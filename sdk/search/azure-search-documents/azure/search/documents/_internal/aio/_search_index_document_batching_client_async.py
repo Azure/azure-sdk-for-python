@@ -4,17 +4,18 @@
 # license information.
 # --------------------------------------------------------------------------
 from typing import cast, List, TYPE_CHECKING
+import time
 
 from azure.core.tracing.decorator_async import distributed_trace_async
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import HttpResponseError, ServiceResponseTimeoutError
 from ._timer import Timer
 from .._utils import is_retryable_status_code
-from .._generated_serviceclient.aio import SearchServiceClient
+from .._search_index_document_batching_client_base import SearchIndexDocumentBatchingClientBase
+from ...indexes.aio import SearchIndexClient as SearchServiceClient
 from .._generated.aio import SearchIndexClient
 from .._generated.models import IndexBatch, IndexingResult
 from .._search_documents_error import RequestEntityTooLargeError
 from ._index_documents_batch_async import IndexDocumentsBatch
-from ..._api_versions import validate_api_version
 from ..._headers_mixin import HeadersMixin
 from ..._version import SDK_MONIKER
 
@@ -24,7 +25,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import AzureKeyCredential
 
 
-class SearchIndexDocumentBatchingClient(HeadersMixin):
+class SearchIndexDocumentBatchingClient(SearchIndexDocumentBatchingClientBase, HeadersMixin):
     """A client to do index document batching.
 
     :param endpoint: The URL endpoint of an Azure search service
@@ -33,49 +34,36 @@ class SearchIndexDocumentBatchingClient(HeadersMixin):
     :type index_name: str
     :param credential: A credential to authorize search client requests
     :type credential: ~azure.core.credentials.AzureKeyCredential
+    :keyword bool auto_flush: if the auto flush mode is on. Default to True.
     :keyword int window: how many seconds if there is no changes that triggers auto flush.
-        if window is less or equal than 0, it will disable auto flush
-    :keyword int batch_size: batch size. Default to 1000. It only takes affect when auto_flush is on
-    :keyword persistence: persistence hook. If it is set, the batch client will dump actions queue when it changes
-    :paramtype persistence: PersistenceBase
+        Default to 60 seconds
+    :keyword hook: hook. If it is set, the client will call corresponding methods when status changes
+    :paramtype hook: IndexingHook
     :keyword str api_version: The Search API version to use for requests.
     """
     # pylint: disable=too-many-instance-attributes
-    _ODATA_ACCEPT = "application/json;odata.metadata=none"  # type: str
-    _DEFAULT_WINDOW = 0
-    _DEFAULT_BATCH_SIZE = 1000
 
     def __init__(self, endpoint, index_name, credential, **kwargs):
         # type: (str, str, AzureKeyCredential, **Any) -> None
-
-        api_version = kwargs.pop('api_version', None)
-        validate_api_version(api_version)
-        self._batch_size = kwargs.pop('batch_size', self._DEFAULT_BATCH_SIZE)
-        self._window = kwargs.pop('window', self._DEFAULT_WINDOW)
-        self._auto_flush = self._window > 0
+        super(SearchIndexDocumentBatchingClient, self).__init__(endpoint, index_name, credential, **kwargs)
         self._index_documents_batch = IndexDocumentsBatch()
-        self._endpoint = endpoint  # type: str
-        self._index_name = index_name  # type: str
-        self._index_key = None
-        self._credential = credential  # type: AzureKeyCredential
         self._client = SearchIndexClient(
             endpoint=endpoint, index_name=index_name, sdk_moniker=SDK_MONIKER, **kwargs
         )  # type: SearchIndexClient
         self._reset_timer()
-        self._persistence = kwargs.pop('persistence', None)
 
-    async def _cleanup(self, flush=True, raise_error=False):
+    async def _cleanup(self, flush=True):
         # type: () -> None
         """Clean up the client.
 
         :param bool flush: flush the actions queue before shutdown the client
             Default to True.
-        :param bool raise_error: raise error if there are failures during flushing
-            Default to False which re-queue the failed tasks and retry on next flush.
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises: ~azure.core.exceptions.HttpResponseError,
+                 ~azure.core.exceptions.ServiceResponseTimeoutError
+                 ~azure.search.documents.RequestEntityTooLargeError
         """
         if flush:
-            await self.flush(raise_error=raise_error)
+            await self.flush()
         if self._auto_flush:
             self._timer.cancel()
 
@@ -93,54 +81,47 @@ class SearchIndexDocumentBatchingClient(HeadersMixin):
         """
         return self._index_documents_batch.actions
 
-    @property
-    def succeeded_actions(self):
-        # type: () -> List[IndexAction]
-        """The list of currently succeeded index actions in queue.
-
-        :rtype: List[IndexAction]
-        """
-        return self._index_documents_batch.succeeded_actions
-
-    @property
-    def failed_actions(self):
-        # type: () -> List[IndexAction]
-        """The list of currently failed index actions in queue.
-
-        :rtype: List[IndexAction]
-        """
-        return self._index_documents_batch.failed_actions
-
-    @property
-    def batch_size(self):
-        # type: () -> int
-        return self._batch_size
-
     async def close(self):
         # type: () -> None
-        """Close the :class:`~azure.search.aio.SearchClient` session.
+        """Close the :class:`~azure.search.documents.aio.SearchClient` session.
+
+        :raises: ~azure.core.exceptions.HttpResponseError,
+                 ~azure.core.exceptions.ServiceResponseTimeoutError
+                 ~azure.search.documents.RequestEntityTooLargeError
 
         """
         await self._cleanup(flush=True)
         return await self._client.close()
 
-    async def flush(self, raise_error=False):
-        # type: (bool) -> None
+    @distributed_trace_async
+    async def flush(self, timeout=86400):
+        # type: (bool) -> bool
         """Flush the batch.
 
         :param bool raise_error: raise error if there are failures during flushing
             Default to False which re-queue the failed tasks and retry on next flush.
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        # get actions
+        has_error = False
+        begin_time = int(time.time())
+        while len(self._index_documents_batch.actions) > 0:
+            now = int(time.time())
+            remaining = timeout - (now - begin_time)
+            if remaining < 0:
+                raise ServiceResponseTimeoutError("Service response time out")
+            result = await self._process(timeout=remaining)
+            if (result):
+                has_error = True
+        return has_error
+
+    async def _process(self, timeout=86400):
+        # type: (int) -> bool
         actions = await self._index_documents_batch.dequeue_actions()
         try:
-            results = await self._index_documents_actions(actions=actions)
-            # re-queue 207:
+            results = await self._index_documents_actions(actions=actions, timeout=timeout)
             if not self._index_key:
-                client = SearchServiceClient(self._endpoint)
-                kwargs = {"headers": self._merge_client_headers({})}
-                result = await client.indexes.get(self._index_name, **kwargs)
+                client = SearchServiceClient(self._endpoint, self._credential)
+                result = await client.get_index(self._index_name)
                 if not result:
                     # Cannot find the index
                     self._index_key = ""
@@ -153,32 +134,27 @@ class SearchIndexDocumentBatchingClient(HeadersMixin):
             has_error = False
 
             for result in results:
-                action = [x for x in actions if x.get(self._index_key) == result.key]
-                if is_retryable_status_code(result.status_code):
-                    await self._index_documents_batch.enqueue_actions(action)
-                    has_error = True
-                elif result.status_code in [200, 201]:
-                    if self._persistence:
-                        self._persistence.remove_queued_action(action)
-                        self._persistence.add_succeeded_action(action)
-                    await self._index_documents_batch.enqueue_succeeded_actions(action)
-                else:
-                    if self._persistence:
-                        self._persistence.remove_queued_action(action)
-                        self._persistence.add_failed_action(action)
-                    await self._index_documents_batch.enqueue_failed_actions(action)
-                    has_error = True
+                try:
+                    action = next(x for x in actions if x.additional_properties.get(self._index_key) == result.key)
+                    if result.succeeded:
+                        self._succeed_callback(action)
+                    elif is_retryable_status_code(result.status_code):
+                        await self._retry_action(action)
+                        has_error = True
+                    else:
+                        self._fail_callback(action)
+                        has_error = True
+                except StopIteration:
+                    pass
 
-            if has_error and raise_error:
-                raise HttpResponseError(message="Some actions failed. Failed actions are re-queued.")
+            return has_error
 
         except Exception:  # pylint: disable=broad-except
-            # Do we want to re-queue these failures?
-            await self._index_documents_batch.enqueue_actions(actions)
-            if raise_error:
+            for action in actions:
+                await self._retry_action(action)
                 raise
 
-    async def _flush_if_needed(self):
+    async def _process_if_needed(self):
         # type: () -> bool
         """ Every time when a new action is queued, this method
             will be triggered. It checks the actions already queued and flushes them if:
@@ -194,7 +170,7 @@ class SearchIndexDocumentBatchingClient(HeadersMixin):
         if len(self._index_documents_batch.actions) < self._batch_size:
             return
 
-        await self.flush(raise_error=False)
+        await self._process()
 
     def _reset_timer(self):
         # pylint: disable=access-member-before-definition
@@ -212,9 +188,8 @@ class SearchIndexDocumentBatchingClient(HeadersMixin):
         :type documents: List[dict]
         """
         actions = await self._index_documents_batch.add_upload_actions(documents)
-        if self._persistence:
-            self._persistence.add_queued_actions(actions)
-        await self._flush_if_needed()
+        self._new_callback(actions)
+        await self._process_if_needed()
 
     async def add_delete_actions(self, documents):
         # type: (List[dict]) -> None
@@ -223,9 +198,8 @@ class SearchIndexDocumentBatchingClient(HeadersMixin):
         :type documents: List[dict]
         """
         actions = await self._index_documents_batch.add_delete_actions(documents)
-        if self._persistence:
-            self._persistence.add_queued_actions(actions)
-        await self._flush_if_needed()
+        self._new_callback(actions)
+        await self._process_if_needed()
 
     async def add_merge_actions(self, documents):
         # type: (List[dict]) -> None
@@ -234,9 +208,8 @@ class SearchIndexDocumentBatchingClient(HeadersMixin):
         :type documents: List[dict]
         """
         actions = await self._index_documents_batch.add_merge_actions(documents)
-        if self._persistence:
-            self._persistence.add_queued_actions(actions)
-        await self._flush_if_needed()
+        self._new_callback(actions)
+        await self._process_if_needed()
 
     async def add_merge_or_upload_actions(self, documents):
         # type: (List[dict]) -> None
@@ -245,15 +218,15 @@ class SearchIndexDocumentBatchingClient(HeadersMixin):
         :type documents: List[dict]
         """
         actions = await self._index_documents_batch.add_merge_or_upload_actions(documents)
-        if self._persistence:
-            self._persistence.add_queued_actions(actions)
-        await self._flush_if_needed()
+        self._new_callback(actions)
+        await self._process_if_needed()
 
-    @distributed_trace_async
     async def _index_documents_actions(self, actions, **kwargs):
         # type: (List[IndexAction], **Any) -> List[IndexingResult]
         error_map = {413: RequestEntityTooLargeError}
 
+        timeout = kwargs.pop('timeout', 86400)
+        begin_time = int(time.time())
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         try:
             index_documents = IndexBatch(actions=actions)
@@ -263,21 +236,29 @@ class SearchIndexDocumentBatchingClient(HeadersMixin):
             if len(actions) == 1:
                 raise
             pos = round(len(actions) / 2)
+            now = int(time.time())
+            remaining = timeout - (now - begin_time)
+            if remaining < 0:
+                raise ServiceResponseTimeoutError("Service response time out")
             batch_response_first_half = await self._index_documents_actions(
                 actions=actions[:pos],
                 error_map=error_map,
                 **kwargs
             )
-            if batch_response_first_half:
+            if len(batch_response_first_half) > 0:
                 result_first_half = cast(List[IndexingResult], batch_response_first_half.results)
             else:
                 result_first_half = []
+            now = int(time.time())
+            remaining = timeout - (now - begin_time)
+            if remaining < 0:
+                raise ServiceResponseTimeoutError("Service response time out")
             batch_response_second_half = await self._index_documents_actions(
                 actions=actions[pos:],
                 error_map=error_map,
                 **kwargs
             )
-            if batch_response_second_half:
+            if len(batch_response_second_half) > 0:
                 result_second_half = cast(List[IndexingResult], batch_response_second_half.results)
             else:
                 result_second_half = []
@@ -292,3 +273,18 @@ class SearchIndexDocumentBatchingClient(HeadersMixin):
         # type: (*Any) -> None
         await self.close()
         await self._client.__aexit__(*args)  # pylint: disable=no-member
+
+    async def _retry_action(self, action):
+        # type: (IndexAction) -> None
+        key = action.additional_properties.get(self._index_key)
+        counter = self._retry_counter.get(key)
+        if not counter:
+            # first time that fails
+            self._retry_counter[key] = 1
+            await self._index_documents_batch.enqueue_action(action)
+        elif counter < self._RETRY_LIMIT - 1:
+            # not reach retry limit yet
+            self._retry_counter[key] = counter + 1
+            await self._index_documents_batch.enqueue_action(action)
+        else:
+            self._fail_callback(action)

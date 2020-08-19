@@ -15,7 +15,6 @@ from .._queries import AutocompleteQuery, SearchQuery, SuggestQuery
 from ..._api_versions import validate_api_version
 from ..._headers_mixin import HeadersMixin
 from ..._version import SDK_MONIKER
-from ._search_index_document_batching_client_async import SearchIndexDocumentBatchingClient
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
@@ -68,15 +67,10 @@ class SearchClient(HeadersMixin):
 
     async def close(self):
         # type: () -> None
-        """Close the :class:`~azure.search.aio.SearchClient` session.
+        """Close the :class:`~azure.search.documents.aio.SearchClient` session.
 
         """
         return await self._client.close()
-
-    def get_index_document_batching_client(self, **kwargs):
-        # type: (str, dict) -> SearchIndexDocumentBatchingClient
-        """Return a search index document batching client"""
-        return SearchIndexDocumentBatchingClient(self._endpoint, self._index_name, self._credential, **kwargs)
 
     @distributed_trace_async
     async def get_document_count(self, **kwargs):
@@ -503,6 +497,7 @@ class SearchClient(HeadersMixin):
         :param batch: A batch of document operations to perform.
         :type batch: IndexDocumentsBatch
         :rtype:  List[IndexingResult]
+        :raises :class:`~azure.search.documents.RequestEntityTooLargeError`
         """
         return await self._index_documents_actions(actions=batch.actions, **kwargs)
 

@@ -2,6 +2,15 @@
 
 ## 11.1.0b2 (Unreleased)
 
+**Features**
+
+- Added azure.search.documents.RequestEntityTooLargeError
+- Flush method in BatchClient now will not return untill all actions are done
+
+**Breaking Changes**
+
+- Removed succeeded_actions & failed_actions from BatchClient
+- Removed get_index_document_batching_client from SearchClient
 
 ## 11.1.0b1 (2020-08-11)
 

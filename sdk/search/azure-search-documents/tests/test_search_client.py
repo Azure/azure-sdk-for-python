@@ -262,9 +262,3 @@ class TestSearchClient(object):
         index_documents = mock_index.call_args[1]["batch"]
         assert isinstance(index_documents, IndexBatch)
         assert index_documents.actions == batch.actions
-
-    def test_get_batching_client(self):
-        client = SearchClient("endpoint", "index name", CREDENTIAL)
-        batching_client = client.get_index_document_batching_client()
-        assert batching_client.batch_size == 1000
-        assert batching_client._window == 0

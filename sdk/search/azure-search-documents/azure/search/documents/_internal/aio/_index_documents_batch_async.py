@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     from typing import List
 
 
-def flatten_args(args):
+def _flatten_args(args):
     # type (Union[List[dict], List[List[dict]]]) -> List[dict]
     if len(args) == 1 and isinstance(args[0], (list, tuple)):
         return args[0]
@@ -32,8 +32,6 @@ class IndexDocumentsBatch(object):
     def __init__(self):
         # type: () -> None
         self._actions = []  # type: List[IndexAction]
-        self._succeeded_actions = []  # type: List[IndexAction]
-        self._failed_actions = []     # type: List[IndexAction]
         self._lock = asyncio.Lock()
 
     def __repr__(self):
@@ -51,9 +49,10 @@ class IndexDocumentsBatch(object):
         :param documents: Documents to upload to an Azure search index. May be
          a single list of documents, or documents as individual parameters.
         :type documents: dict or list[dict]
+        :return: the added actions
         :rtype: List[IndexAction]
         """
-        return await self._extend_batch(flatten_args(documents), "upload")
+        return await self._extend_batch(_flatten_args(documents), "upload")
 
     async def add_delete_actions(self, *documents):
         # type (Union[List[dict], List[List[dict]]]) -> List[IndexAction]
@@ -71,9 +70,10 @@ class IndexDocumentsBatch(object):
         :param documents: Documents to delete from an Azure search index. May be
          a single list of documents, or documents as individual parameters.
         :type documents: dict or list[dict]
+        :return: the added actions
         :rtype: List[IndexAction]
         """
-        return await self._extend_batch(flatten_args(documents), "delete")
+        return await self._extend_batch(_flatten_args(documents), "delete")
 
     async def add_merge_actions(self, *documents):
         # type (Union[List[dict], List[List[dict]]]) -> List[IndexAction]
@@ -88,9 +88,10 @@ class IndexDocumentsBatch(object):
         :param documents: Documents to merge into an Azure search index. May be
          a single list of documents, or documents as individual parameters.
         :type documents: dict or list[dict]
+        :return: the added actions
         :rtype: List[IndexAction]
         """
-        return await self._extend_batch(flatten_args(documents), "merge")
+        return await self._extend_batch(_flatten_args(documents), "merge")
 
     async def add_merge_or_upload_actions(self, *documents):
         # type (Union[List[dict], List[List[dict]]]) -> List[IndexAction]
@@ -105,9 +106,10 @@ class IndexDocumentsBatch(object):
          index. May be a single list of documents, or documents as individual
          parameters.
         :type documents: dict or list[dict]
+        :return: the added actions
         :rtype: List[IndexAction]
         """
-        return await self._extend_batch(flatten_args(documents), "mergeOrUpload")
+        return await self._extend_batch(_flatten_args(documents), "mergeOrUpload")
 
     @property
     def actions(self):
@@ -117,24 +119,6 @@ class IndexDocumentsBatch(object):
         :rtype: List[IndexAction]
         """
         return list(self._actions)
-
-    @property
-    def succeeded_actions(self):
-        # type: () -> List[IndexAction]
-        """The list of currently succeeded index actions.
-
-        :rtype: List[IndexAction]
-        """
-        return list(self._succeeded_actions)
-
-    @property
-    def failed_actions(self):
-        # type: () -> List[IndexAction]
-        """The list of currently failed index actions.
-
-        :rtype: List[IndexAction]
-        """
-        return list(self._failed_actions)
 
     async def dequeue_actions(self):
         # type: () -> List[IndexAction]
@@ -154,19 +138,12 @@ class IndexDocumentsBatch(object):
         async with self._lock:
             self._actions.extend(new_actions)
 
-    async def enqueue_succeeded_actions(self, succeeded_actions):
-        # type: (List[IndexAction]) -> None
-        """Enqueue a list of succeeded index actions.
+    async def enqueue_action(self, new_action):
+        # type: (IndexAction) -> None
+        """Enqueue a single index action to index.
         """
         async with self._lock:
-            self._succeeded_actions.extend(succeeded_actions)
-
-    async def enqueue_failed_actions(self, failed_actions):
-        # type: (List[IndexAction]) -> None
-        """Enqueue a list of failed index actions.
-        """
-        async with self._lock:
-            self._failed_actions.extend(failed_actions)
+            self._actions.append(new_action)
 
     async def _extend_batch(self, documents, action_type):
         # type: (List[dict], str) -> List[IndexAction]
