@@ -9,6 +9,7 @@
   - Added operation QuotaOperations.list
   - Added operation QuotaOperations.update
   - Added operation group QuotaRequestStatusOperations
+  - Added reservedResourceType
 
 **Breaking changes**
 
