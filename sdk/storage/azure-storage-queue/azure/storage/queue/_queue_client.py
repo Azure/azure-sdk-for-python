@@ -158,7 +158,7 @@ class QueueClient(StorageAccountHostsMixin):
             credential=None,  # type: Any
             **kwargs  # type: Any
         ):
-        # type: (...) -> None
+        # type: (...) -> QueueClient
         """Create QueueClient from a Connection String.
 
         :param str conn_str:
