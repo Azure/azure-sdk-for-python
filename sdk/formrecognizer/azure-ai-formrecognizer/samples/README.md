@@ -72,7 +72,7 @@ what you can do with the Azure Form Recognizer client library.
 [azure_identity_pip]: https://pypi.org/project/azure-identity/
 [python-fr-ref-docs]: https://aka.ms/azsdk/python/formrecognizer/docs
 [get-endpoint-instructions]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/formrecognizer/azure-ai-formrecognizer/README.md#looking-up-the-endpoint
-[get-key-instructions]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/formrecognizer/azure-ai-formrecognizer/README.md#types-of-credentials
+[get-key-instructions]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/formrecognizer/azure-ai-formrecognizer/README.md#get-the-api-key
 
 [sample_authentication]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_authentication.py
 [sample_authentication_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_authentication_async.py
