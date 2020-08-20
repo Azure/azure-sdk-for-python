@@ -1223,12 +1223,15 @@ class FileOperations:
             return cls(response, None, response_headers)
     upload_range_from_url.metadata = {'url': '/{shareName}/{directory}/{fileName}'}
 
-    async def get_range_list(self, sharesnapshot=None, timeout=None, range=None, lease_access_conditions=None, *, cls=None, **kwargs):
+    async def get_range_list(self, sharesnapshot=None, prevsharesnapshot=None, timeout=None, range=None, lease_access_conditions=None, *, cls=None, **kwargs):
         """Returns the list of valid ranges for a file.
 
         :param sharesnapshot: The snapshot parameter is an opaque DateTime
          value that, when present, specifies the share snapshot to query.
         :type sharesnapshot: str
+        :param prevsharesnapshot: The previous snapshot parameter is an opaque
+         DateTime value that, when present, specifies the previous snapshot.
+        :type prevsharesnapshot: str
         :param timeout: The timeout parameter is expressed in seconds. For
          more information, see <a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
@@ -1266,6 +1269,8 @@ class FileOperations:
         query_parameters = {}
         if sharesnapshot is not None:
             query_parameters['sharesnapshot'] = self._serialize.query("sharesnapshot", sharesnapshot, 'str')
+        if prevsharesnapshot is not None:
+            query_parameters['prevsharesnapshot'] = self._serialize.query("prevsharesnapshot", prevsharesnapshot, 'str')
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
         query_parameters['comp'] = self._serialize.query("comp", comp, 'str')
@@ -1594,7 +1599,7 @@ class FileOperations:
         """Closes all handles open for given file.
 
         :param handle_id: Specifies handle ID opened on the file or directory
-         to be closed. Asterix (‘*’) is a wildcard that specifies all handles.
+         to be closed. Asterisk (‘*’) is a wildcard that specifies all handles.
         :type handle_id: str
         :param timeout: The timeout parameter is expressed in seconds. For
          more information, see <a
