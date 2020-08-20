@@ -4,8 +4,7 @@
 # ------------------------------------
 from typing import TYPE_CHECKING
 
-from .base import AsyncCredentialBase
-from .._internal import AadClient
+from .._internal import AadClient, AsyncContextManager
 from .._internal.decorators import log_get_token_async
 from ..._internal import ClientSecretCredentialBase
 
@@ -14,7 +13,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import AccessToken
 
 
-class ClientSecretCredential(AsyncCredentialBase, ClientSecretCredentialBase):
+class ClientSecretCredential(AsyncContextManager, ClientSecretCredentialBase):
     """Authenticates as a service principal using a client ID and client secret.
 
     :param str tenant_id: ID of the service principal's tenant. Also called its 'directory' ID.

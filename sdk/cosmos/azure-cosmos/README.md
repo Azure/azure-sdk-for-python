@@ -153,11 +153,12 @@ except exceptions.CosmosHttpResponseError:
 
 This example creates a container with [Analytical Store](https://docs.microsoft.com/en-us/azure/cosmos-db/analytical-store-introduction) enabled, for reporting, BI, AI, and Advanced Analytics with [Azure Synapse Link](https://docs.microsoft.com/en-us/azure/cosmos-db/synapse-link).
 
-Options:
+The options for analytical_storage_ttl are:
 
 + 0 or Null or not informed: Not enabled.
 + -1: The data will be stored infinitely.
 + Any other number: the actual ttl, in seconds.
+
 
 ```Python
 container_name = 'products'
