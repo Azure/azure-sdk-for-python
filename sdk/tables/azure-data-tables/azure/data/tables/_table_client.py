@@ -264,7 +264,6 @@ class TableClient(TableClientBase):
 
         if "PartitionKey" in entity and "RowKey" in entity:
             entity = _add_entity_properties(entity)
-            # TODO: Remove - and run test to see what happens with the service
         else:
             raise ValueError('PartitionKey and RowKey were not provided in entity')
         try:
@@ -451,24 +450,28 @@ class TableClient(TableClientBase):
 
         try:
             if mode is UpdateMode.MERGE:
-                self._client.table.merge_entity(
+                metadata, identifiers = self._client.table.merge_entity(
                     table=self.table_name,
                     partition_key=partition_key,
                     row_key=row_key,
                     table_entity_properties=entity,
+                    cls=kwargs.pop('cls', _return_headers_and_deserialized),
                     **kwargs
                 )
+                return metadata
             elif mode is UpdateMode.REPLACE:
-                self._client.table.update_entity(
+                metadata, identifiers = self._client.table.update_entity(
                     table=self.table_name,
                     partition_key=partition_key,
                     row_key=row_key,
                     table_entity_properties=entity,
+                    cls=kwargs.pop('cls', _return_headers_and_deserialized),
                     **kwargs)
+                return metadata
             else:
                 raise ValueError('Mode type is not supported')
         except ResourceNotFoundError:
-            self.create_entity(
+            return self.create_entity(
                 partition_key=partition_key,
                 row_key=row_key,
                 table_entity_properties=entity,

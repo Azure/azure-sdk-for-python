@@ -11,11 +11,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 30 Jul 2020 13:33:44 GMT
+      - Thu, 20 Aug 2020 19:58:57 GMT
       User-Agent:
-      - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 30 Jul 2020 13:33:44 GMT
+      - Thu, 20 Aug 2020 19:58:57 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
@@ -26,7 +26,7 @@ interactions:
     headers:
       cache-control: no-cache
       content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
-      date: Thu, 30 Jul 2020 13:33:43 GMT
+      date: Thu, 20 Aug 2020 19:58:56 GMT
       location: https://storagename.table.core.windows.net/Tables('uttable7e8316e7')
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
@@ -35,7 +35,7 @@ interactions:
     status:
       code: 201
       message: Created
-    url: https://pyacrstorageubqarxe6dhep.table.core.windows.net/Tables
+    url: https://pyacrstoragezjybwtgsrny6.table.core.windows.net/Tables
 - request:
     body: '{"PartitionKey": "pk7e8316e7", "RowKey": "rk7e8316e7", "age": "abc", "sex":
       "female", "sign": "aquarius", "birthday": "1991-10-04T00:00:00Z", "birthday@odata.type":
@@ -48,13 +48,13 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 30 Jul 2020 13:33:44 GMT
+      - Thu, 20 Aug 2020 19:58:57 GMT
       If-Match:
       - '*'
       User-Agent:
-      - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 30 Jul 2020 13:33:44 GMT
+      - Thu, 20 Aug 2020 19:58:57 GMT
       x-ms-version:
       - '2019-07-07'
     method: PUT
@@ -64,13 +64,13 @@ interactions:
       string: '<?xml version="1.0" encoding="utf-8"?><error xmlns="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"><code>ResourceNotFound</code><message
         xml:lang="en-US">The specified resource does not exist.
 
-        RequestId:7fdb0557-b002-0012-6176-663e16000000
+        RequestId:e7cc7026-b002-001f-702c-7772e9000000
 
-        Time:2020-07-30T13:33:43.4765134Z</message></error>'
+        Time:2020-08-20T19:58:57.8322526Z</message></error>'
     headers:
       cache-control: no-cache
       content-type: application/xml;charset=utf-8
-      date: Thu, 30 Jul 2020 13:33:43 GMT
+      date: Thu, 20 Aug 2020 19:58:57 GMT
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-content-type-options: nosniff
@@ -78,16 +78,16 @@ interactions:
     status:
       code: 404
       message: Not Found
-    url: https://pyacrstorageubqarxe6dhep.table.core.windows.net/uttable7e8316e7(PartitionKey='pk7e8316e7',RowKey='rk7e8316e7')
+    url: https://pyacrstoragezjybwtgsrny6.table.core.windows.net/uttable7e8316e7(PartitionKey='pk7e8316e7',RowKey='rk7e8316e7')
 - request:
     body: null
     headers:
       Date:
-      - Thu, 30 Jul 2020 13:33:44 GMT
+      - Thu, 20 Aug 2020 19:58:57 GMT
       User-Agent:
-      - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 30 Jul 2020 13:33:44 GMT
+      - Thu, 20 Aug 2020 19:58:57 GMT
       x-ms-version:
       - '2019-07-07'
     method: DELETE
@@ -98,12 +98,12 @@ interactions:
     headers:
       cache-control: no-cache
       content-length: '0'
-      date: Thu, 30 Jul 2020 13:33:43 GMT
+      date: Thu, 20 Aug 2020 19:58:57 GMT
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options: nosniff
       x-ms-version: '2019-07-07'
     status:
       code: 204
       message: No Content
-    url: https://pyacrstorageubqarxe6dhep.table.core.windows.net/Tables('uttable7e8316e7')
+    url: https://pyacrstoragezjybwtgsrny6.table.core.windows.net/Tables('uttable7e8316e7')
 version: 1
