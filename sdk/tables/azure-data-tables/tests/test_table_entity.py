@@ -822,7 +822,7 @@ class StorageTableEntityTest(TableTestCase):
             resp = self.table.upsert_entity(mode=UpdateMode.MERGE, entity=sent_entity)
 
             # Assert
-            self.assertIsNone(resp)
+            self.assertIsNotNone(resp)
             received_entity = self.table.get_entity(entity.PartitionKey, entity.RowKey)
             self._assert_merged_entity(received_entity)
         finally:
@@ -842,7 +842,7 @@ class StorageTableEntityTest(TableTestCase):
             resp = self.table.upsert_entity(mode=UpdateMode.MERGE, entity=sent_entity)
 
             # Assert
-            self.assertIsNone(resp)
+            self.assertIsNotNone(resp)
             received_entity = self.table.get_entity(entity['PartitionKey'],
                                                     entity['RowKey'])
             self._assert_updated_entity(received_entity)
@@ -863,7 +863,7 @@ class StorageTableEntityTest(TableTestCase):
             resp = self.table.upsert_entity(mode=UpdateMode.REPLACE, entity=sent_entity)
 
             # Assert
-            # self.assertIsNone(resp)
+            self.assertIsNotNone(resp)
             received_entity = self.table.get_entity(entity.PartitionKey, entity.RowKey)
             self._assert_updated_entity(received_entity)
         finally:
@@ -883,7 +883,7 @@ class StorageTableEntityTest(TableTestCase):
             resp = self.table.upsert_entity(mode=UpdateMode.REPLACE, entity=sent_entity)
 
             # Assert
-            self.assertIsNone(resp)
+            self.assertIsNotNone(resp)
             received_entity = self.table.get_entity(entity['PartitionKey'],
                                                     entity['RowKey'])
             self._assert_updated_entity(received_entity)
@@ -1109,7 +1109,7 @@ class StorageTableEntityTest(TableTestCase):
             resp = self.table.upsert_entity(mode=UpdateMode.MERGE, entity=sent_entity)
 
             # Assert
-            self.assertIsNone(resp)
+            self.assertIsNotNone(resp)
             # row key here only has 2 quotes
             received_entity = self.table.get_entity(entity.PartitionKey, entity.RowKey)
             self._assert_updated_entity(received_entity)
