@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any
+from typing import Any, TYPE_CHECKING
 
 from azure.core import AsyncPipelineClient
 from msrest import Deserializer, Serializer
