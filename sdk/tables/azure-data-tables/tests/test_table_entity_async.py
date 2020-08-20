@@ -798,9 +798,9 @@ class StorageTableEntityTest(TableTestCase):
             resp = await self.table.upsert_entity(mode=UpdateMode.MERGE, entity=sent_entity)
 
             # Assert
-            self.assertIsNone(resp)
             received_entity = await self.table.get_entity(entity.PartitionKey,
                                                           entity.RowKey)
+            self.assertIsNotNone(resp)
             self._assert_merged_entity(received_entity)
         finally:
             await self._tear_down()
@@ -819,9 +819,9 @@ class StorageTableEntityTest(TableTestCase):
             resp = await self.table.upsert_entity(mode=UpdateMode.MERGE, entity=sent_entity)
 
             # Assert
-            self.assertIsNone(resp)
             received_entity = await self.table.get_entity(entity['PartitionKey'],
                                                           entity['RowKey'])
+            self.assertIsNotNone(resp)
             self._assert_updated_entity(received_entity)
         finally:
             await self._tear_down()
@@ -840,9 +840,9 @@ class StorageTableEntityTest(TableTestCase):
             resp = await self.table.upsert_entity(mode=UpdateMode.REPLACE, entity=sent_entity)
 
             # Assert
-            # self.assertIsNone(resp)
             received_entity = await self.table.get_entity(entity.PartitionKey,
                                                           entity.RowKey)
+            self.assertIsNotNone(resp)
             self._assert_updated_entity(received_entity)
         finally:
             await self._tear_down()
@@ -861,9 +861,9 @@ class StorageTableEntityTest(TableTestCase):
             resp = await self.table.upsert_entity(mode=UpdateMode.REPLACE, entity=sent_entity)
 
             # Assert
-            self.assertIsNone(resp)
             received_entity = await self.table.get_entity(entity['PartitionKey'],
                                                           entity['RowKey'])
+            self.assertIsNotNone(resp)
             self._assert_updated_entity(received_entity)
         finally:
             await self._tear_down()
@@ -1094,7 +1094,7 @@ class StorageTableEntityTest(TableTestCase):
             resp = await self.table.upsert_entity(mode=UpdateMode.REPLACE, entity=sent_entity)
 
             # Assert
-            self.assertIsNone(resp)
+            self.assertIsNotNone(resp)
             # row key here only has 2 quotes
             received_entity = await self.table.get_entity(
                 entity.PartitionKey, entity.RowKey)

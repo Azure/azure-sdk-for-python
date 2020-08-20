@@ -456,24 +456,28 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
 
         try:
             if mode is UpdateMode.MERGE:
-                await self._client.table.merge_entity(
+                metadata, identifiers = await self._client.table.merge_entity(
                     table=self.table_name,
                     partition_key=partition_key,
                     row_key=row_key,
                     table_entity_properties=entity,
+                    cls=kwargs.pop('cls', _return_headers_and_deserialized),
                     **kwargs
                 )
+                return metadata
             elif mode is UpdateMode.REPLACE:
-                await self._client.table.update_entity(
+                metadata, identifiers = await self._client.table.update_entity(
                     table=self.table_name,
                     partition_key=partition_key,
                     row_key=row_key,
                     table_entity_properties=entity,
+                    cls=kwargs.pop('cls', _return_headers_and_deserialized),
                     **kwargs)
+                return metadata
             else:
                 raise ValueError('Mode type is not supported')
         except ResourceNotFoundError:
-            await self.create_entity(
+            return await self.create_entity(
                 partition_key=partition_key,
                 row_key=row_key,
                 table_entity_properties=entity,
