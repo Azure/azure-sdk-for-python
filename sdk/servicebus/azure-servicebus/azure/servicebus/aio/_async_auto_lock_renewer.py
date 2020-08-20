@@ -76,7 +76,7 @@ class AutoLockRenew:
             if not renewable._receiver._running: # type: ignore
                 return False
         except AttributeError: # If for whatever reason the renewable isn't hooked up to a receiver
-            raise ServiceBusError("Cannot renew an entity without an associated receiver")
+            raise ServiceBusError("Cannot renew an entity without an associated receiver.  ReceivedMessage and active ServiceBusReceiver.Session objects are expected.")
         return True
 
     async def _auto_lock_renew(self,
