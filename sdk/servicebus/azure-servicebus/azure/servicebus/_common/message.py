@@ -748,7 +748,11 @@ class ReceivedMessageBase(PeekMessage):
         self._received_timestamp_utc = utc_now()
         self._is_deferred_message = kwargs.get("is_deferred_message", False)
         self.auto_renew_error = None # type: Optional[Exception]
-        self._receiver = None  # type: Optional[Union[ServiceBusReceiver, ServiceBusSessionReceiver]]
+        try:
+            self._receiver = kwargs.pop("receiver")  # type: Union[ServiceBusReceiver, ServiceBusSessionReceiver]
+        except KeyError:
+            raise TypeError("ReceivedMessage requires a receiver to be initialized.  This class should never be" + \
+            "initialized by a user; the Message class should be utilized instead.")
         self._expiry = None
 
     def _check_live(self, action):
@@ -771,9 +775,6 @@ class ReceivedMessageBase(PeekMessage):
     def _settle_via_mgmt_link(self, settle_operation, dead_letter_reason=None, dead_letter_description=None):
         # type: (str, Optional[str], Optional[str]) -> Callable
         # pylint: disable=protected-access
-
-        if not self._receiver:
-            raise ServiceBusError("Cannot settle a message without an associated receiver.")
 
         if settle_operation == MESSAGE_COMPLETE:
             return functools.partial(

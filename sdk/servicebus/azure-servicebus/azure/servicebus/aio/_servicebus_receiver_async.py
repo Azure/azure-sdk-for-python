@@ -293,6 +293,15 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
          timeout period, the iterator will stop.
 
          :rtype AsyncIterator[ReceivedMessage]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_code_servicebus.py
+                :start-after: [START receive_forever_async]
+                :end-before: [END receive_forever_async]
+                :language: python
+                :dedent: 4
+                :caption: Receive indefinitely from an iterator in streaming fashion.
         """
         return self._IterContextualWrapper(self, max_wait_time)
 
@@ -437,14 +446,15 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
 
         self._populate_message_properties(message)
 
-        handler = functools.partial(mgmt_handlers.deferred_message_op, mode=self._mode, message_type=ReceivedMessage)
+        handler = functools.partial(mgmt_handlers.deferred_message_op,
+                                    mode=self._mode,
+                                    message_type=ReceivedMessage,
+                                    receiver=self)
         messages = await self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_RECEIVE_BY_SEQUENCE_NUMBER,
             message,
             handler
         )
-        for m in messages:
-            m._receiver = self  # pylint: disable=protected-access
         return messages
 
     async def peek_messages(self, message_count=1, sequence_number=0):

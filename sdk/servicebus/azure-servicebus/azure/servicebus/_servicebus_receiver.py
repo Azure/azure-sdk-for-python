@@ -296,6 +296,15 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
          timeout period, the iterator will stop.
         :type max_wait_time: float
         :rtype: Iterator[ReceivedMessage]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
+                :start-after: [START receive_forever]
+                :end-before: [END receive_forever]
+                :language: python
+                :dedent: 4
+                :caption: Receive indefinitely from an iterator in streaming fashion.
         """
         return self._iter_contextual_wrapper(max_wait_time)
 
@@ -443,14 +452,12 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
 
         self._populate_message_properties(message)
 
-        handler = functools.partial(mgmt_handlers.deferred_message_op, mode=self._mode)
+        handler = functools.partial(mgmt_handlers.deferred_message_op, mode=self._mode, receiver=self)
         messages = self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_RECEIVE_BY_SEQUENCE_NUMBER,
             message,
             handler
         )
-        for m in messages:
-            m._receiver = self  # pylint: disable=protected-access
         return messages
 
     def peek_messages(self, message_count=1, sequence_number=None):
