@@ -743,6 +743,7 @@ class StorageTableEntityTest(TableTestCase):
             received_entity = self.table.get_entity(partition_key=entity.PartitionKey,
                                                     row_key=entity.RowKey)
 
+            self.assertIsNotNone(resp)
             self._assert_updated_entity(received_entity)
         finally:
             self._tear_down()
@@ -774,13 +775,13 @@ class StorageTableEntityTest(TableTestCase):
 
             # Act
             sent_entity = self._create_updated_entity_dict(entity.PartitionKey, entity.RowKey)
-            # , response_hook=lambda e, h: h)
-            self.table.update_entity(
+
+            resp = self.table.update_entity(
                 mode=UpdateMode.REPLACE, entity=sent_entity, etag=etag,
                 match_condition=MatchConditions.IfNotModified)
 
             # Assert
-            # self.assertTrue(resp)
+            self.assertIsNotNone(resp)
             received_entity = self.table.get_entity(entity.PartitionKey, entity.RowKey)
             self._assert_updated_entity(received_entity)
         finally:
@@ -902,7 +903,7 @@ class StorageTableEntityTest(TableTestCase):
             resp = self.table.update_entity(mode=UpdateMode.MERGE, entity=sent_entity)
 
             # Assert
-            self.assertIsNone(resp)
+            self.assertIsNotNone(resp)
             received_entity = self.table.get_entity(entity.PartitionKey, entity.RowKey)
             self._assert_merged_entity(received_entity)
         finally:
@@ -942,7 +943,7 @@ class StorageTableEntityTest(TableTestCase):
                 match_condition=MatchConditions.IfNotModified)
 
             # Assert
-            self.assertIsNone(resp)
+            self.assertIsNotNone(resp)
             received_entity = self.table.get_entity(entity.PartitionKey, entity.RowKey)
             self._assert_merged_entity(received_entity)
         finally:
@@ -1118,7 +1119,7 @@ class StorageTableEntityTest(TableTestCase):
             resp = self.table.update_entity(mode=UpdateMode.MERGE, entity=sent_entity)
 
             # Assert
-            self.assertIsNone(resp)
+            self.assertIsNotNone(resp)
             received_entity = self.table.get_entity(entity.PartitionKey, entity.RowKey)
             self._assert_updated_entity(received_entity)
             self.assertEqual(received_entity['newField'], 'newFieldValue')
@@ -1597,10 +1598,11 @@ class StorageTableEntityTest(TableTestCase):
             )
             table = service.get_table_client(self.table_name)
             updated_entity = self._create_updated_entity_dict(entity.PartitionKey, entity.RowKey)
-            table.update_entity(mode=UpdateMode.REPLACE, entity=updated_entity)
+            resp = table.update_entity(mode=UpdateMode.REPLACE, entity=updated_entity)
 
             # Assert
             received_entity = self.table.get_entity(entity.PartitionKey, entity.RowKey)
+            self.assertIsNotNone(resp)
             self._assert_updated_entity(received_entity)
         finally:
             self._tear_down()

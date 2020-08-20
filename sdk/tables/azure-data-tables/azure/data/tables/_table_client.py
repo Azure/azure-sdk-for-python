@@ -309,17 +309,25 @@ class TableClient(TableClientBase):
         entity = _add_entity_properties(entity)
         try:
             if mode is UpdateMode.REPLACE:
-                self._client.table.update_entity(
+                metadata, identifiers = self._client.table.update_entity(
                     table=self.table_name,
                     partition_key=partition_key,
                     row_key=row_key,
                     table_entity_properties=entity,
                     if_match=if_match or if_not_match or "*",
+                    cls=kwargs.pop('cls', _return_headers_and_deserialized),
                     **kwargs)
+                return metadata
             elif mode is UpdateMode.MERGE:
-                self._client.table.merge_entity(table=self.table_name, partition_key=partition_key,
-                                                row_key=row_key, if_match=if_match or if_not_match or "*",
-                                                table_entity_properties=entity, **kwargs)
+                metadata, identifiers = self._client.table.merge_entity(
+                    table=self.table_name,
+                    partition_key=partition_key,
+                    row_key=row_key,
+                    if_match=if_match or if_not_match or "*",
+                    table_entity_properties=entity,
+                    cls=kwargs.pop('cls', _return_headers_and_deserialized),
+                    **kwargs)
+                return metadata
             else:
                 raise ValueError('Mode type is not supported')
         except HttpResponseError as error:
