@@ -2,8 +2,11 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-from ._schema_registry_client_async import SchemaRegistryClient
+import avro
 
-__all__ = [
-    "SchemaRegistryClient"
-]
+from azure.schemaregistry.aio import SchemaRegistryClient
+
+
+class SchemaRegistryAvroSerializer:
+    def __init__(self):
+        self._schema_dict = {}
