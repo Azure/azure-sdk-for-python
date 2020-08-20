@@ -564,6 +564,24 @@ class Metrics(Model):
         self.retention_policy = retention_policy
 
 
+class ProtocolSettings(Model):
+    """Protocol settings.
+
+    :param smb_settings: Settings for SMB protocol.
+    :type smb_settings: ~azure.storage.fileshare.models.SmbSettings
+    """
+
+    _attribute_map = {
+        'smb_settings': {'key': 'SmbSettings', 'type': 'SmbSettings', 'xml': {'name': 'SMB'}},
+    }
+    _xml_map = {
+    }
+
+    def __init__(self, *, smb_settings=None, **kwargs) -> None:
+        super(ProtocolSettings, self).__init__(**kwargs)
+        self.smb_settings = smb_settings
+
+
 class Range(Model):
     """An Azure Storage file range.
 
@@ -721,6 +739,14 @@ class ShareProperties(Model):
     :type deleted_time: datetime
     :param remaining_retention_days:
     :type remaining_retention_days: int
+    :param lease_status: Possible values include: 'locked', 'unlocked'
+    :type lease_status: str or ~azure.storage.fileshare.models.LeaseStatusType
+    :param lease_state: Possible values include: 'available', 'leased',
+     'expired', 'breaking', 'broken'
+    :type lease_state: str or ~azure.storage.fileshare.models.LeaseStateType
+    :param lease_duration: Possible values include: 'infinite', 'fixed'
+    :type lease_duration: str or
+     ~azure.storage.fileshare.models.LeaseDurationType
     """
 
     _validation = {
@@ -739,11 +765,14 @@ class ShareProperties(Model):
         'next_allowed_quota_downgrade_time': {'key': 'NextAllowedQuotaDowngradeTime', 'type': 'rfc-1123', 'xml': {'name': 'NextAllowedQuotaDowngradeTime'}},
         'deleted_time': {'key': 'DeletedTime', 'type': 'rfc-1123', 'xml': {'name': 'DeletedTime'}},
         'remaining_retention_days': {'key': 'RemainingRetentionDays', 'type': 'int', 'xml': {'name': 'RemainingRetentionDays'}},
+        'lease_status': {'key': 'LeaseStatus', 'type': 'LeaseStatusType', 'xml': {'name': 'LeaseStatus'}},
+        'lease_state': {'key': 'LeaseState', 'type': 'LeaseStateType', 'xml': {'name': 'LeaseState'}},
+        'lease_duration': {'key': 'LeaseDuration', 'type': 'LeaseDurationType', 'xml': {'name': 'LeaseDuration'}},
     }
     _xml_map = {
     }
 
-    def __init__(self, *, last_modified, etag: str, quota: int, provisioned_iops: int=None, provisioned_ingress_mbps: int=None, provisioned_egress_mbps: int=None, next_allowed_quota_downgrade_time=None, deleted_time=None, remaining_retention_days: int=None, **kwargs) -> None:
+    def __init__(self, *, last_modified, etag: str, quota: int, provisioned_iops: int=None, provisioned_ingress_mbps: int=None, provisioned_egress_mbps: int=None, next_allowed_quota_downgrade_time=None, deleted_time=None, remaining_retention_days: int=None, lease_status=None, lease_state=None, lease_duration=None, **kwargs) -> None:
         super(ShareProperties, self).__init__(**kwargs)
         self.last_modified = last_modified
         self.etag = etag
@@ -754,6 +783,9 @@ class ShareProperties(Model):
         self.next_allowed_quota_downgrade_time = next_allowed_quota_downgrade_time
         self.deleted_time = deleted_time
         self.remaining_retention_days = remaining_retention_days
+        self.lease_status = lease_status
+        self.lease_state = lease_state
+        self.lease_duration = lease_duration
 
 
 class ShareStats(Model):
@@ -808,6 +840,43 @@ class SignedIdentifier(Model):
         super(SignedIdentifier, self).__init__(**kwargs)
         self.id = id
         self.access_policy = access_policy
+
+
+class SmbMultichannel(Model):
+    """Settings for SMB multichannel.
+
+    :param enabled: If SMB multichannel is enabled.
+    :type enabled: bool
+    """
+
+    _attribute_map = {
+        'enabled': {'key': 'Enabled', 'type': 'bool', 'xml': {'name': 'Enabled'}},
+    }
+    _xml_map = {
+        'name': 'Multichannel'
+    }
+
+    def __init__(self, *, enabled: bool=None, **kwargs) -> None:
+        super(SmbMultichannel, self).__init__(**kwargs)
+        self.enabled = enabled
+
+
+class SmbSettings(Model):
+    """Settings for SMB protocol.
+
+    :param multichannel: Settings for SMB Multichannel.
+    :type multichannel: ~azure.storage.fileshare.models.SmbMultichannel
+    """
+
+    _attribute_map = {
+        'multichannel': {'key': 'Multichannel', 'type': 'SmbMultichannel', 'xml': {'name': 'Multichannel'}},
+    }
+    _xml_map = {
+    }
+
+    def __init__(self, *, multichannel=None, **kwargs) -> None:
+        super(SmbSettings, self).__init__(**kwargs)
+        self.multichannel = multichannel
 
 
 class SourceModifiedAccessConditions(Model):
@@ -879,18 +948,22 @@ class StorageServiceProperties(Model):
     :type minute_metrics: ~azure.storage.fileshare.models.Metrics
     :param cors: The set of CORS rules.
     :type cors: list[~azure.storage.fileshare.models.CorsRule]
+    :param protocol_settings: Protocol settings
+    :type protocol_settings: ~azure.storage.fileshare.models.ProtocolSettings
     """
 
     _attribute_map = {
         'hour_metrics': {'key': 'HourMetrics', 'type': 'Metrics', 'xml': {'name': 'HourMetrics'}},
         'minute_metrics': {'key': 'MinuteMetrics', 'type': 'Metrics', 'xml': {'name': 'MinuteMetrics'}},
         'cors': {'key': 'Cors', 'type': '[CorsRule]', 'xml': {'name': 'Cors', 'itemsName': 'CorsRule', 'wrapped': True}},
+        'protocol_settings': {'key': 'ProtocolSettings', 'type': 'ProtocolSettings', 'xml': {'name': 'ProtocolSettings'}},
     }
     _xml_map = {
     }
 
-    def __init__(self, *, hour_metrics=None, minute_metrics=None, cors=None, **kwargs) -> None:
+    def __init__(self, *, hour_metrics=None, minute_metrics=None, cors=None, protocol_settings=None, **kwargs) -> None:
         super(StorageServiceProperties, self).__init__(**kwargs)
         self.hour_metrics = hour_metrics
         self.minute_metrics = minute_metrics
         self.cors = cors
+        self.protocol_settings = protocol_settings
