@@ -624,6 +624,40 @@ class StorageTableEntityTest(TableTestCase):
                 match_condition=MatchConditions.IfNotModified
             )
 
+            with self.assertRaises(ResourceNotFoundError):
+                resp = self.table.get_entity(partition_key=entity['PartitionKey'],
+                                            row_key=entity['RowKey'])
+
+            # Assert
+        finally:
+            self._tear_down()
+
+    @pytest.mark.skip("pending")
+    @GlobalStorageAccountPreparer()
+    def test_get_entity_if_match_modified(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        self._set_up(storage_account, storage_account_key)
+        try:
+            entity, etag = self._insert_random_entity()
+
+            # Act
+            # Do a get and confirm the etag is parsed correctly by using it
+            # as a condition to delete.
+            resp = self.table.get_entity(partition_key=entity['PartitionKey'],
+                                         row_key=entity['RowKey'])
+
+            self.table.delete_entity(
+                partition_key=resp['PartitionKey'],
+                row_key=resp['RowKey'],
+                etag=etag,
+                match_condition=MatchConditions.IfModified
+            )
+
+            # with self.assertRaises(ResourceNotFoundError):
+            resp = self.table.get_entity(partition_key=entity['PartitionKey'],
+                                        row_key=entity['RowKey'])
+            self.assertIsNotNone(resp)
+
             # Assert
         finally:
             self._tear_down()
@@ -1167,7 +1201,7 @@ class StorageTableEntityTest(TableTestCase):
             entity = self._create_random_base_entity_dict()
             entity.update({'NoneValue': None})
 
-            # Act       
+            # Act
             self.table.create_entity(entity=entity)
             resp = self.table.get_entity(entity['PartitionKey'], entity['RowKey'])
 
@@ -1187,7 +1221,7 @@ class StorageTableEntityTest(TableTestCase):
             entity = self._create_random_base_entity_dict()
             entity.update({'binary': b'\x01\x02\x03\x04\x05\x06\x07\x08\t\n'})
 
-            # Act  
+            # Act
             self.table.create_entity(entity=entity)
             resp = self.table.get_entity(entity['PartitionKey'], entity['RowKey'])
 
