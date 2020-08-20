@@ -17,8 +17,8 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.8.2 (Linux-4.19.104-microsoft-standard-x86_64-with-glibc2.29) msrest/0.6.16
-        msrest_azure/0.6.3 azure-mgmt-storage/11.1.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-storage/11.2.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
@@ -34,11 +34,11 @@ interactions:
       content-type:
       - text/plain; charset=utf-8
       date:
-      - Sun, 28 Jun 2020 02:59:49 GMT
+      - Thu, 20 Aug 2020 01:09:38 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/locations/westeurope/asyncoperations/df46e80a-68f6-4d39-8d71-d5382893951d?monitor=true&api-version=2019-06-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/locations/westeurope/asyncoperations/63e14db2-01cd-4c96-840c-f3ac48a69d85?monitor=true&api-version=2019-06-01
       pragma:
       - no-cache
       server:
@@ -48,7 +48,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1198'
+      - '1199'
     status:
       code: 202
       message: Accepted
@@ -62,13 +62,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.2 (Linux-4.19.104-microsoft-standard-x86_64-with-glibc2.29) msrest/0.6.16
-        msrest_azure/0.6.3 azure-mgmt-storage/11.1.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-storage/11.2.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/locations/westeurope/asyncoperations/df46e80a-68f6-4d39-8d71-d5382893951d?monitor=true&api-version=2019-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/locations/westeurope/asyncoperations/63e14db2-01cd-4c96-840c-f3ac48a69d85?monitor=true&api-version=2019-06-01
   response:
     body:
-      string: '{"sku":{"name":"Standard_GRS","tier":"Standard"},"kind":"StorageV2","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzz","name":"storageaccountxxyyzz","type":"Microsoft.Storage/storageAccounts","location":"westeurope","tags":{"key1":"value1","key2":"value2"},"properties":{"privateEndpointConnections":[],"networkAcls":{"bypass":"AzureServices","virtualNetworkRules":[],"ipRules":[],"defaultAction":"Allow"},"supportsHttpsTrafficOnly":true,"encryption":{"services":{"file":{"keyType":"Account","enabled":true,"lastEnabledTime":"2020-06-28T02:59:48.9210983Z"},"blob":{"keyType":"Account","enabled":true,"lastEnabledTime":"2020-06-28T02:59:48.9210983Z"}},"keySource":"Microsoft.Storage"},"accessTier":"Hot","provisioningState":"Succeeded","creationTime":"2020-06-28T02:59:48.8272916Z","primaryEndpoints":{"dfs":"https://storageaccountxxyyzz.dfs.core.windows.net/","web":"https://storageaccountxxyyzz.z6.web.core.windows.net/","blob":"https://storageaccountxxyyzz.blob.core.windows.net/","queue":"https://storageaccountxxyyzz.queue.core.windows.net/","table":"https://storageaccountxxyyzz.table.core.windows.net/","file":"https://storageaccountxxyyzz.file.core.windows.net/"},"primaryLocation":"westeurope","statusOfPrimary":"available","secondaryLocation":"northeurope","statusOfSecondary":"available"}}'
+      string: '{"sku":{"name":"Standard_GRS","tier":"Standard"},"kind":"StorageV2","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzz","name":"storageaccountxxyyzz","type":"Microsoft.Storage/storageAccounts","location":"westeurope","tags":{"key1":"value1","key2":"value2"},"properties":{"privateEndpointConnections":[],"networkAcls":{"bypass":"AzureServices","virtualNetworkRules":[],"ipRules":[],"defaultAction":"Allow"},"supportsHttpsTrafficOnly":true,"encryption":{"services":{"file":{"keyType":"Account","enabled":true,"lastEnabledTime":"2020-08-20T01:09:38.2016541Z"},"blob":{"keyType":"Account","enabled":true,"lastEnabledTime":"2020-08-20T01:09:38.2016541Z"}},"keySource":"Microsoft.Storage"},"accessTier":"Hot","provisioningState":"Succeeded","creationTime":"2020-08-20T01:09:38.1078553Z","primaryEndpoints":{"dfs":"https://storageaccountxxyyzz.dfs.core.windows.net/","web":"https://storageaccountxxyyzz.z6.web.core.windows.net/","blob":"https://storageaccountxxyyzz.blob.core.windows.net/","queue":"https://storageaccountxxyyzz.queue.core.windows.net/","table":"https://storageaccountxxyyzz.table.core.windows.net/","file":"https://storageaccountxxyyzz.file.core.windows.net/"},"primaryLocation":"westeurope","statusOfPrimary":"available","secondaryLocation":"northeurope","statusOfSecondary":"available"}}'
     headers:
       cache-control:
       - no-cache
@@ -77,7 +77,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Sun, 28 Jun 2020 03:00:07 GMT
+      - Thu, 20 Aug 2020 01:09:57 GMT
       expires:
       - '-1'
       pragma:
@@ -117,8 +117,8 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.8.2 (Linux-4.19.104-microsoft-standard-x86_64-with-glibc2.29) msrest/0.6.16
-        msrest_azure/0.6.3 azure-mgmt-storage/11.1.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-storage/11.2.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
@@ -134,7 +134,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Sun, 28 Jun 2020 03:00:07 GMT
+      - Thu, 20 Aug 2020 01:09:57 GMT
       expires:
       - '-1'
       pragma:
@@ -150,7 +150,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1197'
+      - '1198'
     status:
       code: 200
       message: OK
@@ -178,8 +178,8 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.8.2 (Linux-4.19.104-microsoft-standard-x86_64-with-glibc2.29) msrest/0.6.16
-        msrest_azure/0.6.3 azure-mgmt-storage/11.1.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-storage/11.2.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
@@ -196,7 +196,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Sun, 28 Jun 2020 03:00:09 GMT
+      - Thu, 20 Aug 2020 01:09:58 GMT
       expires:
       - '-1'
       pragma:
@@ -212,7 +212,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1196'
+      - '1197'
     status:
       code: 200
       message: OK
@@ -234,15 +234,15 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.8.2 (Linux-4.19.104-microsoft-standard-x86_64-with-glibc2.29) msrest/0.6.16
-        msrest_azure/0.6.3 azure-mgmt-storage/11.1.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-storage/11.2.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzz/managementPolicies/default?api-version=2019-06-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzz/managementPolicies/default","name":"DefaultManagementPolicy","type":"Microsoft.Storage/storageAccounts/managementPolicies","properties":{"policy":{"rules":[{"enabled":true,"name":"olcmtest","type":"Lifecycle","definition":{"actions":{"baseBlob":{"tierToCool":{"daysAfterModificationGreaterThan":30.0},"tierToArchive":{"daysAfterModificationGreaterThan":90.0},"delete":{"daysAfterModificationGreaterThan":1000.0}},"snapshot":{"delete":{"daysAfterCreationGreaterThan":30.0}}},"filters":{"blobTypes":["blockBlob"],"prefixMatch":["olcmtestcontainer"]}}}]},"lastModifiedTime":"2020-06-28T03:00:09.8428915Z"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzz/managementPolicies/default","name":"DefaultManagementPolicy","type":"Microsoft.Storage/storageAccounts/managementPolicies","properties":{"policy":{"rules":[{"enabled":true,"name":"olcmtest","type":"Lifecycle","definition":{"actions":{"baseBlob":{"tierToCool":{"daysAfterModificationGreaterThan":30.0},"tierToArchive":{"daysAfterModificationGreaterThan":90.0},"delete":{"daysAfterModificationGreaterThan":1000.0}},"snapshot":{"delete":{"daysAfterCreationGreaterThan":30.0}}},"filters":{"blobTypes":["blockBlob"],"prefixMatch":["olcmtestcontainer"]}}}]},"lastModifiedTime":"2020-08-20T01:09:59.3436112Z"}}'
     headers:
       cache-control:
       - no-cache
@@ -251,7 +251,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Sun, 28 Jun 2020 03:00:09 GMT
+      - Thu, 20 Aug 2020 01:09:58 GMT
       expires:
       - '-1'
       pragma:
@@ -267,7 +267,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1195'
+      - '1196'
     status:
       code: 200
       message: OK
@@ -285,8 +285,8 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.8.2 (Linux-4.19.104-microsoft-standard-x86_64-with-glibc2.29) msrest/0.6.16
-        msrest_azure/0.6.3 azure-mgmt-storage/11.1.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-storage/11.2.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
@@ -302,9 +302,9 @@ interactions:
       content-type:
       - application/json
       date:
-      - Sun, 28 Jun 2020 03:00:10 GMT
+      - Thu, 20 Aug 2020 01:09:59 GMT
       etag:
-      - '"0x8D81B0F5EEC0AAC"'
+      - '"0x8D844A5C2C7A73A"'
       expires:
       - '-1'
       pragma:
@@ -316,7 +316,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1194'
+      - '1195'
     status:
       code: 201
       message: Created
@@ -334,8 +334,8 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.8.2 (Linux-4.19.104-microsoft-standard-x86_64-with-glibc2.29) msrest/0.6.16
-        msrest_azure/0.6.3 azure-mgmt-storage/11.1.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-storage/11.2.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
@@ -351,9 +351,9 @@ interactions:
       content-type:
       - application/json
       date:
-      - Sun, 28 Jun 2020 03:00:10 GMT
+      - Thu, 20 Aug 2020 01:10:00 GMT
       etag:
-      - '"0x8D81B0F5F3989B4"'
+      - '"0x8D844A5C32ED044"'
       expires:
       - '-1'
       pragma:
@@ -365,7 +365,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1193'
+      - '1194'
     status:
       code: 201
       message: Created
@@ -383,15 +383,15 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.8.2 (Linux-4.19.104-microsoft-standard-x86_64-with-glibc2.29) msrest/0.6.16
-        msrest_azure/0.6.3 azure-mgmt-storage/11.1.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-storage/11.2.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzz/blobServices/default/containers/containernamexxyyzz/immutabilityPolicies/default?api-version=2019-06-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzz/blobServices/default/containers/containernamexxyyzz/immutabilityPolicies/default","name":"default","type":"Microsoft.Storage/storageAccounts/blobServices/containers/immutabilityPolicies","etag":"\"8d81b0f5f92b7fe\"","properties":{"immutabilityPeriodSinceCreationInDays":3,"state":"Unlocked"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzz/blobServices/default/containers/containernamexxyyzz/immutabilityPolicies/default","name":"default","type":"Microsoft.Storage/storageAccounts/blobServices/containers/immutabilityPolicies","etag":"\"8d844a5c3eab095\"","properties":{"immutabilityPeriodSinceCreationInDays":3,"state":"Unlocked"}}'
     headers:
       cache-control:
       - no-cache
@@ -400,9 +400,9 @@ interactions:
       content-type:
       - application/json
       date:
-      - Sun, 28 Jun 2020 03:00:11 GMT
+      - Thu, 20 Aug 2020 01:10:01 GMT
       etag:
-      - '"8d81b0f5f92b7fe"'
+      - '"8d844a5c3eab095"'
       expires:
       - '-1'
       pragma:
@@ -418,7 +418,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1192'
+      - '1193'
     status:
       code: 200
       message: OK
@@ -434,17 +434,17 @@ interactions:
       Content-Length:
       - '0'
       If-Match:
-      - '"8d81b0f5f92b7fe"'
+      - '"8d844a5c3eab095"'
       User-Agent:
-      - python/3.8.2 (Linux-4.19.104-microsoft-standard-x86_64-with-glibc2.29) msrest/0.6.16
-        msrest_azure/0.6.3 azure-mgmt-storage/11.1.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-storage/11.2.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzz/blobServices/default/containers/containernamexxyyzz/immutabilityPolicies/default?api-version=2019-06-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzz/blobServices/default/containers/containernamexxyyzz/immutabilityPolicies/default","name":"default","type":"Microsoft.Storage/storageAccounts/blobServices/containers/immutabilityPolicies","etag":"\"8d81b0f5fd0b4cc\"","properties":{"immutabilityPeriodSinceCreationInDays":0,"state":"Deleted"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzz/blobServices/default/containers/containernamexxyyzz/immutabilityPolicies/default","name":"default","type":"Microsoft.Storage/storageAccounts/blobServices/containers/immutabilityPolicies","etag":"\"8d844a5c4454949\"","properties":{"immutabilityPeriodSinceCreationInDays":0,"state":"Deleted"}}'
     headers:
       cache-control:
       - no-cache
@@ -453,9 +453,9 @@ interactions:
       content-type:
       - application/json
       date:
-      - Sun, 28 Jun 2020 03:00:11 GMT
+      - Thu, 20 Aug 2020 01:10:02 GMT
       etag:
-      - '"8d81b0f5fd0b4cc"'
+      - '"8d844a5c4454949"'
       expires:
       - '-1'
       pragma:
@@ -489,15 +489,15 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.8.2 (Linux-4.19.104-microsoft-standard-x86_64-with-glibc2.29) msrest/0.6.16
-        msrest_azure/0.6.3 azure-mgmt-storage/11.1.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-storage/11.2.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzz/blobServices/default/containers/containernamexxyyzz/immutabilityPolicies/default?api-version=2019-06-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzz/blobServices/default/containers/containernamexxyyzz/immutabilityPolicies/default","name":"default","type":"Microsoft.Storage/storageAccounts/blobServices/containers/immutabilityPolicies","etag":"\"8d81b0f601f6351\"","properties":{"immutabilityPeriodSinceCreationInDays":3,"state":"Unlocked"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzz/blobServices/default/containers/containernamexxyyzz/immutabilityPolicies/default","name":"default","type":"Microsoft.Storage/storageAccounts/blobServices/containers/immutabilityPolicies","etag":"\"8d844a5c498bbca\"","properties":{"immutabilityPeriodSinceCreationInDays":3,"state":"Unlocked"}}'
     headers:
       cache-control:
       - no-cache
@@ -506,9 +506,9 @@ interactions:
       content-type:
       - application/json
       date:
-      - Sun, 28 Jun 2020 03:00:12 GMT
+      - Thu, 20 Aug 2020 01:10:02 GMT
       etag:
-      - '"8d81b0f601f6351"'
+      - '"8d844a5c498bbca"'
       expires:
       - '-1'
       pragma:
@@ -524,7 +524,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1191'
+      - '1192'
     status:
       code: 200
       message: OK
@@ -538,15 +538,15 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.2 (Linux-4.19.104-microsoft-standard-x86_64-with-glibc2.29) msrest/0.6.16
-        msrest_azure/0.6.3 azure-mgmt-storage/11.1.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-storage/11.2.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzz/blobServices/default/containers/containernamexxyyzz/immutabilityPolicies/default?api-version=2019-06-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzz/blobServices/default/containers/containernamexxyyzz/immutabilityPolicies/default","name":"default","type":"Microsoft.Storage/storageAccounts/blobServices/containers/immutabilityPolicies","etag":"\"8d81b0f601f6351\"","properties":{"immutabilityPeriodSinceCreationInDays":3,"state":"Unlocked"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzz/blobServices/default/containers/containernamexxyyzz/immutabilityPolicies/default","name":"default","type":"Microsoft.Storage/storageAccounts/blobServices/containers/immutabilityPolicies","etag":"\"8d844a5c498bbca\"","properties":{"immutabilityPeriodSinceCreationInDays":3,"state":"Unlocked"}}'
     headers:
       cache-control:
       - no-cache
@@ -555,9 +555,9 @@ interactions:
       content-type:
       - application/json
       date:
-      - Sun, 28 Jun 2020 03:00:12 GMT
+      - Thu, 20 Aug 2020 01:10:03 GMT
       etag:
-      - '"8d81b0f601f6351"'
+      - '"8d844a5c498bbca"'
       expires:
       - '-1'
       pragma:
@@ -585,15 +585,15 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.2 (Linux-4.19.104-microsoft-standard-x86_64-with-glibc2.29) msrest/0.6.16
-        msrest_azure/0.6.3 azure-mgmt-storage/11.1.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-storage/11.2.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzz/blobServices/default/containers/containernamexxyyzz?api-version=2019-06-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzz/blobServices/default/containers/containernamexxyyzz","name":"containernamexxyyzz","type":"Microsoft.Storage/storageAccounts/blobServices/containers","etag":"\"0x8D81B0F6022DBB9\"","properties":{"deleted":false,"remainingRetentionDays":0,"defaultEncryptionScope":"$account-encryption-key","denyEncryptionScopeOverride":false,"publicAccess":"None","leaseStatus":"Unlocked","leaseState":"Available","lastModifiedTime":"2020-06-28T03:00:12.0000000Z","immutabilityPolicy":{"etag":"\"8d81b0f601f6351\"","properties":{"immutabilityPeriodSinceCreationInDays":3,"state":"Unlocked"},"updateHistory":[{"update":"put","immutabilityPeriodSinceCreationInDays":3,"timestamp":"2020-06-28T03:00:12.4210516Z","objectIdentifier":"123743cc-88ef-49ee-920e-13958fe5697d","tenantId":"72f988bf-86f1-41af-91ab-2d7cd011db47"}]},"legalHold":{"hasLegalHold":false,"tags":[]},"hasImmutabilityPolicy":true,"hasLegalHold":false}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzz/blobServices/default/containers/containernamexxyyzz","name":"containernamexxyyzz","type":"Microsoft.Storage/storageAccounts/blobServices/containers","etag":"\"0x8D844A5C49B4C78\"","properties":{"deleted":false,"remainingRetentionDays":0,"defaultEncryptionScope":"$account-encryption-key","denyEncryptionScopeOverride":false,"publicAccess":"None","leaseStatus":"Unlocked","leaseState":"Available","lastModifiedTime":"2020-08-20T01:10:03.0000000Z","immutabilityPolicy":{"etag":"\"8d844a5c498bbca\"","properties":{"immutabilityPeriodSinceCreationInDays":3,"state":"Unlocked"},"updateHistory":[{"update":"put","immutabilityPeriodSinceCreationInDays":3,"timestamp":"2020-08-20T01:10:03.1717940Z","objectIdentifier":"b8d54648-e120-4a1f-8da0-38788dc0090c","tenantId":"00000000-0000-0000-0000-000000000000"}]},"legalHold":{"hasLegalHold":false,"tags":[]},"hasImmutabilityPolicy":true,"hasLegalHold":false}}'
     headers:
       cache-control:
       - no-cache
@@ -602,9 +602,9 @@ interactions:
       content-type:
       - application/json
       date:
-      - Sun, 28 Jun 2020 03:00:12 GMT
+      - Thu, 20 Aug 2020 01:10:03 GMT
       etag:
-      - '"0x8D81B0F6022DBB9"'
+      - '"0x8D844A5C49B4C78"'
       expires:
       - '-1'
       pragma:
@@ -632,15 +632,15 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.2 (Linux-4.19.104-microsoft-standard-x86_64-with-glibc2.29) msrest/0.6.16
-        msrest_azure/0.6.3 azure-mgmt-storage/11.1.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-storage/11.2.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzz/fileServices/default/shares/filesharenamexxyyzz?api-version=2019-06-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzz/fileServices/default/shares/filesharenamexxyyzz","name":"filesharenamexxyyzz","type":"Microsoft.Storage/storageAccounts/fileServices/shares","etag":"\"0x8D81B0F5EEC0AAC\"","properties":{"lastModifiedTime":"2020-06-28T03:00:10.0000000Z","shareQuota":5120}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzz/fileServices/default/shares/filesharenamexxyyzz","name":"filesharenamexxyyzz","type":"Microsoft.Storage/storageAccounts/fileServices/shares","etag":"\"0x8D844A5C2C7A73A\"","properties":{"lastModifiedTime":"2020-08-20T01:10:00.0000000Z","shareQuota":5120}}'
     headers:
       cache-control:
       - no-cache
@@ -649,9 +649,9 @@ interactions:
       content-type:
       - application/json
       date:
-      - Sun, 28 Jun 2020 03:00:12 GMT
+      - Thu, 20 Aug 2020 01:10:04 GMT
       etag:
-      - '"0x8D81B0F5EEC0AAC"'
+      - '"0x8D844A5C2C7A73A"'
       expires:
       - '-1'
       pragma:
@@ -679,15 +679,15 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.2 (Linux-4.19.104-microsoft-standard-x86_64-with-glibc2.29) msrest/0.6.16
-        msrest_azure/0.6.3 azure-mgmt-storage/11.1.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-storage/11.2.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzz/managementPolicies/default?api-version=2019-06-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzz/managementPolicies/default","name":"DefaultManagementPolicy","type":"Microsoft.Storage/storageAccounts/managementPolicies","properties":{"policy":{"rules":[{"enabled":true,"name":"olcmtest","type":"Lifecycle","definition":{"actions":{"baseBlob":{"tierToCool":{"daysAfterModificationGreaterThan":30.0},"tierToArchive":{"daysAfterModificationGreaterThan":90.0},"delete":{"daysAfterModificationGreaterThan":1000.0}},"snapshot":{"delete":{"daysAfterCreationGreaterThan":30.0}}},"filters":{"blobTypes":["blockBlob"],"prefixMatch":["olcmtestcontainer"]}}}]},"lastModifiedTime":"2020-06-28T03:00:09.8428915Z"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzz/managementPolicies/default","name":"DefaultManagementPolicy","type":"Microsoft.Storage/storageAccounts/managementPolicies","properties":{"policy":{"rules":[{"enabled":true,"name":"olcmtest","type":"Lifecycle","definition":{"actions":{"baseBlob":{"tierToCool":{"daysAfterModificationGreaterThan":30.0},"tierToArchive":{"daysAfterModificationGreaterThan":90.0},"delete":{"daysAfterModificationGreaterThan":1000.0}},"snapshot":{"delete":{"daysAfterCreationGreaterThan":30.0}}},"filters":{"blobTypes":["blockBlob"],"prefixMatch":["olcmtestcontainer"]}}}]},"lastModifiedTime":"2020-08-20T01:09:59.3436112Z"}}'
     headers:
       cache-control:
       - no-cache
@@ -696,7 +696,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Sun, 28 Jun 2020 03:00:13 GMT
+      - Thu, 20 Aug 2020 01:10:04 GMT
       expires:
       - '-1'
       pragma:
@@ -724,8 +724,8 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.2 (Linux-4.19.104-microsoft-standard-x86_64-with-glibc2.29) msrest/0.6.16
-        msrest_azure/0.6.3 azure-mgmt-storage/11.1.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-storage/11.2.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
@@ -742,7 +742,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Sun, 28 Jun 2020 03:00:13 GMT
+      - Thu, 20 Aug 2020 01:10:05 GMT
       expires:
       - '-1'
       pragma:
@@ -770,8 +770,8 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.2 (Linux-4.19.104-microsoft-standard-x86_64-with-glibc2.29) msrest/0.6.16
-        msrest_azure/0.6.3 azure-mgmt-storage/11.1.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-storage/11.2.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
@@ -787,7 +787,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Sun, 28 Jun 2020 03:00:13 GMT
+      - Thu, 20 Aug 2020 01:10:05 GMT
       expires:
       - '-1'
       pragma:
@@ -815,8 +815,8 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.2 (Linux-4.19.104-microsoft-standard-x86_64-with-glibc2.29) msrest/0.6.16
-        msrest_azure/0.6.3 azure-mgmt-storage/11.1.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-storage/11.2.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
@@ -832,7 +832,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Sun, 28 Jun 2020 03:00:14 GMT
+      - Thu, 20 Aug 2020 01:10:05 GMT
       expires:
       - '-1'
       pragma:
@@ -860,8 +860,8 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.2 (Linux-4.19.104-microsoft-standard-x86_64-with-glibc2.29) msrest/0.6.16
-        msrest_azure/0.6.3 azure-mgmt-storage/11.1.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-storage/11.2.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
@@ -877,7 +877,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Sun, 28 Jun 2020 03:00:14 GMT
+      - Thu, 20 Aug 2020 01:10:06 GMT
       expires:
       - '-1'
       pragma:
@@ -905,15 +905,15 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.2 (Linux-4.19.104-microsoft-standard-x86_64-with-glibc2.29) msrest/0.6.16
-        msrest_azure/0.6.3 azure-mgmt-storage/11.1.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-storage/11.2.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzz?api-version=2019-06-01
   response:
     body:
-      string: '{"sku":{"name":"Standard_GRS","tier":"Standard"},"kind":"StorageV2","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzz","name":"storageaccountxxyyzz","type":"Microsoft.Storage/storageAccounts","location":"westeurope","tags":{"key1":"value1","key2":"value2"},"properties":{"privateEndpointConnections":[],"networkAcls":{"bypass":"AzureServices","virtualNetworkRules":[],"ipRules":[],"defaultAction":"Allow"},"supportsHttpsTrafficOnly":true,"encryption":{"services":{"file":{"keyType":"Account","enabled":true,"lastEnabledTime":"2020-06-28T02:59:48.9210983Z"},"blob":{"keyType":"Account","enabled":true,"lastEnabledTime":"2020-06-28T02:59:48.9210983Z"}},"keySource":"Microsoft.Storage"},"accessTier":"Hot","provisioningState":"Succeeded","creationTime":"2020-06-28T02:59:48.8272916Z","primaryEndpoints":{"dfs":"https://storageaccountxxyyzz.dfs.core.windows.net/","web":"https://storageaccountxxyyzz.z6.web.core.windows.net/","blob":"https://storageaccountxxyyzz.blob.core.windows.net/","queue":"https://storageaccountxxyyzz.queue.core.windows.net/","table":"https://storageaccountxxyyzz.table.core.windows.net/","file":"https://storageaccountxxyyzz.file.core.windows.net/"},"primaryLocation":"westeurope","statusOfPrimary":"available","secondaryLocation":"northeurope","statusOfSecondary":"available"}}'
+      string: '{"sku":{"name":"Standard_GRS","tier":"Standard"},"kind":"StorageV2","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzz","name":"storageaccountxxyyzz","type":"Microsoft.Storage/storageAccounts","location":"westeurope","tags":{"key1":"value1","key2":"value2"},"properties":{"privateEndpointConnections":[],"networkAcls":{"bypass":"AzureServices","virtualNetworkRules":[],"ipRules":[],"defaultAction":"Allow"},"supportsHttpsTrafficOnly":true,"encryption":{"services":{"file":{"keyType":"Account","enabled":true,"lastEnabledTime":"2020-08-20T01:09:38.2016541Z"},"blob":{"keyType":"Account","enabled":true,"lastEnabledTime":"2020-08-20T01:09:38.2016541Z"}},"keySource":"Microsoft.Storage"},"accessTier":"Hot","provisioningState":"Succeeded","creationTime":"2020-08-20T01:09:38.1078553Z","primaryEndpoints":{"dfs":"https://storageaccountxxyyzz.dfs.core.windows.net/","web":"https://storageaccountxxyyzz.z6.web.core.windows.net/","blob":"https://storageaccountxxyyzz.blob.core.windows.net/","queue":"https://storageaccountxxyyzz.queue.core.windows.net/","table":"https://storageaccountxxyyzz.table.core.windows.net/","file":"https://storageaccountxxyyzz.file.core.windows.net/"},"primaryLocation":"westeurope","statusOfPrimary":"available","secondaryLocation":"northeurope","statusOfSecondary":"available"}}'
     headers:
       cache-control:
       - no-cache
@@ -922,7 +922,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Sun, 28 Jun 2020 03:00:14 GMT
+      - Thu, 20 Aug 2020 01:10:06 GMT
       expires:
       - '-1'
       pragma:
@@ -954,8 +954,8 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.8.2 (Linux-4.19.104-microsoft-standard-x86_64-with-glibc2.29) msrest/0.6.16
-        msrest_azure/0.6.3 azure-mgmt-storage/11.1.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-storage/11.2.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: POST
@@ -971,7 +971,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Sun, 28 Jun 2020 03:00:14 GMT
+      - Thu, 20 Aug 2020 01:10:07 GMT
       expires:
       - '-1'
       pragma:
@@ -1005,8 +1005,8 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.8.2 (Linux-4.19.104-microsoft-standard-x86_64-with-glibc2.29) msrest/0.6.16
-        msrest_azure/0.6.3 azure-mgmt-storage/11.1.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-storage/11.2.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: POST
@@ -1022,7 +1022,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Sun, 28 Jun 2020 03:00:15 GMT
+      - Thu, 20 Aug 2020 01:10:07 GMT
       expires:
       - '-1'
       pragma:
@@ -1056,15 +1056,15 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.8.2 (Linux-4.19.104-microsoft-standard-x86_64-with-glibc2.29) msrest/0.6.16
-        msrest_azure/0.6.3 azure-mgmt-storage/11.1.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-storage/11.2.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzz/blobServices/default/containers/containernamexxyyzz/lease?api-version=2019-06-01
   response:
     body:
-      string: '{"leaseId":"e4d54927-32cc-46dd-80c1-ea7328aa4197"}'
+      string: '{"leaseId":"fcaa4aa4-088f-4f26-8f71-2f2e15c85daa"}'
     headers:
       cache-control:
       - no-cache
@@ -1073,9 +1073,9 @@ interactions:
       content-type:
       - application/json
       date:
-      - Sun, 28 Jun 2020 03:00:15 GMT
+      - Thu, 20 Aug 2020 01:10:08 GMT
       etag:
-      - '"0x8D81B0F621877AA"'
+      - '"0x8D844A5C7C13A58"'
       expires:
       - '-1'
       pragma:
@@ -1096,7 +1096,7 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: '{"action": "Break", "leaseId": "e4d54927-32cc-46dd-80c1-ea7328aa4197"}'
+    body: '{"action": "Break", "leaseId": "fcaa4aa4-088f-4f26-8f71-2f2e15c85daa"}'
     headers:
       Accept:
       - application/json
@@ -1109,8 +1109,8 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.8.2 (Linux-4.19.104-microsoft-standard-x86_64-with-glibc2.29) msrest/0.6.16
-        msrest_azure/0.6.3 azure-mgmt-storage/11.1.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-storage/11.2.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: POST
@@ -1126,9 +1126,9 @@ interactions:
       content-type:
       - application/json
       date:
-      - Sun, 28 Jun 2020 03:00:16 GMT
+      - Thu, 20 Aug 2020 01:10:08 GMT
       etag:
-      - '"0x8D81B0F621877AA"'
+      - '"0x8D844A5C7C13A58"'
       expires:
       - '-1'
       pragma:
@@ -1162,8 +1162,8 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.8.2 (Linux-4.19.104-microsoft-standard-x86_64-with-glibc2.29) msrest/0.6.16
-        msrest_azure/0.6.3 azure-mgmt-storage/11.1.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-storage/11.2.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PATCH
@@ -1179,9 +1179,62 @@ interactions:
       content-type:
       - application/json
       date:
-      - Sun, 28 Jun 2020 03:00:16 GMT
+      - Thu, 20 Aug 2020 01:10:09 GMT
       etag:
-      - '"0x8D81B0F62CE062D"'
+      - '"0x8D844A5C8A0C673"'
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0,Microsoft-HTTPAPI/2.0 Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1191'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"properties": {"metadata": {"type": "image"}}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '47'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-storage/11.2.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PATCH
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzz/fileServices/default/shares/filesharenamexxyyzz?api-version=2019-06-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzz/fileServices/default/shares/filesharenamexxyyzz","name":"filesharenamexxyyzz","type":"Microsoft.Storage/storageAccounts/fileServices/shares","properties":{"metadata":{"type":"image"}}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '366'
+      content-type:
+      - application/json
+      date:
+      - Thu, 20 Aug 2020 01:10:09 GMT
+      etag:
+      - '"0x8D844A5C8FDB041"'
       expires:
       - '-1'
       pragma:
@@ -1202,59 +1255,6 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: '{"properties": {"metadata": {"type": "image"}}}'
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '47'
-      Content-Type:
-      - application/json; charset=utf-8
-      User-Agent:
-      - python/3.8.2 (Linux-4.19.104-microsoft-standard-x86_64-with-glibc2.29) msrest/0.6.16
-        msrest_azure/0.6.3 azure-mgmt-storage/11.1.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
-    method: PATCH
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzz/fileServices/default/shares/filesharenamexxyyzz?api-version=2019-06-01
-  response:
-    body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzz/fileServices/default/shares/filesharenamexxyyzz","name":"filesharenamexxyyzz","type":"Microsoft.Storage/storageAccounts/fileServices/shares","properties":{"metadata":{"type":"image"}}}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '366'
-      content-type:
-      - application/json
-      date:
-      - Sun, 28 Jun 2020 03:00:16 GMT
-      etag:
-      - '"0x8D81B0F630F491B"'
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-Azure-Storage-Resource-Provider/1.0,Microsoft-HTTPAPI/2.0 Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-      x-ms-ratelimit-remaining-subscription-writes:
-      - '1189'
-    status:
-      code: 200
-      message: OK
-- request:
     body: null
     headers:
       Accept:
@@ -1266,8 +1266,8 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.8.2 (Linux-4.19.104-microsoft-standard-x86_64-with-glibc2.29) msrest/0.6.16
-        msrest_azure/0.6.3 azure-mgmt-storage/11.1.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-storage/11.2.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: POST
@@ -1283,7 +1283,7 @@ interactions:
       content-type:
       - text/plain; charset=utf-8
       date:
-      - Sun, 28 Jun 2020 03:00:17 GMT
+      - Thu, 20 Aug 2020 01:10:10 GMT
       expires:
       - '-1'
       pragma:
@@ -1313,15 +1313,15 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.8.2 (Linux-4.19.104-microsoft-standard-x86_64-with-glibc2.29) msrest/0.6.16
-        msrest_azure/0.6.3 azure-mgmt-storage/11.1.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-storage/11.2.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzz/regenerateKey?api-version=2019-06-01
   response:
     body:
-      string: '{"keys":[{"keyName":"key1","value":"546xtb4LNdoMVpK9zqpKmkP3etB5/V6WYdBVUiILoeInWKUXK2RlTIgMDl7RJ2T9vhnon07a8+FUxDstN7ZuFw==","permissions":"FULL"},{"keyName":"key2","value":"aKeGtdt9ph3YxzqHRCQ39SY2xVuuQbnCMydJcyNacXpI6fzc8Ao5Sy/IfDV0B4o+IHd72m1E24lZJHSDwu8aiQ==","permissions":"FULL"}]}'
+      string: '{"keys":[{"keyName":"key1","value":"upfXWSvzBBLWfkjwKQVhzVaVRRhdceeyprohQn2X/43neM8bbyaZ5QSGV7J5ZiUvv+OW2BFze7EMGgeJYZ36Xw==","permissions":"FULL"},{"keyName":"key2","value":"RJncvi5v3trA1fpRk1t8IKHrrcWy6cgmCEoukV2nXeJwEfX4dabv+RcXt8ydlmg3da34LAsrWLR9hS85296wlw==","permissions":"FULL"}]}'
     headers:
       cache-control:
       - no-cache
@@ -1330,7 +1330,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Sun, 28 Jun 2020 03:00:17 GMT
+      - Thu, 20 Aug 2020 01:10:10 GMT
       expires:
       - '-1'
       pragma:
@@ -1362,15 +1362,15 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.8.2 (Linux-4.19.104-microsoft-standard-x86_64-with-glibc2.29) msrest/0.6.16
-        msrest_azure/0.6.3 azure-mgmt-storage/11.1.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-storage/11.2.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzz/listKeys?api-version=2019-06-01
   response:
     body:
-      string: '{"keys":[{"keyName":"key1","value":"546xtb4LNdoMVpK9zqpKmkP3etB5/V6WYdBVUiILoeInWKUXK2RlTIgMDl7RJ2T9vhnon07a8+FUxDstN7ZuFw==","permissions":"FULL"},{"keyName":"key2","value":"aKeGtdt9ph3YxzqHRCQ39SY2xVuuQbnCMydJcyNacXpI6fzc8Ao5Sy/IfDV0B4o+IHd72m1E24lZJHSDwu8aiQ==","permissions":"FULL"}]}'
+      string: '{"keys":[{"keyName":"key1","value":"upfXWSvzBBLWfkjwKQVhzVaVRRhdceeyprohQn2X/43neM8bbyaZ5QSGV7J5ZiUvv+OW2BFze7EMGgeJYZ36Xw==","permissions":"FULL"},{"keyName":"key2","value":"RJncvi5v3trA1fpRk1t8IKHrrcWy6cgmCEoukV2nXeJwEfX4dabv+RcXt8ydlmg3da34LAsrWLR9hS85296wlw==","permissions":"FULL"}]}'
     headers:
       cache-control:
       - no-cache
@@ -1379,7 +1379,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Sun, 28 Jun 2020 03:00:18 GMT
+      - Thu, 20 Aug 2020 01:10:11 GMT
       expires:
       - '-1'
       pragma:
@@ -1414,15 +1414,15 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.8.2 (Linux-4.19.104-microsoft-standard-x86_64-with-glibc2.29) msrest/0.6.16
-        msrest_azure/0.6.3 azure-mgmt-storage/11.1.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-storage/11.2.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PATCH
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzz?api-version=2019-06-01
   response:
     body:
-      string: '{"sku":{"name":"Standard_GRS","tier":"Standard"},"kind":"StorageV2","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzz","name":"storageaccountxxyyzz","type":"Microsoft.Storage/storageAccounts","location":"westeurope","tags":{"key1":"value1","key2":"value2"},"properties":{"privateEndpointConnections":[],"networkAcls":{"bypass":"AzureServices","virtualNetworkRules":[],"ipRules":[],"defaultAction":"Allow"},"supportsHttpsTrafficOnly":true,"encryption":{"services":{"file":{"keyType":"Account","enabled":true,"lastEnabledTime":"2020-06-28T02:59:48.9210983Z"},"blob":{"keyType":"Account","enabled":true,"lastEnabledTime":"2020-06-28T02:59:48.9210983Z"}},"keySource":"Microsoft.Storage"},"accessTier":"Hot","provisioningState":"Succeeded","creationTime":"2020-06-28T02:59:48.8272916Z","primaryEndpoints":{"dfs":"https://storageaccountxxyyzz.dfs.core.windows.net/","web":"https://storageaccountxxyyzz.z6.web.core.windows.net/","blob":"https://storageaccountxxyyzz.blob.core.windows.net/","queue":"https://storageaccountxxyyzz.queue.core.windows.net/","table":"https://storageaccountxxyyzz.table.core.windows.net/","file":"https://storageaccountxxyyzz.file.core.windows.net/"},"primaryLocation":"westeurope","statusOfPrimary":"available","secondaryLocation":"northeurope","statusOfSecondary":"available"}}'
+      string: '{"sku":{"name":"Standard_GRS","tier":"Standard"},"kind":"StorageV2","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzz","name":"storageaccountxxyyzz","type":"Microsoft.Storage/storageAccounts","location":"westeurope","tags":{"key1":"value1","key2":"value2"},"properties":{"privateEndpointConnections":[],"networkAcls":{"bypass":"AzureServices","virtualNetworkRules":[],"ipRules":[],"defaultAction":"Allow"},"supportsHttpsTrafficOnly":true,"encryption":{"services":{"file":{"keyType":"Account","enabled":true,"lastEnabledTime":"2020-08-20T01:09:38.2016541Z"},"blob":{"keyType":"Account","enabled":true,"lastEnabledTime":"2020-08-20T01:09:38.2016541Z"}},"keySource":"Microsoft.Storage"},"accessTier":"Hot","provisioningState":"Succeeded","creationTime":"2020-08-20T01:09:38.1078553Z","primaryEndpoints":{"dfs":"https://storageaccountxxyyzz.dfs.core.windows.net/","web":"https://storageaccountxxyyzz.z6.web.core.windows.net/","blob":"https://storageaccountxxyyzz.blob.core.windows.net/","queue":"https://storageaccountxxyyzz.queue.core.windows.net/","table":"https://storageaccountxxyyzz.table.core.windows.net/","file":"https://storageaccountxxyyzz.file.core.windows.net/"},"primaryLocation":"westeurope","statusOfPrimary":"available","secondaryLocation":"northeurope","statusOfSecondary":"available"}}'
     headers:
       cache-control:
       - no-cache
@@ -1431,7 +1431,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Sun, 28 Jun 2020 03:00:19 GMT
+      - Thu, 20 Aug 2020 01:10:12 GMT
       expires:
       - '-1'
       pragma:
@@ -1447,7 +1447,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1188'
+      - '1189'
     status:
       code: 200
       message: OK
@@ -1463,17 +1463,17 @@ interactions:
       Content-Length:
       - '0'
       If-Match:
-      - '"8d81b0f601f6351"'
+      - '"8d844a5c498bbca"'
       User-Agent:
-      - python/3.8.2 (Linux-4.19.104-microsoft-standard-x86_64-with-glibc2.29) msrest/0.6.16
-        msrest_azure/0.6.3 azure-mgmt-storage/11.1.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-storage/11.2.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzz/blobServices/default/containers/containernamexxyyzz/immutabilityPolicies/default/lock?api-version=2019-06-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzz/blobServices/default/containers/containernamexxyyzz/immutabilityPolicies/default","name":"default","type":"Microsoft.Storage/storageAccounts/blobServices/containers/immutabilityPolicies","etag":"\"8d81b0f649a2df0\"","properties":{"immutabilityPeriodSinceCreationInDays":3,"state":"Locked"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzz/blobServices/default/containers/containernamexxyyzz/immutabilityPolicies/default","name":"default","type":"Microsoft.Storage/storageAccounts/blobServices/containers/immutabilityPolicies","etag":"\"8d844a5cae945bc\"","properties":{"immutabilityPeriodSinceCreationInDays":3,"state":"Locked"}}'
     headers:
       cache-control:
       - no-cache
@@ -1482,9 +1482,9 @@ interactions:
       content-type:
       - application/json
       date:
-      - Sun, 28 Jun 2020 03:00:19 GMT
+      - Thu, 20 Aug 2020 01:10:13 GMT
       etag:
-      - '"8d81b0f649a2df0"'
+      - '"8d844a5cae945bc"'
       expires:
       - '-1'
       pragma:
@@ -1518,17 +1518,17 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       If-Match:
-      - '"8d81b0f649a2df0"'
+      - '"8d844a5cae945bc"'
       User-Agent:
-      - python/3.8.2 (Linux-4.19.104-microsoft-standard-x86_64-with-glibc2.29) msrest/0.6.16
-        msrest_azure/0.6.3 azure-mgmt-storage/11.1.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-storage/11.2.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzz/blobServices/default/containers/containernamexxyyzz/immutabilityPolicies/default/extend?api-version=2019-06-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzz/blobServices/default/containers/containernamexxyyzz/immutabilityPolicies/default","name":"default","type":"Microsoft.Storage/storageAccounts/blobServices/containers/immutabilityPolicies","etag":"\"8d81b0f64d36621\"","properties":{"immutabilityPeriodSinceCreationInDays":100,"state":"Locked"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_storage_test_storagef61c0e02/providers/Microsoft.Storage/storageAccounts/storageaccountxxyyzz/blobServices/default/containers/containernamexxyyzz/immutabilityPolicies/default","name":"default","type":"Microsoft.Storage/storageAccounts/blobServices/containers/immutabilityPolicies","etag":"\"8d844a5cb332f83\"","properties":{"immutabilityPeriodSinceCreationInDays":100,"state":"Locked"}}'
     headers:
       cache-control:
       - no-cache
@@ -1537,9 +1537,9 @@ interactions:
       content-type:
       - application/json
       date:
-      - Sun, 28 Jun 2020 03:00:19 GMT
+      - Thu, 20 Aug 2020 01:10:13 GMT
       etag:
-      - '"8d81b0f64d36621"'
+      - '"8d844a5cb332f83"'
       expires:
       - '-1'
       pragma:
@@ -1573,8 +1573,8 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.8.2 (Linux-4.19.104-microsoft-standard-x86_64-with-glibc2.29) msrest/0.6.16
-        msrest_azure/0.6.3 azure-mgmt-storage/11.1.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-storage/11.2.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: POST
@@ -1590,7 +1590,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Sun, 28 Jun 2020 03:00:20 GMT
+      - Thu, 20 Aug 2020 01:10:14 GMT
       expires:
       - '-1'
       pragma:
@@ -1620,8 +1620,8 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.8.2 (Linux-4.19.104-microsoft-standard-x86_64-with-glibc2.29) msrest/0.6.16
-        msrest_azure/0.6.3 azure-mgmt-storage/11.1.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-storage/11.2.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: DELETE
@@ -1637,7 +1637,7 @@ interactions:
       content-type:
       - text/plain; charset=utf-8
       date:
-      - Sun, 28 Jun 2020 03:00:21 GMT
+      - Thu, 20 Aug 2020 01:10:15 GMT
       expires:
       - '-1'
       pragma:
@@ -1665,8 +1665,8 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.8.2 (Linux-4.19.104-microsoft-standard-x86_64-with-glibc2.29) msrest/0.6.16
-        msrest_azure/0.6.3 azure-mgmt-storage/11.1.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-storage/11.2.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: DELETE
@@ -1682,7 +1682,7 @@ interactions:
       content-type:
       - text/plain; charset=utf-8
       date:
-      - Sun, 28 Jun 2020 03:00:21 GMT
+      - Thu, 20 Aug 2020 01:10:15 GMT
       expires:
       - '-1'
       pragma:
@@ -1710,8 +1710,8 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.8.2 (Linux-4.19.104-microsoft-standard-x86_64-with-glibc2.29) msrest/0.6.16
-        msrest_azure/0.6.3 azure-mgmt-storage/11.1.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-storage/11.2.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: DELETE
@@ -1727,7 +1727,7 @@ interactions:
       content-type:
       - text/plain; charset=utf-8
       date:
-      - Sun, 28 Jun 2020 03:00:21 GMT
+      - Thu, 20 Aug 2020 01:10:16 GMT
       expires:
       - '-1'
       pragma:
@@ -1755,8 +1755,8 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.8.2 (Linux-4.19.104-microsoft-standard-x86_64-with-glibc2.29) msrest/0.6.16
-        msrest_azure/0.6.3 azure-mgmt-storage/11.1.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-storage/11.2.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: DELETE
@@ -1772,7 +1772,7 @@ interactions:
       content-type:
       - text/plain; charset=utf-8
       date:
-      - Sun, 28 Jun 2020 03:00:26 GMT
+      - Thu, 20 Aug 2020 01:10:24 GMT
       expires:
       - '-1'
       pragma:
