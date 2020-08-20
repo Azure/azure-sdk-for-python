@@ -250,7 +250,7 @@ class TableClient(TableClientBase):
             entity,  # type: Union[TableEntity, dict[str,str]]
             **kwargs  # type: Any
     ):
-        # type: (...) -> TableEntity
+        # type: (...) -> dict[str,str]
         """Insert entity in a table.
 
         :param entity: The properties for the table entity.
@@ -266,13 +266,12 @@ class TableClient(TableClientBase):
         else:
             raise ValueError('PartitionKey and RowKey were not provided in entity')
         try:
-            inserted_entity = self._client.table.insert_entity(
+            metadata, identifiers = self._client.table.insert_entity(
                 table=self.table_name,
                 table_entity_properties=entity,
-                **kwargs
-            )
-            properties = _convert_to_entity(inserted_entity)
-            return properties
+                cls=kwargs.pop('cls', _return_headers_and_deserialized),
+                **kwargs)
+            return metadata
         except ResourceNotFoundError as error:
             _process_table_error(error)
 

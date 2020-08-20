@@ -123,8 +123,8 @@ class StorageTableEntityTest(TableTestCase):
     def _insert_random_entity(self, pk=None, rk=None):
         entity = self._create_random_entity_dict(pk, rk)
         # etag = self.table.create_item(entity, response_hook=lambda e, h: h['etag'])
-        e = self.table.create_entity(entity)
-        metadata = e.metadata()
+        metadata = self.table.create_entity(entity)
+        # metadata = e.metadata()
         return entity, metadata['etag']
 
     def _create_updated_entity_dict(self, partition, row):
@@ -326,7 +326,7 @@ class StorageTableEntityTest(TableTestCase):
             # resp = self.table.create_item(entity)
             resp = self.table.create_entity(entity=entity)
 
-            # Assert  --- Does this mean insert returns nothing?
+            # Assert
             self.assertIsNotNone(resp)
         finally:
             self._tear_down()
@@ -340,12 +340,15 @@ class StorageTableEntityTest(TableTestCase):
             entity = self._create_random_entity_dict()
 
             # Act
-            # , response_hook=lambda e, h: (e, h)
             resp = self.table.create_entity(entity=entity)
+            received_entity = self.table.get_entity(
+                row_key=entity['RowKey'],
+                partition_key=entity['PartitionKey']
+            )
 
             # Assert
             self.assertIsNotNone(resp)
-            self._assert_default_entity(resp)
+            self._assert_default_entity(received_entity)
         finally:
             self._tear_down()
 
@@ -356,17 +359,22 @@ class StorageTableEntityTest(TableTestCase):
         self._set_up(storage_account, storage_account_key)
         try:
             entity = self._create_random_entity_dict()
-
+            headers = {'Accept': 'application/json;odata=nometadata'}
             # Act
             # response_hook=lambda e, h: (e, h)
             resp = self.table.create_entity(
                 entity=entity,
-                headers={'Accept': 'application/json;odata=nometadata'},
+                headers=headers,
+            )
+            received_entity = self.table.get_entity(
+                row_key=entity['RowKey'],
+                partition_key=entity['PartitionKey'],
+                headers=headers
             )
 
             # Assert
             self.assertIsNotNone(resp)
-            self._assert_default_entity_json_no_metadata(resp)
+            self._assert_default_entity_json_no_metadata(received_entity)
         finally:
             self._tear_down()
 
@@ -377,17 +385,22 @@ class StorageTableEntityTest(TableTestCase):
         self._set_up(storage_account, storage_account_key)
         try:
             entity = self._create_random_entity_dict()
+            headers = {'Accept': 'application/json;odata=fullmetadata'}
 
             # Act
-            # response_hook=lambda e, h: (e, h)
             resp = self.table.create_entity(
                 entity=entity,
                 headers={'Accept': 'application/json;odata=fullmetadata'},
             )
+            received_entity = self.table.get_entity(
+                row_key=entity['RowKey'],
+                partition_key=entity['PartitionKey'],
+                headers=headers
+            )
 
             # Assert
             self.assertIsNotNone(resp)
-            self._assert_default_entity_json_full_metadata(resp)
+            self._assert_default_entity_json_full_metadata(received_entity)
         finally:
             self._tear_down()
 
@@ -401,7 +414,6 @@ class StorageTableEntityTest(TableTestCase):
 
             # Act
             with self.assertRaises(ResourceExistsError):
-                # self.table.create_item(entity)
                 self.table.create_entity(entity=entity)
 
             # Assert
@@ -480,9 +492,8 @@ class StorageTableEntityTest(TableTestCase):
                     self.table.create_entity(entity=entity)
             else:
                 resp = self.table.create_entity(entity=entity)
+                self.assertIsNotNone(resp)
 
-                # Assert
-            #  self.assertIsNone(resp)
         finally:
             self._tear_down()
 
@@ -497,8 +508,8 @@ class StorageTableEntityTest(TableTestCase):
             # Act
             with self.assertRaises(ValueError):
                 resp = self.table.create_entity(entity=entity)
+                self.assertIsNotNone(resp)
 
-            # Assert
         finally:
             self._tear_down()
 
@@ -516,9 +527,8 @@ class StorageTableEntityTest(TableTestCase):
                     self.table.create_entity(entity=entity)
             else:
                 resp = self.table.create_entity(entity=entity)
+                self.assertIsNotNone(resp)
 
-                # Assert
-            #  self.assertIsNone(resp)
         finally:
             self._tear_down()
 
@@ -537,6 +547,7 @@ class StorageTableEntityTest(TableTestCase):
             # Act
             with self.assertRaises(HttpResponseError):
                 resp = self.table.create_entity(entity=entity)
+                self.assertIsNotNone(resp)
 
             # Assert
         finally:
@@ -556,6 +567,7 @@ class StorageTableEntityTest(TableTestCase):
             # Act
             with self.assertRaises(HttpResponseError):
                 resp = self.table.create_entity(entity=entity)
+                self.assertIsNotNone(resp)
 
             # Assert
         finally:
@@ -702,13 +714,13 @@ class StorageTableEntityTest(TableTestCase):
             self.table.create_entity(entity=entity)
 
             # Act
-            resp = self.table.get_entity(partition_key=entity['PartitionKey'],
+            received_entity = self.table.get_entity(partition_key=entity['PartitionKey'],
                                          row_key=entity['RowKey'])
 
             # Assert
-            self.assertEqual(resp.inf, float('inf'))
-            self.assertEqual(resp.negativeinf, float('-inf'))
-            self.assertTrue(isnan(resp.nan))
+            self.assertEqual(received_entity.inf, float('inf'))
+            self.assertEqual(received_entity.negativeinf, float('-inf'))
+            self.assertTrue(isnan(received_entity.nan))
         finally:
             self._tear_down()
 
@@ -1167,7 +1179,7 @@ class StorageTableEntityTest(TableTestCase):
             entity = self._create_random_base_entity_dict()
             entity.update({'NoneValue': None})
 
-            # Act       
+            # Act
             self.table.create_entity(entity=entity)
             resp = self.table.get_entity(entity['PartitionKey'], entity['RowKey'])
 
@@ -1187,7 +1199,7 @@ class StorageTableEntityTest(TableTestCase):
             entity = self._create_random_base_entity_dict()
             entity.update({'binary': b'\x01\x02\x03\x04\x05\x06\x07\x08\t\n'})
 
-            # Act  
+            # Act
             self.table.create_entity(entity=entity)
             resp = self.table.get_entity(entity['PartitionKey'], entity['RowKey'])
 
