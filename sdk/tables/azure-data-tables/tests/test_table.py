@@ -15,16 +15,16 @@ from datetime import (
     timedelta,
 )
 
-    
+
 from azure.data.tables import (
-    ResourceTypes, 
-    AccountSasPermissions, 
-    TableSasPermissions, 
-    CorsRule, 
-    RetentionPolicy, 
-    UpdateMode, 
-    AccessPolicy, 
-    TableAnalyticsLogging, 
+    ResourceTypes,
+    AccountSasPermissions,
+    TableSasPermissions,
+    CorsRule,
+    RetentionPolicy,
+    UpdateMode,
+    AccessPolicy,
+    TableAnalyticsLogging,
     Metrics
 )
 from azure.core.pipeline import Pipeline
@@ -473,9 +473,9 @@ class StorageTableTest(TableTestCase):
         ts = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
         table = (self._get_table_reference())
         init_locale = locale.getlocale()
-        if os.name is "nt":
+        if os.name == "nt":
             culture = "Spanish_Spain"
-        elif os.name is 'posix':
+        elif os.name == 'posix':
             culture = 'es_ES.UTF-8'
         else:
             culture = 'es_ES.utf8'

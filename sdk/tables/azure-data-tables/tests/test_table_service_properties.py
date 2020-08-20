@@ -107,7 +107,6 @@ class TableServicePropertiesTest(TableTestCase):
         self.assertEqual(ret1.days, ret2.days)
 
     # --Test cases per service ---------------------------------------
-    #@pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_table_service_properties(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -130,7 +129,6 @@ class TableServicePropertiesTest(TableTestCase):
 
 
     # --Test cases per feature ---------------------------------------
-    #@pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_set_logging(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -149,7 +147,6 @@ class TableServicePropertiesTest(TableTestCase):
         received_props = tsc.get_service_properties()
         self._assert_logging_equal(received_props['analytics_logging'], logging)
 
-    #@pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_set_hour_metrics(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -168,7 +165,6 @@ class TableServicePropertiesTest(TableTestCase):
         received_props = tsc.get_service_properties()
         self._assert_metrics_equal(received_props['hour_metrics'], hour_metrics)
 
-    #@pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_set_minute_metrics(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -188,7 +184,6 @@ class TableServicePropertiesTest(TableTestCase):
         received_props = tsc.get_service_properties()
         self._assert_metrics_equal(received_props['minute_metrics'], minute_metrics)
 
-    #@pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_set_cors(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -222,7 +217,6 @@ class TableServicePropertiesTest(TableTestCase):
         self._assert_cors_equal(received_props['cors'], cors)
 
     # --Test cases for errors ---------------------------------------
-    # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_retention_no_days(self, resource_group, location, storage_account, storage_account_key):
         # Assert
@@ -230,7 +224,6 @@ class TableServicePropertiesTest(TableTestCase):
                           RetentionPolicy,
                           True, None)
 
-    # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_too_many_cors_rules(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -243,7 +236,6 @@ class TableServicePropertiesTest(TableTestCase):
         self.assertRaises(HttpResponseError,
                           tsc.set_service_properties, None, None, None, cors)
 
-    # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_retention_too_long(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
