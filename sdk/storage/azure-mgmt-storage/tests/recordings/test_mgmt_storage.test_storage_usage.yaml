@@ -9,15 +9,15 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.2 (Linux-4.19.104-microsoft-standard-x86_64-with-glibc2.29) msrest/0.6.16
-        msrest_azure/0.6.3 azure-mgmt-storage/11.1.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-storage/11.2.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/locations/eastus/usages?api-version=2019-06-01
   response:
     body:
-      string: '{"value":[{"unit":"Count","currentValue":1,"limit":250,"name":{"value":"StorageAccounts","localizedValue":"Storage
+      string: '{"value":[{"unit":"Count","currentValue":4,"limit":250,"name":{"value":"StorageAccounts","localizedValue":"Storage
         Accounts"}}]}'
     headers:
       cache-control:
@@ -27,7 +27,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Sun, 28 Jun 2020 03:01:11 GMT
+      - Thu, 20 Aug 2020 01:11:38 GMT
       expires:
       - '-1'
       pragma:

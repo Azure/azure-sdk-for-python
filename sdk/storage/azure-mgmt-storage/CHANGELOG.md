@@ -1,6 +1,12 @@
 # Release History
 
-## 11.1.0 (2020-6-22)
+## 11.2.0 (2020-08-20)
+
+**Features**
+
+  - Model RestorePolicyProperties has a new parameter min_restore_time
+
+## 11.1.0 (2020-06-22)
 
 **Features**
 
