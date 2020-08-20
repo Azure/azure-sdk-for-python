@@ -48,7 +48,7 @@ class SchemaRegistryClient:
         :param schema_id:
         :return:
         """
-        return self._client.schema.get_by_id(schema_id)
+        return self._generated_client.schema.get_by_id(schema_id)
 
     def get_schema_id(self, schema_group, schema_name, serialization_type, schema_string):
         # type: (str, str, str, Union[str, Enum]) -> str

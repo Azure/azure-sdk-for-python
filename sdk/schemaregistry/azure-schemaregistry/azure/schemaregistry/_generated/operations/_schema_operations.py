@@ -63,7 +63,7 @@ class SchemaOperations(object):
         cls = kwargs.pop('cls', None)  # type: ClsType[str]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-01-01-preview"
+        api_version = "2017-04"  # TODO: manually patch, the default value generated is "2018-01-01-preview"
 
         # Construct URL
         url = self.get_by_id.metadata['url']  # type: ignore
@@ -133,7 +133,7 @@ class SchemaOperations(object):
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         x_schema_type = "avro"
-        api_version = "2018-01-01-preview"
+        api_version = "2017-04"  # TODO: manually patch, the default value generated is "2018-01-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
@@ -211,7 +211,7 @@ class SchemaOperations(object):
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         x_schema_type = "avro"
-        api_version = "2018-01-01-preview"
+        api_version = "2017-04"  # TODO: manually patch, the default value generated is "2018-01-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
