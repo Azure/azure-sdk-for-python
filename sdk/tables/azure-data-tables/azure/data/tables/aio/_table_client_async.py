@@ -272,7 +272,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         else:
             raise ValueError('PartitionKey and RowKey were not provided in entity')
         try:
-            metadata, identifiers = await self._client.table.insert_entity(
+            metadata, _ = await self._client.table.insert_entity(
                 table=self.table_name,
                 table_entity_properties=entity,
                 cls=kwargs.pop('cls', _return_headers_and_deserialized),
@@ -316,7 +316,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         entity = _add_entity_properties(entity)
         try:
             if mode is UpdateMode.REPLACE:
-                metadata, identifiers = await self._client.table.update_entity(
+                metadata, _ = await self._client.table.update_entity(
                     table=self.table_name,
                     partition_key=partition_key,
                     row_key=row_key,
@@ -324,18 +324,17 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
                     if_match=if_match or if_not_match or "*",
                     cls=kwargs.pop('cls', _return_headers_and_deserialized),
                     **kwargs)
-                return metadata
             elif mode is UpdateMode.MERGE:
-                metadata, identifiers = await self._client.table.merge_entity(
+                metadata, _ = await self._client.table.merge_entity(
                     table=self.table_name,
                     partition_key=partition_key,
                     row_key=row_key,
                     if_match=if_match or if_not_match or "*",
                     cls=kwargs.pop('cls', _return_headers_and_deserialized),
                     table_entity_properties=entity, **kwargs)
-                return metadata
             else:
                 raise ValueError('Mode type is not supported')
+            return metadata
         except HttpResponseError as error:
             _process_table_error(error)
 
@@ -456,7 +455,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
 
         try:
             if mode is UpdateMode.MERGE:
-                metadata, identifiers = await self._client.table.merge_entity(
+                metadata, _ = await self._client.table.merge_entity(
                     table=self.table_name,
                     partition_key=partition_key,
                     row_key=row_key,
@@ -464,18 +463,17 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
                     cls=kwargs.pop('cls', _return_headers_and_deserialized),
                     **kwargs
                 )
-                return metadata
             elif mode is UpdateMode.REPLACE:
-                metadata, identifiers = await self._client.table.update_entity(
+                metadata, _ = await self._client.table.update_entity(
                     table=self.table_name,
                     partition_key=partition_key,
                     row_key=row_key,
                     table_entity_properties=entity,
                     cls=kwargs.pop('cls', _return_headers_and_deserialized),
                     **kwargs)
-                return metadata
             else:
                 raise ValueError('Mode type is not supported')
+            return metadata
         except ResourceNotFoundError:
             return await self.create_entity(
                 partition_key=partition_key,

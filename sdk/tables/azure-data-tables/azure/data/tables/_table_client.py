@@ -189,7 +189,7 @@ class TableClient(TableClientBase):
         """
         table_properties = TableProperties(table_name=self.table_name, **kwargs)
         try:
-            metadata, identifiers = self._client.table.create(
+            metadata, _ = self._client.table.create(
                 table_properties,
                 cls=kwargs.pop('cls', _return_headers_and_deserialized))
             return metadata
@@ -267,7 +267,7 @@ class TableClient(TableClientBase):
         else:
             raise ValueError('PartitionKey and RowKey were not provided in entity')
         try:
-            metadata, identifiers = self._client.table.insert_entity(
+            metadata, _ = self._client.table.insert_entity(
                 table=self.table_name,
                 table_entity_properties=entity,
                 cls=kwargs.pop('cls', _return_headers_and_deserialized),
@@ -307,8 +307,9 @@ class TableClient(TableClientBase):
         row_key = entity['RowKey']
         entity = _add_entity_properties(entity)
         try:
+            metadata = None
             if mode is UpdateMode.REPLACE:
-                metadata, identifiers = self._client.table.update_entity(
+                metadata, _ = self._client.table.update_entity(
                     table=self.table_name,
                     partition_key=partition_key,
                     row_key=row_key,
@@ -316,9 +317,8 @@ class TableClient(TableClientBase):
                     if_match=if_match or if_not_match or "*",
                     cls=kwargs.pop('cls', _return_headers_and_deserialized),
                     **kwargs)
-                return metadata
             elif mode is UpdateMode.MERGE:
-                metadata, identifiers = self._client.table.merge_entity(
+                metadata, _ = self._client.table.merge_entity(
                     table=self.table_name,
                     partition_key=partition_key,
                     row_key=row_key,
@@ -326,9 +326,9 @@ class TableClient(TableClientBase):
                     table_entity_properties=entity,
                     cls=kwargs.pop('cls', _return_headers_and_deserialized),
                     **kwargs)
-                return metadata
             else:
                 raise ValueError('Mode type is not supported')
+            return metadata
         except HttpResponseError as error:
             _process_table_error(error)
 
@@ -449,8 +449,9 @@ class TableClient(TableClientBase):
         entity = _add_entity_properties(entity)
 
         try:
+            metadata = None
             if mode is UpdateMode.MERGE:
-                metadata, identifiers = self._client.table.merge_entity(
+                metadata, _ = self._client.table.merge_entity(
                     table=self.table_name,
                     partition_key=partition_key,
                     row_key=row_key,
@@ -458,18 +459,17 @@ class TableClient(TableClientBase):
                     cls=kwargs.pop('cls', _return_headers_and_deserialized),
                     **kwargs
                 )
-                return metadata
             elif mode is UpdateMode.REPLACE:
-                metadata, identifiers = self._client.table.update_entity(
+                metadata, _ = self._client.table.update_entity(
                     table=self.table_name,
                     partition_key=partition_key,
                     row_key=row_key,
                     table_entity_properties=entity,
                     cls=kwargs.pop('cls', _return_headers_and_deserialized),
                     **kwargs)
-                return metadata
             else:
                 raise ValueError('Mode type is not supported')
+            return metadata
         except ResourceNotFoundError:
             return self.create_entity(
                 partition_key=partition_key,
