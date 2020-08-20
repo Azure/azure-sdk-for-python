@@ -46,7 +46,6 @@ class EventGridPublisherClient(object):
         self._topic_hostname = topic_hostname
         auth_policy = _get_authentication_policy(credential)
         self._client = EventGridPublisherClientImpl(authentication_policy=auth_policy, **kwargs)
-  
     def send(self, events, **kwargs):
         # type: (SendType, Any) -> None
         """Sends event data to topic hostname specified during client initialization.
