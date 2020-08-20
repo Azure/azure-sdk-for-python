@@ -77,4 +77,4 @@ def _is_cloud_event(event):
     try:
         return all([_ in event for _ in required]) and event['specversion'] == "1.0"
     except TypeError:
-        pass
+        return False
