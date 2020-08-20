@@ -213,7 +213,6 @@ try:
     from ._models_py3 import ExpressRouteServiceProviderBandwidthsOffered
     from ._models_py3 import ExpressRouteServiceProviderListResult
     from ._models_py3 import FirewallPolicy
-    from ._models_py3 import FirewallPolicyCertificateAuthority
     from ._models_py3 import FirewallPolicyFilterRule
     from ._models_py3 import FirewallPolicyFilterRuleAction
     from ._models_py3 import FirewallPolicyListResult
@@ -225,8 +224,6 @@ try:
     from ._models_py3 import FirewallPolicyRuleGroup
     from ._models_py3 import FirewallPolicyRuleGroupListResult
     from ._models_py3 import FirewallPolicyThreatIntelWhitelist
-    from ._models_py3 import FirewallPolicyTransportSecurity
-    from ._models_py3 import FirewallPolicyTrustedRootCertificate
     from ._models_py3 import FlowLog
     from ._models_py3 import FlowLogFormatParameters
     from ._models_py3 import FlowLogInformation
@@ -710,7 +707,6 @@ except (SyntaxError, ImportError):
     from ._models import ExpressRouteServiceProviderBandwidthsOffered  # type: ignore
     from ._models import ExpressRouteServiceProviderListResult  # type: ignore
     from ._models import FirewallPolicy  # type: ignore
-    from ._models import FirewallPolicyCertificateAuthority  # type: ignore
     from ._models import FirewallPolicyFilterRule  # type: ignore
     from ._models import FirewallPolicyFilterRuleAction  # type: ignore
     from ._models import FirewallPolicyListResult  # type: ignore
@@ -722,8 +718,6 @@ except (SyntaxError, ImportError):
     from ._models import FirewallPolicyRuleGroup  # type: ignore
     from ._models import FirewallPolicyRuleGroupListResult  # type: ignore
     from ._models import FirewallPolicyThreatIntelWhitelist  # type: ignore
-    from ._models import FirewallPolicyTransportSecurity  # type: ignore
-    from ._models import FirewallPolicyTrustedRootCertificate  # type: ignore
     from ._models import FlowLog  # type: ignore
     from ._models import FlowLogFormatParameters  # type: ignore
     from ._models import FlowLogInformation  # type: ignore
@@ -1055,7 +1049,6 @@ from ._network_management_client_enums import (
     ExpressRoutePeeringType,
     ExpressRoutePortsEncapsulation,
     FirewallPolicyFilterRuleActionType,
-    FirewallPolicyIntrusionSystemMode,
     FirewallPolicyRuleConditionApplicationProtocolType,
     FirewallPolicyRuleConditionNetworkProtocol,
     FirewallPolicyRuleConditionType,
@@ -1333,7 +1326,6 @@ __all__ = [
     'ExpressRouteServiceProviderBandwidthsOffered',
     'ExpressRouteServiceProviderListResult',
     'FirewallPolicy',
-    'FirewallPolicyCertificateAuthority',
     'FirewallPolicyFilterRule',
     'FirewallPolicyFilterRuleAction',
     'FirewallPolicyListResult',
@@ -1345,8 +1337,6 @@ __all__ = [
     'FirewallPolicyRuleGroup',
     'FirewallPolicyRuleGroupListResult',
     'FirewallPolicyThreatIntelWhitelist',
-    'FirewallPolicyTransportSecurity',
-    'FirewallPolicyTrustedRootCertificate',
     'FlowLog',
     'FlowLogFormatParameters',
     'FlowLogInformation',
@@ -1676,7 +1666,6 @@ __all__ = [
     'ExpressRoutePeeringType',
     'ExpressRoutePortsEncapsulation',
     'FirewallPolicyFilterRuleActionType',
-    'FirewallPolicyIntrusionSystemMode',
     'FirewallPolicyRuleConditionApplicationProtocolType',
     'FirewallPolicyRuleConditionNetworkProtocol',
     'FirewallPolicyRuleConditionType',
