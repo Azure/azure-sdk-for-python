@@ -1,5 +1,9 @@
 # Release History
 
+## 2.0.0b1 (Unreleased)
+
+  - Placeholder - NEEDS TO BE CHANGED
+
 ## 1.3.0 (2019-05-20)
 
   - Event Schemas for new event types from IotHub, Media Services,
