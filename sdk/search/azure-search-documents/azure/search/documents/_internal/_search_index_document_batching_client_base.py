@@ -46,6 +46,8 @@ class SearchIndexDocumentBatchingClientBase(HeadersMixin):
         self._auto_flush = kwargs.pop('auto_flush', True)
         self._batch_size = kwargs.pop('batch_size', self._DEFAULT_BATCH_SIZE)
         self._window = kwargs.pop('window', self._DEFAULT_WINDOW)
+        if self._window <= 0:
+            self._window = 86400
         self._endpoint = endpoint  # type: str
         self._index_name = index_name  # type: str
         self._index_key = None
