@@ -9,6 +9,7 @@ from typing import (  # pylint: disable=unused-import
     Union, Optional, Any, IO, Iterable, AnyStr, Dict, List, Tuple,
     TYPE_CHECKING
 )
+from urllib.parse import quote_plus
 
 from azure.core.tracing.decorator_async import distributed_trace_async
 
@@ -927,7 +928,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
                 :caption: Copy a blob from a URL.
         """
         options = self._start_copy_from_url_options(
-            source_url,
+            source_url=quote_plus(source_url, safe='~/ ~:'),
             metadata=metadata,
             incremental_copy=incremental_copy,
             **kwargs)
@@ -1163,7 +1164,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         """
         options = self._stage_block_from_url_options(
             block_id,
-            source_url,
+            source_url=quote_plus(source_url, safe='~/ ~:'),
             source_offset=source_offset,
             source_length=source_length,
             source_content_md5=source_content_md5,
@@ -1738,7 +1739,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         """
 
         options = self._upload_pages_from_url_options(
-            source_url=source_url,
+            source_url=quote_plus(source_url, safe='~/ ~:'),
             offset=offset,
             length=length,
             source_offset=source_offset,
@@ -1979,7 +1980,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             The timeout parameter is expressed in seconds.
         """
         options = self._append_block_from_url_options(
-            copy_source_url,
+            copy_source_url=quote_plus(copy_source_url, safe='~/ ~:'),
             source_offset=source_offset,
             source_length=source_length,
             **kwargs
