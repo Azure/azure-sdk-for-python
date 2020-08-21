@@ -28,7 +28,7 @@ from ._serialize import serialize_iso
 from ._deserialize import _return_headers_and_deserialized
 from ._error import _process_table_error
 from ._version import VERSION
-from ._models import TableEntityPropertiesPaged, UpdateMode, Table
+from ._models import TableEntityPropertiesPaged, UpdateMode
 
 
 class TableClient(TableClientBase):
@@ -180,11 +180,11 @@ class TableClient(TableClientBase):
             self,
             **kwargs  # type: Any
     ):
-        # type: (...) -> Table
+        # type: (...) -> Dict[str,str]
         """Creates a new table under the current account.
 
-        :return: Table created
-        :rtype: Table
+        :return: Dictionary of response headers from service
+        :rtype: Dict[str,str]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         table_properties = TableProperties(table_name=self.table_name, **kwargs)
@@ -257,8 +257,8 @@ class TableClient(TableClientBase):
 
         :param entity: The properties for the table entity.
         :type entity: Union[TableEntity, dict[str,str]]
-        :return: TableEntity mapping str to azure.data.tables.EntityProperty
-        :rtype: ~azure.data.tables.TableEntity
+        :return: Dictionary mapping response headers from the service
+        :rtype: dict[str,str]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
 
@@ -283,7 +283,7 @@ class TableClient(TableClientBase):
             mode=UpdateMode.MERGE,  # type: UpdateMode
             **kwargs  # type: Any
     ):
-        # type: (...) -> None
+        # type: (...) -> Dict[str,str]
         """Update entity in a table.
 
         :param entity: The properties for the table entity.
@@ -294,8 +294,8 @@ class TableClient(TableClientBase):
         :keyword str row_key: The row key of the entity.
         :keyword str etag: Etag of the entity
         :keyword ~azure.core.MatchConditions match_condition: MatchCondition
-        :return: None
-        :rtype: None
+        :return: Dictionary mapping response headers from the service
+        :rtype: dict[str,str
         :raises: ~azure.core.exceptions.HttpResponseError
         """
 
@@ -403,15 +403,15 @@ class TableClient(TableClientBase):
             row_key,  # type: str
             **kwargs  # type: Any
     ):
-        # type: (...) -> TableEntity
+        # type: (...) -> Dict[str,str]
         """Queries entities in a table.
 
         :param partition_key: The partition key of the entity.
         :type partition_key: str
         :param row_key: The row key of the entity.
         :type row_key: str
-        :return: Entity mapping str to azure.data.tables.EntityProperty
-        :rtype: ~azure.data.tables.TableEntity
+        :return: Dictionary mapping response headers from the service
+        :rtype: dict[str,str
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         try:
@@ -432,15 +432,15 @@ class TableClient(TableClientBase):
             mode=UpdateMode.MERGE,  # type: UpdateMode
             **kwargs  # type: Any
     ):
-        # type: (...) -> None
+        # type: (...) -> Dict[str,str]
         """Update/Merge or Insert entity into table.
 
         :param entity: The properties for the table entity.
         :type entity: Union[TableEntity, dict[str,str]]
         :param mode: Merge or Replace and Insert on fail
         :type mode: ~azure.data.tables.UpdateMode
-        :return: None
-        :rtype: None
+        :return: Dictionary mapping response headers from the service
+        :rtype: dict[str,str
         :raises: ~azure.core.exceptions.HttpResponseError
         """
 

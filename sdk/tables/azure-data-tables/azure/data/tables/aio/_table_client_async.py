@@ -25,7 +25,7 @@ from .._base_client import parse_connection_str
 from .._entity import TableEntity
 from .._generated.aio import AzureTable
 from .._generated.models import SignedIdentifier, TableProperties, QueryOptions
-from .._models import AccessPolicy, Table
+from .._models import AccessPolicy
 from .._serialize import serialize_iso
 from .._deserialize import _return_headers_and_deserialized
 from .._error import _process_table_error
@@ -193,16 +193,18 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
             self,
             **kwargs  # type: Any
     ):
-        # type: (...) -> Table
+        # type: (...) -> Dict[str,str]
         """Creates a new table under the given account.
-        :return: Table created
-        :rtype: Table
+        :return: Dictionary of response headers from service
+        :rtype: Dict[str,str]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         table_properties = TableProperties(table_name=self.table_name, **kwargs)
         try:
-            table = await self._client.table.create(table_properties)
-            return Table(table)
+            metadata, _ = await self._client.table.create(
+                table_properties,
+                cls=kwargs.pop('cls', _return_headers_and_deserialized))
+            return metadata
         except HttpResponseError as error:
             _process_table_error(error)
 
@@ -259,12 +261,12 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
             entity,  # type: Union[TableEntity, dict[str,str]]
             **kwargs  # type: Any
     ):
-        # type: (...) -> TableEntity
+        # type: (...) -> Dict[str,str]
         """Insert entity in a table.
         :param entity: The properties for the table entity.
         :type entity: dict[str, str]
-        :return: TableEntity mapping str to azure.data.tables.EntityProperty
-        :rtype: ~azure.data.tables.TableEntity
+        :return: Dictionary of response headers from service
+        :rtype: Dict[str,str]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         if "PartitionKey" in entity and "RowKey" in entity:
@@ -289,7 +291,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
             mode=UpdateMode.MERGE,  # type: UpdateMode
             **kwargs  # type: Any
     ):
-        # type: (...) -> None
+        # type: (...) -> Dict[str,str]
         """Update entity in a table.
         :param mode: Merge or Replace entity
         :type mode: ~azure.data.tables.UpdateMode
@@ -303,8 +305,8 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         :type etag: str
         :param match_condition: MatchCondition
         :type match_condition: ~azure.core.MatchConditions
-        :return: None
-        :rtype: None
+        :return: Dictionary of response headers from service
+        :rtype: Dict[str,str]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         if_match, if_not_match = _get_match_headers(kwargs=dict(kwargs, etag=kwargs.pop('etag', None),
@@ -315,6 +317,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         row_key = entity['RowKey']
         entity = _add_entity_properties(entity)
         try:
+            metadata = None
             if mode is UpdateMode.REPLACE:
                 metadata, _ = await self._client.table.update_entity(
                     table=self.table_name,
@@ -437,15 +440,15 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
             mode=UpdateMode.MERGE,  # type: UpdateMode
             **kwargs  # type: Any
     ):
-        # type: (...) -> None
+        # type: (...) -> Dict[str,str]
 
         """Update/Merge or Insert entity into table.
         :param mode: Merge or Replace and Insert on fail
         :type mode: ~azure.data.tables.UpdateMode
         :param entity: The properties for the table entity.
         :type entity: dict[str, str]
-        :return: Entity mapping str to azure.data.tables.EntityProperty or None
-        :rtype: None
+        :return: Dictionary of response headers from service
+        :rtype: Dict[str,str]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
 
@@ -454,6 +457,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         entity = _add_entity_properties(entity)
 
         try:
+            metadata = None
             if mode is UpdateMode.MERGE:
                 metadata, _ = await self._client.table.merge_entity(
                     table=self.table_name,
