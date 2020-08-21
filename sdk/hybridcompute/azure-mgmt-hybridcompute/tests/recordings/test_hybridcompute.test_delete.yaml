@@ -9,24 +9,24 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.7.4 (Windows-10-10.0.18362-SP0) msrest/0.6.9 msrest_azure/0.4.34
-        azure-mgmt-hybridcompute/2019-08-02-preview Azure-SDK-For-Python
+      - python/3.8.2 (Windows-10-10.0.19041-SP0) msrest/0.6.17 msrest_azure/0.6.3
+        azure-mgmt-hybridcompute/1.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hybridrptest/providers/Microsoft.HybridCompute/machines/fv-az467iqj4s_e2etest?api-version=2019-08-02-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-sdk-test/providers/Microsoft.HybridCompute/machines/DESKTOP-ROKPM1C?api-version=2019-12-12
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hybridrptest/providers/Microsoft.HybridCompute/machines/fv-az467iqj4s_e2etest","name":"fv-az467iqj4s_e2etest","location":"eastus2euap","tags":{},"identity":{"type":"SystemAssigned","principalId":"d90ee3ab-550f-4cd9-b73a-d2a0ff91656d","tenantId":"72f988bf-86f1-41af-91ab-2d7cd011db47"},"type":"Microsoft.HybridCompute/machines","properties":{"provisioningState":"Succeeded","agentVersion":"0.1.1908.28001","status":"Disconnected","lastStatusChange":"2019-08-28T19:03:24.7624542","errorDetails":[],"displayName":"fv-az467","machineFqdn":"fv-az467","osName":"windows","osVersion":"10.0.14393","osProfile":{"computerName":"fv-az467"},"vmId":"302ad9fd-d9b3-4719-ad93-07c4589a4c0d","physicalLocation":"","clientPublicKey":"MIIBCgKCAQEArKpKmkpPJtIUKTlmVkex4xe0GEnRiFnSAo/Tgjmym0fPXo9VoiJzZOig+XQRKIjKj1iGjphHE729vAbtoE3KDT28MxWvkEJ5G/x5UddlYsiCz5NLfl5J803z1UZgnLT44f/82a/Qju/t0ezWCFAgUrf8KqM4ZRUXhflLJcO3FCx1pb5T3Aw6V60i5yhTA40mPnFxJyR1r6HpBWh4KKuLR5n6LAzDf8WDl6ZV6eHIwuh6E6j/e0TbNmdU1xYGdHqJrhji1HxX7nRKpDnrmYmzOVJVi097U1+NxGGmP5rlme9QZKpDXf/LAUMZ5uPXQvH6tzvGhyyt9Fcr6EUXYmq2pwIDAQAB"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-sdk-test/providers/Microsoft.HybridCompute/machines/DESKTOP-ROKPM1C","name":"DESKTOP-ROKPM1C","location":"eastus","tags":{},"identity":{"type":"SystemAssigned","principalId":"227a4f84-2165-4b0e-8ba2-fb0a6cafe490","tenantId":"54826b22-38d6-4fb2-bad9-b7b93a3e9c5a"},"type":"Microsoft.HybridCompute/machines","properties":{"provisioningState":"Succeeded","agentVersion":"0.11.20231.004","status":"Connected","lastStatusChange":"2020-08-20T02:21:11.4010538Z","errorDetails":[],"displayName":"DESKTOP-ROKPM1C","machineFqdn":"DESKTOP-ROKPM1C","osName":"windows","osVersion":"10.0.19041.450","osProfile":{"computerName":"DESKTOP-ROKPM1C"},"vmId":"9975d745-2d1a-43a4-9213-1093eb2f6010","clientPublicKey":"MIIBCgKCAQEA6RLyl0b1vf0Ry3F35ZhHtxHjwLXOlevDIXFPkIqynXFWUKjCfVYaY7Pq08BpjQo6mI7cjs3oGQKbnWO2GidnEsmbXoXttLjnSfBVwkiQPhtAKRF2e4RleKrWy0ugzlBZed3iHrXHGxcmjG6mAU79iK25ohbFkgkuyMAA6L79Ac7uZfDmsNmbp95nD/cS2z1jIsQYj9ya/gh+Glsrl9aS+PeAqkHYmqoPP4xHnAwO4rcW+MHbuooKHrkalvNqdupv/DaEaZdATHPQogOvxVp+yqcMV6U8kVoEPZEI+n7X69uDqP4wv4DqJM7DqtDZRB5czK+OVMS3JPL/hxvbcSTm9QIDAQAB"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '1154'
+      - '1140'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 Sep 2019 23:34:02 GMT
+      - Thu, 20 Aug 2020 02:46:01 GMT
       expires:
       - '-1'
       pragma:
@@ -56,12 +56,12 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.7.4 (Windows-10-10.0.18362-SP0) msrest/0.6.9 msrest_azure/0.4.34
-        azure-mgmt-hybridcompute/2019-08-02-preview Azure-SDK-For-Python
+      - python/3.8.2 (Windows-10-10.0.19041-SP0) msrest/0.6.17 msrest_azure/0.6.3
+        azure-mgmt-hybridcompute/1.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hybridrptest/providers/Microsoft.HybridCompute/machines/fv-az467iqj4s_e2etest?api-version=2019-08-02-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-sdk-test/providers/Microsoft.HybridCompute/machines/DESKTOP-ROKPM1C?api-version=2019-12-12
   response:
     body:
       string: ''
@@ -73,7 +73,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Fri, 06 Sep 2019 23:34:05 GMT
+      - Thu, 20 Aug 2020 02:46:12 GMT
       expires:
       - '-1'
       pragma:
@@ -99,25 +99,26 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.7.4 (Windows-10-10.0.18362-SP0) msrest/0.6.9 msrest_azure/0.4.34
-        azure-mgmt-hybridcompute/2019-08-02-preview Azure-SDK-For-Python
+      - python/3.8.2 (Windows-10-10.0.19041-SP0) msrest/0.6.17 msrest_azure/0.6.3
+        azure-mgmt-hybridcompute/1.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hybridrptest/providers/Microsoft.HybridCompute/machines/fv-az467iqj4s_e2etest?api-version=2019-08-02-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-sdk-test/providers/Microsoft.HybridCompute/machines/DESKTOP-ROKPM1C?api-version=2019-12-12
   response:
     body:
-      string: '{"error":{"code":"ResourceNotFound","message":"The Resource ''Microsoft.HybridCompute/machines/fv-az467iqj4s_e2etest''
-        under resource group ''hybridrptest'' was not found."}}'
+      string: '{"error":{"code":"ResourceNotFound","message":"The Resource ''Microsoft.HybridCompute/machines/DESKTOP-ROKPM1C''
+        under resource group ''azure-sdk-test'' was not found. For more details please
+        go to https://aka.ms/ARMResourceNotFoundFix"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '170'
+      - '234'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 Sep 2019 23:34:05 GMT
+      - Thu, 20 Aug 2020 02:46:12 GMT
       expires:
       - '-1'
       pragma:

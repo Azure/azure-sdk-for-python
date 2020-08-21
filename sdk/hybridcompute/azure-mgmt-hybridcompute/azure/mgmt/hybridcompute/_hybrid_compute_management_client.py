@@ -14,6 +14,7 @@ from msrest import Serializer, Deserializer
 
 from ._configuration import HybridComputeManagementClientConfiguration
 from .operations import MachinesOperations
+from .operations import MachineExtensionsOperations
 from .operations import Operations
 from . import models
 
@@ -26,15 +27,15 @@ class HybridComputeManagementClient(SDKClient):
 
     :ivar machines: Machines operations
     :vartype machines: azure.mgmt.hybridcompute.operations.MachinesOperations
+    :ivar machine_extensions: MachineExtensions operations
+    :vartype machine_extensions: azure.mgmt.hybridcompute.operations.MachineExtensionsOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.hybridcompute.operations.Operations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: Subscription credentials which uniquely identify
-     Microsoft Azure subscription. The subscription ID forms part of the URI
-     for every service call.
+    :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
     :param str base_url: Service URL
     """
@@ -46,11 +47,13 @@ class HybridComputeManagementClient(SDKClient):
         super(HybridComputeManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2019-08-02-preview'
+        self.api_version = '2019-12-12'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
         self.machines = MachinesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.machine_extensions = MachineExtensionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
