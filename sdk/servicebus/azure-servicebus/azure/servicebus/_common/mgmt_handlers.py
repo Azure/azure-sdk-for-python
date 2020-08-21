@@ -61,8 +61,8 @@ def list_sessions_op(status_code, message, description):
 def deferred_message_op(
         status_code,
         message,
-        receiver,
         description,
+        receiver,
         mode=ReceiveSettleMode.PeekLock,
         message_type=ReceivedMessage
 ):
