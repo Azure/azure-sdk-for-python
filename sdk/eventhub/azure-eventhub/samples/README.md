@@ -61,7 +61,7 @@ Both [sync version](https://github.com/Azure/azure-sdk-for-python/tree/master/sd
 - [iot_hub_connection_string_receive_async.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples/async_samples/iot_hub_connection_string_receive_async.py) - Examples to receive events from an IoT Hub:
     - Convert an IoT Hub connection string to the built-in Event Hub endpoint and receive events from it
 
-- [authenticate_with_sas_token.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples/sync_samples/authenticate_with_sas_token.py) - Examples to receive events from an IoT Hub:
+- [authenticate_with_sas_token.py]<!--(https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples/sync_samples/authenticate_with_sas_token.py)-->
     - Utilize a SAS token to authenticate when creating an Event Hub client.
 
 ## Prerequisites
