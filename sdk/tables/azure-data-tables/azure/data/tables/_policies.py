@@ -460,7 +460,7 @@ class StorageRetryPolicy(RetryPolicy):
             'history': []
         }
 
-    def sleep(self, settings, transport):
+    def sleep(self, settings, transport): # pylint: disable=arguments-differ
         # type: (...) -> None
         """
         :param Any settings:
