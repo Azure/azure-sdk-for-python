@@ -11,10 +11,10 @@ from typing import (  # pylint: disable=unused-import
     TYPE_CHECKING
 )
 try:
-    from urllib.parse import urlparse, quote, unquote
+    from urllib.parse import urlparse, quote, quote_plus, unquote
 except ImportError:
     from urlparse import urlparse  # type: ignore
-    from urllib2 import quote, unquote  # type: ignore
+    from urllib2 import quote, quote_plus, unquote  # type: ignore
 
 import six
 from azure.core.tracing.decorator import distributed_trace
@@ -1705,7 +1705,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 :caption: Copy a blob from a URL.
         """
         options = self._start_copy_from_url_options(
-            source_url,
+            source_url=quote_plus(source_url, safe='~/ ~:'),
             metadata=metadata,
             incremental_copy=incremental_copy,
             **kwargs)
@@ -2069,7 +2069,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         """
         options = self._stage_block_from_url_options(
             block_id,
-            source_url,
+            source_url=quote_plus(source_url, safe='~/ ~:'),
             source_offset=source_offset,
             source_length=source_length,
             source_content_md5=source_content_md5,
@@ -3045,7 +3045,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             The timeout parameter is expressed in seconds.
         """
         options = self._upload_pages_from_url_options(
-            source_url=source_url,
+            source_url=quote_plus(source_url, safe='~/ ~:'),
             offset=offset,
             length=length,
             source_offset=source_offset,
@@ -3456,7 +3456,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             The timeout parameter is expressed in seconds.
         """
         options = self._append_block_from_url_options(
-            copy_source_url,
+            copy_source_url=quote_plus(copy_source_url, safe='~/ ~:'),
             source_offset=source_offset,
             source_length=source_length,
             **kwargs
