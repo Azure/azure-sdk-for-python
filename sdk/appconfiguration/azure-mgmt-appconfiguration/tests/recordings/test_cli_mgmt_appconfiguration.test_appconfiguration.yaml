@@ -14,18 +14,18 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.8.2 (Linux-4.19.104-microsoft-standard-x86_64-with-glibc2.29) msrest/0.6.16
-        msrest_azure/0.6.3 azure-mgmt-appconfiguration/0.5.0 Azure-SDK-For-Python
+      - python/3.8.2 (Windows-10-10.0.19041-SP0) msrest/0.6.17 msrest_azure/0.6.3
+        azure-mgmt-appconfiguration/0.6.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appconfiguration_test_appconfiguration39c8158a/providers/Microsoft.AppConfiguration/configurationStores/myConfigStore?api-version=2020-06-01
   response:
     body:
-      string: '{"type":"Microsoft.AppConfiguration/configurationStores","properties":{"provisioningState":"Creating","creationDate":"2020-07-01T05:08:12.3956086+00:00","endpoint":null,"encryption":null,"privateEndpointConnections":null},"sku":null,"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appconfiguration_test_appconfiguration39c8158a/providers/Microsoft.AppConfiguration/configurationStores/myConfigStore","name":"myConfigStore","location":"westus","tags":{}}'
+      string: '{"type":"Microsoft.AppConfiguration/configurationStores","properties":{"provisioningState":"Creating","creationDate":"2020-08-19T07:40:33.4890704+00:00","endpoint":null,"encryption":null,"privateEndpointConnections":null},"sku":null,"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appconfiguration_test_appconfiguration39c8158a/providers/Microsoft.AppConfiguration/configurationStores/myConfigStore","name":"myConfigStore","location":"westus","tags":{}}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.AppConfiguration/locations/westus/operationsStatus/844d38f7-53db-ae21-de5e-79d46ca440d3?api-version=2020-06-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.AppConfiguration/locations/westus/operationsStatus/be96149a-d233-62e9-084f-23a497db5b5c?api-version=2020-06-01
       cache-control:
       - no-cache
       content-length:
@@ -33,19 +33,19 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 01 Jul 2020 05:08:14 GMT
+      - Wed, 19 Aug 2020 07:40:34 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       server:
-      - openresty/1.15.8.1
+      - nginx/1.17.10
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1198'
+      - '1172'
     status:
       code: 201
       message: Created
@@ -59,16 +59,16 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.2 (Linux-4.19.104-microsoft-standard-x86_64-with-glibc2.29) msrest/0.6.16
-        msrest_azure/0.6.3 azure-mgmt-appconfiguration/0.5.0 Azure-SDK-For-Python
+      - python/3.8.2 (Windows-10-10.0.19041-SP0) msrest/0.6.17 msrest_azure/0.6.3
+        azure-mgmt-appconfiguration/0.6.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.AppConfiguration/locations/westus/operationsStatus/844d38f7-53db-ae21-de5e-79d46ca440d3?api-version=2020-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.AppConfiguration/locations/westus/operationsStatus/be96149a-d233-62e9-084f-23a497db5b5c?api-version=2020-06-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.AppConfiguration/locations/westus/operationsStatus/844d38f7-53db-ae21-de5e-79d46ca440d3","name":"844d38f7-53db-ae21-de5e-79d46ca440d3","status":"Succeeded","error":null}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.AppConfiguration/locations/westus/operationsStatus/be96149a-d233-62e9-084f-23a497db5b5c","name":"be96149a-d233-62e9-084f-23a497db5b5c","status":"Succeeded","error":null}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.AppConfiguration/locations/westus/operationsStatus/844d38f7-53db-ae21-de5e-79d46ca440d3?api-version=2020-06-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.AppConfiguration/locations/westus/operationsStatus/be96149a-d233-62e9-084f-23a497db5b5c?api-version=2020-06-01
       cache-control:
       - no-cache
       content-length:
@@ -76,13 +76,13 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 01 Jul 2020 05:08:24 GMT
+      - Wed, 19 Aug 2020 07:40:45 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       server:
-      - openresty/1.15.8.1
+      - nginx/1.17.10
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -104,13 +104,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.2 (Linux-4.19.104-microsoft-standard-x86_64-with-glibc2.29) msrest/0.6.16
-        msrest_azure/0.6.3 azure-mgmt-appconfiguration/0.5.0 Azure-SDK-For-Python
+      - python/3.8.2 (Windows-10-10.0.19041-SP0) msrest/0.6.17 msrest_azure/0.6.3
+        azure-mgmt-appconfiguration/0.6.0 Azure-SDK-For-Python
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appconfiguration_test_appconfiguration39c8158a/providers/Microsoft.AppConfiguration/configurationStores/myConfigStore?api-version=2020-06-01
   response:
     body:
-      string: '{"type":"Microsoft.AppConfiguration/configurationStores","properties":{"provisioningState":"Succeeded","creationDate":"2020-07-01T05:08:18+00:00","endpoint":"https://myconfigstore.azconfig.io","encryption":{"keyVaultProperties":null},"privateEndpointConnections":null},"sku":{"name":"standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appconfiguration_test_appconfiguration39c8158a/providers/Microsoft.AppConfiguration/configurationStores/myconfigstore","name":"myConfigStore","location":"westus","tags":{"my_tag":"myTagValue"}}'
+      string: '{"type":"Microsoft.AppConfiguration/configurationStores","properties":{"provisioningState":"Succeeded","creationDate":"2020-08-19T07:40:35+00:00","endpoint":"https://myconfigstore.azconfig.io","encryption":{"keyVaultProperties":null},"privateEndpointConnections":null},"sku":{"name":"standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appconfiguration_test_appconfiguration39c8158a/providers/Microsoft.AppConfiguration/configurationStores/myconfigstore","name":"myConfigStore","location":"westus","tags":{"my_tag":"myTagValue"}}'
     headers:
       cache-control:
       - no-cache
@@ -119,15 +119,15 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 01 Jul 2020 05:08:25 GMT
+      - Wed, 19 Aug 2020 07:40:45 GMT
       etag:
-      - W/"0800d473-0000-0700-0000-5efc1a420000"
+      - W/"0a00b17c-0000-0700-0000-5f3cd7720000"
       expires:
       - '-1'
       pragma:
       - no-cache
       server:
-      - openresty/1.15.8.1
+      - nginx/1.17.10
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -149,15 +149,15 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.2 (Linux-4.19.104-microsoft-standard-x86_64-with-glibc2.29) msrest/0.6.16
-        msrest_azure/0.6.3 azure-mgmt-appconfiguration/0.5.0 Azure-SDK-For-Python
+      - python/3.8.2 (Windows-10-10.0.19041-SP0) msrest/0.6.17 msrest_azure/0.6.3
+        azure-mgmt-appconfiguration/0.6.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appconfiguration_test_appconfiguration39c8158a/providers/Microsoft.AppConfiguration/configurationStores/myConfigStore?api-version=2020-06-01
   response:
     body:
-      string: '{"type":"Microsoft.AppConfiguration/configurationStores","properties":{"provisioningState":"Succeeded","creationDate":"2020-07-01T05:08:18+00:00","endpoint":"https://myconfigstore.azconfig.io","encryption":{"keyVaultProperties":null},"privateEndpointConnections":null},"sku":{"name":"standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appconfiguration_test_appconfiguration39c8158a/providers/Microsoft.AppConfiguration/configurationStores/myconfigstore","name":"myConfigStore","location":"westus","tags":{"my_tag":"myTagValue"}}'
+      string: '{"type":"Microsoft.AppConfiguration/configurationStores","properties":{"provisioningState":"Succeeded","creationDate":"2020-08-19T07:40:35+00:00","endpoint":"https://myconfigstore.azconfig.io","encryption":{"keyVaultProperties":null},"privateEndpointConnections":null},"sku":{"name":"standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appconfiguration_test_appconfiguration39c8158a/providers/Microsoft.AppConfiguration/configurationStores/myconfigstore","name":"myConfigStore","location":"westus","tags":{"my_tag":"myTagValue"}}'
     headers:
       cache-control:
       - no-cache
@@ -166,15 +166,15 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 01 Jul 2020 05:08:25 GMT
+      - Wed, 19 Aug 2020 07:40:45 GMT
       etag:
-      - W/"0800d473-0000-0700-0000-5efc1a420000"
+      - W/"0a00b17c-0000-0700-0000-5f3cd7720000"
       expires:
       - '-1'
       pragma:
       - no-cache
       server:
-      - openresty/1.15.8.1
+      - nginx/1.17.10
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -198,8 +198,8 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.8.2 (Linux-4.19.104-microsoft-standard-x86_64-with-glibc2.29) msrest/0.6.16
-        msrest_azure/0.6.3 azure-mgmt-appconfiguration/0.5.0 Azure-SDK-For-Python
+      - python/3.8.2 (Windows-10-10.0.19041-SP0) msrest/0.6.17 msrest_azure/0.6.3
+        azure-mgmt-appconfiguration/0.6.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: DELETE
@@ -213,19 +213,19 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 01 Jul 2020 05:08:30 GMT
+      - Wed, 19 Aug 2020 07:40:50 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       server:
-      - openresty/1.15.8.1
+      - nginx/1.17.10
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14998'
+      - '14993'
     status:
       code: 200
       message: OK
