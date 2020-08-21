@@ -28,10 +28,8 @@ pip install --pre azure-data-tables
 
 ### Create a storage account
 If you wish to create a new cosmos storage account, you can use [Azure Cosmos DB](azure_create_cosmos).
-If you wish to create a new storage account, you can use the
-[Azure Portal](azure_portal_create_account),
-[Azure PowerShell](azure_powershell_create_account),
-or [Azure CLI](azure_cli_create_account):
+If you wish to create a new storage account, you can use [Azure Portal](azure_portal_create_account),
+[Azure PowerShell](azure_powershell_create_account), or [Azure CLI](azure_cli_create_account):
 
 ```bash
 # Create a new resource group to hold the storage account -
@@ -44,9 +42,9 @@ az storage account create -n MyStorageAccount -g MyResourceGroup
 
 ### Create the client
 The Azure Data Tables client library for Python allows you to interact with two types of resources: the
-account and tables, and entities. Interaction with these resources starts with an instance of a [client](#clients).
-To create a client object, you will need the account's table service endpoint URL and a credential that allows
-you to access the account:
+tables in your account, and the entities within the tables. Interaction with these resources starts with an
+instance of a [client](#clients). To create a client object, you will need the account's table service
+endpoint URL and a credential that allows you to access the account:
 
 ```python
 from azure.data.tables import TableServiceClient
@@ -299,6 +297,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct](msft_oss_co
 
 <!-- LINKS -->
 [source_code]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/azure/data/table
+<!-- Still needed -->
 [Tables_pypi]: https://pypi.org/project/azure-data-tables
 [Tables_ref_docs]: https://aka.ms/azsdk/python/tables/docs
 [Tables_product_doc]: https://docs.microsoft.com/azure/storage/
@@ -322,7 +321,9 @@ This project has adopted the [Microsoft Open Source Code of Conduct](msft_oss_co
 [azure_sas_token]: https://docs.microsoft.com/azure/storage/common/storage-sas-overview
 [azure_shared_key]: https://docs.microsoft.com/rest/api/storageservices/authenticate-with-shared-key/
 
+<!-- Still needed -->
 [table_service_client_docs]: https://aka.ms/azsdk/python/tables/docs
+<!-- Still needed -->
 [table_client_docs]: https://aka.ms/azsdk/python/tables/docs
 
 [azure_core_ref_docs]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-core/latest/azure.core.html
@@ -331,8 +332,11 @@ This project has adopted the [Microsoft Open Source Code of Conduct](msft_oss_co
 [python_logging]: https://docs.python.org/3/library/logging.html
 [tables_error_codes]: https://docs.microsoft.com/rest/api/storageservices/table-service-error-codes
 
+<!-- Still needed -->
 [samples_authentication]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/tables/azure-data-tables/samples/table_samples_authentication.py
+<!-- Still needed -->
 [samples_services]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/tables/azure-data-tables/samples/table_samples_authentication.py
+<!-- Still needed -->
 [samples_client]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/tables/azure-data-tables/samples/table_samples_client.py
 
 [msft_oss_coc]:https://opensource.microsoft.com/codeofconduct/
