@@ -4,6 +4,12 @@
       "title": "Example service",
       "version": "1.1"
   },
+  "produces": [
+    "application/json"
+  ],
+  "consumes": [
+    "application/json"
+  ],
   "paths": {
       "/ComputeNodes": {
           "parameters": [
