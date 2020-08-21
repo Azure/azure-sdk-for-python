@@ -109,7 +109,6 @@ from ._virtual_hub_bgp_connection_operations import VirtualHubBgpConnectionOpera
 from ._virtual_hub_bgp_connections_operations import VirtualHubBgpConnectionsOperations
 from ._virtual_hub_ip_configuration_operations import VirtualHubIpConfigurationOperations
 from ._hub_route_tables_operations import HubRouteTablesOperations
-from ._web_application_firewall_policies_operations import WebApplicationFirewallPoliciesOperations
 from ._network_management_client_operations import NetworkManagementClientOperationsMixin
 
 __all__ = [
@@ -213,6 +212,5 @@ __all__ = [
     'VirtualHubBgpConnectionsOperations',
     'VirtualHubIpConfigurationOperations',
     'HubRouteTablesOperations',
-    'WebApplicationFirewallPoliciesOperations',
     'NetworkManagementClientOperationsMixin',
 ]

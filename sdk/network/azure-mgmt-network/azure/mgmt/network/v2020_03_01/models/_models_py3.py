@@ -7716,10 +7716,6 @@ class FirewallPolicy(Resource):
      Possible values include: 'Alert', 'Deny', 'Off'
     :type threat_intel_mode: str or
      ~azure.mgmt.network.v2020_03_01.models.AzureFirewallThreatIntelMode
-    :param intrusion_system_mode: The operation mode for Intrusion system.
-     Possible values include: 'Enabled', 'Disabled'
-    :type intrusion_system_mode: str or
-     ~azure.mgmt.network.v2020_03_01.models.FirewallPolicyIntrusionSystemMode
     :ivar etag: A unique read-only string that changes whenever the resource
      is updated.
     :vartype etag: str
@@ -7747,11 +7743,10 @@ class FirewallPolicy(Resource):
         'firewalls': {'key': 'properties.firewalls', 'type': '[SubResource]'},
         'child_policies': {'key': 'properties.childPolicies', 'type': '[SubResource]'},
         'threat_intel_mode': {'key': 'properties.threatIntelMode', 'type': 'str'},
-        'intrusion_system_mode': {'key': 'properties.intrusionSystemMode', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str=None, location: str=None, tags=None, base_policy=None, threat_intel_mode=None, intrusion_system_mode=None, **kwargs) -> None:
+    def __init__(self, *, id: str=None, location: str=None, tags=None, base_policy=None, threat_intel_mode=None, **kwargs) -> None:
         super(FirewallPolicy, self).__init__(id=id, location=location, tags=tags, **kwargs)
         self.rule_groups = None
         self.provisioning_state = None
@@ -7759,7 +7754,6 @@ class FirewallPolicy(Resource):
         self.firewalls = None
         self.child_policies = None
         self.threat_intel_mode = threat_intel_mode
-        self.intrusion_system_mode = intrusion_system_mode
         self.etag = None
 
 
