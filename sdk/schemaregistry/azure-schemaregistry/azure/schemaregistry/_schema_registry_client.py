@@ -28,10 +28,10 @@ class SchemaRegistryClient:
         # type: (str, str, str, str) -> str
         """
 
-        :param schema_group:
-        :param schema_name:
-        :param serialization_type:
-        :param schema_string:
+        :param str schema_group:
+        :param str schema_name:
+        :param str serialization_type:
+        :param str schema_string:
         :return:
         """
         schema_id_model = self._generated_client.schema.register(
@@ -45,7 +45,7 @@ class SchemaRegistryClient:
         # type: (str) -> str
         """
 
-        :param schema_id:
+        :param str schema_id:
         :return:
         """
         return self._generated_client.schema.get_by_id(schema_id)
