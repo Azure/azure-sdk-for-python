@@ -158,7 +158,7 @@ class AzureEntityResource(Resource):
 class CloudError(Model):
     """An error response from the Batch service.
 
-    :param error:
+    :param error: Error message
     :type error: ~azure.mgmt.rdbms.mysql.models.ErrorResponse
     """
 
