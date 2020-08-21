@@ -1796,8 +1796,7 @@ class VirtualMachinesOperations(object):
 
     def simulate_eviction(
             self, resource_group_name, vm_name, custom_headers=None, raw=False, polling=True, **operation_config):
-        """The operation to simulate the eviction of spot virtual machine. The
-        eviction will occur within 30 minutes of calling the API.
+        """The operation to simulate the eviction of spot virtual machine.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str

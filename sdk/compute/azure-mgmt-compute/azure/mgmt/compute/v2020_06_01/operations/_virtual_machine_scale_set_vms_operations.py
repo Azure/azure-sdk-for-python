@@ -1307,8 +1307,7 @@ class VirtualMachineScaleSetVMsOperations(object):
     def simulate_eviction(
             self, resource_group_name, vm_scale_set_name, instance_id, custom_headers=None, raw=False, polling=True, **operation_config):
         """The operation to simulate the eviction of spot virtual machine in a VM
-        scale set. The eviction will occur within 30 minutes of calling the
-        API.
+        scale set.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
