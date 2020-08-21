@@ -192,9 +192,11 @@ function ReplaceGithubLink([string]$originLink) {
     return $originLink
   }
   $ReplacementPattern = "`${1}$branchReplacementName`$2"
-  $originLink -match $branchReplaceRegex
+  Write-Host "This is the printout whether it matches"
+  $returnLink = $originLink -replace $branchReplaceRegex, $ReplacementPattern 
   Write-Host $Matches
-  return $originLink -replace $branchReplaceRegex, $ReplacementPattern 
+  Write-Host "End"
+  return $returnLink
 }
 
 function GetLinks([System.Uri]$pageUri)
