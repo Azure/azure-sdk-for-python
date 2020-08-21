@@ -639,6 +639,7 @@ class StorageTableEntityTest(TableTestCase):
         # Arrange
         self._set_up(storage_account, storage_account_key)
         try:
+            table = self.ts.create_table("testtable")
             entity = {
                 "PartitionKey": "PartitionKey",
                 "RowKey": "RowKey",
@@ -650,22 +651,22 @@ class StorageTableEntityTest(TableTestCase):
                 "Value": 2
             }
 
-            self.table.create_entity(entity=entity)
+            e1 = table.create_entity(entity=entity)
 
             # Act
             # Do a get and confirm the etag is parsed correctly by using it
             # as a condition to delete.
-            resp = self.table.get_entity(partition_key=entity['PartitionKey'],
+            resp = table.get_entity(partition_key=entity['PartitionKey'],
                                          row_key=entity['RowKey'])
             etag = resp["_metadata"]["etag"]
 
-            self.table.create_entity(entity=entity2)
-            resp2 = self.table.get_entity(partition_key=entity2['PartitionKey'],
+            create2_resp = table.create_entity(entity=entity2)
+            resp2 = table.get_entity(partition_key=entity2['PartitionKey'],
                                          row_key=entity2['RowKey'])
-
+            new_etag = resp2["_metadata"]["etag"]
 
             with self.assertRaises(ResourceModifiedError):
-                self.table.delete_entity(
+                table.delete_entity(
                     partition_key=resp['PartitionKey'],
                     row_key=resp['RowKey'],
                     etag=etag,
