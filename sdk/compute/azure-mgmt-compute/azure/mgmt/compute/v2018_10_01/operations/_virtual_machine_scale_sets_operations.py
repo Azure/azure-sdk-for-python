@@ -79,7 +79,6 @@ class VirtualMachineScaleSetsOperations(object):
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'VirtualMachineScaleSet')
         body_content_kwargs['content'] = body_content
@@ -92,7 +91,6 @@ class VirtualMachineScaleSetsOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('VirtualMachineScaleSet', pipeline_response)
 
@@ -112,7 +110,7 @@ class VirtualMachineScaleSetsOperations(object):
         parameters,  # type: "models.VirtualMachineScaleSet"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller["models.VirtualMachineScaleSet"]
         """Create or update a VM scale set.
 
         :param resource_group_name: The name of the resource group.
@@ -203,7 +201,6 @@ class VirtualMachineScaleSetsOperations(object):
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'VirtualMachineScaleSetUpdate')
         body_content_kwargs['content'] = body_content
@@ -231,7 +228,7 @@ class VirtualMachineScaleSetsOperations(object):
         parameters,  # type: "models.VirtualMachineScaleSetUpdate"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller["models.VirtualMachineScaleSet"]
         """Update a VM scale set.
 
         :param resource_group_name: The name of the resource group.
@@ -318,7 +315,6 @@ class VirtualMachineScaleSetsOperations(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
 
-        # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -338,7 +334,7 @@ class VirtualMachineScaleSetsOperations(object):
         vm_scale_set_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller[None]
         """Deletes a VM scale set.
 
         :param resource_group_name: The name of the resource group.
@@ -431,7 +427,6 @@ class VirtualMachineScaleSetsOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -479,7 +474,6 @@ class VirtualMachineScaleSetsOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         if vm_instance_i_ds is not None:
             body_content = self._serialize.body(vm_instance_i_ds, 'VirtualMachineScaleSetVMInstanceIDs')
@@ -507,7 +501,7 @@ class VirtualMachineScaleSetsOperations(object):
         vm_instance_i_ds=None,  # type: Optional["models.VirtualMachineScaleSetVMInstanceIDs"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller[None]
         """Deallocates specific virtual machines in a VM scale set. Shuts down the virtual machines and
     releases the compute resources. You are not billed for the compute resources that this virtual
     machine scale set deallocates.
@@ -596,7 +590,6 @@ class VirtualMachineScaleSetsOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(vm_instance_i_ds, 'VirtualMachineScaleSetVMInstanceRequiredIDs')
         body_content_kwargs['content'] = body_content
@@ -621,7 +614,7 @@ class VirtualMachineScaleSetsOperations(object):
         vm_instance_i_ds,  # type: "models.VirtualMachineScaleSetVMInstanceRequiredIDs"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller[None]
         """Deletes virtual machines in a VM scale set.
 
         :param resource_group_name: The name of the resource group.
@@ -717,7 +710,6 @@ class VirtualMachineScaleSetsOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -755,6 +747,10 @@ class VirtualMachineScaleSetsOperations(object):
         api_version = "2018-10-01"
 
         def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = 'application/json'
+
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']  # type: ignore
@@ -767,15 +763,11 @@ class VirtualMachineScaleSetsOperations(object):
                 query_parameters = {}  # type: Dict[str, Any]
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
+                request = self._client.get(url, query_parameters, header_parameters)
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
+                request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         def extract_data(pipeline_response):
@@ -822,6 +814,10 @@ class VirtualMachineScaleSetsOperations(object):
         api_version = "2018-10-01"
 
         def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = 'application/json'
+
             if not next_link:
                 # Construct URL
                 url = self.list_all.metadata['url']  # type: ignore
@@ -833,15 +829,11 @@ class VirtualMachineScaleSetsOperations(object):
                 query_parameters = {}  # type: Dict[str, Any]
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
+                request = self._client.get(url, query_parameters, header_parameters)
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
+                request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         def extract_data(pipeline_response):
@@ -893,6 +885,10 @@ class VirtualMachineScaleSetsOperations(object):
         api_version = "2018-10-01"
 
         def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = 'application/json'
+
             if not next_link:
                 # Construct URL
                 url = self.list_skus.metadata['url']  # type: ignore
@@ -906,15 +902,11 @@ class VirtualMachineScaleSetsOperations(object):
                 query_parameters = {}  # type: Dict[str, Any]
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
+                request = self._client.get(url, query_parameters, header_parameters)
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
+                request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         def extract_data(pipeline_response):
@@ -965,6 +957,10 @@ class VirtualMachineScaleSetsOperations(object):
         api_version = "2018-10-01"
 
         def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = 'application/json'
+
             if not next_link:
                 # Construct URL
                 url = self.get_os_upgrade_history.metadata['url']  # type: ignore
@@ -978,15 +974,11 @@ class VirtualMachineScaleSetsOperations(object):
                 query_parameters = {}  # type: Dict[str, Any]
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
+                request = self._client.get(url, query_parameters, header_parameters)
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
+                request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         def extract_data(pipeline_response):
@@ -1044,7 +1036,6 @@ class VirtualMachineScaleSetsOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         if vm_instance_i_ds is not None:
             body_content = self._serialize.body(vm_instance_i_ds, 'VirtualMachineScaleSetVMInstanceIDs')
@@ -1072,7 +1063,7 @@ class VirtualMachineScaleSetsOperations(object):
         vm_instance_i_ds=None,  # type: Optional["models.VirtualMachineScaleSetVMInstanceIDs"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller[None]
         """Power off (stop) one or more virtual machines in a VM scale set. Note that resources are still
     attached and you are getting charged for the resources. Instead, use deallocate to release
     resources and avoid charges.
@@ -1161,7 +1152,6 @@ class VirtualMachineScaleSetsOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         if vm_instance_i_ds is not None:
             body_content = self._serialize.body(vm_instance_i_ds, 'VirtualMachineScaleSetVMInstanceIDs')
@@ -1189,7 +1179,7 @@ class VirtualMachineScaleSetsOperations(object):
         vm_instance_i_ds=None,  # type: Optional["models.VirtualMachineScaleSetVMInstanceIDs"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller[None]
         """Restarts one or more virtual machines in a VM scale set.
 
         :param resource_group_name: The name of the resource group.
@@ -1276,7 +1266,6 @@ class VirtualMachineScaleSetsOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         if vm_instance_i_ds is not None:
             body_content = self._serialize.body(vm_instance_i_ds, 'VirtualMachineScaleSetVMInstanceIDs')
@@ -1304,7 +1293,7 @@ class VirtualMachineScaleSetsOperations(object):
         vm_instance_i_ds=None,  # type: Optional["models.VirtualMachineScaleSetVMInstanceIDs"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller[None]
         """Starts one or more virtual machines in a VM scale set.
 
         :param resource_group_name: The name of the resource group.
@@ -1391,7 +1380,6 @@ class VirtualMachineScaleSetsOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         if vm_instance_i_ds is not None:
             body_content = self._serialize.body(vm_instance_i_ds, 'VirtualMachineScaleSetVMInstanceIDs')
@@ -1419,7 +1407,7 @@ class VirtualMachineScaleSetsOperations(object):
         vm_instance_i_ds=None,  # type: Optional["models.VirtualMachineScaleSetVMInstanceIDs"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller[None]
         """Shuts down all the virtual machines in the virtual machine scale set, moves them to a new node,
     and powers them back on.
 
@@ -1507,7 +1495,6 @@ class VirtualMachineScaleSetsOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         if vm_instance_i_ds is not None:
             body_content = self._serialize.body(vm_instance_i_ds, 'VirtualMachineScaleSetVMInstanceIDs')
@@ -1535,7 +1522,7 @@ class VirtualMachineScaleSetsOperations(object):
         vm_instance_i_ds=None,  # type: Optional["models.VirtualMachineScaleSetVMInstanceIDs"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller[None]
         """Perform maintenance on one or more virtual machines in a VM scale set. Operation on instances
     which are not eligible for perform maintenance will be failed. Please refer to best practices
     for more details: https://docs.microsoft.com/en-us/azure/virtual-machine-scale-sets/virtual-
@@ -1625,7 +1612,6 @@ class VirtualMachineScaleSetsOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(vm_instance_i_ds, 'VirtualMachineScaleSetVMInstanceRequiredIDs')
         body_content_kwargs['content'] = body_content
@@ -1650,7 +1636,7 @@ class VirtualMachineScaleSetsOperations(object):
         vm_instance_i_ds,  # type: "models.VirtualMachineScaleSetVMInstanceRequiredIDs"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller[None]
         """Upgrades one or more virtual machines to the latest SKU set in the VM scale set model.
 
         :param resource_group_name: The name of the resource group.
@@ -1737,7 +1723,6 @@ class VirtualMachineScaleSetsOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         if vm_scale_set_reimage_input is not None:
             body_content = self._serialize.body(vm_scale_set_reimage_input, 'VirtualMachineScaleSetReimageParameters')
@@ -1765,7 +1750,7 @@ class VirtualMachineScaleSetsOperations(object):
         vm_scale_set_reimage_input=None,  # type: Optional["models.VirtualMachineScaleSetReimageParameters"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller[None]
         """Reimages (upgrade the operating system) one or more virtual machines in a VM scale set which
     don't have a ephemeral OS disk, for virtual machines who have a ephemeral OS disk the virtual
     machine is reset to initial state.
@@ -1854,7 +1839,6 @@ class VirtualMachineScaleSetsOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         if vm_instance_i_ds is not None:
             body_content = self._serialize.body(vm_instance_i_ds, 'VirtualMachineScaleSetVMInstanceIDs')
@@ -1882,7 +1866,7 @@ class VirtualMachineScaleSetsOperations(object):
         vm_instance_i_ds=None,  # type: Optional["models.VirtualMachineScaleSetVMInstanceIDs"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller[None]
         """Reimages all the disks ( including data disks ) in the virtual machines in a VM scale set. This
     operation is only supported for managed disks.
 
@@ -1985,7 +1969,6 @@ class VirtualMachineScaleSetsOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response

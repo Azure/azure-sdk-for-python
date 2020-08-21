@@ -76,7 +76,6 @@ class VirtualMachineScaleSetExtensionsOperations:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(extension_parameters, 'VirtualMachineScaleSetExtension')
         body_content_kwargs['content'] = body_content
@@ -89,7 +88,6 @@ class VirtualMachineScaleSetExtensionsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('VirtualMachineScaleSetExtension', pipeline_response)
 
@@ -109,7 +107,7 @@ class VirtualMachineScaleSetExtensionsOperations:
         vmss_extension_name: str,
         extension_parameters: "models.VirtualMachineScaleSetExtension",
         **kwargs
-    ) -> "models.VirtualMachineScaleSetExtension":
+    ) -> AsyncLROPoller["models.VirtualMachineScaleSetExtension"]:
         """The operation to create or update an extension.
 
         :param resource_group_name: The name of the resource group.
@@ -128,8 +126,8 @@ class VirtualMachineScaleSetExtensionsOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: VirtualMachineScaleSetExtension, or the result of cls(response)
-        :rtype: ~azure.mgmt.compute.v2017_12_01.models.VirtualMachineScaleSetExtension
+        :return: An instance of AsyncLROPoller that returns either VirtualMachineScaleSetExtension or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.compute.v2017_12_01.models.VirtualMachineScaleSetExtension]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -179,8 +177,8 @@ class VirtualMachineScaleSetExtensionsOperations:
         vm_scale_set_name: str,
         vmss_extension_name: str,
         **kwargs
-    ) -> "models.OperationStatusResponse":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.OperationStatusResponse"]
+    ) -> Optional["models.OperationStatusResponse"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.OperationStatusResponse"]]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2017-12-01"
@@ -203,7 +201,6 @@ class VirtualMachineScaleSetExtensionsOperations:
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -228,7 +225,7 @@ class VirtualMachineScaleSetExtensionsOperations:
         vm_scale_set_name: str,
         vmss_extension_name: str,
         **kwargs
-    ) -> "models.OperationStatusResponse":
+    ) -> AsyncLROPoller["models.OperationStatusResponse"]:
         """The operation to delete the extension.
 
         :param resource_group_name: The name of the resource group.
@@ -243,8 +240,8 @@ class VirtualMachineScaleSetExtensionsOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: OperationStatusResponse, or the result of cls(response)
-        :rtype: ~azure.mgmt.compute.v2017_12_01.models.OperationStatusResponse
+        :return: An instance of AsyncLROPoller that returns either OperationStatusResponse or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.compute.v2017_12_01.models.OperationStatusResponse]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -335,7 +332,6 @@ class VirtualMachineScaleSetExtensionsOperations:
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -375,6 +371,10 @@ class VirtualMachineScaleSetExtensionsOperations:
         api_version = "2017-12-01"
 
         def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = 'application/json'
+
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']  # type: ignore
@@ -388,15 +388,11 @@ class VirtualMachineScaleSetExtensionsOperations:
                 query_parameters = {}  # type: Dict[str, Any]
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
+                request = self._client.get(url, query_parameters, header_parameters)
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
+                request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         async def extract_data(pipeline_response):
