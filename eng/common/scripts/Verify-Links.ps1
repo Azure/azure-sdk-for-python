@@ -192,6 +192,8 @@ function ReplaceGithubLink([string]$originLink) {
     return $originLink
   }
   $ReplacementPattern = "`${1}$branchReplacementName`$2"
+  $originLink -match $branchReplaceRegex
+  Write-Host $Matches
   return $originLink -replace $branchReplaceRegex, $ReplacementPattern 
 }
 
