@@ -271,7 +271,10 @@ while ($pageUrisToCheck.Count -ne 0)
   Write-Host "Found $($linkUris.Count) links on page $pageUri";
   
   foreach ($linkUri in $linkUris) {
+    Write-Host "before the replace $linkUri"
+    Write-Host "the commit $branchReplacementName"
     $linkUri = ReplaceGithubLink $linkUri
+    Write-Host "after the replace $linkUri"
 
     $isLinkValid = CheckLink $linkUri
     if (!$isLinkValid) {
