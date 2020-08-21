@@ -51,7 +51,7 @@ consumer_client = EventHubConsumerClient(
     fully_qualified_namespace=FULLY_QUALIFIED_NAMESPACE,
     eventhub_name=EVENTHUB_NAME,
     consumer_group=CONSUMER_GROUP,
-    credential=CustomizedSASToken(sas_token, time.time() + token_ttl.seconds),
+    credential=CustomizedSASToken(SAS_TOKEN, time.time() + token_ttl.seconds),
     logging_enable=True
 )
 
