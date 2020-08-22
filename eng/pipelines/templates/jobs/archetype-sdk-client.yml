@@ -42,6 +42,21 @@ parameters:
   AdditionalTestMatrix: []
 
 jobs:
+  - job: 'Build'
+    variables:
+    - template: ../variables/globals.yml
+
+    pool:
+      vmImage: 'ubuntu-18.04'
+
+    steps:
+    - template: ../steps/build-artifacts.yml
+      parameters: 
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
+        BuildDocs: ${{ parameters.BuildDocs }}
+
   - job: 'Analyze'
     condition: and(succeededOrFailed(), ne(variables['Skip.Analyze'], 'true'))
     variables:
