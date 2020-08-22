@@ -32,7 +32,7 @@ def generate_sas_token(uri, sas_name, sas_value, token_ttl):
     expiry = str(int(time.time() + token_ttl))
     string_to_sign = (uri + '\n' + expiry).encode('utf-8')
     signed_hmac_sha256 = hmac.HMAC(sas, string_to_sign, hashlib.sha256)
-    signature = url_parse_quote.quote(base64.b64encode(signed_hmac_sha256.digest()))
+    signature = url_parse_quote(base64.b64encode(signed_hmac_sha256.digest()))
     return 'SharedAccessSignature sr={}&sig={}&se={}&skn={}'.format(uri, signature, expiry, sas_name)
 
 
@@ -47,7 +47,7 @@ class CustomizedSASCredential(object):
         self.expiry = expiry
         self.token_type = b"servicebus.windows.net:sastoken"
 
-    def get_token(self, *scopes, **kwargs):
+    async def get_token(self, *scopes, **kwargs):
         """
         This method is automatically called when token is about to expire.
         """
@@ -77,9 +77,12 @@ async def create_with_sas_token():
         logging_enable=True
     )
     
+    async def on_event(context, event):
+        print(context.partition_id, ":", event)
+
     async with consumer_client:
         await consumer_client.receive(
-            lambda pc, event: print(pc.partition_id, ":", event),
+            on_event,
             starting_position=-1
         )
 
