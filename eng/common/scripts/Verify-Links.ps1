@@ -14,7 +14,7 @@ param (
   # list of http status codes count as broken links. Defaults to 400, 401, 404, SocketError.HostNotFound = 11001, SocketError.NoData = 11004
   [array] $errorStatusCodes = @(400, 401, 404, 11001, 11004),
   # regex to check if the link needs to be replaced
-  [string] $branchReplaceRegex = "(https://github.com/.*/blob/)master(/.*)",
+  [string] $branchReplaceRegex = "(https://github.com/.*/blob|tree/)master(/.*)",
   # the substitute branch name or SHA commit
   [string] $branchReplacementName = "",
   # flag to allow checking against azure sdk link guidance.
