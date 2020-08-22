@@ -9,7 +9,6 @@ from typing import (  # pylint: disable=unused-import
     Union, Optional, Any, IO, Iterable, AnyStr, Dict, List, Tuple,
     TYPE_CHECKING
 )
-from urllib.parse import quote_plus
 
 from azure.core.tracing.decorator_async import distributed_trace_async
 
