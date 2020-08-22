@@ -6,7 +6,7 @@
 # --------------------------------------------------------------------------------------------
 
 """
-Example to show scheduling messages to and cancelling messages from a Service Bus Queue asynchronously.
+Example to show scheduling messages to and cancelling messages from a Service Bus Topic asynchronously.
 """
 
 # pylint: disable=C0111
@@ -17,8 +17,9 @@ import datetime
 from azure.servicebus.aio import ServiceBusClient
 from azure.servicebus import Message
 
-CONNECTION_STR = os.environ["SERVICE_BUS_CONNECTION_STR"]
+CONNECTION_STR = os.environ['SERVICE_BUS_CONNECTION_STR']
 TOPIC_NAME = os.environ["SERVICE_BUS_TOPIC_NAME"]
+
 
 
 async def schedule_single_message(sender):
