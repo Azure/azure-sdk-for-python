@@ -181,7 +181,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         parsed_source_url = urlparse(source_url)
         source_scheme = parsed_source_url.scheme
         source_hostname = parsed_source_url.netloc.rstrip('/')
-        source_path = parsed_source_url.path
+        source_path = unquote(parsed_source_url.path)
         source_query = parsed_source_url.query
         return "{}://{}{}?{}".format(
             source_scheme,
@@ -3469,7 +3469,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             The timeout parameter is expressed in seconds.
         """
         options = self._append_block_from_url_options(
-            copy_source_url=self._encode_source_url(source_url),
+            copy_source_url=self._encode_source_url(copy_source_url),
             source_offset=source_offset,
             source_length=source_length,
             **kwargs
