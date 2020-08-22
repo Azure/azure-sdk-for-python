@@ -11,10 +11,10 @@ from typing import (  # pylint: disable=unused-import
     TYPE_CHECKING
 )
 try:
-    from urllib.parse import urlparse, quote, quote_plus, unquote
+    from urllib.parse import urlparse, quote, unquote
 except ImportError:
     from urlparse import urlparse  # type: ignore
-    from urllib2 import quote, quote_plus, unquote  # type: ignore
+    from urllib2 import quote, unquote  # type: ignore
 
 import six
 from azure.core.tracing.decorator import distributed_trace
