@@ -5,8 +5,9 @@
 # --------------------------------------------------------------------------
 import os
 
-from azure.identity import ClientSecretCredential
-from azure.schemaregistry import SchemaRegistryClient, SerializationType
+from azure.identity.aio import ClientSecretCredential
+from azure.schemaregistry.aio import SchemaRegistryClient
+from azure.schemaregistry import SerializationType
 
 TENANT_ID=os.environ['AZURE_TENANT_ID']
 CLIENT_ID=os.environ['AZURE_CLIENT_ID']

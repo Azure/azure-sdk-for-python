@@ -15,25 +15,8 @@ from setuptools import find_packages, setup
 PACKAGE_NAME = "azure-schemaregistry-avro-serializer"
 PACKAGE_PPRINT_NAME = "Schema Registry Avro Serializer"
 
-# a-b-c => a/b/c
-package_folder_path = PACKAGE_NAME.replace('-', '/')
-# a-b-c => a.b.c
-namespace_name = PACKAGE_NAME.replace('-', '.')
-
-# azure v0.x is not compatible with this package
-# azure v0.x used to have a __version__ attribute (newer versions don't)
-try:
-    import azure
-    try:
-        ver = azure.__version__
-        raise Exception(
-            'This package is incompatible with azure=={}. '.format(ver) +
-            'Uninstall it with "pip uninstall azure".'
-        )
-    except AttributeError:
-        pass
-except ImportError:
-    pass
+package_folder_path = "azure/schemaregistry/serializer/avro_serializer"
+namespace_name = "azure.schemaregistry.serializer.avro_serializer"
 
 # Version extraction inspired from 'requests'
 with open(os.path.join(package_folder_path, '_version.py'), 'r') as fd:
@@ -78,9 +61,8 @@ setup(
         'azure',
     ]),
     install_requires=[
-        'msrest>=0.5.0',
         'azure-core<2.0.0,>=1.2.2'
-        'azure-schemaregistry==1.0.0b1'
+        'azure-schemaregistry<2.0.0,>=1.0.0b1'
     ],
     extras_require={
         ":python_version<'3.0'": ['azure-nspkg', 'futures'],

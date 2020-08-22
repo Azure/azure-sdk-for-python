@@ -25,7 +25,7 @@ class SchemaRegistryClient:
         self._generated_client = AzureSchemaRegistry(credential=credential, endpoint=endpoint, **kwargs)
 
     def register_schema(self, schema_group, schema_name, serialization_type, schema_string):
-        # type: (str, str, str, str) -> str
+        # type: (str, str, Union[str, Enum], str) -> str
         """
 
         :param str schema_group:
