@@ -235,7 +235,6 @@ class StorageAppendBlobTest(StorageTestCase):
         self._setup(bsc)
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(source_blob_data, bsc)
-
         sas = generate_blob_sas(
             source_blob_client.account_name,
             source_blob_client.container_name,
