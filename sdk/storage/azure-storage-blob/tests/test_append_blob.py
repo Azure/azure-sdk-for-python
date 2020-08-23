@@ -76,13 +76,6 @@ class StorageAppendBlobTest(StorageTestCase):
         blob_client.append_block(data)
         return blob_client
 
-    def _create_source_blob_with_special_chars(self, data, bsc):
-        blob_client = bsc.get_blob_client(
-            self.source_container_name, 'भारत¥test/testsubÐirÍ/'+self.get_resource_name('srcÆblob'))
-        blob_client.create_append_blob()
-        blob_client.append_block(data)
-        return blob_client
-
     def assertBlobEqual(self, blob, expected_data):
         stream = blob.download_blob()
         actual_data = stream.readall()
