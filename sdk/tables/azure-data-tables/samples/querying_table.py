@@ -21,9 +21,8 @@ class QueryTable(object):
         # Create Tables to query
         try:
             my_table = table_service_client.create_table(table_name=self.table_name)
-            print(my_table.table_name)
         except ResourceExistsError:
-            print("Table already exists!")
+            pass
 
         # Query tables
         queried_tables = table_service_client.query_tables(filter=self.name_filter, results_per_page=10)
