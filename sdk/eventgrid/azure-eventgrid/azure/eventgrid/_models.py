@@ -159,10 +159,17 @@ class DeserializedEvent():
 
         :rtype: Union[CloudEvent, EventGridEvent]
         """
-        event = self._event_dict['type'].rsplit('.')[-1]
-        DeserializedEvent._event_type_mappings = {
-            self._event_dict['type']:v for k, v in models.__dict__.items() if event in k
-            }
+        try:
+            event = self._event_dict['type'].rsplit('.')[-1]
+        except KeyError:
+            try:
+                event = self._event_dict['event_type'].rsplit('.')[-1]
+            except KeyError:
+                event = None
+        if event is not None:
+            DeserializedEvent._event_type_mappings.update({
+                self._event_dict['type']:v for k, v in models.__dict__.items() if event in k
+                })
         if not self._model:
             try:
                 if 'specversion' in self._event_dict.keys():
