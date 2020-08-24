@@ -23,7 +23,7 @@ from azure.storage.blob.aio import (
 from azure.storage.blob import (
     BlobBlock
 )
-from azure.storage.blob._shared.base_client import format_shared_key_credential
+from azure.storage.blob._shared.base_client import _format_shared_key_credential
 from azure.storage.blob._shared.constants import CONNECTION_TIMEOUT, READ_TIMEOUT
 
 from _shared.asynctestcase import AsyncStorageTestCase
@@ -123,7 +123,7 @@ class StorageLargestBlockBlobTestAsync(AsyncStorageTestCase):
     @AsyncStorageTestCase.await_prepared_test
     async def test_put_block_bytes_largest_without_network(self, resource_group, location, storage_account, storage_account_key):
         payload_dropping_policy = PayloadDroppingPolicy()
-        credential_policy = format_shared_key_credential([storage_account.name, "dummy"], storage_account_key)
+        credential_policy = _format_shared_key_credential(storage_account.name, storage_account_key)
         await self._setup(storage_account, storage_account_key, [payload_dropping_policy, credential_policy])
         blob = await self._create_blob()
 
@@ -185,7 +185,7 @@ class StorageLargestBlockBlobTestAsync(AsyncStorageTestCase):
     @AsyncStorageTestCase.await_prepared_test
     async def test_put_block_stream_largest_without_network(self, resource_group, location, storage_account, storage_account_key):
         payload_dropping_policy = PayloadDroppingPolicy()
-        credential_policy = format_shared_key_credential([storage_account.name, "dummy"], storage_account_key)
+        credential_policy = _format_shared_key_credential(storage_account.name, storage_account_key)
         await self._setup(storage_account, storage_account_key, [payload_dropping_policy, credential_policy])
         blob = await self._create_blob()
 
@@ -241,7 +241,7 @@ class StorageLargestBlockBlobTestAsync(AsyncStorageTestCase):
     @AsyncStorageTestCase.await_prepared_test
     async def test_create_largest_blob_from_path_without_network(self, resource_group, location, storage_account, storage_account_key):
         payload_dropping_policy = PayloadDroppingPolicy()
-        credential_policy = format_shared_key_credential([storage_account.name, "dummy"], storage_account_key)
+        credential_policy = _format_shared_key_credential(storage_account.name, storage_account_key)
         await self._setup(storage_account, storage_account_key, [payload_dropping_policy, credential_policy])
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
@@ -268,7 +268,7 @@ class StorageLargestBlockBlobTestAsync(AsyncStorageTestCase):
     @AsyncStorageTestCase.await_prepared_test
     async def test_create_largest_blob_from_stream_without_network(self, resource_group, location, storage_account, storage_account_key):
         payload_dropping_policy = PayloadDroppingPolicy()
-        credential_policy = format_shared_key_credential([storage_account.name, "dummy"], storage_account_key)
+        credential_policy = _format_shared_key_credential(storage_account.name, storage_account_key)
         await self._setup(storage_account, storage_account_key, [payload_dropping_policy, credential_policy])
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
@@ -289,7 +289,7 @@ class StorageLargestBlockBlobTestAsync(AsyncStorageTestCase):
     @AsyncStorageTestCase.await_prepared_test
     async def test_create_largest_blob_from_stream_single_upload_without_network(self, resource_group, location, storage_account, storage_account_key):
         payload_dropping_policy = PayloadDroppingPolicy()
-        credential_policy = format_shared_key_credential([storage_account.name, "dummy"], storage_account_key)
+        credential_policy = _format_shared_key_credential(storage_account.name, storage_account_key)
         await self._setup(storage_account, storage_account_key, [payload_dropping_policy, credential_policy],
                     max_single_put_size=LARGEST_SINGLE_UPLOAD_SIZE)
         blob_name = self._get_blob_reference()

@@ -234,8 +234,9 @@ credential = DefaultAzureCredential()
 
 certificate_client = CertificateClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
 
-deleted_certificate = certificate_client.begin_delete_certificate("cert-name")
+deleted_certificate_poller = certificate_client.begin_delete_certificate("cert-name")
 
+deleted_certificate = deleted_certificate_poller.result()
 print(deleted_certificate.name)
 print(deleted_certificate.deleted_on)
 ```
@@ -412,7 +413,7 @@ additional questions or comments.
 [backup_operations_async_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/keyvault/azure-keyvault-certificates/samples/backup_restore_operations_async.py
 [hello_world_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/keyvault/azure-keyvault-certificates/samples/hello_world.py
 [hello_world_async_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/keyvault/azure-keyvault-certificates/samples/hello_world_async.py
-[keyvault_docs]: https://docs.microsoft.com/en-us/azure/key-vault/
+[keyvault_docs]: https://docs.microsoft.com/azure/key-vault/
 [list_operations_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/keyvault/azure-keyvault-certificates/samples/list_operations.py
 [list_operations_async_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/keyvault/azure-keyvault-certificates/samples/list_operations_async.py
 [recover_purge_operations_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/keyvault/azure-keyvault-certificates/samples/recover_purge_operations.py
@@ -427,6 +428,6 @@ additional questions or comments.
 [reference_docs]: https://aka.ms/azsdk/python/keyvault-certificates/docs
 [certificates_client_src]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-certificates/azure/keyvault/certificates
 [certificates_samples]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-certificates/samples
-[soft_delete]: https://docs.microsoft.com/en-us/azure/key-vault/key-vault-ovw-soft-delete
+[soft_delete]: https://docs.microsoft.com/azure/key-vault/key-vault-ovw-soft-delete
 
 ![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fsdk%2Fkeyvault%2Fazure-keyvault-certificates%2FFREADME.png)

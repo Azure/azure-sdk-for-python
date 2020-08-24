@@ -135,7 +135,7 @@ class SearchIndexDocumentBatchingClient(HeadersMixin):
         # get actions
         actions = await self._index_documents_batch.dequeue_actions()
         try:
-            results = self._index_documents_actions(actions=actions)
+            results = await self._index_documents_actions(actions=actions)
             # re-queue 207:
             if not self._index_key:
                 client = SearchServiceClient(self._endpoint)

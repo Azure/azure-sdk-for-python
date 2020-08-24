@@ -6,7 +6,7 @@ Azure SDK clients which support Azure Active Directory (AAD) token authenticatio
 [Source code](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity)
 | [Package (PyPI)](https://pypi.org/project/azure-identity/)
 | [API reference documentation][ref_docs]
-| [Azure Active Directory documentation](https://docs.microsoft.com/en-us/azure/active-directory/)
+| [Azure Active Directory documentation](https://docs.microsoft.com/azure/active-directory/)
 
 # Getting started
 
@@ -268,7 +268,7 @@ the message collects error messages from each credential in the chain.
 
 For more details on handling specific Azure Active Directory errors please refer to the
 Azure Active Directory
-[error code documentation](https://docs.microsoft.com/en-us/azure/active-directory/develop/reference-aadsts-error-codes).
+[error code documentation](https://docs.microsoft.com/azure/active-directory/develop/reference-aadsts-error-codes).
 
 ### Logging
 

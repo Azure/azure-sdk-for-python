@@ -30,7 +30,7 @@ if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
     from typing import Any, Iterable, List, Mapping, Optional
     from .._internal import AadClientBase
-    from azure.identity._auth_record import AuthenticationRecord
+    from azure.identity import AuthenticationRecord
 
     CacheItem = Mapping[str, str]
 
@@ -90,7 +90,7 @@ class SharedTokenCacheBase(ABC):
     def __init__(self, username=None, **kwargs):  # pylint:disable=unused-argument
         # type: (Optional[str], **Any) -> None
 
-        self._auth_record = kwargs.pop("_authentication_record", None)  # type: Optional[AuthenticationRecord]
+        self._auth_record = kwargs.pop("authentication_record", None)  # type: Optional[AuthenticationRecord]
         if self._auth_record:
             # authenticate in the tenant that produced the record unless 'tenant_id' specifies another
             authenticating_tenant = kwargs.pop("tenant_id", None) or self._auth_record.tenant_id
@@ -118,7 +118,7 @@ class SharedTokenCacheBase(ABC):
             return
 
         if not self._cache and self.supported():
-            allow_unencrypted = self._client_kwargs.get("_allow_unencrypted_cache", True)
+            allow_unencrypted = self._client_kwargs.get("allow_unencrypted_cache", False)
             try:
                 self._cache = load_user_cache(allow_unencrypted)
             except Exception:  # pylint:disable=broad-except

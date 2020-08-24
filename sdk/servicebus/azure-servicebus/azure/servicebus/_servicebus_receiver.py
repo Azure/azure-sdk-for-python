@@ -188,6 +188,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             send_settle_mode=SenderSettleMode.Settled if self._mode == ReceiveSettleMode.ReceiveAndDelete else None,
             timeout=self._max_wait_time * 1000 if self._max_wait_time else 0,
             prefetch=self._prefetch,
+            keep_alive_interval=self._config.keep_alive,
             shutdown_after_timeout=False
         )
 

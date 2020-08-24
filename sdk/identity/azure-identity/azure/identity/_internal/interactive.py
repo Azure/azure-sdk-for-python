@@ -71,8 +71,8 @@ def _build_auth_record(response):
 
 class InteractiveCredential(MsalCredential):
     def __init__(self, **kwargs):
-        self._disable_automatic_authentication = kwargs.pop("_disable_automatic_authentication", False)
-        self._auth_record = kwargs.pop("_authentication_record", None)  # type: Optional[AuthenticationRecord]
+        self._disable_automatic_authentication = kwargs.pop("disable_automatic_authentication", False)
+        self._auth_record = kwargs.pop("authentication_record", None)  # type: Optional[AuthenticationRecord]
         if self._auth_record:
             kwargs.pop("client_id", None)  # authentication_record overrides client_id argument
             tenant_id = kwargs.pop("tenant_id", None) or self._auth_record.tenant_id
@@ -97,6 +97,8 @@ class InteractiveCredential(MsalCredential):
           required data, state, or platform support
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``
           attribute gives a reason.
+        :raises AuthenticationRequiredError: user interaction is necessary to acquire a token, and the credential is
+          configured not to begin this automatically. Call :func:`authenticate` to begin interactive authentication.
         """
         if not scopes:
             message = "'get_token' requires at least one scope"
@@ -138,7 +140,7 @@ class InteractiveCredential(MsalCredential):
         _LOGGER.info("%s.get_token succeeded", self.__class__.__name__)
         return AccessToken(result["access_token"], now + int(result["expires_in"]))
 
-    def _authenticate(self, **kwargs):
+    def authenticate(self, **kwargs):
         # type: (**Any) -> AuthenticationRecord
         """Interactively authenticate a user.
 

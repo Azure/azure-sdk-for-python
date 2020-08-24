@@ -66,7 +66,7 @@ class TestSearchBatchingClientAsync(object):
 
 
     @mock.patch(
-        "azure.search.documents._internal._search_index_document_batching_client.SearchIndexDocumentBatchingClient.flush"
+        "azure.search.documents._internal.aio._search_index_document_batching_client_async.SearchIndexDocumentBatchingClient.flush"
     )
     async def test_flush_if_needed(self, mock_flush):
         client = SearchIndexDocumentBatchingClient("endpoint", "index name", CREDENTIAL, window=1000, batch_size=2)
@@ -78,9 +78,9 @@ class TestSearchBatchingClientAsync(object):
 
 
     @mock.patch(
-        "azure.search.documents._internal._search_index_document_batching_client.SearchIndexDocumentBatchingClient._cleanup"
+        "azure.search.documents._internal.aio._search_index_document_batching_client_async.SearchIndexDocumentBatchingClient._cleanup"
     )
-    async def test_flush_if_needed(self, mock_cleanup):
+    async def test_context_manager(self, mock_cleanup):
         async with SearchIndexDocumentBatchingClient("endpoint", "index name", CREDENTIAL) as client:
             await client.add_upload_actions(["upload1"])
             await client.add_delete_actions(["delete1", "delete2"])

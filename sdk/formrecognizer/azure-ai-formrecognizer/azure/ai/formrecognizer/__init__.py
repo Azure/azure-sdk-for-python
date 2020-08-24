@@ -36,9 +36,11 @@ from ._models import (
     SelectionMark,
     SelectionMarkState,
 )
+from ._api_versions import FormRecognizerApiVersion
 
 
 __all__ = [
+    "FormRecognizerApiVersion",
     'FormRecognizerClient',
     'FormTrainingClient',
     'LengthUnit',

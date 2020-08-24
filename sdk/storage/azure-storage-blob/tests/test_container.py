@@ -13,7 +13,7 @@ from time import sleep
 import pytest
 import requests
 
-from _shared.testcase import StorageTestCase, LogCaptured, GlobalStorageAccountPreparer
+from _shared.testcase import StorageTestCase, LogCaptured, GlobalStorageAccountPreparer, GlobalResourceGroupPreparer, StorageAccountPreparer
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceExistsError, ResourceModifiedError
 from azure.storage.blob import (
     BlobServiceClient,
@@ -25,7 +25,7 @@ from azure.storage.blob import (
     PremiumPageBlobTier,
     generate_container_sas,
     PartialBatchErrorException,
-    generate_account_sas, ResourceTypes, AccountSasPermissions)
+    generate_account_sas, ResourceTypes, AccountSasPermissions, ContainerClient)
 
 #------------------------------------------------------------------------------
 TEST_CONTAINER_PREFIX = 'container'
@@ -1073,6 +1073,11 @@ class StorageContainerTest(StorageTestCase):
         self.assertNamedItemInContainer(resp, 'b/')
         self.assertNamedItemInContainer(resp, 'blob4')
 
+    def test_batch_delete_empty_blob_list(self):
+        container_client = ContainerClient("https://mystorageaccount.blob.core.windows.net", "container")
+        blob_list = list()
+        container_client.delete_blobs(*blob_list)
+
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="Batch not supported on Python 2.7")
     @GlobalStorageAccountPreparer()
     def test_delete_blobs_simple(self, resource_group, location, storage_account, storage_account_key):
@@ -1102,7 +1107,8 @@ class StorageContainerTest(StorageTestCase):
         assert response[2].status_code == 202
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="Batch not supported on Python 2.7")
-    @GlobalStorageAccountPreparer()
+    @GlobalResourceGroupPreparer()
+    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='storagename')
     def test_delete_blobs_with_if_tags(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
@@ -1308,6 +1314,7 @@ class StorageContainerTest(StorageTestCase):
             raise_on_any_failure=False
         )
 
+    @pytest.mark.playback_test_only
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="Batch not supported on Python 2.7")
     @GlobalStorageAccountPreparer()
     def test_batch_set_standard_blob_tier_for_version(self, resource_group, location, storage_account, storage_account_key):
@@ -1366,7 +1373,8 @@ class StorageContainerTest(StorageTestCase):
         )
         
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="Batch not supported on Python 2.7")
-    @GlobalStorageAccountPreparer()
+    @GlobalResourceGroupPreparer()
+    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='storagename')
     def test_standard_blob_tier_with_if_tags(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
         container = self._create_container(bsc)

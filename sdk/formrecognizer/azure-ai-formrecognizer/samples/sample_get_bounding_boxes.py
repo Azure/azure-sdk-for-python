@@ -37,7 +37,6 @@ class GetBoundingBoxesSample(object):
     def get_bounding_boxes(self):
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer import FormRecognizerClient
-        from azure.ai.formrecognizer import FormWord, FormLine
 
         endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
         key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
@@ -83,19 +82,19 @@ class GetBoundingBoxesSample(object):
                         # field_elements is only populated if you set include_field_elements to True in your call
                         # to begin_recognize_custom_forms
                         # It is a heterogeneous list of FormWord and FormLine.
-                        for content in cell.field_elements:
-                            if isinstance(content, FormWord):
+                        for element in cell.field_elements:
+                            if element.kind == "word":
                                 print("......Word '{}' within bounding box '{}' has a confidence of {}".format(
-                                    content.text,
-                                    format_bounding_box(content.bounding_box),
-                                    content.confidence
+                                    element.text,
+                                    format_bounding_box(element.bounding_box),
+                                    element.confidence
                                 ))
-                            elif isinstance(content, FormLine):
+                            elif element.kind == "line":
                                 print("......Line '{}' within bounding box '{}' has the following words: ".format(
-                                    content.text,
-                                    format_bounding_box(content.bounding_box)
+                                    element.text,
+                                    format_bounding_box(element.bounding_box)
                                 ))
-                                for word in content.words:
+                                for word in element.words:
                                     print(".........Word '{}' within bounding box '{}' has a confidence of {}".format(
                                         word.text,
                                         format_bounding_box(word.bounding_box),

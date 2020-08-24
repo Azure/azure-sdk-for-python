@@ -13,8 +13,8 @@ from typing import (  # pylint: disable=unused-import
 try:
     from urllib.parse import urlparse, quote, unquote
 except ImportError:
-    from urlparse import urlparse # type: ignore
-    from urllib2 import quote, unquote # type: ignore
+    from urlparse import urlparse  # type: ignore
+    from urllib2 import quote, unquote  # type: ignore
 
 import six
 from azure.core.tracing.decorator import distributed_trace
@@ -44,7 +44,7 @@ from ._serialize import (
     get_api_version,
     serialize_blob_tags_header,
     serialize_blob_tags,
-    serialize_query_format
+    serialize_query_format, get_access_conditions
 )
 from ._deserialize import get_page_ranges_result, deserialize_blob_properties, deserialize_blob_stream, parse_tags
 from ._quick_query_helper import BlobQueryReader
@@ -54,7 +54,7 @@ from ._upload_helpers import (
     upload_page_blob)
 from ._models import BlobType, BlobBlock, BlobProperties, BlobQueryError
 from ._download import StorageStreamDownloader
-from ._lease import BlobLeaseClient, get_access_conditions
+from ._lease import BlobLeaseClient
 
 if TYPE_CHECKING:
     from datetime import datetime
@@ -180,7 +180,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
     @classmethod
     def from_blob_url(cls, blob_url, credential=None, snapshot=None, **kwargs):
         # type: (str, Optional[Any], Optional[Union[str, Dict[str, Any]]], Any) -> BlobClient
-        """Create BlobClient from a blob url.
+        """Create BlobClient from a blob url. This doesn't support customized blob url with '/' in blob name.
 
         :param str blob_url:
             The full endpoint URL to the Blob, including SAS token and snapshot if used. This could be
@@ -209,10 +209,18 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         if not parsed_url.netloc:
             raise ValueError("Invalid URL: {}".format(blob_url))
 
-        path_blob = parsed_url.path.lstrip('/').split('/')
         account_path = ""
-        if len(path_blob) > 2:
-            account_path = "/" + "/".join(path_blob[:-2])
+        if ".core." in parsed_url.netloc:
+            # .core. is indicating non-customized url. Blob name with directory info can also be parsed.
+            path_blob = parsed_url.path.lstrip('/').split('/', 1)
+        elif "localhost" in parsed_url.netloc or "127.0.0.1" in parsed_url.netloc:
+            path_blob = parsed_url.path.lstrip('/').split('/', 2)
+            account_path += path_blob[0]
+        else:
+            # for customized url. blob name that has directory info cannot be parsed.
+            path_blob = parsed_url.path.lstrip('/').split('/')
+            if len(path_blob) > 2:
+                account_path = "/" + "/".join(path_blob[:-2])
         account_url = "{}://{}{}?{}".format(
             parsed_url.scheme,
             parsed_url.netloc.rstrip('/'),

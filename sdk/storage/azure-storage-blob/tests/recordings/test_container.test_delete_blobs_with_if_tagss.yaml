@@ -17,7 +17,7 @@ interactions:
       x-ms-version:
       - '2019-12-12'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/containerbb5312de?restype=container
+    uri: https://storagenamestorname.blob.core.windows.net/containerbb5312de?restype=container
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerAlreadyExists</Code><Message>The
@@ -62,7 +62,7 @@ interactions:
       x-ms-version:
       - '2019-12-12'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/containerbb5312de/blob1
+    uri: https://storagenamestorname.blob.core.windows.net/containerbb5312de/blob1
   response:
     body:
       string: ''
@@ -114,7 +114,7 @@ interactions:
       x-ms-version:
       - '2019-12-12'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/containerbb5312de/blob2
+    uri: https://storagenamestorname.blob.core.windows.net/containerbb5312de/blob2
   response:
     body:
       string: ''
@@ -166,7 +166,7 @@ interactions:
       x-ms-version:
       - '2019-12-12'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/containerbb5312de/blob3
+    uri: https://storagenamestorname.blob.core.windows.net/containerbb5312de/blob3
   response:
     body:
       string: ''
@@ -210,7 +210,7 @@ interactions:
       x-ms-version:
       - '2019-12-12'
     method: HEAD
-    uri: https://storagename.blob.core.windows.net/containerbb5312de/blob1
+    uri: https://storagenamestorname.blob.core.windows.net/containerbb5312de/blob1
   response:
     body:
       string: ''
@@ -288,7 +288,7 @@ interactions:
       x-ms-version:
       - '2019-12-12'
     method: POST
-    uri: https://storagename.blob.core.windows.net/?comp=batch
+    uri: https://storagenamestorname.blob.core.windows.net/?comp=batch
   response:
     body:
       string: "--batchresponse_c25f513a-11f1-473a-a0fb-3e033d834496\r\nContent-Type:
@@ -343,7 +343,7 @@ interactions:
       x-ms-version:
       - '2019-12-12'
     method: HEAD
-    uri: https://storagename.blob.core.windows.net/containerbb5312de/blob1
+    uri: https://storagenamestorname.blob.core.windows.net/containerbb5312de/blob1
   response:
     body:
       string: ''
@@ -421,7 +421,7 @@ interactions:
       x-ms-version:
       - '2019-12-12'
     method: POST
-    uri: https://storagename.blob.core.windows.net/?comp=batch
+    uri: https://storagenamestorname.blob.core.windows.net/?comp=batch
   response:
     body:
       string: "--batchresponse_f69be136-4352-4596-854f-e726dd59245c\r\nContent-Type:

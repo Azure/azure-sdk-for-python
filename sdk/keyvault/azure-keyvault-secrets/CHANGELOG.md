@@ -1,6 +1,9 @@
 # Release History
 
-## 4.2.0 (2020-08-10)
+## 4.2.1 (Unreleased)
+
+
+## 4.2.0 (2020-08-11)
 ### Fixed
 - Values of `x-ms-keyvault-region` and `x-ms-keyvault-service-version` headers
   are no longer redacted in logging output
