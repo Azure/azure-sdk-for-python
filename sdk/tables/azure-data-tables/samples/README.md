@@ -22,37 +22,50 @@ These sample programs show common scenarios for the Text Analytics client's offe
 |-------------|---------------|
 |[sample_create_client.py][create_client] and [sample_create_client_async.py][create_client_async]|Instantiate a table client|Authorizing a `TableServiceClient` object|
 |[sample_create_delete_table.py][create_delete_table] and [sample_create_delete_table_async.py][create_delete_table_async]|Creating a table in a storage account|
+|[sample_insert_delete_entities.py][insert_delete_entities] and [sample_insert_delete_entities_async.py][insert_delete_entities_async]|Inserting and deleting individual entities into a table|
+|[sample_query_table.py][query_table] and [sample_query_table_async.py][query_table_async]|Querying entities in a table|
 
+### Prerequisites
+* Python 2.7, or 3.5 or later is required to use this package.
+* You must have an [Azure subscription](https://azure.microsoft.com/free/) and an
+[Azure storage account](https://docs.microsoft.com/azure/storage/common/storage-account-overview) to use this package
+ or you must have a [Azure Cosmos Account](https://docs.microsoft.com/azure/cosmos-db/account-overview).
+
+## Setup
+
+1. Install the Azure Data Tables client library for Python with [pip](https://pypi.org/project/pip/):
+
+```bash
+pip install --pre azure-data-tables
+```
+
+
+2. Clone or download this sample repository
+3. Open the sample folder in Visual Studio Code or your IDE of choice.
+
+## Running the samples
+
+1. Open a terminal window and `cd` to the directory that the samples are saved in.
+2. Set the environment variables specified in the sample file you wish to run.
+3. Follow the usage described in the file, e.g. `python sample_detect_language.py`
+
+## Next steps
+
+Check out the [API reference documentation][api_reference_documentation] to learn more about
+what you can do with the Azure Text Analytics client library.
 
 
 <!-- LINKS -->
+[api_reference_documentation]: https://aka.ms/azsdk/python/tables/docs
+
 [sample_authentication]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/samples_authentication.py
 [sample_authentication_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/samples_authentication_async.py
 
 [create_delete_table]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/sample_create_delete_table.py
 [create_delete_table_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/sample_create_delete_table_async.py
 
+[insert_delete_entities_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/sample_insert_delete_entities.py
+[insert_delete_entities_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/sample_insert_delete_entities_async.py
 
-[detect_language]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/textanalytics/azure-ai-textanalytics/samples/sample_detect_language.py
-[detect_language_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_detect_language_async.py
-[recognize_entities]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/textanalytics/azure-ai-textanalytics/samples/sample_recognize_entities.py
-[recognize_entities_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_recognize_entities_async.py
-[recognize_linked_entities]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/textanalytics/azure-ai-textanalytics/samples/sample_recognize_linked_entities.py
-[recognize_linked_entities_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_recognize_linked_entities_async.py
-[recognize_pii_entities]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/textanalytics/azure-ai-textanalytics/samples/sample_recognize_pii_entities.py
-[recognize_pii_entities_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_recognize_pii_entities_async.py
-[extract_key_phrases]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/textanalytics/azure-ai-textanalytics/samples/sample_extract_key_phrases.py
-[extract_key_phrases_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_extract_key_phrases_async.py
-[analyze_sentiment]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/textanalytics/azure-ai-textanalytics/samples/sample_analyze_sentiment.py
-[analyze_sentiment_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_analyze_sentiment_async.py
-[get_detailed_diagnostics_information]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/textanalytics/azure-ai-textanalytics/samples/sample_get_detailed_diagnostics_information.py
-[get_detailed_diagnostics_information_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_get_detailed_diagnostics_information_async.py
-[sample_alternative_document_input]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/textanalytics/azure-ai-textanalytics/samples/sample_alternative_document_input.py
-[sample_alternative_document_input_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_alternative_document_input_async.py
-[sample_analyze_sentiment_with_opinion_mining]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/textanalytics/azure-ai-textanalytics/samples/sample_analyze_sentiment_with_opinion_mining.py
-[sample_analyze_sentiment_with_opinion_mining_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_analyze_sentiment_with_opinion_mining_async.py
-[pip]: https://pypi.org/project/pip/
-[azure_subscription]: https://azure.microsoft.com/free/
-[azure_text_analytics_account]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=singleservice%2Cwindows
-[azure_identity_pip]: https://pypi.org/project/azure-identity/
-[api_reference_documentation]: https://aka.ms/azsdk-python-textanalytics-ref-docs
+[query_table]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/sample_insert_delete_entities_async.py
+[query_table_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/sample_insert_delete_entities_async.py
