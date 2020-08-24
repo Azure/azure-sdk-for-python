@@ -23,7 +23,7 @@ from azure.search.documents._internal._search_client import SearchPageIterator
 from azure.search.documents import (
     IndexDocumentsBatch,
     SearchClient,
-    SearchIndexDocumentBatchingClient,
+    RequestEntityTooLargeError,
 )
 from azure.search.documents.models import odata
 
@@ -262,3 +262,11 @@ class TestSearchClient(object):
         index_documents = mock_index.call_args[1]["batch"]
         assert isinstance(index_documents, IndexBatch)
         assert index_documents.actions == batch.actions
+
+    def test_request_too_large_error(self):
+        with mock.patch.object(SearchClient, "_index_documents_actions", side_effect=RequestEntityTooLargeError("Error")):
+            client = SearchClient("endpoint", "index name", CREDENTIAL)
+            batch = IndexDocumentsBatch()
+            batch.add_upload_actions("upload1")
+            with pytest.raises(RequestEntityTooLargeError):
+                client.index_documents(batch, extra="foo")

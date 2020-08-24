@@ -11,6 +11,7 @@ from azure.search.documents.aio import (
     SearchIndexDocumentBatchingClient,
 )
 from azure.core.credentials import AzureKeyCredential
+from azure.core.exceptions import HttpResponseError
 
 CREDENTIAL = AzureKeyCredential(key="test_api_key")
 
@@ -58,3 +59,18 @@ class TestSearchBatchingClientAsync(object):
             await client.add_upload_actions(["upload1"])
             await client.add_delete_actions(["delete1", "delete2"])
         assert mock_cleanup.called
+
+    async def test_flush(self):
+        DOCUMENT = {
+            'Category': 'Hotel',
+            'HotelId': '1000',
+            'Rating': 4.0,
+            'Rooms': [],
+            'HotelName': 'Azure Inn',
+        }
+        with mock.patch.object(SearchIndexDocumentBatchingClient, "_index_documents_actions", side_effect=HttpResponseError("Error")):
+            async with SearchIndexDocumentBatchingClient("endpoint", "index name", CREDENTIAL, auto_flush=False) as client:
+                client._index_key = "HotelId"
+                await client.add_upload_actions([DOCUMENT])
+                await client.flush()
+                assert len(client.actions) == 0

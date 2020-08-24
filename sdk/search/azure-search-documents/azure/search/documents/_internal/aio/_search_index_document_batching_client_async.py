@@ -62,9 +62,6 @@ class SearchIndexDocumentBatchingClient(SearchIndexDocumentBatchingClientBase, H
 
         :param bool flush: flush the actions queue before shutdown the client
             Default to True.
-        :raises: ~azure.core.exceptions.HttpResponseError,
-                 ~azure.core.exceptions.ServiceResponseTimeoutError
-                 ~azure.search.documents.RequestEntityTooLargeError
         """
         if flush:
             await self.flush()
@@ -87,13 +84,7 @@ class SearchIndexDocumentBatchingClient(SearchIndexDocumentBatchingClientBase, H
 
     async def close(self):
         # type: () -> None
-        """Close the :class:`~azure.search.documents.aio.SearchClient` session.
-
-        :raises: ~azure.core.exceptions.HttpResponseError,
-                 ~azure.core.exceptions.ServiceResponseTimeoutError
-                 ~azure.search.documents.RequestEntityTooLargeError
-
-        """
+        """Close the :class:`~azure.search.documents.aio.SearchClient` session."""
         await self._cleanup(flush=True)
         return await self._client.close()
 
@@ -101,42 +92,41 @@ class SearchIndexDocumentBatchingClient(SearchIndexDocumentBatchingClientBase, H
     async def flush(self, timeout=86400, **kwargs):    # pylint:disable=unused-argument
         # type: (bool) -> bool
         """Flush the batch.
-
-        :param bool raise_error: raise error if there are failures during flushing
-            Default to False which re-queue the failed tasks and retry on next flush.
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :param int timeout: time out setting. Default is 86400s (one day)
+        :return: True if there are errors. Else False
+        :rtype: bool
         """
         has_error = False
         begin_time = int(time.time())
-        while len(self._index_documents_batch.actions) > 0:
+        while len(self.actions) > 0:
             now = int(time.time())
             remaining = timeout - (now - begin_time)
             if remaining < 0:
                 raise ServiceResponseTimeoutError("Service response time out")
-            result = await self._process(timeout=remaining)
+            result = await self._process(timeout=remaining, raise_error=False)
             if result:
                 has_error = True
         return has_error
 
-    async def _process(self, timeout=86400):
+    async def _process(self, timeout=86400, **kwargs):
         # type: (int) -> bool
+        raise_error = kwargs.pop("raise_error", True)
         actions = await self._index_documents_batch.dequeue_actions()
-        try:
-            results = await self._index_documents_actions(actions=actions, timeout=timeout)
-            if not self._index_key:
+        has_error = False
+        if not self._index_key:
+            try:
                 client = SearchServiceClient(self._endpoint, self._credential)
                 result = await client.get_index(self._index_name)
-                if not result:
-                    # Cannot find the index
-                    self._index_key = ""
-                else:
+                if result:
                     for field in result.fields:
                         if field.key:
                             self._index_key = field.name
                             break
+            except Exception:  # pylint: disable=broad-except
+                pass
 
-            has_error = False
-
+        try:
+            results = await self._index_documents_actions(actions=actions, timeout=timeout)
             for result in results:
                 try:
                     action = next(x for x in actions if x.additional_properties.get(self._index_key) == result.key)
@@ -156,7 +146,10 @@ class SearchIndexDocumentBatchingClient(SearchIndexDocumentBatchingClientBase, H
         except Exception:  # pylint: disable=broad-except
             for action in actions:
                 await self._retry_action(action)
-                raise
+                if raise_error:
+                    raise
+                else:
+                    return True
 
     async def _process_if_needed(self):
         # type: () -> bool
@@ -174,7 +167,7 @@ class SearchIndexDocumentBatchingClient(SearchIndexDocumentBatchingClientBase, H
         if len(self._index_documents_batch.actions) < self._batch_size:
             return
 
-        await self._process()
+        await self._process(raise_error=False)
 
     def _reset_timer(self):
         # pylint: disable=access-member-before-definition
@@ -183,7 +176,7 @@ class SearchIndexDocumentBatchingClient(SearchIndexDocumentBatchingClientBase, H
         except AttributeError:
             pass
         if self._auto_flush:
-            self._timer = Timer(self._window, self.flush)
+            self._timer = Timer(self._window, self._process)
 
     async def add_upload_actions(self, documents):
         # type: (List[dict]) -> None
@@ -280,6 +273,9 @@ class SearchIndexDocumentBatchingClient(SearchIndexDocumentBatchingClientBase, H
 
     async def _retry_action(self, action):
         # type: (IndexAction) -> None
+        if not self._index_key:
+            self._fail_callback(action)
+            return
         key = action.additional_properties.get(self._index_key)
         counter = self._retry_counter.get(key)
         if not counter:
