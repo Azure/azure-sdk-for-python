@@ -423,4 +423,3 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
         set_kv.etag = "bad"
         with pytest.raises(ResourceModifiedError):
             self.app_config_client.set_read_only(set_kv, True, match_condition=MatchConditions.IfNotModified)
-
