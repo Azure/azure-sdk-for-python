@@ -476,7 +476,8 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
                     cls=kwargs.pop('cls', _return_headers_and_deserialized),
                     **kwargs)
             else:
-                raise ValueError('Mode type is not supported')
+                raise ValueError("""Update mode {} is not supported.
+                    For a list of supported modes see the UpdateMode enum""".format(mode))
             return metadata
         except ResourceNotFoundError:
             return await self.create_entity(
