@@ -14,7 +14,7 @@ from ._credentials import (
     EnvironmentCredential,
     ManagedIdentityCredential,
     SharedTokenCacheCredential,
-    VSCodeCredential,
+    VisualStudioCodeCredential,
 )
 
 
@@ -28,5 +28,5 @@ __all__ = [
     "ManagedIdentityCredential",
     "ChainedTokenCredential",
     "SharedTokenCacheCredential",
-    "VSCodeCredential",
+    "VisualStudioCodeCredential",
 ]

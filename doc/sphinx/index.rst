@@ -66,6 +66,7 @@ section of the project.
   installation
   quickstart_authentication
   mgmt_preview_quickstart
+  python_mgmt_migration_guide
   multicloud
   exceptions
   Service Management (Legacy) <servicemanagement>

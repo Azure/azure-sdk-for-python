@@ -5,7 +5,7 @@
 import time
 import logging
 import functools
-from typing import Any, List, TYPE_CHECKING, Optional, Dict
+from typing import Any, List, TYPE_CHECKING, Optional, Dict, Iterator
 
 from uamqp import ReceiveClient, types, Message
 from uamqp.constants import SenderSettleMode
@@ -61,7 +61,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
      the client connects to.
     :keyword str subscription_name: The path of specific Service Bus Subscription under the
      specified Topic the client connects to.
-    :keyword float idle_timeout: The timeout in seconds between received messages after which the receiver will
+    :keyword float max_wait_time: The timeout in seconds between received messages after which the receiver will
      automatically shutdown. The default value is 0, meaning no timeout.
     :keyword mode: The mode with which messages will be retrieved from the entity. The two options
      are PeekLock and ReceiveAndDelete. Messages received with PeekLock must be settled within a given
@@ -105,6 +105,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         **kwargs
     ):
         # type: (str, TokenCredential, Any) -> None
+        self._message_iter = None # type: Optional[Iterator[ReceivedMessage]]
         if kwargs.get("entity_name"):
             super(ServiceBusReceiver, self).__init__(
                 fully_qualified_namespace=fully_qualified_namespace,
@@ -133,7 +134,24 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         self._populate_attributes(**kwargs)
 
     def __iter__(self):
-        return self
+        return self._iter_contextual_wrapper()
+
+    def _iter_contextual_wrapper(self, max_wait_time=None):
+        # pylint: disable=protected-access
+        original_timeout = None
+        while True:
+            # This is not threadsafe, but gives us a way to handle if someone passes
+            # different max_wait_times to different iterators and uses them in concert.
+            if max_wait_time:
+                original_timeout = self._handler._timeout
+                self._handler._timeout = max_wait_time * 1000
+            try:
+                yield next(self)
+            except StopIteration:
+                break
+            finally:
+                if original_timeout:
+                    self._handler._timeout = original_timeout
 
     def __next__(self):
         self._check_live()
@@ -141,13 +159,15 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             try:
                 return self._do_retryable_operation(self._iter_next)
             except StopIteration:
-                self.close()
+                self._message_iter = None
                 raise
 
     next = __next__  # for python2.7
 
     def _iter_next(self):
         self._open()
+        if not self._message_iter:
+            self._message_iter = self._handler.receive_messages_iter()
         uamqp_message = next(self._message_iter)
         message = self._build_message(uamqp_message)
         return message
@@ -166,27 +186,34 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             encoding=self._config.encoding,
             receive_settle_mode=self._mode.value,
             send_settle_mode=SenderSettleMode.Settled if self._mode == ReceiveSettleMode.ReceiveAndDelete else None,
-            timeout=self._idle_timeout * 1000 if self._idle_timeout else 0,
-            prefetch=self._prefetch
+            timeout=self._max_wait_time * 1000 if self._max_wait_time else 0,
+            prefetch=self._prefetch,
+            keep_alive_interval=self._config.keep_alive,
+            shutdown_after_timeout=False
         )
 
     def _open(self):
+        # pylint: disable=protected-access
         if self._running:
             return
-        if self._handler:
+        if self._handler and not self._handler._shutdown:
             self._handler.close()
 
         auth = None if self._connection else create_authentication(self)
         self._create_handler(auth)
         try:
             self._handler.open(connection=self._connection)
-            self._message_iter = self._handler.receive_messages_iter()  # pylint: disable=attribute-defined-outside-init
             while not self._handler.client_ready():
                 time.sleep(0.05)
             self._running = True
         except:
             self.close()
             raise
+
+    def close(self):
+        # type: () -> None
+        super(ServiceBusReceiver, self).close()
+        self._message_iter = None # pylint: disable=attribute-defined-outside-init
 
     def _receive(self, max_batch_size=None, timeout=None):
         # type: (Optional[int], Optional[float]) -> List[ReceivedMessage]
@@ -196,7 +223,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         amqp_receive_client = self._handler
         received_messages_queue = amqp_receive_client._received_messages
         max_batch_size = max_batch_size or self._prefetch
-        timeout_ms = 1000 * (timeout or self._idle_timeout) if (timeout or self._idle_timeout) else 0
+        timeout_ms = 1000 * (timeout or self._max_wait_time) if (timeout or self._max_wait_time) else 0
         abs_timeout_ms = amqp_receive_client._counter.get_current_ms() + timeout_ms if timeout_ms else 0
 
         batch = []  # type: List[Message]
@@ -258,6 +285,19 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             mgmt_handlers.lock_renew_op
         )
 
+    def get_streaming_message_iter(self, max_wait_time=None):
+        """Receive messages from an iterator indefinitely, or if a max_wait_time is specified, until
+        such a timeout occurs.
+
+        :param float max_wait_time: Maximum time to wait in seconds for the next message to arrive.
+         If no messages arrive, and no timeout is specified, this call will not return
+         until the connection is closed. If specified, and no messages arrive for the
+         timeout period, the iterator will stop.
+
+         :rtype Iterator[ReceivedMessage]
+        """
+        return self._iter_contextual_wrapper(max_wait_time)
+
     @classmethod
     def from_connection_string(
         cls,
@@ -280,7 +320,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
          if the client fails to process the message.
          The default mode is PeekLock.
         :paramtype mode: ~azure.servicebus.ReceiveSettleMode
-        :keyword float idle_timeout: The timeout in seconds between received messages after which the receiver will
+        :keyword float max_wait_time: The timeout in seconds between received messages after which the receiver will
          automatically shutdown. The default value is 0, meaning no timeout.
         :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
         :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.

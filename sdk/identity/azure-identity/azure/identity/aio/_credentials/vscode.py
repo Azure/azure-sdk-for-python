@@ -5,8 +5,8 @@
 from typing import TYPE_CHECKING
 
 from ..._exceptions import CredentialUnavailableError
-from .._credentials.base import AsyncCredentialBase
 from ..._constants import AZURE_VSCODE_CLIENT_ID
+from .._internal import AsyncContextManager
 from .._internal.aad_client import AadClient
 from .._internal.decorators import log_get_token_async
 from ..._credentials.vscode import get_credentials
@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import AccessToken
 
 
-class VSCodeCredential(AsyncCredentialBase):
+class VisualStudioCodeCredential(AsyncContextManager):
     """Authenticates as the Azure user signed in to Visual Studio Code.
 
     :keyword str authority: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
@@ -48,16 +48,14 @@ class VSCodeCredential(AsyncCredentialBase):
     @log_get_token_async
     async def get_token(self, *scopes, **kwargs):
         # type: (*str, **Any) -> AccessToken
-        """Request an access token for `scopes`.
+        """Request an access token for `scopes` as the user currently signed in to Visual Studio Code.
 
         .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
 
-        When this method is called, the credential will try to get the refresh token saved by VS Code. If a refresh
-        token can be found, it will redeem the refresh token for an access token and return the access token.
-
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
         :rtype: :class:`azure.core.credentials.AccessToken`
-        :raises ~azure.identity.CredentialUnavailableError: fail to get refresh token.
+        :raises ~azure.identity.CredentialUnavailableError: the credential cannot retrieve user details from Visual
+          Studio Code
         """
         if not scopes:
             raise ValueError("'get_token' requires at least one scope")
@@ -76,7 +74,7 @@ class VSCodeCredential(AsyncCredentialBase):
         if not self._refresh_token:
             self._refresh_token = get_credentials()
             if not self._refresh_token:
-                raise CredentialUnavailableError(message="No Azure user is logged in to Visual Studio Code.")
+                raise CredentialUnavailableError(message="Failed to get Azure user details from Visual Studio Code.")
 
         token = await self._client.obtain_token_by_refresh_token(scopes, self._refresh_token, **kwargs)
         return token

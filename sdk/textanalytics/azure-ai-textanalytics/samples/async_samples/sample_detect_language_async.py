@@ -31,7 +31,7 @@ class DetectLanguageSampleAsync(object):
     key = os.environ["AZURE_TEXT_ANALYTICS_KEY"]
 
     async def detect_language_async(self):
-        # [START batch_detect_language_async]
+        # [START detect_language_async]
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.textanalytics.aio import TextAnalyticsClient
 
@@ -57,7 +57,7 @@ class DetectLanguageSampleAsync(object):
                 print("Confidence score: {}\n".format(doc.primary_language.confidence_score))
             if doc.is_error:
                 print(doc.id, doc.error)
-        # [END batch_detect_language_async]
+        # [END detect_language_async]
 
 
 async def main():

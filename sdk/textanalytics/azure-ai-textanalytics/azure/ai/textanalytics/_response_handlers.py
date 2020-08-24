@@ -29,35 +29,17 @@ from ._models import (
     PiiEntity,
 )
 
-def _get_too_many_documents_error(obj):
-    try:
-        too_many_documents_errors = [
-            error for error in obj.errors if error.id == ""
-        ]
-    except AttributeError:
-        too_many_documents_errors = [
-            error for error in obj["errors"] if error["id"] == ""
-        ]
-    if too_many_documents_errors:
-        return too_many_documents_errors[0]
-    return None
-
 class CSODataV4Format(ODataV4Format):
 
     def __init__(self, odata_error):
-
         try:
-            if not odata_error.get("error"):
-                odata_error = _get_too_many_documents_error(odata_error)
-            if not odata_error:
-                raise ValueError("Service encountered an error without any details")
             if odata_error["error"]["innererror"]:
                 super(CSODataV4Format, self).__init__(odata_error["error"]["innererror"])
         except KeyError:
             super(CSODataV4Format, self).__init__(odata_error)
 
 
-def process_batch_error(error):
+def process_http_response_error(error):
     """Raise detailed error message.
     """
     raise_error = HttpResponseError
@@ -79,26 +61,8 @@ def order_results(response, combined):
 
 
 def prepare_result(func):
-    def _get_error_code_and_message(error):
-        if hasattr(error.error, 'innererror') and error.error.innererror:
-            return error.error.innererror.code, error.error.innererror.message
-        return error.error.code, error.error.message
-
-    def _deal_with_too_many_documents(response, obj):
-        # special case for now if there are too many documents in the request
-        too_many_documents_error = _get_too_many_documents_error(obj)
-        if too_many_documents_error:
-            response.reason = "Bad Request"
-            response.status_code = 400
-            code, message = _get_error_code_and_message(too_many_documents_error)
-            raise HttpResponseError(
-                message="({}) {}".format(code, message),
-                response=response
-            )
-
     def wrapper(response, obj, response_headers):  # pylint: disable=unused-argument
         if obj.errors:
-            _deal_with_too_many_documents(response.http_response, obj)
             combined = obj.documents + obj.errors
             results = order_results(response, combined)
         else:

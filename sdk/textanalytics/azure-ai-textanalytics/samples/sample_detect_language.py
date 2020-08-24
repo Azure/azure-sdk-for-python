@@ -27,7 +27,7 @@ import os
 class DetectLanguageSample(object):
 
     def detect_language(self):
-        # [START batch_detect_language]
+        # [START detect_language]
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.textanalytics import TextAnalyticsClient
 
@@ -53,7 +53,7 @@ class DetectLanguageSample(object):
                 print("Confidence score: {}\n".format(doc.primary_language.confidence_score))
             if doc.is_error:
                 print(doc.id, doc.error)
-        # [END batch_detect_language]
+        # [END detect_language]
 
 
 if __name__ == '__main__':

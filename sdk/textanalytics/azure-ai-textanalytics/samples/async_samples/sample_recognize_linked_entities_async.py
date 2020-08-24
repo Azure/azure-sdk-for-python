@@ -29,7 +29,7 @@ import asyncio
 class RecognizeLinkedEntitiesSampleAsync(object):
 
     async def recognize_linked_entities_async(self):
-        # [START batch_recognize_linked_entities_async]
+        # [START recognize_linked_entities_async]
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.textanalytics.aio import TextAnalyticsClient
 
@@ -52,13 +52,16 @@ class RecognizeLinkedEntitiesSampleAsync(object):
             print("Document text: {}\n".format(documents[idx]))
             for entity in doc.entities:
                 print("Entity: {}".format(entity.name))
-                print("Url: {}".format(entity.url))
-                print("Data Source: {}".format(entity.data_source))
+                print("...URL: {}".format(entity.url))
+                print("...Data Source: {}".format(entity.data_source))
+                print("...Entity matches:")
                 for match in entity.matches:
-                    print("Confidence Score: {}".format(match.confidence_score))
-                    print("Entity as appears in request: {}".format(match.text))
+                    print("......Entity match text: {}".format(match.text))
+                    print("......Confidence Score: {}".format(match.confidence_score))
+                    print("......Offset: {}".format(match.offset))
+                    print("......Length: {}".format(match.length))
             print("------------------------------------------")
-        # [END batch_recognize_linked_entities_async]
+        # [END recognize_linked_entities_async]
 
 
 async def main():

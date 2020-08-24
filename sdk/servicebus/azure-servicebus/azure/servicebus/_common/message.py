@@ -878,16 +878,6 @@ class ReceivedMessageBase(PeekMessage):
             self._expiry = utc_from_timestamp(expiry_in_seconds)
         return self._expiry
 
-    @property
-    def settled(self):
-        # type: () -> bool
-        """Whether the message has been settled.
-        This will aways be `True` for a message received using ReceiveAndDelete mode,
-        otherwise it will be `False` until the message is completed or otherwise settled.
-        :rtype: bool
-        """
-        return self._settled
-
 
 class ReceivedMessage(ReceivedMessageBase):
     def _settle_message(

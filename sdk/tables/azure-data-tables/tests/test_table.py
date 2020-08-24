@@ -15,9 +15,18 @@ from datetime import (
     timedelta,
 )
 
-from azure.data.tables._models import TableSasPermissions, UpdateMode, AccessPolicy, TableAnalyticsLogging, Metrics, CorsRule, \
-    RetentionPolicy
-from azure.data.tables._shared.models import ResourceTypes, AccountSasPermissions
+
+from azure.data.tables import (
+    ResourceTypes,
+    AccountSasPermissions,
+    TableSasPermissions,
+    CorsRule,
+    RetentionPolicy,
+    UpdateMode,
+    AccessPolicy,
+    TableAnalyticsLogging,
+    Metrics
+)
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.policies import (
     HeadersPolicy,
@@ -25,7 +34,7 @@ from azure.core.pipeline.policies import (
 )
 
 from _shared.testcase import TableTestCase, GlobalStorageAccountPreparer
-from azure.data.tables._shared.authentication import SharedKeyCredentialPolicy
+from azure.data.tables._authentication import SharedKeyCredentialPolicy
 from azure.core.pipeline.transport import RequestsTransport
 from azure.core.exceptions import (
     HttpResponseError,
@@ -33,7 +42,7 @@ from azure.core.exceptions import (
     ResourceExistsError)
 
 # ------------------------------------------------------------------------------
-from azure.data.tables._shared.table_shared_access_signature import generate_account_sas
+from azure.data.tables._table_shared_access_signature import generate_account_sas
 
 TEST_TABLE_PREFIX = 'pytablesync'
 
@@ -464,9 +473,9 @@ class StorageTableTest(TableTestCase):
         ts = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
         table = (self._get_table_reference())
         init_locale = locale.getlocale()
-        if os.name is "nt":
+        if os.name == "nt":
             culture = "Spanish_Spain"
-        elif os.name is 'posix':
+        elif os.name == 'posix':
             culture = 'es_ES.UTF-8'
         else:
             culture = 'es_ES.utf8'

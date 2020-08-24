@@ -8,8 +8,8 @@ from ._generated.models import AuthorizationRule, MessageCountDetails, \
     AccessRights, EntityAvailabilityStatus, EntityStatus, \
     NamespaceProperties, MessagingSku, NamespaceType
 
-from ._models import QueueRuntimeInfo, QueueDescription, TopicRuntimeInfo, TopicDescription, \
-    SubscriptionDescription, SubscriptionRuntimeInfo, RuleDescription, \
+from ._models import QueueRuntimeProperties, QueueProperties, TopicRuntimeProperties, TopicProperties, \
+    SubscriptionRuntimeProperties, SubscriptionProperties, RuleProperties, \
     TrueRuleFilter, FalseRuleFilter, SqlRuleFilter, CorrelationRuleFilter, \
     SqlRuleAction
 
@@ -17,16 +17,16 @@ __all__ = [
     'ServiceBusManagementClient',
     'AuthorizationRule',
     'MessageCountDetails',
-    'QueueDescription',
-    'QueueRuntimeInfo',
-    'TopicDescription',
-    'TopicRuntimeInfo',
-    'SubscriptionDescription',
-    'SubscriptionRuntimeInfo',
+    'QueueProperties',
+    'QueueRuntimeProperties',
+    'TopicProperties',
+    'TopicRuntimeProperties',
+    'SubscriptionProperties',
+    'SubscriptionRuntimeProperties',
     'AccessRights',
     'EntityAvailabilityStatus',
     'EntityStatus',
-    'RuleDescription',
+    'RuleProperties',
     'CorrelationRuleFilter', 'SqlRuleFilter', 'TrueRuleFilter', 'FalseRuleFilter',
     'SqlRuleAction',
     'NamespaceProperties', 'MessagingSku', 'NamespaceType',

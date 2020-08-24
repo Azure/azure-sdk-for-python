@@ -57,7 +57,7 @@ Both [sync version](./sync_samples) and [async version](./async_samples) of samp
     - Delete a queue
     - Update a queue
     - List queues
-    - Get queue description
+    - Get queue properties
     - Get queue runtime information
 
 

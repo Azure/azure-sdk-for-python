@@ -11,11 +11,13 @@ from azure.core.tracing.decorator import distributed_trace
 from .._api_versions import validate_api_version
 from ._generated import SearchIndexClient
 from ._generated.models import IndexBatch, IndexingResult
+from ._search_documents_error import RequestEntityTooLargeError
 from ._index_documents_batch import IndexDocumentsBatch
 from ._paging import SearchItemPaged, SearchPageIterator
 from ._queries import AutocompleteQuery, SearchQuery, SuggestQuery
 from .._headers_mixin import HeadersMixin
 from .._version import SDK_MONIKER
+from ._search_index_document_batching_client import SearchIndexDocumentBatchingClient
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
@@ -98,6 +100,11 @@ class SearchClient(HeadersMixin):
 
         """
         return self._client.close()
+
+    def get_index_document_batching_client(self, **kwargs):
+        # type: (str, dict) -> SearchIndexDocumentBatchingClient
+        """Return a search index document batching client"""
+        return SearchIndexDocumentBatchingClient(self._endpoint, self._index_name, self._credential, **kwargs)
 
     @distributed_trace
     def get_document_count(self, **kwargs):
@@ -525,11 +532,41 @@ class SearchClient(HeadersMixin):
         :type batch: IndexDocumentsBatch
         :rtype:  List[IndexingResult]
         """
-        index_documents = IndexBatch(actions=batch.actions)
+        return self._index_documents_actions(actions=batch.actions, **kwargs)
+
+    @distributed_trace
+    def _index_documents_actions(self, actions, **kwargs):
+        # type: (List[IndexAction], **Any) -> List[IndexingResult]
+        error_map = {413: RequestEntityTooLargeError}
 
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        batch_response = self._client.documents.index(batch=index_documents, **kwargs)
-        return cast(List[IndexingResult], batch_response.results)
+        try:
+            index_documents = IndexBatch(actions=actions)
+            batch_response = self._client.documents.index(batch=index_documents, error_map=error_map, **kwargs)
+            return cast(List[IndexingResult], batch_response.results)
+        except RequestEntityTooLargeError:
+            if len(actions) == 1:
+                raise
+            pos = round(len(actions) / 2)
+            batch_response_first_half = self._index_documents_actions(
+                actions=actions[:pos],
+                error_map=error_map,
+                **kwargs
+            )
+            if batch_response_first_half:
+                result_first_half = cast(List[IndexingResult], batch_response_first_half.results)
+            else:
+                result_first_half = []
+            batch_response_second_half = self._index_documents_actions(
+                actions=actions[pos:],
+                error_map=error_map,
+                **kwargs
+            )
+            if batch_response_second_half:
+                result_second_half = cast(List[IndexingResult], batch_response_second_half.results)
+            else:
+                result_second_half = []
+            return result_first_half.extend(result_second_half)
 
     def __enter__(self):
         # type: () -> SearchClient

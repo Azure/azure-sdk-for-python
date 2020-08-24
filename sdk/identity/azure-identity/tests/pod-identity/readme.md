@@ -2,7 +2,7 @@
 
 # prerequisite tools
 - Azure CLI
-  - https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest
+  - https://docs.microsoft.com/cli/azure/install-azure-cli?view=azure-cli-latest
 - Docker CLI
   - https://hub.docker.com/search?q=&type=edition&offering=community
 - Helm 2.x (3.x doesn't handle CRDs properly at time of writing)

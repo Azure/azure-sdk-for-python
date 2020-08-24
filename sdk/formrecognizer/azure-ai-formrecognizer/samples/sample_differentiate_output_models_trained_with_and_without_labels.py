@@ -73,10 +73,9 @@ class DifferentiateOutputModelsTrainedWithAndWithoutLabels(object):
         print("---------Recognizing forms using models trained with labeled data---------")
         for labeled_form in forms_with_labeled_model:
             for name, field in labeled_form.fields.items():
-                print("...Field '{}' has value '{}' based on '{}' within bounding box '{}', with a confidence score of {}".format(
+                print("...Field '{}' has value '{}' within bounding box '{}', with a confidence score of {}".format(
                     name,
                     field.value,
-                    field.value_data.text,
                     format_bounding_box(field.value_data.bounding_box),
                     field.confidence
                 ))
@@ -88,7 +87,7 @@ class DifferentiateOutputModelsTrainedWithAndWithoutLabels(object):
             for labeled_form in forms_with_labeled_model:
                 print("The Merchant is {}\n".format(labeled_form.fields[training_time_label].value))
         except KeyError:
-            print("'Merchant' training-time label does not exist. Substitute with your own training-time label.")
+            print("'Merchant' training-time label does not exist. Substitute with your own training-time label.\n")
 
         # With a form recognized by a model trained without labels, the `name` key will be denoted by numeric indices.
         # Non-unique form field label names will be found in the `label_data.text`
@@ -103,10 +102,9 @@ class DifferentiateOutputModelsTrainedWithAndWithoutLabels(object):
                     format_bounding_box(field.label_data.bounding_box),
                     field.confidence
                 ))
-                print("...Field '{}' has value '{}' based on '{}' within bounding box '{}', with a confidence score of {}".format(
+                print("...Field '{}' has value '{}' within bounding box '{}', with a confidence score of {}".format(
                     name,
                     field.value,
-                    field.value_data.text,
                     format_bounding_box(field.value_data.bounding_box),
                     field.confidence
                 ))

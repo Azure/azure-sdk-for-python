@@ -1,11 +1,22 @@
 # Release History
 
-## 4.2.0b2 (Unreleased)
+## 4.2.1 (Unreleased)
+
+
+## 4.2.0 (2020-08-11)
+### Fixed
 - Values of `x-ms-keyvault-region` and `x-ms-keyvault-service-version` headers
-  are no longer redacted in logging output.
-- Updated minimum `azure-core` version to 1.4.0
-- Users can pass in CustomHookPolicy through the kwarg `custom_hook_policy` when initializing the client
-- RequestIdPolicy is now always set for all requests. This policy sets the id of the request in the header.
+  are no longer redacted in logging output
+
+### Changed
+- Key Vault API version 7.1 is now the default
+- Updated minimum `azure-core` version to 1.7.0
+
+### Added
+- At construction, clients accept a `CustomHookPolicy` through the optional
+  keyword argument `custom_hook_policy`
+- All client requests include a unique ID in the header `x-ms-client-request-id`
+- Dependency on `azure-common` for multiapi support
 
 ## 4.2.0b1 (2020-03-10)
 - Support for Key Vault API version 7.1-preview

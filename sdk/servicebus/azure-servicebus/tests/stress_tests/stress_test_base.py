@@ -53,7 +53,7 @@ class StressTestRunner:
                  receive_type = ReceiveType.push,
                  send_batch_size = None,
                  message_size = 10,
-                 idle_timeout = 10,
+                 max_wait_time = 10,
                  send_delay = .01,
                  receive_delay = 0,
                  should_complete_messages = True,
@@ -64,7 +64,7 @@ class StressTestRunner:
         self.receive_type = receive_type
         self.message_size = message_size
         self.send_batch_size = send_batch_size
-        self.idle_timeout = idle_timeout
+        self.max_wait_time = max_wait_time
         self.send_delay = send_delay
         self.receive_delay = receive_delay
         self.should_complete_messages = should_complete_messages
@@ -81,38 +81,31 @@ class StressTestRunner:
 
 
     # Plugin functions the caller can override to further tailor the test.
-    @staticmethod
-    def OnSend(state, sent_message):
+    def OnSend(self, state, sent_message):
         '''Called on every successful send'''
         pass
 
-
-    @staticmethod
-    def OnReceive(state, received_message):
+    def OnReceive(self, state, received_message):
         '''Called on every successful receive'''
         pass
 
 
-    @staticmethod
-    def OnComplete(send_results=[], receive_results=[]):
+    def OnComplete(self, send_results=[], receive_results=[]):
         '''Called on stress test run completion'''
         pass
 
 
-    @staticmethod
-    def PreProcessMessage(message):
+    def PreProcessMessage(self, message):
         '''Allows user to transform the message before batching or sending it.'''
         pass
 
 
-    @staticmethod
-    def PreProcessMessageBatch(message):
+    def PreProcessMessageBatch(self, message):
         '''Allows user to transform the batch before sending it.'''
         pass
 
 
-    @staticmethod
-    def PreProcessMessageBody(payload):
+    def PreProcessMessageBody(self, payload):
         '''Allows user to transform message payload before sending it.'''
         return payload
 
@@ -144,7 +137,7 @@ class StressTestRunner:
 
 
     def _Receive(self, receiver, end_time):
-        receiver._config.idle_timeout = self.idle_timeout
+        receiver._max_wait_time = self.max_wait_time
         with receiver:
             while end_time > datetime.utcnow():
                 if self.receive_type == ReceiveType.pull:
@@ -176,12 +169,14 @@ class StressTestRunner:
             senders = [proc_pool.submit(self._Send, sender, end_time) for sender in self.senders]
             receivers = [proc_pool.submit(self._Receive, receiver, end_time) for receiver in self.receivers]
 
-        result = StressTestResults()
-        result.state_by_sender = {s:f.result() for s,f in zip(self.senders, concurrent.futures.as_completed(senders))}
-        result.state_by_receiver = {r:f.result() for r,f in zip(self.receivers, concurrent.futures.as_completed(receivers))}
-        result.total_sent = sum([r.total_sent for r in result.state_by_sender.values()])
-        result.total_received = sum([r.total_received for r in result.state_by_receiver.values()])
-        result.time_elapsed = end_time - start_time
-        print("Stress test completed.  Results:\n", result)
-        return result
+            result = StressTestResults()
+            # TODO: do as_completed in one batch to provide a way to short-circuit on failure.
+            result.state_by_sender = {s:f.result() for s,f in zip(self.senders, concurrent.futures.as_completed(senders))}
+            result.state_by_receiver = {r:f.result() for r,f in zip(self.receivers, concurrent.futures.as_completed(receivers))}
+            print("got receiever results")
+            result.total_sent = sum([r.total_sent for r in result.state_by_sender.values()])
+            result.total_received = sum([r.total_received for r in result.state_by_receiver.values()])
+            result.time_elapsed = end_time - start_time
+            print("Stress test completed.  Results:\n", result)
+            return result
 

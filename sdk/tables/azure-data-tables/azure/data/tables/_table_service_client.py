@@ -10,18 +10,17 @@ from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline import Pipeline
-from ._models import Table
+from ._models import TableItem
 
 from ._generated import AzureTable
 from ._generated.models import TableProperties, TableServiceProperties, QueryOptions
 from ._models import TablePropertiesPaged, service_stats_deserialize, service_properties_deserialize
-from ._shared.base_client import parse_connection_str, TransportWrapper
-from ._shared.models import LocationMode
-from ._shared.response_handlers import process_table_error
+from ._base_client import parse_connection_str, TransportWrapper
+from ._models import LocationMode
+from ._error import _process_table_error
 from ._version import VERSION
-
 from ._table_client import TableClient
-from ._shared._table_service_client_base import TableServiceClientBase
+from ._table_service_client_base import TableServiceClientBase
 
 
 class TableServiceClient(TableServiceClientBase):
@@ -63,10 +62,8 @@ class TableServiceClient(TableServiceClientBase):
         :returns: A Table service client.
         :rtype: ~azure.data.tables.TableServiceClient
         """
-        account_url, secondary, credential = parse_connection_str(
-            conn_str=conn_str, credential=None, service='table')
-        if 'secondary_hostname' not in kwargs:
-            kwargs['secondary_hostname'] = secondary
+        account_url, credential = parse_connection_str(
+            conn_str=conn_str, credential=None, service='table', keyword_args=kwargs)
         return cls(account_url, credential=credential, **kwargs)
 
     @distributed_trace
@@ -85,7 +82,7 @@ class TableServiceClient(TableServiceClientBase):
                 timeout=timeout, use_location=LocationMode.SECONDARY, **kwargs)
             return service_stats_deserialize(stats)
         except HttpResponseError as error:
-            process_table_error(error)
+            _process_table_error(error)
 
     @distributed_trace
     def get_service_properties(self, **kwargs):
@@ -102,7 +99,7 @@ class TableServiceClient(TableServiceClientBase):
             service_props = self._client.service.get_properties(timeout=timeout, **kwargs)  # type: ignore
             return service_properties_deserialize(service_props)
         except HttpResponseError as error:
-            process_table_error(error)
+            _process_table_error(error)
 
     @distributed_trace
     def set_service_properties(
@@ -138,7 +135,7 @@ class TableServiceClient(TableServiceClientBase):
         try:
             return self._client.service.set_properties(props, **kwargs)  # type: ignore
         except HttpResponseError as error:
-            process_table_error(error)
+            _process_table_error(error)
 
     @distributed_trace
     def create_table(
@@ -182,7 +179,7 @@ class TableServiceClient(TableServiceClientBase):
             filter,  # pylint: disable=W0622
             **kwargs  # type: Any
     ):
-        # type: (...) -> ItemPaged[Table]
+        # type: (...) -> ItemPaged[TableItem]
         """Queries tables under the given account.
         :param filter: Specify a filter to return certain tables
         :type filter: str
@@ -190,7 +187,7 @@ class TableServiceClient(TableServiceClientBase):
         :keyword Union[str, list(str)] select: Specify desired properties of a table to return certain tables
         :keyword dict parameters: Dictionary for formatting query with additional, user defined parameters
         :return: A query of tables
-        :rtype: ItemPaged[Table]
+        :rtype: ItemPaged[TableItem]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         parameters = kwargs.pop('parameters', None)
@@ -214,13 +211,13 @@ class TableServiceClient(TableServiceClientBase):
             self,
             **kwargs  # type: Any
     ):
-        # type: (...) -> ItemPaged[Table]
+        # type: (...) -> ItemPaged[TableItem]
         """Queries tables under the given account.
 
         :keyword int results_per_page: Number of tables per page in return ItemPaged
         :keyword Union[str, list(str)] select: Specify desired properties of a table to return certain tables
         :return: A query of tables
-        :rtype: ItemPaged[Table]
+        :rtype: ItemPaged[TableItem]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         user_select = kwargs.pop('select', None)

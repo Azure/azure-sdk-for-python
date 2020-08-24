@@ -216,7 +216,7 @@ class BlobItemInternal(Model):
         'properties': {'key': 'Properties', 'type': 'BlobPropertiesInternal', 'xml': {'name': 'Properties'}},
         'metadata': {'key': 'Metadata', 'type': 'BlobMetadata', 'xml': {'name': 'Metadata'}},
         'blob_tags': {'key': 'BlobTags', 'type': 'BlobTags', 'xml': {'name': 'BlobTags'}},
-        'object_replication_metadata': {'key': 'ObjectReplicationMetadata', 'type': '{str}', 'xml': {'name': 'ObjectReplicationMetadata'}},
+        'object_replication_metadata': {'key': 'OrMetadata', 'type': '{str}', 'xml': {'name': 'OrMetadata'}},
     }
     _xml_map = {
         'name': 'Blob'
@@ -364,6 +364,9 @@ class BlobPropertiesInternal(Model):
     :type expires_on: datetime
     :param is_sealed:
     :type is_sealed: bool
+    :param rehydrate_priority: Possible values include: 'High', 'Standard'
+    :type rehydrate_priority: str or
+     ~azure.storage.blob.models.RehydratePriority
     """
 
     _validation = {
@@ -406,13 +409,14 @@ class BlobPropertiesInternal(Model):
         'access_tier_change_time': {'key': 'AccessTierChangeTime', 'type': 'rfc-1123', 'xml': {'name': 'AccessTierChangeTime'}},
         'tag_count': {'key': 'TagCount', 'type': 'int', 'xml': {'name': 'TagCount'}},
         'expires_on': {'key': 'Expiry-Time', 'type': 'rfc-1123', 'xml': {'name': 'Expiry-Time'}},
-        'is_sealed': {'key': 'IsSealed', 'type': 'bool', 'xml': {'name': 'IsSealed'}},
+        'is_sealed': {'key': 'Sealed', 'type': 'bool', 'xml': {'name': 'Sealed'}},
+        'rehydrate_priority': {'key': 'RehydratePriority', 'type': 'str', 'xml': {'name': 'RehydratePriority'}},
     }
     _xml_map = {
         'name': 'Properties'
     }
 
-    def __init__(self, *, last_modified, etag: str, creation_time=None, content_length: int=None, content_type: str=None, content_encoding: str=None, content_language: str=None, content_md5: bytearray=None, content_disposition: str=None, cache_control: str=None, blob_sequence_number: int=None, blob_type=None, lease_status=None, lease_state=None, lease_duration=None, copy_id: str=None, copy_status=None, copy_source: str=None, copy_progress: str=None, copy_completion_time=None, copy_status_description: str=None, server_encrypted: bool=None, incremental_copy: bool=None, destination_snapshot: str=None, deleted_time=None, remaining_retention_days: int=None, access_tier=None, access_tier_inferred: bool=None, archive_status=None, customer_provided_key_sha256: str=None, encryption_scope: str=None, access_tier_change_time=None, tag_count: int=None, expires_on=None, is_sealed: bool=None, **kwargs) -> None:
+    def __init__(self, *, last_modified, etag: str, creation_time=None, content_length: int=None, content_type: str=None, content_encoding: str=None, content_language: str=None, content_md5: bytearray=None, content_disposition: str=None, cache_control: str=None, blob_sequence_number: int=None, blob_type=None, lease_status=None, lease_state=None, lease_duration=None, copy_id: str=None, copy_status=None, copy_source: str=None, copy_progress: str=None, copy_completion_time=None, copy_status_description: str=None, server_encrypted: bool=None, incremental_copy: bool=None, destination_snapshot: str=None, deleted_time=None, remaining_retention_days: int=None, access_tier=None, access_tier_inferred: bool=None, archive_status=None, customer_provided_key_sha256: str=None, encryption_scope: str=None, access_tier_change_time=None, tag_count: int=None, expires_on=None, is_sealed: bool=None, rehydrate_priority=None, **kwargs) -> None:
         super(BlobPropertiesInternal, self).__init__(**kwargs)
         self.creation_time = creation_time
         self.last_modified = last_modified
@@ -449,6 +453,7 @@ class BlobPropertiesInternal(Model):
         self.tag_count = tag_count
         self.expires_on = expires_on
         self.is_sealed = is_sealed
+        self.rehydrate_priority = rehydrate_priority
 
 
 class BlobTag(Model):
@@ -1755,6 +1760,9 @@ class StaticWebsite(Model):
     :type index_document: str
     :param error_document404_path: The absolute path of the custom 404 page
     :type error_document404_path: str
+    :param default_index_document_path: Absolute path of the default index
+     page
+    :type default_index_document_path: str
     """
 
     _validation = {
@@ -1765,15 +1773,17 @@ class StaticWebsite(Model):
         'enabled': {'key': 'Enabled', 'type': 'bool', 'xml': {'name': 'Enabled'}},
         'index_document': {'key': 'IndexDocument', 'type': 'str', 'xml': {'name': 'IndexDocument'}},
         'error_document404_path': {'key': 'ErrorDocument404Path', 'type': 'str', 'xml': {'name': 'ErrorDocument404Path'}},
+        'default_index_document_path': {'key': 'DefaultIndexDocumentPath', 'type': 'str', 'xml': {'name': 'DefaultIndexDocumentPath'}},
     }
     _xml_map = {
     }
 
-    def __init__(self, *, enabled: bool, index_document: str=None, error_document404_path: str=None, **kwargs) -> None:
+    def __init__(self, *, enabled: bool, index_document: str=None, error_document404_path: str=None, default_index_document_path: str=None, **kwargs) -> None:
         super(StaticWebsite, self).__init__(**kwargs)
         self.enabled = enabled
         self.index_document = index_document
         self.error_document404_path = error_document404_path
+        self.default_index_document_path = default_index_document_path
 
 
 class StorageError(Model):

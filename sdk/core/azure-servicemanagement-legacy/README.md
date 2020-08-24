@@ -231,7 +231,7 @@ section of the project.
 # Learn More
 
 [Microsoft Azure Python Developer
-Center](http://azure.microsoft.com/en-us/develop/python/)
+Center](http://azure.microsoft.com/develop/python/)
 
 
 ![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fazure-servicemanagement-legacy%2FREADME.png)

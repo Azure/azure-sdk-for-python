@@ -246,8 +246,11 @@ result = [doc for doc in response if not doc.is_error]
 
 for doc in result:
     for entity in doc.entities:
-        print("Entity: \t", entity.text, "\tCategory: \t", entity.category,
-              "\tConfidence Score: \t", entity.confidence_score)
+        print("Entity: {}".format(entity.text))
+        print("...Category: {}".format(entity.category))
+        print("...Confidence Score: {}".format(entity.confidence_score))
+        print("...Offset: {}".format(entity.offset))
+        print("...Length: {}".format(entity.length))
 ```
 
 The returned response is a heterogeneous list of result and error objects: list[[RecognizeEntitiesResult][recognize_entities_result], [DocumentError][document_error]]
@@ -280,11 +283,14 @@ result = [doc for doc in response if not doc.is_error]
 for doc in result:
     for entity in doc.entities:
         print("Entity: {}".format(entity.name))
-        print("URL: {}".format(entity.url))
-        print("Data Source: {}".format(entity.data_source))
+        print("...URL: {}".format(entity.url))
+        print("...Data Source: {}".format(entity.data_source))
+        print("...Entity matches:")
         for match in entity.matches:
-            print("Confidence Score: {}".format(match.confidence_score))
-            print("Entity as appears in request: {}".format(match.text))
+            print("......Entity match text: {}".format(match.text))
+            print("......Confidence Score: {}".format(match.confidence_score))
+            print("......Offset: {}".format(match.offset))
+            print("......Length: {}".format(match.length))
 ```
 
 The returned response is a heterogeneous list of result and error objects: list[[RecognizeLinkedEntitiesResult][recognize_linked_entities_result], [DocumentError][document_error]]
@@ -298,7 +304,7 @@ Social Security Numbers, bank account information, credit card numbers, and more
 
 ```python
 from azure.core.credentials import AzureKeyCredential
-from azure.ai.textanalytics import TextAnalyticsClient, ApiVersion
+from azure.ai.textanalytics import TextAnalyticsClient
 
 credential = AzureKeyCredential("<api_key>")
 endpoint="https://<region>.api.cognitive.microsoft.com/"
@@ -313,8 +319,11 @@ response = text_analytics_client.recognize_pii_entities(documents, language="en"
 result = [doc for doc in response if not doc.is_error]
 for doc in result:
     for entity in doc.entities:
-        print("Entity: \t", entity.text, "\tCategory: \t", entity.category,
-              "\tConfidence Score: \t", entity.confidence_score)
+        print("Entity: {}".format(entity.text))
+        print("...Category: {}".format(entity.category))
+        print("...Confidence Score: {}".format(entity.confidence_score))
+        print("...Offset: {}".format(entity.offset))
+        print("...Length: {}".format(entity.length))
 ```
 
 The returned response is a heterogeneous list of result and error objects: list[[RecognizePiiEntitiesResult][recognize_pii_entities_result], [DocumentError][document_error]]

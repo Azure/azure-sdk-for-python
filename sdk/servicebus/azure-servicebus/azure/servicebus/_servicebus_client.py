@@ -180,8 +180,8 @@ class ServiceBusClient(object):
          will be immediately removed from the queue, and cannot be subsequently rejected or re-received if
          the client fails to process the message. The default mode is PeekLock.
         :paramtype mode: ~azure.servicebus.ReceiveSettleMode
-        :keyword float idle_timeout: The timeout in seconds between received messages after which the receiver will
-         automatically shutdown. The default value is 0, meaning no timeout.
+        :keyword float max_wait_time: The timeout in seconds between received messages after which the receiver will
+         automatically stop receiving. The default value is 0, meaning no timeout.
         :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.
          Default value is 3.
         :keyword int prefetch: The maximum number of messages to cache with each request to the service.
@@ -230,8 +230,8 @@ class ServiceBusClient(object):
          will be immediately removed from the queue, and cannot be subsequently rejected or re-received if
          the client fails to process the message. The default mode is PeekLock.
         :paramtype mode: ~azure.servicebus.ReceiveSettleMode
-        :keyword float idle_timeout: The timeout in seconds between received messages after which the receiver will
-         automatically shutdown. The default value is 0, meaning no timeout.
+        :keyword float max_wait_time: The timeout in seconds between received messages after which the receiver will
+         automatically stop receiving. The default value is 0, meaning no timeout.
         :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.
          Default value is 3.
         :keyword float retry_backoff_factor: Delta back-off internal in the unit of second between retries.
@@ -325,8 +325,8 @@ class ServiceBusClient(object):
          will be immediately removed from the subscription, and cannot be subsequently rejected or re-received if
          the client fails to process the message. The default mode is PeekLock.
         :paramtype mode: ~azure.servicebus.ReceiveSettleMode
-        :keyword float idle_timeout: The timeout in seconds between received messages after which the receiver will
-         automatically shutdown. The default value is 0, meaning no timeout.
+        :keyword float max_wait_time: The timeout in seconds between received messages after which the receiver will
+         automatically stop receiving. The default value is 0, meaning no timeout.
         :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.
          Default value is 3.
         :keyword float retry_backoff_factor: Delta back-off internal in the unit of second between retries.
@@ -381,8 +381,8 @@ class ServiceBusClient(object):
          will be immediately removed from the subscription, and cannot be subsequently rejected or re-received if
          the client fails to process the message. The default mode is PeekLock.
         :paramtype mode: ~azure.servicebus.ReceiveSettleMode
-        :keyword float idle_timeout: The timeout in seconds between received messages after which the receiver will
-         automatically shutdown. The default value is 0, meaning no timeout.
+        :keyword float max_wait_time: The timeout in seconds between received messages after which the receiver will
+         automatically stop receiving. The default value is 0, meaning no timeout.
         :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.
          Default value is 3.
         :keyword float retry_backoff_factor: Delta back-off internal in the unit of second between retries.
@@ -445,8 +445,8 @@ class ServiceBusClient(object):
          will be immediately removed from the subscription, and cannot be subsequently rejected or re-received if
          the client fails to process the message. The default mode is PeekLock.
         :paramtype mode: ~azure.servicebus.ReceiveSettleMode
-        :keyword float idle_timeout: The timeout in seconds between received messages after which the receiver will
-         automatically shutdown. The default value is 0, meaning no timeout.
+        :keyword float max_wait_time: The timeout in seconds between received messages after which the receiver will
+         automatically stop receiving. The default value is 0, meaning no timeout.
         :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.
          Default value is 3.
         :keyword float retry_backoff_factor: Delta back-off internal in the unit of second between retries.
@@ -501,8 +501,8 @@ class ServiceBusClient(object):
          will be immediately removed from the queue, and cannot be subsequently rejected or re-received if
          the client fails to process the message. The default mode is PeekLock.
         :paramtype mode: ~azure.servicebus.ReceiveSettleMode
-        :keyword float idle_timeout: The timeout in seconds between received messages after which the receiver will
-         automatically shutdown. The default value is 0, meaning no timeout.
+        :keyword float max_wait_time: The timeout in seconds between received messages after which the receiver will
+         automatically stop receiving. The default value is 0, meaning no timeout.
         :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.
          Default value is 3.
         :keyword int prefetch: The maximum number of messages to cache with each request to the service.

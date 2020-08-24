@@ -3,10 +3,10 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from azure.identity import VSCodeCredential
+from azure.identity import VisualStudioCodeCredential
 
 def test_live():
-    credential = VSCodeCredential()
+    credential = VisualStudioCodeCredential()
     token=credential.get_token('https://vault.azure.net/.default')
     print(token)
 

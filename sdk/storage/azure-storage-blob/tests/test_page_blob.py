@@ -45,8 +45,11 @@ class StoragePageBlobTest(StorageTestCase):
         self.container_name = self.get_resource_name('utcontainer')
         self.source_container_name = self.get_resource_name('utcontainersource')
         if self.is_live:
-            bsc.create_container(self.container_name)
-            bsc.create_container(self.source_container_name)
+            try:
+                bsc.create_container(self.container_name)
+                bsc.create_container(self.source_container_name)
+            except:
+                pass
 
     def _teardown(self, FILE_PATH):
         if os.path.isfile(FILE_PATH):
@@ -60,9 +63,9 @@ class StoragePageBlobTest(StorageTestCase):
             self.container_name,
             self.get_resource_name(TEST_BLOB_PREFIX))
 
-    def _create_blob(self, bsc, length=512, sequence_number=None):
+    def _create_blob(self, bsc, length=512, sequence_number=None, tags=None):
         blob = self._get_blob_reference(bsc)
-        blob.create_page_blob(size=length, sequence_number=sequence_number)
+        blob.create_page_blob(size=length, sequence_number=sequence_number, tags=tags)
         return blob
 
     def _create_source_blob(self, bs, data, offset, length):
@@ -173,6 +176,30 @@ class StoragePageBlobTest(StorageTestCase):
         # Assert
         content = blob.download_blob(lease=lease)
         self.assertEqual(content.readall(), data)
+
+    @GlobalResourceGroupPreparer()
+    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='storagename')
+    def test_put_page_with_lease_id_and_if_tags(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
+        self._setup(bsc)
+        tags = {"tag1 name": "my tag", "tag2": "secondtag", "tag3": "thirdtag"}
+        blob = self._create_blob(bsc, tags=tags)
+        with self.assertRaises(ResourceModifiedError):
+            blob.acquire_lease(if_tags_match_condition="\"tag1\"='first tag'")
+        lease = blob.acquire_lease(if_tags_match_condition="\"tag1 name\"='my tag' AND \"tag2\"='secondtag'")
+
+        # Act
+        data = self.get_random_bytes(512)
+        with self.assertRaises(ResourceModifiedError):
+            blob.upload_page(data, offset=0, length=512, lease=lease, if_tags_match_condition="\"tag1\"='first tag'")
+        blob.upload_page(data, offset=0, length=512, lease=lease, if_tags_match_condition="\"tag1 name\"='my tag' AND \"tag2\"='secondtag'")
+
+        page_ranges, cleared = blob.get_page_ranges()
+
+        # Assert
+        content = blob.download_blob(lease=lease)
+        self.assertEqual(content.readall(), data)
+        self.assertEqual(1, len(page_ranges))
 
     @GlobalStorageAccountPreparer()
     def test_update_page(self, resource_group, location, storage_account, storage_account_key):
@@ -1685,6 +1712,63 @@ class StoragePageBlobTest(StorageTestCase):
             self.assertFalse(blobs[0].blob_tier_inferred)
         finally:
             container.delete_container()
+
+    # TODO: check with service to see if premium blob supports tags
+    # @GlobalResourceGroupPreparer()
+    # @StorageAccountPreparer(random_name_enabled=True, sku='premium_LRS', name_prefix='pyacrstorage')
+    # def test_blob_tier_set_tier_api_with_if_tags(self, resource_group, location, storage_account, storage_account_key):
+    #     bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
+    #     self._setup(bsc)
+    #     url = self.account_url(storage_account, "blob")
+    #     credential = storage_account_key
+    #     pbs = BlobServiceClient(url, credential=credential)
+    #     tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
+    #
+    #     try:
+    #         container_name = self.get_resource_name('utpremiumcontainer')
+    #         container = pbs.get_container_client(container_name)
+    #
+    #         if self.is_live:
+    #             try:
+    #                 container.create_container()
+    #             except:
+    #                 pass
+    #
+    #         blob = self._get_blob_reference(bsc)
+    #         pblob = pbs.get_blob_client(container_name, blob.blob_name)
+    #         # pblob.create_page_blob(1024, tags=tags)
+    #         blob_ref = pblob.get_blob_properties()
+    #         self.assertEqual(PremiumPageBlobTier.P10, blob_ref.blob_tier)
+    #         self.assertIsNotNone(blob_ref.blob_tier)
+    #         self.assertTrue(blob_ref.blob_tier_inferred)
+    #
+    #         pcontainer = pbs.get_container_client(container_name)
+    #         blobs = list(pcontainer.list_blobs())
+    #
+    #         # Assert
+    #         self.assertIsNotNone(blobs)
+    #         self.assertGreaterEqual(len(blobs), 1)
+    #         self.assertIsNotNone(blobs[0])
+    #         self.assertNamedItemInContainer(blobs, blob.blob_name)
+    #         with self.assertRaises(ResourceModifiedError):
+    #             pblob.set_premium_page_blob_tier(PremiumPageBlobTier.P50, if_tags_match_condition="\"tag1\"='firsttag WRONG'")
+    #         pblob.set_premium_page_blob_tier(PremiumPageBlobTier.P50, if_tags_match_condition="\"tag1\"='firsttag'")
+    #
+    #         blob_ref2 = pblob.get_blob_properties()
+    #         self.assertEqual(PremiumPageBlobTier.P50, blob_ref2.blob_tier)
+    #         self.assertFalse(blob_ref2.blob_tier_inferred)
+    #
+    #         blobs = list(pcontainer.list_blobs())
+    #
+    #         # Assert
+    #         self.assertIsNotNone(blobs)
+    #         self.assertGreaterEqual(len(blobs), 1)
+    #         self.assertIsNotNone(blobs[0])
+    #         self.assertNamedItemInContainer(blobs, blob.blob_name)
+    #         self.assertEqual(blobs[0].blob_tier, PremiumPageBlobTier.P50)
+    #         self.assertFalse(blobs[0].blob_tier_inferred)
+    #     finally:
+    #         container.delete_container()
 
     @GlobalResourceGroupPreparer()
     @StorageAccountPreparer(random_name_enabled=True, sku='premium_LRS', name_prefix='pyacrstorage')

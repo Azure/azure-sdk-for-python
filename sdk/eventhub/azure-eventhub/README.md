@@ -4,7 +4,7 @@ Azure Event Hubs is a highly scalable publish-subscribe service that can ingest 
 them to multiple consumers. This lets you process and analyze the massive amounts of data produced by your connected
 devices and applications. Once Event Hubs has collected the data, you can retrieve, transform, and store it by using
 any real-time analytics provider or with batching/storage adapters. If you would like to know more about Azure Event Hubs,
-you may wish to review: [What is Event Hubs](https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-about)?
+you may wish to review: [What is Event Hubs](https://docs.microsoft.com/azure/event-hubs/event-hubs-about)?
 
 The Azure Event Hubs client library allows for publishing and consuming of Azure Event Hubs events and may be used to:
 
@@ -13,7 +13,7 @@ The Azure Event Hubs client library allows for publishing and consuming of Azure
 - Observe interesting operations and interactions happening within your business or other ecosystem, allowing loosely coupled systems to interact without the need to bind them together.
 - Receive events from one or more publishers, transform them to better meet the needs of your ecosystem, then publish the transformed events to a new stream for consumers to observe.
 
-[Source code](./) | [Package (PyPi)](https://pypi.org/project/azure-eventhub/) | [API reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.2.0b1/azure.eventhub.html) | [Product documentation](https://docs.microsoft.com/en-us/azure/event-hubs/) | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples)
+[Source code](./) | [Package (PyPi)](https://pypi.org/project/azure-eventhub/) | [API reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.2.0b1/azure.eventhub.html) | [Product documentation](https://docs.microsoft.com/azure/event-hubs/) | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples)
 ## Getting started
 
 ### Prerequisites
@@ -24,7 +24,7 @@ If you do not have an existing Azure account, you may sign up for a free trial o
 
 - **Event Hubs namespace with an Event Hub:** To interact with Azure Event Hubs, you'll also need to have a namespace and Event Hub  available.
 If you are not familiar with creating Azure resources, you may wish to follow the step-by-step guide
-for [creating an Event Hub using the Azure portal](https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-create).
+for [creating an Event Hub using the Azure portal](https://docs.microsoft.com/azure/event-hubs/event-hubs-create).
 There, you can also find detailed instructions for using the Azure CLI, Azure PowerShell, or Azure Resource Manager (ARM) templates to create an Event Hub.
 
 ### Install the package
@@ -42,7 +42,7 @@ Interaction with Event Hubs starts with an instance of EventHubConsumerClient or
 **Create client from connection string:**
 
 For the Event Hubs client library to interact with an Event Hub, the easiest means is to use a connection string, which is created automatically when creating an Event Hubs namespace.
-If you aren't familiar with shared access policies in Azure, you may wish to follow the step-by-step guide to [get an Event Hubs connection string](https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-get-connection-string).
+If you aren't familiar with shared access policies in Azure, you may wish to follow the step-by-step guide to [get an Event Hubs connection string](https://docs.microsoft.com/azure/event-hubs/event-hubs-get-connection-string).
 
 
 ```python
@@ -58,7 +58,7 @@ consumer_client = EventHubConsumerClient.from_connection_string(connection_str, 
 
 - The `from_connection_string` method takes the connection string of the form
 `Endpoint=sb://<yournamespace>.servicebus.windows.net/;SharedAccessKeyName=<yoursharedaccesskeyname>;SharedAccessKey=<yoursharedaccesskey>` and
-entity name to your Event Hub instance. You can get the connection string from the [Azure portal](https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-get-connection-string#get-connection-string-from-the-portal).
+entity name to your Event Hub instance. You can get the connection string from the [Azure portal](https://docs.microsoft.com/azure/event-hubs/event-hubs-get-connection-string#get-connection-string-from-the-portal).
 
 **Create client using the azure-identity library:**
 
@@ -104,7 +104,7 @@ There can be at most 5 concurrent readers on a partition per consumer group; how
 one active consumer for a given partition and consumer group pairing. Each active reader receives all of the events from
 its partition; if there are multiple readers on the same partition, then they will receive duplicate events.
 
-For more concepts and deeper discussion, see: [Event Hubs Features](https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-features).
+For more concepts and deeper discussion, see: [Event Hubs Features](https://docs.microsoft.com/azure/event-hubs/event-hubs-features).
 Also, the concepts for AMQP are well documented in [OASIS Advanced Messaging Queuing Protocol (AMQP) Version 1.0](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-overview-v1.0-os.html).
 
 ## Examples
@@ -327,8 +327,8 @@ Search pypi with the prefix `azure-eventhub-checkpointstore` to
 find packages that support this and use the `CheckpointStore` implementation from one such package. Please note that both sync and async libraries are provided.
 
 In the below example, we create an instance of `EventHubConsumerClient` and use a `BlobCheckpointStore`. You need
-to [create an Azure Storage account](https://docs.microsoft.com/en-us/azure/storage/common/storage-quickstart-create-account?tabs=azure-portal)
-and a [Blob Container](https://docs.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-portal#create-a-container) to run the code.
+to [create an Azure Storage account](https://docs.microsoft.com/azure/storage/common/storage-quickstart-create-account?tabs=azure-portal)
+and a [Blob Container](https://docs.microsoft.com/azure/storage/blobs/storage-quickstart-blobs-portal#create-a-container) to run the code.
 
 [Azure Blob Storage Checkpoint Store Async](../azure-eventhub-checkpointstoreblob-aio)
 and [Azure Blob Storage Checkpoint Store Sync](../azure-eventhub-checkpointstoreblob)
@@ -378,7 +378,7 @@ if __name__ == '__main__':
 You can use `EventHubConsumerClient` to work with IoT Hub as well. This is useful for receiving telemetry data of IoT Hub from the
 linked EventHub. The associated connection string will not have send claims, hence sending events is not possible.
 
-Please notice that the connection string needs to be for an [Event Hub-compatible endpoint](https://docs.microsoft.com/en-us/azure/iot-hub/iot-hub-devguide-messages-read-builtin), 
+Please notice that the connection string needs to be for an [Event Hub-compatible endpoint](https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-messages-read-builtin), 
 e.g. "Endpoint=sb://my-iothub-namespace-[uid].servicebus.windows.net/;SharedAccessKeyName=my-SA-name;SharedAccessKey=my-SA-key;EntityPath=my-iot-hub-name"
 
 There are two ways to get the Event Hubs compatible endpoint:

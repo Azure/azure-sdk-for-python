@@ -48,7 +48,7 @@ class ServiceBusSubscriptionAsyncTests(AzureMgmtTestCase):
             async with sb_client.get_subscription_receiver(
                     topic_name=servicebus_topic.name,
                     subscription_name=servicebus_subscription.name,
-                    idle_timeout=5
+                    max_wait_time=5
             ) as receiver:
                 count = 0
                 async for message in receiver:
@@ -80,7 +80,7 @@ class ServiceBusSubscriptionAsyncTests(AzureMgmtTestCase):
             async with sb_client.get_subscription_receiver(
                     topic_name=servicebus_topic.name,
                     subscription_name=servicebus_subscription.name,
-                    idle_timeout=5
+                    max_wait_time=5
             ) as receiver:
                 count = 0
                 async for message in receiver:
@@ -104,7 +104,7 @@ class ServiceBusSubscriptionAsyncTests(AzureMgmtTestCase):
             async with sb_client.get_subscription_receiver(
                 topic_name=servicebus_topic.name,
                 subscription_name=servicebus_subscription.name,
-                idle_timeout=5,
+                max_wait_time=5,
                 mode=ReceiveSettleMode.PeekLock,
                 prefetch=10
             ) as receiver:
@@ -128,7 +128,7 @@ class ServiceBusSubscriptionAsyncTests(AzureMgmtTestCase):
             async with sb_client.get_subscription_receiver(
                 topic_name=servicebus_topic.name,
                 subscription_name=servicebus_subscription.name,
-                idle_timeout=5,
+                max_wait_time=5,
                 mode=ReceiveSettleMode.PeekLock
             ) as receiver:
                 count = 0
@@ -141,7 +141,7 @@ class ServiceBusSubscriptionAsyncTests(AzureMgmtTestCase):
             async with sb_client.get_subscription_deadletter_receiver(
                 topic_name=servicebus_topic.name,
                 subscription_name=servicebus_subscription.name,
-                idle_timeout=5,
+                max_wait_time=5,
                 mode=ReceiveSettleMode.PeekLock
             ) as dl_receiver:
                 count = 0

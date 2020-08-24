@@ -115,7 +115,7 @@ class FileSystemSamples(object):
         datalake_service_client = DataLakeServiceClient.from_connection_string(self.connection_string)
 
         # Instantiate a FileSystemClient
-        file_system_client = datalake_service_client.get_file_system_client("myfilesystem")
+        file_system_client = datalake_service_client.get_file_system_client("myfilesystemforlistpaths")
 
         # Create new File System
         file_system_client.create_file_system()
@@ -144,7 +144,7 @@ class FileSystemSamples(object):
         datalake_service_client = DataLakeServiceClient.from_connection_string(self.connection_string)
 
         # Instantiate a FileSystemClient
-        file_system_client = datalake_service_client.get_file_system_client("myfilesystem")
+        file_system_client = datalake_service_client.get_file_system_client("myfilesystemforgetclient")
 
         # Create new File System
         try:

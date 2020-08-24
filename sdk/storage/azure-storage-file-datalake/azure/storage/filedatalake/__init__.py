@@ -28,6 +28,9 @@ from ._models import (
     UserDelegationKey,
     PublicAccess,
     AccessPolicy,
+    DelimitedTextDialect,
+    DelimitedJsonDialect,
+    DataLakeFileQueryError
 )
 from ._shared_access_signature import generate_account_sas, generate_file_system_sas, generate_directory_sas, \
     generate_file_sas
@@ -69,5 +72,8 @@ __all__ = [
     'generate_directory_sas',
     'generate_file_sas',
     'VERSION',
-    'StorageStreamDownloader'
+    'StorageStreamDownloader',
+    'DelimitedTextDialect',
+    'DelimitedJsonDialect',
+    'DataLakeFileQueryError'
 ]

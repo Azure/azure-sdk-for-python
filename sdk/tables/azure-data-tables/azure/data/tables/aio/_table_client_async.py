@@ -9,25 +9,33 @@ from typing import (
     Any,
 )
 
+try:
+    from urllib.parse import urlparse, unquote
+except ImportError:
+    from urlparse import urlparse  # type: ignore
+    from urllib2 import unquote  # type: ignore
+
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
-from azure.data.tables import VERSION
-from azure.data.tables._entity import TableEntity
-from azure.data.tables._generated.aio._azure_table_async import AzureTable
-from azure.data.tables._generated.models import SignedIdentifier, TableProperties, QueryOptions
-from azure.data.tables._models import AccessPolicy, Table
-from azure.data.tables._shared.base_client_async import AsyncStorageAccountHostsMixin
-from azure.data.tables._shared.policies_async import ExponentialRetry
-from azure.data.tables._shared.request_handlers import serialize_iso
-from azure.data.tables._shared.response_handlers import return_headers_and_deserialized, process_table_error
 
+from .. import VERSION
+from .._base_client import parse_connection_str
+from .._entity import TableEntity
+from .._generated.aio import AzureTable
+from .._generated.models import SignedIdentifier, TableProperties, QueryOptions
+from .._models import AccessPolicy, TableItem
+from .._serialize import serialize_iso
+from .._deserialize import _return_headers_and_deserialized
+from .._error import _process_table_error
 from .._models import UpdateMode
-from ._models import TableEntityPropertiesPaged
 from .._deserialize import _convert_to_entity
 from .._serialize import _add_entity_properties, _get_match_headers
-from .._shared._table_client_base import TableClientBase
+from .._table_client_base import TableClientBase
+from ._base_client_async import AsyncStorageAccountHostsMixin
+from ._models import TableEntityPropertiesPaged
+from ._policies_async import ExponentialRetry
 
 
 class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
@@ -66,6 +74,66 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         self._client._config.version = kwargs.get('api_version', VERSION)  # pylint: disable = W0212
         self._loop = loop
 
+    @classmethod
+    def from_connection_string(
+            cls, conn_str,  # type: str
+            table_name,  # type: str
+            **kwargs  # type: Any
+    ):
+        # type: (...) -> TableClient
+        """Create TableClient from a Connection String.
+
+        :param conn_str:
+            A connection string to an Azure Storage or Cosmos account.
+        :type conn_str: str
+        :param table_name: The table name.
+        :type table_name: str
+        :returns: A table client.
+        :rtype: ~azure.data.tables.TableClient
+        """
+        account_url, credential = parse_connection_str(
+            conn_str=conn_str, credential=None, service='table', keyword_args=kwargs)
+        return cls(account_url, table_name=table_name, credential=credential, **kwargs)
+
+    @classmethod
+    def from_table_url(cls, table_url, credential=None, **kwargs):
+        # type: (str, Optional[Any], Any) -> TableClient
+        """A client to interact with a specific Table.
+
+        :param table_url: The full URI to the table, including SAS token if used.
+        :type table_url: str
+        :param credential:
+            The credentials with which to authenticate. This is optional if the
+            account URL already has a SAS token. The value can be a SAS token string, an account
+            shared access key.
+        :type credential: str
+        :returns: A table client.
+        :rtype: ~azure.data.tables.TableClient
+        """
+        try:
+            if not table_url.lower().startswith('http'):
+                table_url = "https://" + table_url
+        except AttributeError:
+            raise ValueError("Table URL must be a string.")
+        parsed_url = urlparse(table_url.rstrip('/'))
+
+        if not parsed_url.netloc:
+            raise ValueError("Invalid URL: {}".format(table_url))
+
+        table_path = parsed_url.path.lstrip('/').split('/')
+        account_path = ""
+        if len(table_path) > 1:
+            account_path = "/" + "/".join(table_path[:-1])
+        account_url = "{}://{}{}?{}".format(
+            parsed_url.scheme,
+            parsed_url.netloc.rstrip('/'),
+            account_path,
+            parsed_url.query)
+        table_name = unquote(table_path[-1])
+        if not table_name:
+            raise ValueError("Invalid URL. Please provide a URL with a valid table name")
+        return cls(account_url, table_name=table_name, credential=credential, **kwargs)
+
     @distributed_trace_async
     async def get_table_access_policy(
             self,
@@ -84,10 +152,10 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
             _, identifiers = await self._client.table.get_access_policy(
                 table=self.table_name,
                 timeout=timeout,
-                cls=return_headers_and_deserialized,
+                cls=kwargs.pop('cls', None) or _return_headers_and_deserialized,
                 **kwargs)
         except HttpResponseError as error:
-            process_table_error(error)
+            _process_table_error(error)
         return {s.id: s.access_policy or AccessPolicy() for s in identifiers}
 
     @distributed_trace_async
@@ -118,25 +186,25 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
                 table_acl=signed_identifiers or None,
                 **kwargs)
         except HttpResponseError as error:
-            process_table_error(error)
+            _process_table_error(error)
 
     @distributed_trace_async
     async def create_table(
             self,
             **kwargs  # type: Any
     ):
-        # type: (...) -> Table
+        # type: (...) -> TableItem
         """Creates a new table under the given account.
         :return: Table created
-        :rtype: Table
+        :rtype: TableItem
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         table_properties = TableProperties(table_name=self.table_name, **kwargs)
         try:
             table = await self._client.table.create(table_properties)
-            return Table(table)
+            return TableItem(table)
         except HttpResponseError as error:
-            process_table_error(error)
+            _process_table_error(error)
 
     @distributed_trace_async
     async def delete_table(
@@ -151,7 +219,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         try:
             await self._client.table.delete(table=self.table_name, **kwargs)
         except HttpResponseError as error:
-            process_table_error(error)
+            _process_table_error(error)
 
     @distributed_trace_async
     async def delete_entity(
@@ -183,7 +251,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
                 if_match=if_match or if_not_match or '*',
                 **kwargs)
         except HttpResponseError as error:
-            process_table_error(error)
+            _process_table_error(error)
 
     @distributed_trace_async
     async def create_entity(
@@ -214,7 +282,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
             properties = _convert_to_entity(inserted_entity)
             return properties
         except ResourceNotFoundError as error:
-            process_table_error(error)
+            _process_table_error(error)
 
     @distributed_trace_async
     async def update_entity(
@@ -264,7 +332,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
             else:
                 raise ValueError('Mode type is not supported')
         except HttpResponseError as error:
-            process_table_error(error)
+            _process_table_error(error)
 
     @distributed_trace
     def list_entities(
@@ -352,10 +420,11 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
                                                                                         partition_key=partition_key,
                                                                                         row_key=row_key,
                                                                                         **kwargs)
-            properties = _convert_to_entity(entity.additional_properties)
+
+            properties = _convert_to_entity(entity)
             return properties
         except HttpResponseError as error:
-            process_table_error(error)
+            _process_table_error(error)
 
     @distributed_trace_async
     async def upsert_entity(

@@ -10,7 +10,7 @@ from _shared.testcase import GlobalStorageAccountPreparer
 from azure.data.tables import AccessPolicy, TableSasPermissions, ResourceTypes, AccountSasPermissions
 from azure.data.tables.aio import TableServiceClient
 from azure.data.tables._generated.models import QueryOptions
-from azure.data.tables._shared.table_shared_access_signature import generate_account_sas
+from azure.data.tables._table_shared_access_signature import generate_account_sas
 
 TEST_TABLE_PREFIX = 'pytableasync'
 
@@ -316,7 +316,7 @@ class TableTestAsync(AsyncTableTestCase):
             pytest.skip("Cosmos endpoint does not support this")
         ts = TableServiceClient(url, storage_account_key)
         table = await self._create_table(ts)
-        client = ts.get_table_client(table=table.table_name)
+        client = ts.get_table_client(table_name=table.table_name)
 
         # Act
         identifiers = dict()

@@ -16,22 +16,19 @@ except ImportError:
 from azure.core.paging import ItemPaged
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.tracing.decorator import distributed_trace
+
 from ._deserialize import _convert_to_entity
 from ._entity import TableEntity
 from ._generated import AzureTable
 from ._generated.models import AccessPolicy, SignedIdentifier, TableProperties, QueryOptions
 from ._serialize import _get_match_headers, _add_entity_properties
-from ._shared.base_client import parse_connection_str
-from ._shared._table_client_base import TableClientBase
-
-from ._shared.request_handlers import serialize_iso
-from ._shared.response_handlers import process_table_error
-
+from ._base_client import parse_connection_str
+from ._table_client_base import TableClientBase
+from ._serialize import serialize_iso
+from ._deserialize import _return_headers_and_deserialized
+from ._error import _process_table_error
 from ._version import VERSION
-
-from ._models import TableEntityPropertiesPaged, UpdateMode, Table
-
-from ._shared.response_handlers import return_headers_and_deserialized
+from ._models import TableEntityPropertiesPaged, UpdateMode, TableItem
 
 
 class TableClient(TableClientBase):
@@ -81,11 +78,9 @@ class TableClient(TableClientBase):
         :returns: A table client.
         :rtype: ~azure.data.tables.TableClient
         """
-        account_url, secondary, credential = parse_connection_str(
-            conn_str=conn_str, credential=None, service='table')
-        if 'secondary_hostname' not in kwargs:
-            kwargs['secondary_hostname'] = secondary
-        return cls(account_url, table_name=table_name, credential=credential, **kwargs)  # type: ignore
+        account_url, credential = parse_connection_str(
+            conn_str=conn_str, credential=None, service='table', keyword_args=kwargs)
+        return cls(account_url, table_name=table_name, credential=credential, **kwargs)
 
     @classmethod
     def from_table_url(cls, table_url, credential=None, **kwargs):
@@ -144,10 +139,10 @@ class TableClient(TableClientBase):
             _, identifiers = self._client.table.get_access_policy(
                 table=self.table_name,
                 timeout=timeout,
-                cls=return_headers_and_deserialized,
+                cls=kwargs.pop('cls', None) or _return_headers_and_deserialized,
                 **kwargs)
         except HttpResponseError as error:
-            process_table_error(error)
+            _process_table_error(error)
         return {s.id: s.access_policy or AccessPolicy() for s in identifiers}  # pylint: disable=E1125
 
     @distributed_trace
@@ -178,26 +173,26 @@ class TableClient(TableClientBase):
                 table_acl=signed_identifiers or None,
                 **kwargs)
         except HttpResponseError as error:
-            process_table_error(error)
+            _process_table_error(error)
 
     @distributed_trace
     def create_table(
             self,
             **kwargs  # type: Any
     ):
-        # type: (...) -> Table
+        # type: (...) -> TableItem
         """Creates a new table under the current account.
 
-        :return: Table created
-        :rtype: Table
+        :return: TableItem created
+        :rtype: TableItem
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         table_properties = TableProperties(table_name=self.table_name, **kwargs)
         try:
             table = self._client.table.create(table_properties)
-            return Table(table=table)
+            return TableItem(table=table)
         except HttpResponseError as error:
-            process_table_error(error)
+            _process_table_error(error)
 
     @distributed_trace
     def delete_table(
@@ -213,7 +208,7 @@ class TableClient(TableClientBase):
         try:
             self._client.table.delete(table=self.table_name, **kwargs)
         except HttpResponseError as error:
-            process_table_error(error)
+            _process_table_error(error)
 
     @distributed_trace
     def delete_entity(
@@ -247,7 +242,7 @@ class TableClient(TableClientBase):
                 if_match=if_match or if_not_match or '*',
                 **kwargs)
         except HttpResponseError as error:
-            process_table_error(error)
+            _process_table_error(error)
 
     @distributed_trace
     def create_entity(
@@ -279,7 +274,7 @@ class TableClient(TableClientBase):
             properties = _convert_to_entity(inserted_entity)
             return properties
         except ResourceNotFoundError as error:
-            process_table_error(error)
+            _process_table_error(error)
 
     @distributed_trace
     def update_entity(  # pylint:disable=R1710
@@ -327,7 +322,7 @@ class TableClient(TableClientBase):
             else:
                 raise ValueError('Mode type is not supported')
         except HttpResponseError as error:
-            process_table_error(error)
+            _process_table_error(error)
 
     @distributed_trace
     def list_entities(
@@ -416,10 +411,11 @@ class TableClient(TableClientBase):
                                                                                   partition_key=partition_key,
                                                                                   row_key=row_key,
                                                                                   **kwargs)
-            properties = _convert_to_entity(entity.additional_properties)
+
+            properties = _convert_to_entity(entity)
             return properties
         except HttpResponseError as error:
-            process_table_error(error)
+            _process_table_error(error)
 
     @distributed_trace
     def upsert_entity(  # pylint:disable=R1710
