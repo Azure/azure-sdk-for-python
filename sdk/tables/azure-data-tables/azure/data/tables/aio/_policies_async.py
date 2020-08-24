@@ -154,8 +154,7 @@ class AsyncStorageRetryPolicy(AsyncRetryPolicy, StorageRetryPolicy):
                         continue
                 break
             except AzureError as err:
-                retries_remaining = self.increment(
-                    retry_settings, error=err)
+                retries_remaining = self.increment(retry_settings, error=err)
                 if retries_remaining:
                     await retry_hook(
                         retry_settings,
@@ -204,11 +203,10 @@ class ExponentialRetry(AsyncStorageRetryPolicy):
         super(ExponentialRetry, self).__init__(
             retry_total=retry_total, retry_to_secondary=retry_to_secondary, **kwargs)
 
-    def get_backoff_time(self, settings, **kwargs): # pylint: disable=unused-argument
+    def get_backoff_time(self, settings):
         """
         Calculates how long to sleep before retrying.
 
-        :param **kwargs:
         :return:
             An integer indicating how long to wait before retrying the request,
             or None to indicate no retry should be performed.

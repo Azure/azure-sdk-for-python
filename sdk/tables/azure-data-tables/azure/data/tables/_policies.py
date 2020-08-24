@@ -368,15 +368,13 @@ class StorageRetryPolicy(RetryPolicy):
         **kwargs # type: Any
     ):
         """
-        Build a BLANK retry object.
+        Build a StorageRetryPolicy object.
 
         :param int initial_backoff:
             The initial backoff interval, in seconds, for the first retry.
         :param int increment_base:
             The base, in seconds, to increment the initial_backoff by after the
             first retry.
-        :param int max_attempts:
-            The maximum number of retry attempts.
         :param int retry_total: total number of retries
         :param bool retry_to_secondary:
             Whether the request should be retried to secondary, if able. This should
@@ -394,7 +392,7 @@ class StorageRetryPolicy(RetryPolicy):
         self.read_retries = kwargs.pop('retry_read', 3)
         self.status_retries = kwargs.pop('retry_status', 3)
         self.retry_to_secondary = retry_to_secondary
-        super(StorageRetryPolicy, self).__init__()
+        super(StorageRetryPolicy, self).__init__(**kwargs)
 
     def get_backoff_time(self, settings):
         """
