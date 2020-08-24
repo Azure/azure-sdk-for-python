@@ -55,6 +55,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             'interface_endpoints': '2019-02-01',
             'p2s_vpn_server_configurations': '2019-07-01',
             'virtual_wa_ns': '2018-07-01',
+            'web_application_firewall_policies': '2020-04-01',
         }},
         _PROFILE_TAG + " latest"
     )
@@ -6380,7 +6381,6 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2019-12-01: :class:`WebApplicationFirewallPoliciesOperations<azure.mgmt.network.v2019_12_01.operations.WebApplicationFirewallPoliciesOperations>`
            * 2020-03-01: :class:`WebApplicationFirewallPoliciesOperations<azure.mgmt.network.v2020_03_01.operations.WebApplicationFirewallPoliciesOperations>`
            * 2020-04-01: :class:`WebApplicationFirewallPoliciesOperations<azure.mgmt.network.v2020_04_01.operations.WebApplicationFirewallPoliciesOperations>`
-           * 2020-05-01: :class:`WebApplicationFirewallPoliciesOperations<azure.mgmt.network.v2020_05_01.operations.WebApplicationFirewallPoliciesOperations>`
         """
         api_version = self._get_api_version('web_application_firewall_policies')
         if api_version == '2018-12-01':
@@ -6405,8 +6405,6 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_03_01.operations import WebApplicationFirewallPoliciesOperations as OperationClass
         elif api_version == '2020-04-01':
             from .v2020_04_01.operations import WebApplicationFirewallPoliciesOperations as OperationClass
-        elif api_version == '2020-05-01':
-            from .v2020_05_01.operations import WebApplicationFirewallPoliciesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
