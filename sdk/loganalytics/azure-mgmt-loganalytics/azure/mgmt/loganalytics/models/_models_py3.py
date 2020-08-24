@@ -868,7 +868,7 @@ class LinkedStorageAccountsResource(ProxyResource):
      Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
     :vartype type: str
     :ivar data_source_type: Linked storage accounts type. Possible values
-     include: 'CustomLogs', 'AzureWatson'
+     include: 'CustomLogs', 'AzureWatson', 'Query', 'Alerts'
     :vartype data_source_type: str or
      ~azure.mgmt.loganalytics.models.DataSourceType
     :param storage_account_ids: Linked storage accounts resources ids.
@@ -1623,9 +1623,8 @@ class Workspace(TrackedResource):
     :vartype customer_id: str
     :param sku: The SKU of the workspace.
     :type sku: ~azure.mgmt.loganalytics.models.WorkspaceSku
-    :param retention_in_days: The workspace data retention in days. -1 means
-     Unlimited retention for the Unlimited Sku. 730 days is the maximum allowed
-     for all other Skus.
+    :param retention_in_days: The workspace data retention in days, between 30
+     and 730.
     :type retention_in_days: int
     :param workspace_capping: The daily volume cap for ingestion.
     :type workspace_capping: ~azure.mgmt.loganalytics.models.WorkspaceCapping
@@ -1653,7 +1652,7 @@ class Workspace(TrackedResource):
         'type': {'readonly': True},
         'location': {'required': True},
         'customer_id': {'readonly': True},
-        'retention_in_days': {'maximum': 730, 'minimum': -1},
+        'retention_in_days': {'maximum': 730, 'minimum': 30},
         'private_link_scoped_resources': {'readonly': True},
     }
 
@@ -1693,8 +1692,7 @@ class WorkspaceCapping(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param daily_quota_gb: The workspace daily quota for ingestion. -1 means
-     unlimited.
+    :param daily_quota_gb: The workspace daily quota for ingestion.
     :type daily_quota_gb: float
     :ivar quota_next_reset_time: The time when the quota will be rest.
     :vartype quota_next_reset_time: str
@@ -1749,9 +1747,8 @@ class WorkspacePatch(AzureEntityResource):
     :vartype customer_id: str
     :param sku: The SKU of the workspace.
     :type sku: ~azure.mgmt.loganalytics.models.WorkspaceSku
-    :param retention_in_days: The workspace data retention in days. -1 means
-     Unlimited retention for the Unlimited Sku. 730 days is the maximum allowed
-     for all other Skus.
+    :param retention_in_days: The workspace data retention in days, between 30
+     and 730.
     :type retention_in_days: int
     :param workspace_capping: The daily volume cap for ingestion.
     :type workspace_capping: ~azure.mgmt.loganalytics.models.WorkspaceCapping
@@ -1779,7 +1776,7 @@ class WorkspacePatch(AzureEntityResource):
         'type': {'readonly': True},
         'etag': {'readonly': True},
         'customer_id': {'readonly': True},
-        'retention_in_days': {'maximum': 730, 'minimum': -1},
+        'retention_in_days': {'maximum': 730, 'minimum': 30},
         'private_link_scoped_resources': {'readonly': True},
     }
 

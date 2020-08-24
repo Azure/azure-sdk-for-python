@@ -25,7 +25,7 @@ class LinkedStorageAccountsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version to use for this operation. Constant value: "2020-03-01-preview".
+    :ivar api_version: The API version to use for this operation. Constant value: "2020-08-01".
     """
 
     models = models
@@ -35,7 +35,7 @@ class LinkedStorageAccountsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2020-03-01-preview"
+        self.api_version = "2020-08-01"
 
         self.config = config
 
@@ -50,7 +50,7 @@ class LinkedStorageAccountsOperations(object):
         :param workspace_name: The name of the workspace.
         :type workspace_name: str
         :param data_source_type: Linked storage accounts type. Possible values
-         include: 'CustomLogs', 'AzureWatson'
+         include: 'CustomLogs', 'AzureWatson', 'Query', 'Alerts'
         :type data_source_type: str or
          ~azure.mgmt.loganalytics.models.DataSourceType
         :param storage_account_ids: Linked storage accounts resources ids.
@@ -127,7 +127,7 @@ class LinkedStorageAccountsOperations(object):
         :param workspace_name: The name of the workspace.
         :type workspace_name: str
         :param data_source_type: Linked storage accounts type. Possible values
-         include: 'CustomLogs', 'AzureWatson'
+         include: 'CustomLogs', 'AzureWatson', 'Query', 'Alerts'
         :type data_source_type: str or
          ~azure.mgmt.loganalytics.models.DataSourceType
         :param dict custom_headers: headers that will be added to the request
@@ -187,7 +187,7 @@ class LinkedStorageAccountsOperations(object):
         :param workspace_name: The name of the workspace.
         :type workspace_name: str
         :param data_source_type: Linked storage accounts type. Possible values
-         include: 'CustomLogs', 'AzureWatson'
+         include: 'CustomLogs', 'AzureWatson', 'Query', 'Alerts'
         :type data_source_type: str or
          ~azure.mgmt.loganalytics.models.DataSourceType
         :param dict custom_headers: headers that will be added to the request
