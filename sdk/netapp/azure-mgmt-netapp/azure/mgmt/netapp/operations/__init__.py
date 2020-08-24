@@ -15,6 +15,11 @@ from ._accounts_operations import AccountsOperations
 from ._pools_operations import PoolsOperations
 from ._volumes_operations import VolumesOperations
 from ._snapshots_operations import SnapshotsOperations
+from ._snapshot_policies_operations import SnapshotPoliciesOperations
+from ._account_backups_operations import AccountBackupsOperations
+from ._backups_operations import BackupsOperations
+from ._backup_policies_operations import BackupPoliciesOperations
+from ._vaults_operations import VaultsOperations
 
 __all__ = [
     'Operations',
@@ -23,4 +28,9 @@ __all__ = [
     'PoolsOperations',
     'VolumesOperations',
     'SnapshotsOperations',
+    'SnapshotPoliciesOperations',
+    'AccountBackupsOperations',
+    'BackupsOperations',
+    'BackupPoliciesOperations',
+    'VaultsOperations',
 ]
