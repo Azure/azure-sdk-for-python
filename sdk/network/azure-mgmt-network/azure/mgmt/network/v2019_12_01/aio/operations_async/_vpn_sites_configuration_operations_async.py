@@ -72,7 +72,6 @@ class VpnSitesConfigurationOperations:
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(request, 'GetVpnSitesConfigurationRequest')
         body_content_kwargs['content'] = body_content
@@ -96,7 +95,7 @@ class VpnSitesConfigurationOperations:
         virtual_wan_name: str,
         request: "models.GetVpnSitesConfigurationRequest",
         **kwargs
-    ) -> None:
+    ) -> AsyncLROPoller[None]:
         """Gives the sas-url to download the configurations for vpn-sites in a resource group.
 
         :param resource_group_name: The resource group name.
@@ -112,8 +111,8 @@ class VpnSitesConfigurationOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: None, or the result of cls(response)
-        :rtype: None
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]

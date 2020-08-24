@@ -86,7 +86,6 @@ class P2SVpnServerConfigurationsOperations:
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -137,7 +136,6 @@ class P2SVpnServerConfigurationsOperations:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(p2_s_vpn_server_configuration_parameters, 'P2SVpnServerConfiguration')
         body_content_kwargs['content'] = body_content
@@ -151,7 +149,6 @@ class P2SVpnServerConfigurationsOperations:
             error = self._deserialize(models.Error, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('P2SVpnServerConfiguration', pipeline_response)
 
@@ -171,7 +168,7 @@ class P2SVpnServerConfigurationsOperations:
         p2_s_vpn_server_configuration_name: str,
         p2_s_vpn_server_configuration_parameters: "models.P2SVpnServerConfiguration",
         **kwargs
-    ) -> "models.P2SVpnServerConfiguration":
+    ) -> AsyncLROPoller["models.P2SVpnServerConfiguration"]:
         """Creates a P2SVpnServerConfiguration to associate with a VirtualWan if it doesn't exist else
     updates the existing P2SVpnServerConfiguration.
 
@@ -190,8 +187,8 @@ class P2SVpnServerConfigurationsOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: P2SVpnServerConfiguration, or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2018_12_01.models.P2SVpnServerConfiguration
+        :return: An instance of AsyncLROPoller that returns either P2SVpnServerConfiguration or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2018_12_01.models.P2SVpnServerConfiguration]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -264,7 +261,6 @@ class P2SVpnServerConfigurationsOperations:
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
 
-        # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -285,7 +281,7 @@ class P2SVpnServerConfigurationsOperations:
         virtual_wan_name: str,
         p2_s_vpn_server_configuration_name: str,
         **kwargs
-    ) -> None:
+    ) -> AsyncLROPoller[None]:
         """Deletes a P2SVpnServerConfiguration.
 
         :param resource_group_name: The resource group name of the P2SVpnServerConfiguration.
@@ -300,8 +296,8 @@ class P2SVpnServerConfigurationsOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: None, or the result of cls(response)
-        :rtype: None
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -364,6 +360,10 @@ class P2SVpnServerConfigurationsOperations:
         api_version = "2018-12-01"
 
         def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = 'application/json'
+
             if not next_link:
                 # Construct URL
                 url = self.list_by_virtual_wan.metadata['url']  # type: ignore
@@ -377,15 +377,11 @@ class P2SVpnServerConfigurationsOperations:
                 query_parameters = {}  # type: Dict[str, Any]
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
+                request = self._client.get(url, query_parameters, header_parameters)
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
+                request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         async def extract_data(pipeline_response):
