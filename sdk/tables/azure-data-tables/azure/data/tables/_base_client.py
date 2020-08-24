@@ -277,8 +277,6 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         )
         request.set_multipart_mixed(changeset, boundary="batch_{}".format(uuid4()))
 
-        print("REQUEST: {}".format(request))
-        print(type(self._pipeline))
         pipeline_response = self._pipeline.run(
             request, stream=False, **kwargs
         )
