@@ -24,7 +24,7 @@ import os
 
 
 class TableServiceSamples(object):
-    connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
+    connection_string = os.getenv("AZURE_TABLES_CONNECTION_STRING")
 
     def table_service_properties(self):
         # Instantiate the TableServiceClient from a connection string
@@ -76,39 +76,40 @@ class TableServiceSamples(object):
 
         # [START tsc_create_table]
         table_service.create_table("mytable1")
+        table_service.create_table("mytable2")
+        table_service.create_table("mytable3")
         # [END tsc_create_table]
 
         try:
             # [START tsc_list_tables]
             # List all the tables in the service
-            list_tables = table_service.query_tables()
+            list_tables = table_service.list_tables()
             for table in list_tables:
-                print(table)
+                print(table.table_name)
 
             # List the tables in the service that start with the name "my"
-            list_my_tables = table_service.query_tables(select="my")
+            list_my_tables = table_service.query_tables(filter="my")
             for table in list_my_tables:
-                print(table)
+                print(table.table_name)
             # [END tsc_list_tables]
 
         finally:
             # [START tsc_delete_table]
-            table_service.delete_table(table_name="mytable1")
+            self.delete_tables()
             # [END tsc_delete_table]
 
-    def get_table_client(self):
-        # Instantiate the TableServiceClient from a connection string
-        from azure.data.tables import TableServiceClient, TableClient
-        table_service = TableServiceClient.from_connection_string(conn_str=self.connection_string)
-
-        # [START get_table_client]
-        # Get the table client to interact with a specific table
-        table = table_service.get_table_client(table="mytable2")
-        # [END get_table_client]
-
+    def delete_tables(self):
+        from azure.data.tables import TableServiceClient
+        ts = TableServiceClient.from_connection_string(conn_str=self.connection_string)
+        try:
+            ts.delete_table(table_name="mytable1")
+            ts.delete_table(table_name="mytable2")
+            ts.delete_table(table_name="mytable3")
+        except:
+            pass
 
 if __name__ == '__main__':
     sample = TableServiceSamples()
+    sample.delete_tables()
     sample.table_service_properties()
     sample.tables_in_account()
-    sample.get_table_client()

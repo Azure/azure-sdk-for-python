@@ -1,3 +1,5 @@
+import os
+
 class UpdateEntity(object):
     connection_string = "DefaultEndpointsProtocol=https;AccountName=example;AccountKey" \
                         "=fasgfbhBDFAShjDQ4jkvbnaBFHJOWS6gkjngdakeKFNLK==;EndpointSuffix=core.windows.net "
@@ -34,3 +36,8 @@ class UpdateEntity(object):
 
         table_client.upsert_entity(entity=self.entity, mode=UpdateMode.REPLACE)
         # no error will be thrown - it will insert
+
+if __name__ == "__main__":
+    u = UpdateEntity()
+    u.update_entity()
+    u.upsert_entity()
