@@ -44,6 +44,9 @@ Both [sync version](./sync_samples) and [async version](./async_samples) of samp
 - [schedule_messages_and_cancellation](./sync_samples/schedule_messages_and_cancellation.py) ([async_version](./async_samples/schedule_messages_and_cancellation_async.py)) - Examples to schedule messages and cancel scheduled message:
     - Schedule a single message or multiples messages to a queue
     - Cancel scheduled messages from a queue
+- [schedule_topic_messages_and_cancellation](./sync_samples/schedule_topic_messages_and_cancellation.py) ([async_version](./async_samples/schedule_topic_messages_and_cancellation_async.py)) - Examples to schedule messages and cancel scheduled message:
+    - Schedule a single message or multiples messages to a topic
+    - Cancel scheduled messages from a topic
 - [client_identity_authentication.py](./sync_samples/client_identity_authentication.py) ([async_version](./async_samples/client_identity_authentication_async.py)) - Examples to authenticate the client by Azure Activate Directory
     - Authenticate and create the client utilizing the `azure.identity` library
 - [proxy.py](./sync_samples/proxy.py) ([async_version](./async_samples/proxy_async.py)) - Examples to send message behind a proxy:
