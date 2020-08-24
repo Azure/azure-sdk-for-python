@@ -8,7 +8,7 @@ from msrest.serialization import UTC
 import datetime as dt
 import uuid
 import json
-
+from ._generated import models
 from ._generated.models import StorageBlobCreatedEventData, \
     EventGridEvent as InternalEventGridEvent, \
     CloudEvent as InternalCloudEvent
@@ -134,7 +134,7 @@ class DeserializedEvent():
         :param dict event: dict
     """
     # class variable
-    _event_type_mappings = {'Microsoft.Storage.BlobCreated': StorageBlobCreatedEventData}
+    _event_type_mappings = {}
 
     def __init__(self, event):
         # type: (Any) -> None
@@ -159,6 +159,10 @@ class DeserializedEvent():
 
         :rtype: Union[CloudEvent, EventGridEvent]
         """
+        event = self._event_dict['type'].rsplit('.')[-1]
+        DeserializedEvent._event_type_mappings = {
+            self._event_dict['type']:v for k, v in models.__dict__.items() if event in k
+            }
         if not self._model:
             try:
                 if 'specversion' in self._event_dict.keys():
