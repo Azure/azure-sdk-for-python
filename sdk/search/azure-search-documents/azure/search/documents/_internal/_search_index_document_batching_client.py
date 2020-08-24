@@ -147,8 +147,7 @@ class SearchIndexDocumentBatchingClient(SearchIndexDocumentBatchingClientBase, H
                 self._retry_action(action)
                 if raise_error:
                     raise
-                else:
-                    return True
+                return True
 
     def _process_if_needed(self):
         # type: () -> bool

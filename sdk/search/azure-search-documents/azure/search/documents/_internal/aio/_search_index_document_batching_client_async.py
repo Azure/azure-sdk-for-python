@@ -148,8 +148,7 @@ class SearchIndexDocumentBatchingClient(SearchIndexDocumentBatchingClientBase, H
                 await self._retry_action(action)
                 if raise_error:
                     raise
-                else:
-                    return True
+                return True
 
     async def _process_if_needed(self):
         # type: () -> bool
