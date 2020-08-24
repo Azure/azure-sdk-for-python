@@ -651,33 +651,28 @@ class StorageTableEntityTest(TableTestCase):
                 "Value": 2
             }
 
-            e1 = table.create_entity(entity=entity)
+            resp1 = table.create_entity(entity=entity)
 
             # Act
             # Do a get and confirm the etag is parsed correctly by using it
             # as a condition to delete.
-            resp = table.get_entity(partition_key=entity['PartitionKey'],
+            e1 = table.get_entity(partition_key=entity['PartitionKey'],
                                          row_key=entity['RowKey'])
-            etag = resp["_metadata"]["etag"]
+            old_etag = e1["_metadata"]["etag"]
 
-            create2_resp = table.create_entity(entity=entity2)
-            resp2 = table.get_entity(partition_key=entity2['PartitionKey'],
+            resp2 = table.create_entity(entity=entity2)
+            e2 = table.get_entity(partition_key=entity2['PartitionKey'],
                                          row_key=entity2['RowKey'])
-            new_etag = resp2["_metadata"]["etag"]
+            new_etag = e2["_metadata"]["etag"]
 
             with self.assertRaises(ResourceModifiedError):
                 table.delete_entity(
-                    partition_key=resp['PartitionKey'],
-                    row_key=resp['RowKey'],
-                    etag=etag,
+                    partition_key=e1['PartitionKey'],
+                    row_key=e1['RowKey'],
+                    etag=old_etag,
                     match_condition=MatchConditions.IfNotModified
                 )
-
-            # resp = self.table.get_entity(partition_key=entity['PartitionKey'],
-            #                                 row_key=entity['RowKey'])
-            # self.assertIsNotNone(resp)
-
-            # Assert
+                
         finally:
             self._tear_down()
 
