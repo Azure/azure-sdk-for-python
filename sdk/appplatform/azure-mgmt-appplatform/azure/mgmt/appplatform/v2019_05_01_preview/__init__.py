@@ -9,5 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "1.0.0"
+from ._configuration import AppPlatformManagementClientConfiguration
+from ._app_platform_management_client import AppPlatformManagementClient
+__all__ = ['AppPlatformManagementClient', 'AppPlatformManagementClientConfiguration']
+
+from .version import VERSION
+
+__version__ = VERSION
 

@@ -61,8 +61,9 @@ class DeploymentsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: DeploymentResource or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.appplatform.models.DeploymentResource or
-         ~msrest.pipeline.ClientRawResponse
+        :rtype:
+         ~azure.mgmt.appplatform.v2019_05_01_preview.models.DeploymentResource
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -113,9 +114,7 @@ class DeploymentsOperations(object):
 
     def _create_or_update_initial(
             self, resource_group_name, service_name, app_name, deployment_name, properties=None, custom_headers=None, raw=False, **operation_config):
-        deployment_resource = None
-        if properties is not None:
-            deployment_resource = models.DeploymentResource(properties=properties)
+        deployment_resource = models.DeploymentResource(properties=properties)
 
         # Construct URL
         url = self.create_or_update.metadata['url']
@@ -144,10 +143,7 @@ class DeploymentsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        if deployment_resource is not None:
-            body_content = self._serialize.body(deployment_resource, 'DeploymentResource')
-        else:
-            body_content = None
+        body_content = self._serialize.body(deployment_resource, 'DeploymentResource')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -187,7 +183,7 @@ class DeploymentsOperations(object):
         :type deployment_name: str
         :param properties: Properties of the Deployment resource
         :type properties:
-         ~azure.mgmt.appplatform.models.DeploymentResourceProperties
+         ~azure.mgmt.appplatform.v2019_05_01_preview.models.DeploymentResourceProperties
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -196,9 +192,9 @@ class DeploymentsOperations(object):
         :return: An instance of LROPoller that returns DeploymentResource or
          ClientRawResponse<DeploymentResource> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.appplatform.models.DeploymentResource]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.appplatform.v2019_05_01_preview.models.DeploymentResource]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.appplatform.models.DeploymentResource]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.appplatform.v2019_05_01_preview.models.DeploymentResource]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._create_or_update_initial(
@@ -294,9 +290,7 @@ class DeploymentsOperations(object):
 
     def _update_initial(
             self, resource_group_name, service_name, app_name, deployment_name, properties=None, custom_headers=None, raw=False, **operation_config):
-        deployment_resource = None
-        if properties is not None:
-            deployment_resource = models.DeploymentResource(properties=properties)
+        deployment_resource = models.DeploymentResource(properties=properties)
 
         # Construct URL
         url = self.update.metadata['url']
@@ -325,10 +319,7 @@ class DeploymentsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        if deployment_resource is not None:
-            body_content = self._serialize.body(deployment_resource, 'DeploymentResource')
-        else:
-            body_content = None
+        body_content = self._serialize.body(deployment_resource, 'DeploymentResource')
 
         # Construct and send request
         request = self._client.patch(url, query_parameters, header_parameters, body_content)
@@ -368,7 +359,7 @@ class DeploymentsOperations(object):
         :type deployment_name: str
         :param properties: Properties of the Deployment resource
         :type properties:
-         ~azure.mgmt.appplatform.models.DeploymentResourceProperties
+         ~azure.mgmt.appplatform.v2019_05_01_preview.models.DeploymentResourceProperties
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -377,9 +368,9 @@ class DeploymentsOperations(object):
         :return: An instance of LROPoller that returns DeploymentResource or
          ClientRawResponse<DeploymentResource> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.appplatform.models.DeploymentResource]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.appplatform.v2019_05_01_preview.models.DeploymentResource]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.appplatform.models.DeploymentResource]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.appplatform.v2019_05_01_preview.models.DeploymentResource]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._update_initial(
@@ -432,7 +423,7 @@ class DeploymentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of DeploymentResource
         :rtype:
-         ~azure.mgmt.appplatform.models.DeploymentResourcePaged[~azure.mgmt.appplatform.models.DeploymentResource]
+         ~azure.mgmt.appplatform.v2019_05_01_preview.models.DeploymentResourcePaged[~azure.mgmt.appplatform.v2019_05_01_preview.models.DeploymentResource]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
@@ -449,9 +440,9 @@ class DeploymentsOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
                 if version is not None:
                     query_parameters['version'] = self._serialize.query("version", version, '[str]', div=',')
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -511,7 +502,7 @@ class DeploymentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of DeploymentResource
         :rtype:
-         ~azure.mgmt.appplatform.models.DeploymentResourcePaged[~azure.mgmt.appplatform.models.DeploymentResource]
+         ~azure.mgmt.appplatform.v2019_05_01_preview.models.DeploymentResourcePaged[~azure.mgmt.appplatform.v2019_05_01_preview.models.DeploymentResource]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
@@ -527,9 +518,9 @@ class DeploymentsOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
                 if version is not None:
                     query_parameters['version'] = self._serialize.query("version", version, '[str]', div=',')
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -857,8 +848,9 @@ class DeploymentsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: LogFileUrlResponse or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.appplatform.models.LogFileUrlResponse or
-         ~msrest.pipeline.ClientRawResponse
+        :rtype:
+         ~azure.mgmt.appplatform.v2019_05_01_preview.models.LogFileUrlResponse
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL

@@ -1,3 +1,4 @@
+
 # coding: utf-8
 
 #-------------------------------------------------------------------------
@@ -18,7 +19,7 @@
 
 import unittest
 
-import azure.mgmt.appplatform
+import azure.mgmt.appplatform.v2019_05_01_preview
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
 AZURE_LOCATION = 'eastus'
@@ -28,7 +29,8 @@ class MgmtAppPlatformTest(AzureMgmtTestCase):
     def setUp(self):
         super(MgmtAppPlatformTest, self).setUp()
         self.mgmt_client = self.create_mgmt_client(
-            azure.mgmt.appplatform.AppPlatformManagementClient
+            azure.mgmt.appplatform.AppPlatformManagementClient,
+            api_version="2019-05-01-preview"
         )
     
     @ResourceGroupPreparer(location=AZURE_LOCATION)
@@ -37,7 +39,7 @@ class MgmtAppPlatformTest(AzureMgmtTestCase):
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
         TENANT_ID = self.settings.TENANT_ID
         RESOURCE_GROUP = resource_group.name
-        SERVICE_NAME = "myservice"
+        SERVICE_NAME = "myservice1"
         LOCATION = "myLocation"
         APP_NAME = "myapp"
         BINDING_NAME = "mybinding"
@@ -52,7 +54,7 @@ class MgmtAppPlatformTest(AzureMgmtTestCase):
             "config_server_properties": {
               "config_server": {
                 "git_property": {
-                  "uri": "https://github.com/fake-user/fake-repository.git",
+                  "uri": "https://github.com/Azure-Samples/piggymetrics-config.git",
                   "label": "master",
                   "search_paths": [
                     "/"
@@ -88,7 +90,7 @@ class MgmtAppPlatformTest(AzureMgmtTestCase):
             "mount_path": "/mypersistentdisk"
           }
         }
-        result = self.mgmt_client.apps.create_or_update(resource_group_name=RESOURCE_GROUP, service_name=SERVICE_NAME, app_name=APP_NAME, properties= PROPERTIES, location="eastus")
+        result = self.mgmt_client.apps.create_or_update(resource_group_name=RESOURCE_GROUP, service_name=SERVICE_NAME, app_name=APP_NAME, app_resource= PROPERTIES, location="eastus")
         result = result.result()
 
         # Not available/tested yet
@@ -294,11 +296,8 @@ class MgmtAppPlatformTest(AzureMgmtTestCase):
             "config_server_properties": {
               "config_server": {
                 "git_property": {
-                  "uri": "https://github.com/fake-user/fake-repository.git",
-                  "label": "master",
-                  "search_paths": [
-                    "/"
-                  ]
+                  "uri": "https://github.com/Azure-Samples/piggymetrics-config.git",
+                  "label": "master"
                 }
               }
             },
@@ -316,7 +315,7 @@ class MgmtAppPlatformTest(AzureMgmtTestCase):
         # result = result.result()
 
         # /Services/post/Services_CheckNameAvailability[post]
-        result = self.mgmt_client.services.check_name_availability(azure_location=AZURE_LOCATION, type="Microsoft.AppPlatform/Spring", name="myservice")
+        result = self.mgmt_client.services.check_name_availability(azure_location=AZURE_LOCATION, type="Microsoft.AppPlatform/Spring", name="myservice1", location="eastus")
 
         # Not available/tested yet
         # /Bindings/delete/Bindings_Delete[delete]
