@@ -411,7 +411,7 @@ class TableClient(TableClientBase):
         :param row_key: The row key of the entity.
         :type row_key: str
         :return: Dictionary mapping response headers from the service
-        :rtype: dict[str,str
+        :rtype: dict[str,str]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         try:
@@ -440,7 +440,7 @@ class TableClient(TableClientBase):
         :param mode: Merge or Replace and Insert on fail
         :type mode: ~azure.data.tables.UpdateMode
         :return: Dictionary mapping response headers from the service
-        :rtype: dict[str,str
+        :rtype: dict[str,str]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
 
@@ -468,7 +468,8 @@ class TableClient(TableClientBase):
                     cls=kwargs.pop('cls', _return_headers_and_deserialized),
                     **kwargs)
             else:
-                raise ValueError('Mode type is not supported')
+                raise ValueError("""Update mode {} is not supported.
+                    For a list of supported modes see the UpdateMode enum""".format(mode))
             return metadata
         except ResourceNotFoundError:
             return self.create_entity(
