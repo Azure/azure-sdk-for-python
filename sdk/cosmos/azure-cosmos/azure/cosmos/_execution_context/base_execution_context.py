@@ -44,7 +44,7 @@ class _QueryExecutionContextBase(object):
         self._options = options
         self._is_change_feed = "changeFeed" in options and options["changeFeed"] is True
         self._continuation = None
-        if "continuation" in options and self._is_change_feed:
+        if "continuation" in options:
             self._continuation = options["continuation"]
         self._has_started = False
         self._has_finished = False
