@@ -11,39 +11,6 @@ class CreateDeleteTable(object):
     table_name = "OfficeSupplies"
 
 
-    def shared_key_credential(self):
-        from azure.data.tables import TableServiceClient
-
-        table_service_client = TableServiceClient(account_url=self.account_url, credential=self.access_key)
-
-
-    def connection_string_auth(self):
-        from azure.data.tables import TableServiceClient
-
-        table_service_client = TableServiceClient.from_connection_string(conn_str=self.connection_string)
-
-
-    def sas_token_auth(self):
-        from azure.data.tables import (
-            TableServiceClient, 
-            ResourceTypes, 
-            AccountSasPermissions, 
-            generate_account_sas
-        )
-        import datetime
-        import timedelta
-
-        token = generate_account_sas(
-            account_name=self.account_name,
-            account_key=self.account_key,
-            resource_types=ResourceTypes(object=True),
-            permission=AccountSasPermissions(read=True),
-            expiry=datetime.utcnow() + timedelta(hours=1),
-            start=datetime.utcnow() - timedelta(minutes=1),
-            )
-        table_service_client = TableServiceClient(account_url=self.account_url, credential=token)
-
-
     def create_table(self):
         from azure.data.tables import TableServiceClient
         from azure.core.exceptions import ResourceExistsError
@@ -51,7 +18,7 @@ class CreateDeleteTable(object):
         table_service_client = TableServiceClient.from_connection_string(self.connection_string)
         try:
             table_created = table_service_client.create_table(table_name=self.table_name)
-            print(table_created.table_name)
+            print("Created table {}!".format(table_created.table_name))
         except ResourceExistsError:
             print("Table already exists")
 
@@ -63,8 +30,9 @@ class CreateDeleteTable(object):
         table_service_client = TableServiceClient.from_connection_string(self.connection_string)
         try:
             table_service_client.delete_table(table_name=self.table_name)
+            print("Deleted table {}!".format(self.table_name))
         except ResourceNotFoundError:
-            print("Table coult not be found")
+            print("Table could not be found")
 
 
 if __name__ == '__main__':
