@@ -196,7 +196,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         # type: (...) -> Dict[str,str]
         """Creates a new table under the given account.
         :return: Dictionary of response headers from service
-        :rtype: Dict[str,str]
+        :rtype: dict[str,str]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         table_properties = TableProperties(table_name=self.table_name, **kwargs)
@@ -258,7 +258,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
     @distributed_trace_async
     async def create_entity(
             self,
-            entity,  # type: Union[TableEntity, dict[str,str]]
+            entity,  # type: Union[TableEntity, Dict[str,str]]
             **kwargs  # type: Any
     ):
         # type: (...) -> Dict[str,str]
@@ -266,7 +266,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         :param entity: The properties for the table entity.
         :type entity: dict[str, str]
         :return: Dictionary of response headers from service
-        :rtype: Dict[str,str]
+        :rtype: dict[str,str]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         if "PartitionKey" in entity and "RowKey" in entity:
@@ -287,7 +287,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
     @distributed_trace_async
     async def update_entity(
             self,
-            entity,  # type: Union[TableEntity, dict[str,str]]
+            entity,  # type: Union[TableEntity, Dict[str,str]]
             mode=UpdateMode.MERGE,  # type: UpdateMode
             **kwargs  # type: Any
     ):
@@ -306,7 +306,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         :param match_condition: MatchCondition
         :type match_condition: ~azure.core.MatchConditions
         :return: Dictionary of response headers from service
-        :rtype: Dict[str,str]
+        :rtype: dict[str,str]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         if_match, if_not_match = _get_match_headers(kwargs=dict(kwargs, etag=kwargs.pop('etag', None),
@@ -436,7 +436,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
     @distributed_trace_async
     async def upsert_entity(
             self,
-            entity,  # type: Union[TableEntity, dict[str,str]]
+            entity,  # type: Union[TableEntity, Dict[str,str]]
             mode=UpdateMode.MERGE,  # type: UpdateMode
             **kwargs  # type: Any
     ):
@@ -448,7 +448,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         :param entity: The properties for the table entity.
         :type entity: dict[str, str]
         :return: Dictionary of response headers from service
-        :rtype: Dict[str,str]
+        :rtype: dict[str,str]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
 

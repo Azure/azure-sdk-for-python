@@ -126,7 +126,7 @@ class TableClient(TableClientBase):
             self,
             **kwargs  # type: Any
     ):
-        # type: (...) -> dict[str,AccessPolicy]
+        # type: (...) -> Dict[str,AccessPolicy]
         """Retrieves details about any stored access policies specified on the table that may be
         used with Shared Access Signatures.
 
@@ -148,7 +148,7 @@ class TableClient(TableClientBase):
     @distributed_trace
     def set_table_access_policy(
             self,
-            signed_identifiers,  # type: dict[str,AccessPolicy]
+            signed_identifiers,  # type: Dict[str,AccessPolicy]
             **kwargs):
         # type: (...) -> None
         """Sets stored access policies for the table that may be used with Shared Access Signatures.
@@ -184,7 +184,7 @@ class TableClient(TableClientBase):
         """Creates a new table under the current account.
 
         :return: Dictionary of response headers from service
-        :rtype: Dict[str,str]
+        :rtype: dict[str,str]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         table_properties = TableProperties(table_name=self.table_name, **kwargs)
@@ -249,10 +249,10 @@ class TableClient(TableClientBase):
     @distributed_trace
     def create_entity(
             self,
-            entity,  # type: Union[TableEntity, dict[str,str]]
+            entity,  # type: Union[TableEntity, Dict[str,str]]
             **kwargs  # type: Any
     ):
-        # type: (...) -> dict[str,str]
+        # type: (...) -> Dict[str,str]
         """Insert entity in a table.
 
         :param entity: The properties for the table entity.
@@ -279,7 +279,7 @@ class TableClient(TableClientBase):
     @distributed_trace
     def update_entity(  # pylint:disable=R1710
             self,
-            entity,  # type: Union[TableEntity, dict[str,str]]
+            entity,  # type: Union[TableEntity, Dict[str,str]]
             mode=UpdateMode.MERGE,  # type: UpdateMode
             **kwargs  # type: Any
     ):
@@ -295,7 +295,7 @@ class TableClient(TableClientBase):
         :keyword str etag: Etag of the entity
         :keyword ~azure.core.MatchConditions match_condition: MatchCondition
         :return: Dictionary mapping response headers from the service
-        :rtype: dict[str,str
+        :rtype: dict[str,str]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
 
@@ -428,7 +428,7 @@ class TableClient(TableClientBase):
     @distributed_trace
     def upsert_entity(  # pylint:disable=R1710
             self,
-            entity,  # type: Union[TableEntity, dict[str,str]]
+            entity,  # type: Union[TableEntity, Dict[str,str]]
             mode=UpdateMode.MERGE,  # type: UpdateMode
             **kwargs  # type: Any
     ):

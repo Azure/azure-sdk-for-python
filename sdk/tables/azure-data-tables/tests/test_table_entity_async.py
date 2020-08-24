@@ -285,6 +285,24 @@ class StorageTableEntityTest(TableTestCase):
         # self.assertIsNotNone(entity.Timestamp)
         # self.assertIsInstance(entity.Timestamp, datetime)
 
+    def _assert_valid_full_metadata(self, metadata):
+        keys = metadata.keys()
+        self.assertIn("client_request_id", keys)
+        self.assertIn("request_id", keys)
+        self.assertIn("version", keys)
+        self.assertIn("date", keys)
+        self.assertIn("etag", keys)
+        self.assertIn("preference_applied", keys)
+        self.assertIn("content_type", keys)
+
+    def _assert_valid_update_metadata(self, metadata):
+        keys = metadata.keys()
+        self.assertIn("client_request_id", keys)
+        self.assertIn("request_id", keys)
+        self.assertIn("version", keys)
+        self.assertIn("date", keys)
+        self.assertIn("etag", keys)
+
     # --Test cases for entities ------------------------------------------
     @GlobalStorageAccountPreparer()
     async def test_insert_entity_dictionary(self, resource_group, location, storage_account, storage_account_key):
@@ -297,7 +315,7 @@ class StorageTableEntityTest(TableTestCase):
             resp = await self.table.create_entity(entity=entity)
 
             # Assert
-            self.assertIsNotNone(resp)
+            self._assert_valid_full_metadata(resp)
         finally:
             await self._tear_down()
 
@@ -315,7 +333,7 @@ class StorageTableEntityTest(TableTestCase):
                 row_key=entity["RowKey"]
             )
             # Assert
-            self.assertIsNotNone(resp)
+            self._assert_valid_full_metadata(resp)
             self._assert_default_entity(received_entity)
         finally:
             await self._tear_down()
@@ -340,7 +358,7 @@ class StorageTableEntityTest(TableTestCase):
             )
 
             # Assert
-            self.assertIsNotNone(resp)
+            self._assert_valid_full_metadata(resp)
             self._assert_default_entity_json_no_metadata(received_entity)
         finally:
             await self._tear_down()
@@ -367,7 +385,7 @@ class StorageTableEntityTest(TableTestCase):
             )
 
             # Assert
-            self.assertIsNotNone(resp)
+            self._assert_valid_full_metadata(resp)
             self._assert_default_entity_json_full_metadata(received_entity)
         finally:
             await self._tear_down()
@@ -408,7 +426,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    
+
     @GlobalStorageAccountPreparer()
     async def test_insert_entity_with_large_int64_value_throws(self, resource_group, location, storage_account,
                                                                storage_account_key):
@@ -429,7 +447,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    
+
     @GlobalStorageAccountPreparer()
     async def test_insert_entity_missing_pk(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -440,11 +458,10 @@ class StorageTableEntityTest(TableTestCase):
             # Act
             with self.assertRaises(ValueError):
                 resp = await self.table.create_entity(entity=entity)
-                self.assertIsNotNone(resp)
         finally:
             await self._tear_down()
 
-    
+
     @GlobalStorageAccountPreparer()
     async def test_insert_entity_empty_string_pk(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -458,11 +475,11 @@ class StorageTableEntityTest(TableTestCase):
                     await self.table.create_entity(entity=entity)
             else:
                 resp = await self.table.create_entity(entity=entity)
-                self.assertIsNotNone(resp)
+                self._assert_valid_full_metadata(resp)
         finally:
             await self._tear_down()
 
-    
+
     @GlobalStorageAccountPreparer()
     async def test_insert_entity_missing_rk(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -478,7 +495,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    
+
     @GlobalStorageAccountPreparer()
     async def test_insert_entity_empty_string_rk(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -492,14 +509,14 @@ class StorageTableEntityTest(TableTestCase):
                     await self.table.create_entity(entity=entity)
             else:
                 resp = await self.table.create_entity(entity=entity)
-                self.assertIsNotNone(resp)
+                self._assert_valid_full_metadata(resp)
 
                 # Assert
             #  self.assertIsNone(resp)
         finally:
             await self._tear_down()
 
-    
+
     @GlobalStorageAccountPreparer()
     async def test_insert_entity_too_many_properties(self, resource_group, location, storage_account,
                                                      storage_account_key):
@@ -519,7 +536,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    
+
     @GlobalStorageAccountPreparer()
     async def test_insert_entity_property_name_too_long(self, resource_group, location, storage_account,
                                                         storage_account_key):
@@ -539,7 +556,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    
+
     @GlobalStorageAccountPreparer()
     async def test_get_entity(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -558,7 +575,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    
+
     @GlobalStorageAccountPreparer()
     async def test_get_entity_with_hook(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -581,7 +598,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    
+
     @GlobalStorageAccountPreparer()
     async def test_get_entity_if_match(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -606,7 +623,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    
+
     @GlobalStorageAccountPreparer()
     async def test_get_entity_full_metadata(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -627,7 +644,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    
+
     @GlobalStorageAccountPreparer()
     async def test_get_entity_no_metadata(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -648,7 +665,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    
+
     @GlobalStorageAccountPreparer()
     async def test_get_entity_not_existing(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -665,7 +682,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    
+
     @GlobalStorageAccountPreparer()
     async def test_get_entity_with_special_doubles(self, resource_group, location, storage_account,
                                                    storage_account_key):
@@ -691,7 +708,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    
+
     @GlobalStorageAccountPreparer()
     async def test_update_entity(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -711,12 +728,12 @@ class StorageTableEntityTest(TableTestCase):
                 partition_key=entity.PartitionKey,
                 row_key=entity.RowKey)
 
-            self.assertIsNotNone(resp)
+            self._assert_valid_update_metadata(resp)
             self._assert_updated_entity(received_entity)
         finally:
             await self._tear_down()
 
-    
+
     @GlobalStorageAccountPreparer()
     async def test_update_entity_not_existing(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -733,7 +750,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    
+
     @GlobalStorageAccountPreparer()
     async def test_update_entity_with_if_matches(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -751,12 +768,12 @@ class StorageTableEntityTest(TableTestCase):
             # Assert
             received_entity = await self.table.get_entity(entity.PartitionKey,
                                                           entity.RowKey)
-            self.assertIsNotNone(resp)
+            self._assert_valid_update_metadata(resp)
             self._assert_updated_entity(received_entity)
         finally:
             await self._tear_down()
 
-    
+
     @GlobalStorageAccountPreparer()
     async def test_update_entity_with_if_doesnt_match(self, resource_group, location, storage_account,
                                                       storage_account_key):
@@ -778,7 +795,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    
+
     @GlobalStorageAccountPreparer()
     async def test_insert_or_merge_entity_with_existing_entity(self, resource_group, location, storage_account,
                                                                storage_account_key):
@@ -794,12 +811,12 @@ class StorageTableEntityTest(TableTestCase):
             # Assert
             received_entity = await self.table.get_entity(entity.PartitionKey,
                                                           entity.RowKey)
-            self.assertIsNotNone(resp)
+            self._assert_valid_update_metadata(resp)
             self._assert_merged_entity(received_entity)
         finally:
             await self._tear_down()
 
-    
+
     @GlobalStorageAccountPreparer()
     async def test_insert_or_merge_entity_with_non_existing_entity(self, resource_group, location, storage_account,
                                                                    storage_account_key):
@@ -815,12 +832,12 @@ class StorageTableEntityTest(TableTestCase):
             # Assert
             received_entity = await self.table.get_entity(entity['PartitionKey'],
                                                           entity['RowKey'])
-            self.assertIsNotNone(resp)
+            self._assert_valid_update_metadata(resp)
             self._assert_updated_entity(received_entity)
         finally:
             await self._tear_down()
 
-    
+
     @GlobalStorageAccountPreparer()
     async def test_insert_or_replace_entity_with_existing_entity(self, resource_group, location, storage_account,
                                                                  storage_account_key):
@@ -836,12 +853,12 @@ class StorageTableEntityTest(TableTestCase):
             # Assert
             received_entity = await self.table.get_entity(entity.PartitionKey,
                                                           entity.RowKey)
-            self.assertIsNotNone(resp)
+            self._assert_valid_update_metadata(resp)
             self._assert_updated_entity(received_entity)
         finally:
             await self._tear_down()
 
-    
+
     @GlobalStorageAccountPreparer()
     async def test_insert_or_replace_entity_with_non_existing_entity(self, resource_group, location, storage_account,
                                                                      storage_account_key):
@@ -862,7 +879,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    
+
     @GlobalStorageAccountPreparer()
     async def test_merge_entity(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -877,12 +894,12 @@ class StorageTableEntityTest(TableTestCase):
             # Assert
             received_entity = await self.table.get_entity(entity.PartitionKey,
                                                           entity.RowKey)
-            self.assertIsNotNone(resp)
+            self._assert_valid_update_metadata(resp)
             self._assert_merged_entity(received_entity)
         finally:
             await self._tear_down()
 
-    
+
     @GlobalStorageAccountPreparer()
     async def test_merge_entity_not_existing(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -899,7 +916,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    
+
     @GlobalStorageAccountPreparer()
     async def test_merge_entity_with_if_matches(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -916,12 +933,12 @@ class StorageTableEntityTest(TableTestCase):
             # Assert
             received_entity = await self.table.get_entity(entity.PartitionKey,
                                                           entity.RowKey)
-            self.assertIsNotNone(resp)
+            self._assert_valid_update_metadata(resp)
             self._assert_merged_entity(received_entity)
         finally:
             await self._tear_down()
 
-    
+
     @GlobalStorageAccountPreparer()
     async def test_merge_entity_with_if_doesnt_match(self, resource_group, location, storage_account,
                                                      storage_account_key):
@@ -942,7 +959,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    
+
     @GlobalStorageAccountPreparer()
     async def test_delete_entity(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -960,7 +977,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    
+
     @GlobalStorageAccountPreparer()
     async def test_delete_entity_not_existing(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -976,7 +993,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    
+
     @GlobalStorageAccountPreparer()
     async def test_delete_entity_with_if_matches(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -995,7 +1012,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    
+
     @GlobalStorageAccountPreparer()
     async def test_delete_entity_with_if_doesnt_match(self, resource_group, location, storage_account,
                                                       storage_account_key):
@@ -1015,7 +1032,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    
+
     @GlobalStorageAccountPreparer()
     async def test_unicode_property_value(self, resource_group, location, storage_account, storage_account_key):
         ''' regression test for github issue #57'''
@@ -1043,7 +1060,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    
+
     @GlobalStorageAccountPreparer()
     async def test_unicode_property_name(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -1088,7 +1105,7 @@ class StorageTableEntityTest(TableTestCase):
             resp = await self.table.upsert_entity(mode=UpdateMode.REPLACE, entity=sent_entity)
 
             # Assert
-            self.assertIsNotNone(resp)
+            self._assert_valid_update_metadata(resp)
             # row key here only has 2 quotes
             received_entity = await self.table.get_entity(
                 entity.PartitionKey, entity.RowKey)
@@ -1101,7 +1118,7 @@ class StorageTableEntityTest(TableTestCase):
                 entity.PartitionKey, entity.RowKey)
 
             # Assert
-            self.assertIsNotNone(resp)
+            self._assert_valid_update_metadata(resp)
             self._assert_updated_entity(received_entity)
             self.assertEqual(received_entity['newField'], 'newFieldValue')
 
@@ -1113,7 +1130,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    
+
     @GlobalStorageAccountPreparer()
     async def test_empty_and_spaces_property_value(self, resource_group, location, storage_account,
                                                    storage_account_key):
@@ -1153,7 +1170,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    
+
     @GlobalStorageAccountPreparer()
     async def test_none_property_value(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -1172,7 +1189,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    
+
     @GlobalStorageAccountPreparer()
     async def test_binary_property_value(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -1192,7 +1209,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    
+
     @GlobalStorageAccountPreparer()
     async def test_timezone(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -1215,7 +1232,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    
+
     @GlobalStorageAccountPreparer()
     async def test_query_entities(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -1235,7 +1252,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    
+
     @GlobalStorageAccountPreparer()
     async def test_query_zero_entities(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -1253,7 +1270,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    
+
     @GlobalStorageAccountPreparer()
     async def test_query_entities_full_metadata(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -1273,7 +1290,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    
+
     @GlobalStorageAccountPreparer()
     async def test_query_entities_no_metadata(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -1326,7 +1343,7 @@ class StorageTableEntityTest(TableTestCase):
         # if it runs slowly, it will return fewer results and make the test fail
         self.assertEqual(len(entities), total_entities_count)
 
-    
+
     @GlobalStorageAccountPreparer()
     async def test_query_entities_with_filter(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -1347,7 +1364,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    
+
     @GlobalStorageAccountPreparer()
     async def test_query_entities_with_select(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -1370,7 +1387,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    
+
     @GlobalStorageAccountPreparer()
     async def test_query_entities_with_top(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -1388,7 +1405,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    
+
     @GlobalStorageAccountPreparer()
     async def test_query_entities_with_top_and_next(self, resource_group, location, storage_account,
                                                     storage_account_key):
@@ -1425,7 +1442,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    
+
     @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     async def test_sas_query(self, resource_group, location, storage_account, storage_account_key):
@@ -1464,7 +1481,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    
+
     @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     async def test_sas_add(self, resource_group, location, storage_account, storage_account_key):
@@ -1501,7 +1518,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    
+
     @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     async def test_sas_add_inside_range(self, resource_group, location, storage_account, storage_account_key):
@@ -1537,7 +1554,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    
+
     @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     async def test_sas_add_outside_range(self, resource_group, location, storage_account, storage_account_key):
@@ -1572,7 +1589,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    
+
     @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     async def test_sas_update(self, resource_group, location, storage_account, storage_account_key):
@@ -1610,7 +1627,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    
+
     @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     async def test_sas_delete(self, resource_group, location, storage_account, storage_account_key):
@@ -1644,7 +1661,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    
+
     @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     async def test_sas_upper_case_table_name(self, resource_group, location, storage_account, storage_account_key):
@@ -1684,7 +1701,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    
+
     @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     async def test_sas_signed_identifier(self, resource_group, location, storage_account, storage_account_key):
