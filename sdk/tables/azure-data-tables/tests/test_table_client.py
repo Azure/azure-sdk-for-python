@@ -10,20 +10,19 @@ import platform
 from azure.data.tables import TableServiceClient, TableClient
 from azure.data.tables._version import VERSION
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
-# from azure.data.tabless import (
-#     VERSION,
-#     TableServiceClient,
-#     TableClient,
-# )
-from _shared.testcase import GlobalStorageAccountPreparer, TableTestCase
+from _shared.testcase import (
+    GlobalStorageAccountPreparer,
+    GlobalCosmosAccountPreparer,
+    TableTestCase
+)
 
 from azure.core.exceptions import HttpResponseError
 # ------------------------------------------------------------------------------
 SERVICES = {
     TableServiceClient: 'table',
     TableClient: 'table',
-    # TableServiceClient: 'cosmos',
-    # TableClient: 'cosmos',
+    TableServiceClient: 'cosmos',
+    TableClient: 'cosmos',
 }
 
 _CONNECTION_ENDPOINTS = {'table': 'TableEndpoint', 'cosmos': 'TableEndpoint'}
@@ -52,6 +51,7 @@ class StorageTableClientTest(TableTestCase):
     # --Direct Parameters Test Cases --------------------------------------------
     #@pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
+    @GlobalCosmosAccountPreparer()
     def test_create_service_with_key(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
 
