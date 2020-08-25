@@ -43,6 +43,15 @@ class SchemaRegistryClient:
     :param credential: To authenticate to manage the entities of the SchemaRegistry namespace.
     :type credential: TokenCredential
 
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/sync_samples/sample_code_schemaregistry.py
+            :start-after: [START create_sr_client_sync]
+            :end-before: [END create_sr_client_sync]
+            :language: python
+            :dedent: 4
+            :caption: Create a new instance of the SchemaRegistryClient.
+
     """
     def __init__(
         self,
@@ -82,6 +91,16 @@ class SchemaRegistryClient:
         :type serialization_type: Union[str, Enum]
         :param str schema_string: String representation of the schema being registered.
         :rtype: SchemaId
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sync_samples/sample_code_schemaregistry.py
+                :start-after: [START register_schema_sync]
+                :end-before: [END register_schema_sync]
+                :language: python
+                :dedent: 4
+                :caption: Register a new schema.
+
         """
         return self._generated_client.schema.register(
             group_name=schema_group,
@@ -99,6 +118,16 @@ class SchemaRegistryClient:
 
         :param str schema_id: References specific schema in registry namespace.
         :rtype: Schema
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sync_samples/sample_code_schemaregistry.py
+                :start-after: [START get_schema_sync]
+                :end-before: [END get_schema_sync]
+                :language: python
+                :dedent: 4
+                :caption: Get schema by id.
+
         """
         return self._generated_client.schema.get_by_id(
             schema_id,
@@ -117,6 +146,16 @@ class SchemaRegistryClient:
         :type serialization_type: Union[str, Enum]
         :param str schema_string: String representation of the schema being registered.
         :rtype: SchemaId
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sync_samples/sample_code_schemaregistry.py
+                :start-after: [START get_schema_id_sync]
+                :end-before: [END get_schema_id_sync]
+                :language: python
+                :dedent: 4
+                :caption: Get schema id.
+
         """
         return self._generated_client.schema.query_id_by_content(
             group_name=schema_group,

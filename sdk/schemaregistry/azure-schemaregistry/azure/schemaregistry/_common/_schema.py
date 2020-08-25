@@ -117,6 +117,16 @@ class SchemaId(SchemaMeta):  # TODO: need a better name here?
     :type type: str
     :ivar version: Version of the returned schema.
     :type version: int
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/sync_samples/sample_code_schemaregistry.py
+            :start-after: [START print_schema_id]
+            :end-before: [END print_schema_id]
+            :language: python
+            :dedent: 4
+            :caption: SchemaId object.
+
     """
     def __init__(
         self,
@@ -144,6 +154,16 @@ class Schema(SchemaMeta):
     :type type: str
     :ivar version: Version of the returned schema.
     :type version: int
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/sync_samples/sample_code_schemaregistry.py
+            :start-after: [START print_schema]
+            :end-before: [END print_schema]
+            :language: python
+            :dedent: 4
+            :caption: Schema object.
+
     """
     def __init__(
         self,
