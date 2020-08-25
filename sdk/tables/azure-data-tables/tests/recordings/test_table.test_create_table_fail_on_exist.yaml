@@ -15,11 +15,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 30 Jul 2020 13:30:17 GMT
+      - Wed, 19 Aug 2020 21:18:00 GMT
       User-Agent:
-      - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-table/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 30 Jul 2020 13:30:17 GMT
+      - Wed, 19 Aug 2020 21:18:00 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
@@ -33,7 +33,7 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Thu, 30 Jul 2020 13:30:17 GMT
+      - Wed, 19 Aug 2020 21:18:00 GMT
       location:
       - https://storagename.table.core.windows.net/Tables('pytablesync6d7c1113')
       server:
@@ -63,11 +63,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 30 Jul 2020 13:30:18 GMT
+      - Wed, 19 Aug 2020 21:18:00 GMT
       User-Agent:
-      - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-table/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 30 Jul 2020 13:30:18 GMT
+      - Wed, 19 Aug 2020 21:18:00 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
@@ -75,14 +75,14 @@ interactions:
   response:
     body:
       string: '{"odata.error":{"code":"TableAlreadyExists","message":{"lang":"en-US","value":"The
-        table specified already exists.\nRequestId:aaf65c7a-b002-0055-7875-66bf84000000\nTime:2020-07-30T13:30:17.3141296Z"}}}'
+        table specified already exists.\nRequestId:fbae76e2-b002-009f-206e-7649d9000000\nTime:2020-08-19T21:18:00.8893697Z"}}}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Thu, 30 Jul 2020 13:30:17 GMT
+      - Wed, 19 Aug 2020 21:18:00 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -106,11 +106,11 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Thu, 30 Jul 2020 13:30:18 GMT
+      - Wed, 19 Aug 2020 21:18:00 GMT
       User-Agent:
-      - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-table/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 30 Jul 2020 13:30:18 GMT
+      - Wed, 19 Aug 2020 21:18:00 GMT
       x-ms-version:
       - '2019-07-07'
     method: DELETE
@@ -124,7 +124,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 30 Jul 2020 13:30:17 GMT
+      - Wed, 19 Aug 2020 21:18:00 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options:

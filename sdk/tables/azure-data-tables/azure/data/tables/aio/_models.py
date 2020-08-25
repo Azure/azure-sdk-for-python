@@ -10,7 +10,7 @@ from .._deserialize import (
     _return_context_and_deserialized,
     _convert_to_entity
 )
-from .._models import Table
+from .._models import TableItem
 from .._error import _process_table_error
 
 class TablePropertiesPaged(AsyncPageIterator):
@@ -47,7 +47,7 @@ class TablePropertiesPaged(AsyncPageIterator):
 
     async def _extract_data_cb(self, get_next_return):
         self.location_mode, self._response, self._headers = get_next_return
-        props_list = [Table(t) for t in self._response.value]
+        props_list = [TableItem(t) for t in self._response.value]
         return self._headers['x-ms-continuation-NextTableName'] or None, props_list
 
 
