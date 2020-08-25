@@ -5,6 +5,12 @@
 - Application authentication APIs from 1.4.0b7
 - `ManagedIdentityCredential` supports the latest version of App Service
   ([#11346](https://github.com/Azure/azure-sdk-for-python/issues/11346))
+- `CertificateCredential` supports Subject Name/Issuer authentication when
+  created with `send_certificate=True`. The async `CertificateCredential`
+  (`azure.identity.aio.CertificateCredential`) will support this in a
+  future version.
+  ([#10816](https://github.com/Azure/azure-sdk-for-python/issues/10816))
+
 
 ## 1.4.0 (2020-08-10)
 ### Added
