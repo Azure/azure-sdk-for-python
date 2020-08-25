@@ -21,6 +21,20 @@ except ImportError:  # python < 3.3
 from helpers import build_aad_response, build_id_token, id_token_claims
 
 
+# fake object for tests which need to exercise request_token but don't care about its return value
+REQUEST_TOKEN_RESULT = build_aad_response(
+    access_token="***",
+    id_token_claims=id_token_claims(
+        aud="...",
+        iss="http://localhost/tenant",
+        sub="subject",
+        preferred_username="...",
+        tenant_id="...",
+        object_id="...",
+    ),
+)
+
+
 class MockCredential(InteractiveCredential):
     """Test class to drive InteractiveCredential.
 
@@ -132,7 +146,7 @@ def test_scopes_round_trip():
 
     def validate_scopes(*scopes, **_):
         assert scopes == (scope,)
-        return {"access_token": "**", "expires_in": 42}
+        return REQUEST_TOKEN_RESULT
 
     request_token = Mock(wraps=validate_scopes)
     credential = MockCredential(disable_automatic_authentication=True, request_token=request_token)
@@ -158,7 +172,7 @@ def test_authenticate_default_scopes(authority, expected_scope):
 
     def validate_scopes(*scopes):
         assert scopes == (expected_scope,)
-        return {"access_token": "**", "expires_in": 42}
+        return REQUEST_TOKEN_RESULT
 
     request_token = Mock(wraps=validate_scopes)
     MockCredential(authority=authority, request_token=request_token).authenticate()
@@ -176,7 +190,7 @@ def test_authenticate_unknown_cloud():
 def test_authenticate_ignores_disable_automatic_authentication(option):
     """authenticate should prompt for authentication regardless of the credential's configuration"""
 
-    request_token = Mock(return_value={"access_token": "**", "expires_in": 42})
+    request_token = Mock(return_value=REQUEST_TOKEN_RESULT)
     MockCredential(request_token=request_token, disable_automatic_authentication=option).authenticate()
     assert request_token.call_count == 1, "credential didn't begin interactive authentication"
 
