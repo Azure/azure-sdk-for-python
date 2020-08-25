@@ -12,68 +12,118 @@
 try:
     from ._models_py3 import ActiveDirectory
     from ._models_py3 import AuthorizeRequest
+    from ._models_py3 import Backup
+    from ._models_py3 import BackupPatch
+    from ._models_py3 import BackupPolicy
+    from ._models_py3 import BackupPolicyDetails
+    from ._models_py3 import BackupPolicyPatch
+    from ._models_py3 import BackupsList
+    from ._models_py3 import BreakReplicationRequest
     from ._models_py3 import CapacityPool
     from ._models_py3 import CapacityPoolPatch
+    from ._models_py3 import CheckAvailabilityResponse
+    from ._models_py3 import DailySchedule
     from ._models_py3 import Dimension
     from ._models_py3 import ExportPolicyRule
+    from ._models_py3 import HourlySchedule
     from ._models_py3 import MetricSpecification
+    from ._models_py3 import MonthlySchedule
     from ._models_py3 import MountTarget
     from ._models_py3 import MountTargetProperties
     from ._models_py3 import NetAppAccount
     from ._models_py3 import NetAppAccountPatch
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
+    from ._models_py3 import PoolChangeRequest
+    from ._models_py3 import QuotaAvailabilityRequest
     from ._models_py3 import ReplicationObject
     from ._models_py3 import ReplicationStatus
-    from ._models_py3 import ResourceNameAvailability
     from ._models_py3 import ResourceNameAvailabilityRequest
     from ._models_py3 import ServiceSpecification
     from ._models_py3 import Snapshot
+    from ._models_py3 import SnapshotPolicy
+    from ._models_py3 import SnapshotPolicyDetails
+    from ._models_py3 import SnapshotPolicyPatch
+    from ._models_py3 import SnapshotPolicyVolumeList
+    from ._models_py3 import Vault
     from ._models_py3 import Volume
+    from ._models_py3 import VolumeBackupProperties
+    from ._models_py3 import VolumeBackups
     from ._models_py3 import VolumePatch
+    from ._models_py3 import VolumePatchPropertiesDataProtection
     from ._models_py3 import VolumePatchPropertiesExportPolicy
     from ._models_py3 import VolumePropertiesDataProtection
     from ._models_py3 import VolumePropertiesExportPolicy
     from ._models_py3 import VolumeRevert
     from ._models_py3 import VolumeSnapshotProperties
+    from ._models_py3 import WeeklySchedule
 except (SyntaxError, ImportError):
     from ._models import ActiveDirectory
     from ._models import AuthorizeRequest
+    from ._models import Backup
+    from ._models import BackupPatch
+    from ._models import BackupPolicy
+    from ._models import BackupPolicyDetails
+    from ._models import BackupPolicyPatch
+    from ._models import BackupsList
+    from ._models import BreakReplicationRequest
     from ._models import CapacityPool
     from ._models import CapacityPoolPatch
+    from ._models import CheckAvailabilityResponse
+    from ._models import DailySchedule
     from ._models import Dimension
     from ._models import ExportPolicyRule
+    from ._models import HourlySchedule
     from ._models import MetricSpecification
+    from ._models import MonthlySchedule
     from ._models import MountTarget
     from ._models import MountTargetProperties
     from ._models import NetAppAccount
     from ._models import NetAppAccountPatch
     from ._models import Operation
     from ._models import OperationDisplay
+    from ._models import PoolChangeRequest
+    from ._models import QuotaAvailabilityRequest
     from ._models import ReplicationObject
     from ._models import ReplicationStatus
-    from ._models import ResourceNameAvailability
     from ._models import ResourceNameAvailabilityRequest
     from ._models import ServiceSpecification
     from ._models import Snapshot
+    from ._models import SnapshotPolicy
+    from ._models import SnapshotPolicyDetails
+    from ._models import SnapshotPolicyPatch
+    from ._models import SnapshotPolicyVolumeList
+    from ._models import Vault
     from ._models import Volume
+    from ._models import VolumeBackupProperties
+    from ._models import VolumeBackups
     from ._models import VolumePatch
+    from ._models import VolumePatchPropertiesDataProtection
     from ._models import VolumePatchPropertiesExportPolicy
     from ._models import VolumePropertiesDataProtection
     from ._models import VolumePropertiesExportPolicy
     from ._models import VolumeRevert
     from ._models import VolumeSnapshotProperties
+    from ._models import WeeklySchedule
+from ._paged_models import BackupPaged
+from ._paged_models import BackupPolicyPaged
 from ._paged_models import CapacityPoolPaged
 from ._paged_models import NetAppAccountPaged
 from ._paged_models import OperationPaged
 from ._paged_models import SnapshotPaged
+from ._paged_models import SnapshotPolicyPaged
+from ._paged_models import VaultPaged
 from ._paged_models import VolumePaged
 from ._azure_net_app_files_management_client_enums import (
     InAvailabilityReasonType,
     CheckNameResourceTypes,
+    CheckQuotaNameResourceTypes,
+    ActiveDirectoryStatus,
     ServiceLevel,
+    QosType,
     EndpointType,
     ReplicationSchedule,
+    SecurityStyle,
     RelationshipStatus,
     MirrorState,
 )
@@ -81,40 +131,69 @@ from ._azure_net_app_files_management_client_enums import (
 __all__ = [
     'ActiveDirectory',
     'AuthorizeRequest',
+    'Backup',
+    'BackupPatch',
+    'BackupPolicy',
+    'BackupPolicyDetails',
+    'BackupPolicyPatch',
+    'BackupsList',
+    'BreakReplicationRequest',
     'CapacityPool',
     'CapacityPoolPatch',
+    'CheckAvailabilityResponse',
+    'DailySchedule',
     'Dimension',
     'ExportPolicyRule',
+    'HourlySchedule',
     'MetricSpecification',
+    'MonthlySchedule',
     'MountTarget',
     'MountTargetProperties',
     'NetAppAccount',
     'NetAppAccountPatch',
     'Operation',
     'OperationDisplay',
+    'PoolChangeRequest',
+    'QuotaAvailabilityRequest',
     'ReplicationObject',
     'ReplicationStatus',
-    'ResourceNameAvailability',
     'ResourceNameAvailabilityRequest',
     'ServiceSpecification',
     'Snapshot',
+    'SnapshotPolicy',
+    'SnapshotPolicyDetails',
+    'SnapshotPolicyPatch',
+    'SnapshotPolicyVolumeList',
+    'Vault',
     'Volume',
+    'VolumeBackupProperties',
+    'VolumeBackups',
     'VolumePatch',
+    'VolumePatchPropertiesDataProtection',
     'VolumePatchPropertiesExportPolicy',
     'VolumePropertiesDataProtection',
     'VolumePropertiesExportPolicy',
     'VolumeRevert',
     'VolumeSnapshotProperties',
+    'WeeklySchedule',
     'OperationPaged',
     'NetAppAccountPaged',
     'CapacityPoolPaged',
     'VolumePaged',
     'SnapshotPaged',
+    'SnapshotPolicyPaged',
+    'BackupPaged',
+    'BackupPolicyPaged',
+    'VaultPaged',
     'InAvailabilityReasonType',
     'CheckNameResourceTypes',
+    'CheckQuotaNameResourceTypes',
+    'ActiveDirectoryStatus',
     'ServiceLevel',
+    'QosType',
     'EndpointType',
     'ReplicationSchedule',
+    'SecurityStyle',
     'RelationshipStatus',
     'MirrorState',
 ]
