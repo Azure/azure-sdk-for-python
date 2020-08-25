@@ -44,7 +44,7 @@ Both [sync version](./sync_samples) and [async version](./async_samples) of samp
 - [schedule_messages_and_cancellation](./sync_samples/schedule_messages_and_cancellation.py) ([async_version](./async_samples/schedule_messages_and_cancellation_async.py)) - Examples to schedule messages and cancel scheduled messages on a service bus queue:
     - Schedule a single message or multiple messages to a queue
     - Cancel scheduled messages from a queue
-- [schedule_topic_messages_and_cancellation](./sync_samples/schedule_topic_messages_and_cancellation.py) ([async_version](./async_samples/schedule_topic_messages_and_cancellation_async.py)) - Examples to schedule messages and cancel scheduled messages:
+- [schedule_topic_messages_and_cancellation](./sync_samples/schedule_topic_messages_and_cancellation.py) ([async_version](./async_samples/schedule_topic_messages_and_cancellation_async.py)) - Examples to schedule messages and cancel scheduled messages on a service bus topic:
     - Schedule a single message or multiple messages to a topic
     - Cancel scheduled messages from a topic
 - [client_identity_authentication.py](./sync_samples/client_identity_authentication.py) ([async_version](./async_samples/client_identity_authentication_async.py)) - Examples to authenticate the client by Azure Activate Directory
