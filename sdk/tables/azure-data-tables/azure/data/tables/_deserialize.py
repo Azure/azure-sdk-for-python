@@ -206,3 +206,16 @@ def _return_headers_and_deserialized(response, deserialized, response_headers): 
 
 def _return_context_and_deserialized(response, deserialized, response_headers):  # pylint: disable=unused-argument
     return response.http_response.location_mode, deserialized, response_headers
+
+
+def _trim_service_metadata(metadata):
+    # type: (dict[str,str] -> None)
+    keys = metadata.keys()
+    if "preference_applied" in keys:
+        del metadata["preference_applied"]
+    if "content_type" in keys:
+        del metadata["content_type"]
+    if "client_request_id" in keys:
+        del metadata["client_request_id"]
+    if "request_id" in keys:
+        del metadata["request_id"]

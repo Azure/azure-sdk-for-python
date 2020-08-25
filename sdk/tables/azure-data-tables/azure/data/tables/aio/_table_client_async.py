@@ -30,7 +30,7 @@ from .._serialize import serialize_iso
 from .._deserialize import _return_headers_and_deserialized
 from .._error import _process_table_error
 from .._models import UpdateMode
-from .._deserialize import _convert_to_entity
+from .._deserialize import _convert_to_entity, _trim_service_metadata
 from .._serialize import _add_entity_properties, _get_match_headers
 from .._table_client_base import TableClientBase
 from ._base_client_async import AsyncStorageAccountHostsMixin
@@ -195,7 +195,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
     ):
         # type: (...) -> Dict[str,str]
         """Creates a new table under the given account.
-        :return: Dictionary of response headers from service
+        :return: Dictionary of operation metadata returned from service
         :rtype: dict[str,str]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -204,6 +204,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
             metadata, _ = await self._client.table.create(
                 table_properties,
                 cls=kwargs.pop('cls', _return_headers_and_deserialized))
+            _trim_service_metadata(metadata)
             return metadata
         except HttpResponseError as error:
             _process_table_error(error)
@@ -242,7 +243,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        if_match, if_not_match = _get_match_headers(kwargs=dict(kwargs, etag=kwargs.pop('etag', None),
+        if_match, _ =  _get_match_headers(kwargs=dict(kwargs, etag=kwargs.pop('etag', None),
                                                                 match_condition=kwargs.pop('match_condition', None)),
                                                     etag_param='etag', match_param='match_condition')
         try:
@@ -250,7 +251,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
                 table=self.table_name,
                 partition_key=partition_key,
                 row_key=row_key,
-                if_match=if_match or if_not_match or '*',
+                if_match=if_match or '*',
                 **kwargs)
         except HttpResponseError as error:
             _process_table_error(error)
@@ -265,7 +266,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         """Insert entity in a table.
         :param entity: The properties for the table entity.
         :type entity: dict[str, str]
-        :return: Dictionary of response headers from service
+        :return: Dictionary of operation metadata returned from service
         :rtype: dict[str,str]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -280,6 +281,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
                 cls=kwargs.pop('cls', _return_headers_and_deserialized),
                 **kwargs
             )
+            _trim_service_metadata(metadata)
             return metadata
         except ResourceNotFoundError as error:
             _process_table_error(error)
@@ -305,11 +307,11 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         :type etag: str
         :param match_condition: MatchCondition
         :type match_condition: ~azure.core.MatchConditions
-        :return: Dictionary of response headers from service
+        :return: Dictionary of operation metadata returned from service
         :rtype: dict[str,str]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        if_match, if_not_match = _get_match_headers(kwargs=dict(kwargs, etag=kwargs.pop('etag', None),
+        if_match, _ =  _get_match_headers(kwargs=dict(kwargs, etag=kwargs.pop('etag', None),
                                                                 match_condition=kwargs.pop('match_condition', None)),
                                                     etag_param='etag', match_param='match_condition')
 
@@ -324,7 +326,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
                     partition_key=partition_key,
                     row_key=row_key,
                     table_entity_properties=entity,
-                    if_match=if_match or if_not_match or "*",
+                    if_match=if_match or "*",
                     cls=kwargs.pop('cls', _return_headers_and_deserialized),
                     **kwargs)
             elif mode is UpdateMode.MERGE:
@@ -332,11 +334,12 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
                     table=self.table_name,
                     partition_key=partition_key,
                     row_key=row_key,
-                    if_match=if_match or if_not_match or "*",
+                    if_match=if_match or "*",
                     cls=kwargs.pop('cls', _return_headers_and_deserialized),
                     table_entity_properties=entity, **kwargs)
             else:
                 raise ValueError('Mode type is not supported')
+            _trim_service_metadata(metadata)
             return metadata
         except HttpResponseError as error:
             _process_table_error(error)
@@ -447,7 +450,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         :type mode: ~azure.data.tables.UpdateMode
         :param entity: The properties for the table entity.
         :type entity: dict[str, str]
-        :return: Dictionary of response headers from service
+        :return: Dictionary of operation metadata returned from service
         :rtype: dict[str,str]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -478,6 +481,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
             else:
                 raise ValueError("""Update mode {} is not supported.
                     For a list of supported modes see the UpdateMode enum""".format(mode))
+            _trim_service_metadata(metadata)
             return metadata
         except ResourceNotFoundError:
             return await self.create_entity(

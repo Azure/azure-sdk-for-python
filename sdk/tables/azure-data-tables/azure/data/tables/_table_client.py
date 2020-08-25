@@ -17,7 +17,7 @@ from azure.core.paging import ItemPaged
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.tracing.decorator import distributed_trace
 
-from ._deserialize import _convert_to_entity
+from ._deserialize import _convert_to_entity, _trim_service_metadata
 from ._entity import TableEntity
 from ._generated import AzureTable
 from ._generated.models import AccessPolicy, SignedIdentifier, TableProperties, QueryOptions
@@ -183,7 +183,7 @@ class TableClient(TableClientBase):
         # type: (...) -> Dict[str,str]
         """Creates a new table under the current account.
 
-        :return: Dictionary of response headers from service
+        :return: Dictionary of operation metadata returned from service
         :rtype: dict[str,str]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -192,6 +192,7 @@ class TableClient(TableClientBase):
             metadata, _ = self._client.table.create(
                 table_properties,
                 cls=kwargs.pop('cls', _return_headers_and_deserialized))
+            _trim_service_metadata(metadata)
             return metadata
         except HttpResponseError as error:
             _process_table_error(error)
@@ -233,7 +234,7 @@ class TableClient(TableClientBase):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
 
-        if_match, if_not_match = _get_match_headers(kwargs=dict(kwargs, etag=kwargs.pop('etag', None),
+        if_match, _ =  _get_match_headers(kwargs=dict(kwargs, etag=kwargs.pop('etag', None),
                                                                 match_condition=kwargs.pop('match_condition', None)),
                                                     etag_param='etag', match_param='match_condition')
         try:
@@ -241,7 +242,7 @@ class TableClient(TableClientBase):
                 table=self.table_name,
                 partition_key=partition_key,
                 row_key=row_key,
-                if_match=if_match or if_not_match or '*',
+                if_match=if_match or '*',
                 **kwargs)
         except HttpResponseError as error:
             _process_table_error(error)
@@ -257,7 +258,7 @@ class TableClient(TableClientBase):
 
         :param entity: The properties for the table entity.
         :type entity: Union[TableEntity, dict[str,str]]
-        :return: Dictionary mapping response headers from the service
+        :return: Dictionary mapping operation metadata returned from the service
         :rtype: dict[str,str]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -272,6 +273,7 @@ class TableClient(TableClientBase):
                 table_entity_properties=entity,
                 cls=kwargs.pop('cls', _return_headers_and_deserialized),
                 **kwargs)
+            _trim_service_metadata(metadata)
             return metadata
         except ResourceNotFoundError as error:
             _process_table_error(error)
@@ -294,12 +296,12 @@ class TableClient(TableClientBase):
         :keyword str row_key: The row key of the entity.
         :keyword str etag: Etag of the entity
         :keyword ~azure.core.MatchConditions match_condition: MatchCondition
-        :return: Dictionary mapping response headers from the service
+        :return: Dictionary mapping operation metadata returned from the service
         :rtype: dict[str,str]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
 
-        if_match, if_not_match = _get_match_headers(kwargs=dict(kwargs, etag=kwargs.pop('etag', None),
+        if_match, _ =  _get_match_headers(kwargs=dict(kwargs, etag=kwargs.pop('etag', None),
                                                                 match_condition=kwargs.pop('match_condition', None)),
                                                     etag_param='etag', match_param='match_condition')
 
@@ -314,7 +316,7 @@ class TableClient(TableClientBase):
                     partition_key=partition_key,
                     row_key=row_key,
                     table_entity_properties=entity,
-                    if_match=if_match or if_not_match or "*",
+                    if_match=if_match or "*",
                     cls=kwargs.pop('cls', _return_headers_and_deserialized),
                     **kwargs)
             elif mode is UpdateMode.MERGE:
@@ -322,12 +324,13 @@ class TableClient(TableClientBase):
                     table=self.table_name,
                     partition_key=partition_key,
                     row_key=row_key,
-                    if_match=if_match or if_not_match or "*",
+                    if_match=if_match or "*",
                     table_entity_properties=entity,
                     cls=kwargs.pop('cls', _return_headers_and_deserialized),
                     **kwargs)
             else:
                 raise ValueError('Mode type is not supported')
+            _trim_service_metadata(metadata)
             return metadata
         except HttpResponseError as error:
             _process_table_error(error)
@@ -410,7 +413,7 @@ class TableClient(TableClientBase):
         :type partition_key: str
         :param row_key: The row key of the entity.
         :type row_key: str
-        :return: Dictionary mapping response headers from the service
+        :return: Dictionary mapping operation metadata returned from the service
         :rtype: dict[str,str]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -439,7 +442,7 @@ class TableClient(TableClientBase):
         :type entity: Union[TableEntity, dict[str,str]]
         :param mode: Merge or Replace and Insert on fail
         :type mode: ~azure.data.tables.UpdateMode
-        :return: Dictionary mapping response headers from the service
+        :return: Dictionary mapping operation metadata returned from the service
         :rtype: dict[str,str]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -470,6 +473,7 @@ class TableClient(TableClientBase):
             else:
                 raise ValueError("""Update mode {} is not supported.
                     For a list of supported modes see the UpdateMode enum""".format(mode))
+            _trim_service_metadata(metadata)
             return metadata
         except ResourceNotFoundError:
             return self.create_entity(
