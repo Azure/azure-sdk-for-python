@@ -14,6 +14,14 @@ def parse_certificate_id(original_id):
     :returns: Returns a parsed certificate id
     :rtype: ~azure.keyvault.certificates.ParsedId
     :raises: ValueError
+
+    Example:
+        .. literalinclude:: ../tests/test_parse_id.py
+            :start-after: [START parse_certificate_id]
+            :end-before: [END parse_certificate_id]
+            :language: python
+            :caption: Parse a certificate's ID
+            :dedent: 8
     """
     parsed_id = parse_key_vault_identifier(original_id)
 
