@@ -37,7 +37,7 @@ except AttributeError:  # Python 2.7, abc exists, but not ABC
 ObjectType = TypeVar("ObjectType")
 
 
-class AvroObjectSerializer():
+class AvroObjectSerializer(ABC):
 
     def __init__(self, codec=None):
         """A Avro serializer using avro lib from Apache.

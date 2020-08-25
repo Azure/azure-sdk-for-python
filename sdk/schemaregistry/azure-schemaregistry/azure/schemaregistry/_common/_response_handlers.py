@@ -23,12 +23,33 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from ._version import VERSION
+from typing import Any, Dict
 
-__version__ = VERSION
+from azure.core.pipeline import PipelineResponse
 
-from ._schema_registry_avro_serializer import SchemaRegistryAvroSerializer
+from .._generated.models import SchemaId as InternalSchemaId
+from ._schema import SchemaId, Schema
 
-__all__ = [
-    "SchemaRegistryAvroSerializer"
-]
+
+def _parse_response_schema_id(pipeline_response, deserialized, response_headers):
+    # type: (PipelineResponse, InternalSchemaId, Dict[str, Any]) -> SchemaId
+    """
+
+    :param pipeline_response:
+    :param deserialized:
+    :param response_headers:
+    :return:
+    """
+    return SchemaId(schema_id=deserialized.id, **response_headers)
+
+
+def _parse_response_schema(pipeline_response, deserialized, response_headers):
+    # type: (PipelineResponse, str, Dict[str, Any]) -> Schema
+    """
+
+    :param pipeline_response:
+    :param deserialized:
+    :param response_headers:
+    :return:
+    """
+    return Schema(schema_str=deserialized, **response_headers)

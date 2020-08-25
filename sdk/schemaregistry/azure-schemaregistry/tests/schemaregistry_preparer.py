@@ -32,7 +32,9 @@ from devtools_testutils import (
 
 SCHEMA_REGISTRY_ENDPOINT_PARAM = "schemaregistry_endpoint"
 SCHEMA_REGISTRY_GROUP_PARAM = "schemaregistry_group"
-SCHEMA_REGISTRY_CREDENTIAL_PARAM = "schemaregistry_credential"
+SCHEMA_REGISTRY_TENANT_ID_PARAM = "schemaregistry_tenant_id"
+SCHEMA_REGISTRY_CLIENT_ID_PARAM = "schemaregistry_client_id"
+SCHEMA_REGISTRY_CLIENT_SECRET_PARAM = "schemaregistry_client_secret"
 SCHEMA_REGISTRY_ENDPOINT_ENV_KEY_NAME = 'SCHEMA_REGISTRY_ENDPOINT'
 SCHEMA_REGISTRY_GROUP_ENV_KEY_NAME = 'SCHEMA_REGISTRY_GROUP'
 AZURE_TENANT_ID_ENV_KEY_NAME = 'SCHEMA_REGISTRY_AZURE_TENANT_ID'
@@ -64,11 +66,9 @@ class SchemaRegistryPreparer(AzureMgmtPreparer):
         return {
             SCHEMA_REGISTRY_ENDPOINT_PARAM: os.environ[SCHEMA_REGISTRY_ENDPOINT_ENV_KEY_NAME],
             SCHEMA_REGISTRY_GROUP_PARAM: os.environ[SCHEMA_REGISTRY_GROUP_ENV_KEY_NAME],
-            SCHEMA_REGISTRY_CREDENTIAL_PARAM: ClientSecretCredential(
-                tenant_id=os.environ[AZURE_TENANT_ID_ENV_KEY_NAME],
-                client_id=os.environ[AZURE_CLIENT_ID_ENV_KEY_NAME],
-                client_secret=os.environ[AZURE_CLIENT_SECRET_ENV_KEY_NAME]
-            )
+            SCHEMA_REGISTRY_TENANT_ID_PARAM: os.environ[AZURE_TENANT_ID_ENV_KEY_NAME],
+            SCHEMA_REGISTRY_CLIENT_ID_PARAM: os.environ[AZURE_CLIENT_ID_ENV_KEY_NAME],
+            SCHEMA_REGISTRY_CLIENT_SECRET_PARAM: os.environ[AZURE_CLIENT_SECRET_ENV_KEY_NAME]
         }
 
     def remove_resource(self, name, **kwargs):

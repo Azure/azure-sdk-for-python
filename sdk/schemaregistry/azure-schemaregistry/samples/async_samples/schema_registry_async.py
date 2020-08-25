@@ -3,48 +3,77 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+
+"""
+Example to show basic usage of schema registry asynchronously:
+    - register a schema
+    - get schema by id
+    - get schema id
+"""
+
+import asyncio
 import os
 
 from azure.identity.aio import ClientSecretCredential
 from azure.schemaregistry.aio import SchemaRegistryClient
 from azure.schemaregistry import SerializationType
 
-TENANT_ID=os.environ['AZURE_TENANT_ID']
-CLIENT_ID=os.environ['AZURE_CLIENT_ID']
-CLIENT_SECRET=os.environ['AZURE_CLIENT_SECRET']
+TENANT_ID = os.environ['SCHEMA_REGISTRY_AZURE_TENANT_ID']
+CLIENT_ID = os.environ['SCHEMA_REGISTRY_AZURE_CLIENT_ID']
+CLIENT_SECRET = os.environ['SCHEMA_REGISTRY_AZURE_CLIENT_SECRET']
 
-SCHEMA_REGISTRY_ENDPOINT=os.environ['SCHEMA_REGISTRY_ENDPOINT']
-SCHEMA_GROUP=os.environ['SCHEMA_GROUP']
-SCHEMA_NAME=os.environ['SCHEMA_NAME']
-SERIALIZATION_TYPE=SerializationType.AVRO
-SCHEMA_STRING="""{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
-
-token_credential = ClientSecretCredential(
-    tenant_id=TENANT_ID,
-    client_id=CLIENT_ID,
-    client_secret=CLIENT_SECRET
-)
-
-
-def register_schema(client, schema_group, schema_name, serialization_type, schema_string):
-    res = client.register_schema(schema_group, schema_name, "AVRO", schema_string)
-    print(type(res))
-    print(res)
+SCHEMA_REGISTRY_ENDPOINT = os.environ['SCHEMA_REGISTRY_ENDPOINT']
+SCHEMA_GROUP = os.environ['SCHEMA_REGISTRY_GROUP']
+SCHEMA_NAME = 'your-schema-name'
+SERIALIZATION_TYPE = SerializationType.AVRO
+SCHEMA_STRING = """
+{"namespace": "example.avro",
+ "type": "record",
+ "name": "User",
+ "fields": [
+     {"name": "name", "type": "string"},
+     {"name": "favorite_number",  "type": ["int", "null"]},
+     {"name": "favorite_color", "type": ["string", "null"]}
+ ]
+}"""
 
 
-def get_schema_by_id(client, schema_id):
-    res = client.get_schema(schema_id)
-    print(type(res))
-    print(res)
+async def register_schema(client, schema_group, schema_name, serialization_type, schema_string):
+    print("Registering schema...")
+    schema_id = await client.register_schema(schema_group, schema_name, serialization_type, schema_string)
+    print("Schema registered, returned schema id is {}".format(schema_id.id))
+    print("Schema meta properties are {}".format(schema_id))
+    return schema_id.id
 
 
-def get_schema_id(client, schema_group, schema_name, serialization_type, schema_string):
-    res = client.get_schema_id(schema_group, schema_name, serialization_type, schema_string)
-    print(type(res))
-    print(res)
+async def get_schema_by_id(client, schema_id):
+    print("Getting schema by id...")
+    schema = await client.get_schema(schema_id)
+    print("The schema string of schema id: {} string is {}".format(schema_id, schema.content))
+    print("Schema meta properties are {}".format(schema_id))
+    return schema.content
 
 
-schema_registry_client = SchemaRegistryClient(endpoint=SCHEMA_REGISTRY_ENDPOINT, credential=token_credential)
-# schema_id = register_schema(schema_registry_client, SCHEMA_GROUP, SCHEMA_NAME, SERIALIZATION_TYPE, SCHEMA_STRING)
-# schema_str = get_schema_by_id(schema_registry_client, schema_id=schema_id)
-schema_id = get_schema_id(schema_registry_client, SCHEMA_GROUP, SCHEMA_NAME, SERIALIZATION_TYPE, "dsaijdia")
+async def get_schema_id(client, schema_group, schema_name, serialization_type, schema_string):
+    print("Getting schema id...")
+    schema_id = await client.get_schema_id(schema_group, schema_name, serialization_type, schema_string)
+    print("The schema id is: {}".format(schema_id.id))
+    print("Schema meta properties are {}".format(schema_id))
+    return schema_id.id
+
+
+async def main():
+    token_credential = ClientSecretCredential(
+        tenant_id=TENANT_ID,
+        client_id=CLIENT_ID,
+        client_secret=CLIENT_SECRET
+    )
+    schema_registry_client = SchemaRegistryClient(endpoint=SCHEMA_REGISTRY_ENDPOINT, credential=token_credential)
+    async with token_credential, schema_registry_client:
+        schema_id = await register_schema(schema_registry_client, SCHEMA_GROUP, SCHEMA_NAME, SERIALIZATION_TYPE, SCHEMA_STRING)
+        schema_str = await get_schema_by_id(schema_registry_client, schema_id)
+        schema_id = await get_schema_id(schema_registry_client, SCHEMA_GROUP, SCHEMA_NAME, SERIALIZATION_TYPE, SCHEMA_STRING)
+
+
+loop = asyncio.get_event_loop()
+loop.run_until_complete(main())

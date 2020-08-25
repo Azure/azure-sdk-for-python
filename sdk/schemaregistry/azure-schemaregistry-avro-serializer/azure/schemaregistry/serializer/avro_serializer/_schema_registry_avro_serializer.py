@@ -1,7 +1,28 @@
-# --------------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------
+#
 # Copyright (c) Microsoft Corporation. All rights reserved.
-# Licensed under the MIT License. See License.txt in the project root for license information.
-# --------------------------------------------------------------------------------------------
+#
+# The MIT License (MIT)
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the ""Software""), to
+# deal in the Software without restriction, including without limitation the
+# rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+# sell copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED *AS IS*, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+# IN THE SOFTWARE.
+#
+# --------------------------------------------------------------------------
 from io import BytesIO
 import avro
 
@@ -10,17 +31,16 @@ from azure.schemaregistry import SchemaRegistryClient, SerializationType
 from ._avro_serializer import AvroObjectSerializer
 
 
-class SchemaRegistryAvroSerializer:
+class SchemaRegistryAvroSerializer(object):
     """
 
     """
     def __init__(self, credential, endpoint, schema_group, **kwargs):
         self._schema_group = schema_group
         self._avro_serializer = AvroObjectSerializer()
-        self._scheme_registry_client = SchemaRegistryClient(credential=credential, endpoint=endpoint)
-
-        self._id_to_schema_dict = {}
-        self._schema_to_id_dict = {}
+        self._schema_registry_client = SchemaRegistryClient(credential=credential, endpoint=endpoint)
+        self._id_to_schema = {}
+        self._schema_to_id = {}
 
     def _get_schema_id(self, schema_name, schema_str):
         """
@@ -30,16 +50,16 @@ class SchemaRegistryAvroSerializer:
         :return:
         """
         try:
-            return self._schema_to_id_dict[schema_str]
+            return self._schema_to_id[schema_str]
         except KeyError:
-            schema_id = self._scheme_registry_client.register_schema(
+            schema_id = self._schema_registry_client.register_schema(
                 self._schema_group,
                 schema_name,
                 SerializationType.AVRO,
                 schema_str
             )
-            self._schema_to_id_dict[schema_str] = schema_id
-            self._id_to_schema_dict[schema_id] = str(schema_str)
+            self._schema_to_id[schema_str] = schema_id
+            self._id_to_schema[schema_id] = str(schema_str)
             return schema_id
 
     def _get_schema(self, schema_id):
@@ -49,11 +69,11 @@ class SchemaRegistryAvroSerializer:
         :return:
         """
         try:
-            return self._id_to_schema_dict[schema_id]
+            return self._id_to_schema[schema_id]
         except KeyError:
-            schema_str = self._scheme_registry_client.get_schema(schema_id)
-            self._id_to_schema_dict[schema_id] = schema_str
-            self._schema_to_id_dict[schema_str] = schema_id
+            schema_str = self._schema_registry_client.get_schema(schema_id)
+            self._id_to_schema[schema_id] = schema_str
+            self._schema_to_id[schema_str] = schema_id
             return schema_str
 
     def serialize(self, data, schema):
