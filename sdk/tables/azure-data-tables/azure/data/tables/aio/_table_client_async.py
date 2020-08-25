@@ -204,8 +204,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
             metadata, _ = await self._client.table.create(
                 table_properties,
                 cls=kwargs.pop('cls', _return_headers_and_deserialized))
-            _trim_service_metadata(metadata)
-            return metadata
+            return _trim_service_metadata(metadata)
         except HttpResponseError as error:
             _process_table_error(error)
 
@@ -281,8 +280,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
                 cls=kwargs.pop('cls', _return_headers_and_deserialized),
                 **kwargs
             )
-            _trim_service_metadata(metadata)
-            return metadata
+            return _trim_service_metadata(metadata)
         except ResourceNotFoundError as error:
             _process_table_error(error)
 
@@ -339,8 +337,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
                     table_entity_properties=entity, **kwargs)
             else:
                 raise ValueError('Mode type is not supported')
-            _trim_service_metadata(metadata)
-            return metadata
+            return _trim_service_metadata(metadata)
         except HttpResponseError as error:
             _process_table_error(error)
 
@@ -481,8 +478,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
             else:
                 raise ValueError("""Update mode {} is not supported.
                     For a list of supported modes see the UpdateMode enum""".format(mode))
-            _trim_service_metadata(metadata)
-            return metadata
+            return _trim_service_metadata(metadata)
         except ResourceNotFoundError:
             return await self.create_entity(
                 partition_key=partition_key,
