@@ -44,6 +44,9 @@ class TestRecognizeEntities(TextAnalyticsTest):
             for entity in doc.entities:
                 self.assertIsNotNone(entity.text)
                 self.assertIsNotNone(entity.category)
+                self.assertIsNotNone(entity.offset)
+                self.assertIsNotNone(entity.length)
+                self.assertNotEqual(entity.length, 0)
                 self.assertIsNotNone(entity.confidence_score)
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -61,6 +64,9 @@ class TestRecognizeEntities(TextAnalyticsTest):
             for entity in doc.entities:
                 self.assertIsNotNone(entity.text)
                 self.assertIsNotNone(entity.category)
+                self.assertIsNotNone(entity.offset)
+                self.assertIsNotNone(entity.length)
+                self.assertNotEqual(entity.length, 0)
                 self.assertIsNotNone(entity.confidence_score)
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -110,7 +116,7 @@ class TestRecognizeEntities(TextAnalyticsTest):
             client.recognize_entities(docs)
         assert excinfo.value.status_code == 400
         assert excinfo.value.error.code == "InvalidDocumentBatch"
-        assert "(InvalidDocumentBatch) The number of documents in the request have exceeded the data limitations" in str(excinfo.value)
+        assert "Batch request contains too many records" in str(excinfo.value)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()

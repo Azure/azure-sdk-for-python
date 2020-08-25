@@ -1,0 +1,165 @@
+interactions:
+- request:
+    body: '{"TableName": "pytableasynce5ae0d85"}'
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Content-Length:
+      - '37'
+      Content-Type:
+      - application/json;odata=nometadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Wed, 01 Jul 2020 19:38:16 GMT
+      User-Agent:
+      - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 01 Jul 2020 19:38:16 GMT
+      x-ms-version:
+      - '2019-07-07'
+    method: POST
+    uri: https://storagename.table.core.windows.net/Tables
+  response:
+    body:
+      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#Tables/@Element","TableName":"pytableasynce5ae0d85"}'
+    headers:
+      cache-control: no-cache
+      content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
+      date: Wed, 01 Jul 2020 19:38:14 GMT
+      location: https://storagename.table.core.windows.net/Tables('pytableasynce5ae0d85')
+      server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-ms-version: '2019-07-07'
+    status:
+      code: 201
+      message: Created
+    url: https://pyacrstoragewmjulbgag54k.table.core.windows.net/Tables
+- request:
+    body: '{"PartitionKey": "test", "RowKey": "test1", "text": "hello"}'
+    headers:
+      Content-Length:
+      - '60'
+      Content-Type:
+      - application/json
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Wed, 01 Jul 2020 19:38:16 GMT
+      User-Agent:
+      - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 01 Jul 2020 19:38:16 GMT
+      x-ms-version:
+      - '2019-07-07'
+    method: PATCH
+    uri: https://storagename.table.core.windows.net/pytableasynce5ae0d85(PartitionKey='test',RowKey='test1')
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control: no-cache
+      content-length: '0'
+      date: Wed, 01 Jul 2020 19:38:14 GMT
+      etag: W/"datetime'2020-07-01T19%3A38%3A15.4375691Z'"
+      server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      x-content-type-options: nosniff
+      x-ms-version: '2019-07-07'
+    status:
+      code: 204
+      message: No Content
+    url: https://pyacrstoragewmjulbgag54k.table.core.windows.net/pytableasynce5ae0d85(PartitionKey='test',RowKey='test1')
+- request:
+    body: '{"PartitionKey": "test", "RowKey": "test2", "text": "hello"}'
+    headers:
+      Content-Length:
+      - '60'
+      Content-Type:
+      - application/json
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Wed, 01 Jul 2020 19:38:16 GMT
+      User-Agent:
+      - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 01 Jul 2020 19:38:16 GMT
+      x-ms-version:
+      - '2019-07-07'
+    method: PATCH
+    uri: https://storagename.table.core.windows.net/pytableasynce5ae0d85(PartitionKey='test',RowKey='test2')
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control: no-cache
+      content-length: '0'
+      date: Wed, 01 Jul 2020 19:38:14 GMT
+      etag: W/"datetime'2020-07-01T19%3A38%3A15.5206274Z'"
+      server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      x-content-type-options: nosniff
+      x-ms-version: '2019-07-07'
+    status:
+      code: 204
+      message: No Content
+    url: https://pyacrstoragewmjulbgag54k.table.core.windows.net/pytableasynce5ae0d85(PartitionKey='test',RowKey='test2')
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Wed, 01 Jul 2020 19:40:44 GMT
+      User-Agent:
+      - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 01 Jul 2020 19:40:44 GMT
+      x-ms-version:
+      - '2019-07-07'
+    method: GET
+    uri: https://storagename.table.core.windows.net/Tables?st=2020-07-01T19:37:16Z&se=2020-07-01T20:38:16Z&sp=l&sv=2019-07-07&ss=t&srt=c&sig=vFStimHCbV6koJEHsdqo3MqWUYRHvwTl4F2pkJ1qdxk%3D
+  response:
+    body:
+      string: '{"odata.error":{"code":"InvalidUri","message":{"lang":"en-US","value":"The
+        requested URI does not represent any resource on the server.\nRequestId:006703ee-6002-0050-4cdf-4f8a05000000\nTime:2020-07-01T19:40:43.4759218Z"}}}'
+    headers:
+      content-length: '222'
+      content-type: application/json
+      date: Wed, 01 Jul 2020 19:40:43 GMT
+      server: Microsoft-HTTPAPI/2.0
+      x-ms-error-code: InvalidUri
+    status:
+      code: 400
+      message: The requested URI does not represent any resource on the server.
+    url: https://pyacrstoragewmjulbgag54k.table.core.windows.net//Tables?st=2020-07-01T19:37:16Z&se=2020-07-01T20:38:16Z&sp=l&sv=2019-07-07&ss=t&srt=c&sig=vFStimHCbV6koJEHsdqo3MqWUYRHvwTl4F2pkJ1qdxk%3D
+- request:
+    body: null
+    headers:
+      Date:
+      - Wed, 01 Jul 2020 19:40:44 GMT
+      User-Agent:
+      - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 01 Jul 2020 19:40:44 GMT
+      x-ms-version:
+      - '2019-07-07'
+    method: DELETE
+    uri: https://storagename.table.core.windows.net/Tables('pytableasynce5ae0d85')
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control: no-cache
+      content-length: '0'
+      date: Wed, 01 Jul 2020 19:40:43 GMT
+      server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      x-content-type-options: nosniff
+      x-ms-version: '2019-07-07'
+    status:
+      code: 204
+      message: No Content
+    url: https://pyacrstoragewmjulbgag54k.table.core.windows.net/Tables('pytableasynce5ae0d85')
+version: 1

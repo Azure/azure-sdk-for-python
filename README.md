@@ -2,7 +2,7 @@
 
 [![Packages](https://img.shields.io/badge/packages-latest-blue.svg)](https://azure.github.io/azure-sdk/releases/latest/python.html) [![Dependencies](https://img.shields.io/badge/dependency-report-blue.svg)](https://azuresdkartifacts.blob.core.windows.net/azure-sdk-for-python/dependencies/dependencies.html) [![DepGraph](https://img.shields.io/badge/dependency-graph-blue.svg)](https://azuresdkartifacts.blob.core.windows.net/azure-sdk-for-python/dependencies/InterdependencyGraph.html) [![Python](https://img.shields.io/pypi/pyversions/azure-core.svg?maxAge=2592000)](https://pypi.python.org/pypi/azure/) [![Build Status](https://dev.azure.com/azure-sdk/public/_apis/build/status/python/python%20-%20core%20-%20ci?branchName=master)](https://dev.azure.com/azure-sdk/public/_build/latest?definitionId=458&branchName=master)
 
-This repository is for active development of the Azure SDK for Python. For consumers of the SDK we recommend visiting our [public developer docs](https://docs.microsoft.com/en-us/python/azure/) or our versioned [developer docs](https://azure.github.io/azure-sdk-for-python).
+This repository is for active development of the Azure SDK for Python. For consumers of the SDK we recommend visiting our [public developer docs](https://docs.microsoft.com/python/azure/) or our versioned [developer docs](https://azure.github.io/azure-sdk-for-python).
 
 ## Getting started
 
@@ -36,7 +36,7 @@ Last stable versions of packages that have been provided for usage with Azure an
 
 ### Management: New Releases
 A new set of management libraries that follow the [Azure SDK Design Guidelines for Python](https://azure.github.io/azure-sdk/python/guidelines/) are now in Public Preview. These new libraries provide a number of core capabilities that are shared amongst all Azure SDKs, including the intuitive Azure Identity library, an HTTP Pipeline with custom policies, error-handling, distributed tracing, and much more. 
-You can find the list of new packages [on this page](https://azure.github.io/azure-sdk/releases/latest/python.html). Documentation and for these new libraries can be found [here](https://azure.github.io/azure-sdk-for-python). Code samples can also be viewed [here](https://docs.microsoft.com/samples/browse/?languages=python&term=Getting%20started%20-%20Managing)
+You can find the list of new packages [on this page](https://azure.github.io/azure-sdk/releases/latest/mgmt/python.html). Documentation and for these new libraries can be found [here](https://aka.ms/azure-sdk-python-mgmt). Code samples can also be viewed [here](https://docs.microsoft.com/samples/browse/?languages=python&term=Getting%20started%20-%20Managing). In addition, a migration guide that shows how to transition from older versions of libraries is located [here](https://github.com/Azure/azure-sdk-for-python/blob/master/doc/sphinx/python_mgmt_migration_guide.rst). 
 
 > NOTE: If you need to ensure your code is ready for production use one of the stable, non-preview libraries.
 
@@ -47,7 +47,7 @@ Management libraries can be identified by namespaces that start with `azure-mgmt
 ## Need help?
 
 * For detailed documentation visit our [Azure SDK for Python documentation](https://aka.ms/python-docs)
-* File an issue via [Github Issues](../../issues)
+* File an issue via [Github Issues](https://github.com/Azure/azure-sdk-for-python/issues)
 * Check [previous questions](https://stackoverflow.com/questions/tagged/azure+python) or ask new ones on StackOverflow using `azure` and `python` tags.
 
 ### Community

@@ -7,11 +7,11 @@ interactions:
       Content-Length:
       - '0'
       Content-Type:
-      - application/json; charset=utf-8
+      - application/json
       User-Agent:
-      - azsdk-python-keyvault-certificates/4.2.0b1 Python/3.8.0 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-keyvault-certificates/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: PUT
-    uri: https://vaultname.vault.azure.net/certificates/contacts?api-version=7.1-preview
+    uri: https://vaultname.vault.azure.net/certificates/contacts?api-version=7.1
   response:
     body:
       string: '{"error":{"code":"Unauthorized","message":"Request is missing a Bearer
@@ -20,23 +20,22 @@ interactions:
       cache-control: no-cache
       content-length: '87'
       content-type: application/json; charset=utf-8
-      date: Fri, 06 Mar 2020 00:08:48 GMT
+      date: Wed, 29 Jul 2020 18:03:20 GMT
       expires: '-1'
       pragma: no-cache
-      server: Microsoft-IIS/10.0
       strict-transport-security: max-age=31536000;includeSubDomains
       www-authenticate: Bearer authorization="https://login.windows.net/72f988bf-86f1-41af-91ab-2d7cd011db47",
         resource="https://vault.azure.net"
       x-aspnet-version: 4.0.30319
       x-content-type-options: nosniff
-      x-ms-keyvault-network-info: addr=76.121.58.221;act_addr_fam=InterNetwork;
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
       x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.0.897
+      x-ms-keyvault-service-version: 1.1.10.0
       x-powered-by: ASP.NET
     status:
       code: 401
       message: Unauthorized
-    url: https://bdtltjmgojkiikb5rgvkpxsq.vault.azure.net/certificates/contacts?api-version=7.1-preview
+    url: https://llbqiumejfljbrn2vqlkwhox.vault.azure.net/certificates/contacts?api-version=7.1
 - request:
     body: '{"contacts": [{"email": "admin@contoso.com", "name": "John Doe", "phone":
       "1111111111"}, {"email": "admin2@contoso.com", "name": "John Doe2", "phone":
@@ -47,11 +46,11 @@ interactions:
       Content-Length:
       - '166'
       Content-Type:
-      - application/json; charset=utf-8
+      - application/json
       User-Agent:
-      - azsdk-python-keyvault-certificates/4.2.0b1 Python/3.8.0 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-keyvault-certificates/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: PUT
-    uri: https://vaultname.vault.azure.net/certificates/contacts?api-version=7.1-preview
+    uri: https://vaultname.vault.azure.net/certificates/contacts?api-version=7.1
   response:
     body:
       string: '{"id":"https://vaultname.vault.azure.net/certificates/contacts","contacts":[{"email":"admin@contoso.com","name":"John
@@ -60,30 +59,29 @@ interactions:
       cache-control: no-cache
       content-length: '232'
       content-type: application/json; charset=utf-8
-      date: Fri, 06 Mar 2020 00:08:48 GMT
+      date: Wed, 29 Jul 2020 18:03:20 GMT
       expires: '-1'
       pragma: no-cache
-      server: Microsoft-IIS/10.0
       strict-transport-security: max-age=31536000;includeSubDomains
       x-aspnet-version: 4.0.30319
       x-content-type-options: nosniff
-      x-ms-keyvault-network-info: addr=76.121.58.221;act_addr_fam=InterNetwork;
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
       x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.0.897
+      x-ms-keyvault-service-version: 1.1.10.0
       x-powered-by: ASP.NET
     status:
       code: 200
       message: OK
-    url: https://bdtltjmgojkiikb5rgvkpxsq.vault.azure.net/certificates/contacts?api-version=7.1-preview
+    url: https://llbqiumejfljbrn2vqlkwhox.vault.azure.net/certificates/contacts?api-version=7.1
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-certificates/4.2.0b1 Python/3.8.0 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-keyvault-certificates/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: GET
-    uri: https://vaultname.vault.azure.net/certificates/contacts?api-version=7.1-preview
+    uri: https://vaultname.vault.azure.net/certificates/contacts?api-version=7.1
   response:
     body:
       string: '{"id":"https://vaultname.vault.azure.net/certificates/contacts","contacts":[{"email":"admin@contoso.com","name":"John
@@ -92,30 +90,29 @@ interactions:
       cache-control: no-cache
       content-length: '232'
       content-type: application/json; charset=utf-8
-      date: Fri, 06 Mar 2020 00:08:48 GMT
+      date: Wed, 29 Jul 2020 18:03:20 GMT
       expires: '-1'
       pragma: no-cache
-      server: Microsoft-IIS/10.0
       strict-transport-security: max-age=31536000;includeSubDomains
       x-aspnet-version: 4.0.30319
       x-content-type-options: nosniff
-      x-ms-keyvault-network-info: addr=76.121.58.221;act_addr_fam=InterNetwork;
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
       x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.0.897
+      x-ms-keyvault-service-version: 1.1.10.0
       x-powered-by: ASP.NET
     status:
       code: 200
       message: OK
-    url: https://bdtltjmgojkiikb5rgvkpxsq.vault.azure.net/certificates/contacts?api-version=7.1-preview
+    url: https://llbqiumejfljbrn2vqlkwhox.vault.azure.net/certificates/contacts?api-version=7.1
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-certificates/4.2.0b1 Python/3.8.0 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-keyvault-certificates/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: DELETE
-    uri: https://vaultname.vault.azure.net/certificates/contacts?api-version=7.1-preview
+    uri: https://vaultname.vault.azure.net/certificates/contacts?api-version=7.1
   response:
     body:
       string: '{"id":"https://vaultname.vault.azure.net/certificates/contacts","contacts":[{"email":"admin@contoso.com","name":"John
@@ -124,19 +121,18 @@ interactions:
       cache-control: no-cache
       content-length: '232'
       content-type: application/json; charset=utf-8
-      date: Fri, 06 Mar 2020 00:08:49 GMT
+      date: Wed, 29 Jul 2020 18:03:20 GMT
       expires: '-1'
       pragma: no-cache
-      server: Microsoft-IIS/10.0
       strict-transport-security: max-age=31536000;includeSubDomains
       x-aspnet-version: 4.0.30319
       x-content-type-options: nosniff
-      x-ms-keyvault-network-info: addr=76.121.58.221;act_addr_fam=InterNetwork;
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
       x-ms-keyvault-region: westus
-      x-ms-keyvault-service-version: 1.1.0.897
+      x-ms-keyvault-service-version: 1.1.10.0
       x-powered-by: ASP.NET
     status:
       code: 200
       message: OK
-    url: https://bdtltjmgojkiikb5rgvkpxsq.vault.azure.net/certificates/contacts?api-version=7.1-preview
+    url: https://llbqiumejfljbrn2vqlkwhox.vault.azure.net/certificates/contacts?api-version=7.1
 version: 1

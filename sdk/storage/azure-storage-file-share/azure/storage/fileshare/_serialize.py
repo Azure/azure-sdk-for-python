@@ -54,6 +54,7 @@ def get_source_conditions(kwargs):
         source_if_none_match=if_none_match or kwargs.pop('source_if_none_match', None)
     )
 
+
 def get_access_conditions(lease):
     # type: (Optional[Union[ShareLeaseClient, str]]) -> Union[LeaseAccessConditions, None]
     try:

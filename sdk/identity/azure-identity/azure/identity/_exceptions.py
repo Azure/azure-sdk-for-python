@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 from azure.core.exceptions import ClientAuthenticationError
 
 if TYPE_CHECKING:
-    from typing import Any, Optional, Sequence
+    from typing import Any, Iterable, Optional
 
 
 class CredentialUnavailableError(ClientAuthenticationError):
@@ -18,7 +18,7 @@ class AuthenticationRequiredError(CredentialUnavailableError):
     """Interactive authentication is required to acquire a token."""
 
     def __init__(self, scopes, message=None, error_details=None, **kwargs):
-        # type: (Sequence[str], Optional[str], Optional[str], **Any) -> None
+        # type: (Iterable[str], Optional[str], Optional[str], **Any) -> None
         self._scopes = scopes
         self._error_details = error_details
         if not message:
@@ -27,7 +27,7 @@ class AuthenticationRequiredError(CredentialUnavailableError):
 
     @property
     def scopes(self):
-        # type: () -> Sequence[str]
+        # type: () -> Iterable[str]
         """Scopes requested during the failed authentication"""
         return self._scopes
 

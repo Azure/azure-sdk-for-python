@@ -198,13 +198,10 @@ class TestReceiptFromUrl(FormRecognizerTest):
         receipt = result[0]
 
         self.assertFormPagesHasValues(receipt.pages)
-        for field, value in receipt.__dict__.items():
-            if field not in ["receipt_items", "page_range", "pages", "fields", "form_type"]:
-                field = getattr(receipt, field)
-                self.assertTextContentHasValues(field.value_data.field_elements, receipt.page_range.first_page_number)
 
-        for field, value in receipt.fields.items():
-            self.assertTextContentHasValues(value.value_data.field_elements, receipt.page_range.first_page_number)
+        for name, field in receipt.fields.items():
+            if field.value_type not in ["list", "dictionary"] and name != "ReceiptType":  # receipt cases where value_data is None
+                self.assertFieldElementsHasValues(field.value_data.field_elements, receipt.page_range.first_page_number)
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalClientPreparer()

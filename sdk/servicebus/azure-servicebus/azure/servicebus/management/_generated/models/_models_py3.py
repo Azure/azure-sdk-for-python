@@ -18,11 +18,11 @@ from ._service_bus_management_client_enums import *
 class AuthorizationRule(msrest.serialization.Model):
     """Authorization rule of an entity.
 
-    :param type:
+    :param type: The authorization type.
     :type type: str
-    :param claim_type:
+    :param claim_type: The claim type.
     :type claim_type: str
-    :param claim_value:
+    :param claim_value: The claim value.
     :type claim_value: str
     :param rights: Access rights of the entity. Values are 'Send', 'Listen', or 'Manage'.
     :type rights: list[str]
@@ -40,14 +40,14 @@ class AuthorizationRule(msrest.serialization.Model):
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'str', 'xml': {'attr': True, 'prefix': 'i', 'ns': 'http://www.w3.org/2001/XMLSchema-instance'}},
-        'claim_type': {'key': 'ClaimType', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'claim_value': {'key': 'ClaimValue', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'rights': {'key': 'Rights', 'type': '[str]', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect', 'wrapped': True, 'itemsName': 'AccessRights', 'itemsNs': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'created_time': {'key': 'CreatedTime', 'type': 'iso-8601', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'modified_time': {'key': 'ModifiedTime', 'type': 'iso-8601', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'key_name': {'key': 'KeyName', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'primary_key': {'key': 'PrimaryKey', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'secondary_key': {'key': 'SecondaryKey', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'claim_type': {'key': 'claimType', 'type': 'str', 'xml': {'name': 'ClaimType', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'claim_value': {'key': 'claimValue', 'type': 'str', 'xml': {'name': 'ClaimValue', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'rights': {'key': 'rights', 'type': '[str]', 'xml': {'name': 'Rights', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect', 'wrapped': True, 'itemsName': 'AccessRights', 'itemsNs': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'created_time': {'key': 'createdTime', 'type': 'iso-8601', 'xml': {'name': 'CreatedTime', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'modified_time': {'key': 'modifiedTime', 'type': 'iso-8601', 'xml': {'name': 'ModifiedTime', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'key_name': {'key': 'keyName', 'type': 'str', 'xml': {'name': 'KeyName', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'primary_key': {'key': 'primaryKey', 'type': 'str', 'xml': {'name': 'PrimaryKey', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'secondary_key': {'key': 'secondaryKey', 'type': 'str', 'xml': {'name': 'SecondaryKey', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
     }
     _xml_map = {
         'name': 'AuthorizationRule', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'
@@ -83,18 +83,24 @@ class RuleFilter(msrest.serialization.Model):
     """RuleFilter.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: CorrelationFilter, FalseFilter, SqlFilter, TrueFilter.
+    sub-classes are: CorrelationFilter, SqlFilter.
 
-    :param type: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. Constant filled by server.
     :type type: str
     """
+
+    _validation = {
+        'type': {'required': True},
+    }
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'str', 'xml': {'attr': True, 'prefix': 'xsi', 'ns': 'http://www.w3.org/2001/XMLSchema-instance'}},
     }
 
     _subtype_map = {
-        'type': {'CorrelationFilter': 'CorrelationFilter', 'FalseFilter': 'FalseFilter', 'SqlFilter': 'SqlFilter', 'TrueFilter': 'TrueFilter'}
+        'type': {'CorrelationFilter': 'CorrelationFilter', 'SqlFilter': 'SqlFilter'}
     }
     _xml_map = {
         'name': 'Filter', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'
@@ -111,7 +117,9 @@ class RuleFilter(msrest.serialization.Model):
 class CorrelationFilter(RuleFilter):
     """CorrelationFilter.
 
-    :param type: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. Constant filled by server.
     :type type: str
     :param correlation_id:
     :type correlation_id: str
@@ -133,17 +141,21 @@ class CorrelationFilter(RuleFilter):
     :type properties: list[~azure.servicebus.management._generated.models.KeyValue]
     """
 
+    _validation = {
+        'type': {'required': True},
+    }
+
     _attribute_map = {
         'type': {'key': 'type', 'type': 'str', 'xml': {'attr': True, 'prefix': 'xsi', 'ns': 'http://www.w3.org/2001/XMLSchema-instance'}},
-        'correlation_id': {'key': 'CorrelationId', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'message_id': {'key': 'MessageId', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'to': {'key': 'To', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'reply_to': {'key': 'ReplyTo', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'label': {'key': 'Label', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'session_id': {'key': 'SessionId', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'reply_to_session_id': {'key': 'ReplyToSessionId', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'content_type': {'key': 'ContentType', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'properties': {'key': 'Properties', 'type': '[KeyValue]', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect', 'wrapped': True, 'itemsName': 'KeyValueOfstringanyType', 'itemsNs': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'correlation_id': {'key': 'correlationId', 'type': 'str', 'xml': {'name': 'CorrelationId', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'message_id': {'key': 'messageId', 'type': 'str', 'xml': {'name': 'MessageId', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'to': {'key': 'to', 'type': 'str', 'xml': {'name': 'To', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'reply_to': {'key': 'replyTo', 'type': 'str', 'xml': {'name': 'ReplyTo', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'label': {'key': 'label', 'type': 'str', 'xml': {'name': 'Label', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'session_id': {'key': 'sessionId', 'type': 'str', 'xml': {'name': 'SessionId', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'reply_to_session_id': {'key': 'replyToSessionId', 'type': 'str', 'xml': {'name': 'ReplyToSessionId', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'content_type': {'key': 'contentType', 'type': 'str', 'xml': {'name': 'ContentType', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'properties': {'key': 'properties', 'type': '[KeyValue]', 'xml': {'name': 'Properties', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect', 'wrapped': True, 'itemsName': 'KeyValueOfstringanyType', 'itemsNs': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
     }
 
     def __init__(
@@ -208,7 +220,7 @@ class CreateQueueBodyContent(msrest.serialization.Model):
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'str', 'xml': {'attr': True}},
-        'queue_description': {'key': 'QueueDescription', 'type': 'QueueDescription'},
+        'queue_description': {'key': 'queueDescription', 'type': 'QueueDescription'},
     }
     _xml_map = {
         'ns': 'http://www.w3.org/2005/Atom'
@@ -227,7 +239,7 @@ class CreateQueueBodyContent(msrest.serialization.Model):
 
 
 class CreateRuleBody(msrest.serialization.Model):
-    """The request body for creating a topic.
+    """The request body for creating a rule.
 
     :param content: RuleDescription for the new Rule.
     :type content: ~azure.servicebus.management._generated.models.CreateRuleBodyContent
@@ -261,7 +273,7 @@ class CreateRuleBodyContent(msrest.serialization.Model):
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'str', 'xml': {'attr': True}},
-        'rule_description': {'key': 'RuleDescription', 'type': 'RuleDescription'},
+        'rule_description': {'key': 'ruleDescription', 'type': 'RuleDescription'},
     }
     _xml_map = {
         'ns': 'http://www.w3.org/2005/Atom'
@@ -280,9 +292,9 @@ class CreateRuleBodyContent(msrest.serialization.Model):
 
 
 class CreateSubscriptionBody(msrest.serialization.Model):
-    """The request body for creating a topic.
+    """The request body for creating a subscription.
 
-    :param content: TopicDescription for the new topic.
+    :param content: SubscriptionDescription for the new subscription.
     :type content: ~azure.servicebus.management._generated.models.CreateSubscriptionBodyContent
     """
 
@@ -304,18 +316,18 @@ class CreateSubscriptionBody(msrest.serialization.Model):
 
 
 class CreateSubscriptionBodyContent(msrest.serialization.Model):
-    """TopicDescription for the new topic.
+    """SubscriptionDescription for the new subscription.
 
     :param type: MIME type of content.
     :type type: str
-    :param subscription_description: Topic information to create.
+    :param subscription_description: Subscription information to create.
     :type subscription_description:
      ~azure.servicebus.management._generated.models.SubscriptionDescription
     """
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'str', 'xml': {'attr': True}},
-        'subscription_description': {'key': 'SubscriptionDescription', 'type': 'SubscriptionDescription'},
+        'subscription_description': {'key': 'subscriptionDescription', 'type': 'SubscriptionDescription'},
     }
     _xml_map = {
         'ns': 'http://www.w3.org/2005/Atom'
@@ -368,7 +380,7 @@ class CreateTopicBodyContent(msrest.serialization.Model):
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'str', 'xml': {'attr': True}},
-        'topic_description': {'key': 'TopicDescription', 'type': 'TopicDescription'},
+        'topic_description': {'key': 'topicDescription', 'type': 'TopicDescription'},
     }
     _xml_map = {
         'ns': 'http://www.w3.org/2005/Atom'
@@ -392,9 +404,15 @@ class RuleAction(msrest.serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: EmptyRuleAction, SqlRuleAction.
 
-    :param type: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. Constant filled by server.
     :type type: str
     """
+
+    _validation = {
+        'type': {'required': True},
+    }
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'str', 'xml': {'attr': True, 'prefix': 'xsi', 'ns': 'http://www.w3.org/2001/XMLSchema-instance'}},
@@ -418,9 +436,15 @@ class RuleAction(msrest.serialization.Model):
 class EmptyRuleAction(RuleAction):
     """EmptyRuleAction.
 
-    :param type: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. Constant filled by server.
     :type type: str
     """
+
+    _validation = {
+        'type': {'required': True},
+    }
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'str', 'xml': {'attr': True, 'prefix': 'xsi', 'ns': 'http://www.w3.org/2001/XMLSchema-instance'}},
@@ -434,33 +458,103 @@ class EmptyRuleAction(RuleAction):
         self.type: str = 'EmptyRuleAction'
 
 
-class FalseFilter(RuleFilter):
-    """FalseFilter.
+class SqlFilter(RuleFilter):
+    """SqlFilter.
 
-    :param type: Constant filled by server.
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: FalseFilter, TrueFilter.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. Constant filled by server.
     :type type: str
     :param sql_expression:
     :type sql_expression: str
+    :param compatibility_level:
+    :type compatibility_level: str
+    :param parameters:
+    :type parameters: list[~azure.servicebus.management._generated.models.KeyValue]
+    :param requires_preprocessing:
+    :type requires_preprocessing: bool
     """
+
+    _validation = {
+        'type': {'required': True},
+    }
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'str', 'xml': {'attr': True, 'prefix': 'xsi', 'ns': 'http://www.w3.org/2001/XMLSchema-instance'}},
-        'sql_expression': {'key': 'SqlExpression', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'sql_expression': {'key': 'sqlExpression', 'type': 'str', 'xml': {'name': 'SqlExpression', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'compatibility_level': {'key': 'compatibilityLevel', 'type': 'str', 'xml': {'name': 'CompatibilityLevel', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'parameters': {'key': 'parameters', 'type': '[KeyValue]', 'xml': {'name': 'Parameters', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect', 'wrapped': True, 'itemsName': 'KeyValueOfstringanyType', 'itemsNs': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'requires_preprocessing': {'key': 'requiresPreprocessing', 'type': 'bool', 'xml': {'name': 'RequiresPreprocessing', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+    }
+
+    _subtype_map = {
+        'type': {'FalseFilter': 'FalseFilter', 'TrueFilter': 'TrueFilter'}
     }
 
     def __init__(
         self,
         *,
-        sql_expression: Optional[str] = "1 != 1",
+        sql_expression: Optional[str] = None,
+        compatibility_level: Optional[str] = "20",
+        parameters: Optional[List["KeyValue"]] = None,
+        requires_preprocessing: Optional[bool] = None,
         **kwargs
     ):
-        super(FalseFilter, self).__init__(**kwargs)
-        self.type: str = 'FalseFilter'
+        super(SqlFilter, self).__init__(**kwargs)
+        self.type: str = 'SqlFilter'
         self.sql_expression = sql_expression
+        self.compatibility_level = compatibility_level
+        self.parameters = parameters
+        self.requires_preprocessing = requires_preprocessing
+
+
+class FalseFilter(SqlFilter):
+    """FalseFilter.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :param sql_expression:
+    :type sql_expression: str
+    :param compatibility_level:
+    :type compatibility_level: str
+    :param parameters:
+    :type parameters: list[~azure.servicebus.management._generated.models.KeyValue]
+    :param requires_preprocessing:
+    :type requires_preprocessing: bool
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str', 'xml': {'attr': True, 'prefix': 'xsi', 'ns': 'http://www.w3.org/2001/XMLSchema-instance'}},
+        'sql_expression': {'key': 'sqlExpression', 'type': 'str', 'xml': {'name': 'SqlExpression', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'compatibility_level': {'key': 'compatibilityLevel', 'type': 'str', 'xml': {'name': 'CompatibilityLevel', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'parameters': {'key': 'parameters', 'type': '[KeyValue]', 'xml': {'name': 'Parameters', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect', 'wrapped': True, 'itemsName': 'KeyValueOfstringanyType', 'itemsNs': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'requires_preprocessing': {'key': 'requiresPreprocessing', 'type': 'bool', 'xml': {'name': 'RequiresPreprocessing', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+    }
+
+    def __init__(
+        self,
+        *,
+        sql_expression: Optional[str] = None,
+        compatibility_level: Optional[str] = "20",
+        parameters: Optional[List["KeyValue"]] = None,
+        requires_preprocessing: Optional[bool] = None,
+        **kwargs
+    ):
+        super(FalseFilter, self).__init__(sql_expression=sql_expression, compatibility_level=compatibility_level, parameters=parameters, requires_preprocessing=requires_preprocessing, **kwargs)
+        self.type: str = 'FalseFilter'
 
 
 class KeyValue(msrest.serialization.Model):
-    """KeyValue.
+    """Key Values of custom properties.
 
     :param key:
     :type key: str
@@ -469,8 +563,8 @@ class KeyValue(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'key': {'key': 'Key', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'value': {'key': 'Value', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'key': {'key': 'key', 'type': 'str', 'xml': {'name': 'Key', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'value': {'key': 'value', 'type': 'str', 'xml': {'name': 'Value', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
     }
     _xml_map = {
         'name': 'KeyValueOfstringanyType', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'
@@ -505,11 +599,11 @@ class MessageCountDetails(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'active_message_count': {'key': 'ActiveMessageCount', 'type': 'int', 'xml': {'prefix': 'd2p1', 'ns': 'http://schemas.microsoft.com/netservices/2011/06/servicebus'}},
-        'dead_letter_message_count': {'key': 'DeadLetterMessageCount', 'type': 'int', 'xml': {'prefix': 'd2p1', 'ns': 'http://schemas.microsoft.com/netservices/2011/06/servicebus'}},
-        'scheduled_message_count': {'key': 'ScheduledMessageCount', 'type': 'int', 'xml': {'prefix': 'd2p1', 'ns': 'http://schemas.microsoft.com/netservices/2011/06/servicebus'}},
-        'transfer_dead_letter_message_count': {'key': 'TransferDeadLetterMessageCount', 'type': 'int', 'xml': {'prefix': 'd2p1', 'ns': 'http://schemas.microsoft.com/netservices/2011/06/servicebus'}},
-        'transfer_message_count': {'key': 'TransferMessageCount', 'type': 'int', 'xml': {'prefix': 'd2p1', 'ns': 'http://schemas.microsoft.com/netservices/2011/06/servicebus'}},
+        'active_message_count': {'key': 'activeMessageCount', 'type': 'int', 'xml': {'name': 'ActiveMessageCount', 'prefix': 'd2p1', 'ns': 'http://schemas.microsoft.com/netservices/2011/06/servicebus'}},
+        'dead_letter_message_count': {'key': 'deadLetterMessageCount', 'type': 'int', 'xml': {'name': 'DeadLetterMessageCount', 'prefix': 'd2p1', 'ns': 'http://schemas.microsoft.com/netservices/2011/06/servicebus'}},
+        'scheduled_message_count': {'key': 'scheduledMessageCount', 'type': 'int', 'xml': {'name': 'ScheduledMessageCount', 'prefix': 'd2p1', 'ns': 'http://schemas.microsoft.com/netservices/2011/06/servicebus'}},
+        'transfer_dead_letter_message_count': {'key': 'transferDeadLetterMessageCount', 'type': 'int', 'xml': {'name': 'TransferDeadLetterMessageCount', 'prefix': 'd2p1', 'ns': 'http://schemas.microsoft.com/netservices/2011/06/servicebus'}},
+        'transfer_message_count': {'key': 'transferMessageCount', 'type': 'int', 'xml': {'name': 'TransferMessageCount', 'prefix': 'd2p1', 'ns': 'http://schemas.microsoft.com/netservices/2011/06/servicebus'}},
     }
     _xml_map = {
         'name': 'CountDetails', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'
@@ -555,13 +649,13 @@ class NamespaceProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'alias': {'key': 'Alias', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'created_time': {'key': 'CreatedTime', 'type': 'iso-8601', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'messaging_sku': {'key': 'MessagingSku', 'type': 'str', 'xml': {'name': 'MessagingSKU', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'messaging_units': {'key': 'MessagingUnits', 'type': 'int', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'modified_time': {'key': 'ModifiedTime', 'type': 'iso-8601', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'name': {'key': 'Name', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'namespace_type': {'key': 'NamespaceType', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'alias': {'key': 'alias', 'type': 'str', 'xml': {'name': 'Alias', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'created_time': {'key': 'createdTime', 'type': 'iso-8601', 'xml': {'name': 'CreatedTime', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'messaging_sku': {'key': 'messagingSku', 'type': 'str', 'xml': {'name': 'MessagingSKU', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'messaging_units': {'key': 'messagingUnits', 'type': 'int', 'xml': {'name': 'MessagingUnits', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'modified_time': {'key': 'modifiedTime', 'type': 'iso-8601', 'xml': {'name': 'ModifiedTime', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'name': {'key': 'name', 'type': 'str', 'xml': {'name': 'Name', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'namespace_type': {'key': 'namespaceType', 'type': 'str', 'xml': {'name': 'NamespaceType', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
     }
     _xml_map = {
         'name': 'NamespaceInfo', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'
@@ -676,7 +770,7 @@ class QueueDescription(msrest.serialization.Model):
     :type lock_duration: ~datetime.timedelta
     :param max_size_in_megabytes: The maximum size of the queue in megabytes, which is the size of
      memory allocated for the queue.
-    :type max_size_in_megabytes: int
+    :type max_size_in_megabytes: long
     :param requires_duplicate_detection: A value indicating if this queue requires duplicate
      detection.
     :type requires_duplicate_detection: bool
@@ -720,7 +814,7 @@ class QueueDescription(msrest.serialization.Model):
     :type user_metadata: str
     :param created_at: The exact time the queue was created.
     :type created_at: ~datetime.datetime
-    :param updated_at: The exact time a message was updated in the queue.
+    :param updated_at: The exact time the entity description was last updated.
     :type updated_at: ~datetime.datetime
     :param accessed_at: Last time a message was sent, or the last time there was a receive request
      to this queue.
@@ -748,32 +842,32 @@ class QueueDescription(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'lock_duration': {'key': 'LockDuration', 'type': 'duration', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'max_size_in_megabytes': {'key': 'MaxSizeInMegabytes', 'type': 'int', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'requires_duplicate_detection': {'key': 'RequiresDuplicateDetection', 'type': 'bool', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'requires_session': {'key': 'RequiresSession', 'type': 'bool', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'default_message_time_to_live': {'key': 'DefaultMessageTimeToLive', 'type': 'duration', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'dead_lettering_on_message_expiration': {'key': 'DeadLetteringOnMessageExpiration', 'type': 'bool', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'duplicate_detection_history_time_window': {'key': 'DuplicateDetectionHistoryTimeWindow', 'type': 'duration', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'max_delivery_count': {'key': 'MaxDeliveryCount', 'type': 'int', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'enable_batched_operations': {'key': 'EnableBatchedOperations', 'type': 'bool', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'size_in_bytes': {'key': 'SizeInBytes', 'type': 'int', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'message_count': {'key': 'MessageCount', 'type': 'int', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'is_anonymous_accessible': {'key': 'IsAnonymousAccessible', 'type': 'bool', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'authorization_rules': {'key': 'AuthorizationRules', 'type': '[AuthorizationRule]', 'xml': {'name': 'AuthorizationRules', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect', 'wrapped': True, 'itemsName': 'AuthorizationRule', 'itemsNs': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'status': {'key': 'Status', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'forward_to': {'key': 'ForwardTo', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'user_metadata': {'key': 'UserMetadata', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'created_at': {'key': 'CreatedAt', 'type': 'iso-8601', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'updated_at': {'key': 'UpdatedAt', 'type': 'iso-8601', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'accessed_at': {'key': 'AccessedAt', 'type': 'iso-8601', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'support_ordering': {'key': 'SupportOrdering', 'type': 'bool', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'message_count_details': {'key': 'MessageCountDetails', 'type': 'MessageCountDetails'},
-        'auto_delete_on_idle': {'key': 'AutoDeleteOnIdle', 'type': 'duration', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'enable_partitioning': {'key': 'EnablePartitioning', 'type': 'bool', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'entity_availability_status': {'key': 'EntityAvailabilityStatus', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'enable_express': {'key': 'EnableExpress', 'type': 'bool', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'forward_dead_lettered_messages_to': {'key': 'ForwardDeadLetteredMessagesTo', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'lock_duration': {'key': 'lockDuration', 'type': 'duration', 'xml': {'name': 'LockDuration', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'max_size_in_megabytes': {'key': 'maxSizeInMegabytes', 'type': 'long', 'xml': {'name': 'MaxSizeInMegabytes', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'requires_duplicate_detection': {'key': 'requiresDuplicateDetection', 'type': 'bool', 'xml': {'name': 'RequiresDuplicateDetection', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'requires_session': {'key': 'requiresSession', 'type': 'bool', 'xml': {'name': 'RequiresSession', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'default_message_time_to_live': {'key': 'defaultMessageTimeToLive', 'type': 'duration', 'xml': {'name': 'DefaultMessageTimeToLive', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'dead_lettering_on_message_expiration': {'key': 'deadLetteringOnMessageExpiration', 'type': 'bool', 'xml': {'name': 'DeadLetteringOnMessageExpiration', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'duplicate_detection_history_time_window': {'key': 'duplicateDetectionHistoryTimeWindow', 'type': 'duration', 'xml': {'name': 'DuplicateDetectionHistoryTimeWindow', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'max_delivery_count': {'key': 'maxDeliveryCount', 'type': 'int', 'xml': {'name': 'MaxDeliveryCount', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'enable_batched_operations': {'key': 'enableBatchedOperations', 'type': 'bool', 'xml': {'name': 'EnableBatchedOperations', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'size_in_bytes': {'key': 'sizeInBytes', 'type': 'int', 'xml': {'name': 'SizeInBytes', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'message_count': {'key': 'messageCount', 'type': 'int', 'xml': {'name': 'MessageCount', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'is_anonymous_accessible': {'key': 'isAnonymousAccessible', 'type': 'bool', 'xml': {'name': 'IsAnonymousAccessible', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'authorization_rules': {'key': 'authorizationRules', 'type': '[AuthorizationRule]', 'xml': {'name': 'AuthorizationRules', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect', 'wrapped': True, 'itemsName': 'AuthorizationRule', 'itemsNs': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'status': {'key': 'status', 'type': 'str', 'xml': {'name': 'Status', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'forward_to': {'key': 'forwardTo', 'type': 'str', 'xml': {'name': 'ForwardTo', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'user_metadata': {'key': 'userMetadata', 'type': 'str', 'xml': {'name': 'UserMetadata', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'created_at': {'key': 'createdAt', 'type': 'iso-8601', 'xml': {'name': 'CreatedAt', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'updated_at': {'key': 'updatedAt', 'type': 'iso-8601', 'xml': {'name': 'UpdatedAt', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'accessed_at': {'key': 'accessedAt', 'type': 'iso-8601', 'xml': {'name': 'AccessedAt', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'support_ordering': {'key': 'supportOrdering', 'type': 'bool', 'xml': {'name': 'SupportOrdering', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'message_count_details': {'key': 'messageCountDetails', 'type': 'MessageCountDetails'},
+        'auto_delete_on_idle': {'key': 'autoDeleteOnIdle', 'type': 'duration', 'xml': {'name': 'AutoDeleteOnIdle', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'enable_partitioning': {'key': 'enablePartitioning', 'type': 'bool', 'xml': {'name': 'EnablePartitioning', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'entity_availability_status': {'key': 'entityAvailabilityStatus', 'type': 'str', 'xml': {'name': 'EntityAvailabilityStatus', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'enable_express': {'key': 'enableExpress', 'type': 'bool', 'xml': {'name': 'EnableExpress', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'forward_dead_lettered_messages_to': {'key': 'forwardDeadLetteredMessagesTo', 'type': 'str', 'xml': {'name': 'ForwardDeadLetteredMessagesTo', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
     }
     _xml_map = {
         'name': 'QueueDescription', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'
@@ -982,7 +1076,7 @@ class ResponseAuthor(msrest.serialization.Model):
         'name': {'key': 'name', 'type': 'str', 'xml': {'ns': 'http://www.w3.org/2005/Atom'}},
     }
     _xml_map = {
-        'ns': 'http://www.w3.org/2005/Atom'
+        'name': 'author', 'ns': 'http://www.w3.org/2005/Atom'
     }
 
     def __init__(
@@ -1038,13 +1132,13 @@ class RuleDescription(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'filter': {'key': 'Filter', 'type': 'RuleFilter'},
-        'action': {'key': 'Action', 'type': 'RuleAction'},
-        'created_at': {'key': 'CreatedAt', 'type': 'iso-8601', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'name': {'key': 'Name', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'filter': {'key': 'filter', 'type': 'RuleFilter'},
+        'action': {'key': 'action', 'type': 'RuleAction'},
+        'created_at': {'key': 'createdAt', 'type': 'iso-8601', 'xml': {'name': 'CreatedAt', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'name': {'key': 'name', 'type': 'str', 'xml': {'name': 'Name', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
     }
     _xml_map = {
-        'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'
+        'name': 'RuleDescription', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'
     }
 
     def __init__(
@@ -1115,7 +1209,7 @@ class RuleDescriptionEntry(msrest.serialization.Model):
 class RuleDescriptionEntryContent(msrest.serialization.Model):
     """The RuleDescription.
 
-    :param type: Type of content in queue response.
+    :param type: Type of content in rule response.
     :type type: str
     :param rule_description:
     :type rule_description: ~azure.servicebus.management._generated.models.RuleDescription
@@ -1195,8 +1289,8 @@ class ServiceBusManagementError(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'Code', 'type': 'int'},
-        'detail': {'key': 'Detail', 'type': 'str'},
+        'code': {'key': 'code', 'type': 'int', 'xml': {'name': 'Code'}},
+        'detail': {'key': 'detail', 'type': 'str', 'xml': {'name': 'Detail'}},
     }
 
     def __init__(
@@ -1211,54 +1305,50 @@ class ServiceBusManagementError(msrest.serialization.Model):
         self.detail = detail
 
 
-class SqlFilter(RuleFilter):
-    """SqlFilter.
-
-    :param type: Constant filled by server.
-    :type type: str
-    :param sql_expression:
-    :type sql_expression: str
-    """
-
-    _attribute_map = {
-        'type': {'key': 'type', 'type': 'str', 'xml': {'attr': True, 'prefix': 'xsi', 'ns': 'http://www.w3.org/2001/XMLSchema-instance'}},
-        'sql_expression': {'key': 'SqlExpression', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-    }
-
-    def __init__(
-        self,
-        *,
-        sql_expression: Optional[str] = None,
-        **kwargs
-    ):
-        super(SqlFilter, self).__init__(**kwargs)
-        self.type: str = 'SqlFilter'
-        self.sql_expression = sql_expression
-
-
 class SqlRuleAction(RuleAction):
     """SqlRuleAction.
 
-    :param type: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. Constant filled by server.
     :type type: str
     :param sql_expression:
     :type sql_expression: str
+    :param compatibility_level:
+    :type compatibility_level: str
+    :param parameters:
+    :type parameters: list[~azure.servicebus.management._generated.models.KeyValue]
+    :param requires_preprocessing:
+    :type requires_preprocessing: bool
     """
+
+    _validation = {
+        'type': {'required': True},
+    }
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'str', 'xml': {'attr': True, 'prefix': 'xsi', 'ns': 'http://www.w3.org/2001/XMLSchema-instance'}},
-        'sql_expression': {'key': 'SqlExpression', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'sql_expression': {'key': 'sqlExpression', 'type': 'str', 'xml': {'name': 'SqlExpression', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'compatibility_level': {'key': 'compatibilityLevel', 'type': 'str', 'xml': {'name': 'CompatibilityLevel', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'parameters': {'key': 'parameters', 'type': '[KeyValue]', 'xml': {'name': 'Parameters', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect', 'wrapped': True, 'itemsName': 'KeyValueOfstringanyType', 'itemsNs': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'requires_preprocessing': {'key': 'requiresPreprocessing', 'type': 'bool', 'xml': {'name': 'RequiresPreprocessing', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
     }
 
     def __init__(
         self,
         *,
         sql_expression: Optional[str] = None,
+        compatibility_level: Optional[str] = "20",
+        parameters: Optional[List["KeyValue"]] = None,
+        requires_preprocessing: Optional[bool] = None,
         **kwargs
     ):
         super(SqlRuleAction, self).__init__(**kwargs)
         self.type: str = 'SqlRuleAction'
         self.sql_expression = sql_expression
+        self.compatibility_level = compatibility_level
+        self.parameters = parameters
+        self.requires_preprocessing = requires_preprocessing
 
 
 class SubscriptionDescription(msrest.serialization.Model):
@@ -1268,8 +1358,8 @@ class SubscriptionDescription(msrest.serialization.Model):
      that the message is locked for other receivers. The maximum value for LockDuration is 5
      minutes; the default value is 1 minute.
     :type lock_duration: ~datetime.timedelta
-    :param requires_session: A value that indicates whether the queue supports the concept of
-     sessions.
+    :param requires_session: A value that indicates whether the subscription supports the concept
+     of sessions.
     :type requires_session: bool
     :param default_message_time_to_live: ISO 8601 default message timespan to live value. This is
      the duration after which the message expires, starting from when the message is sent to Service
@@ -1320,24 +1410,24 @@ class SubscriptionDescription(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'lock_duration': {'key': 'LockDuration', 'type': 'duration', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'requires_session': {'key': 'RequiresSession', 'type': 'bool', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'default_message_time_to_live': {'key': 'DefaultMessageTimeToLive', 'type': 'duration', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'dead_lettering_on_message_expiration': {'key': 'DeadLetteringOnMessageExpiration', 'type': 'bool', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'dead_lettering_on_filter_evaluation_exceptions': {'key': 'DeadLetteringOnFilterEvaluationExceptions', 'type': 'bool', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'message_count': {'key': 'MessageCount', 'type': 'int', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'max_delivery_count': {'key': 'MaxDeliveryCount', 'type': 'int', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'enable_batched_operations': {'key': 'EnableBatchedOperations', 'type': 'bool', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'status': {'key': 'Status', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'forward_to': {'key': 'ForwardTo', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'created_at': {'key': 'CreatedAt', 'type': 'iso-8601', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'updated_at': {'key': 'UpdatedAt', 'type': 'iso-8601', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'accessed_at': {'key': 'AccessedAt', 'type': 'iso-8601', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'message_count_details': {'key': 'MessageCountDetails', 'type': 'MessageCountDetails'},
-        'user_metadata': {'key': 'UserMetadata', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'forward_dead_lettered_messages_to': {'key': 'ForwardDeadLetteredMessagesTo', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'auto_delete_on_idle': {'key': 'AutoDeleteOnIdle', 'type': 'duration', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'entity_availability_status': {'key': 'EntityAvailabilityStatus', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'lock_duration': {'key': 'lockDuration', 'type': 'duration', 'xml': {'name': 'LockDuration', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'requires_session': {'key': 'requiresSession', 'type': 'bool', 'xml': {'name': 'RequiresSession', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'default_message_time_to_live': {'key': 'defaultMessageTimeToLive', 'type': 'duration', 'xml': {'name': 'DefaultMessageTimeToLive', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'dead_lettering_on_message_expiration': {'key': 'deadLetteringOnMessageExpiration', 'type': 'bool', 'xml': {'name': 'DeadLetteringOnMessageExpiration', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'dead_lettering_on_filter_evaluation_exceptions': {'key': 'deadLetteringOnFilterEvaluationExceptions', 'type': 'bool', 'xml': {'name': 'DeadLetteringOnFilterEvaluationExceptions', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'message_count': {'key': 'messageCount', 'type': 'int', 'xml': {'name': 'MessageCount', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'max_delivery_count': {'key': 'maxDeliveryCount', 'type': 'int', 'xml': {'name': 'MaxDeliveryCount', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'enable_batched_operations': {'key': 'enableBatchedOperations', 'type': 'bool', 'xml': {'name': 'EnableBatchedOperations', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'status': {'key': 'status', 'type': 'str', 'xml': {'name': 'Status', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'forward_to': {'key': 'forwardTo', 'type': 'str', 'xml': {'name': 'ForwardTo', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'created_at': {'key': 'createdAt', 'type': 'iso-8601', 'xml': {'name': 'CreatedAt', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'updated_at': {'key': 'updatedAt', 'type': 'iso-8601', 'xml': {'name': 'UpdatedAt', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'accessed_at': {'key': 'accessedAt', 'type': 'iso-8601', 'xml': {'name': 'AccessedAt', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'message_count_details': {'key': 'messageCountDetails', 'type': 'MessageCountDetails'},
+        'user_metadata': {'key': 'userMetadata', 'type': 'str', 'xml': {'name': 'UserMetadata', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'forward_dead_lettered_messages_to': {'key': 'forwardDeadLetteredMessagesTo', 'type': 'str', 'xml': {'name': 'ForwardDeadLetteredMessagesTo', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'auto_delete_on_idle': {'key': 'autoDeleteOnIdle', 'type': 'duration', 'xml': {'name': 'AutoDeleteOnIdle', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'entity_availability_status': {'key': 'entityAvailabilityStatus', 'type': 'str', 'xml': {'name': 'EntityAvailabilityStatus', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
     }
     _xml_map = {
         'name': 'SubscriptionDescription', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'
@@ -1440,7 +1530,7 @@ class SubscriptionDescriptionEntry(msrest.serialization.Model):
 class SubscriptionDescriptionEntryContent(msrest.serialization.Model):
     """The SubscriptionDescription.
 
-    :param type: Type of content in queue response.
+    :param type: Type of content in subscription response.
     :type type: str
     :param subscription_description: Description of a Service Bus subscription resource.
     :type subscription_description:
@@ -1570,35 +1660,35 @@ class TopicDescription(msrest.serialization.Model):
      subscription is to be partitioned.
     :type enable_subscription_partitioning: bool
     :param enable_express: A value that indicates whether Express Entities are enabled. An express
-     queue holds a message in memory temporarily before writing it to persistent storage.
+     topic holds a message in memory temporarily before writing it to persistent storage.
     :type enable_express: bool
     :param user_metadata: Metadata associated with the topic.
     :type user_metadata: str
     """
 
     _attribute_map = {
-        'default_message_time_to_live': {'key': 'DefaultMessageTimeToLive', 'type': 'duration', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'max_size_in_megabytes': {'key': 'MaxSizeInMegabytes', 'type': 'long', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'requires_duplicate_detection': {'key': 'RequiresDuplicateDetection', 'type': 'bool', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'duplicate_detection_history_time_window': {'key': 'DuplicateDetectionHistoryTimeWindow', 'type': 'duration', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'enable_batched_operations': {'key': 'EnableBatchedOperations', 'type': 'bool', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'size_in_bytes': {'key': 'SizeInBytes', 'type': 'int', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'filtering_messages_before_publishing': {'key': 'FilteringMessagesBeforePublishing', 'type': 'bool', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'is_anonymous_accessible': {'key': 'IsAnonymousAccessible', 'type': 'bool', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'authorization_rules': {'key': 'AuthorizationRules', 'type': '[AuthorizationRule]', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect', 'wrapped': True, 'itemsName': 'AuthorizationRule', 'itemsNs': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'status': {'key': 'Status', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'created_at': {'key': 'CreatedAt', 'type': 'iso-8601', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'updated_at': {'key': 'UpdatedAt', 'type': 'iso-8601', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'accessed_at': {'key': 'AccessedAt', 'type': 'iso-8601', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'support_ordering': {'key': 'SupportOrdering', 'type': 'bool', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'message_count_details': {'key': 'MessageCountDetails', 'type': 'MessageCountDetails'},
-        'subscription_count': {'key': 'SubscriptionCount', 'type': 'int', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'auto_delete_on_idle': {'key': 'AutoDeleteOnIdle', 'type': 'duration', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'enable_partitioning': {'key': 'EnablePartitioning', 'type': 'bool', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'entity_availability_status': {'key': 'EntityAvailabilityStatus', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'enable_subscription_partitioning': {'key': 'EnableSubscriptionPartitioning', 'type': 'bool', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'enable_express': {'key': 'EnableExpress', 'type': 'bool', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'user_metadata': {'key': 'UserMetadata', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'default_message_time_to_live': {'key': 'defaultMessageTimeToLive', 'type': 'duration', 'xml': {'name': 'DefaultMessageTimeToLive', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'max_size_in_megabytes': {'key': 'maxSizeInMegabytes', 'type': 'long', 'xml': {'name': 'MaxSizeInMegabytes', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'requires_duplicate_detection': {'key': 'requiresDuplicateDetection', 'type': 'bool', 'xml': {'name': 'RequiresDuplicateDetection', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'duplicate_detection_history_time_window': {'key': 'duplicateDetectionHistoryTimeWindow', 'type': 'duration', 'xml': {'name': 'DuplicateDetectionHistoryTimeWindow', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'enable_batched_operations': {'key': 'enableBatchedOperations', 'type': 'bool', 'xml': {'name': 'EnableBatchedOperations', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'size_in_bytes': {'key': 'sizeInBytes', 'type': 'int', 'xml': {'name': 'SizeInBytes', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'filtering_messages_before_publishing': {'key': 'filteringMessagesBeforePublishing', 'type': 'bool', 'xml': {'name': 'FilteringMessagesBeforePublishing', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'is_anonymous_accessible': {'key': 'isAnonymousAccessible', 'type': 'bool', 'xml': {'name': 'IsAnonymousAccessible', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'authorization_rules': {'key': 'authorizationRules', 'type': '[AuthorizationRule]', 'xml': {'name': 'AuthorizationRules', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect', 'wrapped': True, 'itemsName': 'AuthorizationRule', 'itemsNs': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'status': {'key': 'status', 'type': 'str', 'xml': {'name': 'Status', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'created_at': {'key': 'createdAt', 'type': 'iso-8601', 'xml': {'name': 'CreatedAt', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'updated_at': {'key': 'updatedAt', 'type': 'iso-8601', 'xml': {'name': 'UpdatedAt', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'accessed_at': {'key': 'accessedAt', 'type': 'iso-8601', 'xml': {'name': 'AccessedAt', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'support_ordering': {'key': 'supportOrdering', 'type': 'bool', 'xml': {'name': 'SupportOrdering', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'message_count_details': {'key': 'messageCountDetails', 'type': 'MessageCountDetails'},
+        'subscription_count': {'key': 'subscriptionCount', 'type': 'int', 'xml': {'name': 'SubscriptionCount', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'auto_delete_on_idle': {'key': 'autoDeleteOnIdle', 'type': 'duration', 'xml': {'name': 'AutoDeleteOnIdle', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'enable_partitioning': {'key': 'enablePartitioning', 'type': 'bool', 'xml': {'name': 'EnablePartitioning', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'entity_availability_status': {'key': 'entityAvailabilityStatus', 'type': 'str', 'xml': {'name': 'EntityAvailabilityStatus', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'enable_subscription_partitioning': {'key': 'enableSubscriptionPartitioning', 'type': 'bool', 'xml': {'name': 'EnableSubscriptionPartitioning', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'enable_express': {'key': 'enableExpress', 'type': 'bool', 'xml': {'name': 'EnableExpress', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'user_metadata': {'key': 'userMetadata', 'type': 'str', 'xml': {'name': 'UserMetadata', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
     }
     _xml_map = {
         'name': 'TopicDescription', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'
@@ -1718,7 +1808,7 @@ class TopicDescriptionEntry(msrest.serialization.Model):
 class TopicDescriptionEntryContent(msrest.serialization.Model):
     """The TopicDescription.
 
-    :param type: Type of content in queue response.
+    :param type: Type of content in topic response.
     :type type: str
     :param topic_description: Description of a Service Bus topic resource.
     :type topic_description: ~azure.servicebus.management._generated.models.TopicDescription
@@ -1788,26 +1878,43 @@ class TopicDescriptionFeed(msrest.serialization.Model):
         self.entry = entry
 
 
-class TrueFilter(RuleFilter):
+class TrueFilter(SqlFilter):
     """TrueFilter.
 
-    :param type: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. Constant filled by server.
     :type type: str
     :param sql_expression:
     :type sql_expression: str
+    :param compatibility_level:
+    :type compatibility_level: str
+    :param parameters:
+    :type parameters: list[~azure.servicebus.management._generated.models.KeyValue]
+    :param requires_preprocessing:
+    :type requires_preprocessing: bool
     """
+
+    _validation = {
+        'type': {'required': True},
+    }
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'str', 'xml': {'attr': True, 'prefix': 'xsi', 'ns': 'http://www.w3.org/2001/XMLSchema-instance'}},
-        'sql_expression': {'key': 'SqlExpression', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'sql_expression': {'key': 'sqlExpression', 'type': 'str', 'xml': {'name': 'SqlExpression', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'compatibility_level': {'key': 'compatibilityLevel', 'type': 'str', 'xml': {'name': 'CompatibilityLevel', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'parameters': {'key': 'parameters', 'type': '[KeyValue]', 'xml': {'name': 'Parameters', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect', 'wrapped': True, 'itemsName': 'KeyValueOfstringanyType', 'itemsNs': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'requires_preprocessing': {'key': 'requiresPreprocessing', 'type': 'bool', 'xml': {'name': 'RequiresPreprocessing', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
     }
 
     def __init__(
         self,
         *,
-        sql_expression: Optional[str] = "1 = 1",
+        sql_expression: Optional[str] = None,
+        compatibility_level: Optional[str] = "20",
+        parameters: Optional[List["KeyValue"]] = None,
+        requires_preprocessing: Optional[bool] = None,
         **kwargs
     ):
-        super(TrueFilter, self).__init__(**kwargs)
+        super(TrueFilter, self).__init__(sql_expression=sql_expression, compatibility_level=compatibility_level, parameters=parameters, requires_preprocessing=requires_preprocessing, **kwargs)
         self.type: str = 'TrueFilter'
-        self.sql_expression = sql_expression

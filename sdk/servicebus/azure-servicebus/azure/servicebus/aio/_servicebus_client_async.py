@@ -42,6 +42,7 @@ class ServiceBusClient(object):
     :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
      keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
      Additionally the following keys may also be present: `'username', 'password'`.
+    :keyword str user_agent: If specified, this will be added in front of the built-in user agent string.
 
     .. admonition:: Example:
 
@@ -107,6 +108,7 @@ class ServiceBusClient(object):
         :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
          keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
          Additionally the following keys may also be present: `'username', 'password'`.
+        :keyword str user_agent: If specified, this will be added in front of the built-in user agent string.
         :rtype: ~azure.servicebus.aio.ServiceBusClient
 
         .. admonition:: Example:
@@ -165,6 +167,7 @@ class ServiceBusClient(object):
             transport_type=self._config.transport_type,
             http_proxy=self._config.http_proxy,
             connection=self._connection,
+            user_agent=self._config.user_agent,
             **kwargs
         )
 
@@ -179,8 +182,8 @@ class ServiceBusClient(object):
          will be immediately removed from the queue, and cannot be subsequently rejected or re-received if
          the client fails to process the message. The default mode is PeekLock.
         :paramtype mode: ~azure.servicebus.ReceiveSettleMode
-        :keyword float idle_timeout: The timeout in seconds between received messages after which the receiver will
-         automatically shutdown. The default value is 0, meaning no timeout.
+        :keyword float max_wait_time: The timeout in seconds between received messages after which the receiver will
+         automatically stop receiving. The default value is 0, meaning no timeout.
         :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.
          Default value is 3.
         :keyword int prefetch: The maximum number of messages to cache with each request to the service.
@@ -211,6 +214,7 @@ class ServiceBusClient(object):
             transport_type=self._config.transport_type,
             http_proxy=self._config.http_proxy,
             connection=self._connection,
+            user_agent=self._config.user_agent,
             **kwargs
         )
 
@@ -227,8 +231,8 @@ class ServiceBusClient(object):
          will be immediately removed from the queue, and cannot be subsequently rejected or re-received if
          the client fails to process the message. The default mode is PeekLock.
         :paramtype mode: ~azure.servicebus.ReceiveSettleMode
-        :keyword float idle_timeout: The timeout in seconds between received messages after which the receiver will
-         automatically shutdown. The default value is 0, meaning no timeout.
+        :keyword float max_wait_time: The timeout in seconds between received messages after which the receiver will
+         automatically stop receiving. The default value is 0, meaning no timeout.
         :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.
          Default value is 3.
         :keyword float retry_backoff_factor: Delta back-off internal in the unit of second between retries.
@@ -271,6 +275,7 @@ class ServiceBusClient(object):
             http_proxy=self._config.http_proxy,
             connection=self._connection,
             is_dead_letter_receiver=True,
+            user_agent=self._config.user_agent,
             **kwargs
         )
 
@@ -304,6 +309,7 @@ class ServiceBusClient(object):
             transport_type=self._config.transport_type,
             http_proxy=self._config.http_proxy,
             connection=self._connection,
+            user_agent=self._config.user_agent,
             **kwargs
         )
 
@@ -320,8 +326,8 @@ class ServiceBusClient(object):
          will be immediately removed from the subscription, and cannot be subsequently rejected or re-received if
          the client fails to process the message. The default mode is PeekLock.
         :paramtype mode: ~azure.servicebus.ReceiveSettleMode
-        :keyword float idle_timeout: The timeout in seconds between received messages after which the receiver will
-         automatically shutdown. The default value is 0, meaning no timeout.
+        :keyword float max_wait_time: The timeout in seconds between received messages after which the receiver will
+         automatically stop receiving. The default value is 0, meaning no timeout.
         :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.
          Default value is 3.
         :keyword float retry_backoff_factor: Delta back-off internal in the unit of second between retries.
@@ -357,6 +363,7 @@ class ServiceBusClient(object):
             transport_type=self._config.transport_type,
             http_proxy=self._config.http_proxy,
             connection=self._connection,
+            user_agent=self._config.user_agent,
             **kwargs
         )
 
@@ -375,8 +382,8 @@ class ServiceBusClient(object):
          will be immediately removed from the subscription, and cannot be subsequently rejected or re-received if
          the client fails to process the message. The default mode is PeekLock.
         :paramtype mode: ~azure.servicebus.ReceiveSettleMode
-        :keyword float idle_timeout: The timeout in seconds between received messages after which the receiver will
-         automatically shutdown. The default value is 0, meaning no timeout.
+        :keyword float max_wait_time: The timeout in seconds between received messages after which the receiver will
+         automatically stop receiving. The default value is 0, meaning no timeout.
         :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.
          Default value is 3.
         :keyword float retry_backoff_factor: Delta back-off internal in the unit of second between retries.
@@ -419,6 +426,7 @@ class ServiceBusClient(object):
             http_proxy=self._config.http_proxy,
             connection=self._connection,
             is_dead_letter_receiver=True,
+            user_agent=self._config.user_agent,
             **kwargs
         )
 
@@ -438,8 +446,8 @@ class ServiceBusClient(object):
          will be immediately removed from the subscription, and cannot be subsequently rejected or re-received if
          the client fails to process the message. The default mode is PeekLock.
         :paramtype mode: ~azure.servicebus.ReceiveSettleMode
-        :keyword float idle_timeout: The timeout in seconds between received messages after which the receiver will
-         automatically shutdown. The default value is 0, meaning no timeout.
+        :keyword float max_wait_time: The timeout in seconds between received messages after which the receiver will
+         automatically stop receiving. The default value is 0, meaning no timeout.
         :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.
          Default value is 3.
         :keyword float retry_backoff_factor: Delta back-off internal in the unit of second between retries.
@@ -476,6 +484,7 @@ class ServiceBusClient(object):
             http_proxy=self._config.http_proxy,
             connection=self._connection,
             session_id=session_id,
+            user_agent=self._config.user_agent,
             **kwargs
         )
 
@@ -493,8 +502,8 @@ class ServiceBusClient(object):
          will be immediately removed from the queue, and cannot be subsequently rejected or re-received if
          the client fails to process the message. The default mode is PeekLock.
         :paramtype mode: ~azure.servicebus.ReceiveSettleMode
-        :keyword float idle_timeout: The timeout in seconds between received messages after which the receiver will
-         automatically shutdown. The default value is 0, meaning no timeout.
+        :keyword float max_wait_time: The timeout in seconds between received messages after which the receiver will
+         automatically stop receiving. The default value is 0, meaning no timeout.
         :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.
          Default value is 3.
         :keyword int prefetch: The maximum number of messages to cache with each request to the service.
@@ -526,5 +535,6 @@ class ServiceBusClient(object):
             session_id=session_id,
             transport_type=self._config.transport_type,
             http_proxy=self._config.http_proxy,
+            user_agent=self._config.user_agent,
             **kwargs
         )

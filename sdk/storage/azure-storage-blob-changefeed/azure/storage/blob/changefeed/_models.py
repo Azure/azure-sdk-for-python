@@ -384,10 +384,12 @@ class ChangeFeedStreamer(object):
     def seekable():
         return True
 
-    def next(self):
+    def __next__(self):
         next_chunk = next(self._iterator)
         self._download_offset += len(next_chunk)
         return next_chunk
+
+    next = __next__  # Python 2 compatibility.
 
     def tell(self):
         return self._point
@@ -406,7 +408,7 @@ class ChangeFeedStreamer(object):
         try:
             # keep downloading file content until the buffer has enough bytes to read
             while self._point + size > self._download_offset:
-                next_data_chunk = self.next()
+                next_data_chunk = self.__next__()
                 self._buf += next_data_chunk
         except StopIteration:
             pass

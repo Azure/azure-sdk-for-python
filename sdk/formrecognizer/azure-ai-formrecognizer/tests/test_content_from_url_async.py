@@ -24,37 +24,41 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
     @GlobalFormRecognizerAccountPreparer()
     @GlobalClientPreparer()
     async def test_content_encoded_url(self, client):
-        try:
+        with pytest.raises(HttpResponseError) as e:
             poller = await client.begin_recognize_content_from_url("https://fakeuri.com/blank%20space")
-        except HttpResponseError as e:
-            self.assertIn("https://fakeuri.com/blank%20space", e.response.request.body)
+        await client.close()
+        self.assertIn("https://fakeuri.com/blank%20space", e.value.response.request.body)
 
     @GlobalFormRecognizerAccountPreparer()
     async def test_content_url_bad_endpoint(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         with self.assertRaises(ServiceRequestError):
             client = FormRecognizerClient("http://notreal.azure.com", AzureKeyCredential(form_recognizer_account_key))
-            poller = await client.begin_recognize_content_from_url(self.invoice_url_pdf)
-            result = await poller.result()
+            async with client:
+                poller = await client.begin_recognize_content_from_url(self.invoice_url_pdf)
+                result = await poller.result()
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalClientPreparer()
     async def test_content_url_auth_successful_key(self, client):
-        poller = await client.begin_recognize_content_from_url(self.invoice_url_pdf)
-        result = await poller.result()
+        async with client:
+            poller = await client.begin_recognize_content_from_url(self.invoice_url_pdf)
+            result = await poller.result()
 
     @GlobalFormRecognizerAccountPreparer()
     async def test_content_url_auth_bad_key(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential("xxxx"))
         with self.assertRaises(ClientAuthenticationError):
-            poller = await client.begin_recognize_content_from_url(self.invoice_url_pdf)
-            result = await poller.result()
+            async with client:
+                poller = await client.begin_recognize_content_from_url(self.invoice_url_pdf)
+                result = await poller.result()
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalClientPreparer()
     async def test_content_bad_url(self, client):
         with self.assertRaises(HttpResponseError):
-            poller = await client.begin_recognize_content_from_url("https://badurl.jpg")
-            result = await poller.result()
+            async with client:
+                poller = await client.begin_recognize_content_from_url("https://badurl.jpg")
+                result = await poller.result()
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalClientPreparer()
@@ -63,8 +67,9 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
             receipt = fd.read(4)  # makes the recording smaller
 
         with self.assertRaises(HttpResponseError):
-            poller = await client.begin_recognize_content_from_url(receipt)
-            result = await poller.result()
+            async with client:
+                poller = await client.begin_recognize_content_from_url(receipt)
+                result = await poller.result()
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalClientPreparer()
@@ -77,8 +82,9 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
             responses.append(analyze_result)
             responses.append(extracted_layout)
 
-        poller = await client.begin_recognize_content_from_url(self.invoice_url_pdf, cls=callback)
-        result = await poller.result()
+        async with client:
+            poller = await client.begin_recognize_content_from_url(self.invoice_url_pdf, cls=callback)
+            result = await poller.result()
         raw_response = responses[0]
         layout = responses[1]
         page_results = raw_response.analyze_result.page_results
@@ -90,8 +96,9 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
     @GlobalFormRecognizerAccountPreparer()
     @GlobalClientPreparer()
     async def test_content_url_pdf(self, client):
-        poller = await client.begin_recognize_content_from_url(self.invoice_url_pdf)
-        result = await poller.result()
+        async with client:
+            poller = await client.begin_recognize_content_from_url(self.invoice_url_pdf)
+            result = await poller.result()
         self.assertEqual(len(result), 1)
         layout = result[0]
         self.assertEqual(layout.page_number, 1)
@@ -111,8 +118,9 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
             responses.append(analyze_result)
             responses.append(extracted_layout)
 
-        poller = await client.begin_recognize_content_from_url(self.form_url_jpg, cls=callback)
-        result = await poller.result()
+        async with client:
+            poller = await client.begin_recognize_content_from_url(self.form_url_jpg, cls=callback)
+            result = await poller.result()
         raw_response = responses[0]
         layout = responses[1]
         page_results = raw_response.analyze_result.page_results
@@ -124,8 +132,9 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
     @GlobalFormRecognizerAccountPreparer()
     @GlobalClientPreparer()
     async def test_content_url_jpg(self, client):
-        poller = await client.begin_recognize_content_from_url(self.form_url_jpg)
-        result = await poller.result()
+        async with client:
+            poller = await client.begin_recognize_content_from_url(self.form_url_jpg)
+            result = await poller.result()
         self.assertEqual(len(result), 1)
         layout = result[0]
         self.assertEqual(layout.page_number, 1)
@@ -140,8 +149,9 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
     @GlobalFormRecognizerAccountPreparer()
     @GlobalClientPreparer()
     async def test_content_multipage_url(self, client):
-        poller = await client.begin_recognize_content_from_url(self.multipage_url_pdf)
-        result = await poller.result()
+        async with client:
+            poller = await client.begin_recognize_content_from_url(self.multipage_url_pdf)
+            result = await poller.result()
         self.assertEqual(len(result), 3)
         self.assertFormPagesHasValues(result)
 
@@ -156,8 +166,9 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
             responses.append(analyze_result)
             responses.append(extracted_layout)
 
-        poller = await client.begin_recognize_content_from_url(self.multipage_url_pdf, cls=callback)
-        result = await poller.result()
+        async with client:
+            poller = await client.begin_recognize_content_from_url(self.multipage_url_pdf, cls=callback)
+            result = await poller.result()
         raw_response = responses[0]
         layout = responses[1]
         page_results = raw_response.analyze_result.page_results
@@ -170,19 +181,21 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
     @GlobalClientPreparer()
     @pytest.mark.live_test_only
     async def test_content_continuation_token(self, client):
-        initial_poller = await client.begin_recognize_content_from_url(self.form_url_jpg)
-        cont_token = initial_poller.continuation_token()
+        async with client:
+            initial_poller = await client.begin_recognize_content_from_url(self.form_url_jpg)
+            cont_token = initial_poller.continuation_token()
 
-        poller = await client.begin_recognize_content_from_url(self.form_url_jpg, continuation_token=cont_token)
-        result = await poller.result()
-        self.assertIsNotNone(result)
-        await initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
+            poller = await client.begin_recognize_content_from_url(self.form_url_jpg, continuation_token=cont_token)
+            result = await poller.result()
+            self.assertIsNotNone(result)
+            await initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalClientPreparer()
     async def test_content_multipage_table_span_pdf(self, client):
-        poller = await client.begin_recognize_content_from_url(self.multipage_table_url_pdf)
-        result = await poller.result()
+        async with client:
+            poller = await client.begin_recognize_content_from_url(self.multipage_table_url_pdf)
+            result = await poller.result()
         self.assertEqual(len(result), 2)
         layout = result[0]
         self.assertEqual(layout.page_number, 1)
@@ -212,8 +225,9 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
             responses.append(analyze_result)
             responses.append(extracted_layout)
 
-        poller = await client.begin_recognize_content_from_url(self.multipage_table_url_pdf, cls=callback)
-        result = await poller.result()
+        async with client:
+            poller = await client.begin_recognize_content_from_url(self.multipage_table_url_pdf, cls=callback)
+            result = await poller.result()
         raw_response = responses[0]
         layout = responses[1]
         page_results = raw_response.analyze_result.page_results

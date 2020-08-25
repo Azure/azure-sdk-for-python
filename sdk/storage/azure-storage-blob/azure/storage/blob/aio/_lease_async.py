@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=invalid-overridden-method
 
 from typing import (  # pylint: disable=unused-import
     Union, Optional, Any, IO, Iterable, AnyStr, Dict, List, Tuple,
@@ -91,6 +92,12 @@ class BlobLeaseClient(LeaseClientBase):
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
+        :keyword str if_tags_match_condition
+            Specify a SQL where clause on blob tags to operate only on blob with a matching value.
+            eg. "\"tagname\"='my tag'"
+
+            .. versionadded:: 12.4.0
+
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
@@ -108,7 +115,7 @@ class BlobLeaseClient(LeaseClientBase):
             process_storage_error(error)
         self.id = response.get('lease_id')  # type: str
         self.last_modified = response.get('last_modified')   # type: datetime
-        self.etag = kwargs.get('etag')  # type: str
+        self.etag = response.get('etag')  # type: str
 
     @distributed_trace_async
     async def renew(self, **kwargs):
@@ -138,6 +145,12 @@ class BlobLeaseClient(LeaseClientBase):
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
+        :keyword str if_tags_match_condition
+            Specify a SQL where clause on blob tags to operate only on blob with a matching value.
+            eg. "\"tagname\"='my tag'"
+
+            .. versionadded:: 12.4.0
+
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :return: None
@@ -182,6 +195,12 @@ class BlobLeaseClient(LeaseClientBase):
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
+        :keyword str if_tags_match_condition
+            Specify a SQL where clause on blob tags to operate only on blob with a matching value.
+            eg. "\"tagname\"='my tag'"
+
+            .. versionadded:: 12.4.0
+
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :return: None
@@ -225,6 +244,12 @@ class BlobLeaseClient(LeaseClientBase):
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
+        :keyword str if_tags_match_condition
+            Specify a SQL where clause on blob tags to operate only on blob with a matching value.
+            eg. "\"tagname\"='my tag'"
+
+            .. versionadded:: 12.4.0
+
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :return: None
@@ -278,6 +303,12 @@ class BlobLeaseClient(LeaseClientBase):
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
+        :keyword str if_tags_match_condition
+            Specify a SQL where clause on blob tags to operate only on blob with a matching value.
+            eg. "\"tagname\"='my tag'"
+
+            .. versionadded:: 12.4.0
+
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :return: Approximate time remaining in the lease period, in seconds.

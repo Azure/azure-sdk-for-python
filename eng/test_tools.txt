@@ -1,29 +1,30 @@
 # requirements leveraged by ci for testing
-pytest==5.4.1; python_version >= '3.5'
 pytest==4.6.9; python_version == '2.7'
-pytest-asyncio==0.10.0; python_version >= '3.5'
+pytest==5.4.2; python_version >= '3.5'
+pytest-asyncio==0.12.0; python_version >= '3.5'
 pytest-cov==2.8.1
 pytest-custom-exit-code==0.3.0
-pytest-xdist==1.31.0
+pytest-xdist==1.32.0
+# we pin coverage to 4.5.4 because there is an bug with `pytest-cov`. the generated coverage files cannot be `coverage combine`ed
 coverage==4.5.4
+bandit==1.6.2
 
 # locking packages defined as deps from azure-sdk-tools or azure-devtools
 pytoml==0.1.21
 readme-renderer[md]==25.0
 pyOpenSSL==19.1.0
 json-delta==2.0
-ConfigArgParse==1.1
+ConfigArgParse==1.2.3
 six==1.14.0
 vcrpy==3.0.0
 pyyaml==5.3.1
 packaging==20.4
 wheel==0.34.2
-Jinja2==2.11.1
+Jinja2==2.11.2
 
 # Locking pylint and required packages
-pylint==2.3.1; python_version >= '3.4'
 pylint==1.8.4; python_version < '3.4'
-astroid==2.3.3; python_version >= '3.4'
+pylint==2.5.2; python_version >= '3.4'
 
 ../../../tools/azure-devtools
 ../../../tools/azure-sdk-tools

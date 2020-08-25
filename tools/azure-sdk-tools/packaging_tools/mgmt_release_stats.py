@@ -46,18 +46,26 @@ class ReleaseStats:
                        package_name)  # set column title
 
         with open(changelog_filename) as f:
+            in_stable_version = False
             rls_date, rls_version = None, None
             for line in f.readlines():
                 version, date = ReleaseStats.parse_release_event(line)
                 if version:
                     rls_date, rls_version = date, version
-                    if rls_date >= start_date:
+                    if re.match(r"^\d+\.\d+\.\d+$", version):
+                        in_stable_version = True
+                    else:
+                        in_stable_version = False
+                    if rls_date >= start_date and in_stable_version:
                         self._add_package_release(
                             self.provider_num+1, version, rls_date, package_name)
 
                 if rls_date and rls_date >= start_date and ReleaseStats.parse_breaking_head(line):
-                    self._add_breaking_release(
-                        self.provider_num+1, rls_version, rls_date, package_name)
+                    if in_stable_version:
+                        self._add_breaking_release(
+                            self.provider_num+1, rls_version, rls_date, package_name)
+                    else:
+                        logging.info("skip breaking for {}".format(rls_version))
 
     def gen_pivot_table(self):
         logging.info("Generating pivot table")
@@ -173,6 +181,10 @@ class ReleaseStats:
         row = self.find_or_create_row(rls_date, ws)
         ws.cell(row=row, column=col, value=1)
 
+        ws = self.wb[SHEET_BREAKING_MATRIX]
+        row = self.find_or_create_row(rls_date, ws)
+        ws.cell(row=row, column=col, value=0)
+
         ws = self.wb[SHEET_EVENT]
         self.release_num += 1
         ws.append([rls_date, package_name])
@@ -278,6 +290,7 @@ def build_release_stats(xls_file, threshold, start_date):
                     package_name, os.path.join(root, file), start_date)
     stats.gen_latest_sum(90, SHEET_BREAKING_MATRIX, threshold-1)
     stats.gen_latest_sum(180, SHEET_BREAKING_MATRIX, threshold)
+    stats.gen_latest_sum(90, SHEET_PACKAGE_MATRIX, threshold-1)
     stats.gen_pivot_table()
     stats.sum_matrix_sheets()
     stats.save(xls_file)

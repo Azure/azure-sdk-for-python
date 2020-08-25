@@ -8,7 +8,7 @@ import pytest
 import datetime
 
 import msrest
-from azure.servicebus.management import ServiceBusManagementClient, TopicDescription
+from azure.servicebus.management import ServiceBusManagementClient, TopicProperties
 from utilities import get_logger
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
 
@@ -48,18 +48,16 @@ class ServiceBusManagementClientTopicTests(AzureMgmtTestCase):
         topic_name = "iweidk"
         try:
             mgmt_service.create_topic(
-                TopicDescription(
-                    name=topic_name,
-                    auto_delete_on_idle=datetime.timedelta(minutes=10),
-                    default_message_time_to_live=datetime.timedelta(minutes=11),
-                    duplicate_detection_history_time_window=datetime.timedelta(minutes=12),
-                    enable_batched_operations=True,
-                    enable_express=True,
-                    enable_partitioning=True,
-                    enable_subscription_partitioning=True,
-                    is_anonymous_accessible=True,
-                    max_size_in_megabytes=3072
-                )
+                name=topic_name,
+                auto_delete_on_idle=datetime.timedelta(minutes=10),
+                default_message_time_to_live=datetime.timedelta(minutes=11),
+                duplicate_detection_history_time_window=datetime.timedelta(minutes=12),
+                enable_batched_operations=True,
+                enable_express=True,
+                enable_partitioning=True,
+                enable_subscription_partitioning=True,
+                is_anonymous_accessible=True,
+                max_size_in_megabytes=3072
             )
             topic = mgmt_service.get_topic(topic_name)
             assert topic.name == topic_name
@@ -239,12 +237,8 @@ class ServiceBusManagementClientTopicTests(AzureMgmtTestCase):
         assert info.updated_at is not None
         assert info.subscription_count is 0
 
-        assert info.message_count_details
-        assert info.message_count_details.active_message_count == 0
-        assert info.message_count_details.dead_letter_message_count == 0
-        assert info.message_count_details.transfer_dead_letter_message_count == 0
-        assert info.message_count_details.transfer_message_count == 0
-        assert info.message_count_details.scheduled_message_count == 0
+        assert info.size_in_bytes == 0
+        assert info.scheduled_message_count == 0
 
         mgmt_service.delete_topic("test_topic")
         topics_infos = list(mgmt_service.list_topics_runtime_info())
@@ -263,12 +257,11 @@ class ServiceBusManagementClientTopicTests(AzureMgmtTestCase):
         assert topic_runtime_info.created_at is not None
         assert topic_runtime_info.accessed_at is not None
         assert topic_runtime_info.updated_at is not None
+        assert topic_runtime_info.size_in_bytes == 0
         assert topic_runtime_info.subscription_count is 0
-
-        assert topic_runtime_info.message_count_details
-        assert topic_runtime_info.message_count_details.active_message_count == 0
-        assert topic_runtime_info.message_count_details.dead_letter_message_count == 0
-        assert topic_runtime_info.message_count_details.transfer_dead_letter_message_count == 0
-        assert topic_runtime_info.message_count_details.transfer_message_count == 0
-        assert topic_runtime_info.message_count_details.scheduled_message_count == 0
+        assert topic_runtime_info.scheduled_message_count == 0
         mgmt_service.delete_topic("test_topic")
+
+    def test_topic_properties_constructor(self):
+        with pytest.raises(TypeError):
+            TopicProperties("randomname")

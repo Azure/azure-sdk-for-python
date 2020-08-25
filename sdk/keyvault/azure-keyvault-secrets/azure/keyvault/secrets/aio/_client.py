@@ -87,12 +87,25 @@ class SecretClient(AsyncKeyVaultClientBase):
         enabled = kwargs.pop("enabled", None)
         not_before = kwargs.pop("not_before", None)
         expires_on = kwargs.pop("expires_on", None)
+        content_type = kwargs.pop("content_type", None)
         if enabled is not None or not_before is not None or expires_on is not None:
             attributes = self._models.SecretAttributes(enabled=enabled, not_before=not_before, expires=expires_on)
         else:
             attributes = None
+
+        parameters = self._models.SecretSetParameters(
+            value=value,
+            tags=kwargs.pop("tags", None),
+            content_type=content_type,
+            secret_attributes=attributes
+        )
+
         bundle = await self._client.set_secret(
-            self.vault_url, name, value, secret_attributes=attributes, error_map=_error_map, **kwargs
+            self.vault_url,
+            name,
+            parameters=parameters,
+            error_map=_error_map,
+            **kwargs
         )
         return KeyVaultSecret._from_secret_bundle(bundle)
 
@@ -129,15 +142,23 @@ class SecretClient(AsyncKeyVaultClientBase):
         enabled = kwargs.pop("enabled", None)
         not_before = kwargs.pop("not_before", None)
         expires_on = kwargs.pop("expires_on", None)
+        content_type = kwargs.pop("content_type", None)
         if enabled is not None or not_before is not None or expires_on is not None:
             attributes = self._models.SecretAttributes(enabled=enabled, not_before=not_before, expires=expires_on)
         else:
             attributes = None
+
+        parameters = self._models.SecretUpdateParameters(
+            content_type=content_type,
+            secret_attributes=attributes,
+            tags=kwargs.pop("tags", None)
+        )
+
         bundle = await self._client.update_secret(
             self.vault_url,
             name,
             secret_version=version or "",
-            secret_attributes=attributes,
+            parameters=parameters,
             error_map=_error_map,
             **kwargs
         )
@@ -203,7 +224,7 @@ class SecretClient(AsyncKeyVaultClientBase):
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the secret doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
 
-         Example:
+        Example:
             .. literalinclude:: ../tests/test_samples_secrets_async.py
                 :start-after: [START backup_secret]
                 :end-before: [END backup_secret]
@@ -233,7 +254,12 @@ class SecretClient(AsyncKeyVaultClientBase):
                 :caption: Restore a backed up secret
                 :dedent: 8
         """
-        bundle = await self._client.restore_secret(self.vault_url, backup, error_map=_error_map, **kwargs)
+        bundle = await self._client.restore_secret(
+            self.vault_url,
+            parameters=self._models.SecretRestoreParameters(secret_bundle_backup=backup),
+            error_map=_error_map,
+            **kwargs
+        )
         return SecretProperties._from_secret_bundle(bundle)
 
     @distributed_trace_async

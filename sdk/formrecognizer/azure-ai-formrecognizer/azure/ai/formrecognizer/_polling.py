@@ -5,7 +5,7 @@
 # ------------------------------------
 
 from typing import TYPE_CHECKING
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import HttpResponseError, ODataV4Format
 from azure.core.polling.base_polling import (
     LocationPolling,
     OperationResourcePolling,
@@ -18,9 +18,10 @@ if TYPE_CHECKING:
 
 
 def raise_error(response, errors, message):
-    for err in errors:
-        message += "({}) {}\n".format(err["code"], err["message"])
-    raise HttpResponseError(message=message, response=response)
+    error_message = "({}) {}{}".format(errors[0]["code"], errors[0]["message"], message)
+    error = HttpResponseError(message=error_message, response=response)
+    error.error = ODataV4Format(errors[0])
+    raise error
 
 
 class TrainingPolling(LocationPolling):
@@ -51,7 +52,7 @@ class TrainingPolling(LocationPolling):
                 if train_result:
                     errors = train_result.get("errors")
                     if errors:
-                        message = "Invalid model created with ID={}\n".format(body["modelInfo"]["modelId"])
+                        message = "\nInvalid model created with ID={}".format(body["modelInfo"]["modelId"])
                         raise_error(response, errors, message)
                 return "Failed"
             if status.lower() != "creating":

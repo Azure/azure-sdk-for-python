@@ -20,7 +20,7 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/1.0.1 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0/entities/recognition/general?showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.1/entities/recognition/general?showStats=false
   response:
     body:
       string: '{"documents":[{"id":"0","entities":[{"text":"Microsoft","category":"Organization","offset":0,"length":9,"confidenceScore":0.81},{"text":"Bill
@@ -34,13 +34,13 @@ interactions:
         text is empty."}}}],"modelVersion":"2020-04-01"}'
     headers:
       apim-request-id:
-      - b11e4dfd-da87-4084-b07b-a6bcb5ef1f0c
+      - 15d71555-b5cb-413d-9b3d-166b4758bb39
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=3
       date:
-      - Thu, 18 Jun 2020 19:52:41 GMT
+      - Fri, 24 Jul 2020 16:32:51 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -48,7 +48,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '148'
+      - '94'
     status:
       code: 200
       message: OK

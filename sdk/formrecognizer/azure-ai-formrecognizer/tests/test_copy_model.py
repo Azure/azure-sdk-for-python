@@ -62,14 +62,34 @@ class TestCopyModel(FormRecognizerTest):
         # give an incorrect region
         target = client.get_copy_authorization(resource_region="eastus", resource_id=resource_id)
 
-        with self.assertRaises(HttpResponseError):
+        with pytest.raises(HttpResponseError) as e:
             poller = client.begin_copy_model(model.model_id, target=target)
             copy = poller.result()
+        self.assertIsNotNone(e.value.error.code)
+        self.assertIsNotNone(e.value.error.message)
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer(training=True, copy=True)
+    def test_copy_model_case_insensitive_region(self, client, container_sas_url, location, resource_id):
+
+        poller = client.begin_training(container_sas_url, use_training_labels=False)
+        model = poller.result()
+
+        # give region all uppercase
+        target = client.get_copy_authorization(resource_region=location.upper(), resource_id=resource_id)
+
+        poller = client.begin_copy_model(model.model_id, target=target)
+        copy = poller.result()
+
+        self.assertEqual(copy.status, "ready")
+        self.assertIsNotNone(copy.training_started_on)
+        self.assertIsNotNone(copy.training_completed_on)
+        self.assertEqual(target["modelId"], copy.model_id)
+        self.assertNotEqual(target["modelId"], model.model_id)
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalClientPreparer(training=True, copy=True)
     def test_copy_model_fail_bad_model_id(self, client, container_sas_url, location, resource_id):
-        pytest.skip("service team will tell us when to enable this test")
 
         poller = client.begin_training(container_sas_url, use_training_labels=False)
         model = poller.result()

@@ -6,7 +6,7 @@ Client Library.
 This package has been tested with Python 2.7, 3.5, 3.6, 3.7 and 3.8.
 
 For a more complete set of Azure libraries, see the
-[azure](https://pypi.python.org/pypi/azure) bundle package.
+[azure sdk python release](https://aka.ms/azsdk/python/all).
 
 ## Usage
 

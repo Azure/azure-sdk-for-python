@@ -1,0 +1,45 @@
+interactions:
+- request:
+    body: '{"documents": [{"id": "1", "text": "one", "language": "en"}, {"id": "2",
+      "text": "two", "language": "en"}, {"id": "3", "text": "three", "language": "en"},
+      {"id": "4", "text": "four", "language": "en"}, {"id": "5", "text": "five", "language":
+      "en"}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '249'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-textanalytics/1.0.1 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+    method: POST
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.1/entities/recognition/pii?showStats=false
+  response:
+    body:
+      string: '{"documents":[{"id":"1","entities":[],"warnings":[]},{"id":"2","entities":[],"warnings":[]},{"id":"3","entities":[],"warnings":[]},{"id":"4","entities":[],"warnings":[]},{"id":"5","entities":[],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}'
+    headers:
+      apim-request-id:
+      - b73d414c-77b4-4732-985f-8429761f6f6e
+      content-type:
+      - application/json; charset=utf-8
+      csp-billing-usage:
+      - CognitiveServices.TextAnalytics.BatchScoring=5
+      date:
+      - Thu, 23 Jul 2020 17:18:51 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '64'
+    status:
+      code: 200
+      message: OK
+version: 1

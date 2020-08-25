@@ -28,7 +28,9 @@ from ._internal import (
     IndexDocumentsBatch,
     SearchClient,
     SearchItemPaged,
+    SearchIndexDocumentBatchingClient,
 )
+from ._internal._search_documents_error import RequestEntityTooLargeError
 from ._version import VERSION
 
 __version__ = VERSION
@@ -38,4 +40,6 @@ __all__ = (
     "IndexDocumentsBatch",
     "SearchClient",
     "SearchItemPaged",
+    "SearchIndexDocumentBatchingClient",
+    "RequestEntityTooLargeError",
 )

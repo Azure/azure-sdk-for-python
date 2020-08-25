@@ -6,7 +6,7 @@ All packages in this bundle have been tested with Python 2.7, 3.3, 3.4 and 3.5.
 
 For the newer Azure Resource Management (ARM) libraries, see [azure-mgmt](https://pypi.python.org/pypi/azure-mgmt).
 
-For a more complete set of Azure libraries, see the [azure](https://pypi.python.org/pypi/azure) bundle package.
+For a more complete set of Azure libraries, see the [azure sdk python release](https://aka.ms/azsdk/python/all).
 
 
 # Compatibility
@@ -231,7 +231,7 @@ section of the project.
 # Learn More
 
 [Microsoft Azure Python Developer
-Center](http://azure.microsoft.com/en-us/develop/python/)
+Center](http://azure.microsoft.com/develop/python/)
 
 
 ![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fazure-servicemanagement-legacy%2FREADME.png)

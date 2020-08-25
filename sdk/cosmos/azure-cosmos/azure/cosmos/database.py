@@ -177,6 +177,9 @@ class DatabaseProxy(object):
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
         :keyword Callable response_hook: A callable invoked with the response metadata.
+        :keyword analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of
+            None leaves analytical storage off and a value of -1 turns analytical storage on with no TTL. Please
+            note that analytical storage can only be enabled on Synapse Link enabled accounts.
         :returns: A `ContainerProxy` instance representing the new container.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container creation failed.
         :rtype: ~azure.cosmos.ContainerProxy
@@ -215,6 +218,10 @@ class DatabaseProxy(object):
             definition["uniqueKeyPolicy"] = unique_key_policy
         if conflict_resolution_policy is not None:
             definition["conflictResolutionPolicy"] = conflict_resolution_policy
+
+        analytical_storage_ttl = kwargs.pop("analytical_storage_ttl", None)
+        if analytical_storage_ttl is not None:
+            definition["analyticalStorageTtl"] = analytical_storage_ttl
 
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
@@ -266,11 +273,15 @@ class DatabaseProxy(object):
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
         :keyword Callable response_hook: A callable invoked with the response metadata.
+        :keyword analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of
+            None leaves analytical storage off and a value of -1 turns analytical storage on with no TTL.  Please
+            note that analytical storage can only be enabled on Synapse Link enabled accounts.
         :returns: A `ContainerProxy` instance representing the container.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container read or creation failed.
         :rtype: ~azure.cosmos.ContainerProxy
         """
 
+        analytical_storage_ttl = kwargs.pop("analytical_storage_ttl", None)
         try:
             container_proxy = self.get_container_client(id)
             container_proxy.read(
@@ -287,7 +298,8 @@ class DatabaseProxy(object):
                 populate_query_metrics=populate_query_metrics,
                 offer_throughput=offer_throughput,
                 unique_key_policy=unique_key_policy,
-                conflict_resolution_policy=conflict_resolution_policy
+                conflict_resolution_policy=conflict_resolution_policy,
+                analytical_storage_ttl=analytical_storage_ttl
             )
 
     @distributed_trace

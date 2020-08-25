@@ -30,7 +30,7 @@ class InteractiveBrowserCredential(InteractiveCredential):
     https://docs.microsoft.com/en-us/azure/active-directory/develop/v1-protocols-oauth-code
 
     :keyword str authority: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
-          the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities`
+          the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
           defines authorities for other clouds.
     :keyword str tenant_id: an Azure Active Directory tenant ID. Defaults to the 'organizations' tenant, which can
           authenticate work or school accounts.

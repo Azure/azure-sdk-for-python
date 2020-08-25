@@ -27,11 +27,7 @@ class StorageObjectReplicationTest(StorageTestCase):
 
     # mock a response to test the deserializer
     def test_deserialize_ors_policies(self):
-        class StubHTTPResponse:
-            headers = {}
-
-        response = StubHTTPResponse()
-        response.headers = {
+        headers = {
             'x-ms-or-111_111': 'Completed',
             'x-ms-or-111_222': 'Failed',
             'x-ms-or-222_111': 'Completed',
@@ -40,7 +36,7 @@ class StorageObjectReplicationTest(StorageTestCase):
             'x-ms-not-related': 'garbage',  # to be ignored
         }
 
-        result = deserialize_ors_policies(response)
+        result = deserialize_ors_policies(headers)
         self.assertEqual(len(result), 2)  # 2 policies
         self.assertEqual(len(result[0].rules), 2)  # 2 rules for policy 111
         self.assertEqual(len(result[1].rules), 2)  # 2 rules for policy 222

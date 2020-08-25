@@ -9,7 +9,7 @@
 from enum import Enum
 
 class AccessRights(str, Enum):
-    """Access rights of the entity
+    """Access rights of an authorization
     """
 
     manage = "Manage"

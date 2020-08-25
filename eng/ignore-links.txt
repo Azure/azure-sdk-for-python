@@ -1,0 +1,1 @@
+https://docs.microsoft.com/python/api/overview/azure/{{package_doc_id}}

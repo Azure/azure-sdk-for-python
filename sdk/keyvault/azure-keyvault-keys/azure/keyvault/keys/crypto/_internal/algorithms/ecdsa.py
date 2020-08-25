@@ -12,6 +12,8 @@ from ..transform import SignatureTransform
 
 class _EcdsaSignatureTransform(SignatureTransform):
     def __init__(self, key, hash_algorithm):
+        super(_EcdsaSignatureTransform, self).__init__()
+
         self._key = key
         self._hash_algorithm = hash_algorithm
 

@@ -206,7 +206,7 @@ class ConflictWorker(object):
             conflict_document_for_insertion = self.try_insert_document(self.clients[0], self.manual_collection_link, conflict_document_for_insertion)
             time.sleep(1) #1 Second for write to sync.
 
-            print("1) Performing conflicting update across %d regions on %s" % (len(self.clients), self.manual_collection_link));
+            print("1) Performing conflicting update across %d regions on %s" % (len(self.clients), self.manual_collection_link))
 
             i = 0
             options = {'accessCondition': {'condition': 'IfMatch', 'type': conflict_document_for_insertion['_etag']}}
@@ -244,7 +244,7 @@ class ConflictWorker(object):
             conflict_document_for_insertion = self.try_insert_document(self.clients[0], self.manual_collection_link, conflict_document_for_insertion)
             time.sleep(1) #1 Second for write to sync.
 
-            print("1) Performing conflicting delete across %d regions on %s" % (len(self.clients), self.manual_collection_link));
+            print("1) Performing conflicting delete across %d regions on %s" % (len(self.clients), self.manual_collection_link))
 
             i = 0
             options = {'accessCondition': {'condition': 'IfMatch', 'type': conflict_document_for_insertion['_etag']}}
@@ -272,7 +272,7 @@ class ConflictWorker(object):
                 # Conflicts will not be registered in conflict feed for delete-delete
                 # operations. The 'hasDeleteConflict' part of LWW validation can be reused for
                 # manual conflict resolution policy validation of delete-delete conflicts.
-                self.validate_LWW_async(self.clients, delete_documents, True);
+                self.validate_LWW_async(self.clients, delete_documents, True)
                 break
             else:
                 print("Retrying delete to induce conflicts")
@@ -312,7 +312,7 @@ class ConflictWorker(object):
             conflict_document_for_insertion = self.try_insert_document(self.clients[0], self.lww_collection_link, conflict_document_for_insertion)
             time.sleep(1) #1 Second for write to sync.
 
-            print("1) Performing conflicting update across %d regions on %s" % (len(self.clients), self.lww_collection_link));
+            print("1) Performing conflicting update across %d regions on %s" % (len(self.clients), self.lww_collection_link))
 
             i = 0
             options = {'accessCondition': {'condition': 'IfMatch', 'type': conflict_document_for_insertion['_etag']}}
@@ -408,7 +408,7 @@ class ConflictWorker(object):
             conflict_document_for_insertion = self.try_insert_document(self.clients[0], self.udp_collection_link, conflict_document_for_insertion)
             time.sleep(1) #1 Second for write to sync.
 
-            print("1) Performing conflicting update across %d regions on %s" % (len(self.clients), self.udp_collection_link));
+            print("1) Performing conflicting update across %d regions on %s" % (len(self.clients), self.udp_collection_link))
 
             i = 0
             options = {'accessCondition': {'condition': 'IfMatch', 'type': conflict_document_for_insertion['_etag']}}
@@ -479,7 +479,7 @@ class ConflictWorker(object):
     def try_update_document(self, client, collection_uri, document, options):
         try:
             options['partitionKey'] = document['id']
-            return client.ReplaceItem(collection_uri + "/docs/" + document['id'], document, options);
+            return client.ReplaceItem(collection_uri + "/docs/" + document['id'], document, options)
         except (exceptions.CosmosResourceNotFoundError, exceptions.CosmosAccessConditionFailedError):
             # Lost synchronously or no document yet. No conflict is induced.
             return None
@@ -642,7 +642,7 @@ class ConflictWorker(object):
             conflict = next(conflicts_iterartor, None)
 
         if conflict_count > 0:
-            self.trace_error("Found %d conflicts in the udp collection" % conflictCount)
+            self.trace_error("Found %d conflicts in the udp collection" % conflict_count)
             return
 
         if has_delete_conflict:
@@ -667,7 +667,7 @@ class ConflictWorker(object):
 
         for document in conflict_document:
             if winner_document is None or int(winner_document['regionId']) <= int(document['regionId']):
-                winner_document = document;
+                winner_document = document
 
         print("Document from region %d should be the winner" % int(winner_document['regionId']))
 

@@ -111,9 +111,9 @@ Mypy install and run.
 **Example: Invoke tox, breaking into the debugger on failure**
 `tox -e whl -c ../../../eng/tox/tox.ini -- --pdb`
 
-### Daily Dev Build
-Daily dev build version of Azure sdk packages for python are available and are uploaded to Azure devops feed nightly. We have also created a tox environment to test a package against dev built version of dependent packages. Below is the link to Azure devops feed.
-`https://dev.azure.com/azure-sdk/public/_packaging?_a=feed&feed=azure-sdk-for-python`
+### Dev Feed
+Daily dev build version of Azure sdk packages for python are available and are uploaded to Azure devops feed daily. We have also created a tox environment to test a package against dev built version of dependent packages. Below is the link to Azure devops feed.
+[`https://dev.azure.com/azure-sdk/public/_packaging?_a=feed&feed=azure-sdk-for-python`](https://dev.azure.com/azure-sdk/public/_packaging?_a=feed&feed=azure-sdk-for-python)
 
 ##### To install latest dev build version of a package
 ```

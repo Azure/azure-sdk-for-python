@@ -183,7 +183,7 @@ class AzureAppConfigurationClient:
                 pass  # do something
 
             filtered_listed = client.list_configuration_settings(
-                label_filter="*Labe*", key_filter="*Ke*", accept_datetime=accept_datetime
+                label_filter="Labe*", key_filter="Ke*", accept_datetime=accept_datetime
             )
             for item in filtered_listed:
                 pass  # do something
@@ -473,7 +473,7 @@ class AzureAppConfigurationClient:
                 pass  # do something
 
             filtered_revisions = client.list_revisions(
-                label_filter="*Labe*", key_filter="*Ke*", accept_datetime=accept_datetime
+                label_filter="Labe*", key_filter="Ke*", accept_datetime=accept_datetime
             )
             for item in filtered_revisions:
                 pass  # do something

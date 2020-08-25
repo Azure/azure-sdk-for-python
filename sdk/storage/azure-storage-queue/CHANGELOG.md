@@ -116,7 +116,7 @@ https://aka.ms/azure-sdk-preview1-python.
     - `QueueClient`: The client handles operations within a particular queue. This includes creating or deleting that queue, as well as enqueueing and dequeueing messages.
 
     These clients can be accessed by navigating down the client hierarchy, or instantiated directly using URLs to the resource (account or queue).
-    For full details on the new API, please see the [reference documentation](http://azure.github.io/azure-sdk-for-python/ref/azure.storage.queue.html).
+    For full details on the new API, please see the [reference documentation](https://azure.github.io/azure-sdk-for-python/ref/Storage.html#azure-storage-queue).
 - New message iterator, for receiving messages from a queue in a continuous stream.
 - New underlying REST pipeline implementation, based on the new `azure-core` library.
 - Client and pipeline configuration is now available via keyword arguments at both the client level, and per-operation. See reference documentation for a full list of optional configuration arguments.

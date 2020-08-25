@@ -1,0 +1,40 @@
+# NOTE: Please refer to https://aka.ms/azsdk/engsys/ci-yaml before editing this file.
+
+trigger:
+  branches:
+    include:
+    - master
+    - hotfix/*
+    - release/*
+    - restapi*
+  paths:
+    include:
+    - sdk/tables/
+    - sdk/core/
+    - tools/
+    - eng/
+
+pr:
+  branches:
+    include:
+    - master
+    - feature/*
+    - hotfix/*
+    - release/*
+    - restapi*
+  paths:
+    include:
+    - sdk/tables/
+    - sdk/core/
+    - tools/
+    - eng/
+
+
+extends:
+  template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
+  parameters:
+    ServiceDirectory: tables
+    Artifacts:
+    - name: azure_data_tables
+      safeName: azuredatatables
+

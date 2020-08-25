@@ -18,7 +18,7 @@ from azure.servicebus import ServiceBusClient, Message
 
 
 def process_message(message):
-    print(message)
+    print(str(message))
 
 
 def example_create_servicebus_client_sync():
@@ -199,18 +199,21 @@ def example_send_and_receive_sync():
     # [END create_batch_sync]
 
     # [START send_complex_message]
-    message = Message("Hello World!!")
-    message.session_id = "MySessionID"
-    message.partition_key = "UsingSpecificPartition"
-    message.user_properties = {'data': 'custom_data'}
-    message.time_to_live = datetime.timedelta(seconds=30)
+    message = Message(
+        "Hello World!!",
+        session_id="MySessionID",
+        partition_key="UsingSpecificPartition",
+        user_properties={'data': 'custom_data'},
+        time_to_live=datetime.timedelta(seconds=30),
+        label='MyLabel'
+    )
     # [END send_complex_message]
 
     # [START peek_messages_sync]
     with servicebus_receiver:
         messages = servicebus_receiver.peek_messages()
         for message in messages:
-            print(message)
+            print(str(message))
     # [END peek_messages_sync]
 
     # [START auto_lock_renew_message_sync]
@@ -229,7 +232,7 @@ def example_send_and_receive_sync():
     with servicebus_receiver:
         messages = servicebus_receiver.receive_messages(max_wait_time=5)
         for message in messages:
-            print(message)
+            print(str(message))
             message.complete()
     # [END receive_sync]
 
@@ -239,13 +242,11 @@ def example_send_and_receive_sync():
             print("Receiving: {}".format(message))
             print("Time to live: {}".format(message.time_to_live))
             print("Sequence number: {}".format(message.sequence_number))
-            print("Enqueue Sequence numger: {}".format(message.enqueue_sequence_number))
-            print("Partition ID: {}".format(message.partition_id))
+            print("Enqueued Sequence numger: {}".format(message.enqueued_sequence_number))
             print("Partition Key: {}".format(message.partition_key))
-            print("User Properties: {}".format(message.user_properties))
-            print("Annotations: {}".format(message.annotations))
-            print("Delivery count: {}".format(message.header.delivery_count))
-            print("Message ID: {}".format(message.properties.message_id))
+            print("Properties: {}".format(message.properties))
+            print("Delivery count: {}".format(message.delivery_count))
+            print("Message ID: {}".format(message.message_id))
             print("Locked until: {}".format(message.locked_until_utc))
             print("Lock Token: {}".format(message.lock_token))
             print("Enqueued time: {}".format(message.enqueued_time_utc))
@@ -268,7 +269,7 @@ def example_receive_deferred_sync():
         messages = servicebus_receiver.receive_messages(max_wait_time=5)
         for message in messages:
             deferred_sequenced_numbers.append(message.sequence_number)
-            print(message)
+            print(str(message))
             message.defer()
 
         received_deferred_msg = servicebus_receiver.receive_deferred_messages(

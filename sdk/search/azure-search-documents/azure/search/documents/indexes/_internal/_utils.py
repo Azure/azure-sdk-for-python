@@ -78,6 +78,7 @@ def prep_if_none_match(etag, match_condition):
 def pack_custom_analyzer(custom_analyzer):
     # type: (CustomAnalyzer) -> _CustomAnalyzer
     return _CustomAnalyzer(
+        name=custom_analyzer.name,
         odata_type=custom_analyzer.odata_type,
         tokenizer=custom_analyzer.tokenizer_name,
         token_filters=custom_analyzer.token_filters,
@@ -87,7 +88,8 @@ def pack_custom_analyzer(custom_analyzer):
 
 def unpack_custom_analyzer(custom_analyzer):
     # type: (_CustomAnalyzer) -> CustomAnalyzer
-    return _CustomAnalyzer(
+    return CustomAnalyzer(
+        name=custom_analyzer.name,
         odata_type=custom_analyzer.odata_type,
         tokenizer_name=custom_analyzer.tokenizer,
         token_filters=custom_analyzer.token_filters,

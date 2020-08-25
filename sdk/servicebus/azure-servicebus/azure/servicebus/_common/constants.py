@@ -3,10 +3,9 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-
 from enum import Enum
 
-from uamqp import constants
+from uamqp import constants, types
 
 VENDOR = b"com.microsoft"
 DATETIMEOFFSET_EPOCH = 621355968000000000
@@ -97,6 +96,10 @@ _X_OPT_VIA_PARTITION_KEY = b'x-opt-via-partition-key'
 _X_OPT_LOCKED_UNTIL = b'x-opt-locked-until'
 _X_OPT_LOCK_TOKEN = b'x-opt-lock-token'
 _X_OPT_SCHEDULED_ENQUEUE_TIME = b'x-opt-scheduled-enqueue-time'
+_X_OPT_DEAD_LETTER_SOURCE = b'x-opt-deadletter-source'
+
+PROPERTIES_DEAD_LETTER_REASON = b'DeadLetterReason'
+PROPERTIES_DEAD_LETTER_ERROR_DESCRIPTION = b'DeadLetterErrorDescription'
 
 
 DEAD_LETTER_QUEUE_SUFFIX = '/$DeadLetterQueue'
@@ -110,6 +113,17 @@ class ReceiveSettleMode(Enum):
 
 class SessionFilter(Enum):
     NextAvailable = 0
+
+
+ANNOTATION_SYMBOL_PARTITION_KEY = types.AMQPSymbol(_X_OPT_PARTITION_KEY)
+ANNOTATION_SYMBOL_VIA_PARTITION_KEY = types.AMQPSymbol(_X_OPT_VIA_PARTITION_KEY)
+ANNOTATION_SYMBOL_SCHEDULED_ENQUEUE_TIME = types.AMQPSymbol(_X_OPT_SCHEDULED_ENQUEUE_TIME)
+
+ANNOTATION_SYMBOL_KEY_MAP = {
+    _X_OPT_PARTITION_KEY: ANNOTATION_SYMBOL_PARTITION_KEY,
+    _X_OPT_VIA_PARTITION_KEY: ANNOTATION_SYMBOL_VIA_PARTITION_KEY,
+    _X_OPT_SCHEDULED_ENQUEUE_TIME: ANNOTATION_SYMBOL_SCHEDULED_ENQUEUE_TIME
+}
 
 
 NEXT_AVAILABLE = SessionFilter.NextAvailable

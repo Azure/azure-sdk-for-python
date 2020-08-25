@@ -1,7 +1,28 @@
 # Release History
 
-## 11.0.1 (Unreleased)
+## 11.1.0b2 (Unreleased)
 
+**Features**
+
+- Added `azure.search.documents.RequestEntityTooLargeError`
+- `Flush` method in `BatchClient` now will not return untill all actions are done
+
+**Breaking Changes**
+
+- Removed `succeeded_actions` & `failed_actions` from `BatchClient`
+- Removed `get_index_document_batching_client` from `SearchClient`
+
+## 11.1.0b1 (2020-08-11)
+
+**Features**
+
+- new `SearchIndexDocumentBatchingClient`
+
+`SearchIndexDocumentBatchingClient` supports handling document indexing actions in an automatic way. It can trigger the flush method automatically based on pending tasks and idle time.
+
+### Fixes
+
+- Doc & Sample fixes
 
 ## 11.0.0 (2020-07-07)
 

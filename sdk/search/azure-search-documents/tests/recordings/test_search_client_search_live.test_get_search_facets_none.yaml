@@ -1,0 +1,62 @@
+interactions:
+- request:
+    body: '{"search": "WiFi", "select": "hotelName,category,description"}'
+    headers:
+      Accept:
+      - application/json;odata.metadata=none
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '62'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      api-key:
+      - 2156D37D17C6C5432A9291C3BE479642
+    method: POST
+    uri: https://searchbad5179e.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2020-06-30
+  response:
+    body:
+      string: '{"value":[{"@search.score":2.3832736,"hotelName":"Countryside Hotel","description":"Save
+        up to 50% off traditional hotels.  Free WiFi, great location near downtown,
+        full kitchen, washer & dryer, 24/7 support, bowling alley, fitness center
+        and more.","category":"Budget"},{"@search.score":1.0225849,"hotelName":"EconoStay","description":"Very
+        popular hotel in town","category":"Budget"},{"@search.score":1.0225849,"hotelName":"Express
+        Rooms","description":"Pretty good hotel","category":"Budget"},{"@search.score":1.0225849,"hotelName":"Comfy
+        Place","description":"Another good hotel","category":"Budget"},{"@search.score":0.7987757,"hotelName":"Fancy
+        Stay","description":"Best hotel in town if you like luxury hotels. They have
+        an amazing infinity pool, a spa, and a really helpful concierge. The location
+        is perfect -- right downtown, close to all the tourist attractions. We highly
+        recommend this hotel.","category":"Luxury"}]}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '929'
+      content-type:
+      - application/json; odata.metadata=none
+      date:
+      - Wed, 12 Aug 2020 23:58:20 GMT
+      elapsed-time:
+      - '36'
+      expires:
+      - '-1'
+      odata-version:
+      - '4.0'
+      pragma:
+      - no-cache
+      preference-applied:
+      - odata.include-annotations="*"
+      request-id:
+      - b27b92e3-dcf7-11ea-a1a9-5cf37071153c
+      strict-transport-security:
+      - max-age=15724800; includeSubDomains
+      vary:
+      - Accept-Encoding
+    status:
+      code: 200
+      message: OK
+version: 1

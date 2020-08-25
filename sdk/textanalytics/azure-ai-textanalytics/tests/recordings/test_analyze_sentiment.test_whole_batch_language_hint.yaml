@@ -18,7 +18,7 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/1.0.1 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0/sentiment?showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.1/sentiment?showStats=false
   response:
     body:
       string: '{"documents":[{"id":"0","sentiment":"neutral","confidenceScores":{"positive":0.07,"neutral":0.93,"negative":0.0},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.07,"neutral":0.93,"negative":0.0},"offset":0,"length":33,"text":"This
@@ -28,13 +28,13 @@ interactions:
         restaurant was not as good as I hoped."}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}'
     headers:
       apim-request-id:
-      - a0d2255c-d30b-454e-9832-e2c098059604
+      - 977bc57b-3591-4c0e-a083-5ff3326d32b9
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=3
       date:
-      - Thu, 18 Jun 2020 19:52:37 GMT
+      - Fri, 24 Jul 2020 16:32:42 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:

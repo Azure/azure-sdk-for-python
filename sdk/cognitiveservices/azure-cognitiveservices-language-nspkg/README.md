@@ -15,6 +15,6 @@ It provides the necessary files for other packages to extend the
 azure.cognitiveservices.language namespace.
 
 If you are looking to install the Azure client libraries, see the
-[azure](https://pypi.python.org/pypi/azure) bundle package.
+[azure sdk python release](https://aka.ms/azsdk/python/all).
 
 ![image](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fazure-cognitiveservices-language-nspkg%2FREADME.png)

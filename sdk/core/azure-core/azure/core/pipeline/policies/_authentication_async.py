@@ -23,7 +23,7 @@ class AsyncBearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, SansIOH
         super().__init__(credential, *scopes, **kwargs)
         self._lock = asyncio.Lock()
 
-    async def on_request(self, request: PipelineRequest):
+    async def on_request(self, request: PipelineRequest):  # pylint:disable=invalid-overridden-method
         """Adds a bearer token Authorization header to request and sends request to next policy.
 
         :param request: The pipeline request object to be modified.

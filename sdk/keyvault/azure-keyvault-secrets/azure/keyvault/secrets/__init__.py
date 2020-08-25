@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from ._models import DeletedSecret, KeyVaultSecret, SecretProperties
-from ._shared.multi_api import ApiVersion
+from ._shared.client_base import ApiVersion
 from ._client import SecretClient
 
 __all__ = ["ApiVersion", "SecretClient", "KeyVaultSecret", "SecretProperties", "DeletedSecret"]

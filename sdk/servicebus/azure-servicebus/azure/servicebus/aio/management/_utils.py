@@ -89,6 +89,29 @@ async def extract_data_template(feed_class, convert, feed_element):
     return next_link, iter(list_of_qd)  # when next_page is None, AsyncPagedItem will stop fetch next page data.
 
 
+async def extract_rule_data_template(feed_class, convert, feed_element):
+    """Special version of function extrat_data_template for Rule.
+
+    Pass both the XML entry element and the rule instance to function `convert`. Rule needs to extract
+    KeyValue from XML Element and set to Rule model instance manually. The autorest/msrest serialization/deserialization
+    doesn't work for this special part.
+    After autorest is enhanced, this method can be removed.
+    Refer to autorest issue https://github.com/Azure/autorest/issues/3535
+    """
+    deserialized = feed_class.deserialize(feed_element)
+    next_link = None
+    if deserialized.link and len(deserialized.link) == 2:
+        next_link = deserialized.link[1].href
+    if deserialized.entry:
+        list_of_entities = [
+            convert(*x) if convert else x for x in zip(feed_element.findall(
+                constants.ATOM_ENTRY_TAG), deserialized.entry)
+        ]
+    else:
+        list_of_entities = []
+    return next_link, iter(list_of_entities)
+
+
 async def get_next_template(list_func, *args, start_index=0, max_page_size=100, **kwargs):
     """Call list_func to get the XML data and deserialize it to XML ElementTree.
 

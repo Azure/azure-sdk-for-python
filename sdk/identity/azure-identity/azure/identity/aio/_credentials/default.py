@@ -13,7 +13,7 @@ from .chained import ChainedTokenCredential
 from .environment import EnvironmentCredential
 from .managed_identity import ManagedIdentityCredential
 from .shared_cache import SharedTokenCacheCredential
-from .vscode_credential import VSCodeCredential
+from .vscode import VisualStudioCodeCredential
 
 if TYPE_CHECKING:
     from typing import Any
@@ -39,7 +39,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
     This default behavior is configurable with keyword arguments.
 
     :keyword str authority: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
-          the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities`
+          the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
           defines authorities for other clouds. Managed identities ignore this because they reside in a single cloud.
     :keyword bool exclude_cli_credential: Whether to exclude the Azure CLI from the credential. Defaults to **False**.
     :keyword bool exclude_environment_credential: Whether to exclude a service principal configured by environment
@@ -54,6 +54,8 @@ class DefaultAzureCredential(ChainedTokenCredential):
         Defaults to the value of environment variable AZURE_USERNAME, if any.
     :keyword str shared_cache_tenant_id: Preferred tenant for :class:`~azure.identity.SharedTokenCacheCredential`.
         Defaults to the value of environment variable AZURE_TENANT_ID, if any.
+    :keyword str visual_studio_code_tenant_id: Tenant ID to use when authenticating with
+        :class:`~azure.identity.VisualStudioCodeCredential`.
     """
 
     def __init__(self, **kwargs: "Any") -> None:
@@ -63,6 +65,10 @@ class DefaultAzureCredential(ChainedTokenCredential):
         shared_cache_username = kwargs.pop("shared_cache_username", os.environ.get(EnvironmentVariables.AZURE_USERNAME))
         shared_cache_tenant_id = kwargs.pop(
             "shared_cache_tenant_id", os.environ.get(EnvironmentVariables.AZURE_TENANT_ID)
+        )
+
+        vscode_tenant_id = kwargs.pop(
+            "visual_studio_code_tenant_id", os.environ.get(EnvironmentVariables.AZURE_TENANT_ID)
         )
 
         exclude_visual_studio_code_credential = kwargs.pop("exclude_visual_studio_code_credential", False)
@@ -75,7 +81,9 @@ class DefaultAzureCredential(ChainedTokenCredential):
         if not exclude_environment_credential:
             credentials.append(EnvironmentCredential(authority=authority, **kwargs))
         if not exclude_managed_identity_credential:
-            credentials.append(ManagedIdentityCredential(**kwargs))
+            credentials.append(
+                ManagedIdentityCredential(client_id=os.environ.get(EnvironmentVariables.AZURE_CLIENT_ID), **kwargs)
+            )
         if not exclude_shared_token_cache_credential and SharedTokenCacheCredential.supported():
             try:
                 # username and/or tenant_id are only required when the cache contains tokens for multiple identities
@@ -87,7 +95,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
                 # transitive dependency pywin32 doesn't support 3.8 (https://github.com/mhammond/pywin32/issues/1431)
                 _LOGGER.info("Shared token cache is unavailable: '%s'", ex)
         if not exclude_visual_studio_code_credential:
-            credentials.append(VSCodeCredential())
+            credentials.append(VisualStudioCodeCredential(tenant_id=vscode_tenant_id))
         if not exclude_cli_credential:
             credentials.append(AzureCliCredential())
 

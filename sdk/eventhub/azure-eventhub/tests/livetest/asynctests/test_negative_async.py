@@ -40,11 +40,11 @@ async def test_send_with_invalid_hostname_async(invalid_hostname, connstr_receiv
                          ["hostname", "key_name", "access_key", "event_hub", "partition"])
 @pytest.mark.liveTest
 @pytest.mark.asyncio
-async def test_receive_with_invalid_param_async(live_eventhub_config, invalid_place):
-    eventhub_config = live_eventhub_config.copy()
+async def test_receive_with_invalid_param_async(live_eventhub, invalid_place):
+    eventhub_config = live_eventhub.copy()
     if invalid_place != "partition":
         eventhub_config[invalid_place] = "invalid " + invalid_place
-    conn_str = live_eventhub_config["connection_str"].format(
+    conn_str = live_eventhub["connection_str"].format(
         eventhub_config['hostname'],
         eventhub_config['key_name'],
         eventhub_config['access_key'],

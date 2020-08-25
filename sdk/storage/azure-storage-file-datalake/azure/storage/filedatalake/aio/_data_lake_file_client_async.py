@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=invalid-overridden-method
 
 from ._download_async import StorageStreamDownloader
 from ._path_client_async import PathClient

@@ -89,7 +89,7 @@ async def test_receive_load_balancing_async(connstr_senders):
         await asyncio.sleep(3.3)
         task2 = asyncio.ensure_future(
             client2.receive(on_event, starting_position="-1"))
-        await asyncio.sleep(10)
+        await asyncio.sleep(20)
         assert len(client1._event_processors[("$default", ALL_PARTITIONS)]._tasks) == 1
         assert len(client2._event_processors[("$default", ALL_PARTITIONS)]._tasks) == 1
     await task1
@@ -139,7 +139,7 @@ async def test_receive_batch_no_max_wait_time_async(connstr_senders):
 
 
 @pytest.mark.parametrize("max_wait_time, sleep_time, expected_result",
-                         [(3, 6, []),
+                         [(3, 10, []),
                           (3, 2, None),
                           ])
 @pytest.mark.liveTest

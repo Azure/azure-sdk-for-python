@@ -14,7 +14,7 @@ from .shared_cache import SharedTokenCacheCredential
 from .azure_cli import AzureCliCredential
 from .device_code import DeviceCodeCredential
 from .user_password import UsernamePasswordCredential
-from .vscode_credential import VSCodeCredential
+from .vscode import VisualStudioCodeCredential
 
 
 __all__ = [
@@ -31,5 +31,5 @@ __all__ = [
     "SharedTokenCacheCredential",
     "AzureCliCredential",
     "UsernamePasswordCredential",
-    "VSCodeCredential",
+    "VisualStudioCodeCredential",
 ]

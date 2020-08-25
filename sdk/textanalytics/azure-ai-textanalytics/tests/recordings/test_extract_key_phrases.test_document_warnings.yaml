@@ -16,7 +16,7 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/1.0.1 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0/keyPhrases?showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.1/keyPhrases?showStats=false
   response:
     body:
       string: '{"documents":[{"id":"1","keyPhrases":["Thisisaveryveryverylongtextwhichgoesonforalongtimeandwhichalmost"],"warnings":[{"code":"LongWordsInDocument","message":"The
@@ -24,13 +24,13 @@ interactions:
         will be truncated and may result in unreliable model predictions."}]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
       apim-request-id:
-      - 143b0c59-ac42-419c-aeee-f47a8b6c2f04
+      - 9db1eddc-bf89-4fe6-867a-f33ae45bcdf8
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=1
       date:
-      - Thu, 18 Jun 2020 19:52:40 GMT
+      - Fri, 24 Jul 2020 16:32:47 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:

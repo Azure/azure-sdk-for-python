@@ -12,22 +12,22 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/1.0.1 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0/sentiment?model-version=latest&showStats=true
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.1/sentiment?model-version=latest&showStats=true
   response:
     body:
       string: '{"statistics":{"documentsCount":1,"validDocumentsCount":1,"erroneousDocumentsCount":0,"transactionsCount":1},"documents":[{"id":"0","sentiment":"neutral","statistics":{"charactersCount":35,"transactionsCount":1},"confidenceScores":{"positive":0.01,"neutral":0.98,"negative":0.01},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.01,"neutral":0.98,"negative":0.01},"offset":0,"length":35,"text":"Bill
         Gates is the CEO of Microsoft."}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}'
     headers:
-      apim-request-id: c12996a8-9b6a-40d8-ab31-2ac7d0e020ef
+      apim-request-id: b22cdb80-908b-4758-a721-638746a66fc7
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=1
-      date: Thu, 18 Jun 2020 19:52:37 GMT
+      date: Fri, 24 Jul 2020 16:32:45 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '111'
+      x-envoy-upstream-service-time: '93'
     status:
       code: 200
       message: OK
-    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.0/sentiment?model-version=latest&showStats=true
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.1/sentiment?model-version=latest&showStats=true
 version: 1

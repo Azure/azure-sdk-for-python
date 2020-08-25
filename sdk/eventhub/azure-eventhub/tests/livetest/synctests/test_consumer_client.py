@@ -100,7 +100,7 @@ def test_receive_load_balancing(connstr_senders):
         worker1.start()
         time.sleep(3.3)
         worker2.start()
-        time.sleep(10)
+        time.sleep(20)
         assert len(client1._event_processors[("$default", ALL_PARTITIONS)]._consumers) == 1
         assert len(client2._event_processors[("$default", ALL_PARTITIONS)]._consumers) == 1
 
@@ -147,7 +147,7 @@ def test_receive_batch_no_max_wait_time(connstr_senders):
 
 
 @pytest.mark.parametrize("max_wait_time, sleep_time, expected_result",
-                         [(3, 6, []),
+                         [(3, 10, []),
                           (3, 2, None),
                           ])
 def test_receive_batch_empty_with_max_wait_time(connection_str, max_wait_time, sleep_time, expected_result):

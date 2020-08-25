@@ -37,7 +37,7 @@ class MgmtKeyVaultTest(AzureMgmtTestCase):
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
         TENANT_ID = "72f988bf-86f1-41af-91ab-2d7cd011db47" # self.settings.TENANT_ID
         RESOURCE_GROUP = resource_group.name
-        VAULT_NAME = "myValtZikfikxy"
+        VAULT_NAME = "myValtZikfikxz"
         OPERATION_KIND = "add"
         LOCATION = "eastus"
         PRIVATE_ENDPOINT_CONNECTION_NAME = "myPrivateEndpointConnection"

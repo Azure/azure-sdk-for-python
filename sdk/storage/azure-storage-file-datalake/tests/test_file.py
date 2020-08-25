@@ -167,7 +167,6 @@ class FileTest(StorageTestCase):
 
         # Act
         response = file_client.append_data(b'abc', 0, 3)
-
         self.assertIsNotNone(response)
 
     @record

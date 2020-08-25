@@ -133,7 +133,7 @@ class TestCustomForms(FormRecognizerTest):
             poller = fr_client.begin_recognize_custom_forms(
                 model.model_id,
                 stream,
-                content_type=FormContentType.image_jpeg
+                content_type=FormContentType.IMAGE_JPEG
             )
         form = poller.result()
 
@@ -158,7 +158,7 @@ class TestCustomForms(FormRecognizerTest):
             poller = fr_client.begin_recognize_custom_forms(
                 model.model_id,
                 stream,
-                content_type=FormContentType.application_pdf
+                content_type=FormContentType.APPLICATION_PDF
             )
         forms = poller.result()
 
@@ -188,7 +188,7 @@ class TestCustomForms(FormRecognizerTest):
         with open(self.form_jpg, "rb") as fd:
             myfile = fd.read()
 
-        poller = fr_client.begin_recognize_custom_forms(model.model_id, myfile, content_type=FormContentType.image_jpeg)
+        poller = fr_client.begin_recognize_custom_forms(model.model_id, myfile, content_type=FormContentType.IMAGE_JPEG)
         form = poller.result()
 
         self.assertEqual(form[0].form_type, "form-"+model.model_id)
@@ -216,7 +216,7 @@ class TestCustomForms(FormRecognizerTest):
         poller = fr_client.begin_recognize_custom_forms(
             model.model_id,
             myfile,
-            content_type=FormContentType.application_pdf
+            content_type=FormContentType.APPLICATION_PDF
         )
         forms = poller.result()
 

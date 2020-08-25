@@ -86,7 +86,6 @@ class PrivateEndpointConnectionsOperations:
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -152,7 +151,6 @@ class PrivateEndpointConnectionsOperations:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(properties, 'PrivateEndpointConnection')
         body_content_kwargs['content'] = body_content
@@ -182,8 +180,8 @@ class PrivateEndpointConnectionsOperations:
         vault_name: str,
         private_endpoint_connection_name: str,
         **kwargs
-    ) -> "models.PrivateEndpointConnection":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateEndpointConnection"]
+    ) -> Optional["models.PrivateEndpointConnection"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.PrivateEndpointConnection"]]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2018-02-14"
@@ -206,7 +204,6 @@ class PrivateEndpointConnectionsOperations:
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -236,7 +233,7 @@ class PrivateEndpointConnectionsOperations:
         vault_name: str,
         private_endpoint_connection_name: str,
         **kwargs
-    ) -> "models.PrivateEndpointConnection":
+    ) -> AsyncLROPoller["models.PrivateEndpointConnection"]:
         """Deletes the specified private endpoint connection associated with the key vault.
 
         :param resource_group_name: Name of the resource group that contains the key vault.
@@ -252,8 +249,8 @@ class PrivateEndpointConnectionsOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: PrivateEndpointConnection, or the result of cls(response)
-        :rtype: ~azure.mgmt.keyvault.v2018_02_14.models.PrivateEndpointConnection
+        :return: An instance of AsyncLROPoller that returns either PrivateEndpointConnection or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.keyvault.v2018_02_14.models.PrivateEndpointConnection]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]

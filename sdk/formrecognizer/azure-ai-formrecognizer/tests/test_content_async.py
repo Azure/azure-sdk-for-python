@@ -29,34 +29,38 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
             myfile = fd.read()
         with self.assertRaises(ServiceRequestError):
             client = FormRecognizerClient("http://notreal.azure.com", AzureKeyCredential(form_recognizer_account_key))
-            poller = await client.begin_recognize_content(myfile)
-            result = await poller.result()
+            async with client:
+                poller = await client.begin_recognize_content(myfile)
+                result = await poller.result()
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalClientPreparer()
     async def test_content_authentication_successful_key(self, client):
         with open(self.invoice_pdf, "rb") as fd:
             myfile = fd.read()
-        poller = await client.begin_recognize_content(myfile)
-        result = await poller.result()
+        async with client:
+            poller = await client.begin_recognize_content(myfile)
+            result = await poller.result()
 
     @GlobalFormRecognizerAccountPreparer()
     async def test_content_authentication_bad_key(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential("xxxx"))
         with self.assertRaises(ClientAuthenticationError):
-            poller = await client.begin_recognize_content(b"xxx", content_type="application/pdf")
-            result = await poller.result()
+            async with client:
+                poller = await client.begin_recognize_content(b"xxx", content_type="application/pdf")
+                result = await poller.result()
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalClientPreparer()
     async def test_passing_enum_content_type(self, client):
         with open(self.invoice_pdf, "rb") as fd:
             myfile = fd.read()
-        poller = await client.begin_recognize_content(
-            myfile,
-            content_type=FormContentType.application_pdf
-        )
-        result = await poller.result()
+        async with client:
+            poller = await client.begin_recognize_content(
+                myfile,
+                content_type=FormContentType.APPLICATION_PDF
+            )
+            result = await poller.result()
         self.assertIsNotNone(result)
 
     @GlobalFormRecognizerAccountPreparer()
@@ -64,50 +68,55 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
     async def test_damaged_file_passed_as_bytes(self, client):
         damaged_pdf = b"\x25\x50\x44\x46\x55\x55\x55"  # still has correct bytes to be recognized as PDF
         with self.assertRaises(HttpResponseError):
-            poller = await client.begin_recognize_content(
-                damaged_pdf,
-            )
-            result = await poller.result()
+            async with client:
+                poller = await client.begin_recognize_content(
+                    damaged_pdf,
+                )
+                result = await poller.result()
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalClientPreparer()
     async def test_damaged_file_bytes_fails_autodetect_content_type(self, client):
         damaged_pdf = b"\x50\x44\x46\x55\x55\x55"  # doesn't match any magic file numbers
         with self.assertRaises(ValueError):
-            poller = await client.begin_recognize_content(
-                damaged_pdf,
-            )
-            result = await poller.result()
+            async with client:
+                poller = await client.begin_recognize_content(
+                    damaged_pdf,
+                )
+                result = await poller.result()
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalClientPreparer()
     async def test_damaged_file_passed_as_bytes_io(self, client):
         damaged_pdf = BytesIO(b"\x25\x50\x44\x46\x55\x55\x55")  # still has correct bytes to be recognized as PDF
         with self.assertRaises(HttpResponseError):
-            poller = await client.begin_recognize_content(
-                damaged_pdf,
-            )
-            result = await poller.result()
+            async with client:
+                poller = await client.begin_recognize_content(
+                    damaged_pdf,
+                )
+                result = await poller.result()
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalClientPreparer()
     async def test_damaged_file_bytes_io_fails_autodetect(self, client):
         damaged_pdf = BytesIO(b"\x50\x44\x46\x55\x55\x55")  # doesn't match any magic file numbers
         with self.assertRaises(ValueError):
-            poller = await client.begin_recognize_content(
-                damaged_pdf,
-            )
-            result = await poller.result()
+            async with client:
+                poller = await client.begin_recognize_content(
+                    damaged_pdf,
+                )
+                result = await poller.result()
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalClientPreparer()
     async def test_blank_page(self, client):
         with open(self.blank_pdf, "rb") as fd:
             blank = fd.read()
-        poller = await client.begin_recognize_content(
-            blank,
-        )
-        result = await poller.result()
+        async with client:
+            poller = await client.begin_recognize_content(
+                blank,
+            )
+            result = await poller.result()
         self.assertIsNotNone(result)
 
     @GlobalFormRecognizerAccountPreparer()
@@ -116,18 +125,20 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
         with open(self.invoice_pdf, "rb") as fd:
             myfile = fd.read()
         with self.assertRaises(ValueError):
-            poller = await client.begin_recognize_content(
-                myfile,
-                content_type="application/jpeg"
-            )
-            result = await poller.result()
+            async with client:
+                poller = await client.begin_recognize_content(
+                    myfile,
+                    content_type="application/jpeg"
+                )
+                result = await poller.result()
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalClientPreparer()
     async def test_content_stream_passing_url(self, client):
         with self.assertRaises(TypeError):
-            poller = await client.begin_recognize_content("https://badurl.jpg", content_type="application/json")
-            result = await poller.result()
+            async with client:
+                poller = await client.begin_recognize_content("https://badurl.jpg", content_type="application/json")
+                result = await poller.result()
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalClientPreparer()
@@ -136,10 +147,11 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
             myfile = fd.read()
 
         with self.assertRaises(ValueError):
-            poller = await client.begin_recognize_content(
-                myfile
-            )
-            result = await poller.result()
+            async with client:
+                poller = await client.begin_recognize_content(
+                    myfile
+                )
+                result = await poller.result()
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalClientPreparer()
@@ -155,8 +167,9 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
             responses.append(analyze_result)
             responses.append(extracted_layout)
 
-        poller = await client.begin_recognize_content(myform, cls=callback)
-        result = await poller.result()
+        async with client:
+            poller = await client.begin_recognize_content(myform, cls=callback)
+            result = await poller.result()
         raw_response = responses[0]
         layout = responses[1]
         page_results = raw_response.analyze_result.page_results
@@ -171,8 +184,9 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
         with open(self.invoice_pdf, "rb") as fd:
             myform = fd.read()
 
-        poller = await client.begin_recognize_content(myform)
-        result = await poller.result()
+        async with client:
+            poller = await client.begin_recognize_content(myform)
+            result = await poller.result()
         self.assertEqual(len(result), 1)
         layout = result[0]
         self.assertEqual(layout.page_number, 1)
@@ -195,8 +209,9 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
             responses.append(analyze_result)
             responses.append(extracted_layout)
 
-        poller = await client.begin_recognize_content(myform, cls=callback)
-        result = await poller.result()
+        async with client:
+            poller = await client.begin_recognize_content(myform, cls=callback)
+            result = await poller.result()
         raw_response = responses[0]
         layout = responses[1]
         page_results = raw_response.analyze_result.page_results
@@ -211,8 +226,9 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
         with open(self.form_jpg, "rb") as fd:
             myform = fd.read()
 
-        poller = await client.begin_recognize_content(myform)
-        result = await poller.result()
+        async with client:
+            poller = await client.begin_recognize_content(myform)
+            result = await poller.result()
         self.assertEqual(len(result), 1)
         layout = result[0]
         self.assertEqual(layout.page_number, 1)
@@ -229,8 +245,9 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
     async def test_content_multipage(self, client):
         with open(self.multipage_invoice_pdf, "rb") as fd:
             invoice = fd.read()
-        poller = await client.begin_recognize_content(invoice)
-        result = await poller.result()
+        async with client:
+            poller = await client.begin_recognize_content(invoice)
+            result = await poller.result()
 
         self.assertEqual(len(result), 3)
         self.assertFormPagesHasValues(result)
@@ -249,8 +266,9 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
             responses.append(analyze_result)
             responses.append(extracted_layout)
 
-        poller = await client.begin_recognize_content(myform, cls=callback)
-        result = await poller.result()
+        async with client:
+            poller = await client.begin_recognize_content(myform, cls=callback)
+            result = await poller.result()
         raw_response = responses[0]
         layout = responses[1]
         page_results = raw_response.analyze_result.page_results
@@ -265,13 +283,13 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
     async def test_content_continuation_token(self, client):
         with open(self.form_jpg, "rb") as fd:
             myfile = fd.read()
-        initial_poller = await client.begin_recognize_content(myfile)
-        cont_token = initial_poller.continuation_token()
-
-        poller = await client.begin_recognize_content(myfile, continuation_token=cont_token)
-        result = await poller.result()
-        self.assertIsNotNone(result)
-        await initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
+        async with client:
+            initial_poller = await client.begin_recognize_content(myfile)
+            cont_token = initial_poller.continuation_token()
+            poller = await client.begin_recognize_content(myfile, continuation_token=cont_token)
+            result = await poller.result()
+            self.assertIsNotNone(result)
+            await initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
 
 
     @GlobalFormRecognizerAccountPreparer()
@@ -279,8 +297,9 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
     async def test_content_multipage_table_span_pdf(self, client):
         with open(self.multipage_table_pdf, "rb") as fd:
             myfile = fd.read()
-        poller = await client.begin_recognize_content(myfile)
-        result = await poller.result()
+        async with client:
+            poller = await client.begin_recognize_content(myfile)
+            result = await poller.result()
         self.assertEqual(len(result), 2)
         layout = result[0]
         self.assertEqual(layout.page_number, 1)
@@ -312,9 +331,9 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
             extracted_layout = prepare_content_result(analyze_result)
             responses.append(analyze_result)
             responses.append(extracted_layout)
-
-        poller = await client.begin_recognize_content(myform, cls=callback)
-        result = await poller.result()
+        async with client:
+            poller = await client.begin_recognize_content(myform, cls=callback)
+            result = await poller.result()
         raw_response = responses[0]
         layout = responses[1]
         page_results = raw_response.analyze_result.page_results

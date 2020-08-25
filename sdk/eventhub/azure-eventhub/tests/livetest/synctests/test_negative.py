@@ -50,13 +50,8 @@ def test_receive_with_invalid_hostname_sync(invalid_hostname):
 
 
 @pytest.mark.liveTest
-def test_send_batch_with_invalid_key(live_eventhub):
-    conn_str = live_eventhub["connection_str"].format(
-        live_eventhub['hostname'],
-        live_eventhub['key_name'],
-        'invalid',
-        live_eventhub['event_hub'])
-    client = EventHubProducerClient.from_connection_string(conn_str)
+def test_send_batch_with_invalid_key(invalid_key):
+    client = EventHubProducerClient.from_connection_string(invalid_key)
     try:
         with pytest.raises(ConnectError):
             batch = EventDataBatch()

@@ -19,7 +19,7 @@ from azure.servicebus._common.constants import ReceiveSettleMode
 from azure.servicebus.exceptions import (
     ServiceBusError,
     ServiceBusConnectionError,
-    ServiceBusAuthorizationError,
+    ServiceBusAuthenticationError,
     ServiceBusResourceNotFound
 )
 from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer
@@ -70,7 +70,7 @@ class ServiceBusClientTests(AzureMgmtTestCase):
         client = ServiceBusClient.from_connection_string(servicebus_namespace_connection_string)
 
         with client:
-            with pytest.raises(ServiceBusConnectionError):
+            with pytest.raises(ServiceBusAuthenticationError):
                 with client.get_queue_sender("invalid") as sender:
                     sender.send_messages(Message("test"))
 

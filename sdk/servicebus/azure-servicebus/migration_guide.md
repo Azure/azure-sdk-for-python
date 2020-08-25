@@ -35,6 +35,7 @@ semantics with the sender or receiver lifetime.
 |---|---|---|
 | `ServiceBusClient.from_connection_string()`    | `ServiceBusClient.from_connection_string()` | [using credential](./samples/sync_samples/sample_code_servicebus.py ) |
 | `QueueClient.from_connection_string()`    | `ServiceBusClient.from_connection_string().get_queue_<sender/receiver>()` | [client initialization](./samples/sync_samples/send_queue.py ) |
+| `QueueClient.from_connection_string(idle_timeout=None)` | `QueueClient.from_connection_string(max_wait_time=None)` | [providing a timeout](./samples/sync_samples/session_pool_receive.py) |
 
 ### Receiving messages
 
@@ -76,6 +77,11 @@ semantics with the sender or receiver lifetime.
 |---|---|---|
 | `azure.servicebus.control_client.ServiceBusService().create_queue(queue_name)` | `azure.servicebus.management.ServiceBusManagementClient().create_queue(queue_name)` | [Create a queue](./samples/sync_samples/mgmt_queue.py) |
 | `azure.servicebus.ServiceBusClient().list_queues()` | `azure.servicebus.management.ServiceBusManagementClient().list_queues()` | [List queues](./samples/sync_samples/mgmt_queue.py ) |
+
+### Working with AutoLockRenew
+| In v0.50 | Equivalent in v7 | Sample |
+|---|---|---|
+| `azure.servicebus.AutoLockRenew().shutdown()` | `azure.servicebus.AutoLockRenew().close()` | [Close an auto-lock-renewer](./samples/sync_samples/auto_lock_renew.py) |
 
 
 ## Migration samples

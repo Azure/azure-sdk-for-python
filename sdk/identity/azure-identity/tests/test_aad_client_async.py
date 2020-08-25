@@ -5,10 +5,11 @@
 import functools
 from unittest.mock import Mock, patch
 from urllib.parse import urlparse
-
+import time
 from azure.core.exceptions import ClientAuthenticationError
-from azure.identity._constants import EnvironmentVariables
+from azure.identity._constants import EnvironmentVariables, DEFAULT_REFRESH_OFFSET, DEFAULT_TOKEN_REFRESH_RETRY_DELAY
 from azure.identity.aio._internal.aad_client import AadClient
+from azure.core.credentials import AccessToken
 from msal import TokenCache
 import pytest
 
@@ -208,3 +209,24 @@ async def test_evicts_invalid_refresh_token():
     assert transport.send.call_count == 1
     assert len(cache.find(TokenCache.CredentialType.REFRESH_TOKEN)) == 1
     assert len(cache.find(TokenCache.CredentialType.REFRESH_TOKEN, query={"secret": invalid_token})) == 0
+
+
+async def test_should_refresh():
+    client = AadClient("test", "test")
+    now = int(time.time())
+
+    # do not need refresh
+    token = AccessToken("token", now + DEFAULT_REFRESH_OFFSET + 1)
+    should_refresh = client.should_refresh(token)
+    assert not should_refresh
+
+    # need refresh
+    token = AccessToken("token", now + DEFAULT_REFRESH_OFFSET - 1)
+    should_refresh = client.should_refresh(token)
+    assert should_refresh
+
+    # not exceed cool down time, do not refresh
+    token = AccessToken("token", now + DEFAULT_REFRESH_OFFSET - 1)
+    client._last_refresh_time = now - DEFAULT_TOKEN_REFRESH_RETRY_DELAY + 1
+    should_refresh = client.should_refresh(token)
+    assert not should_refresh

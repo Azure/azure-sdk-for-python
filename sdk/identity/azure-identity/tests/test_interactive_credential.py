@@ -9,7 +9,7 @@ from azure.identity import (
     KnownAuthorities,
     CredentialUnavailableError,
 )
-from azure.identity._internal.msal_credentials import InteractiveCredential
+from azure.identity._internal import InteractiveCredential
 from msal import TokenCache
 import pytest
 

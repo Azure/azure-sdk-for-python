@@ -11,11 +11,11 @@ interactions:
       Content-Length:
       - '0'
       Content-Type:
-      - application/json; charset=utf-8
+      - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b1 Python/3.8.0 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
-    uri: https://vaultname.vault.azure.net/keys/rsa-key-name/create?api-version=7.1-preview
+    uri: https://vaultname.vault.azure.net/keys/rsa-key-name/create?api-version=7.1
   response:
     body:
       string: '{"error":{"code":"Unauthorized","message":"Request is missing a Bearer
@@ -28,13 +28,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 05 Mar 2020 23:46:09 GMT
+      - Wed, 29 Jul 2020 16:13:23 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
-      server:
-      - Microsoft-IIS/10.0
       strict-transport-security:
       - max-age=31536000;includeSubDomains
       www-authenticate:
@@ -45,11 +43,11 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-keyvault-network-info:
-      - addr=76.121.58.221;act_addr_fam=InterNetwork;
+      - conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
       x-ms-keyvault-region:
       - westus
       x-ms-keyvault-service-version:
-      - 1.1.0.897
+      - 1.1.10.0
       x-powered-by:
       - ASP.NET
     status:
@@ -67,29 +65,27 @@ interactions:
       Content-Length:
       - '32'
       Content-Type:
-      - application/json; charset=utf-8
+      - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.2.0b1 Python/3.8.0 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-keyvault-keys/4.2.0b2 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
-    uri: https://vaultname.vault.azure.net/keys/rsa-key-name/create?api-version=7.1-preview
+    uri: https://vaultname.vault.azure.net/keys/rsa-key-name/create?api-version=7.1
   response:
     body:
-      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/rsa-key-name/0a79a5a3db46422cb4396d8cd1fba940","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"4y18_7dytyL5jmx5eWWTgdePmkFKVKXfFrM2bP_UX8EkCaHOHOz8Xxeg3eTvSV9_nUiguVRtXVJ58BWkikJowJzkqzvHSDPPzbFXSkY0K3yJ7AOejwlZSlkBzLgeivI3_AimIe-Kr-OonkfWU-J708Gnhesvj0W7MXRWpw4LjbZbRwV3EO6I60QO0t3bs_3s2AeMtGeSTq06zDp46pDanErE3QFbM91JDERWsEcdLlKAy4KCpcfyQOQxuI_MFQnEr5EMDLvUOO99iH2RWh_PmR8ieWjvOHAiHVOvsgCcsZi-aSfoqhycn-RJUrVbJfUMc_9XpTEdmwzJ3-mm-oJ-mw","e":"AQAB"},"attributes":{"enabled":true,"created":1583451970,"updated":1583451970,"recoveryLevel":"Recoverable+Purgeable"}}'
+      string: '{"key":{"kid":"https://vaultname.vault.azure.net/keys/rsa-key-name/fe726f4b24c54df8becefc171fc06f23","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"wzhtevUIf1RSZRgQfOeijGrumJvlt61IL9cTN7Bn7Qg8HbIC5B8Jhy0OZYr3EOYmp_0funD-9iQxTlZ_JkWSjKdUDHg5tmw2Pob6PYuhzA6J_UopwVobe2PJZkHjSMpFlpfNKrx3iewRcOy2FRNdJ9Y6tIK3WQxb6PEG8mwMyGHn_2udHuqRgCgT1SCAjFxw87H5tchSWJcN1ZMpZAGLL7M54L0HtssgyS0Jzi-ieu6C5olRbe7rzmp7nt2-4mKbHjvzP5GwBr9w2frnoLZv3pf7lCB9ckcCPoMfyODIWyacDJuRV4_k1VN32C_iXbDE9cKb8NQKXqpksqbh6_atJw","e":"AQAB"},"attributes":{"enabled":true,"created":1596039204,"updated":1596039204,"recoveryLevel":"Recoverable+Purgeable","recoverableDays":90}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '671'
+      - '692'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 05 Mar 2020 23:46:09 GMT
+      - Wed, 29 Jul 2020 16:13:24 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
-      server:
-      - Microsoft-IIS/10.0
       strict-transport-security:
       - max-age=31536000;includeSubDomains
       x-aspnet-version:
@@ -97,11 +93,11 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-keyvault-network-info:
-      - addr=76.121.58.221;act_addr_fam=InterNetwork;
+      - conn_type=Ipv4;addr=73.135.72.237;act_addr_fam=InterNetwork;
       x-ms-keyvault-region:
       - westus
       x-ms-keyvault-service-version:
-      - 1.1.0.897
+      - 1.1.10.0
       x-powered-by:
       - ASP.NET
     status:

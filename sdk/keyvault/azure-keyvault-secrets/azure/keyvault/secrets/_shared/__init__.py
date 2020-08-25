@@ -15,6 +15,7 @@ from .client_base import KeyVaultClientBase
 from .http_challenge import HttpChallenge
 from . import http_challenge_cache as HttpChallengeCache
 
+
 __all__ = [
     "ChallengeAuthPolicy",
     "ChallengeAuthPolicyBase",

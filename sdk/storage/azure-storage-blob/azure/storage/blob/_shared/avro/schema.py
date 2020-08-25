@@ -393,7 +393,7 @@ class NamedSchema(Schema):
     def __init__(
             self,
             data_type,
-            name,
+            name=None,
             namespace=None,
             names=None,
             other_props=None,

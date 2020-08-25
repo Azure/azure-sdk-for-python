@@ -176,7 +176,7 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
 
         with concurrent.futures.ThreadPoolExecutor() as executor:
             # List comprehension to raise exceptions if happened
-            [  # pylint: disable=expression-not-assigned
+            [  # pylint: disable=expression-not-assigned, unnecessary-comprehension
                 _ for _ in executor.map(prepare_requests, requests)
             ]
 

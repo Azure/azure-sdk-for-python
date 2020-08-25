@@ -22,7 +22,7 @@ _RUN_ITERATOR = False
 
 
 async def process_message(message):
-    print(message)
+    print(str(message))
 
 
 def example_create_servicebus_client_async():
@@ -206,14 +206,14 @@ async def example_send_and_receive_async():
     async with servicebus_receiver:
         messages = await servicebus_receiver.peek_messages()
         for message in messages:
-            print(message)
+            print(str(message))
     # [END peek_messages_async]
 
     # [START receive_async]
     async with servicebus_receiver:
         messages = await servicebus_receiver.receive_messages(max_wait_time=5)
         for message in messages:
-            print(message)
+            print(str(message))
             await message.complete()
     # [END receive_async]
 
@@ -240,7 +240,7 @@ async def example_receive_deferred_async():
         messages = await servicebus_receiver.receive_messages(max_wait_time=5)
         for message in messages:
             deferred_sequenced_numbers.append(message.sequence_number)
-            print(message)
+            print(str(message))
             await message.defer()
 
         received_deferred_msg = await servicebus_receiver.receive_deferred_messages(

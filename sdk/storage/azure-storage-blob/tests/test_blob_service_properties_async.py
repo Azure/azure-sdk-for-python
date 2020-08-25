@@ -80,6 +80,7 @@ class ServicePropertiesTestAsync(AsyncStorageTestCase):
         self.assertEqual(prop1.enabled, prop2.enabled)
         self.assertEqual(prop1.index_document, prop2.index_document)
         self.assertEqual(prop1.error_document404_path, prop2.error_document404_path)
+        self.assertEqual(prop1.default_index_document_path, prop2.default_index_document_path)
 
     def _assert_delete_retention_policy_not_equal(self, policy1, policy2):
         if policy1 is None or policy2 is None:
@@ -228,6 +229,22 @@ class ServicePropertiesTestAsync(AsyncStorageTestCase):
             enabled=True,
             index_document="index.html",
             error_document404_path="errors/error/404error.html")
+
+        # Act
+        await bsc.set_service_properties(static_website=static_website)
+
+        # Assert
+        received_props = await bsc.get_service_properties()
+        self._assert_static_website_equal(received_props['static_website'], static_website)
+
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_set_static_website_properties_with_default_index_document_path(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key, transport=AiohttpTestTransport())
+        static_website = StaticWebsite(
+            enabled=True,
+            error_document404_path="errors/error/404error.html",
+            default_index_document_path="index.html")
 
         # Act
         await bsc.set_service_properties(static_website=static_website)

@@ -79,10 +79,10 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
     async def __aexit__(self, *exc_details):  # pylint: disable=arguments-differ
         return super(AsyncioRequestsTransport, self).__exit__()
 
-    async def sleep(self, duration):
+    async def sleep(self, duration):  # pylint:disable=invalid-overridden-method
         await asyncio.sleep(duration)
 
-    async def send(self, request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:  # type: ignore
+    async def send(self, request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:  # type: ignore # pylint:disable=invalid-overridden-method
         """Send the request using this HTTP sender.
 
         :param request: The HttpRequest

@@ -28,7 +28,7 @@ except ImportError:
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any, Iterable, List, Mapping, Optional, Sequence
+    from typing import Any, Iterable, List, Mapping, Optional
     from .._internal import AadClientBase
     from azure.identity import AuthenticationRecord
 
@@ -203,7 +203,7 @@ class SharedTokenCacheBase(ABC):
         raise CredentialUnavailableError(message=message)
 
     def _get_cached_access_token(self, scopes, account):
-        # type: (Sequence[str], CacheItem) -> Optional[AccessToken]
+        # type: (Iterable[str], CacheItem) -> Optional[AccessToken]
         if "home_account_id" not in account:
             return None
 

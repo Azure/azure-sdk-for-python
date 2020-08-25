@@ -42,7 +42,7 @@ class AsyncARMAutoResourceProviderRegistrationPolicy(
     """Auto register an ARM resource provider if not done yet.
     """
 
-    async def send(self, request: PipelineRequest):
+    async def send(self, request: PipelineRequest):  # pylint: disable=invalid-overridden-method
         http_request = request.http_request
         response = await self.next.send(request)
         if response.http_response.status_code == 409:

@@ -22,10 +22,10 @@ from common_tasks import (
     filter_dev_requirements,
     find_packages_missing_on_pypi,
     find_whl,
-    find_tools_packages
+    find_tools_packages,
+    get_installed_packages
 )
 from git_helper import get_release_tag, git_checkout_tag, git_checkout_branch, clone_repo
-from pip._internal.operations import freeze
 
 AZURE_GLOB_STRING = "azure*"
 
@@ -222,7 +222,7 @@ class RegressionTest:
         temp_dir = self.context.temp_path
 
         list_to_exclude = [pkg_to_exclude,]
-        installed_pkgs = [p.split('==')[0] for p in list(freeze.freeze(paths=self.context.venv.lib_paths)) if p.startswith('azure-')]
+        installed_pkgs = [p.split('==')[0] for p in get_installed_packages(self.context.venv.lib_paths) if p.startswith('azure-')]
         logging.info("Installed azure sdk packages:{}".format(installed_pkgs))
 
         # Do not exclude list of packages in tools directory and so these tools packages will be reinstalled from repo branch we are testing
@@ -257,7 +257,7 @@ class RegressionTest:
         venv_root = self.context.venv.path
         site_packages = self.context.venv.lib_paths
         logging.info("Searching for packages in :{}".format(site_packages))
-        installed_pkgs = list(freeze.freeze(paths=site_packages))
+        installed_pkgs = get_installed_packages(site_packages)
         logging.info("Installed packages: {}".format(installed_pkgs))
         # Verify installed package version
         # Search for exact version or dev build version of current version.

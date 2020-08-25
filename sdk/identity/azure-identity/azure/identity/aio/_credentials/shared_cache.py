@@ -7,8 +7,9 @@ from typing import TYPE_CHECKING
 from ... import CredentialUnavailableError
 from ..._constants import AZURE_CLI_CLIENT_ID
 from ..._internal.shared_token_cache import NO_TOKEN, SharedTokenCacheBase
+from .._internal import AsyncContextManager
 from .._internal.aad_client import AadClient
-from .base import AsyncCredentialBase
+from .._internal.decorators import log_get_token_async
 
 if TYPE_CHECKING:
     from typing import Any
@@ -16,7 +17,7 @@ if TYPE_CHECKING:
     from ..._internal.aad_client import AadClientBase
 
 
-class SharedTokenCacheCredential(SharedTokenCacheBase, AsyncCredentialBase):
+class SharedTokenCacheCredential(SharedTokenCacheBase, AsyncContextManager):
     """Authenticates using tokens in the local cache shared between Microsoft applications.
 
     :param str username:
@@ -24,7 +25,7 @@ class SharedTokenCacheCredential(SharedTokenCacheBase, AsyncCredentialBase):
         may contain tokens for multiple identities.
 
     :keyword str authority: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
-        the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities`
+        the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
         defines authorities for other clouds.
     :keyword str tenant_id: an Azure Active Directory tenant ID. Used to select an account when the cache contains
         tokens for multiple identities.
@@ -45,6 +46,7 @@ class SharedTokenCacheCredential(SharedTokenCacheBase, AsyncCredentialBase):
         if self._client:
             await self._client.__aexit__()
 
+    @log_get_token_async
     async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":  # pylint:disable=unused-argument
         """Get an access token for `scopes` from the shared cache.
 
