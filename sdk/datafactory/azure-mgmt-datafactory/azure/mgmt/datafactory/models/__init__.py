@@ -65,6 +65,7 @@ try:
     from ._models_py3 import AzureFileStorageLinkedService
     from ._models_py3 import AzureFileStorageLocation
     from ._models_py3 import AzureFileStorageReadSettings
+    from ._models_py3 import AzureFileStorageWriteSettings
     from ._models_py3 import AzureFunctionActivity
     from ._models_py3 import AzureFunctionLinkedService
     from ._models_py3 import AzureKeyVaultLinkedService
@@ -125,6 +126,7 @@ try:
     from ._models_py3 import ConcurLinkedService
     from ._models_py3 import ConcurObjectDataset
     from ._models_py3 import ConcurSource
+    from ._models_py3 import ConnectionStateProperties
     from ._models_py3 import ControlActivity
     from ._models_py3 import CopyActivity
     from ._models_py3 import CopySink
@@ -224,6 +226,8 @@ try:
     from ._models_py3 import ExecuteSSISPackageActivity
     from ._models_py3 import ExecutionActivity
     from ._models_py3 import ExportSettings
+    from ._models_py3 import ExposureControlBatchRequest
+    from ._models_py3 import ExposureControlBatchResponse
     from ._models_py3 import ExposureControlRequest
     from ._models_py3 import ExposureControlResponse
     from ._models_py3 import Expression
@@ -348,6 +352,10 @@ try:
     from ._models_py3 import ManagedIntegrationRuntimeNode
     from ._models_py3 import ManagedIntegrationRuntimeOperationResult
     from ._models_py3 import ManagedIntegrationRuntimeStatus
+    from ._models_py3 import ManagedPrivateEndpoint
+    from ._models_py3 import ManagedPrivateEndpointResource
+    from ._models_py3 import ManagedVirtualNetwork
+    from ._models_py3 import ManagedVirtualNetworkResource
     from ._models_py3 import MappingDataFlow
     from ._models_py3 import MariaDBLinkedService
     from ._models_py3 import MariaDBSource
@@ -664,6 +672,7 @@ except (SyntaxError, ImportError):
     from ._models import AzureFileStorageLinkedService
     from ._models import AzureFileStorageLocation
     from ._models import AzureFileStorageReadSettings
+    from ._models import AzureFileStorageWriteSettings
     from ._models import AzureFunctionActivity
     from ._models import AzureFunctionLinkedService
     from ._models import AzureKeyVaultLinkedService
@@ -724,6 +733,7 @@ except (SyntaxError, ImportError):
     from ._models import ConcurLinkedService
     from ._models import ConcurObjectDataset
     from ._models import ConcurSource
+    from ._models import ConnectionStateProperties
     from ._models import ControlActivity
     from ._models import CopyActivity
     from ._models import CopySink
@@ -823,6 +833,8 @@ except (SyntaxError, ImportError):
     from ._models import ExecuteSSISPackageActivity
     from ._models import ExecutionActivity
     from ._models import ExportSettings
+    from ._models import ExposureControlBatchRequest
+    from ._models import ExposureControlBatchResponse
     from ._models import ExposureControlRequest
     from ._models import ExposureControlResponse
     from ._models import Expression
@@ -947,6 +959,10 @@ except (SyntaxError, ImportError):
     from ._models import ManagedIntegrationRuntimeNode
     from ._models import ManagedIntegrationRuntimeOperationResult
     from ._models import ManagedIntegrationRuntimeStatus
+    from ._models import ManagedPrivateEndpoint
+    from ._models import ManagedPrivateEndpointResource
+    from ._models import ManagedVirtualNetwork
+    from ._models import ManagedVirtualNetworkResource
     from ._models import MappingDataFlow
     from ._models import MariaDBLinkedService
     from ._models import MariaDBSource
@@ -1213,6 +1229,8 @@ from ._paged_models import DatasetResourcePaged
 from ._paged_models import FactoryPaged
 from ._paged_models import IntegrationRuntimeResourcePaged
 from ._paged_models import LinkedServiceResourcePaged
+from ._paged_models import ManagedPrivateEndpointResourcePaged
+from ._paged_models import ManagedVirtualNetworkResourcePaged
 from ._paged_models import OperationPaged
 from ._paged_models import PipelineResourcePaged
 from ._paged_models import TriggerResourcePaged
@@ -1353,6 +1371,7 @@ __all__ = [
     'AzureFileStorageLinkedService',
     'AzureFileStorageLocation',
     'AzureFileStorageReadSettings',
+    'AzureFileStorageWriteSettings',
     'AzureFunctionActivity',
     'AzureFunctionLinkedService',
     'AzureKeyVaultLinkedService',
@@ -1413,6 +1432,7 @@ __all__ = [
     'ConcurLinkedService',
     'ConcurObjectDataset',
     'ConcurSource',
+    'ConnectionStateProperties',
     'ControlActivity',
     'CopyActivity',
     'CopySink',
@@ -1512,6 +1532,8 @@ __all__ = [
     'ExecuteSSISPackageActivity',
     'ExecutionActivity',
     'ExportSettings',
+    'ExposureControlBatchRequest',
+    'ExposureControlBatchResponse',
     'ExposureControlRequest',
     'ExposureControlResponse',
     'Expression',
@@ -1636,6 +1658,10 @@ __all__ = [
     'ManagedIntegrationRuntimeNode',
     'ManagedIntegrationRuntimeOperationResult',
     'ManagedIntegrationRuntimeStatus',
+    'ManagedPrivateEndpoint',
+    'ManagedPrivateEndpointResource',
+    'ManagedVirtualNetwork',
+    'ManagedVirtualNetworkResource',
     'MappingDataFlow',
     'MariaDBLinkedService',
     'MariaDBSource',
@@ -1905,6 +1931,8 @@ __all__ = [
     'TriggerResourcePaged',
     'DataFlowResourcePaged',
     'DataFlowDebugSessionInfoPaged',
+    'ManagedVirtualNetworkResourcePaged',
+    'ManagedPrivateEndpointResourcePaged',
     'GlobalParameterType',
     'IntegrationRuntimeState',
     'IntegrationRuntimeAutoUpdate',
