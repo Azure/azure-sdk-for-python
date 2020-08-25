@@ -15,9 +15,18 @@ from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import padding
 from msal import TokenCache
 import pytest
+import six
 from six.moves.urllib_parse import urlparse
 
-from helpers import build_aad_response, urlsafeb64_decode, mock_response, Request, validating_transport
+from helpers import (
+    build_aad_response,
+    get_discovery_response,
+    urlsafeb64_decode,
+    mock_response,
+    msal_validating_transport,
+    Request,
+    validating_transport,
+)
 
 try:
     from unittest.mock import Mock, patch
@@ -41,11 +50,12 @@ def test_no_scopes():
 def test_policies_configurable():
     policy = Mock(spec_set=SansIOHTTPPolicy, on_request=Mock())
 
-    def send(*_, **__):
-        return mock_response(json_payload=build_aad_response(access_token="**"))
+    transport = msal_validating_transport(
+        requests=[Request()], responses=[mock_response(json_payload=build_aad_response(access_token="**"))],
+    )
 
     credential = CertificateCredential(
-        "tenant-id", "client-id", CERT_PATH, policies=[ContentDecodePolicy(), policy], transport=Mock(send=send)
+        "tenant-id", "client-id", CERT_PATH, policies=[ContentDecodePolicy(), policy], transport=transport
     )
 
     credential.get_token("scope")
@@ -54,7 +64,7 @@ def test_policies_configurable():
 
 
 def test_user_agent():
-    transport = validating_transport(
+    transport = msal_validating_transport(
         requests=[Request(required_headers={"User-Agent": USER_AGENT})],
         responses=[mock_response(json_payload=build_aad_response(access_token="**"))],
     )
@@ -65,35 +75,37 @@ def test_user_agent():
 
 
 @pytest.mark.parametrize("authority", ("localhost", "https://localhost"))
-@pytest.mark.parametrize("cert_path,cert_password", BOTH_CERTS)
-def test_request_url(cert_path, cert_password, authority):
+def test_authority(authority):
     """the credential should accept an authority, with or without scheme, as an argument or environment variable"""
 
     tenant_id = "expected_tenant"
-    access_token = "***"
     parsed_authority = urlparse(authority)
-    expected_netloc = parsed_authority.netloc or authority  # "localhost" parses to netloc "", path "localhost"
+    expected_netloc = parsed_authority.netloc or authority
+    expected_authority = "https://{}/{}".format(expected_netloc, tenant_id)
 
-    def mock_send(request, **kwargs):
-        actual = urlparse(request.url)
-        assert actual.scheme == "https"
-        assert actual.netloc == expected_netloc
-        assert actual.path.startswith("/" + tenant_id)
-        return mock_response(json_payload={"token_type": "Bearer", "expires_in": 42, "access_token": access_token})
-
-    cred = CertificateCredential(
-        tenant_id, "client-id", cert_path, password=cert_password, transport=Mock(send=mock_send), authority=authority
+    mock_ctor = Mock(
+        return_value=Mock(acquire_token_silent_with_error=lambda *_, **__: {"access_token": "**", "expires_in": 42})
     )
-    token = cred.get_token("scope")
-    assert token.token == access_token
+
+    credential = CertificateCredential(tenant_id, "client-id", CERT_PATH, authority=authority)
+    with patch("msal.ConfidentialClientApplication", mock_ctor):
+        # must call get_token because the credential constructs the MSAL application lazily
+        credential.get_token("scope")
+
+    assert mock_ctor.call_count == 1
+    _, kwargs = mock_ctor.call_args
+    assert kwargs["authority"] == expected_authority
+    mock_ctor.reset_mock()
 
     # authority can be configured via environment variable
     with patch.dict("os.environ", {EnvironmentVariables.AZURE_AUTHORITY_HOST: authority}, clear=True):
-        credential = CertificateCredential(
-            tenant_id, "client-id", cert_path, password=cert_password, transport=Mock(send=mock_send)
-        )
+        credential = CertificateCredential(tenant_id, "client-id", CERT_PATH, authority=authority)
+    with patch("msal.ConfidentialClientApplication", mock_ctor):
         credential.get_token("scope")
-    assert token.token == access_token
+
+    assert mock_ctor.call_count == 1
+    _, kwargs = mock_ctor.call_args
+    assert kwargs["authority"] == expected_authority
 
 
 @pytest.mark.parametrize("cert_path,cert_password", BOTH_CERTS)
@@ -105,6 +117,9 @@ def test_request_body(cert_path, cert_password):
     tenant_id = "tenant"
 
     def mock_send(request, **kwargs):
+        if not request.body:
+            return get_discovery_response()
+
         assert request.body["grant_type"] == "client_credentials"
         assert request.body["scope"] == expected_scope
 
@@ -128,7 +143,7 @@ def validate_jwt(request, client_id, pem_bytes):
     cert = x509.load_pem_x509_certificate(pem_bytes, default_backend())
 
     # jwt is of the form 'header.payload.signature'; 'signature' is 'header.payload' signed with cert's private key
-    jwt = request.body["client_assertion"]
+    jwt = six.ensure_str(request.body["client_assertion"])
     header, payload, signature = (urlsafeb64_decode(s) for s in jwt.split("."))
     signed_part = jwt[: jwt.rfind(".")]
     claims = json.loads(payload.decode("utf-8"))
@@ -211,10 +226,10 @@ def test_persistent_cache_multiple_clients(cert_path, cert_password):
 
     access_token_a = "token a"
     access_token_b = "not " + access_token_a
-    transport_a = validating_transport(
+    transport_a = msal_validating_transport(
         requests=[Request()], responses=[mock_response(json_payload=build_aad_response(access_token=access_token_a))]
     )
-    transport_b = validating_transport(
+    transport_b = msal_validating_transport(
         requests=[Request()], responses=[mock_response(json_payload=build_aad_response(access_token=access_token_b))]
     )
 
@@ -234,9 +249,9 @@ def test_persistent_cache_multiple_clients(cert_path, cert_password):
     scope = "scope"
     token_a = credential_a.get_token(scope)
     assert token_a.token == access_token_a
-    assert transport_a.send.call_count == 1
+    assert transport_a.send.call_count == 3  # two MSAL discovery requests, one token request
 
     # B should get a different token for the same scope
     token_b = credential_b.get_token(scope)
     assert token_b.token == access_token_b
-    assert transport_b.send.call_count == 1
+    assert transport_b.send.call_count == 3
