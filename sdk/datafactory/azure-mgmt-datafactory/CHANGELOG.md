@@ -1,5 +1,19 @@
 # Release History
 
+## 0.13.0 (2020-08-25)
+
+**Features**
+
+  - Model LogStorageSettings has a new parameter enable_reliable_logging
+  - Model LogStorageSettings has a new parameter log_level
+  - Model HdfsReadSettings has a new parameter delete_files_after_completion
+  - Model XmlReadSettings has a new parameter detect_data_type
+  - Model XmlReadSettings has a new parameter namespaces
+  - Model CosmosDbSqlApiSource has a new parameter detect_datetime
+  - Added operation ExposureControlOperations.query_feature_values_by_factory
+  - Added operation group ManagedPrivateEndpointsOperations
+  - Added operation group ManagedVirtualNetworksOperations
+
 ## 0.12.0 (2020-07-29)
 
 **Features**
