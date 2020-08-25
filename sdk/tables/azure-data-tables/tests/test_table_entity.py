@@ -645,34 +645,21 @@ class StorageTableEntityTest(TableTestCase):
                 "RowKey": "RowKey",
                 "Value": 1
             }
-            entity2 = {
-                "PartitionKey": entity["PartitionKey"],
-                "RowKey": entity["RowKey"] + "1",
-                "Value": 2
-            }
 
-            resp1 = table.create_entity(entity=entity)
+            response = table.create_entity(entity=entity)
+            old_etag = response["_metadata"]["etag"]
 
-            # Act
-            # Do a get and confirm the etag is parsed correctly by using it
-            # as a condition to delete.
-            e1 = table.get_entity(partition_key=entity['PartitionKey'],
-                                         row_key=entity['RowKey'])
-            old_etag = e1["_metadata"]["etag"]
+            entity["Value"] = 2
+            response = table.update_entity(entity=entity)
 
-            resp2 = table.create_entity(entity=entity2)
-            e2 = table.get_entity(partition_key=entity2['PartitionKey'],
-                                         row_key=entity2['RowKey'])
-            new_etag = e2["_metadata"]["etag"]
-
-            with self.assertRaises(ResourceModifiedError):
+            with self.assertRaises(HttpResponseError):
                 table.delete_entity(
-                    partition_key=e1['PartitionKey'],
-                    row_key=e1['RowKey'],
+                    partition_key=entity['PartitionKey'],
+                    row_key=entity['RowKey'],
                     etag=old_etag,
                     match_condition=MatchConditions.IfNotModified
                 )
-                
+
         finally:
             self._tear_down()
 
