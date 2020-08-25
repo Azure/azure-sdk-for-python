@@ -24,7 +24,9 @@ from ._models import(
     LifetimeAction,
     KeyVaultCertificate
 )
+from ._parse_id import parse_certificate_id
 from ._shared.client_base import ApiVersion
+from ._shared import ParsedId
 
 __all__ = [
     "ApiVersion",
@@ -47,7 +49,9 @@ __all__ = [
     "CertificateContentType",
     "WellKnownIssuerNames",
     "CertificateIssuer",
-    "IssuerProperties"
+    "IssuerProperties",
+    "parse_certificate_id",
+    "ParsedId",
 ]
 
 from ._version import VERSION
