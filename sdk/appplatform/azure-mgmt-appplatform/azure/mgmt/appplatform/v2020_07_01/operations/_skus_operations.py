@@ -16,8 +16,8 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class Operations(object):
-    """Operations operations.
+class SkusOperations(object):
+    """SkusOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -25,7 +25,7 @@ class Operations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2019-05-01-preview".
+    :ivar api_version: Client Api Version. Constant value: "2020-07-01".
     """
 
     models = models
@@ -35,29 +35,32 @@ class Operations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-05-01-preview"
+        self.api_version = "2020-07-01"
 
         self.config = config
 
     def list(
             self, custom_headers=None, raw=False, **operation_config):
-        """Lists all of the available REST API operations of the
-        Microsoft.AppPlatform provider.
+        """Lists all of the available skus of the Microsoft.AppPlatform provider.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of OperationDetail
+        :return: An iterator like instance of ResourceSku
         :rtype:
-         ~azure.mgmt.appplatform.models.OperationDetailPaged[~azure.mgmt.appplatform.models.OperationDetail]
+         ~azure.mgmt.appplatform.v2020_07_01.models.ResourceSkuPaged[~azure.mgmt.appplatform.v2020_07_01.models.ResourceSku]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']
+                path_format_arguments = {
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
@@ -97,7 +100,7 @@ class Operations(object):
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.OperationDetailPaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.ResourceSkuPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list.metadata = {'url': '/providers/Microsoft.AppPlatform/operations'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.AppPlatform/skus'}
