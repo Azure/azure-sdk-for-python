@@ -31,7 +31,12 @@ from _shared.testcase import GlobalStorageAccountPreparer, TableTestCase, LogCap
 
 
 # ------------------------------------------------------------------------------
-
+SERVICES = {
+    TableServiceClient: 'table',
+    TableClient: 'table',
+    TableServiceClient: 'cosmos',
+    TableClient: 'cosmos',
+}
 # ------------------------------------------------------------------------------
 
 class StorageTableEntityTest(TableTestCase):
@@ -1167,7 +1172,7 @@ class StorageTableEntityTest(TableTestCase):
             entity = self._create_random_base_entity_dict()
             entity.update({'NoneValue': None})
 
-            # Act       
+            # Act
             self.table.create_entity(entity=entity)
             resp = self.table.get_entity(entity['PartitionKey'], entity['RowKey'])
 
@@ -1187,7 +1192,7 @@ class StorageTableEntityTest(TableTestCase):
             entity = self._create_random_base_entity_dict()
             entity.update({'binary': b'\x01\x02\x03\x04\x05\x06\x07\x08\t\n'})
 
-            # Act  
+            # Act
             self.table.create_entity(entity=entity)
             resp = self.table.get_entity(entity['PartitionKey'], entity['RowKey'])
 
