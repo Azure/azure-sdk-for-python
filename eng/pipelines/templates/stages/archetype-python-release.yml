@@ -106,7 +106,6 @@ stages:
         - deployment: PublishGitHubIODocs
           displayName: Publish Docs to GitHubIO Blob Storage
           environment: githubio
-          dependsOn: PublishPackage
 
           pool:
             vmImage: windows-2019
@@ -143,7 +142,6 @@ stages:
         - deployment: PublishDocs
           displayName: "Docs.MS Release"
           environment: githubio
-          dependsOn: PublishPackage
 
           pool:
             vmImage: ubuntu-18.04
