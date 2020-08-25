@@ -243,7 +243,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        if_match, _ =  _get_match_headers(kwargs=dict(kwargs, etag=kwargs.pop('etag', None),
+        if_match, _ = _get_match_headers(kwargs=dict(kwargs, etag=kwargs.pop('etag', None),
                                                                 match_condition=kwargs.pop('match_condition', None)),
                                                     etag_param='etag', match_param='match_condition')
         try:
@@ -311,7 +311,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         :rtype: dict[str,str]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        if_match, _ =  _get_match_headers(kwargs=dict(kwargs, etag=kwargs.pop('etag', None),
+        if_match, _ = _get_match_headers(kwargs=dict(kwargs, etag=kwargs.pop('etag', None),
                                                                 match_condition=kwargs.pop('match_condition', None)),
                                                     etag_param='etag', match_param='match_condition')
 

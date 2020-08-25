@@ -234,7 +234,7 @@ class TableClient(TableClientBase):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
 
-        if_match, _ =  _get_match_headers(kwargs=dict(kwargs, etag=kwargs.pop('etag', None),
+        if_match, _ = _get_match_headers(kwargs=dict(kwargs, etag=kwargs.pop('etag', None),
                                                                 match_condition=kwargs.pop('match_condition', None)),
                                                     etag_param='etag', match_param='match_condition')
         try:
@@ -301,7 +301,7 @@ class TableClient(TableClientBase):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
 
-        if_match, _ =  _get_match_headers(kwargs=dict(kwargs, etag=kwargs.pop('etag', None),
+        if_match, _ = _get_match_headers(kwargs=dict(kwargs, etag=kwargs.pop('etag', None),
                                                                 match_condition=kwargs.pop('match_condition', None)),
                                                     etag_param='etag', match_param='match_condition')
 
