@@ -21,8 +21,8 @@ from azure.core.exceptions import HttpResponseError
 SERVICES = {
     TableServiceClient: 'table',
     TableClient: 'table',
-    #TableServiceClient: 'cosmos',
-    #TableClient: 'cosmos',
+    TableServiceClient: 'cosmos',
+    TableClient: 'cosmos',
 }
 
 _CONNECTION_ENDPOINTS = {'table': 'TableEndpoint', 'cosmos': 'TableEndpoint'}

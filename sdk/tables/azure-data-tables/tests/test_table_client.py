@@ -558,6 +558,49 @@ class StorageTableClientTest(TableTestCase):
             service = client(
                 self.account_url(storage_account, "table"), credential=storage_account_key, table_name='table')
             service.close()
+
+    @GlobalStorageAccountPreparer()
+    @GlobalCosmosAccountPreparer()
+    def test_service_client_create_table(self, resource_group, location, storage_account, storage_account_key):
+        SERVICE_CLIENTS = {
+            TableClient: "cosmos",
+            # TableClient: "table",
+        }
+
+        entity = {
+            "PartitionKey": "pk",
+            "RowKey": "rk",
+            "Value": 2,
+        }
+        table_name = 'foo'
+        tsc = TableServiceClient(self.account_url(storage_account, "table"), credential=storage_account_key)
+        tsc.create_table(table_name)
+        tc = tsc.get_table_client(table_name)
+        tc.create_entity(entity=entity)
+
+        for client, url in SERVICE_CLIENTS.items():
+            service = client(
+                self.account_url(storage_account, url),
+                credential=storage_account_key,
+                table_name=table_name
+            )
+
+            # resp = service.create_entity(entity=entity)
+
+            # resp = service.delete_entity(
+            #     row_key=entity['RowKey'],
+            #     partition_key=entity['PartitionKey'])
+
+            entity['Value'] = 3
+            resp = service.upsert_entity(entity)
+
+
+
+            print(resp)
+            self.assertIsNotNone(resp)
+
+
+
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
     unittest.main()

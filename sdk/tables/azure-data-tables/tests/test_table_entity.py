@@ -27,23 +27,37 @@ from azure.core.exceptions import (
 from azure.data.tables._entity import TableEntity, EntityProperty, EdmType
 from azure.data.tables._models import TableSasPermissions, AccessPolicy, UpdateMode
 
-from _shared.testcase import GlobalStorageAccountPreparer, TableTestCase, LogCaptured
-
+from _shared.testcase import (
+    GlobalStorageAccountPreparer,
+    GlobalCosmosAccountPreparer,
+    TableTestCase,
+    LogCaptured
+)
 
 # ------------------------------------------------------------------------------
-SERVICES = {
-    TableServiceClient: 'table',
-    TableClient: 'table',
-    TableServiceClient: 'cosmos',
-    TableClient: 'cosmos',
-}
+SERVICE_CLIENT_ENDPOINTS = [
+    # 'table',
+    'cosmos',
+]
+# {
+#     TableServiceClient: 'table',
+#     # TableClient: 'table',
+#     TableServiceClient: 'cosmos',
+#     # TableClient: 'cosmos',
+# }
 # ------------------------------------------------------------------------------
 
 class StorageTableEntityTest(TableTestCase):
 
-    def _set_up(self, storage_account, storage_account_key):
-        self.ts = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
+    def _set_up(self, storage_account, storage_account_key, url):
         self.table_name = self.get_resource_name('uttable')
+        self.ts = TableServiceClient(
+            self.account_url(storage_account, url),
+            credential=storage_account_key,
+            table_name = self.table_name
+        )
+        # self.ts = TableServiceClient(self.account_url(storage_account, url), storage_account_key)
+        # self.table_name = self.get_resource_name('uttable')
         self.table = self.ts.get_table_client(self.table_name)
         if self.is_live:
             try:
@@ -174,8 +188,6 @@ class StorageTableEntityTest(TableTestCase):
         # if headers:
         #    self.assertTrue("etag" in headers)
 
-    #     self.assertIsNotNone(headers['etag'])
-
     def _assert_default_entity_json_full_metadata(self, entity, headers=None):
         '''
         Asserts that the entity passed in matches the default entity.
@@ -202,12 +214,6 @@ class StorageTableEntityTest(TableTestCase):
         # self.assertTrue('etag' in entity.odata)
         # self.assertTrue('editLink' in entity.odata)
 
-    # self.assertIsNotNone(entity.Timestamp)
-    #  self.assertIsInstance(entity.Timestamp, datetime)
-    #  if headers:
-    #      self.assertTrue("etag" in headers)
-    #      self.assertIsNotNone(headers['etag'])
-
     def _assert_default_entity_json_no_metadata(self, entity, headers=None):
         '''
         Asserts that the entity passed in matches the default entity.
@@ -233,11 +239,6 @@ class StorageTableEntityTest(TableTestCase):
         # self.assertIsNone(entity.odata)
         # self.assertIsNotNone(entity.Timestamp)
 
-    # self.assertIsInstance(entity.Timestamp, datetime)
-    # if headers:
-    #     self.assertTrue("etag" in headers)
-    #     self.assertIsNotNone(headers['etag'])
-
     def _assert_updated_entity(self, entity):
         '''
         Asserts that the entity passed in matches the updated entity.
@@ -252,14 +253,9 @@ class StorageTableEntityTest(TableTestCase):
         self.assertFalse(hasattr(entity, "evenratio"))
         self.assertFalse(hasattr(entity, "large"))
         self.assertFalse(hasattr(entity, "Birthday"))
-        # self.assertEqual(entity.birthday, "1991-10-04 00:00:00+00:00")
         self.assertEqual(entity.birthday, datetime(1991, 10, 4, tzinfo=tzutc()))
         self.assertFalse(hasattr(entity, "other"))
         self.assertFalse(hasattr(entity, "clsid"))
-        #        self.assertIsNotNone(entity.odata.etag)
-
-    # self.assertIsNotNone(entity.Timestamp)
-    # self.assertIsInstance(entity.timestamp, datetime)
 
     def _assert_merged_entity(self, entity):
         '''
@@ -282,25 +278,23 @@ class StorageTableEntityTest(TableTestCase):
         self.assertEqual(entity.other.value, 20)
         self.assertIsInstance(entity.clsid, uuid.UUID)
         self.assertEqual(str(entity.clsid), 'c9da6455-213d-42c9-9a79-3e9149a57833')
-        # self.assertIsNotNone(entity.etag)
-        # self.assertIsNotNone(entity.odata['etag'])
-        # self.assertIsNotNone(entity.Timestamp)
-        # self.assertIsInstance(entity.Timestamp, datetime)
 
     # --Test cases for entities ------------------------------------------
     @GlobalStorageAccountPreparer()
+    @GlobalCosmosAccountPreparer()
     def test_insert_etag(self, resource_group, location, storage_account, storage_account_key):
-        self._set_up(storage_account, storage_account_key)
+        for url in SERVICE_CLIENT_ENDPOINTS:
 
-        entity, _ = self._insert_random_entity()
+            self._set_up(storage_account, storage_account_key, url)
 
-        entity1 = self.table.get_entity(row_key=entity.RowKey, partition_key=entity.PartitionKey)
+            entity, _ = self._insert_random_entity()
 
-        with self.assertRaises(AttributeError):
-            etag = entity1.etag
+            entity1 = self.table.get_entity(row_key=entity.RowKey, partition_key=entity.PartitionKey)
 
+            with self.assertRaises(AttributeError):
+                etag = entity1.etag
 
-        self.assertIsNotNone(entity1.metadata())
+            self.assertIsNotNone(entity1.metadata())
 
     # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
