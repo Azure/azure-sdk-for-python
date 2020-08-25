@@ -130,6 +130,10 @@ stages:
                         displayName: Output Visible Artifacts
                       - template: /eng/common/pipelines/templates/steps/publish-blobs.yml
                         parameters:
+                          Directory: ${{parameters.DocArtifact}}
+                          ReleaseSha: $(Build.SourceVersion)
+                      - template: /eng/common/pipelines/templates/steps/publish-blobs.yml
+                        parameters:
                           FolderForUpload: '$(Pipeline.Workspace)/${{artifact.safeName}}'
                           BlobSASKey: '$(azure-sdk-docs-prod-sas)'
                           BlobName: '$(azure-sdk-docs-prod-blob-name)'
