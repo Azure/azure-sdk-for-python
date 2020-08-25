@@ -15,7 +15,7 @@ import pytest
 
 from helpers import build_aad_response, urlsafeb64_decode, mock_response, Request
 from helpers_async import async_validating_transport, AsyncMockTransport
-from test_certificate_credential import BOTH_CERTS, CERT_PATH, validate_jwt
+from test_certificate_credential import ALL_CERTS, CERT_PATH, validate_jwt
 
 
 @pytest.mark.asyncio
@@ -79,7 +79,7 @@ async def test_user_agent():
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("authority", ("localhost", "https://localhost"))
-@pytest.mark.parametrize("cert_path,cert_password", BOTH_CERTS)
+@pytest.mark.parametrize("cert_path,cert_password", ALL_CERTS)
 async def test_request_url(cert_path, cert_password, authority):
     """the credential should accept an authority, with or without scheme, as an argument or environment variable"""
 
@@ -111,7 +111,7 @@ async def test_request_url(cert_path, cert_password, authority):
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("cert_path,cert_password", BOTH_CERTS)
+@pytest.mark.parametrize("cert_path,cert_password", ALL_CERTS)
 async def test_request_body(cert_path, cert_password):
     access_token = "***"
     authority = "authority.com"
@@ -136,7 +136,7 @@ async def test_request_body(cert_path, cert_password):
     assert token.token == access_token
 
 
-@pytest.mark.parametrize("cert_path,cert_password", BOTH_CERTS)
+@pytest.mark.parametrize("cert_path,cert_password", ALL_CERTS)
 def test_enable_persistent_cache(cert_path, cert_password):
     """the credential should use the persistent cache only when given enable_persistent_cache=True"""
 
@@ -168,7 +168,7 @@ def test_enable_persistent_cache(cert_path, cert_password):
 
 @patch("azure.identity._internal.persistent_cache.sys.platform", "linux2")
 @patch("azure.identity._internal.persistent_cache.msal_extensions")
-@pytest.mark.parametrize("cert_path,cert_password", BOTH_CERTS)
+@pytest.mark.parametrize("cert_path,cert_password", ALL_CERTS)
 def test_persistent_cache_linux(mock_extensions, cert_path, cert_password):
     """The credential should use an unencrypted cache when encryption is unavailable and the user explicitly opts in.
 
@@ -198,7 +198,7 @@ def test_persistent_cache_linux(mock_extensions, cert_path, cert_password):
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("cert_path,cert_password", BOTH_CERTS)
+@pytest.mark.parametrize("cert_path,cert_password", ALL_CERTS)
 async def test_persistent_cache_multiple_clients(cert_path, cert_password):
     """the credential shouldn't use tokens issued to other service principals"""
 
