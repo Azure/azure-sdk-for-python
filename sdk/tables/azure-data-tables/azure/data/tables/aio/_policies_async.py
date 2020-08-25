@@ -12,7 +12,7 @@ from typing import Any, TYPE_CHECKING
 from azure.core.pipeline.policies import AsyncHTTPPolicy, AsyncRetryPolicy
 from azure.core.exceptions import AzureError
 
-from .._policies import is_retry, StorageRetryPolicy
+from .._policies import is_retry, TablesRetryPolicy
 
 if TYPE_CHECKING:
     from azure.core.pipeline import PipelineRequest, PipelineResponse
@@ -79,7 +79,7 @@ class AsyncStorageResponseHook(AsyncHTTPPolicy):
         return response
 
 
-class AsyncStorageRetryPolicy(AsyncRetryPolicy, StorageRetryPolicy):
+class AsyncTablesRetryPolicy(AsyncRetryPolicy, TablesRetryPolicy):
     """Exponential retry."""
 
     def __init__(self, initial_backoff=15, increment_base=3, retry_total=3,
@@ -109,7 +109,7 @@ class AsyncStorageRetryPolicy(AsyncRetryPolicy, StorageRetryPolicy):
         self.initial_backoff = initial_backoff
         self.increment_base = increment_base
         self.random_jitter_range = random_jitter_range
-        super(AsyncStorageRetryPolicy, self).__init__(
+        super(AsyncTablesRetryPolicy, self).__init__(
             retry_total=retry_total, retry_to_secondary=retry_to_secondary, **kwargs)
 
     def get_backoff_time(self, settings):
@@ -170,7 +170,7 @@ class AsyncStorageRetryPolicy(AsyncRetryPolicy, StorageRetryPolicy):
         return response
 
 
-class ExponentialRetry(AsyncStorageRetryPolicy):
+class ExponentialRetry(AsyncTablesRetryPolicy):
     """Exponential retry."""
 
     def __init__(self, initial_backoff=15, increment_base=3, retry_total=3,
@@ -219,7 +219,7 @@ class ExponentialRetry(AsyncStorageRetryPolicy):
         return random_generator.uniform(random_range_start, random_range_end)
 
 
-class LinearRetry(AsyncStorageRetryPolicy):
+class LinearRetry(AsyncTablesRetryPolicy):
     """Linear retry."""
 
     def __init__(self, backoff=15, retry_total=3, retry_to_secondary=False, random_jitter_range=3, **kwargs):

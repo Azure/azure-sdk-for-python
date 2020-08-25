@@ -354,7 +354,7 @@ class StorageContentValidation(SansIOHTTPPolicy):
                 )
 
 
-class StorageRetryPolicy(RetryPolicy):
+class TablesRetryPolicy(RetryPolicy):
     """
     A base class for retry policies for the Table Client and Table Service Client
     """
@@ -368,7 +368,7 @@ class StorageRetryPolicy(RetryPolicy):
         **kwargs # type: Any
     ):
         """
-        Build a StorageRetryPolicy object.
+        Build a TablesRetryPolicy object.
 
         :param int initial_backoff:
             The initial backoff interval, in seconds, for the first retry.
@@ -392,7 +392,7 @@ class StorageRetryPolicy(RetryPolicy):
         self.read_retries = kwargs.pop('retry_read', 3)
         self.status_retries = kwargs.pop('retry_status', 3)
         self.retry_to_secondary = retry_to_secondary
-        super(StorageRetryPolicy, self).__init__(**kwargs)
+        super(TablesRetryPolicy, self).__init__(**kwargs)
 
     def get_backoff_time(self, settings):
         """
@@ -566,7 +566,7 @@ class StorageRetryPolicy(RetryPolicy):
         return response
 
 
-class ExponentialRetry(StorageRetryPolicy):
+class ExponentialRetry(TablesRetryPolicy):
     """Exponential retry."""
 
     def __init__(self, initial_backoff=15, increment_base=3, retry_total=3,
@@ -617,7 +617,7 @@ class ExponentialRetry(StorageRetryPolicy):
         return random_generator.uniform(random_range_start, random_range_end)
 
 
-class LinearRetry(StorageRetryPolicy):
+class LinearRetry(TablesRetryPolicy):
     """Linear retry."""
 
     def __init__(self, backoff=15, retry_total=3, retry_to_secondary=False, random_jitter_range=3, **kwargs):

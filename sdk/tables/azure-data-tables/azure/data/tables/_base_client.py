@@ -51,7 +51,7 @@ from ._policies import (
     StorageResponseHook,
     StorageLoggingPolicy,
     StorageHosts,
-    StorageRetryPolicy,
+    TablesRetryPolicy,
 )
 from ._error import _process_table_error
 from ._models import PartialBatchErrorException
@@ -392,7 +392,7 @@ def create_configuration(**kwargs):
     config.headers_policy = StorageHeadersPolicy(**kwargs)
     config.user_agent_policy = UserAgentPolicy(sdk_moniker=SDK_MONIKER, **kwargs)
         # sdk_moniker="storage-{}/{}".format(kwargs.pop('storage_sdk'), VERSION), **kwargs)
-    config.retry_policy = kwargs.get("retry_policy") or StorageRetryPolicy(**kwargs)
+    config.retry_policy = kwargs.get("retry_policy") or TablesRetryPolicy(**kwargs)
     config.logging_policy = StorageLoggingPolicy(**kwargs)
     config.proxy_policy = ProxyPolicy(**kwargs)
 
