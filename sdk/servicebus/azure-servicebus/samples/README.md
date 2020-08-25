@@ -41,7 +41,7 @@ Both [sync version](./sync_samples) and [async version](./async_samples) of samp
 - [session_send_receive.py](./sync_samples/session_send_receive.py) ([async_version](./async_samples/session_send_receive_async.py)) - Examples to send messages to and receive messages from a session-enabled service bus queue:
     - Send messages to a session-enabled queue
     - Receive messages from session-enabled queue
-- [schedule_messages_and_cancellation](./sync_samples/schedule_messages_and_cancellation.py) ([async_version](./async_samples/schedule_messages_and_cancellation_async.py)) - Examples to schedule messages and cancel scheduled messages:
+- [schedule_messages_and_cancellation](./sync_samples/schedule_messages_and_cancellation.py) ([async_version](./async_samples/schedule_messages_and_cancellation_async.py)) - Examples to schedule messages and cancel scheduled messages on a service bus queue:
     - Schedule a single message or multiple messages to a queue
     - Cancel scheduled messages from a queue
 - [schedule_topic_messages_and_cancellation](./sync_samples/schedule_topic_messages_and_cancellation.py) ([async_version](./async_samples/schedule_topic_messages_and_cancellation_async.py)) - Examples to schedule messages and cancel scheduled messages:
