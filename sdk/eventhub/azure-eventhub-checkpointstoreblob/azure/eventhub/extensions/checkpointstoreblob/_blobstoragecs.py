@@ -140,6 +140,7 @@ class BlobCheckpointStore(CheckpointStore):
         try:
             uploaded_blob_properties = blob_client.set_blob_metadata(metadata, **etag_match)
         except ResourceNotFoundError:
+            logger.info("Upload ownership blob %r because it hasn't existed in the container yet.", blob_name)
             uploaded_blob_properties = blob_client.upload_blob(
                 data=UPLOAD_DATA, overwrite=True, metadata=metadata, **etag_match
             )
@@ -243,6 +244,7 @@ class BlobCheckpointStore(CheckpointStore):
         try:
             blob_client.set_blob_metadata(metadata)
         except ResourceNotFoundError:
+            logger.info("Upload checkpoint blob %r because it hasn't existed in the container yet.", blob_name)
             blob_client.upload_blob(
                 data=UPLOAD_DATA, overwrite=True, metadata=metadata
             )
