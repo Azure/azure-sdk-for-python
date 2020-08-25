@@ -18,7 +18,7 @@ try:
 except ImportError:  # python < 3.3
     from mock import Mock, patch  # type: ignore
 
-from helpers import build_aad_response
+from helpers import build_aad_response, build_id_token, id_token_claims
 
 
 class MockCredential(InteractiveCredential):
@@ -296,19 +296,22 @@ def test_home_account_id_client_info():
     assert record.home_account_id == "{}.{}".format(object_id, home_tenant)
 
 
-def test_home_account_id_no_client_info():
-    """the credential should use the subject claim as home_account_id when MSAL doesn't provide client_info"""
+def test_adfs():
+    """the credential should be able to construct an AuthenticationRecord from an ADFS response returned by MSAL"""
 
+    authority = "localhost"
     subject = "subject"
+    tenant = "adfs"
+    username = "username"
     msal_response = build_aad_response(access_token="***", refresh_token="**")
-    msal_response["id_token_claims"] = {
-        "aud": "client-id",
-        "iss": "https://localhost",
-        "object_id": "some-guid",
-        "tid": "some-tenant",
-        "preferred_username": "me",
-        "sub": subject,
-    }
+    msal_response["id_token_claims"] = id_token_claims(
+        aud="client-id",
+        iss="https://{}/{}".format(authority, tenant),
+        sub=subject,
+        tenant_id=tenant,
+        object_id="object-id",
+        upn=username,
+    )
 
     class TestCredential(InteractiveCredential):
         def __init__(self, **kwargs):
@@ -318,4 +321,7 @@ def test_home_account_id_no_client_info():
             return msal_response
 
     record = TestCredential().authenticate()
+    assert record.authority == authority
     assert record.home_account_id == subject
+    assert record.tenant_id == tenant
+    assert record.username == username
