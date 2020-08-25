@@ -25,7 +25,6 @@ pip install azure-storage-file-datalake --pre
 
 ### Create a storage account
 If you wish to create a new storage account, you can use the
-
 [Azure Portal](https://docs.microsoft.com/azure/storage/blobs/data-lake-storage-quickstart-create-account#create-an-account-using-the-azure-portal),
 [Azure PowerShell](https://docs.microsoft.com/azure/storage/blobs/data-lake-storage-quickstart-create-account#create-an-account-using-powershell),
 or [Azure CLI](https://docs.microsoft.com/azure/storage/blobs/data-lake-storage-quickstart-create-account#create-an-account-using-azure-cli):
