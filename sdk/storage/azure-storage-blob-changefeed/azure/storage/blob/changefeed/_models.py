@@ -57,6 +57,8 @@ class ChangeFeedPaged(PageIterator):
             extract_data=self._extract_data_cb,
             continuation_token=continuation_token or ""
         )
+        continuation_token = eval(continuation_token) if continuation_token else None
+
         if continuation_token and container_client.primary_hostname != continuation_token['UrlHost']:
             raise ValueError('The token is not for the current storage account.')
         self.results_per_page = results_per_page or 5000
@@ -75,7 +77,7 @@ class ChangeFeedPaged(PageIterator):
     def _extract_data_cb(self, event_list):
         self.current_page = event_list
 
-        return self._change_feed.cursor, self.current_page
+        return str(self._change_feed.cursor), self.current_page
 
 
 class ChangeFeed(object):
@@ -85,11 +87,19 @@ class ChangeFeed(object):
         self._segment_paths_generator = None
         self.current_segment = None
         self.start_time = start_time
+
+        # the end time is in str format
         end_time_in_cursor = cf_cursor['EndTime'] if cf_cursor else None
+        # convert the end time in str format to a datetime object
+        end_time_in_cursor_obj = \
+            datetime.strptime(end_time_in_cursor, '%Y-%m-%dT%H:%M:%S+00:00') if end_time_in_cursor else None
+        # self.end_time is in datetime format
+        self.end_time = end_time or end_time_in_cursor_obj
+
         cur_segment_cursor = cf_cursor['CurrentSegmentCursor'] if cf_cursor else None
-        self.end_time = end_time or end_time_in_cursor
+
         self.cursor = {"CursorVersion": 1,
-                       "EndTime": self.end_time,
+                       "EndTime": self.end_time.strftime('%Y-%m-%dT%H:%M:%S+00:00') if self.end_time else "",
                        "UrlHost": self.client.primary_hostname}
         self._initialize(cur_segment_cursor=cur_segment_cursor)
 

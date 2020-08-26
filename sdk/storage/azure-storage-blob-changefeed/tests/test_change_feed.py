@@ -132,11 +132,12 @@ class StorageChangeFeedTest(StorageTestCase):
                 print(event)
         token = change_feed.continuation_token
 
-        self.assertEqual(token['CursorVersion'], 1)
-        self.assertIsNotNone(token['UrlHost'])
-        self.assertEqual(len(token['CurrentSegmentCursor']['ShardCursors']), 3)
-        self.assertIsNotNone(token['CurrentSegmentCursor']['SegmentPath'])
-        self.assertIsNotNone(token['CurrentSegmentCursor']['CurrentShardPath'])
+        dict_token = eval(token)
+        self.assertEqual(dict_token['CursorVersion'], 1)
+        self.assertIsNotNone(dict_token['UrlHost'])
+        self.assertEqual(len(dict_token['CurrentSegmentCursor']['ShardCursors']), 3)
+        self.assertIsNotNone(dict_token['CurrentSegmentCursor']['SegmentPath'])
+        self.assertIsNotNone(dict_token['CurrentSegmentCursor']['CurrentShardPath'])
 
         if self.is_live:
             sleep(120)
@@ -172,11 +173,12 @@ class StorageChangeFeedTest(StorageTestCase):
             aaaaaa = event
         token = change_feed.continuation_token
 
-        self.assertEqual(token['CursorVersion'], 1)
-        self.assertIsNotNone(token['UrlHost'])
-        self.assertEqual(len(token['CurrentSegmentCursor']['ShardCursors']), 3)
-        self.assertIsNotNone(token['CurrentSegmentCursor']['SegmentPath'])
-        self.assertIsNotNone(token['CurrentSegmentCursor']['CurrentShardPath'])
+        dict_token = eval(token)
+        self.assertEqual(dict_token['CursorVersion'], 1)
+        self.assertIsNotNone(dict_token['UrlHost'])
+        self.assertEqual(len(dict_token['CurrentSegmentCursor']['ShardCursors']), 3)
+        self.assertIsNotNone(dict_token['CurrentSegmentCursor']['SegmentPath'])
+        self.assertIsNotNone(dict_token['CurrentSegmentCursor']['CurrentShardPath'])
 
         # if self.is_live:
         #     sleep(120)
@@ -206,12 +208,13 @@ class StorageChangeFeedTest(StorageTestCase):
 
         token = change_feed.continuation_token
 
-        self.assertEqual(token['CursorVersion'], 1)
-        self.assertIsNotNone(token['EndTime'])
-        self.assertIsNotNone(token['UrlHost'])
-        self.assertEqual(len(token['CurrentSegmentCursor']['ShardCursors']), 3)
-        self.assertIsNotNone(token['CurrentSegmentCursor']['SegmentPath'])
-        self.assertIsNotNone(token['CurrentSegmentCursor']['CurrentShardPath'])
+        dict_token = eval(token)
+        self.assertEqual(dict_token['CursorVersion'], 1)
+        self.assertIsNotNone(dict_token['EndTime'])
+        self.assertIsNotNone(dict_token['UrlHost'])
+        self.assertEqual(len(dict_token['CurrentSegmentCursor']['ShardCursors']), 3)
+        self.assertIsNotNone(dict_token['CurrentSegmentCursor']['SegmentPath'])
+        self.assertIsNotNone(dict_token['CurrentSegmentCursor']['CurrentShardPath'])
 
         change_feed2 = cf_client.list_changes().by_page(continuation_token=token)
         events = list(next(change_feed2))
