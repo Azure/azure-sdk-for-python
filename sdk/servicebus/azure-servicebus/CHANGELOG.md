@@ -2,6 +2,10 @@
 
 ## 7.0.0b6 (Unreleased)
 
+**Breaking Changes**
+
+* ServiceBusSession is no longer exported from azure.servicebus
+* Attempting to initialize a sender or receiver with a different connection string entity and specified entity (e.g. `queue_name`) will result in an AuthenticationError
 
 ## 7.0.0b5 (2020-08-10)
 

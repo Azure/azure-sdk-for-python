@@ -137,6 +137,9 @@ class ServiceBusSessionReceiver(ServiceBusReceiver, SessionReceiverMixin):
          within its request to the service.
         :rtype: ~azure.servicebus.aio.ServiceBusSessionReceiver
 
+        :raises ~azure.servicebus.ServiceBusAuthenticationError: Indicates an issue in token/identity validity.
+        :raises ~azure.servicebus.ServiceBusAuthorizationError: Indicates an access/rights related failure.
+
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/async_samples/sample_code_servicebus_async.py
