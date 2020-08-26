@@ -5,7 +5,7 @@
 # -------------------------------------------------------------------------
 import uuid
 from uamqp import Source
-from .message import ReceivedMessage
+from .message import ReceivedMessage, ReceivedMessageBase
 from .constants import (
     NEXT_AVAILABLE,
     SESSION_FILTER,
@@ -51,11 +51,7 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
         self._max_wait_time = kwargs.get("max_wait_time", None)
 
     def _build_message(self, received, message_type=ReceivedMessage):
-        kwargs = {}
-        if message_type == ReceivedMessage:
-            kwargs['receiver'] = self
-        message = message_type(message=received, mode=self._mode, **kwargs)
-        message._receiver = self  # pylint: disable=protected-access
+        message = message_type(message=received, mode=self._mode, receiver=self)
         self._last_received_sequenced_number = message.sequence_number
         return message
 
