@@ -44,7 +44,7 @@ from ._serialize import (
     get_api_version,
     serialize_blob_tags_header,
     serialize_blob_tags,
-    serialize_query_format
+    serialize_query_format, get_access_conditions
 )
 from ._deserialize import get_page_ranges_result, deserialize_blob_properties, deserialize_blob_stream, parse_tags
 from ._quick_query_helper import BlobQueryReader
@@ -54,7 +54,7 @@ from ._upload_helpers import (
     upload_page_blob)
 from ._models import BlobType, BlobBlock, BlobProperties, BlobQueryError
 from ._download import StorageStreamDownloader
-from ._lease import BlobLeaseClient, get_access_conditions
+from ._lease import BlobLeaseClient
 
 if TYPE_CHECKING:
     from datetime import datetime

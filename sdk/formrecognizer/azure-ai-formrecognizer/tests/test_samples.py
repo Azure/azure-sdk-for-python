@@ -57,6 +57,10 @@ class TestSamples(FormRecognizerTest):
     @pytest.mark.live_test_only
     @GlobalFormRecognizerAccountPreparer()
     def test_sample_authentication(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+        os.environ['AZURE_FORM_RECOGNIZER_AAD_ENDPOINT'] = self.get_settings_value("FORM_RECOGNIZER_AAD_ENDPOINT")
+        os.environ['AZURE_CLIENT_ID'] = self.get_settings_value("CLIENT_ID")
+        os.environ['AZURE_CLIENT_SECRET'] = self.get_settings_value("CLIENT_SECRET")
+        os.environ['AZURE_TENANT_ID'] = self.get_settings_value("TENANT_ID")
         _test_file('sample_authentication.py', form_recognizer_account, form_recognizer_account_key)
 
     @pytest.mark.live_test_only

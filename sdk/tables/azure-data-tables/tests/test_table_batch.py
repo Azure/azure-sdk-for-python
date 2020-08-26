@@ -16,6 +16,7 @@ from dateutil.tz import tzutc
 from azure.core import MatchConditions
 from azure.core.exceptions import (
     ResourceExistsError)
+from azure.data.tables import EdmType, TableEntity, EntityProperty
 
 from _shared.testcase import GlobalStorageAccountPreparer, TableTestCase, LogCaptured
 
@@ -78,7 +79,7 @@ class StorageTableBatchTest(TableTestCase):
             'Birthday': datetime(1973, 10, 4, tzinfo=tzutc()),
             'birthday': datetime(1970, 10, 4, tzinfo=tzutc()),
             'binary': b'binary',
-            'other': EntityProperty(EdmType.INT32, 20),
+            'other': EntityProperty(20, EdmType.INT32),
             'clsid': uuid.UUID('c9da6455-213d-42c9-9a79-3e9149a57833')
         }
         return Entity(**properties)
@@ -148,6 +149,33 @@ class StorageTableBatchTest(TableTestCase):
         self.assertIsInstance(entity.timestamp, datetime)
 
     #--Test cases for batch ---------------------------------------------
+
+    def test_inferred_types(self):
+        # Arrange
+        # Act
+        entity = TableEntity()
+        entity.PartitionKey = '003'
+        entity.RowKey = 'batch_all_operations_together-1'
+        entity.test = EntityProperty(True)
+        entity.test2 = EntityProperty(b'abcdef')
+        entity.test3 = EntityProperty(u'c9da6455-213d-42c9-9a79-3e9149a57833')
+        entity.test4 = EntityProperty(datetime(1973, 10, 4, tzinfo=tzutc()))
+        entity.test5 = EntityProperty(u"stringystring")
+        entity.test6 = EntityProperty(3.14159)
+        entity.test7 = EntityProperty(100)
+        entity.test8 = EntityProperty(10, EdmType.INT32)
+
+        # Assert
+        self.assertEqual(entity.test.type, EdmType.BOOLEAN)
+        self.assertEqual(entity.test2.type, EdmType.BINARY)
+        self.assertEqual(entity.test3.type, EdmType.GUID)
+        self.assertEqual(entity.test4.type, EdmType.DATETIME)
+        self.assertEqual(entity.test5.type, EdmType.STRING)
+        self.assertEqual(entity.test6.type, EdmType.DOUBLE)
+        self.assertEqual(entity.test7.type, EdmType.INT64)
+        self.assertEqual(entity.test8.type, EdmType.INT32)
+
+
     @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_batch_insert(self, resource_group, location, storage_account, storage_account_key):
@@ -158,10 +186,10 @@ class StorageTableBatchTest(TableTestCase):
             entity = Entity()
             entity.PartitionKey = '001'
             entity.RowKey = 'batch_insert'
-            entity.test = EntityProperty(EdmType.BOOLEAN, 'true')
+            entity.test = EntityProperty(True)
             entity.test2 = 'value'
             entity.test3 = 3
-            entity.test4 = EntityProperty(EdmType.INT64, '1234567890')
+            entity.test4 = EntityProperty(1234567890)
             entity.test5 = datetime.utcnow()
 
             batch = self.table.create_batch()
@@ -185,10 +213,10 @@ class StorageTableBatchTest(TableTestCase):
             entity = Entity()
             entity.PartitionKey = '001'
             entity.RowKey = 'batch_update'
-            entity.test = EntityProperty(EdmType.BOOLEAN, 'true')
+            entity.test = EntityProperty(True)
             entity.test2 = 'value'
             entity.test3 = 3
-            entity.test4 = EntityProperty(EdmType.INT64, '1234567890')
+            entity.test4 = EntityProperty(1234567890)
             entity.test5 = datetime.utcnow()
             self.table.create_item(entity)
 
@@ -218,10 +246,10 @@ class StorageTableBatchTest(TableTestCase):
             entity = Entity()
             entity.PartitionKey = '001'
             entity.RowKey = 'batch_merge'
-            entity.test = EntityProperty(EdmType.BOOLEAN, 'true')
+            entity.test = EntityProperty(True)
             entity.test2 = 'value'
             entity.test3 = 3
-            entity.test4 = EntityProperty(EdmType.INT64, '1234567890')
+            entity.test4 = EntityProperty(1234567890)
             entity.test5 = datetime.utcnow()
             self.table.create_item(entity)
 
@@ -313,7 +341,7 @@ class StorageTableBatchTest(TableTestCase):
             entity.test = True
             entity.test2 = 'value'
             entity.test3 = 3
-            entity.test4 = EntityProperty(EdmType.INT64, '1234567890')
+            entity.test4 = EntityProperty(1234567890)
             entity.test5 = datetime.utcnow()
 
             batch = self.table.create_batch()
@@ -343,7 +371,7 @@ class StorageTableBatchTest(TableTestCase):
             entity.test = True
             entity.test2 = 'value'
             entity.test3 = 3
-            entity.test4 = EntityProperty(EdmType.INT64, '1234567890')
+            entity.test4 = EntityProperty(1234567890)
             entity.test5 = datetime.utcnow()
 
             batch = self.table.create_batch()
@@ -370,10 +398,10 @@ class StorageTableBatchTest(TableTestCase):
             entity = Entity()
             entity.PartitionKey = '001'
             entity.RowKey = 'batch_delete'
-            entity.test = EntityProperty(EdmType.BOOLEAN, 'true')
+            entity.test = EntityProperty(True)
             entity.test2 = 'value'
             entity.test3 = 3
-            entity.test4 = EntityProperty(EdmType.INT64, '1234567890')
+            entity.test4 = EntityProperty(1234567890)
             entity.test5 = datetime.utcnow()
             self.table.create_item(entity)
 
@@ -399,10 +427,10 @@ class StorageTableBatchTest(TableTestCase):
             # Act
             entity = Entity()
             entity.PartitionKey = 'batch_inserts'
-            entity.test = EntityProperty(EdmType.BOOLEAN, 'true')
+            entity.test = EntityProperty(True)
             entity.test2 = 'value'
             entity.test3 = 3
-            entity.test4 = EntityProperty(EdmType.INT64, '1234567890')
+            entity.test4 = EntityProperty(1234567890)
 
             batch = self.table.create_batch()
             for i in range(100):
@@ -428,10 +456,10 @@ class StorageTableBatchTest(TableTestCase):
             entity = Entity()
             entity.PartitionKey = '003'
             entity.RowKey = 'batch_all_operations_together-1'
-            entity.test = EntityProperty(EdmType.BOOLEAN, 'true')
+            entity.test = EntityProperty(True)
             entity.test2 = 'value'
             entity.test3 = 3
-            entity.test4 = EntityProperty(EdmType.INT64, '1234567890')
+            entity.test4 = EntityProperty(1234567890)
             entity.test5 = datetime.utcnow()
             self.table.create_item(entity)
             entity.RowKey = 'batch_all_operations_together-2'
@@ -476,10 +504,10 @@ class StorageTableBatchTest(TableTestCase):
             entity = Entity()
             entity.PartitionKey = '003'
             entity.RowKey = 'batch_all_operations_together-1'
-            entity.test = EntityProperty(EdmType.BOOLEAN, 'true')
+            entity.test = EntityProperty(True)
             entity.test2 = 'value'
             entity.test3 = 3
-            entity.test4 = EntityProperty(EdmType.INT64, '1234567890')
+            entity.test4 = EntityProperty(1234567890)
             entity.test5 = datetime.utcnow()
             self.table.create_item(entity)
             entity.RowKey = 'batch_all_operations_together-2'
@@ -525,10 +553,10 @@ class StorageTableBatchTest(TableTestCase):
             entity = Entity()
             entity.PartitionKey = '003'
             entity.RowKey = 'batch_all_operations_together-1'
-            entity.test = EntityProperty(EdmType.BOOLEAN, 'true')
+            entity.test = EntityProperty(True)
             entity.test2 = 'value'
             entity.test3 = 3
-            entity.test4 = EntityProperty(EdmType.INT64, '1234567890')
+            entity.test4 = EntityProperty(1234567890)
             entity.test5 = datetime.utcnow()
 
             batch = TableBatchClient()

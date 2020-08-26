@@ -4,6 +4,9 @@
 # license information.
 # --------------------------------------------------------------------------
 from enum import Enum
+from datetime import datetime
+from uuid import UUID
+import six
 
 from ._error import _ERROR_ATTRIBUTE_MISSING
 
@@ -75,17 +78,41 @@ class EntityProperty(object):
     """
 
     def __init__(self,
-                 type=None,  # type: Union[str,EdmType] # pylint:disable=W0622
-                 value=None  # type: Any
-                 ):
+        value=None, # type: Any
+        type=None,  # type: Union[str,EdmType] # pylint:disable=W0622
+    ):
         """
         Represents an Azure Table. Returned by list_tables.
 
         :param Union[str, EdmType] type: The type of the property.
         :param Any value: The value of the property.
         """
-        self.type = type
         self.value = value
+        if type is not None:
+            self.type = type
+        elif isinstance(value, six.text_type):
+            try:
+                self.value = UUID(value)
+                self.type = EdmType.GUID
+            except ValueError:
+                self.type = EdmType.STRING
+        elif isinstance(value, six.binary_type):
+            self.type = EdmType.BINARY
+        elif isinstance(value, bool):
+            self.type = EdmType.BOOLEAN
+        elif isinstance(value, six.integer_types):
+            self.type = EdmType.INT64
+        elif isinstance(value, datetime):
+            self.type = EdmType.DATETIME
+        elif isinstance(value, float):
+            self.type = EdmType.DOUBLE
+        else:
+            raise ValueError(
+                """Type of {} could not be inferred. Acceptable types are bytes, int, uuid.UUID,
+                datetime, string, int32, int64, float, and boolean. Refer to
+                azure.data.tables.EdmType for more information.
+                """.format(value)
+                )
 
 
 class EdmType(str, Enum):

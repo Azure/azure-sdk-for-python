@@ -17,7 +17,6 @@ from ._paging import SearchItemPaged, SearchPageIterator
 from ._queries import AutocompleteQuery, SearchQuery, SuggestQuery
 from .._headers_mixin import HeadersMixin
 from .._version import SDK_MONIKER
-from ._search_index_document_batching_client import SearchIndexDocumentBatchingClient
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
@@ -96,15 +95,10 @@ class SearchClient(HeadersMixin):
 
     def close(self):
         # type: () -> None
-        """Close the :class:`~azure.search.SearchClient` session.
+        """Close the :class:`~azure.search.documents.SearchClient` session.
 
         """
         return self._client.close()
-
-    def get_index_document_batching_client(self, **kwargs):
-        # type: (str, dict) -> SearchIndexDocumentBatchingClient
-        """Return a search index document batching client"""
-        return SearchIndexDocumentBatchingClient(self._endpoint, self._index_name, self._credential, **kwargs)
 
     @distributed_trace
     def get_document_count(self, **kwargs):
@@ -531,10 +525,10 @@ class SearchClient(HeadersMixin):
         :param batch: A batch of document operations to perform.
         :type batch: IndexDocumentsBatch
         :rtype:  List[IndexingResult]
+        :raises :class:`~azure.search.documents.RequestEntityTooLargeError`
         """
         return self._index_documents_actions(actions=batch.actions, **kwargs)
 
-    @distributed_trace
     def _index_documents_actions(self, actions, **kwargs):
         # type: (List[IndexAction], **Any) -> List[IndexingResult]
         error_map = {413: RequestEntityTooLargeError}

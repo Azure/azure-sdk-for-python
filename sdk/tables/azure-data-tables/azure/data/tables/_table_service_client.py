@@ -10,7 +10,7 @@ from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline import Pipeline
-from ._models import Table
+from ._models import TableItem
 
 from ._generated import AzureTable
 from ._generated.models import TableProperties, TableServiceProperties, QueryOptions
@@ -62,10 +62,8 @@ class TableServiceClient(TableServiceClientBase):
         :returns: A Table service client.
         :rtype: ~azure.data.tables.TableServiceClient
         """
-        account_url, secondary, credential = parse_connection_str(
-            conn_str=conn_str, credential=None, service='table')
-        if 'secondary_hostname' not in kwargs:
-            kwargs['secondary_hostname'] = secondary
+        account_url, credential = parse_connection_str(
+            conn_str=conn_str, credential=None, service='table', keyword_args=kwargs)
         return cls(account_url, credential=credential, **kwargs)
 
     @distributed_trace
@@ -181,7 +179,7 @@ class TableServiceClient(TableServiceClientBase):
             filter,  # pylint: disable=W0622
             **kwargs  # type: Any
     ):
-        # type: (...) -> ItemPaged[Table]
+        # type: (...) -> ItemPaged[TableItem]
         """Queries tables under the given account.
         :param filter: Specify a filter to return certain tables
         :type filter: str
@@ -189,7 +187,7 @@ class TableServiceClient(TableServiceClientBase):
         :keyword Union[str, list(str)] select: Specify desired properties of a table to return certain tables
         :keyword dict parameters: Dictionary for formatting query with additional, user defined parameters
         :return: A query of tables
-        :rtype: ItemPaged[Table]
+        :rtype: ItemPaged[TableItem]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         parameters = kwargs.pop('parameters', None)
@@ -213,13 +211,13 @@ class TableServiceClient(TableServiceClientBase):
             self,
             **kwargs  # type: Any
     ):
-        # type: (...) -> ItemPaged[Table]
+        # type: (...) -> ItemPaged[TableItem]
         """Queries tables under the given account.
 
         :keyword int results_per_page: Number of tables per page in return ItemPaged
         :keyword Union[str, list(str)] select: Specify desired properties of a table to return certain tables
         :return: A query of tables
-        :rtype: ItemPaged[Table]
+        :rtype: ItemPaged[TableItem]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         user_select = kwargs.pop('select', None)
