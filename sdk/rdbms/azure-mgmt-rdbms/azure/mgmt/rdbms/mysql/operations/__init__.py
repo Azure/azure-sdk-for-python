@@ -19,8 +19,8 @@ from ._log_files_operations import LogFilesOperations
 from ._server_administrators_operations import ServerAdministratorsOperations
 from ._location_based_performance_tier_operations import LocationBasedPerformanceTierOperations
 from ._check_name_availability_operations import CheckNameAvailabilityOperations
-from ._server_security_alert_policies_operations import ServerSecurityAlertPoliciesOperations
 from ._operations import Operations
+from ._server_security_alert_policies_operations import ServerSecurityAlertPoliciesOperations
 from ._query_texts_operations import QueryTextsOperations
 from ._top_query_statistics_operations import TopQueryStatisticsOperations
 from ._wait_statistics_operations import WaitStatisticsOperations
@@ -44,8 +44,8 @@ __all__ = [
     'ServerAdministratorsOperations',
     'LocationBasedPerformanceTierOperations',
     'CheckNameAvailabilityOperations',
-    'ServerSecurityAlertPoliciesOperations',
     'Operations',
+    'ServerSecurityAlertPoliciesOperations',
     'QueryTextsOperations',
     'TopQueryStatisticsOperations',
     'WaitStatisticsOperations',
