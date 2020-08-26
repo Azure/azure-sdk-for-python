@@ -24,9 +24,9 @@ database service.
 """
 
 from collections import deque
+import copy
 from .. import _retry_utility
 from .. import http_constants
-import copy
 
 # pylint: disable=protected-access
 
@@ -53,8 +53,7 @@ class _QueryExecutionContextBase(object):
         if "continuation" in self._options:
             if "enableCrossPartitionQuery" in self._options:
                 raise AttributeError("continuation tokens are not supported for cross-partition queries.")
-            else:
-                return self._options["continuation"]
+            return self._options["continuation"]
         return None
 
     def _has_more_pages(self):
