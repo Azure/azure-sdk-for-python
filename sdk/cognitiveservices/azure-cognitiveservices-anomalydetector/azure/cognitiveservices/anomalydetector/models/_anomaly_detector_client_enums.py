@@ -12,11 +12,12 @@
 from enum import Enum
 
 
-class Granularity(str, Enum):
+class TimeGranularity(str, Enum):
 
     yearly = "yearly"
     monthly = "monthly"
     weekly = "weekly"
     daily = "daily"
     hourly = "hourly"
-    minutely = "minutely"
+    per_minute = "minutely"
+    per_second = "secondly"

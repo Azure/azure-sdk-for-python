@@ -10,26 +10,32 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .api_error_py3 import APIError, APIErrorException
-    from .point_py3 import Point
-    from .request_py3 import Request
-    from .entire_detect_response_py3 import EntireDetectResponse
-    from .last_detect_response_py3 import LastDetectResponse
+    from ._models_py3 import AnomalyDetectorError, AnomalyDetectorErrorException
+    from ._models_py3 import ChangePointDetectRequest
+    from ._models_py3 import ChangePointDetectResponse
+    from ._models_py3 import DetectRequest
+    from ._models_py3 import EntireDetectResponse
+    from ._models_py3 import LastDetectResponse
+    from ._models_py3 import TimeSeriesPoint
 except (SyntaxError, ImportError):
-    from .api_error import APIError, APIErrorException
-    from .point import Point
-    from .request import Request
-    from .entire_detect_response import EntireDetectResponse
-    from .last_detect_response import LastDetectResponse
-from .anomaly_detector_client_enums import (
-    Granularity,
+    from ._models import AnomalyDetectorError, AnomalyDetectorErrorException
+    from ._models import ChangePointDetectRequest
+    from ._models import ChangePointDetectResponse
+    from ._models import DetectRequest
+    from ._models import EntireDetectResponse
+    from ._models import LastDetectResponse
+    from ._models import TimeSeriesPoint
+from ._anomaly_detector_client_enums import (
+    TimeGranularity,
 )
 
 __all__ = [
-    'APIError', 'APIErrorException',
-    'Point',
-    'Request',
+    'AnomalyDetectorError', 'AnomalyDetectorErrorException',
+    'ChangePointDetectRequest',
+    'ChangePointDetectResponse',
+    'DetectRequest',
     'EntireDetectResponse',
     'LastDetectResponse',
-    'Granularity',
+    'TimeSeriesPoint',
+    'TimeGranularity',
 ]
