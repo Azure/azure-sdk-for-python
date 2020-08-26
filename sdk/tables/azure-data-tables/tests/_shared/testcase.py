@@ -351,6 +351,8 @@ def storage_account():
     i_need_to_create_rg = not (existing_rg_name or existing_storage_name or storage_connection_string)
     got_storage_info_from_env = existing_storage_name or storage_connection_string
 
+    storage_name = None
+
     try:
         if i_need_to_create_rg:
             rg_name, rg_kwargs = rg_preparer._prepare_create_resource(test_case)
@@ -431,11 +433,12 @@ def storage_account():
             TableTestCase._STORAGE_CONNECTION_STRING = storage_connection_string
             yield
         finally:
-            if not got_storage_info_from_env:
-                storage_preparer.remove_resource(
-                    storage_name,
-                    resource_group=rg
-                )
+            if storage_name is not None:
+                if not got_storage_info_from_env:
+                    storage_preparer.remove_resource(
+                        storage_name,
+                        resource_group=rg
+                    )
     finally:
         if i_need_to_create_rg:
             rg_preparer.remove_resource(rg_name)
