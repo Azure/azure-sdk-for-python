@@ -11,7 +11,7 @@ from typing import Any, TYPE_CHECKING
 from azure.core import AsyncPipelineClient
 from msrest import Deserializer, Serializer
 
-from .._models import CloudEvent, EventGridEvent
+from .._models import CloudEvent, EventGridEvent, CustomEvent
 from .._helpers import _get_topic_hostname_only_fqdn, _get_authentication_policy, _is_cloud_event
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from azure.core.credentials import AzureKeyCredential
@@ -42,7 +42,8 @@ class EventGridPublisherClient(object):
     def __init__(self, topic_hostname, credential, **kwargs):
         # type: (str, Union[AzureKeyCredential, EventGridSharedAccessSignatureCredential], Any) -> None
         auth_policy = _get_authentication_policy(credential)
-        self._client = EventGridPublisherClientAsync(authentication_policy=auth_policy)
+        self._client = EventGridPublisherClientAsync(authentication_policy=auth_policy, **kwargs)
+        topic_hostname = _get_topic_hostname_only_fqdn(topic_hostname)
         self._topic_hostname = topic_hostname
 
 
@@ -53,20 +54,20 @@ class EventGridPublisherClient(object):
         :param  events: A list of CloudEvent/EventGridEvent/CustomEvent to be sent.
         :type events: Union[List[models.CloudEvent], List[models.EventGridEvent], List[models.CustomEvent]]
         :rtype: None
-        raise: :class:`ValueError`, when events do not follow specified SendType.
+        :raise: :class:`ValueError`, when events do not follow specified SendType.
          """
         if not isinstance(events, list):
             events = [events]
 
         if all(isinstance(e, CloudEvent) for e in events) or all(_is_cloud_event(e) for e in events):
             kwargs.setdefault("content_type", "application/cloudevents-batch+json; charset=utf-8")
-            self._client.publish_cloud_event_events(self._topic_hostname, events, **kwargs)
+            await self._client.publish_cloud_event_events(self._topic_hostname, events, **kwargs)
         elif all(isinstance(e, EventGridEvent) for e in events) or all(isinstance(e, dict) for e in events):
             kwargs.setdefault("content_type", "application/json; charset=utf-8")
-            self._client.publish_events(self._topic_hostname, events, **kwargs)
+            await self._client.publish_events(self._topic_hostname, events, **kwargs)
         elif all(isinstance(e, CustomEvent) for e in events):
             serialized_events = [dict(e) for e in events]
-            self._client.publish_custom_event_events(self._topic_hostname, serialized_events, **kwargs)
+            await self._client.publish_custom_event_events(self._topic_hostname, serialized_events, **kwargs)
         else:
             raise ValueError("Event schema is not correct.")
     
