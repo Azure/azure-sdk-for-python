@@ -107,12 +107,12 @@ class DataFileReader(object):
         # get ready to read
         self._block_count = 0
 
-        # event_position and block_count are to support reading from current position in the future read,
-        # no need to downloading from the beginning of avro file with these two attr.
-        if hasattr(self._reader, 'event_position'):
-            self.reader.track_event_position()
+        # object_position is to support reading from current position in the future read,
+        # no need to downloading from the beginning of avro.
+        if hasattr(self._reader, 'object_position'):
+            self.reader.track_object_position()
 
-        self._cur_event_index = 0
+        self._cur_object_index = 0
         # header_reader indicates reader only has partial content. The reader doesn't have block header,
         # so we read use the block count stored last time.
         # Also ChangeFeed only has codec==null, so use _raw_decoder is good.
@@ -228,26 +228,28 @@ class DataFileReader(object):
         if self.block_count == 0:
             self._skip_sync()
 
-            # event_position and block_count are to support reading from current position in the future read,
-            # no need to downloading from the beginning of avro file with these two attr.
-            if hasattr(self._reader, 'event_position'):
-                self.reader.track_event_position()
+            # object_position is to support reading from current position in the future read,
+            # no need to downloading from the beginning of avro file with this attr.
+            if hasattr(self._reader, 'object_position'):
+                self.reader.track_object_position()
+            self._cur_object_index = 0
 
             self._read_block_header()
-            self._cur_event_index = 0
 
         datum = self.datum_reader.read(self.datum_decoder)
         self._block_count -= 1
-        self._cur_event_index += 1
+        self._cur_object_index += 1
 
-        # This only applies for changefeed
-        if hasattr(self._reader, 'event_position'):
+        # object_position is to support reading from current position in the future read,
+        # This will track the index of the next item to be read.
+        # This will also track the offset before the next sync marker.
+        if hasattr(self._reader, 'object_position'):
             if self.block_count == 0:
                 # the next event to be read is at index 0 in the new chunk of blocks,
-                self.reader.track_event_position()
-                self.reader.set_event_index(0)
+                self.reader.track_object_position()
+                self.reader.set_object_index(0)
             else:
-                self.reader.set_event_index(self._cur_event_index)
+                self.reader.set_object_index(self._cur_object_index)
 
         return datum
 

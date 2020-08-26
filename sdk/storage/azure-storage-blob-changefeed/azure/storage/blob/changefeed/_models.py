@@ -61,6 +61,8 @@ class ChangeFeedPaged(PageIterator):
 
         if continuation_token and container_client.primary_hostname != continuation_token['UrlHost']:
             raise ValueError('The token is not for the current storage account.')
+        if continuation_token and continuation_token['CursorVersion'] != 1:
+            raise ValueError('The CursorVersion is not supported by the current SDK.')
         self.results_per_page = results_per_page or 5000
         self.current_page = None
         self._change_feed = ChangeFeed(container_client, self.results_per_page, start_time=start_time,
@@ -344,11 +346,11 @@ class Chunk(object):
         try:
             event = next(self.file_reader)
             self.cursor['EventIndex'] = self._data_stream.event_index
-            self.cursor['BlockOffset'] = self._data_stream.event_position
+            self.cursor['BlockOffset'] = self._data_stream.object_position
             return event
         except StopIteration:
             self.cursor['EventIndex'] = self._data_stream.event_index
-            self.cursor['BlockOffset'] = self._data_stream.event_position
+            self.cursor['BlockOffset'] = self._data_stream.object_position
             raise StopIteration
 
     next = __next__  # Python 2 compatibility.
@@ -378,7 +380,7 @@ class ChangeFeedStreamer(object):
     def __init__(self, blob_client, chunk_file_start=0):
         self._chunk_file_start = chunk_file_start or 0  # this value will never be updated
         self._download_offset = self._chunk_file_start  # range start of the next download
-        self.event_position = self._chunk_file_start  # track the most recently read sync marker position
+        self.object_position = self._chunk_file_start  # track the most recently read sync marker position
         self.event_index = 0
         self._point = self._chunk_file_start  # file cursor position relative to the whole chunk file, not the buffered
         self._chunk_size = 4 * 1024 * 1024
@@ -448,9 +450,9 @@ class ChangeFeedStreamer(object):
 
         return data
 
-    def track_event_position(self):
-        self.event_position = self.tell()
+    def track_object_position(self):
+        self.object_position = self.tell()
 
-    def set_event_index(self, event_index):
+    def set_object_index(self, event_index):
         self.event_index = event_index
 

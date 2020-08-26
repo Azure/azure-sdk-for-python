@@ -124,36 +124,6 @@ class ChangeFeedSamples(object):
         for event in change_feed_page3:
             print(event)
 
-    def list_events_in_live_mode_continuously_without_waiting_for_a_minute(self):
-        # Instantiate a ChangeFeedClient
-        cf_client = ChangeFeedClient("https://{}.blob.core.windows.net".format(self.ACCOUNT_NAME),
-                                     credential=self.ACCOUNT_KEY)
-        # to get continuation token
-        start_time = datetime(2020, 8, 19, 10)
-        change_feed = cf_client.list_changes(start_time=start_time).by_page()
-
-        for page in change_feed:
-            for event in page:
-                print(event)
-        token = change_feed.continuation_token
-
-        print("continue printing events")
-        # restart using the continuation token while there's no event's added yet
-        change_feed2 = cf_client.list_changes(results_per_page=56).by_page(continuation_token=token)
-        for change_feed_page2 in change_feed2:
-            for event in change_feed_page2:
-                print(event)
-
-        print("continue printing events")
-        # There's no event's added yet
-        token2 = change_feed2.continuation_token
-        change_feed3 = cf_client.list_changes(results_per_page=56).by_page(continuation_token=token2)
-        try:
-            change_feed_page3 = next(change_feed3)
-            for event in change_feed_page3:
-                print(event)
-        except StopIteration:
-            pass
 
 if __name__ == '__main__':
     sample = ChangeFeedSamples()

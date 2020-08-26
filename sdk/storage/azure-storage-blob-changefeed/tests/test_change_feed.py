@@ -127,12 +127,14 @@ class StorageChangeFeedTest(StorageTestCase):
         start_time = datetime(2020, 8, 19, 23)
         change_feed = cf_client.list_changes(start_time=start_time).by_page()
 
+        events = list()
         for page in change_feed:
             for event in page:
-                print(event)
+                events.append(event)
         token = change_feed.continuation_token
 
         dict_token = eval(token)
+        self.assertTrue(len(events) > 0)
         self.assertEqual(dict_token['CursorVersion'], 1)
         self.assertIsNotNone(dict_token['UrlHost'])
         self.assertEqual(len(dict_token['CurrentSegmentCursor']['ShardCursors']), 3)
@@ -144,10 +146,13 @@ class StorageChangeFeedTest(StorageTestCase):
         print("continue printing events")
 
         # restart using the continuation token after waiting for 2 minutes
-        change_feed2 = cf_client.list_changes(results_per_page=5).by_page(continuation_token=token)
+        change_feed2 = cf_client.list_changes(results_per_page=6).by_page(continuation_token=token)
         change_feed_page2 = next(change_feed2)
+        events2 = list()
         for event in change_feed_page2:
-            print(event)
+            events2.append(event)
+
+        self.assertNotEqual(events2, 0)
 
         if self.is_live:
             sleep(120)
@@ -155,10 +160,18 @@ class StorageChangeFeedTest(StorageTestCase):
 
         # restart using the continuation token which has Non-zero EventIndex for 3 shards
         token2 = change_feed2.continuation_token
+        dict_token2 = eval(token2)
+        self.assertEqual(len(dict_token2['CurrentSegmentCursor']['ShardCursors']), 3)
+        self.assertNotEqual(dict_token2['CurrentSegmentCursor']['ShardCursors'][0]['EventIndex'], 0)
+        self.assertNotEqual(dict_token2['CurrentSegmentCursor']['ShardCursors'][1]['EventIndex'], 0)
+        self.assertNotEqual(dict_token2['CurrentSegmentCursor']['ShardCursors'][2]['EventIndex'], 0)
+
         change_feed3 = cf_client.list_changes(results_per_page=57).by_page(continuation_token=token2)
         change_feed_page3 = next(change_feed3)
+        events3 = list()
         for event in change_feed_page3:
-            print(event)
+            events3.append(event)
+        self.assertNotEqual(events2, 0)
 
     @GlobalStorageAccountPreparer()
     def test_read_change_feed_tail_where_only_1_shard_has_data(self, resource_group, location, storage_account, storage_account_key):
@@ -169,11 +182,14 @@ class StorageChangeFeedTest(StorageTestCase):
         change_feed = cf_client.list_changes(start_time=start_time, results_per_page=3).by_page()
 
         page = next(change_feed)
+        events_on_first_page = list()
         for event in page:
-            aaaaaa = event
-        token = change_feed.continuation_token
+            events_on_first_page.append(event)
 
+        token = change_feed.continuation_token
         dict_token = eval(token)
+
+        self.assertEqual(len(events_on_first_page), 3)
         self.assertEqual(dict_token['CursorVersion'], 1)
         self.assertIsNotNone(dict_token['UrlHost'])
         self.assertEqual(len(dict_token['CurrentSegmentCursor']['ShardCursors']), 3)
