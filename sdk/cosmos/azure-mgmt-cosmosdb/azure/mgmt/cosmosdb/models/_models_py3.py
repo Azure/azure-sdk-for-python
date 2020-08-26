@@ -1374,6 +1374,10 @@ class DatabaseAccountGetResults(ARMResourceProperties):
     :param virtual_network_rules: List of Virtual Network ACL rules configured for the Cosmos DB
      account.
     :type virtual_network_rules: list[~azure.mgmt.cosmosdb.models.VirtualNetworkRule]
+    :ivar private_endpoint_connections: List of Private Endpoint Connections configured for the
+     Cosmos DB account.
+    :vartype private_endpoint_connections:
+     list[~azure.mgmt.cosmosdb.models.PrivateEndpointConnection]
     :param enable_multiple_write_locations: Enables the account to write in multiple locations.
     :type enable_multiple_write_locations: bool
     :param enable_cassandra_connector: Enables the cassandra connector on the Cosmos DB C* account.
@@ -1410,6 +1414,7 @@ class DatabaseAccountGetResults(ARMResourceProperties):
         'read_locations': {'readonly': True},
         'locations': {'readonly': True},
         'failover_policies': {'readonly': True},
+        'private_endpoint_connections': {'readonly': True},
         'public_network_access': {'readonly': True},
     }
 
@@ -1433,6 +1438,7 @@ class DatabaseAccountGetResults(ARMResourceProperties):
         'locations': {'key': 'properties.locations', 'type': '[Location]'},
         'failover_policies': {'key': 'properties.failoverPolicies', 'type': '[FailoverPolicy]'},
         'virtual_network_rules': {'key': 'properties.virtualNetworkRules', 'type': '[VirtualNetworkRule]'},
+        'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
         'enable_multiple_write_locations': {'key': 'properties.enableMultipleWriteLocations', 'type': 'bool'},
         'enable_cassandra_connector': {'key': 'properties.enableCassandraConnector', 'type': 'bool'},
         'connector_offer': {'key': 'properties.connectorOffer', 'type': 'str'},
@@ -1485,6 +1491,7 @@ class DatabaseAccountGetResults(ARMResourceProperties):
         self.locations = None
         self.failover_policies = None
         self.virtual_network_rules = virtual_network_rules
+        self.private_endpoint_connections = None
         self.enable_multiple_write_locations = enable_multiple_write_locations
         self.enable_cassandra_connector = enable_cassandra_connector
         self.connector_offer = connector_offer
