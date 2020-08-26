@@ -4,11 +4,10 @@
 # -------------------------------------
 import pytest
 from azure.keyvault.certificates import parse_certificate_id
+from _shared.test_case import KeyVaultTestCase
 
-def print(*args):
-    assert all(arg is not None for arg in args)
 
-class TestParseId():
+class TestParseId(KeyVaultTestCase):
     def test_parse_certificate_id_with_version(self):
         # [START parse_certificate_id]
         original_id = "https://keyvault-name.vault.azure.net/certificates/certificate-name/version"
@@ -20,6 +19,11 @@ class TestParseId():
         print(parsed_certificate_id.version)
         print(parsed_certificate_id.original_id)
         # [END parse_certificate_id]
+        assert parsed_certificate_id.name == "certificate-name"
+        assert parsed_certificate_id.collection == "certificates"
+        assert parsed_certificate_id.vault_url == "https://keyvault-name.vault.azure.net"
+        assert parsed_certificate_id.version == "version"
+        assert parsed_certificate_id.original_id == "https://keyvault-name.vault.azure.net/certificates/certificate-name/version"
 
     def test_parse_certificate_id_with_pending_version(self):
         original_id = "https://keyvault-name.vault.azure.net/certificates/certificate-name/pending"
