@@ -546,6 +546,18 @@ class QueryTest(unittest.TestCase):
 
         self.assertEqual(second_page['id'], second_page_fetched_with_continuation_token['id'])
 
+    def test_cross_partition_query_with_continuation_token_fails(self):
+        created_collection = self.config.create_multi_partition_collection_with_custom_pk_if_not_exist(self.client)
+        query = 'SELECT * from c'
+        query_iterable = created_collection.query_items(
+            query=query,
+            enable_cross_partition_query=True,
+            max_item_count=1,
+        )
+
+        with self.assertRaises(AttributeError):
+            pager = query_iterable.by_page("fake_continuation_token")
+
     def _validate_distinct_on_different_types_and_field_orders(self, collection, query, expected_results, get_mock_result):
         self.count = 0
         self.get_mock_result = get_mock_result
