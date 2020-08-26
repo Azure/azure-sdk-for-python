@@ -181,9 +181,9 @@ class DeserializedEvent():
         :param str event_type: The event_type of the EventGridEvent object or the type of the CloudEvent object.
         """
         # if system event type defined, set model.data to system event object
-        if event_type in _event_mappings:
+        try:
             self._model.data = (_event_mappings[event_type]).deserialize(self._model.data)
-        else:    # else, if custom event, then model.data is dict and should be set to None
+        except KeyError:
             self._model.data = None
     
 class CustomEvent(DictMixin):
