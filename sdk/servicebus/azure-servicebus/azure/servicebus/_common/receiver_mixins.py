@@ -5,7 +5,7 @@
 # -------------------------------------------------------------------------
 import uuid
 from uamqp import Source
-from .message import ReceivedMessage, ReceivedMessageBase
+from .message import ReceivedMessage
 from .constants import (
     NEXT_AVAILABLE,
     SESSION_FILTER,
