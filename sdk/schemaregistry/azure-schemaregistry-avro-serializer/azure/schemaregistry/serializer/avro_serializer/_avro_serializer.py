@@ -80,6 +80,7 @@ class AvroObjectSerializer(ABC):
         )
         writer.append(value)
         writer.flush()
+        writer.close()
 
     def deserialize(
         self,
