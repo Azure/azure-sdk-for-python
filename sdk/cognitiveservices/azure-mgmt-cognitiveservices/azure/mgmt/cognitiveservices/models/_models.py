@@ -826,6 +826,23 @@ class PrivateEndpointConnection(Resource):
         self.properties = kwargs.get('properties', None)
 
 
+class PrivateEndpointConnectionListResult(Model):
+    """A list of private endpoint connections.
+
+    :param value: Array of private endpoint connections
+    :type value:
+     list[~azure.mgmt.cognitiveservices.models.PrivateEndpointConnection]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[PrivateEndpointConnection]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PrivateEndpointConnectionListResult, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+
+
 class PrivateEndpointConnectionProperties(Model):
     """Properties of the PrivateEndpointConnectProperties.
 
