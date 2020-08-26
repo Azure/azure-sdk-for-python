@@ -7,6 +7,8 @@
 # --------------------------------------------------------------------------
 
 try:
+    from ._models_py3 import AspectConfidenceScoreLabel
+    from ._models_py3 import AspectRelation
     from ._models_py3 import DetectedLanguage
     from ._models_py3 import DocumentEntities
     from ._models_py3 import DocumentError
@@ -28,13 +30,19 @@ try:
     from ._models_py3 import Match
     from ._models_py3 import MultiLanguageBatchInput
     from ._models_py3 import MultiLanguageInput
+    from ._models_py3 import PiiDocumentEntities
+    from ._models_py3 import PiiEntitiesResult
     from ._models_py3 import RequestStatistics
+    from ._models_py3 import SentenceAspect
+    from ._models_py3 import SentenceOpinion
     from ._models_py3 import SentenceSentiment
     from ._models_py3 import SentimentConfidenceScorePerLabel
     from ._models_py3 import SentimentResponse
     from ._models_py3 import TextAnalyticsError
     from ._models_py3 import TextAnalyticsWarning
 except (SyntaxError, ImportError):
+    from ._models import AspectConfidenceScoreLabel  # type: ignore
+    from ._models import AspectRelation  # type: ignore
     from ._models import DetectedLanguage  # type: ignore
     from ._models import DocumentEntities  # type: ignore
     from ._models import DocumentError  # type: ignore
@@ -56,7 +64,11 @@ except (SyntaxError, ImportError):
     from ._models import Match  # type: ignore
     from ._models import MultiLanguageBatchInput  # type: ignore
     from ._models import MultiLanguageInput  # type: ignore
+    from ._models import PiiDocumentEntities  # type: ignore
+    from ._models import PiiEntitiesResult  # type: ignore
     from ._models import RequestStatistics  # type: ignore
+    from ._models import SentenceAspect  # type: ignore
+    from ._models import SentenceOpinion  # type: ignore
     from ._models import SentenceSentiment  # type: ignore
     from ._models import SentimentConfidenceScorePerLabel  # type: ignore
     from ._models import SentimentResponse  # type: ignore
@@ -64,14 +76,19 @@ except (SyntaxError, ImportError):
     from ._models import TextAnalyticsWarning  # type: ignore
 
 from ._text_analytics_client_enums import (
+    AspectRelationType,
     DocumentSentimentValue,
     ErrorCodeValue,
     InnerErrorCodeValue,
     SentenceSentimentValue,
+    StringIndexType,
+    TokenSentimentValue,
     WarningCodeValue,
 )
 
 __all__ = [
+    'AspectConfidenceScoreLabel',
+    'AspectRelation',
     'DetectedLanguage',
     'DocumentEntities',
     'DocumentError',
@@ -93,15 +110,22 @@ __all__ = [
     'Match',
     'MultiLanguageBatchInput',
     'MultiLanguageInput',
+    'PiiDocumentEntities',
+    'PiiEntitiesResult',
     'RequestStatistics',
+    'SentenceAspect',
+    'SentenceOpinion',
     'SentenceSentiment',
     'SentimentConfidenceScorePerLabel',
     'SentimentResponse',
     'TextAnalyticsError',
     'TextAnalyticsWarning',
+    'AspectRelationType',
     'DocumentSentimentValue',
     'ErrorCodeValue',
     'InnerErrorCodeValue',
     'SentenceSentimentValue',
+    'StringIndexType',
+    'TokenSentimentValue',
     'WarningCodeValue',
 ]
