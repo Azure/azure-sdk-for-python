@@ -15,6 +15,7 @@ jobs:
         SCHEMA_REGISTRY_AZURE_CLIENT_ID: $(schema-registry-sdk-test-client-id)
         SCHEMA_REGISTRY_AZURE_CLIENT_SECRET: $(schema-registry-sdk-test-client-secret)
         SCHEMA_REGISTRY_ENDPOINT: $(schema-registry-sdk-test-endpoint)
+        SCHEMA_REGISTRY_GROUP： $(schema-registry-sdk-test-group)
         AZURE_TEST_RUN_LIVE: 'true'
       Matrix:
         Linux_Python35:

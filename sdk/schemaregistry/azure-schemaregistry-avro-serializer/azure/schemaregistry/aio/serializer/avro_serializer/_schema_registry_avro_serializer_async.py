@@ -27,12 +27,13 @@ from io import BytesIO
 from typing import Any, Dict, Union
 import avro
 
-from azure.schemaregistry import SchemaRegistryClient, SerializationType
+from azure.schemaregistry.aio import SchemaRegistryClient
+from azure.schemaregistry import SerializationType
 
-from ._avro_serializer import AvroObjectSerializer
+from ....serializer.avro_serializer._avro_serializer import AvroObjectSerializer
 
 
-class SchemaRegistryAvroSerializer(object):
+class SchemaRegistryAvroSerializer:
     """
 
     """
@@ -43,23 +44,20 @@ class SchemaRegistryAvroSerializer(object):
         self._id_to_schema = {}
         self._schema_to_id = {}
 
-    def __enter__(self):
-        # type: () -> SchemaRegistryClient
-        self._schema_registry_client.__enter__()
+    async def __aenter__(self):
+        await self._schema_registry_client.__aenter__()
         return self
 
-    def __exit__(self, *exc_details):
-        # type: (Any) -> None
-        self._schema_registry_client.__exit__(*exc_details)
+    async def __aexit__(self, *args):
+        await self._schema_registry_client.__aexit__(*args)
 
-    def close(self):
-        # type: () -> None
+    async def close(self):
         """ This method is to close the sockets opened by the client.
         It need not be used when using with a context manager.
         """
-        self._schema_registry_client.close()
+        await self._schema_registry_client.close()
 
-    def _get_schema_id(self, schema_name, schema_str):
+    async def _get_schema_id(self, schema_name, schema_str):
         # type: (str, str) -> str
         """
 
@@ -70,17 +68,17 @@ class SchemaRegistryAvroSerializer(object):
         try:
             return self._schema_to_id[schema_str]
         except KeyError:
-            schema_id = self._schema_registry_client.register_schema(
+            schema_id = (await self._schema_registry_client.register_schema(
                 self._schema_group,
                 schema_name,
                 SerializationType.AVRO,
                 schema_str
-            ).id
+            )).id
             self._schema_to_id[schema_str] = schema_id
             self._id_to_schema[schema_id] = str(schema_str)
             return schema_id
 
-    def _get_schema(self, schema_id):
+    async def _get_schema(self, schema_id):
         # type: (str) -> str
         """
 
@@ -90,12 +88,12 @@ class SchemaRegistryAvroSerializer(object):
         try:
             return self._id_to_schema[schema_id]
         except KeyError:
-            schema_str = self._schema_registry_client.get_schema(schema_id).content
+            schema_str = (await self._schema_registry_client.get_schema(schema_id)).content
             self._id_to_schema[schema_id] = schema_str
             self._schema_to_id[schema_str] = schema_id
             return schema_str
 
-    def serialize(self, data, schema):
+    async def serialize(self, data, schema):
         # type: (Dict[str, Any], Union[str, bytes, avro.schema.Schema]) -> bytes
         """
 
@@ -106,7 +104,7 @@ class SchemaRegistryAvroSerializer(object):
         if not isinstance(schema, avro.schema.Schema):
             schema = avro.schema.parse(schema)
 
-        schema_id = self._get_schema_id(schema.fullname, str(schema))
+        schema_id = await self._get_schema_id(schema.fullname, str(schema))
         stream = BytesIO()
         self._avro_serializer.serialize(stream, data, schema)
         # TODO: Arthur:  We are adding 4 bytes to the beginning of each SR payload.
@@ -116,7 +114,7 @@ class SchemaRegistryAvroSerializer(object):
         res = record_format_identifier + schema_id.encode('utf-8') + stream.getvalue()
         return res
 
-    def deserialize(self, data):
+    async def deserialize(self, data):
         # type: (bytes) -> Dict[str, Any]
         """
 
@@ -128,7 +126,7 @@ class SchemaRegistryAvroSerializer(object):
         # Right now, you can just put \x00\x00\x00\x00.
         record_format_identifier = data[0:4]
         schema_id = data[4:36].decode('utf-8')
-        schema_content = self._get_schema(schema_id)
+        schema_content = await self._get_schema(schema_id)
         dict_data = self._avro_serializer.deserialize(data[36:])
         try:  # TODO: this part is a draft validation process, but I have the concern that the performance is poor
             schema = avro.schema.parse(schema_content)

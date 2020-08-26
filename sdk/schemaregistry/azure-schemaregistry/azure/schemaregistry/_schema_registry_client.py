@@ -33,6 +33,7 @@ from ._generated._azure_schema_registry import AzureSchemaRegistry
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
+# TODO: Arthur: schema id will be the type of long instead of string
 
 class SchemaRegistryClient:
     """

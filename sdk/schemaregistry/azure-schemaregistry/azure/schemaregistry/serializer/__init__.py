@@ -23,8 +23,4 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from ._schema_registry_avro_serializer_async import SchemaRegistryAvroSerializer
-
-__all__ = [
-    "SchemaRegistryAvroSerializer"
-]
+# __path__ = __import__("pkgutil").extend_path(__path__, __name__)  # type: ignore
