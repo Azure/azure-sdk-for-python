@@ -555,7 +555,7 @@ class QueryTest(unittest.TestCase):
             max_item_count=1,
         )
 
-        with self.assertRaises(AttributeError):
+        with self.assertRaises(ValueError):
             pager = query_iterable.by_page("fake_continuation_token")
 
     def _validate_distinct_on_different_types_and_field_orders(self, collection, query, expected_results, get_mock_result):

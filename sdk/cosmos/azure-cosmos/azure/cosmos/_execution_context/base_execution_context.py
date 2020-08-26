@@ -52,7 +52,7 @@ class _QueryExecutionContextBase(object):
     def _get_initial_continuation(self):
         if "continuation" in self._options:
             if "enableCrossPartitionQuery" in self._options:
-                raise AttributeError("continuation tokens are not supported for cross-partition queries.")
+                raise ValueError("continuation tokens are not supported for cross-partition queries.")
             return self._options["continuation"]
         return None
 
