@@ -12,6 +12,6 @@ from ._shared_access_signature_credential import EventGridSharedAccessSignatureC
 from ._version import VERSION
 
 __all__ = ['EventGridPublisherClient', 'EventGridConsumer',
-            'CloudEvent', 'CustomEvent', 'DeserializedEvent', 'EventGridEvent', 'StorageBlobCreatedEventData'
+            'CloudEvent', 'CustomEvent', 'DeserializedEvent', 'EventGridEvent', 'StorageBlobCreatedEventData',
             'generate_shared_access_signature', 'EventGridSharedAccessSignatureCredential']
 __version__ = VERSION
