@@ -183,7 +183,7 @@ class DeserializedEvent():
         # if system event type defined, set model.data to system event object
         try:
             self._model.data = (_event_mappings[event_type]).deserialize(self._model.data)
-        except KeyError:
+        except KeyError: # else, if custom event, then model.data is dict and should be set to None
             self._model.data = None
     
 class CustomEvent(DictMixin):
