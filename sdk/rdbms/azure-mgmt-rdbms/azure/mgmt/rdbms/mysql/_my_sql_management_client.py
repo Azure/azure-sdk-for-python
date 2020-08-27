@@ -24,8 +24,8 @@ from .operations import LogFilesOperations
 from .operations import ServerAdministratorsOperations
 from .operations import LocationBasedPerformanceTierOperations
 from .operations import CheckNameAvailabilityOperations
-from .operations import ServerSecurityAlertPoliciesOperations
 from .operations import Operations
+from .operations import ServerSecurityAlertPoliciesOperations
 from .operations import QueryTextsOperations
 from .operations import TopQueryStatisticsOperations
 from .operations import WaitStatisticsOperations
@@ -65,10 +65,10 @@ class MySQLManagementClient(MySQLManagementClientOperationsMixin, SDKClient):
     :vartype location_based_performance_tier: azure.mgmt.rdbms.mysql.operations.LocationBasedPerformanceTierOperations
     :ivar check_name_availability: CheckNameAvailability operations
     :vartype check_name_availability: azure.mgmt.rdbms.mysql.operations.CheckNameAvailabilityOperations
-    :ivar server_security_alert_policies: ServerSecurityAlertPolicies operations
-    :vartype server_security_alert_policies: azure.mgmt.rdbms.mysql.operations.ServerSecurityAlertPoliciesOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.rdbms.mysql.operations.Operations
+    :ivar server_security_alert_policies: ServerSecurityAlertPolicies operations
+    :vartype server_security_alert_policies: azure.mgmt.rdbms.mysql.operations.ServerSecurityAlertPoliciesOperations
     :ivar query_texts: QueryTexts operations
     :vartype query_texts: azure.mgmt.rdbms.mysql.operations.QueryTextsOperations
     :ivar top_query_statistics: TopQueryStatistics operations
@@ -128,9 +128,9 @@ class MySQLManagementClient(MySQLManagementClientOperationsMixin, SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.check_name_availability = CheckNameAvailabilityOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.server_security_alert_policies = ServerSecurityAlertPoliciesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.server_security_alert_policies = ServerSecurityAlertPoliciesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.query_texts = QueryTextsOperations(
             self._client, self.config, self._serialize, self._deserialize)
