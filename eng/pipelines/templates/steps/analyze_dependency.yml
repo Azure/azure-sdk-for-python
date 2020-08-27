@@ -4,10 +4,10 @@ steps:
     inputs:
      versionSpec: '$(PythonVersion)'
 
-  - script: |
-     pip install -r eng/ci_tools.txt
-     ward scan -d $(Build.SourcesDirectory) -c $(Build.SourcesDirectory)/eng/.docsettings.yml
-    displayName: 'Verify Readmes'
+  # - script: |
+  #    pip install -r eng/ci_tools.txt
+  #    ward scan -d $(Build.SourcesDirectory) -c $(Build.SourcesDirectory)/eng/.docsettings.yml
+  #   displayName: 'Verify Readmes'
 
   - pwsh: |
       mkdir "$(Build.ArtifactStagingDirectory)/reports"
