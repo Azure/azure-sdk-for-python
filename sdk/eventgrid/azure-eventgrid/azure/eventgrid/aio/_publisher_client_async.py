@@ -28,7 +28,8 @@ if TYPE_CHECKING:
         Dict,
         List[CloudEvent],
         List[EventGridEvent],
-        List[CustomEvent]
+        List[CustomEvent],
+        List[Dict]
     ]
 
 class EventGridPublisherClient(object):
