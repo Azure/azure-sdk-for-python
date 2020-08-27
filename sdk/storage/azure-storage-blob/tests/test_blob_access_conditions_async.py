@@ -746,6 +746,38 @@ class StorageBlobAccessConditionsAsyncTest(AsyncStorageTestCase):
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
+    async def test_if_blob_exists(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+        self._setup()
+        await self._create_container_and_block_blob(
+            self.container_name, 'blob1', b'hello world', bsc)
+        # Act
+        blob = bsc.get_blob_client(self.container_name, 'blob1')
+        old_blob_props = await blob.get_blob_properties()
+        old_blob_version_id = old_blob_props.get("version_id")
+        self.assertIsNotNone(old_blob_version_id)
+        await blob.stage_block(block_id='1', data="this is test content")
+        await blob.commit_block_list(['1'])
+        new_blob_props = await blob.get_blob_properties()
+        new_blob_version_id = new_blob_props.get("version_id")
+
+        # Assert
+        self.assertEqual(await blob.exists(version_id=old_blob_version_id), False)
+        self.assertEqual(await blob.exists(version_id=new_blob_version_id), True)
+
+        # Act
+        test_snapshot = await blob.create_snapshot()
+        blob_snapshot = bsc.get_blob_client(self.container_name, 'blob1', snapshot=test_snapshot)
+        self.assertEqual(await blob_snapshot.exists(), True)
+        await blob.stage_block(block_id='1', data="this is additional test content")
+        await blob.commit_block_list(['1'])
+
+        # Assert
+        self.assertEqual(await blob_snapshot.exists(), True)
+        self.assertEqual(await blob.exists(), True)
+
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_properties_with_if_modified(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()

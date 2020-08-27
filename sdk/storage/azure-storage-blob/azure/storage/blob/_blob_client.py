@@ -919,7 +919,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             process_storage_error(error)
 
     @distributed_trace()
-    def exists(self, timeout=None, version_id=None):
+    def exists(self, **kwargs):
         # type: (**Any) -> bool
         """
         Returns True if a blob exists with the defined parameters, and returns
@@ -933,10 +933,14 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :returns: boolean
         """
         try:
-            self._client.blob.get_properties(
-                timeout=timeout,
-                version_id=version_id)
-            return True
+            blob_props = self._client.blob.get_properties(
+                timeout=kwargs.pop('timeout', None),
+                version_id=kwargs.pop('version_id', None),
+                snapshot=self.snapshot,
+                cls=deserialize_blob_properties)
+            if blob_props and blob_props.is_current_version or blob_props and self.snapshot:
+                return True
+            return False
         except StorageErrorException:
             return False
 

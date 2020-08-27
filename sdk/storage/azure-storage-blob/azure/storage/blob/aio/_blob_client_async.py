@@ -461,6 +461,32 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             process_storage_error(error)
 
     @distributed_trace_async
+    async def exists(self, **kwargs):
+        # type: (**Any) -> bool
+        """
+        Returns True if a blob exists with the defined parameters, and returns
+        False otherwise.
+
+        :param str version_id:
+            The version id parameter is an opaque DateTime
+            value that, when present, specifies the version of the blob to check if it exists.
+        :param int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: boolean
+        """
+        try:
+            blob_props = await self._client.blob.get_properties(
+                timeout=kwargs.pop('timeout', None),
+                version_id=kwargs.pop('version_id', None),
+                snapshot=self.snapshot,
+                cls=deserialize_blob_properties)
+            if blob_props and blob_props.is_current_version or blob_props and self.snapshot:
+                return True
+            return False
+        except StorageErrorException:
+            return False
+
+    @distributed_trace_async
     async def get_blob_properties(self, **kwargs):
         # type: (Any) -> BlobProperties
         """Returns all user-defined metadata, standard HTTP properties, and

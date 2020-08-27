@@ -721,13 +721,28 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         self._setup()
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
-        test_datetime = (datetime.utcnow() -
-                         timedelta(minutes=15))
         # Act
         blob = bsc.get_blob_client(self.container_name, 'blob1')
-        blob_version_id = blob.get_blob_properties().get("version_id")
-        self.assertEqual(blob.exists(version_id=blob_version_id), True)
-        self.assertEqual(blob.exists(version_id="bad_version_id"), False)
+        old_blob_version_id = blob.get_blob_properties().get("version_id")
+        self.assertIsNotNone(old_blob_version_id)
+        blob.stage_block(block_id='1', data="this is test content")
+        blob.commit_block_list(['1'])
+        new_blob_version_id = blob.get_blob_properties().get("version_id")
+
+        # Assert
+        self.assertEqual(blob.exists(version_id=old_blob_version_id), False)
+        self.assertEqual(blob.exists(version_id=new_blob_version_id), True)
+
+        # Act
+        test_snapshot = blob.create_snapshot()
+        blob_snapshot = bsc.get_blob_client(self.container_name, 'blob1', snapshot=test_snapshot)
+        self.assertEqual(blob_snapshot.exists(), True)
+        blob.stage_block(block_id='1', data="this is additional test content")
+        blob.commit_block_list(['1'])
+
+        # Assert
+        self.assertEqual(blob_snapshot.exists(), True)
+        self.assertEqual(blob.exists(), True)
 
     @GlobalStorageAccountPreparer()
     def test_get_blob_properties_with_if_modified_fail(self, resource_group, location, storage_account, storage_account_key):
