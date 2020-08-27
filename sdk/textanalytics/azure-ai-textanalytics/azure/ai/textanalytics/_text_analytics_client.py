@@ -93,6 +93,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         )
         self._default_language = kwargs.pop("default_language", "en")
         self._default_country_hint = kwargs.pop("default_country_hint", "US")
+        self._string_index_type = None if kwargs.get("api_version") == "v3.0" else "UnicodeCodePoint"
 
     @distributed_trace
     def detect_language(  # type: ignore
@@ -148,6 +149,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         docs = _validate_input(documents, "country_hint", country_hint)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
+        if self._string_index_type:
+            kwargs.update({"string_index_type": self._string_index_type})
         try:
             return self._client.languages(
                 documents=docs,
@@ -213,6 +216,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         docs = _validate_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
+        if self._string_index_type:
+            kwargs.update({"string_index_type": self._string_index_type})
         try:
             return self._client.entities_recognition_general(
                 documents=docs,
@@ -278,6 +283,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         docs = _validate_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
+        if self._string_index_type:
+            kwargs.update({"string_index_type": self._string_index_type})
         try:
             return self._client.entities_recognition_pii(
                 documents=docs,
@@ -350,6 +357,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         docs = _validate_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
+        if self._string_index_type:
+            kwargs.update({"string_index_type": self._string_index_type})
         try:
             return self._client.entities_linking(
                 documents=docs,
@@ -416,6 +425,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         docs = _validate_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
+        if self._string_index_type:
+            kwargs.update({"string_index_type": self._string_index_type})
         try:
             return self._client.key_phrases(
                 documents=docs,
@@ -490,6 +501,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
         show_opinion_mining = kwargs.pop("show_opinion_mining", None)
+        if self._string_index_type:
+            kwargs.update({"string_index_type": self._string_index_type})
 
         if show_opinion_mining is not None:
             kwargs.update({"opinion_mining": show_opinion_mining})
