@@ -34,6 +34,6 @@ If you encounter any bugs or have suggestions, please file an issue in the [Issu
 
 ![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fsdk%2Ftemplate%2Fazure-template%2FREADME.png)
 
-https://github.com/Azure/azure-sdk-for-net/tree/master/sdk/appconfiguration/Azure.ResourceManager.AppConfiguration
+https://github.com/azure-sdk/azure-sdk-for-python/blob/master/sdk/appconfiguration/ci.yml
 
-https://github.com/Azure/azure-sdk-for-net/tree/master/sdk/appconfiguration/Azure.ResourceManager.AppConfiguration
+https://github.com/azure-sdk/azure-sdk-for-python/blob/master/sdk/appconfiguration/ci.yml
