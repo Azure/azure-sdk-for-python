@@ -26,8 +26,7 @@
 import abc
 from typing import BinaryIO, Union, Type, TypeVar, Optional, Any
 
-from avro.datafile import DataFileWriter, DataFileReader
-from avro.io import DatumWriter, DatumReader
+from avro.io import DatumWriter, DatumReader, BinaryDecoder, BinaryEncoder
 
 try:
     ABC = abc.ABC
@@ -72,18 +71,12 @@ class AvroObjectSerializer(ABC):
         if self._writer_codec:
             kwargs['codec'] = self._writer_codec
 
-        writer = DataFileWriter(
-            stream,
-            DatumWriter(),
-            schema,
-            **kwargs
-        )
-        writer.append(value)
-        writer.flush()
-        writer.close()
+        writer = DatumWriter(schema)  # TODO: cache it
+        writer.write(value, BinaryEncoder(stream))
 
     def deserialize(
         self,
+        schema,  # type:
         data,  # type: Union[bytes, BinaryIO]
         return_type=None,  # type: Optional[Type[ObjectType]]
     ):
@@ -92,6 +85,7 @@ class AvroObjectSerializer(ABC):
         Return type will be ignored, since the schema is deduced from the provided bytes.
         :param data: A stream of bytes or bytes directly
         :type data: BinaryIO or bytes
+        :param schema: A Avro RecordSchema
         :param return_type: Return type is not supported in the Avro serializer.
         :returns: An instanciated object
         :rtype: ObjectType
@@ -100,15 +94,8 @@ class AvroObjectSerializer(ABC):
             from io import BytesIO
             data = BytesIO(data)
 
-        reader = DataFileReader(
-            data,
-            DatumReader()
-        )
-        obj = next(reader)
-        try:
-            next(reader)
-            raise ValueError("This avro stream is multiple object stream")
-        except StopIteration:
-            pass
-        reader.close()
+        avro_reader = DatumReader(writers_schema=schema)
+        bin_decoder = BinaryDecoder(data)
+        obj = avro_reader.read(bin_decoder)
+        data.close()
         return obj

@@ -114,6 +114,7 @@ class SchemaRegistryAvroSerializer(object):
         # Right now, you can just put \x00\x00\x00\x00.
         record_format_identifier = b'\0\0\0\0'
         res = record_format_identifier + schema_id.encode('utf-8') + stream.getvalue()
+        stream.close()
         return res
 
     def deserialize(self, data):
