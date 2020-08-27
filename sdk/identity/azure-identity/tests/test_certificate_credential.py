@@ -34,10 +34,9 @@ except ImportError:  # python < 3.3
     from mock import Mock, patch  # type: ignore
 
 CERT_PATH = os.path.join(os.path.dirname(__file__), "certificate.pem")
-CERT_WITH_INTERMEDIATE_PATH = os.path.join(os.path.dirname(__file__), "certificate-with-intermediate.pem")
 CERT_WITH_PASSWORD_PATH = os.path.join(os.path.dirname(__file__), "certificate-with-password.pem")
 CERT_PASSWORD = "password"
-ALL_CERTS = ((CERT_PATH, None), (CERT_WITH_INTERMEDIATE_PATH, None), (CERT_WITH_PASSWORD_PATH, CERT_PASSWORD))
+BOTH_CERTS = ((CERT_PATH, None), (CERT_WITH_PASSWORD_PATH, CERT_PASSWORD))
 
 
 def test_no_scopes():
@@ -109,8 +108,9 @@ def test_authority(authority):
     assert kwargs["authority"] == expected_authority
 
 
-@pytest.mark.parametrize("cert_path,cert_password", ALL_CERTS)
-def test_request_body(cert_path, cert_password):
+@pytest.mark.parametrize("cert_path,cert_password", BOTH_CERTS)
+@pytest.mark.parametrize("send_certificate", (True, False))
+def test_request_body(cert_path, cert_password, send_certificate):
     access_token = "***"
     authority = "authority.com"
     client_id = "client-id"
@@ -125,36 +125,7 @@ def test_request_body(cert_path, cert_password):
         assert request.body["scope"] == expected_scope
 
         with open(cert_path, "rb") as cert_file:
-            validate_jwt(request, client_id, cert_file.read())
-
-        return mock_response(json_payload={"token_type": "Bearer", "expires_in": 42, "access_token": access_token})
-
-    cred = CertificateCredential(
-        tenant_id, client_id, cert_path, password=cert_password, transport=Mock(send=mock_send), authority=authority
-    )
-    token = cred.get_token(expected_scope)
-    assert token.token == access_token
-
-
-@pytest.mark.parametrize("cert_path,cert_password", ALL_CERTS)
-def test_send_certificate(cert_path, cert_password):
-    """given send_certificate=True, the credential should add an x5c claim to the JWT header"""
-
-    access_token = "***"
-    authority = "localhost"
-    client_id = "client-id"
-    expected_scope = "scope"
-    tenant_id = "tenant"
-
-    def mock_send(request, **_):
-        if not request.body:
-            return get_discovery_response()
-
-        assert request.body["grant_type"] == "client_credentials"
-        assert request.body["scope"] == expected_scope
-
-        with open(cert_path, "rb") as cert_file:
-            validate_jwt(request, client_id, cert_file.read(), expect_x5c=True)
+            validate_jwt(request, client_id, cert_file.read(), expect_x5c=send_certificate)
 
         return mock_response(json_payload=build_aad_response(access_token=access_token))
 
@@ -165,7 +136,7 @@ def test_send_certificate(cert_path, cert_password):
         password=cert_password,
         transport=Mock(send=mock_send),
         authority=authority,
-        send_certificate=True,
+        send_certificate=send_certificate,
     )
     token = cred.get_token(expected_scope)
     assert token.token == access_token
@@ -207,7 +178,7 @@ def validate_jwt(request, client_id, pem_bytes, expect_x5c=False):
     cert.public_key().verify(signature, signed_part.encode("utf-8"), padding.PKCS1v15(), hashes.SHA256())
 
 
-@pytest.mark.parametrize("cert_path,cert_password", ALL_CERTS)
+@pytest.mark.parametrize("cert_path,cert_password", BOTH_CERTS)
 def test_enable_persistent_cache(cert_path, cert_password):
     """the credential should use the persistent cache only when given enable_persistent_cache=True"""
 
@@ -239,7 +210,7 @@ def test_enable_persistent_cache(cert_path, cert_password):
 
 @patch("azure.identity._internal.persistent_cache.sys.platform", "linux2")
 @patch("azure.identity._internal.persistent_cache.msal_extensions")
-@pytest.mark.parametrize("cert_path,cert_password", ALL_CERTS)
+@pytest.mark.parametrize("cert_path,cert_password", BOTH_CERTS)
 def test_persistent_cache_linux(mock_extensions, cert_path, cert_password):
     """The credential should use an unencrypted cache when encryption is unavailable and the user explicitly opts in.
 
@@ -268,7 +239,7 @@ def test_persistent_cache_linux(mock_extensions, cert_path, cert_password):
     assert mock_extensions.PersistedTokenCache.called_with(mock_extensions.FilePersistence)
 
 
-@pytest.mark.parametrize("cert_path,cert_password", ALL_CERTS)
+@pytest.mark.parametrize("cert_path,cert_password", BOTH_CERTS)
 def test_persistent_cache_multiple_clients(cert_path, cert_password):
     """the credential shouldn't use tokens issued to other service principals"""
 
