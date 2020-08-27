@@ -21,7 +21,8 @@ if TYPE_CHECKING:
         Dict,
         List[CloudEvent],
         List[EventGridEvent],
-        List[CustomEvent]
+        List[CustomEvent],
+        List[Dict]
     ]
 
 from ._models import CloudEvent, EventGridEvent, CustomEvent
@@ -53,6 +54,7 @@ class EventGridPublisherClient(object):
         :param events: A list of CloudEvent/EventGridEvent/CustomEvent to be sent.
         :type events: Union[List[models.CloudEvent], List[models.EventGridEvent], List[models.CustomEvent]]
         :keyword str content_type: The type of content to be used to send the events.
+        Has default value "application/json; charset=utf-8" for EventGridEvents, with "cloudevents-batch+json" for CloudEvents
         :rtype: None
         :raise: :class:`ValueError`, when events do not follow specified SendType.
          """
