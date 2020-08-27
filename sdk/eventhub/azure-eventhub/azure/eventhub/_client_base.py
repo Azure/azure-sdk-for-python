@@ -44,7 +44,7 @@ _AccessToken = collections.namedtuple("AccessToken", "token expires_on")
 
 
 def _parse_conn_str(conn_str, kwargs):
-    # type: (str, Dict[str, Any]) -> Tuple[str, str, str, str, Optional[str], Optional[int]]
+    # type: (str, Dict[str, Any]) -> Tuple[str, Optional[str], Optional[str], str, Optional[str], Optional[int]]
     endpoint = None
     shared_access_key_name = None
     shared_access_key = None
@@ -65,11 +65,10 @@ def _parse_conn_str(conn_str, kwargs):
         elif key.lower() == "entitypath":
             entity_path = value
         elif key.lower() == "sharedaccesstoken":
-            shared_access_token = str(value)
-            print("TOKEN*#^Q@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
-            print(value)
+            shared_access_token = value
             try:
-                shared_access_token_expiry = int(shared_access_token.split('se=')[1].split('&')[0] or None)
+                # Expiry can be stored in the "se=<timestamp>" clause of the token. ('&'-separated key-value pairs)
+                shared_access_token_expiry = int(shared_access_token.split('se=')[1].split('&')[0]) # type: ignore
             except (IndexError, TypeError, ValueError) as e: # Fallback since technically expiry is optional.
                 # An arbitrary, absurdly large number, since you can't renew.
                 shared_access_token_expiry = time.time() * 2
@@ -85,7 +84,12 @@ def _parse_conn_str(conn_str, kwargs):
         host = cast(str, endpoint)[left_slash_pos + 2 :]
     else:
         host = str(endpoint)
-    return host, str(shared_access_key_name), str(shared_access_key), entity, shared_access_token, shared_access_token_expiry
+    return (host,
+            str(shared_access_key_name) if shared_access_key_name else None,
+            str(shared_access_key) if shared_access_key else None,
+            entity,
+            str(shared_access_token) if shared_access_token else None,
+            shared_access_token_expiry)
 
 
 def _generate_sas_token(uri, policy, key, expiry=None):
@@ -141,10 +145,10 @@ class EventHubSASTokenCredential(object):
     """The shared access token credential used for authentication.
 
     :param str token: The shared access token string
-    :param float expiry: The epoch timestamp
+    :param int expiry: The epoch timestamp
     """
     def __init__(self, token, expiry):
-        # type: (str, float) -> None
+        # type: (str, int) -> None
         """
         :param str token: The shared access token string
         :param float expiry: The epoch timestamp
@@ -163,12 +167,6 @@ class EventHubSASTokenCredential(object):
 
 class ClientBase(object):  # pylint:disable=too-many-instance-attributes
     def __init__(self, fully_qualified_namespace, eventhub_name, credential, **kwargs):
-        print("MAKING CLIENT~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-        print(fully_qualified_namespace, eventhub_name, credential, kwargs)
-        try:
-            print(credential.token, credential.expiry)
-        except:
-            pass
         # type: (str, str, TokenCredential, Any) -> None
         self.eventhub_name = eventhub_name
         if not eventhub_name:
@@ -195,7 +193,6 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         kwargs["fully_qualified_namespace"] = host
         kwargs["eventhub_name"] = entity
         kwargs["credential"] = EventHubSASTokenCredential(token, time.time() + 3000) if token else EventHubSharedKeyCredential(policy, key)
-        print(kwargs)
         return kwargs
 
     def _create_auth(self):

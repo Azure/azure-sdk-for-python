@@ -1,6 +1,6 @@
 # Release History
 
-## 5.2.0b2 (Unreleased)
+## 5.2.0 (2020-09-07)
 
 **New Features**
 
