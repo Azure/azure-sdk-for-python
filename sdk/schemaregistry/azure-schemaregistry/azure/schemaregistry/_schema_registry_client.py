@@ -26,6 +26,7 @@
 from typing import Any, TYPE_CHECKING, Union
 from enum import Enum
 
+from ._common._constants import SerializationType
 from ._common._schema import Schema, SchemaId
 from ._common._response_handlers import _parse_response_schema, _parse_response_schema_id
 from ._generated._azure_schema_registry import AzureSchemaRegistry
@@ -34,6 +35,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 # TODO: Arthur: schema id will be the type of long instead of string
+
 
 class SchemaRegistryClient:
     """
@@ -79,8 +81,8 @@ class SchemaRegistryClient:
         """
         self._generated_client.close()
 
-    def register_schema(self, schema_group, schema_name, serialization_type, schema_string):  # TODO: serialization_type Enum + string?
-        # type: (str, str, Union[str, Enum], str) -> SchemaId
+    def register_schema(self, schema_group, schema_name, serialization_type, schema_string, **kwargs):  # TODO: serialization_type Enum + string?
+        # type: (str, str, Union[str, SerializationType], str, Any) -> SchemaId
         """
         Register new schema. If schema of specified name does not exist in specified group,
         schema is created at version 1. If schema of specified name exists already in specified group,
@@ -89,7 +91,7 @@ class SchemaRegistryClient:
         :param str schema_group: Schema group under which schema should be registered.
         :param str schema_name: Name of schema being registered.
         :param serialization_type: Serialization type for the schema being registered.
-        :type serialization_type: Union[str, Enum]
+        :type serialization_type: Union[str, SerializationType]
         :param str schema_string: String representation of the schema being registered.
         :rtype: SchemaId
 
@@ -103,6 +105,11 @@ class SchemaRegistryClient:
                 :caption: Register a new schema.
 
         """
+        try:
+            serialization_type = serialization_type.value
+        except AttributeError:
+            pass
+
         return self._generated_client.schema.register(
             group_name=schema_group,
             schema_name=schema_name,
@@ -111,8 +118,8 @@ class SchemaRegistryClient:
             cls=_parse_response_schema_id
         )
 
-    def get_schema(self, schema_id):
-        # type: (str) -> Schema
+    def get_schema(self, schema_id, **kwargs):
+        # type: (str, Any) -> Schema
         """
         Gets a registered schema by its unique ID.
         Azure Schema Registry guarantees that ID is unique within a namespace.
@@ -135,8 +142,8 @@ class SchemaRegistryClient:
             cls=_parse_response_schema
         )
 
-    def get_schema_id(self, schema_group, schema_name, serialization_type, schema_string):
-        # type: (str, str, str, Union[str, Enum]) -> SchemaId
+    def get_schema_id(self, schema_group, schema_name, serialization_type, schema_string, **kwargs):
+        # type: (str, str, str, Union[str, SerializationType], Any) -> SchemaId
         """
         Gets the ID referencing an existing schema within the specified schema group,
         as matched by schema content comparison.
@@ -144,7 +151,8 @@ class SchemaRegistryClient:
         :param str schema_group: Schema group under which schema should be registered.
         :param str schema_name: Name of schema being registered.
         :param serialization_type: Serialization type for the schema being registered.
-        :type serialization_type: Union[str, Enum]
+         The
+        :type serialization_type: Union[str, SerializationType]
         :param str schema_string: String representation of the schema being registered.
         :rtype: SchemaId
 
@@ -158,6 +166,11 @@ class SchemaRegistryClient:
                 :caption: Get schema id.
 
         """
+        try:
+            serialization_type = serialization_type.value
+        except AttributeError:
+            pass
+
         return self._generated_client.schema.query_id_by_content(
             group_name=schema_group,
             schema_name=schema_name,

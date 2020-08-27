@@ -26,6 +26,9 @@
 from typing import Any, Dict
 
 
+# TODO: Arthur: schema id will be the type of long instead of string
+
+
 class DictMixin(object):
 
     def __setitem__(self, key, item):
@@ -96,6 +99,7 @@ class SchemaMeta(DictMixin):
         self,
         **kwargs
     ):
+        # type: (Any) -> None
         self.location = kwargs.get('Location')
         self.id = kwargs.get("X-Schema-Id")
         self.id_location = kwargs.get('X-Schema-Id-Location')
@@ -133,7 +137,7 @@ class SchemaId(SchemaMeta):  # TODO: need a better name here?
         schema_id,
         **kwargs
     ):
-        # type: (str, Dict[str, Any]) -> None
+        # type: (str, Any) -> None
         super(SchemaId, self).__init__(**kwargs)
         self.id = schema_id
 
@@ -170,6 +174,6 @@ class Schema(SchemaMeta):
         schema_str,
         **kwargs
     ):
-        # type: (str, Dict[str, Any]) -> None
+        # type: (str, Any) -> None
         super(Schema, self).__init__(**kwargs)
         self.content = schema_str

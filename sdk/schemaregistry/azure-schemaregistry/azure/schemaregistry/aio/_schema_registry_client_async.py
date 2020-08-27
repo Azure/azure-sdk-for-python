@@ -24,8 +24,8 @@
 #
 # --------------------------------------------------------------------------
 from typing import Any, TYPE_CHECKING, Union
-from enum import Enum
 
+from .._common._constants import SerializationType
 from .._common._response_handlers import _parse_response_schema_id, _parse_response_schema
 from .._common._schema import SchemaId, Schema
 from .._generated.aio._azure_schema_registry_async import AzureSchemaRegistry
@@ -35,6 +35,7 @@ if TYPE_CHECKING:
 
 # TODO: Arthur: schema id will be the type of long instead of string
 
+
 class SchemaRegistryClient:
     """
     SchemaRegistryClient is as a central schema repository for enterprise-level data infrastructure,
@@ -42,7 +43,7 @@ class SchemaRegistryClient:
 
     :param str endpoint: The Schema Registry service endpoint, for example my-namespace.servicebus.windows.net.
     :param credential: To authenticate to manage the entities of the SchemaRegistry namespace.
-    :type credential: TokenCredential
+    :type credential: AsyncTokenCredential
 
     .. admonition:: Example:
 
@@ -79,8 +80,9 @@ class SchemaRegistryClient:
         self,
         schema_group: str,
         schema_name: str,
-        serialization_type: Union[str, Enum],
-        schema_string: str
+        serialization_type: Union[str, SerializationType],
+        schema_string: str,
+        **kwargs: Any
     ) -> SchemaId:
         """
         Register new schema. If schema of specified name does not exist in specified group,
@@ -90,7 +92,7 @@ class SchemaRegistryClient:
         :param str schema_group: Schema group under which schema should be registered.
         :param str schema_name: Name of schema being registered.
         :param serialization_type: Serialization type for the schema being registered.
-        :type serialization_type: Union[str, Enum]
+        :type serialization_type: Union[str, SerializationType]
         :param str schema_string: String representation of the schema being registered.
         :rtype: SchemaId
 
@@ -104,6 +106,11 @@ class SchemaRegistryClient:
                 :caption: Register a new schema.
 
         """
+        try:
+            serialization_type = serialization_type.value
+        except AttributeError:
+            pass
+
         return await self._generated_client.schema.register(
             group_name=schema_group,
             schema_name=schema_name,
@@ -114,7 +121,8 @@ class SchemaRegistryClient:
 
     async def get_schema(
         self,
-        schema_id: str
+        schema_id: str,
+        **kwargs: Any
     ) -> Schema:
         """
         Gets a registered schema by its unique ID.
@@ -142,9 +150,10 @@ class SchemaRegistryClient:
         self,
         schema_group: str,
         schema_name: str,
-        serialization_type: Union[str, Enum],
-        schema_string: str
-    ) -> str:
+        serialization_type: Union[str, SerializationType],
+        schema_string: str,
+        **kwargs: Any
+    ) -> SchemaId:
         """
         Gets the ID referencing an existing schema within the specified schema group,
         as matched by schema content comparison.
@@ -152,7 +161,7 @@ class SchemaRegistryClient:
         :param str schema_group: Schema group under which schema should be registered.
         :param str schema_name: Name of schema being registered.
         :param serialization_type: Serialization type for the schema being registered.
-        :type serialization_type: Union[str, Enum]
+        :type serialization_type: Union[str, SerializationType]
         :param str schema_string: String representation of the schema being registered.
         :rtype: SchemaId
 
@@ -166,6 +175,11 @@ class SchemaRegistryClient:
                 :caption:Get schema id.
 
         """
+        try:
+            serialization_type = serialization_type.value
+        except AttributeError:
+            pass
+
         return await self._generated_client.schema.query_id_by_content(
             group_name=schema_group,
             schema_name=schema_name,
