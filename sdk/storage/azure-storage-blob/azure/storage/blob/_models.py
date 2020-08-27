@@ -548,6 +548,7 @@ class BlobProperties(DictMixin):
         self.request_server_encrypted = kwargs.get('x-ms-server-encrypted')
         self.object_replication_source_properties = kwargs.get('object_replication_source_properties')
         self.object_replication_destination_policy = kwargs.get('x-ms-or-policy-id')
+        self.last_accessed_on = kwargs.get('x-ms-last-accessed-time', None)
         self.tag_count = kwargs.get('x-ms-tag-count')
         self.tags = None
 
