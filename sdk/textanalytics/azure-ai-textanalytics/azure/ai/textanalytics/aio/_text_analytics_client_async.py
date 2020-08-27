@@ -153,8 +153,6 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         docs = _validate_input(documents, "country_hint", country_hint)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
-        if self._string_index_type:
-            kwargs.update({"string_index_type": self._string_index_type})
         try:
             return await self._client.languages(
                 documents=docs,
@@ -425,8 +423,6 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         docs = _validate_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
-        if self._string_index_type:
-            kwargs.update({"string_index_type": self._string_index_type})
         try:
             return await self._client.key_phrases(
                 documents=docs,
