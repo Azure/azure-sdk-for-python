@@ -23,9 +23,9 @@ if TYPE_CHECKING:
 
 class AnomalyDetectorClientOperationsMixin(object):
 
-    def entire_detect(
+    def detect_entire_series(
         self,
-        body,  # type: "models.Request"
+        body,  # type: "models.DetectRequest"
         **kwargs  # type: Any
     ):
         # type: (...) -> "models.EntireDetectResponse"
@@ -37,7 +37,7 @@ class AnomalyDetectorClientOperationsMixin(object):
 
         :param body: Time series points and period if needed. Advanced model parameters can also be set
          in the request.
-        :type body: ~azure.ai.anomalydetector.models.Request
+        :type body: ~azure.ai.anomalydetector.models.DetectRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: EntireDetectResponse, or the result of cls(response)
         :rtype: ~azure.ai.anomalydetector.models.EntireDetectResponse
@@ -49,7 +49,7 @@ class AnomalyDetectorClientOperationsMixin(object):
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
-        url = self.entire_detect.metadata['url']  # type: ignore
+        url = self.detect_entire_series.metadata['url']  # type: ignore
         path_format_arguments = {
             'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
@@ -64,7 +64,7 @@ class AnomalyDetectorClientOperationsMixin(object):
         header_parameters['Accept'] = 'application/json'
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(body, 'Request')
+        body_content = self._serialize.body(body, 'DetectRequest')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
 
@@ -73,7 +73,7 @@ class AnomalyDetectorClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.APIError, response)
+            error = self._deserialize(models.AnomalyDetectorError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('EntireDetectResponse', pipeline_response)
@@ -82,11 +82,11 @@ class AnomalyDetectorClientOperationsMixin(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    entire_detect.metadata = {'url': '/timeseries/entire/detect'}  # type: ignore
+    detect_entire_series.metadata = {'url': '/timeseries/entire/detect'}  # type: ignore
 
-    def last_detect(
+    def detect_last_point(
         self,
-        body,  # type: "models.Request"
+        body,  # type: "models.DetectRequest"
         **kwargs  # type: Any
     ):
         # type: (...) -> "models.LastDetectResponse"
@@ -98,7 +98,7 @@ class AnomalyDetectorClientOperationsMixin(object):
 
         :param body: Time series points and period if needed. Advanced model parameters can also be set
          in the request.
-        :type body: ~azure.ai.anomalydetector.models.Request
+        :type body: ~azure.ai.anomalydetector.models.DetectRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: LastDetectResponse, or the result of cls(response)
         :rtype: ~azure.ai.anomalydetector.models.LastDetectResponse
@@ -110,7 +110,7 @@ class AnomalyDetectorClientOperationsMixin(object):
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
-        url = self.last_detect.metadata['url']  # type: ignore
+        url = self.detect_last_point.metadata['url']  # type: ignore
         path_format_arguments = {
             'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
@@ -125,7 +125,7 @@ class AnomalyDetectorClientOperationsMixin(object):
         header_parameters['Accept'] = 'application/json'
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(body, 'Request')
+        body_content = self._serialize.body(body, 'DetectRequest')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
 
@@ -134,7 +134,7 @@ class AnomalyDetectorClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.APIError, response)
+            error = self._deserialize(models.AnomalyDetectorError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('LastDetectResponse', pipeline_response)
@@ -143,9 +143,9 @@ class AnomalyDetectorClientOperationsMixin(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    last_detect.metadata = {'url': '/timeseries/last/detect'}  # type: ignore
+    detect_last_point.metadata = {'url': '/timeseries/last/detect'}  # type: ignore
 
-    def change_point_detect(
+    def detect_change_point(
         self,
         body,  # type: "models.ChangePointDetectRequest"
         **kwargs  # type: Any
@@ -169,7 +169,7 @@ class AnomalyDetectorClientOperationsMixin(object):
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
-        url = self.change_point_detect.metadata['url']  # type: ignore
+        url = self.detect_change_point.metadata['url']  # type: ignore
         path_format_arguments = {
             'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
@@ -193,7 +193,7 @@ class AnomalyDetectorClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.APIError, response)
+            error = self._deserialize(models.AnomalyDetectorError, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('ChangePointDetectResponse', pipeline_response)
@@ -202,4 +202,4 @@ class AnomalyDetectorClientOperationsMixin(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    change_point_detect.metadata = {'url': '/timeseries/changePoint/detect'}  # type: ignore
+    detect_change_point.metadata = {'url': '/timeseries/changepoint/detect'}  # type: ignore
