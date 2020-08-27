@@ -12,6 +12,8 @@ param (
   $Tag
 )
 
+. (Join-Path $PSScriptRoot link-replacement.ps1)
+
 $Language = $Language.ToLower()
 
 # Regex inspired but simplified from https://semver.org/#is-there-a-suggested-regular-expression-regex-to-check-a-semver-string
