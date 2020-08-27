@@ -2,7 +2,10 @@
 
 ## 3.0.0b2 (Unreleased)
 
+  **Bug Fixes**
   - Fixed an issue with ChangePointDetect
+
+  **Breaking Changes**
   - Renamed `entire_detect` to `detect_entire_series`
   - Renamed `APIError` to `AnomalyDetectorError`
   - Renamed `Request` to `DetectRequest`
