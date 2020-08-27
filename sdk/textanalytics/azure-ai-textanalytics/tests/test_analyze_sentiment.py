@@ -16,7 +16,7 @@ from azure.ai.textanalytics import (
     TextAnalyticsClient,
     TextDocumentInput,
     VERSION,
-    TextAnalyticsApiVersion
+    TextAnalyticsApiVersion,
 )
 
 # pre-apply the client_cls positional argument so it needn't be explicitly passed below
@@ -665,3 +665,23 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
             client.analyze_sentiment(["will fail"], show_opinion_mining=True)
 
         assert "'show_opinion_mining' is only available for API version v3.1-preview.1 and up" in str(excinfo.value)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    def test_offset_length(self, client):
+        result = client.analyze_sentiment(["I like nature. I do not like being inside"])
+        sentences = result[0].sentences
+        self.assertEqual(sentences[0].offset, 0)
+        self.assertEqual(sentences[0].length, 14)
+        self.assertEqual(sentences[1].offset, 15)
+        self.assertEqual(sentences[1].length, 26)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_0})
+    def test_no_offset_length_v3_sentence_sentiment(self, client):
+        result = client.analyze_sentiment(["I like nature. I do not like being inside"])
+        sentences = result[0].sentences
+        self.assertIsNone(sentences[0].offset)
+        self.assertIsNone(sentences[0].length)
+        self.assertIsNone(sentences[1].offset)
+        self.assertIsNone(sentences[1].length)
