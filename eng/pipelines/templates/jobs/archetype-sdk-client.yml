@@ -158,8 +158,8 @@ jobs:
     pool:
       vmImage: 'ubuntu-18.04'
 
-    steps:
-    - template: ../steps/test_regression.yml
-      parameters: 
-        ServiceDirectory: ${{ parameters.ServiceDirectory }}
-        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+    # steps:
+    # - template: ../steps/test_regression.yml
+    #   parameters: 
+    #     ServiceDirectory: ${{ parameters.ServiceDirectory }}
+    #     BuildTargetingString: ${{ parameters.BuildTargetingString }}
