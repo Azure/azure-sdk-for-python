@@ -40,7 +40,7 @@ class AnomalyDetectorErrorCodes(with_metaclass(_CaseInsensitiveEnumMeta, str, En
     REQUIRED_GRANULARITY = "RequiredGranularity"
     REQUIRED_SERIES = "RequiredSeries"
 
-class Granularity(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class TimeGranularity(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Can only be one of yearly, monthly, weekly, daily, hourly, minutely or secondly. Granularity is
     used for verify whether input series is valid.
     """
@@ -50,5 +50,5 @@ class Granularity(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     WEEKLY = "weekly"
     DAILY = "daily"
     HOURLY = "hourly"
-    MINUTELY = "minutely"
-    SECONDLY = "secondly"
+    PER_MINUTE = "minutely"
+    PER_SECOND = "secondly"
