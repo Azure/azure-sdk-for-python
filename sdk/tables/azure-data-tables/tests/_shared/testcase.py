@@ -348,10 +348,6 @@ def storage_account():
     existing_storage_key = os.environ.get("AZURE_STORAGE_ACCOUNT_KEY")
     storage_connection_string = os.environ.get("AZURE_STORAGE_CONNECTION_STRING")
 
-    existing_rg_name = None
-    existing_storage_name = None
-    storage_connection_string = None
-
     i_need_to_create_rg = not (existing_rg_name or existing_storage_name or storage_connection_string)
     got_storage_info_from_env = existing_storage_name or storage_connection_string
 
