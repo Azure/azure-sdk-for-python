@@ -352,6 +352,7 @@ def storage_account():
     got_storage_info_from_env = existing_storage_name or storage_connection_string
 
     storage_name = None
+    rg_kwargs = None
 
     try:
         if i_need_to_create_rg:
