@@ -65,6 +65,10 @@ class ExpressRouteCrossConnectionsOperations(object):
         api_version = "2019-12-01"
 
         def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = 'application/json'
+
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']  # type: ignore
@@ -76,15 +80,11 @@ class ExpressRouteCrossConnectionsOperations(object):
                 query_parameters = {}  # type: Dict[str, Any]
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
+                request = self._client.get(url, query_parameters, header_parameters)
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
+                request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         def extract_data(pipeline_response):
@@ -132,6 +132,10 @@ class ExpressRouteCrossConnectionsOperations(object):
         api_version = "2019-12-01"
 
         def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = 'application/json'
+
             if not next_link:
                 # Construct URL
                 url = self.list_by_resource_group.metadata['url']  # type: ignore
@@ -144,15 +148,11 @@ class ExpressRouteCrossConnectionsOperations(object):
                 query_parameters = {}  # type: Dict[str, Any]
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
+                request = self._client.get(url, query_parameters, header_parameters)
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
+                request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         def extract_data(pipeline_response):
@@ -220,7 +220,6 @@ class ExpressRouteCrossConnectionsOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -269,7 +268,6 @@ class ExpressRouteCrossConnectionsOperations(object):
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'ExpressRouteCrossConnection')
         body_content_kwargs['content'] = body_content
@@ -297,7 +295,7 @@ class ExpressRouteCrossConnectionsOperations(object):
         parameters,  # type: "models.ExpressRouteCrossConnection"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller["models.ExpressRouteCrossConnection"]
         """Update the specified ExpressRouteCrossConnection.
 
         :param resource_group_name: The name of the resource group.
@@ -402,7 +400,6 @@ class ExpressRouteCrossConnectionsOperations(object):
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(cross_connection_parameters, 'TagsObject')
         body_content_kwargs['content'] = body_content
@@ -431,8 +428,8 @@ class ExpressRouteCrossConnectionsOperations(object):
         device_path,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ExpressRouteCircuitsArpTableListResult"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ExpressRouteCircuitsArpTableListResult"]
+        # type: (...) -> Optional["models.ExpressRouteCircuitsArpTableListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.ExpressRouteCircuitsArpTableListResult"]]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-12-01"
@@ -456,7 +453,6 @@ class ExpressRouteCrossConnectionsOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -483,7 +479,7 @@ class ExpressRouteCrossConnectionsOperations(object):
         device_path,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller["models.ExpressRouteCircuitsArpTableListResult"]
         """Gets the currently advertised ARP table associated with the express route cross connection in a
     resource group.
 
@@ -554,8 +550,8 @@ class ExpressRouteCrossConnectionsOperations(object):
         device_path,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ExpressRouteCrossConnectionsRoutesTableSummaryListResult"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ExpressRouteCrossConnectionsRoutesTableSummaryListResult"]
+        # type: (...) -> Optional["models.ExpressRouteCrossConnectionsRoutesTableSummaryListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.ExpressRouteCrossConnectionsRoutesTableSummaryListResult"]]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-12-01"
@@ -579,7 +575,6 @@ class ExpressRouteCrossConnectionsOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -606,7 +601,7 @@ class ExpressRouteCrossConnectionsOperations(object):
         device_path,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller["models.ExpressRouteCrossConnectionsRoutesTableSummaryListResult"]
         """Gets the route table summary associated with the express route cross connection in a resource
     group.
 
@@ -677,8 +672,8 @@ class ExpressRouteCrossConnectionsOperations(object):
         device_path,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ExpressRouteCircuitsRoutesTableListResult"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ExpressRouteCircuitsRoutesTableListResult"]
+        # type: (...) -> Optional["models.ExpressRouteCircuitsRoutesTableListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.ExpressRouteCircuitsRoutesTableListResult"]]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-12-01"
@@ -702,7 +697,6 @@ class ExpressRouteCrossConnectionsOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -729,7 +723,7 @@ class ExpressRouteCrossConnectionsOperations(object):
         device_path,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller["models.ExpressRouteCircuitsRoutesTableListResult"]
         """Gets the currently advertised routes table associated with the express route cross connection
     in a resource group.
 

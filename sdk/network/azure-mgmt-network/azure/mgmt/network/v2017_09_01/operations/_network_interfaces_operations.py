@@ -75,7 +75,6 @@ class NetworkInterfacesOperations(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
 
-        # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -95,7 +94,7 @@ class NetworkInterfacesOperations(object):
         network_interface_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller[None]
         """Deletes the specified network interface.
 
         :param resource_group_name: The name of the resource group.
@@ -193,7 +192,6 @@ class NetworkInterfacesOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -242,7 +240,6 @@ class NetworkInterfacesOperations(object):
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'NetworkInterface')
         body_content_kwargs['content'] = body_content
@@ -255,7 +252,6 @@ class NetworkInterfacesOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('NetworkInterface', pipeline_response)
 
@@ -275,7 +271,7 @@ class NetworkInterfacesOperations(object):
         parameters,  # type: "models.NetworkInterface"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller["models.NetworkInterface"]
         """Creates or updates a network interface.
 
         :param resource_group_name: The name of the resource group.
@@ -366,7 +362,6 @@ class NetworkInterfacesOperations(object):
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'TagsObject')
         body_content_kwargs['content'] = body_content
@@ -394,7 +389,7 @@ class NetworkInterfacesOperations(object):
         parameters,  # type: "models.TagsObject"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller["models.NetworkInterface"]
         """Updates a network interface tags.
 
         :param resource_group_name: The name of the resource group.
@@ -471,6 +466,10 @@ class NetworkInterfacesOperations(object):
         api_version = "2017-09-01"
 
         def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = 'application/json'
+
             if not next_link:
                 # Construct URL
                 url = self.list_all.metadata['url']  # type: ignore
@@ -482,15 +481,11 @@ class NetworkInterfacesOperations(object):
                 query_parameters = {}  # type: Dict[str, Any]
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
+                request = self._client.get(url, query_parameters, header_parameters)
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
+                request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         def extract_data(pipeline_response):
@@ -538,6 +533,10 @@ class NetworkInterfacesOperations(object):
         api_version = "2017-09-01"
 
         def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = 'application/json'
+
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']  # type: ignore
@@ -550,15 +549,11 @@ class NetworkInterfacesOperations(object):
                 query_parameters = {}  # type: Dict[str, Any]
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
+                request = self._client.get(url, query_parameters, header_parameters)
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
+                request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         def extract_data(pipeline_response):
@@ -591,8 +586,8 @@ class NetworkInterfacesOperations(object):
         network_interface_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.EffectiveRouteListResult"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.EffectiveRouteListResult"]
+        # type: (...) -> Optional["models.EffectiveRouteListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.EffectiveRouteListResult"]]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2017-09-01"
@@ -614,7 +609,6 @@ class NetworkInterfacesOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -639,7 +633,7 @@ class NetworkInterfacesOperations(object):
         network_interface_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller["models.EffectiveRouteListResult"]
         """Gets all route tables applied to a network interface.
 
         :param resource_group_name: The name of the resource group.
@@ -701,8 +695,8 @@ class NetworkInterfacesOperations(object):
         network_interface_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.EffectiveNetworkSecurityGroupListResult"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.EffectiveNetworkSecurityGroupListResult"]
+        # type: (...) -> Optional["models.EffectiveNetworkSecurityGroupListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.EffectiveNetworkSecurityGroupListResult"]]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2017-09-01"
@@ -724,7 +718,6 @@ class NetworkInterfacesOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -749,7 +742,7 @@ class NetworkInterfacesOperations(object):
         network_interface_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller["models.EffectiveNetworkSecurityGroupListResult"]
         """Gets all network security groups applied to a network interface.
 
         :param resource_group_name: The name of the resource group.
@@ -833,6 +826,10 @@ class NetworkInterfacesOperations(object):
         api_version = "2017-03-30"
 
         def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = 'application/json'
+
             if not next_link:
                 # Construct URL
                 url = self.list_virtual_machine_scale_set_vm_network_interfaces.metadata['url']  # type: ignore
@@ -847,15 +844,11 @@ class NetworkInterfacesOperations(object):
                 query_parameters = {}  # type: Dict[str, Any]
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
+                request = self._client.get(url, query_parameters, header_parameters)
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
+                request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         def extract_data(pipeline_response):
@@ -906,6 +899,10 @@ class NetworkInterfacesOperations(object):
         api_version = "2017-03-30"
 
         def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = 'application/json'
+
             if not next_link:
                 # Construct URL
                 url = self.list_virtual_machine_scale_set_network_interfaces.metadata['url']  # type: ignore
@@ -919,15 +916,11 @@ class NetworkInterfacesOperations(object):
                 query_parameters = {}  # type: Dict[str, Any]
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
+                request = self._client.get(url, query_parameters, header_parameters)
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
+                request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         def extract_data(pipeline_response):
@@ -1007,7 +1000,6 @@ class NetworkInterfacesOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -1057,6 +1049,10 @@ class NetworkInterfacesOperations(object):
         api_version = "2017-03-30"
 
         def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = 'application/json'
+
             if not next_link:
                 # Construct URL
                 url = self.list_virtual_machine_scale_set_ip_configurations.metadata['url']  # type: ignore
@@ -1074,15 +1070,11 @@ class NetworkInterfacesOperations(object):
                 if expand is not None:
                     query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
 
+                request = self._client.get(url, query_parameters, header_parameters)
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
+                request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         def extract_data(pipeline_response):
@@ -1166,7 +1158,6 @@ class NetworkInterfacesOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response

@@ -77,7 +77,6 @@ class VpnSitesConfigurationOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(request, 'GetVpnSitesConfigurationRequest')
         body_content_kwargs['content'] = body_content
@@ -102,7 +101,7 @@ class VpnSitesConfigurationOperations(object):
         request,  # type: "models.GetVpnSitesConfigurationRequest"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller[None]
         """Gives the sas-url to download the configurations for vpn-sites in a resource group.
 
         :param resource_group_name: The resource group name.
