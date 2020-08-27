@@ -449,7 +449,7 @@ function VerifyPackages($pkgRepository, $artifactLocation, $workingDirectory, $a
       } else {
         $parsedPackage.PackageVersion
       }
-
+      echo "##vso[task.setvariable variable=ReleaseTag;isOutput=true]$tag"
       $pkgList += New-Object PSObject -Property @{
         PackageId      = $parsedPackage.PackageId
         PackageVersion = $parsedPackage.PackageVersion
