@@ -14,13 +14,22 @@ except ImportError:
     from urllib2 import unquote  # type: ignore
 
 from azure.core.paging import ItemPaged
-from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
+from azure.core.exceptions import (
+    HttpResponseError,
+    ResourceNotFoundError,
+    ResourceExistsError
+)
 from azure.core.tracing.decorator import distributed_trace
 
 from ._deserialize import _convert_to_entity
 from ._entity import TableEntity
 from ._generated import AzureTable
-from ._generated.models import AccessPolicy, SignedIdentifier, TableProperties, QueryOptions
+from ._generated.models import (
+    AccessPolicy,
+    SignedIdentifier,
+    TableProperties,
+    QueryOptions
+)
 from ._serialize import _get_match_headers, _add_entity_properties
 from ._base_client import parse_connection_str
 from ._table_client_base import TableClientBase
