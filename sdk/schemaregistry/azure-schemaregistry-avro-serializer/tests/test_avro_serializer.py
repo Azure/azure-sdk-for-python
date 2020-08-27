@@ -25,6 +25,7 @@ from io import BytesIO
 
 from azure.schemaregistry import SchemaRegistryClient
 from azure.schemaregistry.serializer.avro_serializer import SchemaRegistryAvroSerializer
+from azure.schemaregistry.serializer.avro_serializer._avro_serializer import AvroObjectSerializer
 from azure.identity import ClientSecretCredential
 from azure.core.exceptions import ClientAuthenticationError, ServiceRequestError, HttpResponseError
 
@@ -32,7 +33,7 @@ from schemaregistry_preparer import SchemaRegistryPreparer
 from devtools_testutils import AzureMgmtTestCase
 
 
-class SchemaRegistryTests(AzureMgmtTestCase):
+class SchemaRegistryAvroSerializerTests(AzureMgmtTestCase):
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -41,20 +42,21 @@ class SchemaRegistryTests(AzureMgmtTestCase):
         schema = avro.schema.parse(schema_str)
         dict_data = {"name": "Ben", "favorite_number": 7, "favorite_color": "red"}
 
+        raw_avro_object_serailizer = AvroObjectSerializer()
+
         # encoding part
         encode_stream = BytesIO()
-        writer = avro.io.DatumWriter(schema)
-        writer.write(dict_data, avro.io.BinaryEncoder(encode_stream))
+        raw_avro_object_serailizer.serialize(encode_stream, dict_data, schema)
         encoded_payload = encode_stream.getvalue()
         encode_stream.close()
 
         # decoding part
-        decode_stream = BytesIO(encoded_payload)
-        avro_reader = avro.io.DatumReader(writers_schema=schema)
-        bin_decoder = avro.io.BinaryDecoder(decode_stream)
-        decoded_data = avro_reader.read(bin_decoder)
-        decode_stream.close()
+        decoded_data = raw_avro_object_serailizer.deserialize(encoded_payload, schema)
 
         assert decoded_data['name'] == "Ben"
         assert decoded_data['favorite_number'] == 7
         assert decoded_data['favorite_color'] == 'red'
+
+
+
+

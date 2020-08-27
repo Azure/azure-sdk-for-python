@@ -31,6 +31,15 @@ with open('README.md', encoding='utf-8') as f:
 with open('CHANGELOG.md', encoding='utf-8') as f:
     changelog = f.read()
 
+exclude_packages = [
+        'tests',
+        'samples',
+        # Exclude packages that will be covered by PEP420 or nspkg
+        'azure',
+        'azure.schemaregistry',
+        'azure.schemaregistry.serializer'
+    ]
+
 setup(
     name=PACKAGE_NAME,
     version=version,
@@ -54,15 +63,11 @@ setup(
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
-    packages=find_packages(exclude=[
-        'tests',
-        'samples',
-        # Exclude packages that will be covered by PEP420 or nspkg
-        'azure',
-    ]),
+    packages=find_packages(exclude=exclude_packages),
     install_requires=[
-        'azure-core<2.0.0,>=1.2.2'
-        'azure-schemaregistry<2.0.0,>=1.0.0b1'
+        'azure-core<2.0.0,>=1.2.2',
+        'azure-schemaregistry<2.0.0,>=1.0.0b1',
+        'avro>=1.0.0'
     ],
     extras_require={
         ":python_version<'3.0'": ['azure-nspkg', 'futures'],

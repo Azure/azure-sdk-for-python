@@ -34,6 +34,13 @@ from ._avro_serializer import AvroObjectSerializer
 
 class SchemaRegistryAvroSerializer(object):
     """
+    SchemaRegistryClient is as a central schema repository for enterprise-level data infrastructure,
+    complete with support for versioning and management.
+
+    :param str endpoint: The Schema Registry service endpoint, for example my-namespace.servicebus.windows.net.
+    :param credential: To authenticate to manage the entities of the SchemaRegistry namespace.
+    :type credential: TokenCredential
+    :param str schema_group
 
     """
     def __init__(self, credential, endpoint, schema_group, **kwargs):
@@ -44,7 +51,7 @@ class SchemaRegistryAvroSerializer(object):
         self._schema_to_id = {}
 
     def __enter__(self):
-        # type: () -> SchemaRegistryClient
+        # type: () -> SchemaRegistryAvroSerializer
         self._schema_registry_client.__enter__()
         return self
 
@@ -98,9 +105,11 @@ class SchemaRegistryAvroSerializer(object):
     def serialize(self, data, schema):
         # type: (Dict[str, Any], Union[str, bytes, avro.schema.Schema]) -> bytes
         """
+        Encode dict data with the given schema.
 
-        :param schema:  # TODO: support schema object/str/bytes?
-        :param dict data:
+        :param data: The dict data to be encoded.
+        :param schema: The schema used to encode the data.  # TODO: support schema object/str/bytes?
+        :type schema: Union[str, bytes, avro.schema.Schema])
         :return:
         """
         if not isinstance(schema, avro.schema.Schema):
@@ -120,8 +129,9 @@ class SchemaRegistryAvroSerializer(object):
     def deserialize(self, data):
         # type: (bytes) -> Dict[str, Any]
         """
+        Decode bytes data.
 
-        :param bytes data:
+        :param bytes data: The bytes data needs to be decoded.
         :rtype: Dict[str, Any]
         """
         # TODO: Arthur:  We are adding 4 bytes to the beginning of each SR payload.
@@ -133,5 +143,5 @@ class SchemaRegistryAvroSerializer(object):
 
         # TODO: schema_id to datumreader cache
         schema = avro.schema.parse(schema_content)
-        dict_data = self._avro_serializer.deserialize(schema, data[36:])
+        dict_data = self._avro_serializer.deserialize(data[36:], schema)
         return dict_data

@@ -27,7 +27,7 @@ import asyncio
 import os
 
 from azure.identity.aio import ClientSecretCredential
-from azure.schemaregistry.aio.serializer.avro_serializer import SchemaRegistryAvroSerializer
+from azure.schemaregistry.serializer.avro_serializer.aio import SchemaRegistryAvroSerializer
 
 TENANT_ID=os.environ['SCHEMA_REGISTRY_AZURE_TENANT_ID']
 CLIENT_ID=os.environ['SCHEMA_REGISTRY_AZURE_CLIENT_ID']

@@ -76,8 +76,8 @@ class AvroObjectSerializer(ABC):
 
     def deserialize(
         self,
-        schema,  # type:
         data,  # type: Union[bytes, BinaryIO]
+        schema,  # type:
         return_type=None,  # type: Optional[Type[ObjectType]]
     ):
         # type: (...) -> ObjectType

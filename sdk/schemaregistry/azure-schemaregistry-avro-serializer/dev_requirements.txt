@@ -1,2 +1,2 @@
 -e ../../identity/azure-identity
--e ../azure-schemaregistry
+../azure-schemaregistry
