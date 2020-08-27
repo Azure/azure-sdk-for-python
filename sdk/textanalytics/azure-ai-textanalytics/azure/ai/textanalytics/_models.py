@@ -4,10 +4,12 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import re
-from ._generated.v3_0.models._models import (
+from ._generated.models import (
     LanguageInput,
-    MultiLanguageInput
+    MultiLanguageInput,
 )
+
+from ._generated.v3_0 import models as _v3_0_models
 
 def _get_indices(relation):
     return [int(s) for s in re.findall(r"\d+", relation)]
@@ -207,7 +209,9 @@ class CategorizedEntity(DictMixin):
     :ivar subcategory: Entity subcategory, such as Age/Year/TimeRange etc
     :vartype subcategory: str
     :ivar int offset: The entity text offset from the start of the document.
-    :ivar int length: The length of the entity text.
+     Only returned for api versions v3.1-preview.1 and up.
+    :ivar int length: The length of the entity text. Only returned for
+     api versions v3.1-preview.1 and up.
     :ivar confidence_score: Confidence score between 0 and 1 of the extracted
         entity.
     :vartype confidence_score: float
@@ -223,12 +227,19 @@ class CategorizedEntity(DictMixin):
 
     @classmethod
     def _from_generated(cls, entity):
+        offset = entity.offset
+        length = entity.length
+        if isinstance(entity, _v3_0_models.Entity):
+            # we do not return offset and length for v3.0 since
+            # the correct encoding was not introduced for v3.0
+            offset = None
+            length = None
         return cls(
             text=entity.text,
             category=entity.category,
             subcategory=entity.subcategory,
-            offset=entity.offset,
-            length=entity.length,
+            offset=offset,
+            length=length,
             confidence_score=entity.confidence_score,
         )
 
@@ -636,7 +647,9 @@ class LinkedEntityMatch(DictMixin):
     :vartype confidence_score: float
     :ivar text: Entity text as appears in the request.
     :ivar int offset: The linked entity match text offset from the start of the document.
-    :ivar int length: The length of the linked entity match text.
+     Only returned for api versions v3.1-preview.1 and up.
+    :ivar int length: The length of the linked entity match text. Only returned for
+     api versions v3.1-preview.1 and up.
     :vartype text: str
     """
 
@@ -648,11 +661,18 @@ class LinkedEntityMatch(DictMixin):
 
     @classmethod
     def _from_generated(cls, match):
+        offset = match.offset
+        length = match.length
+        if isinstance(match, _v3_0_models.Match):
+            # we do not return offset and length for v3.0 since
+            # the correct encoding was not introduced for v3.0
+            offset = None
+            length = None
         return cls(
             confidence_score=match.confidence_score,
             text=match.text,
-            offset=match.offset,
-            length=match.length
+            offset=offset,
+            length=length
         )
 
     def __repr__(self):
@@ -739,7 +759,9 @@ class SentenceSentiment(DictMixin):
     :vartype confidence_scores:
         ~azure.ai.textanalytics.SentimentConfidenceScores
     :ivar int offset: The sentence offset from the start of the document.
-    :ivar int length: The length of the sentence.
+     Only returned for api versions v3.1-preview.1 and up.
+    :ivar int length: The length of the sentence. Only returned for api
+     versions v3.1-preview.1 and up.
     :ivar mined_opinions: The list of opinions mined from this sentence.
         For example in "The food is good, but the service is bad", we would
         mind these two opinions "food is good", "service is bad". Only returned
@@ -758,6 +780,13 @@ class SentenceSentiment(DictMixin):
 
     @classmethod
     def _from_generated(cls, sentence, results):
+        offset = sentence.offset
+        length = sentence.length
+        if isinstance(sentence, _v3_0_models.SentenceSentiment):
+            # we do not return offset and length for v3.0 since
+            # the correct encoding was not introduced for v3.0
+            offset = None
+            length = None
         if hasattr(sentence, "aspects"):
             mined_opinions = (
                 [MinedOpinion._from_generated(aspect, results) for aspect in sentence.aspects]  # pylint: disable=protected-access
@@ -769,8 +798,8 @@ class SentenceSentiment(DictMixin):
             text=sentence.text,
             sentiment=sentence.sentiment,
             confidence_scores=SentimentConfidenceScores._from_generated(sentence.confidence_scores),  # pylint: disable=protected-access
-            offset=sentence.offset,
-            length=sentence.length,
+            offset=offset,
+            length=length,
             mined_opinions=mined_opinions
         )
 
