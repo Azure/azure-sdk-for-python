@@ -11,7 +11,9 @@ from .._models import RoleAssignment, RoleDefinition
 from .._internal import AsyncKeyVaultClientBase
 
 if TYPE_CHECKING:
-    from typing import Any, AsyncIterable
+    from typing import Any, Union
+    from uuid import UUID
+    from azure.core.async_paging import AsyncItemPaged
 
 
 class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
@@ -26,7 +28,12 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def create_role_assignment(
-        self, role_scope: str, role_assignment_name: str, role_definition_id: str, principal_id: str, **kwargs: "Any"
+        self,
+        role_scope: str,
+        role_assignment_name: "Union[str, UUID]",
+        role_definition_id: str,
+        principal_id: str,
+        **kwargs: "Any"
     ) -> RoleAssignment:
         """Create a role assignment.
 
@@ -54,7 +61,7 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def delete_role_assignment(
-        self, role_scope: str, role_assignment_name: str, **kwargs: "Any"
+        self, role_scope: str, role_assignment_name: "Union[str, UUID]", **kwargs: "Any"
     ) -> RoleAssignment:
         """Delete a role assignment.
 
@@ -70,7 +77,9 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
         return RoleAssignment._from_generated(assignment)
 
     @distributed_trace_async
-    async def get_role_assignment(self, role_scope: str, role_assignment_name: str, **kwargs: "Any") -> RoleAssignment:
+    async def get_role_assignment(
+        self, role_scope: str, role_assignment_name: "Union[str, UUID]", **kwargs: "Any"
+    ) -> RoleAssignment:
         """Get a role assignment.
 
         :param str role_scope: the assignment's scope
@@ -84,7 +93,7 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
         return RoleAssignment._from_generated(assignment)
 
     @distributed_trace
-    def list_role_assignments(self, role_scope: str, **kwargs: "Any") -> "AsyncIterable[RoleAssignment]":
+    def list_role_assignments(self, role_scope: str, **kwargs: "Any") -> "AsyncItemPaged[RoleAssignment]":
         """List all role assignments for a scope.
 
         :param str role_scope: scope of the role assignments
@@ -98,7 +107,7 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
         )
 
     @distributed_trace
-    def list_role_definitions(self, role_scope: str, **kwargs: "Any") -> "AsyncIterable[RoleDefinition]":
+    def list_role_definitions(self, role_scope: str, **kwargs: "Any") -> "AsyncItemPaged[RoleDefinition]":
         """List all role definitions applicable at and above a scope.
 
         :param str role_scope: scope of the role definitions

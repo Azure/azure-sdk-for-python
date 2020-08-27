@@ -10,7 +10,9 @@ from ._models import RoleAssignment, RoleDefinition
 from ._internal import KeyVaultClientBase
 
 if TYPE_CHECKING:
-    from typing import Any, Iterable
+    from typing import Any, Union
+    from uuid import UUID
+    from azure.core.paging import ItemPaged
 
 
 class KeyVaultAccessControlClient(KeyVaultClientBase):
@@ -25,7 +27,7 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
 
     @distributed_trace
     def create_role_assignment(self, role_scope, role_assignment_name, role_definition_id, principal_id, **kwargs):
-        # type: (str, str, str, str, **Any) -> RoleAssignment
+        # type: (str, Union[str, UUID], str, str, **Any) -> RoleAssignment
         """Create a role assignment.
 
         :param str role_scope: scope the role assignment will apply over
@@ -52,7 +54,7 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
 
     @distributed_trace
     def delete_role_assignment(self, role_scope, role_assignment_name, **kwargs):
-        # type: (str, str, **Any) -> RoleAssignment
+        # type: (str, Union[str, UUID], **Any) -> RoleAssignment
         """Delete a role assignment.
 
         :param str role_scope: the assignment's scope
@@ -68,7 +70,7 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
 
     @distributed_trace
     def get_role_assignment(self, role_scope, role_assignment_name, **kwargs):
-        # type: (str, str, **Any) -> RoleAssignment
+        # type: (str, Union[str, UUID], **Any) -> RoleAssignment
         """Get a role assignment.
 
         :param str role_scope: the assignment's scope
@@ -83,7 +85,7 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
 
     @distributed_trace
     def list_role_assignments(self, role_scope, **kwargs):
-        # type: (str, **Any) -> Iterable[RoleAssignment]
+        # type: (str, **Any) -> ItemPaged[RoleAssignment]
         """List all role assignments for a scope.
 
         :param str role_scope: scope of the role assignments
@@ -98,7 +100,7 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
 
     @distributed_trace
     def list_role_definitions(self, role_scope, **kwargs):
-        # type: (str, **Any) -> Iterable[RoleDefinition]
+        # type: (str, **Any) -> ItemPaged[RoleDefinition]
         """List all role definitions applicable at and above a scope.
 
         :param str role_scope: scope of the role definitions
