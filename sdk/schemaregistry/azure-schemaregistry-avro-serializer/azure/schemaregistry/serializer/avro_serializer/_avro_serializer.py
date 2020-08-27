@@ -25,7 +25,7 @@
 # --------------------------------------------------------------------------
 import abc
 from typing import BinaryIO, Union, Type, TypeVar, Optional, Any
-
+from io import BytesIO
 from avro.io import DatumWriter, DatumReader, BinaryDecoder, BinaryEncoder
 
 try:
@@ -53,7 +53,7 @@ class AvroObjectSerializer(ABC):
         self,
         stream,  # type: BinaryIO
         value,  # type: ObjectType
-        schema=None,  # type: Optional[Any]
+        schema,  # type: Optional[Any]
     ):
         # type: (...) -> None
         """Convert the provided value to it's binary representation and write it to the stream.
@@ -91,11 +91,11 @@ class AvroObjectSerializer(ABC):
         :rtype: ObjectType
         """
         if not hasattr(data, 'read'):
-            from io import BytesIO
             data = BytesIO(data)
 
-        avro_reader = DatumReader(writers_schema=schema)
+        avro_reader = DatumReader(writers_schema=schema)  # TODO: cache it
         bin_decoder = BinaryDecoder(data)
-        obj = avro_reader.read(bin_decoder)
+        decoded_data = avro_reader.read(bin_decoder)
         data.close()
-        return obj
+
+        return decoded_data

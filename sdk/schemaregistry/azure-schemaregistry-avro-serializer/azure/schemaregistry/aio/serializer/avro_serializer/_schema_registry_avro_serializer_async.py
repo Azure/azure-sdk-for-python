@@ -112,6 +112,7 @@ class SchemaRegistryAvroSerializer:
         # Right now, you can just put \x00\x00\x00\x00.
         record_format_identifier = b'\0\0\0\0'
         res = record_format_identifier + schema_id.encode('utf-8') + stream.getvalue()
+        stream.close()
         return res
 
     async def deserialize(self, data):
@@ -127,11 +128,8 @@ class SchemaRegistryAvroSerializer:
         record_format_identifier = data[0:4]
         schema_id = data[4:36].decode('utf-8')
         schema_content = await self._get_schema(schema_id)
-        dict_data = self._avro_serializer.deserialize(data[36:])
-        try:  # TODO: this part is a draft validation process, but I have the concern that the performance is poor
-            schema = avro.schema.parse(schema_content)
-            stream = BytesIO()
-            self._avro_serializer.serialize(stream, dict_data, schema)
-        except avro.schema.AvroException:
-            raise
+
+        # TODO: schema_id to datumreader cache
+        schema = avro.schema.parse(schema_content)
+        dict_data = self._avro_serializer.deserialize(schema, data[36:])
         return dict_data
