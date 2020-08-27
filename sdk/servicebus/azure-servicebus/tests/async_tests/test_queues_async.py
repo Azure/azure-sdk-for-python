@@ -1254,7 +1254,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 message_2nd_received_cnt = 0
                 while message_1st_received_cnt < 20 or message_2nd_received_cnt < 20:
                     messages = []
-                    for message in receiver.get_streaming_message_iter(max_wait_time=5):
+                    async for message in receiver.get_streaming_message_iter(max_wait_time=5):
                         messages.append(message)
                     if not messages:
                         break
