@@ -69,9 +69,9 @@ def _parse_conn_str(conn_str, kwargs):
             try:
                 # Expiry can be stored in the "se=<timestamp>" clause of the token. ('&'-separated key-value pairs)
                 shared_access_token_expiry = int(shared_access_token.split('se=')[1].split('&')[0]) # type: ignore
-            except (IndexError, TypeError, ValueError) as e: # Fallback since technically expiry is optional.
+            except (IndexError, TypeError, ValueError): # Fallback since technically expiry is optional.
                 # An arbitrary, absurdly large number, since you can't renew.
-                shared_access_token_expiry = time.time() * 2
+                shared_access_token_expiry = int(time.time() * 2)
             print(shared_access_token_expiry)
     if not (all([endpoint, shared_access_key_name, shared_access_key]) or all([endpoint, shared_access_token])):
         raise ValueError(
@@ -157,7 +157,7 @@ class EventHubSASTokenCredential(object):
         self.expiry = expiry
         self.token_type = b"servicebus.windows.net:sastoken"
 
-    def get_token(self, *scopes, **kwargs):
+    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
         # type: (str, Any) -> AccessToken
         """
         This method is automatically called when token is about to expire.
@@ -192,7 +192,10 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         host, policy, key, entity, token, token_expiry = _parse_conn_str(conn_str, kwargs)
         kwargs["fully_qualified_namespace"] = host
         kwargs["eventhub_name"] = entity
-        kwargs["credential"] = EventHubSASTokenCredential(token, time.time() + 3000) if token else EventHubSharedKeyCredential(policy, key)
+        if token and token_expiry:
+            kwargs["credential"] = EventHubSASTokenCredential(token, token_expiry)
+        elif policy and key:
+            kwargs["credential"] = EventHubSharedKeyCredential(policy, key)
         return kwargs
 
     def _create_auth(self):

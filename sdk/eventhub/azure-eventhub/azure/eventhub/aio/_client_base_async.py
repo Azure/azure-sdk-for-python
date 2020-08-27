@@ -11,7 +11,6 @@ import functools
 from typing import TYPE_CHECKING, Any, Dict, List, Callable, Optional, Union, cast
 
 import six
-from azure.core.credentials import AccessToken
 from uamqp import (
     authentication,
     constants,
@@ -20,6 +19,7 @@ from uamqp import (
     Message,
     AMQPClientAsync,
 )
+from azure.core.credentials import AccessToken
 
 from .._client_base import ClientBase, _generate_sas_token, _parse_conn_str
 from .._utils import utc_from_timestamp
@@ -72,13 +72,13 @@ class EventHubSASTokenCredential(object):
     def __init__(self, token: str, expiry: int) -> None:
         """
         :param str token: The shared access token string
-        :param float expiry: The epoch timestamp
+        :param int expiry: The epoch timestamp
         """
         self.token = token
         self.expiry = expiry
         self.token_type = b"servicebus.windows.net:sastoken"
 
-    async def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
+    async def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:  # pylint:disable=unused-argument
         """
         This method is automatically called when token is about to expire.
         """
@@ -112,7 +112,10 @@ class ClientBaseAsync(ClientBase):
         host, policy, key, entity, token, token_expiry = _parse_conn_str(conn_str, kwargs)
         kwargs["fully_qualified_namespace"] = host
         kwargs["eventhub_name"] = entity
-        kwargs["credential"] = EventHubSASTokenCredential(token, time.time() + 3000) if token else EventHubSharedKeyCredential(policy, key)
+        if token and token_expiry:
+            kwargs["credential"] = EventHubSASTokenCredential(token, token_expiry)
+        elif policy and key:
+            kwargs["credential"] = EventHubSharedKeyCredential(policy, key)
         return kwargs
 
     async def _create_auth_async(self) -> authentication.JWTTokenAsync:
