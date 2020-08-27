@@ -7,35 +7,35 @@
 # --------------------------------------------------------------------------
 
 try:
-    from ._models_py3 import APIError
+    from ._models_py3 import AnomalyDetectorError
     from ._models_py3 import ChangePointDetectRequest
     from ._models_py3 import ChangePointDetectResponse
+    from ._models_py3 import DetectRequest
     from ._models_py3 import EntireDetectResponse
     from ._models_py3 import LastDetectResponse
-    from ._models_py3 import Point
-    from ._models_py3 import Request
+    from ._models_py3 import TimeSeriesPoint
 except (SyntaxError, ImportError):
-    from ._models import APIError  # type: ignore
+    from ._models import AnomalyDetectorError  # type: ignore
     from ._models import ChangePointDetectRequest  # type: ignore
     from ._models import ChangePointDetectResponse  # type: ignore
+    from ._models import DetectRequest  # type: ignore
     from ._models import EntireDetectResponse  # type: ignore
     from ._models import LastDetectResponse  # type: ignore
-    from ._models import Point  # type: ignore
-    from ._models import Request  # type: ignore
+    from ._models import TimeSeriesPoint  # type: ignore
 
 from ._anomaly_detector_client_enums import (
     AnomalyDetectorErrorCodes,
-    Granularity,
+    TimeGranularity,
 )
 
 __all__ = [
-    'APIError',
+    'AnomalyDetectorError',
     'ChangePointDetectRequest',
     'ChangePointDetectResponse',
+    'DetectRequest',
     'EntireDetectResponse',
     'LastDetectResponse',
-    'Point',
-    'Request',
+    'TimeSeriesPoint',
     'AnomalyDetectorErrorCodes',
-    'Granularity',
+    'TimeGranularity',
 ]

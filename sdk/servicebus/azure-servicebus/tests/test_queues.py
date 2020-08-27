@@ -1558,7 +1558,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             },
             properties=uamqp.message.MessageProperties()
         )
-        received_message = ReceivedMessage(uamqp_received_message)
+        received_message = ReceivedMessage(uamqp_received_message, receiver=None)
         assert received_message.partition_key == 'r_key'
         assert received_message.via_partition_key == 'r_via_key'
         assert received_message.scheduled_enqueue_time_utc == new_scheduled_time

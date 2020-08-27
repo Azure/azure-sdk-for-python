@@ -10,7 +10,7 @@ from ._event_grid_publisher_client import EventGridPublisherClient
 __all__ = ['EventGridPublisherClient']
 
 try:
-    from ._patch import patch_sdk
+    from ._patch import patch_sdk  # type: ignore
     patch_sdk()
 except ImportError:
     pass
