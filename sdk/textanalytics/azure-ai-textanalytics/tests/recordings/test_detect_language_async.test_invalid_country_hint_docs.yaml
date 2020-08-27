@@ -4,13 +4,13 @@ interactions:
       States"}]}'
     headers:
       Accept:
-      - application/json
+      - application/json, text/json
       Content-Length:
       - '83'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/1.0.1 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.0.1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.1/languages?showStats=false
   response:
@@ -18,11 +18,11 @@ interactions:
       string: '{"documents":[],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
         Country Hint.","innererror":{"code":"InvalidCountryHint","message":"Country
         hint is not valid. Please specify an ISO 3166-1 alpha-2 two letter country
-        code."}}}],"modelVersion":"2019-10-01"}'
+        code."}}}],"modelVersion":"2020-07-01"}'
     headers:
-      apim-request-id: e4ad770a-7a0e-455c-bedf-514223112e62
+      apim-request-id: e09c79a3-72d3-41c2-8da3-3110ccdef3fe
       content-type: application/json; charset=utf-8
-      date: Fri, 24 Jul 2020 16:32:44 GMT
+      date: Wed, 26 Aug 2020 21:20:50 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
