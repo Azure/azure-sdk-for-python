@@ -17,14 +17,14 @@ interactions:
       string: '{"documents":[{"id":"0","sentiment":"positive","confidenceScores":{"positive":0.99,"neutral":0.0,"negative":0.01},"sentences":[{"sentiment":"positive","confidenceScores":{"positive":0.99,"neutral":0.0,"negative":0.01},"offset":0,"length":17,"text":"please
         don''t fail"}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}'
     headers:
-      apim-request-id: f16a6dea-510a-418f-bcc1-c871b5c5d57a
+      apim-request-id: 9d082595-3d44-4ca6-ada0-bb3527f62aa2
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=1
-      date: Thu, 27 Aug 2020 15:31:26 GMT
+      date: Thu, 27 Aug 2020 19:31:56 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '84'
+      x-envoy-upstream-service-time: '75'
     status:
       code: 200
       message: OK

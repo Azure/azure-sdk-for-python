@@ -34,11 +34,11 @@ interactions:
         see https://aka.ms/text-analytics-data-limits"}}}],"modelVersion":"2020-07-01"}'
     headers:
       apim-request-id:
-      - 0c25a316-b27b-4787-b807-abdce117fbff
+      - 927d8622-6c72-42ce-8b20-9aa68e7878fb
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 26 Aug 2020 21:20:42 GMT
+      - Thu, 27 Aug 2020 19:32:03 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:

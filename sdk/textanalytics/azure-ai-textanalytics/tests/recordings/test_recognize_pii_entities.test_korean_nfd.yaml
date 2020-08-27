@@ -23,13 +23,13 @@ interactions:
         Social Security Number (SSN)","offset":8,"length":11,"confidenceScore":0.65}],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}'
     headers:
       apim-request-id:
-      - 2c4629f5-2433-479c-864b-c2060942c900
+      - 3362c6da-0e2e-49be-a661-2c55332f2928
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=1
       date:
-      - Thu, 27 Aug 2020 18:48:44 GMT
+      - Thu, 27 Aug 2020 19:32:21 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:

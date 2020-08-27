@@ -23,14 +23,14 @@ interactions:
         3\",\"keyPhrases\":[\"\u732B\u306F\u5E78\u305B\"],\"warnings\":[]}],\"errors\"\
         :[],\"modelVersion\":\"2020-07-01\"}"
     headers:
-      apim-request-id: 83dd42eb-d58f-491c-9484-d1013c7ef931
+      apim-request-id: 9f43f6eb-e9b8-401d-9e68-790910d15a95
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Wed, 26 Aug 2020 21:20:51 GMT
+      date: Thu, 27 Aug 2020 19:32:07 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '8'
+      x-envoy-upstream-service-time: '7'
     status:
       code: 200
       message: OK

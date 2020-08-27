@@ -18,14 +18,14 @@ interactions:
       string: '{"documents":[{"id":"0","entities":[{"text":"859-98-0987","category":"U.S.
         Social Security Number (SSN)","offset":9,"length":11,"confidenceScore":0.65}],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}'
     headers:
-      apim-request-id: 70a1e515-2579-453c-bd71-4314242b2720
+      apim-request-id: ab40c1bd-7dee-460a-98af-11e5c9f5f534
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=1
-      date: Thu, 27 Aug 2020 18:50:36 GMT
+      date: Thu, 27 Aug 2020 19:32:23 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '89'
+      x-envoy-upstream-service-time: '61'
     status:
       code: 200
       message: OK

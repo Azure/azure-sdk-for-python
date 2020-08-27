@@ -23,13 +23,13 @@ interactions:
         Social Security Number (SSN)","offset":13,"length":11,"confidenceScore":0.65}],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}'
     headers:
       apim-request-id:
-      - b57d4311-f62b-4564-a82b-8c5ae831c3b0
+      - 086e7305-4c28-4cb6-b991-61de9e8a5476
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=1
       date:
-      - Thu, 27 Aug 2020 16:04:00 GMT
+      - Thu, 27 Aug 2020 19:32:18 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -37,7 +37,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '69'
+      - '70'
     status:
       code: 200
       message: OK
