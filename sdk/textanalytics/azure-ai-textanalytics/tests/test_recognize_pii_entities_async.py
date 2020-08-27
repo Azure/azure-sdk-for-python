@@ -17,6 +17,7 @@ from azure.ai.textanalytics.aio import TextAnalyticsClient
 from azure.ai.textanalytics import (
     TextDocumentInput,
     VERSION,
+    TextAnalyticsApiVersion,
 )
 
 # pre-apply the client_cls positional argument so it needn't be explicitly passed below
@@ -570,3 +571,11 @@ class TestRecognizePIIEntities(AsyncTextAnalyticsTest):
             language="en",
             raw_response_hook=callback
         )
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_0})
+    async def test_recognize_pii_entities_v3(self, client):
+        with pytest.raises(NotImplementedError) as excinfo:
+            await client.recognize_pii_entities(["this should fail"])
+
+        assert "'recognize_pii_entities' endpoint is only available for API version v3.1-preview.1 and up" in str(excinfo.value)
