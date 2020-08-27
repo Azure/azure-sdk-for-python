@@ -80,51 +80,29 @@ class EventHubClientTests(AzureMgmtTestCase):
             producer_client.send_batch(batch)
 
         # This should also work, but now using SAS tokens.
-
-        #credential = EventHubSharedKeyCredential(eventhub_namespace_key_name, eventhub_namespace_primary_key)
+        print("This works->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+        credential = EventHubSharedKeyCredential(eventhub_namespace_key_name, eventhub_namespace_primary_key)
         hostname = "{}.servicebus.windows.net".format(eventhub_namespace.name)
         auth_uri = "sb://{}/{}".format(hostname, eventhub.name)
-        #token = credential.get_token(auth_uri).token
-        token = generate_sas_token(auth_uri, eventhub_namespace_key_name, eventhub_namespace_primary_key, datetime.timedelta(seconds=300)).token
+        token = credential.get_token(auth_uri).token
+        #token = generate_sas_token(auth_uri, eventhub_namespace_key_name, eventhub_namespace_primary_key, datetime.timedelta(seconds=300)).token
         producer_client = EventHubProducerClient(fully_qualified_namespace=hostname,
-                                                 eventhub_name=eventhub_namespace.name,
+                                                 eventhub_name=eventhub.name,
                                                  credential=EventHubSASTokenCredential(token, time.time() + 3000))
 
         with producer_client:
             batch = producer_client.create_batch(partition_id='0')
             batch.add(EventData(body='A single message'))
             producer_client.send_batch(batch)
-
-        #token_conn_str = "Endpoint=sb://{}/;SharedAccessToken={};".format(hostname, )
-        #conn_str_producer_client = EventHubProducerClient.from_connection_string(token_conn_str,
-        #                                                                         eventhub_name=live_eventhub['event_hub')
-        #
-        #with conn_str_producer_client:
-        #    batch = conn_str_producer_client.create_batch(partition_id='0')
-        #    batch.add(EventData(body='A single message'))
-        #    conn_str_producer_client.send_batch(batch)
-
-
-
-
-
-    #credential = EventHubSharedKeyCredential(live_eventhub['key_name'], live_eventhub['access_key'])
-    #auth_uri = "sb://{}{}".format(live_eventhub['hostname'], live_eventhub['event_hub'])
-    #token = credential.get_token(auth_uri)
-    #producer_client = EventHubProducerClient(fully_qualified_namespace=live_eventhub['hostname'],
-    #                                         eventhub_name=live_eventhub['event_hub'],
-    #                                         credential=EventHubSASTokenCredential(token, 3000))
-    #
-    #with producer_client:
-    #    batch = producer_client.create_batch(partition_id='0')
-    #    batch.add(EventData(body='A single message'))
-    #    producer_client.send_batch(batch)
-    #
-    ##token_conn_str = "Endpoint=sb://{}/;SharedAccessToken={};".format(hostname, )
-    ##conn_str_producer_client = EventHubProducerClient.from_connection_string(token_conn_str,
-    ##                                                                         eventhub_name=live_eventhub['event_hub')
-    ##
-    ##with conn_str_producer_client:
-    ##    batch = conn_str_producer_client.create_batch(partition_id='0')
-    ##    batch.add(EventData(body='A single message'))
-    ##    conn_str_producer_client.send_batch(batch)
+        
+        print("RAWTOKEN===================================================")    
+        print(token)
+        # Finally let's do it with SAS token + conn str
+        token_conn_str = "Endpoint=sb://{}/;SharedAccessToken={};".format(hostname, token)
+        conn_str_producer_client = EventHubProducerClient.from_connection_string(token_conn_str,
+                                                                                 eventhub_name=eventhub.name)
+        
+        with conn_str_producer_client:
+            batch = conn_str_producer_client.create_batch(partition_id='0')
+            batch.add(EventData(body='A single message'))
+            conn_str_producer_client.send_batch(batch)

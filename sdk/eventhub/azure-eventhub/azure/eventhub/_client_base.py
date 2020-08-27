@@ -44,7 +44,7 @@ _AccessToken = collections.namedtuple("AccessToken", "token expires_on")
 
 
 def _parse_conn_str(conn_str, kwargs):
-    # type: (str, Dict[str, Any]) -> Tuple[str, str, str, str, Optional[str]]
+    # type: (str, Dict[str, Any]) -> Tuple[str, str, str, str, Optional[str], Optional[int]]
     endpoint = None
     shared_access_key_name = None
     shared_access_key = None
@@ -65,11 +65,15 @@ def _parse_conn_str(conn_str, kwargs):
         elif key.lower() == "entitypath":
             entity_path = value
         elif key.lower() == "sharedaccesstoken":
-            shared_access_token = value
+            shared_access_token = str(value)
+            print("TOKEN*#^Q@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+            print(value)
             try:
-                shared_access_token_expiry = int(value.split(b'se=')[1].split(b'&')[0] or None)
-            except (IndexError, TypeError, ValueError): # Fallback since technically expiry is optional.
-                shared_access_token_expiry = 100*100 # An arbitrary, absurdly large number, since you can't renew.
+                shared_access_token_expiry = int(shared_access_token.split('se=')[1].split('&')[0] or None)
+            except (IndexError, TypeError, ValueError) as e: # Fallback since technically expiry is optional.
+                # An arbitrary, absurdly large number, since you can't renew.
+                shared_access_token_expiry = time.time() * 2
+            print(shared_access_token_expiry)
     if not (all([endpoint, shared_access_key_name, shared_access_key]) or all([endpoint, shared_access_token])):
         raise ValueError(
             "Invalid connection string. Should be in the format: "
@@ -159,6 +163,12 @@ class EventHubSASTokenCredential(object):
 
 class ClientBase(object):  # pylint:disable=too-many-instance-attributes
     def __init__(self, fully_qualified_namespace, eventhub_name, credential, **kwargs):
+        print("MAKING CLIENT~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+        print(fully_qualified_namespace, eventhub_name, credential, kwargs)
+        try:
+            print(credential.token, credential.expiry)
+        except:
+            pass
         # type: (str, str, TokenCredential, Any) -> None
         self.eventhub_name = eventhub_name
         if not eventhub_name:
@@ -185,6 +195,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         kwargs["fully_qualified_namespace"] = host
         kwargs["eventhub_name"] = entity
         kwargs["credential"] = EventHubSASTokenCredential(token, time.time() + 3000) if token else EventHubSharedKeyCredential(policy, key)
+        print(kwargs)
         return kwargs
 
     def _create_auth(self):
