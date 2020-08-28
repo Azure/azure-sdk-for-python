@@ -286,8 +286,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 cls=kwargs.pop("cls", pii_entities_result),
                 **kwargs
             )
-        except AttributeError as error:
-            if "'TextAnalyticsClient' object has no attribute 'entities_recognition_pii'" in str(error):
+        except NotImplementedError as error:
+            if "APIVersion v3.0 is not available" in str(error):
                 raise NotImplementedError(
                     "'recognize_pii_entities' endpoint is only available for API version v3.1-preview.1 and up"
                 )
