@@ -17,13 +17,13 @@ These sample programs show common scenarios for the Anomaly Detector client's of
 
 |**File Name**|**Description**|
 |----------------|-------------|
-|[sample_detect_entire_series_anomaly.py][sample_detect_entire_series_anomaly] |Authenticate the client|
-|[sample_detect_last_point_anomaly.py][sample_detect_last_point_anomaly] |Recognize text and table structures of a document|
-|[sample_detect_change_point.py][sample_detect_change_point] |Recognize data from a file of a US sales receipt using a prebuilt model|
+|[sample_detect_entire_series_anomaly.py][sample_detect_entire_series_anomaly] |Detecting anomalies in the entire time series.|
+|[sample_detect_last_point_anomaly.py][sample_detect_last_point_anomaly] |Detecting the anomaly status of the latest data point.|
+|[sample_detect_change_point.py][sample_detect_change_point] |Detecting change points in the entire time series.|
 
 ## Prerequisites
-* Python 3.x is required to use this package
-* The Pandas data analysis library
+* Python 2.7 or 3.x is required to use this package.
+* The Pandas data analysis library.
 * You must have an [Azure subscription][azure_subscription] and an
 [Azure Anomaly Detector account][azure_anomaly_detector_account] to run these samples.
 
