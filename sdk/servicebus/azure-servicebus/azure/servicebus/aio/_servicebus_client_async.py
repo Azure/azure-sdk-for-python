@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-from typing import Any, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING, Union
 
 import uamqp
 
@@ -98,7 +98,7 @@ class ServiceBusClient(object):
         """
         Create a ServiceBusClient from a connection string.
 
-        :param conn_str: The connection string of a Service Bus.
+        :param str conn_str: The connection string of a Service Bus.
         :keyword str entity_name: Optional entity name, this can be the name of Queue or Topic.
          It must be specified if the credential is for specific Queue or Topic.
         :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
@@ -125,7 +125,7 @@ class ServiceBusClient(object):
         return cls(
             fully_qualified_namespace=host,
             entity_name=entity_in_conn_str or kwargs.pop("entity_name", None),
-            credential=ServiceBusSharedKeyCredential(policy, key),
+            credential=ServiceBusSharedKeyCredential(policy, key), # type: ignore
             **kwargs
         )
 
@@ -431,7 +431,7 @@ class ServiceBusClient(object):
         )
 
     def get_subscription_session_receiver(self, topic_name, subscription_name, session_id=None, **kwargs):
-        # type: (str, str, str, Any) -> ServiceBusReceiver
+        # type: (str, str, str, Any) -> ServiceBusSessionReceiver
         """Get ServiceBusReceiver for the specific subscription under the topic.
 
         :param str topic_name: The name of specific Service Bus Topic the client connects to.

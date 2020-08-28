@@ -125,7 +125,8 @@ class ReceivedMessage(sync_message.ReceivedMessageBase):
         await self._settle_message(MESSAGE_DEFER)
         self._settled = True
 
-    async def renew_lock(self) -> None:  # type: ignore
+    async def renew_lock(self) -> None:
+        # pylint: disable=protected-access
         """Renew the message lock.
 
         This will maintain the lock on the message to ensure
@@ -142,7 +143,7 @@ class ReceivedMessage(sync_message.ReceivedMessageBase):
         :raises: ~azure.servicebus.exceptions.MessageAlreadySettled is message has already been settled.
         """
         try:
-            if self._receiver.session:  # pylint: disable=protected-access
+            if self._receiver.session:  # type: ignore
                 raise TypeError("Session messages cannot be renewed. Please renew the Session lock instead.")
         except AttributeError:
             pass
@@ -151,5 +152,5 @@ class ReceivedMessage(sync_message.ReceivedMessageBase):
         if not token:
             raise ValueError("Unable to renew lock - no lock token found.")
 
-        expiry = await self._receiver._renew_locks(token)  # pylint: disable=protected-access
+        expiry = await self._receiver._renew_locks(token) # type: ignore
         self._expiry = utc_from_timestamp(expiry[MGMT_RESPONSE_MESSAGE_EXPIRATION][0]/1000.0)
