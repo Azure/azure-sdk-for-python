@@ -13,10 +13,10 @@
 #        Example data is included in this repo.
 
 # <imports>
-from azure.cognitiveservices.anomalydetector import AnomalyDetectorClient
-from azure.cognitiveservices.anomalydetector.models import Request, Point, Granularity, \
-    APIErrorException
-from msrest.authentication import CognitiveServicesCredentials
+from azure.ai.anomalydetector import AnomalyDetectorClient
+from azure.ai.anomalydetector.models import DetectRequest, TimeSeriesPoint, TimeGranularity, \
+    AnomalyDetectorError
+from azure.core.credentials import AzureKeyCredential
 import pandas as pd
 import os
 # </imports>
@@ -32,7 +32,7 @@ TIME_SERIES_DATA_PATH = "request-data.csv"
 # Create an Anomaly Detector client and add the 
 
 # <client>
-client = AnomalyDetectorClient(ANOMALY_DETECTOR_ENDPOINT, CognitiveServicesCredentials(SUBSCRIPTION_KEY))
+client = AnomalyDetectorClient(AzureKeyCredential(SUBSCRIPTION_KEY), ANOMALY_DETECTOR_ENDPOINT)
 # </client>
 
 # Load in the time series data file
@@ -41,13 +41,13 @@ client = AnomalyDetectorClient(ANOMALY_DETECTOR_ENDPOINT, CognitiveServicesCrede
 series = []
 data_file = pd.read_csv(TIME_SERIES_DATA_PATH, header=None, encoding='utf-8', parse_dates=[0])
 for index, row in data_file.iterrows():
-    series.append(Point(timestamp=row[0], value=row[1]))
+    series.append(TimeSeriesPoint(timestamp=row[0], value=row[1]))
 # </loadDataFile>
 
 # Create a request from the data file 
 
 # <request>
-request = Request(series=series, granularity=Granularity.daily)
+request = DetectRequest(series=series, granularity=TimeGranularity.daily)
 # </request>
 
 
@@ -57,9 +57,9 @@ request = Request(series=series, granularity=Granularity.daily)
 print('Detecting anomalies in the entire time series.')
 
 try:
-    response = client.entire_detect(request)
+    response = client.detect_entire_series(request)
 except Exception as e:
-    if isinstance(e, APIErrorException):
+    if isinstance(e, AnomalyDetectorError):
         print('Error code: {}'.format(e.error.code),
             'Error message: {}'.format(e.error.message))
     else:
@@ -80,9 +80,9 @@ else:
 print('Detecting the anomaly status of the latest data point.')
 
 try:
-    response = client.last_detect(request)
+    response = client.detect_last_point(request)
 except Exception as e:
-    if isinstance(e, APIErrorException):
+    if isinstance(e, AnomalyDetectorError):
         print('Error code: {}'.format(e.error.code),
             'Error message: {}'.format(e.error.message))
     else:
@@ -93,3 +93,26 @@ if response.is_anomaly:
 else:
     print('The latest point is not detected as anomaly.')
 # </latestPointDetection>
+
+# detect change points throughout the entire time series
+
+# <detectChangePoint>
+print('Detecting change points in the entire time series.')
+
+try:
+    response = client.detect_change_point(request)
+except Exception as e:
+    if isinstance(e, AnomalyDetectorError):
+        print('Error code: {}'.format(e.error.code),
+            'Error message: {}'.format(e.error.message))
+    else:
+        print(e)
+
+if True in response.is_change_point:
+    print('An change point was detected at index:')
+    for i in range(len(response.is_change_point)):
+        if response.is_change_point[i]:
+            print(i)
+else:
+    print('No change point were detected in the time series.')
+# </detectChangePoint>
