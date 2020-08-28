@@ -34,8 +34,6 @@ from ._avro_serializer import AvroObjectSerializer
 
 class SchemaRegistryAvroSerializer(object):
     """
-    SchemaRegistryClient is as a central schema repository for enterprise-level data infrastructure,
-    complete with support for versioning and management.
 
     :param str endpoint: The Schema Registry service endpoint, for example my-namespace.servicebus.windows.net.
     :param credential: To authenticate to manage the entities of the SchemaRegistry namespace.

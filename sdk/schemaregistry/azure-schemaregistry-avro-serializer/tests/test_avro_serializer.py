@@ -37,7 +37,7 @@ class SchemaRegistryAvroSerializerTests(AzureMgmtTestCase):
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    def test_basic_avro_serializer(self):
+    def test_raw_avro_serializer(self):
         schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
         schema = avro.schema.parse(schema_str)
         dict_data = {"name": "Ben", "favorite_number": 7, "favorite_color": "red"}
@@ -57,6 +57,9 @@ class SchemaRegistryAvroSerializerTests(AzureMgmtTestCase):
         assert decoded_data['favorite_number'] == 7
         assert decoded_data['favorite_color'] == 'red'
 
-
-
-
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @SchemaRegistryPreparer()
+    def test_basic_sr_avro_serializer(self, schemaregistry_endpoint, schemaregistry_group, schemaregistry_tenant_id,
+                          schemaregistry_client_id, schemaregistry_client_secret, **kwargs):
+        pass
