@@ -47,8 +47,8 @@ class VpnServerConfigurationsAssociatedWithVirtualWanOperations:
         resource_group_name: str,
         virtual_wan_name: str,
         **kwargs
-    ) -> "models.VpnServerConfigurationsResponse":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VpnServerConfigurationsResponse"]
+    ) -> Optional["models.VpnServerConfigurationsResponse"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.VpnServerConfigurationsResponse"]]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2020-04-01"
@@ -70,7 +70,6 @@ class VpnServerConfigurationsAssociatedWithVirtualWanOperations:
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -94,7 +93,7 @@ class VpnServerConfigurationsAssociatedWithVirtualWanOperations:
         resource_group_name: str,
         virtual_wan_name: str,
         **kwargs
-    ) -> "models.VpnServerConfigurationsResponse":
+    ) -> AsyncLROPoller["models.VpnServerConfigurationsResponse"]:
         """Gives the list of VpnServerConfigurations associated with Virtual Wan in a resource group.
 
         :param resource_group_name: The resource group name.
@@ -108,8 +107,8 @@ class VpnServerConfigurationsAssociatedWithVirtualWanOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: VpnServerConfigurationsResponse, or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2020_04_01.models.VpnServerConfigurationsResponse
+        :return: An instance of AsyncLROPoller that returns either VpnServerConfigurationsResponse or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2020_04_01.models.VpnServerConfigurationsResponse]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
