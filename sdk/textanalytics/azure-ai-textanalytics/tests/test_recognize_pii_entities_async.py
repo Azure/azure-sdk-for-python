@@ -86,13 +86,6 @@ class TestRecognizePIIEntities(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
-    async def test_length_with_emoji(self, client):
-        result = await client.recognize_pii_entities(["👩 SSN: 859-98-0987"])
-        self.assertEqual(result[0].entities[0].offset, 7)
-        self.assertEqual(result[0].entities[0].length, 11)
-
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
     async def test_passing_only_string(self, client):
         docs = [
             u"My SSN is 859-98-0987.",

@@ -24,13 +24,13 @@ interactions:
         will be truncated and may result in unreliable model predictions."}]}],"errors":[],"modelVersion":"2020-07-01"}'
     headers:
       apim-request-id:
-      - 5ca999f0-7199-4e52-9289-fd887cfc0806
+      - dd291596-55f6-432a-a98c-bd79ae69101f
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=1
       date:
-      - Wed, 26 Aug 2020 21:20:47 GMT
+      - Thu, 27 Aug 2020 19:32:07 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:

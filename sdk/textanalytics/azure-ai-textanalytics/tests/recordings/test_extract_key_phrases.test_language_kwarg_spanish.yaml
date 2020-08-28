@@ -23,13 +23,13 @@ interactions:
         Gates","the CEO of Microsoft"],"statistics":{"charactersCount":35,"transactionsCount":1},"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}'
     headers:
       apim-request-id:
-      - c50a13bb-2bbc-443b-a9a7-7bf3656766f6
+      - 452a909d-1ffd-4e2c-b221-ab27332acc4a
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=1
       date:
-      - Wed, 26 Aug 2020 21:20:50 GMT
+      - Thu, 27 Aug 2020 19:32:07 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -37,7 +37,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '8'
+      - '9'
     status:
       code: 200
       message: OK

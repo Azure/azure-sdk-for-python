@@ -18,9 +18,9 @@ interactions:
       string: '{"error":{"code":"InvalidRequest","message":"Invalid Request.","innererror":{"code":"ModelVersionIncorrect","message":"Invalid
         model version. Possible values are: latest,2019-10-01,2020-07-01"}}}'
     headers:
-      apim-request-id: d473113d-c640-432e-a6aa-95d0aba499af
+      apim-request-id: 62bf884f-77d6-413e-aad4-73b564771f64
       content-type: application/json; charset=utf-8
-      date: Wed, 26 Aug 2020 21:20:43 GMT
+      date: Thu, 27 Aug 2020 19:32:03 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff

@@ -19,14 +19,14 @@ interactions:
       string: '{"documents":[{"id":"1","keyPhrases":["Bill Gates","Paul Allen","Microsoft"],"warnings":[]},{"id":"2","keyPhrases":["Bill
         Gates","Paul Allen","Microsoft"],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}'
     headers:
-      apim-request-id: 6aaf7227-890d-4b66-9097-4bec69b4d145
+      apim-request-id: 38098dc0-f282-446c-b5df-922dcf78775d
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=2
-      date: Wed, 26 Aug 2020 21:20:50 GMT
+      date: Thu, 27 Aug 2020 19:32:07 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '10'
+      x-envoy-upstream-service-time: '9'
     status:
       code: 200
       message: OK

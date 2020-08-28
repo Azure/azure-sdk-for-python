@@ -23,11 +23,11 @@ interactions:
         model version. Possible values are: latest,2019-10-01,2020-07-01"}}}'
     headers:
       apim-request-id:
-      - 21dc4871-b1c7-4866-9d74-ee930d22318b
+      - 662fe0f3-89e7-425f-8a10-69bc78444264
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 26 Aug 2020 21:20:42 GMT
+      - Thu, 27 Aug 2020 19:32:02 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:

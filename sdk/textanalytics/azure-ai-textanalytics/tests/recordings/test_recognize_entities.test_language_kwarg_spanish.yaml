@@ -16,20 +16,20 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.0.1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.1/entities/recognition/general?model-version=latest&showStats=true&stringIndexType=TextElements_v8
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.1/entities/recognition/general?model-version=latest&showStats=true&stringIndexType=UnicodeCodePoint
   response:
     body:
       string: '{"statistics":{"documentsCount":1,"validDocumentsCount":1,"erroneousDocumentsCount":0,"transactionsCount":1},"documents":[{"id":"0","statistics":{"charactersCount":35,"transactionsCount":1},"entities":[{"text":"Bill
         Gates","category":"Person","offset":0,"length":10,"confidenceScore":0.76},{"text":"CEO","category":"PersonType","offset":18,"length":3,"confidenceScore":0.66},{"text":"Microsoft","category":"Organization","offset":25,"length":9,"confidenceScore":0.38}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}'
     headers:
       apim-request-id:
-      - 91e5cc38-3d10-4a72-97bf-2d7db707e99b
+      - 29282959-f5f5-425e-916c-61989326b2eb
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=1
       date:
-      - Wed, 26 Aug 2020 21:20:50 GMT
+      - Thu, 27 Aug 2020 19:32:14 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
