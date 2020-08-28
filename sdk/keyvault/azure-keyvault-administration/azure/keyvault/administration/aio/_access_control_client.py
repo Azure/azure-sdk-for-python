@@ -41,8 +41,8 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
         :param role_assignment_name: a name for the role assignment. Must be a UUID.
         :type role_assignment_name: str or uuid.UUID
         :param str role_definition_id: ID of the role's definition
-        :param str principal_id: ID of the principal which will be assigned the role. This maps to the ID inside the
-            Active Directory. It can point to a user, service principal, or security group.
+        :param str principal_id: Azure Active Directory object ID of the principal which will be assigned the role. The
+            principal can be a user, service principal, or security group.
         :rtype: KeyVaultRoleAssignment
         """
         create_parameters = self._client.role_assignments.models.RoleAssignmentCreateParameters(
