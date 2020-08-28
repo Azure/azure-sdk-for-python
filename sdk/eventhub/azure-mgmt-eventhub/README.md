@@ -7,7 +7,7 @@ For a more complete view of Azure libraries, see the [azure sdk python release](
 
 # Usage
 
-For code examples, see [EventHub Management](https://docs.microsoft.com/python/api/overview/azure/event-hub?view=azure-python-preview)
+For code examples, see [EventHub Management](https://docs.microsoft.com/python/api/overview/azure/event-hub)
 on docs.microsoft.com.
 
 
