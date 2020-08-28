@@ -107,7 +107,7 @@ class ServiceBusClient(object):
                     handler._container_id,  # pylint: disable=protected-access
                     exception,
                 )
-        self._handlers.clear()
+        del self._handlers[:]
 
         if self._connection_sharing and self._connection:
             self._connection.destroy()
