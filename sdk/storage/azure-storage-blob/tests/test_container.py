@@ -742,7 +742,7 @@ class StorageContainerTest(StorageTestCase):
         for container in container_list:
             # find the deleted container and restore it
             if container.deleted and container.name == container_client.container_name:
-                restored_ctn_client = bsc._undelete_container(container.name, container.version,
+                restored_ctn_client = bsc.undelete_container(container.name, container.version,
                                                               new_name="restored" + str(restored_version))
                 restored_version += 1
 
@@ -774,7 +774,7 @@ class StorageContainerTest(StorageTestCase):
             # find the deleted container and restore it
             if container.deleted and container.name == container_client.container_name:
                 with self.assertRaises(HttpResponseError):
-                    bsc._undelete_container(container.name, container.version,
+                    bsc.undelete_container(container.name, container.version,
                                             new_name=existing_container_client.container_name)
 
     @pytest.mark.live_test_only  # sas token is dynamically generated
@@ -804,7 +804,7 @@ class StorageContainerTest(StorageTestCase):
         for container in container_list:
             # find the deleted container and restore it
             if container.deleted and container.name == container_client.container_name:
-                restored_ctn_client = bsc._undelete_container(container.name, container.version,
+                restored_ctn_client = bsc.undelete_container(container.name, container.version,
                                                               new_name="restored" + str(restored_version))
                 restored_version += 1
 
