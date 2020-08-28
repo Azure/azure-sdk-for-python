@@ -51,6 +51,10 @@ steps:
 
   - ${{ parameters.AfterTestSteps }}
 
+  - pwsh: |
+      Get-ChildItem -path env:
+    displayName: Dump Env
+
   - task: PublishTestResults@2
     condition: always()
     inputs:
