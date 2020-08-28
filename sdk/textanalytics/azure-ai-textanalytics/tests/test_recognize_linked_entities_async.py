@@ -611,10 +611,10 @@ class TestRecognizeLinkedEntities(AsyncTextAnalyticsTest):
 
         self.assertIsNone(entities[0].matches[0].offset)
         self.assertIsNone(entities[0].matches[0].length)
-        self.assertIsNone(entities[0].matches[0].offset)
-        self.assertIsNone(entities[0].matches[0].length)
-        self.assertIsNone(entities[0].matches[0].offset)
-        self.assertIsNone(entities[0].matches[0].length)
+        self.assertIsNone(entities[1].matches[0].offset)
+        self.assertIsNone(entities[1].matches[0].length)
+        self.assertIsNone(entities[2].matches[0].offset)
+        self.assertIsNone(entities[2].matches[0].length)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_0})
