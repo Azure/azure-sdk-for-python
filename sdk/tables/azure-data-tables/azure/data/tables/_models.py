@@ -299,7 +299,7 @@ class TablePropertiesPaged(PageIterator):
     def _extract_data_cb(self, get_next_return):
         self.location_mode, self._response, self._headers = get_next_return
         props_list = []
-        props_list = [Table(t) for t in self._response.value]
+        props_list = [TableItem(t) for t in self._response.value]
         return self._headers['x-ms-continuation-NextTableName'] or None, props_list
 
 
@@ -458,9 +458,9 @@ def service_properties_deserialize(generated):
     }
 
 
-class Table(object):
+class TableItem(object):
     """
-    Represents an Azure Table. Returned by list_tables.
+    Represents an Azure TableItem. Returned by list_tables and query_tables.
 
     :ivar str name: The name of the table.
     """

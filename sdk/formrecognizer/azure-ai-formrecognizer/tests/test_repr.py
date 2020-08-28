@@ -28,7 +28,7 @@ def bounding_box():
 @pytest.fixture
 def form_word(bounding_box):
     model = _models.FormWord(text="Word", bounding_box=bounding_box[0], confidence=0.5, page_number=1)
-    model_repr = "FormWord(text=Word, bounding_box={}, confidence=0.5, page_number=1)".format(bounding_box[1])[:1024]
+    model_repr = "FormWord(text=Word, bounding_box={}, confidence=0.5, page_number=1, kind=word)".format(bounding_box[1])[:1024]
     assert repr(model) == model_repr
     return model, model_repr
 
@@ -36,7 +36,7 @@ def form_word(bounding_box):
 @pytest.fixture
 def form_line(bounding_box, form_word):
     model = _models.FormLine(text="Word Word", bounding_box=bounding_box[0], words=[form_word[0], form_word[0]], page_number=1)
-    model_repr = "FormLine(text=Word Word, bounding_box={}, words=[{}, {}], page_number=1)".format(bounding_box[1], form_word[1], form_word[1])[:1024]
+    model_repr = "FormLine(text=Word Word, bounding_box={}, words=[{}, {}], page_number=1, kind=line)".format(bounding_box[1], form_word[1], form_word[1])[:1024]
     assert repr(model) == model_repr
     return model, model_repr
 

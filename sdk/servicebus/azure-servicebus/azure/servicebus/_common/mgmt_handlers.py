@@ -62,6 +62,7 @@ def deferred_message_op(
         status_code,
         message,
         description,
+        receiver,
         mode=ReceiveSettleMode.PeekLock,
         message_type=ReceivedMessage
 ):
@@ -69,7 +70,7 @@ def deferred_message_op(
         parsed = []
         for m in message.get_data()[b'messages']:
             wrapped = uamqp.Message.decode_from_bytes(bytearray(m[b'message']))
-            parsed.append(message_type(wrapped, mode, is_deferred_message=True))
+            parsed.append(message_type(wrapped, mode, is_deferred_message=True, receiver=receiver))
         return parsed
     if status_code in [202, 204]:
         return []

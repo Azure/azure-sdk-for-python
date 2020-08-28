@@ -3,9 +3,12 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from azure.core.exceptions import ClientAuthenticationError
-from azure.identity import KnownAuthorities, CredentialUnavailableError
-from azure.identity._auth_record import AuthenticationRecord
-from azure.identity._exceptions import AuthenticationRequiredError
+from azure.identity import (
+    AuthenticationRequiredError,
+    AuthenticationRecord,
+    KnownAuthorities,
+    CredentialUnavailableError,
+)
 from azure.identity._internal import InteractiveCredential
 from msal import TokenCache
 import pytest
@@ -64,7 +67,7 @@ def test_authentication_record_argument():
 
     app_factory = Mock(wraps=validate_app_parameters)
     credential = MockCredential(
-        _authentication_record=record, _disable_automatic_authentication=True, msal_app_factory=app_factory,
+        authentication_record=record, disable_automatic_authentication=True, msal_app_factory=app_factory,
     )
     with pytest.raises(AuthenticationRequiredError):
         credential.get_token("scope")
@@ -87,9 +90,9 @@ def test_tenant_argument_overrides_record():
         return Mock(get_accounts=Mock(return_value=[]))
 
     credential = MockCredential(
-        _authentication_record=record,
+        authentication_record=record,
         tenant_id=expected_tenant,
-        _disable_automatic_authentication=True,
+        disable_automatic_authentication=True,
         msal_app_factory=validate_authority,
     )
     with pytest.raises(AuthenticationRequiredError):
@@ -107,8 +110,8 @@ def test_disable_automatic_authentication():
     )
 
     credential = MockCredential(
-        _authentication_record=record,
-        _disable_automatic_authentication=True,
+        authentication_record=record,
+        disable_automatic_authentication=True,
         msal_app_factory=lambda *_, **__: msal_app,
         request_token=Mock(side_effect=Exception("credential shouldn't begin interactive authentication")),
     )
@@ -132,11 +135,11 @@ def test_scopes_round_trip():
         return {"access_token": "**", "expires_in": 42}
 
     request_token = Mock(wraps=validate_scopes)
-    credential = MockCredential(_disable_automatic_authentication=True, request_token=request_token)
+    credential = MockCredential(disable_automatic_authentication=True, request_token=request_token)
     with pytest.raises(AuthenticationRequiredError) as ex:
         credential.get_token(scope)
 
-    credential._authenticate(scopes=ex.value.scopes)
+    credential.authenticate(scopes=ex.value.scopes)
 
     assert request_token.call_count == 1, "validation method wasn't called"
 
@@ -158,7 +161,7 @@ def test_authenticate_default_scopes(authority, expected_scope):
         return {"access_token": "**", "expires_in": 42}
 
     request_token = Mock(wraps=validate_scopes)
-    MockCredential(authority=authority, request_token=request_token)._authenticate()
+    MockCredential(authority=authority, request_token=request_token).authenticate()
     assert request_token.call_count == 1
 
 
@@ -166,7 +169,7 @@ def test_authenticate_unknown_cloud():
     """authenticate should raise when given no scopes in an unknown cloud"""
 
     with pytest.raises(CredentialUnavailableError):
-        MockCredential(authority="localhost")._authenticate()
+        MockCredential(authority="localhost").authenticate()
 
 
 @pytest.mark.parametrize("option", (True, False))
@@ -174,7 +177,7 @@ def test_authenticate_ignores_disable_automatic_authentication(option):
     """authenticate should prompt for authentication regardless of the credential's configuration"""
 
     request_token = Mock(return_value={"access_token": "**", "expires_in": 42})
-    MockCredential(request_token=request_token, _disable_automatic_authentication=option)._authenticate()
+    MockCredential(request_token=request_token, disable_automatic_authentication=option).authenticate()
     assert request_token.call_count == 1, "credential didn't begin interactive authentication"
 
 
@@ -190,7 +193,7 @@ def test_get_token_wraps_exceptions():
         acquire_token_silent_with_error=Mock(side_effect=CustomException(expected_message)),
         get_accounts=Mock(return_value=[{"home_account_id": record.home_account_id}]),
     )
-    credential = MockCredential(msal_app_factory=lambda *_, **__: msal_app, _authentication_record=record)
+    credential = MockCredential(msal_app_factory=lambda *_, **__: msal_app, authentication_record=record)
     with pytest.raises(ClientAuthenticationError) as ex:
         credential.get_token("scope")
 
@@ -220,20 +223,20 @@ def test_enable_persistent_cache():
             assert credential._cache is in_memory_cache
 
             # allowing an unencrypted cache doesn't count as opting in to the persistent cache
-            credential = TestCredential(_allow_unencrypted_cache=True)
+            credential = TestCredential(allow_unencrypted_cache=True)
             assert credential._cache is in_memory_cache
 
     # keyword argument opts in to persistent cache
     with patch(persistent_cache + ".msal_extensions") as mock_extensions:
-        TestCredential(_enable_persistent_cache=True)
+        TestCredential(enable_persistent_cache=True)
     assert mock_extensions.PersistedTokenCache.call_count == 1
 
     # opting in on an unsupported platform raises an exception
     with patch(persistent_cache + ".sys.platform", "commodore64"):
         with pytest.raises(NotImplementedError):
-            TestCredential(_enable_persistent_cache=True)
+            TestCredential(enable_persistent_cache=True)
         with pytest.raises(NotImplementedError):
-            TestCredential(_enable_persistent_cache=True, _allow_unencrypted_cache=True)
+            TestCredential(enable_persistent_cache=True, allow_unencrypted_cache=True)
 
 
 @patch("azure.identity._internal.persistent_cache.sys.platform", "linux2")
@@ -252,7 +255,7 @@ def test_persistent_cache_linux(mock_extensions):
             pass
 
     # the credential should prefer an encrypted cache even when the user allows an unencrypted one
-    TestCredential(_enable_persistent_cache=True, _allow_unencrypted_cache=True)
+    TestCredential(enable_persistent_cache=True, allow_unencrypted_cache=True)
     assert mock_extensions.PersistedTokenCache.called_with(mock_extensions.LibsecretPersistence)
     mock_extensions.PersistedTokenCache.reset_mock()
 
@@ -261,9 +264,9 @@ def test_persistent_cache_linux(mock_extensions):
 
     # encryption unavailable, no opt in to unencrypted cache -> credential should raise
     with pytest.raises(ValueError):
-        TestCredential(_enable_persistent_cache=True)
+        TestCredential(enable_persistent_cache=True)
 
-    TestCredential(_enable_persistent_cache=True, _allow_unencrypted_cache=True)
+    TestCredential(enable_persistent_cache=True, allow_unencrypted_cache=True)
     assert mock_extensions.PersistedTokenCache.called_with(mock_extensions.FilePersistence)
 
 
@@ -289,7 +292,7 @@ def test_home_account_id_client_info():
         def _request_token(self, *_, **__):
             return msal_response
 
-    record = TestCredential()._authenticate()
+    record = TestCredential().authenticate()
     assert record.home_account_id == "{}.{}".format(object_id, home_tenant)
 
 
@@ -314,5 +317,5 @@ def test_home_account_id_no_client_info():
         def _request_token(self, *_, **__):
             return msal_response
 
-    record = TestCredential()._authenticate()
+    record = TestCredential().authenticate()
     assert record.home_account_id == subject

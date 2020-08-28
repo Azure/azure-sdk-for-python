@@ -238,7 +238,7 @@ class StorageBlockBlobTestAsync(AsyncStorageTestCase):
         self.assertEqual(blob_properties.blob_tier, blob_tier)
 
     @GlobalResourceGroupPreparer()
-    @StorageAccountPreparer(location="canadacentral", name_prefix='storagename')
+    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='storagename')
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_block_list_no_blocks(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
