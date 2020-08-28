@@ -701,3 +701,10 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
         self.assertIsNone(sentences[0].length)
         self.assertIsNone(sentences[1].offset)
         self.assertIsNone(sentences[1].length)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_0})
+    async def test_string_index_type_not_fail_v3(self, client):
+        # make sure that the addition of the string_index_type kwarg for v3.1-preview.1 doesn't
+        # cause v3.0 calls to fail
+        await client.analyze_sentiment(["please don't fail"])

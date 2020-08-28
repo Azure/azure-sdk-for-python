@@ -18,7 +18,7 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.0.1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.1/entities/recognition/pii?showStats=true&stringIndexType=TextElements_v8
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.1/entities/recognition/pii?showStats=true&stringIndexType=UnicodeCodePoint
   response:
     body:
       string: '{"statistics":{"documentsCount":3,"validDocumentsCount":3,"erroneousDocumentsCount":0,"transactionsCount":3},"documents":[{"id":"1","statistics":{"charactersCount":22,"transactionsCount":1},"entities":[{"text":"859-98-0987","category":"U.S.
@@ -30,13 +30,13 @@ interactions:
         CPF Number","offset":3,"length":14,"confidenceScore":0.85}],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}'
     headers:
       apim-request-id:
-      - b45c81ad-3c7b-4f85-a46c-da4c092a761e
+      - a609f561-bb88-4571-84e7-478a670d3549
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=3
       date:
-      - Wed, 26 Aug 2020 21:21:01 GMT
+      - Thu, 27 Aug 2020 19:32:17 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -44,7 +44,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '164'
+      - '135'
     status:
       code: 200
       message: OK

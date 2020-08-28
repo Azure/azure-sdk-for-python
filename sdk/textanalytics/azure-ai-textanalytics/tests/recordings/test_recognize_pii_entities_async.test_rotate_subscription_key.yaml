@@ -14,23 +14,23 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.0.1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.1/entities/recognition/pii?showStats=false&stringIndexType=TextElements_v8
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.1/entities/recognition/pii?showStats=false&stringIndexType=UnicodeCodePoint
   response:
     body:
       string: '{"documents":[{"id":"1","entities":[],"warnings":[]},{"id":"2","entities":[],"warnings":[]},{"id":"3","entities":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}'
     headers:
-      apim-request-id: e70f825a-de7c-4dc2-b3c4-648ff1371bf8
+      apim-request-id: f2635c08-1d74-485b-8b1c-514cd9c61542
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Wed, 26 Aug 2020 21:21:05 GMT
+      date: Thu, 27 Aug 2020 19:32:24 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '128'
+      x-envoy-upstream-service-time: '90'
     status:
       code: 200
       message: OK
-    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.1/entities/recognition/pii?showStats=false&stringIndexType=TextElements_v8
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.1/entities/recognition/pii?showStats=false&stringIndexType=UnicodeCodePoint
 - request:
     body: '{"documents": [{"id": "1", "text": "I will go to the park.", "language":
       "en"}, {"id": "2", "text": "I did not like the hotel we stayed at.", "language":
@@ -46,7 +46,7 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.0.1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.1/entities/recognition/pii?showStats=false&stringIndexType=TextElements_v8
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.1/entities/recognition/pii?showStats=false&stringIndexType=UnicodeCodePoint
   response:
     body:
       string: '{"error":{"code":"401","message":"Access denied due to invalid subscription
@@ -54,11 +54,11 @@ interactions:
         subscription and use a correct regional API endpoint for your resource."}}'
     headers:
       content-length: '224'
-      date: Wed, 26 Aug 2020 21:21:05 GMT
+      date: Thu, 27 Aug 2020 19:32:24 GMT
     status:
       code: 401
       message: PermissionDenied
-    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.1/entities/recognition/pii?showStats=false&stringIndexType=TextElements_v8
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.1/entities/recognition/pii?showStats=false&stringIndexType=UnicodeCodePoint
 - request:
     body: '{"documents": [{"id": "1", "text": "I will go to the park.", "language":
       "en"}, {"id": "2", "text": "I did not like the hotel we stayed at.", "language":
@@ -74,15 +74,15 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.0.1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.1/entities/recognition/pii?showStats=false&stringIndexType=TextElements_v8
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.1/entities/recognition/pii?showStats=false&stringIndexType=UnicodeCodePoint
   response:
     body:
       string: '{"documents":[{"id":"1","entities":[],"warnings":[]},{"id":"2","entities":[],"warnings":[]},{"id":"3","entities":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}'
     headers:
-      apim-request-id: fa104e64-a925-407a-8527-b74108e4776f
+      apim-request-id: aeb55f41-e114-480a-a2ba-7e5250f22f08
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Wed, 26 Aug 2020 21:21:05 GMT
+      date: Thu, 27 Aug 2020 19:32:24 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
@@ -90,5 +90,5 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.1/entities/recognition/pii?showStats=false&stringIndexType=TextElements_v8
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.1/entities/recognition/pii?showStats=false&stringIndexType=UnicodeCodePoint
 version: 1

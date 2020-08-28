@@ -579,3 +579,10 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
         self.assertIsNone(entities[0].matches[0].length)
         self.assertIsNone(entities[0].matches[0].offset)
         self.assertIsNone(entities[0].matches[0].length)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_0})
+    def test_string_index_type_not_fail_v3(self, client):
+        # make sure that the addition of the string_index_type kwarg for v3.1-preview.1 doesn't
+        # cause v3.0 calls to fail
+        client.recognize_linked_entities(["please don't fail"])
