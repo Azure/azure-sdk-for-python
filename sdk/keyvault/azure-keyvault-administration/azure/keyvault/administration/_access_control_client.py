@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 
 from azure.core.tracing.decorator import distributed_trace
 
-from ._models import RoleAssignment, RoleDefinition
+from ._models import KeyVaultRoleAssignment, KeyVaultRoleDefinition
 from ._internal import KeyVaultClientBase
 
 if TYPE_CHECKING:
@@ -27,7 +27,7 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
 
     @distributed_trace
     def create_role_assignment(self, role_scope, role_assignment_name, role_definition_id, principal_id, **kwargs):
-        # type: (str, Union[str, UUID], str, str, **Any) -> RoleAssignment
+        # type: (str, Union[str, UUID], str, str, **Any) -> KeyVaultRoleAssignment
         """Create a role assignment.
 
         :param str role_scope: scope the role assignment will apply over
@@ -36,7 +36,7 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
         :param str role_definition_id: ID of the role's definition
         :param str principal_id: ID of the principal which will be assigned the role. This maps to the ID inside the
             Active Directory. It can point to a user, service principal, or security group.
-        :rtype: RoleAssignment
+        :rtype: KeyVaultRoleAssignment
         """
         create_parameters = self._client.role_assignments.models.RoleAssignmentCreateParameters(
             properties=self._client.role_assignments.models.RoleAssignmentProperties(
@@ -50,65 +50,65 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
             parameters=create_parameters,
             **kwargs
         )
-        return RoleAssignment._from_generated(assignment)
+        return KeyVaultRoleAssignment._from_generated(assignment)
 
     @distributed_trace
     def delete_role_assignment(self, role_scope, role_assignment_name, **kwargs):
-        # type: (str, Union[str, UUID], **Any) -> RoleAssignment
+        # type: (str, Union[str, UUID], **Any) -> KeyVaultRoleAssignment
         """Delete a role assignment.
 
         :param str role_scope: the assignment's scope
         :param role_assignment_name: the assignment's name. Must be a UUID.
         :type role_assignment_name: str or uuid.UUID
         :returns: the deleted assignment
-        :rtype: RoleAssignment
+        :rtype: KeyVaultRoleAssignment
         """
         assignment = self._client.role_assignments.delete(
             vault_base_url=self._vault_url, scope=role_scope, role_assignment_name=str(role_assignment_name), **kwargs
         )
-        return RoleAssignment._from_generated(assignment)
+        return KeyVaultRoleAssignment._from_generated(assignment)
 
     @distributed_trace
     def get_role_assignment(self, role_scope, role_assignment_name, **kwargs):
-        # type: (str, Union[str, UUID], **Any) -> RoleAssignment
+        # type: (str, Union[str, UUID], **Any) -> KeyVaultRoleAssignment
         """Get a role assignment.
 
         :param str role_scope: the assignment's scope
         :param role_assignment_name: the assignment's name. Must be a UUID.
         :type role_assignment_name: str or uuid.UUID
-        :rtype: RoleAssignment
+        :rtype: KeyVaultRoleAssignment
         """
         assignment = self._client.role_assignments.get(
             vault_base_url=self._vault_url, scope=role_scope, role_assignment_name=str(role_assignment_name), **kwargs
         )
-        return RoleAssignment._from_generated(assignment)
+        return KeyVaultRoleAssignment._from_generated(assignment)
 
     @distributed_trace
     def list_role_assignments(self, role_scope, **kwargs):
-        # type: (str, **Any) -> ItemPaged[RoleAssignment]
+        # type: (str, **Any) -> ItemPaged[KeyVaultRoleAssignment]
         """List all role assignments for a scope.
 
         :param str role_scope: scope of the role assignments
-        :rtype: ~azure.core.paging.ItemPaged[RoleAssignment]
+        :rtype: ~azure.core.paging.ItemPaged[KeyVaultRoleAssignment]
         """
         return self._client.role_assignments.list_for_scope(
             self._vault_url,
             role_scope,
-            cls=lambda result: [RoleAssignment._from_generated(a) for a in result],
+            cls=lambda result: [KeyVaultRoleAssignment._from_generated(a) for a in result],
             **kwargs
         )
 
     @distributed_trace
     def list_role_definitions(self, role_scope, **kwargs):
-        # type: (str, **Any) -> ItemPaged[RoleDefinition]
+        # type: (str, **Any) -> ItemPaged[KeyVaultRoleDefinition]
         """List all role definitions applicable at and above a scope.
 
         :param str role_scope: scope of the role definitions
-        :rtype: ~azure.core.paging.ItemPaged[RoleDefinition]
+        :rtype: ~azure.core.paging.ItemPaged[KeyVaultRoleDefinition]
         """
         return self._client.role_definitions.list(
             self._vault_url,
             role_scope,
-            cls=lambda result: [RoleDefinition._from_generated(d) for d in result],
+            cls=lambda result: [KeyVaultRoleDefinition._from_generated(d) for d in result],
             **kwargs
         )

@@ -10,6 +10,7 @@ if TYPE_CHECKING:
 
 # pylint:disable=protected-access
 
+
 class KeyVaultPermission(object):
     """Role definition permissions.
 
@@ -36,7 +37,7 @@ class KeyVaultPermission(object):
         )
 
 
-class RoleAssignment(object):
+class KeyVaultRoleAssignment(object):
     """Represents the assignment to a principal of a role over a scope"""
 
     def __init__(self, **kwargs):
@@ -48,7 +49,7 @@ class RoleAssignment(object):
 
     def __repr__(self):
         # type: () -> str
-        return "RoleAssignment<{}>".format(self._assignment_id)
+        return "KeyVaultRoleAssignment<{}>".format(self._assignment_id)
 
     @property
     def assignment_id(self):
@@ -95,11 +96,11 @@ class RoleAssignment(object):
             assignment_id=role_assignment.id,
             name=role_assignment.name,
             assignment_type=role_assignment.type,
-            properties=RoleAssignmentProperties._from_generated(role_assignment.properties),
+            properties=KeyVaultRoleAssignmentProperties._from_generated(role_assignment.properties),
         )
 
 
-class RoleAssignmentProperties(object):
+class KeyVaultRoleAssignmentProperties(object):
     def __init__(self, **kwargs):
         # type: (**Any) -> None
         self.principal_id = kwargs.get("principal_id")
@@ -108,7 +109,7 @@ class RoleAssignmentProperties(object):
 
     def __repr__(self):
         # type: () -> str
-        return "RoleAssignmentProperties(principal_id={}, role_definition_id={}, scope={})".format(
+        return "KeyVaultRoleAssignmentProperties(principal_id={}, role_definition_id={}, scope={})".format(
             self.principal_id, self.role_definition_id, self.scope
         )[:1024]
 
@@ -123,7 +124,7 @@ class RoleAssignmentProperties(object):
         )
 
 
-class RoleDefinition(object):
+class KeyVaultRoleDefinition(object):
     """Role definition.
 
     :ivar str id: The role definition ID.
@@ -150,7 +151,7 @@ class RoleDefinition(object):
 
     def __repr__(self):
         # type: () -> str
-        return "<RoleDefinition {}>".format(self.role_name)[:1024]
+        return "<KeyVaultRoleDefinition {}>".format(self.role_name)[:1024]
 
     @classmethod
     def _from_generated(cls, definition):
