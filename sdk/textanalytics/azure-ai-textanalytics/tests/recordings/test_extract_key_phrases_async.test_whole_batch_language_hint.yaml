@@ -21,14 +21,14 @@ interactions:
         the hotel we stayed","It was too expensive","I did"],"warnings":[]},{"id":"2","keyPhrases":["as
         good as I hoped","The restaurant was"],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}'
     headers:
-      apim-request-id: 45b84578-c822-428c-b761-f4226744edb0
+      apim-request-id: 5f8ea8ba-d7da-43dd-b643-1d566940b60e
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Wed, 26 Aug 2020 21:20:50 GMT
+      date: Thu, 27 Aug 2020 19:32:06 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '7'
+      x-envoy-upstream-service-time: '8'
     status:
       code: 200
       message: OK

@@ -27,13 +27,13 @@ interactions:
         text is empty."}}}],"modelVersion":"2020-07-01"}'
     headers:
       apim-request-id:
-      - 3927f53f-4c6e-419c-a7c7-56c370e062a7
+      - ec1fa4ee-aff6-4803-9469-72bdf3506308
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=4
       date:
-      - Wed, 26 Aug 2020 21:20:43 GMT
+      - Thu, 27 Aug 2020 19:32:04 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -41,7 +41,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '9'
+      - '7'
     status:
       code: 200
       message: OK

@@ -20,13 +20,13 @@ interactions:
         hint is not valid. Please specify an ISO 3166-1 alpha-2 two letter country
         code."}}}],"modelVersion":"2020-07-01"}'
     headers:
-      apim-request-id: e09c79a3-72d3-41c2-8da3-3110ccdef3fe
+      apim-request-id: a54910c4-d980-4ae9-a3f6-80b95aa34534
       content-type: application/json; charset=utf-8
-      date: Wed, 26 Aug 2020 21:20:50 GMT
+      date: Thu, 27 Aug 2020 19:32:02 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '2'
+      x-envoy-upstream-service-time: '1'
     status:
       code: 200
       message: OK
