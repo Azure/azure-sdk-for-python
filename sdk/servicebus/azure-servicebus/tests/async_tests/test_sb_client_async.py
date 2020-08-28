@@ -25,6 +25,8 @@ class ServiceBusClientAsyncTests(AzureMgmtTestCase):
     async def test_async_sb_client_close_spawned_handlers(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
         client = ServiceBusClient.from_connection_string(servicebus_namespace_connection_string)
 
+        await client.close()
+
         # context manager
         async with client:
             assert len(client._handlers) == 0

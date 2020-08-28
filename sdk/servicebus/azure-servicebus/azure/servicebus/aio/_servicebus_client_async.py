@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 from typing import Any, List, TYPE_CHECKING
+import logging
 
 import uamqp
 
@@ -17,6 +18,8 @@ from ._async_utils import create_authentication
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class ServiceBusClient(object):
@@ -139,7 +142,14 @@ class ServiceBusClient(object):
         :return: None
         """
         for handler in self._handlers:
-            await handler.close()
+            try:
+                await handler.close()
+            except Exception as exception:  # pylint: disable=broad-except
+                _LOGGER.error(
+                    "Client has met an exception when closing the handler: %r. Exception: %r.",
+                    handler._container_id,  # pylint: disable=protected-access
+                    exception,
+                )
         self._handlers.clear()
 
         if self._connection_sharing and self._connection:
