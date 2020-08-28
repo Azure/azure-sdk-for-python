@@ -48,12 +48,14 @@ steps:
         --injected-packages="${{ parameters.InjectedPackages }}"
         ${{ parameters.ToxEnvParallel }}
     env: ${{ parameters.EnvVars }}
+    continueOnError: true
 
   - ${{ parameters.AfterTestSteps }}
 
   - pwsh: |
       Get-ChildItem -path env:
     displayName: Dump Env
+
 
   - task: PublishTestResults@2
     condition: always()
