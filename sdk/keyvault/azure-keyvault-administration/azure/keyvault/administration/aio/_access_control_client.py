@@ -65,7 +65,7 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
     ) -> KeyVaultRoleAssignment:
         """Delete a role assignment.
 
-        :param str role_scope: the assignment's scope
+        :param str role_scope: the assignment's scope, for example "/", "/keys", or "/keys/<specific key identifier>"
         :param role_assignment_name: the assignment's name. Must be a UUID.
         :type role_assignment_name: str or uuid.UUID
         :returns: the deleted assignment
@@ -82,7 +82,7 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
     ) -> KeyVaultRoleAssignment:
         """Get a role assignment.
 
-        :param str role_scope: the assignment's scope
+        :param str role_scope: the assignment's scope, for example "/", "/keys", or "/keys/<specific key identifier>"
         :param role_assignment_name: the assignment's name. Must be a UUID.
         :type role_assignment_name: str or uuid.UUID
         :rtype: KeyVaultRoleAssignment
