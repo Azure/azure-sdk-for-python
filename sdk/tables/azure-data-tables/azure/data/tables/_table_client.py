@@ -189,8 +189,11 @@ class TableClient(TableClientBase):
         """
         table_properties = TableProperties(table_name=self.table_name, **kwargs)
         try:
-            table = self._client.table.create(table_properties)
-            return TableItem(table=table)
+            pipeline_response, _ = self._client.table.create(
+                table_properties,
+                cls=kwargs.pop('cls', _return_headers_and_deserialized),
+            )
+            return TableItem(self.table_name, pipeline_response)
         except HttpResponseError as error:
             _process_table_error(error)
 

@@ -9,7 +9,7 @@ import pytest
 import sys
 import locale
 import os
-from azure.data.tables import TableServiceClient
+from azure.data.tables import TableServiceClient, TableItem
 from datetime import (
     datetime,
     timedelta,
@@ -85,6 +85,13 @@ class StorageTableTest(TableTestCase):
         except ResourceNotFoundError:
             pass
 
+    def assertIsValidTableItem(self, table_item):
+        self.assertIsNotNone(table_item)
+        self.assertIsInstance(table_item, TableItem)
+        self.assertIsNotNone(table_item.table_name)
+        self.assertIsNotNone(table_item.api_version)
+        self.assertIsNotNone(table_item.date_created)
+
     # --Test cases for tables --------------------------------------------------
     @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
@@ -99,7 +106,6 @@ class StorageTableTest(TableTestCase):
         assert created.table_name == table_name
 
         properties = ts.get_service_properties()
-        print(properties)
         ts.set_service_properties(analytics_logging=TableAnalyticsLogging(write=True))
         # have to wait for return to service
         p = ts.get_service_properties()
@@ -108,8 +114,6 @@ class StorageTableTest(TableTestCase):
                                  retention_policy=RetentionPolicy(enabled=True, days=5)))
 
         ps = ts.get_service_properties()
-        print(ps)
-        print(p)
         ts.delete_table(table_name)
 
     # @pytest.mark.skip("pending")
@@ -133,17 +137,18 @@ class StorageTableTest(TableTestCase):
         # Arrange
         ts = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
         table_name = self._get_table_reference()
-        # btable_client = ts.get_table_client(table_name)
 
         # Act
         created = ts.create_table(table_name)
         with self.assertRaises(ResourceExistsError):
             ts.create_table(table_name)
 
+        name_filter = "TableName eq '{}'".format(table_name)
+        existing = list(ts.query_tables(filter=name_filter))
+
         # Assert
         self.assertTrue(created)
-        # existing = list(ts.query_tables(query_options=QueryOptions(filter="TableName eq '{}'".format(table_name))))
-        # self.assertEqual(existing[0], [table_name])
+        self.assertEqual(len(existing), 1)
         ts.delete_table(table_name)
 
     @GlobalStorageAccountPreparer()
@@ -172,37 +177,41 @@ class StorageTableTest(TableTestCase):
 
     # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
-    def test_query_tables(self, resource_group, location, storage_account, storage_account_key):
+    def test_list_tables(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         ts = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
-        table = self._create_table(ts)
+        t = self._create_table(ts)
 
         # Act
         tables = list(ts.list_tables())
 
         # Assert
+        for table_item in tables:
+            self.assertIsValidTableItem(table_item)
+
         self.assertIsNotNone(tables)
         self.assertGreaterEqual(len(tables), 1)
         self.assertIsNotNone(tables[0])
-        # self.assertNamedItemInContainer(tables, table.table_name)
-        ts.delete_table(table.table_name)
+        ts.delete_table(t.table_name)
 
     # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_query_tables_with_filter(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         ts = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
-        table = self._create_table(ts)
+        t = self._create_table(ts)
 
         # Act
-        name_filter = "TableName eq '{}'".format(table.table_name)
+        name_filter = "TableName eq '{}'".format(t.table_name)
         tables = list(ts.query_tables(filter=name_filter))
+
+        for table_item in tables:
+            self.assertIsValidTableItem(table_item)
+
         # Assert
         self.assertIsNotNone(tables)
         self.assertEqual(len(tables), 1)
-        # self.assertEqual(tables[0].table_name, [table.table_name])
-        # table.delete_table()
-        ts.delete_table(table.table_name)
+        ts.delete_table(t.table_name)
 
     # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
@@ -221,8 +230,6 @@ class StorageTableTest(TableTestCase):
             small_page.append(s)
         for t in next(ts.list_tables().by_page()):
             big_page.append(t)
-        # big_page = (next(ts.query_tables().by_page()))
-        # small_page = (next(ts.query_tables(results_per_page=3).by_page()))
 
         # Assert
         self.assertEqual(len(small_page), 3)
@@ -263,13 +270,12 @@ class StorageTableTest(TableTestCase):
         table = self._create_table(ts)
 
         # Act
-        # deleted = table.delete_table()
         deleted = ts.delete_table(table_name=table.table_name)
+        existing = list(ts.query_tables("TableName eq '{}'".format(table.table_name)))
 
         # Assert
         self.assertIsNone(deleted)
-        # existing = list(ts.query_tables("TableName eq '{}'".format(table.table_name)))
-        # self.assertEqual(existing, [])
+        self.assertEqual(len(existing), 0)
 
     # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
