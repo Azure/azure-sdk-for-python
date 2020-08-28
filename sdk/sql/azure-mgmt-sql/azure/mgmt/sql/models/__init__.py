@@ -44,7 +44,7 @@ try:
     from ._models_py3 import ElasticPoolPerformanceLevelCapability
     from ._models_py3 import ElasticPoolUpdate
     from ._models_py3 import EncryptionProtector
-    from ._models_py3 import ExportRequest
+    from ._models_py3 import ExportDatabaseDefinition
     from ._models_py3 import ExtendedDatabaseBlobAuditingPolicy
     from ._models_py3 import ExtendedServerBlobAuditingPolicy
     from ._models_py3 import FailoverGroup
@@ -53,9 +53,9 @@ try:
     from ._models_py3 import FailoverGroupUpdate
     from ._models_py3 import FirewallRule
     from ._models_py3 import GeoBackupPolicy
-    from ._models_py3 import ImportExportResponse
-    from ._models_py3 import ImportExtensionRequest
-    from ._models_py3 import ImportRequest
+    from ._models_py3 import ImportExistingDatabaseDefinition
+    from ._models_py3 import ImportExportOperationResult
+    from ._models_py3 import ImportNewDatabaseDefinition
     from ._models_py3 import InstanceFailoverGroup
     from ._models_py3 import InstanceFailoverGroupReadOnlyEndpoint
     from ._models_py3 import InstanceFailoverGroupReadWriteEndpoint
@@ -99,6 +99,7 @@ try:
     from ._models_py3 import ManagedInstanceOperationParametersPair
     from ._models_py3 import ManagedInstanceOperationSteps
     from ._models_py3 import ManagedInstancePairInfo
+    from ._models_py3 import ManagedInstancePrivateLinkServiceConnectionStateProperty
     from ._models_py3 import ManagedInstanceUpdate
     from ._models_py3 import ManagedInstanceVcoresCapability
     from ._models_py3 import ManagedInstanceVersionCapability
@@ -113,6 +114,7 @@ try:
     from ._models_py3 import MetricValue
     from ._models_py3 import MinCapacityCapability
     from ._models_py3 import Name
+    from ._models_py3 import NetworkIsolationSettings
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
     from ._models_py3 import OperationImpact
@@ -121,6 +123,7 @@ try:
     from ._models_py3 import PerformanceLevelCapability
     from ._models_py3 import PrivateEndpointConnection
     from ._models_py3 import PrivateEndpointConnectionProperties
+    from ._models_py3 import PrivateEndpointConnectionRequestStatus
     from ._models_py3 import PrivateEndpointProperty
     from ._models_py3 import PrivateLinkResource
     from ._models_py3 import PrivateLinkResourceProperties
@@ -143,6 +146,7 @@ try:
     from ._models_py3 import Server
     from ._models_py3 import ServerAutomaticTuning
     from ._models_py3 import ServerAzureADAdministrator
+    from ._models_py3 import ServerAzureADOnlyAuthentication
     from ._models_py3 import ServerBlobAuditingPolicy
     from ._models_py3 import ServerCommunicationLink
     from ._models_py3 import ServerConnectionPolicy
@@ -226,7 +230,7 @@ except (SyntaxError, ImportError):
     from ._models import ElasticPoolPerformanceLevelCapability
     from ._models import ElasticPoolUpdate
     from ._models import EncryptionProtector
-    from ._models import ExportRequest
+    from ._models import ExportDatabaseDefinition
     from ._models import ExtendedDatabaseBlobAuditingPolicy
     from ._models import ExtendedServerBlobAuditingPolicy
     from ._models import FailoverGroup
@@ -235,9 +239,9 @@ except (SyntaxError, ImportError):
     from ._models import FailoverGroupUpdate
     from ._models import FirewallRule
     from ._models import GeoBackupPolicy
-    from ._models import ImportExportResponse
-    from ._models import ImportExtensionRequest
-    from ._models import ImportRequest
+    from ._models import ImportExistingDatabaseDefinition
+    from ._models import ImportExportOperationResult
+    from ._models import ImportNewDatabaseDefinition
     from ._models import InstanceFailoverGroup
     from ._models import InstanceFailoverGroupReadOnlyEndpoint
     from ._models import InstanceFailoverGroupReadWriteEndpoint
@@ -281,6 +285,7 @@ except (SyntaxError, ImportError):
     from ._models import ManagedInstanceOperationParametersPair
     from ._models import ManagedInstanceOperationSteps
     from ._models import ManagedInstancePairInfo
+    from ._models import ManagedInstancePrivateLinkServiceConnectionStateProperty
     from ._models import ManagedInstanceUpdate
     from ._models import ManagedInstanceVcoresCapability
     from ._models import ManagedInstanceVersionCapability
@@ -295,6 +300,7 @@ except (SyntaxError, ImportError):
     from ._models import MetricValue
     from ._models import MinCapacityCapability
     from ._models import Name
+    from ._models import NetworkIsolationSettings
     from ._models import Operation
     from ._models import OperationDisplay
     from ._models import OperationImpact
@@ -303,6 +309,7 @@ except (SyntaxError, ImportError):
     from ._models import PerformanceLevelCapability
     from ._models import PrivateEndpointConnection
     from ._models import PrivateEndpointConnectionProperties
+    from ._models import PrivateEndpointConnectionRequestStatus
     from ._models import PrivateEndpointProperty
     from ._models import PrivateLinkResource
     from ._models import PrivateLinkResourceProperties
@@ -325,6 +332,7 @@ except (SyntaxError, ImportError):
     from ._models import Server
     from ._models import ServerAutomaticTuning
     from ._models import ServerAzureADAdministrator
+    from ._models import ServerAzureADOnlyAuthentication
     from ._models import ServerBlobAuditingPolicy
     from ._models import ServerCommunicationLink
     from ._models import ServerConnectionPolicy
@@ -427,6 +435,7 @@ from ._paged_models import RestorableDroppedManagedDatabasePaged
 from ._paged_models import RestorePointPaged
 from ._paged_models import SensitivityLabelPaged
 from ._paged_models import ServerAzureADAdministratorPaged
+from ._paged_models import ServerAzureADOnlyAuthenticationPaged
 from ._paged_models import ServerBlobAuditingPolicyPaged
 from ._paged_models import ServerCommunicationLinkPaged
 from ._paged_models import ServerDnsAliasPaged
@@ -461,10 +470,6 @@ from ._sql_management_client_enums import (
     DataMaskingRuleState,
     DataMaskingFunction,
     GeoBackupPolicyState,
-    DatabaseEdition,
-    ServiceObjectiveName,
-    StorageKeyType,
-    AuthenticationType,
     UnitType,
     PrimaryAggregationType,
     UnitDefinitionType,
@@ -475,6 +480,7 @@ from ._sql_management_client_enums import (
     RecommendedIndexState,
     RecommendedIndexType,
     TransparentDataEncryptionStatus,
+    ServiceObjectiveName,
     TransparentDataEncryptionActivityStatus,
     AutomaticTuningMode,
     AutomaticTuningOptionModeDesired,
@@ -515,13 +521,10 @@ from ._sql_management_client_enums import (
     VulnerabilityAssessmentScanState,
     InstanceFailoverGroupReplicationRole,
     InstancePoolLicenseType,
-    IdentityType,
-    ManagedServerCreateMode,
-    ManagedInstanceLicenseType,
-    ManagedInstanceProxyOverride,
     PrivateLinkServiceConnectionStateStatus,
     PrivateLinkServiceConnectionStateActionsRequire,
     PrivateEndpointProvisioningState,
+    IdentityType,
     ServerPublicNetworkAccess,
     CheckNameAvailabilityReason,
     MaxSizeUnit,
@@ -536,6 +539,11 @@ from ._sql_management_client_enums import (
     SyncMemberState,
     ManagedDatabaseStatus,
     ManagedDatabaseCreateMode,
+    ManagedServerCreateMode,
+    ManagedInstanceLicenseType,
+    ManagedInstanceProxyOverride,
+    StorageAccountType,
+    StorageKeyType,
     LongTermRetentionDatabaseState,
     VulnerabilityAssessmentPolicyBaselineName,
     SensitivityLabelSource,
@@ -584,7 +592,7 @@ __all__ = [
     'ElasticPoolPerformanceLevelCapability',
     'ElasticPoolUpdate',
     'EncryptionProtector',
-    'ExportRequest',
+    'ExportDatabaseDefinition',
     'ExtendedDatabaseBlobAuditingPolicy',
     'ExtendedServerBlobAuditingPolicy',
     'FailoverGroup',
@@ -593,9 +601,9 @@ __all__ = [
     'FailoverGroupUpdate',
     'FirewallRule',
     'GeoBackupPolicy',
-    'ImportExportResponse',
-    'ImportExtensionRequest',
-    'ImportRequest',
+    'ImportExistingDatabaseDefinition',
+    'ImportExportOperationResult',
+    'ImportNewDatabaseDefinition',
     'InstanceFailoverGroup',
     'InstanceFailoverGroupReadOnlyEndpoint',
     'InstanceFailoverGroupReadWriteEndpoint',
@@ -639,6 +647,7 @@ __all__ = [
     'ManagedInstanceOperationParametersPair',
     'ManagedInstanceOperationSteps',
     'ManagedInstancePairInfo',
+    'ManagedInstancePrivateLinkServiceConnectionStateProperty',
     'ManagedInstanceUpdate',
     'ManagedInstanceVcoresCapability',
     'ManagedInstanceVersionCapability',
@@ -653,6 +662,7 @@ __all__ = [
     'MetricValue',
     'MinCapacityCapability',
     'Name',
+    'NetworkIsolationSettings',
     'Operation',
     'OperationDisplay',
     'OperationImpact',
@@ -661,6 +671,7 @@ __all__ = [
     'PerformanceLevelCapability',
     'PrivateEndpointConnection',
     'PrivateEndpointConnectionProperties',
+    'PrivateEndpointConnectionRequestStatus',
     'PrivateEndpointProperty',
     'PrivateLinkResource',
     'PrivateLinkResourceProperties',
@@ -683,6 +694,7 @@ __all__ = [
     'Server',
     'ServerAutomaticTuning',
     'ServerAzureADAdministrator',
+    'ServerAzureADOnlyAuthentication',
     'ServerBlobAuditingPolicy',
     'ServerCommunicationLink',
     'ServerConnectionPolicy',
@@ -786,7 +798,6 @@ __all__ = [
     'ElasticPoolOperationPaged',
     'VulnerabilityAssessmentScanRecordPaged',
     'InstanceFailoverGroupPaged',
-    'BackupShortTermRetentionPolicyPaged',
     'ManagedInstanceKeyPaged',
     'ManagedInstanceEncryptionProtectorPaged',
     'RecoverableManagedDatabasePaged',
@@ -794,7 +805,6 @@ __all__ = [
     'ServerVulnerabilityAssessmentPaged',
     'InstancePoolPaged',
     'UsagePaged',
-    'ManagedInstancePaged',
     'PrivateEndpointConnectionPaged',
     'PrivateLinkResourcePaged',
     'ServerPaged',
@@ -802,14 +812,17 @@ __all__ = [
     'ManagedInstanceLongTermRetentionPolicyPaged',
     'WorkloadGroupPaged',
     'WorkloadClassifierPaged',
-    'ServerAzureADAdministratorPaged',
     'ManagedInstanceOperationPaged',
+    'ServerAzureADAdministratorPaged',
     'SyncDatabaseIdPropertiesPaged',
     'SyncFullSchemaPropertiesPaged',
     'SyncGroupLogPropertiesPaged',
     'SyncGroupPaged',
     'SyncMemberPaged',
+    'ManagedInstancePaged',
+    'BackupShortTermRetentionPolicyPaged',
     'ManagedDatabasePaged',
+    'ServerAzureADOnlyAuthenticationPaged',
     'ServerConnectionType',
     'SecurityAlertPolicyState',
     'SecurityAlertPolicyEmailAccountAdmins',
@@ -818,10 +831,6 @@ __all__ = [
     'DataMaskingRuleState',
     'DataMaskingFunction',
     'GeoBackupPolicyState',
-    'DatabaseEdition',
-    'ServiceObjectiveName',
-    'StorageKeyType',
-    'AuthenticationType',
     'UnitType',
     'PrimaryAggregationType',
     'UnitDefinitionType',
@@ -832,6 +841,7 @@ __all__ = [
     'RecommendedIndexState',
     'RecommendedIndexType',
     'TransparentDataEncryptionStatus',
+    'ServiceObjectiveName',
     'TransparentDataEncryptionActivityStatus',
     'AutomaticTuningMode',
     'AutomaticTuningOptionModeDesired',
@@ -872,13 +882,10 @@ __all__ = [
     'VulnerabilityAssessmentScanState',
     'InstanceFailoverGroupReplicationRole',
     'InstancePoolLicenseType',
-    'IdentityType',
-    'ManagedServerCreateMode',
-    'ManagedInstanceLicenseType',
-    'ManagedInstanceProxyOverride',
     'PrivateLinkServiceConnectionStateStatus',
     'PrivateLinkServiceConnectionStateActionsRequire',
     'PrivateEndpointProvisioningState',
+    'IdentityType',
     'ServerPublicNetworkAccess',
     'CheckNameAvailabilityReason',
     'MaxSizeUnit',
@@ -893,6 +900,11 @@ __all__ = [
     'SyncMemberState',
     'ManagedDatabaseStatus',
     'ManagedDatabaseCreateMode',
+    'ManagedServerCreateMode',
+    'ManagedInstanceLicenseType',
+    'ManagedInstanceProxyOverride',
+    'StorageAccountType',
+    'StorageKeyType',
     'LongTermRetentionDatabaseState',
     'VulnerabilityAssessmentPolicyBaselineName',
     'SensitivityLabelSource',

@@ -39,81 +39,93 @@ class ManagedInstancesOperations(object):
 
         self.config = config
 
-    def list_by_instance_pool(
-            self, resource_group_name, instance_pool_name, custom_headers=None, raw=False, **operation_config):
-        """Gets a list of all managed instances in an instance pool.
 
-        :param resource_group_name: The name of the resource group that
-         contains the resource. You can obtain this value from the Azure
-         Resource Manager API or the portal.
+    def _failover_initial(
+            self, resource_group_name, managed_instance_name, replica_type=None, custom_headers=None, raw=False, **operation_config):
+        api_version = "2019-06-01-preview"
+
+        # Construct URL
+        url = self.failover.metadata['url']
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'managedInstanceName': self._serialize.url("managed_instance_name", managed_instance_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str', min_length=1)
+        if replica_type is not None:
+            query_parameters['replicaType'] = self._serialize.query("replica_type", replica_type, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200, 202]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+
+    def failover(
+            self, resource_group_name, managed_instance_name, replica_type=None, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Failovers a managed instance.
+
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
         :type resource_group_name: str
-        :param instance_pool_name: The instance pool name.
-        :type instance_pool_name: str
+        :param managed_instance_name: The name of the managed instance.
+        :type managed_instance_name: str
+        :param replica_type: The type of replica to be failed over. Possible
+         values include: 'Primary', 'ReadableSecondary'
+        :type replica_type: str or ~azure.mgmt.sql.models.ReplicaType
         :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of ManagedInstance
-        :rtype:
-         ~azure.mgmt.sql.models.ManagedInstancePaged[~azure.mgmt.sql.models.ManagedInstance]
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns None or
+         ClientRawResponse<None> if raw==True
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        api_version = "2018-06-01-preview"
+        raw_result = self._failover_initial(
+            resource_group_name=resource_group_name,
+            managed_instance_name=managed_instance_name,
+            replica_type=replica_type,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
 
-        def prepare_request(next_link=None):
-            if not next_link:
-                # Construct URL
-                url = self.list_by_instance_pool.metadata['url']
-                path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-                    'instancePoolName': self._serialize.url("instance_pool_name", instance_pool_name, 'str'),
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-                }
-                url = self._client.format_url(url, **path_format_arguments)
+        def get_long_running_output(response):
+            if raw:
+                client_raw_response = ClientRawResponse(None, response)
+                return client_raw_response
 
-                # Construct parameters
-                query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-            else:
-                url = next_link
-                query_parameters = {}
-
-            # Construct headers
-            header_parameters = {}
-            header_parameters['Accept'] = 'application/json'
-            if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
-            return request
-
-        def internal_paging(next_link=None):
-            request = prepare_request(next_link)
-
-            response = self._client.send(request, stream=False, **operation_config)
-
-            if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
-            return response
-
-        # Deserialize response
-        header_dict = None
-        if raw:
-            header_dict = {}
-        deserialized = models.ManagedInstancePaged(internal_paging, self._deserialize.dependencies, header_dict)
-
-        return deserialized
-    list_by_instance_pool.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/instancePools/{instancePoolName}/managedInstances'}
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    failover.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/failover'}
 
     def list_by_resource_group(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
@@ -133,7 +145,7 @@ class ManagedInstancesOperations(object):
          ~azure.mgmt.sql.models.ManagedInstancePaged[~azure.mgmt.sql.models.ManagedInstance]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        api_version = "2018-06-01-preview"
+        api_version = "2020-02-02-preview"
 
         def prepare_request(next_link=None):
             if not next_link:
@@ -208,7 +220,7 @@ class ManagedInstancesOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        api_version = "2018-06-01-preview"
+        api_version = "2020-02-02-preview"
 
         # Construct URL
         url = self.get.metadata['url']
@@ -256,7 +268,7 @@ class ManagedInstancesOperations(object):
 
     def _create_or_update_initial(
             self, resource_group_name, managed_instance_name, parameters, custom_headers=None, raw=False, **operation_config):
-        api_version = "2018-06-01-preview"
+        api_version = "2020-02-02-preview"
 
         # Construct URL
         url = self.create_or_update.metadata['url']
@@ -362,7 +374,7 @@ class ManagedInstancesOperations(object):
 
     def _delete_initial(
             self, resource_group_name, managed_instance_name, custom_headers=None, raw=False, **operation_config):
-        api_version = "2018-06-01-preview"
+        api_version = "2020-02-02-preview"
 
         # Construct URL
         url = self.delete.metadata['url']
@@ -445,7 +457,7 @@ class ManagedInstancesOperations(object):
 
     def _update_initial(
             self, resource_group_name, managed_instance_name, parameters, custom_headers=None, raw=False, **operation_config):
-        api_version = "2018-06-01-preview"
+        api_version = "2020-02-02-preview"
 
         # Construct URL
         url = self.update.metadata['url']
@@ -546,6 +558,82 @@ class ManagedInstancesOperations(object):
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}'}
 
+    def list_by_instance_pool(
+            self, resource_group_name, instance_pool_name, custom_headers=None, raw=False, **operation_config):
+        """Gets a list of all managed instances in an instance pool.
+
+        :param resource_group_name: The name of the resource group that
+         contains the resource. You can obtain this value from the Azure
+         Resource Manager API or the portal.
+        :type resource_group_name: str
+        :param instance_pool_name: The instance pool name.
+        :type instance_pool_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of ManagedInstance
+        :rtype:
+         ~azure.mgmt.sql.models.ManagedInstancePaged[~azure.mgmt.sql.models.ManagedInstance]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        api_version = "2020-02-02-preview"
+
+        def prepare_request(next_link=None):
+            if not next_link:
+                # Construct URL
+                url = self.list_by_instance_pool.metadata['url']
+                path_format_arguments = {
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'instancePoolName': self._serialize.url("instance_pool_name", instance_pool_name, 'str'),
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Accept'] = 'application/json'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
+            response = self._client.send(request, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        header_dict = None
+        if raw:
+            header_dict = {}
+        deserialized = models.ManagedInstancePaged(internal_paging, self._deserialize.dependencies, header_dict)
+
+        return deserialized
+    list_by_instance_pool.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/instancePools/{instancePoolName}/managedInstances'}
+
     def list(
             self, custom_headers=None, raw=False, **operation_config):
         """Gets a list of all managed instances in the subscription.
@@ -560,7 +648,7 @@ class ManagedInstancesOperations(object):
          ~azure.mgmt.sql.models.ManagedInstancePaged[~azure.mgmt.sql.models.ManagedInstance]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        api_version = "2018-06-01-preview"
+        api_version = "2020-02-02-preview"
 
         def prepare_request(next_link=None):
             if not next_link:
@@ -613,91 +701,3 @@ class ManagedInstancesOperations(object):
 
         return deserialized
     list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Sql/managedInstances'}
-
-
-    def _failover_initial(
-            self, resource_group_name, managed_instance_name, replica_type=None, custom_headers=None, raw=False, **operation_config):
-        api_version = "2019-06-01-preview"
-
-        # Construct URL
-        url = self.failover.metadata['url']
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'managedInstanceName': self._serialize.url("managed_instance_name", managed_instance_name, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str', min_length=1)
-        if replica_type is not None:
-            query_parameters['replicaType'] = self._serialize.query("replica_type", replica_type, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200, 202]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        if raw:
-            client_raw_response = ClientRawResponse(None, response)
-            return client_raw_response
-
-    def failover(
-            self, resource_group_name, managed_instance_name, replica_type=None, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Failovers a managed instance.
-
-        :param resource_group_name: The name of the resource group. The name
-         is case insensitive.
-        :type resource_group_name: str
-        :param managed_instance_name: The name of the managed instance.
-        :type managed_instance_name: str
-        :param replica_type: The type of replica to be failed over. Possible
-         values include: 'Primary', 'ReadableSecondary'
-        :type replica_type: str or ~azure.mgmt.sql.models.ReplicaType
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: The poller return type is ClientRawResponse, the
-         direct response alongside the deserialized response
-        :param polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
-        :return: An instance of LROPoller that returns None or
-         ClientRawResponse<None> if raw==True
-        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        raw_result = self._failover_initial(
-            resource_group_name=resource_group_name,
-            managed_instance_name=managed_instance_name,
-            replica_type=replica_type,
-            custom_headers=custom_headers,
-            raw=True,
-            **operation_config
-        )
-
-        def get_long_running_output(response):
-            if raw:
-                client_raw_response = ClientRawResponse(None, response)
-                return client_raw_response
-
-        lro_delay = operation_config.get(
-            'long_running_operation_timeout',
-            self.config.long_running_operation_timeout)
-        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
-        elif polling is False: polling_method = NoPolling()
-        else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    failover.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/failover'}
