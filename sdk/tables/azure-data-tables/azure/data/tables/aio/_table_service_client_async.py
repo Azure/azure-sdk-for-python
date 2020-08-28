@@ -84,7 +84,6 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
             loop=loop,
             **kwargs)
         self._client = AzureTable(url=self.url, pipeline=self._pipeline, loop=loop)  # type: ignore
-        self._client._config.version = kwargs.get('api_version', VERSION)  # pylint: disable=protected-access
         self._loop = loop
 
     @classmethod

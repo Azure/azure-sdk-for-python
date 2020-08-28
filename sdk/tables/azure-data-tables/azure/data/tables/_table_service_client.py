@@ -47,8 +47,7 @@ class TableServiceClient(TableServiceClientBase):
 
         super(TableServiceClient, self).__init__(account_url, service='table', credential=credential, **kwargs)
         self._client = AzureTable(self.url, pipeline=self._pipeline)
-        self._client._config.version = kwargs.get('api_version', VERSION)  # pylint: disable=protected-access
-
+        
     @classmethod
     def from_connection_string(
             cls, conn_str,  # type: str

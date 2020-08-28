@@ -71,7 +71,6 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
             account_url, table_name=table_name, credential=credential, loop=loop, **kwargs
         )
         self._client = AzureTable(self.url, pipeline=self._pipeline, loop=loop)
-        self._client._config.version = kwargs.get('api_version', VERSION)  # pylint: disable = W0212
         self._loop = loop
 
     @classmethod
