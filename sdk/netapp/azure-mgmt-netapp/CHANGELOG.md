@@ -1,5 +1,55 @@
 # Release History
 
+## 0.13.0 (2020-08-29)
+
+**Features**
+
+  - Model VolumePatch has a new parameter throughput_mibps
+  - Model VolumePatch has a new parameter data_protection
+  - Model ActiveDirectory has a new parameter status_details
+  - Model ActiveDirectory has a new parameter kdc_ip
+  - Model ActiveDirectory has a new parameter ad_name
+  - Model ActiveDirectory has a new parameter server_root_ca_certificate
+  - Model CapacityPool has a new parameter qos_type
+  - Model CapacityPool has a new parameter utilized_throughput_mibps
+  - Model CapacityPool has a new parameter total_throughput_mibps
+  - Model Volume has a new parameter backup_id
+  - Model Volume has a new parameter kerberos_enabled
+  - Model Volume has a new parameter throughput_mibps
+  - Model Volume has a new parameter security_style
+  - Model CapacityPoolPatch has a new parameter qos_type
+  - Model ExportPolicyRule has a new parameter kerberos5_read_only
+  - Model ExportPolicyRule has a new parameter kerberos5i_read_write
+  - Model ExportPolicyRule has a new parameter kerberos5p_read_only
+  - Model ExportPolicyRule has a new parameter kerberos5_read_write
+  - Model ExportPolicyRule has a new parameter has_root_access
+  - Model ExportPolicyRule has a new parameter kerberos5p_read_write
+  - Model ExportPolicyRule has a new parameter kerberos5i_read_only
+  - Model VolumePropertiesDataProtection has a new parameter backup
+  - Added operation NetAppResourceOperations.check_quota_availability
+  - Added operation VolumesOperations.pool_change
+  - Added operation VolumesOperations.re_initialize_replication
+  - Added operation group AccountBackupsOperations
+  - Added operation group VaultsOperations
+  - Added operation group SnapshotPoliciesOperations
+  - Added operation group BackupsOperations
+  - Added operation group BackupPoliciesOperations
+
+**Breaking changes**
+
+  - Operation VolumesOperations.break_replication has a new signature
+  - Model CapacityPoolPatch no longer has parameter service_level
+  - Model MountTarget no longer has parameter end_ip
+  - Model MountTarget no longer has parameter start_ip
+  - Model MountTarget no longer has parameter netmask
+  - Model MountTarget no longer has parameter subnet
+  - Model MountTarget no longer has parameter gateway
+  - Model MountTargetProperties no longer has parameter end_ip
+  - Model MountTargetProperties no longer has parameter start_ip
+  - Model MountTargetProperties no longer has parameter netmask
+  - Model MountTargetProperties no longer has parameter subnet
+  - Model MountTargetProperties no longer has parameter gateway
+
 ## 0.12.0 (2020-07-30)
 
 **Features**
