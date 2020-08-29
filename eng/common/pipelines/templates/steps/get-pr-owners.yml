@@ -10,6 +10,10 @@ steps:
     displayName: Setup Identity Resolver
 
   - pwsh: |
+      Write-Host "##vso[task.setvariable variable=${{ parameters.TargetVariable }}]"
+    displayName: 'Ensure Target Variable Is Populated'
+
+  - pwsh: |
       $result = dotnet run -v q -- `
         --aad-app-id-var APP_ID `
         --aad-app-secret-var APP_SECRET `
@@ -17,7 +21,7 @@ steps:
         --kusto-url-var KUSTO_URL `
         --kusto-database-var KUSTO_DB `
         --kusto-table-var KUSTO_TABLE `
-        --identity "$(Build.QueuedBy)"
+        --identity "$(Build.QueuedBy)" `
         --vsoVariable "${{ parameters.TargetVariable }}"
     displayName: 'Resolving Queuing User'
     continueOnError: true
