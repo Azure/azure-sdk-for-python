@@ -515,7 +515,7 @@ class BatchMessage(object):
     def _from_list(self, messages):
         for each in messages:
             if not isinstance(each, Message):
-                raise ValueError("Only Message or an iterable object containing Message objects are accepted."
+                raise TypeError("Only Message or an iterable object containing Message objects are accepted."
                                  "Received instead: {}".format(each.__class__.__name__))
             self.add(each)
 

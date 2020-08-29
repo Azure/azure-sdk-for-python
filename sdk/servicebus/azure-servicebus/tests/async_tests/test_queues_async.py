@@ -1401,3 +1401,34 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     time_7 = receiver._handler._counter.get_current_ms()
                     assert timedelta(seconds=3) < timedelta(milliseconds=(time_7 - time_6)) < timedelta(seconds=6)
                     assert len(messages) == 1
+
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusQueuePreparer(name_prefix='servicebustest')
+    async def test_async_queue_send_twice(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+        async with ServiceBusClient.from_connection_string(
+            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+
+            async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+                message = Message("Message")
+                message2 = Message("Message2")
+                # first test batch message resending.
+                batch_message = await sender.create_batch()
+                batch_message._from_list([message, message2])  # pylint: disable=protected-access
+                await sender.send_messages(batch_message)
+                await sender.send_messages(batch_message)
+                messages = []
+                async with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5) as receiver:
+                    async for message in receiver:
+                        messages.append(message)
+                assert len(messages) == 4
+                # then normal message resending
+                await sender.send_messages(message)
+                await sender.send_messages(message)
+                messages = []
+                async with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5) as receiver:
+                    async for message in receiver:
+                        messages.append(message)
+                assert len(messages) == 2

@@ -9,6 +9,7 @@ from typing import Any, TYPE_CHECKING, Union, List, Optional
 
 import uamqp
 from uamqp import SendClient, types
+from uamqp.constants import MessageState
 from uamqp.authentication.common import AMQPAuth
 
 from ._base_handler import BaseHandler, ServiceBusSharedKeyCredential, _convert_connection_string_to_kwargs
@@ -339,6 +340,12 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             pass
         if isinstance(message, BatchMessage) and len(message) == 0:  # pylint: disable=len-as-condition
             raise ValueError("A BatchMessage or list of Message must have at least one Message")
+        if not isinstance(message, BatchMessage):
+            if not isinstance(message, Message):
+                raise TypeError("Can only send azure.servicebus.<BatchMessage,Message> or lists of Messages.")
+            # This allows resending an already sent message; not needed for batch.  Perhaps should be in uamqp?
+            message.message.state = MessageState.WaitingToBeSent
+            message.message._response = None
 
         self._do_retryable_operation(
             self._send,
