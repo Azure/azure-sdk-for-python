@@ -15,8 +15,6 @@ interactions:
       - application/json
       User-Agent:
       - azsdk-python-search-documents/1.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      api-key:
-      - 611B37AA724F1C68730D7CF6A8C3A842
     method: POST
     uri: https://search8001902.search.windows.net/datasources?api-version=2020-06-30
   response:
@@ -68,8 +66,6 @@ interactions:
       - application/json
       User-Agent:
       - azsdk-python-search-documents/1.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      api-key:
-      - 611B37AA724F1C68730D7CF6A8C3A842
     method: POST
     uri: https://search8001902.search.windows.net/indexes?api-version=2020-06-30
   response:
@@ -121,8 +117,6 @@ interactions:
       - application/json
       User-Agent:
       - azsdk-python-search-documents/1.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      api-key:
-      - 611B37AA724F1C68730D7CF6A8C3A842
     method: POST
     uri: https://search8001902.search.windows.net/indexers?api-version=2020-06-30
   response:
@@ -169,8 +163,6 @@ interactions:
       - keep-alive
       User-Agent:
       - azsdk-python-search-documents/1.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      api-key:
-      - 611B37AA724F1C68730D7CF6A8C3A842
     method: GET
     uri: https://search8001902.search.windows.net/indexers?api-version=2020-06-30
   response:
@@ -222,8 +214,6 @@ interactions:
       - return=representation
       User-Agent:
       - azsdk-python-search-documents/1.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      api-key:
-      - 611B37AA724F1C68730D7CF6A8C3A842
     method: PUT
     uri: https://search8001902.search.windows.net/indexers('sample-indexer')?api-version=2020-06-30
   response:
@@ -270,8 +260,6 @@ interactions:
       - keep-alive
       User-Agent:
       - azsdk-python-search-documents/1.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      api-key:
-      - 611B37AA724F1C68730D7CF6A8C3A842
     method: GET
     uri: https://search8001902.search.windows.net/indexers?api-version=2020-06-30
   response:
@@ -316,8 +304,6 @@ interactions:
       - keep-alive
       User-Agent:
       - azsdk-python-search-documents/1.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      api-key:
-      - 611B37AA724F1C68730D7CF6A8C3A842
     method: GET
     uri: https://search8001902.search.windows.net/indexers('sample-indexer')?api-version=2020-06-30
   response:

@@ -15,8 +15,6 @@ interactions:
       - application/json
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-      api-key:
-      - AF7406FAE688FB220E9D298B2800E555
     method: POST
     uri: https://searcha9211b9f.search.windows.net/indexes('drgqefsg')/docs/search.index?api-version=2020-06-30
   response:
@@ -62,8 +60,6 @@ interactions:
       - keep-alive
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-      api-key:
-      - AF7406FAE688FB220E9D298B2800E555
     method: GET
     uri: https://searcha9211b9f.search.windows.net/indexes('drgqefsg')/docs/$count?api-version=2020-06-30
   response:
@@ -108,8 +104,6 @@ interactions:
       - keep-alive
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-      api-key:
-      - AF7406FAE688FB220E9D298B2800E555
     method: GET
     uri: https://searcha9211b9f.search.windows.net/indexes('drgqefsg')/docs('1000')?api-version=2020-06-30
   response:
@@ -146,8 +140,6 @@ interactions:
       - keep-alive
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-      api-key:
-      - AF7406FAE688FB220E9D298B2800E555
     method: GET
     uri: https://searcha9211b9f.search.windows.net/indexes('drgqefsg')/docs('4')?api-version=2020-06-30
   response:
