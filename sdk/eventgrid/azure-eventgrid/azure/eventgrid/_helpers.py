@@ -12,6 +12,7 @@ from azure.core.credentials import AzureKeyCredential
 from ._shared_access_signature_credential import EventGridSharedAccessSignatureCredential
 from ._signature_credential_policy import EventGridSharedAccessSignatureCredentialPolicy
 from . import _constants as constants
+from ._event_mappings import _event_mappings
 
 def generate_shared_access_signature(topic_hostname, shared_access_key, expiration_date_utc, **kwargs):
     # type: (str, str, datetime.Datetime, Any) -> str
@@ -78,3 +79,16 @@ def _is_cloud_event(event):
         return all([_ in event for _ in required]) and event['specversion'] == "1.0"
     except TypeError:
         return False
+
+def _deserialize_data(event, event_type):
+    """
+    Sets the data of the desrialized event to strongly typed event object if event type exists in _event_mappings.
+    Otherwise, sets it to None.
+
+    :param str event_type: The event_type of the EventGridEvent object or the type of the CloudEvent object.
+    """
+    # if system event type defined, set event.data to system event object
+    try:
+        event.data = (_event_mappings[event_type]).deserialize(event.data)
+    except KeyError: # else, if custom event, then event.data is dict and should be set to None
+        event.data = None

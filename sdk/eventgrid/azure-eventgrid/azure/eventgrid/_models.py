@@ -130,62 +130,6 @@ class EventGridEvent(InternalEventGridEvent):
         super(EventGridEvent, self).__init__(**kwargs)
 
 
-class DeserializedEvent():
-    """The container for the deserialized event model and mapping of event envelope properties.
-        :param dict event: dict
-    """
-
-    def __init__(self, event):
-        # type: (Any) -> None
-        self._model = None
-        self._event_dict = event
-    
-    def to_json(self):
-        # type: () -> dict
-        return self._event_dict
-
-    @property
-    def model(self):
-        # type: () -> Union[CloudEvent, EventGridEvent]
-        """
-        Returns strongly typed EventGridEvent/CloudEvent object defined by the format of the properties.
-        All properties of the model are strongly typed (ie. for an EventGridEvent, event_time property will return a datetime.datetime object).
-
-        model.data: Returns a system event type(StorageBlobCreated, StorageBlobDeleted, etc.). If model.type/model.event_type is not defined in the 
-          system registry, returns None.
-
-        :raise: :class:`ValueError`, when events do not follow CloudEvent or EventGridEvent schema.
-
-        :rtype: Union[CloudEvent, EventGridEvent]
-        """
-        if not self._model:
-            try:
-                if 'specversion' in self._event_dict.keys():
-                    self._model = CloudEvent.deserialize(self._event_dict)
-                    event_type = self._model.type
-                else:
-                    self._model = EventGridEvent.deserialize(self._event_dict)
-                    event_type = self._model.event_type
-            except:
-                raise ValueError("Event is not correctly formatted CloudEvent or EventGridEvent.")
-
-            self._deserialize_data(event_type)
-
-        return self._model
-    
-    def _deserialize_data(self, event_type):
-        """
-        Sets self._model.data to strongly typed event object if event type exists in _event_mappings.
-        Otherwise, sets self._model.data to None.
-
-        :param str event_type: The event_type of the EventGridEvent object or the type of the CloudEvent object.
-        """
-        # if system event type defined, set model.data to system event object
-        try:
-            self._model.data = (_event_mappings[event_type]).deserialize(self._model.data)
-        except KeyError: # else, if custom event, then model.data is dict and should be set to None
-            self._model.data = None
-    
 class CustomEvent(DictMixin):
     """The wrapper class for a CustomEvent, to be used when publishing events.
        :param dict args: dict
