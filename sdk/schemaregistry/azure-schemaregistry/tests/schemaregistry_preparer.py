@@ -62,7 +62,7 @@ class SchemaRegistryPreparer(AzureMgmtPreparer):
         super(SchemaRegistryPreparer, self).__init__(name_prefix, 24)
 
     def create_resource(self, name, **kwargs):
-        # TODO: right now the endpoint/group is fixed, as there is no way to create/delete resources using api, in the future we should be able to dynamically create and remove resources
+        # TODO: right now the endpoint/group is fixed, as there is no way to create/delete resources using mgmt api, in the future we should be able to dynamically create and remove resources
         return {
             SCHEMA_REGISTRY_ENDPOINT_PARAM: os.environ[SCHEMA_REGISTRY_ENDPOINT_ENV_KEY_NAME],
             SCHEMA_REGISTRY_GROUP_PARAM: os.environ[SCHEMA_REGISTRY_GROUP_ENV_KEY_NAME],

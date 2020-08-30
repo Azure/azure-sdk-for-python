@@ -27,7 +27,7 @@ from typing import Any, TYPE_CHECKING, Union
 from enum import Enum
 
 from ._common._constants import SerializationType
-from ._common._schema import Schema, SchemaId
+from ._common._schema import Schema, SchemaProperties
 from ._common._response_handlers import _parse_response_schema, _parse_response_schema_id
 from ._generated._azure_schema_registry import AzureSchemaRegistry
 
@@ -81,8 +81,8 @@ class SchemaRegistryClient:
         """
         self._generated_client.close()
 
-    def register_schema(self, schema_group, schema_name, serialization_type, schema_string, **kwargs):  # TODO: serialization_type Enum + string?
-        # type: (str, str, Union[str, SerializationType], str, Any) -> SchemaId
+    def register_schema(self, schema_group, schema_name, serialization_type, schema_content, **kwargs):  # TODO: serialization_type Enum + string?
+        # type: (str, str, Union[str, SerializationType], str, Any) -> SchemaProperties
         """
         Register new schema. If schema of specified name does not exist in specified group,
         schema is created at version 1. If schema of specified name exists already in specified group,
@@ -92,8 +92,8 @@ class SchemaRegistryClient:
         :param str schema_name: Name of schema being registered.
         :param serialization_type: Serialization type for the schema being registered.
         :type serialization_type: Union[str, SerializationType]
-        :param str schema_string: String representation of the schema being registered.
-        :rtype: SchemaId
+        :param str schema_content: String representation of the schema being registered.
+        :rtype: SchemaProperties
 
         .. admonition:: Example:
 
@@ -113,7 +113,7 @@ class SchemaRegistryClient:
         return self._generated_client.schema.register(
             group_name=schema_group,
             schema_name=schema_name,
-            schema_content=schema_string,
+            schema_content=schema_content,
             #serialization_type=serialization_type,  # TODO: current swagger doesn't support the parameter
             cls=_parse_response_schema_id
         )
@@ -142,8 +142,8 @@ class SchemaRegistryClient:
             cls=_parse_response_schema
         )
 
-    def get_schema_id(self, schema_group, schema_name, serialization_type, schema_string, **kwargs):
-        # type: (str, str, str, Union[str, SerializationType], Any) -> SchemaId
+    def get_schema_id(self, schema_group, schema_name, serialization_type, schema_content, **kwargs):
+        # type: (str, str, str, Union[str, SerializationType], Any) -> SchemaProperties
         """
         Gets the ID referencing an existing schema within the specified schema group,
         as matched by schema content comparison.
@@ -153,8 +153,8 @@ class SchemaRegistryClient:
         :param serialization_type: Serialization type for the schema being registered.
          The
         :type serialization_type: Union[str, SerializationType]
-        :param str schema_string: String representation of the schema being registered.
-        :rtype: SchemaId
+        :param str schema_content: String representation of the schema being registered.
+        :rtype: SchemaProperties
 
         .. admonition:: Example:
 
@@ -174,7 +174,7 @@ class SchemaRegistryClient:
         return self._generated_client.schema.query_id_by_content(
             group_name=schema_group,
             schema_name=schema_name,
-            schema_content=schema_string,
+            schema_content=schema_content,
             #serialization_type=serialization_type,  # TODO: current swagger doesn't support the parameter
             cls=_parse_response_schema_id
         )

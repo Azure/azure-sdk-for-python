@@ -30,11 +30,11 @@ __version__ = VERSION
 
 from ._schema_registry_client import SchemaRegistryClient
 from ._common._constants import SerializationType
-from ._common._schema import Schema, SchemaId
+from ._common._schema import Schema, SchemaProperties
 
 __all__ = [
     "SchemaRegistryClient",
     "SerializationType",
     "Schema",
-    "SchemaId"
+    "SchemaProperties"
 ]

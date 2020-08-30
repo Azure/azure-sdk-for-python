@@ -28,11 +28,11 @@ from typing import Any, Dict
 from azure.core.pipeline import PipelineResponse
 
 from .._generated.models import SchemaId as InternalSchemaId
-from ._schema import SchemaId, Schema
+from ._schema import SchemaProperties, Schema
 
 
 def _parse_response_schema_id(pipeline_response, deserialized, response_headers):
-    # type: (PipelineResponse, InternalSchemaId, Dict[str, Any]) -> SchemaId
+    # type: (PipelineResponse, InternalSchemaId, Dict[str, Any]) -> SchemaProperties
     """
 
     :param pipeline_response:
@@ -40,7 +40,7 @@ def _parse_response_schema_id(pipeline_response, deserialized, response_headers)
     :param response_headers:
     :return:
     """
-    return SchemaId(schema_id=deserialized.id, **response_headers)
+    return SchemaProperties(schema_id=deserialized.id, **response_headers)
 
 
 def _parse_response_schema(pipeline_response, deserialized, response_headers):

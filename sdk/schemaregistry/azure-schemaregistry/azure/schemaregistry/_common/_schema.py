@@ -107,7 +107,7 @@ class SchemaMeta(DictMixin):
         self.version = kwargs.get('X-Schema-Version')
 
 
-class SchemaId(SchemaMeta):  # TODO: need a better name here?
+class SchemaProperties:
     """
     Id and meta properties of a schema.
 
@@ -138,13 +138,13 @@ class SchemaId(SchemaMeta):  # TODO: need a better name here?
         **kwargs
     ):
         # type: (str, Any) -> None
-        super(SchemaId, self).__init__(**kwargs)
+        super(SchemaProperties, self).__init__(**kwargs)
         self.id = schema_id
 
 
 class Schema(SchemaMeta):
     """
-    Id, meta properties and schema content of a schema.
+    The schema content of a schema, along with id and meta properties.
 
     :ivar content: The content of the schema.
     :type content: str
