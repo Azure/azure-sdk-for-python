@@ -1,2 +1,2 @@
 # matches SEMVER
-VERSION = "0.0.16b1"
+VERSION = "0.0.16b2"
