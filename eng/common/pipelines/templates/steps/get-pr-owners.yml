@@ -21,8 +21,9 @@ steps:
         --kusto-url-var KUSTO_URL `
         --kusto-database-var KUSTO_DB `
         --kusto-table-var KUSTO_TABLE `
-        --identity "$(Build.QueuedBy)" `
-        --vsoVariable "${{ parameters.TargetVariable }}"
+        --identity "$(Build.QueuedBy)" --vsoVariable "${{ parameters.TargetVariable }}"
+      
+      Write-Host "-aad-app-id-var APP_ID --aad-app-secret-var APP_SECRET --aad-tenant-var AAD_TENANT --kusto-url-var KUSTO_URL --kusto-database-var KUSTO_DB --kusto-table-var KUSTO_TABLE --identity `"`$(Build.QueuedBy)`" --vsoVariable `"`${{ parameters.TargetVariable }}"
     displayName: 'Resolving Queuing User'
     continueOnError: true
     workingDirectory: $(Build.SourcesDirectory)/tools_repo/tools/notification-configuration/identity-resolver
