@@ -1,5 +1,8 @@
 # Release History
 
+## 0.0.17b1 (2020-08-30)
+- Test a successful Release
+
 ## 0.0.17 (2020-08-29)
 - Test a successful Release
 
