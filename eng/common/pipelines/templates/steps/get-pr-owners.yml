@@ -6,7 +6,7 @@ steps:
   - pwsh: |
       git clone https://github.com/Azure/azure-sdk-tools.git $(Build.SourcesDirectory)/tools_repo
       cd $(Build.SourcesDirectory)/tools_repo
-      git checkout b34945ef5e756faa8e312f260a30eaaca1f2b22b
+      git checkout a7f38c84325424bd7f8be8c7661213995ebe8adb
     displayName: Setup Identity Resolver
 
   - pwsh: |
