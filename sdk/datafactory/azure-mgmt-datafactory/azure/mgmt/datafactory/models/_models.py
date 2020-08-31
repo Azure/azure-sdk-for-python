@@ -2553,8 +2553,9 @@ class StoreWriteSettings(Model):
     """Connector write settings.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: FileServerWriteSettings, AzureDataLakeStoreWriteSettings,
-    AzureBlobFSWriteSettings, AzureBlobStorageWriteSettings, SftpWriteSettings
+    sub-classes are: AzureFileStorageWriteSettings, FileServerWriteSettings,
+    AzureDataLakeStoreWriteSettings, AzureBlobFSWriteSettings,
+    AzureBlobStorageWriteSettings, SftpWriteSettings
 
     All required parameters must be populated in order to send to Azure.
 
@@ -2583,7 +2584,7 @@ class StoreWriteSettings(Model):
     }
 
     _subtype_map = {
-        'type': {'FileServerWriteSettings': 'FileServerWriteSettings', 'AzureDataLakeStoreWriteSettings': 'AzureDataLakeStoreWriteSettings', 'AzureBlobFSWriteSettings': 'AzureBlobFSWriteSettings', 'AzureBlobStorageWriteSettings': 'AzureBlobStorageWriteSettings', 'SftpWriteSettings': 'SftpWriteSettings'}
+        'type': {'AzureFileStorageWriteSettings': 'AzureFileStorageWriteSettings', 'FileServerWriteSettings': 'FileServerWriteSettings', 'AzureDataLakeStoreWriteSettings': 'AzureDataLakeStoreWriteSettings', 'AzureBlobFSWriteSettings': 'AzureBlobFSWriteSettings', 'AzureBlobStorageWriteSettings': 'AzureBlobStorageWriteSettings', 'SftpWriteSettings': 'SftpWriteSettings'}
     }
 
     def __init__(self, **kwargs):
@@ -4158,6 +4159,40 @@ class AzureFileStorageReadSettings(StoreReadSettings):
         self.modified_datetime_start = kwargs.get('modified_datetime_start', None)
         self.modified_datetime_end = kwargs.get('modified_datetime_end', None)
         self.type = 'AzureFileStorageReadSettings'
+
+
+class AzureFileStorageWriteSettings(StoreWriteSettings):
+    """Azure File Storage write settings.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param max_concurrent_connections: The maximum concurrent connection count
+     for the source data store. Type: integer (or Expression with resultType
+     integer).
+    :type max_concurrent_connections: object
+    :param copy_behavior: The type of copy behavior for copy sink.
+    :type copy_behavior: object
+    :param type: Required. Constant filled by server.
+    :type type: str
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'copy_behavior': {'key': 'copyBehavior', 'type': 'object'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(AzureFileStorageWriteSettings, self).__init__(**kwargs)
+        self.type = 'AzureFileStorageWriteSettings'
 
 
 class AzureFunctionActivity(ExecutionActivity):
@@ -7963,7 +7998,8 @@ class CompressionReadSettings(Model):
     """Compression read settings.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: ZipDeflateReadSettings
+    sub-classes are: TarGZipReadSettings, TarReadSettings,
+    ZipDeflateReadSettings
 
     All required parameters must be populated in order to send to Azure.
 
@@ -7984,7 +8020,7 @@ class CompressionReadSettings(Model):
     }
 
     _subtype_map = {
-        'type': {'ZipDeflateReadSettings': 'ZipDeflateReadSettings'}
+        'type': {'TarGZipReadSettings': 'TarGZipReadSettings', 'TarReadSettings': 'TarReadSettings', 'ZipDeflateReadSettings': 'ZipDeflateReadSettings'}
     }
 
     def __init__(self, **kwargs):
@@ -8187,6 +8223,40 @@ class ConcurSource(TabularSource):
         super(ConcurSource, self).__init__(**kwargs)
         self.query = kwargs.get('query', None)
         self.type = 'ConcurSource'
+
+
+class ConnectionStateProperties(Model):
+    """The connection state of a managed private endpoint.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar actions_required: The actions required on the managed private
+     endpoint
+    :vartype actions_required: str
+    :ivar description: The managed private endpoint description
+    :vartype description: str
+    :ivar status: The approval status
+    :vartype status: str
+    """
+
+    _validation = {
+        'actions_required': {'readonly': True},
+        'description': {'readonly': True},
+        'status': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'actions_required': {'key': 'actionsRequired', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ConnectionStateProperties, self).__init__(**kwargs)
+        self.actions_required = None
+        self.description = None
+        self.status = None
 
 
 class CopyActivity(ExecutionActivity):
@@ -8773,6 +8843,9 @@ class CosmosDbSqlApiSource(CopySource):
     :param preferred_regions: Preferred regions. Type: array of strings (or
      Expression with resultType array of strings).
     :type preferred_regions: object
+    :param detect_datetime: Whether detect primitive values as datetime
+     values. Type: boolean (or Expression with resultType boolean).
+    :type detect_datetime: object
     :param additional_columns: Specifies the additional columns to be added to
      source data. Type: array of objects (or Expression with resultType array
      of objects).
@@ -8793,6 +8866,7 @@ class CosmosDbSqlApiSource(CopySource):
         'query': {'key': 'query', 'type': 'object'},
         'page_size': {'key': 'pageSize', 'type': 'object'},
         'preferred_regions': {'key': 'preferredRegions', 'type': 'object'},
+        'detect_datetime': {'key': 'detectDatetime', 'type': 'object'},
         'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
     }
 
@@ -8801,6 +8875,7 @@ class CosmosDbSqlApiSource(CopySource):
         self.query = kwargs.get('query', None)
         self.page_size = kwargs.get('page_size', None)
         self.preferred_regions = kwargs.get('preferred_regions', None)
+        self.detect_datetime = kwargs.get('detect_datetime', None)
         self.additional_columns = kwargs.get('additional_columns', None)
         self.type = 'CosmosDbSqlApiSource'
 
@@ -10146,7 +10221,8 @@ class DatasetCompression(Model):
     """The compression method used on a dataset.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: DatasetZipDeflateCompression, DatasetDeflateCompression,
+    sub-classes are: DatasetTarGZipCompression, DatasetTarCompression,
+    DatasetZipDeflateCompression, DatasetDeflateCompression,
     DatasetGZipCompression, DatasetBZip2Compression
 
     All required parameters must be populated in order to send to Azure.
@@ -10168,7 +10244,7 @@ class DatasetCompression(Model):
     }
 
     _subtype_map = {
-        'type': {'ZipDeflate': 'DatasetZipDeflateCompression', 'Deflate': 'DatasetDeflateCompression', 'GZip': 'DatasetGZipCompression', 'BZip2': 'DatasetBZip2Compression'}
+        'type': {'TarGZip': 'DatasetTarGZipCompression', 'Tar': 'DatasetTarCompression', 'ZipDeflate': 'DatasetZipDeflateCompression', 'Deflate': 'DatasetDeflateCompression', 'GZip': 'DatasetGZipCompression', 'BZip2': 'DatasetBZip2Compression'}
     }
 
     def __init__(self, **kwargs):
@@ -10380,6 +10456,62 @@ class DatasetResource(SubResource):
     def __init__(self, **kwargs):
         super(DatasetResource, self).__init__(**kwargs)
         self.properties = kwargs.get('properties', None)
+
+
+class DatasetTarCompression(DatasetCompression):
+    """The Tar archive method used on a dataset.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param type: Required. Constant filled by server.
+    :type type: str
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(DatasetTarCompression, self).__init__(**kwargs)
+        self.type = 'Tar'
+
+
+class DatasetTarGZipCompression(DatasetCompression):
+    """The TarGZip compression method used on a dataset.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :param level: The TarGZip compression level.
+    :type level: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'level': {'key': 'level', 'type': 'object'},
+    }
+
+    def __init__(self, **kwargs):
+        super(DatasetTarGZipCompression, self).__init__(**kwargs)
+        self.level = kwargs.get('level', None)
+        self.type = 'TarGZip'
 
 
 class DatasetZipDeflateCompression(DatasetCompression):
@@ -13007,6 +13139,54 @@ class ExportSettings(Model):
         self.type = None
 
 
+class ExposureControlBatchRequest(Model):
+    """A list of exposure control features.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param exposure_control_requests: Required. List of exposure control
+     features.
+    :type exposure_control_requests:
+     list[~azure.mgmt.datafactory.models.ExposureControlRequest]
+    """
+
+    _validation = {
+        'exposure_control_requests': {'required': True},
+    }
+
+    _attribute_map = {
+        'exposure_control_requests': {'key': 'exposureControlRequests', 'type': '[ExposureControlRequest]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ExposureControlBatchRequest, self).__init__(**kwargs)
+        self.exposure_control_requests = kwargs.get('exposure_control_requests', None)
+
+
+class ExposureControlBatchResponse(Model):
+    """A list of exposure control feature values.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param exposure_control_responses: Required. List of exposure control
+     feature values.
+    :type exposure_control_responses:
+     list[~azure.mgmt.datafactory.models.ExposureControlResponse]
+    """
+
+    _validation = {
+        'exposure_control_responses': {'required': True},
+    }
+
+    _attribute_map = {
+        'exposure_control_responses': {'key': 'exposureControlResponses', 'type': '[ExposureControlResponse]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ExposureControlBatchResponse, self).__init__(**kwargs)
+        self.exposure_control_responses = kwargs.get('exposure_control_responses', None)
+
+
 class ExposureControlRequest(Model):
     """The exposure control request.
 
@@ -15528,6 +15708,10 @@ class HdfsReadSettings(StoreReadSettings):
     :type modified_datetime_end: object
     :param distcp_settings: Specifies Distcp-related settings.
     :type distcp_settings: ~azure.mgmt.datafactory.models.DistcpSettings
+    :param delete_files_after_completion: Indicates whether the source files
+     need to be deleted after copy completion. Default is false. Type: boolean
+     (or Expression with resultType boolean).
+    :type delete_files_after_completion: object
     """
 
     _validation = {
@@ -15547,6 +15731,7 @@ class HdfsReadSettings(StoreReadSettings):
         'modified_datetime_start': {'key': 'modifiedDatetimeStart', 'type': 'object'},
         'modified_datetime_end': {'key': 'modifiedDatetimeEnd', 'type': 'object'},
         'distcp_settings': {'key': 'distcpSettings', 'type': 'DistcpSettings'},
+        'delete_files_after_completion': {'key': 'deleteFilesAfterCompletion', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
@@ -15560,6 +15745,7 @@ class HdfsReadSettings(StoreReadSettings):
         self.modified_datetime_start = kwargs.get('modified_datetime_start', None)
         self.modified_datetime_end = kwargs.get('modified_datetime_end', None)
         self.distcp_settings = kwargs.get('distcp_settings', None)
+        self.delete_files_after_completion = kwargs.get('delete_files_after_completion', None)
         self.type = 'HdfsReadSettings'
 
 
@@ -19248,6 +19434,12 @@ class LogStorageSettings(Model):
     :param path: The path to storage for storing detailed logs of activity
      execution. Type: string (or Expression with resultType string).
     :type path: object
+    :param log_level: Gets or sets the log level, support: Info, Warning.
+     Type: string (or Expression with resultType string).
+    :type log_level: object
+    :param enable_reliable_logging: Specifies whether to enable reliable
+     logging. Type: boolean (or Expression with resultType boolean).
+    :type enable_reliable_logging: object
     """
 
     _validation = {
@@ -19258,6 +19450,8 @@ class LogStorageSettings(Model):
         'additional_properties': {'key': '', 'type': '{object}'},
         'linked_service_name': {'key': 'linkedServiceName', 'type': 'LinkedServiceReference'},
         'path': {'key': 'path', 'type': 'object'},
+        'log_level': {'key': 'logLevel', 'type': 'object'},
+        'enable_reliable_logging': {'key': 'enableReliableLogging', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
@@ -19265,6 +19459,8 @@ class LogStorageSettings(Model):
         self.additional_properties = kwargs.get('additional_properties', None)
         self.linked_service_name = kwargs.get('linked_service_name', None)
         self.path = kwargs.get('path', None)
+        self.log_level = kwargs.get('log_level', None)
+        self.enable_reliable_logging = kwargs.get('enable_reliable_logging', None)
 
 
 class LookupActivity(ExecutionActivity):
@@ -19771,6 +19967,174 @@ class ManagedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
         self.other_errors = None
         self.last_operation = None
         self.type = 'Managed'
+
+
+class ManagedPrivateEndpoint(Model):
+    """Properties of a managed private endpoint.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param connection_state: The managed private endpoint connection state
+    :type connection_state:
+     ~azure.mgmt.datafactory.models.ConnectionStateProperties
+    :param fqdns: Fully qualified domain names
+    :type fqdns: list[str]
+    :param group_id: The groupId to which the managed private endpoint is
+     created
+    :type group_id: str
+    :ivar is_reserved: Denotes whether the managed private endpoint is
+     reserved
+    :vartype is_reserved: bool
+    :param private_link_resource_id: The ARM resource ID of the resource to
+     which the managed private endpoint is created
+    :type private_link_resource_id: str
+    :ivar provisioning_state: The managed private endpoint provisioning state
+    :vartype provisioning_state: str
+    """
+
+    _validation = {
+        'is_reserved': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'connection_state': {'key': 'connectionState', 'type': 'ConnectionStateProperties'},
+        'fqdns': {'key': 'fqdns', 'type': '[str]'},
+        'group_id': {'key': 'groupId', 'type': 'str'},
+        'is_reserved': {'key': 'isReserved', 'type': 'bool'},
+        'private_link_resource_id': {'key': 'privateLinkResourceId', 'type': 'str'},
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ManagedPrivateEndpoint, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.connection_state = kwargs.get('connection_state', None)
+        self.fqdns = kwargs.get('fqdns', None)
+        self.group_id = kwargs.get('group_id', None)
+        self.is_reserved = None
+        self.private_link_resource_id = kwargs.get('private_link_resource_id', None)
+        self.provisioning_state = None
+
+
+class ManagedPrivateEndpointResource(SubResource):
+    """Managed private endpoint resource type.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: The resource identifier.
+    :vartype id: str
+    :ivar name: The resource name.
+    :vartype name: str
+    :ivar type: The resource type.
+    :vartype type: str
+    :ivar etag: Etag identifies change in the resource.
+    :vartype etag: str
+    :param properties: Required. Managed private endpoint properties.
+    :type properties: ~azure.mgmt.datafactory.models.ManagedPrivateEndpoint
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'etag': {'readonly': True},
+        'properties': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'ManagedPrivateEndpoint'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ManagedPrivateEndpointResource, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)
+
+
+class ManagedVirtualNetwork(Model):
+    """A managed Virtual Network associated with the Azure Data Factory.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :ivar v_net_id: Managed Virtual Network ID.
+    :vartype v_net_id: str
+    :ivar alias: Managed Virtual Network alias.
+    :vartype alias: str
+    """
+
+    _validation = {
+        'v_net_id': {'readonly': True},
+        'alias': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'v_net_id': {'key': 'vNetId', 'type': 'str'},
+        'alias': {'key': 'alias', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ManagedVirtualNetwork, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.v_net_id = None
+        self.alias = None
+
+
+class ManagedVirtualNetworkResource(SubResource):
+    """Managed Virtual Network resource type.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: The resource identifier.
+    :vartype id: str
+    :ivar name: The resource name.
+    :vartype name: str
+    :ivar type: The resource type.
+    :vartype type: str
+    :ivar etag: Etag identifies change in the resource.
+    :vartype etag: str
+    :param properties: Required. Managed Virtual Network properties.
+    :type properties: ~azure.mgmt.datafactory.models.ManagedVirtualNetwork
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'etag': {'readonly': True},
+        'properties': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'ManagedVirtualNetwork'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ManagedVirtualNetworkResource, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)
 
 
 class MappingDataFlow(DataFlow):
@@ -31735,6 +32099,70 @@ class SybaseTableDataset(Dataset):
         self.type = 'SybaseTable'
 
 
+class TarGZipReadSettings(CompressionReadSettings):
+    """The TarGZip compression read settings.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :param preserve_compression_file_name_as_folder: Preserve the compression
+     file name as folder path. Type: boolean (or Expression with resultType
+     boolean).
+    :type preserve_compression_file_name_as_folder: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'preserve_compression_file_name_as_folder': {'key': 'preserveCompressionFileNameAsFolder', 'type': 'object'},
+    }
+
+    def __init__(self, **kwargs):
+        super(TarGZipReadSettings, self).__init__(**kwargs)
+        self.preserve_compression_file_name_as_folder = kwargs.get('preserve_compression_file_name_as_folder', None)
+        self.type = 'TarGZipReadSettings'
+
+
+class TarReadSettings(CompressionReadSettings):
+    """The Tar compression read settings.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :param preserve_compression_file_name_as_folder: Preserve the compression
+     file name as folder path. Type: boolean (or Expression with resultType
+     boolean).
+    :type preserve_compression_file_name_as_folder: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'preserve_compression_file_name_as_folder': {'key': 'preserveCompressionFileNameAsFolder', 'type': 'object'},
+    }
+
+    def __init__(self, **kwargs):
+        super(TarReadSettings, self).__init__(**kwargs)
+        self.preserve_compression_file_name_as_folder = kwargs.get('preserve_compression_file_name_as_folder', None)
+        self.type = 'TarReadSettings'
+
+
 class TeradataLinkedService(LinkedService):
     """Linked service for Teradata data source.
 
@@ -33827,6 +34255,13 @@ class XmlReadSettings(FormatReadSettings):
      reading the xml files. Allowed values: 'none', 'xsd', or 'dtd'. Type:
      string (or Expression with resultType string).
     :type validation_mode: object
+    :param detect_data_type: Indicates whether type detection is enabled when
+     reading the xml files. Type: boolean (or Expression with resultType
+     boolean).
+    :type detect_data_type: object
+    :param namespaces: Indicates whether namespace is enabled when reading the
+     xml files. Type: boolean (or Expression with resultType boolean).
+    :type namespaces: object
     :param namespace_prefixes: Namespace uri to prefix mappings to override
      the prefixes in column names when namespace is enabled, if no prefix is
      defined for a namespace uri, the prefix of xml element/attribute name in
@@ -33845,6 +34280,8 @@ class XmlReadSettings(FormatReadSettings):
         'type': {'key': 'type', 'type': 'str'},
         'compression_properties': {'key': 'compressionProperties', 'type': 'CompressionReadSettings'},
         'validation_mode': {'key': 'validationMode', 'type': 'object'},
+        'detect_data_type': {'key': 'detectDataType', 'type': 'object'},
+        'namespaces': {'key': 'namespaces', 'type': 'object'},
         'namespace_prefixes': {'key': 'namespacePrefixes', 'type': 'object'},
     }
 
@@ -33852,6 +34289,8 @@ class XmlReadSettings(FormatReadSettings):
         super(XmlReadSettings, self).__init__(**kwargs)
         self.compression_properties = kwargs.get('compression_properties', None)
         self.validation_mode = kwargs.get('validation_mode', None)
+        self.detect_data_type = kwargs.get('detect_data_type', None)
+        self.namespaces = kwargs.get('namespaces', None)
         self.namespace_prefixes = kwargs.get('namespace_prefixes', None)
         self.type = 'XmlReadSettings'
 
