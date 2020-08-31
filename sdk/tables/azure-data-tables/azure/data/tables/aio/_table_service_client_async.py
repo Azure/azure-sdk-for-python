@@ -197,7 +197,7 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
         await table.create_table(**kwargs)
         return table
 
-    @distributed_trace
+    @distributed_trace_async
     async def create_table_if_not_exists(
         self,
         table_name, # type: str
@@ -211,7 +211,7 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
         :param table_name: The Table name.
         :type table_name: str
         :return: TableClient
-        :rtype: ~azure.data.tables.TableClient
+        :rtype: ~azure.data.tables.aio.TableClient
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         table = self.get_table_client(table_name=table_name)
