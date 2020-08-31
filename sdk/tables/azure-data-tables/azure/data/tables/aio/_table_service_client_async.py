@@ -16,7 +16,7 @@ from azure.core.pipeline import AsyncPipeline
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
-from .. import VERSION, LocationMode
+from .. import LocationMode
 from .._base_client import parse_connection_str
 from .._generated.aio._azure_table_async import AzureTable
 from .._generated.models import TableServiceProperties, TableProperties, QueryOptions
