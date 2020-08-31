@@ -633,6 +633,8 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         blob.stage_block(block_id='1', data="this is test content")
         blob.commit_block_list(['1'])
         new_lat = blob.get_blob_properties().last_accessed_on
+        self.assertIsInstance(lat, datetime)
+        self.assertIsInstance(new_lat, datetime)
         self.assertGreater(new_lat, lat)
 
     @GlobalStorageAccountPreparer()
