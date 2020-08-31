@@ -30,6 +30,7 @@ __all__ = [
     'ServiceBusClient',
     'ServiceBusReceiver',
     'ServiceBusSessionReceiver',
+    'ServiceBusSession',
     'ServiceBusSender',
     'ServiceBusSharedKeyCredential',
     'TransportType',
