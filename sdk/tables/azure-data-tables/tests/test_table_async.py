@@ -170,7 +170,7 @@ class TableTestAsync(AsyncTableTestCase):
             self.assertIsInstance(table_item, TableItem)
         await ts.delete_table(table.table_name)
 
-    # @pytest.mark.skip("pending")
+    @pytest.mark.skip("pending")
     # TODO: TablePropertiesPaged is not an iterator, should inherit from AsyncPageIterator
     @GlobalStorageAccountPreparer()
     async def test_query_tables_with_num_results(self, resource_group, location, storage_account, storage_account_key):
