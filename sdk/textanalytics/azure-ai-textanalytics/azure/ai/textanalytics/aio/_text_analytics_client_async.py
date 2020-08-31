@@ -262,9 +262,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
         :keyword bool show_stats: If set to true, response will contain document level statistics.
-        :keyword domain_filter: Filters the response entities to ones only included in your specified domain.
+        :keyword domain_filter: Filters the response entities to ones only included in the specified domain.
             I.e., if set to 'PHI', will only return entities in the Protected Healthcare Information domain.
-            Currently only supports 'PHI'. See https://aka.ms/tanerpii for more information.
+            See https://aka.ms/tanerpii for more information.
         :paramtype domain_filter: str or ~azure.ai.textanalytics.PiiEntityDomainType
         :return: The combined list of :class:`~azure.ai.textanalytics.RecognizePiiEntitiesResult`
             and :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents
