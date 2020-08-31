@@ -20,7 +20,6 @@ from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
-from .. import VERSION
 from .._base_client import parse_connection_str
 from .._entity import TableEntity
 from .._generated.aio import AzureTable
@@ -71,7 +70,6 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
             account_url, table_name=table_name, credential=credential, loop=loop, **kwargs
         )
         self._client = AzureTable(self.url, pipeline=self._pipeline, loop=loop)
-        self._client._config.version = kwargs.get('api_version', VERSION)  # pylint: disable = W0212
         self._loop = loop
 
     @classmethod

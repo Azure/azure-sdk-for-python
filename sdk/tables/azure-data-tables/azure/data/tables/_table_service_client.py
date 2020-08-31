@@ -18,7 +18,6 @@ from ._models import TablePropertiesPaged, service_stats_deserialize, service_pr
 from ._base_client import parse_connection_str, TransportWrapper
 from ._models import LocationMode
 from ._error import _process_table_error
-from ._version import VERSION
 from ._table_client import TableClient
 from ._table_service_client_base import TableServiceClientBase
 
@@ -47,7 +46,6 @@ class TableServiceClient(TableServiceClientBase):
 
         super(TableServiceClient, self).__init__(account_url, service='table', credential=credential, **kwargs)
         self._client = AzureTable(self.url, pipeline=self._pipeline)
-        self._client._config.version = kwargs.get('api_version', VERSION)  # pylint: disable=protected-access
 
     @classmethod
     def from_connection_string(
