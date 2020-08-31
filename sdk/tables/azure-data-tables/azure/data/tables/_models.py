@@ -459,10 +459,12 @@ def service_properties_deserialize(generated):
 
 class TableItem(object):
     """
-    Represents an Azure TableItem. Returned by TableClient.create_table,
-    TableServiceClient.list_tables and TableServiceClient.query_tables.
+    Represents an Azure TableItem. Returned by TableServiceClient.list_tables
+    and TableServiceClient.query_tables.
 
     :ivar str name: The name of the table.
+    :ivar str api_version: The API version included in the service call
+    :ivar str date: The date the service call was made
     """
 
     def __init__(
@@ -473,7 +475,7 @@ class TableItem(object):
         # type: (...) -> None
         self.table_name = table
         self.api_version = headers.pop('version', None)
-        self.date_created = headers.pop('date', None) or headers.pop('Date', None)
+        self.date = headers.pop('date', None) or headers.pop('Date', None)
 
 
 class TablePayloadFormat(object):
