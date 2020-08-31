@@ -27,8 +27,7 @@ from ._table_client_base import TableClientBase
 from ._serialize import serialize_iso
 from ._deserialize import _return_headers_and_deserialized
 from ._error import _process_table_error
-from ._version import VERSION
-from ._models import TableEntityPropertiesPaged, UpdateMode
+from ._models import TableEntityPropertiesPaged, UpdateMode, TableItem
 
 
 class TableClient(TableClientBase):
@@ -59,7 +58,6 @@ class TableClient(TableClientBase):
         """
         super(TableClient, self).__init__(account_url, table_name, credential=credential, **kwargs)
         self._client = AzureTable(self.url, pipeline=self._pipeline)
-        self._client._config.version = kwargs.get('api_version', VERSION)  # pylint: disable=protected-access
 
     @classmethod
     def from_connection_string(
