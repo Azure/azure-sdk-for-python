@@ -49,11 +49,9 @@
     "operation_mixins": {
         "list_operations" : {
             "sync": {
-                "operation_name": "list_operations",
                 "signature": "def list_operations(\n    self,\n    **kwargs  # type: Any\n):\n"
             },
             "async": {
-                "operation_name": "list_operations",
                 "signature": "def list_operations(\n    self,\n    **kwargs\n) -\u003e AsyncItemPaged[\"models.OperationListResult\"]:\n",
                 "coroutine": false
             },
@@ -61,6 +59,6 @@
             "call": ""
         }
     },
-    "sync_imports": "from typing import TYPE_CHECKING\nimport warnings\n\nfrom azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error\nfrom azure.core.paging import ItemPaged\nfrom azure.core.pipeline import PipelineResponse\nfrom azure.core.pipeline.transport import HttpRequest, HttpResponse\nfrom azure.mgmt.core.exceptions import ARMErrorFormat\n\nif TYPE_CHECKING:\n    # pylint: disable=unused-import,ungrouped-imports\n    from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar",
-    "async_imports": "from typing import Any, AsyncIterable, Callable, Dict, Generic, Optional, TypeVar\nimport warnings\n\nfrom azure.core.async_paging import AsyncItemPaged, AsyncList\nfrom azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error\nfrom azure.core.pipeline import PipelineResponse\nfrom azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest\nfrom azure.mgmt.core.exceptions import ARMErrorFormat"
+    "sync_imports": "{\"regular\": {\"azurecore\": {\"azure.core.exceptions\": [\"HttpResponseError\", \"ResourceExistsError\", \"ResourceNotFoundError\", \"map_error\"], \"azure.mgmt.core.exceptions\": [\"ARMErrorFormat\"], \"azure.core.pipeline\": [\"PipelineResponse\"], \"azure.core.pipeline.transport\": [\"HttpRequest\", \"HttpResponse\"], \"azure.core.paging\": [\"ItemPaged\"]}, \"stdlib\": {\"warnings\": [null]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Callable\", \"Dict\", \"Generic\", \"Iterable\", \"Optional\", \"TypeVar\"]}}}",
+    "async_imports": "{\"regular\": {\"azurecore\": {\"azure.core.exceptions\": [\"HttpResponseError\", \"ResourceExistsError\", \"ResourceNotFoundError\", \"map_error\"], \"azure.mgmt.core.exceptions\": [\"ARMErrorFormat\"], \"azure.core.pipeline\": [\"PipelineResponse\"], \"azure.core.pipeline.transport\": [\"AsyncHttpResponse\", \"HttpRequest\"], \"azure.core.async_paging\": [\"AsyncItemPaged\", \"AsyncList\"]}, \"stdlib\": {\"warnings\": [null]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"AsyncIterable\", \"Callable\", \"Dict\", \"Generic\", \"Optional\", \"TypeVar\"]}}}"
 }
