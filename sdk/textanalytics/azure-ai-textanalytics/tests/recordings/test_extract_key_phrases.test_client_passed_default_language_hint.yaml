@@ -26,13 +26,13 @@ interactions:
         restaurant had really good food"],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}'
     headers:
       apim-request-id:
-      - 51f9108a-1f95-4a86-ae4e-ebc4da9fdb5d
+      - 8a7afaa7-8dab-40f2-856f-bbb2d03c45c7
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=3
       date:
-      - Wed, 26 Aug 2020 21:20:45 GMT
+      - Thu, 27 Aug 2020 19:32:06 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -40,7 +40,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '9'
+      - '8'
     status:
       code: 200
       message: OK
@@ -70,13 +70,13 @@ interactions:
         food"],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}'
     headers:
       apim-request-id:
-      - 5426511a-f45c-4475-a076-9469b6094939
+      - 3e2cdc27-5e43-4651-abe5-0e42ca083d68
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=3
       date:
-      - Wed, 26 Aug 2020 21:20:45 GMT
+      - Thu, 27 Aug 2020 19:32:06 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -84,7 +84,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '12'
+      - '11'
     status:
       code: 200
       message: OK
@@ -115,13 +115,13 @@ interactions:
         restaurant had really good food"],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}'
     headers:
       apim-request-id:
-      - c646acbc-ede2-4adb-9620-9cc4e6140e1b
+      - b3751022-8e82-474e-ab65-15604c0e9ffd
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=3
       date:
-      - Wed, 26 Aug 2020 21:20:45 GMT
+      - Thu, 27 Aug 2020 19:32:06 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -129,7 +129,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '9'
+      - '8'
     status:
       code: 200
       message: OK

@@ -12,8 +12,6 @@ interactions:
       - application/json
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-      api-key:
-      - BFB5A586FD4628C66469444C62BC3AEF
     method: POST
     uri: https://search520c211e.search.windows.net/datasources?api-version=2020-06-30
   response:
@@ -52,8 +50,6 @@ interactions:
       - return=representation
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-      api-key:
-      - BFB5A586FD4628C66469444C62BC3AEF
     method: PUT
     uri: https://search520c211e.search.windows.net/datasources('sample-datasource')?api-version=2020-06-30
   response:
@@ -95,8 +91,6 @@ interactions:
       - return=representation
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-      api-key:
-      - BFB5A586FD4628C66469444C62BC3AEF
     method: PUT
     uri: https://search520c211e.search.windows.net/datasources('sample-datasource')?api-version=2020-06-30
   response:

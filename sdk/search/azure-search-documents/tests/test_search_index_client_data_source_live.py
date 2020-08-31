@@ -5,35 +5,22 @@
 # --------------------------------------------------------------------------
 import json
 from os.path import dirname, join, realpath
-import time
 
 import pytest
 
 from devtools_testutils import AzureMgmtTestCase
 
 from search_service_preparer import SearchServicePreparer, SearchResourceGroupPreparer
+from azure_devtools.scenario_tests import ReplayableTest
 
 from azure.core import MatchConditions
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import HttpResponseError
 from azure.search.documents.indexes.models import(
-    AnalyzeTextOptions,
-    AnalyzeResult,
-    CorsOptions,
-    EntityRecognitionSkill,
-    SearchIndex,
-    InputFieldMappingEntry,
-    OutputFieldMappingEntry,
-    ScoringProfile,
-    SearchIndexerSkillset,
     SearchIndexerDataSourceConnection,
-    SearchIndexer,
     SearchIndexerDataContainer,
-    SynonymMap,
-    SimpleField,
-    SearchFieldDataType
 )
-from azure.search.documents.indexes import SearchIndexClient, SearchIndexerClient
+from azure.search.documents.indexes import SearchIndexerClient
 
 CWD = dirname(realpath(__file__))
 SCHEMA = open(join(CWD, "hotel_schema.json")).read()
@@ -45,6 +32,8 @@ TIME_TO_SLEEP = 5
 CONNECTION_STRING = 'DefaultEndpointsProtocol=https;AccountName=storagename;AccountKey=NzhL3hKZbJBuJ2484dPTR+xF30kYaWSSCbs2BzLgVVI1woqeST/1IgqaLm6QAOTxtGvxctSNbIR/1hW8yH+bJg==;EndpointSuffix=core.windows.net'
 
 class SearchDataSourcesClientTest(AzureMgmtTestCase):
+    FILTER_HEADERS = ReplayableTest.FILTER_HEADERS + ['api-key']
+
     def _create_data_source_connection(self, name="sample-datasource"):
         container = SearchIndexerDataContainer(name='searchcontainer')
         data_source_connection = SearchIndexerDataSourceConnection(

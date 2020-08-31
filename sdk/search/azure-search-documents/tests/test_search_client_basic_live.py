@@ -10,6 +10,7 @@ import time
 import pytest
 
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
+from azure_devtools.scenario_tests import ReplayableTest
 
 from search_service_preparer import SearchServicePreparer
 
@@ -27,6 +28,8 @@ from azure.search.documents import SearchClient
 TIME_TO_SLEEP = 3
 
 class SearchClientTest(AzureMgmtTestCase):
+    FILTER_HEADERS = ReplayableTest.FILTER_HEADERS + ['api-key']
+
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_get_document_count(self, api_key, endpoint, index_name, **kwargs):

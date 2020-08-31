@@ -14,29 +14,19 @@ from azure.core import MatchConditions
 from azure.core.credentials import AzureKeyCredential
 from devtools_testutils import AzureMgmtTestCase
 
-from search_service_preparer import SearchServicePreparer, SearchResourceGroupPreparer
-
+from azure_devtools.scenario_tests import ReplayableTest
 from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_function
+
+from search_service_preparer import SearchServicePreparer, SearchResourceGroupPreparer
 
 from azure.core.exceptions import HttpResponseError
 from azure.search.documents.indexes.models import(
-    AnalyzeTextOptions,
-    AnalyzeResult,
-    CorsOptions,
     EntityRecognitionSkill,
-    SearchIndex,
     InputFieldMappingEntry,
     OutputFieldMappingEntry,
-    ScoringProfile,
     SearchIndexerSkillset,
-    SearchIndexerDataSourceConnection,
-    SearchIndexerDataContainer,
-    SearchIndexer,
-    SynonymMap,
-    SimpleField,
-    SearchFieldDataType
 )
-from azure.search.documents.indexes.aio import SearchIndexClient, SearchIndexerClient
+from azure.search.documents.indexes.aio import SearchIndexerClient
 
 CWD = dirname(realpath(__file__))
 SCHEMA = open(join(CWD, "..", "hotel_schema.json")).read()
@@ -58,6 +48,7 @@ def await_prepared_test(test_fn):
     return run
 
 class SearchSkillsetClientTest(AzureMgmtTestCase):
+    FILTER_HEADERS = ReplayableTest.FILTER_HEADERS + ['api-key']
 
     @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)

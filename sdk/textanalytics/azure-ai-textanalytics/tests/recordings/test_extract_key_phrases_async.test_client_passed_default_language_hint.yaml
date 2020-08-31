@@ -21,14 +21,14 @@ interactions:
         did not like the hotel we stayed at"],"warnings":[]},{"id":"3","keyPhrases":["The
         restaurant had really good food"],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}'
     headers:
-      apim-request-id: b978038f-1eee-413e-8747-0b1096e962d4
+      apim-request-id: 03eeac48-4618-495f-a5c6-252ecd1ffd29
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Wed, 26 Aug 2020 21:20:52 GMT
+      date: Thu, 27 Aug 2020 19:32:05 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '10'
+      x-envoy-upstream-service-time: '8'
     status:
       code: 200
       message: OK
@@ -54,14 +54,14 @@ interactions:
       string: '{"documents":[{"id":"1","keyPhrases":["park"],"warnings":[]},{"id":"2","keyPhrases":["hotel"],"warnings":[]},{"id":"3","keyPhrases":["restaurant","good
         food"],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}'
     headers:
-      apim-request-id: f806b46e-7ca0-4bf9-a1d3-369f6a806df2
+      apim-request-id: 16dcb319-f28a-4cf2-b842-a7de3c9c45fa
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Wed, 26 Aug 2020 21:20:52 GMT
+      date: Thu, 27 Aug 2020 19:32:05 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '9'
+      x-envoy-upstream-service-time: '11'
     status:
       code: 200
       message: OK
@@ -88,14 +88,14 @@ interactions:
         did not like the hotel we stayed at"],"warnings":[]},{"id":"3","keyPhrases":["The
         restaurant had really good food"],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}'
     headers:
-      apim-request-id: b05482cd-c4de-4e97-ada0-a792ba400ecb
+      apim-request-id: 00049009-5234-40ea-93a4-ae0ae3ecbe55
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Wed, 26 Aug 2020 21:20:52 GMT
+      date: Thu, 27 Aug 2020 19:32:05 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '10'
+      x-envoy-upstream-service-time: '9'
     status:
       code: 200
       message: OK
