@@ -215,6 +215,8 @@ class CategorizedEntity(DictMixin):
     :ivar confidence_score: Confidence score between 0 and 1 of the extracted
         entity.
     :vartype confidence_score: float
+    .. versionadded:: v3.1-preview.1
+        The *offset* and *length* properties.
     """
 
     def __init__(self, **kwargs):
@@ -653,6 +655,8 @@ class LinkedEntityMatch(DictMixin):
     :ivar int length: The length of the linked entity match text. Returned
         in unicode code points. Only returned for api versions v3.1-preview.1 and up.
     :vartype text: str
+    .. versionadded:: v3.1-preview.1
+        The *offset* and *length* properties.
     """
 
     def __init__(self, **kwargs):
@@ -767,9 +771,12 @@ class SentenceSentiment(DictMixin):
     :ivar mined_opinions: The list of opinions mined from this sentence.
         For example in "The food is good, but the service is bad", we would
         mind these two opinions "food is good", "service is bad". Only returned
-        if `show_opinion_mining` is set to True in the call to `analyze_sentiment`.
+        if `show_opinion_mining` is set to True in the call to `analyze_sentiment` and
+        api version is v3.1-preview.1 and up.
     :vartype mined_opinions:
         list[~azure.ai.textanalytics.MinedOpinion]
+    .. versionadded:: v3.1-preview.1
+        The *offset*, *length*, and *mined_opinions* properties.
     """
 
     def __init__(self, **kwargs):
