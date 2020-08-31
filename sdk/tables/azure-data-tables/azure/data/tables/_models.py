@@ -298,9 +298,7 @@ class TablePropertiesPaged(PageIterator):
 
     def _extract_data_cb(self, get_next_return):
         self.location_mode, self._response, self._headers = get_next_return
-        props_list = []
-        for t, header in zip(self._response.value, self._headers):
-            props_list.append(TableItem(t, header))
+        props_list = [TableItem(t, self._headers) for t in self._response.value]
         return self._headers['x-ms-continuation-NextTableName'] or None, props_list
 
 
@@ -461,19 +459,21 @@ def service_properties_deserialize(generated):
 
 class TableItem(object):
     """
-    Represents an Azure TableItem. Returned by create_table,
-    list_tables and query_tables.
+    Represents an Azure TableItem. Returned by TableClient.create_table,
+    TableServiceClient.list_tables and TableServiceClient.query_tables.
 
     :ivar str name: The name of the table.
     """
 
-    def __init__(self, table, headers=None):
+    def __init__(
+        self,
+        table, # type: str
+        headers=None # type: dict[str,str]
+    ):
+        # type: (...) -> None
         self.table_name = table
-        self.api_version = None
-        self.date_created = None
-        if isinstance(headers, dict):
-            self.api_version = headers.pop('version', None)
-            self.date_created = headers.pop('date', None) or headers.pop('Date', None)
+        self.api_version = headers.pop('version', None)
+        self.date_created = headers.pop('date', None) or headers.pop('Date', None)
 
 
 class TablePayloadFormat(object):

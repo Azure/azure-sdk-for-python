@@ -47,8 +47,7 @@ class TablePropertiesPaged(AsyncPageIterator):
 
     async def _extract_data_cb(self, get_next_return):
         self.location_mode, self._response, self._headers = get_next_return
-        for t, header in zip(self._response.value, self._headers):
-            props_list.append(TableItem(t, header))
+        props_list = [TableItem(t, self._headers) for t in self._response.value]
         return self._headers['x-ms-continuation-NextTableName'] or None, props_list
 
 

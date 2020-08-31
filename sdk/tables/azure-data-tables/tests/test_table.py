@@ -85,13 +85,6 @@ class StorageTableTest(TableTestCase):
         except ResourceNotFoundError:
             pass
 
-    def assertIsValidTableItem(self, table_item):
-        self.assertIsNotNone(table_item)
-        self.assertIsInstance(table_item, TableItem)
-        self.assertIsNotNone(table_item.table_name)
-        self.assertIsNotNone(table_item.api_version)
-        self.assertIsNotNone(table_item.date_created)
-
     # --Test cases for tables --------------------------------------------------
     @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
@@ -149,6 +142,7 @@ class StorageTableTest(TableTestCase):
         # Assert
         self.assertTrue(created)
         self.assertEqual(len(existing), 1)
+        self.assertIsInstance(existing[0], TableItem)
         ts.delete_table(table_name)
 
     @GlobalStorageAccountPreparer()
@@ -175,7 +169,6 @@ class StorageTableTest(TableTestCase):
         assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.""" in str(
             excinfo)
 
-    # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_list_tables(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -187,7 +180,7 @@ class StorageTableTest(TableTestCase):
 
         # Assert
         for table_item in tables:
-            self.assertIsValidTableItem(table_item)
+            self.assertIsInstance(table_item, TableItem)
 
         self.assertIsNotNone(tables)
         self.assertGreaterEqual(len(tables), 1)
@@ -206,7 +199,7 @@ class StorageTableTest(TableTestCase):
         tables = list(ts.query_tables(filter=name_filter))
 
         for table_item in tables:
-            self.assertIsValidTableItem(table_item)
+            self.assertIsInstance(table_item, TableItem)
 
         # Assert
         self.assertIsNotNone(tables)

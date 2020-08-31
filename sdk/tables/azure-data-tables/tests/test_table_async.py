@@ -47,13 +47,6 @@ class TableTestAsync(AsyncTableTestCase):
         except ResourceNotFoundError:
             pass
 
-    def assertIsValidTableItem(self, table_item):
-        self.assertIsNotNone(table_item)
-        self.assertIsInstance(table_item, TableItem)
-        self.assertIsNotNone(table_item.table_name)
-        self.assertIsNotNone(table_item.api_version)
-        self.assertIsNotNone(table_item.date_created)
-
     # --Test cases for tables --------------------------------------------------
     @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
@@ -151,7 +144,7 @@ class TableTestAsync(AsyncTableTestCase):
 
         # Assert
         for table_item in tables:
-            self.assertIsValidTableItem(table_item)
+            self.assertIsInstance(table_item, TableItem)
         self.assertIsNotNone(tables)
         self.assertGreaterEqual(len(tables), 1)
         self.assertIsNotNone(tables[0])
@@ -174,7 +167,7 @@ class TableTestAsync(AsyncTableTestCase):
         self.assertIsNotNone(tables)
         self.assertEqual(len(tables), 1)
         for table_item in tables:
-            self.assertIsValidTableItem(table_item)
+            self.assertIsInstance(table_item, TableItem)
         await ts.delete_table(table.table_name)
 
     # @pytest.mark.skip("pending")
