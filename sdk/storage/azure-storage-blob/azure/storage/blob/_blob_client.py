@@ -18,6 +18,7 @@ except ImportError:
 
 import six
 from azure.core.tracing.decorator import distributed_trace
+from azure.core.exceptions import ResourceNotFoundError
 
 from ._shared import encode_base64
 from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
@@ -934,14 +935,13 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         """
         try:
             blob_props = self._client.blob.get_properties(
-                timeout=kwargs.pop('timeout', None),
-                version_id=kwargs.pop('version_id', None),
+                **kwargs,
                 snapshot=self.snapshot,
                 cls=deserialize_blob_properties)
             if blob_props and blob_props.is_current_version or blob_props and self.snapshot:
                 return True
             return False
-        except StorageErrorException:
+        except ResourceNotFoundError:
             return False
 
     @distributed_trace

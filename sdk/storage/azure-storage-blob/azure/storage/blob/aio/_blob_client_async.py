@@ -11,6 +11,7 @@ from typing import (  # pylint: disable=unused-import
 )
 
 from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.exceptions import ResourceNotFoundError
 
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 from .._shared.policies_async import ExponentialRetry
@@ -476,14 +477,13 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         """
         try:
             blob_props = await self._client.blob.get_properties(
-                timeout=kwargs.pop('timeout', None),
-                version_id=kwargs.pop('version_id', None),
+                **kwargs,
                 snapshot=self.snapshot,
                 cls=deserialize_blob_properties)
             if blob_props and blob_props.is_current_version or blob_props and self.snapshot:
                 return True
             return False
-        except StorageErrorException:
+        except ResourceNotFoundError:
             return False
 
     @distributed_trace_async
