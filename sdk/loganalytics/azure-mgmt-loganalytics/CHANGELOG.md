@@ -1,5 +1,11 @@
 # Release History
 
+## 0.7.1 (2020-08-31)
+
+**API-version changes**
+
+  - REST call api-version is changed from 2020-03-01-preview to 2020-08-01
+
 ## 0.7.0 (2020-07-09)
 
 **Features**
