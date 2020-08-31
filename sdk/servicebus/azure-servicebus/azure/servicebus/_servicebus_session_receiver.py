@@ -82,13 +82,14 @@ class ServiceBusSessionReceiver(ServiceBusReceiver, SessionReceiverMixin):
 
     """
     def __init__(self, fully_qualified_namespace, credential, **kwargs):
+        # type: (str, TokenCredential, Any) -> None
         super(ServiceBusSessionReceiver, self).__init__(fully_qualified_namespace, credential, **kwargs)
         self._populate_session_attributes(**kwargs)
         self._session = ServiceBusSession(self._session_id, self, self._config.encoding)
 
     @property
     def session(self):
-        # type: ()->ServiceBusSession
+        # type: () -> ServiceBusSession
         """
         Get the ServiceBusSession object linked with the receiver. Session is only available to session-enabled
         entities.
@@ -115,7 +116,7 @@ class ServiceBusSessionReceiver(ServiceBusReceiver, SessionReceiverMixin):
         # type: (str, Any) -> ServiceBusSessionReceiver
         """Create a ServiceBusSessionReceiver from a connection string.
 
-        :param conn_str: The connection string of a Service Bus.
+        :param str conn_str: The connection string of a Service Bus.
         :keyword str queue_name: The path of specific Service Bus Queue the client connects to.
         :keyword str topic_name: The path of specific Service Bus Topic which contains the Subscription
          the client connects to.

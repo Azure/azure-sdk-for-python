@@ -75,7 +75,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         fully_qualified_namespace: str,
         credential: "TokenCredential",
         **kwargs: Any
-    ):
+    ) -> None:
         if kwargs.get("entity_name"):
             super(ServiceBusSender, self).__init__(
                 fully_qualified_namespace=fully_qualified_namespace,
@@ -208,7 +208,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
     ) -> "ServiceBusSender":
         """Create a ServiceBusSender from a connection string.
 
-        :param conn_str: The connection string of a Service Bus.
+        :param str conn_str: The connection string of a Service Bus.
         :keyword str queue_name: The path of specific Service Bus Queue the client connects to.
         :keyword str topic_name: The path of specific Service Bus Topic the client connects to.
         :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.

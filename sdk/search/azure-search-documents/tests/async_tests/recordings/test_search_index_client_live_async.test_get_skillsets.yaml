@@ -13,8 +13,6 @@ interactions:
       - application/json
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-      api-key:
-      - CB68CD9B6F3625D1D289F317F3C567E6
     method: POST
     uri: https://search62d21641.search.windows.net/skillsets?api-version=2020-06-30
   response:
@@ -52,8 +50,6 @@ interactions:
       - application/json
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-      api-key:
-      - CB68CD9B6F3625D1D289F317F3C567E6
     method: POST
     uri: https://search62d21641.search.windows.net/skillsets?api-version=2020-06-30
   response:
@@ -84,8 +80,6 @@ interactions:
       - application/json;odata.metadata=minimal
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-      api-key:
-      - CB68CD9B6F3625D1D289F317F3C567E6
     method: GET
     uri: https://search62d21641.search.windows.net/skillsets?api-version=2020-06-30
   response:
