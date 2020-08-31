@@ -3,7 +3,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-
+import os
 import pytest
 import platform
 import functools
@@ -586,3 +586,19 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
         # make sure that the addition of the string_index_type kwarg for v3.1-preview.1 doesn't
         # cause v3.0 calls to fail
         client.recognize_linked_entities(["please don't fail"])
+
+    # currently only have this as playback since the dev endpoint is unreliable
+    @pytest.mark.playback_test_only 
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_2,
+        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
+        "text_analytics_account": os.environ.get("AZURE_TEXT_ANALYTICS_ENDPOINT")
+    })
+    def test_bing_id(self, client):
+        # make sure that the addition of the string_index_type kwarg for v3.1-preview.1 doesn't
+        # cause v3.0 calls to fail
+        result = client.recognize_linked_entities(["Microsoft was founded by Bill Gates and Paul Allen"])
+        for doc in result:
+            for entity in doc.entities:
+                assert entity  # this checks if it's None and if it's empty
