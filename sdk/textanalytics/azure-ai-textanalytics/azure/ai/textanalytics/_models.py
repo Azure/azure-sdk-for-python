@@ -67,7 +67,7 @@ class DictMixin(object):
 
 class PiiEntityDomainType(str, Enum):
     """The different domains of PII entities that users can filter by"""
-    PHI = "PHI"
+    PHI = "PHI"  # Protected Healthcare information. See https://aka.ms/tanerpii for more information.
 
 
 class DetectedLanguage(DictMixin):
