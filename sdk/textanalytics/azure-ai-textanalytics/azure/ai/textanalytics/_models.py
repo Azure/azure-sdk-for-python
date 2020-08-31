@@ -4,6 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import re
+from enum import Enum
 from ._generated.models import (
     LanguageInput,
     MultiLanguageInput,
@@ -63,6 +64,10 @@ class DictMixin(object):
         if key in self.__dict__:
             return self.__dict__[key]
         return default
+
+class PiiEntityDomainType(str, Enum):
+    """The different domains of PII entities that users can filter by"""
+    PHI = "PHI"
 
 
 class DetectedLanguage(DictMixin):
