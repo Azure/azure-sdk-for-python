@@ -162,10 +162,8 @@ def _convert_to_entity(entry_element):
         if type(value) is int:  # pylint:disable=C0123
             if value.bit_length() <= 32:
                 mtype = EdmType.INT32
-            elif value.bit_length() <= 64:
-                mtype = EdmType.INT64
             else:
-                mtype = EdmType.STRING
+                mtype = EdmType.INT64
 
         # no type info, property should parse automatically
         if not mtype:
