@@ -6,6 +6,7 @@
 - We are now targeting the service's v3.1-preview.1 API as the default. If you would like to still use version v3.0 of the service,
 pass in `v3.0` to the kwarg `api_version` when creating your TextAnalyticsClient
 - We have added an API `recognize_pii_entities` which returns entities containing personal information for a batch of documents. Only available for API version v3.1-preview.1 and up.
+  - In API version v3.1-preview.2 and up, the redacted text of the document is returned on the top-level result object through property `redacted_text`
 - Added `offset` and `length` properties for `CategorizedEntity`, `SentenceSentiment`, and `LinkedEntityMatch`. These properties are only available for API versions v3.1-preview.1 and up.
   - `length` is the number of characters in the text of these models
   - `offset` is the offset of the text from the start of the document

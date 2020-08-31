@@ -1,4 +1,4 @@
-# coding=utf-8
+# coding=utf-8  pylint: disable=too-many-lines
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -141,6 +141,8 @@ class RecognizePiiEntitiesResult(DictMixin):
     :ivar entities: Recognized PII entities in the document.
     :vartype entities:
         list[~azure.ai.textanalytics.PiiEntity]
+    :ivar str redacted_text: Returns the text of the input document with all of the PII information
+        redacted out. Only returned for api versions v3.1-preview.2 and up.
     :ivar warnings: Warnings encountered while processing document. Results will still be returned
         if there are warnings, but they may not be fully accurate.
     :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
@@ -150,18 +152,28 @@ class RecognizePiiEntitiesResult(DictMixin):
         ~azure.ai.textanalytics.TextDocumentStatistics
     :ivar bool is_error: Boolean check for error item when iterating over list of
         results. Always False for an instance of a RecognizePiiEntitiesResult.
+    .. versionadded:: v3.1-preview.2
+        The *redacted_text* parameter.
     """
 
     def __init__(self, **kwargs):
         self.id = kwargs.get("id", None)
         self.entities = kwargs.get("entities", None)
+        self.redacted_text = kwargs.get("redacted_text", None)
         self.warnings = kwargs.get("warnings", [])
         self.statistics = kwargs.get("statistics", None)
         self.is_error = False
 
     def __repr__(self):
-        return "RecognizePiiEntitiesResult(id={}, entities={}, warnings={}, statistics={}, is_error={})" \
-            .format(self.id, repr(self.entities), repr(self.warnings), repr(self.statistics), self.is_error)[:1024]
+        return "RecognizePiiEntitiesResult(id={}, entities={}, redacted_text={}, warnings={}, " \
+            "statistics={}, is_error={})" .format(
+                self.id,
+                repr(self.entities),
+                self.redacted_text,
+                repr(self.warnings),
+                repr(self.statistics),
+                self.is_error
+            )[:1024]
 
 
 class DetectLanguageResult(DictMixin):
