@@ -66,11 +66,11 @@ async def main():
         client_secret=CLIENT_SECRET
     )
 
-    serializer = SchemaRegistryAvroSerializer(token_credential, SCHEMA_REGISTRY_ENDPOINT, SCHEMA_GROUP)
+    serializer = SchemaRegistryAvroSerializer(SCHEMA_REGISTRY_ENDPOINT, token_credential, SCHEMA_GROUP)
     async with serializer:
         dict_data = {"name": "Ben", "favorite_number": 7, "favorite_color": "red"}
         payload_bytes = await serialize(serializer, SCHEMA_STRING, dict_data)
-        dict_data = await deserialize(serializer, payload_bytes)
+        decoded_data = await deserialize(serializer, payload_bytes)
 
     await token_credential.close()
 

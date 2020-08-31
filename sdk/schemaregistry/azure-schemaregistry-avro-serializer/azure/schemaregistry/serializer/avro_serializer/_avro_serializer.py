@@ -24,8 +24,9 @@
 #
 # --------------------------------------------------------------------------
 import abc
-from typing import BinaryIO, Union, Type, TypeVar, Optional, Any
+from typing import BinaryIO, Union, Type, TypeVar, Optional, Any, Dict
 from io import BytesIO
+import avro
 from avro.io import DatumWriter, DatumReader, BinaryDecoder, BinaryEncoder
 
 try:
@@ -42,37 +43,41 @@ class AvroObjectSerializer(ABC):
         """A Avro serializer using avro lib from Apache.
         :param str codec: The writer codec. If None, let the avro library decides.
         """
-        try:
-            import avro  # pylint: disable=unused-import
-        except ImportError:
-            raise ImportError("In order to create a AvroObjectSerializer you need to install the 'avro' library")
-
         self._writer_codec = codec
+        self._schema_writer_cache = {}  # type: Dict[str, DatumWriter]
+        self._schema_reader_cache = {}  # type: Dict[str, DatumReader]
 
     def serialize(
         self,
-        stream,  # type: BinaryIO
-        value,  # type: ObjectType
+        data,  # type: ObjectType
         schema,  # type: Optional[Any]
     ):
-        # type: (...) -> None
+        # type: (...) -> bytes
         """Convert the provided value to it's binary representation and write it to the stream.
         Schema must be a Avro RecordSchema:
         https://avro.apache.org/docs/1.10.0/gettingstartedpython.html#Defining+a+schema
-        :param stream: A stream of bytes or bytes directly
-        :type stream: BinaryIO
-        :param value: An object to serialize
+        :param data: An object to serialize
         :param schema: A Avro RecordSchema
         """
         if not schema:
             raise ValueError("Schema is required in Avro serializer.")
 
-        kwargs = {}
-        if self._writer_codec:
-            kwargs['codec'] = self._writer_codec
+        if not isinstance(schema, avro.schema.Schema):
+            schema = avro.schema.parse(schema)
 
-        writer = DatumWriter(schema)  # TODO: cache it
-        writer.write(value, BinaryEncoder(stream))
+        try:
+            writer = self._schema_writer_cache[str(schema)]
+        except KeyError:
+            writer = DatumWriter(schema)
+            self._schema_writer_cache[str(schema)] = writer
+
+        stream = BytesIO()
+
+        writer.write(data, BinaryEncoder(stream))
+        encoded_data = stream.getvalue()
+
+        stream.close()
+        return encoded_data
 
     def deserialize(
         self,
@@ -87,15 +92,23 @@ class AvroObjectSerializer(ABC):
         :type data: BinaryIO or bytes
         :param schema: A Avro RecordSchema
         :param return_type: Return type is not supported in the Avro serializer.
-        :returns: An instanciated object
+        :returns: An instantiated object
         :rtype: ObjectType
         """
         if not hasattr(data, 'read'):
             data = BytesIO(data)
 
-        avro_reader = DatumReader(writers_schema=schema)  # TODO: cache it
+        if not isinstance(schema, avro.schema.Schema):
+            schema = avro.schema.parse(schema)
+
+        try:
+            reader = self._schema_reader_cache[str(schema)]
+        except KeyError:
+            reader = DatumReader(writers_schema=schema)
+            self._schema_reader_cache[str(schema)] = reader
+
         bin_decoder = BinaryDecoder(data)
-        decoded_data = avro_reader.read(bin_decoder)
+        decoded_data = reader.read(bin_decoder)
         data.close()
 
         return decoded_data

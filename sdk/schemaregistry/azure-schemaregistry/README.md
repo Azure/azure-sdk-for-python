@@ -75,7 +75,7 @@ endpoint = os.environ['SCHEMA_REGISTRY_ENDPOINT']
 schema_id = '<your-schema-id>'
 
 schema_registry_client = SchemaRegistryClient(endpoint=endpoint, credential=token_credential)
-with schema_registry_client, token_credential:
+with schema_registry_client:
     schema = schema_registry_client.get_schema(schema_id)
     schema_content = schema.content
 ```
@@ -106,7 +106,7 @@ schema_content = """
 """
 
 schema_registry_client = SchemaRegistryClient(endpoint=endpoint, credential=token_credential)
-with schema_registry_client, token_credential:
+with schema_registry_client:
     schema_properties = schema_registry_client.get_schema_id(schema_group, schema_name, serialization_type, schema_content)
     schema_id = schema_properties.id
 ```

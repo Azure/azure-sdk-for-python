@@ -143,7 +143,7 @@ class SchemaRegistryClient:
         )
 
     def get_schema_id(self, schema_group, schema_name, serialization_type, schema_content, **kwargs):
-        # type: (str, str, str, Union[str, SerializationType], Any) -> SchemaProperties
+        # type: (str, str, Union[str, SerializationType], str, Any) -> SchemaProperties
         """
         Gets the ID referencing an existing schema within the specified schema group,
         as matched by schema content comparison.

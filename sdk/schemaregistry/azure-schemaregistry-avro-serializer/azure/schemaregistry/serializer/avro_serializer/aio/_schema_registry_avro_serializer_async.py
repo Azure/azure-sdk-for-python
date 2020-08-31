@@ -35,8 +35,8 @@ from .._avro_serializer import AvroObjectSerializer
 
 class SchemaRegistryAvroSerializer:
     """
-    SchemaRegistryClient is as a central schema repository for enterprise-level data infrastructure,
-    complete with support for versioning and management.
+    SchemaRegistryAvroSerializer provides the ability to serialize and deserialize data according
+    to the given avro schema. It would automatically register, get and cache the schema.
 
     :param str endpoint: The Schema Registry service endpoint, for example my-namespace.servicebus.windows.net.
     :param credential: To authenticate to manage the entities of the SchemaRegistry namespace.
@@ -44,10 +44,10 @@ class SchemaRegistryAvroSerializer:
     :param str schema_group
 
     """
-    def __init__(self, credential, endpoint, schema_group, **kwargs):
+    def __init__(self, endpoint, credential, schema_group, **kwargs):
         self._schema_group = schema_group
         self._avro_serializer = AvroObjectSerializer()
-        self._schema_registry_client = SchemaRegistryClient(credential=credential, endpoint=endpoint)
+        self._schema_registry_client = SchemaRegistryClient(endpoint=endpoint, credential=credential)
         self._id_to_schema = {}
         self._schema_to_id = {}
 
@@ -98,28 +98,26 @@ class SchemaRegistryAvroSerializer:
             self._schema_to_id[schema_str] = schema_id
             return schema_str
 
-    async def serialize(self, data: Dict[str, Any], schema: Union[str, bytes, avro.schema.Schema]) -> bytes:
+    async def serialize(self, data: Dict[str, Any], schema: Union[str, bytes]) -> bytes:
         """
         Encode dict data with the given schema.
 
         :param data: The dict data to be encoded.
         :param schema: The schema used to encode the data.  # TODO: support schema object/str/bytes?
-        :type schema: Union[str, bytes, avro.schema.Schema])
+        :type schema: Union[str, bytes]
         :return:
         """
         if not isinstance(schema, avro.schema.Schema):
             schema = avro.schema.parse(schema)
 
         schema_id = await self._get_schema_id(schema.fullname, str(schema))
-        stream = BytesIO()
-        self._avro_serializer.serialize(stream, data, schema)
+        data_bytes = self._avro_serializer.serialize(data, schema)
         # TODO: Arthur:  We are adding 4 bytes to the beginning of each SR payload.
         # This is intended to become a record format identifier in the future.
         # Right now, you can just put \x00\x00\x00\x00.
         record_format_identifier = b'\0\0\0\0'
-        res = record_format_identifier + schema_id.encode('utf-8') + stream.getvalue()
-        stream.close()
-        return res
+        payload = record_format_identifier + schema_id.encode('utf-8') + data_bytes
+        return payload
 
     async def deserialize(self, data: bytes) -> Dict[str, Any]:
         """
@@ -135,7 +133,6 @@ class SchemaRegistryAvroSerializer:
         schema_id = data[4:36].decode('utf-8')
         schema_content = await self._get_schema(schema_id)
 
-        # TODO: schema_id to datumreader cache
         schema = avro.schema.parse(schema_content)
         dict_data = self._avro_serializer.deserialize(data[36:], schema)
         return dict_data

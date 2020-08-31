@@ -1,2 +1,4 @@
 -e ../../identity/azure-identity
+-e ../../../tools/azure-devtools
+-e ../../../tools/azure-sdk-tools
 ../azure-schemaregistry
