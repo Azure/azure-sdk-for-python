@@ -154,7 +154,7 @@ class StorageTableTest(TableTestCase):
 
         self.assertIsNotNone(t0)
         self.assertIsNotNone(t1)
-        self.assertEqual(t0.name, t1.name)
+        self.assertEqual(t0.table_name, t1.table_name)
         ts.delete_table(table_name)
 
     @GlobalStorageAccountPreparer()
@@ -165,7 +165,7 @@ class StorageTableTest(TableTestCase):
         t = ts.create_table_if_not_exists(table_name)
 
         self.assertIsNotNone(t)
-        self.assertEqual(t.name, table_name)
+        self.assertEqual(t.table_name, table_name)
         ts.delete_table(table_name)
 
     @GlobalStorageAccountPreparer()
