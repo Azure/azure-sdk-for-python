@@ -611,6 +611,9 @@ class LinkedEntity(DictMixin):
     :ivar data_source: Data source used to extract entity linking,
         such as Wiki/Bing etc.
     :vartype data_source: str
+    :param str bing_id: Bing unique identifier of the recognized entity. Use in conjunction
+        with the Bing Entity Search SDK to fetch additional relevant information. Only
+        available for API version v3.1-preview.2 and up.
     """
 
     def __init__(self, **kwargs):
@@ -620,9 +623,11 @@ class LinkedEntity(DictMixin):
         self.data_source_entity_id = kwargs.get("data_source_entity_id", None)
         self.url = kwargs.get("url", None)
         self.data_source = kwargs.get("data_source", None)
+        self.bing_id = kwargs.get("bing_id", None)
 
     @classmethod
     def _from_generated(cls, entity):
+        bing_id = entity.bing_id if hasattr(entity, "bing_id") else None
         return cls(
             name=entity.name,
             matches=[LinkedEntityMatch._from_generated(e) for e in entity.matches],  # pylint: disable=protected-access
@@ -630,12 +635,20 @@ class LinkedEntity(DictMixin):
             data_source_entity_id=entity.id,
             url=entity.url,
             data_source=entity.data_source,
+            bing_id=bing_id,
         )
 
     def __repr__(self):
         return "LinkedEntity(name={}, matches={}, language={}, data_source_entity_id={}, url={}, " \
-               "data_source={})".format(self.name, repr(self.matches), self.language, self.data_source_entity_id,
-                                        self.url, self.data_source)[:1024]
+            "data_source={}, bing_id={})".format(
+                self.name,
+                repr(self.matches),
+                self.language,
+                self.data_source_entity_id,
+                self.url,
+                self.data_source,
+                self.bing_id,
+        )[:1024]
 
 
 class LinkedEntityMatch(DictMixin):
