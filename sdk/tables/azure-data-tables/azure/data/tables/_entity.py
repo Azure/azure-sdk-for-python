@@ -101,7 +101,12 @@ class EntityProperty(object):
         elif isinstance(value, bool):
             self.type = EdmType.BOOLEAN
         elif isinstance(value, six.integer_types):
-            self.type = EdmType.INT64
+            if value.bit_length() <= 32:
+                self.type = EdmType.INT32
+            elif value.bit_length() <= 64:
+                self.type = EdmType.INT64
+            else:
+                self.type = EdmType.STRING
         elif isinstance(value, datetime):
             self.type = EdmType.DATETIME
         elif isinstance(value, float):
