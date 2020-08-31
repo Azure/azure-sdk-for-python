@@ -14,6 +14,10 @@ try:
     from ._models_py3 import ErrorAdditionalInfo
     from ._models_py3 import ErrorDetail
     from ._models_py3 import ErrorResponse, ErrorResponseException
+    from ._models_py3 import ErrorResponseCommon
+    from ._models_py3 import ErrorResponseV2, ErrorResponseV2Exception
+    from ._models_py3 import ErrorResponseV2Error
+    from ._models_py3 import HybridComputePrivateLinkScope
     from ._models_py3 import Identity
     from ._models_py3 import LocationData
     from ._models_py3 import Machine
@@ -27,21 +31,20 @@ try:
     from ._models_py3 import MachineIdentity
     from ._models_py3 import MachineProperties
     from ._models_py3 import MachinePropertiesOsProfile
-    from ._models_py3 import MachineReconnect
-    from ._models_py3 import MachineReconnectProperties
     from ._models_py3 import MachineUpdate
     from ._models_py3 import MachineUpdateProperties
     from ._models_py3 import OperationValue
     from ._models_py3 import OperationValueDisplayModel
     from ._models_py3 import OSProfile
-    from ._models_py3 import Plan
+    from ._models_py3 import PrivateEndpointConnection
+    from ._models_py3 import PrivateEndpointProperty
+    from ._models_py3 import PrivateLinkResource
+    from ._models_py3 import PrivateLinkScopesResource
+    from ._models_py3 import PrivateLinkServiceConnectionStateProperty
     from ._models_py3 import ProxyResource
     from ._models_py3 import Resource
-    from ._models_py3 import ResourceModelWithAllowedPropertySet
-    from ._models_py3 import ResourceModelWithAllowedPropertySetIdentity
-    from ._models_py3 import ResourceModelWithAllowedPropertySetPlan
-    from ._models_py3 import ResourceModelWithAllowedPropertySetSku
-    from ._models_py3 import Sku
+    from ._models_py3 import ScopedResource
+    from ._models_py3 import TagsResource
     from ._models_py3 import TrackedResource
     from ._models_py3 import UpdateResource
 except (SyntaxError, ImportError):
@@ -49,6 +52,10 @@ except (SyntaxError, ImportError):
     from ._models import ErrorAdditionalInfo
     from ._models import ErrorDetail
     from ._models import ErrorResponse, ErrorResponseException
+    from ._models import ErrorResponseCommon
+    from ._models import ErrorResponseV2, ErrorResponseV2Exception
+    from ._models import ErrorResponseV2Error
+    from ._models import HybridComputePrivateLinkScope
     from ._models import Identity
     from ._models import LocationData
     from ._models import Machine
@@ -62,31 +69,33 @@ except (SyntaxError, ImportError):
     from ._models import MachineIdentity
     from ._models import MachineProperties
     from ._models import MachinePropertiesOsProfile
-    from ._models import MachineReconnect
-    from ._models import MachineReconnectProperties
     from ._models import MachineUpdate
     from ._models import MachineUpdateProperties
     from ._models import OperationValue
     from ._models import OperationValueDisplayModel
     from ._models import OSProfile
-    from ._models import Plan
+    from ._models import PrivateEndpointConnection
+    from ._models import PrivateEndpointProperty
+    from ._models import PrivateLinkResource
+    from ._models import PrivateLinkScopesResource
+    from ._models import PrivateLinkServiceConnectionStateProperty
     from ._models import ProxyResource
     from ._models import Resource
-    from ._models import ResourceModelWithAllowedPropertySet
-    from ._models import ResourceModelWithAllowedPropertySetIdentity
-    from ._models import ResourceModelWithAllowedPropertySetPlan
-    from ._models import ResourceModelWithAllowedPropertySetSku
-    from ._models import Sku
+    from ._models import ScopedResource
+    from ._models import TagsResource
     from ._models import TrackedResource
     from ._models import UpdateResource
+from ._paged_models import HybridComputePrivateLinkScopePaged
 from ._paged_models import MachineExtensionPaged
 from ._paged_models import MachinePaged
 from ._paged_models import OperationValuePaged
+from ._paged_models import PrivateEndpointConnectionPaged
+from ._paged_models import PrivateLinkResourcePaged
+from ._paged_models import ScopedResourcePaged
 from ._hybrid_compute_management_client_enums import (
     StatusTypes,
     StatusLevelTypes,
-    SkuTier,
-    ResourceIdentityType,
+    PublicNetworkAccessType,
     InstanceViewTypes,
 )
 
@@ -95,6 +104,10 @@ __all__ = [
     'ErrorAdditionalInfo',
     'ErrorDetail',
     'ErrorResponse', 'ErrorResponseException',
+    'ErrorResponseCommon',
+    'ErrorResponseV2', 'ErrorResponseV2Exception',
+    'ErrorResponseV2Error',
+    'HybridComputePrivateLinkScope',
     'Identity',
     'LocationData',
     'Machine',
@@ -108,29 +121,31 @@ __all__ = [
     'MachineIdentity',
     'MachineProperties',
     'MachinePropertiesOsProfile',
-    'MachineReconnect',
-    'MachineReconnectProperties',
     'MachineUpdate',
     'MachineUpdateProperties',
     'OperationValue',
     'OperationValueDisplayModel',
     'OSProfile',
-    'Plan',
+    'PrivateEndpointConnection',
+    'PrivateEndpointProperty',
+    'PrivateLinkResource',
+    'PrivateLinkScopesResource',
+    'PrivateLinkServiceConnectionStateProperty',
     'ProxyResource',
     'Resource',
-    'ResourceModelWithAllowedPropertySet',
-    'ResourceModelWithAllowedPropertySetIdentity',
-    'ResourceModelWithAllowedPropertySetPlan',
-    'ResourceModelWithAllowedPropertySetSku',
-    'Sku',
+    'ScopedResource',
+    'TagsResource',
     'TrackedResource',
     'UpdateResource',
     'MachinePaged',
     'MachineExtensionPaged',
     'OperationValuePaged',
+    'HybridComputePrivateLinkScopePaged',
+    'PrivateLinkResourcePaged',
+    'PrivateEndpointConnectionPaged',
+    'ScopedResourcePaged',
     'StatusTypes',
     'StatusLevelTypes',
-    'SkuTier',
-    'ResourceIdentityType',
+    'PublicNetworkAccessType',
     'InstanceViewTypes',
 ]
