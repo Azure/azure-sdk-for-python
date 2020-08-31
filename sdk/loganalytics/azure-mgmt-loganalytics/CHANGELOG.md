@@ -5,6 +5,7 @@
 **Features**
 
   - REST call api-version changes from 2020-03-01-preview to 2020-08-01
+  - DataSourceType has new enum values
 
 **Breaking changes**
 
