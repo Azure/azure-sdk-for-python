@@ -585,8 +585,6 @@ class TestRecognizePIIEntities(AsyncTextAnalyticsTest):
         result = await client.recognize_pii_entities(["My SSN is 859-98-0987."])
         self.assertEqual("My SSN is ***********.", result[0].redacted_text)
 
-    # currently only have this as playback since the dev endpoint is unreliable
-    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
     async def test_redacted_text_v3_1_preview_1(self, client):
