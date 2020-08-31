@@ -935,9 +935,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         """
         try:
             blob_props = self._client.blob.get_properties(
-                **kwargs,
                 snapshot=self.snapshot,
-                cls=deserialize_blob_properties)
+                cls=deserialize_blob_properties,
+                **kwargs)
             if blob_props and blob_props.is_current_version or blob_props and self.snapshot:
                 return True
             return False
