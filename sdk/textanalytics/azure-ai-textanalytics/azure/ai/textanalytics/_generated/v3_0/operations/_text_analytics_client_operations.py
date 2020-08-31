@@ -57,6 +57,7 @@ class TextAnalyticsClientOperationsMixin(object):
 
         _input = models.MultiLanguageBatchInput(documents=documents)
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json, text/json"
 
         # Construct URL
         url = self.entities_recognition_general.metadata['url']  # type: ignore
@@ -75,19 +76,18 @@ class TextAnalyticsClientOperationsMixin(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(_input, 'MultiLanguageBatchInput')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.TextAnalyticsError, response)
+            error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('EntitiesResult', pipeline_response)
@@ -131,6 +131,7 @@ class TextAnalyticsClientOperationsMixin(object):
 
         _input = models.MultiLanguageBatchInput(documents=documents)
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json, text/json"
 
         # Construct URL
         url = self.entities_linking.metadata['url']  # type: ignore
@@ -149,19 +150,18 @@ class TextAnalyticsClientOperationsMixin(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(_input, 'MultiLanguageBatchInput')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.TextAnalyticsError, response)
+            error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('EntityLinkingResult', pipeline_response)
@@ -205,6 +205,7 @@ class TextAnalyticsClientOperationsMixin(object):
 
         _input = models.MultiLanguageBatchInput(documents=documents)
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json, text/json"
 
         # Construct URL
         url = self.key_phrases.metadata['url']  # type: ignore
@@ -223,19 +224,18 @@ class TextAnalyticsClientOperationsMixin(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(_input, 'MultiLanguageBatchInput')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.TextAnalyticsError, response)
+            error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('KeyPhraseResult', pipeline_response)
@@ -280,6 +280,7 @@ class TextAnalyticsClientOperationsMixin(object):
 
         _input = models.LanguageBatchInput(documents=documents)
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json, text/json"
 
         # Construct URL
         url = self.languages.metadata['url']  # type: ignore
@@ -298,19 +299,18 @@ class TextAnalyticsClientOperationsMixin(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(_input, 'LanguageBatchInput')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.TextAnalyticsError, response)
+            error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('LanguageResult', pipeline_response)
@@ -355,6 +355,7 @@ class TextAnalyticsClientOperationsMixin(object):
 
         _input = models.MultiLanguageBatchInput(documents=documents)
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json, text/json"
 
         # Construct URL
         url = self.sentiment.metadata['url']  # type: ignore
@@ -373,19 +374,18 @@ class TextAnalyticsClientOperationsMixin(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(_input, 'MultiLanguageBatchInput')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.TextAnalyticsError, response)
+            error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('SentimentResponse', pipeline_response)

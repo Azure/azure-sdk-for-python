@@ -283,7 +283,7 @@ class TableTestAsync(AsyncTableTestCase):
 
     @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
-    async def test_set_table_acl_with_empty_signed_identifier(self, resource_group, location, storage_account,
+    async def test_set_table_acl_with_none_signed_identifier(self, resource_group, location, storage_account,
                                                               storage_account_key):
         # Arrange
         url = self.account_url(storage_account, "table")

@@ -9,6 +9,7 @@
 
 * Attempting to call `send_messages` on something not a `Message`, `BatchMessage`, or list of `Message`s, will now throw a `TypeError` instead of `ValueError`
 * Sending a message twice will no longer result in a MessageAlreadySettled exception.
+* `ServiceBusClient.close()` now closes spawned senders and receivers.
 
 ## 7.0.0b5 (2020-08-10)
 

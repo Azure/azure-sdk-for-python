@@ -6,29 +6,29 @@ interactions:
       was not as good as I hoped.", "language": "fr"}]}'
     headers:
       Accept:
-      - application/json
+      - application/json, text/json
       Content-Length:
       - '279'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/1.0.1 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.0.1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.1/keyPhrases?showStats=false
   response:
     body:
       string: '{"documents":[{"id":"0","keyPhrases":["This was the best day","my"],"warnings":[]},{"id":"1","keyPhrases":["like
         the hotel we stayed","It was too expensive","I did"],"warnings":[]},{"id":"2","keyPhrases":["as
-        good as I hoped","The restaurant was"],"warnings":[]}],"errors":[],"modelVersion":"2019-10-01"}'
+        good as I hoped","The restaurant was"],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}'
     headers:
-      apim-request-id: 6c82c32f-6052-4964-98b9-b2b1e74e51e9
+      apim-request-id: 5f8ea8ba-d7da-43dd-b643-1d566940b60e
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Fri, 24 Jul 2020 16:32:51 GMT
+      date: Thu, 27 Aug 2020 19:32:06 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '12'
+      x-envoy-upstream-service-time: '8'
     status:
       code: 200
       message: OK

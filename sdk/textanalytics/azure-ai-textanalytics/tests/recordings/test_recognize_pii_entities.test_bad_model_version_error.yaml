@@ -4,7 +4,7 @@ interactions:
       at.", "language": "english"}]}'
     headers:
       Accept:
-      - application/json
+      - application/json, text/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -14,20 +14,20 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/1.0.1 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.0.1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.1/entities/recognition/pii?model-version=bad&showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.1/entities/recognition/pii?model-version=bad&showStats=false&stringIndexType=UnicodeCodePoint
   response:
     body:
       string: '{"error":{"code":"InvalidRequest","message":"Invalid Request.","innererror":{"code":"ModelVersionIncorrect","message":"Invalid
-        model version. Possible values are: latest,2020-04-01,2019-10-01,2020-02-01"}}}'
+        model version. Possible values are: latest,2019-10-01,2020-02-01,2020-04-01,2020-07-01"}}}'
     headers:
       apim-request-id:
-      - c999c1e5-ba3b-4351-b65d-4356362357c6
+      - e8d6a18a-53f3-4404-a8a0-0bfbc08aaf97
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 23 Jul 2020 17:18:43 GMT
+      - Thu, 27 Aug 2020 19:32:19 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -35,7 +35,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '4'
+      - '5'
     status:
       code: 400
       message: Bad Request

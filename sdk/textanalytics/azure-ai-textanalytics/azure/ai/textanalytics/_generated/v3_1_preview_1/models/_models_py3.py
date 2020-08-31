@@ -575,15 +575,42 @@ class EntityLinkingResult(msrest.serialization.Model):
         self.model_version = model_version
 
 
+class ErrorResponse(msrest.serialization.Model):
+    """ErrorResponse.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param error: Required. Document Error.
+    :type error: ~azure.ai.textanalytics.v3_1_preview_1.models.TextAnalyticsError
+    """
+
+    _validation = {
+        'error': {'required': True},
+    }
+
+    _attribute_map = {
+        'error': {'key': 'error', 'type': 'TextAnalyticsError'},
+    }
+
+    def __init__(
+        self,
+        *,
+        error: "TextAnalyticsError",
+        **kwargs
+    ):
+        super(ErrorResponse, self).__init__(**kwargs)
+        self.error = error
+
+
 class InnerError(msrest.serialization.Model):
     """InnerError.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param code: Required. Error code. Possible values include: "invalidParameterValue",
-     "invalidRequestBodyFormat", "emptyRequest", "missingInputRecords", "invalidDocument",
-     "modelVersionIncorrect", "invalidDocumentBatch", "unsupportedLanguageCode",
-     "invalidCountryHint".
+    :param code: Required. Error code. Possible values include: "InvalidParameterValue",
+     "InvalidRequestBodyFormat", "EmptyRequest", "MissingInputRecords", "InvalidDocument",
+     "ModelVersionIncorrect", "InvalidDocumentBatch", "UnsupportedLanguageCode",
+     "InvalidCountryHint".
     :type code: str or ~azure.ai.textanalytics.v3_1_preview_1.models.InnerErrorCodeValue
     :param message: Required. Error message.
     :type message: str
@@ -1005,7 +1032,7 @@ class SentenceAspect(msrest.serialization.Model):
 
     :param sentiment: Required. Aspect level sentiment for the aspect in the sentence. Possible
      values include: "positive", "mixed", "negative".
-    :type sentiment: str or ~azure.ai.textanalytics.v3_1_preview_1.models.SentenceAspectSentiment
+    :type sentiment: str or ~azure.ai.textanalytics.v3_1_preview_1.models.TokenSentimentValue
     :param confidence_scores: Required. Aspect level sentiment confidence scores for the aspect in
      the sentence.
     :type confidence_scores:
@@ -1042,7 +1069,7 @@ class SentenceAspect(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        sentiment: Union[str, "SentenceAspectSentiment"],
+        sentiment: Union[str, "TokenSentimentValue"],
         confidence_scores: "AspectConfidenceScoreLabel",
         offset: int,
         length: int,
@@ -1066,7 +1093,7 @@ class SentenceOpinion(msrest.serialization.Model):
 
     :param sentiment: Required. Opinion level sentiment for the aspect in the sentence. Possible
      values include: "positive", "mixed", "negative".
-    :type sentiment: str or ~azure.ai.textanalytics.v3_1_preview_1.models.SentenceOpinionSentiment
+    :type sentiment: str or ~azure.ai.textanalytics.v3_1_preview_1.models.TokenSentimentValue
     :param confidence_scores: Required. Opinion level sentiment confidence scores for the aspect in
      the sentence.
     :type confidence_scores:
@@ -1102,7 +1129,7 @@ class SentenceOpinion(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        sentiment: Union[str, "SentenceOpinionSentiment"],
+        sentiment: Union[str, "TokenSentimentValue"],
         confidence_scores: "AspectConfidenceScoreLabel",
         offset: int,
         length: int,
@@ -1272,8 +1299,8 @@ class TextAnalyticsError(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param code: Required. Error code. Possible values include: "invalidRequest",
-     "invalidArgument", "internalServerError", "serviceUnavailable".
+    :param code: Required. Error code. Possible values include: "InvalidRequest",
+     "InvalidArgument", "InternalServerError", "ServiceUnavailable".
     :type code: str or ~azure.ai.textanalytics.v3_1_preview_1.models.ErrorCodeValue
     :param message: Required. Error message.
     :type message: str

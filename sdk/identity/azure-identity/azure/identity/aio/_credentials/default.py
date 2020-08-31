@@ -50,6 +50,8 @@ class DefaultAzureCredential(ChainedTokenCredential):
         Defaults to **False**.
     :keyword bool exclude_shared_token_cache_credential: Whether to exclude the shared token cache. Defaults to
         **False**.
+    :keyword str managed_identity_client_id: The client ID of a user-assigned managed identity. Defaults to the value
+        of the environment variable AZURE_CLIENT_ID, if any. If not specified, a system-assigned identity will be used.
     :keyword str shared_cache_username: Preferred username for :class:`~azure.identity.SharedTokenCacheCredential`.
         Defaults to the value of environment variable AZURE_USERNAME, if any.
     :keyword str shared_cache_tenant_id: Preferred tenant for :class:`~azure.identity.SharedTokenCacheCredential`.
@@ -67,6 +69,10 @@ class DefaultAzureCredential(ChainedTokenCredential):
             "shared_cache_tenant_id", os.environ.get(EnvironmentVariables.AZURE_TENANT_ID)
         )
 
+        managed_identity_client_id = kwargs.pop(
+            "managed_identity_client_id", os.environ.get(EnvironmentVariables.AZURE_CLIENT_ID)
+        )
+
         vscode_tenant_id = kwargs.pop(
             "visual_studio_code_tenant_id", os.environ.get(EnvironmentVariables.AZURE_TENANT_ID)
         )
@@ -82,7 +88,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
             credentials.append(EnvironmentCredential(authority=authority, **kwargs))
         if not exclude_managed_identity_credential:
             credentials.append(
-                ManagedIdentityCredential(client_id=os.environ.get(EnvironmentVariables.AZURE_CLIENT_ID), **kwargs)
+                ManagedIdentityCredential(client_id=managed_identity_client_id, **kwargs)
             )
         if not exclude_shared_token_cache_credential and SharedTokenCacheCredential.supported():
             try:
