@@ -12,7 +12,7 @@ from azure.identity import EnvironmentCredential
 from azure.eventhub import EventData, EventHubProducerClient, EventHubConsumerClient, EventHubSharedKeyCredential, EventHubSASTokenCredential
 
 from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer
-from tests.eventhub_preparer import (
+from eventhub_preparer import (
     CachedEventHubNamespacePreparer, 
     CachedEventHubPreparer
 )
