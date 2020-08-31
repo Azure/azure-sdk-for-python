@@ -611,9 +611,11 @@ class LinkedEntity(DictMixin):
     :ivar data_source: Data source used to extract entity linking,
         such as Wiki/Bing etc.
     :vartype data_source: str
-    :param str bing_id: Bing unique identifier of the recognized entity. Use in conjunction
+    :ivar str bing_id: Bing unique identifier of the recognized entity. Use in conjunction
         with the Bing Entity Search SDK to fetch additional relevant information. Only
         available for API version v3.1-preview.2 and up.
+    .. versionadded:: v3.1-preview.2
+        The *bing_id* property.
     """
 
     def __init__(self, **kwargs):
