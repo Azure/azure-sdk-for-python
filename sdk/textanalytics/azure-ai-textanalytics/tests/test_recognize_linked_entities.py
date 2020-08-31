@@ -588,12 +588,12 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
         client.recognize_linked_entities(["please don't fail"])
 
     # currently only have this as playback since the dev endpoint is unreliable
-    @pytest.mark.playback_test_only 
+    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_2,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": os.environ.get("AZURE_TEXT_ANALYTICS_ENDPOINT")
+        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net/"
     })
     def test_bing_id(self, client):
         # make sure that the addition of the string_index_type kwarg for v3.1-preview.1 doesn't
