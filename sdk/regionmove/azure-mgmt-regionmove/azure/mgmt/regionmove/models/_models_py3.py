@@ -406,12 +406,13 @@ class JobStatus(msrest.serialization.Model):
 
     :ivar job_name: Defines the job name. Default value: "InitialSync".
     :vartype job_name: str
-    :param job_progress: Gets or sets the monitoring job percentage.
-    :type job_progress: str
+    :ivar job_progress: Gets or sets the monitoring job percentage.
+    :vartype job_progress: str
     """
 
     _validation = {
-        'job_name': {'constant': True},
+        'job_name': {'readonly': True, 'constant': True},
+        'job_progress': {'readonly': True},
     }
 
     _attribute_map = {
@@ -423,12 +424,11 @@ class JobStatus(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        job_progress: Optional[str] = None,
         **kwargs
     ):
         super(JobStatus, self).__init__(**kwargs)
-        self.job_progress = job_progress
+        self.job_name = None
+        self.job_progress = None
 
 
 class LBBackendAddressPoolResourceSettings(msrest.serialization.Model):
@@ -988,18 +988,27 @@ class MoveResourceError(msrest.serialization.Model):
 class MoveResourceErrorBody(msrest.serialization.Model):
     """An error response from the Azure Migrate service.
 
-    :param code: An identifier for the error. Codes are invariant and are intended to be consumed
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: An identifier for the error. Codes are invariant and are intended to be consumed
      programmatically.
-    :type code: str
-    :param message: A message describing the error, intended to be suitable for display in a user
+    :vartype code: str
+    :ivar message: A message describing the error, intended to be suitable for display in a user
      interface.
-    :type message: str
-    :param target: The target of the particular error. For example, the name of the property in
+    :vartype message: str
+    :ivar target: The target of the particular error. For example, the name of the property in
      error.
-    :type target: str
-    :param details: A list of additional details about the error.
-    :type details: list[~region_move_service_api.models.MoveResourceErrorBody]
+    :vartype target: str
+    :ivar details: A list of additional details about the error.
+    :vartype details: list[~region_move_service_api.models.MoveResourceErrorBody]
     """
+
+    _validation = {
+        'code': {'readonly': True},
+        'message': {'readonly': True},
+        'target': {'readonly': True},
+        'details': {'readonly': True},
+    }
 
     _attribute_map = {
         'code': {'key': 'code', 'type': 'str'},
@@ -1010,18 +1019,13 @@ class MoveResourceErrorBody(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        code: Optional[str] = None,
-        message: Optional[str] = None,
-        target: Optional[str] = None,
-        details: Optional[List["MoveResourceErrorBody"]] = None,
         **kwargs
     ):
         super(MoveResourceErrorBody, self).__init__(**kwargs)
-        self.code = code
-        self.message = message
-        self.target = target
-        self.details = details
+        self.code = None
+        self.message = None
+        self.target = None
+        self.details = None
 
 
 class MoveResourceFilter(msrest.serialization.Model):
@@ -1165,18 +1169,25 @@ class MoveResourcePropertiesErrors(MoveResourceError):
 class MoveResourceStatus(msrest.serialization.Model):
     """Defines the move resource status.
 
-    :param move_state: Defines the MoveResource states. Possible values include:
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar move_state: Defines the MoveResource states. Possible values include:
      "AssignmentPending", "PreparePending", "PrepareInProgress", "PrepareFailed", "MovePending",
      "MoveInProgress", "MoveFailed", "DiscardInProgress", "DiscardFailed", "CommitPending",
      "CommitInProgress", "CommitFailed", "Committed".
-    :type move_state: str or ~region_move_service_api.models.MoveState
+    :vartype move_state: str or ~region_move_service_api.models.MoveState
     :param job_status: Defines the job status.
     :type job_status: ~region_move_service_api.models.JobStatus
     :param errors: An error response from the azure region move service.
     :type errors: ~region_move_service_api.models.MoveResourceError
-    :param target_id: Gets the Target ARM Id of the resource.
-    :type target_id: str
+    :ivar target_id: Gets the Target ARM Id of the resource.
+    :vartype target_id: str
     """
+
+    _validation = {
+        'move_state': {'readonly': True},
+        'target_id': {'readonly': True},
+    }
 
     _attribute_map = {
         'move_state': {'key': 'moveState', 'type': 'str'},
@@ -1188,34 +1199,39 @@ class MoveResourceStatus(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        move_state: Optional[Union[str, "MoveState"]] = None,
         job_status: Optional["JobStatus"] = None,
         errors: Optional["MoveResourceError"] = None,
-        target_id: Optional[str] = None,
         **kwargs
     ):
         super(MoveResourceStatus, self).__init__(**kwargs)
-        self.move_state = move_state
+        self.move_state = None
         self.job_status = job_status
         self.errors = errors
-        self.target_id = target_id
+        self.target_id = None
 
 
 class MoveResourcePropertiesMoveStatus(MoveResourceStatus):
     """Defines the move resource status.
 
-    :param move_state: Defines the MoveResource states. Possible values include:
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar move_state: Defines the MoveResource states. Possible values include:
      "AssignmentPending", "PreparePending", "PrepareInProgress", "PrepareFailed", "MovePending",
      "MoveInProgress", "MoveFailed", "DiscardInProgress", "DiscardFailed", "CommitPending",
      "CommitInProgress", "CommitFailed", "Committed".
-    :type move_state: str or ~region_move_service_api.models.MoveState
+    :vartype move_state: str or ~region_move_service_api.models.MoveState
     :param job_status: Defines the job status.
     :type job_status: ~region_move_service_api.models.JobStatus
     :param errors: An error response from the azure region move service.
     :type errors: ~region_move_service_api.models.MoveResourceError
-    :param target_id: Gets the Target ARM Id of the resource.
-    :type target_id: str
+    :ivar target_id: Gets the Target ARM Id of the resource.
+    :vartype target_id: str
     """
+
+    _validation = {
+        'move_state': {'readonly': True},
+        'target_id': {'readonly': True},
+    }
 
     _attribute_map = {
         'move_state': {'key': 'moveState', 'type': 'str'},
@@ -1227,13 +1243,11 @@ class MoveResourcePropertiesMoveStatus(MoveResourceStatus):
     def __init__(
         self,
         *,
-        move_state: Optional[Union[str, "MoveState"]] = None,
         job_status: Optional["JobStatus"] = None,
         errors: Optional["MoveResourceError"] = None,
-        target_id: Optional[str] = None,
         **kwargs
     ):
-        super(MoveResourcePropertiesMoveStatus, self).__init__(move_state=move_state, job_status=job_status, errors=errors, target_id=target_id, **kwargs)
+        super(MoveResourcePropertiesMoveStatus, self).__init__(job_status=job_status, errors=errors, **kwargs)
 
 
 class MoveResourcePropertiesSourceResourceSettings(ResourceSettings):
