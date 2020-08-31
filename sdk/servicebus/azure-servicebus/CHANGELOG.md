@@ -2,6 +2,9 @@
 
 ## 7.0.0b6 (Unreleased)
 
+**Breaking Changes**
+
+* `ServiceBusClient.close()` now closes spawned senders and receivers.
 
 ## 7.0.0b5 (2020-08-10)
 
