@@ -1,0 +1,40 @@
+interactions:
+- request:
+    body: '[{"id": "3dc4b913-4bc2-41f8-be9b-bf1f67069806", "source": "http://samplesource.dev",
+      "data": "cloudevent", "type": "Sample.Cloud.Event", "time": "2020-08-19T03:36:41.947462Z",
+      "specversion": "1.0"}]'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '198'
+      Content-Type:
+      - application/cloudevents-batch+json; charset=utf-8
+      User-Agent:
+      - azsdk-python-eventgridpublisherclient/unknown Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      aeg-sas-key:
+      - dHUaOOg5xRj+D7iH/AC92GyHweLx9ugrDuMDg4e5Xvw=
+    method: POST
+    uri: https://cloudeventgridtestegtopic.westus-1.eventgrid.azure.net/api/events?api-version=2018-01-01
+  response:
+    body:
+      string: ''
+    headers:
+      api-supported-versions:
+      - '2018-01-01'
+      content-length:
+      - '0'
+      date:
+      - Wed, 19 Aug 2020 03:36:43 GMT
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+    status:
+      code: 200
+      message: OK
+version: 1

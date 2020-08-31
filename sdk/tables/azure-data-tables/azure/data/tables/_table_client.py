@@ -17,7 +17,7 @@ from azure.core.paging import ItemPaged
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.tracing.decorator import distributed_trace
 
-from ._deserialize import _convert_to_entity
+from ._deserialize import _convert_to_entity, _trim_service_metadata
 from ._entity import TableEntity
 from ._generated import AzureTable
 from ._generated.models import AccessPolicy, SignedIdentifier, TableProperties, QueryOptions
@@ -124,7 +124,7 @@ class TableClient(TableClientBase):
             self,
             **kwargs  # type: Any
     ):
-        # type: (...) -> dict[str,AccessPolicy]
+        # type: (...) -> Dict[str,AccessPolicy]
         """Retrieves details about any stored access policies specified on the table that may be
         used with Shared Access Signatures.
 
@@ -146,7 +146,7 @@ class TableClient(TableClientBase):
     @distributed_trace
     def set_table_access_policy(
             self,
-            signed_identifiers,  # type: dict[str,AccessPolicy]
+            signed_identifiers,  # type: Dict[str,AccessPolicy]
             **kwargs):
         # type: (...) -> None
         """Sets stored access policies for the table that may be used with Shared Access Signatures.
@@ -178,17 +178,19 @@ class TableClient(TableClientBase):
             self,
             **kwargs  # type: Any
     ):
-        # type: (...) -> TableItem
+        # type: (...) -> Dict[str,str]
         """Creates a new table under the current account.
 
-        :return: TableItem created
-        :rtype: TableItem
+        :return: Dictionary of operation metadata returned from service
+        :rtype: dict[str,str]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         table_properties = TableProperties(table_name=self.table_name, **kwargs)
         try:
-            table = self._client.table.create(table_properties)
-            return TableItem(table=table)
+            metadata, _ = self._client.table.create(
+                table_properties,
+                cls=kwargs.pop('cls', _return_headers_and_deserialized))
+            return _trim_service_metadata(metadata)
         except HttpResponseError as error:
             _process_table_error(error)
 
@@ -229,7 +231,7 @@ class TableClient(TableClientBase):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
 
-        if_match, if_not_match = _get_match_headers(kwargs=dict(kwargs, etag=kwargs.pop('etag', None),
+        if_match, _ = _get_match_headers(kwargs=dict(kwargs, etag=kwargs.pop('etag', None),
                                                                 match_condition=kwargs.pop('match_condition', None)),
                                                     etag_param='etag', match_param='match_condition')
         try:
@@ -237,7 +239,7 @@ class TableClient(TableClientBase):
                 table=self.table_name,
                 partition_key=partition_key,
                 row_key=row_key,
-                if_match=if_match or if_not_match or '*',
+                if_match=if_match or '*',
                 **kwargs)
         except HttpResponseError as error:
             _process_table_error(error)
@@ -245,43 +247,41 @@ class TableClient(TableClientBase):
     @distributed_trace
     def create_entity(
             self,
-            entity,  # type: Union[TableEntity, dict[str,str]]
+            entity,  # type: Union[TableEntity, Dict[str,str]]
             **kwargs  # type: Any
     ):
-        # type: (...) -> TableEntity
+        # type: (...) -> Dict[str,str]
         """Insert entity in a table.
 
         :param entity: The properties for the table entity.
         :type entity: Union[TableEntity, dict[str,str]]
-        :return: TableEntity mapping str to azure.data.tables.EntityProperty
-        :rtype: ~azure.data.tables.TableEntity
+        :return: Dictionary mapping operation metadata returned from the service
+        :rtype: dict[str,str]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
 
         if "PartitionKey" in entity and "RowKey" in entity:
             entity = _add_entity_properties(entity)
-            # TODO: Remove - and run test to see what happens with the service
         else:
             raise ValueError('PartitionKey and RowKey were not provided in entity')
         try:
-            inserted_entity = self._client.table.insert_entity(
+            metadata, _ = self._client.table.insert_entity(
                 table=self.table_name,
                 table_entity_properties=entity,
-                **kwargs
-            )
-            properties = _convert_to_entity(inserted_entity)
-            return properties
+                cls=kwargs.pop('cls', _return_headers_and_deserialized),
+                **kwargs)
+            return _trim_service_metadata(metadata)
         except ResourceNotFoundError as error:
             _process_table_error(error)
 
     @distributed_trace
     def update_entity(  # pylint:disable=R1710
             self,
-            entity,  # type: Union[TableEntity, dict[str,str]]
+            entity,  # type: Union[TableEntity, Dict[str,str]]
             mode=UpdateMode.MERGE,  # type: UpdateMode
             **kwargs  # type: Any
     ):
-        # type: (...) -> None
+        # type: (...) -> Dict[str,str]
         """Update entity in a table.
 
         :param entity: The properties for the table entity.
@@ -292,12 +292,12 @@ class TableClient(TableClientBase):
         :keyword str row_key: The row key of the entity.
         :keyword str etag: Etag of the entity
         :keyword ~azure.core.MatchConditions match_condition: MatchCondition
-        :return: None
-        :rtype: None
+        :return: Dictionary mapping operation metadata returned from the service
+        :rtype: dict[str,str]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
 
-        if_match, if_not_match = _get_match_headers(kwargs=dict(kwargs, etag=kwargs.pop('etag', None),
+        if_match, _ = _get_match_headers(kwargs=dict(kwargs, etag=kwargs.pop('etag', None),
                                                                 match_condition=kwargs.pop('match_condition', None)),
                                                     etag_param='etag', match_param='match_condition')
 
@@ -305,20 +305,28 @@ class TableClient(TableClientBase):
         row_key = entity['RowKey']
         entity = _add_entity_properties(entity)
         try:
+            metadata = None
             if mode is UpdateMode.REPLACE:
-                self._client.table.update_entity(
+                metadata, _ = self._client.table.update_entity(
                     table=self.table_name,
                     partition_key=partition_key,
                     row_key=row_key,
                     table_entity_properties=entity,
-                    if_match=if_match or if_not_match or "*",
+                    if_match=if_match or "*",
+                    cls=kwargs.pop('cls', _return_headers_and_deserialized),
                     **kwargs)
             elif mode is UpdateMode.MERGE:
-                self._client.table.merge_entity(table=self.table_name, partition_key=partition_key,
-                                                row_key=row_key, if_match=if_match or if_not_match or "*",
-                                                table_entity_properties=entity, **kwargs)
+                metadata, _ = self._client.table.merge_entity(
+                    table=self.table_name,
+                    partition_key=partition_key,
+                    row_key=row_key,
+                    if_match=if_match or "*",
+                    table_entity_properties=entity,
+                    cls=kwargs.pop('cls', _return_headers_and_deserialized),
+                    **kwargs)
             else:
                 raise ValueError('Mode type is not supported')
+            return _trim_service_metadata(metadata)
         except HttpResponseError as error:
             _process_table_error(error)
 
@@ -393,15 +401,15 @@ class TableClient(TableClientBase):
             row_key,  # type: str
             **kwargs  # type: Any
     ):
-        # type: (...) -> TableEntity
+        # type: (...) -> Dict[str,str]
         """Queries entities in a table.
 
         :param partition_key: The partition key of the entity.
         :type partition_key: str
         :param row_key: The row key of the entity.
         :type row_key: str
-        :return: Entity mapping str to azure.data.tables.EntityProperty
-        :rtype: ~azure.data.tables.TableEntity
+        :return: Dictionary mapping operation metadata returned from the service
+        :rtype: dict[str,str]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         try:
@@ -418,19 +426,19 @@ class TableClient(TableClientBase):
     @distributed_trace
     def upsert_entity(  # pylint:disable=R1710
             self,
-            entity,  # type: Union[TableEntity, dict[str,str]]
+            entity,  # type: Union[TableEntity, Dict[str,str]]
             mode=UpdateMode.MERGE,  # type: UpdateMode
             **kwargs  # type: Any
     ):
-        # type: (...) -> None
+        # type: (...) -> Dict[str,str]
         """Update/Merge or Insert entity into table.
 
         :param entity: The properties for the table entity.
         :type entity: Union[TableEntity, dict[str,str]]
         :param mode: Merge or Replace and Insert on fail
         :type mode: ~azure.data.tables.UpdateMode
-        :return: None
-        :rtype: None
+        :return: Dictionary mapping operation metadata returned from the service
+        :rtype: dict[str,str]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
 
@@ -439,25 +447,30 @@ class TableClient(TableClientBase):
         entity = _add_entity_properties(entity)
 
         try:
+            metadata = None
             if mode is UpdateMode.MERGE:
-                self._client.table.merge_entity(
+                metadata, _ = self._client.table.merge_entity(
                     table=self.table_name,
                     partition_key=partition_key,
                     row_key=row_key,
                     table_entity_properties=entity,
+                    cls=kwargs.pop('cls', _return_headers_and_deserialized),
                     **kwargs
                 )
             elif mode is UpdateMode.REPLACE:
-                self._client.table.update_entity(
+                metadata, _ = self._client.table.update_entity(
                     table=self.table_name,
                     partition_key=partition_key,
                     row_key=row_key,
                     table_entity_properties=entity,
+                    cls=kwargs.pop('cls', _return_headers_and_deserialized),
                     **kwargs)
             else:
-                raise ValueError('Mode type is not supported')
+                raise ValueError("""Update mode {} is not supported.
+                    For a list of supported modes see the UpdateMode enum""".format(mode))
+            return _trim_service_metadata(metadata)
         except ResourceNotFoundError:
-            self.create_entity(
+            return self.create_entity(
                 partition_key=partition_key,
                 row_key=row_key,
                 table_entity_properties=entity,

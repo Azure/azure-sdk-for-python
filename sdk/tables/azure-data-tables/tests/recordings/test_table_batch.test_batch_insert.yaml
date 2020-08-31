@@ -1,0 +1,154 @@
+interactions:
+- request:
+    body: '{"TableName": "uttablef0c20dcc"}'
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '32'
+      Content-Type:
+      - application/json;odata=nometadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Wed, 19 Aug 2020 19:17:14 GMT
+      User-Agent:
+      - azsdk-python-storage-table/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 19 Aug 2020 19:17:14 GMT
+      x-ms-version:
+      - '2019-07-07'
+    method: POST
+    uri: https://storagename.table.core.windows.net/Tables
+  response:
+    body:
+      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#Tables/@Element","TableName":"uttablef0c20dcc"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-type:
+      - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
+      date:
+      - Wed, 19 Aug 2020 19:17:14 GMT
+      location:
+      - https://storagename.table.core.windows.net/Tables('uttablef0c20dcc')
+      server:
+      - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-ms-version:
+      - '2019-07-07'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: "--batch_b3f94fdb-e1cd-4216-8739-23e499422706\r\nContent-Type: multipart/mixed;
+      boundary=changeset_8fc24677-141c-47e2-92bd-dd2403c1e89b\r\n\r\n--changeset_8fc24677-141c-47e2-92bd-dd2403c1e89b\r\nContent-Type:
+      application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID: 0\r\n\r\nPOST
+      https://pyacrstoragenkyeai74ujmb.table.core.windows.net HTTP/1.1\r\nx-ms-version:
+      2019-07-07\r\nDataServiceVersion: 3.0\r\nContent-Type: application/json;odata=nometadata\r\nAccept:
+      application/json;odata=minimalmetadata\r\nContent-Length: 253\r\nx-ms-date:
+      Wed, 19 Aug 2020 19:17:14 GMT\r\nDate: Wed, 19 Aug 2020 19:17:14 GMT\r\nx-ms-client-request-id:
+      9729b0c1-e250-11ea-92a6-002b67128e4c\r\nAuthorization: SharedKey pyacrstoragenkyeai74ujmb:0tCNgVju2tetkBJLzUYeGlbTFU7+4SZnzg+3782LBLo=\r\n\r\n{\"PartitionKey\":
+      \"001\", \"RowKey\": \"batch_insert\", \"test\": true, \"test2\": \"value\",
+      \"test3\": \"3\", \"test3@odata.type\": \"Edm.Int64\", \"test4\": \"1234567890\",
+      \"test4@odata.type\": \"Edm.Int64\", \"test5\": \"2020-08-19T19:17:14Z\", \"test5@odata.type\":
+      \"Edm.DateTime\"}\r\n--changeset_8fc24677-141c-47e2-92bd-dd2403c1e89b--\r\n\r\n--batch_b3f94fdb-e1cd-4216-8739-23e499422706--\r\n"
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '1106'
+      Content-Type:
+      - multipart/mixed; boundary=batch_b3f94fdb-e1cd-4216-8739-23e499422706
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Wed, 19 Aug 2020 19:17:14 GMT
+      MaxDataServiceVersion:
+      - 3.0;NetFx
+      User-Agent:
+      - azsdk-python-storage-table/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 19 Aug 2020 19:17:14 GMT
+      x-ms-version:
+      - '2019-07-07'
+    method: POST
+    uri: https://storagename.table.core.windows.net/$batch
+  response:
+    body:
+      string: "--batchresponse_86a4547a-05c4-4259-b88f-b4af09450694\r\nContent-Type:
+        multipart/mixed; boundary=changesetresponse_4aaca2a9-5a91-4dc4-bbb2-61b8ef41bf0b\r\n\r\n--changesetresponse_4aaca2a9-5a91-4dc4-bbb2-61b8ef41bf0b\r\nContent-Type:
+        application/http\r\nContent-Transfer-Encoding: binary\r\n\r\nHTTP/1.1 405
+        Method Not Allowed\r\nX-Content-Type-Options: nosniff\r\nDataServiceVersion:
+        3.0;\r\nContent-Type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8\r\n\r\n{\"odata.error\":{\"code\":\"MethodNotAllowed\",\"message\":{\"lang\":\"en-US\",\"value\":\"0:The
+        requested method is not allowed on the specified resource.\\nRequestId:d2de8117-9002-0070-7e5d-76e394000000\\nTime:2020-08-19T19:17:15.0662050Z\"}}}\r\n--changesetresponse_4aaca2a9-5a91-4dc4-bbb2-61b8ef41bf0b--\r\n--batchresponse_86a4547a-05c4-4259-b88f-b4af09450694--\r\n"
+    headers:
+      cache-control:
+      - no-cache
+      content-type:
+      - multipart/mixed; boundary=batchresponse_86a4547a-05c4-4259-b88f-b4af09450694
+      date:
+      - Wed, 19 Aug 2020 19:17:14 GMT
+      server:
+      - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-ms-version:
+      - '2019-07-07'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Date:
+      - Wed, 19 Aug 2020 19:17:15 GMT
+      User-Agent:
+      - azsdk-python-storage-table/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 19 Aug 2020 19:17:15 GMT
+      x-ms-version:
+      - '2019-07-07'
+    method: DELETE
+    uri: https://storagename.table.core.windows.net/Tables('uttablef0c20dcc')
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '0'
+      date:
+      - Wed, 19 Aug 2020 19:17:14 GMT
+      server:
+      - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      x-content-type-options:
+      - nosniff
+      x-ms-version:
+      - '2019-07-07'
+    status:
+      code: 204
+      message: No Content
+version: 1

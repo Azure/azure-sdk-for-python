@@ -24,13 +24,13 @@
 #
 # --------------------------------------------------------------------------
 
-from .._internal import (
+from .._internal._index import (
     ComplexField,
     SearchField,
     SearchableField,
     SimpleField,
-    SearchFieldDataType,
 )
+from .._internal import _edm as SearchFieldDataType
 from ..._internal._generated.models import SuggestOptions
 from .._internal._generated.models import (
     AnalyzeResult,

@@ -18,7 +18,7 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.0.1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.1/entities/linking?showStats=false&stringIndexType=TextElements_v8
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.1/entities/linking?showStats=false&stringIndexType=UnicodeCodePoint
   response:
     body:
       string: '{"documents":[],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
@@ -32,11 +32,11 @@ interactions:
         see https://aka.ms/text-analytics-data-limits"}}}],"modelVersion":"2020-02-01"}'
     headers:
       apim-request-id:
-      - efd6705c-9fee-43b2-b354-34d5ab6402b5
+      - 4ca5881f-cab1-4fc4-80f7-c41660fa3697
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 26 Aug 2020 21:20:58 GMT
+      - Thu, 27 Aug 2020 19:32:15 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:

@@ -15,7 +15,7 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.0.1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.1/entities/recognition/pii?showStats=true&stringIndexType=TextElements_v8
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.1/entities/recognition/pii?showStats=true&stringIndexType=UnicodeCodePoint
   response:
     body:
       string: '{"statistics":{"documentsCount":4,"validDocumentsCount":3,"erroneousDocumentsCount":1,"transactionsCount":3},"documents":[{"id":"0","statistics":{"charactersCount":22,"transactionsCount":1},"entities":[{"text":"859-98-0987","category":"U.S.
@@ -28,16 +28,16 @@ interactions:
         document in request.","innererror":{"code":"InvalidDocument","message":"Document
         text is empty."}}}],"modelVersion":"2020-07-01"}'
     headers:
-      apim-request-id: 5846c485-17b0-47a4-a413-b268b882bdd6
+      apim-request-id: b251a5b4-7fef-4e29-9983-f3f5bd7cdd63
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Wed, 26 Aug 2020 21:21:05 GMT
+      date: Thu, 27 Aug 2020 19:32:24 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '184'
+      x-envoy-upstream-service-time: '161'
     status:
       code: 200
       message: OK
-    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.1/entities/recognition/pii?showStats=true&stringIndexType=TextElements_v8
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.1/entities/recognition/pii?showStats=true&stringIndexType=UnicodeCodePoint
 version: 1

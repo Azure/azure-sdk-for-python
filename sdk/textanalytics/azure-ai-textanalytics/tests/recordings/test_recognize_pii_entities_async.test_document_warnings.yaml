@@ -12,21 +12,21 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.0.1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.1/entities/recognition/pii?showStats=false&stringIndexType=TextElements_v8
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.1/entities/recognition/pii?showStats=false&stringIndexType=UnicodeCodePoint
   response:
     body:
       string: '{"documents":[{"id":"1","entities":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}'
     headers:
-      apim-request-id: 075704b1-2bbf-4c98-9e74-9e715f02f54c
+      apim-request-id: 1174b12d-1b69-4ca0-99c8-dc8720bcc910
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=1
-      date: Wed, 26 Aug 2020 21:21:04 GMT
+      date: Thu, 27 Aug 2020 19:32:23 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '70'
+      x-envoy-upstream-service-time: '102'
     status:
       code: 200
       message: OK
-    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.1/entities/recognition/pii?showStats=false&stringIndexType=TextElements_v8
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.1/entities/recognition/pii?showStats=false&stringIndexType=UnicodeCodePoint
 version: 1

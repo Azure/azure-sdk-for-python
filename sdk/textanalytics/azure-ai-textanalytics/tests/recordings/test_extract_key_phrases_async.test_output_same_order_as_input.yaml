@@ -19,10 +19,10 @@ interactions:
     body:
       string: '{"documents":[{"id":"1","keyPhrases":[],"warnings":[]},{"id":"2","keyPhrases":[],"warnings":[]},{"id":"3","keyPhrases":[],"warnings":[]},{"id":"4","keyPhrases":[],"warnings":[]},{"id":"5","keyPhrases":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}'
     headers:
-      apim-request-id: 04e90791-ae83-45ee-bd83-12171cd4c8de
+      apim-request-id: 7637794f-baa4-4c53-91b4-e17b451137c9
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=5
-      date: Wed, 26 Aug 2020 21:20:49 GMT
+      date: Thu, 27 Aug 2020 19:32:05 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
