@@ -13,7 +13,7 @@ from setuptools import find_packages, setup
 
 # Change the PACKAGE_NAME only to change folder and different name
 PACKAGE_NAME = "azure-data-tables"
-PACKAGE_PPRINT_NAME = "MyService Management"
+PACKAGE_PPRINT_NAME = "Azure Data Tables"
 
 # a-b-c => a/b/c
 package_folder_path = PACKAGE_NAME.replace('-', '/')
@@ -36,11 +36,8 @@ except ImportError:
     pass
 
 # Version extraction inspired from 'requests'
-with open(os.path.join(package_folder_path, 'version.py')
-          if os.path.exists(os.path.join(package_folder_path, 'version.py'))
-          else os.path.join(package_folder_path, '_version.py'), 'r') as fd:
-    version = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]',
-                        fd.read(), re.MULTILINE).group(1)
+with open(os.path.join(package_folder_path, '_version.py'), 'r') as fd:
+    version = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]', fd.read(), re.MULTILINE).group(1) # type: ignore
 
 if not version:
     raise RuntimeError('Cannot find version information')
@@ -59,7 +56,7 @@ setup(
     license='MIT License',
     author='Microsoft Corporation',
     author_email='azpysdkhelp@microsoft.com',
-    url='https://github.com/Azure/azure-sdk-for-python',
+    url='https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/table/azure-table',
     classifiers=[
         'Development Status :: 4 - Beta',
         'Programming Language :: Python',
@@ -80,11 +77,14 @@ setup(
         'azure.data',
     ]),
     install_requires=[
-        'msrest>=0.5.0',
+        'azure-core<2.0.0,>=1.2.2',
+        'msrest>=0.6.10',
         'msrestazure>=0.4.32,<2.0.0',
         'azure-common~=1.1',
     ],
     extras_require={
-        ":python_version<'3.0'": ['azure-data-nspkg'],
+        ":python_version<'3.0'": ['futures'],
+        ":python_version<'3.4'": ['enum34>=1.0.4'],
+        ":python_version<'3.5'": ["typing"]
     }
 )
