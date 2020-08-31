@@ -1,10 +1,14 @@
 # Release History
 
-## 0.7.1 (2020-08-31)
+## 1.0.0 (2020-08-31)
 
-**API-version changes**
+**Features**
 
-  - REST call api-version is changed from 2020-03-01-preview to 2020-08-01
+  - REST call api-version changes from 2020-03-01-preview to 2020-08-01
+
+**Breaking changes**
+
+  - retention_in_days minimum changes from -1 to 30
 
 ## 0.7.0 (2020-07-09)
 
