@@ -177,6 +177,19 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             quote(self.blob_name, safe='~/'),
             self._query_str)
 
+    def _encode_source_url(self, source_url):
+        parsed_source_url = urlparse(source_url)
+        source_scheme = parsed_source_url.scheme
+        source_hostname = parsed_source_url.netloc.rstrip('/')
+        source_path = unquote(parsed_source_url.path)
+        source_query = parsed_source_url.query
+        return "{}://{}{}?{}".format(
+            source_scheme,
+            source_hostname,
+            quote(source_path, safe='~/'),
+            source_query
+        )
+
     @classmethod
     def from_blob_url(cls, blob_url, credential=None, snapshot=None, **kwargs):
         # type: (str, Optional[Any], Optional[Union[str, Dict[str, Any]]], Any) -> BlobClient
@@ -1705,7 +1718,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 :caption: Copy a blob from a URL.
         """
         options = self._start_copy_from_url_options(
-            source_url,
+            source_url=self._encode_source_url(source_url),
             metadata=metadata,
             incremental_copy=incremental_copy,
             **kwargs)
@@ -2069,7 +2082,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         """
         options = self._stage_block_from_url_options(
             block_id,
-            source_url,
+            source_url=self._encode_source_url(source_url),
             source_offset=source_offset,
             source_length=source_length,
             source_content_md5=source_content_md5,
@@ -3045,7 +3058,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             The timeout parameter is expressed in seconds.
         """
         options = self._upload_pages_from_url_options(
-            source_url=source_url,
+            source_url=self._encode_source_url(source_url),
             offset=offset,
             length=length,
             source_offset=source_offset,
@@ -3456,7 +3469,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             The timeout parameter is expressed in seconds.
         """
         options = self._append_block_from_url_options(
-            copy_source_url,
+            copy_source_url=self._encode_source_url(copy_source_url),
             source_offset=source_offset,
             source_length=source_length,
             **kwargs
