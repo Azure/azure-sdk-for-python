@@ -581,7 +581,7 @@ class TestRecognizePIIEntities(AsyncTextAnalyticsTest):
         # and the phone number. With the domain filter, it should only return one.
         result = await client.recognize_pii_entities(
             ["I work at Microsoft and my phone number is 333-333-3333"],
-            domain_filter=PiiEntityDomainType.PHI
+            domain_filter=PiiEntityDomainType.PROTECTED_HEALTH_INFORMATION
         )
         self.assertEqual(len(result[0].entities), 1)
         self.assertEqual(result[0].entities[0].text, '333-333-3333')
