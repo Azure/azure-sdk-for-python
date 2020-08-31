@@ -284,7 +284,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 raise TypeError("Can only send azure.servicebus.<BatchMessage,Message> or lists of Messages.")
             # This allows resending an already sent message; not needed for batch.  Perhaps should be in uamqp?
             message.message.state = MessageState.WaitingToBeSent
-            message.message._response = None
+            message.message._response = None # pylint: disable=protected-access
 
         await self._do_retryable_operation(
             self._send,
