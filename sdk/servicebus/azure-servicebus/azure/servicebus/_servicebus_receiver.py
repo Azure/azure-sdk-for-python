@@ -352,6 +352,9 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
          within its request to the service.
         :rtype: ~azure.servicebus.ServiceBusReceiver
 
+        :raises ~azure.servicebus.ServiceBusAuthenticationError: Indicates an issue in token/identity validity.
+        :raises ~azure.servicebus.ServiceBusAuthorizationError: Indicates an access/rights related failure.
+
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py

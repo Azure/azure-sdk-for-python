@@ -284,6 +284,9 @@ class ServiceBusSender(BaseHandler, SenderMixin):
 
         :rtype: ~azure.servicebus.ServiceBusSender
 
+        :raises ~azure.servicebus.ServiceBusAuthenticationError: Indicates an issue in token/identity validity.
+        :raises ~azure.servicebus.ServiceBusAuthorizationError: Indicates an access/rights related failure.
+
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
