@@ -8,6 +8,11 @@
 - `DefaultAzureCredential` allows specifying the client ID of a user-assigned
   managed identity via keyword argument `managed_identity_client_id`
   ([#12991](https://github.com/Azure/azure-sdk-for-python/issues/12991)) 
+- `CertificateCredential` supports Subject Name/Issuer authentication when
+  created with `send_certificate=True`. The async `CertificateCredential`
+  (`azure.identity.aio.CertificateCredential`) will support this in a
+  future version.
+  ([#10816](https://github.com/Azure/azure-sdk-for-python/issues/10816))
 
 ## 1.4.0 (2020-08-10)
 ### Added

@@ -74,6 +74,30 @@ class TableTestAsync(AsyncTableTestCase):
         await ts.delete_table(table_name=table_name)
 
     @GlobalStorageAccountPreparer()
+    async def test_create_table_if_exists(self, resource_group, location, storage_account, storage_account_key):
+        ts = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
+        table_name = self._get_table_reference()
+
+        t0 = await ts.create_table(table_name)
+        t1 = await ts.create_table_if_not_exists(table_name)
+
+        self.assertIsNotNone(t0)
+        self.assertIsNotNone(t1)
+        self.assertEqual(t0.table_name, t1.table_name)
+        await ts.delete_table(table_name)
+
+    @GlobalStorageAccountPreparer()
+    async def test_create_table_if_exists_new_table(self, resource_group, location, storage_account, storage_account_key):
+        ts = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
+        table_name = self._get_table_reference()
+
+        t = await ts.create_table_if_not_exists(table_name)
+
+        self.assertIsNotNone(t)
+        self.assertEqual(t.table_name, table_name)
+        await ts.delete_table(table_name)
+
+    @GlobalStorageAccountPreparer()
     async def test_create_table_invalid_name(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         ts = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
@@ -283,7 +307,7 @@ class TableTestAsync(AsyncTableTestCase):
 
     @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
-    async def test_set_table_acl_with_empty_signed_identifier(self, resource_group, location, storage_account,
+    async def test_set_table_acl_with_none_signed_identifier(self, resource_group, location, storage_account,
                                                               storage_account_key):
         # Arrange
         url = self.account_url(storage_account, "table")

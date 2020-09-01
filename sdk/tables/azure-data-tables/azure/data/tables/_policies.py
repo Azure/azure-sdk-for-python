@@ -36,7 +36,8 @@ from azure.core.pipeline.policies import (
     SansIOHTTPPolicy,
     NetworkTraceLoggingPolicy,
     HTTPPolicy,
-    RequestHistory
+    RequestHistory,
+    RetryPolicy
 )
 from azure.core.exceptions import AzureError, ServiceRequestError, ServiceResponseError
 
@@ -353,18 +354,61 @@ class StorageContentValidation(SansIOHTTPPolicy):
                 )
 
 
-class StorageRetryPolicy(HTTPPolicy):
+class TablesRetryPolicy(RetryPolicy):
     """
-    The base class for Exponential and Linear retries containing shared code.
+    A base class for retry policies for the Table Client and Table Service Client
     """
+    def __init__(
+        self,
+        initial_backoff=15, # type: int
+        increment_base=3, # type: int
+        retry_total=10, # type: int
+        retry_to_secondary=False, # type: bool
+        random_jitter_range=3, # type: int
+        **kwargs # type: Any
+    ):
+        """
+        Build a TablesRetryPolicy object.
 
-    def __init__(self, **kwargs):
-        self.total_retries = kwargs.pop('retry_total', 10)
+        :param int initial_backoff:
+            The initial backoff interval, in seconds, for the first retry.
+        :param int increment_base:
+            The base, in seconds, to increment the initial_backoff by after the
+            first retry.
+        :param int retry_total: total number of retries
+        :param bool retry_to_secondary:
+            Whether the request should be retried to secondary, if able. This should
+            only be enabled of RA-GRS accounts are used and potentially stale data
+            can be handled.
+        :param int random_jitter_range:
+            A number in seconds which indicates a range to jitter/randomize for the back-off interval.
+            For example, a random_jitter_range of 3 results in the back-off interval x to vary between x+3 and x-3.
+        """
+        self.initial_backoff = initial_backoff
+        self.increment_base = increment_base
+        self.random_jitter_range = random_jitter_range
+        self.total_retries = retry_total
         self.connect_retries = kwargs.pop('retry_connect', 3)
         self.read_retries = kwargs.pop('retry_read', 3)
         self.status_retries = kwargs.pop('retry_status', 3)
-        self.retry_to_secondary = kwargs.pop('retry_to_secondary', False)
-        super(StorageRetryPolicy, self).__init__()
+        self.retry_to_secondary = retry_to_secondary
+        super(TablesRetryPolicy, self).__init__(**kwargs)
+
+    def get_backoff_time(self, settings):
+        """
+        Calculates how long to sleep before retrying.
+        :param dict settings:
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return:
+            An integer indicating how long to wait before retrying the request,
+            or None to indicate no retry should be performed.
+        :rtype: int or None
+        """
+        random_generator = random.Random()
+        backoff = self.initial_backoff + (0 if settings['count'] == 0 else pow(self.increment_base, settings['count']))
+        random_range_start = backoff - self.random_jitter_range if backoff > self.random_jitter_range else 0
+        random_range_end = backoff + self.random_jitter_range
+        return random_generator.uniform(random_range_start, random_range_end)
 
     def _set_next_host_location(self, settings, request):  # pylint: disable=no-self-use
         """
@@ -384,7 +428,7 @@ class StorageRetryPolicy(HTTPPolicy):
             updated = url._replace(netloc=settings['hosts'].get(settings['mode']))
             request.url = updated.geturl()
 
-    def configure_retries(self, request):  # pylint: disable=no-self-use
+    def configure_retries(self, request):  # pylint: disable=no-self-use, arguments-differ
         # type: (...)-> dict
         """
         :param Any request:
@@ -414,17 +458,8 @@ class StorageRetryPolicy(HTTPPolicy):
             'history': []
         }
 
-    def get_backoff_time(self, settings, **kwargs):  # pylint: disable=unused-argument,no-self-use
-        """ Formula for computing the current backoff.
-        Should be calculated by child class.
-        :param Any settings:
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :rtype: float
-        """
-        return 0
-
-    def sleep(self, settings, transport):
-        # type: (...)->None
+    def sleep(self, settings, transport): # pylint: disable=arguments-differ
+        # type: (...) -> None
         """
         :param Any settings:
         :param Any transport:
@@ -435,7 +470,7 @@ class StorageRetryPolicy(HTTPPolicy):
             return
         transport.sleep(backoff)
 
-    def increment(self, settings, request, response=None, error=None, **kwargs):  # pylint:disable=W0613
+    def increment(self, settings, request, response=None, error=None, **kwargs):  # pylint:disable=unused-argument, arguments-differ
         # type: (...)->None
         """Increment the retry counters.
 
@@ -531,7 +566,7 @@ class StorageRetryPolicy(HTTPPolicy):
         return response
 
 
-class ExponentialRetry(StorageRetryPolicy):
+class ExponentialRetry(TablesRetryPolicy):
     """Exponential retry."""
 
     def __init__(self, initial_backoff=15, increment_base=3, retry_total=3,
@@ -565,10 +600,9 @@ class ExponentialRetry(StorageRetryPolicy):
         super(ExponentialRetry, self).__init__(
             retry_total=retry_total, retry_to_secondary=retry_to_secondary, **kwargs)
 
-    def get_backoff_time(self, settings, **kwargs):
+    def get_backoff_time(self, settings):
         """
         Calculates how long to sleep before retrying.
-        :param **kwargs:
         :param dict settings:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return:
@@ -583,7 +617,7 @@ class ExponentialRetry(StorageRetryPolicy):
         return random_generator.uniform(random_range_start, random_range_end)
 
 
-class LinearRetry(StorageRetryPolicy):
+class LinearRetry(TablesRetryPolicy):
     """Linear retry."""
 
     def __init__(self, backoff=15, retry_total=3, retry_to_secondary=False, random_jitter_range=3, **kwargs):
@@ -608,7 +642,7 @@ class LinearRetry(StorageRetryPolicy):
         super(LinearRetry, self).__init__(
             retry_total=retry_total, retry_to_secondary=retry_to_secondary, **kwargs)
 
-    def get_backoff_time(self, settings, **kwargs):
+    def get_backoff_time(self, settings):
         """
         Calculates how long to sleep before retrying.
 

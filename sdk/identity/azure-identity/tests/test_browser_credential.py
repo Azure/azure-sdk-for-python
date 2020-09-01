@@ -111,10 +111,13 @@ def test_disable_automatic_authentication():
 @patch("azure.identity._credentials.browser.webbrowser.open", lambda _: True)
 def test_policies_configurable():
     policy = Mock(spec_set=SansIOHTTPPolicy, on_request=Mock())
-
+    client_id = "client-id"
     transport = validating_transport(
         requests=[Request()] * 2,
-        responses=[get_discovery_response(), mock_response(json_payload=build_aad_response(access_token="**"))],
+        responses=[
+            get_discovery_response(),
+            mock_response(json_payload=build_aad_response(access_token="**", id_token=build_id_token(aud=client_id))),
+        ],
     )
 
     # mock local server fakes successful authentication by immediately returning a well-formed response
@@ -123,7 +126,7 @@ def test_policies_configurable():
     server_class = Mock(return_value=Mock(wait_for_redirect=lambda: auth_code_response))
 
     credential = InteractiveBrowserCredential(
-        policies=[policy], transport=transport, server_class=server_class, _cache=TokenCache()
+        policies=[policy], client_id=client_id, transport=transport, server_class=server_class, _cache=TokenCache()
     )
 
     with patch("azure.identity._credentials.browser.uuid.uuid4", lambda: oauth_state):
@@ -134,9 +137,13 @@ def test_policies_configurable():
 
 @patch("azure.identity._credentials.browser.webbrowser.open", lambda _: True)
 def test_user_agent():
+    client_id = "client-id"
     transport = validating_transport(
         requests=[Request(), Request(required_headers={"User-Agent": USER_AGENT})],
-        responses=[get_discovery_response(), mock_response(json_payload=build_aad_response(access_token="**"))],
+        responses=[
+            get_discovery_response(),
+            mock_response(json_payload=build_aad_response(access_token="**", id_token=build_id_token(aud=client_id))),
+        ],
     )
 
     # mock local server fakes successful authentication by immediately returning a well-formed response
@@ -144,7 +151,9 @@ def test_user_agent():
     auth_code_response = {"code": "authorization-code", "state": [oauth_state]}
     server_class = Mock(return_value=Mock(wait_for_redirect=lambda: auth_code_response))
 
-    credential = InteractiveBrowserCredential(transport=transport, server_class=server_class, _cache=TokenCache())
+    credential = InteractiveBrowserCredential(
+        client_id=client_id, transport=transport, server_class=server_class, _cache=TokenCache()
+    )
 
     with patch("azure.identity._credentials.browser.uuid.uuid4", lambda: oauth_state):
         credential.get_token("scope")
@@ -284,7 +293,7 @@ def test_redirect_server():
     thread.start()
 
     # send a request, verify the server exposes the query
-    url = "http://127.0.0.1:{}/?{}={}".format(port, expected_param, expected_value) # nosec
+    url = "http://127.0.0.1:{}/?{}={}".format(port, expected_param, expected_value)  # nosec
     response = urllib.request.urlopen(url)  # nosec
 
     assert response.code == 200
