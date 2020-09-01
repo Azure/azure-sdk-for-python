@@ -109,7 +109,8 @@ def test_authority(authority):
 
 
 @pytest.mark.parametrize("cert_path,cert_password", BOTH_CERTS)
-def test_request_body(cert_path, cert_password):
+@pytest.mark.parametrize("send_certificate", (True, False))
+def test_request_body(cert_path, cert_password, send_certificate):
     access_token = "***"
     authority = "authority.com"
     client_id = "client-id"
@@ -124,18 +125,24 @@ def test_request_body(cert_path, cert_password):
         assert request.body["scope"] == expected_scope
 
         with open(cert_path, "rb") as cert_file:
-            validate_jwt(request, client_id, cert_file.read())
+            validate_jwt(request, client_id, cert_file.read(), expect_x5c=send_certificate)
 
-        return mock_response(json_payload={"token_type": "Bearer", "expires_in": 42, "access_token": access_token})
+        return mock_response(json_payload=build_aad_response(access_token=access_token))
 
     cred = CertificateCredential(
-        tenant_id, client_id, cert_path, password=cert_password, transport=Mock(send=mock_send), authority=authority
+        tenant_id,
+        client_id,
+        cert_path,
+        password=cert_password,
+        transport=Mock(send=mock_send),
+        authority=authority,
+        send_certificate=send_certificate,
     )
     token = cred.get_token(expected_scope)
     assert token.token == access_token
 
 
-def validate_jwt(request, client_id, pem_bytes):
+def validate_jwt(request, client_id, pem_bytes, expect_x5c=False):
     """Validate the request meets AAD's expectations for a client credential grant using a certificate, as documented
     at https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-certificate-credentials
     """
@@ -146,15 +153,27 @@ def validate_jwt(request, client_id, pem_bytes):
     jwt = six.ensure_str(request.body["client_assertion"])
     header, payload, signature = (urlsafeb64_decode(s) for s in jwt.split("."))
     signed_part = jwt[: jwt.rfind(".")]
+
     claims = json.loads(payload.decode("utf-8"))
+    assert claims["aud"] == request.url
+    assert claims["iss"] == claims["sub"] == client_id
 
     deserialized_header = json.loads(header.decode("utf-8"))
     assert deserialized_header["alg"] == "RS256"
     assert deserialized_header["typ"] == "JWT"
-    assert urlsafeb64_decode(deserialized_header["x5t"]) == cert.fingerprint(hashes.SHA1())  # nosec
+    if expect_x5c:
+        # x5c should have all the certs in the PEM file, in order, minus headers and footers
+        pem_lines = pem_bytes.decode("utf-8").splitlines()
+        header = "-----BEGIN CERTIFICATE-----"
+        assert len(deserialized_header["x5c"]) == pem_lines.count(header)
 
-    assert claims["aud"] == request.url
-    assert claims["iss"] == claims["sub"] == client_id
+        # concatenate the PEM file's certs, removing headers and footers
+        chain_start = pem_lines.index(header)
+        pem_chain_content = "".join(line for line in pem_lines[chain_start:] if not line.startswith("-" * 5))
+        assert "".join(deserialized_header["x5c"]) == pem_chain_content, "JWT's x5c claim contains unexpected content"
+    else:
+        assert "x5c" not in deserialized_header
+    assert urlsafeb64_decode(deserialized_header["x5t"]) == cert.fingerprint(hashes.SHA1())  # nosec
 
     cert.public_key().verify(signature, signed_part.encode("utf-8"), padding.PKCS1v15(), hashes.SHA256())
 
