@@ -447,14 +447,13 @@ function RetrivePackages($pkgRepository, $artifactLocation) {
       exit(1)
     }
   }
-  return (Get-ChildItem -Path $artifactLocation -Include $packagePattern -Recurse -File), $ParsePkgInfoFn, $packagePattern
+  return (Get-ChildItem -Path $artifactLocation -Include $packagePattern -Recurse -File), $ParsePkgInfoFn
 }
 
 # Walk across all build artifacts, check them against the appropriate repository, return a list of tags/releases
 function VerifyPackages($pkgRepository, $artifactLocation, $workingDirectory, $apiUrl, $releaseSha,  $continueOnError = $false) {
   $pkgList = [array]@()
-  $pkgs, $ParsePkgInfoFn, $packagePattern = RetrivePackages $pkgRepository, $artifactLocation
-  Write-Host "The value of ParsePkgInfoFn: $ParsePkgInfoFn."
+  $pkgs, $ParsePkgInfoFn = RetrivePackages $pkgRepository, $artifactLocation
 
   foreach ($pkg in $pkgs) {
     try {
@@ -468,6 +467,7 @@ function VerifyPackages($pkgRepository, $artifactLocation, $workingDirectory, $a
         Write-Host "Package $($parsedPackage.PackageId) is marked with version $($parsedPackage.PackageVersion), the version $($parsedPackage.PackageVersion) has already been deployed to the target repository."
         Write-Host "Maybe a pkg version wasn't updated properly?"
         #exit(1)
+        return
       }
 
       $tag = if ($parsedPackage.packageId) {
