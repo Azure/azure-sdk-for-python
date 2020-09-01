@@ -343,7 +343,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         if isinstance(message, BatchMessage) and len(message) == 0:  # pylint: disable=len-as-condition
             raise ValueError("A BatchMessage or list of Message must have at least one Message")
         if not isinstance(message, BatchMessage) and not isinstance(message, Message):
-                raise TypeError("Can only send azure.servicebus.<BatchMessage,Message> or lists of Messages.")
+            raise TypeError("Can only send azure.servicebus.<BatchMessage,Message> or lists of Messages.")
 
         self._do_retryable_operation(
             self._send,
