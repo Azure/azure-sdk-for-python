@@ -9,7 +9,7 @@
 import re
 import os.path
 from io import open
-from setuptools import find_packages, setup
+from setuptools import find_packages, setup  # type: ignore
 
 # Change the PACKAGE_NAME only to change folder and different name
 PACKAGE_NAME = "azure-data-tables"
@@ -25,7 +25,7 @@ namespace_name = PACKAGE_NAME.replace('-', '.')
 try:
     import azure
     try:
-        ver = azure.__version__
+        ver = azure.__version__  # type: ignore
         raise Exception(
             'This package is incompatible with azure=={}. '.format(ver) +
             'Uninstall it with "pip uninstall azure".'
@@ -37,28 +37,24 @@ except ImportError:
 
 # Version extraction inspired from 'requests'
 with open(os.path.join(package_folder_path, '_version.py'), 'r') as fd:
-    version = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]', fd.read(), re.MULTILINE).group(1) # type: ignore
+    version = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]',  # type: ignore
+                        fd.read(), re.MULTILINE).group(1)
 
 if not version:
     raise RuntimeError('Cannot find version information')
-
-with open('README.md', encoding='utf-8') as f:
-    readme = f.read()
-with open('CHANGELOG.md', encoding='utf-8') as f:
-    changelog = f.read()
 
 setup(
     name=PACKAGE_NAME,
     version=version,
     description='Microsoft Azure {} Client Library for Python'.format(PACKAGE_PPRINT_NAME),
-    long_description=readme + '\n\n' + changelog,
+    long_description='\n\n',
     long_description_content_type='text/markdown',
     license='MIT License',
     author='Microsoft Corporation',
-    author_email='azpysdkhelp@microsoft.com',
+    author_email='ascl@microsoft.com',
     url='https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/table/azure-table',
     classifiers=[
-        'Development Status :: 4 - Beta',
+        "Development Status :: 4 - Beta",
         'Programming Language :: Python',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
@@ -71,20 +67,18 @@ setup(
     ],
     zip_safe=False,
     packages=find_packages(exclude=[
-        'tests',
         # Exclude packages that will be covered by PEP420 or nspkg
         'azure',
-        'azure.data',
+        'tests',
     ]),
     install_requires=[
-        'azure-core<2.0.0,>=1.2.2',
-        'msrest>=0.6.10',
-        'msrestazure>=0.4.32,<2.0.0',
-        'azure-common~=1.1',
+        "azure-core<2.0.0,>=1.2.2",
+        "msrest>=0.6.10"
+        # azure-data-tables
     ],
     extras_require={
         ":python_version<'3.0'": ['futures'],
         ":python_version<'3.4'": ['enum34>=1.0.4'],
         ":python_version<'3.5'": ["typing"]
-    }
+    },
 )
