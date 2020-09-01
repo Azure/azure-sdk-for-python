@@ -10,6 +10,9 @@ import logging
 import functools
 import platform
 from typing import Optional, Dict
+from msrest.serialization import UTC as utc
+
+
 try:
     from urlparse import urlparse
 except ImportError:
@@ -17,7 +20,6 @@ except ImportError:
 
 from uamqp import authentication, types
 
-from ..exceptions import ServiceBusError
 from .._version import VERSION
 from .constants import (
     JWT_TOKEN_SCOPE,
@@ -25,7 +27,7 @@ from .constants import (
     TOKEN_TYPE_SASTOKEN,
     DEAD_LETTER_QUEUE_SUFFIX,
     TRANSFER_DEAD_LETTER_QUEUE_SUFFIX,
-    USER_AGENT_PREFIX
+    USER_AGENT_PREFIX,
 )
 
 _log = logging.getLogger(__name__)
@@ -60,7 +62,7 @@ def utc_from_timestamp(timestamp):
 
 
 def utc_now():
-    return datetime.datetime.now(tz=TZ_UTC)
+    return datetime.datetime.now(utc())
 
 
 def parse_conn_str(conn_str):
@@ -68,15 +70,15 @@ def parse_conn_str(conn_str):
     shared_access_key_name = None
     shared_access_key = None
     entity_path = None
-    for element in conn_str.split(';'):
-        key, _, value = element.partition('=')
-        if key.lower() == 'endpoint':
-            endpoint = value.rstrip('/')
-        elif key.lower() == 'sharedaccesskeyname':
+    for element in conn_str.split(";"):
+        key, _, value = element.partition("=")
+        if key.lower() == "endpoint":
+            endpoint = value.rstrip("/")
+        elif key.lower() == "sharedaccesskeyname":
             shared_access_key_name = value
-        elif key.lower() == 'sharedaccesskey':
+        elif key.lower() == "sharedaccesskey":
             shared_access_key = value
-        elif key.lower() == 'entitypath':
+        elif key.lower() == "entitypath":
             entity_path = value
     if not all([endpoint, shared_access_key_name, shared_access_key]):
         raise ValueError("Invalid connection string")
@@ -99,7 +101,8 @@ def create_properties(user_agent=None):
     Format the properties with which to instantiate the connection.
     This acts like a user agent over HTTP.
 
-    :param str user_agent: If specified, this will be added in front of the built-in user agent string.
+    :param str user_agent: If specified,
+    this will be added in front of the built-in user agent string.
 
     :rtype: dict
     """
@@ -165,15 +168,18 @@ def create_authentication(client):
 
 
 def generate_dead_letter_entity_name(
-        queue_name=None,
-        topic_name=None,
-        subscription_name=None,
-        transfer_deadletter=False
+    queue_name=None, topic_name=None, subscription_name=None, transfer_deadletter=False
 ):
-    entity_name = queue_name if queue_name else (topic_name + "/Subscriptions/" + subscription_name)
+    entity_name = (
+        queue_name
+        if queue_name
+        else (topic_name + "/Subscriptions/" + subscription_name)
+    )
     entity_name = "{}{}".format(
         entity_name,
-        TRANSFER_DEAD_LETTER_QUEUE_SUFFIX if transfer_deadletter else DEAD_LETTER_QUEUE_SUFFIX
+        TRANSFER_DEAD_LETTER_QUEUE_SUFFIX
+        if transfer_deadletter
+        else DEAD_LETTER_QUEUE_SUFFIX,
     )
 
     return entity_name
@@ -181,7 +187,8 @@ def generate_dead_letter_entity_name(
 
 def copy_messages_to_sendable_if_needed(messages):
     """
-    This method is to convert single/multiple received messages to sendable messages to enable message resending.
+    This method is to convert single/multiple received messages
+    to sendable messages to enable message resending.
     """
     # pylint: disable=protected-access
     try:
