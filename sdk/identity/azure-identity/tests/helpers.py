@@ -14,24 +14,7 @@ except ImportError:  # python < 3.3
     import mock  # type: ignore
 
 
-# build_* lifted from msal tests
 def build_id_token(
-    iss="issuer",
-    sub="subject",
-    aud="client-id",
-    username="username",
-    tenant_id="tenant",
-    object_id="object id",
-    **claims
-):
-    token_claims = id_token_claims(
-        iss=iss, sub=sub, aud=aud, tenant_id=tenant_id, object_id=object_id, preferred_username=username, **claims
-    )
-    jwt_payload = base64.b64encode(json.dumps(token_claims).encode()).decode("utf-8")
-    return "header.{}.signature".format(jwt_payload)
-
-
-def build_adfs_id_token(
     iss="issuer",
     sub="subject",
     aud="client-id",
@@ -41,23 +24,21 @@ def build_adfs_id_token(
     **claims
 ):
     token_claims = id_token_claims(
-        iss=iss, sub=sub, aud=aud, tenant_id=tenant_id, object_id=object_id, upn=username, **claims
+        iss=iss, sub=sub, aud=aud, tid=tenant_id, oid=object_id, preferred_username=username, **claims
     )
     jwt_payload = base64.b64encode(json.dumps(token_claims).encode()).decode("utf-8")
     return "header.{}.signature".format(jwt_payload)
 
 
-def id_token_claims(iss, sub, aud, tenant_id, object_id, exp=None, iat=None, **claims):
+def build_adfs_id_token(iss="issuer", sub="subject", aud="client-id", username="username", **claims):
+    token_claims = id_token_claims(iss=iss, sub=sub, aud=aud, upn=username, **claims)
+    jwt_payload = base64.b64encode(json.dumps(token_claims).encode()).decode("utf-8")
+    return "header.{}.signature".format(jwt_payload)
+
+
+def id_token_claims(iss, sub, aud, exp=None, iat=None, **claims):
     return dict(
-        {
-            "iss": iss,
-            "sub": sub,
-            "aud": aud,
-            "exp": exp or int(time.time()) + 3600,
-            "iat": iat or int(time.time()),
-            "tid": tenant_id,
-            "oid": object_id,
-        },
+        {"iss": iss, "sub": sub, "aud": aud, "exp": exp or int(time.time()) + 3600, "iat": iat or int(time.time())},
         **claims
     )
 
