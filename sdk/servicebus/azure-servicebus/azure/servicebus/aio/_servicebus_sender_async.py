@@ -75,7 +75,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         fully_qualified_namespace: str,
         credential: "TokenCredential",
         **kwargs: Any
-    ):
+    ) -> None:
         if kwargs.get("entity_name"):
             super(ServiceBusSender, self).__init__(
                 fully_qualified_namespace=fully_qualified_namespace,
@@ -208,7 +208,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
     ) -> "ServiceBusSender":
         """Create a ServiceBusSender from a connection string.
 
-        :param conn_str: The connection string of a Service Bus.
+        :param str conn_str: The connection string of a Service Bus.
         :keyword str queue_name: The path of specific Service Bus Queue the client connects to.
         :keyword str topic_name: The path of specific Service Bus Topic the client connects to.
         :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
@@ -222,6 +222,9 @@ class ServiceBusSender(BaseHandler, SenderMixin):
          Additionally the following keys may also be present: `'username', 'password'`.
         :keyword str user_agent: If specified, this will be added in front of the built-in user agent string.
         :rtype: ~azure.servicebus.aio.ServiceBusSender
+
+        :raises ~azure.servicebus.ServiceBusAuthenticationError: Indicates an issue in token/identity validity.
+        :raises ~azure.servicebus.ServiceBusAuthorizationError: Indicates an access/rights related failure.
 
         .. admonition:: Example:
 

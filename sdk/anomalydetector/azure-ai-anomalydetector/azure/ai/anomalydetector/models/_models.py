@@ -10,7 +10,7 @@ from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
 
-class APIError(msrest.serialization.Model):
+class AnomalyDetectorError(msrest.serialization.Model):
     """Error information returned by the API.
 
     :param code: The error code. Possible values include: "InvalidCustomInterval", "BadArgument",
@@ -30,7 +30,7 @@ class APIError(msrest.serialization.Model):
         self,
         **kwargs
     ):
-        super(APIError, self).__init__(**kwargs)
+        super(AnomalyDetectorError, self).__init__(**kwargs)
         self.code = kwargs.get('code', None)
         self.message = kwargs.get('message', None)
 
@@ -42,11 +42,11 @@ class ChangePointDetectRequest(msrest.serialization.Model):
 
     :param series: Required. Time series data points. Points should be sorted by timestamp in
      ascending order to match the change point detection result.
-    :type series: list[~azure.ai.anomalydetector.models.Point]
+    :type series: list[~azure.ai.anomalydetector.models.TimeSeriesPoint]
     :param granularity: Required. Can only be one of yearly, monthly, weekly, daily, hourly,
      minutely or secondly. Granularity is used for verify whether input series is valid. Possible
      values include: "yearly", "monthly", "weekly", "daily", "hourly", "minutely", "secondly".
-    :type granularity: str or ~azure.ai.anomalydetector.models.Granularity
+    :type granularity: str or ~azure.ai.anomalydetector.models.TimeGranularity
     :param custom_interval: Custom Interval is used to set non-standard time interval, for example,
      if the series is 5 minutes, request can be set as {"granularity":"minutely",
      "customInterval":5}.
@@ -68,7 +68,7 @@ class ChangePointDetectRequest(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'series': {'key': 'series', 'type': '[Point]'},
+        'series': {'key': 'series', 'type': '[TimeSeriesPoint]'},
         'granularity': {'key': 'granularity', 'type': 'str'},
         'custom_interval': {'key': 'customInterval', 'type': 'int'},
         'period': {'key': 'period', 'type': 'int'},
@@ -125,6 +125,62 @@ class ChangePointDetectResponse(msrest.serialization.Model):
         self.period = kwargs['period']
         self.is_change_point = kwargs['is_change_point']
         self.confidence_scores = kwargs['confidence_scores']
+
+
+class DetectRequest(msrest.serialization.Model):
+    """DetectRequest.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param series: Required. Time series data points. Points should be sorted by timestamp in
+     ascending order to match the anomaly detection result. If the data is not sorted correctly or
+     there is duplicated timestamp, the API will not work. In such case, an error message will be
+     returned.
+    :type series: list[~azure.ai.anomalydetector.models.TimeSeriesPoint]
+    :param granularity: Required. Can only be one of yearly, monthly, weekly, daily, hourly,
+     minutely or secondly. Granularity is used for verify whether input series is valid. Possible
+     values include: "yearly", "monthly", "weekly", "daily", "hourly", "minutely", "secondly".
+    :type granularity: str or ~azure.ai.anomalydetector.models.TimeGranularity
+    :param custom_interval: Custom Interval is used to set non-standard time interval, for example,
+     if the series is 5 minutes, request can be set as {"granularity":"minutely",
+     "customInterval":5}.
+    :type custom_interval: int
+    :param period: Optional argument, periodic value of a time series. If the value is null or does
+     not present, the API will determine the period automatically.
+    :type period: int
+    :param max_anomaly_ratio: Optional argument, advanced model parameter, max anomaly ratio in a
+     time series.
+    :type max_anomaly_ratio: float
+    :param sensitivity: Optional argument, advanced model parameter, between 0-99, the lower the
+     value is, the larger the margin value will be which means less anomalies will be accepted.
+    :type sensitivity: int
+    """
+
+    _validation = {
+        'series': {'required': True},
+        'granularity': {'required': True},
+    }
+
+    _attribute_map = {
+        'series': {'key': 'series', 'type': '[TimeSeriesPoint]'},
+        'granularity': {'key': 'granularity', 'type': 'str'},
+        'custom_interval': {'key': 'customInterval', 'type': 'int'},
+        'period': {'key': 'period', 'type': 'int'},
+        'max_anomaly_ratio': {'key': 'maxAnomalyRatio', 'type': 'float'},
+        'sensitivity': {'key': 'sensitivity', 'type': 'int'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DetectRequest, self).__init__(**kwargs)
+        self.series = kwargs['series']
+        self.granularity = kwargs['granularity']
+        self.custom_interval = kwargs.get('custom_interval', None)
+        self.period = kwargs.get('period', None)
+        self.max_anomaly_ratio = kwargs.get('max_anomaly_ratio', None)
+        self.sensitivity = kwargs.get('sensitivity', None)
 
 
 class EntireDetectResponse(msrest.serialization.Model):
@@ -268,8 +324,8 @@ class LastDetectResponse(msrest.serialization.Model):
         self.is_positive_anomaly = kwargs['is_positive_anomaly']
 
 
-class Point(msrest.serialization.Model):
-    """Point.
+class TimeSeriesPoint(msrest.serialization.Model):
+    """TimeSeriesPoint.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -293,62 +349,6 @@ class Point(msrest.serialization.Model):
         self,
         **kwargs
     ):
-        super(Point, self).__init__(**kwargs)
+        super(TimeSeriesPoint, self).__init__(**kwargs)
         self.timestamp = kwargs['timestamp']
         self.value = kwargs['value']
-
-
-class Request(msrest.serialization.Model):
-    """Request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param series: Required. Time series data points. Points should be sorted by timestamp in
-     ascending order to match the anomaly detection result. If the data is not sorted correctly or
-     there is duplicated timestamp, the API will not work. In such case, an error message will be
-     returned.
-    :type series: list[~azure.ai.anomalydetector.models.Point]
-    :param granularity: Required. Can only be one of yearly, monthly, weekly, daily, hourly,
-     minutely or secondly. Granularity is used for verify whether input series is valid. Possible
-     values include: "yearly", "monthly", "weekly", "daily", "hourly", "minutely", "secondly".
-    :type granularity: str or ~azure.ai.anomalydetector.models.Granularity
-    :param custom_interval: Custom Interval is used to set non-standard time interval, for example,
-     if the series is 5 minutes, request can be set as {"granularity":"minutely",
-     "customInterval":5}.
-    :type custom_interval: int
-    :param period: Optional argument, periodic value of a time series. If the value is null or does
-     not present, the API will determine the period automatically.
-    :type period: int
-    :param max_anomaly_ratio: Optional argument, advanced model parameter, max anomaly ratio in a
-     time series.
-    :type max_anomaly_ratio: float
-    :param sensitivity: Optional argument, advanced model parameter, between 0-99, the lower the
-     value is, the larger the margin value will be which means less anomalies will be accepted.
-    :type sensitivity: int
-    """
-
-    _validation = {
-        'series': {'required': True},
-        'granularity': {'required': True},
-    }
-
-    _attribute_map = {
-        'series': {'key': 'series', 'type': '[Point]'},
-        'granularity': {'key': 'granularity', 'type': 'str'},
-        'custom_interval': {'key': 'customInterval', 'type': 'int'},
-        'period': {'key': 'period', 'type': 'int'},
-        'max_anomaly_ratio': {'key': 'maxAnomalyRatio', 'type': 'float'},
-        'sensitivity': {'key': 'sensitivity', 'type': 'int'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(Request, self).__init__(**kwargs)
-        self.series = kwargs['series']
-        self.granularity = kwargs['granularity']
-        self.custom_interval = kwargs.get('custom_interval', None)
-        self.period = kwargs.get('period', None)
-        self.max_anomaly_ratio = kwargs.get('max_anomaly_ratio', None)
-        self.sensitivity = kwargs.get('sensitivity', None)

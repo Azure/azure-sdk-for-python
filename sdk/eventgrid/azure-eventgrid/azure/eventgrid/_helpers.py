@@ -70,3 +70,11 @@ def _get_authentication_policy(credential):
     if isinstance(credential, EventGridSharedAccessSignatureCredential):
         authentication_policy = EventGridSharedAccessSignatureCredentialPolicy(credential=credential, name=constants.EVENTGRID_TOKEN_HEADER)
     return authentication_policy
+
+def _is_cloud_event(event):
+    # type: dict -> bool
+    required = ('id', 'source', 'specversion', 'type')
+    try:
+        return all([_ in event for _ in required]) and event['specversion'] == "1.0"
+    except TypeError:
+        return False

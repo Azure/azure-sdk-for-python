@@ -160,7 +160,10 @@ def _convert_to_entity(entry_element):
 
         # Add type for Int32
         if type(value) is int:  # pylint:disable=C0123
-            mtype = EdmType.INT32
+            if value.bit_length() <= 32:
+                mtype = EdmType.INT32
+            else:
+                mtype = EdmType.INT64
 
         # no type info, property should parse automatically
         if not mtype:
@@ -206,3 +209,12 @@ def _return_headers_and_deserialized(response, deserialized, response_headers): 
 
 def _return_context_and_deserialized(response, deserialized, response_headers):  # pylint: disable=unused-argument
     return response.http_response.location_mode, deserialized, response_headers
+
+
+def _trim_service_metadata(metadata):
+    # type: (dict[str,str] -> None)
+    return {
+        "date": metadata.pop("date", None),
+        "etag": metadata.pop("etag", None),
+        "version": metadata.pop("version", None)
+    }

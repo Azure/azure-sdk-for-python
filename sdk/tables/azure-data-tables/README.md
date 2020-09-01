@@ -1,16 +1,17 @@
 # Azure Data Tables client library for Python
 
-Azure Data Tables is a NoSQL data storing service that can be accessed from anywhere in the world via authenticated calls using HTTP or HTTPS. 
-Tables scale as needed to support the amount of data inserted, and allow for the storing of data with non-complex accessing. 
-Tables scale as needed to support the amount of data inserted, and allow for the storing of data with non-complex accessing. 
+Azure Data Tables is a NoSQL data storing service that can be accessed from anywhere in the world via authenticated calls using HTTP or HTTPS.
+Tables scale as needed to support the amount of data inserted, and allow for the storing of data with non-complex accessing.
 The Azure Data Tables client can be used to access Azure Storage or Cosmos accounts.
 
-Common uses of Azure Data Tables include:
 
-* Storing structured data in the form of tables
+# Usage
+* Storing structured data in the form of tables	# Usage
 * Quickly querying data using a clustered index
 
 [Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk) | [Package (PyPI)](https://pypi.org) | [API reference documentation](https://aka.ms/azsdk/python/tables/docs) | [Product documentation](https://docs.microsoft.com/azure/storage/) | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk)
+For code examples, see [MyService Management](https://docs.microsoft.com/python/api/overview/azure/)
+on docs.microsoft.com.
 
 ## Getting started
 
@@ -38,7 +39,6 @@ or [Azure CLI](https://docs.microsoft.com/azure/storage/common/storage-quickstar
 # Create a new resource group to hold the storage account -
 # if using an existing resource group, skip this step
 az group create --name MyResourceGroup --location westus2
-
 # Create the storage account
 az storage account create -n mystorageaccount -g MyResourceGroup
 ```
@@ -51,12 +51,11 @@ you to access the account:
 
 ```python
 from azure.data.tables import TableServiceClient
-
 service = TableServiceClient(account_url="https://<myaccount>.table.core.windows.net/", credential=credential)
 ```
 
 #### Looking up the account URL
-You can find the account's table service URL using the 
+You can find the account's table service URL using the
 [Azure Portal](https://docs.microsoft.com/azure/storage/common/storage-account-overview#storage-account-endpoints),
 [Azure PowerShell](https://docs.microsoft.com/powershell/module/az.storage/get-azstorageaccount),
 or [Azure CLI](https://docs.microsoft.com/cli/azure/storage/account?view=azure-cli-latest#az-storage-account-show):
@@ -77,7 +76,7 @@ The `credential` parameter may be provided in a number of different forms, depen
 ```python
     from datetime import datetime, timedelta
     from azure.data.tables import TableServiceClient, generate_account_sas, ResourceTypes, AccountSasPermissions
-    
+
     sas_token = generate_account_sas(
         account_name="<account-name>",
         account_key="<account-access-key>",
@@ -85,16 +84,15 @@ The `credential` parameter may be provided in a number of different forms, depen
         permission=AccountSasPermissions(read=True),
         expiry=datetime.utcnow() + timedelta(hours=1)
     )
-    
+
     table_service_client = TableServiceClient(account_url="https://<my_account_name>.table.core.windows.net", credential=sas_token)
 ```
 
 2. To use an account [shared key](https://docs.microsoft.com/rest/api/storageservices/authenticate-with-shared-key/)
-   (aka account key or access key), provide the key as a string. This can be found in the Azure Portal under the "Access Keys" 
+   (aka account key or access key), provide the key as a string. This can be found in the Azure Portal under the "Access Keys"
    section or by running the following Azure CLI command:
 
     ```az storage account keys list -g MyResourceGroup -n mystorageaccount```
-
     Use the key as the credential parameter to authenticate the client:
     ```python
     from azure.data.tables import TableServiceClient
@@ -103,12 +101,11 @@ The `credential` parameter may be provided in a number of different forms, depen
 
 #### Creating the client from a connection string
 Depending on your use case and authorization method, you may prefer to initialize a client instance with a
-connection string instead of providing the account URL and credential separately. To do this, pass the 
+connection string instead of providing the account URL and credential separately. To do this, pass the
 connection string to the client's `from_connection_string` class method:
 
 ```python
 from azure.data.tables import TableServiceClient
-
 connection_string = "DefaultEndpointsProtocol=https;AccountName=xxxx;AccountKey=xxxx;EndpointSuffix=core.windows.net"
 service = TableServiceClient.from_connection_string(conn_str=connection_string)
 ```
@@ -139,14 +136,14 @@ Two different clients are provided to to interact with the various components of
     this client represents interaction with a specific table (which need not exist yet). It provides operations to
     create, delete, or update a table and includes operations to query, get, and upsert entities
     within it.
-    
+
 ### Entities
 * **Create** - Adds an entity to the table.
 * **Delete** - Deletes an entity from the table.
 * **Update** - Updates an entities information by either merging or replacing the existing entity.
 * **Query** - Queries existing entities in a table based off of the QueryOptions (OData).
 * **Get** - Gets a specific entity from a table by partition and row key.
-* **Upsert** - Merges or replaces an entity in a table, or if the entity does not exist, inserts the entity. 
+* **Upsert** - Merges or replaces an entity in a table, or if the entity does not exist, inserts the entity.
 
 ## Examples
 
@@ -162,7 +159,6 @@ Create a table in your account
 
 ```python
 from azure.data.tables import TableServiceClient
-
 table_service_client = TableServiceClient.from_connection_string(conn_str="<connection_string>")
 table_service_client.create_table(table_name="myTable")
 ```
@@ -172,9 +168,7 @@ Create entities in the table
 
 ```python
 from azure.data.tables import TableClient
-
 my_entity = {'PartitionKey':'part','RowKey':'row'}
-
 table_client = TableClient.from_connection_string(conn_str="<connection_string>", table_name="myTable")
 entity = table_client.create_entity(entity=my_entity)
 ```
@@ -184,9 +178,7 @@ Querying entities in the table
 
 ```python
 from azure.data.tables import TableClient
-
 my_filter = "text eq Marker"
-
 table_client = TableClient.from_connection_string(conn_str="<connection_string>", table_name="mytable")
 entity = table_client.query_entities(filter=my_filter)
 ```
@@ -246,15 +238,12 @@ headers, can be enabled on a client with the `logging_enable` argument:
 import sys
 import logging
 from azure.data.tables import TableServiceClient
-
 # Create a logger for the 'azure.data.tables' SDK
 logger = logging.getLogger('azure.data.tables')
 logger.setLevel(logging.DEBUG)
-
 # Configure a console output
 handler = logging.StreamHandler(stream=sys.stdout)
 logger.addHandler(handler)
-
 # This client will log detailed information about its HTTP sessions, at DEBUG level
 service_client = TableServiceClient.from_connection_string("your_connection_string", logging_enable=True)
 ```
@@ -287,7 +276,7 @@ Several Azure Data Tables Python SDK samples are available to you in the SDK's G
     * Query entities
     * Update entities
     * Upsert entities
-    
+
 ### Additional documentation
 For more extensive documentation on Azure Data Tables, see the [Azure Data Tables documentation](https://docs.microsoft.com/azure/storage/tables/) on docs.microsoft.com.
 

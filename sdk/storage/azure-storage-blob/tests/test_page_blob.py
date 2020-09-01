@@ -68,6 +68,13 @@ class StoragePageBlobTest(StorageTestCase):
         blob.create_page_blob(size=length, sequence_number=sequence_number, tags=tags)
         return blob
 
+    def _create_source_blob_with_special_chars(self, bs, data, offset, length):
+        blob_client = bs.get_blob_client(self.source_container_name,
+                                         'भारत¥test/testsubÐirÍ/'+self.get_resource_name('srcÆblob'))
+        blob_client.create_page_blob(size=length)
+        blob_client.upload_page(data, offset=offset, length=length)
+        return blob_client
+
     def _create_source_blob(self, bs, data, offset, length):
         blob_client = bs.get_blob_client(self.source_container_name,
                                          self.get_resource_name(TEST_BLOB_PREFIX))
@@ -407,12 +414,24 @@ class StoragePageBlobTest(StorageTestCase):
         self._setup(bsc)
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
+        source_blob_client_with_special_chars = self._create_source_blob_with_special_chars(
+            bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
+
         sas = generate_blob_sas(
             source_blob_client.account_name,
             source_blob_client.container_name,
             source_blob_client.blob_name,
             snapshot=source_blob_client.snapshot,
             account_key=source_blob_client.credential.account_key,
+            permission=BlobSasPermissions(read=True, delete=True),
+            expiry=datetime.utcnow() + timedelta(hours=1))
+
+        sas_token_for_blob_with_special_chars = generate_blob_sas(
+            source_blob_client_with_special_chars.account_name,
+            source_blob_client_with_special_chars.container_name,
+            source_blob_client_with_special_chars.blob_name,
+            snapshot=source_blob_client_with_special_chars.snapshot,
+            account_key=source_blob_client_with_special_chars.credential.account_key,
             permission=BlobSasPermissions(read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1))
 
@@ -436,6 +455,19 @@ class StoragePageBlobTest(StorageTestCase):
         self.assertBlobEqual(self.container_name, destination_blob_client.blob_name, source_blob_data, bsc)
         self.assertEqual(blob_properties.get('etag'), resp.get('etag'))
         self.assertEqual(blob_properties.get('last_modified'), resp.get('last_modified'))
+
+    # Act: make update page from url calls
+        source_with_special_chars_resp = destination_blob_client.upload_pages_from_url(
+            source_blob_client_with_special_chars.url + "?" + sas_token_for_blob_with_special_chars, offset=0, length=4 * 1024, source_offset=0)
+        self.assertIsNotNone(source_with_special_chars_resp.get('etag'))
+        self.assertIsNotNone(source_with_special_chars_resp.get('last_modified'))
+
+        # Assert the destination blob is constructed correctly
+        blob_properties = destination_blob_client.get_blob_properties()
+        self.assertEqual(blob_properties.size, SOURCE_BLOB_SIZE)
+        self.assertBlobEqual(self.container_name, destination_blob_client.blob_name, source_blob_data, bsc)
+        self.assertEqual(blob_properties.get('etag'), source_with_special_chars_resp.get('etag'))
+        self.assertEqual(blob_properties.get('last_modified'), source_with_special_chars_resp.get('last_modified'))
 
     @GlobalStorageAccountPreparer()
     def test_upload_pages_from_url_and_validate_content_md5(self, resource_group, location, storage_account, storage_account_key):

@@ -15,6 +15,10 @@ class TextAnalyticsApiVersion(str, Enum):
 
     #: this is the default version
     V3_1_PREVIEW_1 = "v3.1-preview.1"
+
+    # 3.1-preview.2 is not yet the default version since we don't have a
+    # reliable endpoint
+    V3_1_PREVIEW_2 = "v3.1-preview.2"
     V3_0 = "v3.0"
 
 def _authentication_policy(credential):

@@ -7,15 +7,15 @@ interactions:
       "en"}]}'
     headers:
       Accept:
-      - application/json
+      - application/json, text/json
       Content-Length:
       - '315'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/1.0.1 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.0.1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.1/sentiment?showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.1/sentiment?showStats=false&stringIndexType=UnicodeCodePoint
   response:
     body:
       string: '{"documents":[{"id":"1","sentiment":"neutral","confidenceScores":{"positive":0.01,"neutral":0.99,"negative":0.0},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.01,"neutral":0.99,"negative":0.0},"offset":0,"length":51,"text":"Microsoft
@@ -25,16 +25,16 @@ interactions:
         restaurant had really good food."},{"sentiment":"positive","confidenceScores":{"positive":0.96,"neutral":0.03,"negative":0.01},"offset":37,"length":23,"text":"I
         recommend you try it."}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}'
     headers:
-      apim-request-id: 88f5d350-fd2a-4d63-9d33-efb5a3e9feaf
+      apim-request-id: f665688d-1cce-4513-bd7c-ae81c7400faf
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Fri, 24 Jul 2020 16:32:45 GMT
+      date: Thu, 27 Aug 2020 19:32:00 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '109'
+      x-envoy-upstream-service-time: '83'
     status:
       code: 200
       message: OK
-    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.1/sentiment?showStats=false
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.1/sentiment?showStats=false&stringIndexType=UnicodeCodePoint
 version: 1

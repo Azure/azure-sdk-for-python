@@ -15,8 +15,6 @@ interactions:
       - application/json
       User-Agent:
       - azsdk-python-search-documents/1.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      api-key:
-      - EF6DF05F92A8948F94DCE2B89C2D1E9C
     method: POST
     uri: https://searche35313ac.search.windows.net/datasources?api-version=2020-06-30
   response:
@@ -68,8 +66,6 @@ interactions:
       - application/json
       User-Agent:
       - azsdk-python-search-documents/1.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      api-key:
-      - EF6DF05F92A8948F94DCE2B89C2D1E9C
     method: POST
     uri: https://searche35313ac.search.windows.net/indexes?api-version=2020-06-30
   response:
@@ -121,8 +117,6 @@ interactions:
       - application/json
       User-Agent:
       - azsdk-python-search-documents/1.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      api-key:
-      - EF6DF05F92A8948F94DCE2B89C2D1E9C
     method: POST
     uri: https://searche35313ac.search.windows.net/indexers?api-version=2020-06-30
   response:
@@ -169,8 +163,6 @@ interactions:
       - keep-alive
       User-Agent:
       - azsdk-python-search-documents/1.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      api-key:
-      - EF6DF05F92A8948F94DCE2B89C2D1E9C
     method: GET
     uri: https://searche35313ac.search.windows.net/indexers('sample-indexer')?api-version=2020-06-30
   response:
