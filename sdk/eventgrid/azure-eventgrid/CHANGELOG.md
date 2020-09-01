@@ -2,7 +2,9 @@
 
 ## 2.0.0b1 (Unreleased)
 
-  - Placeholder - NEEDS TO BE CHANGED
+  - Version (2.0.0b1) is the first preview of our efforts to create a user-friendly and Pythonic client library for AzureEventGrid.
+  
+  For more information about this, and preview releases of other Azure SDK libraries, please visit https://azure.github.io/azure-sdk/releases/latest/python.html.
 
 ## 1.3.0 (2019-05-20)
 
