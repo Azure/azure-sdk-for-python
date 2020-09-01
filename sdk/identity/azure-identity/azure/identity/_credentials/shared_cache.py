@@ -4,10 +4,10 @@
 # ------------------------------------
 import time
 
-from azure.core.exceptions import ClientAuthenticationError
 from msal.application import PublicClientApplication
 
 from azure.core.credentials import AccessToken
+from azure.core.exceptions import ClientAuthenticationError
 
 from .. import CredentialUnavailableError
 from .._constants import AZURE_CLI_CLIENT_ID
