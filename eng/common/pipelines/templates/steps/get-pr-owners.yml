@@ -10,11 +10,7 @@ steps:
     displayName: Setup Identity Resolver
 
   - pwsh: |
-      Write-Host "##vso[task.setvariable variable=${{ parameters.TargetVariable }}]"
-    displayName: 'Ensure Target Variable Is Populated'
-
-  - pwsh: |
-      $result = dotnet run -v q -- `
+      dotnet run -v q -- `
         --aad-app-id-var APP_ID `
         --aad-app-secret-var APP_SECRET `
         --aad-tenant-var AAD_TENANT `
