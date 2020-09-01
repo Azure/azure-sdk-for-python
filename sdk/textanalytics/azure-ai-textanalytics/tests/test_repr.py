@@ -117,12 +117,12 @@ def linked_entity(linked_entity_match):
         data_source_entity_id="Bill Gates",
         url="https://en.wikipedia.org/wiki/Bill_Gates",
         data_source="wikipedia",
-        bing_id="12345678"
+        bing_entity_search_api_id="12345678"
     )
     model_repr = (
         "LinkedEntity(name=Bill Gates, matches=[{}, {}], "\
         "language=English, data_source_entity_id=Bill Gates, "\
-        "url=https://en.wikipedia.org/wiki/Bill_Gates, data_source=wikipedia, bing_id=12345678)".format(
+        "url=https://en.wikipedia.org/wiki/Bill_Gates, data_source=wikipedia, bing_entity_search_api_id=12345678)".format(
             linked_entity_match[1], linked_entity_match[1]
         )
     )
