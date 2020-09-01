@@ -147,7 +147,7 @@ class RecognizePiiEntitiesResult(DictMixin):
     :vartype entities:
         list[~azure.ai.textanalytics.PiiEntity]
     :ivar str redacted_text: Returns the text of the input document with all of the PII information
-        redacted out. Only returned for api versions v3.1-preview.2 and up.
+        redacted out. Only returned for API versions v3.1-preview.2 and up.
     :ivar warnings: Warnings encountered while processing document. Results will still be returned
         if there are warnings, but they may not be fully accurate.
     :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
@@ -226,9 +226,9 @@ class CategorizedEntity(DictMixin):
     :ivar subcategory: Entity subcategory, such as Age/Year/TimeRange etc
     :vartype subcategory: str
     :ivar int offset: The entity text offset from the start of the document.
-        Returned in unicode code points. Only returned for api versions v3.1-preview.1 and up.
+        Returned in unicode code points. Only returned for API versions v3.1-preview.1 and up.
     :ivar int length: The length of the entity text. Returned
-        in unicode code points. Only returned for api versions v3.1-preview.1 and up.
+        in unicode code points. Only returned for API versions v3.1-preview.1 and up.
     :ivar confidence_score: Confidence score between 0 and 1 of the extracted
         entity.
     :vartype confidence_score: float
@@ -681,9 +681,9 @@ class LinkedEntityMatch(DictMixin):
     :vartype confidence_score: float
     :ivar text: Entity text as appears in the request.
     :ivar int offset: The linked entity match text offset from the start of the document.
-        Returned in unicode code points. Only returned for api versions v3.1-preview.1 and up.
+        Returned in unicode code points. Only returned for API versions v3.1-preview.1 and up.
     :ivar int length: The length of the linked entity match text. Returned
-        in unicode code points. Only returned for api versions v3.1-preview.1 and up.
+        in unicode code points. Only returned for API versions v3.1-preview.1 and up.
     :vartype text: str
     """
 
@@ -793,9 +793,9 @@ class SentenceSentiment(DictMixin):
     :vartype confidence_scores:
         ~azure.ai.textanalytics.SentimentConfidenceScores
     :ivar int offset: The sentence offset from the start of the document. Returned
-        in unicode code points. Only returned for api versions v3.1-preview.1 and up.
+        in unicode code points. Only returned for API versions v3.1-preview.1 and up.
     :ivar int length: The length of the sentence. Returned
-        in unicode code points. Only returned for api versions v3.1-preview.1 and up.
+        in unicode code points. Only returned for API versions v3.1-preview.1 and up.
     :ivar mined_opinions: The list of opinions mined from this sentence.
         For example in "The food is good, but the service is bad", we would
         mind these two opinions "food is good", "service is bad". Only returned

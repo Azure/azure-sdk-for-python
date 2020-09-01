@@ -53,7 +53,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     https://docs.microsoft.com/azure/cognitive-services/text-analytics/overview
 
     :param str endpoint: Supported Cognitive Services or Text Analytics resource
-        endpoints (protocol and hostname, for example: https://westus2.api.cognitive.microsoft.com).
+        endpoints (protocol and hostname, for example: https://westus2.API.cognitive.microsoft.com).
     :param credential: Credentials needed for the client to connect to Azure.
         This can be the an instance of AzureKeyCredential if using a
         cognitive services/text analytics API key or a token credential
