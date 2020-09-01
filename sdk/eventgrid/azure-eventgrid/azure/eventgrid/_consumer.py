@@ -32,9 +32,9 @@ class EventGridConsumer(object):
         """Single event following CloudEvent/EventGridEvent schema will be parsed and returned as DeserializedEvent.
         :param event: The event to be deserialized.
         :type event: Union[str, dict, bytes]
+        :keyword str encoding: The encoding that should be used. Defaults to 'utf-8'
         :rtype: models.DeserializedEvent
-
-        :raise: :class:`ValueError`, when events do not follow CloudEvent or EventGridEvent schema.
+        :raises: :class:`ValueError`, when events do not follow CloudEvent or EventGridEvent schema.
         """
         encode = kwargs.pop('encoding', 'utf-8')
         try:
