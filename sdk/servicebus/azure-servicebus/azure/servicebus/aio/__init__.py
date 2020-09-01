@@ -18,7 +18,7 @@ __all__ = [
     'ServiceBusSender',
     'ServiceBusReceiver',
     'ServiceBusSessionReceiver',
+    'ServiceBusSession',
     'ServiceBusSharedKeyCredential',
-    'AutoLockRenew',
-    'ServiceBusSession'
+    'AutoLockRenew'
 ]

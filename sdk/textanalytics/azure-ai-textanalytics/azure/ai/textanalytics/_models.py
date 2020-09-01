@@ -4,6 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import re
+from enum import Enum
 from ._generated.models import (
     LanguageInput,
     MultiLanguageInput,
@@ -63,6 +64,10 @@ class DictMixin(object):
         if key in self.__dict__:
             return self.__dict__[key]
         return default
+
+class PiiEntityDomainType(str, Enum):
+    """The different domains of PII entities that users can filter by"""
+    PROTECTED_HEALTH_INFORMATION = "PHI"  # See https://aka.ms/tanerpii for more information.
 
 
 class DetectedLanguage(DictMixin):
@@ -623,6 +628,11 @@ class LinkedEntity(DictMixin):
     :ivar data_source: Data source used to extract entity linking,
         such as Wiki/Bing etc.
     :vartype data_source: str
+    :ivar str bing_id: Bing unique identifier of the recognized entity. Use in conjunction
+        with the Bing Entity Search SDK to fetch additional relevant information. Only
+        available for API version v3.1-preview.2 and up.
+    .. versionadded:: v3.1-preview.2
+        The *bing_id* property.
     """
 
     def __init__(self, **kwargs):
@@ -632,9 +642,11 @@ class LinkedEntity(DictMixin):
         self.data_source_entity_id = kwargs.get("data_source_entity_id", None)
         self.url = kwargs.get("url", None)
         self.data_source = kwargs.get("data_source", None)
+        self.bing_id = kwargs.get("bing_id", None)
 
     @classmethod
     def _from_generated(cls, entity):
+        bing_id = entity.bing_id if hasattr(entity, "bing_id") else None
         return cls(
             name=entity.name,
             matches=[LinkedEntityMatch._from_generated(e) for e in entity.matches],  # pylint: disable=protected-access
@@ -642,12 +654,20 @@ class LinkedEntity(DictMixin):
             data_source_entity_id=entity.id,
             url=entity.url,
             data_source=entity.data_source,
+            bing_id=bing_id,
         )
 
     def __repr__(self):
         return "LinkedEntity(name={}, matches={}, language={}, data_source_entity_id={}, url={}, " \
-               "data_source={})".format(self.name, repr(self.matches), self.language, self.data_source_entity_id,
-                                        self.url, self.data_source)[:1024]
+            "data_source={}, bing_id={})".format(
+                self.name,
+                repr(self.matches),
+                self.language,
+                self.data_source_entity_id,
+                self.url,
+                self.data_source,
+                self.bing_id,
+        )[:1024]
 
 
 class LinkedEntityMatch(DictMixin):

@@ -116,12 +116,15 @@ def linked_entity(linked_entity_match):
         language="English",
         data_source_entity_id="Bill Gates",
         url="https://en.wikipedia.org/wiki/Bill_Gates",
-        data_source="wikipedia"
+        data_source="wikipedia",
+        bing_id="12345678"
     )
     model_repr = (
         "LinkedEntity(name=Bill Gates, matches=[{}, {}], "\
         "language=English, data_source_entity_id=Bill Gates, "\
-        "url=https://en.wikipedia.org/wiki/Bill_Gates, data_source=wikipedia)".format(linked_entity_match[1], linked_entity_match[1])
+        "url=https://en.wikipedia.org/wiki/Bill_Gates, data_source=wikipedia, bing_id=12345678)".format(
+            linked_entity_match[1], linked_entity_match[1]
+        )
     )
     assert repr(model) == model_repr
     return model, model_repr

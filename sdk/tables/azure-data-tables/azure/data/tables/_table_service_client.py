@@ -6,7 +6,7 @@
 
 import functools
 from typing import Any, Union
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import HttpResponseError, ResourceExistsError
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline import Pipeline
@@ -18,7 +18,6 @@ from ._models import TablePropertiesPaged, service_stats_deserialize, service_pr
 from ._base_client import parse_connection_str, TransportWrapper
 from ._models import LocationMode
 from ._error import _process_table_error
-from ._version import VERSION
 from ._table_client import TableClient
 from ._table_service_client_base import TableServiceClientBase
 
@@ -47,7 +46,6 @@ class TableServiceClient(TableServiceClientBase):
 
         super(TableServiceClient, self).__init__(account_url, service='table', credential=credential, **kwargs)
         self._client = AzureTable(self.url, pipeline=self._pipeline)
-        self._client._config.version = kwargs.get('api_version', VERSION)  # pylint: disable=protected-access
 
     @classmethod
     def from_connection_string(
@@ -154,6 +152,30 @@ class TableServiceClient(TableServiceClientBase):
         """
         table = self.get_table_client(table_name=table_name)
         table.create_table(**kwargs)
+        return table
+
+    @distributed_trace
+    def create_table_if_not_exists(
+        self,
+        table_name, # type: str
+        **kwargs # type: Any
+    ):
+        # type: (...) -> TableClient
+        """Creates a new table if it does not currently exist.
+        If the table currently exists, the current table is
+        returned.
+
+        :param table_name: The Table name.
+        :type table_name: str
+        :return: TableClient
+        :rtype: ~azure.data.tables.TableClient
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        table = self.get_table_client(table_name=table_name)
+        try:
+            table.create_table(**kwargs)
+        except ResourceExistsError:
+            pass
         return table
 
     @distributed_trace
