@@ -24,13 +24,10 @@
 #
 # --------------------------------------------------------------------------
 
-from ._internal import (
-    IndexDocumentsBatch,
-    SearchClient,
-    SearchItemPaged,
-    SearchIndexDocumentBatchingClient,
-)
+from ._internal._index_documents_batch import IndexDocumentsBatch
 from ._internal._search_documents_error import RequestEntityTooLargeError
+from ._internal._search_client import SearchClient, SearchItemPaged
+from ._internal._search_index_document_batching_client import SearchIndexDocumentBatchingClient
 from ._version import VERSION
 
 __version__ = VERSION

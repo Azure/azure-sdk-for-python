@@ -98,6 +98,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         )
         self._default_language = kwargs.pop("default_language", "en")
         self._default_country_hint = kwargs.pop("default_country_hint", "US")
+        self._string_code_unit = None if kwargs.get("api_version") == "v3.0" else "UnicodeCodePoint"
 
     @distributed_trace_async
     async def detect_language(  # type: ignore
@@ -216,6 +217,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         docs = _validate_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
+        if self._string_code_unit:
+            kwargs.update({"string_index_type": self._string_code_unit})
         try:
             return await self._client.entities_recognition_general(
                 documents=docs,
@@ -259,6 +262,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
         :keyword bool show_stats: If set to true, response will contain document level statistics.
+        :keyword domain_filter: Filters the response entities to ones only included in the specified domain.
+            I.e., if set to 'PHI', will only return entities in the Protected Healthcare Information domain.
+            See https://aka.ms/tanerpii for more information.
+        :paramtype domain_filter: str or ~azure.ai.textanalytics.PiiEntityDomainType
         :return: The combined list of :class:`~azure.ai.textanalytics.RecognizePiiEntitiesResult`
             and :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents
             were passed in.
@@ -280,16 +287,21 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         docs = _validate_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
+        domain_filter = kwargs.pop("domain_filter", None)
+
+        if self._string_code_unit:
+            kwargs.update({"string_index_type": self._string_code_unit})
         try:
             return await self._client.entities_recognition_pii(
                 documents=docs,
                 model_version=model_version,
                 show_stats=show_stats,
+                domain=domain_filter,
                 cls=kwargs.pop("cls", pii_entities_result),
                 **kwargs
             )
-        except AttributeError as error:
-            if "'TextAnalyticsClient' object has no attribute 'entities_recognition_pii'" in str(error):
+        except NotImplementedError as error:
+            if "APIVersion v3.0 is not available" in str(error):
                 raise NotImplementedError(
                     "'recognize_pii_entities' endpoint is only available for API version v3.1-preview.1 and up"
                 )
@@ -351,6 +363,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         docs = _validate_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
+        if self._string_code_unit:
+            kwargs.update({"string_index_type": self._string_code_unit})
         try:
             return await self._client.entities_linking(
                 documents=docs,
@@ -489,6 +503,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
         show_opinion_mining = kwargs.pop("show_opinion_mining", None)
+        if self._string_code_unit:
+            kwargs.update({"string_index_type": self._string_code_unit})
 
         if show_opinion_mining is not None:
             kwargs.update({"opinion_mining": show_opinion_mining})

@@ -1,6 +1,8 @@
 # Release History
 
 ## 4.2.1 (Unreleased)
+### Fixed
+- Correct typing for paging methods
 
 ### Added
 - Added method `parse_certificate_id` that parses out a full ID returned by key vault, so users

@@ -1,0 +1,30 @@
+interactions:
+- request:
+    body: '[{"id": "5bd130e8-0001-488a-9cd6-807d6bb30270", "subject": "sample", "data":
+      "eventgridevent", "eventType": "Sample.EventGrid.Event", "eventTime": "2020-08-26T08:37:23.122484Z",
+      "dataVersion": "2.0"}]'
+    headers:
+      Content-Length:
+      - '200'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - azsdk-python-eventgridpublisherclient/unknown Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      aeg-sas-key:
+      - NpNkZLDV1WROE17wLypJk8VTz8hmAcByPv3tsCmhlys=
+    method: POST
+    uri: https://eventgridtestegtopic.westus-1.eventgrid.azure.net/api/events?api-version=2018-01-01
+  response:
+    body:
+      string: ''
+    headers:
+      api-supported-versions: '2018-01-01'
+      content-length: '0'
+      date: Wed, 26 Aug 2020 08:37:23 GMT
+      server: Microsoft-HTTPAPI/2.0
+      strict-transport-security: max-age=31536000; includeSubDomains
+    status:
+      code: 200
+      message: OK
+    url: https://eventgridtesty45wuyer4g4.westus-1.eventgrid.azure.net/api/events?api-version=2018-01-01
+version: 1

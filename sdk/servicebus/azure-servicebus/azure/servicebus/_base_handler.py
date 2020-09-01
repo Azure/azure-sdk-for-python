@@ -21,7 +21,7 @@ from uamqp.message import MessageProperties
 from ._common._configuration import Configuration
 from .exceptions import (
     ServiceBusError,
-    ServiceBusAuthorizationError,
+    ServiceBusAuthenticationError,
     _create_servicebus_exception
 )
 from ._common.utils import create_properties
@@ -104,7 +104,7 @@ def _convert_connection_string_to_kwargs(conn_str, shared_key_credential_type, *
 
     entity_in_kwargs = queue_name or topic_name
     if entity_in_conn_str and entity_in_kwargs and (entity_in_conn_str != entity_in_kwargs):
-        raise ServiceBusAuthorizationError(
+        raise ServiceBusAuthenticationError(
             "Entity names do not match, the entity name in connection string is {};"
             " the entity name in parameter is {}.".format(entity_in_conn_str, entity_in_kwargs)
         )
