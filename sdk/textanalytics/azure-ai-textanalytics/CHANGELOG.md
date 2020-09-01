@@ -1,6 +1,6 @@
 # Release History
 
-## 5.0.1 (Unreleased)
+## 5.1.0b1 (Unreleased)
 
 **New features**
 - We are now targeting the service's v3.1-preview.1 API as the default. If you would like to still use version v3.0 of the service,
