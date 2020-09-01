@@ -446,10 +446,6 @@ class StorageTableEntityTest(TableTestCase):
             dict32['large'] = EntityProperty(-(2 ** 31 + 1), EdmType.INT32)
             with self.assertRaises(TypeError):
                 self.table.create_entity(entity=dict32)
-
-            dict32['large'] = 2**100
-            with self.assertRaises(TypeError):
-                self.table.create_entity(entity=dict32)
         finally:
             self._tear_down()
 
