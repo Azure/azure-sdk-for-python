@@ -2,7 +2,7 @@
 
 There are various tests currently enabled in Azure pipeline for Python SDK and some of them are enabled only for nightly CI checks. We also run some static analysis tool to verify code completeness, security and lint check.  
 
-Check the [../CONTRIBUTING.md#building-and-testing] for an intro to `tox`.
+Check the [contributing guide](../CONTRIBUTING.md#building-and-testing) for an intro to `tox`.
 
 As a contributor, you will see the build jobs run in two modes: `Nightly Scheduled` and `Pull Request`.
 
@@ -12,6 +12,8 @@ Example PR build:
 
 ![res/job_snippet.png](res/job_snippet.png)
 
+ - `Analyze` tox envs run during the `Analyze job.
+ - `Test <platform>_<pyversion>` runs PR/Nightly tox envs, depending on context.
 
 ## Analyze Checks
 Analyze job in both nightly CI and pull request validation pipeline runs a set of static analysis using external and internal tools. Following are the list of these static analysis.
