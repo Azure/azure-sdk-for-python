@@ -73,12 +73,12 @@ jobs:
       parameters:
         Directory: "sdk/${{ parameters.ServiceDirectory }}"
 
-    - template: ../steps/analyze.yml
-      parameters: 
-        ServiceDirectory: ${{ parameters.ServiceDirectory }}
-        BuildTargetingString: ${{ parameters.BuildTargetingString }}
-        TestMarkArgument: ${{ parameters.TestMarkArgument }}
-        AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
+    # - template: ../steps/analyze.yml
+    #   parameters: 
+    #     ServiceDirectory: ${{ parameters.ServiceDirectory }}
+    #     BuildTargetingString: ${{ parameters.BuildTargetingString }}
+    #     TestMarkArgument: ${{ parameters.TestMarkArgument }}
+    #     AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
 
   - job: 'Test'
     condition: and(succeededOrFailed(), ne(variables['Skip.Test'], 'true'))
@@ -158,8 +158,8 @@ jobs:
     pool:
       vmImage: 'ubuntu-18.04'
 
-    steps:
-    - template: ../steps/test_regression.yml
-      parameters: 
-        ServiceDirectory: ${{ parameters.ServiceDirectory }}
-        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+    # steps:
+    # - template: ../steps/test_regression.yml
+    #   parameters: 
+    #     ServiceDirectory: ${{ parameters.ServiceDirectory }}
+    #     BuildTargetingString: ${{ parameters.BuildTargetingString }}
