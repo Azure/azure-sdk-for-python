@@ -1,5 +1,16 @@
 # Release History
 
+## 7.0.0rc2 (2020-09-01)
+
+**Features**
+
+  - Model RedisRebootParameters has a new parameter ports
+  - Model RedisInstanceDetails has a new parameter is_master
+
+**Breaking changes**
+
+  - Operation RedisOperations.force_reboot has a new signature
+
 ## 7.0.0rc1 (2019-12-07)
 
 **Features**
