@@ -730,8 +730,9 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         new_blob_version_id = blob.get_blob_properties().get("version_id")
 
         # Assert
-        self.assertEqual(blob.exists(version_id=old_blob_version_id), False)
+        self.assertEqual(blob.exists(version_id=old_blob_version_id), True)
         self.assertEqual(blob.exists(version_id=new_blob_version_id), True)
+        self.assertEqual(blob.exists(version_id="2020-08-21T21:24:15.3585832Z"), False)
 
         # Act
         test_snapshot = blob.create_snapshot()

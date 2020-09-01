@@ -476,14 +476,11 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :returns: boolean
         """
         try:
-            blob_props = await self._client.blob.get_properties(
-                **kwargs,
+            await self._client.blob.get_properties(
                 snapshot=self.snapshot,
-                cls=deserialize_blob_properties)
-            if blob_props and blob_props.is_current_version or blob_props and self.snapshot:
-                return True
-            return False
-        except ResourceNotFoundError:
+                **kwargs)
+            return True
+        except StorageErrorException:
             return False
 
     @distributed_trace_async

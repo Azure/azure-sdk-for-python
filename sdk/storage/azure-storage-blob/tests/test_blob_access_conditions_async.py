@@ -762,8 +762,9 @@ class StorageBlobAccessConditionsAsyncTest(AsyncStorageTestCase):
         new_blob_version_id = new_blob_props.get("version_id")
 
         # Assert
-        self.assertEqual(await blob.exists(version_id=old_blob_version_id), False)
+        self.assertEqual(await blob.exists(version_id=old_blob_version_id), True)
         self.assertEqual(await blob.exists(version_id=new_blob_version_id), True)
+        self.assertEqual(await blob.exists(version_id="bad_version_id"), False)
 
         # Act
         test_snapshot = await blob.create_snapshot()
