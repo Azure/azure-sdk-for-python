@@ -18,6 +18,7 @@ from azure.ai.textanalytics import (
     TextDocumentInput,
     VERSION,
     TextAnalyticsApiVersion,
+    PiiEntityDomainType,
 )
 
 # pre-apply the client_cls positional argument so it needn't be explicitly passed below
@@ -572,3 +573,16 @@ class TestRecognizePIIEntities(AsyncTextAnalyticsTest):
             await client.recognize_pii_entities(["this should fail"])
 
         assert "'recognize_pii_entities' endpoint is only available for API version v3.1-preview.1 and up" in str(excinfo.value)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    async def test_phi_domain_filter(self, client):
+        # without the domain filter, this should return two entities: Microsoft as an org,
+        # and the phone number. With the domain filter, it should only return one.
+        result = await client.recognize_pii_entities(
+            ["I work at Microsoft and my phone number is 333-333-3333"],
+            domain_filter=PiiEntityDomainType.PROTECTED_HEALTH_INFORMATION
+        )
+        self.assertEqual(len(result[0].entities), 1)
+        self.assertEqual(result[0].entities[0].text, '333-333-3333')
+        self.assertEqual(result[0].entities[0].category, 'Phone Number')
