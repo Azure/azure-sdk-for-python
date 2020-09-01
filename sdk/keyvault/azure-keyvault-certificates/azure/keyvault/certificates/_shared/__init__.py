@@ -25,7 +25,7 @@ __all__ = [
 class ParsedId():
     """Represents a key vault identifier and its parsed contents.
 
-    :param str original_id: The originally received complete identifier
+    :param str source_id: The originally received complete identifier
     :param str vault_url: The vault URL
     :param str name: The name extracted from the id
     :param str version: The version extracted from the id
@@ -33,33 +33,33 @@ class ParsedId():
 
     def __init__(
         self,
-        original_id,  # type: str
+        source_id,  # type: str
         vault_url,  # type: str
         name,  # type: str
         version=None  # type: Optional[str]
     ):
-        self.original_id = original_id
+        self.source_id = source_id
         self.vault_url = vault_url
         self.name = name
         self.version = version
 
 
-def parse_key_vault_identifier(original_id):
+def parse_key_vault_identifier(source_id):
     # type: (str) -> ParsedId
     try:
-        parsed_uri = parse.urlparse(original_id)
+        parsed_uri = parse.urlparse(source_id)
     except Exception:  # pylint: disable=broad-except
-        raise ValueError("'{}' is not not a valid ID".format(original_id))
+        raise ValueError("'{}' is not not a valid ID".format(source_id))
     if not (parsed_uri.scheme and parsed_uri.hostname):
-        raise ValueError("'{}' is not not a valid ID".format(original_id))
+        raise ValueError("'{}' is not not a valid ID".format(source_id))
 
     path = list(filter(None, parsed_uri.path.split("/")))
 
     if len(path) < 2 or len(path) > 3:
-        raise ValueError("'{}' is not not a valid vault ID".format(original_id))
+        raise ValueError("'{}' is not not a valid vault ID".format(source_id))
 
     return ParsedId(
-        original_id=original_id,
+        source_id=source_id,
         vault_url="{}://{}".format(parsed_uri.scheme, parsed_uri.hostname),
         name=path[1],
         version=path[2] if len(path) == 3 else None,

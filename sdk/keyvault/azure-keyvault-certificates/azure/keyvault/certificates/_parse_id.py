@@ -6,11 +6,11 @@
 from ._shared import parse_key_vault_identifier, ParsedId
 
 
-def parse_certificate_id(original_id):
+def parse_certificate_id(source_id):
     # type: (str) -> ParsedId
     """Parses a full certificate's ID into a class.
 
-    :param str original_id: the full original identifier of a certificate
+    :param str source_id: the full original identifier of a certificate
     :returns: Returns a parsed certificate id
     :rtype: ~azure.keyvault.certificates.ParsedId
     :raises: ValueError
@@ -23,11 +23,11 @@ def parse_certificate_id(original_id):
             :caption: Parse a certificate's ID
             :dedent: 8
     """
-    parsed_id = parse_key_vault_identifier(original_id)
+    parsed_id = parse_key_vault_identifier(source_id)
 
     return ParsedId(
         name=parsed_id.name,
-        original_id=parsed_id.original_id,
+        source_id=parsed_id.source_id,
         vault_url=parsed_id.vault_url,
         version=parsed_id.version
     )

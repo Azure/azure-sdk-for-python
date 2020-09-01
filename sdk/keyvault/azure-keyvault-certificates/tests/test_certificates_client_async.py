@@ -354,7 +354,7 @@ class CertificateClientTests(KeyVaultTestCase):
         deleted_certificates = client.list_deleted_certificates()
         deleted = []
         async for c in deleted_certificates:
-            deleted.append(parse_certificate_id(original_id=c.id).name)
+            deleted.append(parse_certificate_id(source_id=c.id).name)
         self.assertTrue(all(c in deleted for c in certs.keys()))
 
         # recover select certificates
@@ -372,7 +372,7 @@ class CertificateClientTests(KeyVaultTestCase):
         deleted_certificates = client.list_deleted_certificates()
         deleted = []
         async for c in deleted_certificates:
-            deleted.append(parse_certificate_id(original_id=c.id).name)
+            deleted.append(parse_certificate_id(source_id=c.id).name)
         self.assertTrue(not any(c in deleted for c in certs.keys()))
 
         # validate the recovered certificates
