@@ -5,7 +5,7 @@
 - Correct typing for paging methods
 
 ### Added
-- Added method `parse_certificate_id` that parses out a full ID returned by key vault, so users
+- Added method `parse_key_vault_certificate_id` that parses out a full ID returned by key vault, so users
 can easily access the certificate's `name`, `vault_url`, `version` etc.
 
 

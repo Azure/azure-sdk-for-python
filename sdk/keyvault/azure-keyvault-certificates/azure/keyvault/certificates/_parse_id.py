@@ -6,7 +6,7 @@
 from ._shared import parse_key_vault_identifier, ParsedId
 
 
-def parse_certificate_id(source_id):
+def parse_key_vault_certificate_id(source_id):
     # type: (str) -> ParsedId
     """Parses a full certificate's ID into a class.
 
@@ -17,8 +17,8 @@ def parse_certificate_id(source_id):
 
     Example:
         .. literalinclude:: ../tests/test_parse_id.py
-            :start-after: [START parse_certificate_id]
-            :end-before: [END parse_certificate_id]
+            :start-after: [START parse_key_vault_certificate_id]
+            :end-before: [END parse_key_vault_certificate_id]
             :language: python
             :caption: Parse a certificate's ID
             :dedent: 8
