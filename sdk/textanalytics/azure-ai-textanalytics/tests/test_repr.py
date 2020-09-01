@@ -290,11 +290,13 @@ class TestRepr():
         model = _models.RecognizePiiEntitiesResult(
             id="1",
             entities=[pii_entity[0]],
+            redacted_text="***********",
             warnings=[text_analytics_warning[0]],
             statistics=text_document_statistics[0],
             is_error=False
         )
-        model_repr = "RecognizePiiEntitiesResult(id=1, entities=[{}], warnings=[{}], statistics={}, is_error=False)".format(
+        model_repr = "RecognizePiiEntitiesResult(id=1, entities=[{}], redacted_text=***********, warnings=[{}], " \
+        "statistics={}, is_error=False)".format(
             pii_entity[1], text_analytics_warning[1], text_document_statistics[1]
         )
 
