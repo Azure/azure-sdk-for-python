@@ -1,6 +1,6 @@
 # Azure Data Tables client library for Python
 
-Azure Data Tables is a NoSQL data storing service that can be accessed from anywhere in the world via authenticated calls using HTTP or HTTPS.
+Azure Data Tables is a NoSQL data storage service that can be accessed from anywhere in the world via authenticated calls using HTTP or HTTPS.
 Tables scales as needed to support the amount of data inserted, and allow for the storing of data with non-complex accessing.
 The Azure Data Tables client can be used to access Azure Storage or Cosmos accounts.
 
@@ -38,6 +38,13 @@ az group create --name MyResourceGroup --location westus2
 
 # Create the storage account
 az storage account create -n MyStorageAccount -g MyResourceGroup
+```
+
+### Creating a Cosmos DB
+Create a Cosmos DB account `MycosmosDBDatabaseAccount` in resource group `MyResourceGroup` in the subscription `MySubscription` and a table named `MyTableName` in the account.
+```bash
+az cosmosdb create --name MyCosmosDBDatabaseAccount --resource-group MyResourceGroup --subscription MySubscription
+az cosmosdb table create --name MyTableName --resource-group MyResourceGroup --acount-name MyCosmosDBDatabaseAccount
 ```
 
 ### Create the client
@@ -117,6 +124,12 @@ az storage account show-connection-string -g MyResourceGroup -n MyStorageAccount
 ```
 
 ## Key concepts
+Common uses of the Table service included:
+* Storing TBs of structured data capable of serving web scale applications
+* Storing datasets that do not require complex joins, foreign keys, or stored procedures and can be de-normalized for fast access
+* Quickly querying data using a clustered index
+* Accessing data using the OData protocol and LINQ filter expressions
+
 The following components make up the Azure Data Tables Service:
 * The account
 * A table within the account, which contains a set of entities
@@ -126,7 +139,7 @@ The Azure Data Tables client library for Python allows you to interact with each
 use of a dedicated client object.
 
 ### Clients
-Two different clients are provided to to interact with the various components of the Table Service:
+Two different clients are provided to interact with the various components of the Table Service:
 1. [TableServiceClient](table_service_client_docs) -
     this client represents interaction with the Azure account itself, and allows you to acquire preconfigured
     client instances to access the tables within. It provides operations to retrieve and configure the account
@@ -186,6 +199,22 @@ my_filter = "text eq Marker"
 
 table_client = TableClient.from_connection_string(conn_str="<connection_string>", table_name="mytable")
 entity = table_client.query_entities(filter=my_filter)
+```
+
+## Troubleshooting
+When you interact with the Azure table library using the Python SDK, errors returned by the service respond ot the same HTTP status codes for [REST API](tables_rest) requests.
+
+For examples, if you try to create a table that already exists, a `409` error is returned indicating "Conflict".
+```python
+service_client = TableServiceClient(connection_string)
+
+# Create the table if it does not already exist
+tc = service_client.create_table_if_not_exists(table_name)
+
+try:
+    service_client.create_table(table_name)
+except HttpResponseError:
+    print("Table with name {} already exists".format(table_name))
 ```
 
 ## Optional Configuration
