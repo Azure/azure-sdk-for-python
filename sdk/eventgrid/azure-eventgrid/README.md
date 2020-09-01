@@ -43,14 +43,14 @@ eg_publisher_client = EventGridPublisherClient(topic_hostname, credential)
 
 ## Key concepts
 
+Information about the key concepts on EventGrid, see [Concepts in Azure Event Grid][publisher-service-doc]
+
 ### EventGridPublisherClient
 `EventGridPublisherClient` provides operations to send event data to topic hostname specified during client initialization.
 Either a list or a single instance of CloudEvent/EventGridEvent/CustomEvent can be sent.
 
 ### EventGridConsumer
 `EventGridConsumer` is used to desrialize an event received.
-
-For more information about the key concepts on EventGrid, see [Concepts in Azure Event Grid][publisher-service-doc]
 
 ## Examples
 
