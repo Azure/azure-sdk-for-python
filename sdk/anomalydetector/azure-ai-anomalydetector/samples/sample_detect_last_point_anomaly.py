@@ -22,17 +22,16 @@ USAGE:
 """
 
 import os
+from azure.ai.anomalydetector import AnomalyDetectorClient
+from azure.ai.anomalydetector.models import DetectRequest, TimeSeriesPoint, TimeGranularity, \
+    AnomalyDetectorError
+from azure.core.credentials import AzureKeyCredential
+import pandas as pd
 
 
 class DetectLastAnomalySample(object):
 
     def detect_last_point(self):
-        from azure.ai.anomalydetector import AnomalyDetectorClient
-        from azure.ai.anomalydetector.models import DetectRequest, TimeSeriesPoint, TimeGranularity, \
-            AnomalyDetectorError
-        from azure.core.credentials import AzureKeyCredential
-        import pandas as pd
-
         SUBSCRIPTION_KEY = os.environ["ANOMALY_DETECTOR_KEY"]
         ANOMALY_DETECTOR_ENDPOINT = os.environ["ANOMALY_DETECTOR_ENDPOINT"]
         TIME_SERIES_DATA_PATH = os.path.join("./sample_data", "request-data.csv")
@@ -65,12 +64,10 @@ class DetectLastAnomalySample(object):
 
         try:
             response = client.detect_last_point(request)
+        except AnomalyDetectorError as e:
+            print('Error code: {}'.format(e.error.code), 'Error message: {}'.format(e.error.message))
         except Exception as e:
-            if isinstance(e, AnomalyDetectorError):
-                print('Error code: {}'.format(e.error.code),
-                      'Error message: {}'.format(e.error.message))
-            else:
-                print(e)
+            print(e)
 
         if response.is_anomaly:
             print('The latest point is detected as anomaly.')

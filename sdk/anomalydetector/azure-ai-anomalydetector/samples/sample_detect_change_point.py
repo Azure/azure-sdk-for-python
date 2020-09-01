@@ -22,17 +22,16 @@ USAGE:
 """
 
 import os
+from azure.ai.anomalydetector import AnomalyDetectorClient
+from azure.ai.anomalydetector.models import DetectRequest, TimeSeriesPoint, TimeGranularity, \
+    AnomalyDetectorError
+from azure.core.credentials import AzureKeyCredential
+import pandas as pd
 
 
 class DetectChangePointsSample(object):
 
     def detect_change_point(self):
-        from azure.ai.anomalydetector import AnomalyDetectorClient
-        from azure.ai.anomalydetector.models import DetectRequest, TimeSeriesPoint, TimeGranularity, \
-            AnomalyDetectorError
-        from azure.core.credentials import AzureKeyCredential
-        import pandas as pd
-
         SUBSCRIPTION_KEY = os.environ["ANOMALY_DETECTOR_KEY"]
         ANOMALY_DETECTOR_ENDPOINT = os.environ["ANOMALY_DETECTOR_ENDPOINT"]
         TIME_SERIES_DATA_PATH = os.path.join("./sample_data", "request-data.csv")
@@ -65,17 +64,15 @@ class DetectChangePointsSample(object):
 
         try:
             response = client.detect_change_point(request)
+        except AnomalyDetectorError as e:
+            print('Error code: {}'.format(e.error.code), 'Error message: {}'.format(e.error.message))
         except Exception as e:
-            if isinstance(e, AnomalyDetectorError):
-                print('Error code: {}'.format(e.error.code),
-                      'Error message: {}'.format(e.error.message))
-            else:
-                print(e)
+            print(e)
 
-        if True in response.is_change_point:
+        if any(response.is_change_point):
             print('An change point was detected at index:')
-            for i in range(len(response.is_change_point)):
-                if response.is_change_point[i]:
+            for i, value in enumerate(response.is_change_point):
+                if value:
                     print(i)
         else:
             print('No change point were detected in the time series.')

@@ -22,17 +22,16 @@ USAGE:
 """
 
 import os
+from azure.ai.anomalydetector import AnomalyDetectorClient
+from azure.ai.anomalydetector.models import DetectRequest, TimeSeriesPoint, TimeGranularity, \
+    AnomalyDetectorError
+from azure.core.credentials import AzureKeyCredential
+import pandas as pd
 
 
 class DetectEntireAnomalySample(object):
 
     def detect_entire_series(self):
-        from azure.ai.anomalydetector import AnomalyDetectorClient
-        from azure.ai.anomalydetector.models import DetectRequest, TimeSeriesPoint, TimeGranularity, \
-            AnomalyDetectorError
-        from azure.core.credentials import AzureKeyCredential
-        import pandas as pd
-
         SUBSCRIPTION_KEY = os.environ["ANOMALY_DETECTOR_KEY"]
         ANOMALY_DETECTOR_ENDPOINT = os.environ["ANOMALY_DETECTOR_ENDPOINT"]
         TIME_SERIES_DATA_PATH = os.path.join("./sample_data", "request-data.csv")
@@ -65,17 +64,15 @@ class DetectEntireAnomalySample(object):
 
         try:
             response = client.detect_entire_series(request)
+        except AnomalyDetectorError as e:
+            print('Error code: {}'.format(e.error.code), 'Error message: {}'.format(e.error.message))
         except Exception as e:
-            if isinstance(e, AnomalyDetectorError):
-                print('Error code: {}'.format(e.error.code),
-                      'Error message: {}'.format(e.error.message))
-            else:
-                print(e)
+            print(e)
 
-        if True in response.is_anomaly:
+        if any(response.is_anomaly):
             print('An anomaly was detected at index:')
-            for i in range(len(response.is_anomaly)):
-                if response.is_anomaly[i]:
+            for i, value in enumerate(response.is_anomaly):
+                if value:
                     print(i)
         else:
             print('No anomalies were detected in the time series.')

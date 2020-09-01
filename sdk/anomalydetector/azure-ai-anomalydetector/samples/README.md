@@ -22,7 +22,7 @@ These sample programs show common scenarios for the Anomaly Detector client's of
 |[sample_detect_change_point.py][sample_detect_change_point] |Detecting change points in the entire time series.|
 
 ## Prerequisites
-* Python 2.7 or 3.x is required to use this package.
+* Python 2.7 or 3.5 or higher is required to use this package.
 * The Pandas data analysis library.
 * You must have an [Azure subscription][azure_subscription] and an
 [Azure Anomaly Detector account][azure_anomaly_detector_account] to run these samples.
