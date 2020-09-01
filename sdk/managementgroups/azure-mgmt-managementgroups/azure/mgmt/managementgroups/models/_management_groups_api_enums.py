@@ -9,19 +9,25 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.paging import Paged
+from enum import Enum
 
 
-class EntityInfoPaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`EntityInfo <azure.mgmt.managementgroups.models.EntityInfo>` object
-    """
+class Reason(str, Enum):
 
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[EntityInfo]'}
-    }
+    invalid = "Invalid"
+    already_exists = "AlreadyExists"
 
-    def __init__(self, *args, **kwargs):
 
-        super(EntityInfoPaged, self).__init__(*args, **kwargs)
+class Status(str, Enum):
+
+    not_started = "NotStarted"
+    not_started_but_groups_exist = "NotStartedButGroupsExist"
+    started = "Started"
+    failed = "Failed"
+    cancelled = "Cancelled"
+    completed = "Completed"
+
+
+class Type(str, Enum):
+
+    microsoft_managementmanagement_groups = "Microsoft.Management/managementGroups"

@@ -9,88 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import SDKClient
-from msrest import Serializer, Deserializer
-from msrestazure import AzureConfiguration
-from .version import VERSION
 from msrest.pipeline import ClientRawResponse
 from msrest.polling import LROPoller, NoPolling
 from msrestazure.polling.arm_polling import ARMPolling
+from .. import models
 import uuid
-from .operations.management_groups_operations import ManagementGroupsOperations
-from .operations.management_group_subscriptions_operations import ManagementGroupSubscriptionsOperations
-from .operations.operations import Operations
-from .operations.entities_operations import EntitiesOperations
-from . import models
 
 
-class ManagementGroupsAPIConfiguration(AzureConfiguration):
-    """Configuration for ManagementGroupsAPI
-    Note that all parameters used to create this instance are saved as instance
-    attributes.
-
-    :param credentials: Credentials needed for the client to connect to Azure.
-    :type credentials: :mod:`A msrestazure Credentials
-     object<msrestazure.azure_active_directory>`
-    :param str base_url: Service URL
-    """
-
-    def __init__(
-            self, credentials, base_url=None):
-
-        if credentials is None:
-            raise ValueError("Parameter 'credentials' must not be None.")
-        if not base_url:
-            base_url = 'https://management.azure.com'
-
-        super(ManagementGroupsAPIConfiguration, self).__init__(base_url)
-
-        self.add_user_agent('azure-mgmt-managementgroups/{}'.format(VERSION))
-        self.add_user_agent('Azure-SDK-For-Python')
-
-        self.credentials = credentials
-
-
-class ManagementGroupsAPI(SDKClient):
-    """The Azure Management Groups API enables consolidation of multiple subscriptions/resources into an organizational hierarchy and centrally manage access control, policies, alerting and reporting for those resources.
-
-    :ivar config: Configuration for client.
-    :vartype config: ManagementGroupsAPIConfiguration
-
-    :ivar management_groups: ManagementGroups operations
-    :vartype management_groups: azure.mgmt.managementgroups.operations.ManagementGroupsOperations
-    :ivar management_group_subscriptions: ManagementGroupSubscriptions operations
-    :vartype management_group_subscriptions: azure.mgmt.managementgroups.operations.ManagementGroupSubscriptionsOperations
-    :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.managementgroups.operations.Operations
-    :ivar entities: Entities operations
-    :vartype entities: azure.mgmt.managementgroups.operations.EntitiesOperations
-
-    :param credentials: Credentials needed for the client to connect to Azure.
-    :type credentials: :mod:`A msrestazure Credentials
-     object<msrestazure.azure_active_directory>`
-    :param str base_url: Service URL
-    """
-
-    def __init__(
-            self, credentials, base_url=None):
-
-        self.config = ManagementGroupsAPIConfiguration(credentials, base_url)
-        super(ManagementGroupsAPI, self).__init__(self.config.credentials, self.config)
-
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2018-03-01-preview'
-        self._serialize = Serializer(client_models)
-        self._deserialize = Deserializer(client_models)
-
-        self.management_groups = ManagementGroupsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.management_group_subscriptions = ManagementGroupSubscriptionsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.operations = Operations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.entities = EntitiesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
+class ManagementGroupsAPIOperationsMixin(object):
 
     def check_name_availability(
             self, check_name_availability_request, custom_headers=None, raw=False, **operation_config):
@@ -141,7 +67,6 @@ class ManagementGroupsAPI(SDKClient):
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('CheckNameAvailabilityResult', response)
 
@@ -192,7 +117,6 @@ class ManagementGroupsAPI(SDKClient):
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('TenantBackfillStatusResult', response)
 
@@ -243,7 +167,6 @@ class ManagementGroupsAPI(SDKClient):
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('TenantBackfillStatusResult', response)
 

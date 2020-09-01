@@ -10,81 +10,112 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .error_details_py3 import ErrorDetails
-    from .error_response_py3 import ErrorResponse, ErrorResponseException
-    from .operation_display_properties_py3 import OperationDisplayProperties
-    from .operation_py3 import Operation
-    from .check_name_availability_result_py3 import CheckNameAvailabilityResult
-    from .tenant_backfill_status_result_py3 import TenantBackfillStatusResult
-    from .management_group_info_py3 import ManagementGroupInfo
-    from .parent_group_info_py3 import ParentGroupInfo
-    from .management_group_details_py3 import ManagementGroupDetails
-    from .management_group_child_info_py3 import ManagementGroupChildInfo
-    from .management_group_py3 import ManagementGroup
-    from .operation_results_py3 import OperationResults
-    from .entity_parent_group_info_py3 import EntityParentGroupInfo
-    from .entity_info_py3 import EntityInfo
-    from .entity_hierarchy_item_py3 import EntityHierarchyItem
-    from .patch_management_group_request_py3 import PatchManagementGroupRequest
-    from .create_parent_group_info_py3 import CreateParentGroupInfo
-    from .create_management_group_details_py3 import CreateManagementGroupDetails
-    from .create_management_group_child_info_py3 import CreateManagementGroupChildInfo
-    from .create_management_group_request_py3 import CreateManagementGroupRequest
-    from .check_name_availability_request_py3 import CheckNameAvailabilityRequest
+    from ._models_py3 import AzureAsyncOperationResults
+    from ._models_py3 import CheckNameAvailabilityRequest
+    from ._models_py3 import CheckNameAvailabilityResult
+    from ._models_py3 import CreateManagementGroupChildInfo
+    from ._models_py3 import CreateManagementGroupDetails
+    from ._models_py3 import CreateManagementGroupRequest
+    from ._models_py3 import CreateOrUpdateSettingsRequest
+    from ._models_py3 import CreateParentGroupInfo
+    from ._models_py3 import DescendantInfo
+    from ._models_py3 import DescendantParentGroupInfo
+    from ._models_py3 import EntityHierarchyItem
+    from ._models_py3 import EntityInfo
+    from ._models_py3 import EntityParentGroupInfo
+    from ._models_py3 import ErrorDetails
+    from ._models_py3 import ErrorResponse, ErrorResponseException
+    from ._models_py3 import HierarchySettings
+    from ._models_py3 import HierarchySettingsInfo
+    from ._models_py3 import HierarchySettingsList
+    from ._models_py3 import ManagementGroup
+    from ._models_py3 import ManagementGroupChildInfo
+    from ._models_py3 import ManagementGroupDetails
+    from ._models_py3 import ManagementGroupInfo
+    from ._models_py3 import ManagementGroupPathElement
+    from ._models_py3 import Operation
+    from ._models_py3 import OperationDisplayProperties
+    from ._models_py3 import OperationResults
+    from ._models_py3 import ParentGroupInfo
+    from ._models_py3 import PatchManagementGroupRequest
+    from ._models_py3 import SubscriptionUnderManagementGroup
+    from ._models_py3 import TenantBackfillStatusResult
 except (SyntaxError, ImportError):
-    from .error_details import ErrorDetails
-    from .error_response import ErrorResponse, ErrorResponseException
-    from .operation_display_properties import OperationDisplayProperties
-    from .operation import Operation
-    from .check_name_availability_result import CheckNameAvailabilityResult
-    from .tenant_backfill_status_result import TenantBackfillStatusResult
-    from .management_group_info import ManagementGroupInfo
-    from .parent_group_info import ParentGroupInfo
-    from .management_group_details import ManagementGroupDetails
-    from .management_group_child_info import ManagementGroupChildInfo
-    from .management_group import ManagementGroup
-    from .operation_results import OperationResults
-    from .entity_parent_group_info import EntityParentGroupInfo
-    from .entity_info import EntityInfo
-    from .entity_hierarchy_item import EntityHierarchyItem
-    from .patch_management_group_request import PatchManagementGroupRequest
-    from .create_parent_group_info import CreateParentGroupInfo
-    from .create_management_group_details import CreateManagementGroupDetails
-    from .create_management_group_child_info import CreateManagementGroupChildInfo
-    from .create_management_group_request import CreateManagementGroupRequest
-    from .check_name_availability_request import CheckNameAvailabilityRequest
-from .management_group_info_paged import ManagementGroupInfoPaged
-from .operation_paged import OperationPaged
-from .entity_info_paged import EntityInfoPaged
-from .management_groups_api_enums import (
+    from ._models import AzureAsyncOperationResults
+    from ._models import CheckNameAvailabilityRequest
+    from ._models import CheckNameAvailabilityResult
+    from ._models import CreateManagementGroupChildInfo
+    from ._models import CreateManagementGroupDetails
+    from ._models import CreateManagementGroupRequest
+    from ._models import CreateOrUpdateSettingsRequest
+    from ._models import CreateParentGroupInfo
+    from ._models import DescendantInfo
+    from ._models import DescendantParentGroupInfo
+    from ._models import EntityHierarchyItem
+    from ._models import EntityInfo
+    from ._models import EntityParentGroupInfo
+    from ._models import ErrorDetails
+    from ._models import ErrorResponse, ErrorResponseException
+    from ._models import HierarchySettings
+    from ._models import HierarchySettingsInfo
+    from ._models import HierarchySettingsList
+    from ._models import ManagementGroup
+    from ._models import ManagementGroupChildInfo
+    from ._models import ManagementGroupDetails
+    from ._models import ManagementGroupInfo
+    from ._models import ManagementGroupPathElement
+    from ._models import Operation
+    from ._models import OperationDisplayProperties
+    from ._models import OperationResults
+    from ._models import ParentGroupInfo
+    from ._models import PatchManagementGroupRequest
+    from ._models import SubscriptionUnderManagementGroup
+    from ._models import TenantBackfillStatusResult
+from ._paged_models import DescendantInfoPaged
+from ._paged_models import EntityInfoPaged
+from ._paged_models import ManagementGroupInfoPaged
+from ._paged_models import OperationPaged
+from ._paged_models import SubscriptionUnderManagementGroupPaged
+from ._management_groups_api_enums import (
     Reason,
     Status,
     Type,
 )
 
 __all__ = [
+    'AzureAsyncOperationResults',
+    'CheckNameAvailabilityRequest',
+    'CheckNameAvailabilityResult',
+    'CreateManagementGroupChildInfo',
+    'CreateManagementGroupDetails',
+    'CreateManagementGroupRequest',
+    'CreateOrUpdateSettingsRequest',
+    'CreateParentGroupInfo',
+    'DescendantInfo',
+    'DescendantParentGroupInfo',
+    'EntityHierarchyItem',
+    'EntityInfo',
+    'EntityParentGroupInfo',
     'ErrorDetails',
     'ErrorResponse', 'ErrorResponseException',
-    'OperationDisplayProperties',
-    'Operation',
-    'CheckNameAvailabilityResult',
-    'TenantBackfillStatusResult',
-    'ManagementGroupInfo',
-    'ParentGroupInfo',
-    'ManagementGroupDetails',
-    'ManagementGroupChildInfo',
+    'HierarchySettings',
+    'HierarchySettingsInfo',
+    'HierarchySettingsList',
     'ManagementGroup',
+    'ManagementGroupChildInfo',
+    'ManagementGroupDetails',
+    'ManagementGroupInfo',
+    'ManagementGroupPathElement',
+    'Operation',
+    'OperationDisplayProperties',
     'OperationResults',
-    'EntityParentGroupInfo',
-    'EntityInfo',
-    'EntityHierarchyItem',
+    'ParentGroupInfo',
     'PatchManagementGroupRequest',
-    'CreateParentGroupInfo',
-    'CreateManagementGroupDetails',
-    'CreateManagementGroupChildInfo',
-    'CreateManagementGroupRequest',
-    'CheckNameAvailabilityRequest',
+    'SubscriptionUnderManagementGroup',
+    'TenantBackfillStatusResult',
     'ManagementGroupInfoPaged',
+    'DescendantInfoPaged',
+    'SubscriptionUnderManagementGroupPaged',
     'OperationPaged',
     'EntityInfoPaged',
     'Reason',

@@ -20,11 +20,13 @@ from .. import models
 class ManagementGroupsOperations(object):
     """ManagementGroupsOperations operations.
 
+    You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
+
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. The current version is 2018-01-01-preview. Constant value: "2018-03-01-preview".
+    :ivar api_version: Version of the API to be used with the client request. The current version is 2018-01-01-preview. Constant value: "2020-05-01".
     """
 
     models = models
@@ -34,23 +36,18 @@ class ManagementGroupsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-03-01-preview"
+        self.api_version = "2020-05-01"
 
         self.config = config
 
     def list(
-            self, cache_control="no-cache", skiptoken=None, custom_headers=None, raw=False, **operation_config):
+            self, cache_control="no-cache", custom_headers=None, raw=False, **operation_config):
         """List management groups for the authenticated user.
+        .
 
         :param cache_control: Indicates that the request shouldn't utilize any
          caches.
         :type cache_control: str
-        :param skiptoken: Page continuation token is only used if a previous
-         operation returned a partial result. If a previous response contains a
-         nextLink element, the value of the nextLink element will include a
-         token parameter that specifies a starting point to use for subsequent
-         calls.
-        :type skiptoken: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -62,8 +59,7 @@ class ManagementGroupsOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.managementgroups.models.ErrorResponseException>`
         """
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']
@@ -71,8 +67,8 @@ class ManagementGroupsOperations(object):
                 # Construct parameters
                 query_parameters = {}
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-                if skiptoken is not None:
-                    query_parameters['$skiptoken'] = self._serialize.query("skiptoken", skiptoken, 'str')
+                if self.config.skiptoken is not None:
+                    query_parameters['$skiptoken'] = self._serialize.query("self.config.skiptoken", self.config.skiptoken, 'str')
 
             else:
                 url = next_link
@@ -92,6 +88,11 @@ class ManagementGroupsOperations(object):
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
@@ -100,12 +101,10 @@ class ManagementGroupsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.ManagementGroupInfoPaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.ManagementGroupInfoPaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.ManagementGroupInfoPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list.metadata = {'url': '/providers/Microsoft.Management/managementGroups'}
@@ -113,12 +112,14 @@ class ManagementGroupsOperations(object):
     def get(
             self, group_id, expand=None, recurse=None, filter=None, cache_control="no-cache", custom_headers=None, raw=False, **operation_config):
         """Get the details of the management group.
+        .
 
         :param group_id: Management Group ID.
         :type group_id: str
         :param expand: The $expand=children query string parameter allows
          clients to request inclusion of children in the response payload.
-         Possible values include: 'children'
+         $expand=path includes the path from the root group to the current
+         group. Possible values include: 'children', 'path'
         :type expand: str
         :param recurse: The $recurse=true query string parameter allows
          clients to request inclusion of entire hierarchy in the response
@@ -179,7 +180,6 @@ class ManagementGroupsOperations(object):
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('ManagementGroup', response)
 
@@ -228,23 +228,35 @@ class ManagementGroupsOperations(object):
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
+        header_dict = {}
 
         if response.status_code == 200:
             deserialized = self._deserialize('ManagementGroup', response)
+            header_dict = {
+                'Location': 'str',
+                'Azure-AsyncOperation': 'str',
+            }
         if response.status_code == 202:
-            deserialized = self._deserialize('OperationResults', response)
+            deserialized = self._deserialize('AzureAsyncOperationResults', response)
+            header_dict = {
+                'Location': 'str',
+                'Azure-AsyncOperation': 'str',
+            }
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
+            client_raw_response.add_headers(header_dict)
             return client_raw_response
 
         return deserialized
 
     def create_or_update(
             self, group_id, create_management_group_request, cache_control="no-cache", custom_headers=None, raw=False, polling=True, **operation_config):
-        """Create or update a management group. If a management group is already
-        created and a subsequent create request is issued with different
-        properties, the management group properties will be updated.
+        """Create or update a management group.
+        If a management group is already created and a subsequent create
+        request is issued with different properties, the management group
+        properties will be updated.
+        .
 
         :param group_id: Management Group ID.
         :type group_id: str
@@ -277,10 +289,15 @@ class ManagementGroupsOperations(object):
         )
 
         def get_long_running_output(response):
+            header_dict = {
+                'Location': 'str',
+                'Azure-AsyncOperation': 'str',
+            }
             deserialized = self._deserialize('object', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
+                client_raw_response.add_headers(header_dict)
                 return client_raw_response
 
             return deserialized
@@ -297,6 +314,7 @@ class ManagementGroupsOperations(object):
     def update(
             self, group_id, patch_group_request, cache_control="no-cache", custom_headers=None, raw=False, **operation_config):
         """Update a management group.
+        .
 
         :param group_id: Management Group ID.
         :type group_id: str
@@ -352,7 +370,6 @@ class ManagementGroupsOperations(object):
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('ManagementGroup', response)
 
@@ -397,20 +414,27 @@ class ManagementGroupsOperations(object):
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
+        header_dict = {}
 
         if response.status_code == 202:
-            deserialized = self._deserialize('OperationResults', response)
+            deserialized = self._deserialize('AzureAsyncOperationResults', response)
+            header_dict = {
+                'Location': 'str',
+                'Azure-AsyncOperation': 'str',
+            }
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
+            client_raw_response.add_headers(header_dict)
             return client_raw_response
 
         return deserialized
 
     def delete(
             self, group_id, cache_control="no-cache", custom_headers=None, raw=False, polling=True, **operation_config):
-        """Delete management group. If a management group contains child
-        resources, the request will fail.
+        """Delete management group.
+        If a management group contains child resources, the request will fail.
+        .
 
         :param group_id: Management Group ID.
         :type group_id: str
@@ -422,12 +446,13 @@ class ManagementGroupsOperations(object):
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :return: An instance of LROPoller that returns OperationResults or
-         ClientRawResponse<OperationResults> if raw==True
+        :return: An instance of LROPoller that returns
+         AzureAsyncOperationResults or
+         ClientRawResponse<AzureAsyncOperationResults> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.managementgroups.models.OperationResults]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.managementgroups.models.AzureAsyncOperationResults]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.managementgroups.models.OperationResults]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.managementgroups.models.AzureAsyncOperationResults]]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.managementgroups.models.ErrorResponseException>`
         """
@@ -440,10 +465,15 @@ class ManagementGroupsOperations(object):
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('OperationResults', response)
+            header_dict = {
+                'Location': 'str',
+                'Azure-AsyncOperation': 'str',
+            }
+            deserialized = self._deserialize('AzureAsyncOperationResults', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
+                client_raw_response.add_headers(header_dict)
                 return client_raw_response
 
             return deserialized
@@ -456,3 +486,75 @@ class ManagementGroupsOperations(object):
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     delete.metadata = {'url': '/providers/Microsoft.Management/managementGroups/{groupId}'}
+
+    def get_descendants(
+            self, group_id, custom_headers=None, raw=False, **operation_config):
+        """List all entities that descend from a management group.
+        .
+
+        :param group_id: Management Group ID.
+        :type group_id: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of DescendantInfo
+        :rtype:
+         ~azure.mgmt.managementgroups.models.DescendantInfoPaged[~azure.mgmt.managementgroups.models.DescendantInfo]
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.managementgroups.models.ErrorResponseException>`
+        """
+        def prepare_request(next_link=None):
+            if not next_link:
+                # Construct URL
+                url = self.get_descendants.metadata['url']
+                path_format_arguments = {
+                    'groupId': self._serialize.url("group_id", group_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                if self.config.skiptoken is not None:
+                    query_parameters['$skiptoken'] = self._serialize.query("self.config.skiptoken", self.config.skiptoken, 'str')
+                if self.config.top is not None:
+                    query_parameters['$top'] = self._serialize.query("self.config.top", self.config.top, 'int')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Accept'] = 'application/json'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
+            response = self._client.send(request, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                raise models.ErrorResponseException(self._deserialize, response)
+
+            return response
+
+        # Deserialize response
+        header_dict = None
+        if raw:
+            header_dict = {}
+        deserialized = models.DescendantInfoPaged(internal_paging, self._deserialize.dependencies, header_dict)
+
+        return deserialized
+    get_descendants.metadata = {'url': '/providers/Microsoft.Management/managementGroups/{groupId}/descendants'}

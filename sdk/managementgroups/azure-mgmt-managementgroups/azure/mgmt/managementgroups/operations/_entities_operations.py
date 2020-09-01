@@ -18,11 +18,13 @@ from .. import models
 class EntitiesOperations(object):
     """EntitiesOperations operations.
 
+    You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
+
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. The current version is 2018-01-01-preview. Constant value: "2018-03-01-preview".
+    :ivar api_version: Version of the API to be used with the client request. The current version is 2018-01-01-preview. Constant value: "2020-05-01".
     """
 
     models = models
@@ -32,27 +34,16 @@ class EntitiesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-03-01-preview"
+        self.api_version = "2020-05-01"
 
         self.config = config
 
     def list(
-            self, skiptoken=None, skip=None, top=None, select=None, search=None, filter=None, view=None, group_name=None, cache_control="no-cache", custom_headers=None, raw=False, **operation_config):
+            self, select=None, search=None, filter=None, view=None, group_name=None, cache_control="no-cache", custom_headers=None, raw=False, **operation_config):
         """List all entities (Management Groups, Subscriptions, etc.) for the
         authenticated user.
+        .
 
-        :param skiptoken: Page continuation token is only used if a previous
-         operation returned a partial result. If a previous response contains a
-         nextLink element, the value of the nextLink element will include a
-         token parameter that specifies a starting point to use for subsequent
-         calls.
-        :type skiptoken: str
-        :param skip: Number of entities to skip over when retrieving results.
-         Passing this in will override $skipToken.
-        :type skip: int
-        :param top: Number of elements to return when retrieving results.
-         Passing this in will override $skipToken.
-        :type top: int
         :param select: This parameter specifies the fields to include in the
          response. Can include any combination of
          Name,DisplayName,Type,ParentDisplayNameChain,ParentChain, e.g.
@@ -62,21 +53,28 @@ class EntitiesOperations(object):
         :type select: str
         :param search: The $search parameter is used in conjunction with the
          $filter parameter to return three different outputs depending on the
-         parameter passed in. With $search=AllowedParents the API will return
-         the entity info of all groups that the requested entity will be able
-         to reparent to as determined by the user's permissions. With
-         $search=AllowedChildren the API will return the entity info of all
-         entities that can be added as children of the requested entity. With
-         $search=ParentAndFirstLevelChildren the API will return the parent and
-         first level of children that the user has either direct access to or
-         indirect access via one of their descendants. Possible values include:
+         parameter passed in.
+         With $search=AllowedParents the API will return the entity info of all
+         groups that the requested entity will be able to reparent to as
+         determined by the user's permissions.
+         With $search=AllowedChildren the API will return the entity info of
+         all entities that can be added as children of the requested entity.
+         With $search=ParentAndFirstLevelChildren the API will return the
+         parent and  first level of children that the user has either direct
+         access to or indirect access via one of their descendants.
+         With $search=ParentOnly the API will return only the group if the user
+         has access to at least one of the descendants of the group.
+         With $search=ChildrenOnly the API will return only the first level of
+         children of the group entity info specified in $filter.  The user must
+         have direct access to the children entities or one of it's descendants
+         for it to show up in the results. Possible values include:
          'AllowedParents', 'AllowedChildren', 'ParentAndFirstLevelChildren',
          'ParentOnly', 'ChildrenOnly'
         :type search: str
-        :param filter: The filter parameter allows you to filter on the name
-         or display name fields. You can check for equality on the name field
-         (e.g. name eq '{entityName}')  and you can check for substrings on
-         either the name or display name fields(e.g. contains(name,
+        :param filter: The filter parameter allows you to filter on the the
+         name or display name fields. You can check for equality on the name
+         field (e.g. name eq '{entityName}')  and you can check for substrings
+         on either the name or display name fields(e.g. contains(name,
          '{substringToSearch}'), contains(displayName, '{substringToSearch')).
          Note that the '{entityName}' and '{substringToSearch}' fields are
          checked case insensitively.
@@ -102,8 +100,7 @@ class EntitiesOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.managementgroups.models.ErrorResponseException>`
         """
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']
@@ -111,12 +108,12 @@ class EntitiesOperations(object):
                 # Construct parameters
                 query_parameters = {}
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-                if skiptoken is not None:
-                    query_parameters['$skiptoken'] = self._serialize.query("skiptoken", skiptoken, 'str')
-                if skip is not None:
-                    query_parameters['$skip'] = self._serialize.query("skip", skip, 'int')
-                if top is not None:
-                    query_parameters['$top'] = self._serialize.query("top", top, 'int')
+                if self.config.skiptoken is not None:
+                    query_parameters['$skiptoken'] = self._serialize.query("self.config.skiptoken", self.config.skiptoken, 'str')
+                if self.config.skip is not None:
+                    query_parameters['$skip'] = self._serialize.query("self.config.skip", self.config.skip, 'int')
+                if self.config.top is not None:
+                    query_parameters['$top'] = self._serialize.query("self.config.top", self.config.top, 'int')
                 if select is not None:
                     query_parameters['$select'] = self._serialize.query("select", select, 'str')
                 if search is not None:
@@ -146,6 +143,11 @@ class EntitiesOperations(object):
 
             # Construct and send request
             request = self._client.post(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
@@ -154,12 +156,10 @@ class EntitiesOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.EntityInfoPaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.EntityInfoPaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.EntityInfoPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list.metadata = {'url': '/providers/Microsoft.Management/getEntities'}

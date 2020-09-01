@@ -9,14 +9,18 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .management_groups_operations import ManagementGroupsOperations
-from .management_group_subscriptions_operations import ManagementGroupSubscriptionsOperations
-from .operations import Operations
-from .entities_operations import EntitiesOperations
+from ._management_groups_operations import ManagementGroupsOperations
+from ._management_group_subscriptions_operations import ManagementGroupSubscriptionsOperations
+from ._hierarchy_settings_operations import HierarchySettingsOperations
+from ._operations import Operations
+from ._entities_operations import EntitiesOperations
+from ._management_groups_api_operations import ManagementGroupsAPIOperationsMixin
 
 __all__ = [
     'ManagementGroupsOperations',
     'ManagementGroupSubscriptionsOperations',
+    'HierarchySettingsOperations',
     'Operations',
     'EntitiesOperations',
+    'ManagementGroupsAPIOperationsMixin',
 ]
