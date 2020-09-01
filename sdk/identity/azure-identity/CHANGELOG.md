@@ -14,6 +14,10 @@
   future version.
   ([#10816](https://github.com/Azure/azure-sdk-for-python/issues/10816))
 
+### Breaking changes
+- Removed `authentication_record` keyword argument from the async
+  `SharedTokenCacheCredential`, i.e. `azure.identity.aio.SharedTokenCacheCredential`
+
 ## 1.4.0 (2020-08-10)
 ### Added
 - `DefaultAzureCredential` uses the value of environment variable
