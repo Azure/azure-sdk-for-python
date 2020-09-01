@@ -12,10 +12,10 @@ import time
 import pytest
 
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
+from azure_devtools.scenario_tests import ReplayableTest
+from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_function
 
 from search_service_preparer import SearchServicePreparer
-
-from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_function
 
 CWD = dirname(realpath(__file__))
 
@@ -43,6 +43,8 @@ def await_prepared_test(test_fn):
 
 
 class SearchClientTestAsync(AzureMgmtTestCase):
+    FILTER_HEADERS = ReplayableTest.FILTER_HEADERS + ['api-key']
+
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     async def test_upload_documents_new(self, api_key, endpoint, index_name, **kwargs):

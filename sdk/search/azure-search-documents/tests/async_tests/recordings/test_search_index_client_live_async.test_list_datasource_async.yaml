@@ -12,8 +12,6 @@ interactions:
       - application/json
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-      api-key:
-      - DCE84900C1A6AA2A6242A5D4C8EEF034
     method: POST
     uri: https://search238d1987.search.windows.net/datasources?api-version=2020-06-30
   response:
@@ -50,8 +48,6 @@ interactions:
       - application/json
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-      api-key:
-      - DCE84900C1A6AA2A6242A5D4C8EEF034
     method: POST
     uri: https://search238d1987.search.windows.net/datasources?api-version=2020-06-30
   response:
@@ -82,8 +78,6 @@ interactions:
       - application/json;odata.metadata=minimal
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-      api-key:
-      - DCE84900C1A6AA2A6242A5D4C8EEF034
     method: GET
     uri: https://search238d1987.search.windows.net/datasources?api-version=2020-06-30
   response:

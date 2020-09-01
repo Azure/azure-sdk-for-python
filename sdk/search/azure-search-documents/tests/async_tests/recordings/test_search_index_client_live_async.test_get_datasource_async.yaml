@@ -12,8 +12,6 @@ interactions:
       - application/json
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-      api-key:
-      - A601EE52AD702E8D82702BF3051A5FC8
     method: POST
     uri: https://search8bb190b.search.windows.net/datasources?api-version=2020-06-30
   response:
@@ -44,8 +42,6 @@ interactions:
       - application/json;odata.metadata=minimal
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-      api-key:
-      - A601EE52AD702E8D82702BF3051A5FC8
     method: GET
     uri: https://search8bb190b.search.windows.net/datasources('sample-datasource')?api-version=2020-06-30
   response:
