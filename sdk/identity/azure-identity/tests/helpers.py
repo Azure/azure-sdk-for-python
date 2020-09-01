@@ -14,35 +14,33 @@ except ImportError:  # python < 3.3
     import mock  # type: ignore
 
 
-# build_* lifted from msal tests
 def build_id_token(
     iss="issuer",
     sub="subject",
-    aud="my_client_id",
+    aud="client-id",
     username="username",
-    tenant_id="tenant id",
-    object_id="object id",
-    exp=None,
-    iat=None,
+    tenant_id="tenant-id",
+    object_id="object-id",
     **claims
-):  # AAD issues "preferred_username", ADFS issues "upn"
-    return "header.%s.signature" % base64.b64encode(
-        json.dumps(
-            dict(
-                {
-                    "iss": iss,
-                    "sub": sub,
-                    "aud": aud,
-                    "exp": exp or (time.time() + 100),
-                    "iat": iat or time.time(),
-                    "tid": tenant_id,
-                    "oid": object_id,
-                    "preferred_username": username,
-                },
-                **claims
-            )
-        ).encode()
-    ).decode("utf-8")
+):
+    token_claims = id_token_claims(
+        iss=iss, sub=sub, aud=aud, tid=tenant_id, oid=object_id, preferred_username=username, **claims
+    )
+    jwt_payload = base64.b64encode(json.dumps(token_claims).encode()).decode("utf-8")
+    return "header.{}.signature".format(jwt_payload)
+
+
+def build_adfs_id_token(iss="issuer", sub="subject", aud="client-id", username="username", **claims):
+    token_claims = id_token_claims(iss=iss, sub=sub, aud=aud, upn=username, **claims)
+    jwt_payload = base64.b64encode(json.dumps(token_claims).encode()).decode("utf-8")
+    return "header.{}.signature".format(jwt_payload)
+
+
+def id_token_claims(iss, sub, aud, exp=None, iat=None, **claims):
+    return dict(
+        {"iss": iss, "sub": sub, "aud": aud, "exp": exp or int(time.time()) + 3600, "iat": iat or int(time.time())},
+        **claims
+    )
 
 
 def build_aad_response(  # simulate a response from AAD
