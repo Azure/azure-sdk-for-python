@@ -68,7 +68,7 @@ class SchemaRegistryClient(object):
     async def __aexit__(self, *args):
         await self._generated_client.__aexit__(*args)
 
-    async def close(self):
+    async def close(self) -> None:
         """ This method is to close the sockets opened by the client.
         It need not be used when using with a context manager.
         """
@@ -115,6 +115,7 @@ class SchemaRegistryClient(object):
             schema_content=schema_content,
             # serialization_type=serialization_type,  # TODO: current swagger doesn't support the parameter
             cls=_parse_response_schema_id,
+            **kwargs
         )
 
     async def get_schema(
@@ -141,7 +142,8 @@ class SchemaRegistryClient(object):
         """
         return await self._generated_client.schema.get_by_id(
             schema_id=schema_id,
-            cls=_parse_response_schema
+            cls=_parse_response_schema,
+            **kwargs
         )
 
     async def get_schema_id(
@@ -183,5 +185,6 @@ class SchemaRegistryClient(object):
             schema_name=schema_name,
             schema_content=schema_content,
             # serialization_type=serialization_type,  # TODO: current swagger doesn't support the parameter
-            cls=_parse_response_schema_id
+            cls=_parse_response_schema_id,
+            **kwargs
         )

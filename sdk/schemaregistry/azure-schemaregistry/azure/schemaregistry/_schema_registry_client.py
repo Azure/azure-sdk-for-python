@@ -112,7 +112,8 @@ class SchemaRegistryClient(object):
             schema_name=schema_name,
             schema_content=schema_content,
             #serialization_type=serialization_type,  # TODO: current swagger doesn't support the parameter
-            cls=_parse_response_schema_id
+            cls=_parse_response_schema_id,
+            **kwargs
         )
 
     def get_schema(self, schema_id, **kwargs):
@@ -136,7 +137,8 @@ class SchemaRegistryClient(object):
         """
         return self._generated_client.schema.get_by_id(
             schema_id,
-            cls=_parse_response_schema
+            cls=_parse_response_schema,
+            **kwargs
         )
 
     def get_schema_id(self, schema_group, schema_name, serialization_type, schema_content, **kwargs):
@@ -173,5 +175,6 @@ class SchemaRegistryClient(object):
             schema_name=schema_name,
             schema_content=schema_content,
             #serialization_type=serialization_type,  # TODO: current swagger doesn't support the parameter
-            cls=_parse_response_schema_id
+            cls=_parse_response_schema_id,
+            **kwargs
         )

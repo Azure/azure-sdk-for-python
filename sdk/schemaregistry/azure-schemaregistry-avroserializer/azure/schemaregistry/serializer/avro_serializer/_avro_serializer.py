@@ -83,7 +83,7 @@ class AvroObjectSerializer(ABC):
         self,
         data,  # type: Union[bytes, BinaryIO]
         schema,  # type:
-        return_type=None,  # type: Optional[Type[ObjectType]]
+        return_type=None,  # type: Optional[Type[ObjectType]]  # pylint: disable=unused-argument
     ):
         # type: (...) -> ObjectType
         """Read the binary representation into a specific type.

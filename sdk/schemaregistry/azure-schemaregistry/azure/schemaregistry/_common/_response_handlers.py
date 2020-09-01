@@ -31,7 +31,7 @@ from .._generated.models import SchemaId as InternalSchemaId
 from ._schema import SchemaProperties, Schema
 
 
-def _parse_response_schema_id(pipeline_response, deserialized, response_headers):
+def _parse_response_schema_id(pipeline_response, deserialized, response_headers):  # pylint: disable=unused-argument
     # type: (PipelineResponse, InternalSchemaId, Dict[str, Any]) -> SchemaProperties
     """
 
@@ -43,7 +43,7 @@ def _parse_response_schema_id(pipeline_response, deserialized, response_headers)
     return SchemaProperties(schema_id=deserialized.id, **response_headers)
 
 
-def _parse_response_schema(pipeline_response, deserialized, response_headers):
+def _parse_response_schema(pipeline_response, deserialized, response_headers):  # pylint: disable=unused-argument
     # type: (PipelineResponse, str, Dict[str, Any]) -> Schema
     """
 

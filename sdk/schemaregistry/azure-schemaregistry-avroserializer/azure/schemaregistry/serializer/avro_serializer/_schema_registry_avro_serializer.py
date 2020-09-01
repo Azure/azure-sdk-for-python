@@ -46,7 +46,7 @@ class SchemaRegistryAvroSerializer(object):
     def __init__(self, endpoint, credential, schema_group, **kwargs):
         self._schema_group = schema_group
         self._avro_serializer = AvroObjectSerializer()
-        self._schema_registry_client = SchemaRegistryClient(credential=credential, endpoint=endpoint)
+        self._schema_registry_client = SchemaRegistryClient(credential=credential, endpoint=endpoint, **kwargs)
         self._id_to_schema = {}
         self._schema_to_id = {}
         self._user_input_schema_cache = {}
@@ -67,8 +67,8 @@ class SchemaRegistryAvroSerializer(object):
         """
         self._schema_registry_client.close()
 
-    def _get_schema_id(self, schema_name, schema):
-        # type: (str, avro.schema.Schema) -> str
+    def _get_schema_id(self, schema_name, schema, **kwargs):
+        # type: (str, avro.schema.Schema, Any) -> str
         """
 
         :param schema_name:
@@ -83,14 +83,15 @@ class SchemaRegistryAvroSerializer(object):
                 self._schema_group,
                 schema_name,
                 SerializationType.AVRO,
-                schema_str
+                schema_str,
+                **kwargs
             ).schema_id
             self._schema_to_id[schema_str] = schema_id
             self._id_to_schema[schema_id] = schema_str
             return schema_id
 
-    def _get_schema(self, schema_id):
-        # type: (str) -> str
+    def _get_schema(self, schema_id, **kwargs):
+        # type: (str, Any) -> str
         """
 
         :param str schema_id:
@@ -99,7 +100,7 @@ class SchemaRegistryAvroSerializer(object):
         try:
             return self._id_to_schema[schema_id]
         except KeyError:
-            schema_str = self._schema_registry_client.get_schema(schema_id).content
+            schema_str = self._schema_registry_client.get_schema(schema_id, **kwargs).schema_content
             self._id_to_schema[schema_id] = schema_str
             self._schema_to_id[schema_str] = schema_id
             return schema_str
@@ -123,7 +124,7 @@ class SchemaRegistryAvroSerializer(object):
             cached_schema = parsed_schema
 
         record_format_identifier = b'\0\0\0\0'
-        schema_id = self._get_schema_id(cached_schema.fullname, cached_schema)
+        schema_id = self._get_schema_id(cached_schema.fullname, cached_schema, **kwargs)
         data_bytes = self._avro_serializer.serialize(data, cached_schema)
 
         stream = BytesIO()
@@ -145,9 +146,9 @@ class SchemaRegistryAvroSerializer(object):
         :param bytes data: The bytes data needs to be decoded.
         :rtype: Dict[str, Any]
         """
-        record_format_identifier = data[0:4]
+        record_format_identifier = data[0:4]  # pylint: disable=unused-variable
         schema_id = data[4:36].decode('utf-8')
-        schema_content = self._get_schema(schema_id)
+        schema_content = self._get_schema(schema_id, **kwargs)
 
         dict_data = self._avro_serializer.deserialize(data[36:], schema_content)
         return dict_data
