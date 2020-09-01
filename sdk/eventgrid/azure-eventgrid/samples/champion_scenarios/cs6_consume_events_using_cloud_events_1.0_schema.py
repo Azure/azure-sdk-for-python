@@ -1,3 +1,10 @@
+"""
+FILE: cs6_consume_events_using_cloud_events_1.0_schema.py
+DESCRIPTION:
+    These samples demonstrate creating a list of CloudEvents and sending then as a list.
+USAGE:
+    python cs6_consume_events_using_cloud_events_1.0_schema.py
+"""
 import os
 from azure.eventgrid import EventGridConsumer
 

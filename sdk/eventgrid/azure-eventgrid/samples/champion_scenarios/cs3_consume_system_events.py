@@ -1,3 +1,10 @@
+"""
+FILE: cs3_consume_system_events.py
+DESCRIPTION:
+    These samples demonstrate deserializing a message from system event.
+USAGE:
+    python cs3_consume_system_events.py
+"""
 import os
 from azure.eventgrid import EventGridConsumer
 

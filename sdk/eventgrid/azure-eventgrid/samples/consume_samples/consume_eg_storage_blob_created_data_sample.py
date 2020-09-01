@@ -1,3 +1,11 @@
+"""
+FILE: consume_eg_storage_blob_created_data_sample.py
+DESCRIPTION:
+    These samples demonstrate creating a list of CloudEvents and sending then as a list.
+USAGE:
+    python consume_eg_storage_blob_created_data_sample.py
+    Set the environment variables with your own values before running the sample:
+"""
 import json
 from azure.eventgrid import EventGridConsumer, EventGridEvent, StorageBlobCreatedEventData
 

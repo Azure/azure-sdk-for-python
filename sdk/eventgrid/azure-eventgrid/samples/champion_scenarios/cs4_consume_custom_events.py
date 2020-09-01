@@ -1,3 +1,10 @@
+"""
+FILE: cs4_consume_custom_events.py
+DESCRIPTION:
+    These samples demonstrate deserializing a custom event
+USAGE:
+    python cs4_consume_custom_events.py
+"""
 import os
 from azure.eventgrid import EventGridConsumer
 

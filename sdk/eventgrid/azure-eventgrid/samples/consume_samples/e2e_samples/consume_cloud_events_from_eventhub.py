@@ -1,9 +1,14 @@
-import sys
+"""
+FILE: consume_cloud_events_from_eventhub.py
+DESCRIPTION:
+    These samples demonstrate creating a list of CloudEvents and sending then as a list.
+USAGE:
+    python consume_cloud_events_from_eventhub.py
+    Set the environment variables with your own values before running the sample:
+    1) EVENT_HUB_CONN_STR: The connection string to the Event hub account
+    3) EVENTHUB_NAME: The name of the eventhub account
+"""
 import os
-
-PACKAGE_PARENT = '..'
-SCRIPT_DIR = os.path.dirname(os.path.realpath(os.path.join(os.getcwd(), os.path.expanduser(__file__))))
-sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
 
 from azure.eventgrid import EventGridConsumer, CloudEvent, EventGridEvent
 from azure.eventhub import EventHubConsumerClient

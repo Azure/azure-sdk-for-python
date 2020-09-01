@@ -1,3 +1,13 @@
+"""
+FILE: consume_cloud_events_from_eventhub.py
+DESCRIPTION:
+    These samples demonstrate creating a list of CloudEvents and sending then as a list.
+USAGE:
+    python consume_cloud_events_from_eventhub.py
+    Set the environment variables with your own values before running the sample:
+    1) STORAGE_QUEUE_CONN_STR: The connection string to the storage account
+    3) STORAGE_QUEUE_NAME: The name of the storage queue.
+"""
 import os
 from azure.storage.queue import QueueServiceClient
 from azure.eventgrid import EventGridConsumer, CloudEvent
