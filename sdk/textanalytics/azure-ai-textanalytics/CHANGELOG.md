@@ -12,7 +12,7 @@ pass in `v3.0` to the kwarg `api_version` when creating your TextAnalyticsClient
   - `offset` is the offset of the text from the start of the document
 - We now have added support for opinion mining. To use this feature, you need to make sure you are using the service's
 v3.1-preview.1 API. To get this support pass `show_opinion_mining` as True when calling the `analyze_sentiment` endpoint
-- Add property `bing_id` to the `LinkedEntity` class. This property is only available for v3.1-preview.2 and up, and it is to be
+- Add property `bing_entity_search_api_id` to the `LinkedEntity` class. This property is only available for v3.1-preview.2 and up, and it is to be
 used in conjunction with the Bing Entity Search API to fetch additional relevant information about the returned entity.
 
 ## 5.0.0 (2020-07-27)

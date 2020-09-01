@@ -599,4 +599,4 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
         result = client.recognize_linked_entities(["Microsoft was founded by Bill Gates and Paul Allen"])
         for doc in result:
             for entity in doc.entities:
-                assert entity.bing_id  # this checks if it's None and if it's empty
+                assert entity.bing_entity_search_api_id  # this checks if it's None and if it's empty
