@@ -194,9 +194,3 @@ Value: true
 •   Regression test 
 Variable name: `Run.Regression`
 Value: true 
-
-
-
-## Release Checks
-
-<will be updated soon>
