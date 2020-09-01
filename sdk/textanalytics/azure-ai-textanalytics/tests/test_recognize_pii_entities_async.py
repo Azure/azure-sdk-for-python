@@ -3,7 +3,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-
+import os
 import pytest
 import platform
 import functools
@@ -574,6 +574,24 @@ class TestRecognizePIIEntities(AsyncTextAnalyticsTest):
 
         assert "'recognize_pii_entities' endpoint is only available for API version v3.1-preview.1 and up" in str(excinfo.value)
 
+    # currently only have this as playback since the dev endpoint is unreliable
+    @pytest.mark.playback_test_only
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_2,
+        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
+        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net/"
+    })
+    async def test_redacted_text(self, client):
+        result = await client.recognize_pii_entities(["My SSN is 859-98-0987."])
+        self.assertEqual("My SSN is ***********.", result[0].redacted_text)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    async def test_redacted_text_v3_1_preview_1(self, client):
+        result = await client.recognize_pii_entities(["My SSN is 859-98-0987."])
+        self.assertIsNone(result[0].redacted_text)
+        
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
     async def test_phi_domain_filter(self, client):
