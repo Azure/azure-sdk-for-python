@@ -27,7 +27,6 @@ class ParsedId():
 
     :param str original_id: The originally received complete identifier
     :param str vault_url: The vault URL
-    :param str collection: The collection name of the id.
     :param str name: The name extracted from the id
     :param str version: The version extracted from the id
     """
@@ -36,13 +35,11 @@ class ParsedId():
         self,
         original_id,  # type: str
         vault_url,  # type: str
-        collection,  # type: str
         name,  # type: str
         version=None  # type: Optional[str]
     ):
         self.original_id = original_id
         self.vault_url = vault_url
-        self.collection = collection
         self.name = name
         self.version = version
 
@@ -64,7 +61,6 @@ def parse_key_vault_identifier(original_id):
     return ParsedId(
         original_id=original_id,
         vault_url="{}://{}".format(parsed_uri.scheme, parsed_uri.hostname),
-        collection=path[0],
         name=path[1],
         version=path[2] if len(path) == 3 else None,
     )

@@ -25,15 +25,7 @@ def parse_certificate_id(original_id):
     """
     parsed_id = parse_key_vault_identifier(original_id)
 
-    valid_collections = ["certificates", "deletedcertificates"]
-
-    if parsed_id.collection not in valid_collections:
-        raise ValueError(
-            "Collection '{}' is not a valid certificate collection. ".format(parsed_id.collection),
-            "Valid collections are: {}".format(", ".join(valid_collections))
-        )
     return ParsedId(
-        collection=parsed_id.collection,
         name=parsed_id.name,
         original_id=parsed_id.original_id,
         vault_url=parsed_id.vault_url,

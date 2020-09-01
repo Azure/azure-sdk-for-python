@@ -258,9 +258,10 @@ class CertificateClientTests(KeyVaultTestCase):
             error_count = 0
             try:
                 cert_bundle = self._import_common_certificate(client=client, cert_name=cert_name)
-                parsed_id = parse_key_vault_identifier(original_id=cert_bundle.id)
-                cid = parsed_id.vault_url + "/" + parsed_id.collection + "/" + parsed_id.name
-                expected[cid.strip("/")] = cert_bundle
+                # going to remove the id from the last '/' onwards. This is because list
+                # properties of certificates doesn't return the version in the id
+                cid = "/".join(cert_bundle.id.split("/")[:-1])
+                expected[cid] = cert_bundle
             except Exception as ex:
                 if hasattr(ex, "message") and "Throttled" in ex.message:
                     error_count += 1
@@ -287,9 +288,7 @@ class CertificateClientTests(KeyVaultTestCase):
             error_count = 0
             try:
                 cert_bundle = self._import_common_certificate(client=client, cert_name=cert_name)
-                parsed_id = parse_key_vault_identifier(original_id=cert_bundle.id)
-                cid = parsed_id.vault_url + "/" + parsed_id.collection + "/" + parsed_id.name + "/" + parsed_id.version
-                expected[cid.strip("/")] = cert_bundle
+                expected[cert_bundle.id] = cert_bundle
             except Exception as ex:
                 if hasattr(ex, "message") and "Throttled" in ex.message:
                     error_count += 1
