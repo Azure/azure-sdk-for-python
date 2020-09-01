@@ -42,7 +42,7 @@ async def register_schema(client, schema_group, schema_name, serialization_type,
     print("Registering schema...")
     schema_properties = await client.register_schema(schema_group, schema_name, serialization_type, schema_string)
     print("Schema registered, returned schema id is {}".format(schema_properties.schema_id))
-    print("Schema meta properties are {}".format(schema_properties))
+    print("Schema properties are {}".format(schema_properties))
     return schema_properties.schema_id
 
 
@@ -50,7 +50,7 @@ async def get_schema_by_id(client, schema_id):
     print("Getting schema by id...")
     schema = await client.get_schema(schema_id)
     print("The schema string of schema id: {} string is {}".format(schema_id, schema.schema_content))
-    print("Schema meta properties are {}".format(schema_id))
+    print("Schema properties are {}".format(schema_id))
     return schema.schema_content
 
 
@@ -58,7 +58,7 @@ async def get_schema_id(client, schema_group, schema_name, serialization_type, s
     print("Getting schema id...")
     schema_properties = await client.get_schema_id(schema_group, schema_name, serialization_type, schema_string)
     print("The schema id is: {}".format(schema_properties.schema_id))
-    print("Schema meta properties are {}".format(schema_properties))
+    print("Schema properties are {}".format(schema_properties))
     return schema_properties.schema_id
 
 

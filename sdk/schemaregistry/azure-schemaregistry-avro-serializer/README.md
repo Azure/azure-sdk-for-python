@@ -1,16 +1,16 @@
-# Azure Schema Registry Avro Serializer library for Python
+# Azure Schema Registry Avro Serializer client library for Python
 
 Azure Schema Registry Avro Serializer provides the ability to serialize and deserialize data according
-to the given avro schema. It would automatically register, get and cache the schema.
+to the given avro schema. It is integrated with Azure Schema Registry SDK and will automatically register and get schema.
 
 ## Getting started
 
 ### Install the package
 
-Install the Azure Service Bus client library for Python with [pip][pip]:
+Install the Azure Schema Registry Avro Serializer client library for Python with [pip][pip]:
 
 ```Bash
-pip install azure-schemaregistry-avro-serializer
+pip install azure-schemaregistry-avroserializer
 ```
 
 ### Prerequisites: 

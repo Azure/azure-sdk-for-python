@@ -12,7 +12,7 @@ from io import open
 from setuptools import find_packages, setup
 
 # Change the PACKAGE_NAME only to change folder and different name
-PACKAGE_NAME = "azure-schemaregistry-avro-serializer"
+PACKAGE_NAME = "azure-schemaregistry-avroserializer"
 PACKAGE_PPRINT_NAME = "Schema Registry Avro Serializer"
 
 package_folder_path = "azure/schemaregistry/serializer/avro_serializer"

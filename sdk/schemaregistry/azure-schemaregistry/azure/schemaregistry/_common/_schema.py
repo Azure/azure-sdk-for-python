@@ -95,8 +95,8 @@ class SchemaProperties(DictMixin):
     .. admonition:: Example:
 
         .. literalinclude:: ../samples/sync_samples/sample_code_schemaregistry.py
-            :start-after: [START print_schema_id]
-            :end-before: [END print_schema_id]
+            :start-after: [START print_schema_properties]
+            :end-before: [END print_schema_properties]
             :language: python
             :dedent: 4
             :caption: SchemaId object.

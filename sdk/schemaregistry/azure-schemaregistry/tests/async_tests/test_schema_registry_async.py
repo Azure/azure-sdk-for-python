@@ -46,24 +46,24 @@ class SchemaRegistryAsyncTests(AzureMgmtTestCase):
             assert schema_properties.location is not None
             assert schema_properties.location_by_id is not None
             assert schema_properties.version is 1
-            assert schema_properties.type == "Avro"
+            assert schema_properties.serialization_type == "Avro"
 
             returned_schema = await client.get_schema(schema_id=schema_properties.schema_id)
 
-            assert returned_schema.schema_id == schema_properties.schema_id
-            assert returned_schema.location is not None
-            assert returned_schema.location_by_id is not None
-            assert returned_schema.version == 1
-            assert returned_schema.type == "Avro"
-            assert returned_schema.content == schema_str
+            assert returned_schema.schema_properties.schema_id == schema_properties.schema_id
+            assert returned_schema.schema_properties.location is not None
+            assert returned_schema.schema_properties.location_by_id is not None
+            assert returned_schema.schema_properties.version == 1
+            assert returned_schema.schema_properties.serialization_type == "Avro"
+            assert returned_schema.schema_content == schema_str
 
-            returned_schema_id = await client.get_schema_id(schemaregistry_group, schema_name, serialization_type, schema_str)
+            returned_schema_properties = await client.get_schema_id(schemaregistry_group, schema_name, serialization_type, schema_str)
 
-            assert returned_schema_id.schema_id == schema_properties.schema_id
-            assert returned_schema_id.location is not None
-            assert returned_schema_id.location_by_id is not None
-            assert returned_schema_id.version == 1
-            assert returned_schema_id.type == "Avro"
+            assert returned_schema_properties.schema_id == schema_properties.schema_id
+            assert returned_schema_properties.location is not None
+            assert returned_schema_properties.location_by_id is not None
+            assert returned_schema_properties.version == 1
+            assert returned_schema_properties.serialization_type == "Avro"
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -81,7 +81,7 @@ class SchemaRegistryAsyncTests(AzureMgmtTestCase):
             assert schema_properties.location is not None
             assert schema_properties.location_by_id is not None
             assert schema_properties.version == 1
-            assert schema_properties.type == "Avro"
+            assert schema_properties.serialization_type == "Avro"
 
             schema_str_new = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_food","type":["string","null"]}]}"""
             new_schema_properties = await client.register_schema(schemaregistry_group, schema_name, serialization_type, schema_str_new)
@@ -90,17 +90,17 @@ class SchemaRegistryAsyncTests(AzureMgmtTestCase):
             assert new_schema_properties.location is not None
             assert new_schema_properties.location_by_id is not None
             assert new_schema_properties.version == 2
-            assert new_schema_properties.type == "Avro"
+            assert new_schema_properties.serialization_type == "Avro"
 
             new_schema = await client.get_schema(schema_id=new_schema_properties.schema_id)
 
-            assert new_schema.schema_id != schema_properties.schema_id
-            assert new_schema.schema_id == new_schema_properties.schema_id
-            assert new_schema.location is not None
-            assert new_schema.location_by_id is not None
-            assert new_schema.content == schema_str_new
-            assert new_schema.version == 2
-            assert new_schema.type == "Avro"
+            assert new_schema.schema_properties.schema_id != schema_properties.schema_id
+            assert new_schema.schema_properties.schema_id == new_schema_properties.schema_id
+            assert new_schema.schema_properties.location is not None
+            assert new_schema.schema_properties.location_by_id is not None
+            assert new_schema.schema_content == schema_str_new
+            assert new_schema.schema_properties.version == 2
+            assert new_schema.schema_properties.serialization_type == "Avro"
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only

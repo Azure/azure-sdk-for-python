@@ -1,0 +1,67 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azureschemaregistry/1.0.0b1 Python/3.7.7 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://sr-playground.servicebus.windows.net/$schemagroups/getSchemaById/a?api-version=2017-04
+  response:
+    body:
+      string: <Error><Code>400</Code><Detail>SubCode=40000, UnknownType:The request
+        is invalid. [MGResponseHttpError=BadRequest]. TrackingId:d63523f2-3c03-4d54-afab-fc9386bd81fb_G0,
+        SystemTracker:sr-playground.servicebus.windows.net:$schemagroups/getSchemaById/a,
+        Timestamp:2020-09-01T21:35:01</Detail></Error>
+    headers:
+      content-type:
+      - application/xml; charset=utf-8
+      date:
+      - Tue, 01 Sep 2020 21:35:01 GMT
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000
+      transfer-encoding:
+      - chunked
+    status:
+      code: 400
+      message: Bad Request
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azureschemaregistry/1.0.0b1 Python/3.7.7 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://sr-playground.servicebus.windows.net/$schemagroups/getSchemaById/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa?api-version=2017-04
+  response:
+    body:
+      string: <Error><Code>404</Code><Detail>Schema id aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+        does not exist. TrackingId:a7b590bf-6862-43cd-b9ce-c6ed5d6d5017_G0, SystemTracker:sr-playground.servicebus.windows.net:$schemagroups/getSchemaById/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa,
+        Timestamp:2020-09-01T21:35:01</Detail></Error>
+    headers:
+      content-type:
+      - application/xml; charset=utf-8
+      date:
+      - Tue, 01 Sep 2020 21:35:01 GMT
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000
+      transfer-encoding:
+      - chunked
+    status:
+      code: 404
+      message: Not Found
+version: 1

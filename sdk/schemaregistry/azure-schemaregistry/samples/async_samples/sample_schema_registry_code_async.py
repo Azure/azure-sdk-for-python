@@ -24,6 +24,7 @@
 #
 # --------------------------------------------------------------------------
 import os
+import asyncio
 
 from azure.schemaregistry.aio import SchemaRegistryClient
 from azure.schemaregistry import SerializationType
@@ -41,7 +42,7 @@ def create_client():
     CLIENT_SECRET = os.environ['SCHEMA_REGISTRY_AZURE_CLIENT_SECRET']
     token_credential = ClientSecretCredential(TENANT_ID, CLIENT_ID, CLIENT_SECRET)
     schema_registry_client = SchemaRegistryClient(endpoint=SCHEMA_REGISTRY_ENDPOINT, credential=token_credential)
-    return schema_registry_client
+    return schema_registry_client, token_credential
 
 
 async def register_scehma(schema_registry_client):
@@ -49,7 +50,7 @@ async def register_scehma(schema_registry_client):
     SCHEMA_GROUP = os.environ['SCHEMA_REGISTRY_GROUP']
     SCHEMA_NAME = 'your-schema-name'
     SERIALIZATION_TYPE = SerializationType.AVRO
-    SCHEMA_STRING = """
+    SCHEMA_CONTENT = """
     {"namespace": "example.avro",
      "type": "record",
      "name": "User",
@@ -59,9 +60,10 @@ async def register_scehma(schema_registry_client):
          {"name": "favorite_color", "type": ["string", "null"]}
      ]
     }"""
-    schema_properties = await schema_registry_client.register_schema(SCHEMA_GROUP, SCHEMA_NAME, SERIALIZATION_TYPE, SCHEMA_STRING)
+    schema_properties = await schema_registry_client.register_schema(SCHEMA_GROUP, SCHEMA_NAME, SERIALIZATION_TYPE, SCHEMA_CONTENT)
     schem_id = schema_properties.schema_id
     # [END register_schema_async]
+    return schem_id
 
 
 async def get_schema(schema_registry_client, schema_id):
@@ -71,8 +73,36 @@ async def get_schema(schema_registry_client, schema_id):
     # [END get_schema_async]
 
 
-async def get_schema_id(schema_registry_client, schema_group, schema_name, serialization_type, schema_string):
+async def get_schema_id(schema_registry_client):
+    schema_group = os.environ['SCHEMA_REGISTRY_GROUP']
+    schema_name = 'your-schema-name'
+    serialization_type = SerializationType.AVRO
+    schema_content = """
+    {"namespace": "example.avro",
+     "type": "record",
+     "name": "User",
+     "fields": [
+         {"name": "name", "type": "string"},
+         {"name": "favorite_number",  "type": ["int", "null"]},
+         {"name": "favorite_color", "type": ["string", "null"]}
+     ]
+    }"""
+
     # [START get_schema_id_async]
-    schema_properties = await schema_registry_client.get_schema_id(schema_group, schema_name, serialization_type, schema_string)
+    schema_properties = await schema_registry_client.get_schema_id(schema_group, schema_name, serialization_type, schema_content)
     schem_id = schema_properties.schema_id
     # [END get_schema_id_async]
+
+
+async def main():
+    client, credential = create_client()
+    async with client, credential:
+        id = await register_scehma(client)
+        schema = await get_schema(client, id)
+        id = await get_schema_id(client)
+
+
+if __name__ == '__main__':
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())
+

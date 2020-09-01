@@ -31,8 +31,8 @@ from azure.schemaregistry import SchemaRegistryClient, SerializationType
 
 from ._avro_serializer import AvroObjectSerializer
 
-# TODO: inherit from context manager
-class SchemaRegistryAvroSerializer():  # suffix Client?
+
+class SchemaRegistryAvroSerializer(object):
     """
     SchemaRegistryAvroSerializer provides the ability to serialize and deserialize data according
     to the given avro schema. It would automatically register, get and cache the schema.
@@ -84,7 +84,7 @@ class SchemaRegistryAvroSerializer():  # suffix Client?
                 schema_name,
                 SerializationType.AVRO,
                 schema_str
-            ).id
+            ).schema_id
             self._schema_to_id[schema_str] = schema_id
             self._id_to_schema[schema_id] = schema_str
             return schema_id
@@ -104,8 +104,8 @@ class SchemaRegistryAvroSerializer():  # suffix Client?
             self._schema_to_id[schema_str] = schema_id
             return schema_str
 
-    def serialize(self, data, schema):
-        # type: (Dict[str, Any], Union[str, bytes]) -> bytes
+    def serialize(self, data, schema, **kwargs):
+        # type: (Dict[str, Any], Union[str, bytes], Any) -> bytes
         """
         Encode dict data with the given schema.
 
@@ -114,16 +114,17 @@ class SchemaRegistryAvroSerializer():  # suffix Client?
         :type schema: Union[str, bytes]
         :return:
         """
+        raw_input_schema = schema
         try:
-            schema = self._user_input_schema_cache[schema]
+            cached_schema = self._user_input_schema_cache[raw_input_schema]
         except KeyError:
-            if not isinstance(schema, avro.schema.Schema):
-                schema = avro.schema.parse(schema)
-            self._user_input_schema_cache[schema] = schema
+            parsed_schema = avro.schema.parse(raw_input_schema)
+            self._user_input_schema_cache[raw_input_schema] = parsed_schema
+            cached_schema = parsed_schema
 
-        record_format_identifier = b'\0\0\0\0'  # TODO: BytesIO to append bytes zero
-        schema_id = self._get_schema_id(schema.fullname, schema)
-        data_bytes = self._avro_serializer.serialize(data, schema)
+        record_format_identifier = b'\0\0\0\0'
+        schema_id = self._get_schema_id(cached_schema.fullname, cached_schema)
+        data_bytes = self._avro_serializer.serialize(data, cached_schema)
 
         stream = BytesIO()
 
@@ -136,8 +137,8 @@ class SchemaRegistryAvroSerializer():  # suffix Client?
         stream.close()
         return payload
 
-    def deserialize(self, data):
-        # type: (bytes) -> Dict[str, Any]  # TODO: add Io/generator support in the future
+    def deserialize(self, data, **kwargs):
+        # type: (bytes, Any) -> Dict[str, Any]
         """
         Decode bytes data.
 

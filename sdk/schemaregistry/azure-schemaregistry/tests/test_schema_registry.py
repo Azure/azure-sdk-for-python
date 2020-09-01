@@ -49,11 +49,11 @@ class SchemaRegistryTests(AzureMgmtTestCase):
 
         returned_schema = client.get_schema(schema_id=schema_properties.schema_id)
 
-        assert returned_schema.schema_id == schema_properties.schema_id
-        assert returned_schema.location is not None
-        assert returned_schema.location_by_id is not None
-        assert returned_schema.version == 1
-        assert returned_schema.serialization_type == "Avro"
+        assert returned_schema.schema_properties.schema_id == schema_properties.schema_id
+        assert returned_schema.schema_properties.location is not None
+        assert returned_schema.schema_properties.location_by_id is not None
+        assert returned_schema.schema_properties.version == 1
+        assert returned_schema.schema_properties.serialization_type == "Avro"
         assert returned_schema.schema_content == schema_str
 
         returned_schema_properties = client.get_schema_id(schemaregistry_group, schema_name, serialization_type, schema_str)
@@ -92,13 +92,13 @@ class SchemaRegistryTests(AzureMgmtTestCase):
 
         new_schema = client.get_schema(schema_id=new_schema_properties.schema_id)
 
-        assert new_schema_properties.schema_id != schema_properties.schema_id
-        assert new_schema.schema_id == new_schema_properties.schema_id
-        assert new_schema.location is not None
-        assert new_schema.location_by_id is not None
+        assert new_schema.schema_properties.schema_id != schema_properties.schema_id
+        assert new_schema.schema_properties.schema_id == new_schema_properties.schema_id
+        assert new_schema.schema_properties.location is not None
+        assert new_schema.schema_properties.location_by_id is not None
         assert new_schema.schema_content == schema_str_new
-        assert new_schema.version == 2
-        assert new_schema.serialization_type == "Avro"
+        assert new_schema.schema_properties.version == 2
+        assert new_schema.schema_properties.serialization_type == "Avro"
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
