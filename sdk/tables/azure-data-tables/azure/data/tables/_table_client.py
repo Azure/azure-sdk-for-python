@@ -32,7 +32,7 @@ from ._table_client_base import TableClientBase
 from ._serialize import serialize_iso
 from ._deserialize import _return_headers_and_deserialized
 from ._error import _process_table_error
-from ._models import TableEntityPropertiesPaged, UpdateMode, TableItem
+from ._models import TableEntityPropertiesPaged, UpdateMode
 
 
 class TableClient(TableClientBase):
