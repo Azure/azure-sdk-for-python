@@ -13,9 +13,6 @@ import os.path
 import time
 from datetime import datetime, timedelta
 
-from azure.data.tables import ResourceTypes, AccountSasPermissions
-from azure.data.tables._table_shared_access_signature import generate_account_sas
-
 try:
     import unittest.mock as mock
 except ImportError:
@@ -42,8 +39,8 @@ except ImportError:
     from io import StringIO
 
 from azure.core.credentials import AccessToken
-#from azure.data.tabless import generate_account_sas, AccountSasPermissions, ResourceTypes
 from azure.mgmt.storage.models import StorageAccount, Endpoints
+from azure.data.tables import generate_account_sas, AccountSasPermissions, ResourceTypes
 
 try:
     from devtools_testutils import mgmt_settings_real as settings
@@ -351,6 +348,9 @@ def storage_account():
     i_need_to_create_rg = not (existing_rg_name or existing_storage_name or storage_connection_string)
     got_storage_info_from_env = existing_storage_name or storage_connection_string
 
+    storage_name = None
+    rg_kwargs = {}
+
     try:
         if i_need_to_create_rg:
             rg_name, rg_kwargs = rg_preparer._prepare_create_resource(test_case)
@@ -431,11 +431,12 @@ def storage_account():
             TableTestCase._STORAGE_CONNECTION_STRING = storage_connection_string
             yield
         finally:
-            if not got_storage_info_from_env:
-                storage_preparer.remove_resource(
-                    storage_name,
-                    resource_group=rg
-                )
+            if storage_name is not None:
+                if not got_storage_info_from_env:
+                    storage_preparer.remove_resource(
+                        storage_name,
+                        resource_group=rg
+                    )
     finally:
         if i_need_to_create_rg:
             rg_preparer.remove_resource(rg_name)

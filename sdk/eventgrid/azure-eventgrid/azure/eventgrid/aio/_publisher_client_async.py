@@ -52,12 +52,12 @@ class EventGridPublisherClient(object):
         # type: (SendType) -> None
         """Sends event data to topic hostname specified during client initialization.
 
-        :param  events: A list of CloudEvent/EventGridEvent/CustomEvent to be sent.
-        :type events: Union[List[models.CloudEvent], List[models.EventGridEvent], List[models.CustomEvent]]
+        :param  events: A list or an instance of CloudEvent/EventGridEvent/CustomEvent to be sent.
+        :type events: SendType
         :keyword str content_type: The type of content to be used to send the events.
         Has default value "application/json; charset=utf-8" for EventGridEvents, with "cloudevents-batch+json" for CloudEvents
         :rtype: None
-        :raise: :class:`ValueError`, when events do not follow specified SendType.
+        :raises: :class:`ValueError`, when events do not follow specified SendType.
          """
         if not isinstance(events, list):
             events = [events]
