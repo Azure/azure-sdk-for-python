@@ -119,7 +119,7 @@ from azure.eventgrid import EventGridConsumer
 consumer = EventGridConsumer()
 
 eg_storage_dict = {
-    "id":"bbab6625-dc56-4b22-abeb-afcc72e5290c",
+    "id":"bbab625-dc56-4b22-abeb-afcc72e5290c",
     "subject":"/blobServices/default/containers/oc2d2817345i200097container/blobs/oc2d2817345i20002296blob",
     "data":{
         "api":"PutBlockList",
@@ -128,7 +128,7 @@ eg_storage_dict = {
     "dataVersion":"2.0",
     "metadataVersion":"1",
     "eventTime":"2020-08-07T02:28:23.867525Z",
-    "topic":"/subscriptions/faa080af-c1d8-40ad-9cce-e1a450ca5b57/resourceGroups/t-swpill-test/providers/Microsoft.EventGrid/topics/eventgridegsub"
+    "topic":"/subscriptions/{subscription-id}/resourceGroups/{resource-group}/providers/Microsoft.EventGrid/topics/eventgridegsub"
 }
 
 deserialized_event = consumer.decode_eventgrid_event(eg_storage_dict)
