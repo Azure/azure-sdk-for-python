@@ -59,26 +59,26 @@ SCHEMA_STRING = """
 
 def register_schema(client, schema_group, schema_name, serialization_type, schema_string):
     print("Registering schema...")
-    schema_id = client.register_schema(schema_group, schema_name, serialization_type, schema_string)
-    print("Schema registered, returned schema id is {}".format(schema_id.id))
-    print("Schema meta properties are {}".format(schema_id))
-    return schema_id.id
+    schema_properties = client.register_schema(schema_group, schema_name, serialization_type, schema_string)
+    print("Schema registered, returned schema id is {}".format(schema_properties.schema_id))
+    print("Schema meta properties are {}".format(schema_properties))
+    return schema_properties.schema_id
 
 
 def get_schema_by_id(client, schema_id):
     print("Getting schema by id...")
     schema = client.get_schema(schema_id)
-    print("The schema string of schema id: {} string is {}".format(schema_id, schema.content))
+    print("The schema string of schema id: {} string is {}".format(schema_id, schema.schema_content))
     print("Schema meta properties are {}".format(schema_id))
-    return schema.content
+    return schema.schema_content
 
 
 def get_schema_id(client, schema_group, schema_name, serialization_type, schema_string):
     print("Getting schema id...")
-    schema_id = client.get_schema_id(schema_group, schema_name, serialization_type, schema_string)
-    print("The schema id is: {}".format(schema_id.id))
-    print("Schema meta properties are {}".format(schema_id))
-    return schema_id.id
+    schema_properties = client.get_schema_id(schema_group, schema_name, serialization_type, schema_string)
+    print("The schema id is: {}".format(schema_properties.schema_id))
+    print("Schema meta properties are {}".format(schema_properties))
+    return schema_properties.schema_id
 
 
 if __name__ == '__main__':

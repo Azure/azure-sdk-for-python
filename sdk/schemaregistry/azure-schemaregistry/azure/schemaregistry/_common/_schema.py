@@ -23,10 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import Any, Dict
-
-
-# TODO: Arthur: schema id will be the type of long instead of string
+from typing import Any, Optional
 
 
 class DictMixin(object):
@@ -80,36 +77,9 @@ class DictMixin(object):
         return default
 
 
-class SchemaMeta(DictMixin):
+class SchemaProperties(DictMixin):
     """
-    Id and meta properties of a schema.
-
-    :ivar id: References specific schema in registry namespace.
-    :type id: str
-    :ivar location: URL location of schema, identified by schema group, schema name, and version.
-    :type location: str
-    :ivar id_location: URL location of schema, identified by schema ID.  # TODO: JS name is LocationById
-    :type id_location: str
-    :ivar type: Serialization type for the schema being stored.
-    :type type: str
-    :ivar version: Version of the returned schema.
-    :type version: int
-    """
-    def __init__(
-        self,
-        **kwargs
-    ):
-        # type: (Any) -> None
-        self.location = kwargs.get('Location')
-        self.id = kwargs.get("X-Schema-Id")
-        self.id_location = kwargs.get('X-Schema-Id-Location')
-        self.type = kwargs.get('X-Schema-Type')
-        self.version = kwargs.get('X-Schema-Version')
-
-
-class SchemaProperties:
-    """
-    Id and meta properties of a schema.
+    Meta properties of a schema.
 
     :ivar id: References specific schema in registry namespace.
     :type id: str
@@ -117,8 +87,8 @@ class SchemaProperties:
     :type location: str
     :ivar location_by_id: URL location of schema, identified by schema ID.
     :type location_by_id: str
-    :ivar type: Serialization type for the schema being stored.
-    :type type: str
+    :ivar serialization_type: Serialization type for the schema being stored.
+    :type serialization_type: str
     :ivar version: Version of the returned schema.
     :type version: int
 
@@ -134,30 +104,25 @@ class SchemaProperties:
     """
     def __init__(
         self,
-        schema_id,
+        schema_id=None,
         **kwargs
     ):
-        # type: (str, Any) -> None
-        super(SchemaProperties, self).__init__(**kwargs)
-        self.id = schema_id
+        # type: (Optional[str], Any) -> None
+        self.location = kwargs.get('Location')
+        self.schema_id = schema_id or kwargs.get("X-Schema-Id")
+        self.location_by_id = kwargs.get('X-Schema-Id-Location')
+        self.serialization_type = kwargs.get('X-Schema-Type')
+        self.version = kwargs.get('X-Schema-Version')
 
 
-class Schema(SchemaMeta):
+class Schema(DictMixin):
     """
     The schema content of a schema, along with id and meta properties.
 
-    :ivar content: The content of the schema.
-    :type content: str
-    :ivar id: References specific schema in registry namespace.
-    :type id: str
-    :ivar location: URL location of schema, identified by schema group, schema name, and version.
-    :type location: str
-    :ivar location_by_id: URL location of schema, identified by schema ID.
-    :type location_by_id: str
-    :ivar type: Serialization type for the schema being stored.
-    :type type: str
-    :ivar version: Version of the returned schema.
-    :type version: int
+    :ivar schema_content: The content of the schema.
+    :type schema_content: str
+    :ivar schema_properties: The properties of the schema.
+    :type schema_properties: SchemaProperties
 
     .. admonition:: Example:
 
@@ -171,9 +136,9 @@ class Schema(SchemaMeta):
     """
     def __init__(
         self,
-        schema_str,
-        **kwargs
+        schema_content,
+        schema_properties,
     ):
-        # type: (str, Any) -> None
-        super(Schema, self).__init__(**kwargs)
-        self.content = schema_str
+        # type: (str, SchemaProperties) -> None
+        self.schema_content = schema_content
+        self.schema_properties = schema_properties

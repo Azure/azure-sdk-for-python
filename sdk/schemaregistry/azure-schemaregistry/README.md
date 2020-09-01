@@ -19,6 +19,20 @@ To use this package, you must have:
 * Azure Schema Registry
 * Python 2.7, 3.5 or later - [Install Python][python]
 
+### Authenticate the client
+Interaction with Schema Registry starts with an instance of SchemaRegistryClient class. You need the endpoint and AAD credential to instantiate the client object. 
+
+**Create client using the azure-identity library:**
+
+```python
+from azure.schemaregistry import SchemaRegistryClient
+from azure.identity import DefaultAzureCredential
+
+credential = DefaultAzureCredential()
+endpoint = '<< ENDPOINT OF THE SCHEMA REGISTRY >>'
+schema_registry_client = SchemaRegistryClient(endpoint, credential)
+```
+
 ## Key concepts
 
 - Schema: Schema is the organization or structure for data.
@@ -58,8 +72,8 @@ schema_content = """
 
 schema_registry_client = SchemaRegistryClient(endpoint=endpoint, credential=token_credential)
 with schema_registry_client, token_credential:
-    schema_properties = schema_registry_client.register_schema(schema_group, schema_name, serilization_type, schema_string)
-    schema_id = schema_properties.id
+    schema_properties = schema_registry_client.register_schema(schema_group, schema_name, serialization_type, schema_content)
+    schema_id = schema_properties.schema_id
 ```
 
 ### Get the schema by id
@@ -108,7 +122,7 @@ schema_content = """
 schema_registry_client = SchemaRegistryClient(endpoint=endpoint, credential=token_credential)
 with schema_registry_client:
     schema_properties = schema_registry_client.get_schema_id(schema_group, schema_name, serialization_type, schema_content)
-    schema_id = schema_properties.id
+    schema_id = schema_properties.schema_id
 ```
 
 ## Troubleshooting

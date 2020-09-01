@@ -33,10 +33,8 @@ from .._generated.aio._azure_schema_registry_async import AzureSchemaRegistry
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
-# TODO: Arthur: schema id will be the type of long instead of string
 
-
-class SchemaRegistryClient:
+class SchemaRegistryClient(object):
     """
     SchemaRegistryClient is as a central schema repository for enterprise-level data infrastructure,
     complete with support for versioning and management.

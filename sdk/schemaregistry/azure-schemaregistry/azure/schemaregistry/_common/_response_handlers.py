@@ -52,4 +52,5 @@ def _parse_response_schema(pipeline_response, deserialized, response_headers):
     :param response_headers:
     :return:
     """
-    return Schema(schema_str=deserialized, **response_headers)
+
+    return Schema(schema_content=deserialized, schema_properties=SchemaProperties(**response_headers))

@@ -59,20 +59,20 @@ async def register_scehma(schema_registry_client):
          {"name": "favorite_color", "type": ["string", "null"]}
      ]
     }"""
-    schema_id_response = await schema_registry_client.register_schema(SCHEMA_GROUP, SCHEMA_NAME, SERIALIZATION_TYPE, SCHEMA_STRING)
-    schem_id = schema_id_response.id
+    schema_properties = await schema_registry_client.register_schema(SCHEMA_GROUP, SCHEMA_NAME, SERIALIZATION_TYPE, SCHEMA_STRING)
+    schem_id = schema_properties.schema_id
     # [END register_schema_async]
 
 
 async def get_schema(schema_registry_client, schema_id):
     # [START get_schema_async]
-    schema_response = await schema_registry_client.get_schema(schema_id)
-    schema_content = schema_response.content
+    schema = await schema_registry_client.get_schema(schema_id)
+    schema_content = schema.schema_content
     # [END get_schema_async]
 
 
 async def get_schema_id(schema_registry_client, schema_group, schema_name, serialization_type, schema_string):
     # [START get_schema_id_async]
-    schema_id_response = await schema_registry_client.get_schema_id(schema_group, schema_name, serialization_type, schema_string)
-    schem_id = schema_id_response.id
+    schema_properties = await schema_registry_client.get_schema_id(schema_group, schema_name, serialization_type, schema_string)
+    schem_id = schema_properties.schema_id
     # [END get_schema_id_async]

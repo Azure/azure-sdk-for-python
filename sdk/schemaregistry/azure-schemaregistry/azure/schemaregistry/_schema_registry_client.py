@@ -24,7 +24,6 @@
 #
 # --------------------------------------------------------------------------
 from typing import Any, TYPE_CHECKING, Union
-from enum import Enum
 
 from ._common._constants import SerializationType
 from ._common._schema import Schema, SchemaProperties
@@ -34,10 +33,8 @@ from ._generated._azure_schema_registry import AzureSchemaRegistry
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
-# TODO: Arthur: schema id will be the type of long instead of string
 
-
-class SchemaRegistryClient:
+class SchemaRegistryClient(object):
     """
     SchemaRegistryClient is as a central schema repository for enterprise-level data infrastructure,
     complete with support for versioning and management.
@@ -81,7 +78,7 @@ class SchemaRegistryClient:
         """
         self._generated_client.close()
 
-    def register_schema(self, schema_group, schema_name, serialization_type, schema_content, **kwargs):  # TODO: serialization_type Enum + string?
+    def register_schema(self, schema_group, schema_name, serialization_type, schema_content, **kwargs):
         # type: (str, str, Union[str, SerializationType], str, Any) -> SchemaProperties
         """
         Register new schema. If schema of specified name does not exist in specified group,

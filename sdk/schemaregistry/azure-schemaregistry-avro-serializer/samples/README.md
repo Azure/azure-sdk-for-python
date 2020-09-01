@@ -16,7 +16,7 @@ and require Python 3.5 or later.
 
 Several Schema Registry Avro Serializer Python SDK samples are available to you in the SDK's GitHub repository. These samples provide example code for additional scenarios commonly encountered while working with Schema Registry Avro Serializer:
 
-* [avro_serializer.py](./sync_samples/avro_serializer.py) ([async version](./async_samples/avro_serializer_async.py)) - Examples for common Schema Registry Avro Serializer tasks:
+* [avro_serializer.py](./sync_samples/avro_serializer.py) - Examples for common Schema Registry Avro Serializer tasks:
     * Serialize data according to the given schema
     * Deserialize data
 

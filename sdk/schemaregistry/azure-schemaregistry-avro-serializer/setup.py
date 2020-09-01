@@ -65,11 +65,7 @@ setup(
     zip_safe=False,
     packages=find_packages(exclude=exclude_packages),
     install_requires=[
-        'azure-core<2.0.0,>=1.2.2',
         'azure-schemaregistry<2.0.0,>=1.0.0b1',
         'avro<2.0.0,>=1.0.0'
-    ],
-    extras_require={
-        ":python_version<'3.0'": ['azure-nspkg', 'futures'],
-    }
+    ]
 )

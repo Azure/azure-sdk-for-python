@@ -39,30 +39,30 @@ class SchemaRegistryTests(AzureMgmtTestCase):
         schema_name = 'test-schema-' + str(uuid.uuid4())
         schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
         serialization_type = "Avro"
-        schema_id = client.register_schema(schemaregistry_group, schema_name, serialization_type, schema_str)
+        schema_properties = client.register_schema(schemaregistry_group, schema_name, serialization_type, schema_str)
 
-        assert schema_id.id is not None
-        assert schema_id.location is not None
-        assert schema_id.id_location is not None
-        assert schema_id.version is 1
-        assert schema_id.type == "Avro"
+        assert schema_properties.schema_id is not None
+        assert schema_properties.location is not None
+        assert schema_properties.location_by_id is not None
+        assert schema_properties.version is 1
+        assert schema_properties.serialization_type == "Avro"
 
-        returned_schema = client.get_schema(schema_id=schema_id.id)
+        returned_schema = client.get_schema(schema_id=schema_properties.schema_id)
 
-        assert returned_schema.id == schema_id.id
+        assert returned_schema.schema_id == schema_properties.schema_id
         assert returned_schema.location is not None
-        assert returned_schema.id_location is not None
+        assert returned_schema.location_by_id is not None
         assert returned_schema.version == 1
-        assert returned_schema.type == "Avro"
-        assert returned_schema.content == schema_str
+        assert returned_schema.serialization_type == "Avro"
+        assert returned_schema.schema_content == schema_str
 
-        returned_schema_id = client.get_schema_id(schemaregistry_group, schema_name, serialization_type, schema_str)
+        returned_schema_properties = client.get_schema_id(schemaregistry_group, schema_name, serialization_type, schema_str)
 
-        assert returned_schema_id.id == schema_id.id
-        assert returned_schema_id.location is not None
-        assert returned_schema_id.id_location is not None
-        assert returned_schema_id.version == 1
-        assert returned_schema_id.type == "Avro"
+        assert returned_schema_properties.schema_id == schema_properties.schema_id
+        assert returned_schema_properties.location is not None
+        assert returned_schema_properties.location_by_id is not None
+        assert returned_schema_properties.version == 1
+        assert returned_schema_properties.serialization_type == "Avro"
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -73,32 +73,45 @@ class SchemaRegistryTests(AzureMgmtTestCase):
         schema_name = 'test-schema-' + str(uuid.uuid4())
         schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
         serialization_type = "Avro"
-        schema_id = client.register_schema(schemaregistry_group, schema_name, serialization_type, schema_str)
+        schema_properties = client.register_schema(schemaregistry_group, schema_name, serialization_type, schema_str)
 
-        assert schema_id.id is not None
-        assert schema_id.location is not None
-        assert schema_id.id_location is not None
-        assert schema_id.version == 1
-        assert schema_id.type == "Avro"
+        assert schema_properties.schema_id is not None
+        assert schema_properties.location is not None
+        assert schema_properties.location_by_id is not None
+        assert schema_properties.version == 1
+        assert schema_properties.serialization_type == "Avro"
 
         schema_str_new = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_food","type":["string","null"]}]}"""
-        new_schema_id = client.register_schema(schemaregistry_group, schema_name, serialization_type, schema_str_new)
+        new_schema_properties = client.register_schema(schemaregistry_group, schema_name, serialization_type, schema_str_new)
 
-        assert new_schema_id.id is not None
-        assert new_schema_id.location is not None
-        assert new_schema_id.id_location is not None
-        assert new_schema_id.version == 2
-        assert new_schema_id.type == "Avro"
+        assert new_schema_properties.schema_id is not None
+        assert new_schema_properties.location is not None
+        assert new_schema_properties.location_by_id is not None
+        assert new_schema_properties.version == 2
+        assert new_schema_properties.serialization_type == "Avro"
 
-        new_schema = client.get_schema(schema_id=new_schema_id.id)
+        new_schema = client.get_schema(schema_id=new_schema_properties.schema_id)
 
-        assert new_schema_id.id != schema_id.id
-        assert new_schema.id == new_schema_id.id
+        assert new_schema_properties.schema_id != schema_properties.schema_id
+        assert new_schema.schema_id == new_schema_properties.schema_id
         assert new_schema.location is not None
-        assert new_schema.id_location is not None
-        assert new_schema.content == schema_str_new
+        assert new_schema.location_by_id is not None
+        assert new_schema.schema_content == schema_str_new
         assert new_schema.version == 2
-        assert new_schema_id.type == "Avro"
+        assert new_schema.serialization_type == "Avro"
+
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @SchemaRegistryPreparer()
+    def test_schema_same_twice(self, schemaregistry_endpoint, schemaregistry_group, schemaregistry_tenant_id, schemaregistry_client_id, schemaregistry_client_secret, **kwargs):
+        credential = ClientSecretCredential(tenant_id=schemaregistry_tenant_id, client_id=schemaregistry_client_id, client_secret=schemaregistry_client_secret)
+        client = SchemaRegistryClient(endpoint=schemaregistry_endpoint, credential=credential)
+        schema_name = 'test-schema-' + str(uuid.uuid4())
+        schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"age","type":["int","null"]},{"name":"city","type":["string","null"]}]}"""
+        serialization_type = "Avro"
+        schema_properties = client.register_schema(schemaregistry_group, schema_name, serialization_type, schema_str)
+        schema_properties_second = client.register_schema(schemaregistry_group, schema_name, serialization_type, schema_str)
+        assert schema_properties.schema_id == schema_properties_second.schema_id
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only

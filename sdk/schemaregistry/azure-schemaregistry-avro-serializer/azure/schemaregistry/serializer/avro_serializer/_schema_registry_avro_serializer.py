@@ -31,8 +31,8 @@ from azure.schemaregistry import SchemaRegistryClient, SerializationType
 
 from ._avro_serializer import AvroObjectSerializer
 
-
-class SchemaRegistryAvroSerializer(object):
+# TODO: inherit from context manager
+class SchemaRegistryAvroSerializer():  # suffix Client?
     """
     SchemaRegistryAvroSerializer provides the ability to serialize and deserialize data according
     to the given avro schema. It would automatically register, get and cache the schema.
@@ -49,6 +49,7 @@ class SchemaRegistryAvroSerializer(object):
         self._schema_registry_client = SchemaRegistryClient(credential=credential, endpoint=endpoint)
         self._id_to_schema = {}
         self._schema_to_id = {}
+        self._user_input_schema_cache = {}
 
     def __enter__(self):
         # type: () -> SchemaRegistryAvroSerializer
@@ -66,14 +67,15 @@ class SchemaRegistryAvroSerializer(object):
         """
         self._schema_registry_client.close()
 
-    def _get_schema_id(self, schema_name, schema_str):
-        # type: (str, str) -> str
+    def _get_schema_id(self, schema_name, schema):
+        # type: (str, avro.schema.Schema) -> str
         """
 
         :param schema_name:
-        :param schema_str:
+        :param schema:
         :return:
         """
+        schema_str = str(schema)
         try:
             return self._schema_to_id[schema_str]
         except KeyError:
@@ -84,7 +86,7 @@ class SchemaRegistryAvroSerializer(object):
                 schema_str
             ).id
             self._schema_to_id[schema_str] = schema_id
-            self._id_to_schema[schema_id] = str(schema_str)
+            self._id_to_schema[schema_id] = schema_str
             return schema_id
 
     def _get_schema(self, schema_id):
@@ -108,33 +110,40 @@ class SchemaRegistryAvroSerializer(object):
         Encode dict data with the given schema.
 
         :param data: The dict data to be encoded.
-        :param schema: The schema used to encode the data.  # TODO: support schema object/str/bytes?
+        :param schema: The schema used to encode the data.
         :type schema: Union[str, bytes]
         :return:
         """
-        if not isinstance(schema, avro.schema.Schema):
-            schema = avro.schema.parse(schema)
+        try:
+            schema = self._user_input_schema_cache[schema]
+        except KeyError:
+            if not isinstance(schema, avro.schema.Schema):
+                schema = avro.schema.parse(schema)
+            self._user_input_schema_cache[schema] = schema
 
-        schema_id = self._get_schema_id(schema.fullname, str(schema))
+        record_format_identifier = b'\0\0\0\0'  # TODO: BytesIO to append bytes zero
+        schema_id = self._get_schema_id(schema.fullname, schema)
         data_bytes = self._avro_serializer.serialize(data, schema)
-        # TODO: Arthur:  We are adding 4 bytes to the beginning of each SR payload.
-        # This is intended to become a record format identifier in the future.
-        # Right now, you can just put \x00\x00\x00\x00.
-        record_format_identifier = b'\0\0\0\0'
-        payload = record_format_identifier + schema_id.encode('utf-8') + data_bytes  # TODO: should we use struck.pack and unpack for interoperability, could be a cross-language problem
+
+        stream = BytesIO()
+
+        stream.write(record_format_identifier)
+        stream.write(schema_id.encode('utf-8'))
+        stream.write(data_bytes)
+        stream.flush()
+
+        payload = stream.getvalue()
+        stream.close()
         return payload
 
     def deserialize(self, data):
-        # type: (bytes) -> Dict[str, Any]
+        # type: (bytes) -> Dict[str, Any]  # TODO: add Io/generator support in the future
         """
         Decode bytes data.
 
         :param bytes data: The bytes data needs to be decoded.
         :rtype: Dict[str, Any]
         """
-        # TODO: Arthur:  We are adding 4 bytes to the beginning of each SR payload.
-        # This is intended to become a record format identifier in the future.
-        # Right now, you can just put \x00\x00\x00\x00.
         record_format_identifier = data[0:4]
         schema_id = data[4:36].decode('utf-8')
         schema_content = self._get_schema(schema_id)

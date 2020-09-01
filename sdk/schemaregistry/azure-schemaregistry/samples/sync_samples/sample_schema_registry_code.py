@@ -58,16 +58,16 @@ def register_scehma(schema_registry_client):
          {"name": "favorite_color", "type": ["string", "null"]}
      ]
     }"""
-    schema_id_response = schema_registry_client.register_schema(SCHEMA_GROUP, SCHEMA_NAME, SERIALIZATION_TYPE, SCHEMA_STRING)
-    schem_id = schema_id_response.id
+    schema_properties = schema_registry_client.register_schema(SCHEMA_GROUP, SCHEMA_NAME, SERIALIZATION_TYPE, SCHEMA_STRING)
+    schem_id = schema_properties.schema_id
     # [END register_schema_sync]
 
     # [START print_schema_id]
-    print(schema_id_response.id)
-    print(schema_id_response.location)
-    print(schema_id_response.id_location)
-    print(schema_id_response.type)
-    print(schema_id_response.version)
+    print(schema_properties.schema_id)
+    print(schema_properties.location)
+    print(schema_properties.location_by_id)
+    print(schema_properties.type)
+    print(schema_properties.version)
     # [END print_schema_id]
 
     return schem_id
@@ -75,22 +75,18 @@ def register_scehma(schema_registry_client):
 
 def get_schema(schema_registry_client, schema_id):
     # [START get_schema_sync]
-    schema_response = schema_registry_client.get_schema(schema_id)
-    schema_content = schema_response.content
+    schema = schema_registry_client.get_schema(schema_id)
+    schema_content = schema.schema_content
     # [END get_schema_sync]
 
     # [START print_schema]
-    print(schema_response.id)
-    print(schema_response.location)
-    print(schema_response.id_location)
-    print(schema_response.type)
-    print(schema_response.version)
-    print(schema_response.content)
+    print(schema.schema_content)
+    print(schema.schema_properties)
     # [END print_schema]
 
 
 def get_schema_id(schema_registry_client, schema_group, schema_name, serialization_type, schema_string):
     # [START get_schema_id_sync]
-    schema_id_response = schema_registry_client.get_schema_id(schema_group, schema_name, serialization_type, schema_string)
-    schem_id = schema_id_response.id
+    schema_properties = schema_registry_client.get_schema_id(schema_group, schema_name, serialization_type, schema_string)
+    schem_id = schema_properties.schema_id
     # [END get_schema_id_sync]

@@ -26,6 +26,9 @@
 from enum import Enum
 
 
-class SerializationType(Enum):
+class SerializationType(str, Enum):
     AVRO = "Avro"
     JSON = "Json"
+
+    def __str__(self):
+        return self.value

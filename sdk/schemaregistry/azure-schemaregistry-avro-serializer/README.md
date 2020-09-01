@@ -19,6 +19,21 @@ To use this package, you must have:
 * Azure Schema Registry
 * Python 2.7, 3.5 or later - [Install Python][python]
 
+### Authenticate the client
+Interaction with Schema Registry Avro Serializer starts with an instance of SchemaRegistryAvroSerializer class. You need the endpoint, AAD credential and schema group name to instantiate the client object. 
+
+**Create client using the azure-identity library:**
+
+```python
+from azure.schemaregistry.serializer.avro_serializer import SchemaRegistryAvroSerializer
+from azure.identity import DefaultAzureCredential
+
+credential = DefaultAzureCredential()
+endpoint = '<< ENDPOINT OF THE SCHEMA REGISTRY >>'
+schema_group = '<< GROUP NAME OF THE SCHEMA >>'
+schema_registry_client = SchemaRegistryAvroSerializer(endpoint, credential, schema_group)
+```
+
 ## Key concepts
 
 - Avro: Apache Avro™ is a data serialization system.
