@@ -399,6 +399,7 @@ class PathClient(StorageAccountHostsMixin):
 
         options = {
             'mode': mode,
+            'force_flag': kwargs.pop('continue_on_failure', False),
             'timeout': kwargs.pop('timeout', None),
             'continuation': kwargs.pop('continuation', None),
             'max_records': kwargs.pop('batch_size', None),
@@ -435,6 +436,12 @@ class PathClient(StorageAccountHostsMixin):
             If maximum is reached before all sub-paths are processed,
             then continuation token can be used to resume operation.
             Empty value indicates that maximum number of batches in unbound and operation continues till end.
+        :keyword bool continue_on_failure:
+            If set to False, the operation will terminate quickly on encountering user errors (4XX).
+            If True, the operation will ignore user errors and proceed with the operation on other sub-entities of
+            the directory.
+            Continuation token will only be returned when continue_on_failure is True in case of user errors.
+            If not set the default value is False for this.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :return: A summary of the recursive operations, including the count of successes and failures,
@@ -478,6 +485,12 @@ class PathClient(StorageAccountHostsMixin):
             If maximum is reached before all sub-paths are processed,
             then continuation token can be used to resume operation.
             Empty value indicates that maximum number of batches in unbound and operation continues till end.
+        :keyword bool continue_on_failure:
+            If set to False, the operation will terminate quickly on encountering user errors (4XX).
+            If True, the operation will ignore user errors and proceed with the operation on other sub-entities of
+            the directory.
+            Continuation token will only be returned when continue_on_failure is True in case of user errors.
+            If not set the default value is False for this.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :return: A summary of the recursive operations, including the count of successes and failures,
@@ -520,6 +533,12 @@ class PathClient(StorageAccountHostsMixin):
             If maximum is reached before all sub-paths are processed then,
             continuation token can be used to resume operation.
             Empty value indicates that maximum number of batches in unbound and operation continues till end.
+        :keyword bool continue_on_failure:
+            If set to False, the operation will terminate quickly on encountering user errors (4XX).
+            If True, the operation will ignore user errors and proceed with the operation on other sub-entities of
+            the directory.
+            Continuation token will only be returned when continue_on_failure is True in case of user errors.
+            If not set the default value is False for this.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :return: A summary of the recursive operations, including the count of successes and failures,
@@ -537,6 +556,7 @@ class PathClient(StorageAccountHostsMixin):
 
     def _set_access_control_internal(self, options, progress_callback, max_batches=None):
         try:
+            continue_on_failure = options.get('force_flag')
             total_directories_successful = 0
             total_files_success = 0
             total_failure_count = 0
@@ -587,7 +607,8 @@ class PathClient(StorageAccountHostsMixin):
                 directories_successful=total_directories_successful,
                 files_successful=total_files_success,
                 failure_count=total_failure_count),
-                continuation=last_continuation_token if total_failure_count > 0 else current_continuation_token)
+                continuation=last_continuation_token
+                if total_failure_count > 0 and not continue_on_failure else current_continuation_token)
         except StorageErrorException as error:
             process_storage_error(error)
 

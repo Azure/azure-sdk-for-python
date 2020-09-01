@@ -399,6 +399,104 @@ class DirectoryTest(StorageTestCase):
         self.assertEqual(len(failed_entries), 1)
 
     @record
+    def test_set_access_control_recursive_stop_on_failures(self):
+        root_directory_client = self.dsc.get_file_system_client(self.file_system_name)._get_root_directory_client()
+        root_directory_client.set_access_control(acl="user::--x,group::--x,other::--x")
+
+        # Using an AAD identity, create a directory to put files under that
+        directory_name = self._get_directory_reference()
+        token_credential = self.generate_oauth_token()
+        directory_client = DataLakeDirectoryClient(self.dsc.url, self.file_system_name, directory_name,
+                                                   credential=token_credential)
+        directory_client.create_directory()
+        num_sub_dirs = 5
+        num_file_per_sub_dir = 5
+        self._create_sub_directory_and_files(directory_client, num_sub_dirs, num_file_per_sub_dir)
+
+        # Create a file as super user
+        self.dsc.get_directory_client(self.file_system_name, directory_name).get_file_client("cannottouchthis") \
+            .create_file()
+
+        acl = 'user::rwx,group::r-x,other::rwx'
+        running_tally = AccessControlChangeCounters(0, 0, 0)
+        failed_entries = []
+
+        def progress_callback(resp):
+            running_tally.directories_successful += resp.batch_counters.directories_successful
+            running_tally.files_successful += resp.batch_counters.files_successful
+            running_tally.failure_count += resp.batch_counters.failure_count
+            if resp.batch_failures:
+                failed_entries.extend(resp.batch_failures)
+
+        summary = directory_client.set_access_control_recursive(acl=acl, progress_callback=progress_callback,
+                                                                batch_size=6)
+
+        # Assert
+        self.assertEqual(summary.counters.failure_count, 1)
+        self.assertEqual(summary.counters.directories_successful, running_tally.directories_successful)
+        self.assertEqual(summary.counters.files_successful, running_tally.files_successful)
+        self.assertEqual(summary.counters.failure_count, running_tally.failure_count)
+        self.assertEqual(len(failed_entries), 1)
+
+    @record
+    def test_set_access_control_recursive_continue_on_failures(self):
+        root_directory_client = self.dsc.get_file_system_client(self.file_system_name)._get_root_directory_client()
+        root_directory_client.set_access_control(acl="user::--x,group::--x,other::--x")
+
+        # Using an AAD identity, create a directory to put files under that
+        directory_name = self._get_directory_reference()
+        token_credential = self.generate_oauth_token()
+        directory_client = DataLakeDirectoryClient(self.dsc.url, self.file_system_name, directory_name,
+                                                   credential=token_credential)
+        directory_client.create_directory()
+        num_sub_dirs = 5
+        num_file_per_sub_dir = 5
+        self._create_sub_directory_and_files(directory_client, num_sub_dirs, num_file_per_sub_dir)
+
+        # Create a file as super user
+        self.dsc.get_directory_client(self.file_system_name, directory_name).get_file_client("cannottouchthis") \
+            .create_file()
+        self.dsc.get_directory_client(self.file_system_name, directory_name).get_sub_directory_client("cannottouchthisdir") \
+            .create_directory()
+
+        acl = 'user::rwx,group::r-x,other::rwx'
+        running_tally = AccessControlChangeCounters(0, 0, 0)
+        failed_entries = []
+
+        def progress_callback(resp):
+            running_tally.directories_successful += resp.batch_counters.directories_successful
+            running_tally.files_successful += resp.batch_counters.files_successful
+            running_tally.failure_count += resp.batch_counters.failure_count
+            if resp.batch_failures:
+                failed_entries.extend(resp.batch_failures)
+
+        # set acl for all directories
+        summary = directory_client.set_access_control_recursive(acl=acl, progress_callback=progress_callback,
+                                                                batch_size=6,
+                                                                continue_on_failure=True)
+
+        # Assert
+        self.assertEqual(summary.counters.failure_count, 2)
+        self.assertEqual(summary.counters.directories_successful, running_tally.directories_successful)
+        self.assertEqual(summary.counters.files_successful, running_tally.files_successful)
+        self.assertEqual(summary.counters.failure_count, running_tally.failure_count)
+        self.assertEqual(len(failed_entries), 2)
+        self.assertIsNone(summary.continuation)
+
+        # reset the counter, set acl for part of the directories
+        running_tally = AccessControlChangeCounters(0, 0, 0)
+        failed_entries = []
+        summary2 = directory_client.set_access_control_recursive(acl=acl, progress_callback=progress_callback,
+                                                                 batch_size=6, max_batches=3,
+                                                                 continue_on_failure=True)
+        self.assertEqual(summary2.counters.failure_count, 2)
+        self.assertEqual(summary2.counters.directories_successful, running_tally.directories_successful)
+        self.assertEqual(summary2.counters.files_successful, running_tally.files_successful)
+        self.assertEqual(summary2.counters.failure_count, running_tally.failure_count)
+        self.assertEqual(len(failed_entries), 2)
+        self.assertIsNotNone(summary2.continuation)
+
+    @record
     def test_set_access_control_recursive_in_batches_with_explicit_iteration(self):
         directory_name = self._get_directory_reference()
         directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)

@@ -665,6 +665,51 @@ class DirectoryTest(StorageTestCase):
         self.assertEqual(len(failed_entries), 1)
 
     @record
+    def test_update_access_control_recursive_continue_on_failures_async(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_update_access_control_recursive_continue_on_failures_async())
+
+    async def _test_update_access_control_recursive_continue_on_failures_async(self):
+        root_directory_client = self.dsc.get_file_system_client(self.file_system_name)._get_root_directory_client()
+        await root_directory_client.set_access_control(acl="user::--x,group::--x,other::--x")
+
+        # Using an AAD identity, create a directory to put files under that
+        directory_name = self._get_directory_reference()
+        token_credential = self.generate_async_oauth_token()
+        directory_client = DataLakeDirectoryClient(self.dsc.url, self.file_system_name, directory_name,
+                                                   credential=token_credential)
+        await directory_client.create_directory()
+        num_sub_dirs = 5
+        num_file_per_sub_dir = 5
+        await self._create_sub_directory_and_files(directory_client, num_sub_dirs, num_file_per_sub_dir)
+
+        # Create a file as super user
+        await self.dsc.get_directory_client(self.file_system_name, directory_name).get_file_client("cannottouchthis") \
+            .create_file()
+
+        acl = 'user::rwx,group::r-x,other::rwx'
+        running_tally = AccessControlChangeCounters(0, 0, 0)
+        failed_entries = []
+
+        async def progress_callback(resp):
+            running_tally.directories_successful += resp.batch_counters.directories_successful
+            running_tally.files_successful += resp.batch_counters.files_successful
+            running_tally.failure_count += resp.batch_counters.failure_count
+            if resp.batch_failures:
+                failed_entries.extend(resp.batch_failures)
+
+        summary = await directory_client.update_access_control_recursive(acl=acl, progress_callback=progress_callback,
+                                                                         batch_size=2, continue_on_failure=True)
+
+        # Assert
+        self.assertEqual(summary.counters.failure_count, 1)
+        self.assertEqual(summary.counters.directories_successful, running_tally.directories_successful)
+        self.assertEqual(summary.counters.files_successful, running_tally.files_successful)
+        self.assertEqual(summary.counters.failure_count, running_tally.failure_count)
+        self.assertEqual(len(failed_entries), 1)
+        self.assertIsNone(summary.continuation)
+
+    @record
     def test_remove_access_control_recursive_async(self):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_remove_access_control_recursive_async())
