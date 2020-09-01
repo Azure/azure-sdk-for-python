@@ -108,7 +108,7 @@ client = EventGridPublisherClient(topic_hostname, credential)
 client.send(event)
 ```
 
-### Consume an eventgrid Event
+### Consume an EventGrid Event
 
 This example demonstrates consuming and deserializing an eventgrid event.
 
