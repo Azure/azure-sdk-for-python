@@ -77,7 +77,7 @@ setup(
         # azure-data-tables
     ],
     extras_require={
-        ":python_version<'3.0'": ['futures'],
+        ":python_version<'3.0'": ['futures', 'azure-data-nspkg<2.0.0,>=1.0.0'],
         ":python_version<'3.4'": ['enum34>=1.0.4'],
         ":python_version<'3.5'": ["typing"]
     },
