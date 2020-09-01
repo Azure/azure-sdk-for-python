@@ -193,10 +193,11 @@ class StorageCommonBlobTest(StorageTestCase):
 
         # Act
         blob = self.bsc.get_blob_client(self.container_name, blob_name, snapshot=snapshot)
-        exists = blob.get_blob_properties()
+        prop = blob.get_blob_properties()
 
         # Assert
-        self.assertTrue(exists)
+        self.assertTrue(prop)
+        self.assertEqual(snapshot['snapshot'], prop.snapshot)
 
 
     @GlobalStorageAccountPreparer()
