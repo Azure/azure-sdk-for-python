@@ -1,4 +1,5 @@
 import os
+import asyncio
 
 class InsertDeleteEntity(object):
     connection_string = os.getenv("AZURE_TABLES_CONNECTION_STRING")
@@ -15,27 +16,27 @@ class InsertDeleteEntity(object):
         'price': '5'
     }
 
-    def create_entity(self):
-        from azure.data.tables import TableClient
+    async def create_entity(self):
+        from azure.data.tables.aio import TableClient
         from azure.core.exceptions import ResourceExistsError, HttpResponseError
 
         table_client = TableClient.from_connection_string(self.connection_string, self.table_name)
 
         # Create a table in case it does not already exist
         try:
-            table_client.create_table()
+            await table_client.create_table()
         except HttpResponseError:
             print("Table already exists")
 
         try:
-            entity = table_client.create_entity(entity=self.entity)
+            entity = await table_client.create_entity(entity=self.entity)
             print(entity)
         except ResourceExistsError:
             print("Entity already exists")
 
 
-    def delete_entity(self):
-        from azure.data.tables import TableClient
+    async def delete_entity(self):
+        from azure.data.tables.aio import TableClient
         from azure.core.exceptions import ResourceNotFoundError, ResourceExistsError
         from azure.core import MatchConditions
 
@@ -43,13 +44,13 @@ class InsertDeleteEntity(object):
 
         # Create entity to delete (to showcase etag)
         try:
-            resp = table_client.create_entity(entity=self.entity)
+            resp = await table_client.create_entity(entity=self.entity)
         except ResourceExistsError:
             print("Entity already exists!")
 
         try:
             # will delete if match_condition and etag are satisfied
-            table_client.delete_entity(
+            await table_client.delete_entity(
                 row_key=self.entity["RowKey"],
                 partition_key=self.entity["PartitionKey"]
             )
@@ -58,7 +59,11 @@ class InsertDeleteEntity(object):
             print("Entity does not exists")
 
 
-if __name__ == '__main__':
+async def main():
     ide = InsertDeleteEntity()
-    ide.create_entity()
-    ide.delete_entity()
+    await ide.create_entity()
+    await ide.delete_entity()
+
+
+if __name__ == '__main__':
+    asyncio.run(main())

@@ -193,6 +193,7 @@ class StorageTableTest(TableTestCase):
         # Arrange
         ts = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
         table = self._create_table(ts)
+        resp = ts.create_table("abc")
 
         # Act
         name_filter = "TableName eq '{}'".format(table.table_name)

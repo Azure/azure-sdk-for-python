@@ -20,10 +20,13 @@ These sample programs show common scenarios for the Text Analytics client's offe
 
 |**File Name**|**Description**|
 |-------------|---------------|
-|[sample_create_client.py][create_client] and [sample_create_client_async.py][create_client_async]|Instantiate a table client|Authorizing a `TableServiceClient` object|
+|[sample_authentication.py][auth] and [sample_authentication_async.py][auth_async]|Different authorization methods|
+|[sample_create_client.py][create_client] and [sample_create_client_async.py][create_client_async]|Instantiate a table client|Authorizing a `TableServiceClient` object and `TableClient` object|
 |[sample_create_delete_table.py][create_delete_table] and [sample_create_delete_table_async.py][create_delete_table_async]|Creating a table in a storage account|
 |[sample_insert_delete_entities.py][insert_delete_entities] and [sample_insert_delete_entities_async.py][insert_delete_entities_async]|Inserting and deleting individual entities into a table|
-|[sample_query_table.py][query_entities] and [sample_query_table_async.py][query_table_async]|Querying entities in a table|
+|[sample_query_tables.py][query_tables] and [sample_query_tables_async.py][query_tables_async]|Querying tables in a storage account|
+|[sample_update_upsert_merge_entities.py][update_upsert_merge] and [sample_update_upsert_merge_entities_async.py][update_upsert_merge_async]| Updating, upserting, and merging entities|
+
 
 ### Prerequisites
 * Python 2.7, or 3.5 or later is required to use this package.
@@ -34,12 +37,9 @@ These sample programs show common scenarios for the Text Analytics client's offe
 ## Setup
 
 1. Install the Azure Data Tables client library for Python with [pip](https://pypi.org/project/pip/):
-
 ```bash
 pip install --pre azure-data-tables
 ```
-
-
 2. Clone or download this sample repository
 3. Open the sample folder in Visual Studio Code or your IDE of choice.
 
@@ -72,3 +72,6 @@ what you can do with the Azure Text Analytics client library.
 
 [query_tables]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/sample_insert_delete_entities_async.py
 [query_tables_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/async_samples/sample_insert_delete_entities_async.py
+
+[update_upsert_merge]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/sample_update_upsert_merge_entities.py
+[update_upsert_merge_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/async_samples/sample_update_upsert_merge_entities_async.py
