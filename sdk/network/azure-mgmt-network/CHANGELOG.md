@@ -1,5 +1,49 @@
 # Release History
 
+## 12.0.0 (2020-09-01)
+
+**Features**
+
+  - Model ConnectionMonitorEndpoint has a new parameter scope
+  - Model ConnectionMonitorEndpoint has a new parameter coverage_level
+  - Model ConnectionMonitorEndpoint has a new parameter type
+  - Model P2SConnectionConfiguration has a new parameter enable_internet_security
+  - Model VirtualHub has a new parameter enable_virtual_router_route_propogation
+  - Model VpnGateway has a new parameter ip_configurations
+  - Model NetworkInterface has a new parameter dscp_configuration
+  - Model NetworkVirtualAppliance has a new parameter address_prefix
+  - Model NetworkVirtualAppliance has a new parameter inbound_security_rules
+  - Model ApplicationGatewayHttpListener has a new parameter ssl_profile
+  - Model ConnectionMonitorTcpConfiguration has a new parameter destination_port_behavior
+  - Model ApplicationGateway has a new parameter ssl_profiles
+  - Model ApplicationGateway has a new parameter trusted_client_certificates
+  - Model PublicIPPrefix has a new parameter custom_ip_prefix
+  - Model VpnSite has a new parameter o365_policy
+  - Model ExpressRouteLinkMacSecConfig has a new parameter sci_state
+  - Model VirtualNetworkPeering has a new parameter remote_bgp_communities
+  - Added operation VpnGatewaysOperations.stop_packet_capture
+  - Added operation VpnGatewaysOperations.start_packet_capture
+  - Added operation VirtualHubBgpConnectionsOperations.list_learned_routes
+  - Added operation VirtualHubBgpConnectionsOperations.list_advertised_routes
+  - Added operation VpnConnectionsOperations.stop_packet_capture
+  - Added operation VpnConnectionsOperations.start_packet_capture
+  - Added operation FlowLogsOperations.update_tags
+  - Added operation ExpressRoutePortsOperations.generate_loa
+  - Added operation P2sVpnGatewaysOperations.reset
+  - Added operation group InboundSecurityRuleOperations
+  - Added operation group CustomIPPrefixesOperations
+  - Added operation group DscpConfigurationOperations
+
+**Breaking changes**
+
+  - Model ApplicationRuleCondition no longer has parameter target_urls
+  - Model FirewallPolicy no longer has parameter intrusion_system_mode
+  - Model FirewallPolicy no longer has parameter identity
+  - Model FirewallPolicy no longer has parameter transport_security
+  - Model ApplicationRule no longer has parameter target_urls
+  - Model ApplicationRule no longer has parameter terminate_tls
+  - Model NatRuleCondition no longer has parameter terminate_tls
+
 ## 11.0.0 (2020-06-19)
 
 **Features**
