@@ -169,7 +169,6 @@ class TableTestAsync(AsyncTableTestCase):
         # Assert
         for table_item in tables:
             self.assertIsInstance(table_item, TableItem)
-            # self.assertIsNotNone(table_item.api_version)
             self.assertIsNotNone(table_item.date)
             self.assertIsNotNone(table_item.table_name)
 
@@ -196,7 +195,6 @@ class TableTestAsync(AsyncTableTestCase):
         self.assertEqual(len(tables), 1)
         for table_item in tables:
             self.assertIsInstance(table_item, TableItem)
-            # self.assertIsNotNone(table_item.api_version)
             self.assertIsNotNone(table_item.date)
             self.assertIsNotNone(table_item.table_name)
         await ts.delete_table(table.table_name)
