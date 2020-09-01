@@ -769,7 +769,7 @@ def get_account_event(
             uid=uid,
             utid=utid,
             refresh_token=refresh_token,
-            id_token=build_id_token(aud=client_id, preferred_username=username),
+            id_token=build_id_token(aud=client_id, username=username),
             foci="1",
             **kwargs
         ),
