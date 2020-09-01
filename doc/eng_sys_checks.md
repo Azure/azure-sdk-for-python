@@ -1,4 +1,4 @@
-# Azure SDK for Python Engineering System 
+# Azure SDK for Python - Engineering System
 
 There are various tests currently enabled in Azure pipeline for Python SDK and some of them are enabled only for nightly CI checks. We also run some static analysis tool to verify code completeness, security and lint check.  
 
