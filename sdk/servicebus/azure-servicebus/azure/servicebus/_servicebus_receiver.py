@@ -286,15 +286,25 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         )
 
     def get_streaming_message_iter(self, max_wait_time=None):
+        # type: (float) -> Iterator[ReceivedMessage]
         """Receive messages from an iterator indefinitely, or if a max_wait_time is specified, until
         such a timeout occurs.
 
-        :param float max_wait_time: Maximum time to wait in seconds for the next message to arrive.
+        :param max_wait_time: Maximum time to wait in seconds for the next message to arrive.
          If no messages arrive, and no timeout is specified, this call will not return
          until the connection is closed. If specified, and no messages arrive for the
          timeout period, the iterator will stop.
+        :type max_wait_time: float
+        :rtype: Iterator[ReceivedMessage]
 
-         :rtype Iterator[ReceivedMessage]
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
+                :start-after: [START receive_forever]
+                :end-before: [END receive_forever]
+                :language: python
+                :dedent: 4
+                :caption: Receive indefinitely from an iterator in streaming fashion.
         """
         return self._iter_contextual_wrapper(max_wait_time)
 
@@ -308,6 +318,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         """Create a ServiceBusReceiver from a connection string.
 
         :param conn_str: The connection string of a Service Bus.
+        :type conn_str: str
         :keyword str queue_name: The path of specific Service Bus Queue the client connects to.
         :keyword str topic_name: The path of specific Service Bus Topic which contains the Subscription
          the client connects to.
@@ -338,6 +349,9 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
          In the case of prefetch_count being 0, `ServiceBusReceiver.receive` would try to cache `max_message_count`
          (if provided) within its request to the service.
         :rtype: ~azure.servicebus.ServiceBusReceiver
+
+        :raises ~azure.servicebus.ServiceBusAuthenticationError: Indicates an issue in token/identity validity.
+        :raises ~azure.servicebus.ServiceBusAuthorizationError: Indicates an access/rights related failure.
 
         .. admonition:: Example:
 
@@ -382,7 +396,8 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
          If no messages arrive, and no timeout is specified, this call will not return
          until the connection is closed. If specified, an no messages arrive within the
          timeout period, an empty list will be returned.
-        :rtype: list[~azure.servicebus.ReceivedMessage]
+
+        :rtype: List[~azure.servicebus.ReceivedMessage]
 
         .. admonition:: Example:
 
@@ -409,9 +424,9 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         When receiving deferred messages from a partitioned entity, all of the supplied
         sequence numbers must be messages from the same partition.
 
-        :param Union[int,list[int]] sequence_numbers: A list of the sequence numbers of messages that have been
+        :param Union[int,List[int]] sequence_numbers: A list of the sequence numbers of messages that have been
          deferred.
-        :rtype: list[~azure.servicebus.ReceivedMessage]
+        :rtype: List[~azure.servicebus.ReceivedMessage]
 
         .. admonition:: Example:
 
@@ -440,14 +455,12 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
 
         self._populate_message_properties(message)
 
-        handler = functools.partial(mgmt_handlers.deferred_message_op, receive_mode=self._receive_mode)
+        handler = functools.partial(mgmt_handlers.deferred_message_op, receive_mode=self._receive_mode, receiver=self)
         messages = self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_RECEIVE_BY_SEQUENCE_NUMBER,
             message,
             handler
         )
-        for m in messages:
-            m._receiver = self  # pylint: disable=protected-access
         return messages
 
     def peek_messages(self, max_message_count=1, sequence_number=None):
@@ -460,7 +473,8 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         :param int max_message_count: The maximum number of messages to try and peek. The default
          value is 1.
         :param int sequence_number: A message sequence number from which to start browsing messages.
-        :rtype: list[~azure.servicebus.PeekedMessage]
+
+        :rtype: List[~azure.servicebus.PeekedMessage]
 
         .. admonition:: Example:
 

@@ -6,29 +6,29 @@ interactions:
       "en"}]}'
     headers:
       Accept:
-      - application/json
+      - application/json, text/json
       Content-Length:
       - '249'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/1.0.1 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.0.1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.1/entities/recognition/pii?showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.1/entities/recognition/pii?showStats=false&stringIndexType=UnicodeCodePoint
   response:
     body:
-      string: '{"documents":[{"id":"1","entities":[],"warnings":[]},{"id":"2","entities":[],"warnings":[]},{"id":"3","entities":[],"warnings":[]},{"id":"4","entities":[],"warnings":[]},{"id":"5","entities":[],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}'
+      string: '{"documents":[{"id":"1","entities":[],"warnings":[]},{"id":"2","entities":[],"warnings":[]},{"id":"3","entities":[],"warnings":[]},{"id":"4","entities":[],"warnings":[]},{"id":"5","entities":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}'
     headers:
-      apim-request-id: 10d501bf-1bf5-48be-85bd-818a8a4d6bb3
+      apim-request-id: a9661dd9-24be-4466-ac59-8898ad3661f8
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=5
-      date: Thu, 23 Jul 2020 17:19:53 GMT
+      date: Thu, 27 Aug 2020 19:32:25 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '75'
+      x-envoy-upstream-service-time: '78'
     status:
       code: 200
       message: OK
-    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.1/entities/recognition/pii?showStats=false
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.1/entities/recognition/pii?showStats=false&stringIndexType=UnicodeCodePoint
 version: 1

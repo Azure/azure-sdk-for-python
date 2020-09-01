@@ -2,12 +2,13 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-from typing import Any, TYPE_CHECKING
+from typing import Any, List, TYPE_CHECKING
+import logging
 
 import uamqp
 
 from .._base_handler import _parse_conn_str
-from ._base_handler_async import ServiceBusSharedKeyCredential
+from ._base_handler_async import ServiceBusSharedKeyCredential, BaseHandler
 from ._servicebus_sender_async import ServiceBusSender
 from ._servicebus_receiver_async import ServiceBusReceiver
 from ._servicebus_session_receiver_async import ServiceBusSessionReceiver
@@ -17,6 +18,8 @@ from ._async_utils import create_authentication
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class ServiceBusClient(object):
@@ -75,6 +78,7 @@ class ServiceBusClient(object):
             self._auth_uri = "{}/{}".format(self._auth_uri, self._entity_name)
         # Internal flag for switching whether to apply connection sharing, pending fix in uamqp library
         self._connection_sharing = False
+        self._handlers = []  # type: List[BaseHandler]
 
     async def __aenter__(self):
         if self._connection_sharing:
@@ -102,7 +106,7 @@ class ServiceBusClient(object):
         """
         Create a ServiceBusClient from a connection string.
 
-        :param conn_str: The connection string of a Service Bus.
+        :param str conn_str: The connection string of a Service Bus.
         :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
         :keyword transport_type: The type of transport protocol that will be used for communicating with
          the Service Bus service. Default is `TransportType.Amqp`.
@@ -132,7 +136,7 @@ class ServiceBusClient(object):
         return cls(
             fully_qualified_namespace=host,
             entity_name=entity_in_conn_str or kwargs.pop("entity_name", None),
-            credential=ServiceBusSharedKeyCredential(policy, key),
+            credential=ServiceBusSharedKeyCredential(policy, key), # type: ignore
             **kwargs
         )
 
@@ -140,9 +144,21 @@ class ServiceBusClient(object):
         # type: () -> None
         """
         Close down the ServiceBus client.
+        All spawned senders, receivers and underlying connection will be shutdown.
 
         :return: None
         """
+        for handler in self._handlers:
+            try:
+                await handler.close()
+            except Exception as exception:  # pylint: disable=broad-except
+                _LOGGER.error(
+                    "Client has met an exception when closing the handler: %r. Exception: %r.",
+                    handler._container_id,  # pylint: disable=protected-access
+                    exception,
+                )
+        del self._handlers[:]
+
         if self._connection_sharing and self._connection:
             await self._connection.destroy_async()
 
@@ -164,7 +180,7 @@ class ServiceBusClient(object):
 
         """
         # pylint: disable=protected-access
-        return ServiceBusSender(
+        handler = ServiceBusSender(
             fully_qualified_namespace=self.fully_qualified_namespace,
             queue_name=queue_name,
             credential=self._credential,
@@ -178,6 +194,8 @@ class ServiceBusClient(object):
             retry_backoff_max=self._config.retry_backoff_max,
             **kwargs
         )
+        self._handlers.append(handler)
+        return handler
 
     def get_queue_receiver(self, queue_name, **kwargs):
         # type: (str, Any) -> ServiceBusReceiver
@@ -212,7 +230,7 @@ class ServiceBusClient(object):
 
         """
         # pylint: disable=protected-access
-        return ServiceBusReceiver(
+        handler = ServiceBusReceiver(
             fully_qualified_namespace=self.fully_qualified_namespace,
             queue_name=queue_name,
             credential=self._credential,
@@ -226,6 +244,8 @@ class ServiceBusClient(object):
             retry_backoff_max=self._config.retry_backoff_max,
             **kwargs
         )
+        self._handlers.append(handler)
+        return handler
 
     def get_queue_deadletter_receiver(self, queue_name, **kwargs):
         # type: (str, Any) -> ServiceBusReceiver
@@ -270,7 +290,7 @@ class ServiceBusClient(object):
             queue_name=queue_name,
             transfer_deadletter=kwargs.get('transfer_deadletter', False)
         )
-        return ServiceBusReceiver(
+        handler = ServiceBusReceiver(
             fully_qualified_namespace=self.fully_qualified_namespace,
             entity_name=entity_name,
             credential=self._credential,
@@ -285,6 +305,8 @@ class ServiceBusClient(object):
             retry_backoff_max=self._config.retry_backoff_max,
             **kwargs
         )
+        self._handlers.append(handler)
+        return handler
 
     def get_topic_sender(self, topic_name, **kwargs):
         # type: (str, Any) -> ServiceBusSender
@@ -303,7 +325,7 @@ class ServiceBusClient(object):
                 :caption: Create a new instance of the ServiceBusSender from ServiceBusClient.
 
         """
-        return ServiceBusSender(
+        handler = ServiceBusSender(
             fully_qualified_namespace=self.fully_qualified_namespace,
             topic_name=topic_name,
             credential=self._credential,
@@ -317,6 +339,8 @@ class ServiceBusClient(object):
             retry_backoff_max=self._config.retry_backoff_max,
             **kwargs
         )
+        self._handlers.append(handler)
+        return handler
 
     def get_subscription_receiver(self, topic_name, subscription_name, **kwargs):
         # type: (str, str, Any) -> ServiceBusReceiver
@@ -354,7 +378,7 @@ class ServiceBusClient(object):
 
         """
         # pylint: disable=protected-access
-        return ServiceBusReceiver(
+        handler = ServiceBusReceiver(
             fully_qualified_namespace=self.fully_qualified_namespace,
             topic_name=topic_name,
             subscription_name=subscription_name,
@@ -369,6 +393,8 @@ class ServiceBusClient(object):
             retry_backoff_max=self._config.retry_backoff_max,
             **kwargs
         )
+        self._handlers.append(handler)
+        return handler
 
     def get_subscription_deadletter_receiver(self, topic_name, subscription_name, **kwargs):
         # type: (str, str, Any) -> ServiceBusReceiver
@@ -415,7 +441,7 @@ class ServiceBusClient(object):
             subscription_name=subscription_name,
             transfer_deadletter=kwargs.get('transfer_deadletter', False)
         )
-        return ServiceBusReceiver(
+        handler = ServiceBusReceiver(
             fully_qualified_namespace=self.fully_qualified_namespace,
             entity_name=entity_name,
             credential=self._credential,
@@ -430,6 +456,8 @@ class ServiceBusClient(object):
             retry_backoff_max=self._config.retry_backoff_max,
             **kwargs
         )
+        self._handlers.append(handler)
+        return handler
 
     def get_subscription_session_receiver(self, topic_name, subscription_name, session_id=None, **kwargs):
         # type: (str, str, str, Any) -> ServiceBusSessionReceiver
@@ -470,7 +498,7 @@ class ServiceBusClient(object):
 
         """
         # pylint: disable=protected-access
-        return ServiceBusSessionReceiver(
+        handler = ServiceBusSessionReceiver(
             fully_qualified_namespace=self.fully_qualified_namespace,
             topic_name=topic_name,
             subscription_name=subscription_name,
@@ -486,6 +514,8 @@ class ServiceBusClient(object):
             retry_backoff_max=self._config.retry_backoff_max,
             **kwargs
         )
+        self._handlers.append(handler)
+        return handler
 
     def get_queue_session_receiver(self, queue_name, session_id=None, **kwargs):
         # type: (str, str, Any) -> ServiceBusSessionReceiver
@@ -523,7 +553,7 @@ class ServiceBusClient(object):
 
         """
         # pylint: disable=protected-access
-        return ServiceBusSessionReceiver(
+        handler = ServiceBusSessionReceiver(
             fully_qualified_namespace=self.fully_qualified_namespace,
             queue_name=queue_name,
             credential=self._credential,
@@ -538,3 +568,5 @@ class ServiceBusClient(object):
             retry_backoff_max=self._config.retry_backoff_max,
             **kwargs
         )
+        self._handlers.append(handler)
+        return handler

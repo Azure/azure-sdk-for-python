@@ -6,7 +6,7 @@ interactions:
       "language": "en"}]}'
     headers:
       Accept:
-      - application/json
+      - application/json, text/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -16,9 +16,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/1.0.1 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.0.1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.1/entities/recognition/pii?showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.1/entities/recognition/pii?showStats=false&stringIndexType=UnicodeCodePoint
   response:
     body:
       string: '{"documents":[],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
@@ -29,14 +29,14 @@ interactions:
         document in request.","innererror":{"code":"InvalidDocument","message":"A
         document within the request was too large to be processed. Limit document
         size to: 5120 text elements. For additional details on the data limitations
-        see https://aka.ms/text-analytics-data-limits"}}}],"modelVersion":"2020-04-01"}'
+        see https://aka.ms/text-analytics-data-limits"}}}],"modelVersion":"2020-07-01"}'
     headers:
       apim-request-id:
-      - 860c6f8f-a447-4ec6-9b05-97c5608db3be
+      - 1d7d7f7e-12f7-4e26-a0f1-358dd5e68859
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 23 Jul 2020 17:18:47 GMT
+      - Thu, 27 Aug 2020 19:32:18 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -44,7 +44,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '2'
+      - '3'
     status:
       code: 200
       message: OK

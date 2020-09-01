@@ -331,7 +331,8 @@ class QueueRuntimeProperties(object):
     def __init__(
         self,
     ):
-        self._name = None
+    # type: () -> None
+        self._name = None # type: Optional[str]
         self._internal_qr = None  # type: Optional[InternalQueueDescription]
 
     @classmethod
@@ -574,7 +575,8 @@ class TopicRuntimeProperties(object):
     def __init__(
         self,
     ):
-        self._name = None
+        # type: () -> None
+        self._name = None # type: Optional[str]
         self._internal_td = None  # type: Optional[InternalTopicDescription]
 
     @classmethod
@@ -765,8 +767,9 @@ class SubscriptionRuntimeProperties(object):
 
     """
     def __init__(self):
+        # type: () -> None
         self._internal_sd = None  # type: Optional[InternalSubscriptionDescription]
-        self._name = None
+        self._name = None # type: Optional[str]
 
     @classmethod
     def _from_internal_entity(cls, name, internal_subscription):
@@ -1014,6 +1017,7 @@ class TrueRuleFilter(SqlRuleFilter):
     """A sql filter with a sql expression that is always True
     """
     def __init__(self):
+        # type: () -> None
         super(TrueRuleFilter, self).__init__("1=1", None)
 
     def _to_internal_entity(self):
@@ -1029,6 +1033,7 @@ class FalseRuleFilter(SqlRuleFilter):
     """A sql filter with a sql expression that is always True
     """
     def __init__(self):
+        # type: () -> None
         super(FalseRuleFilter, self).__init__("1>1", None)
 
     def _to_internal_entity(self):

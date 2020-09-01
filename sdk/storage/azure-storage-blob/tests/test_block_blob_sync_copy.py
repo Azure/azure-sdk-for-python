@@ -1,3 +1,5 @@
+# coding: utf-8
+
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -40,12 +42,17 @@ class StorageBlockBlobTest(StorageTestCase):
 
         # create source blob to be copied from
         self.source_blob_name = self.get_resource_name('srcblob')
+        self.source_blob_name_with_special_chars = 'भारत¥test/testsubÐirÍ/'+self.get_resource_name('srcÆblob')
         self.source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
+        self.source_blob_with_special_chars_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
 
         blob = self.bsc.get_blob_client(self.container_name, self.source_blob_name)
+        blob_with_special_chars = self.bsc.get_blob_client(self.container_name, self.source_blob_name_with_special_chars)
+
         if self.is_live:
             self.bsc.create_container(self.container_name)
             blob.upload_blob(self.source_blob_data)
+            blob_with_special_chars.upload_blob(self.source_blob_with_special_chars_data)
 
         # generate a SAS so that it is accessible with a URL
         sas_token = generate_blob_sas(
@@ -57,7 +64,19 @@ class StorageBlockBlobTest(StorageTestCase):
             permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
+        # generate a SAS so that it is accessible with a URL
+        sas_token_for_special_chars = generate_blob_sas(
+            blob_with_special_chars.account_name,
+            blob_with_special_chars.container_name,
+            blob_with_special_chars.blob_name,
+            snapshot=blob_with_special_chars.snapshot,
+            account_key=blob_with_special_chars.credential.account_key,
+            permission=BlobSasPermissions(read=True),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+        )
         self.source_blob_url = BlobClient.from_blob_url(blob.url, credential=sas_token).url
+        self.source_blob_url_with_special_chars = BlobClient.from_blob_url(
+            blob_with_special_chars.url, credential=sas_token_for_special_chars).url
 
     @GlobalStorageAccountPreparer()
     def test_put_block_from_url_and_commit(self, resource_group, location, storage_account, storage_account_key):
@@ -90,6 +109,30 @@ class StorageBlockBlobTest(StorageTestCase):
         content = dest_blob.download_blob().readall()
         self.assertEqual(len(content), 8 * 1024)
         self.assertEqual(content, self.source_blob_data)
+
+        dest_blob.stage_block_from_url(
+            block_id=3,
+            source_url=self.source_blob_url_with_special_chars,
+            source_offset=0,
+            source_length=split)
+        dest_blob.stage_block_from_url(
+            block_id=4,
+            source_url=self.source_blob_url_with_special_chars,
+            source_offset=split,
+            source_length=split)
+
+        # Assert blocks
+        committed, uncommitted = dest_blob.get_block_list('all')
+        self.assertEqual(len(uncommitted), 2)
+        self.assertEqual(len(committed), 2)
+
+        # Act part 2: commit the blocks
+        dest_blob.commit_block_list(['3', '4'])
+
+        # Assert destination blob has right content
+        content = dest_blob.download_blob().readall()
+        self.assertEqual(len(content), 8 * 1024)
+        self.assertEqual(content, self.source_blob_with_special_chars_data)
 
     @GlobalStorageAccountPreparer()
     def test_put_block_from_url_and_validate_content_md5(self, resource_group, location, storage_account, storage_account_key):
@@ -144,6 +187,17 @@ class StorageBlockBlobTest(StorageTestCase):
         # Verify content
         content = dest_blob.download_blob().readall()
         self.assertEqual(self.source_blob_data, content)
+
+        copy_props_with_special_chars = dest_blob.start_copy_from_url(self.source_blob_url_with_special_chars, requires_sync=True)
+
+        # Assert
+        self.assertIsNotNone(copy_props_with_special_chars)
+        self.assertIsNotNone(copy_props_with_special_chars['copy_id'])
+        self.assertEqual('success', copy_props_with_special_chars['copy_status'])
+
+        # Verify content
+        content = dest_blob.download_blob().readall()
+        self.assertEqual(self.source_blob_with_special_chars_data, content)
 
     @pytest.mark.playback_test_only
     @GlobalStorageAccountPreparer()

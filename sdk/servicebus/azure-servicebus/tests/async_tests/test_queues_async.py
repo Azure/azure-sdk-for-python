@@ -939,16 +939,16 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 await sender.send_messages(message)
 
             async with sb_client.get_queue_receiver(servicebus_queue.name) as receiver:
-                messages = await receiver.receive_messages(max_wait_time=10)
-                recv = True
+                messages = []
+                recv = await receiver.receive_messages(max_wait_time=10)
                 while recv:
-                    recv = await receiver.receive_messages(max_wait_time=10)
                     messages.extend(recv)
+                    for message in recv:
+                        print_message(_logger, message)
+                        await message.complete()
+                    recv = await receiver.receive_messages(max_wait_time=10)
 
                 assert len(messages) == 5
-                for m in messages:
-                    print_message(_logger, m)
-                    await m.complete()
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -959,14 +959,14 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
         async with ServiceBusClient.from_connection_string(
             servicebus_namespace_connection_string, logging_enable=False) as sb_client:
 
-            enqueue_time = (utc_now() + timedelta(minutes=2)).replace(microsecond=0)
+            scheduled_enqueue_time = (utc_now() + timedelta(minutes=2)).replace(microsecond=0)
             async with sb_client.get_queue_receiver(servicebus_queue.name) as receiver:
                 async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                     content = str(uuid.uuid4())
                     message_id = uuid.uuid4()
                     message = Message(content)
                     message.message_id = message_id
-                    message.scheduled_enqueue_time_utc = enqueue_time
+                    message.scheduled_enqueue_time_utc = scheduled_enqueue_time
                     await sender.send_messages(message)
 
                 messages = await receiver.receive_messages(max_wait_time=120)
@@ -975,8 +975,8 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                         data = str(messages[0])
                         assert data == content
                         assert messages[0].message_id == message_id
-                        assert messages[0].scheduled_enqueue_time_utc == enqueue_time
-                        assert messages[0].scheduled_enqueue_time_utc == messages[0].enqueued_time_utc.replace(microsecond=0)
+                        assert messages[0].scheduled_enqueue_time_utc == scheduled_enqueue_time
+                        assert messages[0].scheduled_enqueue_time_utc <= messages[0].enqueued_time_utc.replace(microsecond=0)
                         assert len(messages) == 1
                     finally:
                         for m in messages:
@@ -992,7 +992,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
     async def test_async_queue_schedule_multiple_messages(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
         async with ServiceBusClient.from_connection_string(
             servicebus_namespace_connection_string, logging_enable=False) as sb_client:
-            enqueue_time = (utc_now() + timedelta(minutes=2)).replace(microsecond=0)
+            scheduled_enqueue_time = (utc_now() + timedelta(minutes=2)).replace(microsecond=0)
             messages = []
             receiver = sb_client.get_queue_receiver(servicebus_queue.name, prefetch_count=20)
             sender = sb_client.get_queue_sender(servicebus_queue.name)
@@ -1007,11 +1007,12 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
 
                 await sender.send_messages([message_a, message_b])
 
-                received_messages = await receiver.receive_messages(max_message_count=2, max_wait_time=5)
-                for message in received_messages:
+                received_messages = []
+                async for message in receiver.get_streaming_message_iter(max_wait_time=5):
+                    received_messages.append(message)
                     await message.complete()
 
-                tokens = await sender.schedule_messages(received_messages, enqueue_time)
+                tokens = await sender.schedule_messages(received_messages, scheduled_enqueue_time)
                 assert len(tokens) == 2
 
                 messages = await receiver.receive_messages(max_wait_time=120)
@@ -1022,8 +1023,8 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                         data = str(messages[0])
                         assert data == content
                         assert messages[0].message_id in (message_id_a, message_id_b)
-                        assert messages[0].scheduled_enqueue_time_utc == enqueue_time
-                        assert messages[0].scheduled_enqueue_time_utc == messages[0].enqueued_time_utc.replace(microsecond=0)
+                        assert messages[0].scheduled_enqueue_time_utc == scheduled_enqueue_time
+                        assert messages[0].scheduled_enqueue_time_utc <= messages[0].enqueued_time_utc.replace(microsecond=0)
                         assert len(messages) == 2
                     finally:
                         for m in messages:
@@ -1252,7 +1253,11 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 message_1st_received_cnt = 0
                 message_2nd_received_cnt = 0
                 while message_1st_received_cnt < 20 or message_2nd_received_cnt < 20:
-                    messages = await receiver.receive_messages(max_message_count=20, max_wait_time=5)
+                    messages = []
+                    batch = await receiver.receive_messages(max_message_count=20, max_wait_time=5)
+                    while batch:
+                        messages += batch
+                        batch = await receiver.receive_messages(max_message_count=20, max_wait_time=5)
                     if not messages:
                         break
                     receive_counter += 1

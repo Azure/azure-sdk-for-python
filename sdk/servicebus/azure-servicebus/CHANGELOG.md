@@ -21,6 +21,8 @@
 * Renamed properties `created_time` and `modified_time` to `created_at_utc` and `modified_at_utc` within `AuthorizationRule` and `NamespaceProperties`
 * Removed parameter `requires_preprocessing` from `SqlRuleFilter` and `SqlRuleAction`
 * Removed property `namespace_type` from `NamespaceProperties`
+* `ServiceBusClient.close()` now closes spawned senders and receivers.
+* Attempting to initialize a sender or receiver with a different connection string entity and specified entity (e.g. `queue_name`) will result in an AuthenticationError
 
 ## 7.0.0b5 (2020-08-10)
 

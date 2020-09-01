@@ -20,6 +20,7 @@ try:
     from ._models_py3 import EntitiesResult
     from ._models_py3 import Entity
     from ._models_py3 import EntityLinkingResult
+    from ._models_py3 import ErrorResponse
     from ._models_py3 import InnerError
     from ._models_py3 import KeyPhraseResult
     from ._models_py3 import LanguageBatchInput
@@ -51,6 +52,7 @@ except (SyntaxError, ImportError):
     from ._models import EntitiesResult  # type: ignore
     from ._models import Entity  # type: ignore
     from ._models import EntityLinkingResult  # type: ignore
+    from ._models import ErrorResponse  # type: ignore
     from ._models import InnerError  # type: ignore
     from ._models import KeyPhraseResult  # type: ignore
     from ._models import LanguageBatchInput  # type: ignore
@@ -74,9 +76,9 @@ from ._text_analytics_client_enums import (
     DocumentSentimentValue,
     ErrorCodeValue,
     InnerErrorCodeValue,
-    SentenceAspectSentiment,
-    SentenceOpinionSentiment,
     SentenceSentimentValue,
+    StringIndexType,
+    TokenSentimentValue,
     WarningCodeValue,
 )
 
@@ -94,6 +96,7 @@ __all__ = [
     'EntitiesResult',
     'Entity',
     'EntityLinkingResult',
+    'ErrorResponse',
     'InnerError',
     'KeyPhraseResult',
     'LanguageBatchInput',
@@ -115,8 +118,8 @@ __all__ = [
     'DocumentSentimentValue',
     'ErrorCodeValue',
     'InnerErrorCodeValue',
-    'SentenceAspectSentiment',
-    'SentenceOpinionSentiment',
     'SentenceSentimentValue',
+    'StringIndexType',
+    'TokenSentimentValue',
     'WarningCodeValue',
 ]

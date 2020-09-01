@@ -217,6 +217,13 @@ async def example_send_and_receive_async():
             await message.complete()
     # [END receive_async]
 
+    # [START receive_forever_async]
+    async with servicebus_receiver:
+        async for message in servicebus_receiver.get_streaming_message_iter():
+            print(str(message))
+            await message.complete()
+    # [END receive_forever_async]
+
     # [START auto_lock_renew_message_async]
     from azure.servicebus.aio import AutoLockRenew
 

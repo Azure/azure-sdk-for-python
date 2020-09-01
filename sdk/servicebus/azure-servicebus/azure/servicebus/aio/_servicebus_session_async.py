@@ -74,6 +74,7 @@ class ServiceBusSession(BaseSession):
 
         :param state: The state value.
         :type state: Union[str, bytes, bytearray]
+        :rtype: None
 
         .. admonition:: Example:
 
