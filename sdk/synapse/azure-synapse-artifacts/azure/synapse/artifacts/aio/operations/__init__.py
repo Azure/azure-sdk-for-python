@@ -6,17 +6,17 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._linked_service_operations_async import LinkedServiceOperations
-from ._dataset_operations_async import DatasetOperations
-from ._pipeline_operations_async import PipelineOperations
-from ._pipeline_run_operations_async import PipelineRunOperations
-from ._trigger_operations_async import TriggerOperations
-from ._trigger_run_operations_async import TriggerRunOperations
-from ._data_flow_operations_async import DataFlowOperations
-from ._data_flow_debug_session_operations_async import DataFlowDebugSessionOperations
-from ._sql_script_operations_async import SqlScriptOperations
-from ._spark_job_definition_operations_async import SparkJobDefinitionOperations
-from ._notebook_operations_async import NotebookOperations
+from ._linked_service_operations import LinkedServiceOperations
+from ._dataset_operations import DatasetOperations
+from ._pipeline_operations import PipelineOperations
+from ._pipeline_run_operations import PipelineRunOperations
+from ._trigger_operations import TriggerOperations
+from ._trigger_run_operations import TriggerRunOperations
+from ._data_flow_operations import DataFlowOperations
+from ._data_flow_debug_session_operations import DataFlowDebugSessionOperations
+from ._sql_script_operations import SqlScriptOperations
+from ._spark_job_definition_operations import SparkJobDefinitionOperations
+from ._notebook_operations import NotebookOperations
 
 __all__ = [
     'LinkedServiceOperations',

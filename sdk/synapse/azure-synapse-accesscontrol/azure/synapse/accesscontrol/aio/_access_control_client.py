@@ -15,8 +15,8 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
-from ._configuration_async import AccessControlClientConfiguration
-from .operations_async import AccessControlClientOperationsMixin
+from ._configuration import AccessControlClientConfiguration
+from .operations import AccessControlClientOperationsMixin
 from .. import models
 
 
@@ -27,7 +27,6 @@ class AccessControlClient(AccessControlClientOperationsMixin):
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param endpoint: The workspace development endpoint, for example https://myworkspace.dev.azuresynapse.net.
     :type endpoint: str
-    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
     def __init__(

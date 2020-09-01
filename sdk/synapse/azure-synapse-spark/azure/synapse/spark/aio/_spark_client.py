@@ -15,9 +15,9 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
-from ._configuration_async import SparkClientConfiguration
-from .operations_async import SparkBatchOperations
-from .operations_async import SparkSessionOperations
+from ._configuration import SparkClientConfiguration
+from .operations import SparkBatchOperations
+from .operations import SparkSessionOperations
 from .. import models
 
 
@@ -25,9 +25,9 @@ class SparkClient(object):
     """SparkClient.
 
     :ivar spark_batch: SparkBatchOperations operations
-    :vartype spark_batch: azure.synapse.spark.aio.operations_async.SparkBatchOperations
+    :vartype spark_batch: azure.synapse.spark.aio.operations.SparkBatchOperations
     :ivar spark_session: SparkSessionOperations operations
-    :vartype spark_session: azure.synapse.spark.aio.operations_async.SparkSessionOperations
+    :vartype spark_session: azure.synapse.spark.aio.operations.SparkSessionOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param endpoint: The workspace development endpoint, for example https://myworkspace.dev.azuresynapse.net.
@@ -36,7 +36,6 @@ class SparkClient(object):
     :type spark_pool_name: str
     :param livy_api_version: Valid api-version for the request.
     :type livy_api_version: str
-    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
     def __init__(

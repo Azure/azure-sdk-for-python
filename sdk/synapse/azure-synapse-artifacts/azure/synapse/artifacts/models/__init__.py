@@ -305,6 +305,8 @@ try:
     from ._models_py3 import SparkServiceError
     from ._models_py3 import SparkServicePlugin
     from ._models_py3 import SqlConnection
+    from ._models_py3 import SqlPoolReference
+    from ._models_py3 import SqlPoolStoredProcedureActivity
     from ._models_py3 import SqlScript
     from ._models_py3 import SqlScriptContent
     from ._models_py3 import SqlScriptMetadata
@@ -326,6 +328,10 @@ try:
     from ._models_py3 import SwitchCase
     from ._models_py3 import SybaseLinkedService
     from ._models_py3 import SybaseTableDataset
+    from ._models_py3 import SynapseNotebookActivity
+    from ._models_py3 import SynapseNotebookReference
+    from ._models_py3 import SynapseSparkJobDefinitionActivity
+    from ._models_py3 import SynapseSparkJobReference
     from ._models_py3 import TeradataLinkedService
     from ._models_py3 import TeradataTableDataset
     from ._models_py3 import Transformation
@@ -659,6 +665,8 @@ except (SyntaxError, ImportError):
     from ._models import SparkServiceError  # type: ignore
     from ._models import SparkServicePlugin  # type: ignore
     from ._models import SqlConnection  # type: ignore
+    from ._models import SqlPoolReference  # type: ignore
+    from ._models import SqlPoolStoredProcedureActivity  # type: ignore
     from ._models import SqlScript  # type: ignore
     from ._models import SqlScriptContent  # type: ignore
     from ._models import SqlScriptMetadata  # type: ignore
@@ -680,6 +688,10 @@ except (SyntaxError, ImportError):
     from ._models import SwitchCase  # type: ignore
     from ._models import SybaseLinkedService  # type: ignore
     from ._models import SybaseTableDataset  # type: ignore
+    from ._models import SynapseNotebookActivity  # type: ignore
+    from ._models import SynapseNotebookReference  # type: ignore
+    from ._models import SynapseSparkJobDefinitionActivity  # type: ignore
+    from ._models import SynapseSparkJobReference  # type: ignore
     from ._models import TeradataLinkedService  # type: ignore
     from ._models import TeradataTableDataset  # type: ignore
     from ._models import Transformation  # type: ignore
@@ -718,15 +730,20 @@ except (SyntaxError, ImportError):
 from ._artifacts_client_enums import (
     AvroCompressionCodec,
     AzureFunctionActivityMethod,
+    BigDataPoolReferenceType,
     CellOutputType,
     DataFlowComputeType,
+    DataFlowReferenceType,
     DatasetCompressionLevel,
+    DatasetReferenceType,
+    Db2AuthenticationType,
     DelimitedTextCompressionCodec,
     DependencyCondition,
     DynamicsAuthenticationType,
     DynamicsDeploymentType,
     DynamicsServicePrincipalCredentialType,
     EventSubscriptionStatus,
+    ExpressionType,
     FtpAuthenticationType,
     GoogleAdWordsAuthenticationType,
     GoogleBigQueryAuthenticationType,
@@ -738,13 +755,16 @@ from ._artifacts_client_enums import (
     HiveThriftTransportProtocol,
     HttpAuthenticationType,
     ImpalaAuthenticationType,
+    IntegrationRuntimeReferenceType,
     MongoDbAuthenticationType,
+    NotebookReferenceType,
     ODataAadServicePrincipalCredentialType,
     ODataAuthenticationType,
     OrcCompressionCodec,
     ParameterType,
     ParquetCompressionCodec,
     PhoenixAuthenticationType,
+    PipelineReferenceType,
     PluginCurrentState,
     PrestoAuthenticationType,
     RestServiceAuthenticationType,
@@ -759,19 +779,25 @@ from ._artifacts_client_enums import (
     SparkAuthenticationType,
     SparkBatchJobResultType,
     SparkErrorSource,
+    SparkJobReferenceType,
     SparkJobType,
     SparkServerType,
     SparkThriftTransportProtocol,
     SqlConnectionType,
+    SqlPoolReferenceType,
+    SqlScriptType,
+    SsisLogLocationType,
     SsisPackageLocationType,
     StoredProcedureParameterType,
     SybaseAuthenticationType,
     TeradataAuthenticationType,
     TriggerRunStatus,
     TriggerRuntimeState,
+    Type,
     VariableType,
     WebActivityMethod,
     WebAuthenticationType,
+    WebHookActivityMethod,
 )
 
 __all__ = [
@@ -1073,6 +1099,8 @@ __all__ = [
     'SparkServiceError',
     'SparkServicePlugin',
     'SqlConnection',
+    'SqlPoolReference',
+    'SqlPoolStoredProcedureActivity',
     'SqlScript',
     'SqlScriptContent',
     'SqlScriptMetadata',
@@ -1094,6 +1122,10 @@ __all__ = [
     'SwitchCase',
     'SybaseLinkedService',
     'SybaseTableDataset',
+    'SynapseNotebookActivity',
+    'SynapseNotebookReference',
+    'SynapseSparkJobDefinitionActivity',
+    'SynapseSparkJobReference',
     'TeradataLinkedService',
     'TeradataTableDataset',
     'Transformation',
@@ -1130,15 +1162,20 @@ __all__ = [
     'ZohoObjectDataset',
     'AvroCompressionCodec',
     'AzureFunctionActivityMethod',
+    'BigDataPoolReferenceType',
     'CellOutputType',
     'DataFlowComputeType',
+    'DataFlowReferenceType',
     'DatasetCompressionLevel',
+    'DatasetReferenceType',
+    'Db2AuthenticationType',
     'DelimitedTextCompressionCodec',
     'DependencyCondition',
     'DynamicsAuthenticationType',
     'DynamicsDeploymentType',
     'DynamicsServicePrincipalCredentialType',
     'EventSubscriptionStatus',
+    'ExpressionType',
     'FtpAuthenticationType',
     'GoogleAdWordsAuthenticationType',
     'GoogleBigQueryAuthenticationType',
@@ -1150,13 +1187,16 @@ __all__ = [
     'HiveThriftTransportProtocol',
     'HttpAuthenticationType',
     'ImpalaAuthenticationType',
+    'IntegrationRuntimeReferenceType',
     'MongoDbAuthenticationType',
+    'NotebookReferenceType',
     'ODataAadServicePrincipalCredentialType',
     'ODataAuthenticationType',
     'OrcCompressionCodec',
     'ParameterType',
     'ParquetCompressionCodec',
     'PhoenixAuthenticationType',
+    'PipelineReferenceType',
     'PluginCurrentState',
     'PrestoAuthenticationType',
     'RestServiceAuthenticationType',
@@ -1171,17 +1211,23 @@ __all__ = [
     'SparkAuthenticationType',
     'SparkBatchJobResultType',
     'SparkErrorSource',
+    'SparkJobReferenceType',
     'SparkJobType',
     'SparkServerType',
     'SparkThriftTransportProtocol',
     'SqlConnectionType',
+    'SqlPoolReferenceType',
+    'SqlScriptType',
+    'SsisLogLocationType',
     'SsisPackageLocationType',
     'StoredProcedureParameterType',
     'SybaseAuthenticationType',
     'TeradataAuthenticationType',
     'TriggerRunStatus',
     'TriggerRuntimeState',
+    'Type',
     'VariableType',
     'WebActivityMethod',
     'WebAuthenticationType',
+    'WebHookActivityMethod',
 ]

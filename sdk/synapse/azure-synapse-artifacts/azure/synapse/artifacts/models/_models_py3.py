@@ -19,7 +19,7 @@ class Activity(msrest.serialization.Model):
     """A pipeline activity.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AppendVariableActivity, ControlActivity, ExecutePipelineActivity, ExecutionActivity, FilterActivity, ForEachActivity, IfConditionActivity, SetVariableActivity, SwitchActivity, UntilActivity, ValidationActivity, WaitActivity, WebHookActivity.
+    sub-classes are: AppendVariableActivity, ControlActivity, ExecutePipelineActivity, ExecutionActivity, FilterActivity, ForEachActivity, IfConditionActivity, SetVariableActivity, SynapseSparkJobDefinitionActivity, SqlPoolStoredProcedureActivity, SwitchActivity, SynapseNotebookActivity, UntilActivity, ValidationActivity, WaitActivity, WebHookActivity.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -53,7 +53,7 @@ class Activity(msrest.serialization.Model):
     }
 
     _subtype_map = {
-        'type': {'AppendVariable': 'AppendVariableActivity', 'Container': 'ControlActivity', 'ExecutePipeline': 'ExecutePipelineActivity', 'Execution': 'ExecutionActivity', 'Filter': 'FilterActivity', 'ForEach': 'ForEachActivity', 'IfCondition': 'IfConditionActivity', 'SetVariable': 'SetVariableActivity', 'Switch': 'SwitchActivity', 'Until': 'UntilActivity', 'Validation': 'ValidationActivity', 'Wait': 'WaitActivity', 'WebHook': 'WebHookActivity'}
+        'type': {'AppendVariable': 'AppendVariableActivity', 'Container': 'ControlActivity', 'ExecutePipeline': 'ExecutePipelineActivity', 'Execution': 'ExecutionActivity', 'Filter': 'FilterActivity', 'ForEach': 'ForEachActivity', 'IfCondition': 'IfConditionActivity', 'SetVariable': 'SetVariableActivity', 'SparkJob': 'SynapseSparkJobDefinitionActivity', 'SqlPoolStoredProcedure': 'SqlPoolStoredProcedureActivity', 'Switch': 'SwitchActivity', 'SynapseNotebook': 'SynapseNotebookActivity', 'Until': 'UntilActivity', 'Validation': 'ValidationActivity', 'Wait': 'WaitActivity', 'WebHook': 'WebHookActivity'}
     }
 
     def __init__(
@@ -69,7 +69,7 @@ class Activity(msrest.serialization.Model):
         super(Activity, self).__init__(**kwargs)
         self.additional_properties = additional_properties
         self.name = name
-        self.type: str = 'Activity'
+        self.type = 'Activity'  # type: str
         self.description = description
         self.depends_on = depends_on
         self.user_properties = user_properties
@@ -369,7 +369,7 @@ class LinkedService(msrest.serialization.Model):
     ):
         super(LinkedService, self).__init__(**kwargs)
         self.additional_properties = additional_properties
-        self.type: str = 'LinkedService'
+        self.type = 'LinkedService'  # type: str
         self.connect_via = connect_via
         self.description = description
         self.parameters = parameters
@@ -473,7 +473,7 @@ class AmazonMWSLinkedService(LinkedService):
         **kwargs
     ):
         super(AmazonMWSLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'AmazonMWS'
+        self.type = 'AmazonMWS'  # type: str
         self.endpoint = endpoint
         self.marketplace_id = marketplace_id
         self.seller_id = seller_id
@@ -554,7 +554,7 @@ class Dataset(msrest.serialization.Model):
     ):
         super(Dataset, self).__init__(**kwargs)
         self.additional_properties = additional_properties
-        self.type: str = 'Dataset'
+        self.type = 'Dataset'  # type: str
         self.description = description
         self.structure = structure
         self.schema = schema
@@ -628,7 +628,7 @@ class AmazonMWSObjectDataset(Dataset):
         **kwargs
     ):
         super(AmazonMWSObjectDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'AmazonMWSObject'
+        self.type = 'AmazonMWSObject'  # type: str
         self.table_name = table_name
 
 
@@ -708,7 +708,7 @@ class AmazonRedshiftLinkedService(LinkedService):
         **kwargs
     ):
         super(AmazonRedshiftLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'AmazonRedshift'
+        self.type = 'AmazonRedshift'  # type: str
         self.server = server
         self.username = username
         self.password = password
@@ -792,7 +792,7 @@ class AmazonRedshiftTableDataset(Dataset):
         **kwargs
     ):
         super(AmazonRedshiftTableDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'AmazonRedshiftTable'
+        self.type = 'AmazonRedshiftTable'  # type: str
         self.table_name = table_name
         self.table = table
         self.schema_type_properties_schema = schema_type_properties_schema
@@ -864,7 +864,7 @@ class AmazonS3LinkedService(LinkedService):
         **kwargs
     ):
         super(AmazonS3LinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'AmazonS3'
+        self.type = 'AmazonS3'  # type: str
         self.access_key_id = access_key_id
         self.secret_access_key = secret_access_key
         self.service_url = service_url
@@ -924,7 +924,7 @@ class AppendVariableActivity(Activity):
         **kwargs
     ):
         super(AppendVariableActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, **kwargs)
-        self.type: str = 'AppendVariable'
+        self.type = 'AppendVariable'  # type: str
         self.variable_name = variable_name
         self.value = value
 
@@ -1003,7 +1003,7 @@ class AvroDataset(Dataset):
         **kwargs
     ):
         super(AvroDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'Avro'
+        self.type = 'Avro'  # type: str
         self.location = location
         self.avro_compression_codec = avro_compression_codec
         self.avro_compression_level = avro_compression_level
@@ -1086,7 +1086,7 @@ class AzureBatchLinkedService(LinkedService):
         **kwargs
     ):
         super(AzureBatchLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'AzureBatch'
+        self.type = 'AzureBatch'  # type: str
         self.account_name = account_name
         self.access_key = access_key
         self.batch_uri = batch_uri
@@ -1171,7 +1171,7 @@ class AzureBlobFSLinkedService(LinkedService):
         **kwargs
     ):
         super(AzureBlobFSLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'AzureBlobFS'
+        self.type = 'AzureBlobFS'  # type: str
         self.url = url
         self.account_key = account_key
         self.service_principal_id = service_principal_id
@@ -1269,7 +1269,7 @@ class AzureBlobStorageLinkedService(LinkedService):
         **kwargs
     ):
         super(AzureBlobStorageLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'AzureBlobStorage'
+        self.type = 'AzureBlobStorage'  # type: str
         self.connection_string = connection_string
         self.account_key = account_key
         self.sas_uri = sas_uri
@@ -1408,7 +1408,7 @@ class AzureDatabricksLinkedService(LinkedService):
         **kwargs
     ):
         super(AzureDatabricksLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'AzureDatabricks'
+        self.type = 'AzureDatabricks'  # type: str
         self.domain = domain
         self.access_token = access_token
         self.existing_cluster_id = existing_cluster_id
@@ -1485,7 +1485,7 @@ class ExecutionActivity(Activity):
         **kwargs
     ):
         super(ExecutionActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, **kwargs)
-        self.type: str = 'Execution'
+        self.type = 'Execution'  # type: str
         self.linked_service_name = linked_service_name
         self.policy = policy
 
@@ -1554,7 +1554,7 @@ class AzureDataExplorerCommandActivity(ExecutionActivity):
         **kwargs
     ):
         super(AzureDataExplorerCommandActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, linked_service_name=linked_service_name, policy=policy, **kwargs)
-        self.type: str = 'AzureDataExplorerCommand'
+        self.type = 'AzureDataExplorerCommand'  # type: str
         self.command = command
         self.command_timeout = command_timeout
 
@@ -1634,7 +1634,7 @@ class AzureDataExplorerLinkedService(LinkedService):
         **kwargs
     ):
         super(AzureDataExplorerLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'AzureDataExplorer'
+        self.type = 'AzureDataExplorer'  # type: str
         self.endpoint = endpoint
         self.service_principal_id = service_principal_id
         self.service_principal_key = service_principal_key
@@ -1707,7 +1707,7 @@ class AzureDataExplorerTableDataset(Dataset):
         **kwargs
     ):
         super(AzureDataExplorerTableDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'AzureDataExplorerTable'
+        self.type = 'AzureDataExplorerTable'  # type: str
         self.table = table
 
 
@@ -1798,7 +1798,7 @@ class AzureDataLakeAnalyticsLinkedService(LinkedService):
         **kwargs
     ):
         super(AzureDataLakeAnalyticsLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'AzureDataLakeAnalytics'
+        self.type = 'AzureDataLakeAnalytics'  # type: str
         self.account_name = account_name
         self.service_principal_id = service_principal_id
         self.service_principal_key = service_principal_key
@@ -1895,7 +1895,7 @@ class AzureDataLakeStoreLinkedService(LinkedService):
         **kwargs
     ):
         super(AzureDataLakeStoreLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'AzureDataLakeStore'
+        self.type = 'AzureDataLakeStore'  # type: str
         self.data_lake_store_uri = data_lake_store_uri
         self.service_principal_id = service_principal_id
         self.service_principal_key = service_principal_key
@@ -1971,7 +1971,7 @@ class AzureFileStorageLinkedService(LinkedService):
         **kwargs
     ):
         super(AzureFileStorageLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'AzureFileStorage'
+        self.type = 'AzureFileStorage'  # type: str
         self.host = host
         self.user_id = user_id
         self.password = password
@@ -2054,7 +2054,7 @@ class AzureFunctionActivity(ExecutionActivity):
         **kwargs
     ):
         super(AzureFunctionActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, linked_service_name=linked_service_name, policy=policy, **kwargs)
-        self.type: str = 'AzureFunctionActivity'
+        self.type = 'AzureFunctionActivity'  # type: str
         self.method = method
         self.function_name = function_name
         self.headers = headers
@@ -2121,7 +2121,7 @@ class AzureFunctionLinkedService(LinkedService):
         **kwargs
     ):
         super(AzureFunctionLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'AzureFunction'
+        self.type = 'AzureFunction'  # type: str
         self.function_app_url = function_app_url
         self.function_key = function_key
         self.encrypted_credential = encrypted_credential
@@ -2177,7 +2177,7 @@ class AzureKeyVaultLinkedService(LinkedService):
         **kwargs
     ):
         super(AzureKeyVaultLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'AzureKeyVault'
+        self.type = 'AzureKeyVault'  # type: str
         self.base_url = base_url
 
 
@@ -2210,7 +2210,7 @@ class SecretBase(msrest.serialization.Model):
         **kwargs
     ):
         super(SecretBase, self).__init__(**kwargs)
-        self.type: Optional[str] = None
+        self.type = None  # type: Optional[str]
 
 
 class AzureKeyVaultSecretReference(SecretBase):
@@ -2252,7 +2252,7 @@ class AzureKeyVaultSecretReference(SecretBase):
         **kwargs
     ):
         super(AzureKeyVaultSecretReference, self).__init__(**kwargs)
-        self.type: str = 'AzureKeyVaultSecret'
+        self.type = 'AzureKeyVaultSecret'  # type: str
         self.store = store
         self.secret_name = secret_name
         self.secret_version = secret_version
@@ -2317,7 +2317,7 @@ class AzureMariaDBLinkedService(LinkedService):
         **kwargs
     ):
         super(AzureMariaDBLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'AzureMariaDB'
+        self.type = 'AzureMariaDB'  # type: str
         self.connection_string = connection_string
         self.pwd = pwd
         self.encrypted_credential = encrypted_credential
@@ -2387,7 +2387,7 @@ class AzureMariaDBTableDataset(Dataset):
         **kwargs
     ):
         super(AzureMariaDBTableDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'AzureMariaDBTable'
+        self.type = 'AzureMariaDBTable'  # type: str
         self.table_name = table_name
 
 
@@ -2465,7 +2465,7 @@ class AzureMLBatchExecutionActivity(ExecutionActivity):
         **kwargs
     ):
         super(AzureMLBatchExecutionActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, linked_service_name=linked_service_name, policy=policy, **kwargs)
-        self.type: str = 'AzureMLBatchExecution'
+        self.type = 'AzureMLBatchExecution'  # type: str
         self.global_parameters = global_parameters
         self.web_service_outputs = web_service_outputs
         self.web_service_inputs = web_service_inputs
@@ -2556,7 +2556,7 @@ class AzureMLExecutePipelineActivity(ExecutionActivity):
         **kwargs
     ):
         super(AzureMLExecutePipelineActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, linked_service_name=linked_service_name, policy=policy, **kwargs)
-        self.type: str = 'AzureMLExecutePipeline'
+        self.type = 'AzureMLExecutePipeline'  # type: str
         self.ml_pipeline_id = ml_pipeline_id
         self.experiment_name = experiment_name
         self.ml_pipeline_parameters = ml_pipeline_parameters
@@ -2646,7 +2646,7 @@ class AzureMLLinkedService(LinkedService):
         **kwargs
     ):
         super(AzureMLLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'AzureML'
+        self.type = 'AzureML'  # type: str
         self.ml_endpoint = ml_endpoint
         self.api_key = api_key
         self.update_resource_endpoint = update_resource_endpoint
@@ -2740,7 +2740,7 @@ class AzureMLServiceLinkedService(LinkedService):
         **kwargs
     ):
         super(AzureMLServiceLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'AzureMLService'
+        self.type = 'AzureMLService'  # type: str
         self.subscription_id = subscription_id
         self.resource_group_name = resource_group_name
         self.ml_workspace_name = ml_workspace_name
@@ -2822,7 +2822,7 @@ class AzureMLUpdateResourceActivity(ExecutionActivity):
         **kwargs
     ):
         super(AzureMLUpdateResourceActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, linked_service_name=linked_service_name, policy=policy, **kwargs)
-        self.type: str = 'AzureMLUpdateResource'
+        self.type = 'AzureMLUpdateResource'  # type: str
         self.trained_model_name = trained_model_name
         self.trained_model_linked_service_name = trained_model_linked_service_name
         self.trained_model_file_path = trained_model_file_path
@@ -2923,7 +2923,7 @@ class AzureMySqlLinkedService(LinkedService):
         **kwargs
     ):
         super(AzureMySqlLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'AzureMySql'
+        self.type = 'AzureMySql'  # type: str
         self.connection_string = connection_string
         self.password = password
         self.encrypted_credential = encrypted_credential
@@ -2999,7 +2999,7 @@ class AzureMySqlTableDataset(Dataset):
         **kwargs
     ):
         super(AzureMySqlTableDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'AzureMySqlTable'
+        self.type = 'AzureMySqlTable'  # type: str
         self.table_name = table_name
         self.table = table
 
@@ -3063,7 +3063,7 @@ class AzurePostgreSqlLinkedService(LinkedService):
         **kwargs
     ):
         super(AzurePostgreSqlLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'AzurePostgreSql'
+        self.type = 'AzurePostgreSql'  # type: str
         self.connection_string = connection_string
         self.password = password
         self.encrypted_credential = encrypted_credential
@@ -3144,7 +3144,7 @@ class AzurePostgreSqlTableDataset(Dataset):
         **kwargs
     ):
         super(AzurePostgreSqlTableDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'AzurePostgreSqlTable'
+        self.type = 'AzurePostgreSqlTable'  # type: str
         self.table_name = table_name
         self.table = table
         self.schema_type_properties_schema = schema_type_properties_schema
@@ -3216,7 +3216,7 @@ class AzureSearchIndexDataset(Dataset):
         **kwargs
     ):
         super(AzureSearchIndexDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'AzureSearchIndex'
+        self.type = 'AzureSearchIndex'  # type: str
         self.index_name = index_name
 
 
@@ -3280,7 +3280,7 @@ class AzureSearchLinkedService(LinkedService):
         **kwargs
     ):
         super(AzureSearchLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'AzureSearch'
+        self.type = 'AzureSearch'  # type: str
         self.url = url
         self.key = key
         self.encrypted_credential = encrypted_credential
@@ -3361,7 +3361,7 @@ class AzureSqlDatabaseLinkedService(LinkedService):
         **kwargs
     ):
         super(AzureSqlDatabaseLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'AzureSqlDatabase'
+        self.type = 'AzureSqlDatabase'  # type: str
         self.connection_string = connection_string
         self.password = password
         self.service_principal_id = service_principal_id
@@ -3445,7 +3445,7 @@ class AzureSqlDWLinkedService(LinkedService):
         **kwargs
     ):
         super(AzureSqlDWLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'AzureSqlDW'
+        self.type = 'AzureSqlDW'  # type: str
         self.connection_string = connection_string
         self.password = password
         self.service_principal_id = service_principal_id
@@ -3529,7 +3529,7 @@ class AzureSqlDWTableDataset(Dataset):
         **kwargs
     ):
         super(AzureSqlDWTableDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'AzureSqlDWTable'
+        self.type = 'AzureSqlDWTable'  # type: str
         self.table_name = table_name
         self.schema_type_properties_schema = schema_type_properties_schema
         self.table = table
@@ -3610,7 +3610,7 @@ class AzureSqlMILinkedService(LinkedService):
         **kwargs
     ):
         super(AzureSqlMILinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'AzureSqlMI'
+        self.type = 'AzureSqlMI'  # type: str
         self.connection_string = connection_string
         self.password = password
         self.service_principal_id = service_principal_id
@@ -3694,7 +3694,7 @@ class AzureSqlMITableDataset(Dataset):
         **kwargs
     ):
         super(AzureSqlMITableDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'AzureSqlMITable'
+        self.type = 'AzureSqlMITable'  # type: str
         self.table_name = table_name
         self.schema_type_properties_schema = schema_type_properties_schema
         self.table = table
@@ -3775,7 +3775,7 @@ class AzureSqlTableDataset(Dataset):
         **kwargs
     ):
         super(AzureSqlTableDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'AzureSqlTable'
+        self.type = 'AzureSqlTable'  # type: str
         self.table_name = table_name
         self.schema_type_properties_schema = schema_type_properties_schema
         self.table = table
@@ -3849,7 +3849,7 @@ class AzureStorageLinkedService(LinkedService):
         **kwargs
     ):
         super(AzureStorageLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'AzureStorage'
+        self.type = 'AzureStorage'  # type: str
         self.connection_string = connection_string
         self.account_key = account_key
         self.sas_uri = sas_uri
@@ -3923,7 +3923,7 @@ class AzureTableDataset(Dataset):
         **kwargs
     ):
         super(AzureTableDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'AzureTable'
+        self.type = 'AzureTable'  # type: str
         self.table_name = table_name
 
 
@@ -3995,7 +3995,7 @@ class AzureTableStorageLinkedService(LinkedService):
         **kwargs
     ):
         super(AzureTableStorageLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'AzureTableStorage'
+        self.type = 'AzureTableStorage'  # type: str
         self.connection_string = connection_string
         self.account_key = account_key
         self.sas_uri = sas_uri
@@ -4006,18 +4006,17 @@ class AzureTableStorageLinkedService(LinkedService):
 class BigDataPoolReference(msrest.serialization.Model):
     """Big data pool reference.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Required. Big data pool reference type. Default value: "BigDataPoolReference".
-    :vartype type: str
+    :param type: Required. Big data pool reference type. Possible values include:
+     "BigDataPoolReference".
+    :type type: str or ~azure.synapse.artifacts.models.BigDataPoolReferenceType
     :param reference_name: Required. Reference big data pool name.
     :type reference_name: str
     """
 
     _validation = {
-        'type': {'required': True, 'constant': True},
+        'type': {'required': True},
         'reference_name': {'required': True},
     }
 
@@ -4026,15 +4025,15 @@ class BigDataPoolReference(msrest.serialization.Model):
         'reference_name': {'key': 'referenceName', 'type': 'str'},
     }
 
-    type = "BigDataPoolReference"
-
     def __init__(
         self,
         *,
+        type: Union[str, "BigDataPoolReferenceType"],
         reference_name: str,
         **kwargs
     ):
         super(BigDataPoolReference, self).__init__(**kwargs)
+        self.type = type
         self.reference_name = reference_name
 
 
@@ -4106,7 +4105,7 @@ class BinaryDataset(Dataset):
         **kwargs
     ):
         super(BinaryDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'Binary'
+        self.type = 'Binary'  # type: str
         self.location = location
         self.compression = compression
 
@@ -4186,7 +4185,7 @@ class CassandraLinkedService(LinkedService):
         **kwargs
     ):
         super(CassandraLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'Cassandra'
+        self.type = 'Cassandra'  # type: str
         self.host = host
         self.authentication_type = authentication_type
         self.port = port
@@ -4265,7 +4264,7 @@ class CassandraTableDataset(Dataset):
         **kwargs
     ):
         super(CassandraTableDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'CassandraTable'
+        self.type = 'CassandraTable'  # type: str
         self.table_name = table_name
         self.keyspace = keyspace
 
@@ -4378,7 +4377,7 @@ class CommonDataServiceForAppsEntityDataset(Dataset):
         **kwargs
     ):
         super(CommonDataServiceForAppsEntityDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'CommonDataServiceForAppsEntity'
+        self.type = 'CommonDataServiceForAppsEntity'  # type: str
         self.entity_name = entity_name
 
 
@@ -4504,7 +4503,7 @@ class CommonDataServiceForAppsLinkedService(LinkedService):
         **kwargs
     ):
         super(CommonDataServiceForAppsLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'CommonDataServiceForApps'
+        self.type = 'CommonDataServiceForApps'  # type: str
         self.deployment_type = deployment_type
         self.host_name = host_name
         self.port = port
@@ -4600,7 +4599,7 @@ class ConcurLinkedService(LinkedService):
         **kwargs
     ):
         super(ConcurLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'Concur'
+        self.type = 'Concur'  # type: str
         self.client_id = client_id
         self.username = username
         self.password = password
@@ -4674,7 +4673,7 @@ class ConcurObjectDataset(Dataset):
         **kwargs
     ):
         super(ConcurObjectDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'ConcurObject'
+        self.type = 'ConcurObject'  # type: str
         self.table_name = table_name
 
 
@@ -4723,7 +4722,7 @@ class ControlActivity(Activity):
         **kwargs
     ):
         super(ControlActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, **kwargs)
-        self.type: str = 'Container'
+        self.type = 'Container'  # type: str
 
 
 class CopyActivity(ExecutionActivity):
@@ -4840,7 +4839,7 @@ class CopyActivity(ExecutionActivity):
         **kwargs
     ):
         super(CopyActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, linked_service_name=linked_service_name, policy=policy, **kwargs)
-        self.type: str = 'Copy'
+        self.type = 'Copy'  # type: str
         self.inputs = inputs
         self.outputs = outputs
         self.source = source
@@ -4917,7 +4916,7 @@ class CopySink(msrest.serialization.Model):
     ):
         super(CopySink, self).__init__(**kwargs)
         self.additional_properties = additional_properties
-        self.type: str = 'CopySink'
+        self.type = 'CopySink'  # type: str
         self.write_batch_size = write_batch_size
         self.write_batch_timeout = write_batch_timeout
         self.sink_retry_count = sink_retry_count
@@ -4976,7 +4975,7 @@ class CopySource(msrest.serialization.Model):
     ):
         super(CopySource, self).__init__(**kwargs)
         self.additional_properties = additional_properties
-        self.type: str = 'CopySource'
+        self.type = 'CopySource'  # type: str
         self.source_retry_count = source_retry_count
         self.source_retry_wait = source_retry_wait
         self.max_concurrent_connections = max_concurrent_connections
@@ -5051,7 +5050,7 @@ class CosmosDbLinkedService(LinkedService):
         **kwargs
     ):
         super(CosmosDbLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'CosmosDb'
+        self.type = 'CosmosDb'  # type: str
         self.connection_string = connection_string
         self.account_endpoint = account_endpoint
         self.database = database
@@ -5125,7 +5124,7 @@ class CosmosDbMongoDbApiCollectionDataset(Dataset):
         **kwargs
     ):
         super(CosmosDbMongoDbApiCollectionDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'CosmosDbMongoDbApiCollection'
+        self.type = 'CosmosDbMongoDbApiCollection'  # type: str
         self.collection = collection
 
 
@@ -5186,7 +5185,7 @@ class CosmosDbMongoDbApiLinkedService(LinkedService):
         **kwargs
     ):
         super(CosmosDbMongoDbApiLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'CosmosDbMongoDbApi'
+        self.type = 'CosmosDbMongoDbApi'  # type: str
         self.connection_string = connection_string
         self.database = database
 
@@ -5257,7 +5256,7 @@ class CosmosDbSqlApiCollectionDataset(Dataset):
         **kwargs
     ):
         super(CosmosDbSqlApiCollectionDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'CosmosDbSqlApiCollection'
+        self.type = 'CosmosDbSqlApiCollection'  # type: str
         self.collection_name = collection_name
 
 
@@ -5320,7 +5319,7 @@ class CouchbaseLinkedService(LinkedService):
         **kwargs
     ):
         super(CouchbaseLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'Couchbase'
+        self.type = 'Couchbase'  # type: str
         self.connection_string = connection_string
         self.cred_string = cred_string
         self.encrypted_credential = encrypted_credential
@@ -5390,7 +5389,7 @@ class CouchbaseTableDataset(Dataset):
         **kwargs
     ):
         super(CouchbaseTableDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'CouchbaseTable'
+        self.type = 'CouchbaseTable'  # type: str
         self.table_name = table_name
 
 
@@ -5571,7 +5570,7 @@ class CustomActivity(ExecutionActivity):
         **kwargs
     ):
         super(CustomActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, linked_service_name=linked_service_name, policy=policy, **kwargs)
-        self.type: str = 'Custom'
+        self.type = 'Custom'  # type: str
         self.command = command
         self.resource_linked_service = resource_linked_service
         self.folder_path = folder_path
@@ -5655,7 +5654,7 @@ class CustomDataSourceLinkedService(LinkedService):
         **kwargs
     ):
         super(CustomDataSourceLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'CustomDataSource'
+        self.type = 'CustomDataSource'  # type: str
         self.type_properties = type_properties
 
 
@@ -5728,7 +5727,7 @@ class DatabricksNotebookActivity(ExecutionActivity):
         **kwargs
     ):
         super(DatabricksNotebookActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, linked_service_name=linked_service_name, policy=policy, **kwargs)
-        self.type: str = 'DatabricksNotebook'
+        self.type = 'DatabricksNotebook'  # type: str
         self.notebook_path = notebook_path
         self.base_parameters = base_parameters
         self.libraries = libraries
@@ -5802,7 +5801,7 @@ class DatabricksSparkJarActivity(ExecutionActivity):
         **kwargs
     ):
         super(DatabricksSparkJarActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, linked_service_name=linked_service_name, policy=policy, **kwargs)
-        self.type: str = 'DatabricksSparkJar'
+        self.type = 'DatabricksSparkJar'  # type: str
         self.main_class_name = main_class_name
         self.parameters = parameters
         self.libraries = libraries
@@ -5875,7 +5874,7 @@ class DatabricksSparkPythonActivity(ExecutionActivity):
         **kwargs
     ):
         super(DatabricksSparkPythonActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, linked_service_name=linked_service_name, policy=policy, **kwargs)
-        self.type: str = 'DatabricksSparkPython'
+        self.type = 'DatabricksSparkPython'  # type: str
         self.python_file = python_file
         self.parameters = parameters
         self.libraries = libraries
@@ -5924,7 +5923,7 @@ class DataFlow(msrest.serialization.Model):
         **kwargs
     ):
         super(DataFlow, self).__init__(**kwargs)
-        self.type: Optional[str] = None
+        self.type = None  # type: Optional[str]
         self.description = description
         self.annotations = annotations
         self.folder = folder
@@ -6376,15 +6375,13 @@ class DataFlowListResponse(msrest.serialization.Model):
 class DataFlowReference(msrest.serialization.Model):
     """Data flow reference type.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     All required parameters must be populated in order to send to Azure.
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
     :type additional_properties: dict[str, object]
-    :ivar type: Required. Data flow reference type. Default value: "DataFlowReference".
-    :vartype type: str
+    :param type: Required. Data flow reference type. Possible values include: "DataFlowReference".
+    :type type: str or ~azure.synapse.artifacts.models.DataFlowReferenceType
     :param reference_name: Required. Reference data flow name.
     :type reference_name: str
     :param dataset_parameters: Reference data flow parameters from dataset.
@@ -6392,7 +6389,7 @@ class DataFlowReference(msrest.serialization.Model):
     """
 
     _validation = {
-        'type': {'required': True, 'constant': True},
+        'type': {'required': True},
         'reference_name': {'required': True},
     }
 
@@ -6403,11 +6400,10 @@ class DataFlowReference(msrest.serialization.Model):
         'dataset_parameters': {'key': 'datasetParameters', 'type': 'object'},
     }
 
-    type = "DataFlowReference"
-
     def __init__(
         self,
         *,
+        type: Union[str, "DataFlowReferenceType"],
         reference_name: str,
         additional_properties: Optional[Dict[str, object]] = None,
         dataset_parameters: Optional[object] = None,
@@ -6415,6 +6411,7 @@ class DataFlowReference(msrest.serialization.Model):
     ):
         super(DataFlowReference, self).__init__(**kwargs)
         self.additional_properties = additional_properties
+        self.type = type
         self.reference_name = reference_name
         self.dataset_parameters = dataset_parameters
 
@@ -6753,7 +6750,7 @@ class DataLakeAnalyticsUSQLActivity(ExecutionActivity):
         **kwargs
     ):
         super(DataLakeAnalyticsUSQLActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, linked_service_name=linked_service_name, policy=policy, **kwargs)
-        self.type: str = 'DataLakeAnalyticsU-SQL'
+        self.type = 'DataLakeAnalyticsU-SQL'  # type: str
         self.script_path = script_path
         self.script_linked_service = script_linked_service
         self.degree_of_parallelism = degree_of_parallelism
@@ -6799,7 +6796,7 @@ class DatasetCompression(msrest.serialization.Model):
     ):
         super(DatasetCompression, self).__init__(**kwargs)
         self.additional_properties = additional_properties
-        self.type: str = 'DatasetCompression'
+        self.type = 'DatasetCompression'  # type: str
 
 
 class DatasetBZip2Compression(DatasetCompression):
@@ -6830,7 +6827,7 @@ class DatasetBZip2Compression(DatasetCompression):
         **kwargs
     ):
         super(DatasetBZip2Compression, self).__init__(additional_properties=additional_properties, **kwargs)
-        self.type: str = 'BZip2'
+        self.type = 'BZip2'  # type: str
 
 
 class DatasetDebugResource(SubResourceDebugResource):
@@ -6896,7 +6893,7 @@ class DatasetDeflateCompression(DatasetCompression):
         **kwargs
     ):
         super(DatasetDeflateCompression, self).__init__(additional_properties=additional_properties, **kwargs)
-        self.type: str = 'Deflate'
+        self.type = 'Deflate'  # type: str
         self.level = level
 
 
@@ -6953,7 +6950,7 @@ class DatasetGZipCompression(DatasetCompression):
         **kwargs
     ):
         super(DatasetGZipCompression, self).__init__(additional_properties=additional_properties, **kwargs)
-        self.type: str = 'GZip'
+        self.type = 'GZip'  # type: str
         self.level = level
 
 
@@ -7035,7 +7032,7 @@ class DatasetLocation(msrest.serialization.Model):
     ):
         super(DatasetLocation, self).__init__(**kwargs)
         self.additional_properties = additional_properties
-        self.type: str = 'DatasetLocation'
+        self.type = 'DatasetLocation'  # type: str
         self.folder_path = folder_path
         self.file_name = file_name
 
@@ -7043,12 +7040,10 @@ class DatasetLocation(msrest.serialization.Model):
 class DatasetReference(msrest.serialization.Model):
     """Dataset reference type.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Required. Dataset reference type. Default value: "DatasetReference".
-    :vartype type: str
+    :param type: Required. Dataset reference type. Possible values include: "DatasetReference".
+    :type type: str or ~azure.synapse.artifacts.models.DatasetReferenceType
     :param reference_name: Required. Reference dataset name.
     :type reference_name: str
     :param parameters: Arguments for dataset.
@@ -7056,7 +7051,7 @@ class DatasetReference(msrest.serialization.Model):
     """
 
     _validation = {
-        'type': {'required': True, 'constant': True},
+        'type': {'required': True},
         'reference_name': {'required': True},
     }
 
@@ -7066,16 +7061,16 @@ class DatasetReference(msrest.serialization.Model):
         'parameters': {'key': 'parameters', 'type': '{object}'},
     }
 
-    type = "DatasetReference"
-
     def __init__(
         self,
         *,
+        type: Union[str, "DatasetReferenceType"],
         reference_name: str,
         parameters: Optional[Dict[str, object]] = None,
         **kwargs
     ):
         super(DatasetReference, self).__init__(**kwargs)
+        self.type = type
         self.reference_name = reference_name
         self.parameters = parameters
 
@@ -7157,14 +7152,12 @@ class DatasetZipDeflateCompression(DatasetCompression):
         **kwargs
     ):
         super(DatasetZipDeflateCompression, self).__init__(additional_properties=additional_properties, **kwargs)
-        self.type: str = 'ZipDeflate'
+        self.type = 'ZipDeflate'  # type: str
         self.level = level
 
 
 class Db2LinkedService(LinkedService):
     """Linked service for DB2 data source.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -7187,9 +7180,9 @@ class Db2LinkedService(LinkedService):
     :param database: Required. Database name for connection. Type: string (or Expression with
      resultType string).
     :type database: object
-    :ivar authentication_type: AuthenticationType to be used for connection. Default value:
-     "Basic".
-    :vartype authentication_type: str
+    :param authentication_type: AuthenticationType to be used for connection. Possible values
+     include: "Basic".
+    :type authentication_type: str or ~azure.synapse.artifacts.models.Db2AuthenticationType
     :param username: Username for authentication. Type: string (or Expression with resultType
      string).
     :type username: object
@@ -7211,7 +7204,6 @@ class Db2LinkedService(LinkedService):
         'type': {'required': True},
         'server': {'required': True},
         'database': {'required': True},
-        'authentication_type': {'constant': True},
     }
 
     _attribute_map = {
@@ -7231,8 +7223,6 @@ class Db2LinkedService(LinkedService):
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    authentication_type = "Basic"
-
     def __init__(
         self,
         *,
@@ -7243,6 +7233,7 @@ class Db2LinkedService(LinkedService):
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "ParameterSpecification"]] = None,
         annotations: Optional[List[object]] = None,
+        authentication_type: Optional[Union[str, "Db2AuthenticationType"]] = None,
         username: Optional[object] = None,
         password: Optional["SecretBase"] = None,
         package_collection: Optional[object] = None,
@@ -7251,9 +7242,10 @@ class Db2LinkedService(LinkedService):
         **kwargs
     ):
         super(Db2LinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'Db2'
+        self.type = 'Db2'  # type: str
         self.server = server
         self.database = database
+        self.authentication_type = authentication_type
         self.username = username
         self.password = password
         self.package_collection = package_collection
@@ -7335,7 +7327,7 @@ class Db2TableDataset(Dataset):
         **kwargs
     ):
         super(Db2TableDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'Db2Table'
+        self.type = 'Db2Table'  # type: str
         self.table_name = table_name
         self.schema_type_properties_schema = schema_type_properties_schema
         self.table = table
@@ -7420,7 +7412,7 @@ class DeleteActivity(ExecutionActivity):
         **kwargs
     ):
         super(DeleteActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, linked_service_name=linked_service_name, policy=policy, **kwargs)
-        self.type: str = 'Delete'
+        self.type = 'Delete'  # type: str
         self.recursive = recursive
         self.max_concurrent_connections = max_concurrent_connections
         self.enable_logging = enable_logging
@@ -7563,7 +7555,7 @@ class DelimitedTextDataset(Dataset):
         **kwargs
     ):
         super(DelimitedTextDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'DelimitedText'
+        self.type = 'DelimitedText'  # type: str
         self.location = location
         self.column_delimiter = column_delimiter
         self.row_delimiter = row_delimiter
@@ -7642,7 +7634,7 @@ class DocumentDbCollectionDataset(Dataset):
         **kwargs
     ):
         super(DocumentDbCollectionDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'DocumentDbCollection'
+        self.type = 'DocumentDbCollection'  # type: str
         self.collection_name = collection_name
 
 
@@ -7705,7 +7697,7 @@ class DrillLinkedService(LinkedService):
         **kwargs
     ):
         super(DrillLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'Drill'
+        self.type = 'Drill'  # type: str
         self.connection_string = connection_string
         self.pwd = pwd
         self.encrypted_credential = encrypted_credential
@@ -7785,7 +7777,7 @@ class DrillTableDataset(Dataset):
         **kwargs
     ):
         super(DrillTableDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'DrillTable'
+        self.type = 'DrillTable'  # type: str
         self.table_name = table_name
         self.table = table
         self.schema_type_properties_schema = schema_type_properties_schema
@@ -7873,7 +7865,7 @@ class DynamicsAXLinkedService(LinkedService):
         **kwargs
     ):
         super(DynamicsAXLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'DynamicsAX'
+        self.type = 'DynamicsAX'  # type: str
         self.url = url
         self.service_principal_id = service_principal_id
         self.service_principal_key = service_principal_key
@@ -7948,7 +7940,7 @@ class DynamicsAXResourceDataset(Dataset):
         **kwargs
     ):
         super(DynamicsAXResourceDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'DynamicsAXResource'
+        self.type = 'DynamicsAXResource'  # type: str
         self.path = path
 
 
@@ -8017,7 +8009,7 @@ class DynamicsCrmEntityDataset(Dataset):
         **kwargs
     ):
         super(DynamicsCrmEntityDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'DynamicsCrmEntity'
+        self.type = 'DynamicsCrmEntity'  # type: str
         self.entity_name = entity_name
 
 
@@ -8141,7 +8133,7 @@ class DynamicsCrmLinkedService(LinkedService):
         **kwargs
     ):
         super(DynamicsCrmLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'DynamicsCrm'
+        self.type = 'DynamicsCrm'  # type: str
         self.deployment_type = deployment_type
         self.host_name = host_name
         self.port = port
@@ -8221,7 +8213,7 @@ class DynamicsEntityDataset(Dataset):
         **kwargs
     ):
         super(DynamicsEntityDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'DynamicsEntity'
+        self.type = 'DynamicsEntity'  # type: str
         self.entity_name = entity_name
 
 
@@ -8342,7 +8334,7 @@ class DynamicsLinkedService(LinkedService):
         **kwargs
     ):
         super(DynamicsLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'Dynamics'
+        self.type = 'Dynamics'  # type: str
         self.deployment_type = deployment_type
         self.host_name = host_name
         self.port = port
@@ -8438,7 +8430,7 @@ class EloquaLinkedService(LinkedService):
         **kwargs
     ):
         super(EloquaLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'Eloqua'
+        self.type = 'Eloqua'  # type: str
         self.endpoint = endpoint
         self.username = username
         self.password = password
@@ -8512,7 +8504,7 @@ class EloquaObjectDataset(Dataset):
         **kwargs
     ):
         super(EloquaObjectDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'EloquaObject'
+        self.type = 'EloquaObject'  # type: str
         self.table_name = table_name
 
 
@@ -8627,7 +8619,7 @@ class ExecuteDataFlowActivity(ExecutionActivity):
         **kwargs
     ):
         super(ExecuteDataFlowActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, linked_service_name=linked_service_name, policy=policy, **kwargs)
-        self.type: str = 'ExecuteDataFlow'
+        self.type = 'ExecuteDataFlow'  # type: str
         self.data_flow = data_flow
         self.staging = staging
         self.integration_runtime = integration_runtime
@@ -8721,7 +8713,7 @@ class ExecutePipelineActivity(Activity):
         **kwargs
     ):
         super(ExecutePipelineActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, **kwargs)
-        self.type: str = 'ExecutePipeline'
+        self.type = 'ExecutePipeline'  # type: str
         self.pipeline = pipeline
         self.parameters = parameters
         self.wait_on_completion = wait_on_completion
@@ -8835,7 +8827,7 @@ class ExecuteSSISPackageActivity(ExecutionActivity):
         **kwargs
     ):
         super(ExecuteSSISPackageActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, linked_service_name=linked_service_name, policy=policy, **kwargs)
-        self.type: str = 'ExecuteSSISPackage'
+        self.type = 'ExecuteSSISPackage'  # type: str
         self.package_location = package_location
         self.runtime = runtime
         self.logging_level = logging_level
@@ -8909,18 +8901,16 @@ class ExposureControlResponse(msrest.serialization.Model):
 class Expression(msrest.serialization.Model):
     """Azure Synapse expression definition.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Required. Expression type. Default value: "Expression".
-    :vartype type: str
+    :param type: Required. Expression type. Possible values include: "Expression".
+    :type type: str or ~azure.synapse.artifacts.models.ExpressionType
     :param value: Required. Expression value.
     :type value: str
     """
 
     _validation = {
-        'type': {'required': True, 'constant': True},
+        'type': {'required': True},
         'value': {'required': True},
     }
 
@@ -8929,15 +8919,15 @@ class Expression(msrest.serialization.Model):
         'value': {'key': 'value', 'type': 'str'},
     }
 
-    type = "Expression"
-
     def __init__(
         self,
         *,
+        type: Union[str, "ExpressionType"],
         value: str,
         **kwargs
     ):
         super(Expression, self).__init__(**kwargs)
+        self.type = type
         self.value = value
 
 
@@ -9006,7 +8996,7 @@ class FileServerLinkedService(LinkedService):
         **kwargs
     ):
         super(FileServerLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'FileServer'
+        self.type = 'FileServer'  # type: str
         self.host = host
         self.user_id = user_id
         self.password = password
@@ -9068,7 +9058,7 @@ class FilterActivity(Activity):
         **kwargs
     ):
         super(FilterActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, **kwargs)
-        self.type: str = 'Filter'
+        self.type = 'Filter'  # type: str
         self.items = items
         self.condition = condition
 
@@ -9138,7 +9128,7 @@ class ForEachActivity(Activity):
         **kwargs
     ):
         super(ForEachActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, **kwargs)
-        self.type: str = 'ForEach'
+        self.type = 'ForEach'  # type: str
         self.is_sequential = is_sequential
         self.batch_count = batch_count
         self.items = items
@@ -9231,7 +9221,7 @@ class FtpServerLinkedService(LinkedService):
         **kwargs
     ):
         super(FtpServerLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'FtpServer'
+        self.type = 'FtpServer'  # type: str
         self.host = host
         self.port = port
         self.authentication_type = authentication_type
@@ -9304,7 +9294,7 @@ class GetMetadataActivity(ExecutionActivity):
         **kwargs
     ):
         super(GetMetadataActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, linked_service_name=linked_service_name, policy=policy, **kwargs)
-        self.type: str = 'GetMetadata'
+        self.type = 'GetMetadata'  # type: str
         self.dataset = dataset
         self.field_list = field_list
 
@@ -9436,7 +9426,7 @@ class GoogleAdWordsLinkedService(LinkedService):
         **kwargs
     ):
         super(GoogleAdWordsLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'GoogleAdWords'
+        self.type = 'GoogleAdWords'  # type: str
         self.client_customer_id = client_customer_id
         self.developer_token = developer_token
         self.authentication_type = authentication_type
@@ -9514,7 +9504,7 @@ class GoogleAdWordsObjectDataset(Dataset):
         **kwargs
     ):
         super(GoogleAdWordsObjectDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'GoogleAdWordsObject'
+        self.type = 'GoogleAdWordsObject'  # type: str
         self.table_name = table_name
 
 
@@ -9627,7 +9617,7 @@ class GoogleBigQueryLinkedService(LinkedService):
         **kwargs
     ):
         super(GoogleBigQueryLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'GoogleBigQuery'
+        self.type = 'GoogleBigQuery'  # type: str
         self.project = project
         self.additional_projects = additional_projects
         self.request_google_drive_scope = request_google_drive_scope
@@ -9717,7 +9707,7 @@ class GoogleBigQueryObjectDataset(Dataset):
         **kwargs
     ):
         super(GoogleBigQueryObjectDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'GoogleBigQueryObject'
+        self.type = 'GoogleBigQueryObject'  # type: str
         self.table_name = table_name
         self.table = table
         self.dataset = dataset
@@ -9790,7 +9780,7 @@ class GoogleCloudStorageLinkedService(LinkedService):
         **kwargs
     ):
         super(GoogleCloudStorageLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'GoogleCloudStorage'
+        self.type = 'GoogleCloudStorage'  # type: str
         self.access_key_id = access_key_id
         self.secret_access_key = secret_access_key
         self.service_url = service_url
@@ -9856,7 +9846,7 @@ class GreenplumLinkedService(LinkedService):
         **kwargs
     ):
         super(GreenplumLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'Greenplum'
+        self.type = 'Greenplum'  # type: str
         self.connection_string = connection_string
         self.pwd = pwd
         self.encrypted_credential = encrypted_credential
@@ -9936,7 +9926,7 @@ class GreenplumTableDataset(Dataset):
         **kwargs
     ):
         super(GreenplumTableDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'GreenplumTable'
+        self.type = 'GreenplumTable'  # type: str
         self.table_name = table_name
         self.table = table
         self.schema_type_properties_schema = schema_type_properties_schema
@@ -10042,7 +10032,7 @@ class HBaseLinkedService(LinkedService):
         **kwargs
     ):
         super(HBaseLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'HBase'
+        self.type = 'HBase'  # type: str
         self.host = host
         self.port = port
         self.http_path = http_path
@@ -10120,7 +10110,7 @@ class HBaseObjectDataset(Dataset):
         **kwargs
     ):
         super(HBaseObjectDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'HBaseObject'
+        self.type = 'HBaseObject'  # type: str
         self.table_name = table_name
 
 
@@ -10194,7 +10184,7 @@ class HdfsLinkedService(LinkedService):
         **kwargs
     ):
         super(HdfsLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'Hdfs'
+        self.type = 'Hdfs'  # type: str
         self.url = url
         self.authentication_type = authentication_type
         self.encrypted_credential = encrypted_credential
@@ -10288,7 +10278,7 @@ class HDInsightHiveActivity(ExecutionActivity):
         **kwargs
     ):
         super(HDInsightHiveActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, linked_service_name=linked_service_name, policy=policy, **kwargs)
-        self.type: str = 'HDInsightHive'
+        self.type = 'HDInsightHive'  # type: str
         self.storage_linked_services = storage_linked_services
         self.arguments = arguments
         self.get_debug_info = get_debug_info
@@ -10383,7 +10373,7 @@ class HDInsightLinkedService(LinkedService):
         **kwargs
     ):
         super(HDInsightLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'HDInsight'
+        self.type = 'HDInsight'  # type: str
         self.cluster_uri = cluster_uri
         self.user_name = user_name
         self.password = password
@@ -10481,7 +10471,7 @@ class HDInsightMapReduceActivity(ExecutionActivity):
         **kwargs
     ):
         super(HDInsightMapReduceActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, linked_service_name=linked_service_name, policy=policy, **kwargs)
-        self.type: str = 'HDInsightMapReduce'
+        self.type = 'HDInsightMapReduce'  # type: str
         self.storage_linked_services = storage_linked_services
         self.arguments = arguments
         self.get_debug_info = get_debug_info
@@ -10709,7 +10699,7 @@ class HDInsightOnDemandLinkedService(LinkedService):
         **kwargs
     ):
         super(HDInsightOnDemandLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'HDInsightOnDemand'
+        self.type = 'HDInsightOnDemand'  # type: str
         self.cluster_size = cluster_size
         self.time_to_live = time_to_live
         self.version = version
@@ -10823,7 +10813,7 @@ class HDInsightPigActivity(ExecutionActivity):
         **kwargs
     ):
         super(HDInsightPigActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, linked_service_name=linked_service_name, policy=policy, **kwargs)
-        self.type: str = 'HDInsightPig'
+        self.type = 'HDInsightPig'  # type: str
         self.storage_linked_services = storage_linked_services
         self.arguments = arguments
         self.get_debug_info = get_debug_info
@@ -10923,7 +10913,7 @@ class HDInsightSparkActivity(ExecutionActivity):
         **kwargs
     ):
         super(HDInsightSparkActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, linked_service_name=linked_service_name, policy=policy, **kwargs)
-        self.type: str = 'HDInsightSpark'
+        self.type = 'HDInsightSpark'  # type: str
         self.root_path = root_path
         self.entry_file_path = entry_file_path
         self.arguments = arguments
@@ -11042,7 +11032,7 @@ class HDInsightStreamingActivity(ExecutionActivity):
         **kwargs
     ):
         super(HDInsightStreamingActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, linked_service_name=linked_service_name, policy=policy, **kwargs)
-        self.type: str = 'HDInsightStreaming'
+        self.type = 'HDInsightStreaming'  # type: str
         self.storage_linked_services = storage_linked_services
         self.arguments = arguments
         self.get_debug_info = get_debug_info
@@ -11188,7 +11178,7 @@ class HiveLinkedService(LinkedService):
         **kwargs
     ):
         super(HiveLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'Hive'
+        self.type = 'Hive'  # type: str
         self.host = host
         self.port = port
         self.server_type = server_type
@@ -11282,7 +11272,7 @@ class HiveObjectDataset(Dataset):
         **kwargs
     ):
         super(HiveObjectDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'HiveObject'
+        self.type = 'HiveObject'  # type: str
         self.table_name = table_name
         self.table = table
         self.schema_type_properties_schema = schema_type_properties_schema
@@ -11378,7 +11368,7 @@ class HttpLinkedService(LinkedService):
         **kwargs
     ):
         super(HttpLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'HttpServer'
+        self.type = 'HttpServer'  # type: str
         self.url = url
         self.authentication_type = authentication_type
         self.user_name = user_name
@@ -11474,7 +11464,7 @@ class HubspotLinkedService(LinkedService):
         **kwargs
     ):
         super(HubspotLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'Hubspot'
+        self.type = 'Hubspot'  # type: str
         self.client_id = client_id
         self.client_secret = client_secret
         self.access_token = access_token
@@ -11549,7 +11539,7 @@ class HubspotObjectDataset(Dataset):
         **kwargs
     ):
         super(HubspotObjectDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'HubspotObject'
+        self.type = 'HubspotObject'  # type: str
         self.table_name = table_name
 
 
@@ -11615,7 +11605,7 @@ class IfConditionActivity(Activity):
         **kwargs
     ):
         super(IfConditionActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, **kwargs)
-        self.type: str = 'IfCondition'
+        self.type = 'IfCondition'  # type: str
         self.expression = expression
         self.if_true_activities = if_true_activities
         self.if_false_activities = if_false_activities
@@ -11723,7 +11713,7 @@ class ImpalaLinkedService(LinkedService):
         **kwargs
     ):
         super(ImpalaLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'Impala'
+        self.type = 'Impala'  # type: str
         self.host = host
         self.port = port
         self.authentication_type = authentication_type
@@ -11812,7 +11802,7 @@ class ImpalaObjectDataset(Dataset):
         **kwargs
     ):
         super(ImpalaObjectDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'ImpalaObject'
+        self.type = 'ImpalaObject'  # type: str
         self.table_name = table_name
         self.table = table
         self.schema_type_properties_schema = schema_type_properties_schema
@@ -11895,7 +11885,7 @@ class InformixLinkedService(LinkedService):
         **kwargs
     ):
         super(InformixLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'Informix'
+        self.type = 'Informix'  # type: str
         self.connection_string = connection_string
         self.authentication_type = authentication_type
         self.credential = credential
@@ -11969,20 +11959,18 @@ class InformixTableDataset(Dataset):
         **kwargs
     ):
         super(InformixTableDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'InformixTable'
+        self.type = 'InformixTable'  # type: str
         self.table_name = table_name
 
 
 class IntegrationRuntimeReference(msrest.serialization.Model):
     """Integration runtime reference type.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Required. Type of integration runtime. Default value:
+    :param type: Required. Type of integration runtime. Possible values include:
      "IntegrationRuntimeReference".
-    :vartype type: str
+    :type type: str or ~azure.synapse.artifacts.models.IntegrationRuntimeReferenceType
     :param reference_name: Required. Reference integration runtime name.
     :type reference_name: str
     :param parameters: Arguments for integration runtime.
@@ -11990,7 +11978,7 @@ class IntegrationRuntimeReference(msrest.serialization.Model):
     """
 
     _validation = {
-        'type': {'required': True, 'constant': True},
+        'type': {'required': True},
         'reference_name': {'required': True},
     }
 
@@ -12000,16 +11988,16 @@ class IntegrationRuntimeReference(msrest.serialization.Model):
         'parameters': {'key': 'parameters', 'type': '{object}'},
     }
 
-    type = "IntegrationRuntimeReference"
-
     def __init__(
         self,
         *,
+        type: Union[str, "IntegrationRuntimeReferenceType"],
         reference_name: str,
         parameters: Optional[Dict[str, object]] = None,
         **kwargs
     ):
         super(IntegrationRuntimeReference, self).__init__(**kwargs)
+        self.type = type
         self.reference_name = reference_name
         self.parameters = parameters
 
@@ -12101,7 +12089,7 @@ class JiraLinkedService(LinkedService):
         **kwargs
     ):
         super(JiraLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'Jira'
+        self.type = 'Jira'  # type: str
         self.host = host
         self.port = port
         self.username = username
@@ -12176,7 +12164,7 @@ class JiraObjectDataset(Dataset):
         **kwargs
     ):
         super(JiraObjectDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'JiraObject'
+        self.type = 'JiraObject'  # type: str
         self.table_name = table_name
 
 
@@ -12256,7 +12244,7 @@ class JsonDataset(Dataset):
         **kwargs
     ):
         super(JsonDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'Json'
+        self.type = 'Json'  # type: str
         self.location = location
         self.encoding_name = encoding_name
         self.compression = compression
@@ -12328,12 +12316,11 @@ class LinkedServiceListResponse(msrest.serialization.Model):
 class LinkedServiceReference(msrest.serialization.Model):
     """Linked service reference type.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Required. Linked service reference type. Default value: "LinkedServiceReference".
-    :vartype type: str
+    :param type: Required. Linked service reference type. Possible values include:
+     "LinkedServiceReference".
+    :type type: str or ~azure.synapse.artifacts.models.Type
     :param reference_name: Required. Reference LinkedService name.
     :type reference_name: str
     :param parameters: Arguments for LinkedService.
@@ -12341,7 +12328,7 @@ class LinkedServiceReference(msrest.serialization.Model):
     """
 
     _validation = {
-        'type': {'required': True, 'constant': True},
+        'type': {'required': True},
         'reference_name': {'required': True},
     }
 
@@ -12351,16 +12338,16 @@ class LinkedServiceReference(msrest.serialization.Model):
         'parameters': {'key': 'parameters', 'type': '{object}'},
     }
 
-    type = "LinkedServiceReference"
-
     def __init__(
         self,
         *,
+        type: Union[str, "Type"],
         reference_name: str,
         parameters: Optional[Dict[str, object]] = None,
         **kwargs
     ):
         super(LinkedServiceReference, self).__init__(**kwargs)
+        self.type = type
         self.reference_name = reference_name
         self.parameters = parameters
 
@@ -12517,7 +12504,7 @@ class LookupActivity(ExecutionActivity):
         **kwargs
     ):
         super(LookupActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, linked_service_name=linked_service_name, policy=policy, **kwargs)
-        self.type: str = 'Lookup'
+        self.type = 'Lookup'  # type: str
         self.source = source
         self.dataset = dataset
         self.first_row_only = first_row_only
@@ -12598,7 +12585,7 @@ class MagentoLinkedService(LinkedService):
         **kwargs
     ):
         super(MagentoLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'Magento'
+        self.type = 'Magento'  # type: str
         self.host = host
         self.access_token = access_token
         self.use_encrypted_endpoints = use_encrypted_endpoints
@@ -12671,7 +12658,7 @@ class MagentoObjectDataset(Dataset):
         **kwargs
     ):
         super(MagentoObjectDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'MagentoObject'
+        self.type = 'MagentoObject'  # type: str
         self.table_name = table_name
 
 
@@ -12727,7 +12714,7 @@ class MappingDataFlow(DataFlow):
         **kwargs
     ):
         super(MappingDataFlow, self).__init__(description=description, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'MappingDataFlow'
+        self.type = 'MappingDataFlow'  # type: str
         self.sources = sources
         self.sinks = sinks
         self.transformations = transformations
@@ -12793,7 +12780,7 @@ class MariaDBLinkedService(LinkedService):
         **kwargs
     ):
         super(MariaDBLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'MariaDB'
+        self.type = 'MariaDB'  # type: str
         self.connection_string = connection_string
         self.pwd = pwd
         self.encrypted_credential = encrypted_credential
@@ -12863,7 +12850,7 @@ class MariaDBTableDataset(Dataset):
         **kwargs
     ):
         super(MariaDBTableDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'MariaDBTable'
+        self.type = 'MariaDBTable'  # type: str
         self.table_name = table_name
 
 
@@ -12947,7 +12934,7 @@ class MarketoLinkedService(LinkedService):
         **kwargs
     ):
         super(MarketoLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'Marketo'
+        self.type = 'Marketo'  # type: str
         self.endpoint = endpoint
         self.client_id = client_id
         self.client_secret = client_secret
@@ -13021,7 +13008,7 @@ class MarketoObjectDataset(Dataset):
         **kwargs
     ):
         super(MarketoObjectDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'MarketoObject'
+        self.type = 'MarketoObject'  # type: str
         self.table_name = table_name
 
 
@@ -13102,7 +13089,7 @@ class MicrosoftAccessLinkedService(LinkedService):
         **kwargs
     ):
         super(MicrosoftAccessLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'MicrosoftAccess'
+        self.type = 'MicrosoftAccess'  # type: str
         self.connection_string = connection_string
         self.authentication_type = authentication_type
         self.credential = credential
@@ -13176,7 +13163,7 @@ class MicrosoftAccessTableDataset(Dataset):
         **kwargs
     ):
         super(MicrosoftAccessTableDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'MicrosoftAccessTable'
+        self.type = 'MicrosoftAccessTable'  # type: str
         self.table_name = table_name
 
 
@@ -13246,7 +13233,7 @@ class MongoDbCollectionDataset(Dataset):
         **kwargs
     ):
         super(MongoDbCollectionDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'MongoDbCollection'
+        self.type = 'MongoDbCollection'  # type: str
         self.collection_name = collection_name
 
 
@@ -13346,7 +13333,7 @@ class MongoDbLinkedService(LinkedService):
         **kwargs
     ):
         super(MongoDbLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'MongoDb'
+        self.type = 'MongoDb'  # type: str
         self.server = server
         self.authentication_type = authentication_type
         self.database_name = database_name
@@ -13425,7 +13412,7 @@ class MongoDbV2CollectionDataset(Dataset):
         **kwargs
     ):
         super(MongoDbV2CollectionDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'MongoDbV2Collection'
+        self.type = 'MongoDbV2Collection'  # type: str
         self.collection = collection
 
 
@@ -13485,7 +13472,7 @@ class MongoDbV2LinkedService(LinkedService):
         **kwargs
     ):
         super(MongoDbV2LinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'MongoDbV2'
+        self.type = 'MongoDbV2'  # type: str
         self.connection_string = connection_string
         self.database = database
 
@@ -13541,7 +13528,7 @@ class Trigger(msrest.serialization.Model):
     ):
         super(Trigger, self).__init__(**kwargs)
         self.additional_properties = additional_properties
-        self.type: str = 'Trigger'
+        self.type = 'Trigger'  # type: str
         self.description = description
         self.runtime_state = None
         self.annotations = annotations
@@ -13594,7 +13581,7 @@ class MultiplePipelineTrigger(Trigger):
         **kwargs
     ):
         super(MultiplePipelineTrigger, self).__init__(additional_properties=additional_properties, description=description, annotations=annotations, **kwargs)
-        self.type: str = 'MultiplePipelineTrigger'
+        self.type = 'MultiplePipelineTrigger'  # type: str
         self.pipelines = pipelines
 
 
@@ -13657,7 +13644,7 @@ class MySqlLinkedService(LinkedService):
         **kwargs
     ):
         super(MySqlLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'MySql'
+        self.type = 'MySql'  # type: str
         self.connection_string = connection_string
         self.password = password
         self.encrypted_credential = encrypted_credential
@@ -13727,7 +13714,7 @@ class MySqlTableDataset(Dataset):
         **kwargs
     ):
         super(MySqlTableDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'MySqlTable'
+        self.type = 'MySqlTable'  # type: str
         self.table_name = table_name
 
 
@@ -13790,7 +13777,7 @@ class NetezzaLinkedService(LinkedService):
         **kwargs
     ):
         super(NetezzaLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'Netezza'
+        self.type = 'Netezza'  # type: str
         self.connection_string = connection_string
         self.pwd = pwd
         self.encrypted_credential = encrypted_credential
@@ -13871,7 +13858,7 @@ class NetezzaTableDataset(Dataset):
         **kwargs
     ):
         super(NetezzaTableDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'NetezzaTable'
+        self.type = 'NetezzaTable'  # type: str
         self.table_name = table_name
         self.table = table
         self.schema_type_properties_schema = schema_type_properties_schema
@@ -14400,7 +14387,7 @@ class ODataLinkedService(LinkedService):
         **kwargs
     ):
         super(ODataLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'OData'
+        self.type = 'OData'  # type: str
         self.url = url
         self.authentication_type = authentication_type
         self.user_name = user_name
@@ -14479,7 +14466,7 @@ class ODataResourceDataset(Dataset):
         **kwargs
     ):
         super(ODataResourceDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'ODataResource'
+        self.type = 'ODataResource'  # type: str
         self.path = path
 
 
@@ -14559,7 +14546,7 @@ class OdbcLinkedService(LinkedService):
         **kwargs
     ):
         super(OdbcLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'Odbc'
+        self.type = 'Odbc'  # type: str
         self.connection_string = connection_string
         self.authentication_type = authentication_type
         self.credential = credential
@@ -14632,7 +14619,7 @@ class OdbcTableDataset(Dataset):
         **kwargs
     ):
         super(OdbcTableDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'OdbcTable'
+        self.type = 'OdbcTable'  # type: str
         self.table_name = table_name
 
 
@@ -14707,7 +14694,7 @@ class Office365Dataset(Dataset):
         **kwargs
     ):
         super(Office365Dataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'Office365Table'
+        self.type = 'Office365Table'  # type: str
         self.table_name = table_name
         self.predicate = predicate
 
@@ -14785,7 +14772,7 @@ class Office365LinkedService(LinkedService):
         **kwargs
     ):
         super(Office365LinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'Office365'
+        self.type = 'Office365'  # type: str
         self.office365_tenant_id = office365_tenant_id
         self.service_principal_tenant_id = service_principal_tenant_id
         self.service_principal_id = service_principal_id
@@ -14853,7 +14840,7 @@ class OracleLinkedService(LinkedService):
         **kwargs
     ):
         super(OracleLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'Oracle'
+        self.type = 'Oracle'  # type: str
         self.connection_string = connection_string
         self.password = password
         self.encrypted_credential = encrypted_credential
@@ -14942,7 +14929,7 @@ class OracleServiceCloudLinkedService(LinkedService):
         **kwargs
     ):
         super(OracleServiceCloudLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'OracleServiceCloud'
+        self.type = 'OracleServiceCloud'  # type: str
         self.host = host
         self.username = username
         self.password = password
@@ -15016,7 +15003,7 @@ class OracleServiceCloudObjectDataset(Dataset):
         **kwargs
     ):
         super(OracleServiceCloudObjectDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'OracleServiceCloudObject'
+        self.type = 'OracleServiceCloudObject'  # type: str
         self.table_name = table_name
 
 
@@ -15095,7 +15082,7 @@ class OracleTableDataset(Dataset):
         **kwargs
     ):
         super(OracleTableDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'OracleTable'
+        self.type = 'OracleTable'  # type: str
         self.table_name = table_name
         self.schema_type_properties_schema = schema_type_properties_schema
         self.table = table
@@ -15169,7 +15156,7 @@ class OrcDataset(Dataset):
         **kwargs
     ):
         super(OrcDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'Orc'
+        self.type = 'Orc'  # type: str
         self.location = location
         self.orc_compression_codec = orc_compression_codec
 
@@ -15275,7 +15262,7 @@ class ParquetDataset(Dataset):
         **kwargs
     ):
         super(ParquetDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'Parquet'
+        self.type = 'Parquet'  # type: str
         self.location = location
         self.compression_codec = compression_codec
 
@@ -15360,7 +15347,7 @@ class PaypalLinkedService(LinkedService):
         **kwargs
     ):
         super(PaypalLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'Paypal'
+        self.type = 'Paypal'  # type: str
         self.host = host
         self.client_id = client_id
         self.client_secret = client_secret
@@ -15434,7 +15421,7 @@ class PaypalObjectDataset(Dataset):
         **kwargs
     ):
         super(PaypalObjectDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'PaypalObject'
+        self.type = 'PaypalObject'  # type: str
         self.table_name = table_name
 
 
@@ -15546,7 +15533,7 @@ class PhoenixLinkedService(LinkedService):
         **kwargs
     ):
         super(PhoenixLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'Phoenix'
+        self.type = 'Phoenix'  # type: str
         self.host = host
         self.port = port
         self.http_path = http_path
@@ -15636,7 +15623,7 @@ class PhoenixObjectDataset(Dataset):
         **kwargs
     ):
         super(PhoenixObjectDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'PhoenixObject'
+        self.type = 'PhoenixObject'  # type: str
         self.table_name = table_name
         self.table = table
         self.schema_type_properties_schema = schema_type_properties_schema
@@ -15698,12 +15685,10 @@ class PipelineListResponse(msrest.serialization.Model):
 class PipelineReference(msrest.serialization.Model):
     """Pipeline reference type.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Required. Pipeline reference type. Default value: "PipelineReference".
-    :vartype type: str
+    :param type: Required. Pipeline reference type. Possible values include: "PipelineReference".
+    :type type: str or ~azure.synapse.artifacts.models.PipelineReferenceType
     :param reference_name: Required. Reference pipeline name.
     :type reference_name: str
     :param name: Reference name.
@@ -15711,7 +15696,7 @@ class PipelineReference(msrest.serialization.Model):
     """
 
     _validation = {
-        'type': {'required': True, 'constant': True},
+        'type': {'required': True},
         'reference_name': {'required': True},
     }
 
@@ -15721,16 +15706,16 @@ class PipelineReference(msrest.serialization.Model):
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    type = "PipelineReference"
-
     def __init__(
         self,
         *,
+        type: Union[str, "PipelineReferenceType"],
         reference_name: str,
         name: Optional[str] = None,
         **kwargs
     ):
         super(PipelineReference, self).__init__(**kwargs)
+        self.type = type
         self.reference_name = reference_name
         self.name = name
 
@@ -16035,7 +16020,7 @@ class PostgreSqlLinkedService(LinkedService):
         **kwargs
     ):
         super(PostgreSqlLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'PostgreSql'
+        self.type = 'PostgreSql'  # type: str
         self.connection_string = connection_string
         self.password = password
         self.encrypted_credential = encrypted_credential
@@ -16115,7 +16100,7 @@ class PostgreSqlTableDataset(Dataset):
         **kwargs
     ):
         super(PostgreSqlTableDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'PostgreSqlTable'
+        self.type = 'PostgreSqlTable'  # type: str
         self.table_name = table_name
         self.table = table
         self.schema_type_properties_schema = schema_type_properties_schema
@@ -16237,7 +16222,7 @@ class PrestoLinkedService(LinkedService):
         **kwargs
     ):
         super(PrestoLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'Presto'
+        self.type = 'Presto'  # type: str
         self.host = host
         self.server_version = server_version
         self.catalog = catalog
@@ -16329,7 +16314,7 @@ class PrestoObjectDataset(Dataset):
         **kwargs
     ):
         super(PrestoObjectDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'PrestoObject'
+        self.type = 'PrestoObject'  # type: str
         self.table_name = table_name
         self.table = table
         self.schema_type_properties_schema = schema_type_properties_schema
@@ -16447,7 +16432,7 @@ class QuickBooksLinkedService(LinkedService):
         **kwargs
     ):
         super(QuickBooksLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'QuickBooks'
+        self.type = 'QuickBooks'  # type: str
         self.endpoint = endpoint
         self.company_id = company_id
         self.consumer_key = consumer_key
@@ -16522,7 +16507,7 @@ class QuickBooksObjectDataset(Dataset):
         **kwargs
     ):
         super(QuickBooksObjectDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'QuickBooksObject'
+        self.type = 'QuickBooksObject'  # type: str
         self.table_name = table_name
 
 
@@ -16633,7 +16618,7 @@ class RelationalTableDataset(Dataset):
         **kwargs
     ):
         super(RelationalTableDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'RelationalTable'
+        self.type = 'RelationalTable'  # type: str
         self.table_name = table_name
 
 
@@ -16782,7 +16767,7 @@ class RerunTumblingWindowTrigger(Trigger):
         **kwargs
     ):
         super(RerunTumblingWindowTrigger, self).__init__(additional_properties=additional_properties, description=description, annotations=annotations, **kwargs)
-        self.type: str = 'RerunTumblingWindowTrigger'
+        self.type = 'RerunTumblingWindowTrigger'  # type: str
         self.parent_trigger = parent_trigger
         self.requested_start_time = requested_start_time
         self.requested_end_time = requested_end_time
@@ -16965,7 +16950,7 @@ class ResponsysLinkedService(LinkedService):
         **kwargs
     ):
         super(ResponsysLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'Responsys'
+        self.type = 'Responsys'  # type: str
         self.endpoint = endpoint
         self.client_id = client_id
         self.client_secret = client_secret
@@ -17039,7 +17024,7 @@ class ResponsysObjectDataset(Dataset):
         **kwargs
     ):
         super(ResponsysObjectDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'ResponsysObject'
+        self.type = 'ResponsysObject'  # type: str
         self.table_name = table_name
 
 
@@ -17128,7 +17113,7 @@ class RestResourceDataset(Dataset):
         **kwargs
     ):
         super(RestResourceDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'RestResource'
+        self.type = 'RestResource'  # type: str
         self.relative_url = relative_url
         self.request_method = request_method
         self.request_body = request_body
@@ -17231,7 +17216,7 @@ class RestServiceLinkedService(LinkedService):
         **kwargs
     ):
         super(RestServiceLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'RestService'
+        self.type = 'RestService'  # type: str
         self.url = url
         self.enable_server_certificate_validation = enable_server_certificate_validation
         self.authentication_type = authentication_type
@@ -17448,7 +17433,7 @@ class SalesforceLinkedService(LinkedService):
         **kwargs
     ):
         super(SalesforceLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'Salesforce'
+        self.type = 'Salesforce'  # type: str
         self.environment_url = environment_url
         self.username = username
         self.password = password
@@ -17534,7 +17519,7 @@ class SalesforceMarketingCloudLinkedService(LinkedService):
         **kwargs
     ):
         super(SalesforceMarketingCloudLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'SalesforceMarketingCloud'
+        self.type = 'SalesforceMarketingCloud'  # type: str
         self.client_id = client_id
         self.client_secret = client_secret
         self.use_encrypted_endpoints = use_encrypted_endpoints
@@ -17607,7 +17592,7 @@ class SalesforceMarketingCloudObjectDataset(Dataset):
         **kwargs
     ):
         super(SalesforceMarketingCloudObjectDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'SalesforceMarketingCloudObject'
+        self.type = 'SalesforceMarketingCloudObject'  # type: str
         self.table_name = table_name
 
 
@@ -17676,7 +17661,7 @@ class SalesforceObjectDataset(Dataset):
         **kwargs
     ):
         super(SalesforceObjectDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'SalesforceObject'
+        self.type = 'SalesforceObject'  # type: str
         self.object_api_name = object_api_name
 
 
@@ -17755,7 +17740,7 @@ class SalesforceServiceCloudLinkedService(LinkedService):
         **kwargs
     ):
         super(SalesforceServiceCloudLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'SalesforceServiceCloud'
+        self.type = 'SalesforceServiceCloud'  # type: str
         self.environment_url = environment_url
         self.username = username
         self.password = password
@@ -17829,7 +17814,7 @@ class SalesforceServiceCloudObjectDataset(Dataset):
         **kwargs
     ):
         super(SalesforceServiceCloudObjectDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'SalesforceServiceCloudObject'
+        self.type = 'SalesforceServiceCloudObject'  # type: str
         self.object_api_name = object_api_name
 
 
@@ -17893,7 +17878,7 @@ class SapBwCubeDataset(Dataset):
         **kwargs
     ):
         super(SapBwCubeDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'SapBwCube'
+        self.type = 'SapBwCube'  # type: str
 
 
 class SapBWLinkedService(LinkedService):
@@ -17973,7 +17958,7 @@ class SapBWLinkedService(LinkedService):
         **kwargs
     ):
         super(SapBWLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'SapBW'
+        self.type = 'SapBW'  # type: str
         self.server = server
         self.system_number = system_number
         self.client_id = client_id
@@ -18048,7 +18033,7 @@ class SapCloudForCustomerLinkedService(LinkedService):
         **kwargs
     ):
         super(SapCloudForCustomerLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'SapCloudForCustomer'
+        self.type = 'SapCloudForCustomer'  # type: str
         self.url = url
         self.username = username
         self.password = password
@@ -18121,7 +18106,7 @@ class SapCloudForCustomerResourceDataset(Dataset):
         **kwargs
     ):
         super(SapCloudForCustomerResourceDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'SapCloudForCustomerResource'
+        self.type = 'SapCloudForCustomerResource'  # type: str
         self.path = path
 
 
@@ -18191,7 +18176,7 @@ class SapEccLinkedService(LinkedService):
         **kwargs
     ):
         super(SapEccLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'SapEcc'
+        self.type = 'SapEcc'  # type: str
         self.url = url
         self.username = username
         self.password = password
@@ -18264,7 +18249,7 @@ class SapEccResourceDataset(Dataset):
         **kwargs
     ):
         super(SapEccResourceDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'SapEccResource'
+        self.type = 'SapEccResource'  # type: str
         self.path = path
 
 
@@ -18343,7 +18328,7 @@ class SapHanaLinkedService(LinkedService):
         **kwargs
     ):
         super(SapHanaLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'SapHana'
+        self.type = 'SapHana'  # type: str
         self.connection_string = connection_string
         self.server = server
         self.authentication_type = authentication_type
@@ -18421,7 +18406,7 @@ class SapHanaTableDataset(Dataset):
         **kwargs
     ):
         super(SapHanaTableDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'SapHanaTable'
+        self.type = 'SapHanaTable'  # type: str
         self.schema_type_properties_schema = schema_type_properties_schema
         self.table = table
 
@@ -18511,7 +18496,7 @@ class SapOpenHubLinkedService(LinkedService):
         **kwargs
     ):
         super(SapOpenHubLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'SapOpenHub'
+        self.type = 'SapOpenHub'  # type: str
         self.server = server
         self.system_number = system_number
         self.client_id = client_id
@@ -18598,7 +18583,7 @@ class SapOpenHubTableDataset(Dataset):
         **kwargs
     ):
         super(SapOpenHubTableDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'SapOpenHubTable'
+        self.type = 'SapOpenHubTable'  # type: str
         self.open_hub_destination_name = open_hub_destination_name
         self.exclude_last_request = exclude_last_request
         self.base_request_id = base_request_id
@@ -18730,7 +18715,7 @@ class SapTableLinkedService(LinkedService):
         **kwargs
     ):
         super(SapTableLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'SapTable'
+        self.type = 'SapTable'  # type: str
         self.server = server
         self.system_number = system_number
         self.client_id = client_id
@@ -18815,7 +18800,7 @@ class SapTableResourceDataset(Dataset):
         **kwargs
     ):
         super(SapTableResourceDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'SapTableResource'
+        self.type = 'SapTableResource'  # type: str
         self.table_name = table_name
 
 
@@ -18892,7 +18877,7 @@ class SecureString(SecretBase):
         **kwargs
     ):
         super(SecureString, self).__init__(**kwargs)
-        self.type: str = 'SecureString'
+        self.type = 'SecureString'  # type: str
         self.value = value
 
 
@@ -18992,7 +18977,7 @@ class ServiceNowLinkedService(LinkedService):
         **kwargs
     ):
         super(ServiceNowLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'ServiceNow'
+        self.type = 'ServiceNow'  # type: str
         self.endpoint = endpoint
         self.authentication_type = authentication_type
         self.username = username
@@ -19069,7 +19054,7 @@ class ServiceNowObjectDataset(Dataset):
         **kwargs
     ):
         super(ServiceNowObjectDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'ServiceNowObject'
+        self.type = 'ServiceNowObject'  # type: str
         self.table_name = table_name
 
 
@@ -19126,7 +19111,7 @@ class SetVariableActivity(Activity):
         **kwargs
     ):
         super(SetVariableActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, **kwargs)
-        self.type: str = 'SetVariable'
+        self.type = 'SetVariable'  # type: str
         self.variable_name = variable_name
         self.value = value
 
@@ -19235,7 +19220,7 @@ class SftpServerLinkedService(LinkedService):
         **kwargs
     ):
         super(SftpServerLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'Sftp'
+        self.type = 'Sftp'  # type: str
         self.host = host
         self.port = port
         self.authentication_type = authentication_type
@@ -19325,7 +19310,7 @@ class ShopifyLinkedService(LinkedService):
         **kwargs
     ):
         super(ShopifyLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'Shopify'
+        self.type = 'Shopify'  # type: str
         self.host = host
         self.access_token = access_token
         self.use_encrypted_endpoints = use_encrypted_endpoints
@@ -19398,7 +19383,7 @@ class ShopifyObjectDataset(Dataset):
         **kwargs
     ):
         super(ShopifyObjectDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'ShopifyObject'
+        self.type = 'ShopifyObject'  # type: str
         self.table_name = table_name
 
 
@@ -19923,7 +19908,7 @@ class SparkLinkedService(LinkedService):
         **kwargs
     ):
         super(SparkLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'Spark'
+        self.type = 'Spark'  # type: str
         self.host = host
         self.port = port
         self.server_type = server_type
@@ -20014,7 +19999,7 @@ class SparkObjectDataset(Dataset):
         **kwargs
     ):
         super(SparkObjectDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'SparkObject'
+        self.type = 'SparkObject'  # type: str
         self.table_name = table_name
         self.table = table
         self.schema_type_properties_schema = schema_type_properties_schema
@@ -20265,10 +20250,109 @@ class SqlConnection(msrest.serialization.Model):
         self.name = name
 
 
+class SqlPoolReference(msrest.serialization.Model):
+    """SQL pool reference type.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. SQL pool reference type. Possible values include: "SqlPoolReference".
+    :type type: str or ~azure.synapse.artifacts.models.SqlPoolReferenceType
+    :param reference_name: Required. Reference SQL pool name.
+    :type reference_name: str
+    """
+
+    _validation = {
+        'type': {'required': True},
+        'reference_name': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'reference_name': {'key': 'referenceName', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        type: Union[str, "SqlPoolReferenceType"],
+        reference_name: str,
+        **kwargs
+    ):
+        super(SqlPoolReference, self).__init__(**kwargs)
+        self.type = type
+        self.reference_name = reference_name
+
+
+class SqlPoolStoredProcedureActivity(Activity):
+    """Execute SQL pool stored procedure activity.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param name: Required. Activity name.
+    :type name: str
+    :param type: Required. Type of activity.Constant filled by server.
+    :type type: str
+    :param description: Activity description.
+    :type description: str
+    :param depends_on: Activity depends on condition.
+    :type depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
+    :param user_properties: Activity user properties.
+    :type user_properties: list[~azure.synapse.artifacts.models.UserProperty]
+    :param sql_pool: Required. SQL pool stored procedure reference.
+    :type sql_pool: ~azure.synapse.artifacts.models.SqlPoolReference
+    :param stored_procedure_name: Required. Stored procedure name. Type: string (or Expression with
+     resultType string).
+    :type stored_procedure_name: object
+    :param stored_procedure_parameters: Value and type setting for stored procedure parameters.
+     Example: "{Parameter1: {value: "1", type: "int"}}".
+    :type stored_procedure_parameters: dict[str,
+     ~azure.synapse.artifacts.models.StoredProcedureParameter]
+    """
+
+    _validation = {
+        'name': {'required': True},
+        'type': {'required': True},
+        'sql_pool': {'required': True},
+        'stored_procedure_name': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'depends_on': {'key': 'dependsOn', 'type': '[ActivityDependency]'},
+        'user_properties': {'key': 'userProperties', 'type': '[UserProperty]'},
+        'sql_pool': {'key': 'sqlPool', 'type': 'SqlPoolReference'},
+        'stored_procedure_name': {'key': 'typeProperties.storedProcedureName', 'type': 'object'},
+        'stored_procedure_parameters': {'key': 'typeProperties.storedProcedureParameters', 'type': '{StoredProcedureParameter}'},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: str,
+        sql_pool: "SqlPoolReference",
+        stored_procedure_name: object,
+        additional_properties: Optional[Dict[str, object]] = None,
+        description: Optional[str] = None,
+        depends_on: Optional[List["ActivityDependency"]] = None,
+        user_properties: Optional[List["UserProperty"]] = None,
+        stored_procedure_parameters: Optional[Dict[str, "StoredProcedureParameter"]] = None,
+        **kwargs
+    ):
+        super(SqlPoolStoredProcedureActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, **kwargs)
+        self.type = 'SqlPoolStoredProcedure'  # type: str
+        self.sql_pool = sql_pool
+        self.stored_procedure_name = stored_procedure_name
+        self.stored_procedure_parameters = stored_procedure_parameters
+
+
 class SqlScript(msrest.serialization.Model):
     """SQL script.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -20277,14 +20361,13 @@ class SqlScript(msrest.serialization.Model):
     :type additional_properties: dict[str, object]
     :param description: The description of the SQL script.
     :type description: str
-    :ivar type: The type of the SQL script. Default value: "SqlQuery".
-    :vartype type: str
+    :param type: The type of the SQL script. Possible values include: "SqlQuery".
+    :type type: str or ~azure.synapse.artifacts.models.SqlScriptType
     :param content: Required. The content of the SQL script.
     :type content: ~azure.synapse.artifacts.models.SqlScriptContent
     """
 
     _validation = {
-        'type': {'constant': True},
         'content': {'required': True},
     }
 
@@ -20295,19 +20378,19 @@ class SqlScript(msrest.serialization.Model):
         'content': {'key': 'content', 'type': 'SqlScriptContent'},
     }
 
-    type = "SqlQuery"
-
     def __init__(
         self,
         *,
         content: "SqlScriptContent",
         additional_properties: Optional[Dict[str, object]] = None,
         description: Optional[str] = None,
+        type: Optional[Union[str, "SqlScriptType"]] = None,
         **kwargs
     ):
         super(SqlScript, self).__init__(**kwargs)
         self.additional_properties = additional_properties
         self.description = description
+        self.type = type
         self.content = content
 
 
@@ -20524,7 +20607,7 @@ class SqlServerLinkedService(LinkedService):
         **kwargs
     ):
         super(SqlServerLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'SqlServer'
+        self.type = 'SqlServer'  # type: str
         self.connection_string = connection_string
         self.user_name = user_name
         self.password = password
@@ -20596,7 +20679,7 @@ class SqlServerStoredProcedureActivity(ExecutionActivity):
         **kwargs
     ):
         super(SqlServerStoredProcedureActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, linked_service_name=linked_service_name, policy=policy, **kwargs)
-        self.type: str = 'SqlServerStoredProcedure'
+        self.type = 'SqlServerStoredProcedure'  # type: str
         self.stored_procedure_name = stored_procedure_name
         self.stored_procedure_parameters = stored_procedure_parameters
 
@@ -20676,7 +20759,7 @@ class SqlServerTableDataset(Dataset):
         **kwargs
     ):
         super(SqlServerTableDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'SqlServerTable'
+        self.type = 'SqlServerTable'  # type: str
         self.table_name = table_name
         self.schema_type_properties_schema = schema_type_properties_schema
         self.table = table
@@ -20768,7 +20851,7 @@ class SquareLinkedService(LinkedService):
         **kwargs
     ):
         super(SquareLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'Square'
+        self.type = 'Square'  # type: str
         self.host = host
         self.client_id = client_id
         self.client_secret = client_secret
@@ -20843,7 +20926,7 @@ class SquareObjectDataset(Dataset):
         **kwargs
     ):
         super(SquareObjectDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'SquareObject'
+        self.type = 'SquareObject'  # type: str
         self.table_name = table_name
 
 
@@ -21001,15 +21084,13 @@ class SSISExecutionParameter(msrest.serialization.Model):
 class SSISLogLocation(msrest.serialization.Model):
     """SSIS package execution log location.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     All required parameters must be populated in order to send to Azure.
 
     :param log_path: Required. The SSIS package execution log path. Type: string (or Expression
      with resultType string).
     :type log_path: object
-    :ivar type: Required. The type of SSIS log location. Default value: "File".
-    :vartype type: str
+    :param type: Required. The type of SSIS log location. Possible values include: "File".
+    :type type: str or ~azure.synapse.artifacts.models.SsisLogLocationType
     :param access_credential: The package execution log access credential.
     :type access_credential: ~azure.synapse.artifacts.models.SSISAccessCredential
     :param log_refresh_interval: Specifies the interval to refresh log. The default interval is 5
@@ -21020,7 +21101,7 @@ class SSISLogLocation(msrest.serialization.Model):
 
     _validation = {
         'log_path': {'required': True},
-        'type': {'required': True, 'constant': True},
+        'type': {'required': True},
     }
 
     _attribute_map = {
@@ -21030,18 +21111,18 @@ class SSISLogLocation(msrest.serialization.Model):
         'log_refresh_interval': {'key': 'typeProperties.logRefreshInterval', 'type': 'object'},
     }
 
-    type = "File"
-
     def __init__(
         self,
         *,
         log_path: object,
+        type: Union[str, "SsisLogLocationType"],
         access_credential: Optional["SSISAccessCredential"] = None,
         log_refresh_interval: Optional[object] = None,
         **kwargs
     ):
         super(SSISLogLocation, self).__init__(**kwargs)
         self.log_path = log_path
+        self.type = type
         self.access_credential = access_credential
         self.log_refresh_interval = log_refresh_interval
 
@@ -21388,7 +21469,7 @@ class SwitchActivity(Activity):
         **kwargs
     ):
         super(SwitchActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, **kwargs)
-        self.type: str = 'Switch'
+        self.type = 'Switch'  # type: str
         self.on = on
         self.cases = cases
         self.default_activities = default_activities
@@ -21500,7 +21581,7 @@ class SybaseLinkedService(LinkedService):
         **kwargs
     ):
         super(SybaseLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'Sybase'
+        self.type = 'Sybase'  # type: str
         self.server = server
         self.database = database
         self.schema = schema
@@ -21574,8 +21655,189 @@ class SybaseTableDataset(Dataset):
         **kwargs
     ):
         super(SybaseTableDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'SybaseTable'
+        self.type = 'SybaseTable'  # type: str
         self.table_name = table_name
+
+
+class SynapseNotebookActivity(Activity):
+    """Execute Synapse notebook activity.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param name: Required. Activity name.
+    :type name: str
+    :param type: Required. Type of activity.Constant filled by server.
+    :type type: str
+    :param description: Activity description.
+    :type description: str
+    :param depends_on: Activity depends on condition.
+    :type depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
+    :param user_properties: Activity user properties.
+    :type user_properties: list[~azure.synapse.artifacts.models.UserProperty]
+    :param notebook: Required. Synapse notebook reference.
+    :type notebook: ~azure.synapse.artifacts.models.SynapseNotebookReference
+    :param parameters: Notebook parameters.
+    :type parameters: dict[str, object]
+    """
+
+    _validation = {
+        'name': {'required': True},
+        'type': {'required': True},
+        'notebook': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'depends_on': {'key': 'dependsOn', 'type': '[ActivityDependency]'},
+        'user_properties': {'key': 'userProperties', 'type': '[UserProperty]'},
+        'notebook': {'key': 'typeProperties.notebook', 'type': 'SynapseNotebookReference'},
+        'parameters': {'key': 'typeProperties.parameters', 'type': '{object}'},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: str,
+        notebook: "SynapseNotebookReference",
+        additional_properties: Optional[Dict[str, object]] = None,
+        description: Optional[str] = None,
+        depends_on: Optional[List["ActivityDependency"]] = None,
+        user_properties: Optional[List["UserProperty"]] = None,
+        parameters: Optional[Dict[str, object]] = None,
+        **kwargs
+    ):
+        super(SynapseNotebookActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, **kwargs)
+        self.type = 'SynapseNotebook'  # type: str
+        self.notebook = notebook
+        self.parameters = parameters
+
+
+class SynapseNotebookReference(msrest.serialization.Model):
+    """Synapse notebook reference type.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. Synapse notebook reference type. Possible values include:
+     "NotebookReference".
+    :type type: str or ~azure.synapse.artifacts.models.NotebookReferenceType
+    :param reference_name: Required. Reference notebook name.
+    :type reference_name: str
+    """
+
+    _validation = {
+        'type': {'required': True},
+        'reference_name': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'reference_name': {'key': 'referenceName', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        type: Union[str, "NotebookReferenceType"],
+        reference_name: str,
+        **kwargs
+    ):
+        super(SynapseNotebookReference, self).__init__(**kwargs)
+        self.type = type
+        self.reference_name = reference_name
+
+
+class SynapseSparkJobDefinitionActivity(Activity):
+    """Execute spark job activity.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param name: Required. Activity name.
+    :type name: str
+    :param type: Required. Type of activity.Constant filled by server.
+    :type type: str
+    :param description: Activity description.
+    :type description: str
+    :param depends_on: Activity depends on condition.
+    :type depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
+    :param user_properties: Activity user properties.
+    :type user_properties: list[~azure.synapse.artifacts.models.UserProperty]
+    :param spark_job: Required. Synapse spark job reference.
+    :type spark_job: ~azure.synapse.artifacts.models.SynapseSparkJobReference
+    """
+
+    _validation = {
+        'name': {'required': True},
+        'type': {'required': True},
+        'spark_job': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'depends_on': {'key': 'dependsOn', 'type': '[ActivityDependency]'},
+        'user_properties': {'key': 'userProperties', 'type': '[UserProperty]'},
+        'spark_job': {'key': 'typeProperties.sparkJob', 'type': 'SynapseSparkJobReference'},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: str,
+        spark_job: "SynapseSparkJobReference",
+        additional_properties: Optional[Dict[str, object]] = None,
+        description: Optional[str] = None,
+        depends_on: Optional[List["ActivityDependency"]] = None,
+        user_properties: Optional[List["UserProperty"]] = None,
+        **kwargs
+    ):
+        super(SynapseSparkJobDefinitionActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, **kwargs)
+        self.type = 'SparkJob'  # type: str
+        self.spark_job = spark_job
+
+
+class SynapseSparkJobReference(msrest.serialization.Model):
+    """Synapse spark job reference type.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. Synapse spark job reference type. Possible values include:
+     "SparkJobDefinitionReference".
+    :type type: str or ~azure.synapse.artifacts.models.SparkJobReferenceType
+    :param reference_name: Required. Reference spark job name.
+    :type reference_name: str
+    """
+
+    _validation = {
+        'type': {'required': True},
+        'reference_name': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'reference_name': {'key': 'referenceName', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        type: Union[str, "SparkJobReferenceType"],
+        reference_name: str,
+        **kwargs
+    ):
+        super(SynapseSparkJobReference, self).__init__(**kwargs)
+        self.type = type
+        self.reference_name = reference_name
 
 
 class TeradataLinkedService(LinkedService):
@@ -21651,7 +21913,7 @@ class TeradataLinkedService(LinkedService):
         **kwargs
     ):
         super(TeradataLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'Teradata'
+        self.type = 'Teradata'  # type: str
         self.connection_string = connection_string
         self.server = server
         self.authentication_type = authentication_type
@@ -21729,7 +21991,7 @@ class TeradataTableDataset(Dataset):
         **kwargs
     ):
         super(TeradataTableDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'TeradataTable'
+        self.type = 'TeradataTable'  # type: str
         self.database = database
         self.table = table
 
@@ -22066,7 +22328,7 @@ class UntilActivity(Activity):
         **kwargs
     ):
         super(UntilActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, **kwargs)
-        self.type: str = 'Until'
+        self.type = 'Until'  # type: str
         self.expression = expression
         self.timeout = timeout
         self.activities = activities
@@ -22179,7 +22441,7 @@ class ValidationActivity(Activity):
         **kwargs
     ):
         super(ValidationActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, **kwargs)
-        self.type: str = 'Validation'
+        self.type = 'Validation'  # type: str
         self.timeout = timeout
         self.sleep = sleep
         self.minimum_size = minimum_size
@@ -22279,7 +22541,7 @@ class VerticaLinkedService(LinkedService):
         **kwargs
     ):
         super(VerticaLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'Vertica'
+        self.type = 'Vertica'  # type: str
         self.connection_string = connection_string
         self.pwd = pwd
         self.encrypted_credential = encrypted_credential
@@ -22360,7 +22622,7 @@ class VerticaTableDataset(Dataset):
         **kwargs
     ):
         super(VerticaTableDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'VerticaTable'
+        self.type = 'VerticaTable'  # type: str
         self.table_name = table_name
         self.table = table
         self.schema_type_properties_schema = schema_type_properties_schema
@@ -22416,7 +22678,7 @@ class WaitActivity(Activity):
         **kwargs
     ):
         super(WaitActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, **kwargs)
-        self.type: str = 'Wait'
+        self.type = 'Wait'  # type: str
         self.wait_time_in_seconds = wait_time_in_seconds
 
 
@@ -22512,7 +22774,7 @@ class WebActivity(ExecutionActivity):
         **kwargs
     ):
         super(WebActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, linked_service_name=linked_service_name, policy=policy, **kwargs)
-        self.type: str = 'WebActivity'
+        self.type = 'WebActivity'  # type: str
         self.method = method
         self.url = url
         self.headers = headers
@@ -22610,7 +22872,7 @@ class WebLinkedServiceTypeProperties(msrest.serialization.Model):
     ):
         super(WebLinkedServiceTypeProperties, self).__init__(**kwargs)
         self.url = url
-        self.authentication_type: Optional[str] = None
+        self.authentication_type = None  # type: Optional[str]
 
 
 class WebAnonymousAuthentication(WebLinkedServiceTypeProperties):
@@ -22644,7 +22906,7 @@ class WebAnonymousAuthentication(WebLinkedServiceTypeProperties):
         **kwargs
     ):
         super(WebAnonymousAuthentication, self).__init__(url=url, **kwargs)
-        self.authentication_type: str = 'Anonymous'
+        self.authentication_type = 'Anonymous'  # type: str
 
 
 class WebBasicAuthentication(WebLinkedServiceTypeProperties):
@@ -22689,7 +22951,7 @@ class WebBasicAuthentication(WebLinkedServiceTypeProperties):
         **kwargs
     ):
         super(WebBasicAuthentication, self).__init__(url=url, **kwargs)
-        self.authentication_type: str = 'Basic'
+        self.authentication_type = 'Basic'  # type: str
         self.username = username
         self.password = password
 
@@ -22735,15 +22997,13 @@ class WebClientCertificateAuthentication(WebLinkedServiceTypeProperties):
         **kwargs
     ):
         super(WebClientCertificateAuthentication, self).__init__(url=url, **kwargs)
-        self.authentication_type: str = 'ClientCertificate'
+        self.authentication_type = 'ClientCertificate'  # type: str
         self.pfx = pfx
         self.password = password
 
 
 class WebHookActivity(Activity):
     """WebHook activity.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -22760,8 +23020,8 @@ class WebHookActivity(Activity):
     :type depends_on: list[~azure.synapse.artifacts.models.ActivityDependency]
     :param user_properties: Activity user properties.
     :type user_properties: list[~azure.synapse.artifacts.models.UserProperty]
-    :ivar method: Required. Rest API method for target endpoint. Default value: "POST".
-    :vartype method: str
+    :param method: Required. Rest API method for target endpoint. Possible values include: "POST".
+    :type method: str or ~azure.synapse.artifacts.models.WebHookActivityMethod
     :param url: Required. WebHook activity target endpoint and path. Type: string (or Expression
      with resultType string).
     :type url: object
@@ -22788,7 +23048,7 @@ class WebHookActivity(Activity):
     _validation = {
         'name': {'required': True},
         'type': {'required': True},
-        'method': {'required': True, 'constant': True},
+        'method': {'required': True},
         'url': {'required': True},
     }
 
@@ -22808,12 +23068,11 @@ class WebHookActivity(Activity):
         'report_status_on_call_back': {'key': 'typeProperties.reportStatusOnCallBack', 'type': 'object'},
     }
 
-    method = "POST"
-
     def __init__(
         self,
         *,
         name: str,
+        method: Union[str, "WebHookActivityMethod"],
         url: object,
         additional_properties: Optional[Dict[str, object]] = None,
         description: Optional[str] = None,
@@ -22827,7 +23086,8 @@ class WebHookActivity(Activity):
         **kwargs
     ):
         super(WebHookActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, **kwargs)
-        self.type: str = 'WebHook'
+        self.type = 'WebHook'  # type: str
+        self.method = method
         self.url = url
         self.timeout = timeout
         self.headers = headers
@@ -22885,7 +23145,7 @@ class WebLinkedService(LinkedService):
         **kwargs
     ):
         super(WebLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'Web'
+        self.type = 'Web'  # type: str
         self.type_properties = type_properties
 
 
@@ -22960,7 +23220,7 @@ class WebTableDataset(Dataset):
         **kwargs
     ):
         super(WebTableDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'WebTable'
+        self.type = 'WebTable'  # type: str
         self.index = index
         self.path = path
 
@@ -23192,7 +23452,7 @@ class XeroLinkedService(LinkedService):
         **kwargs
     ):
         super(XeroLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'Xero'
+        self.type = 'Xero'  # type: str
         self.host = host
         self.consumer_key = consumer_key
         self.private_key = private_key
@@ -23266,7 +23526,7 @@ class XeroObjectDataset(Dataset):
         **kwargs
     ):
         super(XeroObjectDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'XeroObject'
+        self.type = 'XeroObject'  # type: str
         self.table_name = table_name
 
 
@@ -23345,7 +23605,7 @@ class ZohoLinkedService(LinkedService):
         **kwargs
     ):
         super(ZohoLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
-        self.type: str = 'Zoho'
+        self.type = 'Zoho'  # type: str
         self.endpoint = endpoint
         self.access_token = access_token
         self.use_encrypted_endpoints = use_encrypted_endpoints
@@ -23418,5 +23678,5 @@ class ZohoObjectDataset(Dataset):
         **kwargs
     ):
         super(ZohoObjectDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
-        self.type: str = 'ZohoObject'
+        self.type = 'ZohoObject'  # type: str
         self.table_name = table_name
