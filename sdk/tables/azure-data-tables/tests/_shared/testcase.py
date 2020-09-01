@@ -39,8 +39,8 @@ except ImportError:
     from io import StringIO
 
 from azure.core.credentials import AccessToken
-from azure.data.tables import generate_account_sas, AccountSasPermissions, ResourceTypes
 from azure.mgmt.storage.models import StorageAccount, Endpoints
+from azure.data.tables import generate_account_sas, AccountSasPermissions, ResourceTypes
 
 try:
     from devtools_testutils import mgmt_settings_real as settings
