@@ -20,7 +20,12 @@ from azure.core.tracing.decorator import distributed_trace
 from ._deserialize import _convert_to_entity, _trim_service_metadata
 from ._entity import TableEntity
 from ._generated import AzureTable
-from ._generated.models import AccessPolicy, SignedIdentifier, TableProperties, QueryOptions
+from ._generated.models import (
+    AccessPolicy,
+    SignedIdentifier,
+    TableProperties,
+    QueryOptions
+)
 from ._serialize import _get_match_headers, _add_entity_properties
 from ._base_client import parse_connection_str
 from ._table_client_base import TableClientBase
