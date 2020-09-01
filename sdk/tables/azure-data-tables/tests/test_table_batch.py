@@ -163,7 +163,7 @@ class StorageTableBatchTest(TableTestCase):
         entity.test5 = EntityProperty(u"stringystring")
         entity.test6 = EntityProperty(3.14159)
         entity.test7 = EntityProperty(100)
-        entity.test8 = EntityProperty(2 ** 33)
+        entity.test8 = EntityProperty(2 ** 33, EdmType.INT64)
 
         # Assert
         self.assertEqual(entity.test.type, EdmType.BOOLEAN)
