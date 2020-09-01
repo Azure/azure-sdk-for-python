@@ -10,28 +10,17 @@ import time
 import pytest
 
 from devtools_testutils import AzureMgmtTestCase
-
+from azure_devtools.scenario_tests import ReplayableTest
 from search_service_preparer import SearchServicePreparer, SearchResourceGroupPreparer
 
 from azure.core import MatchConditions
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import HttpResponseError
 from azure.search.documents.indexes.models import(
-    AnalyzeTextOptions,
-    AnalyzeResult,
-    CorsOptions,
-    EntityRecognitionSkill,
     SearchIndex,
-    InputFieldMappingEntry,
-    OutputFieldMappingEntry,
-    ScoringProfile,
-    SearchIndexerSkillset,
     SearchIndexerDataSourceConnection,
     SearchIndexer,
     SearchIndexerDataContainer,
-    SynonymMap,
-    SimpleField,
-    SearchFieldDataType
 )
 from azure.search.documents.indexes import SearchIndexClient, SearchIndexerClient
 
@@ -45,6 +34,7 @@ TIME_TO_SLEEP = 5
 CONNECTION_STRING = 'DefaultEndpointsProtocol=https;AccountName=storagename;AccountKey=NzhL3hKZbJBuJ2484dPTR+xF30kYaWSSCbs2BzLgVVI1woqeST/1IgqaLm6QAOTxtGvxctSNbIR/1hW8yH+bJg==;EndpointSuffix=core.windows.net'
 
 class SearchIndexersClientTest(AzureMgmtTestCase):
+    FILTER_HEADERS = ReplayableTest.FILTER_HEADERS + ['api-key']
 
     def _prepare_indexer(self, endpoint, api_key, name="sample-indexer", ds_name="sample-datasource", id_name="hotels"):
         con_str = self.settings.AZURE_STORAGE_CONNECTION_STRING

@@ -16,7 +16,7 @@ from .. import models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar
+    from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union
 
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -28,6 +28,7 @@ class TextAnalyticsClientOperationsMixin(object):
         documents,  # type: List["models.MultiLanguageInput"]
         model_version=None,  # type: Optional[str]
         show_stats=None,  # type: Optional[bool]
+        string_index_type="TextElements_v8",  # type: Optional[Union[str, "models.StringIndexType"]]
         **kwargs  # type: Any
     ):
         # type: (...) -> "models.EntitiesResult"
@@ -43,9 +44,13 @@ class TextAnalyticsClientOperationsMixin(object):
         :param model_version: (Optional) This value indicates which model will be used for scoring. If
          a model-version is not specified, the API should default to the latest, non-preview version.
         :type model_version: str
-        :param show_stats: (Optional) if set to true, response will contain input and document level
+        :param show_stats: (Optional) if set to true, response will contain request and document level
          statistics.
         :type show_stats: bool
+        :param string_index_type: (Optional) Specifies the method used to interpret string offsets.
+         Defaults to Text Elements (Graphemes) according to Unicode v8.0.0. For additional information
+         see https://aka.ms/text-analytics-offsets.
+        :type string_index_type: str or ~azure.ai.textanalytics.v3_1_preview_1.models.StringIndexType
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: EntitiesResult, or the result of cls(response)
         :rtype: ~azure.ai.textanalytics.v3_1_preview_1.models.EntitiesResult
@@ -57,6 +62,7 @@ class TextAnalyticsClientOperationsMixin(object):
 
         _input = models.MultiLanguageBatchInput(documents=documents)
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json, text/json"
 
         # Construct URL
         url = self.entities_recognition_general.metadata['url']  # type: ignore
@@ -71,23 +77,24 @@ class TextAnalyticsClientOperationsMixin(object):
             query_parameters['model-version'] = self._serialize.query("model_version", model_version, 'str')
         if show_stats is not None:
             query_parameters['showStats'] = self._serialize.query("show_stats", show_stats, 'bool')
+        if string_index_type is not None:
+            query_parameters['stringIndexType'] = self._serialize.query("string_index_type", string_index_type, 'str')
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(_input, 'MultiLanguageBatchInput')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.TextAnalyticsError, response)
+            error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('EntitiesResult', pipeline_response)
@@ -104,6 +111,7 @@ class TextAnalyticsClientOperationsMixin(object):
         model_version=None,  # type: Optional[str]
         show_stats=None,  # type: Optional[bool]
         domain=None,  # type: Optional[str]
+        string_index_type="TextElements_v8",  # type: Optional[Union[str, "models.StringIndexType"]]
         **kwargs  # type: Any
     ):
         # type: (...) -> "models.EntitiesResult"
@@ -120,11 +128,15 @@ class TextAnalyticsClientOperationsMixin(object):
         :param model_version: (Optional) This value indicates which model will be used for scoring. If
          a model-version is not specified, the API should default to the latest, non-preview version.
         :type model_version: str
-        :param show_stats: (Optional) if set to true, response will contain input and document level
+        :param show_stats: (Optional) if set to true, response will contain request and document level
          statistics.
         :type show_stats: bool
         :param domain: (Optional) if set to 'PHI', response will contain only PHI entities.
         :type domain: str
+        :param string_index_type: (Optional) Specifies the method used to interpret string offsets.
+         Defaults to Text Elements (Graphemes) according to Unicode v8.0.0. For additional information
+         see https://aka.ms/text-analytics-offsets.
+        :type string_index_type: str or ~azure.ai.textanalytics.v3_1_preview_1.models.StringIndexType
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: EntitiesResult, or the result of cls(response)
         :rtype: ~azure.ai.textanalytics.v3_1_preview_1.models.EntitiesResult
@@ -136,6 +148,7 @@ class TextAnalyticsClientOperationsMixin(object):
 
         _input = models.MultiLanguageBatchInput(documents=documents)
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json, text/json"
 
         # Construct URL
         url = self.entities_recognition_pii.metadata['url']  # type: ignore
@@ -152,23 +165,24 @@ class TextAnalyticsClientOperationsMixin(object):
             query_parameters['showStats'] = self._serialize.query("show_stats", show_stats, 'bool')
         if domain is not None:
             query_parameters['domain'] = self._serialize.query("domain", domain, 'str')
+        if string_index_type is not None:
+            query_parameters['stringIndexType'] = self._serialize.query("string_index_type", string_index_type, 'str')
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(_input, 'MultiLanguageBatchInput')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.TextAnalyticsError, response)
+            error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('EntitiesResult', pipeline_response)
@@ -184,6 +198,7 @@ class TextAnalyticsClientOperationsMixin(object):
         documents,  # type: List["models.MultiLanguageInput"]
         model_version=None,  # type: Optional[str]
         show_stats=None,  # type: Optional[bool]
+        string_index_type="TextElements_v8",  # type: Optional[Union[str, "models.StringIndexType"]]
         **kwargs  # type: Any
     ):
         # type: (...) -> "models.EntityLinkingResult"
@@ -198,9 +213,13 @@ class TextAnalyticsClientOperationsMixin(object):
         :param model_version: (Optional) This value indicates which model will be used for scoring. If
          a model-version is not specified, the API should default to the latest, non-preview version.
         :type model_version: str
-        :param show_stats: (Optional) if set to true, response will contain input and document level
+        :param show_stats: (Optional) if set to true, response will contain request and document level
          statistics.
         :type show_stats: bool
+        :param string_index_type: (Optional) Specifies the method used to interpret string offsets.
+         Defaults to Text Elements (Graphemes) according to Unicode v8.0.0. For additional information
+         see https://aka.ms/text-analytics-offsets.
+        :type string_index_type: str or ~azure.ai.textanalytics.v3_1_preview_1.models.StringIndexType
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: EntityLinkingResult, or the result of cls(response)
         :rtype: ~azure.ai.textanalytics.v3_1_preview_1.models.EntityLinkingResult
@@ -212,6 +231,7 @@ class TextAnalyticsClientOperationsMixin(object):
 
         _input = models.MultiLanguageBatchInput(documents=documents)
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json, text/json"
 
         # Construct URL
         url = self.entities_linking.metadata['url']  # type: ignore
@@ -226,23 +246,24 @@ class TextAnalyticsClientOperationsMixin(object):
             query_parameters['model-version'] = self._serialize.query("model_version", model_version, 'str')
         if show_stats is not None:
             query_parameters['showStats'] = self._serialize.query("show_stats", show_stats, 'bool')
+        if string_index_type is not None:
+            query_parameters['stringIndexType'] = self._serialize.query("string_index_type", string_index_type, 'str')
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(_input, 'MultiLanguageBatchInput')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.TextAnalyticsError, response)
+            error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('EntityLinkingResult', pipeline_response)
@@ -272,7 +293,7 @@ class TextAnalyticsClientOperationsMixin(object):
         :param model_version: (Optional) This value indicates which model will be used for scoring. If
          a model-version is not specified, the API should default to the latest, non-preview version.
         :type model_version: str
-        :param show_stats: (Optional) if set to true, response will contain input and document level
+        :param show_stats: (Optional) if set to true, response will contain request and document level
          statistics.
         :type show_stats: bool
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -286,6 +307,7 @@ class TextAnalyticsClientOperationsMixin(object):
 
         _input = models.MultiLanguageBatchInput(documents=documents)
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json, text/json"
 
         # Construct URL
         url = self.key_phrases.metadata['url']  # type: ignore
@@ -304,19 +326,18 @@ class TextAnalyticsClientOperationsMixin(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(_input, 'MultiLanguageBatchInput')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.TextAnalyticsError, response)
+            error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('KeyPhraseResult', pipeline_response)
@@ -347,7 +368,7 @@ class TextAnalyticsClientOperationsMixin(object):
         :param model_version: (Optional) This value indicates which model will be used for scoring. If
          a model-version is not specified, the API should default to the latest, non-preview version.
         :type model_version: str
-        :param show_stats: (Optional) if set to true, response will contain input and document level
+        :param show_stats: (Optional) if set to true, response will contain request and document level
          statistics.
         :type show_stats: bool
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -361,6 +382,7 @@ class TextAnalyticsClientOperationsMixin(object):
 
         _input = models.LanguageBatchInput(documents=documents)
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json, text/json"
 
         # Construct URL
         url = self.languages.metadata['url']  # type: ignore
@@ -379,19 +401,18 @@ class TextAnalyticsClientOperationsMixin(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(_input, 'LanguageBatchInput')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.TextAnalyticsError, response)
+            error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('LanguageResult', pipeline_response)
@@ -408,6 +429,7 @@ class TextAnalyticsClientOperationsMixin(object):
         model_version=None,  # type: Optional[str]
         show_stats=None,  # type: Optional[bool]
         opinion_mining=None,  # type: Optional[bool]
+        string_index_type="TextElements_v8",  # type: Optional[Union[str, "models.StringIndexType"]]
         **kwargs  # type: Any
     ):
         # type: (...) -> "models.SentimentResponse"
@@ -422,12 +444,16 @@ class TextAnalyticsClientOperationsMixin(object):
         :param model_version: (Optional) This value indicates which model will be used for scoring. If
          a model-version is not specified, the API should default to the latest, non-preview version.
         :type model_version: str
-        :param show_stats: (Optional) if set to true, response will contain input and document level
+        :param show_stats: (Optional) if set to true, response will contain request and document level
          statistics.
         :type show_stats: bool
         :param opinion_mining: (Optional) if set to true, response will contain input and document
          level statistics including aspect-based sentiment analysis results.
         :type opinion_mining: bool
+        :param string_index_type: (Optional) Specifies the method used to interpret string offsets.
+         Defaults to Text Elements (Graphemes) according to Unicode v8.0.0. For additional information
+         see https://aka.ms/text-analytics-offsets.
+        :type string_index_type: str or ~azure.ai.textanalytics.v3_1_preview_1.models.StringIndexType
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SentimentResponse, or the result of cls(response)
         :rtype: ~azure.ai.textanalytics.v3_1_preview_1.models.SentimentResponse
@@ -439,6 +465,7 @@ class TextAnalyticsClientOperationsMixin(object):
 
         _input = models.MultiLanguageBatchInput(documents=documents)
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json, text/json"
 
         # Construct URL
         url = self.sentiment.metadata['url']  # type: ignore
@@ -455,23 +482,24 @@ class TextAnalyticsClientOperationsMixin(object):
             query_parameters['showStats'] = self._serialize.query("show_stats", show_stats, 'bool')
         if opinion_mining is not None:
             query_parameters['opinionMining'] = self._serialize.query("opinion_mining", opinion_mining, 'bool')
+        if string_index_type is not None:
+            query_parameters['stringIndexType'] = self._serialize.query("string_index_type", string_index_type, 'str')
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(_input, 'MultiLanguageBatchInput')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.TextAnalyticsError, response)
+            error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('SentimentResponse', pipeline_response)

@@ -16,7 +16,8 @@ from azure.ai.textanalytics.aio import TextAnalyticsClient
 from azure.ai.textanalytics import (
     VERSION,
     DetectLanguageInput,
-    DetectLanguageInput
+    DetectLanguageInput,
+    TextAnalyticsApiVersion,
 )
 
 from testcase import GlobalTextAnalyticsAccountPreparer
@@ -603,3 +604,10 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
             cls=callback
         )
         assert res == "cls result"
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_0})
+    async def test_string_index_type_not_fail_v3(self, client):
+        # make sure that the addition of the string_index_type kwarg for v3.1-preview.1 doesn't
+        # cause v3.0 calls to fail
+        await client.detect_language(["please don't fail"])

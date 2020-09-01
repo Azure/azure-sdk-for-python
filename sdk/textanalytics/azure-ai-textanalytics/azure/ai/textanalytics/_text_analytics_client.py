@@ -93,6 +93,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         )
         self._default_language = kwargs.pop("default_language", "en")
         self._default_country_hint = kwargs.pop("default_country_hint", "US")
+        self._string_code_unit = None if kwargs.get("api_version") == "v3.0" else "UnicodeCodePoint"
 
     @distributed_trace
     def detect_language(  # type: ignore
@@ -213,6 +214,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         docs = _validate_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
+        if self._string_code_unit:
+            kwargs.update({"string_index_type": self._string_code_unit})
         try:
             return self._client.entities_recognition_general(
                 documents=docs,
@@ -278,6 +281,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         docs = _validate_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
+        if self._string_code_unit:
+            kwargs.update({"string_index_type": self._string_code_unit})
         try:
             return self._client.entities_recognition_pii(
                 documents=docs,
@@ -286,8 +291,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 cls=kwargs.pop("cls", pii_entities_result),
                 **kwargs
             )
-        except AttributeError as error:
-            if "'TextAnalyticsClient' object has no attribute 'entities_recognition_pii'" in str(error):
+        except NotImplementedError as error:
+            if "APIVersion v3.0 is not available" in str(error):
                 raise NotImplementedError(
                     "'recognize_pii_entities' endpoint is only available for API version v3.1-preview.1 and up"
                 )
@@ -350,6 +355,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         docs = _validate_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
+        if self._string_code_unit:
+            kwargs.update({"string_index_type": self._string_code_unit})
         try:
             return self._client.entities_linking(
                 documents=docs,
@@ -490,6 +497,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
         show_opinion_mining = kwargs.pop("show_opinion_mining", None)
+        if self._string_code_unit:
+            kwargs.update({"string_index_type": self._string_code_unit})
 
         if show_opinion_mining is not None:
             kwargs.update({"opinion_mining": show_opinion_mining})

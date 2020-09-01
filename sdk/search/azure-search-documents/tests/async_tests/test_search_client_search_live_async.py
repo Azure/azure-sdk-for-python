@@ -7,22 +7,18 @@ import asyncio
 import functools
 import json
 from os.path import dirname, join, realpath
-import time
-
-import pytest
 
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
+from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_function
+from azure_devtools.scenario_tests import ReplayableTest
 
 from search_service_preparer import SearchServicePreparer
-
-from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_function
 
 CWD = dirname(realpath(__file__))
 
 SCHEMA = open(join(CWD, "..", "hotel_schema.json")).read()
 BATCH = json.load(open(join(CWD, "..", "hotel_small.json"), encoding='utf-8'))
 
-from azure.core.exceptions import HttpResponseError
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents.aio import SearchClient
 
@@ -43,6 +39,8 @@ def await_prepared_test(test_fn):
 
 
 class SearchClientTestAsync(AzureMgmtTestCase):
+    FILTER_HEADERS = ReplayableTest.FILTER_HEADERS + ['api-key']
+
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     async def test_get_search_simple(self, api_key, endpoint, index_name, **kwargs):
