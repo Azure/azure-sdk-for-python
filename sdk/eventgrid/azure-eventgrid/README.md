@@ -2,7 +2,7 @@
 
 Azure Event Grid is a fully-managed intelligent event routing service that allows for uniform event consumption using a publish-subscribe model.
 
-[Source code][python-eg-src] | [Package (PyPI)][python-eg-pypi] | [API reference documentation][python-eg-ref-docs]| [Product documentation][python-eg-product-docs] | [Samples][python-eg-samples]
+[Source code][python-eg-src] | [Package (PyPI)][python-eg-pypi] | [API reference documentation][python-eg-ref-docs]| [Product documentation][python-eg-product-docs] | [Samples][python-eg-samples]| [Changelog][python-eg-changelog]
 
 ## Getting started
 
@@ -36,7 +36,7 @@ pass the key as a string into an instance of [AzureKeyCredential][azure-key-cred
 from azure.core.credentials import AzureKeyCredential
 from azure.eventgrid import EventGridPublisherClient
 
-topic_hostname = "https://<name>.<region>.eventgrid.azure.net/api/events"
+topic_hostname = "https://<name>.<region>.eventgrid.azure.net"
 credential = AzureKeyCredential("<api_key>")
 eg_publisher_client = EventGridPublisherClient(topic_hostname, credential)
 ```
@@ -50,7 +50,125 @@ Either a list or a single instance of CloudEvent/EventGridEvent/CustomEvent can 
 ### EventGridConsumer
 `EventGridConsumer` is used to desrialize an event received.
 
+## Examples
+
+The following sections provide several code snippets covering some of the most common EventGrid tasks, including:
+
+* [Send an EventGrid Event](#send-an-eventgrid-event)
+* [Send a Cloud Event](#send-a-cloud-event)
+* [Consume an eventgrid Event](#consume-an-eventgrid-event)
+* [Consume a cloud Event](#consume-a-cloud-event)
+
+### Send an EventGrid Event
+
+This example publishes an EventGrid event.
+
+```Python
+import os
+from azure.core.credentials import AzureKeyCredential
+from azure.eventgrid import EventGridPublisherClient, EventGridEvent
+
+key = os.environ["EG_ACCESS_KEY"]
+topic_hostname = os.environ["EG_TOPIC_HOSTNAME"]
+
+event = EventGridEvent(
+    subject="Door1",
+    data={"team": "azure-sdk"},
+    event_type="Azure.Sdk.Demo",
+    data_version="2.0"
+)
+
+credential = AzureKeyCredential(key)
+client = EventGridPublisherClient(topic_hostname, credential)
+
+client.send(event)
+```
+
+### Send a Cloud Event
+
+This example publishes a Cloud event.
+
+```Python
+import os
+from azure.core.credentials import AzureKeyCredential
+from azure.eventgrid import EventGridPublisherClient, CloudEvent
+
+key = os.environ["CLOUD_ACCESS_KEY"]
+topic_hostname = os.environ["CLOUD_TOPIC_HOSTNAME"]
+
+event = CloudEvent(
+    type="Azure.Sdk.Sample",
+    source="https://egsample.dev/sampleevent",
+    data={"team": "azure-sdk"}
+)
+
+credential = AzureKeyCredential(key)
+client = EventGridPublisherClient(topic_hostname, credential)
+
+client.send(event)
+```
+
+### Consume an eventgrid Event
+
+This example demonstrates consuming and deserializing an eventgrid event.
+
+```Python
+import os
+from azure.eventgrid import EventGridConsumer
+
+consumer = EventGridConsumer()
+
+eg_storage_dict = {
+    "id":"bbab6625-dc56-4b22-abeb-afcc72e5290c",
+    "subject":"/blobServices/default/containers/oc2d2817345i200097container/blobs/oc2d2817345i20002296blob",
+    "data":{
+        "api":"PutBlockList",
+    },
+    "eventType":"Microsoft.Storage.BlobCreated",
+    "dataVersion":"2.0",
+    "metadataVersion":"1",
+    "eventTime":"2020-08-07T02:28:23.867525Z",
+    "topic":"/subscriptions/faa080af-c1d8-40ad-9cce-e1a450ca5b57/resourceGroups/t-swpill-test/providers/Microsoft.EventGrid/topics/eventgridegsub"
+}
+
+deserialized_event = consumer.decode_eventgrid_event(eg_storage_dict)
+
+# both allow access to raw properties as strings
+time_string = deserialized_event.time
+time_string = deserialized_event["time"]
+```
+
+### Consume a Cloud Event
+
+This example demonstrates consuming and deserializing a cloud event.
+
+```Python
+import os
+from azure.eventgrid import EventGridConsumer
+
+consumer = EventGridConsumer()
+
+cloud_storage_dict = {
+    "id":"a0517898-9fa4-4e70-b4a3-afda1dd68672",
+    "source":"/subscriptions/{subscription-id}/resourceGroups/{resource-group}/providers/Microsoft.Storage/storageAccounts/{storage-account}",
+    "data":{
+        "api":"PutBlockList",
+    },
+    "type":"Microsoft.Storage.BlobCreated",
+    "time":"2020-08-07T01:11:49.765846Z",
+    "specversion":"1.0"
+}
+
+deserialized_event = consumer.decode_cloud_event(cloud_storage_dict)
+
+# both allow access to raw properties as strings
+time_string = deserialized_event.time
+time_string = deserialized_event["time"]
+```
+
 ## Troubleshooting
+
+- Enable `azure.eventgrid` logger to collect traces from the library.
 
 ### General
 Eventgrid client library will raise exceptions defined in [Azure Core][azure_core_exceptions].
@@ -102,6 +220,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [python-eg-product-docs]: https://docs.microsoft.com/en-us/azure/event-grid/overview
 [python-eg-ref-docs]: https://aka.ms/azsdk/python/eventgrid/docs
 [python-eg-samples]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventgrid/azure-eventgrid/samples
+[python-eg-changelog]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventgrid/azure-eventgrid/CHANGELOG.md
 
 [azure_portal_create_EG_resource]: https://ms.portal.azure.com/#blade/HubsExtension/BrowseResource/resourceType/Microsoft.EventGrid%2Ftopics
 [azure-key-credential]: https://aka.ms/azsdk/python/core/azurekeycredential
