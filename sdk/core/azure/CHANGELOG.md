@@ -85,9 +85,7 @@ The complete list of packages installed is:
 -  [azure-mgmt-trafficmanager v0.30.x](https://pypi.python.org/pypi/azure-mgmt-trafficmanager/0.30.0)
 -  [azure-mgmt-web v0.32.x](https://pypi.python.org/pypi/azure-mgmt-web/0.32.0)
 
-More packages are available, but they are in preview with not enough tests currently and are not included in this bundle. More details here:
-http://azure-sdk-for-python.readthedocs.io/en/latest/installation.html
-
+More packages are available, but they are in preview with not enough tests currently and are not included in this bundle.
 
 ## 2016-08-30 Version 2.0.0rc6 / 0.30.0rc6
 
@@ -507,8 +505,6 @@ version before installing the latest release.
 * Azure Storage has moved.
     https://github.com/Azure/azure-storage-python
 
-    http://azure-storage.readthedocs.org/en/latest/
-
 **Bugfixes**
 
 * #437 Make delete_storage_account return async request id
@@ -611,9 +607,6 @@ easy production AND consumption of SAS for blob, queue and table storage.
    BlobService/QueueService/TableService with account_name only
    (no account_key or sas_token)
 
- See http://azure-sdk-for-python.readthedocs.org/en/latest/storage.html for
- more details on using SAS with Azure Storage.
-
 **Other changes**
 
  * Create/list/delete job functionality added to SchedulerManagementService
@@ -670,8 +663,6 @@ The other changes in this release are:
   your azure publish settings file
 * Ability to adjust the global http timeout
 * Service bus event hub support (create/update/delete hubs + send events)
-* Documentation for API Reference is now available at
-  http://azure-sdk-for-python.readthedocs.org/en/documentation/index.html
 
 **Bugfixes**
 

@@ -10,6 +10,8 @@ For a more complete view of Azure libraries, see the [Github repo](https://githu
 For code examples, see [Bot Service](https://docs.microsoft.com/python/api/overview/azure/)
 on docs.microsoft.com.
 
+For a more complete set of Azure libraries, see the
+[azure sdk python release](https://aka.ms/azsdk/python/all).
 
 # Provide Feedback
 

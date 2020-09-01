@@ -36,6 +36,7 @@ try:
     from ._models_py3 import ConflictResolutionPolicy
     from ._models_py3 import ConsistencyPolicy
     from ._models_py3 import ContainerPartitionKey
+    from ._models_py3 import CorsPolicy
     from ._models_py3 import CreateUpdateOptions
     from ._models_py3 import DatabaseAccountConnectionString
     from ._models_py3 import DatabaseAccountCreateUpdateParameters
@@ -165,6 +166,7 @@ except (SyntaxError, ImportError):
     from ._models import ConflictResolutionPolicy
     from ._models import ConsistencyPolicy
     from ._models import ContainerPartitionKey
+    from ._models import CorsPolicy
     from ._models import CreateUpdateOptions
     from ._models import DatabaseAccountConnectionString
     from ._models import DatabaseAccountCreateUpdateParameters
@@ -338,6 +340,7 @@ __all__ = [
     'ConflictResolutionPolicy',
     'ConsistencyPolicy',
     'ContainerPartitionKey',
+    'CorsPolicy',
     'CreateUpdateOptions',
     'DatabaseAccountConnectionString',
     'DatabaseAccountCreateUpdateParameters',

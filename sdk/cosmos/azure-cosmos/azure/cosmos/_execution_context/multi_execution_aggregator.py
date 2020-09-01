@@ -102,7 +102,7 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
             except StopIteration:
                 continue
 
-    def next(self):
+    def __next__(self):
         """Returns the next result
 
         :return: The next result.
@@ -157,3 +157,5 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
         return self._routing_provider.get_overlapping_ranges(
             self._resource_link, [routing_range.Range.ParseFromDict(range_as_dict) for range_as_dict in query_ranges]
         )
+
+    next = __next__  # Python 2 compatibility.

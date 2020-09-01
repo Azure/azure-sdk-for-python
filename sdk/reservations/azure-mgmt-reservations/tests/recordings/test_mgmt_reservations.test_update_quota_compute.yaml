@@ -1,0 +1,301 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.8 (Windows-10-10.0.18362-SP0) msrest/0.6.17 msrest_azure/0.6.4
+        azure-mgmt-reservations/0.8.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits?api-version=2019-07-19-preview
+  response:
+    body:
+      string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/availabilitySets","type":"Microsoft.Capacity/ServiceLimits","name":"availabilitySets","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":2500,"name":{"value":"availabilitySets","localizedValue":"Availability
+        Sets"},"resourceType":null}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/cores","type":"Microsoft.Capacity/ServiceLimits","name":"cores","properties":{"currentValue":44,"unit":"Count","quotaPeriod":null,"properties":null,"limit":244,"name":{"value":"cores","localizedValue":"Total
+        Regional vCPUs"},"resourceType":null}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/virtualMachines","type":"Microsoft.Capacity/ServiceLimits","name":"virtualMachines","properties":{"currentValue":11,"unit":"Count","quotaPeriod":null,"properties":null,"limit":25000,"name":{"value":"virtualMachines","localizedValue":"Virtual
+        Machines"},"resourceType":null}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/virtualMachineScaleSets","type":"Microsoft.Capacity/ServiceLimits","name":"virtualMachineScaleSets","properties":{"currentValue":2,"unit":"Count","quotaPeriod":null,"properties":null,"limit":2500,"name":{"value":"virtualMachineScaleSets","localizedValue":"Virtual
+        Machine Scale Sets"},"resourceType":null}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/dedicatedVCpus","type":"Microsoft.Capacity/ServiceLimits","name":"dedicatedVCpus","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":3000,"name":{"value":"dedicatedVCpus","localizedValue":"Dedicated
+        vCPUs"},"resourceType":null}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/lowPriorityCores","type":"Microsoft.Capacity/ServiceLimits","name":"lowPriorityCores","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":100,"name":{"value":"lowPriorityCores","localizedValue":"Total
+        Regional Low-priority vCPUs"},"resourceType":null}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/standardDv2Family","type":"Microsoft.Capacity/ServiceLimits","name":"standardDv2Family","properties":{"currentValue":44,"unit":"Count","quotaPeriod":null,"properties":null,"limit":239,"name":{"value":"standardDv2Family","localizedValue":"Standard
+        Dv2 Family vCPUs"},"resourceType":null}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/basicAFamily","type":"Microsoft.Capacity/ServiceLimits","name":"basicAFamily","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":101,"name":{"value":"basicAFamily","localizedValue":"Basic
+        A Family vCPUs"},"resourceType":null}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/standardA0_A7Family","type":"Microsoft.Capacity/ServiceLimits","name":"standardA0_A7Family","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":101,"name":{"value":"standardA0_A7Family","localizedValue":"Standard
+        A0-A7 Family vCPUs"},"resourceType":null}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/standardA8_A11Family","type":"Microsoft.Capacity/ServiceLimits","name":"standardA8_A11Family","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":100,"name":{"value":"standardA8_A11Family","localizedValue":"Standard
+        A8-A11 Family vCPUs"},"resourceType":null}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/standardDFamily","type":"Microsoft.Capacity/ServiceLimits","name":"standardDFamily","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":101,"name":{"value":"standardDFamily","localizedValue":"Standard
+        D Family vCPUs"},"resourceType":null}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/standardDSFamily","type":"Microsoft.Capacity/ServiceLimits","name":"standardDSFamily","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":100,"name":{"value":"standardDSFamily","localizedValue":"Standard
+        DS Family vCPUs"},"resourceType":null}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/standardDSv2Family","type":"Microsoft.Capacity/ServiceLimits","name":"standardDSv2Family","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":102,"name":{"value":"standardDSv2Family","localizedValue":"Standard
+        DSv2 Family vCPUs"},"resourceType":null}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/standardGFamily","type":"Microsoft.Capacity/ServiceLimits","name":"standardGFamily","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":100,"name":{"value":"standardGFamily","localizedValue":"Standard
+        G Family vCPUs"},"resourceType":null}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/standardGSFamily","type":"Microsoft.Capacity/ServiceLimits","name":"standardGSFamily","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":100,"name":{"value":"standardGSFamily","localizedValue":"Standard
+        GS Family vCPUs"},"resourceType":null}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/standardFFamily","type":"Microsoft.Capacity/ServiceLimits","name":"standardFFamily","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":100,"name":{"value":"standardFFamily","localizedValue":"Standard
+        F Family vCPUs"},"resourceType":null}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/standardFSFamily","type":"Microsoft.Capacity/ServiceLimits","name":"standardFSFamily","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":100,"name":{"value":"standardFSFamily","localizedValue":"Standard
+        FS Family vCPUs"},"resourceType":null}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/standardNVFamily","type":"Microsoft.Capacity/ServiceLimits","name":"standardNVFamily","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":24,"name":{"value":"standardNVFamily","localizedValue":"Standard
+        NV Family vCPUs"},"resourceType":null}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/standardNCFamily","type":"Microsoft.Capacity/ServiceLimits","name":"standardNCFamily","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":48,"name":{"value":"standardNCFamily","localizedValue":"Standard
+        NC Family vCPUs"},"resourceType":null}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/standardHFamily","type":"Microsoft.Capacity/ServiceLimits","name":"standardHFamily","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":8,"name":{"value":"standardHFamily","localizedValue":"Standard
+        H Family vCPUs"},"resourceType":null}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/standardAv2Family","type":"Microsoft.Capacity/ServiceLimits","name":"standardAv2Family","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":100,"name":{"value":"standardAv2Family","localizedValue":"Standard
+        Av2 Family vCPUs"},"resourceType":null}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/standardLSFamily","type":"Microsoft.Capacity/ServiceLimits","name":"standardLSFamily","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":100,"name":{"value":"standardLSFamily","localizedValue":"Standard
+        LS Family vCPUs"},"resourceType":null}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/standardDv2PromoFamily","type":"Microsoft.Capacity/ServiceLimits","name":"standardDv2PromoFamily","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":100,"name":{"value":"standardDv2PromoFamily","localizedValue":"Standard
+        Dv2 Promo Family vCPUs"},"resourceType":null}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/standardDSv2PromoFamily","type":"Microsoft.Capacity/ServiceLimits","name":"standardDSv2PromoFamily","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":100,"name":{"value":"standardDSv2PromoFamily","localizedValue":"Standard
+        DSv2 Promo Family vCPUs"},"resourceType":null}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/standardMSFamily","type":"Microsoft.Capacity/ServiceLimits","name":"standardMSFamily","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":0,"name":{"value":"standardMSFamily","localizedValue":"Standard
+        MS Family vCPUs"},"resourceType":null}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/standardDv3Family","type":"Microsoft.Capacity/ServiceLimits","name":"standardDv3Family","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":100,"name":{"value":"standardDv3Family","localizedValue":"Standard
+        Dv3 Family vCPUs"},"resourceType":null}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/standardDSv3Family","type":"Microsoft.Capacity/ServiceLimits","name":"standardDSv3Family","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":100,"name":{"value":"standardDSv3Family","localizedValue":"Standard
+        DSv3 Family vCPUs"},"resourceType":null}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/standardEv3Family","type":"Microsoft.Capacity/ServiceLimits","name":"standardEv3Family","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":100,"name":{"value":"standardEv3Family","localizedValue":"Standard
+        Ev3 Family vCPUs"},"resourceType":null}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/standardESv3Family","type":"Microsoft.Capacity/ServiceLimits","name":"standardESv3Family","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":100,"name":{"value":"standardESv3Family","localizedValue":"Standard
+        ESv3 Family vCPUs"},"resourceType":null}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/standardDv4Family","type":"Microsoft.Capacity/ServiceLimits","name":"standardDv4Family","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":100,"name":{"value":"standardDv4Family","localizedValue":"Standard
+        Dv4 Family vCPUs"},"resourceType":null}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/standardDDv4Family","type":"Microsoft.Capacity/ServiceLimits","name":"standardDDv4Family","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":100,"name":{"value":"standardDDv4Family","localizedValue":"Standard
+        DDv4 Family vCPUs"},"resourceType":null}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/standardDSv4Family","type":"Microsoft.Capacity/ServiceLimits","name":"standardDSv4Family","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":100,"name":{"value":"standardDSv4Family","localizedValue":"Standard
+        DSv4 Family vCPUs"},"resourceType":null}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/standardDDSv4Family","type":"Microsoft.Capacity/ServiceLimits","name":"standardDDSv4Family","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":100,"name":{"value":"standardDDSv4Family","localizedValue":"Standard
+        DDSv4 Family vCPUs"},"resourceType":null}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/standardEv4Family","type":"Microsoft.Capacity/ServiceLimits","name":"standardEv4Family","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":100,"name":{"value":"standardEv4Family","localizedValue":"Standard
+        Ev4 Family vCPUs"},"resourceType":null}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/standardEDv4Family","type":"Microsoft.Capacity/ServiceLimits","name":"standardEDv4Family","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":100,"name":{"value":"standardEDv4Family","localizedValue":"Standard
+        EDv4 Family vCPUs"},"resourceType":null}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/standardESv4Family","type":"Microsoft.Capacity/ServiceLimits","name":"standardESv4Family","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":100,"name":{"value":"standardESv4Family","localizedValue":"Standard
+        ESv4 Family vCPUs"},"resourceType":null}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/standardEDSv4Family","type":"Microsoft.Capacity/ServiceLimits","name":"standardEDSv4Family","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":100,"name":{"value":"standardEDSv4Family","localizedValue":"Standard
+        EDSv4 Family vCPUs"},"resourceType":null}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/standardBSFamily","type":"Microsoft.Capacity/ServiceLimits","name":"standardBSFamily","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":100,"name":{"value":"standardBSFamily","localizedValue":"Standard
+        BS Family vCPUs"},"resourceType":null}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/standardFSv2Family","type":"Microsoft.Capacity/ServiceLimits","name":"standardFSv2Family","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":100,"name":{"value":"standardFSv2Family","localizedValue":"Standard
+        FSv2 Family vCPUs"},"resourceType":null}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/standardNDSFamily","type":"Microsoft.Capacity/ServiceLimits","name":"standardNDSFamily","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":0,"name":{"value":"standardNDSFamily","localizedValue":"Standard
+        NDS Family vCPUs"},"resourceType":null}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/standardNCSv2Family","type":"Microsoft.Capacity/ServiceLimits","name":"standardNCSv2Family","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":0,"name":{"value":"standardNCSv2Family","localizedValue":"Standard
+        NCSv2 Family vCPUs"},"resourceType":null}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/standardNCSv3Family","type":"Microsoft.Capacity/ServiceLimits","name":"standardNCSv3Family","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":0,"name":{"value":"standardNCSv3Family","localizedValue":"Standard
+        NCSv3 Family vCPUs"},"resourceType":null}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/standardLSv2Family","type":"Microsoft.Capacity/ServiceLimits","name":"standardLSv2Family","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":100,"name":{"value":"standardLSv2Family","localizedValue":"Standard
+        LSv2 Family vCPUs"},"resourceType":null}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/standardPBSFamily","type":"Microsoft.Capacity/ServiceLimits","name":"standardPBSFamily","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":6,"name":{"value":"standardPBSFamily","localizedValue":"Standard
+        PBS Family vCPUs"},"resourceType":null}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/standardEIv3Family","type":"Microsoft.Capacity/ServiceLimits","name":"standardEIv3Family","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":100,"name":{"value":"standardEIv3Family","localizedValue":"Standard
+        EIv3 Family vCPUs"},"resourceType":null}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/standardEISv3Family","type":"Microsoft.Capacity/ServiceLimits","name":"standardEISv3Family","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":100,"name":{"value":"standardEISv3Family","localizedValue":"Standard
+        EISv3 Family vCPUs"},"resourceType":null}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/standardDCSFamily","type":"Microsoft.Capacity/ServiceLimits","name":"standardDCSFamily","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":8,"name":{"value":"standardDCSFamily","localizedValue":"Standard
+        DCS Family vCPUs"},"resourceType":null}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/standardNVSv2Family","type":"Microsoft.Capacity/ServiceLimits","name":"standardNVSv2Family","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":0,"name":{"value":"standardNVSv2Family","localizedValue":"Standard
+        NVSv2 Family vCPUs"},"resourceType":null}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/standardMSv2Family","type":"Microsoft.Capacity/ServiceLimits","name":"standardMSv2Family","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":0,"name":{"value":"standardMSv2Family","localizedValue":"Standard
+        MSv2 Family vCPUs"},"resourceType":null}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/standardHBSFamily","type":"Microsoft.Capacity/ServiceLimits","name":"standardHBSFamily","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":0,"name":{"value":"standardHBSFamily","localizedValue":"Standard
+        HBS Family vCPUs"},"resourceType":null}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/standardHCSFamily","type":"Microsoft.Capacity/ServiceLimits","name":"standardHCSFamily","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":0,"name":{"value":"standardHCSFamily","localizedValue":"Standard
+        HCS Family vCPUs"},"resourceType":null}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/standardNVSv3Family","type":"Microsoft.Capacity/ServiceLimits","name":"standardNVSv3Family","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":0,"name":{"value":"standardNVSv3Family","localizedValue":"Standard
+        NVSv3 Family vCPUs"},"resourceType":null}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/standardNVPromoFamily","type":"Microsoft.Capacity/ServiceLimits","name":"standardNVPromoFamily","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":24,"name":{"value":"standardNVPromoFamily","localizedValue":"Standard
+        NV Promo Family vCPUs"},"resourceType":null}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/standardNCPromoFamily","type":"Microsoft.Capacity/ServiceLimits","name":"standardNCPromoFamily","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":48,"name":{"value":"standardNCPromoFamily","localizedValue":"Standard
+        NC Promo Family vCPUs"},"resourceType":null}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/standardHPromoFamily","type":"Microsoft.Capacity/ServiceLimits","name":"standardHPromoFamily","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":8,"name":{"value":"standardHPromoFamily","localizedValue":"Standard
+        H Promo Family vCPUs"},"resourceType":null}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/standardDAv4Family","type":"Microsoft.Capacity/ServiceLimits","name":"standardDAv4Family","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":50,"name":{"value":"standardDAv4Family","localizedValue":"Standard
+        DAv4 Family vCPUs"},"resourceType":null}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/standardDASv4Family","type":"Microsoft.Capacity/ServiceLimits","name":"standardDASv4Family","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":50,"name":{"value":"standardDASv4Family","localizedValue":"Standard
+        DASv4 Family vCPUs"},"resourceType":null}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/standardEAv4Family","type":"Microsoft.Capacity/ServiceLimits","name":"standardEAv4Family","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":50,"name":{"value":"standardEAv4Family","localizedValue":"Standard
+        EAv4 Family vCPUs"},"resourceType":null}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/standardEASv4Family","type":"Microsoft.Capacity/ServiceLimits","name":"standardEASv4Family","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":50,"name":{"value":"standardEASv4Family","localizedValue":"Standard
+        EASv4 Family vCPUs"},"resourceType":null}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/standardNDSv3Family","type":"Microsoft.Capacity/ServiceLimits","name":"standardNDSv3Family","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":0,"name":{"value":"standardNDSv3Family","localizedValue":"Standard
+        NDSv3 Family vCPUs"},"resourceType":null}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/standardDCSv2Family","type":"Microsoft.Capacity/ServiceLimits","name":"standardDCSv2Family","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":8,"name":{"value":"standardDCSv2Family","localizedValue":"Standard
+        DCSv2 Family vCPUs"},"resourceType":null}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/standardNVSv4Family","type":"Microsoft.Capacity/ServiceLimits","name":"standardNVSv4Family","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":0,"name":{"value":"standardNVSv4Family","localizedValue":"Standard
+        NVSv4 Family vCPUs"},"resourceType":null}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/standardNDSv2Family","type":"Microsoft.Capacity/ServiceLimits","name":"standardNDSv2Family","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":0,"name":{"value":"standardNDSv2Family","localizedValue":"Standard
+        NDSv2 Family vCPUs"},"resourceType":null}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/standardNPSFamily","type":"Microsoft.Capacity/ServiceLimits","name":"standardNPSFamily","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":0,"name":{"value":"standardNPSFamily","localizedValue":"Standard
+        NPS Family vCPUs"},"resourceType":null}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/standardHBrsv2Family","type":"Microsoft.Capacity/ServiceLimits","name":"standardHBrsv2Family","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":0,"name":{"value":"standardHBrsv2Family","localizedValue":"Standard
+        HBrsv2 Family vCPUs"},"resourceType":null}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/StandardDiskCount","type":"Microsoft.Capacity/ServiceLimits","name":"StandardDiskCount","properties":{"currentValue":11,"unit":"Count","quotaPeriod":null,"properties":null,"limit":50000,"name":{"value":"StandardDiskCount","localizedValue":"Standard
+        Storage Managed Disks"},"resourceType":null}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/PremiumDiskCount","type":"Microsoft.Capacity/ServiceLimits","name":"PremiumDiskCount","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":50000,"name":{"value":"PremiumDiskCount","localizedValue":"Premium
+        Storage Managed Disks"},"resourceType":null}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/StandardSSDDiskCount","type":"Microsoft.Capacity/ServiceLimits","name":"StandardSSDDiskCount","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":50000,"name":{"value":"StandardSSDDiskCount","localizedValue":"StandardSSDStorageDisks"},"resourceType":null}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/UltraSSDDiskCount","type":"Microsoft.Capacity/ServiceLimits","name":"UltraSSDDiskCount","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":1000,"name":{"value":"UltraSSDDiskCount","localizedValue":"UltraSSDStorageDisks"},"resourceType":null}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/StandardSnapshotCount","type":"Microsoft.Capacity/ServiceLimits","name":"StandardSnapshotCount","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":50000,"name":{"value":"StandardSnapshotCount","localizedValue":"StandardStorageSnapshots"},"resourceType":null}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/PremiumSnapshotCount","type":"Microsoft.Capacity/ServiceLimits","name":"PremiumSnapshotCount","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":50000,"name":{"value":"PremiumSnapshotCount","localizedValue":"PremiumStorageSnapshots"},"resourceType":null}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/ZRSSnapshotCount","type":"Microsoft.Capacity/ServiceLimits","name":"ZRSSnapshotCount","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":50000,"name":{"value":"ZRSSnapshotCount","localizedValue":"ZrsStorageSnapshots"},"resourceType":null}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/UltraSSDDiskSizeInGB","type":"Microsoft.Capacity/ServiceLimits","name":"UltraSSDDiskSizeInGB","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":16384,"name":{"value":"UltraSSDDiskSizeInGB","localizedValue":"UltraSSDTotalSizeInGB"},"resourceType":null}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/Gallery","type":"Microsoft.Capacity/ServiceLimits","name":"Gallery","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":100,"name":{"value":"Gallery","localizedValue":"Gallery"},"resourceType":null}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/GalleryImage","type":"Microsoft.Capacity/ServiceLimits","name":"GalleryImage","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":1000,"name":{"value":"GalleryImage","localizedValue":"Gallery
+        Image"},"resourceType":null}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/GalleryImageVersion","type":"Microsoft.Capacity/ServiceLimits","name":"GalleryImageVersion","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":10000,"name":{"value":"GalleryImageVersion","localizedValue":"Gallery
+        Image Version"},"resourceType":null}}]}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '33668'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Sat, 15 Aug 2020 01:30:02 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"properties": {"limit": 240, "unit": "Count", "name": {"value": "standardDv2Family"}}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '87'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.7.8 (Windows-10-10.0.18362-SP0) msrest/0.6.17 msrest_azure/0.6.4
+        azure-mgmt-reservations/0.8.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PATCH
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/standardDv2Family?api-version=2019-07-19-preview
+  response:
+    body:
+      string: '{"properties":{"requestSubmitTime":"0001-01-01T00:00:00","message":null,"provisioningState":"InProgress","currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":240,"name":{"value":"standardDv2Family","localizedValue":null},"resourceType":null},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimitsRequests/0d62622e-42d6-4f52-a7a7-4bf6dcfd2fee","name":"0d62622e-42d6-4f52-a7a7-4bf6dcfd2fee","type":"Microsoft.Capacity/serviceLimitsRequests"}'
+    headers:
+      azure-asyncoperation:
+      - https://management.azure.com:443/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/operationsStatus/0d62622e-42d6-4f52-a7a7-4bf6dcfd2fee?api-version=2019-07-19-preview
+      cache-control:
+      - no-cache
+      content-length:
+      - '562'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Sat, 15 Aug 2020 01:30:04 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimitsRequests/0d62622e-42d6-4f52-a7a7-4bf6dcfd2fee?api-version=2019-07-19-preview
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.8 (Windows-10-10.0.18362-SP0) msrest/0.6.17 msrest_azure/0.6.4
+        azure-mgmt-reservations/0.8.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/operationsStatus/0d62622e-42d6-4f52-a7a7-4bf6dcfd2fee?api-version=2019-07-19-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/operationsStatus/0d62622e-42d6-4f52-a7a7-4bf6dcfd2fee","name":"0d62622e-42d6-4f52-a7a7-4bf6dcfd2fee","status":"InProgress","startTime":"2020-08-15T01:30:03.5493722Z","error":null}'
+    headers:
+      azure-asyncoperation:
+      - https://management.azure.com:443/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/operationsStatus/0d62622e-42d6-4f52-a7a7-4bf6dcfd2fee?api-version=2019-07-19-preview
+      cache-control:
+      - no-cache
+      content-length:
+      - '320'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Sat, 15 Aug 2020 01:30:36 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.8 (Windows-10-10.0.18362-SP0) msrest/0.6.17 msrest_azure/0.6.4
+        azure-mgmt-reservations/0.8.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/operationsStatus/0d62622e-42d6-4f52-a7a7-4bf6dcfd2fee?api-version=2019-07-19-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/operationsStatus/0d62622e-42d6-4f52-a7a7-4bf6dcfd2fee","name":"0d62622e-42d6-4f52-a7a7-4bf6dcfd2fee","status":"Succeeded","startTime":"2020-08-15T01:30:03.5493722Z","error":null}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '319'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Sat, 15 Aug 2020 01:31:07 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimitsRequests/0d62622e-42d6-4f52-a7a7-4bf6dcfd2fee?api-version=2019-07-19-preview
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.8 (Windows-10-10.0.18362-SP0) msrest/0.6.17 msrest_azure/0.6.4
+        azure-mgmt-reservations/0.8.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/standardDv2Family?api-version=2019-07-19-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimits/standardDv2Family","type":"Microsoft.Capacity/ServiceLimits","name":"standardDv2Family","properties":{"currentValue":44,"unit":"Count","quotaPeriod":null,"properties":null,"limit":240,"name":{"value":"standardDv2Family","localizedValue":"Standard
+        Dv2 Family vCPUs"},"resourceType":null}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '442'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Sat, 15 Aug 2020 01:31:07 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+version: 1

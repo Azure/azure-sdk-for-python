@@ -27,6 +27,7 @@ try:
     from ._models_py3 import CustomRule
     from ._models_py3 import CustomRuleList
     from ._models_py3 import DeepCreatedOrigin
+    from ._models_py3 import DeepCreatedOriginGroup
     from ._models_py3 import DeliveryRule
     from ._models_py3 import DeliveryRuleAction
     from ._models_py3 import DeliveryRuleCacheExpirationAction
@@ -56,10 +57,13 @@ try:
     from ._models_py3 import ErrorResponse, ErrorResponseException
     from ._models_py3 import GeoFilter
     from ._models_py3 import HeaderActionParameters
+    from ._models_py3 import HealthProbeParameters
+    from ._models_py3 import HttpErrorRangeParameters
     from ._models_py3 import HttpVersionMatchConditionParameters
     from ._models_py3 import IpAddressGroup
     from ._models_py3 import IsDeviceMatchConditionParameters
     from ._models_py3 import KeyVaultCertificateSourceParameters
+    from ._models_py3 import KeyVaultSigningKeyParameters
     from ._models_py3 import LoadParameters
     from ._models_py3 import ManagedRuleDefinition
     from ._models_py3 import ManagedRuleGroupDefinition
@@ -72,6 +76,8 @@ try:
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
     from ._models_py3 import Origin
+    from ._models_py3 import OriginGroup
+    from ._models_py3 import OriginGroupUpdateParameters
     from ._models_py3 import OriginUpdateParameters
     from ._models_py3 import PolicySettings
     from ._models_py3 import PostArgsMatchConditionParameters
@@ -89,7 +95,9 @@ try:
     from ._models_py3 import RequestSchemeMatchConditionParameters
     from ._models_py3 import RequestUriMatchConditionParameters
     from ._models_py3 import Resource
+    from ._models_py3 import ResourceReference
     from ._models_py3 import ResourceUsage
+    from ._models_py3 import ResponseBasedOriginErrorDetectionParameters
     from ._models_py3 import Sku
     from ._models_py3 import SsoUri
     from ._models_py3 import SupportedOptimizationTypesListResult
@@ -101,6 +109,10 @@ try:
     from ._models_py3 import UrlRedirectActionParameters
     from ._models_py3 import UrlRewriteAction
     from ._models_py3 import UrlRewriteActionParameters
+    from ._models_py3 import UrlSigningAction
+    from ._models_py3 import UrlSigningActionParameters
+    from ._models_py3 import UrlSigningKey
+    from ._models_py3 import UrlSigningParamIdentifier
     from ._models_py3 import UserManagedHttpsParameters
     from ._models_py3 import ValidateCustomDomainInput
     from ._models_py3 import ValidateCustomDomainOutput
@@ -124,6 +136,7 @@ except (SyntaxError, ImportError):
     from ._models import CustomRule
     from ._models import CustomRuleList
     from ._models import DeepCreatedOrigin
+    from ._models import DeepCreatedOriginGroup
     from ._models import DeliveryRule
     from ._models import DeliveryRuleAction
     from ._models import DeliveryRuleCacheExpirationAction
@@ -153,10 +166,13 @@ except (SyntaxError, ImportError):
     from ._models import ErrorResponse, ErrorResponseException
     from ._models import GeoFilter
     from ._models import HeaderActionParameters
+    from ._models import HealthProbeParameters
+    from ._models import HttpErrorRangeParameters
     from ._models import HttpVersionMatchConditionParameters
     from ._models import IpAddressGroup
     from ._models import IsDeviceMatchConditionParameters
     from ._models import KeyVaultCertificateSourceParameters
+    from ._models import KeyVaultSigningKeyParameters
     from ._models import LoadParameters
     from ._models import ManagedRuleDefinition
     from ._models import ManagedRuleGroupDefinition
@@ -169,6 +185,8 @@ except (SyntaxError, ImportError):
     from ._models import Operation
     from ._models import OperationDisplay
     from ._models import Origin
+    from ._models import OriginGroup
+    from ._models import OriginGroupUpdateParameters
     from ._models import OriginUpdateParameters
     from ._models import PolicySettings
     from ._models import PostArgsMatchConditionParameters
@@ -186,7 +204,9 @@ except (SyntaxError, ImportError):
     from ._models import RequestSchemeMatchConditionParameters
     from ._models import RequestUriMatchConditionParameters
     from ._models import Resource
+    from ._models import ResourceReference
     from ._models import ResourceUsage
+    from ._models import ResponseBasedOriginErrorDetectionParameters
     from ._models import Sku
     from ._models import SsoUri
     from ._models import SupportedOptimizationTypesListResult
@@ -198,6 +218,10 @@ except (SyntaxError, ImportError):
     from ._models import UrlRedirectActionParameters
     from ._models import UrlRewriteAction
     from ._models import UrlRewriteActionParameters
+    from ._models import UrlSigningAction
+    from ._models import UrlSigningActionParameters
+    from ._models import UrlSigningKey
+    from ._models import UrlSigningParamIdentifier
     from ._models import UserManagedHttpsParameters
     from ._models import ValidateCustomDomainInput
     from ._models import ValidateCustomDomainOutput
@@ -209,6 +233,7 @@ from ._paged_models import EdgeNodePaged
 from ._paged_models import EndpointPaged
 from ._paged_models import ManagedRuleSetDefinitionPaged
 from ._paged_models import OperationPaged
+from ._paged_models import OriginGroupPaged
 from ._paged_models import OriginPaged
 from ._paged_models import ProfilePaged
 from ._paged_models import ResourceUsagePaged
@@ -216,6 +241,9 @@ from ._cdn_management_client_enums import (
     SkuName,
     ProfileResourceState,
     OptimizationType,
+    HealthProbeRequestType,
+    ProbeProtocol,
+    ResponseBasedDetectedErrorTypes,
     EndpointResourceState,
     QueryStringCachingBehavior,
     GeoFilterActions,
@@ -232,10 +260,14 @@ from ._cdn_management_client_enums import (
     CookiesOperator,
     RedirectType,
     DestinationProtocol,
+    Algorithm,
+    ParamIndicator,
     HeaderAction,
     CacheBehavior,
     QueryStringBehavior,
     OriginResourceState,
+    PrivateEndpointStatus,
+    OriginGroupResourceState,
     CustomDomainResourceState,
     CustomHttpsProvisioningState,
     CustomHttpsProvisioningSubstate,
@@ -273,6 +305,7 @@ __all__ = [
     'CustomRule',
     'CustomRuleList',
     'DeepCreatedOrigin',
+    'DeepCreatedOriginGroup',
     'DeliveryRule',
     'DeliveryRuleAction',
     'DeliveryRuleCacheExpirationAction',
@@ -302,10 +335,13 @@ __all__ = [
     'ErrorResponse', 'ErrorResponseException',
     'GeoFilter',
     'HeaderActionParameters',
+    'HealthProbeParameters',
+    'HttpErrorRangeParameters',
     'HttpVersionMatchConditionParameters',
     'IpAddressGroup',
     'IsDeviceMatchConditionParameters',
     'KeyVaultCertificateSourceParameters',
+    'KeyVaultSigningKeyParameters',
     'LoadParameters',
     'ManagedRuleDefinition',
     'ManagedRuleGroupDefinition',
@@ -318,6 +354,8 @@ __all__ = [
     'Operation',
     'OperationDisplay',
     'Origin',
+    'OriginGroup',
+    'OriginGroupUpdateParameters',
     'OriginUpdateParameters',
     'PolicySettings',
     'PostArgsMatchConditionParameters',
@@ -335,7 +373,9 @@ __all__ = [
     'RequestSchemeMatchConditionParameters',
     'RequestUriMatchConditionParameters',
     'Resource',
+    'ResourceReference',
     'ResourceUsage',
+    'ResponseBasedOriginErrorDetectionParameters',
     'Sku',
     'SsoUri',
     'SupportedOptimizationTypesListResult',
@@ -347,6 +387,10 @@ __all__ = [
     'UrlRedirectActionParameters',
     'UrlRewriteAction',
     'UrlRewriteActionParameters',
+    'UrlSigningAction',
+    'UrlSigningActionParameters',
+    'UrlSigningKey',
+    'UrlSigningParamIdentifier',
     'UserManagedHttpsParameters',
     'ValidateCustomDomainInput',
     'ValidateCustomDomainOutput',
@@ -356,6 +400,7 @@ __all__ = [
     'ResourceUsagePaged',
     'EndpointPaged',
     'OriginPaged',
+    'OriginGroupPaged',
     'CustomDomainPaged',
     'OperationPaged',
     'EdgeNodePaged',
@@ -364,6 +409,9 @@ __all__ = [
     'SkuName',
     'ProfileResourceState',
     'OptimizationType',
+    'HealthProbeRequestType',
+    'ProbeProtocol',
+    'ResponseBasedDetectedErrorTypes',
     'EndpointResourceState',
     'QueryStringCachingBehavior',
     'GeoFilterActions',
@@ -380,10 +428,14 @@ __all__ = [
     'CookiesOperator',
     'RedirectType',
     'DestinationProtocol',
+    'Algorithm',
+    'ParamIndicator',
     'HeaderAction',
     'CacheBehavior',
     'QueryStringBehavior',
     'OriginResourceState',
+    'PrivateEndpointStatus',
+    'OriginGroupResourceState',
     'CustomDomainResourceState',
     'CustomHttpsProvisioningState',
     'CustomHttpsProvisioningSubstate',

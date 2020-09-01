@@ -1,5 +1,16 @@
 # Release History
 
+## 0.61.0 (2020-08-10)
+
+**Features**
+
+  - Model RoleAssignmentCreateParameters has a new parameter condition
+  - Model RoleAssignmentCreateParameters has a new parameter description
+  - Model RoleAssignmentCreateParameters has a new parameter condition_version
+  - Model RoleAssignment has a new parameter condition
+  - Model RoleAssignment has a new parameter description
+  - Model RoleAssignment has a new parameter condition_version
+
 ## 0.60.0 (2019-06-25)
 
 **Breaking changes**

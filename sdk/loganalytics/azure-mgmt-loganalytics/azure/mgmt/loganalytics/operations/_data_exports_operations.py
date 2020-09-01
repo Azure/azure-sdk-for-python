@@ -11,8 +11,6 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
-from msrest.polling import LROPoller, NoPolling
-from msrestazure.polling.arm_polling import ARMPolling
 
 from .. import models
 
@@ -112,9 +110,31 @@ class DataExportsOperations(object):
         return deserialized
     list_by_workspace.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/dataExports'}
 
-
-    def _create_or_update_initial(
+    def create_or_update(
             self, resource_group_name, workspace_name, data_export_name, parameters, custom_headers=None, raw=False, **operation_config):
+        """Create or update a data export.
+
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
+        :type resource_group_name: str
+        :param workspace_name: The name of the workspace.
+        :type workspace_name: str
+        :param data_export_name: The data export rule name.
+        :type data_export_name: str
+        :param parameters: The parameters required to create or update a data
+         export.
+        :type parameters: ~azure.mgmt.loganalytics.models.DataExport
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: DataExport or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.loganalytics.models.DataExport or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`DataExportErrorResponseException<azure.mgmt.loganalytics.models.DataExportErrorResponseException>`
+        """
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
@@ -151,7 +171,6 @@ class DataExportsOperations(object):
             raise models.DataExportErrorResponseException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('DataExport', response)
         if response.status_code == 201:
@@ -162,61 +181,6 @@ class DataExportsOperations(object):
             return client_raw_response
 
         return deserialized
-
-    def create_or_update(
-            self, resource_group_name, workspace_name, data_export_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Create or update a data export.
-
-        :param resource_group_name: The name of the resource group. The name
-         is case insensitive.
-        :type resource_group_name: str
-        :param workspace_name: The name of the workspace.
-        :type workspace_name: str
-        :param data_export_name: The data export rule name.
-        :type data_export_name: str
-        :param parameters: The parameters required to create or update a data
-         export.
-        :type parameters: ~azure.mgmt.loganalytics.models.DataExport
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: The poller return type is ClientRawResponse, the
-         direct response alongside the deserialized response
-        :param polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
-        :return: An instance of LROPoller that returns DataExport or
-         ClientRawResponse<DataExport> if raw==True
-        :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.loganalytics.models.DataExport]
-         or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.loganalytics.models.DataExport]]
-        :raises:
-         :class:`DataExportErrorResponseException<azure.mgmt.loganalytics.models.DataExportErrorResponseException>`
-        """
-        raw_result = self._create_or_update_initial(
-            resource_group_name=resource_group_name,
-            workspace_name=workspace_name,
-            data_export_name=data_export_name,
-            parameters=parameters,
-            custom_headers=custom_headers,
-            raw=True,
-            **operation_config
-        )
-
-        def get_long_running_output(response):
-            deserialized = self._deserialize('DataExport', response)
-
-            if raw:
-                client_raw_response = ClientRawResponse(deserialized, response)
-                return client_raw_response
-
-            return deserialized
-
-        lro_delay = operation_config.get(
-            'long_running_operation_timeout',
-            self.config.long_running_operation_timeout)
-        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
-        elif polling is False: polling_method = NoPolling()
-        else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/dataExports/{dataExportName}'}
 
     def get(
@@ -269,7 +233,7 @@ class DataExportsOperations(object):
         request = self._client.get(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 404]:
+        if response.status_code not in [200]:
             raise models.DataExportErrorResponseException(self._deserialize, response)
 
         deserialized = None

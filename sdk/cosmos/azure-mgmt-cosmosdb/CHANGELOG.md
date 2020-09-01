@@ -1,5 +1,115 @@
 # Release History
 
+## 1.0.0 (2020-08-17)
+
+**Features**
+
+  - Model SqlContainerGetPropertiesResource has a new parameter analytical_storage_ttl
+  - Model DatabaseAccountUpdateParameters has a new parameter cors
+  - Model SqlContainerResource has a new parameter analytical_storage_ttl
+  - Model DatabaseAccountGetResults has a new parameter cors
+  - Added operation MongoDBResourcesOperations.migrate_mongo_db_collection_to_manual_throughput
+  - Added operation MongoDBResourcesOperations.migrate_mongo_db_database_to_manual_throughput
+  - Added operation MongoDBResourcesOperations.migrate_mongo_db_database_to_autoscale
+  - Added operation MongoDBResourcesOperations.migrate_mongo_db_collection_to_autoscale
+  - Added operation GremlinResourcesOperations.migrate_gremlin_database_to_manual_throughput
+  - Added operation GremlinResourcesOperations.migrate_gremlin_graph_to_autoscale
+  - Added operation GremlinResourcesOperations.migrate_gremlin_graph_to_manual_throughput
+  - Added operation GremlinResourcesOperations.migrate_gremlin_database_to_autoscale
+  - Added operation TableResourcesOperations.migrate_table_to_autoscale
+  - Added operation TableResourcesOperations.migrate_table_to_manual_throughput
+  - Added operation CassandraResourcesOperations.migrate_cassandra_keyspace_to_autoscale
+  - Added operation CassandraResourcesOperations.migrate_cassandra_keyspace_to_manual_throughput
+  - Added operation CassandraResourcesOperations.migrate_cassandra_table_to_manual_throughput
+  - Added operation CassandraResourcesOperations.migrate_cassandra_table_to_autoscale
+  - Added operation SqlResourcesOperations.migrate_sql_database_to_manual_throughput
+  - Added operation SqlResourcesOperations.migrate_sql_database_to_autoscale
+  - Added operation SqlResourcesOperations.migrate_sql_container_to_autoscale
+  - Added operation SqlResourcesOperations.migrate_sql_container_to_manual_throughput
+
+**Breaking changes**
+
+  - Model ThroughputSettingsUpdateParameters no longer has parameter identity
+  - Model CassandraKeyspaceCreateUpdateParameters no longer has parameter identity
+  - Model SqlTriggerCreateUpdateParameters no longer has parameter identity
+  - Model SqlContainerGetResults no longer has parameter identity
+  - Model MongoDBDatabaseGetResults no longer has parameter identity
+  - Model GremlinGraphGetResults no longer has parameter identity
+  - Model SqlUserDefinedFunctionGetResults no longer has parameter identity
+  - Model CassandraTableGetResults no longer has parameter identity
+  - Model SqlUserDefinedFunctionCreateUpdateParameters no longer has parameter identity
+  - Model SqlDatabaseGetResults no longer has parameter identity
+  - Model MongoDBCollectionGetResults no longer has parameter identity
+  - Model SqlStoredProcedureGetResults no longer has parameter identity
+  - Model GremlinDatabaseGetResults no longer has parameter identity
+  - Model MongoDBDatabaseCreateUpdateParameters no longer has parameter identity
+  - Model SqlTriggerGetResults no longer has parameter identity
+  - Model CassandraKeyspaceGetResults no longer has parameter identity
+  - Model DatabaseAccountUpdateParameters no longer has parameter backup_policy
+  - Model SqlStoredProcedureCreateUpdateParameters no longer has parameter identity
+  - Model TableCreateUpdateParameters no longer has parameter identity
+  - Model GremlinDatabaseCreateUpdateParameters no longer has parameter identity
+  - Model SqlDatabaseCreateUpdateParameters no longer has parameter identity
+  - Model MongoDBCollectionCreateUpdateParameters no longer has parameter identity
+  - Model DatabaseAccountGetResults no longer has parameter instance_id
+  - Model DatabaseAccountGetResults no longer has parameter system_data
+  - Model DatabaseAccountGetResults no longer has parameter backup_policy
+  - Model DatabaseAccountGetResults no longer has parameter identity
+  - Model DatabaseAccountGetResults no longer has parameter create_mode
+  - Model DatabaseAccountGetResults no longer has parameter restore_parameters
+  - Model SqlContainerCreateUpdateParameters no longer has parameter identity
+  - Model GremlinGraphCreateUpdateParameters no longer has parameter identity
+  - Model ARMResourceProperties no longer has parameter identity
+  - Model CassandraTableCreateUpdateParameters no longer has parameter identity
+  - Model ThroughputSettingsGetResults no longer has parameter identity
+  - Model TableGetResults no longer has parameter identity
+  - Model DatabaseAccountCreateUpdateParameters has a new signature
+  - Removed operation group RestorableDatabaseAccountsOperations
+
+## 0.16.0 (2020-07-31)
+
+**Features**
+
+  - Model SqlUserDefinedFunctionGetResults has a new parameter identity
+  - Model CassandraKeyspaceCreateUpdateParameters has a new parameter identity
+  - Model MongoDBCollectionGetResults has a new parameter identity
+  - Model TableGetResults has a new parameter identity
+  - Model SqlTriggerGetResults has a new parameter identity
+  - Model SqlStoredProcedureCreateUpdateParameters has a new parameter identity
+  - Model SqlDatabaseCreateUpdateParameters has a new parameter identity
+  - Model CassandraTableGetResults has a new parameter identity
+  - Model MongoDBDatabaseCreateUpdateParameters has a new parameter identity
+  - Model ThroughputSettingsGetResults has a new parameter identity
+  - Model TableCreateUpdateParameters has a new parameter identity
+  - Model SqlContainerCreateUpdateParameters has a new parameter identity
+  - Model DatabaseAccountUpdateParameters has a new parameter backup_policy
+  - Model SqlDatabaseGetResults has a new parameter identity
+  - Model MongoDBDatabaseGetResults has a new parameter identity
+  - Model SqlUserDefinedFunctionCreateUpdateParameters has a new parameter identity
+  - Model CassandraTableCreateUpdateParameters has a new parameter identity
+  - Model MongoDBCollectionCreateUpdateParameters has a new parameter identity
+  - Model SqlStoredProcedureGetResults has a new parameter identity
+  - Model ThroughputSettingsUpdateParameters has a new parameter identity
+  - Model GremlinDatabaseCreateUpdateParameters has a new parameter identity
+  - Model GremlinDatabaseGetResults has a new parameter identity
+  - Model ARMResourceProperties has a new parameter identity
+  - Model CassandraKeyspaceGetResults has a new parameter identity
+  - Model SqlContainerGetResults has a new parameter identity
+  - Model GremlinGraphCreateUpdateParameters has a new parameter identity
+  - Model GremlinGraphGetResults has a new parameter identity
+  - Model SqlTriggerCreateUpdateParameters has a new parameter identity
+  - Model DatabaseAccountGetResults has a new parameter system_data
+  - Model DatabaseAccountGetResults has a new parameter backup_policy
+  - Model DatabaseAccountGetResults has a new parameter create_mode
+  - Model DatabaseAccountGetResults has a new parameter instance_id
+  - Model DatabaseAccountGetResults has a new parameter identity
+  - Model DatabaseAccountGetResults has a new parameter restore_parameters
+  - Added operation group RestorableDatabaseAccountsOperations
+
+**Breaking changes**
+
+  - Model DatabaseAccountCreateUpdateParameters has a new signature
+
 ## 0.15.0 (2020-06-11)
 
 **Features**

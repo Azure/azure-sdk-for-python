@@ -597,8 +597,10 @@ class Database(TrackedResource):
      which means the replicas of this database will be spread across multiple
      availability zones.
     :type zone_redundant: bool
-    :param license_type: The license type to apply for this database. Possible
-     values include: 'LicenseIncluded', 'BasePrice'
+    :param license_type: The license type to apply for this database.
+     `LicenseIncluded` if you need a license, or `BasePrice` if you have a
+     license and are eligible for the Azure Hybrid Benefit. Possible values
+     include: 'LicenseIncluded', 'BasePrice'
     :type license_type: str or ~azure.mgmt.sql.models.DatabaseLicenseType
     :ivar max_log_size_bytes: The max log size for this database.
     :vartype max_log_size_bytes: long
@@ -802,8 +804,17 @@ class DatabaseBlobAuditingPolicy(ProxyResource):
      storageEndpoint or isAzureMonitorTargetEnabled is required.
     :type storage_endpoint: str
     :param storage_account_access_key: Specifies the identifier key of the
-     auditing storage account. If state is Enabled and storageEndpoint is
-     specified, storageAccountAccessKey is required.
+     auditing storage account.
+     If state is Enabled and storageEndpoint is specified, not specifying the
+     storageAccountAccessKey will use SQL server system-assigned managed
+     identity to access the storage.
+     Prerequisites for using managed identity authentication:
+     1. Assign SQL Server a system-assigned managed identity in Azure Active
+     Directory (AAD).
+     2. Grant SQL Server identity access to the storage account by adding
+     'Storage Blob Data Contributor' RBAC role to the server identity.
+     For more information, see [Auditing to storage using Managed Identity
+     authentication](https://go.microsoft.com/fwlink/?linkid=2114355)
     :type storage_account_access_key: str
     :param retention_days: Specifies the number of days to keep in the audit
      logs in the storage account.
@@ -1233,8 +1244,10 @@ class DatabaseUpdate(Model):
      which means the replicas of this database will be spread across multiple
      availability zones.
     :type zone_redundant: bool
-    :param license_type: The license type to apply for this database. Possible
-     values include: 'LicenseIncluded', 'BasePrice'
+    :param license_type: The license type to apply for this database.
+     `LicenseIncluded` if you need a license, or `BasePrice` if you have a
+     license and are eligible for the Azure Hybrid Benefit. Possible values
+     include: 'LicenseIncluded', 'BasePrice'
     :type license_type: str or ~azure.mgmt.sql.models.DatabaseLicenseType
     :ivar max_log_size_bytes: The max log size for this database.
     :vartype max_log_size_bytes: long
@@ -2671,8 +2684,17 @@ class ExtendedDatabaseBlobAuditingPolicy(ProxyResource):
      storageEndpoint or isAzureMonitorTargetEnabled is required.
     :type storage_endpoint: str
     :param storage_account_access_key: Specifies the identifier key of the
-     auditing storage account. If state is Enabled and storageEndpoint is
-     specified, storageAccountAccessKey is required.
+     auditing storage account.
+     If state is Enabled and storageEndpoint is specified, not specifying the
+     storageAccountAccessKey will use SQL server system-assigned managed
+     identity to access the storage.
+     Prerequisites for using managed identity authentication:
+     1. Assign SQL Server a system-assigned managed identity in Azure Active
+     Directory (AAD).
+     2. Grant SQL Server identity access to the storage account by adding
+     'Storage Blob Data Contributor' RBAC role to the server identity.
+     For more information, see [Auditing to storage using Managed Identity
+     authentication](https://go.microsoft.com/fwlink/?linkid=2114355)
     :type storage_account_access_key: str
     :param retention_days: Specifies the number of days to keep in the audit
      logs in the storage account.
@@ -2831,8 +2853,17 @@ class ExtendedServerBlobAuditingPolicy(ProxyResource):
      storageEndpoint or isAzureMonitorTargetEnabled is required.
     :type storage_endpoint: str
     :param storage_account_access_key: Specifies the identifier key of the
-     auditing storage account. If state is Enabled and storageEndpoint is
-     specified, storageAccountAccessKey is required.
+     auditing storage account.
+     If state is Enabled and storageEndpoint is specified, not specifying the
+     storageAccountAccessKey will use SQL server system-assigned managed
+     identity to access the storage.
+     Prerequisites for using managed identity authentication:
+     1. Assign SQL Server a system-assigned managed identity in Azure Active
+     Directory (AAD).
+     2. Grant SQL Server identity access to the storage account by adding
+     'Storage Blob Data Contributor' RBAC role to the server identity.
+     For more information, see [Auditing to storage using Managed Identity
+     authentication](https://go.microsoft.com/fwlink/?linkid=2114355)
     :type storage_account_access_key: str
     :param retention_days: Specifies the number of days to keep in the audit
      logs in the storage account.
@@ -4680,9 +4711,11 @@ class ManagedDatabase(TrackedResource):
      from external backup files. Collation, StorageContainerUri and
      StorageContainerSasToken must be specified. Recovery: Creates a database
      by restoring a geo-replicated backup. RecoverableDatabaseId must be
-     specified as the recoverable database resource ID to restore. Possible
-     values include: 'Default', 'RestoreExternalBackup', 'PointInTimeRestore',
-     'Recovery', 'RestoreLongTermRetentionBackup'
+     specified as the recoverable database resource ID to restore.
+     RestoreLongTermRetentionBackup: Create a database by restoring from a long
+     term retention backup (longTermRetentionBackupResourceId required).
+     Possible values include: 'Default', 'RestoreExternalBackup',
+     'PointInTimeRestore', 'Recovery', 'RestoreLongTermRetentionBackup'
     :type create_mode: str or ~azure.mgmt.sql.models.ManagedDatabaseCreateMode
     :param storage_container_uri: Conditional. If createMode is
      RestoreExternalBackup, this value is required. Specifies the uri of the
@@ -4707,6 +4740,12 @@ class ManagedDatabase(TrackedResource):
     :param long_term_retention_backup_resource_id: The name of the Long Term
      Retention backup to be used for restore of this managed database.
     :type long_term_retention_backup_resource_id: str
+    :param auto_complete_restore: Whether to auto complete restore of this
+     managed database.
+    :type auto_complete_restore: bool
+    :param last_backup_name: Last backup file name for restore of this managed
+     database.
+    :type last_backup_name: str
     """
 
     _validation = {
@@ -4742,6 +4781,8 @@ class ManagedDatabase(TrackedResource):
         'failover_group_id': {'key': 'properties.failoverGroupId', 'type': 'str'},
         'recoverable_database_id': {'key': 'properties.recoverableDatabaseId', 'type': 'str'},
         'long_term_retention_backup_resource_id': {'key': 'properties.longTermRetentionBackupResourceId', 'type': 'str'},
+        'auto_complete_restore': {'key': 'properties.autoCompleteRestore', 'type': 'bool'},
+        'last_backup_name': {'key': 'properties.lastBackupName', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -4761,6 +4802,8 @@ class ManagedDatabase(TrackedResource):
         self.failover_group_id = None
         self.recoverable_database_id = kwargs.get('recoverable_database_id', None)
         self.long_term_retention_backup_resource_id = kwargs.get('long_term_retention_backup_resource_id', None)
+        self.auto_complete_restore = kwargs.get('auto_complete_restore', None)
+        self.last_backup_name = kwargs.get('last_backup_name', None)
 
 
 class ManagedDatabaseRestoreDetailsResult(ProxyResource):
@@ -4953,9 +4996,11 @@ class ManagedDatabaseUpdate(Model):
      from external backup files. Collation, StorageContainerUri and
      StorageContainerSasToken must be specified. Recovery: Creates a database
      by restoring a geo-replicated backup. RecoverableDatabaseId must be
-     specified as the recoverable database resource ID to restore. Possible
-     values include: 'Default', 'RestoreExternalBackup', 'PointInTimeRestore',
-     'Recovery', 'RestoreLongTermRetentionBackup'
+     specified as the recoverable database resource ID to restore.
+     RestoreLongTermRetentionBackup: Create a database by restoring from a long
+     term retention backup (longTermRetentionBackupResourceId required).
+     Possible values include: 'Default', 'RestoreExternalBackup',
+     'PointInTimeRestore', 'Recovery', 'RestoreLongTermRetentionBackup'
     :type create_mode: str or ~azure.mgmt.sql.models.ManagedDatabaseCreateMode
     :param storage_container_uri: Conditional. If createMode is
      RestoreExternalBackup, this value is required. Specifies the uri of the
@@ -4980,6 +5025,12 @@ class ManagedDatabaseUpdate(Model):
     :param long_term_retention_backup_resource_id: The name of the Long Term
      Retention backup to be used for restore of this managed database.
     :type long_term_retention_backup_resource_id: str
+    :param auto_complete_restore: Whether to auto complete restore of this
+     managed database.
+    :type auto_complete_restore: bool
+    :param last_backup_name: Last backup file name for restore of this managed
+     database.
+    :type last_backup_name: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
     """
@@ -5008,6 +5059,8 @@ class ManagedDatabaseUpdate(Model):
         'failover_group_id': {'key': 'properties.failoverGroupId', 'type': 'str'},
         'recoverable_database_id': {'key': 'properties.recoverableDatabaseId', 'type': 'str'},
         'long_term_retention_backup_resource_id': {'key': 'properties.longTermRetentionBackupResourceId', 'type': 'str'},
+        'auto_complete_restore': {'key': 'properties.autoCompleteRestore', 'type': 'bool'},
+        'last_backup_name': {'key': 'properties.lastBackupName', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
@@ -5028,6 +5081,8 @@ class ManagedDatabaseUpdate(Model):
         self.failover_group_id = None
         self.recoverable_database_id = kwargs.get('recoverable_database_id', None)
         self.long_term_retention_backup_resource_id = kwargs.get('long_term_retention_backup_resource_id', None)
+        self.auto_complete_restore = kwargs.get('auto_complete_restore', None)
+        self.last_backup_name = kwargs.get('last_backup_name', None)
         self.tags = kwargs.get('tags', None)
 
 
@@ -5125,6 +5180,9 @@ class ManagedInstance(TrackedResource):
     :param instance_pool_id: The Id of the instance pool this managed server
      belongs to.
     :type instance_pool_id: str
+    :param maintenance_configuration_id: Specifies maintenance configuration
+     id to apply to this managed instance.
+    :type maintenance_configuration_id: str
     :param minimal_tls_version: Minimal TLS version. Allowed values: 'None',
      '1.0', '1.1', '1.2'
     :type minimal_tls_version: str
@@ -5166,6 +5224,7 @@ class ManagedInstance(TrackedResource):
         'proxy_override': {'key': 'properties.proxyOverride', 'type': 'str'},
         'timezone_id': {'key': 'properties.timezoneId', 'type': 'str'},
         'instance_pool_id': {'key': 'properties.instancePoolId', 'type': 'str'},
+        'maintenance_configuration_id': {'key': 'properties.maintenanceConfigurationId', 'type': 'str'},
         'minimal_tls_version': {'key': 'properties.minimalTlsVersion', 'type': 'str'},
     }
 
@@ -5191,6 +5250,7 @@ class ManagedInstance(TrackedResource):
         self.proxy_override = kwargs.get('proxy_override', None)
         self.timezone_id = kwargs.get('timezone_id', None)
         self.instance_pool_id = kwargs.get('instance_pool_id', None)
+        self.maintenance_configuration_id = kwargs.get('maintenance_configuration_id', None)
         self.minimal_tls_version = kwargs.get('minimal_tls_version', None)
 
 
@@ -5609,6 +5669,12 @@ class ManagedInstanceOperation(ProxyResource):
     :vartype description: str
     :ivar is_cancellable: Whether the operation can be cancelled.
     :vartype is_cancellable: bool
+    :ivar operation_parameters: The operation parameters.
+    :vartype operation_parameters:
+     ~azure.mgmt.sql.models.ManagedInstanceOperationParametersPair
+    :ivar operation_steps: The operation steps.
+    :vartype operation_steps:
+     ~azure.mgmt.sql.models.ManagedInstanceOperationSteps
     """
 
     _validation = {
@@ -5628,6 +5694,8 @@ class ManagedInstanceOperation(ProxyResource):
         'estimated_completion_time': {'readonly': True},
         'description': {'readonly': True},
         'is_cancellable': {'readonly': True},
+        'operation_parameters': {'readonly': True},
+        'operation_steps': {'readonly': True},
     }
 
     _attribute_map = {
@@ -5647,6 +5715,8 @@ class ManagedInstanceOperation(ProxyResource):
         'estimated_completion_time': {'key': 'properties.estimatedCompletionTime', 'type': 'iso-8601'},
         'description': {'key': 'properties.description', 'type': 'str'},
         'is_cancellable': {'key': 'properties.isCancellable', 'type': 'bool'},
+        'operation_parameters': {'key': 'properties.operationParameters', 'type': 'ManagedInstanceOperationParametersPair'},
+        'operation_steps': {'key': 'properties.operationSteps', 'type': 'ManagedInstanceOperationSteps'},
     }
 
     def __init__(self, **kwargs):
@@ -5664,6 +5734,72 @@ class ManagedInstanceOperation(ProxyResource):
         self.estimated_completion_time = None
         self.description = None
         self.is_cancellable = None
+        self.operation_parameters = None
+        self.operation_steps = None
+
+
+class ManagedInstanceOperationParametersPair(Model):
+    """The parameters of a managed instance operation.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar current_parameters: The current parameters.
+    :vartype current_parameters:
+     ~azure.mgmt.sql.models.UpsertManagedServerOperationParameters
+    :ivar requested_parameters: The requested parameters.
+    :vartype requested_parameters:
+     ~azure.mgmt.sql.models.UpsertManagedServerOperationParameters
+    """
+
+    _validation = {
+        'current_parameters': {'readonly': True},
+        'requested_parameters': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'current_parameters': {'key': 'currentParameters', 'type': 'UpsertManagedServerOperationParameters'},
+        'requested_parameters': {'key': 'requestedParameters', 'type': 'UpsertManagedServerOperationParameters'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ManagedInstanceOperationParametersPair, self).__init__(**kwargs)
+        self.current_parameters = None
+        self.requested_parameters = None
+
+
+class ManagedInstanceOperationSteps(Model):
+    """The steps of a managed instance operation.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar total_steps: The total number of operation steps.
+    :vartype total_steps: str
+    :ivar current_step: The number of current operation steps.
+    :vartype current_step: int
+    :ivar steps_list: The operation steps list.
+    :vartype steps_list:
+     list[~azure.mgmt.sql.models.UpsertManagedServerOperationStep]
+    """
+
+    _validation = {
+        'total_steps': {'readonly': True},
+        'current_step': {'readonly': True},
+        'steps_list': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'total_steps': {'key': 'totalSteps', 'type': 'str'},
+        'current_step': {'key': 'currentStep', 'type': 'int'},
+        'steps_list': {'key': 'stepsList', 'type': '[UpsertManagedServerOperationStep]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ManagedInstanceOperationSteps, self).__init__(**kwargs)
+        self.total_steps = None
+        self.current_step = None
+        self.steps_list = None
 
 
 class ManagedInstancePairInfo(Model):
@@ -5766,6 +5902,9 @@ class ManagedInstanceUpdate(Model):
     :param instance_pool_id: The Id of the instance pool this managed server
      belongs to.
     :type instance_pool_id: str
+    :param maintenance_configuration_id: Specifies maintenance configuration
+     id to apply to this managed instance.
+    :type maintenance_configuration_id: str
     :param minimal_tls_version: Minimal TLS version. Allowed values: 'None',
      '1.0', '1.1', '1.2'
     :type minimal_tls_version: str
@@ -5799,6 +5938,7 @@ class ManagedInstanceUpdate(Model):
         'proxy_override': {'key': 'properties.proxyOverride', 'type': 'str'},
         'timezone_id': {'key': 'properties.timezoneId', 'type': 'str'},
         'instance_pool_id': {'key': 'properties.instancePoolId', 'type': 'str'},
+        'maintenance_configuration_id': {'key': 'properties.maintenanceConfigurationId', 'type': 'str'},
         'minimal_tls_version': {'key': 'properties.minimalTlsVersion', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
     }
@@ -5824,6 +5964,7 @@ class ManagedInstanceUpdate(Model):
         self.proxy_override = kwargs.get('proxy_override', None)
         self.timezone_id = kwargs.get('timezone_id', None)
         self.instance_pool_id = kwargs.get('instance_pool_id', None)
+        self.maintenance_configuration_id = kwargs.get('maintenance_configuration_id', None)
         self.minimal_tls_version = kwargs.get('minimal_tls_version', None)
         self.tags = kwargs.get('tags', None)
 
@@ -7778,8 +7919,17 @@ class ServerBlobAuditingPolicy(ProxyResource):
      storageEndpoint or isAzureMonitorTargetEnabled is required.
     :type storage_endpoint: str
     :param storage_account_access_key: Specifies the identifier key of the
-     auditing storage account. If state is Enabled and storageEndpoint is
-     specified, storageAccountAccessKey is required.
+     auditing storage account.
+     If state is Enabled and storageEndpoint is specified, not specifying the
+     storageAccountAccessKey will use SQL server system-assigned managed
+     identity to access the storage.
+     Prerequisites for using managed identity authentication:
+     1. Assign SQL Server a system-assigned managed identity in Azure Active
+     Directory (AAD).
+     2. Grant SQL Server identity access to the storage account by adding
+     'Storage Blob Data Contributor' RBAC role to the server identity.
+     For more information, see [Auditing to storage using Managed Identity
+     authentication](https://go.microsoft.com/fwlink/?linkid=2114355)
     :type storage_account_access_key: str
     :param retention_days: Specifies the number of days to keep in the audit
      logs in the storage account.
@@ -9251,6 +9401,9 @@ class SyncGroup(ProxyResource):
     :vartype sync_state: str or ~azure.mgmt.sql.models.SyncGroupState
     :param schema: Sync schema of the sync group.
     :type schema: ~azure.mgmt.sql.models.SyncGroupSchema
+    :param use_private_link_connection: If use private link connection is
+     enabled.
+    :type use_private_link_connection: bool
     """
 
     _validation = {
@@ -9273,6 +9426,7 @@ class SyncGroup(ProxyResource):
         'hub_database_password': {'key': 'properties.hubDatabasePassword', 'type': 'str'},
         'sync_state': {'key': 'properties.syncState', 'type': 'str'},
         'schema': {'key': 'properties.schema', 'type': 'SyncGroupSchema'},
+        'use_private_link_connection': {'key': 'properties.usePrivateLinkConnection', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs):
@@ -9285,6 +9439,7 @@ class SyncGroup(ProxyResource):
         self.hub_database_password = kwargs.get('hub_database_password', None)
         self.sync_state = None
         self.schema = kwargs.get('schema', None)
+        self.use_private_link_connection = kwargs.get('use_private_link_connection', None)
 
 
 class SyncGroupLogProperties(Model):
@@ -9421,6 +9576,12 @@ class SyncMember(ProxyResource):
     :type sync_agent_id: str
     :param sql_server_database_id: SQL Server database id of the sync member.
     :type sql_server_database_id: str
+    :param sync_member_azure_database_resource_id: ARM resource id of the sync
+     member logical database, for sync members in Azure.
+    :type sync_member_azure_database_resource_id: str
+    :param use_private_link_connection: Whether to use private link
+     connection.
+    :type use_private_link_connection: bool
     :param server_name: Server name of the member database in the sync member
     :type server_name: str
     :param database_name: Database name of the member database in the sync
@@ -9457,6 +9618,8 @@ class SyncMember(ProxyResource):
         'database_type': {'key': 'properties.databaseType', 'type': 'str'},
         'sync_agent_id': {'key': 'properties.syncAgentId', 'type': 'str'},
         'sql_server_database_id': {'key': 'properties.sqlServerDatabaseId', 'type': 'str'},
+        'sync_member_azure_database_resource_id': {'key': 'properties.syncMemberAzureDatabaseResourceId', 'type': 'str'},
+        'use_private_link_connection': {'key': 'properties.usePrivateLinkConnection', 'type': 'bool'},
         'server_name': {'key': 'properties.serverName', 'type': 'str'},
         'database_name': {'key': 'properties.databaseName', 'type': 'str'},
         'user_name': {'key': 'properties.userName', 'type': 'str'},
@@ -9470,6 +9633,8 @@ class SyncMember(ProxyResource):
         self.database_type = kwargs.get('database_type', None)
         self.sync_agent_id = kwargs.get('sync_agent_id', None)
         self.sql_server_database_id = kwargs.get('sql_server_database_id', None)
+        self.sync_member_azure_database_resource_id = kwargs.get('sync_member_azure_database_resource_id', None)
+        self.use_private_link_connection = kwargs.get('use_private_link_connection', None)
         self.server_name = kwargs.get('server_name', None)
         self.database_name = kwargs.get('database_name', None)
         self.user_name = kwargs.get('user_name', None)
@@ -9607,6 +9772,76 @@ class TransparentDataEncryptionActivity(ProxyResource):
         self.location = None
         self.status = None
         self.percent_complete = None
+
+
+class UnlinkParameters(Model):
+    """Represents the parameters for Unlink Replication Link request.
+
+    :param forced_termination: Determines whether link will be terminated in a
+     forced or a friendly way.
+    :type forced_termination: bool
+    """
+
+    _attribute_map = {
+        'forced_termination': {'key': 'forcedTermination', 'type': 'bool'},
+    }
+
+    def __init__(self, **kwargs):
+        super(UnlinkParameters, self).__init__(**kwargs)
+        self.forced_termination = kwargs.get('forced_termination', None)
+
+
+class UpsertManagedServerOperationParameters(Model):
+    """UpsertManagedServerOperationParameters.
+
+    :param family:
+    :type family: str
+    :param tier:
+    :type tier: str
+    :param v_cores:
+    :type v_cores: int
+    :param storage_size_in_gb:
+    :type storage_size_in_gb: int
+    """
+
+    _attribute_map = {
+        'family': {'key': 'family', 'type': 'str'},
+        'tier': {'key': 'tier', 'type': 'str'},
+        'v_cores': {'key': 'vCores', 'type': 'int'},
+        'storage_size_in_gb': {'key': 'storageSizeInGB', 'type': 'int'},
+    }
+
+    def __init__(self, **kwargs):
+        super(UpsertManagedServerOperationParameters, self).__init__(**kwargs)
+        self.family = kwargs.get('family', None)
+        self.tier = kwargs.get('tier', None)
+        self.v_cores = kwargs.get('v_cores', None)
+        self.storage_size_in_gb = kwargs.get('storage_size_in_gb', None)
+
+
+class UpsertManagedServerOperationStep(Model):
+    """UpsertManagedServerOperationStep.
+
+    :param order:
+    :type order: int
+    :param name:
+    :type name: str
+    :param status: Possible values include: 'NotStarted', 'InProgress',
+     'SlowedDown', 'Completed', 'Failed', 'Canceled'
+    :type status: str or ~azure.mgmt.sql.models.enum
+    """
+
+    _attribute_map = {
+        'order': {'key': 'order', 'type': 'int'},
+        'name': {'key': 'name', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(UpsertManagedServerOperationStep, self).__init__(**kwargs)
+        self.order = kwargs.get('order', None)
+        self.name = kwargs.get('name', None)
+        self.status = kwargs.get('status', None)
 
 
 class Usage(Model):

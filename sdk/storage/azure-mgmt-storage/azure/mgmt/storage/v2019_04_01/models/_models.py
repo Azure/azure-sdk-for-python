@@ -2386,6 +2386,15 @@ class StorageAccount(TrackedResource):
      include: 'Disabled', 'Enabled'
     :type large_file_shares_state: str or
      ~azure.mgmt.storage.v2019_04_01.models.LargeFileSharesState
+    :param allow_blob_public_access: Allow or disallow public access to all
+     blobs or containers in the storage account. The default interpretation is
+     true for this property.
+    :type allow_blob_public_access: bool
+    :param minimum_tls_version: Set the minimum TLS version to be permitted on
+     requests to storage. The default interpretation is TLS 1.0 for this
+     property. Possible values include: 'TLS1_0', 'TLS1_1', 'TLS1_2'
+    :type minimum_tls_version: str or
+     ~azure.mgmt.storage.v2019_04_01.models.MinimumTlsVersion
     """
 
     _validation = {
@@ -2440,6 +2449,8 @@ class StorageAccount(TrackedResource):
         'geo_replication_stats': {'key': 'properties.geoReplicationStats', 'type': 'GeoReplicationStats'},
         'failover_in_progress': {'key': 'properties.failoverInProgress', 'type': 'bool'},
         'large_file_shares_state': {'key': 'properties.largeFileSharesState', 'type': 'str'},
+        'allow_blob_public_access': {'key': 'properties.allowBlobPublicAccess', 'type': 'bool'},
+        'minimum_tls_version': {'key': 'properties.minimumTlsVersion', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -2466,6 +2477,8 @@ class StorageAccount(TrackedResource):
         self.geo_replication_stats = None
         self.failover_in_progress = None
         self.large_file_shares_state = kwargs.get('large_file_shares_state', None)
+        self.allow_blob_public_access = kwargs.get('allow_blob_public_access', None)
+        self.minimum_tls_version = kwargs.get('minimum_tls_version', None)
 
 
 class StorageAccountCheckNameAvailabilityParameters(Model):
@@ -2558,6 +2571,15 @@ class StorageAccountCreateParameters(Model):
      include: 'Disabled', 'Enabled'
     :type large_file_shares_state: str or
      ~azure.mgmt.storage.v2019_04_01.models.LargeFileSharesState
+    :param allow_blob_public_access: Allow or disallow public access to all
+     blobs or containers in the storage account. The default interpretation is
+     true for this property.
+    :type allow_blob_public_access: bool
+    :param minimum_tls_version: Set the minimum TLS version to be permitted on
+     requests to storage. The default interpretation is TLS 1.0 for this
+     property. Possible values include: 'TLS1_0', 'TLS1_1', 'TLS1_2'
+    :type minimum_tls_version: str or
+     ~azure.mgmt.storage.v2019_04_01.models.MinimumTlsVersion
     """
 
     _validation = {
@@ -2580,6 +2602,8 @@ class StorageAccountCreateParameters(Model):
         'enable_https_traffic_only': {'key': 'properties.supportsHttpsTrafficOnly', 'type': 'bool'},
         'is_hns_enabled': {'key': 'properties.isHnsEnabled', 'type': 'bool'},
         'large_file_shares_state': {'key': 'properties.largeFileSharesState', 'type': 'str'},
+        'allow_blob_public_access': {'key': 'properties.allowBlobPublicAccess', 'type': 'bool'},
+        'minimum_tls_version': {'key': 'properties.minimumTlsVersion', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -2597,6 +2621,8 @@ class StorageAccountCreateParameters(Model):
         self.enable_https_traffic_only = kwargs.get('enable_https_traffic_only', None)
         self.is_hns_enabled = kwargs.get('is_hns_enabled', None)
         self.large_file_shares_state = kwargs.get('large_file_shares_state', None)
+        self.allow_blob_public_access = kwargs.get('allow_blob_public_access', None)
+        self.minimum_tls_version = kwargs.get('minimum_tls_version', None)
 
 
 class StorageAccountKey(Model):
@@ -2726,6 +2752,15 @@ class StorageAccountUpdateParameters(Model):
      include: 'Disabled', 'Enabled'
     :type large_file_shares_state: str or
      ~azure.mgmt.storage.v2019_04_01.models.LargeFileSharesState
+    :param allow_blob_public_access: Allow or disallow public access to all
+     blobs or containers in the storage account. The default interpretation is
+     true for this property.
+    :type allow_blob_public_access: bool
+    :param minimum_tls_version: Set the minimum TLS version to be permitted on
+     requests to storage. The default interpretation is TLS 1.0 for this
+     property. Possible values include: 'TLS1_0', 'TLS1_1', 'TLS1_2'
+    :type minimum_tls_version: str or
+     ~azure.mgmt.storage.v2019_04_01.models.MinimumTlsVersion
     :param kind: Optional. Indicates the type of storage account. Currently
      only StorageV2 value supported by server. Possible values include:
      'Storage', 'StorageV2', 'BlobStorage', 'FileStorage', 'BlockBlobStorage'
@@ -2743,6 +2778,8 @@ class StorageAccountUpdateParameters(Model):
         'enable_https_traffic_only': {'key': 'properties.supportsHttpsTrafficOnly', 'type': 'bool'},
         'network_rule_set': {'key': 'properties.networkAcls', 'type': 'NetworkRuleSet'},
         'large_file_shares_state': {'key': 'properties.largeFileSharesState', 'type': 'str'},
+        'allow_blob_public_access': {'key': 'properties.allowBlobPublicAccess', 'type': 'bool'},
+        'minimum_tls_version': {'key': 'properties.minimumTlsVersion', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
     }
 
@@ -2758,6 +2795,8 @@ class StorageAccountUpdateParameters(Model):
         self.enable_https_traffic_only = kwargs.get('enable_https_traffic_only', None)
         self.network_rule_set = kwargs.get('network_rule_set', None)
         self.large_file_shares_state = kwargs.get('large_file_shares_state', None)
+        self.allow_blob_public_access = kwargs.get('allow_blob_public_access', None)
+        self.minimum_tls_version = kwargs.get('minimum_tls_version', None)
         self.kind = kwargs.get('kind', None)
 
 

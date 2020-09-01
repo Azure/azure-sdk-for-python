@@ -890,6 +890,51 @@ class ContainerPartitionKey(Model):
         self.version = kwargs.get('version', None)
 
 
+class CorsPolicy(Model):
+    """The CORS policy for the Cosmos DB database account.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param allowed_origins: Required. The origin domains that are permitted to
+     make a request against the service via CORS.
+    :type allowed_origins: str
+    :param allowed_methods: The methods (HTTP request verbs) that the origin
+     domain may use for a CORS request.
+    :type allowed_methods: str
+    :param allowed_headers: The request headers that the origin domain may
+     specify on the CORS request.
+    :type allowed_headers: str
+    :param exposed_headers: The response headers that may be sent in the
+     response to the CORS request and exposed by the browser to the request
+     issuer.
+    :type exposed_headers: str
+    :param max_age_in_seconds: The maximum amount time that a browser should
+     cache the preflight OPTIONS request.
+    :type max_age_in_seconds: long
+    """
+
+    _validation = {
+        'allowed_origins': {'required': True},
+        'max_age_in_seconds': {'maximum': 2147483647, 'minimum': 1},
+    }
+
+    _attribute_map = {
+        'allowed_origins': {'key': 'allowedOrigins', 'type': 'str'},
+        'allowed_methods': {'key': 'allowedMethods', 'type': 'str'},
+        'allowed_headers': {'key': 'allowedHeaders', 'type': 'str'},
+        'exposed_headers': {'key': 'exposedHeaders', 'type': 'str'},
+        'max_age_in_seconds': {'key': 'maxAgeInSeconds', 'type': 'long'},
+    }
+
+    def __init__(self, **kwargs):
+        super(CorsPolicy, self).__init__(**kwargs)
+        self.allowed_origins = kwargs.get('allowed_origins', None)
+        self.allowed_methods = kwargs.get('allowed_methods', None)
+        self.allowed_headers = kwargs.get('allowed_headers', None)
+        self.exposed_headers = kwargs.get('exposed_headers', None)
+        self.max_age_in_seconds = kwargs.get('max_age_in_seconds', None)
+
+
 class CreateUpdateOptions(Model):
     """CreateUpdateOptions are a list of key-value pairs that describe the
     resource. Supported keys are "If-Match", "If-None-Match", "Session-Token"
@@ -1015,6 +1060,8 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):
     :param enable_analytical_storage: Flag to indicate whether to enable
      storage analytics.
     :type enable_analytical_storage: bool
+    :param cors: The CORS policy for the Cosmos DB database account.
+    :type cors: list[~azure.mgmt.cosmosdb.models.CorsPolicy]
     """
 
     _validation = {
@@ -1049,6 +1096,7 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):
         'enable_free_tier': {'key': 'properties.enableFreeTier', 'type': 'bool'},
         'api_properties': {'key': 'properties.apiProperties', 'type': 'ApiProperties'},
         'enable_analytical_storage': {'key': 'properties.enableAnalyticalStorage', 'type': 'bool'},
+        'cors': {'key': 'properties.cors', 'type': '[CorsPolicy]'},
     }
 
     database_account_offer_type = "Standard"
@@ -1072,6 +1120,7 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):
         self.enable_free_tier = kwargs.get('enable_free_tier', None)
         self.api_properties = kwargs.get('api_properties', None)
         self.enable_analytical_storage = kwargs.get('enable_analytical_storage', None)
+        self.cors = kwargs.get('cors', None)
 
 
 class DatabaseAccountGetResults(ARMResourceProperties):
@@ -1166,6 +1215,8 @@ class DatabaseAccountGetResults(ARMResourceProperties):
     :param enable_analytical_storage: Flag to indicate whether to enable
      storage analytics.
     :type enable_analytical_storage: bool
+    :param cors: The CORS policy for the Cosmos DB database account.
+    :type cors: list[~azure.mgmt.cosmosdb.models.CorsPolicy]
     """
 
     _validation = {
@@ -1211,6 +1262,7 @@ class DatabaseAccountGetResults(ARMResourceProperties):
         'enable_free_tier': {'key': 'properties.enableFreeTier', 'type': 'bool'},
         'api_properties': {'key': 'properties.apiProperties', 'type': 'ApiProperties'},
         'enable_analytical_storage': {'key': 'properties.enableAnalyticalStorage', 'type': 'bool'},
+        'cors': {'key': 'properties.cors', 'type': '[CorsPolicy]'},
     }
 
     def __init__(self, **kwargs):
@@ -1239,6 +1291,7 @@ class DatabaseAccountGetResults(ARMResourceProperties):
         self.enable_free_tier = kwargs.get('enable_free_tier', None)
         self.api_properties = kwargs.get('api_properties', None)
         self.enable_analytical_storage = kwargs.get('enable_analytical_storage', None)
+        self.cors = kwargs.get('cors', None)
 
 
 class DatabaseAccountListConnectionStringsResult(Model):
@@ -1408,6 +1461,8 @@ class DatabaseAccountUpdateParameters(Model):
     :param enable_analytical_storage: Flag to indicate whether to enable
      storage analytics.
     :type enable_analytical_storage: bool
+    :param cors: The CORS policy for the Cosmos DB database account.
+    :type cors: list[~azure.mgmt.cosmosdb.models.CorsPolicy]
     """
 
     _attribute_map = {
@@ -1429,6 +1484,7 @@ class DatabaseAccountUpdateParameters(Model):
         'enable_free_tier': {'key': 'properties.enableFreeTier', 'type': 'bool'},
         'api_properties': {'key': 'properties.apiProperties', 'type': 'ApiProperties'},
         'enable_analytical_storage': {'key': 'properties.enableAnalyticalStorage', 'type': 'bool'},
+        'cors': {'key': 'properties.cors', 'type': '[CorsPolicy]'},
     }
 
     def __init__(self, **kwargs):
@@ -1451,6 +1507,7 @@ class DatabaseAccountUpdateParameters(Model):
         self.enable_free_tier = kwargs.get('enable_free_tier', None)
         self.api_properties = kwargs.get('api_properties', None)
         self.enable_analytical_storage = kwargs.get('enable_analytical_storage', None)
+        self.cors = kwargs.get('cors', None)
 
 
 class ErrorResponse(Model):
@@ -3568,6 +3625,8 @@ class SqlContainerGetPropertiesResource(Model):
      container.
     :type conflict_resolution_policy:
      ~azure.mgmt.cosmosdb.models.ConflictResolutionPolicy
+    :param analytical_storage_ttl: Analytical TTL.
+    :type analytical_storage_ttl: long
     :ivar _rid: A system generated property. A unique identifier.
     :vartype _rid: str
     :ivar _ts: A system generated property that denotes the last updated
@@ -3592,6 +3651,7 @@ class SqlContainerGetPropertiesResource(Model):
         'default_ttl': {'key': 'defaultTtl', 'type': 'int'},
         'unique_key_policy': {'key': 'uniqueKeyPolicy', 'type': 'UniqueKeyPolicy'},
         'conflict_resolution_policy': {'key': 'conflictResolutionPolicy', 'type': 'ConflictResolutionPolicy'},
+        'analytical_storage_ttl': {'key': 'analyticalStorageTtl', 'type': 'long'},
         '_rid': {'key': '_rid', 'type': 'str'},
         '_ts': {'key': '_ts', 'type': 'object'},
         '_etag': {'key': '_etag', 'type': 'str'},
@@ -3605,6 +3665,7 @@ class SqlContainerGetPropertiesResource(Model):
         self.default_ttl = kwargs.get('default_ttl', None)
         self.unique_key_policy = kwargs.get('unique_key_policy', None)
         self.conflict_resolution_policy = kwargs.get('conflict_resolution_policy', None)
+        self.analytical_storage_ttl = kwargs.get('analytical_storage_ttl', None)
         self._rid = None
         self._ts = None
         self._etag = None
@@ -3681,6 +3742,8 @@ class SqlContainerResource(Model):
      container.
     :type conflict_resolution_policy:
      ~azure.mgmt.cosmosdb.models.ConflictResolutionPolicy
+    :param analytical_storage_ttl: Analytical TTL.
+    :type analytical_storage_ttl: long
     """
 
     _validation = {
@@ -3694,6 +3757,7 @@ class SqlContainerResource(Model):
         'default_ttl': {'key': 'defaultTtl', 'type': 'int'},
         'unique_key_policy': {'key': 'uniqueKeyPolicy', 'type': 'UniqueKeyPolicy'},
         'conflict_resolution_policy': {'key': 'conflictResolutionPolicy', 'type': 'ConflictResolutionPolicy'},
+        'analytical_storage_ttl': {'key': 'analyticalStorageTtl', 'type': 'long'},
     }
 
     def __init__(self, **kwargs):
@@ -3704,6 +3768,7 @@ class SqlContainerResource(Model):
         self.default_ttl = kwargs.get('default_ttl', None)
         self.unique_key_policy = kwargs.get('unique_key_policy', None)
         self.conflict_resolution_policy = kwargs.get('conflict_resolution_policy', None)
+        self.analytical_storage_ttl = kwargs.get('analytical_storage_ttl', None)
 
 
 class SqlDatabaseCreateUpdateParameters(ARMResourceProperties):

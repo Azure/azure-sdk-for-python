@@ -1,5 +1,11 @@
 # Release History
 
+## 3.0.0rc14(2020-06-15)
+
+**Features**
+
+  - Model RunGetLogResult has a new parameter log_artifact_link
+
 ## 3.0.0rc13(2020-05-15)
 
 **Features**

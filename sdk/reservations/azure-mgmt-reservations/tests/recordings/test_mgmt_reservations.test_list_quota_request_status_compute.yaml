@@ -1,0 +1,54 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.8 (Windows-10-10.0.18362-SP0) msrest/0.6.17 msrest_azure/0.6.4
+        azure-mgmt-reservations/0.8.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimitsRequests?api-version=2019-07-19-preview
+  response:
+    body:
+      string: "{\r\n  \"@odata.context\":\"https://capacityrpprodpreview.trafficmanager.net/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/$metadata#serviceLimitsRequests\",\"value\":[\r\n
+        \   {\r\n      \"properties\":{\r\n        \"requestSubmitTime\":\"2020-08-15T01:30:03.5493722Z\",\"message\":\"\",\"code\":\"\",\"SerailizeCodeField\":false,\"provisioningState\":\"Succeeded\",\"value\":[\r\n
+        \         {\r\n            \"subRequestId\":\"06376f35-4ab8-4793-b988-3cbcb9e83760\",\"message\":\"\",\"provisioningState\":\"Succeeded\",\"Limit\":240,\"Name\":{\r\n
+        \             \"Value\":\"standardDv2Family\",\"LocalizedValue\":null\r\n
+        \           },\"ResourceType\":null\r\n          }\r\n        ]\r\n      },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimitsRequests/0d62622e-42d6-4f52-a7a7-4bf6dcfd2fee\",\"name\":\"00000000-0000-0000-0000-000000000000/0d62622e-42d6-4f52-a7a7-4bf6dcfd2fee\",\"type\":\"Microsoft.Capacity/serviceLimitsRequests\"\r\n
+        \   }\r\n  ]\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1055'
+      content-type:
+      - application/json; odata.metadata=minimal
+      date:
+      - Sat, 15 Aug 2020 01:39:25 GMT
+      expires:
+      - '-1'
+      odata-version:
+      - '4.0'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+version: 1

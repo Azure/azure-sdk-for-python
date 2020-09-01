@@ -22,7 +22,7 @@ class MgmtCosmosDBTest(AzureMgmtTestCase):
 
     @ResourceGroupPreparer()
     def test_accounts_create(self, resource_group, location):
-        account_name = self.get_resource_name('pycosmosdbx1')
+        account_name = self.get_resource_name('spycosmosdbx11')
 
         self.assertFalse(self.client.database_accounts.check_name_exists(account_name))
 
@@ -31,9 +31,14 @@ class MgmtCosmosDBTest(AzureMgmtTestCase):
             account_name,
             {
                 'location': location,
-                'locations': [{
-                    'location_name': self.region
-                }]
+                'properties': {
+                    'databaseAccountOfferType': 'Standard',
+                    'locations': [{
+                        'location_name': self.region,
+                        'failover_priority': 0
+                    }]
+                }
+                
             }
         )
         account = async_cosmosdb_create.result()
@@ -43,7 +48,7 @@ class MgmtCosmosDBTest(AzureMgmtTestCase):
 
     @ResourceGroupPreparer()
     def test_accounts_features(self, resource_group, location):
-        account_name = self.get_resource_name('pycosmosdbx2')
+        account_name = self.get_resource_name('spycosmosdbx22')
 
         if not self.is_playback():
             async_cosmosdb_create = self.client.database_accounts.create_or_update(
@@ -51,9 +56,13 @@ class MgmtCosmosDBTest(AzureMgmtTestCase):
                 account_name,
                 {
                     'location': location,
-                    'locations': [{
-                        'location_name': self.region
-                    }]
+                    'properties': {
+                        'databaseAccountOfferType': 'Standard',
+                        'locations': [{
+                            'location_name': self.region,
+                            'failover_priority': 0
+                        }]
+                    }
                 }
             )
             async_cosmosdb_create.wait()
@@ -109,7 +118,7 @@ class MgmtCosmosDBTest(AzureMgmtTestCase):
 
     @ResourceGroupPreparer()
     def test_accounts_delete(self, resource_group, location):
-        account_name = self.get_resource_name('pydocumentdbx3')
+        account_name = self.get_resource_name('spydocumentdbx33')
 
         if not self.is_playback():
             async_cosmosdb_create = self.client.database_accounts.create_or_update(
@@ -117,9 +126,13 @@ class MgmtCosmosDBTest(AzureMgmtTestCase):
                 account_name,
                 {
                     'location': location,
-                    'locations': [{
-                        'location_name': self.region
-                    }]
+                    'properties': {
+                        'databaseAccountOfferType': 'Standard',
+                        'locations': [{
+                            'location_name': self.region,
+                            'failover_priority': 0
+                        }]
+                    }
                 }
             )
             async_cosmosdb_create.wait()

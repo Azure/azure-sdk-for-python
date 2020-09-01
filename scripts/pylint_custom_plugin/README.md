@@ -3,7 +3,7 @@
 In order to lint for the guidelines, you must make sure you are using the pylintrc file.
 It is recommended you run pylint at the library package level to be consistent with how the CI runs pylint.  
 
-Check that you are running pylint version >=2.31 and astroid version >=2.25.
+Check that you are running pylint version >=2.5.2 and astroid version >=2.4.1.
 
 **How to run pylint locally using the pylintrc:**
 

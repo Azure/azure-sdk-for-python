@@ -1,5 +1,22 @@
 # Release History
 
+## 2.0.0 (2020-06-24)
+
+**Features**
+
+  - Model ContainerGroup has a new parameter init_containers
+  - Model ContainerGroup has a new parameter sku
+  - Model ContainerGroup has a new parameter encryption_properties
+  - Added operation group ContainersOperations
+  - Added operation group LocationOperations
+
+**Breaking changes**
+
+  - Model CachedImages no longer has parameter id
+  - Removed operation group ContainerGroupUsageOperations
+  - Removed operation group ServiceAssociationLinkOperations
+  - Removed operation group ContainerOperations
+
 ## 1.5.0 (2019-05-22)
 
 **Features**

@@ -8644,12 +8644,10 @@ class HubRouteTable(SubResource):
     :type labels: list[str]
     :ivar associated_connections: List of all connections associated with this
      route table.
-    :vartype associated_connections:
-     list[~azure.mgmt.network.v2020_04_01.models.SubResource]
+    :vartype associated_connections: list[str]
     :ivar propagating_connections: List of all connections that advertise to
      this route table.
-    :vartype propagating_connections:
-     list[~azure.mgmt.network.v2020_04_01.models.SubResource]
+    :vartype propagating_connections: list[str]
     :ivar provisioning_state: The provisioning state of the RouteTable
      resource. Possible values include: 'Succeeded', 'Updating', 'Deleting',
      'Failed'
@@ -8677,8 +8675,8 @@ class HubRouteTable(SubResource):
         'id': {'key': 'id', 'type': 'str'},
         'routes': {'key': 'properties.routes', 'type': '[HubRoute]'},
         'labels': {'key': 'properties.labels', 'type': '[str]'},
-        'associated_connections': {'key': 'properties.associatedConnections', 'type': '[SubResource]'},
-        'propagating_connections': {'key': 'properties.propagatingConnections', 'type': '[SubResource]'},
+        'associated_connections': {'key': 'properties.associatedConnections', 'type': '[str]'},
+        'propagating_connections': {'key': 'properties.propagatingConnections', 'type': '[str]'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
@@ -9546,31 +9544,37 @@ class LoadBalancer(Resource):
 class LoadBalancerBackendAddress(Model):
     """Load balancer backend addresses.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param virtual_network: Reference to an existing virtual network.
-    :type virtual_network:
-     ~azure.mgmt.network.v2020_04_01.models.VirtualNetwork
+    :type virtual_network: ~azure.mgmt.network.v2020_04_01.models.SubResource
     :param ip_address: IP Address belonging to the referenced virtual network.
     :type ip_address: str
-    :param network_interface_ip_configuration: Reference to IP address defined
+    :ivar network_interface_ip_configuration: Reference to IP address defined
      in network interfaces.
-    :type network_interface_ip_configuration:
-     ~azure.mgmt.network.v2020_04_01.models.NetworkInterfaceIPConfiguration
+    :vartype network_interface_ip_configuration:
+     ~azure.mgmt.network.v2020_04_01.models.SubResource
     :param name: Name of the backend address.
     :type name: str
     """
 
+    _validation = {
+        'network_interface_ip_configuration': {'readonly': True},
+    }
+
     _attribute_map = {
-        'virtual_network': {'key': 'properties.virtualNetwork', 'type': 'VirtualNetwork'},
+        'virtual_network': {'key': 'properties.virtualNetwork', 'type': 'SubResource'},
         'ip_address': {'key': 'properties.ipAddress', 'type': 'str'},
-        'network_interface_ip_configuration': {'key': 'properties.networkInterfaceIPConfiguration', 'type': 'NetworkInterfaceIPConfiguration'},
+        'network_interface_ip_configuration': {'key': 'properties.networkInterfaceIPConfiguration', 'type': 'SubResource'},
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    def __init__(self, *, virtual_network=None, ip_address: str=None, network_interface_ip_configuration=None, name: str=None, **kwargs) -> None:
+    def __init__(self, *, virtual_network=None, ip_address: str=None, name: str=None, **kwargs) -> None:
         super(LoadBalancerBackendAddress, self).__init__(**kwargs)
         self.virtual_network = virtual_network
         self.ip_address = ip_address
-        self.network_interface_ip_configuration = network_interface_ip_configuration
+        self.network_interface_ip_configuration = None
         self.name = name
 
 

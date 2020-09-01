@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .container_instance_management_client import ContainerInstanceManagementClient
-from .version import VERSION
+from ._configuration import ContainerInstanceManagementClientConfiguration
+from ._container_instance_management_client import ContainerInstanceManagementClient
+__all__ = ['ContainerInstanceManagementClient', 'ContainerInstanceManagementClientConfiguration']
 
-__all__ = ['ContainerInstanceManagementClient']
+from .version import VERSION
 
 __version__ = VERSION
 

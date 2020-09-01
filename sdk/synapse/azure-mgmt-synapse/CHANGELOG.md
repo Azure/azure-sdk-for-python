@@ -1,5 +1,11 @@
 # Release History
 
+## 0.3.0 (2020-06-17)
+
+**Features**
+
+  - Added operation group PrivateLinkHubsOperations
+
 ## 0.2.0 (2020-04-09)
 
 **Features**

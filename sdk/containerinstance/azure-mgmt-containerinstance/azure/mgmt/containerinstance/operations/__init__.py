@@ -9,16 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .container_groups_operations import ContainerGroupsOperations
-from .operations import Operations
-from .container_group_usage_operations import ContainerGroupUsageOperations
-from .container_operations import ContainerOperations
-from .service_association_link_operations import ServiceAssociationLinkOperations
+from ._container_groups_operations import ContainerGroupsOperations
+from ._operations import Operations
+from ._location_operations import LocationOperations
+from ._containers_operations import ContainersOperations
 
 __all__ = [
     'ContainerGroupsOperations',
     'Operations',
-    'ContainerGroupUsageOperations',
-    'ContainerOperations',
-    'ServiceAssociationLinkOperations',
+    'LocationOperations',
+    'ContainersOperations',
 ]

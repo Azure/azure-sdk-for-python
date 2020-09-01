@@ -2,28 +2,10 @@ parameters:
   BuildTargetingString: 'azure-*'
   ServiceDirectory: ''
   TestMarkArgument: ''
+  AdditionalTestArgs: ''
 
 steps:
-  - task: UsePythonVersion@0
-    displayName: 'Use Python $(PythonVersion)'
-    inputs:
-     versionSpec: '$(PythonVersion)'
-
-  - script: |
-     pip install -r eng/ci_tools.txt
-     ward scan -d $(Build.SourcesDirectory) -c $(Build.SourcesDirectory)/eng/.docsettings.yml
-    displayName: 'Verify Readmes'
-
-  - pwsh: |
-      mkdir "$(Build.ArtifactStagingDirectory)/reports"
-      Copy-Item -Path "$(Build.SourcesDirectory)/eng/common/InterdependencyGraph.html" -Destination "$(Build.ArtifactStagingDirectory)/reports/InterdependencyGraph.html"
-    displayName: 'Populate Reports Staging Folder'
-
-  - task: PythonScript@0
-    displayName: 'Analyze dependencies'
-    inputs:
-     scriptPath: 'scripts/analyze_deps.py'
-     arguments: '--verbose --out "$(Build.ArtifactStagingDirectory)/reports/dependencies.html" --dump "$(Build.ArtifactStagingDirectory)/reports/data.js"'
+  - template: /eng/pipelines/templates/steps/analyze_dependency.yml
 
   - task: PythonScript@0
     displayName: 'Verify Change Log'
@@ -41,9 +23,16 @@ steps:
       python find_invalid_versions.py --always-succeed --service=${{parameters.ServiceDirectory}}
     displayName: Find Invalid Versions
 
-  - template: eng/pipelines/templates/scripts/verify-path-length.yml@azure-sdk-tools
+  - template: /eng/common/pipelines/templates/steps/verify-path-length.yml
     parameters:
       SourceDirectory: $(Build.SourcesDirectory)
+  
+  - ${{ each artifact in parameters.Artifacts }}:
+    - template: /eng/common/pipelines/templates/steps/verify-changelog.yml
+      parameters:
+        PackageName: ${{artifact.name}}
+        ServiceName: ${{parameters.ServiceDirectory}}
+        ForRelease: false
 
   - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
     # ComponentGovernance is currently unable to run on pull requests of public projects. Running on non-PR
@@ -72,16 +61,28 @@ steps:
      scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
      arguments: '"${{ parameters.BuildTargetingString }}" --service=${{parameters.ServiceDirectory}} --toxenv=verifywhl'
 
-  - ${{if ne(variables['Skip.MyPy'], 'true') }}:
-    - template: run_mypy.yml
-      parameters: 
-        ServiceDirectory: ${{ parameters.ServiceDirectory }}
-        BuildTargetingString: ${{ parameters.BuildTargetingString }}
-        TestMarkArgument: ${{ parameters.TestMarkArgument }}
+  - template: run_mypy.yml
+    parameters: 
+      ServiceDirectory: ${{ parameters.ServiceDirectory }}
+      BuildTargetingString: ${{ parameters.BuildTargetingString }}
+      TestMarkArgument: ${{ parameters.TestMarkArgument }}
 
-  - ${{if ne(variables['Skip.Pylint'], 'true') }}:
-    - template: run_pylint.yml
-      parameters: 
-        ServiceDirectory: ${{ parameters.ServiceDirectory }}
-        BuildTargetingString: ${{ parameters.BuildTargetingString }}
-        TestMarkArgument: ${{ parameters.TestMarkArgument }}
+  - template: run_pylint.yml
+    parameters: 
+      ServiceDirectory: ${{ parameters.ServiceDirectory }}
+      BuildTargetingString: ${{ parameters.BuildTargetingString }}
+      TestMarkArgument: ${{ parameters.TestMarkArgument }}
+
+  - task: DownloadPipelineArtifact@0
+    condition: ne(variables['Skip.ApiStubGen'],'true')
+    inputs:
+      artifactName: 'artifacts'
+      targetPath: $(Build.ArtifactStagingDirectory)
+
+  - template: ../steps/run_apistub.yml
+    parameters:
+      ServiceDirectory: ${{ parameters.ServiceDirectory }}
+      BuildTargetingString: ${{ parameters.BuildTargetingString }}
+      TestMarkArgument: ${{ parameters.TestMarkArgument }}
+      AdditionalTestArgs: ${{parameters.AdditionalTestArgs}}
+

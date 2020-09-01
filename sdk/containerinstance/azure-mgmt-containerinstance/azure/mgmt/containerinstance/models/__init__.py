@@ -10,161 +10,170 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .container_port_py3 import ContainerPort
-    from .environment_variable_py3 import EnvironmentVariable
-    from .container_state_py3 import ContainerState
-    from .event_py3 import Event
-    from .container_properties_instance_view_py3 import ContainerPropertiesInstanceView
-    from .gpu_resource_py3 import GpuResource
-    from .resource_requests_py3 import ResourceRequests
-    from .resource_limits_py3 import ResourceLimits
-    from .resource_requirements_py3 import ResourceRequirements
-    from .volume_mount_py3 import VolumeMount
-    from .container_exec_py3 import ContainerExec
-    from .container_http_get_py3 import ContainerHttpGet
-    from .container_probe_py3 import ContainerProbe
-    from .container_py3 import Container
-    from .azure_file_volume_py3 import AzureFileVolume
-    from .git_repo_volume_py3 import GitRepoVolume
-    from .volume_py3 import Volume
-    from .container_group_identity_user_assigned_identities_value_py3 import ContainerGroupIdentityUserAssignedIdentitiesValue
-    from .container_group_identity_py3 import ContainerGroupIdentity
-    from .image_registry_credential_py3 import ImageRegistryCredential
-    from .port_py3 import Port
-    from .ip_address_py3 import IpAddress
-    from .container_group_properties_instance_view_py3 import ContainerGroupPropertiesInstanceView
-    from .log_analytics_py3 import LogAnalytics
-    from .container_group_diagnostics_py3 import ContainerGroupDiagnostics
-    from .container_group_network_profile_py3 import ContainerGroupNetworkProfile
-    from .dns_configuration_py3 import DnsConfiguration
-    from .container_group_py3 import ContainerGroup
-    from .operation_display_py3 import OperationDisplay
-    from .operation_py3 import Operation
-    from .operation_list_result_py3 import OperationListResult
-    from .usage_name_py3 import UsageName
-    from .usage_py3 import Usage
-    from .usage_list_result_py3 import UsageListResult
-    from .logs_py3 import Logs
-    from .container_exec_request_terminal_size_py3 import ContainerExecRequestTerminalSize
-    from .container_exec_request_py3 import ContainerExecRequest
-    from .container_exec_response_py3 import ContainerExecResponse
-    from .resource_py3 import Resource
-    from .cached_images_py3 import CachedImages
-    from .cached_images_list_result_py3 import CachedImagesListResult
-    from .capabilities_capabilities_py3 import CapabilitiesCapabilities
-    from .capabilities_py3 import Capabilities
-    from .capabilities_list_result_py3 import CapabilitiesListResult
+    from ._models_py3 import AzureFileVolume
+    from ._models_py3 import CachedImages
+    from ._models_py3 import Capabilities
+    from ._models_py3 import CapabilitiesCapabilities
+    from ._models_py3 import Container
+    from ._models_py3 import ContainerExec
+    from ._models_py3 import ContainerExecRequest
+    from ._models_py3 import ContainerExecRequestTerminalSize
+    from ._models_py3 import ContainerExecResponse
+    from ._models_py3 import ContainerGroup
+    from ._models_py3 import ContainerGroupDiagnostics
+    from ._models_py3 import ContainerGroupIdentity
+    from ._models_py3 import ContainerGroupIdentityUserAssignedIdentitiesValue
+    from ._models_py3 import ContainerGroupNetworkProfile
+    from ._models_py3 import ContainerGroupPropertiesInstanceView
+    from ._models_py3 import ContainerHttpGet
+    from ._models_py3 import ContainerPort
+    from ._models_py3 import ContainerProbe
+    from ._models_py3 import ContainerPropertiesInstanceView
+    from ._models_py3 import ContainerState
+    from ._models_py3 import DnsConfiguration
+    from ._models_py3 import EncryptionProperties
+    from ._models_py3 import EnvironmentVariable
+    from ._models_py3 import Event
+    from ._models_py3 import GitRepoVolume
+    from ._models_py3 import GpuResource
+    from ._models_py3 import ImageRegistryCredential
+    from ._models_py3 import InitContainerDefinition
+    from ._models_py3 import InitContainerPropertiesDefinitionInstanceView
+    from ._models_py3 import IpAddress
+    from ._models_py3 import LogAnalytics
+    from ._models_py3 import Logs
+    from ._models_py3 import Operation
+    from ._models_py3 import OperationDisplay
+    from ._models_py3 import Port
+    from ._models_py3 import Resource
+    from ._models_py3 import ResourceLimits
+    from ._models_py3 import ResourceRequests
+    from ._models_py3 import ResourceRequirements
+    from ._models_py3 import Usage
+    from ._models_py3 import UsageName
+    from ._models_py3 import Volume
+    from ._models_py3 import VolumeMount
 except (SyntaxError, ImportError):
-    from .container_port import ContainerPort
-    from .environment_variable import EnvironmentVariable
-    from .container_state import ContainerState
-    from .event import Event
-    from .container_properties_instance_view import ContainerPropertiesInstanceView
-    from .gpu_resource import GpuResource
-    from .resource_requests import ResourceRequests
-    from .resource_limits import ResourceLimits
-    from .resource_requirements import ResourceRequirements
-    from .volume_mount import VolumeMount
-    from .container_exec import ContainerExec
-    from .container_http_get import ContainerHttpGet
-    from .container_probe import ContainerProbe
-    from .container import Container
-    from .azure_file_volume import AzureFileVolume
-    from .git_repo_volume import GitRepoVolume
-    from .volume import Volume
-    from .container_group_identity_user_assigned_identities_value import ContainerGroupIdentityUserAssignedIdentitiesValue
-    from .container_group_identity import ContainerGroupIdentity
-    from .image_registry_credential import ImageRegistryCredential
-    from .port import Port
-    from .ip_address import IpAddress
-    from .container_group_properties_instance_view import ContainerGroupPropertiesInstanceView
-    from .log_analytics import LogAnalytics
-    from .container_group_diagnostics import ContainerGroupDiagnostics
-    from .container_group_network_profile import ContainerGroupNetworkProfile
-    from .dns_configuration import DnsConfiguration
-    from .container_group import ContainerGroup
-    from .operation_display import OperationDisplay
-    from .operation import Operation
-    from .operation_list_result import OperationListResult
-    from .usage_name import UsageName
-    from .usage import Usage
-    from .usage_list_result import UsageListResult
-    from .logs import Logs
-    from .container_exec_request_terminal_size import ContainerExecRequestTerminalSize
-    from .container_exec_request import ContainerExecRequest
-    from .container_exec_response import ContainerExecResponse
-    from .resource import Resource
-    from .cached_images import CachedImages
-    from .cached_images_list_result import CachedImagesListResult
-    from .capabilities_capabilities import CapabilitiesCapabilities
-    from .capabilities import Capabilities
-    from .capabilities_list_result import CapabilitiesListResult
-from .container_group_paged import ContainerGroupPaged
-from .container_instance_management_client_enums import (
+    from ._models import AzureFileVolume
+    from ._models import CachedImages
+    from ._models import Capabilities
+    from ._models import CapabilitiesCapabilities
+    from ._models import Container
+    from ._models import ContainerExec
+    from ._models import ContainerExecRequest
+    from ._models import ContainerExecRequestTerminalSize
+    from ._models import ContainerExecResponse
+    from ._models import ContainerGroup
+    from ._models import ContainerGroupDiagnostics
+    from ._models import ContainerGroupIdentity
+    from ._models import ContainerGroupIdentityUserAssignedIdentitiesValue
+    from ._models import ContainerGroupNetworkProfile
+    from ._models import ContainerGroupPropertiesInstanceView
+    from ._models import ContainerHttpGet
+    from ._models import ContainerPort
+    from ._models import ContainerProbe
+    from ._models import ContainerPropertiesInstanceView
+    from ._models import ContainerState
+    from ._models import DnsConfiguration
+    from ._models import EncryptionProperties
+    from ._models import EnvironmentVariable
+    from ._models import Event
+    from ._models import GitRepoVolume
+    from ._models import GpuResource
+    from ._models import ImageRegistryCredential
+    from ._models import InitContainerDefinition
+    from ._models import InitContainerPropertiesDefinitionInstanceView
+    from ._models import IpAddress
+    from ._models import LogAnalytics
+    from ._models import Logs
+    from ._models import Operation
+    from ._models import OperationDisplay
+    from ._models import Port
+    from ._models import Resource
+    from ._models import ResourceLimits
+    from ._models import ResourceRequests
+    from ._models import ResourceRequirements
+    from ._models import Usage
+    from ._models import UsageName
+    from ._models import Volume
+    from ._models import VolumeMount
+from ._paged_models import CachedImagesPaged
+from ._paged_models import CapabilitiesPaged
+from ._paged_models import ContainerGroupPaged
+from ._paged_models import OperationPaged
+from ._paged_models import UsagePaged
+from ._container_instance_management_client_enums import (
     ContainerNetworkProtocol,
     GpuSku,
+    Scheme,
     ResourceIdentityType,
     ContainerGroupRestartPolicy,
     ContainerGroupNetworkProtocol,
     ContainerGroupIpAddressType,
     OperatingSystemTypes,
     LogAnalyticsLogType,
+    ContainerGroupSku,
     ContainerInstanceOperationsOrigin,
 )
 
 __all__ = [
-    'ContainerPort',
-    'EnvironmentVariable',
-    'ContainerState',
-    'Event',
-    'ContainerPropertiesInstanceView',
-    'GpuResource',
-    'ResourceRequests',
-    'ResourceLimits',
-    'ResourceRequirements',
-    'VolumeMount',
-    'ContainerExec',
-    'ContainerHttpGet',
-    'ContainerProbe',
-    'Container',
     'AzureFileVolume',
-    'GitRepoVolume',
-    'Volume',
-    'ContainerGroupIdentityUserAssignedIdentitiesValue',
-    'ContainerGroupIdentity',
-    'ImageRegistryCredential',
-    'Port',
-    'IpAddress',
-    'ContainerGroupPropertiesInstanceView',
-    'LogAnalytics',
-    'ContainerGroupDiagnostics',
-    'ContainerGroupNetworkProfile',
-    'DnsConfiguration',
-    'ContainerGroup',
-    'OperationDisplay',
-    'Operation',
-    'OperationListResult',
-    'UsageName',
-    'Usage',
-    'UsageListResult',
-    'Logs',
-    'ContainerExecRequestTerminalSize',
-    'ContainerExecRequest',
-    'ContainerExecResponse',
-    'Resource',
     'CachedImages',
-    'CachedImagesListResult',
-    'CapabilitiesCapabilities',
     'Capabilities',
-    'CapabilitiesListResult',
+    'CapabilitiesCapabilities',
+    'Container',
+    'ContainerExec',
+    'ContainerExecRequest',
+    'ContainerExecRequestTerminalSize',
+    'ContainerExecResponse',
+    'ContainerGroup',
+    'ContainerGroupDiagnostics',
+    'ContainerGroupIdentity',
+    'ContainerGroupIdentityUserAssignedIdentitiesValue',
+    'ContainerGroupNetworkProfile',
+    'ContainerGroupPropertiesInstanceView',
+    'ContainerHttpGet',
+    'ContainerPort',
+    'ContainerProbe',
+    'ContainerPropertiesInstanceView',
+    'ContainerState',
+    'DnsConfiguration',
+    'EncryptionProperties',
+    'EnvironmentVariable',
+    'Event',
+    'GitRepoVolume',
+    'GpuResource',
+    'ImageRegistryCredential',
+    'InitContainerDefinition',
+    'InitContainerPropertiesDefinitionInstanceView',
+    'IpAddress',
+    'LogAnalytics',
+    'Logs',
+    'Operation',
+    'OperationDisplay',
+    'Port',
+    'Resource',
+    'ResourceLimits',
+    'ResourceRequests',
+    'ResourceRequirements',
+    'Usage',
+    'UsageName',
+    'Volume',
+    'VolumeMount',
     'ContainerGroupPaged',
+    'OperationPaged',
+    'UsagePaged',
+    'CachedImagesPaged',
+    'CapabilitiesPaged',
     'ContainerNetworkProtocol',
     'GpuSku',
+    'Scheme',
     'ResourceIdentityType',
     'ContainerGroupRestartPolicy',
     'ContainerGroupNetworkProtocol',
     'ContainerGroupIpAddressType',
     'OperatingSystemTypes',
     'LogAnalyticsLogType',
+    'ContainerGroupSku',
     'ContainerInstanceOperationsOrigin',
 ]

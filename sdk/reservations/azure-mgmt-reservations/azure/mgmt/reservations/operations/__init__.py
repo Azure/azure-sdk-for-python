@@ -10,9 +10,7 @@
 # --------------------------------------------------------------------------
 
 from ._quota_operations import QuotaOperations
-from ._quota_request_operations import QuotaRequestOperations
-from ._quotas_operations import QuotasOperations
-from ._quota_requests_operations import QuotaRequestsOperations
+from ._quota_request_status_operations import QuotaRequestStatusOperations
 from ._auto_quota_increase_operations import AutoQuotaIncreaseOperations
 from ._reservation_operations import ReservationOperations
 from ._reservation_order_operations import ReservationOrderOperations
@@ -21,9 +19,7 @@ from ._azure_reservation_api_operations import AzureReservationAPIOperationsMixi
 
 __all__ = [
     'QuotaOperations',
-    'QuotaRequestOperations',
-    'QuotasOperations',
-    'QuotaRequestsOperations',
+    'QuotaRequestStatusOperations',
     'AutoQuotaIncreaseOperations',
     'ReservationOperations',
     'ReservationOrderOperations',

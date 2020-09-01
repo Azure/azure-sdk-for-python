@@ -12,13 +12,7 @@ For the older Azure Service Management (ASM) libraries, see
 library.
 
 For a more complete set of Azure libraries, see the
-[azure](https://pypi.python.org/pypi/azure) bundle package.
-
-## Usage
-
-For code examples, see [AzureStack
-Management](https://docs.microsoft.com/python/api/overview/azure/azurestack)
-on docs.microsoft.com.
+[azure sdk python release](https://aka.ms/azsdk/python/all).
 
 ## Provide Feedback
 

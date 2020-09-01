@@ -1,0 +1,2320 @@
+interactions:
+- request:
+    body: 'b''{"location": "eastus", "tags": {"key1": "value1"}, "properties": {"configServerProperties":
+      {"configServer": {"gitProperty": {"uri": "https://github.com/Azure-Samples/piggymetrics-config.git",
+      "label": "master", "searchPaths": ["/"]}}}, "trace": {"enabled": true, "appInsightInstrumentationKey":
+      "00000000-0000-0000-0000-000000000000"}}}'''
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '337'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.8.2 (Windows-10-10.0.19041-SP0) msrest/0.6.17 msrest_azure/0.6.3
+        azure-mgmt-appplatform/1.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/Spring/myservice1?api-version=2019-05-01-preview
+  response:
+    body:
+      string: '{"properties":{"provisioningState":"Creating","configServerProperties":{"state":"Succeeded","configServer":{"gitProperty":{"uri":"https://github.com/Azure-Samples/piggymetrics-config.git","label":"master","searchPaths":["/"]}}},"trace":{"state":"Succeeded","enabled":true,"appInsightInstrumentationKey":"00000000-0000-0000-0000-000000000000"},"version":2,"serviceId":"aaa141e95c3b40c1a670c80c03f78b25"},"type":"Microsoft.AppPlatform/Spring","sku":{"name":"S0","tier":"Standard"},"location":"eastus","tags":{"key1":"value1"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/Spring/myservice1","name":"myservice1"}'
+    headers:
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationStatus/myservice1/operationId/e25b0452-d690-4675-a6a2-5a865e09d39f?api-version=2019-05-01-preview
+      cache-control:
+      - no-cache
+      content-length:
+      - '738'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 25 Aug 2020 03:29:48 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationResults/e25b0452-d690-4675-a6a2-5a865e09d39f/Spring/myservice1?api-version=2019-05-01-preview
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.17.7
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-resource-requests:
+      - '1199'
+      x-rp-server-mvid:
+      - d8cff8a2-0549-4ee1-8c3d-fa9d1b5306d8
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.8.2 (Windows-10-10.0.19041-SP0) msrest/0.6.17 msrest_azure/0.6.3
+        azure-mgmt-appplatform/1.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationStatus/myservice1/operationId/e25b0452-d690-4675-a6a2-5a865e09d39f?api-version=2019-05-01-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationStatus/myservice1/operationId/e25b0452-d690-4675-a6a2-5a865e09d39f","name":"e25b0452-d690-4675-a6a2-5a865e09d39f","status":"Running","startTime":"2020-08-25T03:29:41.6889988Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '378'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 25 Aug 2020 03:30:19 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.17.7
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-rp-server-mvid:
+      - d8cff8a2-0549-4ee1-8c3d-fa9d1b5306d8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.8.2 (Windows-10-10.0.19041-SP0) msrest/0.6.17 msrest_azure/0.6.3
+        azure-mgmt-appplatform/1.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationStatus/myservice1/operationId/e25b0452-d690-4675-a6a2-5a865e09d39f?api-version=2019-05-01-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationStatus/myservice1/operationId/e25b0452-d690-4675-a6a2-5a865e09d39f","name":"e25b0452-d690-4675-a6a2-5a865e09d39f","status":"Running","startTime":"2020-08-25T03:29:41.6889988Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '378'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 25 Aug 2020 03:30:50 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.17.7
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-rp-server-mvid:
+      - d8cff8a2-0549-4ee1-8c3d-fa9d1b5306d8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.8.2 (Windows-10-10.0.19041-SP0) msrest/0.6.17 msrest_azure/0.6.3
+        azure-mgmt-appplatform/1.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationStatus/myservice1/operationId/e25b0452-d690-4675-a6a2-5a865e09d39f?api-version=2019-05-01-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationStatus/myservice1/operationId/e25b0452-d690-4675-a6a2-5a865e09d39f","name":"e25b0452-d690-4675-a6a2-5a865e09d39f","status":"Running","startTime":"2020-08-25T03:29:41.6889988Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '378'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 25 Aug 2020 03:31:21 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.17.7
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-rp-server-mvid:
+      - d8cff8a2-0549-4ee1-8c3d-fa9d1b5306d8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.8.2 (Windows-10-10.0.19041-SP0) msrest/0.6.17 msrest_azure/0.6.3
+        azure-mgmt-appplatform/1.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationStatus/myservice1/operationId/e25b0452-d690-4675-a6a2-5a865e09d39f?api-version=2019-05-01-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationStatus/myservice1/operationId/e25b0452-d690-4675-a6a2-5a865e09d39f","name":"e25b0452-d690-4675-a6a2-5a865e09d39f","status":"Running","startTime":"2020-08-25T03:29:41.6889988Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '378'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 25 Aug 2020 03:31:51 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.17.7
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-rp-server-mvid:
+      - d8cff8a2-0549-4ee1-8c3d-fa9d1b5306d8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.8.2 (Windows-10-10.0.19041-SP0) msrest/0.6.17 msrest_azure/0.6.3
+        azure-mgmt-appplatform/1.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationStatus/myservice1/operationId/e25b0452-d690-4675-a6a2-5a865e09d39f?api-version=2019-05-01-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationStatus/myservice1/operationId/e25b0452-d690-4675-a6a2-5a865e09d39f","name":"e25b0452-d690-4675-a6a2-5a865e09d39f","status":"Succeeded","startTime":"2020-08-25T03:29:41.6889988Z","endTime":"2020-08-25T03:32:19.3045981Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '421'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 25 Aug 2020 03:32:21 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.17.7
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-rp-server-mvid:
+      - d8cff8a2-0549-4ee1-8c3d-fa9d1b5306d8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.8.2 (Windows-10-10.0.19041-SP0) msrest/0.6.17 msrest_azure/0.6.3
+        azure-mgmt-appplatform/1.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/Spring/myservice1?api-version=2019-05-01-preview
+  response:
+    body:
+      string: '{"properties":{"provisioningState":"Succeeded","configServerProperties":{"state":"Succeeded","configServer":{"gitProperty":{"uri":"https://github.com/Azure-Samples/piggymetrics-config.git","label":"master","searchPaths":["/"]}}},"trace":{"state":"Succeeded","enabled":true,"appInsightInstrumentationKey":"00000000-0000-0000-0000-000000000000"},"version":2,"serviceId":"aaa141e95c3b40c1a670c80c03f78b25"},"type":"Microsoft.AppPlatform/Spring","sku":{"name":"S0","tier":"Standard"},"location":"eastus","tags":{"key1":"value1"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/Spring/myservice1","name":"myservice1"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '739'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 25 Aug 2020 03:32:21 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.17.7
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-resource-requests:
+      - '11999'
+      x-rp-server-mvid:
+      - d8cff8a2-0549-4ee1-8c3d-fa9d1b5306d8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '2'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.8.2 (Windows-10-10.0.19041-SP0) msrest/0.6.17 msrest_azure/0.6.3
+        azure-mgmt-appplatform/1.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/Spring/myservice1/apps/myapp?api-version=2019-05-01-preview
+  response:
+    body:
+      string: '{"properties":{"public":false,"provisioningState":"Succeeded","fqdn":"myservice1.azuremicroservices.io","httpsOnly":false,"createdTime":"2020-08-25T03:32:23.817Z","temporaryDisk":{"sizeInGB":5,"mountPath":"/tmp"},"persistentDisk":{"sizeInGB":0,"mountPath":"/persistent"}},"type":"Microsoft.AppPlatform/Spring/apps","identity":null,"location":"eastus","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/Spring/myservice1/apps/myapp","name":"myapp"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '571'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 25 Aug 2020 03:32:23 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.17.7
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-resource-requests:
+      - '1199'
+      x-rp-server-mvid:
+      - d8cff8a2-0549-4ee1-8c3d-fa9d1b5306d8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.8.2 (Windows-10-10.0.19041-SP0) msrest/0.6.17 msrest_azure/0.6.3
+        azure-mgmt-appplatform/1.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/Spring/myservice1/apps/myapp?api-version=2019-05-01-preview
+  response:
+    body:
+      string: '{"properties":{"public":false,"provisioningState":"Succeeded","fqdn":"myservice1.azuremicroservices.io","httpsOnly":false,"createdTime":"2020-08-25T03:32:23.817Z","temporaryDisk":{"sizeInGB":5,"mountPath":"/tmp"},"persistentDisk":{"sizeInGB":0,"mountPath":"/persistent"}},"type":"Microsoft.AppPlatform/Spring/apps","identity":null,"location":"eastus","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/Spring/myservice1/apps/myapp","name":"myapp"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '571'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 25 Aug 2020 03:32:23 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.17.7
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-resource-requests:
+      - '11999'
+      x-rp-server-mvid:
+      - d8cff8a2-0549-4ee1-8c3d-fa9d1b5306d8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.8.2 (Windows-10-10.0.19041-SP0) msrest/0.6.17 msrest_azure/0.6.3
+        azure-mgmt-appplatform/1.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/Spring/myservice1?api-version=2019-05-01-preview
+  response:
+    body:
+      string: '{"properties":{"provisioningState":"Succeeded","configServerProperties":{"state":"Succeeded","configServer":{"gitProperty":{"uri":"https://github.com/Azure-Samples/piggymetrics-config.git","label":"master","searchPaths":["/"]}}},"trace":{"state":"Succeeded","enabled":true,"appInsightInstrumentationKey":"00000000-0000-0000-0000-000000000000"},"version":2,"serviceId":"aaa141e95c3b40c1a670c80c03f78b25"},"type":"Microsoft.AppPlatform/Spring","sku":{"name":"S0","tier":"Standard"},"location":"eastus","tags":{"key1":"value1"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/Spring/myservice1","name":"myservice1"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '739'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 25 Aug 2020 03:32:24 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.17.7
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-resource-requests:
+      - '11999'
+      x-rp-server-mvid:
+      - d8cff8a2-0549-4ee1-8c3d-fa9d1b5306d8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - python/3.8.2 (Windows-10-10.0.19041-SP0) msrest/0.6.17 msrest_azure/0.6.3
+        azure-mgmt-appplatform/1.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/Spring/myservice1/apps/myapp/getResourceUploadUrl?api-version=2019-05-01-preview
+  response:
+    body:
+      string: '{"relativePath":"resources/c1b70247946b22975617cfe4f3fdebe8bad9114057300be745f0632c007d2cc9-2020082503-d5df70af-ce3b-419f-b44e-ad57c53b80bf","uploadUrl":"https://61788a894ad0456885fe1729.file.core.windows.net/aaa141e95c3b40c1a670c80c03f78b25/resources/c1b70247946b22975617cfe4f3fdebe8bad9114057300be745f0632c007d2cc9-2020082503-d5df70af-ce3b-419f-b44e-ad57c53b80bf?sv=2018-03-28&sr=f&sig=JvTCvoPzSFXDfwbh2QEG3JDq7uMT6Oj8J1uUA%2BRWPo8%3D&se=2020-08-25T05%3A32%3A25Z&sp=w"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '471'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 25 Aug 2020 03:32:24 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.17.7
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
+      x-rp-server-mvid:
+      - d8cff8a2-0549-4ee1-8c3d-fa9d1b5306d8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - python/3.8.2 (Windows-10-10.0.19041-SP0) msrest/0.6.17 msrest_azure/0.6.3
+        azure-mgmt-appplatform/1.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/Spring/myservice1/disableTestEndpoint?api-version=2019-05-01-preview
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '0'
+      date:
+      - Tue, 25 Aug 2020 03:32:25 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.17.7
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1198'
+      x-rp-server-mvid:
+      - d8cff8a2-0549-4ee1-8c3d-fa9d1b5306d8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - python/3.8.2 (Windows-10-10.0.19041-SP0) msrest/0.6.17 msrest_azure/0.6.3
+        azure-mgmt-appplatform/1.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/Spring/myservice1/enableTestEndpoint?api-version=2019-05-01-preview
+  response:
+    body:
+      string: '{"primaryKey":"u7a6pjzYDXc7Gb8jpnENnxF1L6UmOJcVT0lBak7izFKRksqdiiocnnizclag3D44","secondaryKey":"Sunu63cFLaoeVbMjWYVzKi3lEZMy3AOCWpJTXkIKjSHuFGVfhbzsnsSTFVqFpV0M","primaryTestEndpoint":"https://primary:u7a6pjzYDXc7Gb8jpnENnxF1L6UmOJcVT0lBak7izFKRksqdiiocnnizclag3D44@myservice1.test.azuremicroservices.io","secondaryTestEndpoint":"https://secondary:Sunu63cFLaoeVbMjWYVzKi3lEZMy3AOCWpJTXkIKjSHuFGVfhbzsnsSTFVqFpV0M@myservice1.test.azuremicroservices.io","enabled":true}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '468'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 25 Aug 2020 03:32:26 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.17.7
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1197'
+      x-rp-server-mvid:
+      - d8cff8a2-0549-4ee1-8c3d-fa9d1b5306d8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"keyType": "Primary"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '22'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.8.2 (Windows-10-10.0.19041-SP0) msrest/0.6.17 msrest_azure/0.6.3
+        azure-mgmt-appplatform/1.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/Spring/myservice1/regenerateTestKey?api-version=2019-05-01-preview
+  response:
+    body:
+      string: '{"primaryKey":"4edMZgJ0HADy1eCaWZean3nKZeZ04ERtXrz2ttdU4XoJq5tK3dKyeXMddRQKWT1J","secondaryKey":"Sunu63cFLaoeVbMjWYVzKi3lEZMy3AOCWpJTXkIKjSHuFGVfhbzsnsSTFVqFpV0M","primaryTestEndpoint":"https://primary:4edMZgJ0HADy1eCaWZean3nKZeZ04ERtXrz2ttdU4XoJq5tK3dKyeXMddRQKWT1J@myservice1.test.azuremicroservices.io","secondaryTestEndpoint":"https://secondary:Sunu63cFLaoeVbMjWYVzKi3lEZMy3AOCWpJTXkIKjSHuFGVfhbzsnsSTFVqFpV0M@myservice1.test.azuremicroservices.io","enabled":true}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '468'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 25 Aug 2020 03:32:26 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.17.7
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1196'
+      x-rp-server-mvid:
+      - d8cff8a2-0549-4ee1-8c3d-fa9d1b5306d8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - python/3.8.2 (Windows-10-10.0.19041-SP0) msrest/0.6.17 msrest_azure/0.6.3
+        azure-mgmt-appplatform/1.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/Spring/myservice1/listTestKeys?api-version=2019-05-01-preview
+  response:
+    body:
+      string: '{"primaryKey":"4edMZgJ0HADy1eCaWZean3nKZeZ04ERtXrz2ttdU4XoJq5tK3dKyeXMddRQKWT1J","secondaryKey":"Sunu63cFLaoeVbMjWYVzKi3lEZMy3AOCWpJTXkIKjSHuFGVfhbzsnsSTFVqFpV0M","primaryTestEndpoint":"https://primary:4edMZgJ0HADy1eCaWZean3nKZeZ04ERtXrz2ttdU4XoJq5tK3dKyeXMddRQKWT1J@myservice1.test.azuremicroservices.io","secondaryTestEndpoint":"https://secondary:Sunu63cFLaoeVbMjWYVzKi3lEZMy3AOCWpJTXkIKjSHuFGVfhbzsnsSTFVqFpV0M@myservice1.test.azuremicroservices.io","enabled":true}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '468'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 25 Aug 2020 03:32:27 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.17.7
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1195'
+      x-rp-server-mvid:
+      - d8cff8a2-0549-4ee1-8c3d-fa9d1b5306d8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"type": "Microsoft.AppPlatform/Spring", "name": "myservice1"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '62'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.8.2 (Windows-10-10.0.19041-SP0) msrest/0.6.17 msrest_azure/0.6.3
+        azure-mgmt-appplatform/1.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.AppPlatform/locations/eastus/checkNameAvailability?api-version=2019-05-01-preview
+  response:
+    body:
+      string: '{"nameAvailable":false,"reason":"AlreadyExists","message":"Resource
+        name already exists."}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '90'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 25 Aug 2020 03:32:28 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.17.7
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1194'
+      x-rp-server-mvid:
+      - d8cff8a2-0549-4ee1-8c3d-fa9d1b5306d8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - python/3.8.2 (Windows-10-10.0.19041-SP0) msrest/0.6.17 msrest_azure/0.6.3
+        azure-mgmt-appplatform/1.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/Spring/myservice1/apps/myapp?api-version=2019-05-01-preview
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '0'
+      date:
+      - Tue, 25 Aug 2020 03:32:29 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.17.7
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-deletes:
+      - '14999'
+      x-rp-server-mvid:
+      - d8cff8a2-0549-4ee1-8c3d-fa9d1b5306d8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - python/3.8.2 (Windows-10-10.0.19041-SP0) msrest/0.6.17 msrest_azure/0.6.3
+        azure-mgmt-appplatform/1.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/Spring/myservice1?api-version=2019-05-01-preview
+  response:
+    body:
+      string: ''
+    headers:
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationStatus/myservice1/operationId/2bc263a9-9b7c-4321-97da-b51e683671cd?api-version=2019-05-01-preview
+      cache-control:
+      - no-cache
+      content-length:
+      - '0'
+      date:
+      - Tue, 25 Aug 2020 03:32:30 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationResults/2bc263a9-9b7c-4321-97da-b51e683671cd/Spring/myservice1?api-version=2019-05-01-preview
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.17.7
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-deletes:
+      - '14998'
+      x-rp-server-mvid:
+      - d8cff8a2-0549-4ee1-8c3d-fa9d1b5306d8
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.8.2 (Windows-10-10.0.19041-SP0) msrest/0.6.17 msrest_azure/0.6.3
+        azure-mgmt-appplatform/1.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationStatus/myservice1/operationId/2bc263a9-9b7c-4321-97da-b51e683671cd?api-version=2019-05-01-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationStatus/myservice1/operationId/2bc263a9-9b7c-4321-97da-b51e683671cd","name":"2bc263a9-9b7c-4321-97da-b51e683671cd","status":"Running","startTime":"2020-08-25T03:32:31.0210451Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '378'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 25 Aug 2020 03:33:02 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.17.7
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-rp-server-mvid:
+      - d8cff8a2-0549-4ee1-8c3d-fa9d1b5306d8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.8.2 (Windows-10-10.0.19041-SP0) msrest/0.6.17 msrest_azure/0.6.3
+        azure-mgmt-appplatform/1.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationStatus/myservice1/operationId/2bc263a9-9b7c-4321-97da-b51e683671cd?api-version=2019-05-01-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationStatus/myservice1/operationId/2bc263a9-9b7c-4321-97da-b51e683671cd","name":"2bc263a9-9b7c-4321-97da-b51e683671cd","status":"Running","startTime":"2020-08-25T03:32:31.0210451Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '378'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 25 Aug 2020 03:33:32 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.17.7
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-rp-server-mvid:
+      - d8cff8a2-0549-4ee1-8c3d-fa9d1b5306d8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.8.2 (Windows-10-10.0.19041-SP0) msrest/0.6.17 msrest_azure/0.6.3
+        azure-mgmt-appplatform/1.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationStatus/myservice1/operationId/2bc263a9-9b7c-4321-97da-b51e683671cd?api-version=2019-05-01-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationStatus/myservice1/operationId/2bc263a9-9b7c-4321-97da-b51e683671cd","name":"2bc263a9-9b7c-4321-97da-b51e683671cd","status":"Running","startTime":"2020-08-25T03:32:31.0210451Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '378'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 25 Aug 2020 03:34:02 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.17.7
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-rp-server-mvid:
+      - d8cff8a2-0549-4ee1-8c3d-fa9d1b5306d8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.8.2 (Windows-10-10.0.19041-SP0) msrest/0.6.17 msrest_azure/0.6.3
+        azure-mgmt-appplatform/1.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationStatus/myservice1/operationId/2bc263a9-9b7c-4321-97da-b51e683671cd?api-version=2019-05-01-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationStatus/myservice1/operationId/2bc263a9-9b7c-4321-97da-b51e683671cd","name":"2bc263a9-9b7c-4321-97da-b51e683671cd","status":"Running","startTime":"2020-08-25T03:32:31.0210451Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '378'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 25 Aug 2020 03:34:33 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.17.7
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-rp-server-mvid:
+      - d8cff8a2-0549-4ee1-8c3d-fa9d1b5306d8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.8.2 (Windows-10-10.0.19041-SP0) msrest/0.6.17 msrest_azure/0.6.3
+        azure-mgmt-appplatform/1.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationStatus/myservice1/operationId/2bc263a9-9b7c-4321-97da-b51e683671cd?api-version=2019-05-01-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationStatus/myservice1/operationId/2bc263a9-9b7c-4321-97da-b51e683671cd","name":"2bc263a9-9b7c-4321-97da-b51e683671cd","status":"Running","startTime":"2020-08-25T03:32:31.0210451Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '378'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 25 Aug 2020 03:35:03 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.17.7
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-rp-server-mvid:
+      - d8cff8a2-0549-4ee1-8c3d-fa9d1b5306d8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.8.2 (Windows-10-10.0.19041-SP0) msrest/0.6.17 msrest_azure/0.6.3
+        azure-mgmt-appplatform/1.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationStatus/myservice1/operationId/2bc263a9-9b7c-4321-97da-b51e683671cd?api-version=2019-05-01-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationStatus/myservice1/operationId/2bc263a9-9b7c-4321-97da-b51e683671cd","name":"2bc263a9-9b7c-4321-97da-b51e683671cd","status":"Running","startTime":"2020-08-25T03:32:31.0210451Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '378'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 25 Aug 2020 03:35:33 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.17.7
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-rp-server-mvid:
+      - d8cff8a2-0549-4ee1-8c3d-fa9d1b5306d8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.8.2 (Windows-10-10.0.19041-SP0) msrest/0.6.17 msrest_azure/0.6.3
+        azure-mgmt-appplatform/1.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationStatus/myservice1/operationId/2bc263a9-9b7c-4321-97da-b51e683671cd?api-version=2019-05-01-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationStatus/myservice1/operationId/2bc263a9-9b7c-4321-97da-b51e683671cd","name":"2bc263a9-9b7c-4321-97da-b51e683671cd","status":"Running","startTime":"2020-08-25T03:32:31.0210451Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '378'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 25 Aug 2020 03:36:03 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.17.7
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-rp-server-mvid:
+      - d8cff8a2-0549-4ee1-8c3d-fa9d1b5306d8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.8.2 (Windows-10-10.0.19041-SP0) msrest/0.6.17 msrest_azure/0.6.3
+        azure-mgmt-appplatform/1.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationStatus/myservice1/operationId/2bc263a9-9b7c-4321-97da-b51e683671cd?api-version=2019-05-01-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationStatus/myservice1/operationId/2bc263a9-9b7c-4321-97da-b51e683671cd","name":"2bc263a9-9b7c-4321-97da-b51e683671cd","status":"Running","startTime":"2020-08-25T03:32:31.0210451Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '378'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 25 Aug 2020 03:36:34 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.17.7
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-rp-server-mvid:
+      - d8cff8a2-0549-4ee1-8c3d-fa9d1b5306d8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.8.2 (Windows-10-10.0.19041-SP0) msrest/0.6.17 msrest_azure/0.6.3
+        azure-mgmt-appplatform/1.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationStatus/myservice1/operationId/2bc263a9-9b7c-4321-97da-b51e683671cd?api-version=2019-05-01-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationStatus/myservice1/operationId/2bc263a9-9b7c-4321-97da-b51e683671cd","name":"2bc263a9-9b7c-4321-97da-b51e683671cd","status":"Running","startTime":"2020-08-25T03:32:31.0210451Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '378'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 25 Aug 2020 03:37:04 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.17.7
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-rp-server-mvid:
+      - d8cff8a2-0549-4ee1-8c3d-fa9d1b5306d8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.8.2 (Windows-10-10.0.19041-SP0) msrest/0.6.17 msrest_azure/0.6.3
+        azure-mgmt-appplatform/1.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationStatus/myservice1/operationId/2bc263a9-9b7c-4321-97da-b51e683671cd?api-version=2019-05-01-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationStatus/myservice1/operationId/2bc263a9-9b7c-4321-97da-b51e683671cd","name":"2bc263a9-9b7c-4321-97da-b51e683671cd","status":"Running","startTime":"2020-08-25T03:32:31.0210451Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '378'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 25 Aug 2020 03:37:35 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.17.7
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-rp-server-mvid:
+      - d8cff8a2-0549-4ee1-8c3d-fa9d1b5306d8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.8.2 (Windows-10-10.0.19041-SP0) msrest/0.6.17 msrest_azure/0.6.3
+        azure-mgmt-appplatform/1.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationStatus/myservice1/operationId/2bc263a9-9b7c-4321-97da-b51e683671cd?api-version=2019-05-01-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationStatus/myservice1/operationId/2bc263a9-9b7c-4321-97da-b51e683671cd","name":"2bc263a9-9b7c-4321-97da-b51e683671cd","status":"Running","startTime":"2020-08-25T03:32:31.0210451Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '378'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 25 Aug 2020 03:38:05 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.17.7
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-rp-server-mvid:
+      - d8cff8a2-0549-4ee1-8c3d-fa9d1b5306d8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.8.2 (Windows-10-10.0.19041-SP0) msrest/0.6.17 msrest_azure/0.6.3
+        azure-mgmt-appplatform/1.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationStatus/myservice1/operationId/2bc263a9-9b7c-4321-97da-b51e683671cd?api-version=2019-05-01-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationStatus/myservice1/operationId/2bc263a9-9b7c-4321-97da-b51e683671cd","name":"2bc263a9-9b7c-4321-97da-b51e683671cd","status":"Running","startTime":"2020-08-25T03:32:31.0210451Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '378'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 25 Aug 2020 03:38:35 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.17.7
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-rp-server-mvid:
+      - d8cff8a2-0549-4ee1-8c3d-fa9d1b5306d8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.8.2 (Windows-10-10.0.19041-SP0) msrest/0.6.17 msrest_azure/0.6.3
+        azure-mgmt-appplatform/1.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationStatus/myservice1/operationId/2bc263a9-9b7c-4321-97da-b51e683671cd?api-version=2019-05-01-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationStatus/myservice1/operationId/2bc263a9-9b7c-4321-97da-b51e683671cd","name":"2bc263a9-9b7c-4321-97da-b51e683671cd","status":"Running","startTime":"2020-08-25T03:32:31.0210451Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '378'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 25 Aug 2020 03:39:07 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.17.7
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-rp-server-mvid:
+      - d8cff8a2-0549-4ee1-8c3d-fa9d1b5306d8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.8.2 (Windows-10-10.0.19041-SP0) msrest/0.6.17 msrest_azure/0.6.3
+        azure-mgmt-appplatform/1.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationStatus/myservice1/operationId/2bc263a9-9b7c-4321-97da-b51e683671cd?api-version=2019-05-01-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationStatus/myservice1/operationId/2bc263a9-9b7c-4321-97da-b51e683671cd","name":"2bc263a9-9b7c-4321-97da-b51e683671cd","status":"Running","startTime":"2020-08-25T03:32:31.0210451Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '378'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 25 Aug 2020 03:39:37 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.17.7
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-rp-server-mvid:
+      - d8cff8a2-0549-4ee1-8c3d-fa9d1b5306d8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.8.2 (Windows-10-10.0.19041-SP0) msrest/0.6.17 msrest_azure/0.6.3
+        azure-mgmt-appplatform/1.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationStatus/myservice1/operationId/2bc263a9-9b7c-4321-97da-b51e683671cd?api-version=2019-05-01-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationStatus/myservice1/operationId/2bc263a9-9b7c-4321-97da-b51e683671cd","name":"2bc263a9-9b7c-4321-97da-b51e683671cd","status":"Running","startTime":"2020-08-25T03:32:31.0210451Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '378'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 25 Aug 2020 03:40:07 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.17.7
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-rp-server-mvid:
+      - d8cff8a2-0549-4ee1-8c3d-fa9d1b5306d8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.8.2 (Windows-10-10.0.19041-SP0) msrest/0.6.17 msrest_azure/0.6.3
+        azure-mgmt-appplatform/1.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationStatus/myservice1/operationId/2bc263a9-9b7c-4321-97da-b51e683671cd?api-version=2019-05-01-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationStatus/myservice1/operationId/2bc263a9-9b7c-4321-97da-b51e683671cd","name":"2bc263a9-9b7c-4321-97da-b51e683671cd","status":"Running","startTime":"2020-08-25T03:32:31.0210451Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '378'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 25 Aug 2020 03:40:37 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.17.7
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-rp-server-mvid:
+      - d8cff8a2-0549-4ee1-8c3d-fa9d1b5306d8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.8.2 (Windows-10-10.0.19041-SP0) msrest/0.6.17 msrest_azure/0.6.3
+        azure-mgmt-appplatform/1.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationStatus/myservice1/operationId/2bc263a9-9b7c-4321-97da-b51e683671cd?api-version=2019-05-01-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationStatus/myservice1/operationId/2bc263a9-9b7c-4321-97da-b51e683671cd","name":"2bc263a9-9b7c-4321-97da-b51e683671cd","status":"Running","startTime":"2020-08-25T03:32:31.0210451Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '378'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 25 Aug 2020 03:41:08 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.17.7
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-rp-server-mvid:
+      - d8cff8a2-0549-4ee1-8c3d-fa9d1b5306d8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.8.2 (Windows-10-10.0.19041-SP0) msrest/0.6.17 msrest_azure/0.6.3
+        azure-mgmt-appplatform/1.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationStatus/myservice1/operationId/2bc263a9-9b7c-4321-97da-b51e683671cd?api-version=2019-05-01-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationStatus/myservice1/operationId/2bc263a9-9b7c-4321-97da-b51e683671cd","name":"2bc263a9-9b7c-4321-97da-b51e683671cd","status":"Running","startTime":"2020-08-25T03:32:31.0210451Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '378'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 25 Aug 2020 03:41:38 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.17.7
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-rp-server-mvid:
+      - d8cff8a2-0549-4ee1-8c3d-fa9d1b5306d8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.8.2 (Windows-10-10.0.19041-SP0) msrest/0.6.17 msrest_azure/0.6.3
+        azure-mgmt-appplatform/1.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationStatus/myservice1/operationId/2bc263a9-9b7c-4321-97da-b51e683671cd?api-version=2019-05-01-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationStatus/myservice1/operationId/2bc263a9-9b7c-4321-97da-b51e683671cd","name":"2bc263a9-9b7c-4321-97da-b51e683671cd","status":"Running","startTime":"2020-08-25T03:32:31.0210451Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '378'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 25 Aug 2020 03:42:09 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.17.7
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-rp-server-mvid:
+      - d8cff8a2-0549-4ee1-8c3d-fa9d1b5306d8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.8.2 (Windows-10-10.0.19041-SP0) msrest/0.6.17 msrest_azure/0.6.3
+        azure-mgmt-appplatform/1.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationStatus/myservice1/operationId/2bc263a9-9b7c-4321-97da-b51e683671cd?api-version=2019-05-01-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationStatus/myservice1/operationId/2bc263a9-9b7c-4321-97da-b51e683671cd","name":"2bc263a9-9b7c-4321-97da-b51e683671cd","status":"Running","startTime":"2020-08-25T03:32:31.0210451Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '378'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 25 Aug 2020 03:42:39 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.17.7
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-rp-server-mvid:
+      - d8cff8a2-0549-4ee1-8c3d-fa9d1b5306d8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.8.2 (Windows-10-10.0.19041-SP0) msrest/0.6.17 msrest_azure/0.6.3
+        azure-mgmt-appplatform/1.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationStatus/myservice1/operationId/2bc263a9-9b7c-4321-97da-b51e683671cd?api-version=2019-05-01-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationStatus/myservice1/operationId/2bc263a9-9b7c-4321-97da-b51e683671cd","name":"2bc263a9-9b7c-4321-97da-b51e683671cd","status":"Running","startTime":"2020-08-25T03:32:31.0210451Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '378'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 25 Aug 2020 03:43:10 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.17.7
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-rp-server-mvid:
+      - d8cff8a2-0549-4ee1-8c3d-fa9d1b5306d8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.8.2 (Windows-10-10.0.19041-SP0) msrest/0.6.17 msrest_azure/0.6.3
+        azure-mgmt-appplatform/1.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationStatus/myservice1/operationId/2bc263a9-9b7c-4321-97da-b51e683671cd?api-version=2019-05-01-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationStatus/myservice1/operationId/2bc263a9-9b7c-4321-97da-b51e683671cd","name":"2bc263a9-9b7c-4321-97da-b51e683671cd","status":"Running","startTime":"2020-08-25T03:32:31.0210451Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '378'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 25 Aug 2020 03:43:40 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.17.7
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-rp-server-mvid:
+      - d8cff8a2-0549-4ee1-8c3d-fa9d1b5306d8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.8.2 (Windows-10-10.0.19041-SP0) msrest/0.6.17 msrest_azure/0.6.3
+        azure-mgmt-appplatform/1.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationStatus/myservice1/operationId/2bc263a9-9b7c-4321-97da-b51e683671cd?api-version=2019-05-01-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationStatus/myservice1/operationId/2bc263a9-9b7c-4321-97da-b51e683671cd","name":"2bc263a9-9b7c-4321-97da-b51e683671cd","status":"Running","startTime":"2020-08-25T03:32:31.0210451Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '378'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 25 Aug 2020 03:44:10 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.17.7
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-rp-server-mvid:
+      - d8cff8a2-0549-4ee1-8c3d-fa9d1b5306d8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.8.2 (Windows-10-10.0.19041-SP0) msrest/0.6.17 msrest_azure/0.6.3
+        azure-mgmt-appplatform/1.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationStatus/myservice1/operationId/2bc263a9-9b7c-4321-97da-b51e683671cd?api-version=2019-05-01-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationStatus/myservice1/operationId/2bc263a9-9b7c-4321-97da-b51e683671cd","name":"2bc263a9-9b7c-4321-97da-b51e683671cd","status":"Running","startTime":"2020-08-25T03:32:31.0210451Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '378'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 25 Aug 2020 03:44:40 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.17.7
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-rp-server-mvid:
+      - d8cff8a2-0549-4ee1-8c3d-fa9d1b5306d8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.8.2 (Windows-10-10.0.19041-SP0) msrest/0.6.17 msrest_azure/0.6.3
+        azure-mgmt-appplatform/1.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationStatus/myservice1/operationId/2bc263a9-9b7c-4321-97da-b51e683671cd?api-version=2019-05-01-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationStatus/myservice1/operationId/2bc263a9-9b7c-4321-97da-b51e683671cd","name":"2bc263a9-9b7c-4321-97da-b51e683671cd","status":"Running","startTime":"2020-08-25T03:32:31.0210451Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '378'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 25 Aug 2020 03:45:11 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.17.7
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-rp-server-mvid:
+      - d8cff8a2-0549-4ee1-8c3d-fa9d1b5306d8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.8.2 (Windows-10-10.0.19041-SP0) msrest/0.6.17 msrest_azure/0.6.3
+        azure-mgmt-appplatform/1.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationStatus/myservice1/operationId/2bc263a9-9b7c-4321-97da-b51e683671cd?api-version=2019-05-01-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationStatus/myservice1/operationId/2bc263a9-9b7c-4321-97da-b51e683671cd","name":"2bc263a9-9b7c-4321-97da-b51e683671cd","status":"Running","startTime":"2020-08-25T03:32:31.0210451Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '378'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 25 Aug 2020 03:45:41 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.17.7
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-rp-server-mvid:
+      - d8cff8a2-0549-4ee1-8c3d-fa9d1b5306d8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.8.2 (Windows-10-10.0.19041-SP0) msrest/0.6.17 msrest_azure/0.6.3
+        azure-mgmt-appplatform/1.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationStatus/myservice1/operationId/2bc263a9-9b7c-4321-97da-b51e683671cd?api-version=2019-05-01-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationStatus/myservice1/operationId/2bc263a9-9b7c-4321-97da-b51e683671cd","name":"2bc263a9-9b7c-4321-97da-b51e683671cd","status":"Running","startTime":"2020-08-25T03:32:31.0210451Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '378'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 25 Aug 2020 03:46:12 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.17.7
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-rp-server-mvid:
+      - d8cff8a2-0549-4ee1-8c3d-fa9d1b5306d8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.8.2 (Windows-10-10.0.19041-SP0) msrest/0.6.17 msrest_azure/0.6.3
+        azure-mgmt-appplatform/1.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationStatus/myservice1/operationId/2bc263a9-9b7c-4321-97da-b51e683671cd?api-version=2019-05-01-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationStatus/myservice1/operationId/2bc263a9-9b7c-4321-97da-b51e683671cd","name":"2bc263a9-9b7c-4321-97da-b51e683671cd","status":"Running","startTime":"2020-08-25T03:32:31.0210451Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '378'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 25 Aug 2020 03:46:42 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.17.7
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-rp-server-mvid:
+      - d8cff8a2-0549-4ee1-8c3d-fa9d1b5306d8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.8.2 (Windows-10-10.0.19041-SP0) msrest/0.6.17 msrest_azure/0.6.3
+        azure-mgmt-appplatform/1.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationStatus/myservice1/operationId/2bc263a9-9b7c-4321-97da-b51e683671cd?api-version=2019-05-01-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationStatus/myservice1/operationId/2bc263a9-9b7c-4321-97da-b51e683671cd","name":"2bc263a9-9b7c-4321-97da-b51e683671cd","status":"Running","startTime":"2020-08-25T03:32:31.0210451Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '378'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 25 Aug 2020 03:47:12 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.17.7
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-rp-server-mvid:
+      - d8cff8a2-0549-4ee1-8c3d-fa9d1b5306d8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.8.2 (Windows-10-10.0.19041-SP0) msrest/0.6.17 msrest_azure/0.6.3
+        azure-mgmt-appplatform/1.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationStatus/myservice1/operationId/2bc263a9-9b7c-4321-97da-b51e683671cd?api-version=2019-05-01-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationStatus/myservice1/operationId/2bc263a9-9b7c-4321-97da-b51e683671cd","name":"2bc263a9-9b7c-4321-97da-b51e683671cd","status":"Running","startTime":"2020-08-25T03:32:31.0210451Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '378'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 25 Aug 2020 03:47:43 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.17.7
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-rp-server-mvid:
+      - d8cff8a2-0549-4ee1-8c3d-fa9d1b5306d8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.8.2 (Windows-10-10.0.19041-SP0) msrest/0.6.17 msrest_azure/0.6.3
+        azure-mgmt-appplatform/1.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationStatus/myservice1/operationId/2bc263a9-9b7c-4321-97da-b51e683671cd?api-version=2019-05-01-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationStatus/myservice1/operationId/2bc263a9-9b7c-4321-97da-b51e683671cd","name":"2bc263a9-9b7c-4321-97da-b51e683671cd","status":"Running","startTime":"2020-08-25T03:32:31.0210451Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '378'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 25 Aug 2020 03:48:14 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.17.7
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-rp-server-mvid:
+      - d8cff8a2-0549-4ee1-8c3d-fa9d1b5306d8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.8.2 (Windows-10-10.0.19041-SP0) msrest/0.6.17 msrest_azure/0.6.3
+        azure-mgmt-appplatform/1.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationStatus/myservice1/operationId/2bc263a9-9b7c-4321-97da-b51e683671cd?api-version=2019-05-01-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_appplatform_2019_05_01_preview_test_appplatformd7d51774/providers/Microsoft.AppPlatform/locations/eastus/operationStatus/myservice1/operationId/2bc263a9-9b7c-4321-97da-b51e683671cd","name":"2bc263a9-9b7c-4321-97da-b51e683671cd","status":"Succeeded","startTime":"2020-08-25T03:32:31.0210451Z","endTime":"2020-08-25T03:48:25.3817396Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '421'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 25 Aug 2020 03:48:44 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx/1.17.7
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-rp-server-mvid:
+      - d8cff8a2-0549-4ee1-8c3d-fa9d1b5306d8
+    status:
+      code: 200
+      message: OK
+version: 1

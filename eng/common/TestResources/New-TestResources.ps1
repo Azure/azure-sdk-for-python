@@ -154,6 +154,9 @@ if ($ProvisionerApplicationId) {
     $subscriptionArgs = if ($SubscriptionId) {
         @{SubscriptionId = $SubscriptionId}
     }
+    else {
+        @{}
+    }
 
     $provisionerAccount = Retry {
         Connect-AzAccount -Force:$Force -Tenant $TenantId -Credential $provisionerCredential -ServicePrincipal -Environment $Environment @subscriptionArgs
@@ -161,7 +164,11 @@ if ($ProvisionerApplicationId) {
 
     $exitActions += {
         Write-Verbose "Logging out of service principal '$($provisionerAccount.Context.Account)'"
-        $null = Disconnect-AzAccount -AzureContext $provisionerAccount.Context
+
+        # Only attempt to disconnect if the -WhatIf flag was not set.  Otherwise, this call is not necessary and will fail.
+        if ($PSCmdlet.ShouldProcess($ProvisionerApplicationId)) {
+            $null = Disconnect-AzAccount -AzureContext $provisionerAccount.Context
+        }
     }
 }
 
@@ -175,7 +182,6 @@ if ($TestApplicationId -and !$TestApplicationOid) {
         $script:TestApplicationOid = $testServicePrincipal.Id
     }
 }
-
 
 # If the ServiceDirectory is an absolute path use the last directory name
 # (e.g. D:\foo\bar\ -> bar)
@@ -228,6 +234,13 @@ $resourceGroup = Retry {
 if ($resourceGroup.ProvisioningState -eq 'Succeeded') {
     # New-AzResourceGroup would've written an error and stopped the pipeline by default anyway.
     Write-Verbose "Successfully created resource group '$($resourceGroup.ResourceGroupName)'"
+}
+elseif (($resourceGroup -eq $null) -and (-not $PSCmdlet.ShouldProcess($resourceGroupName))) {
+    # If the -WhatIf flag was passed, there will be no resource group created.  Fake it.
+    $resourceGroup = [PSCustomObject]@{
+        ResourceGroupName = $resourceGroupName
+        Location = $Location
+    }
 }
 
 # Populate the template parameters and merge any additional specified.
@@ -299,6 +312,9 @@ foreach ($templateFile in $templateFiles) {
         "$($serviceDirectoryPrefix)RESOURCE_GROUP" = $resourceGroup.ResourceGroupName;
         "$($serviceDirectoryPrefix)LOCATION" = $resourceGroup.Location;
         "$($serviceDirectoryPrefix)ENVIRONMENT" = $context.Environment.Name;
+        "$($serviceDirectoryPrefix)AZURE_AUTHORITY_HOST" = $context.Environment.ActiveDirectoryAuthority;
+        "$($serviceDirectoryPrefix)RESOURCE_MANAGER_URL" = $context.Environment.ResourceManagerUrl;
+        "$($serviceDirectoryPrefix)SERVICE_MANAGEMENT_URL" = $context.Environment.ServiceManagementUrl;
     }
 
     foreach ($key in $deployment.Outputs.Keys) {
@@ -331,7 +347,7 @@ foreach ($templateFile in $templateFiles) {
     }
     else
     {
-        
+
         if (!$CI) {
             # Write an extra new line to isolate the environment variables for easy reading.
             Log "Persist the following environment variables based on your detected shell ($shell):`n"
@@ -340,7 +356,7 @@ foreach ($templateFile in $templateFiles) {
         foreach ($key in $deploymentOutputs.Keys)
         {
             $value = $deploymentOutputs[$key]
-            
+
             if ($CI) {
                 # Treat all ARM template output variables as secrets since "SecureString" variables do not set values.
                 # In order to mask secrets but set environment variables for any given ARM template, we set variables twice as shown below.

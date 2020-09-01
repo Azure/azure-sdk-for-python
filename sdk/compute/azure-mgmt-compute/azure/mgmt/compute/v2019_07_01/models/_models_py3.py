@@ -376,38 +376,17 @@ class AvailabilitySet(Resource):
 class UpdateResource(Model):
     """The Update Resource model definition.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
     :param tags: Resource tags
     :type tags: dict[str, str]
-    :ivar id: Resource Id
-    :vartype id: str
-    :ivar name: Resource name
-    :vartype name: str
-    :ivar type: Resource type
-    :vartype type: str
     """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
     }
 
     def __init__(self, *, tags=None, **kwargs) -> None:
         super(UpdateResource, self).__init__(**kwargs)
         self.tags = tags
-        self.id = None
-        self.name = None
-        self.type = None
 
 
 class AvailabilitySetUpdate(UpdateResource):
@@ -419,12 +398,6 @@ class AvailabilitySetUpdate(UpdateResource):
 
     :param tags: Resource tags
     :type tags: dict[str, str]
-    :ivar id: Resource Id
-    :vartype id: str
-    :ivar name: Resource name
-    :vartype name: str
-    :ivar type: Resource type
-    :vartype type: str
     :param platform_update_domain_count: Update Domain count.
     :type platform_update_domain_count: int
     :param platform_fault_domain_count: Fault Domain count.
@@ -446,17 +419,11 @@ class AvailabilitySetUpdate(UpdateResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
         'statuses': {'readonly': True},
     }
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
         'platform_update_domain_count': {'key': 'properties.platformUpdateDomainCount', 'type': 'int'},
         'platform_fault_domain_count': {'key': 'properties.platformFaultDomainCount', 'type': 'int'},
         'virtual_machines': {'key': 'properties.virtualMachines', 'type': '[SubResource]'},
@@ -1039,12 +1006,6 @@ class DedicatedHostGroupUpdate(UpdateResource):
 
     :param tags: Resource tags
     :type tags: dict[str, str]
-    :ivar id: Resource Id
-    :vartype id: str
-    :ivar name: Resource name
-    :vartype name: str
-    :ivar type: Resource type
-    :vartype type: str
     :param platform_fault_domain_count: Required. Number of fault domains that
      the host group can span.
     :type platform_fault_domain_count: int
@@ -1060,18 +1021,12 @@ class DedicatedHostGroupUpdate(UpdateResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
         'platform_fault_domain_count': {'required': True, 'maximum': 3, 'minimum': 1},
         'hosts': {'readonly': True},
     }
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
         'platform_fault_domain_count': {'key': 'properties.platformFaultDomainCount', 'type': 'int'},
         'hosts': {'key': 'properties.hosts', 'type': '[SubResourceReadOnly]'},
         'zones': {'key': 'zones', 'type': '[str]'},
@@ -1127,12 +1082,6 @@ class DedicatedHostUpdate(UpdateResource):
 
     :param tags: Resource tags
     :type tags: dict[str, str]
-    :ivar id: Resource Id
-    :vartype id: str
-    :ivar name: Resource name
-    :vartype name: str
-    :ivar type: Resource type
-    :vartype type: str
     :param platform_fault_domain: Fault domain of the dedicated host within a
      dedicated host group.
     :type platform_fault_domain: int
@@ -1166,9 +1115,6 @@ class DedicatedHostUpdate(UpdateResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
         'platform_fault_domain': {'maximum': 2, 'minimum': 0},
         'host_id': {'readonly': True},
         'virtual_machines': {'readonly': True},
@@ -1179,9 +1125,6 @@ class DedicatedHostUpdate(UpdateResource):
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
         'platform_fault_domain': {'key': 'properties.platformFaultDomain', 'type': 'int'},
         'auto_replace_on_failure': {'key': 'properties.autoReplaceOnFailure', 'type': 'bool'},
         'host_id': {'key': 'properties.hostId', 'type': 'str'},
@@ -1922,19 +1865,10 @@ class GalleryApplicationUpdate(UpdateResource):
     """Specifies information about the gallery Application Definition that you
     want to update.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
     All required parameters must be populated in order to send to Azure.
 
     :param tags: Resource tags
     :type tags: dict[str, str]
-    :ivar id: Resource Id
-    :vartype id: str
-    :ivar name: Resource name
-    :vartype name: str
-    :ivar type: Resource type
-    :vartype type: str
     :param description: The description of this gallery Application Definition
      resource. This property is updatable.
     :type description: str
@@ -1957,17 +1891,11 @@ class GalleryApplicationUpdate(UpdateResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
         'supported_os_type': {'required': True},
     }
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
         'description': {'key': 'properties.description', 'type': 'str'},
         'eula': {'key': 'properties.eula', 'type': 'str'},
         'privacy_statement_uri': {'key': 'properties.privacyStatementUri', 'type': 'str'},
@@ -2177,12 +2105,6 @@ class GalleryApplicationVersionUpdate(UpdateResource):
 
     :param tags: Resource tags
     :type tags: dict[str, str]
-    :ivar id: Resource Id
-    :vartype id: str
-    :ivar name: Resource name
-    :vartype name: str
-    :ivar type: Resource type
-    :vartype type: str
     :param publishing_profile: Required.
     :type publishing_profile:
      ~azure.mgmt.compute.v2019_07_01.models.GalleryApplicationVersionPublishingProfile
@@ -2198,9 +2120,6 @@ class GalleryApplicationVersionUpdate(UpdateResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
         'publishing_profile': {'required': True},
         'provisioning_state': {'readonly': True},
         'replication_status': {'readonly': True},
@@ -2208,9 +2127,6 @@ class GalleryApplicationVersionUpdate(UpdateResource):
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
         'publishing_profile': {'key': 'properties.publishingProfile', 'type': 'GalleryApplicationVersionPublishingProfile'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'replication_status': {'key': 'properties.replicationStatus', 'type': 'ReplicationStatus'},
@@ -2525,12 +2441,6 @@ class GalleryImageUpdate(UpdateResource):
 
     :param tags: Resource tags
     :type tags: dict[str, str]
-    :ivar id: Resource Id
-    :vartype id: str
-    :ivar name: Resource name
-    :vartype name: str
-    :ivar type: Resource type
-    :vartype type: str
     :param description: The description of this gallery Image Definition
      resource. This property is updatable.
     :type description: str
@@ -2579,9 +2489,6 @@ class GalleryImageUpdate(UpdateResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
         'os_type': {'required': True},
         'os_state': {'required': True},
         'identifier': {'required': True},
@@ -2590,9 +2497,6 @@ class GalleryImageUpdate(UpdateResource):
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
         'description': {'key': 'properties.description', 'type': 'str'},
         'eula': {'key': 'properties.eula', 'type': 'str'},
         'privacy_statement_uri': {'key': 'properties.privacyStatementUri', 'type': 'str'},
@@ -2777,12 +2681,6 @@ class GalleryImageVersionUpdate(UpdateResource):
 
     :param tags: Resource tags
     :type tags: dict[str, str]
-    :ivar id: Resource Id
-    :vartype id: str
-    :ivar name: Resource name
-    :vartype name: str
-    :ivar type: Resource type
-    :vartype type: str
     :param publishing_profile:
     :type publishing_profile:
      ~azure.mgmt.compute.v2019_07_01.models.GalleryImageVersionPublishingProfile
@@ -2801,9 +2699,6 @@ class GalleryImageVersionUpdate(UpdateResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'storage_profile': {'required': True},
         'replication_status': {'readonly': True},
@@ -2811,9 +2706,6 @@ class GalleryImageVersionUpdate(UpdateResource):
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
         'publishing_profile': {'key': 'properties.publishingProfile', 'type': 'GalleryImageVersionPublishingProfile'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'storage_profile': {'key': 'properties.storageProfile', 'type': 'GalleryImageVersionStorageProfile'},
@@ -2870,12 +2762,6 @@ class GalleryUpdate(UpdateResource):
 
     :param tags: Resource tags
     :type tags: dict[str, str]
-    :ivar id: Resource Id
-    :vartype id: str
-    :ivar name: Resource name
-    :vartype name: str
-    :ivar type: Resource type
-    :vartype type: str
     :param description: The description of this Shared Image Gallery resource.
      This property is updatable.
     :type description: str
@@ -2890,17 +2776,11 @@ class GalleryUpdate(UpdateResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
         'provisioning_state': {'readonly': True},
     }
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
         'description': {'key': 'properties.description', 'type': 'str'},
         'identifier': {'key': 'properties.identifier', 'type': 'GalleryIdentifier'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
@@ -3402,12 +3282,6 @@ class ImageUpdate(UpdateResource):
 
     :param tags: Resource tags
     :type tags: dict[str, str]
-    :ivar id: Resource Id
-    :vartype id: str
-    :ivar name: Resource name
-    :vartype name: str
-    :ivar type: Resource type
-    :vartype type: str
     :param source_virtual_machine: The source virtual machine from which Image
      is created.
     :type source_virtual_machine:
@@ -3425,17 +3299,11 @@ class ImageUpdate(UpdateResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
         'provisioning_state': {'readonly': True},
     }
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
         'source_virtual_machine': {'key': 'properties.sourceVirtualMachine', 'type': 'SubResource'},
         'storage_profile': {'key': 'properties.storageProfile', 'type': 'ImageStorageProfile'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
@@ -4217,30 +4085,12 @@ class ProximityPlacementGroup(Resource):
 class ProximityPlacementGroupUpdate(UpdateResource):
     """Specifies information about the proximity placement group.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
     :param tags: Resource tags
     :type tags: dict[str, str]
-    :ivar id: Resource Id
-    :vartype id: str
-    :ivar name: Resource name
-    :vartype name: str
-    :ivar type: Resource type
-    :vartype type: str
     """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
     }
 
     def __init__(self, *, tags=None, **kwargs) -> None:
@@ -6273,25 +6123,16 @@ class VirtualMachineExtensionsListResult(Model):
 class VirtualMachineExtensionUpdate(UpdateResource):
     """Describes a Virtual Machine Extension.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
     :param tags: Resource tags
     :type tags: dict[str, str]
-    :ivar id: Resource Id
-    :vartype id: str
-    :ivar name: Resource name
-    :vartype name: str
-    :ivar type: Resource type
-    :vartype type: str
     :param force_update_tag: How the extension handler should be forced to
      update even if the extension configuration has not changed.
     :type force_update_tag: str
     :param publisher: The name of the extension handler publisher.
     :type publisher: str
-    :param virtual_machine_extension_update_type: Specifies the type of the
-     extension; an example is "CustomScriptExtension".
-    :type virtual_machine_extension_update_type: str
+    :param type: Specifies the type of the extension; an example is
+     "CustomScriptExtension".
+    :type type: str
     :param type_handler_version: Specifies the version of the script handler.
     :type type_handler_version: str
     :param auto_upgrade_minor_version: Indicates whether the extension should
@@ -6307,31 +6148,22 @@ class VirtualMachineExtensionUpdate(UpdateResource):
     :type protected_settings: object
     """
 
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
         'force_update_tag': {'key': 'properties.forceUpdateTag', 'type': 'str'},
         'publisher': {'key': 'properties.publisher', 'type': 'str'},
-        'virtual_machine_extension_update_type': {'key': 'properties.type', 'type': 'str'},
+        'type': {'key': 'properties.type', 'type': 'str'},
         'type_handler_version': {'key': 'properties.typeHandlerVersion', 'type': 'str'},
         'auto_upgrade_minor_version': {'key': 'properties.autoUpgradeMinorVersion', 'type': 'bool'},
         'settings': {'key': 'properties.settings', 'type': 'object'},
         'protected_settings': {'key': 'properties.protectedSettings', 'type': 'object'},
     }
 
-    def __init__(self, *, tags=None, force_update_tag: str=None, publisher: str=None, virtual_machine_extension_update_type: str=None, type_handler_version: str=None, auto_upgrade_minor_version: bool=None, settings=None, protected_settings=None, **kwargs) -> None:
+    def __init__(self, *, tags=None, force_update_tag: str=None, publisher: str=None, type: str=None, type_handler_version: str=None, auto_upgrade_minor_version: bool=None, settings=None, protected_settings=None, **kwargs) -> None:
         super(VirtualMachineExtensionUpdate, self).__init__(tags=tags, **kwargs)
         self.force_update_tag = force_update_tag
         self.publisher = publisher
-        self.virtual_machine_extension_update_type = virtual_machine_extension_update_type
+        self.type = type
         self.type_handler_version = type_handler_version
         self.auto_upgrade_minor_version = auto_upgrade_minor_version
         self.settings = settings
@@ -7770,17 +7602,8 @@ class VirtualMachineScaleSetStorageProfile(Model):
 class VirtualMachineScaleSetUpdate(UpdateResource):
     """Describes a Virtual Machine Scale Set.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
     :param tags: Resource tags
     :type tags: dict[str, str]
-    :ivar id: Resource Id
-    :vartype id: str
-    :ivar name: Resource name
-    :vartype name: str
-    :ivar type: Resource type
-    :vartype type: str
     :param sku: The virtual machine scale set sku.
     :type sku: ~azure.mgmt.compute.v2019_07_01.models.Sku
     :param plan: The purchase plan when deploying a virtual machine scale set
@@ -7829,17 +7652,8 @@ class VirtualMachineScaleSetUpdate(UpdateResource):
      ~azure.mgmt.compute.v2019_07_01.models.VirtualMachineScaleSetIdentity
     """
 
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
         'sku': {'key': 'sku', 'type': 'Sku'},
         'plan': {'key': 'plan', 'type': 'Plan'},
         'upgrade_policy': {'key': 'properties.upgradePolicy', 'type': 'UpgradePolicy'},
@@ -8714,12 +8528,6 @@ class VirtualMachineUpdate(UpdateResource):
 
     :param tags: Resource tags
     :type tags: dict[str, str]
-    :ivar id: Resource Id
-    :vartype id: str
-    :ivar name: Resource name
-    :vartype name: str
-    :ivar type: Resource type
-    :vartype type: str
     :param plan: Specifies information about the marketplace image used to
      create the virtual machine. This element is only used for marketplace
      images. Before you can use a marketplace image from an API, you must
@@ -8830,9 +8638,6 @@ class VirtualMachineUpdate(UpdateResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'instance_view': {'readonly': True},
         'vm_id': {'readonly': True},
@@ -8840,9 +8645,6 @@ class VirtualMachineUpdate(UpdateResource):
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
         'plan': {'key': 'plan', 'type': 'Plan'},
         'hardware_profile': {'key': 'properties.hardwareProfile', 'type': 'HardwareProfile'},
         'storage_profile': {'key': 'properties.storageProfile', 'type': 'StorageProfile'},

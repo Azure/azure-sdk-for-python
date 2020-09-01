@@ -9,7 +9,6 @@
 import json
 from typing import (
     Any,
-    Iterable,
     Dict,
     Union,
     TYPE_CHECKING,
@@ -39,6 +38,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import AzureKeyCredential, TokenCredential
     from azure.core.pipeline import PipelineResponse
     from azure.core.pipeline.transport import HttpResponse
+    from azure.core.paging import ItemPaged
     PipelineResponseType = HttpResponse
 
 
@@ -182,7 +182,7 @@ class FormTrainingClient(object):
 
     @distributed_trace
     def list_custom_models(self, **kwargs):
-        # type: (Any) -> Iterable[CustomFormModelInfo]
+        # type: (Any) -> ItemPaged[CustomFormModelInfo]
         """List information for each model, including model id,
         model status, and when it was created and last modified.
 
@@ -199,7 +199,7 @@ class FormTrainingClient(object):
                 :dedent: 8
                 :caption: List model information for each model on the account.
         """
-        return self._client.list_custom_models(
+        return self._client.list_custom_models(  # type: ignore
             cls=kwargs.pop("cls", lambda objs: [CustomFormModelInfo._from_generated(x) for x in objs]),
             error_map=error_map,
             **kwargs

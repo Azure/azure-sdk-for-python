@@ -890,6 +890,51 @@ class ContainerPartitionKey(Model):
         self.version = version
 
 
+class CorsPolicy(Model):
+    """The CORS policy for the Cosmos DB database account.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param allowed_origins: Required. The origin domains that are permitted to
+     make a request against the service via CORS.
+    :type allowed_origins: str
+    :param allowed_methods: The methods (HTTP request verbs) that the origin
+     domain may use for a CORS request.
+    :type allowed_methods: str
+    :param allowed_headers: The request headers that the origin domain may
+     specify on the CORS request.
+    :type allowed_headers: str
+    :param exposed_headers: The response headers that may be sent in the
+     response to the CORS request and exposed by the browser to the request
+     issuer.
+    :type exposed_headers: str
+    :param max_age_in_seconds: The maximum amount time that a browser should
+     cache the preflight OPTIONS request.
+    :type max_age_in_seconds: long
+    """
+
+    _validation = {
+        'allowed_origins': {'required': True},
+        'max_age_in_seconds': {'maximum': 2147483647, 'minimum': 1},
+    }
+
+    _attribute_map = {
+        'allowed_origins': {'key': 'allowedOrigins', 'type': 'str'},
+        'allowed_methods': {'key': 'allowedMethods', 'type': 'str'},
+        'allowed_headers': {'key': 'allowedHeaders', 'type': 'str'},
+        'exposed_headers': {'key': 'exposedHeaders', 'type': 'str'},
+        'max_age_in_seconds': {'key': 'maxAgeInSeconds', 'type': 'long'},
+    }
+
+    def __init__(self, *, allowed_origins: str, allowed_methods: str=None, allowed_headers: str=None, exposed_headers: str=None, max_age_in_seconds: int=None, **kwargs) -> None:
+        super(CorsPolicy, self).__init__(**kwargs)
+        self.allowed_origins = allowed_origins
+        self.allowed_methods = allowed_methods
+        self.allowed_headers = allowed_headers
+        self.exposed_headers = exposed_headers
+        self.max_age_in_seconds = max_age_in_seconds
+
+
 class CreateUpdateOptions(Model):
     """CreateUpdateOptions are a list of key-value pairs that describe the
     resource. Supported keys are "If-Match", "If-None-Match", "Session-Token"
@@ -1015,6 +1060,8 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):
     :param enable_analytical_storage: Flag to indicate whether to enable
      storage analytics.
     :type enable_analytical_storage: bool
+    :param cors: The CORS policy for the Cosmos DB database account.
+    :type cors: list[~azure.mgmt.cosmosdb.models.CorsPolicy]
     """
 
     _validation = {
@@ -1049,11 +1096,12 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):
         'enable_free_tier': {'key': 'properties.enableFreeTier', 'type': 'bool'},
         'api_properties': {'key': 'properties.apiProperties', 'type': 'ApiProperties'},
         'enable_analytical_storage': {'key': 'properties.enableAnalyticalStorage', 'type': 'bool'},
+        'cors': {'key': 'properties.cors', 'type': '[CorsPolicy]'},
     }
 
     database_account_offer_type = "Standard"
 
-    def __init__(self, *, locations, location: str=None, tags=None, kind="GlobalDocumentDB", consistency_policy=None, ip_rules=None, is_virtual_network_filter_enabled: bool=None, enable_automatic_failover: bool=None, capabilities=None, virtual_network_rules=None, enable_multiple_write_locations: bool=None, enable_cassandra_connector: bool=None, connector_offer=None, disable_key_based_metadata_write_access: bool=None, key_vault_key_uri: str=None, public_network_access=None, enable_free_tier: bool=None, api_properties=None, enable_analytical_storage: bool=None, **kwargs) -> None:
+    def __init__(self, *, locations, location: str=None, tags=None, kind="GlobalDocumentDB", consistency_policy=None, ip_rules=None, is_virtual_network_filter_enabled: bool=None, enable_automatic_failover: bool=None, capabilities=None, virtual_network_rules=None, enable_multiple_write_locations: bool=None, enable_cassandra_connector: bool=None, connector_offer=None, disable_key_based_metadata_write_access: bool=None, key_vault_key_uri: str=None, public_network_access=None, enable_free_tier: bool=None, api_properties=None, enable_analytical_storage: bool=None, cors=None, **kwargs) -> None:
         super(DatabaseAccountCreateUpdateParameters, self).__init__(location=location, tags=tags, **kwargs)
         self.kind = kind
         self.consistency_policy = consistency_policy
@@ -1072,6 +1120,7 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):
         self.enable_free_tier = enable_free_tier
         self.api_properties = api_properties
         self.enable_analytical_storage = enable_analytical_storage
+        self.cors = cors
 
 
 class DatabaseAccountGetResults(ARMResourceProperties):
@@ -1166,6 +1215,8 @@ class DatabaseAccountGetResults(ARMResourceProperties):
     :param enable_analytical_storage: Flag to indicate whether to enable
      storage analytics.
     :type enable_analytical_storage: bool
+    :param cors: The CORS policy for the Cosmos DB database account.
+    :type cors: list[~azure.mgmt.cosmosdb.models.CorsPolicy]
     """
 
     _validation = {
@@ -1211,9 +1262,10 @@ class DatabaseAccountGetResults(ARMResourceProperties):
         'enable_free_tier': {'key': 'properties.enableFreeTier', 'type': 'bool'},
         'api_properties': {'key': 'properties.apiProperties', 'type': 'ApiProperties'},
         'enable_analytical_storage': {'key': 'properties.enableAnalyticalStorage', 'type': 'bool'},
+        'cors': {'key': 'properties.cors', 'type': '[CorsPolicy]'},
     }
 
-    def __init__(self, *, location: str=None, tags=None, kind="GlobalDocumentDB", provisioning_state: str=None, ip_rules=None, is_virtual_network_filter_enabled: bool=None, enable_automatic_failover: bool=None, consistency_policy=None, capabilities=None, virtual_network_rules=None, enable_multiple_write_locations: bool=None, enable_cassandra_connector: bool=None, connector_offer=None, disable_key_based_metadata_write_access: bool=None, key_vault_key_uri: str=None, public_network_access=None, enable_free_tier: bool=None, api_properties=None, enable_analytical_storage: bool=None, **kwargs) -> None:
+    def __init__(self, *, location: str=None, tags=None, kind="GlobalDocumentDB", provisioning_state: str=None, ip_rules=None, is_virtual_network_filter_enabled: bool=None, enable_automatic_failover: bool=None, consistency_policy=None, capabilities=None, virtual_network_rules=None, enable_multiple_write_locations: bool=None, enable_cassandra_connector: bool=None, connector_offer=None, disable_key_based_metadata_write_access: bool=None, key_vault_key_uri: str=None, public_network_access=None, enable_free_tier: bool=None, api_properties=None, enable_analytical_storage: bool=None, cors=None, **kwargs) -> None:
         super(DatabaseAccountGetResults, self).__init__(location=location, tags=tags, **kwargs)
         self.kind = kind
         self.provisioning_state = provisioning_state
@@ -1239,6 +1291,7 @@ class DatabaseAccountGetResults(ARMResourceProperties):
         self.enable_free_tier = enable_free_tier
         self.api_properties = api_properties
         self.enable_analytical_storage = enable_analytical_storage
+        self.cors = cors
 
 
 class DatabaseAccountListConnectionStringsResult(Model):
@@ -1408,6 +1461,8 @@ class DatabaseAccountUpdateParameters(Model):
     :param enable_analytical_storage: Flag to indicate whether to enable
      storage analytics.
     :type enable_analytical_storage: bool
+    :param cors: The CORS policy for the Cosmos DB database account.
+    :type cors: list[~azure.mgmt.cosmosdb.models.CorsPolicy]
     """
 
     _attribute_map = {
@@ -1429,9 +1484,10 @@ class DatabaseAccountUpdateParameters(Model):
         'enable_free_tier': {'key': 'properties.enableFreeTier', 'type': 'bool'},
         'api_properties': {'key': 'properties.apiProperties', 'type': 'ApiProperties'},
         'enable_analytical_storage': {'key': 'properties.enableAnalyticalStorage', 'type': 'bool'},
+        'cors': {'key': 'properties.cors', 'type': '[CorsPolicy]'},
     }
 
-    def __init__(self, *, tags=None, location: str=None, consistency_policy=None, locations=None, ip_rules=None, is_virtual_network_filter_enabled: bool=None, enable_automatic_failover: bool=None, capabilities=None, virtual_network_rules=None, enable_multiple_write_locations: bool=None, enable_cassandra_connector: bool=None, connector_offer=None, disable_key_based_metadata_write_access: bool=None, key_vault_key_uri: str=None, public_network_access=None, enable_free_tier: bool=None, api_properties=None, enable_analytical_storage: bool=None, **kwargs) -> None:
+    def __init__(self, *, tags=None, location: str=None, consistency_policy=None, locations=None, ip_rules=None, is_virtual_network_filter_enabled: bool=None, enable_automatic_failover: bool=None, capabilities=None, virtual_network_rules=None, enable_multiple_write_locations: bool=None, enable_cassandra_connector: bool=None, connector_offer=None, disable_key_based_metadata_write_access: bool=None, key_vault_key_uri: str=None, public_network_access=None, enable_free_tier: bool=None, api_properties=None, enable_analytical_storage: bool=None, cors=None, **kwargs) -> None:
         super(DatabaseAccountUpdateParameters, self).__init__(**kwargs)
         self.tags = tags
         self.location = location
@@ -1451,6 +1507,7 @@ class DatabaseAccountUpdateParameters(Model):
         self.enable_free_tier = enable_free_tier
         self.api_properties = api_properties
         self.enable_analytical_storage = enable_analytical_storage
+        self.cors = cors
 
 
 class ErrorResponse(Model):
@@ -3568,6 +3625,8 @@ class SqlContainerGetPropertiesResource(Model):
      container.
     :type conflict_resolution_policy:
      ~azure.mgmt.cosmosdb.models.ConflictResolutionPolicy
+    :param analytical_storage_ttl: Analytical TTL.
+    :type analytical_storage_ttl: long
     :ivar _rid: A system generated property. A unique identifier.
     :vartype _rid: str
     :ivar _ts: A system generated property that denotes the last updated
@@ -3592,12 +3651,13 @@ class SqlContainerGetPropertiesResource(Model):
         'default_ttl': {'key': 'defaultTtl', 'type': 'int'},
         'unique_key_policy': {'key': 'uniqueKeyPolicy', 'type': 'UniqueKeyPolicy'},
         'conflict_resolution_policy': {'key': 'conflictResolutionPolicy', 'type': 'ConflictResolutionPolicy'},
+        'analytical_storage_ttl': {'key': 'analyticalStorageTtl', 'type': 'long'},
         '_rid': {'key': '_rid', 'type': 'str'},
         '_ts': {'key': '_ts', 'type': 'object'},
         '_etag': {'key': '_etag', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str, indexing_policy=None, partition_key=None, default_ttl: int=None, unique_key_policy=None, conflict_resolution_policy=None, **kwargs) -> None:
+    def __init__(self, *, id: str, indexing_policy=None, partition_key=None, default_ttl: int=None, unique_key_policy=None, conflict_resolution_policy=None, analytical_storage_ttl: int=None, **kwargs) -> None:
         super(SqlContainerGetPropertiesResource, self).__init__(**kwargs)
         self.id = id
         self.indexing_policy = indexing_policy
@@ -3605,6 +3665,7 @@ class SqlContainerGetPropertiesResource(Model):
         self.default_ttl = default_ttl
         self.unique_key_policy = unique_key_policy
         self.conflict_resolution_policy = conflict_resolution_policy
+        self.analytical_storage_ttl = analytical_storage_ttl
         self._rid = None
         self._ts = None
         self._etag = None
@@ -3681,6 +3742,8 @@ class SqlContainerResource(Model):
      container.
     :type conflict_resolution_policy:
      ~azure.mgmt.cosmosdb.models.ConflictResolutionPolicy
+    :param analytical_storage_ttl: Analytical TTL.
+    :type analytical_storage_ttl: long
     """
 
     _validation = {
@@ -3694,9 +3757,10 @@ class SqlContainerResource(Model):
         'default_ttl': {'key': 'defaultTtl', 'type': 'int'},
         'unique_key_policy': {'key': 'uniqueKeyPolicy', 'type': 'UniqueKeyPolicy'},
         'conflict_resolution_policy': {'key': 'conflictResolutionPolicy', 'type': 'ConflictResolutionPolicy'},
+        'analytical_storage_ttl': {'key': 'analyticalStorageTtl', 'type': 'long'},
     }
 
-    def __init__(self, *, id: str, indexing_policy=None, partition_key=None, default_ttl: int=None, unique_key_policy=None, conflict_resolution_policy=None, **kwargs) -> None:
+    def __init__(self, *, id: str, indexing_policy=None, partition_key=None, default_ttl: int=None, unique_key_policy=None, conflict_resolution_policy=None, analytical_storage_ttl: int=None, **kwargs) -> None:
         super(SqlContainerResource, self).__init__(**kwargs)
         self.id = id
         self.indexing_policy = indexing_policy
@@ -3704,6 +3768,7 @@ class SqlContainerResource(Model):
         self.default_ttl = default_ttl
         self.unique_key_policy = unique_key_policy
         self.conflict_resolution_policy = conflict_resolution_policy
+        self.analytical_storage_ttl = analytical_storage_ttl
 
 
 class SqlDatabaseCreateUpdateParameters(ARMResourceProperties):

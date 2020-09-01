@@ -96,6 +96,8 @@ try:
     from ._models_py3 import ManagedInstanceLongTermRetentionBackup
     from ._models_py3 import ManagedInstanceLongTermRetentionPolicy
     from ._models_py3 import ManagedInstanceOperation
+    from ._models_py3 import ManagedInstanceOperationParametersPair
+    from ._models_py3 import ManagedInstanceOperationSteps
     from ._models_py3 import ManagedInstancePairInfo
     from ._models_py3 import ManagedInstanceUpdate
     from ._models_py3 import ManagedInstanceVcoresCapability
@@ -177,6 +179,9 @@ try:
     from ._models_py3 import TrackedResource
     from ._models_py3 import TransparentDataEncryption
     from ._models_py3 import TransparentDataEncryptionActivity
+    from ._models_py3 import UnlinkParameters
+    from ._models_py3 import UpsertManagedServerOperationParameters
+    from ._models_py3 import UpsertManagedServerOperationStep
     from ._models_py3 import Usage
     from ._models_py3 import VirtualCluster
     from ._models_py3 import VirtualClusterUpdate
@@ -273,6 +278,8 @@ except (SyntaxError, ImportError):
     from ._models import ManagedInstanceLongTermRetentionBackup
     from ._models import ManagedInstanceLongTermRetentionPolicy
     from ._models import ManagedInstanceOperation
+    from ._models import ManagedInstanceOperationParametersPair
+    from ._models import ManagedInstanceOperationSteps
     from ._models import ManagedInstancePairInfo
     from ._models import ManagedInstanceUpdate
     from ._models import ManagedInstanceVcoresCapability
@@ -354,6 +361,9 @@ except (SyntaxError, ImportError):
     from ._models import TrackedResource
     from ._models import TransparentDataEncryption
     from ._models import TransparentDataEncryptionActivity
+    from ._models import UnlinkParameters
+    from ._models import UpsertManagedServerOperationParameters
+    from ._models import UpsertManagedServerOperationStep
     from ._models import Usage
     from ._models import VirtualCluster
     from ._models import VirtualClusterUpdate
@@ -375,6 +385,8 @@ from ._paged_models import ElasticPoolDatabaseActivityPaged
 from ._paged_models import ElasticPoolOperationPaged
 from ._paged_models import ElasticPoolPaged
 from ._paged_models import EncryptionProtectorPaged
+from ._paged_models import ExtendedDatabaseBlobAuditingPolicyPaged
+from ._paged_models import ExtendedServerBlobAuditingPolicyPaged
 from ._paged_models import FailoverGroupPaged
 from ._paged_models import FirewallRulePaged
 from ._paged_models import GeoBackupPolicyPaged
@@ -475,11 +487,6 @@ from ._sql_management_client_enums import (
     OperationOrigin,
     SyncAgentState,
     SyncMemberDbType,
-    SyncGroupLogType,
-    SyncConflictResolutionPolicy,
-    SyncGroupState,
-    SyncDirection,
-    SyncMemberState,
     VirtualNetworkRuleState,
     BlobAuditingPolicyState,
     JobAgentState,
@@ -522,6 +529,11 @@ from ._sql_management_client_enums import (
     CapabilityStatus,
     PerformanceLevelUnit,
     PauseDelayTimeUnit,
+    SyncGroupLogType,
+    SyncConflictResolutionPolicy,
+    SyncGroupState,
+    SyncDirection,
+    SyncMemberState,
     ManagedDatabaseStatus,
     ManagedDatabaseCreateMode,
     LongTermRetentionDatabaseState,
@@ -624,6 +636,8 @@ __all__ = [
     'ManagedInstanceLongTermRetentionBackup',
     'ManagedInstanceLongTermRetentionPolicy',
     'ManagedInstanceOperation',
+    'ManagedInstanceOperationParametersPair',
+    'ManagedInstanceOperationSteps',
     'ManagedInstancePairInfo',
     'ManagedInstanceUpdate',
     'ManagedInstanceVcoresCapability',
@@ -705,6 +719,9 @@ __all__ = [
     'TrackedResource',
     'TransparentDataEncryption',
     'TransparentDataEncryptionActivity',
+    'UnlinkParameters',
+    'UpsertManagedServerOperationParameters',
+    'UpsertManagedServerOperationStep',
     'Usage',
     'VirtualCluster',
     'VirtualClusterUpdate',
@@ -740,14 +757,11 @@ __all__ = [
     'ServerKeyPaged',
     'SyncAgentPaged',
     'SyncAgentLinkedDatabasePaged',
-    'SyncDatabaseIdPropertiesPaged',
-    'SyncFullSchemaPropertiesPaged',
-    'SyncGroupLogPropertiesPaged',
-    'SyncGroupPaged',
-    'SyncMemberPaged',
     'SubscriptionUsagePaged',
     'VirtualClusterPaged',
     'VirtualNetworkRulePaged',
+    'ExtendedDatabaseBlobAuditingPolicyPaged',
+    'ExtendedServerBlobAuditingPolicyPaged',
     'ServerBlobAuditingPolicyPaged',
     'DatabaseBlobAuditingPolicyPaged',
     'DatabaseVulnerabilityAssessmentPaged',
@@ -788,9 +802,14 @@ __all__ = [
     'ManagedInstanceLongTermRetentionPolicyPaged',
     'WorkloadGroupPaged',
     'WorkloadClassifierPaged',
-    'ManagedDatabasePaged',
     'ServerAzureADAdministratorPaged',
     'ManagedInstanceOperationPaged',
+    'SyncDatabaseIdPropertiesPaged',
+    'SyncFullSchemaPropertiesPaged',
+    'SyncGroupLogPropertiesPaged',
+    'SyncGroupPaged',
+    'SyncMemberPaged',
+    'ManagedDatabasePaged',
     'ServerConnectionType',
     'SecurityAlertPolicyState',
     'SecurityAlertPolicyEmailAccountAdmins',
@@ -825,11 +844,6 @@ __all__ = [
     'OperationOrigin',
     'SyncAgentState',
     'SyncMemberDbType',
-    'SyncGroupLogType',
-    'SyncConflictResolutionPolicy',
-    'SyncGroupState',
-    'SyncDirection',
-    'SyncMemberState',
     'VirtualNetworkRuleState',
     'BlobAuditingPolicyState',
     'JobAgentState',
@@ -872,6 +886,11 @@ __all__ = [
     'CapabilityStatus',
     'PerformanceLevelUnit',
     'PauseDelayTimeUnit',
+    'SyncGroupLogType',
+    'SyncConflictResolutionPolicy',
+    'SyncGroupState',
+    'SyncDirection',
+    'SyncMemberState',
     'ManagedDatabaseStatus',
     'ManagedDatabaseCreateMode',
     'LongTermRetentionDatabaseState',

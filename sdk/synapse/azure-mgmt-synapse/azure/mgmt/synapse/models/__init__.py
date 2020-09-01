@@ -73,6 +73,8 @@ try:
     from ._models_py3 import OperationResource
     from ._models_py3 import PrivateEndpoint
     from ._models_py3 import PrivateEndpointConnection
+    from ._models_py3 import PrivateLinkHub
+    from ._models_py3 import PrivateLinkHubPatchInfo
     from ._models_py3 import PrivateLinkResource
     from ._models_py3 import PrivateLinkResourceProperties
     from ._models_py3 import PrivateLinkServiceConnectionState
@@ -195,6 +197,8 @@ except (SyntaxError, ImportError):
     from ._models import OperationResource
     from ._models import PrivateEndpoint
     from ._models import PrivateEndpointConnection
+    from ._models import PrivateLinkHub
+    from ._models import PrivateLinkHubPatchInfo
     from ._models import PrivateLinkResource
     from ._models import PrivateLinkResourceProperties
     from ._models import PrivateLinkServiceConnectionState
@@ -257,6 +261,7 @@ from ._paged_models import BigDataPoolResourceInfoPaged
 from ._paged_models import IntegrationRuntimeResourcePaged
 from ._paged_models import IpFirewallRuleInfoPaged
 from ._paged_models import PrivateEndpointConnectionPaged
+from ._paged_models import PrivateLinkHubPaged
 from ._paged_models import PrivateLinkResourcePaged
 from ._paged_models import ReplicationLinkPaged
 from ._paged_models import RestorePointPaged
@@ -372,6 +377,8 @@ __all__ = [
     'OperationResource',
     'PrivateEndpoint',
     'PrivateEndpointConnection',
+    'PrivateLinkHub',
+    'PrivateLinkHubPatchInfo',
     'PrivateLinkResource',
     'PrivateLinkResourceProperties',
     'PrivateLinkServiceConnectionState',
@@ -447,6 +454,7 @@ __all__ = [
     'IntegrationRuntimeResourcePaged',
     'PrivateLinkResourcePaged',
     'PrivateEndpointConnectionPaged',
+    'PrivateLinkHubPaged',
     'NodeSize',
     'NodeSizeFamily',
     'ProvisioningState',

@@ -1,5 +1,16 @@
 # Release History
 
+## 9.2.0 (2020-06-24)
+
+**Features**
+ 
+  - Model ManagedClusterIdentity has a new parameter user_assigned_identities
+  - Model ManagedClusterAADProfile has a new parameter enable_azure_rbac
+  - Model ManagedClusterAgentPoolProfile has a new parameter proximity_placement_group_id
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter proximity_placement_group_id
+  - Model AgentPool has a new parameter proximity_placement_group_id
+  - Added operation group PrivateEndpointConnectionsOperations
+
 ## 9.1.0 (2020-06-03)
 
 **Features**

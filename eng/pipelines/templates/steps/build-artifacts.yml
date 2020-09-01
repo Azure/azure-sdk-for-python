@@ -19,7 +19,7 @@ steps:
       pip install -r eng/ci_tools.txt
     displayName: 'Prep Py2 Environment'
     
-  - template: eng/pipelines/templates/scripts/replace-relative-links.yml@azure-sdk-tools
+  - template: /eng/common/pipelines/templates/steps/replace-relative-links.yml
     parameters:
       TargetFolder: $(Build.SourcesDirectory)
       RootFolder: $(Build.SourcesDirectory)

@@ -86,13 +86,6 @@ class DdosSettingsProtectionCoverage(str, Enum):
     standard = "Standard"
 
 
-class VirtualNetworkPeeringState(str, Enum):
-
-    initiated = "Initiated"
-    connected = "Connected"
-    disconnected = "Disconnected"
-
-
 class TransportProtocol(str, Enum):
 
     udp = "Udp"
@@ -676,6 +669,13 @@ class SecurityPartnerProviderConnectionStatus(str, Enum):
     partially_connected = "PartiallyConnected"
     connected = "Connected"
     not_connected = "NotConnected"
+
+
+class VirtualNetworkPeeringState(str, Enum):
+
+    initiated = "Initiated"
+    connected = "Connected"
+    disconnected = "Disconnected"
 
 
 class VirtualNetworkGatewayType(str, Enum):

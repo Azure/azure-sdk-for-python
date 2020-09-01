@@ -46,6 +46,7 @@ from ._integration_runtime_monitoring_data_operations import IntegrationRuntimeM
 from ._integration_runtime_status_operations import IntegrationRuntimeStatusOperations
 from ._private_link_resources_operations import PrivateLinkResourcesOperations
 from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
+from ._private_link_hubs_operations import PrivateLinkHubsOperations
 
 __all__ = [
     'BigDataPoolsOperations',
@@ -85,4 +86,5 @@ __all__ = [
     'IntegrationRuntimeStatusOperations',
     'PrivateLinkResourcesOperations',
     'PrivateEndpointConnectionsOperations',
+    'PrivateLinkHubsOperations',
 ]

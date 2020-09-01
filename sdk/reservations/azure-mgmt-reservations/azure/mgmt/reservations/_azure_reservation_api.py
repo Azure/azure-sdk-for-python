@@ -15,9 +15,7 @@ from msrest import Serializer, Deserializer
 from ._configuration import AzureReservationAPIConfiguration
 from .operations import AzureReservationAPIOperationsMixin
 from .operations import QuotaOperations
-from .operations import QuotaRequestOperations
-from .operations import QuotasOperations
-from .operations import QuotaRequestsOperations
+from .operations import QuotaRequestStatusOperations
 from .operations import AutoQuotaIncreaseOperations
 from .operations import ReservationOperations
 from .operations import ReservationOrderOperations
@@ -33,12 +31,8 @@ class AzureReservationAPI(AzureReservationAPIOperationsMixin, SDKClient):
 
     :ivar quota: Quota operations
     :vartype quota: azure.mgmt.reservations.operations.QuotaOperations
-    :ivar quota_request: QuotaRequest operations
-    :vartype quota_request: azure.mgmt.reservations.operations.QuotaRequestOperations
-    :ivar quotas: Quotas operations
-    :vartype quotas: azure.mgmt.reservations.operations.QuotasOperations
-    :ivar quota_requests: QuotaRequests operations
-    :vartype quota_requests: azure.mgmt.reservations.operations.QuotaRequestsOperations
+    :ivar quota_request_status: QuotaRequestStatus operations
+    :vartype quota_request_status: azure.mgmt.reservations.operations.QuotaRequestStatusOperations
     :ivar auto_quota_increase: AutoQuotaIncrease operations
     :vartype auto_quota_increase: azure.mgmt.reservations.operations.AutoQuotaIncreaseOperations
     :ivar reservation: Reservation operations
@@ -66,11 +60,7 @@ class AzureReservationAPI(AzureReservationAPIOperationsMixin, SDKClient):
 
         self.quota = QuotaOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.quota_request = QuotaRequestOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.quotas = QuotasOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.quota_requests = QuotaRequestsOperations(
+        self.quota_request_status = QuotaRequestStatusOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.auto_quota_increase = AutoQuotaIncreaseOperations(
             self._client, self.config, self._serialize, self._deserialize)

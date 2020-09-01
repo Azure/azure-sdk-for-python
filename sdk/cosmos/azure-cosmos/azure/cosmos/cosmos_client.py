@@ -22,7 +22,7 @@
 """Create, read, and delete databases in the Azure Cosmos DB SQL API service.
 """
 
-from typing import Any, Dict, Mapping, Optional, Union, cast, Iterable, List  # pylint: disable=unused-import
+from typing import Any, Dict, Optional, Union, cast, Iterable, List  # pylint: disable=unused-import
 
 import six
 from azure.core.tracing.decorator import distributed_trace  # type: ignore
@@ -320,10 +320,11 @@ class CosmosClient(object):
         """
         if isinstance(database, DatabaseProxy):
             id_value = database.id
-        elif isinstance(database, Mapping):
-            id_value = database["id"]
         else:
-            id_value = database
+            try:
+                id_value = database["id"]
+            except TypeError:
+                id_value = database
 
         return DatabaseProxy(self.client_connection, id_value)
 

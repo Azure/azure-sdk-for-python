@@ -27,7 +27,7 @@ class SnapshotsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Constant value: "2019-11-01".
+    :ivar api_version: Version of the API to be used with the client request. Constant value: "2020-02-01".
     """
 
     models = models
@@ -37,7 +37,7 @@ class SnapshotsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-11-01"
+        self.api_version = "2020-02-01"
 
         self.config = config
 
@@ -195,8 +195,8 @@ class SnapshotsOperations(object):
 
 
     def _create_initial(
-            self, resource_group_name, account_name, pool_name, volume_name, snapshot_name, location, file_system_id=None, custom_headers=None, raw=False, **operation_config):
-        body = models.Snapshot(location=location, file_system_id=file_system_id)
+            self, resource_group_name, account_name, pool_name, volume_name, snapshot_name, location, custom_headers=None, raw=False, **operation_config):
+        body = models.Snapshot(location=location)
 
         # Construct URL
         url = self.create.metadata['url']
@@ -249,7 +249,7 @@ class SnapshotsOperations(object):
         return deserialized
 
     def create(
-            self, resource_group_name, account_name, pool_name, volume_name, snapshot_name, location, file_system_id=None, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, account_name, pool_name, volume_name, snapshot_name, location, custom_headers=None, raw=False, polling=True, **operation_config):
         """Create a snapshot.
 
         Create the specified snapshot within the given volume.
@@ -266,9 +266,6 @@ class SnapshotsOperations(object):
         :type snapshot_name: str
         :param location: Resource location
         :type location: str
-        :param file_system_id: fileSystemId UUID v4 used to identify the
-         FileSystem
-        :type file_system_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -289,7 +286,6 @@ class SnapshotsOperations(object):
             volume_name=volume_name,
             snapshot_name=snapshot_name,
             location=location,
-            file_system_id=file_system_id,
             custom_headers=custom_headers,
             raw=True,
             **operation_config

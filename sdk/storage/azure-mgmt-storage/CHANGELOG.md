@@ -1,5 +1,22 @@
 # Release History
 
+## 11.2.0 (2020-08-20)
+
+**Features**
+
+  - Model RestorePolicyProperties has a new parameter min_restore_time
+
+## 11.1.0 (2020-06-22)
+
+**Features**
+
+  - Model StorageAccount has a new parameter allow_blob_public_access
+  - Model StorageAccount has a new parameter minimum_tls_version
+  - Model StorageAccountCreateParameters has a new parameter allow_blob_public_access
+  - Model StorageAccountCreateParameters has a new parameter minimum_tls_version
+  - Model StorageAccountUpdateParameters has a new parameter allow_blob_public_access
+  - Model StorageAccountUpdateParameters has a new parameter minimum_tls_version
+
 ## 11.0.0 (2020-05-30)
 
 **Features**

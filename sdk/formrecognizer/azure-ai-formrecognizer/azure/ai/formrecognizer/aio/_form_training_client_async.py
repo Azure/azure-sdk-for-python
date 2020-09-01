@@ -9,7 +9,6 @@
 import json
 from typing import (
     Any,
-    AsyncIterable,
     Dict,
     Union,
     TYPE_CHECKING,
@@ -18,6 +17,7 @@ from azure.core.polling import async_poller
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.async_paging import AsyncItemPaged
 from ._form_recognizer_client_async import FormRecognizerClient
 from .._generated.aio._form_recognizer_client_async import FormRecognizerClient as FormRecognizer
 from .._generated.models import (
@@ -188,7 +188,7 @@ class FormTrainingClient(object):
         )
 
     @distributed_trace
-    def list_custom_models(self, **kwargs: Any) -> AsyncIterable[CustomFormModelInfo]:
+    def list_custom_models(self, **kwargs: Any) -> AsyncItemPaged[CustomFormModelInfo]:
         """List information for each model, including model id,
         model status, and when it was created and last modified.
 
@@ -205,7 +205,7 @@ class FormTrainingClient(object):
                 :dedent: 12
                 :caption: List model information for each model on the account.
         """
-        return self._client.list_custom_models(
+        return self._client.list_custom_models(  # type: ignore
             cls=kwargs.pop("cls", lambda objs: [CustomFormModelInfo._from_generated(x) for x in objs]),
             error_map=error_map,
             **kwargs

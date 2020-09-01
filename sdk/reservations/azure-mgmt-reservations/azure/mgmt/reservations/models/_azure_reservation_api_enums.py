@@ -114,6 +114,18 @@ class ReservedResourceType(str, Enum):
     sql_data_warehouse = "SqlDataWarehouse"
     vmware_cloud_simple = "VMwareCloudSimple"
     red_hat_osa = "RedHatOsa"
+    databricks = "Databricks"
+    app_service = "AppService"
+    managed_disk = "ManagedDisk"
+    block_blob = "BlockBlob"
+    redis_cache = "RedisCache"
+    azure_data_explorer = "AzureDataExplorer"
+    my_sql = "MySql"
+    maria_db = "MariaDb"
+    postgre_sql = "PostgreSql"
+    dedicated_host = "DedicatedHost"
+    sap_hana = "SapHana"
+    sql_azure_hybrid_benefit = "SqlAzureHybridBenefit"
 
 
 class InstanceFlexibility(str, Enum):

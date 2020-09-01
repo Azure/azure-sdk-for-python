@@ -8,4 +8,4 @@ It provides the necessary files for other packages to extend the
 azure.storage namespace.
 
 If you are looking to install the Azure Storage libraries, see the
-[azure](https://pypi.python.org/pypi/azure) bundle package.
+[azure sdk python release](https://aka.ms/azsdk/python/all).

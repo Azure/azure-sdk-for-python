@@ -82,7 +82,7 @@ class NetAppAccountTestCase(AzureMgmtTestCase):
         tag = {'Tag1': 'Value2'}
         netapp_account_patch = NetAppAccountPatch(tags=tag)
 
-        account = self.client.accounts.update(netapp_account_patch, TEST_RG, TEST_ACC_1)
+        account = self.client.accounts.update(netapp_account_patch, TEST_RG, TEST_ACC_1).result()
         self.assertTrue(account.tags['Tag1'] == 'Value2')
 
         delete_account(self.client, TEST_RG, TEST_ACC_1)

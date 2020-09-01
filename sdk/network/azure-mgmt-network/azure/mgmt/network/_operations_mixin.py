@@ -31,7 +31,7 @@ class NetworkManagementClientOperationsMixin(object):
          overrides<msrest:optionsforoperations>`.
         :return: DnsNameAvailabilityResult or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.network.v2020_04_01.models.DnsNameAvailabilityResult or
+         ~azure.mgmt.network.v2020_05_01.models.DnsNameAvailabilityResult or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         
@@ -93,6 +93,8 @@ class NetworkManagementClientOperationsMixin(object):
             from .v2020_03_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         elif api_version == '2020-04-01':
             from .v2020_04_01.operations import NetworkManagementClientOperationsMixin as OperationClass
+        elif api_version == '2020-05-01':
+            from .v2020_05_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         mixin_instance = OperationClass()
@@ -113,7 +115,7 @@ class NetworkManagementClientOperationsMixin(object):
         :type bastion_host_name: str
         :param vms: List of VM references.
         :type vms:
-         list[~azure.mgmt.network.v2020_04_01.models.BastionShareableLink]
+         list[~azure.mgmt.network.v2020_05_01.models.BastionShareableLink]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -137,6 +139,8 @@ class NetworkManagementClientOperationsMixin(object):
             from .v2020_03_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         elif api_version == '2020-04-01':
             from .v2020_04_01.operations import NetworkManagementClientOperationsMixin as OperationClass
+        elif api_version == '2020-05-01':
+            from .v2020_05_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         mixin_instance = OperationClass()
@@ -163,7 +167,7 @@ class NetworkManagementClientOperationsMixin(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of BastionSessionState
         :rtype:
-         ~azure.mgmt.network.v2020_04_01.models.BastionSessionStatePaged[~azure.mgmt.network.v2020_04_01.models.BastionSessionState]
+         ~azure.mgmt.network.v2020_05_01.models.BastionSessionStatePaged[~azure.mgmt.network.v2020_05_01.models.BastionSessionState]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         
         """
@@ -178,6 +182,8 @@ class NetworkManagementClientOperationsMixin(object):
             from .v2020_03_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         elif api_version == '2020-04-01':
             from .v2020_04_01.operations import NetworkManagementClientOperationsMixin as OperationClass
+        elif api_version == '2020-05-01':
+            from .v2020_05_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         mixin_instance = OperationClass()
@@ -204,7 +210,7 @@ class NetworkManagementClientOperationsMixin(object):
         :param authentication_method: VPN client authentication method.
          Possible values include: 'EAPTLS', 'EAPMSCHAPv2'
         :type authentication_method: str or
-         ~azure.mgmt.network.v2020_04_01.models.AuthenticationMethod
+         ~azure.mgmt.network.v2020_05_01.models.AuthenticationMethod
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -213,9 +219,9 @@ class NetworkManagementClientOperationsMixin(object):
         :return: An instance of LROPoller that returns VpnProfileResponse or
          ClientRawResponse<VpnProfileResponse> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.network.v2020_04_01.models.VpnProfileResponse]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.network.v2020_05_01.models.VpnProfileResponse]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.network.v2020_04_01.models.VpnProfileResponse]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.network.v2020_05_01.models.VpnProfileResponse]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         
         """
@@ -232,6 +238,8 @@ class NetworkManagementClientOperationsMixin(object):
             from .v2020_03_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         elif api_version == '2020-04-01':
             from .v2020_04_01.operations import NetworkManagementClientOperationsMixin as OperationClass
+        elif api_version == '2020-05-01':
+            from .v2020_05_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         mixin_instance = OperationClass()
@@ -258,9 +266,9 @@ class NetworkManagementClientOperationsMixin(object):
          BastionActiveSessionListResult or
          ClientRawResponse<BastionActiveSessionListResult> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.network.v2020_04_01.models.BastionActiveSessionListResult]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.network.v2020_05_01.models.BastionActiveSessionListResult]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.network.v2020_04_01.models.BastionActiveSessionListResult]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.network.v2020_05_01.models.BastionActiveSessionListResult]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         
         """
@@ -275,6 +283,8 @@ class NetworkManagementClientOperationsMixin(object):
             from .v2020_03_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         elif api_version == '2020-04-01':
             from .v2020_04_01.operations import NetworkManagementClientOperationsMixin as OperationClass
+        elif api_version == '2020-05-01':
+            from .v2020_05_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         mixin_instance = OperationClass()
@@ -295,7 +305,7 @@ class NetworkManagementClientOperationsMixin(object):
         :type bastion_host_name: str
         :param vms: List of VM references.
         :type vms:
-         list[~azure.mgmt.network.v2020_04_01.models.BastionShareableLink]
+         list[~azure.mgmt.network.v2020_05_01.models.BastionShareableLink]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -303,7 +313,7 @@ class NetworkManagementClientOperationsMixin(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of BastionShareableLink
         :rtype:
-         ~azure.mgmt.network.v2020_04_01.models.BastionShareableLinkPaged[~azure.mgmt.network.v2020_04_01.models.BastionShareableLink]
+         ~azure.mgmt.network.v2020_05_01.models.BastionShareableLinkPaged[~azure.mgmt.network.v2020_05_01.models.BastionShareableLink]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         
         """
@@ -318,6 +328,8 @@ class NetworkManagementClientOperationsMixin(object):
             from .v2020_03_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         elif api_version == '2020-04-01':
             from .v2020_04_01.operations import NetworkManagementClientOperationsMixin as OperationClass
+        elif api_version == '2020-05-01':
+            from .v2020_05_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         mixin_instance = OperationClass()
@@ -338,7 +350,7 @@ class NetworkManagementClientOperationsMixin(object):
         :type bastion_host_name: str
         :param vms: List of VM references.
         :type vms:
-         list[~azure.mgmt.network.v2020_04_01.models.BastionShareableLink]
+         list[~azure.mgmt.network.v2020_05_01.models.BastionShareableLink]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -348,9 +360,9 @@ class NetworkManagementClientOperationsMixin(object):
          BastionShareableLinkListResult or
          ClientRawResponse<BastionShareableLinkListResult> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.network.v2020_04_01.models.BastionShareableLinkListResult]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.network.v2020_05_01.models.BastionShareableLinkListResult]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.network.v2020_04_01.models.BastionShareableLinkListResult]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.network.v2020_05_01.models.BastionShareableLinkListResult]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         
         """
@@ -365,6 +377,8 @@ class NetworkManagementClientOperationsMixin(object):
             from .v2020_03_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         elif api_version == '2020-04-01':
             from .v2020_04_01.operations import NetworkManagementClientOperationsMixin as OperationClass
+        elif api_version == '2020-05-01':
+            from .v2020_05_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         mixin_instance = OperationClass()
@@ -390,7 +404,7 @@ class NetworkManagementClientOperationsMixin(object):
          overrides<msrest:optionsforoperations>`.
         :return: VirtualWanSecurityProviders or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.network.v2020_04_01.models.VirtualWanSecurityProviders or
+         ~azure.mgmt.network.v2020_05_01.models.VirtualWanSecurityProviders or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         
@@ -424,6 +438,8 @@ class NetworkManagementClientOperationsMixin(object):
             from .v2020_03_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         elif api_version == '2020-04-01':
             from .v2020_04_01.operations import NetworkManagementClientOperationsMixin as OperationClass
+        elif api_version == '2020-05-01':
+            from .v2020_05_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         mixin_instance = OperationClass()

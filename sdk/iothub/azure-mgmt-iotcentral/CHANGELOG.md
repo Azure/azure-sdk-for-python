@@ -1,5 +1,11 @@
 # Release History
 
+## 3.1.0 (2020-06-30)
+
+**Features**
+
+  - Model AppPatch has a new parameter sku
+
 ## 3.0.0 (2020-03-09)
 
 **Breaking changes**

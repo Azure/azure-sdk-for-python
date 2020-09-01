@@ -44,12 +44,11 @@ class _QueryExecutionEndpointComponent(object):
     def __iter__(self):
         return self
 
-    def next(self):
-        return next(self._execution_context)
-
     def __next__(self):
         # supports python 3 iterator
-        return self.next()
+        return next(self._execution_context)
+
+    next = __next__  # Python 2 compatibility.
 
 
 class _QueryExecutionOrderByEndpointComponent(_QueryExecutionEndpointComponent):
@@ -57,9 +56,10 @@ class _QueryExecutionOrderByEndpointComponent(_QueryExecutionEndpointComponent):
 
     For each processed orderby result it returns 'payload' item of the result.
     """
-
-    def next(self):
+    def __next__(self):
         return next(self._execution_context)["payload"]
+
+    next = __next__  # Python 2 compatibility.
 
 
 class _QueryExecutionTopEndpointComponent(_QueryExecutionEndpointComponent):
@@ -72,12 +72,14 @@ class _QueryExecutionTopEndpointComponent(_QueryExecutionEndpointComponent):
         super(_QueryExecutionTopEndpointComponent, self).__init__(execution_context)
         self._top_count = top_count
 
-    def next(self):
+    def __next__(self):
         if self._top_count > 0:
             res = next(self._execution_context)
             self._top_count -= 1
             return res
         raise StopIteration
+
+    next = __next__  # Python 2 compatibility.
 
 
 class _QueryExecutionDistinctOrderedEndpointComponent(_QueryExecutionEndpointComponent):
@@ -89,12 +91,14 @@ class _QueryExecutionDistinctOrderedEndpointComponent(_QueryExecutionEndpointCom
         super(_QueryExecutionDistinctOrderedEndpointComponent, self).__init__(execution_context)
         self.last_result = None
 
-    def next(self):
+    def __next__(self):
         res = next(self._execution_context)
         while self.last_result == res:
             res = next(self._execution_context)
         self.last_result = res
         return res
+
+    next = __next__  # Python 2 compatibility.
 
 
 class _QueryExecutionDistinctUnorderedEndpointComponent(_QueryExecutionEndpointComponent):
@@ -119,14 +123,14 @@ class _QueryExecutionDistinctUnorderedEndpointComponent(_QueryExecutionEndpointC
 
         return tuple(frozenset(sorted(new_value.items())))
 
-    def next(self):
+    def __next__(self):
         res = next(self._execution_context)
 
         json_repr = json.dumps(self.make_hash(res))
         if six.PY3:
             json_repr = json_repr.encode("utf-8")
 
-        hash_object = hashlib.sha1(json_repr)
+        hash_object = hashlib.sha1(json_repr)   # nosec
         hashed_result = hash_object.hexdigest()
 
         while hashed_result in self.last_result:
@@ -135,10 +139,12 @@ class _QueryExecutionDistinctUnorderedEndpointComponent(_QueryExecutionEndpointC
             if six.PY3:
                 json_repr = json_repr.encode("utf-8")
 
-            hash_object = hashlib.sha1(json_repr)
+            hash_object = hashlib.sha1(json_repr)   # nosec
             hashed_result = hash_object.hexdigest()
         self.last_result.add(hashed_result)
         return res
+
+    next = __next__  # Python 2 compatibility.
 
 
 class _QueryExecutionOffsetEndpointComponent(_QueryExecutionEndpointComponent):
@@ -150,7 +156,7 @@ class _QueryExecutionOffsetEndpointComponent(_QueryExecutionEndpointComponent):
         super(_QueryExecutionOffsetEndpointComponent, self).__init__(execution_context)
         self._offset_count = offset_count
 
-    def next(self):
+    def __next__(self):
         while self._offset_count > 0:
             res = next(self._execution_context)
             if res is not None:
@@ -158,6 +164,8 @@ class _QueryExecutionOffsetEndpointComponent(_QueryExecutionEndpointComponent):
             else:
                 raise StopIteration
         return next(self._execution_context)
+
+    next = __next__  # Python 2 compatibility.
 
 
 class _QueryExecutionAggregateEndpointComponent(_QueryExecutionEndpointComponent):
@@ -183,7 +191,7 @@ class _QueryExecutionAggregateEndpointComponent(_QueryExecutionEndpointComponent
             elif operator == "Sum":
                 self._local_aggregators.append(_SumAggregator())
 
-    def next(self):
+    def __next__(self):
         for res in self._execution_context:
             for item in res:
                 for operator in self._local_aggregators:
@@ -200,3 +208,5 @@ class _QueryExecutionAggregateEndpointComponent(_QueryExecutionEndpointComponent
             self._result_index += 1
             return res
         raise StopIteration
+
+    next = __next__  # Python 2 compatibility.

@@ -28,6 +28,18 @@ class DaysOfWeek(str, Enum):
     sunday = "Sunday"
 
 
+class PublicNetworkAccess(str, Enum):
+
+    inbound_and_outbound = "InboundAndOutbound"
+    outbound_only = "OutboundOnly"
+
+
+class OutboundOnlyPublicNetworkAccessType(str, Enum):
+
+    public_load_balancer = "PublicLoadBalancer"
+    udr = "UDR"
+
+
 class OSType(str, Enum):
 
     windows = "Windows"

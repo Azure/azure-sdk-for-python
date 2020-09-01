@@ -578,26 +578,9 @@ class PrivateLinkServicesOperations(object):
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     delete_private_endpoint_connection.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/privateLinkServices/{serviceName}/privateEndpointConnections/{peConnectionName}'}
 
-    def check_private_link_service_visibility(
-            self, location, private_link_service_alias=None, custom_headers=None, raw=False, **operation_config):
-        """Checks whether the subscription is visible to private link service.
 
-        :param location: The location of the domain name.
-        :type location: str
-        :param private_link_service_alias: The alias of the private link
-         service.
-        :type private_link_service_alias: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: PrivateLinkServiceVisibility or ClientRawResponse if raw=true
-        :rtype:
-         ~azure.mgmt.network.v2019_08_01.models.PrivateLinkServiceVisibility or
-         ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
+    def _check_private_link_service_visibility_initial(
+            self, location, private_link_service_alias=None, custom_headers=None, raw=False, **operation_config):
         parameters = models.CheckPrivateLinkServiceVisibilityRequest(private_link_service_alias=private_link_service_alias)
 
         # Construct URL
@@ -630,12 +613,13 @@ class PrivateLinkServicesOperations(object):
         request = self._client.post(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 202]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
 
         deserialized = None
+
         if response.status_code == 200:
             deserialized = self._deserialize('PrivateLinkServiceVisibility', response)
 
@@ -644,31 +628,59 @@ class PrivateLinkServicesOperations(object):
             return client_raw_response
 
         return deserialized
-    check_private_link_service_visibility.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Network/locations/{location}/checkPrivateLinkServiceVisibility'}
 
-    def check_private_link_service_visibility_by_resource_group(
-            self, location, resource_group_name, private_link_service_alias=None, custom_headers=None, raw=False, **operation_config):
-        """Checks whether the subscription is visible to private link service in
-        the specified resource group.
+    def check_private_link_service_visibility(
+            self, location, private_link_service_alias=None, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Checks whether the subscription is visible to private link service.
 
         :param location: The location of the domain name.
         :type location: str
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
         :param private_link_service_alias: The alias of the private link
          service.
         :type private_link_service_alias: str
         :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: PrivateLinkServiceVisibility or ClientRawResponse if raw=true
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns
+         PrivateLinkServiceVisibility or
+         ClientRawResponse<PrivateLinkServiceVisibility> if raw==True
         :rtype:
-         ~azure.mgmt.network.v2019_08_01.models.PrivateLinkServiceVisibility or
-         ~msrest.pipeline.ClientRawResponse
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.network.v2019_08_01.models.PrivateLinkServiceVisibility]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.network.v2019_08_01.models.PrivateLinkServiceVisibility]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        raw_result = self._check_private_link_service_visibility_initial(
+            location=location,
+            private_link_service_alias=private_link_service_alias,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            deserialized = self._deserialize('PrivateLinkServiceVisibility', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    check_private_link_service_visibility.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Network/locations/{location}/checkPrivateLinkServiceVisibility'}
+
+
+    def _check_private_link_service_visibility_by_resource_group_initial(
+            self, location, resource_group_name, private_link_service_alias=None, custom_headers=None, raw=False, **operation_config):
         parameters = models.CheckPrivateLinkServiceVisibilityRequest(private_link_service_alias=private_link_service_alias)
 
         # Construct URL
@@ -702,12 +714,13 @@ class PrivateLinkServicesOperations(object):
         request = self._client.post(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 202]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
 
         deserialized = None
+
         if response.status_code == 200:
             deserialized = self._deserialize('PrivateLinkServiceVisibility', response)
 
@@ -716,6 +729,58 @@ class PrivateLinkServicesOperations(object):
             return client_raw_response
 
         return deserialized
+
+    def check_private_link_service_visibility_by_resource_group(
+            self, location, resource_group_name, private_link_service_alias=None, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Checks whether the subscription is visible to private link service in
+        the specified resource group.
+
+        :param location: The location of the domain name.
+        :type location: str
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param private_link_service_alias: The alias of the private link
+         service.
+        :type private_link_service_alias: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns
+         PrivateLinkServiceVisibility or
+         ClientRawResponse<PrivateLinkServiceVisibility> if raw==True
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.network.v2019_08_01.models.PrivateLinkServiceVisibility]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.network.v2019_08_01.models.PrivateLinkServiceVisibility]]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._check_private_link_service_visibility_by_resource_group_initial(
+            location=location,
+            resource_group_name=resource_group_name,
+            private_link_service_alias=private_link_service_alias,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            deserialized = self._deserialize('PrivateLinkServiceVisibility', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     check_private_link_service_visibility_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/locations/{location}/checkPrivateLinkServiceVisibility'}
 
     def list_auto_approved_private_link_services(
