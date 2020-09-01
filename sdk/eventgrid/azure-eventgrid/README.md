@@ -50,6 +50,8 @@ Either a list or a single instance of CloudEvent/EventGridEvent/CustomEvent can 
 ### EventGridConsumer
 `EventGridConsumer` is used to desrialize an event received.
 
+For more information about the key concepts on EventGrid, see [Concepts in Azure Event Grid][publisher-service-doc]
+
 ## Examples
 
 The following sections provide several code snippets covering some of the most common EventGrid tasks, including:
@@ -234,6 +236,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [python-eg-sample-consume-customevent]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventgrid/azure-eventgrid/samples/champion_scenarios/cs4_consume_custom_events.py
 [python-eg-sample-send-cloudevent]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventgrid/azure-eventgrid/samples/champion_scenarios/cs5_publish_events_using_cloud_events_1.0_schema.py
 [python-eg-sample-consume-cloudevent]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventgrid/azure-eventgrid/samples/champion_scenarios/cs6_consume_events_using_cloud_events_1.0_schema.py
+[publisher-service-doc]: https://docs.microsoft.com/en-us/azure/event-grid/concepts
 
 [cla]: https://cla.microsoft.com
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
