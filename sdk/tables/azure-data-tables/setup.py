@@ -70,6 +70,7 @@ setup(
         # Exclude packages that will be covered by PEP420 or nspkg
         'azure',
         'tests',
+        'azure.data',
     ]),
     install_requires=[
         "azure-core<2.0.0,>=1.2.2",
