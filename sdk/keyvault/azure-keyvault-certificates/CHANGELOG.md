@@ -6,7 +6,7 @@
 
 ### Added
 - Added method `parse_key_vault_certificate_id` that parses out a full ID returned by key vault, so users
-can easily access the certificate's `name`, `vault_url`, `version` etc.
+can easily access the certificate's `name`, `vault_url`, and `version`.
 
 
 ## 4.2.0 (2020-08-11)
