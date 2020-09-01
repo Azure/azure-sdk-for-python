@@ -13,9 +13,6 @@ import os.path
 import time
 from datetime import datetime, timedelta
 
-from azure.data.tables._models import ResourceTypes, AccountSasPermissions
-from azure.data.tables._table_shared_access_signature import generate_account_sas
-
 try:
     import unittest.mock as mock
 except ImportError:
@@ -42,7 +39,7 @@ except ImportError:
     from io import StringIO
 
 from azure.core.credentials import AccessToken
-#from azure.data.tabless import generate_account_sas, AccountSasPermissions, ResourceTypes
+from azure.data.tables import generate_account_sas, AccountSasPermissions, ResourceTypes
 from azure.mgmt.storage.models import StorageAccount, Endpoints
 
 try:
