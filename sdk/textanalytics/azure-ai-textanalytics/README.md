@@ -449,7 +449,7 @@ with Text Analytics and require Python 3.5 or later.
 Authenticate the client with a Cognitive Services/Text Analytics API key or a token credential from [azure-identity][azure_identity]:
 * [sample_authentication.py][sample_authentication] ([async version][sample_authentication_async])
 
-Common scenarios with the different endpoints
+Common scenarios
 * Analyze sentiment: [sample_analyze_sentiment.py][analyze_sentiment_sample] ([async version][analyze_sentiment_sample_async])
 * Recognize entities: [sample_recognize_entities.py][recognize_entities_sample] ([async version][recognize_entities_sample_async])
 * Recognize personally identifiable information: [sample_recognize_pii_entities.py][recognize_pii_entities_sample]([async version][recognize_pii_entities_sample_async])
@@ -457,7 +457,7 @@ Common scenarios with the different endpoints
 * Extract key phrases: [sample_extract_key_phrases.py][extract_key_phrases_sample] ([async version][extract_key_phrases_sample_async])
 * Detect language: [sample_detect_language.py][detect_language_sample] ([async version][detect_language_sample_async])
 
-Advanced scenarios with the different endpoints
+Advanced scenarios
 * Opinion Mining: [sample_analyze_sentiment_with_opinion_mining.py][opinion_mining_sample] ([async_version][opinion_mining_sample_async])
 
 ### Additional documentation
