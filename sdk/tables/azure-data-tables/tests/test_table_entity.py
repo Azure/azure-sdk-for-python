@@ -664,7 +664,7 @@ class StorageTableEntityTest(TableTestCase):
             }
 
             response = table.create_entity(entity=entity)
-            old_etag = response["_metadata"]["etag"]
+            old_etag = response["etag"]
 
             entity["Value"] = 2
             response = table.update_entity(entity=entity)
