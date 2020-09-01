@@ -112,7 +112,7 @@ if ($pkgs) {
     if ($semVer.IsPreRelease) {
       $rdSuffix = "-pre"
     }
-    Write-Host "Here is the $($packageInfo.PackageId)."
+
     $readmeName = "$($packageInfo.PackageId.Replace('azure-','').Replace('Azure.', '').Replace('@azure/', '').ToLower())-readme$rdSuffix.md"
     $readmeLocation = Join-Path $DocRepoLocation $DocRepoContentLocation $readmeName
 
