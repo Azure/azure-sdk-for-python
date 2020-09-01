@@ -1,15 +1,6 @@
 # Note, due to how `Expand-Archive` is leveraged in this script,
 # powershell core is a requirement for successful execution.
 param (
-  # used by VerifyPackages
-  $artifactLocation, # the root of the artifact folder. DevOps $(System.ArtifactsDirectory)
-  $workingDirectory, # directory that package artifacts will be extracted into for examination (if necessary)
-  $packageRepository, # used to indicate destination against which we will check the existing version.
-  # valid options: PyPI, Nuget, NPM, Maven, C, CPP
-  # used by CreateTags
-  $releaseSha, # the SHA for the artifacts. DevOps: $(Release.Artifacts.<artifactAlias>.SourceVersion) or $(Build.SourceVersion)
-  [switch]$continueOnError = $true,
-
   $AzCopy,
   $DocLocation,
   $SASKey,
@@ -243,25 +234,6 @@ function Upload-Blobs
     }
 }
 
-function RetrieveReleaseTag([Object[]]$pkgs) {
-    if (!$pkgs -or !$pkgs[0]) {
-        Write-Warning "There is no release tag retrieved out from current package. "
-        return ""
-    }
-    Write-Host "Here is the release tag: $($pkgs[0].Tag)."
-    return $pkgs[0].Tag
-}
-
-# VERIFY PACKAGES
-$apiUrl = "https://api.github.com/repos/$repoId"
-$pkgList = VerifyPackages -pkgRepository $packageRepository `
-    -artifactLocation $artifactLocation `
-    -workingDirectory $workingDirectory `
-    -apiUrl $apiUrl -releaseSha $releaseSha `
-    -continueOnError $continueOnError
-
-$releaseTag = RetrieveReleaseTag $pkgList
-
 if ($Language -eq "javascript")
 {
     $PublishedDocs = Get-ChildItem "$($DocLocation)/documentation" | Where-Object -FilterScript {$_.Name.EndsWith(".zip")}
@@ -275,6 +247,7 @@ if ($Language -eq "javascript")
         if($dirList.Length -eq 1){
             $DocVersion = $dirList[0].Name
             Write-Host "Uploading Doc for $($PkgName) Version:- $($DocVersion)..."
+            $releaseTag = RetrieveReleaseTag $DocLocation, "NPM"
             Upload-Blobs -DocDir "$($DocLocation)/documentation/$($Item.BaseName)/$($Item.BaseName)/$($DocVersion)" -PkgName $PkgName -DocVersion $DocVersion -ReleaseTag $releaseTag
         }
         else{
@@ -300,6 +273,7 @@ if ($Language -eq "dotnet")
             Write-Host "DocDir $($Item)"
             Write-Host "PkgName $($PkgName)"
             Write-Host "DocVersion $($DocVersion)"
+            $releaseTag = RetrieveReleaseTag $DocLocation, "Nuget"
             Upload-Blobs -DocDir "$($Item)" -PkgName $PkgName -DocVersion $DocVersion -ReleaseTag $releaseTag
         }
         else
@@ -327,6 +301,7 @@ if ($Language -eq "python")
         Write-Host "Discovered Package Name: $PkgName"
         Write-Host "Discovered Package Version: $Version"
         Write-Host "Directory for Upload: $UnzippedDocumentationPath"
+        $releaseTag = RetrieveReleaseTag $DocLocation, "PyPI"
         Upload-Blobs -DocDir $UnzippedDocumentationPath -PkgName $PkgName -DocVersion $Version -ReleaseTag $releaseTag
     }
 }
@@ -373,6 +348,7 @@ if ($Language -eq "java")
             Write-Host "DocDir $($UnjarredDocumentationPath)"
             Write-Host "PkgName $($ArtifactId)"
             Write-Host "DocVersion $($Version)"
+            $releaseTag = RetrieveReleaseTag $DocLocation, "Maven"
             Upload-Blobs -DocDir $UnjarredDocumentationPath -PkgName $ArtifactId -DocVersion $Version -ReleaseTag $releaseTag
 
         } Finally {
@@ -395,11 +371,13 @@ if ($Language -eq "c")
     # Those loops are left over from previous versions of this script which were
     # used to publish multiple docs packages in a single invocation.
     $pkgInfo = Get-Content $DocLocation/package-info.json | ConvertFrom-Json
+    $releaseTag = RetrieveReleaseTag $DocLocation, "C"
     Upload-Blobs -DocDir $DocLocation -PkgName 'docs' -DocVersion $pkgInfo.version -ReleaseTag $releaseTag
 }
 
 if ($Language -eq "cpp")
 {
     $packageInfo = (Get-Content (Join-Path $DocLocation 'package-info.json') | ConvertFrom-Json)
+    $releaseTag = RetrieveReleaseTag $DocLocation, "CPP"
     Upload-Blobs -DocDir $DocLocation -PkgName $packageInfo.name -DocVersion $packageInfo.version -ReleaseTag $releaseTag
 }
