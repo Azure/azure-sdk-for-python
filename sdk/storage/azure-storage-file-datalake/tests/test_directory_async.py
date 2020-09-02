@@ -879,13 +879,15 @@ class DirectoryTest(StorageTestCase):
         old_file_system_name = self._get_directory_reference("oldfilesystem")
         old_dir_name = "olddir"
         old_client = self.dsc.get_file_system_client(old_file_system_name)
-        time.sleep(30)
+        if not self.is_playback():
+            time.sleep(30)
         await old_client.create_file_system()
         await old_client.create_directory(old_dir_name)
 
         # create a dir2 under filesystem2
         new_name = "newname"
-        time.sleep(5)
+        if not self.is_playback():
+            time.sleep(5)
         new_directory_client = await self._create_directory_and_get_directory_client(directory_name=new_name)
         new_directory_client = await new_directory_client.create_sub_directory("newsub")
 
@@ -937,7 +939,8 @@ class DirectoryTest(StorageTestCase):
         destination_file_system_name = self._get_directory_reference("destfilesystem")
         destination_dir_name = "destdir"
         fs_client = self.dsc.get_file_system_client(destination_file_system_name)
-        time.sleep(30)
+        if not self.is_playback():
+            time.sleep(30)
         await fs_client.create_file_system()
         destination_directory_client = await fs_client.create_directory(destination_dir_name)
 
