@@ -240,7 +240,7 @@ class TableTestAsync(AsyncTableTestCase):
         async for s in ts.list_tables(results_per_page=3).by_page():
             small_page.append(s)
 
-        self.assertEqual(len(small_page), 5)
+        self.assertEqual(len(small_page), 2)
         self.assertGreaterEqual(len(big_page), 4)
 
     @pytest.mark.skip("pending")
