@@ -113,7 +113,7 @@ A role definition is specified as part of a role assignment.
 A role assignment is the association of a role definition to a service principal. They can be created, listed, fetched individually, and deleted.
 
 ### KeyVaultAccessControlClient
-A `KeyVaultAccessControlClient` provides both synchronous and asynchronous operations allowing for management of role definitions and role assignments.
+A `KeyVaultAccessControlClient` manages role definitions and role assignments.
 
 ## Examples
 This section conntains code snippets covering common tasks:
