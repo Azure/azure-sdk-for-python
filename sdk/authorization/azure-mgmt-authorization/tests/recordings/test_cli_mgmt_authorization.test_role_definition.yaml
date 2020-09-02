@@ -1,0 +1,49 @@
+interactions:
+- request:
+    body: 'b''{"properties": {"roleName": "testRole", "description": "Role description",
+      "type": "CustomRole", "permissions": [{"actions": ["*/read"], "notActions":
+      []}], "assignableScopes": ["subscriptions/00000000-0000-0000-0000-000000000000"]}}'''
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '233'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-mgmt-authorization/0.60.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24e?api-version=2015-07-01
+  response:
+    body:
+      string: '{"error":{"code":"RoleDefinitionLimitExceeded","message":"Role definition
+        limit exceeded. No more role definitions can be created."}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '133'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 02 Sep 2020 06:47:45 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      set-cookie:
+      - x-ms-gateway-slice=Production; path=/; secure; samesite=none; httponly
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1197'
+    status:
+      code: 400
+      message: Bad Request
+version: 1
