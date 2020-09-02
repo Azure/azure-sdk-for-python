@@ -247,7 +247,10 @@ if ($Language -eq "javascript")
         if($dirList.Length -eq 1){
             $DocVersion = $dirList[0].Name
             Write-Host "Uploading Doc for $($PkgName) Version:- $($DocVersion)..."
-            $releaseTag = RetrieveReleaseTag "NPM" $DocLocation 
+            $releaseTag = RetrieveReleaseTag "NPM" "$($DocLocation)/documentation"
+            if (!releaseTag) {
+                $releaseTag = GenerateReleaseTag $PkgName $DocVersion
+            } 
             Upload-Blobs -DocDir "$($DocLocation)/documentation/$($Item.BaseName)/$($Item.BaseName)/$($DocVersion)" -PkgName $PkgName -DocVersion $DocVersion -ReleaseTag $releaseTag
         }
         else{
@@ -302,10 +305,8 @@ if ($Language -eq "python")
         Write-Host "Discovered Package Version: $Version"
         Write-Host "Directory for Upload: $UnzippedDocumentationPath"
         $releaseTag = RetrieveReleaseTag "PyPI" $DocLocation 
-        Write-Host "Release tag from zip files: $releaseTag"
         if (!$releaseTag) {
             $releaseTag = GenerateReleaseTag $PkgName $Version
-            Write-Host "Release tag from pkg name and version: $releaseTag"
         }
         Upload-Blobs -DocDir $UnzippedDocumentationPath -PkgName $PkgName -DocVersion $Version -ReleaseTag $releaseTag
     }
