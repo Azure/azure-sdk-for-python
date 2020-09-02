@@ -22,5 +22,5 @@ steps:
   - task: PipAuthenticate@1
     displayName: 'Pip Authenticate to feed: $(DevFeedName)'
     inputs:
-        artifactFeeds: $(DevFeedName)
+      artifactFeeds: $(DevFeedName)
       onlyAddExtraIndex: true
