@@ -302,6 +302,11 @@ if ($Language -eq "python")
         Write-Host "Discovered Package Version: $Version"
         Write-Host "Directory for Upload: $UnzippedDocumentationPath"
         $releaseTag = RetrieveReleaseTag "PyPI" $DocLocation 
+        Write-Host "Release tag from zip files: $releaseTag"
+        if (!$releaseTag) {
+            $releaseTag = GenerateReleaseTag $PkgName $Version
+            Write-Host "Release tag from pkg name and version: $releaseTag"
+        }
         Upload-Blobs -DocDir $UnzippedDocumentationPath -PkgName $PkgName -DocVersion $Version -ReleaseTag $releaseTag
     }
 }
@@ -372,6 +377,9 @@ if ($Language -eq "c")
     # used to publish multiple docs packages in a single invocation.
     $pkgInfo = Get-Content $DocLocation/package-info.json | ConvertFrom-Json
     $releaseTag = RetrieveReleaseTag "C" $DocLocation 
+    if (!$releaseTag) {
+        $releaseTag = GenerateReleaseTag -packageVersion $Version
+    }
     Upload-Blobs -DocDir $DocLocation -PkgName 'docs' -DocVersion $pkgInfo.version -ReleaseTag $releaseTag
 }
 
