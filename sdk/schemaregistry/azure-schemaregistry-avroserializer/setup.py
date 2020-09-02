@@ -67,5 +67,10 @@ setup(
     install_requires=[
         'azure-schemaregistry<2.0.0,>=1.0.0b1',
         'avro<2.0.0,>=1.0.0'
-    ]
+    ],
+    extras_require={
+        ":python_version<'3.0'": ['futures'],
+        ":python_version<'3.4'": ['enum34>=1.0.4'],
+        ":python_version<'3.5'": ["typing"]
+    }
 )
