@@ -8,11 +8,12 @@ from msrest.serialization import UTC
 import datetime as dt
 import uuid
 import json
-
+from ._generated import models
 from ._generated.models import StorageBlobCreatedEventData, \
     EventGridEvent as InternalEventGridEvent, \
     CloudEvent as InternalCloudEvent
 from ._shared.mixins import DictMixin
+from ._event_mappings import _event_mappings
 
 class CloudEvent(InternalCloudEvent):   #pylint:disable=too-many-instance-attributes
     """Properties of an event published to an Event Grid topic using the CloudEvent 1.0 Schema.
@@ -133,8 +134,6 @@ class DeserializedEvent():
     """The container for the deserialized event model and mapping of event envelope properties.
         :param dict event: dict
     """
-    # class variable
-    _event_type_mappings = {'Microsoft.Storage.BlobCreated': StorageBlobCreatedEventData}
 
     def __init__(self, event):
         # type: (Any) -> None
@@ -176,15 +175,15 @@ class DeserializedEvent():
     
     def _deserialize_data(self, event_type):
         """
-        Sets self._model.data to strongly typed event object if event type exists in _event_type_mappings.
+        Sets self._model.data to strongly typed event object if event type exists in _event_mappings.
         Otherwise, sets self._model.data to None.
 
         :param str event_type: The event_type of the EventGridEvent object or the type of the CloudEvent object.
         """
         # if system event type defined, set model.data to system event object
-        if event_type in DeserializedEvent._event_type_mappings:
-            self._model.data = (DeserializedEvent._event_type_mappings[event_type]).deserialize(self._model.data)
-        else:    # else, if custom event, then model.data is dict and should be set to None
+        try:
+            self._model.data = (_event_mappings[event_type]).deserialize(self._model.data)
+        except KeyError: # else, if custom event, then model.data is dict and should be set to None
             self._model.data = None
     
 class CustomEvent(DictMixin):

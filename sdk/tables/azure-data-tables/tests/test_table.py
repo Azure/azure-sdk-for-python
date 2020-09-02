@@ -133,17 +133,39 @@ class StorageTableTest(TableTestCase):
         # Arrange
         ts = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
         table_name = self._get_table_reference()
-        # btable_client = ts.get_table_client(table_name)
 
         # Act
         created = ts.create_table(table_name)
         with self.assertRaises(ResourceExistsError):
             ts.create_table(table_name)
+        print(created)
 
         # Assert
-        self.assertTrue(created)
-        # existing = list(ts.query_tables(query_options=QueryOptions(filter="TableName eq '{}'".format(table_name))))
-        # self.assertEqual(existing[0], [table_name])
+        self.assertIsNotNone(created)
+        ts.delete_table(table_name)
+
+    @GlobalStorageAccountPreparer()
+    def test_create_table_if_exists(self, resource_group, location, storage_account, storage_account_key):
+        ts = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
+        table_name = self._get_table_reference()
+
+        t0 = ts.create_table(table_name)
+        t1 = ts.create_table_if_not_exists(table_name)
+
+        self.assertIsNotNone(t0)
+        self.assertIsNotNone(t1)
+        self.assertEqual(t0.table_name, t1.table_name)
+        ts.delete_table(table_name)
+
+    @GlobalStorageAccountPreparer()
+    def test_create_table_if_exists_new_table(self, resource_group, location, storage_account, storage_account_key):
+        ts = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
+        table_name = self._get_table_reference()
+
+        t = ts.create_table_if_not_exists(table_name)
+
+        self.assertIsNotNone(t)
+        self.assertEqual(t.table_name, table_name)
         ts.delete_table(table_name)
 
     @GlobalStorageAccountPreparer()

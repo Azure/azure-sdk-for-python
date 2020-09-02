@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, Any
 
 import uamqp
 from uamqp.message import MessageProperties
-from .._base_handler import _generate_sas_token
+from .._base_handler import _generate_sas_token, _AccessToken
 from .._common._configuration import Configuration
 from .._common.utils import create_properties
 from .._common.constants import (
@@ -23,7 +23,7 @@ from ..exceptions import (
 )
 
 if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential
+    from azure.core.credentials import TokenCredential, AccessToken
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -35,12 +35,12 @@ class ServiceBusSharedKeyCredential(object):
     :param str key: The shared access key.
     """
 
-    def __init__(self, policy: str, key: str):
+    def __init__(self, policy: str, key: str) -> None:
         self.policy = policy
         self.key = key
         self.token_type = TOKEN_TYPE_SASTOKEN
 
-    async def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
+    async def get_token(self, *scopes: str, **kwargs: Any) -> _AccessToken:  # pylint:disable=unused-argument
         if not scopes:
             raise ValueError("No token scope provided.")
         return _generate_sas_token(scopes[0], self.policy, self.key)

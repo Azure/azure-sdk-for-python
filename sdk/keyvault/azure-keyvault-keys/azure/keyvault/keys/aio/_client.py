@@ -16,7 +16,8 @@ from .. import DeletedKey, JsonWebKey, KeyVaultKey, KeyProperties
 if TYPE_CHECKING:
     # pylint:disable=ungrouped-imports
     from datetime import datetime
-    from typing import Any, AsyncIterable, Optional, List, Union
+    from azure.core.async_paging import AsyncItemPaged
+    from typing import Any, Optional, List, Union
     from .. import KeyType
 
 
@@ -256,7 +257,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         return DeletedKey._from_deleted_key_bundle(bundle)
 
     @distributed_trace
-    def list_deleted_keys(self, **kwargs: "Any") -> "AsyncIterable[DeletedKey]":
+    def list_deleted_keys(self, **kwargs: "Any") -> "AsyncItemPaged[DeletedKey]":
         """List all deleted keys, including the public part of each. Possible only in a vault with soft-delete enabled.
 
         Requires keys/list permission.
@@ -281,7 +282,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         )
 
     @distributed_trace
-    def list_properties_of_keys(self, **kwargs: "Any") -> "AsyncIterable[KeyProperties]":
+    def list_properties_of_keys(self, **kwargs: "Any") -> "AsyncItemPaged[KeyProperties]":
         """List identifiers and properties of all keys in the vault. Requires keys/list permission.
 
         :returns: An iterator of keys without their cryptographic material or version information
@@ -304,7 +305,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         )
 
     @distributed_trace
-    def list_properties_of_key_versions(self, name: str, **kwargs: "Any") -> "AsyncIterable[KeyProperties]":
+    def list_properties_of_key_versions(self, name: str, **kwargs: "Any") -> "AsyncItemPaged[KeyProperties]":
         """List the identifiers and properties of a key's versions. Requires keys/list permission.
 
         :param str name: The name of the key

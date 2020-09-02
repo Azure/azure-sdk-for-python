@@ -12,8 +12,6 @@ interactions:
       - application/json
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-      api-key:
-      - D85D783D552374AA4A0206F9E41D5EB6
     method: POST
     uri: https://search55981a3f.search.windows.net/datasources?api-version=2020-06-30
   response:

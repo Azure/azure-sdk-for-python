@@ -5,13 +5,13 @@ interactions:
       "countryHint": "US"}]}'
     headers:
       Accept:
-      - application/json
+      - application/json, text/json
       Content-Length:
       - '5228'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/1.0.1 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.0.1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.1/languages?showStats=false
   response:
@@ -22,11 +22,11 @@ interactions:
         document in request.","innererror":{"code":"InvalidDocument","message":"A
         document within the request was too large to be processed. Limit document
         size to: 5120 text elements. For additional details on the data limitations
-        see https://aka.ms/text-analytics-data-limits"}}}],"modelVersion":"2019-10-01"}'
+        see https://aka.ms/text-analytics-data-limits"}}}],"modelVersion":"2020-07-01"}'
     headers:
-      apim-request-id: 0546eff8-748b-4af5-a8f3-8e6d7b5c0c7d
+      apim-request-id: ede6d4ca-785a-486a-9dc5-98dd9ddf49a7
       content-type: application/json; charset=utf-8
-      date: Fri, 24 Jul 2020 16:32:48 GMT
+      date: Thu, 27 Aug 2020 19:32:00 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff

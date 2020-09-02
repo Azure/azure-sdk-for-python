@@ -301,7 +301,7 @@ DOCUMENT = {
 
 search_client = SearchClient(endpoint, index_name, AzureKeyCredential(key))
 
-result = client.upload_documents(documents=[DOCUMENT])
+result = search_client.upload_documents(documents=[DOCUMENT])
 
 print("Upload of new document succeeded: {}".format(result[0].succeeded))
 ```

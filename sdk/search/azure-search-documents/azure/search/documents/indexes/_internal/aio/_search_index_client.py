@@ -10,7 +10,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.async_paging import AsyncItemPaged
 from .._generated.aio import SearchServiceClient as _SearchServiceClient
-from ....aio import SearchClient
+from ...._internal.aio._search_client_async import SearchClient
 from .._utils import (
     pack_search_index,
     unpack_search_index,

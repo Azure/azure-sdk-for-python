@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 from msrest import Serializer, Deserializer
-from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar
+from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union
 import warnings
 
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
@@ -50,6 +50,8 @@ class TextAnalyticsClientOperationsMixin(object):
             from ..v3_0.aio.operations_async import TextAnalyticsClientOperationsMixin as OperationClass
         elif api_version == 'v3.1-preview.1':
             from ..v3_1_preview_1.aio.operations_async import TextAnalyticsClientOperationsMixin as OperationClass
+        elif api_version == 'v3.1-preview.2':
+            from ..v3_1_preview_2.aio.operations_async import TextAnalyticsClientOperationsMixin as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         mixin_instance = OperationClass()
@@ -91,6 +93,8 @@ class TextAnalyticsClientOperationsMixin(object):
             from ..v3_0.aio.operations_async import TextAnalyticsClientOperationsMixin as OperationClass
         elif api_version == 'v3.1-preview.1':
             from ..v3_1_preview_1.aio.operations_async import TextAnalyticsClientOperationsMixin as OperationClass
+        elif api_version == 'v3.1-preview.2':
+            from ..v3_1_preview_2.aio.operations_async import TextAnalyticsClientOperationsMixin as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         mixin_instance = OperationClass()
@@ -106,8 +110,9 @@ class TextAnalyticsClientOperationsMixin(object):
         model_version: Optional[str] = None,
         show_stats: Optional[bool] = None,
         domain: Optional[str] = None,
+        string_index_type: Optional[Union[str, "models.StringIndexType"]] = "TextElements_v8",
         **kwargs
-    ) -> "models.EntitiesResult":
+    ) -> "models.PiiEntitiesResult":
         """Entities containing personal information.
 
         The API returns a list of entities with personal information (\"SSN\", \"Bank Account\" etc) in
@@ -117,23 +122,29 @@ class TextAnalyticsClientOperationsMixin(object):
         list of enabled languages.
 
         :param documents: The set of documents to process as part of this batch.
-        :type documents: list[~azure.ai.textanalytics.v3_1_preview_1.models.MultiLanguageInput]
+        :type documents: list[~azure.ai.textanalytics.v3_1_preview_2.models.MultiLanguageInput]
         :param model_version: (Optional) This value indicates which model will be used for scoring. If
          a model-version is not specified, the API should default to the latest, non-preview version.
         :type model_version: str
-        :param show_stats: (Optional) if set to true, response will contain input and document level
+        :param show_stats: (Optional) if set to true, response will contain request and document level
          statistics.
         :type show_stats: bool
         :param domain: (Optional) if set to 'PHI', response will contain only PHI entities.
         :type domain: str
+        :param string_index_type: (Optional) Specifies the method used to interpret string offsets.
+         Defaults to Text Elements (Graphemes) according to Unicode v8.0.0. For additional information
+         see https://aka.ms/text-analytics-offsets.
+        :type string_index_type: str or ~azure.ai.textanalytics.v3_1_preview_2.models.StringIndexType
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: EntitiesResult, or the result of cls(response)
-        :rtype: ~azure.ai.textanalytics.v3_1_preview_1.models.EntitiesResult
+        :return: PiiEntitiesResult, or the result of cls(response)
+        :rtype: ~azure.ai.textanalytics.v3_1_preview_2.models.PiiEntitiesResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('entities_recognition_pii')
         if api_version == 'v3.1-preview.1':
             from ..v3_1_preview_1.aio.operations_async import TextAnalyticsClientOperationsMixin as OperationClass
+        elif api_version == 'v3.1-preview.2':
+            from ..v3_1_preview_2.aio.operations_async import TextAnalyticsClientOperationsMixin as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         mixin_instance = OperationClass()
@@ -141,7 +152,7 @@ class TextAnalyticsClientOperationsMixin(object):
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
-        return await mixin_instance.entities_recognition_pii(documents, model_version, show_stats, domain, **kwargs)
+        return await mixin_instance.entities_recognition_pii(documents, model_version, show_stats, domain, string_index_type, **kwargs)
 
     async def key_phrases(
         self,
@@ -174,6 +185,8 @@ class TextAnalyticsClientOperationsMixin(object):
             from ..v3_0.aio.operations_async import TextAnalyticsClientOperationsMixin as OperationClass
         elif api_version == 'v3.1-preview.1':
             from ..v3_1_preview_1.aio.operations_async import TextAnalyticsClientOperationsMixin as OperationClass
+        elif api_version == 'v3.1-preview.2':
+            from ..v3_1_preview_2.aio.operations_async import TextAnalyticsClientOperationsMixin as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         mixin_instance = OperationClass()
@@ -215,6 +228,8 @@ class TextAnalyticsClientOperationsMixin(object):
             from ..v3_0.aio.operations_async import TextAnalyticsClientOperationsMixin as OperationClass
         elif api_version == 'v3.1-preview.1':
             from ..v3_1_preview_1.aio.operations_async import TextAnalyticsClientOperationsMixin as OperationClass
+        elif api_version == 'v3.1-preview.2':
+            from ..v3_1_preview_2.aio.operations_async import TextAnalyticsClientOperationsMixin as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         mixin_instance = OperationClass()
@@ -256,6 +271,8 @@ class TextAnalyticsClientOperationsMixin(object):
             from ..v3_0.aio.operations_async import TextAnalyticsClientOperationsMixin as OperationClass
         elif api_version == 'v3.1-preview.1':
             from ..v3_1_preview_1.aio.operations_async import TextAnalyticsClientOperationsMixin as OperationClass
+        elif api_version == 'v3.1-preview.2':
+            from ..v3_1_preview_2.aio.operations_async import TextAnalyticsClientOperationsMixin as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         mixin_instance = OperationClass()

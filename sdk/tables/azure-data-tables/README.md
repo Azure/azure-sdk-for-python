@@ -4,9 +4,9 @@ Azure Data Tables is a NoSQL data storage service that can be accessed from anyw
 Tables scales as needed to support the amount of data inserted, and allow for the storing of data with non-complex accessing.
 The Azure Data Tables client can be used to access Azure Storage or Cosmos accounts.
 
-Common uses of Azure Data Tables include:
 
-* Storing structured data in the form of tables
+# Usage
+* Storing structured data in the form of tables	# Usage
 * Quickly querying data using a clustered index
 
 [Source code](source_code) | [Package (PyPI)](Tables_pypi) | [API reference documentation](Tables_ref_docs) | [Product documentation](Tables_product_doc) | [Samples](Tables_samples)
@@ -35,7 +35,6 @@ If you wish to create a new storage account, you can use [Azure Portal](azure_po
 # Create a new resource group to hold the storage account -
 # if using an existing resource group, skip this step
 az group create --name MyResourceGroup --location westus2
-
 # Create the storage account
 az storage account create -n MyStorageAccount -g MyResourceGroup
 ```
@@ -56,8 +55,19 @@ endpoint URL and a credential that allows you to access the account:
 
 ```python
 from azure.data.tables import TableServiceClient
-
 service = TableServiceClient(account_url="https://<myaccount>.table.core.windows.net/", credential=credential)
+```
+
+
+#### Looking up the account URL
+You can find the account's table service URL using the
+[Azure Portal](https://docs.microsoft.com/azure/storage/common/storage-account-overview#storage-account-endpoints),
+[Azure PowerShell](https://docs.microsoft.com/powershell/module/az.storage/get-azstorageaccount),
+or [Azure CLI](https://docs.microsoft.com/cli/azure/storage/account?view=azure-cli-latest#az-storage-account-show):
+
+```bash
+# Get the table service URL for the account
+az storage account show -n mystorageaccount -g MyResourceGroup --query "primaryEndpoints.table"
 ```
 
 #### Types of credentials
@@ -102,7 +112,6 @@ connection string to the client's `from_connection_string` class method:
 
 ```python
 from azure.data.tables import TableServiceClient
-
 connection_string = "DefaultEndpointsProtocol=https;AccountName=xxxx;AccountKey=xxxx;EndpointSuffix=core.windows.net"
 service = TableServiceClient.from_connection_string(conn_str=connection_string)
 ```
@@ -173,7 +182,6 @@ Create a table in your account
 
 ```python
 from azure.data.tables import TableServiceClient
-
 table_service_client = TableServiceClient.from_connection_string(conn_str="<connection_string>")
 table_service_client.create_table(table_name="myTable")
 ```
@@ -183,9 +191,7 @@ Create entities in the table
 
 ```python
 from azure.data.tables import TableClient
-
 my_entity = {'PartitionKey':'part','RowKey':'row'}
-
 table_client = TableClient.from_connection_string(conn_str="<connection_string>", table_name="myTable")
 entity = table_client.create_entity(entity=my_entity)
 ```
@@ -195,9 +201,7 @@ Querying entities in the table
 
 ```python
 from azure.data.tables import TableClient
-
 my_filter = "text eq Marker"
-
 table_client = TableClient.from_connection_string(conn_str="<connection_string>", table_name="mytable")
 entity = table_client.query_entities(filter=my_filter)
 ```
@@ -271,15 +275,12 @@ headers, can be enabled on a client with the `logging_enable` argument:
 import sys
 import logging
 from azure.data.tables import TableServiceClient
-
 # Create a logger for the 'azure.data.tables' SDK
 logger = logging.getLogger('azure.data.tables')
 logger.setLevel(logging.DEBUG)
-
 # Configure a console output
 handler = logging.StreamHandler(stream=sys.stdout)
 logger.addHandler(handler)
-
 # This client will log detailed information about its HTTP sessions, at DEBUG level
 service_client = TableServiceClient.from_connection_string("your_connection_string", logging_enable=True)
 ```

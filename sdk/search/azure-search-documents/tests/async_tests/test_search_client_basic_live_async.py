@@ -7,11 +7,11 @@ import asyncio
 import functools
 import json
 from os.path import dirname, join, realpath
-import time
 
 import pytest
 
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
+from azure_devtools.scenario_tests import ReplayableTest
 
 from search_service_preparer import SearchServicePreparer
 
@@ -43,6 +43,8 @@ def await_prepared_test(test_fn):
 
 
 class SearchClientTestAsync(AzureMgmtTestCase):
+    FILTER_HEADERS = ReplayableTest.FILTER_HEADERS + ['api-key']
+
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     async def test_async_get_document_count(
