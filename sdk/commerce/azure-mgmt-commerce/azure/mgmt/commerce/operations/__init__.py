@@ -9,8 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .usage_aggregates_operations import UsageAggregatesOperations
-from .rate_card_operations import RateCardOperations
+from ._usage_aggregates_operations import UsageAggregatesOperations
+from ._rate_card_operations import RateCardOperations
 
 __all__ = [
     'UsageAggregatesOperations',

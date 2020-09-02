@@ -9,50 +9,16 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
-from msrestazure import AzureConfiguration
-from .version import VERSION
-from .operations.usage_aggregates_operations import UsageAggregatesOperations
-from .operations.rate_card_operations import RateCardOperations
+
+from ._configuration import UsageManagementClientConfiguration
+from .operations import UsageAggregatesOperations
+from .operations import RateCardOperations
 from . import models
 
 
-class UsageManagementClientConfiguration(AzureConfiguration):
-    """Configuration for UsageManagementClient
-    Note that all parameters used to create this instance are saved as instance
-    attributes.
-
-    :param credentials: Credentials needed for the client to connect to Azure.
-    :type credentials: :mod:`A msrestazure Credentials
-     object<msrestazure.azure_active_directory>`
-    :param subscription_id: It uniquely identifies Microsoft Azure
-     subscription. The subscription ID forms part of the URI for every service
-     call.
-    :type subscription_id: str
-    :param str base_url: Service URL
-    """
-
-    def __init__(
-            self, credentials, subscription_id, base_url=None):
-
-        if credentials is None:
-            raise ValueError("Parameter 'credentials' must not be None.")
-        if subscription_id is None:
-            raise ValueError("Parameter 'subscription_id' must not be None.")
-        if not base_url:
-            base_url = 'https://management.azure.com'
-
-        super(UsageManagementClientConfiguration, self).__init__(base_url)
-
-        self.add_user_agent('azure-mgmt-commerce/{}'.format(VERSION))
-        self.add_user_agent('Azure-SDK-For-Python')
-
-        self.credentials = credentials
-        self.subscription_id = subscription_id
-
-
-class UsageManagementClient(object):
+class UsageManagementClient(SDKClient):
     """UsageManagementClient
 
     :ivar config: Configuration for client.
@@ -77,7 +43,7 @@ class UsageManagementClient(object):
             self, credentials, subscription_id, base_url=None):
 
         self.config = UsageManagementClientConfiguration(credentials, subscription_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(UsageManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '2015-06-01-preview'

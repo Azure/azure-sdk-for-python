@@ -12,7 +12,7 @@
 from enum import Enum
 
 
-class AggregationGranularity(Enum):
+class AggregationGranularity(str, Enum):
 
     daily = "Daily"
     hourly = "Hourly"

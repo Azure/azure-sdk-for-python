@@ -9,32 +9,44 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .info_field import InfoField
-from .usage_aggregation import UsageAggregation
-from .rate_card_query_parameters import RateCardQueryParameters
-from .offer_term_info import OfferTermInfo
-from .meter_info import MeterInfo
-from .resource_rate_card_info import ResourceRateCardInfo
-from .monetary_credit import MonetaryCredit
-from .monetary_commitment import MonetaryCommitment
-from .recurring_charge import RecurringCharge
-from .error_response import ErrorResponse, ErrorResponseException
-from .usage_aggregation_paged import UsageAggregationPaged
-from .usage_management_client_enums import (
+try:
+    from ._models_py3 import ErrorResponse, ErrorResponseException
+    from ._models_py3 import InfoField
+    from ._models_py3 import MeterInfo
+    from ._models_py3 import MonetaryCommitment
+    from ._models_py3 import MonetaryCredit
+    from ._models_py3 import OfferTermInfo
+    from ._models_py3 import RateCardQueryParameters
+    from ._models_py3 import RecurringCharge
+    from ._models_py3 import ResourceRateCardInfo
+    from ._models_py3 import UsageAggregation
+except (SyntaxError, ImportError):
+    from ._models import ErrorResponse, ErrorResponseException
+    from ._models import InfoField
+    from ._models import MeterInfo
+    from ._models import MonetaryCommitment
+    from ._models import MonetaryCredit
+    from ._models import OfferTermInfo
+    from ._models import RateCardQueryParameters
+    from ._models import RecurringCharge
+    from ._models import ResourceRateCardInfo
+    from ._models import UsageAggregation
+from ._paged_models import UsageAggregationPaged
+from ._usage_management_client_enums import (
     AggregationGranularity,
 )
 
 __all__ = [
-    'InfoField',
-    'UsageAggregation',
-    'RateCardQueryParameters',
-    'OfferTermInfo',
-    'MeterInfo',
-    'ResourceRateCardInfo',
-    'MonetaryCredit',
-    'MonetaryCommitment',
-    'RecurringCharge',
     'ErrorResponse', 'ErrorResponseException',
+    'InfoField',
+    'MeterInfo',
+    'MonetaryCommitment',
+    'MonetaryCredit',
+    'OfferTermInfo',
+    'RateCardQueryParameters',
+    'RecurringCharge',
+    'ResourceRateCardInfo',
+    'UsageAggregation',
     'UsageAggregationPaged',
     'AggregationGranularity',
 ]
