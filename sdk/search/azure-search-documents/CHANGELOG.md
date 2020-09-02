@@ -5,7 +5,7 @@
 **Features**
 
 - Added `azure.search.documents.RequestEntityTooLargeError`
-- `Flush` method in `BatchClient` now will not return untill all actions are done
+- `Flush` method in `BatchClient` now will not return until all actions are done
 
 **Breaking Changes**
 
