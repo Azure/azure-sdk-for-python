@@ -39,6 +39,17 @@ def pytest_collection_modifyitems(config, items):
 
 
 @pytest.fixture()
+def live_cloud_environment():
+    try:
+        return {
+            "authority": os.environ[EnvironmentVariables.AZURE_AUTHORITY_HOST],
+            "scope": os.environ["IDENTITY_LIVE_TEST_SCOPE"],
+        }
+    except KeyError as ex:
+        pytest.skip('No value for environment variable "{}"'.format(ex))
+
+
+@pytest.fixture()
 def live_service_principal():  # pylint:disable=inconsistent-return-statements
     """Fixture for live Identity tests. Skips them when environment configuration is incomplete."""
 
@@ -113,6 +124,7 @@ def live_user_details():
         pytest.skip("To test username/password authentication, set $AZURE_USERNAME, $AZURE_PASSWORD, $USER_TENANT")
     else:
         return user_details
+
 
 @pytest.fixture()
 def event_loop():
