@@ -20,7 +20,7 @@ These sample programs show common scenarios for the Tables client's offerings.
 
 |**File Name**|**Description**|
 |-------------|---------------|
-|[sample_authentication.py][auth] and [sample_authentication_async.py][auth_async]|Different authorization methods|
+|[sample_authentication.py][sample_authentication] and [sample_authentication_async.py][sample_authentication_async]|Different authorization methods|
 |[sample_create_client.py][create_client] and [sample_create_client_async.py][create_client_async]|Instantiate a table client|Authorizing a `TableServiceClient` object and `TableClient` object|
 |[sample_create_delete_table.py][create_delete_table] and [sample_create_delete_table_async.py][create_delete_table_async]|Creating a table in a storage account|
 |[sample_insert_delete_entities.py][insert_delete_entities] and [sample_insert_delete_entities_async.py][insert_delete_entities_async]|Inserting and deleting individual entities into a table|
@@ -47,7 +47,7 @@ pip install --pre azure-data-tables
 
 1. Open a terminal window and `cd` to the directory that the samples are saved in.
 2. Set the environment variables specified in the sample file you wish to run.
-3. Follow the usage described in the file, e.g. `python sample_detect_language.py`
+3. Follow the usage described in the file, e.g. `python sample_create_table.py`
 
 ## Next steps
 
@@ -58,20 +58,23 @@ what you can do with the Azure Data Tables client library.
 <!-- LINKS -->
 [api_reference_documentation]: https://aka.ms/azsdk/python/tables/docs
 
-[sample_authentication]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/sample_authentication.py
+[sample_authentication]:https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/sample_authentication.py
 [sample_authentication_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/async_samples/sample_authentication_async.py
+
+[create_client]:https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/sample_create_client.py
+[create_client_async]:https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/async_samples/sample_create_client_async.py
 
 [create_delete_table]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/sample_create_delete_table.py
 [create_delete_table_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/async_samples/sample_create_delete_table_async.py
 
-[insert_delete_entities_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/sample_insert_delete_entities.py
+[insert_delete_entities]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/sample_insert_delete_entities.py
 [insert_delete_entities_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/async_samples/sample_insert_delete_entities_async.py
 
-[query_entities]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/sample_insert_delete_entities_async.py
-[query_table_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/async_samples/sample_insert_delete_entities_async.py
+[query_entities]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/sample_query_table.py
+[query_table_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/async_samples/sample_query_table_async.py
 
-[query_tables]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/sample_insert_delete_entities_async.py
-[query_tables_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/async_samples/sample_insert_delete_entities_async.py
+[query_tables]:https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/async_samples/sample_query_tables.py
+[query_tables_async]:https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/async_samples/sample_query_tables_async.py
 
 [update_upsert_merge]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/sample_update_upsert_merge_entities.py
 [update_upsert_merge_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/async_samples/sample_update_upsert_merge_entities_async.py

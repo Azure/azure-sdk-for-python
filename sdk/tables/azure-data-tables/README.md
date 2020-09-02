@@ -294,27 +294,14 @@ service_client.get_service_stats(logging_enable=True)
 
 Get started with our [Table samples](tables_samples).
 
-Several Azure Data Tables Python SDK samples are available to you in the SDK's GitHub repository. These samples provide example code for additional scenarios commonly encountered while working with Tables:
-
-* [table_samples_authentication.py](samples_authentication) - Examples found in this article:
-    * From a connection string
-    * From a shared access key
-    * From a shared access signature token
-* [table_samples_service.py](samples_services) - Examples found in this article:
-    * Get and set service properties
-    * List tables in a account
-    * Create and delete a table from the service
-    * Get the TableClient
-* [table_samples_client.py](samples_client) - Examples found in this article:
-    * Client creation
-    * Create a table
-    * Create and Delete entities
-    * Query entities
-    * Update entities
-    * Upsert entities
+Several Azure Data Tables Python SDK samples are available to you in the SDK's GitHub repository. These samples provide example code for additional scenarios commonly encountered while working with Tables.
 
 ### Additional documentation
 For more extensive documentation on Azure Data Tables, see the [Azure Data Tables documentation](Tables_product_doc) on docs.microsoft.com.
+
+## Known Issues
+
+A list of currently known issues relating to Cosmos DB table endpoints can be found [here](https://aka.ms/tablesknownissues).
 
 ## Contributing
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit https://cla.microsoft.com.
@@ -324,21 +311,20 @@ When you submit a pull request, a CLA-bot will automatically determine whether y
 This project has adopted the [Microsoft Open Source Code of Conduct](msft_oss_coc). For more information see the [Code of Conduct FAQ](msft_oss_coc_faq) or contact [opencode@microsoft.com](contact_msft_oss) with any additional questions or comments.
 
 <!-- LINKS -->
-[source_code]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/azure/data/table
-<!-- Still needed -->
-[Tables_pypi]: https://pypi.org/
-[Tables_ref_docs]: https://docs.microsoft.com/en-us/azure/cosmos-db/table-introduction
+[source_code]:https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables
+[Tables_pypi]:https://pypi.org/
+[Tables_ref_docs]:https://docs.microsoft.com/en-us/azure/cosmos-db/table-introduction
 [Tables_product_doc]:https://docs.microsoft.com/en-us/azure/storage/
-[Tables_samples]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples
+[Tables_samples]:https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples
 
 [azure_subscription]:https://azure.microsoft.com/en-us/free/
 [azure_storage_account]:https://azure.microsoft.com/en-us/free/
 [azure_cosmos_account]: https://docs.microsoft.com/en-us/azure/cosmos-db/account-overview
-[pip_link]: https://pypi.org/project/pip/
+[pip_link]:https://pypi.org/project/pip/
 
-[azure_create_cosmos]: https://docs.microsoft.com/en-us/azure/cosmos-db/create-cosmosdb-resources-portal
-[azure_portal_create_account]: https://docs.microsoft.com/en-us/azure/storage/common/storage-account-create?tabs=azure-portal
-[azure_powershell_create_account]: https://docs.microsoft.com/en-us/azure/storage/common/storage-account-create?tabs=azure-powershell
+[azure_create_cosmos]:https://docs.microsoft.com/en-us/azure/cosmos-db/create-cosmosdb-resources-portal
+[azure_portal_create_account]:https://docs.microsoft.com/en-us/azure/storage/common/storage-account-create?tabs=azure-portal
+[azure_powershell_create_account]:https://docs.microsoft.com/en-us/azure/storage/common/storage-account-create?tabs=azure-powershell
 [azure_cli_create_account]: https://docs.microsoft.com/en-us/azure/storage/common/storage-account-create?tabs=azure-cli
 
 [azure_cli_account_url]:https://docs.microsoft.com/en-us/cli/azure/storage/account?view=azure-cli-latest#az-storage-account-show
@@ -354,13 +340,6 @@ This project has adopted the [Microsoft Open Source Code of Conduct](msft_oss_co
 
 [python_logging]: https://docs.python.org/3/library/logging.html
 [tables_error_codes]: https://docs.microsoft.com/rest/api/storageservices/table-service-error-codes
-
-<!-- Still needed -->
-[samples_authentication]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/tables/azure-data-tables/samples/table_samples_authentication.py
-<!-- Still needed -->
-[samples_services]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/tables/azure-data-tables/samples/table_samples_authentication.py
-<!-- Still needed -->
-[samples_client]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/tables/azure-data-tables/samples/table_samples_client.py
 
 [msft_oss_coc]:https://opensource.microsoft.com/codeofconduct/
 [msft_oss_coc_faq]:https://opensource.microsoft.com/codeofconduct/faq/
