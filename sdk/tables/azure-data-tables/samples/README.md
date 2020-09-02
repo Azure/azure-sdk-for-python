@@ -4,7 +4,7 @@ languages:
   - python
 products:
   - azure
-  - azure-data-tables
+  - azure-table-storage
 urlFragment: tables-samples
 ---
 

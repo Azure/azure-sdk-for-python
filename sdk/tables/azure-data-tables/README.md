@@ -12,6 +12,7 @@ Common uses of Azure Data Tables include:
 [Source code](source_code) | [Package (PyPI)](Tables_pypi) | [API reference documentation](Tables_ref_docs) | [Product documentation](Tables_product_doc) | [Samples](Tables_samples)
 
 ## Getting started
+The Azure Data Tables can be accessed using an Azure Storage or a CosmosDB account.
 
 ### Prerequisites
 * Python 2.7, or 3.5 or later is required to use this package.
@@ -26,8 +27,7 @@ Install the Azure Data Tables client library for Python with [pip](pip_link):
 pip install --pre azure-data-tables
 ```
 
-### Create a storage account
-If you wish to create a new cosmos storage account, you can use [Azure Cosmos DB](azure_create_cosmos).
+#### Create a storage account
 If you wish to create a new storage account, you can use [Azure Portal](azure_portal_create_account),
 [Azure PowerShell](azure_powershell_create_account), or [Azure CLI](azure_cli_create_account):
 
@@ -40,14 +40,15 @@ az group create --name MyResourceGroup --location westus2
 az storage account create -n MyStorageAccount -g MyResourceGroup
 ```
 
-### Creating a Cosmos DB
+#### Creating a Cosmos DB
+If you wish to create a new cosmos storage account, you can use [Azure Cosmos DB](azure_create_cosmos).
 Create a Cosmos DB account `MycosmosDBDatabaseAccount` in resource group `MyResourceGroup` in the subscription `MySubscription` and a table named `MyTableName` in the account.
 ```bash
 az cosmosdb create --name MyCosmosDBDatabaseAccount --resource-group MyResourceGroup --subscription MySubscription
 az cosmosdb table create --name MyTableName --resource-group MyResourceGroup --acount-name MyCosmosDBDatabaseAccount
 ```
 
-### Create the client
+#### Create the client
 The Azure Data Tables client library for Python allows you to interact with two types of resources: the
 tables in your account, and the entities within the tables. Interaction with these resources starts with an
 instance of a [client](#clients). To create a client object, you will need the account's table service
@@ -57,17 +58,6 @@ endpoint URL and a credential that allows you to access the account:
 from azure.data.tables import TableServiceClient
 
 service = TableServiceClient(account_url="https://<myaccount>.table.core.windows.net/", credential=credential)
-```
-
-#### Looking up the account URL
-You can find the account's table service URL using the
-[Azure Portal](azure_portal_account_url),
-[Azure PowerShell](azure_powershell_account_url),
-or [Azure CLI](azure_cli_account_url):
-
-```bash
-# Get the table service URL for the account
-az storage account show -n MyStorageAccount -g MyResourceGroup --query "primaryEndpoints.table"
 ```
 
 #### Types of credentials
@@ -121,6 +111,17 @@ The connection string to your account can be found in the Azure Portal under the
 
 ```bash
 az storage account show-connection-string -g MyResourceGroup -n MyStorageAccount
+```
+
+#### Looking up the account URL
+You can find the account's table service URL using the
+[Azure Portal](azure_portal_account_url),
+[Azure PowerShell](azure_powershell_account_url),
+or [Azure CLI](azure_cli_account_url):
+
+```bash
+# Get the table service URL for the account
+az storage account show -n MyStorageAccount -g MyResourceGroup --query "primaryEndpoints.table"
 ```
 
 ## Key concepts
@@ -201,21 +202,6 @@ table_client = TableClient.from_connection_string(conn_str="<connection_string>"
 entity = table_client.query_entities(filter=my_filter)
 ```
 
-## Troubleshooting
-When you interact with the Azure table library using the Python SDK, errors returned by the service respond ot the same HTTP status codes for [REST API](tables_rest) requests.
-
-For examples, if you try to create a table that already exists, a `409` error is returned indicating "Conflict".
-```python
-service_client = TableServiceClient(connection_string)
-
-# Create the table if it does not already exist
-tc = service_client.create_table_if_not_exists(table_name)
-
-try:
-    service_client.create_table(table_name)
-except HttpResponseError:
-    print("Table with name {} already exists".format(table_name))
-```
 
 ## Optional Configuration
 
@@ -256,9 +242,22 @@ the client level to enable it for all requests.
 
 
 ## Troubleshooting
+
 ### General
 Azure Data Tables clients raise exceptions defined in [Azure Core](azure_core_readme).
-All Table service operations will throw a `HttpResponseError` on failure with helpful [error codes](tables_error_codes).
+When you interact with the Azure table library using the Python SDK, errors returned by the service respond ot the same HTTP status codes for [REST API](tables_rest) requests. The Table service operations will throw a `HttpResponseError` on failure with helpful [error codes](tables_error_codes).
+
+For examples, if you try to create a table that already exists, a `409` error is returned indicating "Conflict".
+```python
+service_client = TableServiceClient(connection_string)
+
+# Create the table if it does not already exist
+tc = service_client.create_table_if_not_exists(table_name)
+
+try:
+    service_client.create_table(table_name)
+except HttpResponseError:
+    print("Table with name {} already exists".format(table_name))
 
 ### Logging
 This library uses the standard
@@ -371,3 +370,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct](msft_oss_co
 [msft_oss_coc]:https://opensource.microsoft.com/codeofconduct/
 [msft_oss_coc_faq]:https://opensource.microsoft.com/codeofconduct/faq/
 [contact_msft_oss]:mailto:opencode@microsoft.com
+
+[tables_rest]: https://docs.microsoft.com/en-us/rest/api/storageservices/table-service-rest-api
+
+![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python/sdk/tables/azure-data-tables/README.png)
