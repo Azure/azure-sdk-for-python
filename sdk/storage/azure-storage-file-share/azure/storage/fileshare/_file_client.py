@@ -1093,19 +1093,59 @@ class ShareFileClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    def _get_ranges_options( # type: ignore
+            self, offset=None, # type: Optional[int]
+            length=None, # type: Optional[int]
+            previous_sharesnapshot_diff=None,  # type: Optional[Union[str, Dict[str, Any]]]
+            **kwargs
+        ):
+        # type: (...) -> Dict[str, Any]
+        if self.require_encryption or (self.key_encryption_key is not None):
+            raise ValueError("Unsupported method for encryption.")
+        access_conditions = get_access_conditions(kwargs.pop('lease', None))
+
+        content_range = None
+        if offset is not None:
+            if length is not None:
+                end_range = offset + length - 1  # Reformat to an inclusive range index
+                content_range = 'bytes={0}-{1}'.format(offset, end_range)
+            else:
+                content_range = 'bytes={0}-'.format(offset)
+        options = {
+            'sharesnapshot': self.snapshot,
+            'lease_access_conditions': access_conditions,
+            'timeout': kwargs.pop('timeout', None),
+            'range': content_range}
+        if previous_sharesnapshot_diff:
+            try:
+                options['prevsharesnapshot'] = previous_sharesnapshot_diff.snapshot # type: ignore
+            except AttributeError:
+                try:
+                    options['prevsharesnapshot'] = previous_sharesnapshot_diff['snapshot'] # type: ignore
+                except TypeError:
+                    options['prevsharesnapshot'] = previous_sharesnapshot_diff
+        options.update(kwargs)
+        return options
+
     @distributed_trace
     def get_ranges(  # type: ignore
             self, offset=None,  # type: Optional[int]
             length=None,  # type: Optional[int]
+            previous_sharesnapshot_diff=None,  # type: Optional[Union[str, Dict[str, Any]]]
             **kwargs  # type: Any
         ):
         # type: (...) -> List[Dict[str, int]]
-        """Returns the list of valid ranges of a file.
+        """Returns the list of valid page ranges for a file or snapshot
+        of a file.
 
         :param int offset:
             Specifies the start offset of bytes over which to get ranges.
         :param int length:
            Number of bytes to use over which to get ranges.
+        :param str previous_sharesnapshot_diff:
+            The snapshot diff parameter that contains an opaque DateTime value that
+            specifies a previous file snapshot to be compared
+            against a more recent snapshot or the current file.
         :keyword lease:
             Required if the file has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
@@ -1118,25 +1158,14 @@ class ShareFileClient(StorageAccountHostsMixin):
         :returns: A list of valid ranges.
         :rtype: List[dict[str, int]]
         """
-        timeout = kwargs.pop('timeout', None)
-        if self.require_encryption or (self.key_encryption_key is not None):
-            raise ValueError("Unsupported method for encryption.")
-        access_conditions = get_access_conditions(kwargs.pop('lease', None))
+        options = self._get_ranges_options(
+            offset=offset,
+            length=length,
+            previous_sharesnapshot_diff=previous_sharesnapshot_diff,
+            **kwargs)
 
-        content_range = None
-        if offset is not None:
-            if length is not None:
-                end_range = offset + length - 1  # Reformat to an inclusive range index
-                content_range = 'bytes={0}-{1}'.format(offset, end_range)
-            else:
-                content_range = 'bytes={0}-'.format(offset)
         try:
-            ranges = self._client.file.get_range_list(
-                range=content_range,
-                sharesnapshot=self.snapshot,
-                lease_access_conditions=access_conditions,
-                timeout=timeout,
-                **kwargs)
+            ranges = self._client.file.get_range_list(**options)
         except StorageErrorException as error:
             process_storage_error(error)
         return [{'start': b.start, 'end': b.end} for b in ranges]
