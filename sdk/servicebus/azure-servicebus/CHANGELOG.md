@@ -6,6 +6,7 @@
 
 * `renew_lock()` now returns the UTC datetime that the lock is set to expire at.
 * `receive_deferred_messages()` can now take a single sequence number as well as a list of sequence numbers.
+* Messages can now be sent twice in succession.
 
 **Breaking Changes**
 
@@ -21,6 +22,8 @@
 * Renamed properties `created_time` and `modified_time` to `created_at_utc` and `modified_at_utc` within `AuthorizationRule` and `NamespaceProperties`
 * Removed parameter `requires_preprocessing` from `SqlRuleFilter` and `SqlRuleAction`
 * Removed property `namespace_type` from `NamespaceProperties`
+* Attempting to call `send_messages` on something not a `Message`, `BatchMessage`, or list of `Message`s, will now throw a `TypeError` instead of `ValueError`
+* Sending a message twice will no longer result in a `MessageAlreadySettled` exception.
 * `ServiceBusClient.close()` now closes spawned senders and receivers.
 * Attempting to initialize a sender or receiver with a different connection string entity and specified entity (e.g. `queue_name`) will result in an AuthenticationError
 

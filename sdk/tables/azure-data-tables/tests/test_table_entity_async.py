@@ -161,7 +161,7 @@ class StorageTableEntityTest(TableTestCase):
         self.assertEqual(entity['birthday'], datetime(1970, 10, 4, tzinfo=tzutc()))
         self.assertEqual(entity['binary'].value, b'binary') # TODO: added the ".value" portion, verify this is correct
         self.assertIsInstance(entity['other'], EntityProperty)
-        self.assertEqual(entity['other'].type, EdmType.INT64)
+        self.assertEqual(entity['other'].type, EdmType.INT32)
         self.assertEqual(entity['other'].value, 20)
         self.assertEqual(entity['clsid'], uuid.UUID('c9da6455-213d-42c9-9a79-3e9149a57833'))
         # self.assertTrue('metadata' in entity.odata)
@@ -190,7 +190,7 @@ class StorageTableEntityTest(TableTestCase):
         self.assertEqual(entity['birthday'], datetime(1970, 10, 4, tzinfo=tzutc()))
         self.assertEqual(entity['binary'].value, b'binary')
         self.assertIsInstance(entity['other'], EntityProperty)
-        self.assertEqual(entity['other'].type, EdmType.INT64)
+        self.assertEqual(entity['other'].type, EdmType.INT32)
         self.assertEqual(entity['other'].value, 20)
         self.assertEqual(entity['clsid'], uuid.UUID('c9da6455-213d-42c9-9a79-3e9149a57833'))
         # self.assertTrue('metadata' in entity.odata)
@@ -225,7 +225,7 @@ class StorageTableEntityTest(TableTestCase):
         self.assertTrue(entity['birthday'].endswith('00Z'))
         self.assertEqual(entity['binary'], b64encode(b'binary').decode('utf-8'))
         self.assertIsInstance(entity['other'], EntityProperty)
-        self.assertEqual(entity['other'].type, EdmType.INT64)
+        self.assertEqual(entity['other'].type, EdmType.INT32)
         self.assertEqual(entity['other'].value, 20)
         self.assertEqual(entity['clsid'], 'c9da6455-213d-42c9-9a79-3e9149a57833')
         # self.assertIsNone(entity.odata)
@@ -275,7 +275,7 @@ class StorageTableEntityTest(TableTestCase):
         self.assertEqual(entity.Birthday, datetime(1973, 10, 4, tzinfo=tzutc()))
         self.assertEqual(entity.birthday, datetime(1991, 10, 4, tzinfo=tzutc()))
         self.assertIsInstance(entity.other, EntityProperty)
-        self.assertEqual(entity.other.type, EdmType.INT64)
+        self.assertEqual(entity.other.type, EdmType.INT32)
         self.assertEqual(entity.other.value, 20)
         self.assertIsInstance(entity.clsid, uuid.UUID)
         self.assertEqual(str(entity.clsid), 'c9da6455-213d-42c9-9a79-3e9149a57833')
@@ -424,13 +424,13 @@ class StorageTableEntityTest(TableTestCase):
         try:
             # Act
             dict64 = self._create_random_base_entity_dict()
-            dict64['large'] = EntityProperty(2 ** 63)
+            dict64['large'] = EntityProperty(2 ** 63, EdmType.INT64)
 
             # Assert
             with self.assertRaises(TypeError):
                 await self.table.create_entity(entity=dict64)
 
-            dict64['large'] = EntityProperty(-(2 ** 63 + 1))
+            dict64['large'] = EntityProperty(-(2 ** 63 + 1), EdmType.INT64)
             with self.assertRaises(TypeError):
                 await self.table.create_entity(entity=dict64)
         finally:

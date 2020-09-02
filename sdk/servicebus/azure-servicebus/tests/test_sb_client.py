@@ -109,7 +109,7 @@ class ServiceBusClientTests(AzureMgmtTestCase):
             with client.get_queue_sender(servicebus_queue.name) as sender:
                 sender.send_messages(Message("test"))
 
-                with pytest.raises(ValueError):
+                with pytest.raises(TypeError):
                     sender.send_messages("cat")
 
     @pytest.mark.liveTest
