@@ -68,7 +68,9 @@ Install the Azure Text Analytics client library for Python with [pip][pip]:
 pip install azure-ai-textanalytics --pre
 ```
 
-> Note: This version of the client library supports the v3.0 version of the Text Analytics service
+> Note: This version of the client library supports both the v3.0 version, and the preview versions of the v3.1 version of the Text Analytics service. If you do not specify the `--pre` flag when installing the package, you will download version 5.0.0 of the library, which will only
+include support of the services v3.0 version. Specifying the `--pre` flag will give you the latest beta release of this library, which includes
+support of all preview versions of v3.1, and also continuing support of the service's v3.0 version.
 
 ### Authenticate the client
 #### Get the endpoint
