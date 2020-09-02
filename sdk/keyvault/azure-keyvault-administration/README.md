@@ -131,7 +131,8 @@ credential = DefaultAzureCredential()
 
 client = KeyVaultAccessControlClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
 
-role_definitions = client.list_role_definitions(role_scope="/")  # this is the global scope
+# this is the global scope. This will list all role definitions available for assignment
+role_definitions = client.list_role_definitions(role_scope="/")
 
 for role_definition in role_definitions:
     print(role_definition.id)
@@ -143,6 +144,7 @@ for role_definition in role_definitions:
 Assign a role to a service principal. This will require a role definition id from the list retrieved in the [above snippet](#list-the-role-definitions) and the principal object id retrieved in the [Create/Get credentials](#create/get-credentials)
 
 ```python
+import uuid
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.administration import KeyVaultAccessControlClient
 
@@ -151,12 +153,12 @@ credential = DefaultAzureCredential()
 client = KeyVaultAccessControlClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
 
 role_scope = "/"  # setting the scope to the global scope
-role_assignment_name = "<role-assignment-name>"  # must be a UUID
-role_definition = "<role-definition>"  # Replace <role-definition-id> with a role definition from the definitions returned from the previous example
+role_assignment_name = uuid.uuid4()
+role_definition_id = "<role-definition-id>"  # Replace <role-definition-id> with the id of a definition returned from the previous example
 principal_id = "<your-service-principal-object-id>"
 
 # first, let's create the role assignment
-role_assignment = client.create_role_assignment(role_scope, role_assignment_name, role_definition.id, principal_id)
+role_assignment = client.create_role_assignment(role_scope, role_assignment_name, role_definition_id, principal_id)
 print(role_assignment.name)
 print(role_assignment.principal_id)
 print(role_assignment.role_definition_id)
