@@ -111,7 +111,7 @@ class StorageChangeFeedTest(StorageTestCase):
         self.assertIsNot(len(events), 0)
 
     @GlobalStorageAccountPreparer()
-    def test_read_change_feed_without_any_seg(self, resource_group, location, storage_account, storage_account_key):
+    def test_change_feed_does_not_fail_on_empty_event_stream(self, resource_group, location, storage_account, storage_account_key):
         cf_client = ChangeFeedClient(self.account_url(storage_account, "blob"), storage_account_key)
         start_time = datetime(2021, 8, 19)
         change_feed = cf_client.list_changes(start_time=start_time)
@@ -237,3 +237,73 @@ class StorageChangeFeedTest(StorageTestCase):
 
         end_time_str = (end_time + timedelta(hours=1)).isoformat()
         self.assertTrue(events[len(events) - 1]['eventTime'] < end_time_str)
+
+    @GlobalStorageAccountPreparer()
+    def test_read_3_shards_change_feed_during_a_time_range_in_multiple_times_gives_same_result_as_reading_all(
+            self, resource_group, location, storage_account, storage_account_key):
+        cf_client = ChangeFeedClient(self.account_url(storage_account, "blob"), storage_account_key)
+
+        # to read until the end
+        start_time = datetime(2020, 8, 5, 17)
+        end_time = datetime(2020, 8, 5, 17, 15)
+
+        all_events = list(cf_client.list_changes(start_time=start_time, end_time=end_time))
+        change_feed = cf_client.list_changes(start_time=start_time, end_time=end_time, results_per_page=50).by_page()
+
+        events = list()
+        for _ in (0, 2):
+            page = next(change_feed)
+            for event in page:
+                events.append(event)
+        token = change_feed.continuation_token
+
+        dict_token = eval(token)
+        self.assertTrue(len(events) > 0)
+        self.assertEqual(dict_token['CursorVersion'], 1)
+        self.assertIsNotNone(dict_token['UrlHost'])
+        self.assertEqual(len(dict_token['CurrentSegmentCursor']['ShardCursors']), 3)
+        self.assertIsNotNone(dict_token['CurrentSegmentCursor']['SegmentPath'])
+        self.assertIsNotNone(dict_token['CurrentSegmentCursor']['CurrentShardPath'])
+
+        # restart using the continuation token after waiting for 2 minutes
+        change_feed2 = cf_client.list_changes(results_per_page=50).by_page(continuation_token=token)
+        events2 = list()
+        for _ in (0, 2):
+            page = next(change_feed2)
+            for event in page:
+                events2.append(event)
+
+        self.assertNotEqual(events2, 0)
+
+        # restart using the continuation token which has Non-zero EventIndex for 3 shards
+        token2 = change_feed2.continuation_token
+        dict_token2 = eval(token2)
+        self.assertEqual(len(dict_token2['CurrentSegmentCursor']['ShardCursors']), 3)
+
+        change_feed3 = cf_client.list_changes(results_per_page=50).by_page(continuation_token=token2)
+        events3 = list()
+        for page in change_feed3:
+            for event in page:
+                events3.append(event)
+
+        token3 = change_feed3.continuation_token
+        dict_token3 = eval(token3)
+
+        self.assertNotEqual(events3, 0)
+        self.assertEqual(len(dict_token3['CurrentSegmentCursor']['ShardCursors']), 3)
+        self.assertEqual(len(events)+len(events2)+len(events3), len(all_events))
+
+        # make sure list_changes is working if only 1 shard cursor is in shard cursor list
+        dict_token3['CurrentSegmentCursor']['ShardCursors'].pop(0)
+        dict_token3['CurrentSegmentCursor']['ShardCursors'].pop(0)
+        token_with_1_shard = str(dict_token3)
+        change_feed4 = cf_client.list_changes(results_per_page=50).by_page(continuation_token=token_with_1_shard)
+        event4 = list()
+        for _ in range(0, 2):
+            page = next(change_feed4)
+            for event in page:
+                event4.append(event)
+        token4 = change_feed4.continuation_token
+        dict_token4 = eval(token4)
+        self.assertEqual()
+        self.assertEqual(len(dict_token4['CurrentSegmentCursor']['ShardCursors']), 3)

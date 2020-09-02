@@ -6,6 +6,7 @@
 # pylint: disable=too-few-public-methods, too-many-instance-attributes
 # pylint: disable=super-init-not-called, too-many-lines
 import collections
+import copy
 import json
 from datetime import datetime
 
@@ -50,13 +51,14 @@ class ChangeFeedPaged(PageIterator):
             start_time=None,
             end_time=None,
             continuation_token=None):
-        if start_time and continuation_token:
-            raise ValueError("start_time and continuation_token shouldn't be specified at the same time")
         super(ChangeFeedPaged, self).__init__(
             get_next=self._get_next_cf,
             extract_data=self._extract_data_cb,
             continuation_token=continuation_token or ""
         )
+        # If start_time and continuation_token are both set, start_time will be ignored.
+        start_time = None if start_time and continuation_token else start_time
+
         continuation_token = eval(continuation_token) if continuation_token else None
 
         if continuation_token and container_client.primary_hostname != continuation_token['UrlHost']:
@@ -78,8 +80,13 @@ class ChangeFeedPaged(PageIterator):
 
     def _extract_data_cb(self, event_list):
         self.current_page = event_list
-
-        return str(self._change_feed.cursor), self.current_page
+        try:
+            cursor = copy.deepcopy(self._change_feed.cursor)
+            shard_cursors = cursor['CurrentSegmentCursor']['ShardCursors']
+            cursor['CurrentSegmentCursor']['ShardCursors'] = [v for v in shard_cursors.values()]
+        except AttributeError:
+            pass
+        return str(cursor), self.current_page
 
 
 class ChangeFeed(object):
@@ -215,7 +222,7 @@ class Segment(object):
         self.segment_path = segment_path
         self.page_size = page_size
         self.shards = collections.deque()
-        self.cursor = {'ShardCursors': [], 'SegmentPath': self.segment_path}
+        self.cursor = {'ShardCursors': {}, 'SegmentPath': self.segment_path}
         self._initialize(segment_cursor=segment_cursor)
         # cursor is in this format {"segment_path", path, "CurrentShardPath": shard_path, "segment_cursor": ShardCursors dict}
 
@@ -234,14 +241,7 @@ class Segment(object):
                 pass
 
             # update cursor
-            is_shard_cursor_in_list = False
-            for shard_cursor in self.cursor['ShardCursors']:
-                if shard_cursor['CurrentChunkPath'] == shard.cursor['CurrentChunkPath']:
-                    shard_cursor['EventIndex'] = shard.cursor['EventIndex']
-                    shard_cursor['BlockOffset'] = shard.cursor['BlockOffset']
-                    is_shard_cursor_in_list = True
-            if not is_shard_cursor_in_list:
-                self.cursor['ShardCursors'].append(shard.cursor)
+            self.cursor['ShardCursors'][shard.shard_path] = shard.cursor
             self.cursor['CurrentShardPath'] = shard.shard_path
 
         if not segment_events:
@@ -268,11 +268,13 @@ class Segment(object):
                 self.shards.append(Shard(self.client, shard_path))
         else:
             start_shard_path = segment_cursor['CurrentShardPath']
+            shard_cursors = {shard_cursor['CurrentChunkPath'][:-10]: shard_cursor
+                             for shard_cursor in segment_cursor['ShardCursors']}
 
             if shard_paths:
-                # Initialize all shards using the shard cursors, skip those finished shards
-                for shard_cursor in segment_cursor['ShardCursors']:
-                    self.shards.append(Shard(self.client, shard_cursor['CurrentChunkPath'][:-10], shard_cursor))
+                # Initialize all shards using the shard cursors
+                for shard_path in shard_paths:
+                    self.shards.append(Shard(self.client, shard_path, shard_cursors.get(shard_path)))
 
                 # the move the shard behind start_shard_path one to the left most place, the left most shard is the next
                 # shard we should read based on continuation token.

@@ -88,6 +88,7 @@ class ChangeFeedClient(object):  # pylint: disable=too-many-public-methods
 
         :keyword datetime start_time:
             Filters the results to return only events which happened after this time.
+            If start_time and continuation_token are both set, start_time will be ignored.
         :keyword datetime end_time:
             Filters the results to return only events which happened before this time.
         :keyword int results_per_page:
