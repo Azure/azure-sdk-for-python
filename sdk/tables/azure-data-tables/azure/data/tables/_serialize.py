@@ -42,6 +42,8 @@ def _get_match_headers(kwargs, match_param, etag_param):
             raise ValueError("'{}' specified without '{}'.".format(match_param, etag_param))
     elif match_condition == MatchConditions.IfMissing:
         if_none_match = '*'
+    elif match_condition == MatchConditions.Unconditionally:
+        if_none_match = '*'
     elif match_condition is None:
         if kwargs.get(etag_param):
             raise ValueError("'{}' specified without '{}'.".format(etag_param, match_param))
@@ -153,7 +155,7 @@ def _to_entity_none(value):  # pylint:disable=W0613
 # Conversion from Python type to a function which returns a tuple of the
 # type string and content string.
 _PYTHON_TO_ENTITY_CONVERSIONS = {
-    int: _to_entity_int,
+    int: _to_entity_int32,
     bool: _to_entity_bool,
     datetime: _to_entity_datetime,
     float: _to_entity_float,

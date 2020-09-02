@@ -8,7 +8,7 @@ from datetime import datetime
 from uuid import UUID
 import six
 
-from ._error import _ERROR_ATTRIBUTE_MISSING
+from ._error import _ERROR_ATTRIBUTE_MISSING, _ERROR_VALUE_TOO_LARGE
 
 
 class TableEntity(dict):
@@ -104,7 +104,7 @@ class EntityProperty(object):
             if value.bit_length() <= 32:
                 self.type = EdmType.INT32
             else:
-                self.type = EdmType.INT64
+                raise TypeError(_ERROR_VALUE_TOO_LARGE.format(str(value), EdmType.INT32))
         elif isinstance(value, datetime):
             self.type = EdmType.DATETIME
         elif isinstance(value, float):

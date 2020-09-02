@@ -22,7 +22,8 @@ from azure.core import MatchConditions
 from azure.core.exceptions import (
     HttpResponseError,
     ResourceNotFoundError,
-    ResourceExistsError)
+    ResourceExistsError,
+    ResourceModifiedError)
 
 from azure.data.tables._entity import TableEntity, EntityProperty, EdmType
 from azure.data.tables._models import TableSasPermissions, AccessPolicy, UpdateMode
@@ -458,13 +459,13 @@ class StorageTableEntityTest(TableTestCase):
         try:
             # Act
             dict64 = self._create_random_base_entity_dict()
-            dict64['large'] = EntityProperty(2 ** 63)
+            dict64['large'] = EntityProperty(2 ** 63, EdmType.INT64)
 
             # Assert
             with self.assertRaises(TypeError):
                 self.table.create_entity(entity=dict64)
 
-            dict64['large'] = EntityProperty(-(2 ** 63 + 1))
+            dict64['large'] = EntityProperty(-(2 ** 63 + 1), EdmType.INT64)
             with self.assertRaises(TypeError):
                 self.table.create_entity(entity=dict64)
         finally:
@@ -640,6 +641,164 @@ class StorageTableEntityTest(TableTestCase):
                 etag=etag,
                 match_condition=MatchConditions.IfNotModified
             )
+
+            with self.assertRaises(ResourceNotFoundError):
+                resp = self.table.get_entity(partition_key=entity['PartitionKey'],
+                                            row_key=entity['RowKey'])
+
+            # Assert
+        finally:
+            self._tear_down()
+
+    # @pytest.mark.skip("pending")
+    @GlobalStorageAccountPreparer()
+    def test_get_entity_if_match_wrong_etag(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        self._set_up(storage_account, storage_account_key)
+        try:
+            table = self.ts.create_table("testtable")
+            entity = {
+                "PartitionKey": "PartitionKey",
+                "RowKey": "RowKey",
+                "Value": 1
+            }
+
+            response = table.create_entity(entity=entity)
+            old_etag = response["etag"]
+
+            entity["Value"] = 2
+            response = table.update_entity(entity=entity)
+
+            with self.assertRaises(HttpResponseError):
+                table.delete_entity(
+                    partition_key=entity['PartitionKey'],
+                    row_key=entity['RowKey'],
+                    etag=old_etag,
+                    match_condition=MatchConditions.IfNotModified
+                )
+
+        finally:
+            self._tear_down()
+
+    # @pytest.mark.skip("pending")
+    @GlobalStorageAccountPreparer()
+    def test_get_entity_if_match_modified(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        self._set_up(storage_account, storage_account_key)
+        try:
+            entity, etag = self._insert_random_entity()
+            self._create_query_table(1)
+
+            # Act
+            # Do a get and confirm the etag is parsed correctly by using it
+            # as a condition to delete.
+            resp = self.table.get_entity(partition_key=entity['PartitionKey'],
+                                         row_key=entity['RowKey'])
+
+            # This is ignoring the match_condition param and will delete the entity
+            self.table.delete_entity(
+                partition_key=resp['PartitionKey'],
+                row_key=resp['RowKey'],
+                etag=etag,
+                match_condition=MatchConditions.IfModified
+            )
+
+            with self.assertRaises(ResourceNotFoundError):
+                resp = self.table.get_entity(partition_key=entity['PartitionKey'],
+                                            row_key=entity['RowKey'])
+
+            # Assert
+        finally:
+            self._tear_down()
+
+    # @pytest.mark.skip("pending")
+    @GlobalStorageAccountPreparer()
+    def test_get_entity_if_match_unconditionally(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        self._set_up(storage_account, storage_account_key)
+        try:
+            entity, etag = self._insert_random_entity()
+            self._create_query_table(1)
+
+            # Act
+            # Do a get and confirm the etag is parsed correctly by using it
+            # as a condition to delete.
+            resp = self.table.get_entity(partition_key=entity['PartitionKey'],
+                                         row_key=entity['RowKey'])
+
+            # This is ignoring the match_condition param and will delete the entity
+            self.table.delete_entity(
+                partition_key=resp['PartitionKey'],
+                row_key=resp['RowKey'],
+                etag='abcdef',
+                match_condition=MatchConditions.Unconditionally
+            )
+
+            with self.assertRaises(ResourceNotFoundError):
+                resp = self.table.get_entity(partition_key=entity['PartitionKey'],
+                                            row_key=entity['RowKey'])
+
+            # Assert
+        finally:
+            self._tear_down()
+
+    # @pytest.mark.skip("pending")
+    @GlobalStorageAccountPreparer()
+    def test_get_entity_if_match_present(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        self._set_up(storage_account, storage_account_key)
+        try:
+            entity, etag = self._insert_random_entity()
+            self._create_query_table(1)
+
+            # Act
+            # Do a get and confirm the etag is parsed correctly by using it
+            # as a condition to delete.
+            resp = self.table.get_entity(partition_key=entity['PartitionKey'],
+                                         row_key=entity['RowKey'])
+
+            # This is ignoring the match_condition param and will delete the entity
+            self.table.delete_entity(
+                partition_key=resp['PartitionKey'],
+                row_key=resp['RowKey'],
+                etag='abcdef',
+                match_condition=MatchConditions.IfPresent
+            )
+
+            with self.assertRaises(ResourceNotFoundError):
+                resp = self.table.get_entity(partition_key=entity['PartitionKey'],
+                                            row_key=entity['RowKey'])
+
+            # Assert
+        finally:
+            self._tear_down()
+
+    # @pytest.mark.skip("pending")
+    @GlobalStorageAccountPreparer()
+    def test_get_entity_if_match_missing(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        self._set_up(storage_account, storage_account_key)
+        try:
+            entity, etag = self._insert_random_entity()
+            self._create_query_table(1)
+
+            # Act
+            # Do a get and confirm the etag is parsed correctly by using it
+            # as a condition to delete.
+            resp = self.table.get_entity(partition_key=entity['PartitionKey'],
+                                         row_key=entity['RowKey'])
+
+            # This is ignoring the match_condition param and will delete the entity
+            self.table.delete_entity(
+                partition_key=resp['PartitionKey'],
+                row_key=resp['RowKey'],
+                etag='abcdef',
+                match_condition=MatchConditions.IfMissing
+            )
+
+            with self.assertRaises(ResourceNotFoundError):
+                resp = self.table.get_entity(partition_key=entity['PartitionKey'],
+                                            row_key=entity['RowKey'])
 
             # Assert
         finally:

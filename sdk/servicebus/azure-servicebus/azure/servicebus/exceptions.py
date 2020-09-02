@@ -117,7 +117,7 @@ def _create_servicebus_exception(logger, exception, handler):  # pylint: disable
         logger.info("Unexpected error occurred (%r). Shutting down.", exception)
         error = exception
         if not isinstance(exception, ServiceBusError):
-            error = ServiceBusError("Handler failed: {}.".format(exception))
+            error = ServiceBusError("Handler failed: {}.".format(exception), exception)
 
     try:
         err_condition = exception.condition

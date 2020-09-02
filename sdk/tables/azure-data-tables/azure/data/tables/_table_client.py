@@ -239,6 +239,7 @@ class TableClient(TableClientBase):
         if_match, _ = _get_match_headers(kwargs=dict(kwargs, etag=kwargs.pop('etag', None),
                                                                 match_condition=kwargs.pop('match_condition', None)),
                                                     etag_param='etag', match_param='match_condition')
+
         try:
             self._client.table.delete_entity(
                 table=self.table_name,
