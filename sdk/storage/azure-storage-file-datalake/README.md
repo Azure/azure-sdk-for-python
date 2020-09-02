@@ -34,8 +34,11 @@ or [Azure CLI](https://docs.microsoft.com/azure/storage/blobs/data-lake-storage-
 # if using an existing resource group, skip this step
 az group create --name my-resource-group --location westus2
 
+# Install the extension 'Storage-Preview'
+az extension add --name storage-preview
+
 # Create the storage account
-az storage account create -n my-storage-account-name -g my-resource-group --hierarchical-namespace true
+az storage account create --name my-storage-account-name --resource-group my-resource-group --sku Standard_LRS --kind StorageV2 --hierarchical-namespace true
 ```
 
 ### Authenticate the client
