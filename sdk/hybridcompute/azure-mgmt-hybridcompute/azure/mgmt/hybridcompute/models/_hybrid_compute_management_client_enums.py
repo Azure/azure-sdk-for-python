@@ -26,17 +26,10 @@ class StatusLevelTypes(str, Enum):
     error = "Error"
 
 
-class SkuTier(str, Enum):
+class PublicNetworkAccessType(str, Enum):
 
-    free = "Free"
-    basic = "Basic"
-    standard = "Standard"
-    premium = "Premium"
-
-
-class ResourceIdentityType(str, Enum):
-
-    system_assigned = "SystemAssigned"
+    enabled = "Enabled"  #: Allows Azure Arc agents to communicate with Azure Arc services over both public (internet) and private endpoints.
+    disabled = "Disabled"  #: Does not allow Azure Arc agents to communicate with Azure Arc services over public (internet) endpoints. The agents must use the private link.
 
 
 class InstanceViewTypes(str, Enum):
