@@ -10,13 +10,13 @@ urlFragment: tables-samples
 
 # Samples for Azure Tables client library for Python
 
-These code samples show common scenario operations with the Azure Text Analytics client library.
+These code samples show common scenario operations with the Azure Data Tables client library.
 The async versions of the samples require Python 3.5 or later.
 
 You can authenticate your client with a Tables API key:
 * See [sample_authentication.py][sample_authentication] and [sample_authentication_async.py][sample_authentication_async] for how to authenticate in the above cases.
 
-These sample programs show common scenarios for the Text Analytics client's offerings.
+These sample programs show common scenarios for the Tables client's offerings.
 
 |**File Name**|**Description**|
 |-------------|---------------|
@@ -52,7 +52,7 @@ pip install --pre azure-data-tables
 ## Next steps
 
 Check out the [API reference documentation][api_reference_documentation] to learn more about
-what you can do with the Azure Text Analytics client library.
+what you can do with the Azure Data Tables client library.
 
 
 <!-- LINKS -->
