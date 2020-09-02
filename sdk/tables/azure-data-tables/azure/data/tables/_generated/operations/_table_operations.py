@@ -79,6 +79,7 @@ class TableOperations(object):
             _select = query_options.select
             _filter = query_options.filter
         data_service_version = "3.0"
+        accept = "application/json;odata=minimalmetadata"
 
         # Construct URL
         url = self.query.metadata['url']  # type: ignore
@@ -106,7 +107,7 @@ class TableOperations(object):
         if request_id_parameter is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter", request_id_parameter, 'str')
         header_parameters['DataServiceVersion'] = self._serialize.header("data_service_version", data_service_version, 'str')
-        header_parameters['Accept'] = 'application/json;odata=minimalmetadata'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -166,6 +167,7 @@ class TableOperations(object):
             _format = query_options.format
         data_service_version = "3.0"
         content_type = kwargs.pop("content_type", "application/json;odata=nometadata")
+        accept = "application/json;odata=minimalmetadata"
 
         # Construct URL
         url = self.create.metadata['url']  # type: ignore
@@ -188,13 +190,12 @@ class TableOperations(object):
         if response_preference is not None:
             header_parameters['Prefer'] = self._serialize.header("response_preference", response_preference, 'str')
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json;odata=minimalmetadata'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(table_properties, 'TableProperties')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -248,6 +249,7 @@ class TableOperations(object):
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
+        accept = "application/json"
 
         # Construct URL
         url = self.delete.metadata['url']  # type: ignore
@@ -265,6 +267,7 @@ class TableOperations(object):
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if request_id_parameter is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter", request_id_parameter, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -331,6 +334,7 @@ class TableOperations(object):
             _select = query_options.select
             _filter = query_options.filter
         data_service_version = "3.0"
+        accept = "application/json;odata=minimalmetadata"
 
         # Construct URL
         url = self.query_entities.metadata['url']  # type: ignore
@@ -363,7 +367,7 @@ class TableOperations(object):
         if request_id_parameter is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter", request_id_parameter, 'str')
         header_parameters['DataServiceVersion'] = self._serialize.header("data_service_version", data_service_version, 'str')
-        header_parameters['Accept'] = 'application/json;odata=minimalmetadata'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -432,6 +436,7 @@ class TableOperations(object):
             _select = query_options.select
             _filter = query_options.filter
         data_service_version = "3.0"
+        accept = "application/json;odata=minimalmetadata"
 
         # Construct URL
         url = self.query_entities_with_partition_and_row_key.metadata['url']  # type: ignore
@@ -460,7 +465,7 @@ class TableOperations(object):
         if request_id_parameter is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter", request_id_parameter, 'str')
         header_parameters['DataServiceVersion'] = self._serialize.header("data_service_version", data_service_version, 'str')
-        header_parameters['Accept'] = 'application/json;odata=minimalmetadata'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -536,6 +541,7 @@ class TableOperations(object):
             _format = query_options.format
         data_service_version = "3.0"
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
 
         # Construct URL
         url = self.update_entity.metadata['url']  # type: ignore
@@ -563,6 +569,7 @@ class TableOperations(object):
         if if_match is not None:
             header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         if table_entity_properties is not None:
@@ -571,7 +578,6 @@ class TableOperations(object):
             body_content = None
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -641,6 +647,7 @@ class TableOperations(object):
             _format = query_options.format
         data_service_version = "3.0"
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
 
         # Construct URL
         url = self.merge_entity.metadata['url']  # type: ignore
@@ -668,6 +675,7 @@ class TableOperations(object):
         if if_match is not None:
             header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         if table_entity_properties is not None:
@@ -676,7 +684,6 @@ class TableOperations(object):
             body_content = None
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -741,6 +748,7 @@ class TableOperations(object):
         if query_options is not None:
             _format = query_options.format
         data_service_version = "3.0"
+        accept = "application/json;odata=minimalmetadata"
 
         # Construct URL
         url = self.delete_entity.metadata['url']  # type: ignore
@@ -766,6 +774,7 @@ class TableOperations(object):
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter", request_id_parameter, 'str')
         header_parameters['DataServiceVersion'] = self._serialize.header("data_service_version", data_service_version, 'str')
         header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -828,6 +837,7 @@ class TableOperations(object):
             _format = query_options.format
         data_service_version = "3.0"
         content_type = kwargs.pop("content_type", "application/json;odata=nometadata")
+        accept = "application/json;odata=minimalmetadata"
 
         # Construct URL
         url = self.insert_entity.metadata['url']  # type: ignore
@@ -853,7 +863,7 @@ class TableOperations(object):
         if response_preference is not None:
             header_parameters['Prefer'] = self._serialize.header("response_preference", response_preference, 'str')
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json;odata=minimalmetadata'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         if table_entity_properties is not None:
@@ -862,7 +872,6 @@ class TableOperations(object):
             body_content = None
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -925,6 +934,7 @@ class TableOperations(object):
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         comp = "acl"
+        accept = "application/xml"
 
         # Construct URL
         url = self.get_access_policy.metadata['url']  # type: ignore
@@ -945,7 +955,7 @@ class TableOperations(object):
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if request_id_parameter is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter", request_id_parameter, 'str')
-        header_parameters['Accept'] = 'application/xml'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -999,6 +1009,7 @@ class TableOperations(object):
         error_map.update(kwargs.pop('error_map', {}))
         comp = "acl"
         content_type = kwargs.pop("content_type", "application/xml")
+        accept = "application/xml"
 
         # Construct URL
         url = self.set_access_policy.metadata['url']  # type: ignore
@@ -1020,6 +1031,7 @@ class TableOperations(object):
         if request_id_parameter is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter", request_id_parameter, 'str')
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         serialization_ctxt = {'xml': {'name': 'SignedIdentifiers', 'wrapped': True, 'itemsName': 'SignedIdentifier'}}
@@ -1029,7 +1041,6 @@ class TableOperations(object):
             body_content = None
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 

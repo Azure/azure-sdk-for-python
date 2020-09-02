@@ -6,7 +6,7 @@ interactions:
       /><ExposedHeaders /><MaxAgeInSeconds>0</MaxAgeInSeconds></CorsRule><CorsRule><AllowedOrigins>www.xyz.com,www.ab.com,www.bc.com</AllowedOrigins><AllowedMethods>GET,PUT</AllowedMethods><AllowedHeaders>x-ms-meta-data*,x-ms-meta-target*,x-ms-meta-xyz,x-ms-meta-foo</AllowedHeaders><ExposedHeaders>x-ms-meta-data*,x-ms-meta-source*,x-ms-meta-abc,x-ms-meta-bcd</ExposedHeaders><MaxAgeInSeconds>500</MaxAgeInSeconds></CorsRule></Cors></StorageServiceProperties>'
     headers:
       Accept:
-      - '*/*'
+      - application/xml
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -16,11 +16,11 @@ interactions:
       Content-Type:
       - application/xml
       Date:
-      - Wed, 02 Sep 2020 02:27:49 GMT
+      - Wed, 02 Sep 2020 21:17:32 GMT
       User-Agent:
       - azsdk-python-data-tables/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 02 Sep 2020 02:27:49 GMT
+      - Wed, 02 Sep 2020 21:17:32 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -30,7 +30,7 @@ interactions:
       string: ''
     headers:
       date:
-      - Wed, 02 Sep 2020 02:27:49 GMT
+      - Wed, 02 Sep 2020 21:17:33 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -50,11 +50,11 @@ interactions:
       Connection:
       - keep-alive
       Date:
-      - Wed, 02 Sep 2020 02:28:19 GMT
+      - Wed, 02 Sep 2020 21:18:03 GMT
       User-Agent:
       - azsdk-python-data-tables/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 02 Sep 2020 02:28:19 GMT
+      - Wed, 02 Sep 2020 21:18:03 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
@@ -67,7 +67,7 @@ interactions:
       content-type:
       - application/xml
       date:
-      - Wed, 02 Sep 2020 02:28:19 GMT
+      - Wed, 02 Sep 2020 21:18:03 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:

@@ -15,11 +15,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Wed, 02 Sep 2020 02:26:59 GMT
+      - Wed, 02 Sep 2020 21:16:59 GMT
       User-Agent:
       - azsdk-python-data-tables/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 02 Sep 2020 02:26:59 GMT
+      - Wed, 02 Sep 2020 21:16:59 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
@@ -33,7 +33,7 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Wed, 02 Sep 2020 02:26:59 GMT
+      - Wed, 02 Sep 2020 21:16:59 GMT
       location:
       - https://storagename.table.core.windows.net/Tables('uttableace512b3')
       server:
@@ -68,27 +68,27 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Wed, 02 Sep 2020 02:27:00 GMT
+      - Wed, 02 Sep 2020 21:16:59 GMT
       User-Agent:
       - azsdk-python-data-tables/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 02 Sep 2020 02:27:00 GMT
+      - Wed, 02 Sep 2020 21:16:59 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
     uri: https://storagename.table.core.windows.net/uttableace512b3
   response:
     body:
-      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#uttableace512b3/@Element","odata.etag":"W/\"datetime''2020-09-02T02%3A27%3A00.3857475Z''\"","PartitionKey":"pkace512b3","RowKey":"rkace512b3","Timestamp":"2020-09-02T02:27:00.3857475Z","age":39,"sex":"male","married":true,"deceased":false,"ratio":3.1,"evenratio":3.0,"large":933311100,"Birthday@odata.type":"Edm.DateTime","Birthday":"1973-10-04T00:00:00Z","birthday@odata.type":"Edm.DateTime","birthday":"1970-10-04T00:00:00Z","binary@odata.type":"Edm.Binary","binary":"YmluYXJ5","other":20,"clsid@odata.type":"Edm.Guid","clsid":"c9da6455-213d-42c9-9a79-3e9149a57833"}'
+      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#uttableace512b3/@Element","odata.etag":"W/\"datetime''2020-09-02T21%3A16%3A59.9818306Z''\"","PartitionKey":"pkace512b3","RowKey":"rkace512b3","Timestamp":"2020-09-02T21:16:59.9818306Z","age":39,"sex":"male","married":true,"deceased":false,"ratio":3.1,"evenratio":3.0,"large":933311100,"Birthday@odata.type":"Edm.DateTime","Birthday":"1973-10-04T00:00:00Z","birthday@odata.type":"Edm.DateTime","birthday":"1970-10-04T00:00:00Z","binary@odata.type":"Edm.Binary","binary":"YmluYXJ5","other":20,"clsid@odata.type":"Edm.Guid","clsid":"c9da6455-213d-42c9-9a79-3e9149a57833"}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Wed, 02 Sep 2020 02:26:59 GMT
+      - Wed, 02 Sep 2020 21:16:59 GMT
       etag:
-      - W/"datetime'2020-09-02T02%3A27%3A00.3857475Z'"
+      - W/"datetime'2020-09-02T21%3A16%3A59.9818306Z'"
       location:
       - https://storagename.table.core.windows.net/uttableace512b3(PartitionKey='pkace512b3',RowKey='rkace512b3')
       server:
@@ -123,11 +123,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Wed, 02 Sep 2020 02:27:00 GMT
+      - Wed, 02 Sep 2020 21:16:59 GMT
       User-Agent:
       - azsdk-python-data-tables/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 02 Sep 2020 02:27:00 GMT
+      - Wed, 02 Sep 2020 21:16:59 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
@@ -135,14 +135,14 @@ interactions:
   response:
     body:
       string: '{"odata.error":{"code":"EntityAlreadyExists","message":{"lang":"en-US","value":"The
-        specified entity already exists.\nRequestId:84c53efc-1002-0083-2cd0-809860000000\nTime:2020-09-02T02:27:00.4524543Z"}}}'
+        specified entity already exists.\nRequestId:6564540d-d002-0057-486e-8137ec000000\nTime:2020-09-02T21:17:00.0198579Z"}}}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Wed, 02 Sep 2020 02:26:59 GMT
+      - Wed, 02 Sep 2020 21:16:59 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -158,7 +158,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -166,11 +166,11 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Wed, 02 Sep 2020 02:27:00 GMT
+      - Wed, 02 Sep 2020 21:16:59 GMT
       User-Agent:
       - azsdk-python-data-tables/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 02 Sep 2020 02:27:00 GMT
+      - Wed, 02 Sep 2020 21:16:59 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
@@ -184,7 +184,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 02 Sep 2020 02:26:59 GMT
+      - Wed, 02 Sep 2020 21:16:59 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options:

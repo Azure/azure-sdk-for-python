@@ -15,11 +15,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Wed, 02 Sep 2020 02:26:54 GMT
+      - Wed, 02 Sep 2020 21:16:55 GMT
       User-Agent:
       - azsdk-python-data-tables/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 02 Sep 2020 02:26:54 GMT
+      - Wed, 02 Sep 2020 21:16:55 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
@@ -33,7 +33,7 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Wed, 02 Sep 2020 02:26:54 GMT
+      - Wed, 02 Sep 2020 21:16:56 GMT
       location:
       - https://storagename.table.core.windows.net/Tables('uttablef9b6145a')
       server:
@@ -51,7 +51,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/json;odata=minimalmetadata
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -61,32 +61,28 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Wed, 02 Sep 2020 02:26:54 GMT
+      - Wed, 02 Sep 2020 21:16:55 GMT
       If-Match:
       - '*'
       User-Agent:
       - azsdk-python-data-tables/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 02 Sep 2020 02:26:54 GMT
+      - Wed, 02 Sep 2020 21:16:55 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
     uri: https://storagename.table.core.windows.net/uttablef9b6145a(PartitionKey='pkf9b6145a',RowKey='rkf9b6145a')
   response:
     body:
-      string: '<?xml version="1.0" encoding="utf-8"?><error xmlns="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"><code>ResourceNotFound</code><message
-        xml:lang="en-US">The specified resource does not exist.
-
-        RequestId:590098b4-0002-0019-74d0-8006b9000000
-
-        Time:2020-09-02T02:26:54.7765074Z</message></error>'
+      string: '{"odata.error":{"code":"ResourceNotFound","message":{"lang":"en-US","value":"The
+        specified resource does not exist.\nRequestId:817cec7b-f002-000f-2a6e-813397000000\nTime:2020-09-02T21:16:56.5106029Z"}}}'
     headers:
       cache-control:
       - no-cache
       content-type:
-      - application/xml;charset=utf-8
+      - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Wed, 02 Sep 2020 02:26:54 GMT
+      - Wed, 02 Sep 2020 21:16:56 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -102,7 +98,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -110,11 +106,11 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Wed, 02 Sep 2020 02:26:54 GMT
+      - Wed, 02 Sep 2020 21:16:55 GMT
       User-Agent:
       - azsdk-python-data-tables/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 02 Sep 2020 02:26:54 GMT
+      - Wed, 02 Sep 2020 21:16:55 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
@@ -128,7 +124,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 02 Sep 2020 02:26:54 GMT
+      - Wed, 02 Sep 2020 21:16:56 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options:

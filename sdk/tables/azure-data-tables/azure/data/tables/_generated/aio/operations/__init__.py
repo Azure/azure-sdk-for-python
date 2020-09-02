@@ -6,8 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._table_operations_async import TableOperations
-from ._service_operations_async import ServiceOperations
+from ._table_operations import TableOperations
+from ._service_operations import ServiceOperations
 
 __all__ = [
     'TableOperations',

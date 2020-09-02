@@ -1723,7 +1723,7 @@ class StorageTableEntityTest(TableTestCase):
                 self.account_url(storage_account, "table"),
                 credential=token,
             )
-            table = service.get_table_client(table=self.table_name)
+            table = service.get_table_client(table_name=self.table_name)
             entities = []
             async for t in table.query_entities(
                     filter="PartitionKey eq '{}'".format(entity.PartitionKey)):
