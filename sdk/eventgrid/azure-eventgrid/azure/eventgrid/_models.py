@@ -39,7 +39,7 @@ class EventMixin(object):
         Load the event into the json
         :param dict eventgrid_event: The event to be deserialized.
         :type eventgrid_event: Union[str, dict, bytes]
-        :param str encode: The encoding to be used.
+        :param str encode: The encoding to be used. Defaults to 'utf-8'
         """
         if isinstance(event, six.binary_type):
             event = json.loads(event.decode(encode))
