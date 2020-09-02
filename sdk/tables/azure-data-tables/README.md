@@ -71,8 +71,7 @@ az storage account show -n mystorageaccount -g MyResourceGroup --query "primaryE
 ```
 
 #### Types of credentials
-The `credential` parameter may be provided in a number of different forms, depending on the type of
-[authorization](azure_authorization) you wish to use:
+The `credential` parameter may be provided in a number of different forms, depending on the type of authorization you wish to use:
 1. To use a [shared access signature (SAS) token](azure_sas_token),
    provide the token as a string. If your account URL includes the SAS token, omit the credential parameter.
    You can generate a SAS token from the Azure Portal under "Shared access signature" or use one of the `generate_sas()`
@@ -150,12 +149,12 @@ use of a dedicated client object.
 
 ### Clients
 Two different clients are provided to interact with the various components of the Table Service:
-1. [TableServiceClient](table_service_client_docs) -
+1. TableServiceClient -
     this client represents interaction with the Azure account itself, and allows you to acquire preconfigured
     client instances to access the tables within. It provides operations to retrieve and configure the account
     properties as well as query, create, and delete tables within the account. To perform operations on a specific table,
     retrieve a client using the `get_table_client` method.
-2. [TableClient](table_client_docs) -
+2. TableClienttable_client_docs -
     this client represents interaction with a specific table (which need not exist yet). It provides operations to
     create, delete, or update a table and includes operations to query, get, and upsert entities
     within it.
@@ -329,31 +328,26 @@ This project has adopted the [Microsoft Open Source Code of Conduct](msft_oss_co
 <!-- Still needed -->
 [Tables_pypi]: https://pypi.org/
 [Tables_ref_docs]: https://docs.microsoft.com/en-us/azure/cosmos-db/table-introduction
-[Tables_product_doc]: https://docs.microsoft.com/azure/storage/
+[Tables_product_doc]:https://docs.microsoft.com/en-us/azure/storage/
 [Tables_samples]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples
 
-[azure_subscription]: https://azure.microsoft.com/free/
-[azure_storage_account]: https://azure.microsoft.com/free/
-[azure_cosmos_account]: https://docs.microsoft.com/azure/cosmos-db/account-overview
+[azure_subscription]:https://azure.microsoft.com/en-us/free/
+[azure_storage_account]:https://azure.microsoft.com/en-us/free/
+[azure_cosmos_account]: https://docs.microsoft.com/en-us/azure/cosmos-db/account-overview
 [pip_link]: https://pypi.org/project/pip/
 
-[azure_create_cosmos]: https://docs.microsoft.com/azure/cosmos-db/create-cosmosdb-resources-portal
-[azure_portal_create_account]: https://docs.microsoft.com/azure/storage/common/storage-quickstart-create-account?tabs=azure-portal
-[azure_powershell_create_account]: https://docs.microsoft.com/azure/storage/common/storage-quickstart-create-account?tabs=azure-powershell
-[azure_cli_create_account]: https://docs.microsoft.com/azure/storage/common/storage-quickstart-create-account?tabs=azure-cli
+[azure_create_cosmos]: https://docs.microsoft.com/en-us/azure/cosmos-db/create-cosmosdb-resources-portal
+[azure_portal_create_account]: https://docs.microsoft.com/en-us/azure/storage/common/storage-account-create?tabs=azure-portal
+[azure_powershell_create_account]: https://docs.microsoft.com/en-us/azure/storage/common/storage-account-create?tabs=azure-powershell
+[azure_cli_create_account]: https://docs.microsoft.com/en-us/azure/storage/common/storage-account-create?tabs=azure-cli
 
-[azure_cli_account_url]:https://docs.microsoft.com/cli/azure/storage/account?view=azure-cli-latest#az-storage-account-show
-[azure_powershell_account_url]:https://docs.microsoft.com/powershell/module/az.storage/get-azstorageaccount
-[azure_portal_account_url]:https://docs.microsoft.com/azure/storage/common/storage-account-overview#storage-account-endpoints
+[azure_cli_account_url]:https://docs.microsoft.com/en-us/cli/azure/storage/account?view=azure-cli-latest#az-storage-account-show
+[azure_powershell_account_url]:https://docs.microsoft.com/en-us/powershell/module/az.storage/get-azstorageaccount?view=azps-4.6.1
+[azure_portal_account_url]:https://docs.microsoft.com/en-us/azure/storage/common/storage-account-overview#storage-account-endpoints
 
-[azure_authorization]: https://docs.microsoft.com/azure/storage/common/storage-auth
-[azure_sas_token]: https://docs.microsoft.com/azure/storage/common/storage-sas-overview
-[azure_shared_key]: https://docs.microsoft.com/rest/api/storageservices/authenticate-with-shared-key/
+[azure_sas_token]:https://docs.microsoft.com/en-us/azure/storage/common/storage-sas-overview
+[azure_shared_key]:https://docs.microsoft.com/en-us/rest/api/storageservices/authorize-with-shared-key
 
-<!-- Still needed -->
-[table_service_client_docs]: https://aka.ms/azsdk/python/tables/docs
-<!-- Still needed -->
-[table_client_docs]: https://aka.ms/azsdk/python/tables/docs
 
 [azure_core_ref_docs]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-core/latest/azure.core.html
 [azure_core_readme]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md
