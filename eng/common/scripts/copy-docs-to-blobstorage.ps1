@@ -388,5 +388,8 @@ if ($Language -eq "cpp")
 {
     $packageInfo = (Get-Content (Join-Path $DocLocation 'package-info.json') | ConvertFrom-Json)
     $releaseTag = RetrieveReleaseTag "CPP" $DocLocation
+    if (!releaseTag) {
+        $releaseTag = GenerateReleaseTag $packageInfo.name $packageInfo.version
+    } 
     Upload-Blobs -DocDir $DocLocation -PkgName $packageInfo.name -DocVersion $packageInfo.version -ReleaseTag $releaseTag
 }

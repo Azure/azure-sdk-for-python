@@ -462,8 +462,7 @@ function VerifyPackages($pkgRepository, $artifactLocation, $workingDirectory, $a
       if ($parsedPackage.Deployable -ne $True -and !$continueOnError) {
         Write-Host "Package $($parsedPackage.PackageId) is marked with version $($parsedPackage.PackageVersion), the version $($parsedPackage.PackageVersion) has already been deployed to the target repository."
         Write-Host "Maybe a pkg version wasn't updated properly?"
-        #exit(1)
-        return
+        exit(1)
       }
 
       $tag = GenerateReleaseTag $parsedPackage.packageId $parsedPackage.PackageVersion
@@ -527,14 +526,15 @@ function CheckArtifactShaAgainstTagsList($priorExistingTagList, $releaseSha, $ap
 
   if ($unmatchedTags.Length -gt 0 -and !$continueOnError) {
     Write-Host "Tags already existing with different SHA versions. Exiting."
-    #exit(1)
+    exit(1)
   }
 }
 
 function GenerateReleaseTag($packageId, $packageVersion) {
-  return if ($packageId) {
+  $tag =if ($packageId) {
     "$packageId_$packageVersion"
   } else {
     $packageVersion
   }
+  return $tag
 }
