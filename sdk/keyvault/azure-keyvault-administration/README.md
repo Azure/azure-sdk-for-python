@@ -33,22 +33,22 @@ accepts any [azure-identity][azure_identity] credential. See the
 [azure-identity][azure_identity] documentation for more information about other
 credentials.
 
-#### Create/Get credentials
+#### Create and Get credentials
 This [Azure Cloud Shell][azure_cloud_shell] snippet shows how to create a
 new service principal. Before using it, replace "your-application-name" with
 a more appropriate name for your service principal.
 
 * Create a service principal:
     ```Bash
-    az ad sp create-for-rbac --name http://my-application --skip-assignment
+    az ad sp create-for-rbac --name http://your-application-name --skip-assignment
     ```
 
     > Output:
     > ```json
     > {
     >     "appId": "generated app id",
-    >     "displayName": "my-application",
-    >     "name": "http://my-application",
+    >     "displayName": "your-application-name",
+    >     "name": "http://your-application-name",
     >     "password": "random password",
     >     "tenant": "tenant id"
     > }
@@ -141,7 +141,7 @@ for role_definition in role_definitions:
 ```
 
 ### Create, Get, and Delete a role assignment
-Assign a role to a service principal. This will require a role definition id from the list retrieved in the [above snippet](#list-the-role-definitions) and the principal object id retrieved in the [Create/Get credentials](#create/get-credentials)
+Assign a role to a service principal. This will require a role definition id from the list retrieved in the [above snippet](#list-the-role-definitions) and the principal object id retrieved in the [Create and Get credentials](#create-and-get-credentials)
 
 ```python
 import uuid
@@ -202,16 +202,24 @@ except ResourceNotFoundError as e:
 
 Content forthcoming
 
+###  Additional Documentation
+For more extensive documentation on Azure Key Vault, see the
+[API reference documentation][reference_docs].
+
 ## Contributing
-
-This project welcomes contributions and suggestions.  Most contributions require
+This project welcomes contributions and suggestions. Most contributions require
 you to agree to a Contributor License Agreement (CLA) declaring that you have
-the right to, and actually do, grant us the rights to use your contribution. For
-details, visit [cla.microsoft.com][cla].
+the right to, and actually do, grant us the rights to use your contribution.
+For details, visit https://cla.microsoft.com.
 
-This project has adopted the [Microsoft Open Source Code of Conduct][coc].
-For more information see the [Code of Conduct FAQ][coc_faq]
-or contact [opencode@microsoft.com][coc_contact] with any
+When you submit a pull request, a CLA-bot will automatically determine whether
+you need to provide a CLA and decorate the PR appropriately (e.g., label,
+comment). Simply follow the instructions provided by the bot. You will only
+need to do this once across all repos using our CLA.
+
+This project has adopted the
+[Microsoft Open Source Code of Conduct][code_of_conduct]. For more information,
+see the Code of Conduct FAQ or contact opencode@microsoft.com with any
 additional questions or comments.
 
 <!-- LINKS -->
@@ -225,7 +233,7 @@ additional questions or comments.
 [keyvault_docs]: https://docs.microsoft.com/azure/key-vault/
 [pip]: https://pypi.org/project/pip/
 [pypi_package_administration]: https://pypi.org/project/azure-keyvault-administration/
-[reference_docs]: https://aka.ms/azsdk/python/keyvault-keys/docs
+[reference_docs]: https://aka.ms/azsdk/python/keyvault-administration/docs
 [rbac_client_docs]: https://aka.ms/azsdk/python/keyvault-administration/docs#azure.keyvault.administration.KeyVaultAccessControlClient
 
 
