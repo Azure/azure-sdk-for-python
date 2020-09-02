@@ -1,7 +1,6 @@
 # Azure KeyVault Administration client library for .NET
 Azure Key Vault helps solve the following problems:
-- Vault administration (this library) - full backup / restore, and key-level
-role-based access control (RBAC) of vaults.
+- Vault administration (this library) - full backup / restore, and key-level role-based access control (RBAC) of vaults.
 - Cryptographic key management ([azure-keyvault-keys](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys)) - create, store, and control
 access to the keys used to encrypt your data
 - Secrets management
