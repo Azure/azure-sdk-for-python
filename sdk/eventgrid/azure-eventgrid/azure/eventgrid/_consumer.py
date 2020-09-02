@@ -21,7 +21,6 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 from ._models import CloudEvent, EventGridEvent
-from ._helpers import _deserialize_data
 
 class EventGridConsumer(object):
     """
@@ -38,12 +37,9 @@ class EventGridConsumer(object):
         """
         encode = kwargs.pop('encoding', 'utf-8')
         try:
-            if isinstance(cloud_event, six.binary_type):
-                cloud_event = json.loads(cloud_event.decode(encode))
-            elif isinstance(cloud_event, six.string_types):
-                cloud_event = json.loads(cloud_event)
+            cloud_event = CloudEvent._load(cloud_event, encode)
             deserialized_event = CloudEvent.deserialize(cloud_event)
-            _deserialize_data(deserialized_event, deserialized_event.type)
+            CloudEvent._deserialize_data(deserialized_event, deserialized_event.type)
             return deserialized_event 
         except Exception as err:
             _LOGGER.error('Error: cannot deserialize event. Event does not have a valid format. Event must be a string, dict, or bytes following the CloudEvent schema.')
@@ -62,12 +58,9 @@ class EventGridConsumer(object):
         """
         encode = kwargs.pop('encoding', 'utf-8')
         try:
-            if isinstance(eventgrid_event, six.binary_type):
-                eventgrid_event = json.loads(eventgrid_event.decode(encode))
-            elif isinstance(eventgrid_event, six.string_types):
-                eventgrid_event = json.loads(eventgrid_event)
+            eventgrid_event = EventGridEvent._load(eventgrid_event, encode)
             deserialized_event = EventGridEvent.deserialize(eventgrid_event)
-            _deserialize_data(deserialized_event, deserialized_event.event_type)
+            EventGridEvent._deserialize_data(deserialized_event, deserialized_event.event_type)
             return deserialized_event
         except Exception as err:
             _LOGGER.error('Error: cannot deserialize event. Event does not have a valid format. Event must be a string, dict, or bytes following the CloudEvent schema.')

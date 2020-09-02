@@ -8,6 +8,7 @@ from msrest.serialization import UTC
 import datetime as dt
 import uuid
 import json
+import six
 from ._generated import models
 from ._generated.models import StorageBlobCreatedEventData, \
     EventGridEvent as InternalEventGridEvent, \
@@ -15,7 +16,39 @@ from ._generated.models import StorageBlobCreatedEventData, \
 from ._shared.mixins import DictMixin
 from ._event_mappings import _event_mappings
 
-class CloudEvent(InternalCloudEvent):   #pylint:disable=too-many-instance-attributes
+
+class EventMixin(object):
+    """
+    Mixin for the event models comprising of some helper methods.
+    """
+    def _deserialize_data(event, event_type):
+        """
+        Sets the data of the desrialized event to strongly typed event object if event type exists in _event_mappings.
+        Otherwise, sets it to None.
+
+        :param str event_type: The event_type of the EventGridEvent object or the type of the CloudEvent object.
+        """
+        # if system event type defined, set event.data to system event object
+        try:
+            event.data = (_event_mappings[event_type]).deserialize(event.data)
+        except KeyError: # else, if custom event, then event.data is dict and should be set to None
+            event.data = None
+
+    def _load(event, encode):
+        """
+        Load the event into the json
+        :param dict eventgrid_event: The event to be deserialized.
+        :type eventgrid_event: Union[str, dict, bytes]
+        :param str encode: The encoding to be used.
+        """
+        if isinstance(event, six.binary_type):
+            event = json.loads(event.decode(encode))
+        elif isinstance(event, six.string_types):
+            event = json.loads(event)
+        return event
+
+
+class CloudEvent(InternalCloudEvent, EventMixin):   #pylint:disable=too-many-instance-attributes
     """Properties of an event published to an Event Grid topic using the CloudEvent 1.0 Schema.
 
     All required parameters must be populated in order to send to Azure.
@@ -71,7 +104,7 @@ class CloudEvent(InternalCloudEvent):   #pylint:disable=too-many-instance-attrib
         super(CloudEvent, self).__init__(**kwargs)
 
 
-class EventGridEvent(InternalEventGridEvent):
+class EventGridEvent(InternalEventGridEvent, EventMixin):
     """Properties of an event published to an Event Grid topic using the EventGrid Schema.
 
     Variables are only populated by the server, and will be ignored when sending a request.
