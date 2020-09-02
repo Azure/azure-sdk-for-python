@@ -51,10 +51,11 @@ class RecognizePiiEntitiesSampleAsync(object):
 
         for idx, doc in enumerate(docs):
             print("Document text: {}".format(documents[idx]))
+            print("Redacted document text: {}".format(doc.redacted_text))
             for entity in doc.entities:
-                print("Entity: {}".format(entity.text))
-                print("Category: {}".format(entity.category))
-                print("Confidence Score: {}\n".format(entity.confidence_score))
+                print("...Entity: {}".format(entity.text))
+                print("......Category: {}".format(entity.category))
+                print("......Confidence Score: {}\n".format(entity.confidence_score))
         # [END recognize_pii_entities_async]
 
 
