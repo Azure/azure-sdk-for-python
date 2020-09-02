@@ -11,13 +11,13 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 20 Aug 2020 20:17:37 GMT
+      - Wed, 02 Sep 2020 02:27:41 GMT
       User-Agent:
-      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 20 Aug 2020 20:17:37 GMT
+      - Wed, 02 Sep 2020 02:27:41 GMT
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     method: POST
     uri: https://storagename.table.core.windows.net/Tables
   response:
@@ -26,16 +26,16 @@ interactions:
     headers:
       cache-control: no-cache
       content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
-      date: Thu, 20 Aug 2020 20:17:36 GMT
+      date: Wed, 02 Sep 2020 02:27:41 GMT
       location: https://storagename.table.core.windows.net/Tables('uttable121a1965')
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-ms-version: '2019-07-07'
+      x-ms-version: '2019-02-02'
     status:
       code: 201
       message: Created
-    url: https://pyacrstoragewdjxux7eodqw.table.core.windows.net/Tables
+    url: https://pyacrstoragect6543astms7.table.core.windows.net/Tables
 - request:
     body: '{"TableName": "querytable121a1965"}'
     headers:
@@ -48,13 +48,13 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 20 Aug 2020 20:17:37 GMT
+      - Wed, 02 Sep 2020 02:27:41 GMT
       User-Agent:
-      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 20 Aug 2020 20:17:37 GMT
+      - Wed, 02 Sep 2020 02:27:41 GMT
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     method: POST
     uri: https://storagename.table.core.windows.net/Tables
   response:
@@ -63,236 +63,231 @@ interactions:
     headers:
       cache-control: no-cache
       content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
-      date: Thu, 20 Aug 2020 20:17:36 GMT
+      date: Wed, 02 Sep 2020 02:27:41 GMT
       location: https://storagename.table.core.windows.net/Tables('querytable121a1965')
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-ms-version: '2019-07-07'
+      x-ms-version: '2019-02-02'
     status:
       code: 201
       message: Created
-    url: https://pyacrstoragewdjxux7eodqw.table.core.windows.net/Tables
+    url: https://pyacrstoragect6543astms7.table.core.windows.net/Tables
 - request:
-    body: '{"PartitionKey": "pk121a1965", "RowKey": "rk121a19651", "age": "39", "age@odata.type":
-      "Edm.Int64", "sex": "male", "married": true, "deceased": false, "ratio": 3.1,
-      "evenratio": 3.0, "large": "933311100", "large@odata.type": "Edm.Int64", "Birthday":
-      "1973-10-04T00:00:00Z", "Birthday@odata.type": "Edm.DateTime", "birthday": "1970-10-04T00:00:00Z",
-      "birthday@odata.type": "Edm.DateTime", "binary": "YmluYXJ5", "binary@odata.type":
-      "Edm.Binary", "other": 20, "clsid": "c9da6455-213d-42c9-9a79-3e9149a57833",
-      "clsid@odata.type": "Edm.Guid"}'
+    body: '{"PartitionKey": "pk121a1965", "RowKey": "rk121a19651", "age": 39, "sex":
+      "male", "married": true, "deceased": false, "ratio": 3.1, "evenratio": 3.0,
+      "large": 933311100, "Birthday": "1973-10-04T00:00:00Z", "Birthday@odata.type":
+      "Edm.DateTime", "birthday": "1970-10-04T00:00:00Z", "birthday@odata.type": "Edm.DateTime",
+      "binary": "YmluYXJ5", "binary@odata.type": "Edm.Binary", "other": 20, "clsid":
+      "c9da6455-213d-42c9-9a79-3e9149a57833", "clsid@odata.type": "Edm.Guid"}'
     headers:
       Accept:
       - application/json;odata=minimalmetadata
       Content-Length:
-      - '538'
+      - '470'
       Content-Type:
       - application/json;odata=nometadata
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 20 Aug 2020 20:17:37 GMT
+      - Wed, 02 Sep 2020 02:27:41 GMT
       User-Agent:
-      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 20 Aug 2020 20:17:37 GMT
+      - Wed, 02 Sep 2020 02:27:41 GMT
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     method: POST
     uri: https://storagename.table.core.windows.net/querytable121a1965
   response:
     body:
-      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#querytable121a1965/@Element","odata.etag":"W/\"datetime''2020-08-20T20%3A17%3A37.6440475Z''\"","PartitionKey":"pk121a1965","RowKey":"rk121a19651","Timestamp":"2020-08-20T20:17:37.6440475Z","age@odata.type":"Edm.Int64","age":"39","sex":"male","married":true,"deceased":false,"ratio":3.1,"evenratio":3.0,"large@odata.type":"Edm.Int64","large":"933311100","Birthday@odata.type":"Edm.DateTime","Birthday":"1973-10-04T00:00:00Z","birthday@odata.type":"Edm.DateTime","birthday":"1970-10-04T00:00:00Z","binary@odata.type":"Edm.Binary","binary":"YmluYXJ5","other":20,"clsid@odata.type":"Edm.Guid","clsid":"c9da6455-213d-42c9-9a79-3e9149a57833"}'
+      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#querytable121a1965/@Element","odata.etag":"W/\"datetime''2020-09-02T02%3A27%3A41.9579649Z''\"","PartitionKey":"pk121a1965","RowKey":"rk121a19651","Timestamp":"2020-09-02T02:27:41.9579649Z","age":39,"sex":"male","married":true,"deceased":false,"ratio":3.1,"evenratio":3.0,"large":933311100,"Birthday@odata.type":"Edm.DateTime","Birthday":"1973-10-04T00:00:00Z","birthday@odata.type":"Edm.DateTime","birthday":"1970-10-04T00:00:00Z","binary@odata.type":"Edm.Binary","binary":"YmluYXJ5","other":20,"clsid@odata.type":"Edm.Guid","clsid":"c9da6455-213d-42c9-9a79-3e9149a57833"}'
     headers:
       cache-control: no-cache
       content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
-      date: Thu, 20 Aug 2020 20:17:36 GMT
-      etag: W/"datetime'2020-08-20T20%3A17%3A37.6440475Z'"
+      date: Wed, 02 Sep 2020 02:27:41 GMT
+      etag: W/"datetime'2020-09-02T02%3A27%3A41.9579649Z'"
       location: https://storagename.table.core.windows.net/querytable121a1965(PartitionKey='pk121a1965',RowKey='rk121a19651')
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-ms-version: '2019-07-07'
+      x-ms-version: '2019-02-02'
     status:
       code: 201
       message: Created
-    url: https://pyacrstoragewdjxux7eodqw.table.core.windows.net/querytable121a1965
+    url: https://pyacrstoragect6543astms7.table.core.windows.net/querytable121a1965
 - request:
-    body: '{"PartitionKey": "pk121a1965", "RowKey": "rk121a196512", "age": "39", "age@odata.type":
-      "Edm.Int64", "sex": "male", "married": true, "deceased": false, "ratio": 3.1,
-      "evenratio": 3.0, "large": "933311100", "large@odata.type": "Edm.Int64", "Birthday":
-      "1973-10-04T00:00:00Z", "Birthday@odata.type": "Edm.DateTime", "birthday": "1970-10-04T00:00:00Z",
-      "birthday@odata.type": "Edm.DateTime", "binary": "YmluYXJ5", "binary@odata.type":
-      "Edm.Binary", "other": 20, "clsid": "c9da6455-213d-42c9-9a79-3e9149a57833",
-      "clsid@odata.type": "Edm.Guid"}'
+    body: '{"PartitionKey": "pk121a1965", "RowKey": "rk121a196512", "age": 39, "sex":
+      "male", "married": true, "deceased": false, "ratio": 3.1, "evenratio": 3.0,
+      "large": 933311100, "Birthday": "1973-10-04T00:00:00Z", "Birthday@odata.type":
+      "Edm.DateTime", "birthday": "1970-10-04T00:00:00Z", "birthday@odata.type": "Edm.DateTime",
+      "binary": "YmluYXJ5", "binary@odata.type": "Edm.Binary", "other": 20, "clsid":
+      "c9da6455-213d-42c9-9a79-3e9149a57833", "clsid@odata.type": "Edm.Guid"}'
     headers:
       Accept:
       - application/json;odata=minimalmetadata
       Content-Length:
-      - '539'
+      - '471'
       Content-Type:
       - application/json;odata=nometadata
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 20 Aug 2020 20:17:37 GMT
+      - Wed, 02 Sep 2020 02:27:41 GMT
       User-Agent:
-      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 20 Aug 2020 20:17:37 GMT
+      - Wed, 02 Sep 2020 02:27:41 GMT
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     method: POST
     uri: https://storagename.table.core.windows.net/querytable121a1965
   response:
     body:
-      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#querytable121a1965/@Element","odata.etag":"W/\"datetime''2020-08-20T20%3A17%3A37.7551534Z''\"","PartitionKey":"pk121a1965","RowKey":"rk121a196512","Timestamp":"2020-08-20T20:17:37.7551534Z","age@odata.type":"Edm.Int64","age":"39","sex":"male","married":true,"deceased":false,"ratio":3.1,"evenratio":3.0,"large@odata.type":"Edm.Int64","large":"933311100","Birthday@odata.type":"Edm.DateTime","Birthday":"1973-10-04T00:00:00Z","birthday@odata.type":"Edm.DateTime","birthday":"1970-10-04T00:00:00Z","binary@odata.type":"Edm.Binary","binary":"YmluYXJ5","other":20,"clsid@odata.type":"Edm.Guid","clsid":"c9da6455-213d-42c9-9a79-3e9149a57833"}'
+      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#querytable121a1965/@Element","odata.etag":"W/\"datetime''2020-09-02T02%3A27%3A41.9967939Z''\"","PartitionKey":"pk121a1965","RowKey":"rk121a196512","Timestamp":"2020-09-02T02:27:41.9967939Z","age":39,"sex":"male","married":true,"deceased":false,"ratio":3.1,"evenratio":3.0,"large":933311100,"Birthday@odata.type":"Edm.DateTime","Birthday":"1973-10-04T00:00:00Z","birthday@odata.type":"Edm.DateTime","birthday":"1970-10-04T00:00:00Z","binary@odata.type":"Edm.Binary","binary":"YmluYXJ5","other":20,"clsid@odata.type":"Edm.Guid","clsid":"c9da6455-213d-42c9-9a79-3e9149a57833"}'
     headers:
       cache-control: no-cache
       content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
-      date: Thu, 20 Aug 2020 20:17:36 GMT
-      etag: W/"datetime'2020-08-20T20%3A17%3A37.7551534Z'"
+      date: Wed, 02 Sep 2020 02:27:41 GMT
+      etag: W/"datetime'2020-09-02T02%3A27%3A41.9967939Z'"
       location: https://storagename.table.core.windows.net/querytable121a1965(PartitionKey='pk121a1965',RowKey='rk121a196512')
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-ms-version: '2019-07-07'
+      x-ms-version: '2019-02-02'
     status:
       code: 201
       message: Created
-    url: https://pyacrstoragewdjxux7eodqw.table.core.windows.net/querytable121a1965
+    url: https://pyacrstoragect6543astms7.table.core.windows.net/querytable121a1965
 - request:
-    body: '{"PartitionKey": "pk121a1965", "RowKey": "rk121a1965123", "age": "39",
-      "age@odata.type": "Edm.Int64", "sex": "male", "married": true, "deceased": false,
-      "ratio": 3.1, "evenratio": 3.0, "large": "933311100", "large@odata.type": "Edm.Int64",
-      "Birthday": "1973-10-04T00:00:00Z", "Birthday@odata.type": "Edm.DateTime", "birthday":
-      "1970-10-04T00:00:00Z", "birthday@odata.type": "Edm.DateTime", "binary": "YmluYXJ5",
-      "binary@odata.type": "Edm.Binary", "other": 20, "clsid": "c9da6455-213d-42c9-9a79-3e9149a57833",
-      "clsid@odata.type": "Edm.Guid"}'
+    body: '{"PartitionKey": "pk121a1965", "RowKey": "rk121a1965123", "age": 39, "sex":
+      "male", "married": true, "deceased": false, "ratio": 3.1, "evenratio": 3.0,
+      "large": 933311100, "Birthday": "1973-10-04T00:00:00Z", "Birthday@odata.type":
+      "Edm.DateTime", "birthday": "1970-10-04T00:00:00Z", "birthday@odata.type": "Edm.DateTime",
+      "binary": "YmluYXJ5", "binary@odata.type": "Edm.Binary", "other": 20, "clsid":
+      "c9da6455-213d-42c9-9a79-3e9149a57833", "clsid@odata.type": "Edm.Guid"}'
     headers:
       Accept:
       - application/json;odata=minimalmetadata
       Content-Length:
-      - '540'
+      - '472'
       Content-Type:
       - application/json;odata=nometadata
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 20 Aug 2020 20:17:37 GMT
+      - Wed, 02 Sep 2020 02:27:41 GMT
       User-Agent:
-      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 20 Aug 2020 20:17:37 GMT
+      - Wed, 02 Sep 2020 02:27:41 GMT
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     method: POST
     uri: https://storagename.table.core.windows.net/querytable121a1965
   response:
     body:
-      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#querytable121a1965/@Element","odata.etag":"W/\"datetime''2020-08-20T20%3A17%3A37.837232Z''\"","PartitionKey":"pk121a1965","RowKey":"rk121a1965123","Timestamp":"2020-08-20T20:17:37.837232Z","age@odata.type":"Edm.Int64","age":"39","sex":"male","married":true,"deceased":false,"ratio":3.1,"evenratio":3.0,"large@odata.type":"Edm.Int64","large":"933311100","Birthday@odata.type":"Edm.DateTime","Birthday":"1973-10-04T00:00:00Z","birthday@odata.type":"Edm.DateTime","birthday":"1970-10-04T00:00:00Z","binary@odata.type":"Edm.Binary","binary":"YmluYXJ5","other":20,"clsid@odata.type":"Edm.Guid","clsid":"c9da6455-213d-42c9-9a79-3e9149a57833"}'
+      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#querytable121a1965/@Element","odata.etag":"W/\"datetime''2020-09-02T02%3A27%3A42.0356237Z''\"","PartitionKey":"pk121a1965","RowKey":"rk121a1965123","Timestamp":"2020-09-02T02:27:42.0356237Z","age":39,"sex":"male","married":true,"deceased":false,"ratio":3.1,"evenratio":3.0,"large":933311100,"Birthday@odata.type":"Edm.DateTime","Birthday":"1973-10-04T00:00:00Z","birthday@odata.type":"Edm.DateTime","birthday":"1970-10-04T00:00:00Z","binary@odata.type":"Edm.Binary","binary":"YmluYXJ5","other":20,"clsid@odata.type":"Edm.Guid","clsid":"c9da6455-213d-42c9-9a79-3e9149a57833"}'
     headers:
       cache-control: no-cache
       content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
-      date: Thu, 20 Aug 2020 20:17:37 GMT
-      etag: W/"datetime'2020-08-20T20%3A17%3A37.837232Z'"
+      date: Wed, 02 Sep 2020 02:27:42 GMT
+      etag: W/"datetime'2020-09-02T02%3A27%3A42.0356237Z'"
       location: https://storagename.table.core.windows.net/querytable121a1965(PartitionKey='pk121a1965',RowKey='rk121a1965123')
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-ms-version: '2019-07-07'
+      x-ms-version: '2019-02-02'
     status:
       code: 201
       message: Created
-    url: https://pyacrstoragewdjxux7eodqw.table.core.windows.net/querytable121a1965
+    url: https://pyacrstoragect6543astms7.table.core.windows.net/querytable121a1965
 - request:
-    body: '{"PartitionKey": "pk121a1965", "RowKey": "rk121a19651234", "age": "39",
-      "age@odata.type": "Edm.Int64", "sex": "male", "married": true, "deceased": false,
-      "ratio": 3.1, "evenratio": 3.0, "large": "933311100", "large@odata.type": "Edm.Int64",
-      "Birthday": "1973-10-04T00:00:00Z", "Birthday@odata.type": "Edm.DateTime", "birthday":
-      "1970-10-04T00:00:00Z", "birthday@odata.type": "Edm.DateTime", "binary": "YmluYXJ5",
-      "binary@odata.type": "Edm.Binary", "other": 20, "clsid": "c9da6455-213d-42c9-9a79-3e9149a57833",
-      "clsid@odata.type": "Edm.Guid"}'
+    body: '{"PartitionKey": "pk121a1965", "RowKey": "rk121a19651234", "age": 39, "sex":
+      "male", "married": true, "deceased": false, "ratio": 3.1, "evenratio": 3.0,
+      "large": 933311100, "Birthday": "1973-10-04T00:00:00Z", "Birthday@odata.type":
+      "Edm.DateTime", "birthday": "1970-10-04T00:00:00Z", "birthday@odata.type": "Edm.DateTime",
+      "binary": "YmluYXJ5", "binary@odata.type": "Edm.Binary", "other": 20, "clsid":
+      "c9da6455-213d-42c9-9a79-3e9149a57833", "clsid@odata.type": "Edm.Guid"}'
     headers:
       Accept:
       - application/json;odata=minimalmetadata
       Content-Length:
-      - '541'
+      - '473'
       Content-Type:
       - application/json;odata=nometadata
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 20 Aug 2020 20:17:37 GMT
+      - Wed, 02 Sep 2020 02:27:41 GMT
       User-Agent:
-      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 20 Aug 2020 20:17:37 GMT
+      - Wed, 02 Sep 2020 02:27:41 GMT
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     method: POST
     uri: https://storagename.table.core.windows.net/querytable121a1965
   response:
     body:
-      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#querytable121a1965/@Element","odata.etag":"W/\"datetime''2020-08-20T20%3A17%3A37.9313216Z''\"","PartitionKey":"pk121a1965","RowKey":"rk121a19651234","Timestamp":"2020-08-20T20:17:37.9313216Z","age@odata.type":"Edm.Int64","age":"39","sex":"male","married":true,"deceased":false,"ratio":3.1,"evenratio":3.0,"large@odata.type":"Edm.Int64","large":"933311100","Birthday@odata.type":"Edm.DateTime","Birthday":"1973-10-04T00:00:00Z","birthday@odata.type":"Edm.DateTime","birthday":"1970-10-04T00:00:00Z","binary@odata.type":"Edm.Binary","binary":"YmluYXJ5","other":20,"clsid@odata.type":"Edm.Guid","clsid":"c9da6455-213d-42c9-9a79-3e9149a57833"}'
+      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#querytable121a1965/@Element","odata.etag":"W/\"datetime''2020-09-02T02%3A27%3A42.072461Z''\"","PartitionKey":"pk121a1965","RowKey":"rk121a19651234","Timestamp":"2020-09-02T02:27:42.072461Z","age":39,"sex":"male","married":true,"deceased":false,"ratio":3.1,"evenratio":3.0,"large":933311100,"Birthday@odata.type":"Edm.DateTime","Birthday":"1973-10-04T00:00:00Z","birthday@odata.type":"Edm.DateTime","birthday":"1970-10-04T00:00:00Z","binary@odata.type":"Edm.Binary","binary":"YmluYXJ5","other":20,"clsid@odata.type":"Edm.Guid","clsid":"c9da6455-213d-42c9-9a79-3e9149a57833"}'
     headers:
       cache-control: no-cache
       content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
-      date: Thu, 20 Aug 2020 20:17:37 GMT
-      etag: W/"datetime'2020-08-20T20%3A17%3A37.9313216Z'"
+      date: Wed, 02 Sep 2020 02:27:42 GMT
+      etag: W/"datetime'2020-09-02T02%3A27%3A42.072461Z'"
       location: https://storagename.table.core.windows.net/querytable121a1965(PartitionKey='pk121a1965',RowKey='rk121a19651234')
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-ms-version: '2019-07-07'
+      x-ms-version: '2019-02-02'
     status:
       code: 201
       message: Created
-    url: https://pyacrstoragewdjxux7eodqw.table.core.windows.net/querytable121a1965
+    url: https://pyacrstoragect6543astms7.table.core.windows.net/querytable121a1965
 - request:
-    body: '{"PartitionKey": "pk121a1965", "RowKey": "rk121a196512345", "age": "39",
-      "age@odata.type": "Edm.Int64", "sex": "male", "married": true, "deceased": false,
-      "ratio": 3.1, "evenratio": 3.0, "large": "933311100", "large@odata.type": "Edm.Int64",
-      "Birthday": "1973-10-04T00:00:00Z", "Birthday@odata.type": "Edm.DateTime", "birthday":
-      "1970-10-04T00:00:00Z", "birthday@odata.type": "Edm.DateTime", "binary": "YmluYXJ5",
-      "binary@odata.type": "Edm.Binary", "other": 20, "clsid": "c9da6455-213d-42c9-9a79-3e9149a57833",
-      "clsid@odata.type": "Edm.Guid"}'
+    body: '{"PartitionKey": "pk121a1965", "RowKey": "rk121a196512345", "age": 39,
+      "sex": "male", "married": true, "deceased": false, "ratio": 3.1, "evenratio":
+      3.0, "large": 933311100, "Birthday": "1973-10-04T00:00:00Z", "Birthday@odata.type":
+      "Edm.DateTime", "birthday": "1970-10-04T00:00:00Z", "birthday@odata.type": "Edm.DateTime",
+      "binary": "YmluYXJ5", "binary@odata.type": "Edm.Binary", "other": 20, "clsid":
+      "c9da6455-213d-42c9-9a79-3e9149a57833", "clsid@odata.type": "Edm.Guid"}'
     headers:
       Accept:
       - application/json;odata=minimalmetadata
       Content-Length:
-      - '542'
+      - '474'
       Content-Type:
       - application/json;odata=nometadata
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 20 Aug 2020 20:17:37 GMT
+      - Wed, 02 Sep 2020 02:27:42 GMT
       User-Agent:
-      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 20 Aug 2020 20:17:37 GMT
+      - Wed, 02 Sep 2020 02:27:42 GMT
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     method: POST
     uri: https://storagename.table.core.windows.net/querytable121a1965
   response:
     body:
-      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#querytable121a1965/@Element","odata.etag":"W/\"datetime''2020-08-20T20%3A17%3A38.0113975Z''\"","PartitionKey":"pk121a1965","RowKey":"rk121a196512345","Timestamp":"2020-08-20T20:17:38.0113975Z","age@odata.type":"Edm.Int64","age":"39","sex":"male","married":true,"deceased":false,"ratio":3.1,"evenratio":3.0,"large@odata.type":"Edm.Int64","large":"933311100","Birthday@odata.type":"Edm.DateTime","Birthday":"1973-10-04T00:00:00Z","birthday@odata.type":"Edm.DateTime","birthday":"1970-10-04T00:00:00Z","binary@odata.type":"Edm.Binary","binary":"YmluYXJ5","other":20,"clsid@odata.type":"Edm.Guid","clsid":"c9da6455-213d-42c9-9a79-3e9149a57833"}'
+      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#querytable121a1965/@Element","odata.etag":"W/\"datetime''2020-09-02T02%3A27%3A42.1092994Z''\"","PartitionKey":"pk121a1965","RowKey":"rk121a196512345","Timestamp":"2020-09-02T02:27:42.1092994Z","age":39,"sex":"male","married":true,"deceased":false,"ratio":3.1,"evenratio":3.0,"large":933311100,"Birthday@odata.type":"Edm.DateTime","Birthday":"1973-10-04T00:00:00Z","birthday@odata.type":"Edm.DateTime","birthday":"1970-10-04T00:00:00Z","binary@odata.type":"Edm.Binary","binary":"YmluYXJ5","other":20,"clsid@odata.type":"Edm.Guid","clsid":"c9da6455-213d-42c9-9a79-3e9149a57833"}'
     headers:
       cache-control: no-cache
       content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
-      date: Thu, 20 Aug 2020 20:17:37 GMT
-      etag: W/"datetime'2020-08-20T20%3A17%3A38.0113975Z'"
+      date: Wed, 02 Sep 2020 02:27:42 GMT
+      etag: W/"datetime'2020-09-02T02%3A27%3A42.1092994Z'"
       location: https://storagename.table.core.windows.net/querytable121a1965(PartitionKey='pk121a1965',RowKey='rk121a196512345')
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-ms-version: '2019-07-07'
+      x-ms-version: '2019-02-02'
     status:
       code: 201
       message: Created
-    url: https://pyacrstoragewdjxux7eodqw.table.core.windows.net/querytable121a1965
+    url: https://pyacrstoragect6543astms7.table.core.windows.net/querytable121a1965
 - request:
     body: null
     headers:
@@ -301,32 +296,32 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 20 Aug 2020 20:17:37 GMT
+      - Wed, 02 Sep 2020 02:27:42 GMT
       User-Agent:
-      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 20 Aug 2020 20:17:37 GMT
+      - Wed, 02 Sep 2020 02:27:42 GMT
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     method: GET
     uri: https://storagename.table.core.windows.net/querytable121a1965()?$top=2
   response:
     body:
-      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#querytable121a1965","value":[{"odata.etag":"W/\"datetime''2020-08-20T20%3A17%3A37.6440475Z''\"","PartitionKey":"pk121a1965","RowKey":"rk121a19651","Timestamp":"2020-08-20T20:17:37.6440475Z","age@odata.type":"Edm.Int64","age":"39","sex":"male","married":true,"deceased":false,"ratio":3.1,"evenratio":3.0,"large@odata.type":"Edm.Int64","large":"933311100","Birthday@odata.type":"Edm.DateTime","Birthday":"1973-10-04T00:00:00Z","birthday@odata.type":"Edm.DateTime","birthday":"1970-10-04T00:00:00Z","binary@odata.type":"Edm.Binary","binary":"YmluYXJ5","other":20,"clsid@odata.type":"Edm.Guid","clsid":"c9da6455-213d-42c9-9a79-3e9149a57833"},{"odata.etag":"W/\"datetime''2020-08-20T20%3A17%3A37.7551534Z''\"","PartitionKey":"pk121a1965","RowKey":"rk121a196512","Timestamp":"2020-08-20T20:17:37.7551534Z","age@odata.type":"Edm.Int64","age":"39","sex":"male","married":true,"deceased":false,"ratio":3.1,"evenratio":3.0,"large@odata.type":"Edm.Int64","large":"933311100","Birthday@odata.type":"Edm.DateTime","Birthday":"1973-10-04T00:00:00Z","birthday@odata.type":"Edm.DateTime","birthday":"1970-10-04T00:00:00Z","binary@odata.type":"Edm.Binary","binary":"YmluYXJ5","other":20,"clsid@odata.type":"Edm.Guid","clsid":"c9da6455-213d-42c9-9a79-3e9149a57833"}]}'
+      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#querytable121a1965","value":[{"odata.etag":"W/\"datetime''2020-09-02T02%3A27%3A41.9579649Z''\"","PartitionKey":"pk121a1965","RowKey":"rk121a19651","Timestamp":"2020-09-02T02:27:41.9579649Z","age":39,"sex":"male","married":true,"deceased":false,"ratio":3.1,"evenratio":3.0,"large":933311100,"Birthday@odata.type":"Edm.DateTime","Birthday":"1973-10-04T00:00:00Z","birthday@odata.type":"Edm.DateTime","birthday":"1970-10-04T00:00:00Z","binary@odata.type":"Edm.Binary","binary":"YmluYXJ5","other":20,"clsid@odata.type":"Edm.Guid","clsid":"c9da6455-213d-42c9-9a79-3e9149a57833"},{"odata.etag":"W/\"datetime''2020-09-02T02%3A27%3A41.9967939Z''\"","PartitionKey":"pk121a1965","RowKey":"rk121a196512","Timestamp":"2020-09-02T02:27:41.9967939Z","age":39,"sex":"male","married":true,"deceased":false,"ratio":3.1,"evenratio":3.0,"large":933311100,"Birthday@odata.type":"Edm.DateTime","Birthday":"1973-10-04T00:00:00Z","birthday@odata.type":"Edm.DateTime","birthday":"1970-10-04T00:00:00Z","binary@odata.type":"Edm.Binary","binary":"YmluYXJ5","other":20,"clsid@odata.type":"Edm.Guid","clsid":"c9da6455-213d-42c9-9a79-3e9149a57833"}]}'
     headers:
       cache-control: no-cache
       content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
-      date: Thu, 20 Aug 2020 20:17:37 GMT
+      date: Wed, 02 Sep 2020 02:27:42 GMT
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-content-type-options: nosniff
       x-ms-continuation-nextpartitionkey: 1!16!cGsxMjFhMTk2NQ--
       x-ms-continuation-nextrowkey: 1!20!cmsxMjFhMTk2NTEyMw--
-      x-ms-version: '2019-07-07'
+      x-ms-version: '2019-02-02'
     status:
       code: 200
       message: OK
-    url: https://pyacrstoragewdjxux7eodqw.table.core.windows.net/querytable121a1965()?$top=2
+    url: https://pyacrstoragect6543astms7.table.core.windows.net/querytable121a1965()?$top=2
 - request:
     body: null
     headers:
@@ -335,32 +330,32 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 20 Aug 2020 20:17:37 GMT
+      - Wed, 02 Sep 2020 02:27:42 GMT
       User-Agent:
-      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 20 Aug 2020 20:17:37 GMT
+      - Wed, 02 Sep 2020 02:27:42 GMT
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     method: GET
     uri: https://storagename.table.core.windows.net/querytable121a1965()?$top=2&NextPartitionKey=1!16!cGsxMjFhMTk2NQ--&NextRowKey=1!20!cmsxMjFhMTk2NTEyMw--
   response:
     body:
-      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#querytable121a1965","value":[{"odata.etag":"W/\"datetime''2020-08-20T20%3A17%3A37.837232Z''\"","PartitionKey":"pk121a1965","RowKey":"rk121a1965123","Timestamp":"2020-08-20T20:17:37.837232Z","age@odata.type":"Edm.Int64","age":"39","sex":"male","married":true,"deceased":false,"ratio":3.1,"evenratio":3.0,"large@odata.type":"Edm.Int64","large":"933311100","Birthday@odata.type":"Edm.DateTime","Birthday":"1973-10-04T00:00:00Z","birthday@odata.type":"Edm.DateTime","birthday":"1970-10-04T00:00:00Z","binary@odata.type":"Edm.Binary","binary":"YmluYXJ5","other":20,"clsid@odata.type":"Edm.Guid","clsid":"c9da6455-213d-42c9-9a79-3e9149a57833"},{"odata.etag":"W/\"datetime''2020-08-20T20%3A17%3A37.9313216Z''\"","PartitionKey":"pk121a1965","RowKey":"rk121a19651234","Timestamp":"2020-08-20T20:17:37.9313216Z","age@odata.type":"Edm.Int64","age":"39","sex":"male","married":true,"deceased":false,"ratio":3.1,"evenratio":3.0,"large@odata.type":"Edm.Int64","large":"933311100","Birthday@odata.type":"Edm.DateTime","Birthday":"1973-10-04T00:00:00Z","birthday@odata.type":"Edm.DateTime","birthday":"1970-10-04T00:00:00Z","binary@odata.type":"Edm.Binary","binary":"YmluYXJ5","other":20,"clsid@odata.type":"Edm.Guid","clsid":"c9da6455-213d-42c9-9a79-3e9149a57833"}]}'
+      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#querytable121a1965","value":[{"odata.etag":"W/\"datetime''2020-09-02T02%3A27%3A42.0356237Z''\"","PartitionKey":"pk121a1965","RowKey":"rk121a1965123","Timestamp":"2020-09-02T02:27:42.0356237Z","age":39,"sex":"male","married":true,"deceased":false,"ratio":3.1,"evenratio":3.0,"large":933311100,"Birthday@odata.type":"Edm.DateTime","Birthday":"1973-10-04T00:00:00Z","birthday@odata.type":"Edm.DateTime","birthday":"1970-10-04T00:00:00Z","binary@odata.type":"Edm.Binary","binary":"YmluYXJ5","other":20,"clsid@odata.type":"Edm.Guid","clsid":"c9da6455-213d-42c9-9a79-3e9149a57833"},{"odata.etag":"W/\"datetime''2020-09-02T02%3A27%3A42.072461Z''\"","PartitionKey":"pk121a1965","RowKey":"rk121a19651234","Timestamp":"2020-09-02T02:27:42.072461Z","age":39,"sex":"male","married":true,"deceased":false,"ratio":3.1,"evenratio":3.0,"large":933311100,"Birthday@odata.type":"Edm.DateTime","Birthday":"1973-10-04T00:00:00Z","birthday@odata.type":"Edm.DateTime","birthday":"1970-10-04T00:00:00Z","binary@odata.type":"Edm.Binary","binary":"YmluYXJ5","other":20,"clsid@odata.type":"Edm.Guid","clsid":"c9da6455-213d-42c9-9a79-3e9149a57833"}]}'
     headers:
       cache-control: no-cache
       content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
-      date: Thu, 20 Aug 2020 20:17:37 GMT
+      date: Wed, 02 Sep 2020 02:27:42 GMT
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-content-type-options: nosniff
       x-ms-continuation-nextpartitionkey: 1!16!cGsxMjFhMTk2NQ--
       x-ms-continuation-nextrowkey: 1!20!cmsxMjFhMTk2NTEyMzQ1
-      x-ms-version: '2019-07-07'
+      x-ms-version: '2019-02-02'
     status:
       code: 200
       message: OK
-    url: https://pyacrstoragewdjxux7eodqw.table.core.windows.net/querytable121a1965()?$top=2&NextPartitionKey=1!16!cGsxMjFhMTk2NQ--&NextRowKey=1!20!cmsxMjFhMTk2NTEyMw--
+    url: https://pyacrstoragect6543astms7.table.core.windows.net/querytable121a1965()?$top=2&NextPartitionKey=1!16!cGsxMjFhMTk2NQ--&NextRowKey=1!20!cmsxMjFhMTk2NTEyMw--
 - request:
     body: null
     headers:
@@ -369,41 +364,41 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 20 Aug 2020 20:17:38 GMT
+      - Wed, 02 Sep 2020 02:27:42 GMT
       User-Agent:
-      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 20 Aug 2020 20:17:38 GMT
+      - Wed, 02 Sep 2020 02:27:42 GMT
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     method: GET
     uri: https://storagename.table.core.windows.net/querytable121a1965()?$top=2&NextPartitionKey=1!16!cGsxMjFhMTk2NQ--&NextRowKey=1!20!cmsxMjFhMTk2NTEyMzQ1
   response:
     body:
-      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#querytable121a1965","value":[{"odata.etag":"W/\"datetime''2020-08-20T20%3A17%3A38.0113975Z''\"","PartitionKey":"pk121a1965","RowKey":"rk121a196512345","Timestamp":"2020-08-20T20:17:38.0113975Z","age@odata.type":"Edm.Int64","age":"39","sex":"male","married":true,"deceased":false,"ratio":3.1,"evenratio":3.0,"large@odata.type":"Edm.Int64","large":"933311100","Birthday@odata.type":"Edm.DateTime","Birthday":"1973-10-04T00:00:00Z","birthday@odata.type":"Edm.DateTime","birthday":"1970-10-04T00:00:00Z","binary@odata.type":"Edm.Binary","binary":"YmluYXJ5","other":20,"clsid@odata.type":"Edm.Guid","clsid":"c9da6455-213d-42c9-9a79-3e9149a57833"}]}'
+      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#querytable121a1965","value":[{"odata.etag":"W/\"datetime''2020-09-02T02%3A27%3A42.1092994Z''\"","PartitionKey":"pk121a1965","RowKey":"rk121a196512345","Timestamp":"2020-09-02T02:27:42.1092994Z","age":39,"sex":"male","married":true,"deceased":false,"ratio":3.1,"evenratio":3.0,"large":933311100,"Birthday@odata.type":"Edm.DateTime","Birthday":"1973-10-04T00:00:00Z","birthday@odata.type":"Edm.DateTime","birthday":"1970-10-04T00:00:00Z","binary@odata.type":"Edm.Binary","binary":"YmluYXJ5","other":20,"clsid@odata.type":"Edm.Guid","clsid":"c9da6455-213d-42c9-9a79-3e9149a57833"}]}'
     headers:
       cache-control: no-cache
       content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
-      date: Thu, 20 Aug 2020 20:17:37 GMT
+      date: Wed, 02 Sep 2020 02:27:42 GMT
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-ms-version: '2019-07-07'
+      x-ms-version: '2019-02-02'
     status:
       code: 200
       message: OK
-    url: https://pyacrstoragewdjxux7eodqw.table.core.windows.net/querytable121a1965()?$top=2&NextPartitionKey=1!16!cGsxMjFhMTk2NQ--&NextRowKey=1!20!cmsxMjFhMTk2NTEyMzQ1
+    url: https://pyacrstoragect6543astms7.table.core.windows.net/querytable121a1965()?$top=2&NextPartitionKey=1!16!cGsxMjFhMTk2NQ--&NextRowKey=1!20!cmsxMjFhMTk2NTEyMzQ1
 - request:
     body: null
     headers:
       Date:
-      - Thu, 20 Aug 2020 20:17:38 GMT
+      - Wed, 02 Sep 2020 02:27:42 GMT
       User-Agent:
-      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 20 Aug 2020 20:17:38 GMT
+      - Wed, 02 Sep 2020 02:27:42 GMT
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     method: DELETE
     uri: https://storagename.table.core.windows.net/Tables('uttable121a1965')
   response:
@@ -412,25 +407,25 @@ interactions:
     headers:
       cache-control: no-cache
       content-length: '0'
-      date: Thu, 20 Aug 2020 20:17:37 GMT
+      date: Wed, 02 Sep 2020 02:27:42 GMT
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options: nosniff
-      x-ms-version: '2019-07-07'
+      x-ms-version: '2019-02-02'
     status:
       code: 204
       message: No Content
-    url: https://pyacrstoragewdjxux7eodqw.table.core.windows.net/Tables('uttable121a1965')
+    url: https://pyacrstoragect6543astms7.table.core.windows.net/Tables('uttable121a1965')
 - request:
     body: null
     headers:
       Date:
-      - Thu, 20 Aug 2020 20:17:38 GMT
+      - Wed, 02 Sep 2020 02:27:42 GMT
       User-Agent:
-      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 20 Aug 2020 20:17:38 GMT
+      - Wed, 02 Sep 2020 02:27:42 GMT
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     method: DELETE
     uri: https://storagename.table.core.windows.net/Tables('querytable121a1965')
   response:
@@ -439,12 +434,12 @@ interactions:
     headers:
       cache-control: no-cache
       content-length: '0'
-      date: Thu, 20 Aug 2020 20:17:37 GMT
+      date: Wed, 02 Sep 2020 02:27:42 GMT
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options: nosniff
-      x-ms-version: '2019-07-07'
+      x-ms-version: '2019-02-02'
     status:
       code: 204
       message: No Content
-    url: https://pyacrstoragewdjxux7eodqw.table.core.windows.net/Tables('querytable121a1965')
+    url: https://pyacrstoragect6543astms7.table.core.windows.net/Tables('querytable121a1965')
 version: 1
