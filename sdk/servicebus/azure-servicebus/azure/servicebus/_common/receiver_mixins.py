@@ -33,6 +33,10 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
         self._auth_uri = "sb://{}/{}".format(self.fully_qualified_namespace, self.entity_path)
         self._entity_uri = "amqps://{}/{}".format(self.fully_qualified_namespace, self.entity_path)
         self._mode = kwargs.get("mode", ReceiveSettleMode.PeekLock)
+        # While we try to leave failures to the service, in this case the errors lower down the stack are less clear.
+        if not isinstance(self._mode, ReceiveSettleMode):
+            raise TypeError("Parameter 'mode' must be of type ReceiveSettleMode")
+
         self._error_policy = _ServiceBusErrorPolicy(
             max_retries=self._config.retry_total
         )
