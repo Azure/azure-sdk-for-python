@@ -37,7 +37,7 @@ class EventGridConsumer(object):
         """
         encode = kwargs.pop('encoding', 'utf-8')
         try:
-            cloud_event = CloudEvent._load(cloud_event, encode)
+            cloud_event = CloudEvent._from_json(cloud_event, encode)
             deserialized_event = CloudEvent.deserialize(cloud_event)
             CloudEvent._deserialize_data(deserialized_event, deserialized_event.type)
             return deserialized_event 
@@ -58,7 +58,7 @@ class EventGridConsumer(object):
         """
         encode = kwargs.pop('encoding', 'utf-8')
         try:
-            eventgrid_event = EventGridEvent._load(eventgrid_event, encode)
+            eventgrid_event = EventGridEvent._from_json(eventgrid_event, encode)
             deserialized_event = EventGridEvent.deserialize(eventgrid_event)
             EventGridEvent._deserialize_data(deserialized_event, deserialized_event.event_type)
             return deserialized_event

@@ -36,7 +36,7 @@ class EventMixin(object):
             event.data = None
 
     @staticmethod
-    def _load(event, encode):
+    def _from_json(event, encode):
         """
         Load the event into the json
         :param dict eventgrid_event: The event to be deserialized.
