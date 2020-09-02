@@ -16,13 +16,11 @@ interactions:
       - application/json
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-      api-key:
-      - 91E338BBE58BFFCBDD4ACA59262815D2
     method: POST
     uri: https://search22291976.search.windows.net/datasources?api-version=2020-06-30
   response:
     body:
-      string: '{"@odata.context":"https://search22291976.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D83F1C1A7C70F8\"","name":"sample-datasource","description":null,"type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null,"encryptionKey":null}'
+      string: '{"@odata.context":"https://search22291976.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D84B88C66906AD\"","name":"sample-datasource","description":null,"type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null,"encryptionKey":null}'
     headers:
       cache-control:
       - no-cache
@@ -31,11 +29,11 @@ interactions:
       content-type:
       - application/json; odata.metadata=minimal
       date:
-      - Thu, 13 Aug 2020 00:02:00 GMT
+      - Fri, 28 Aug 2020 19:30:08 GMT
       elapsed-time:
-      - '70'
+      - '32'
       etag:
-      - W/"0x8D83F1C1A7C70F8"
+      - W/"0x8D84B88C66906AD"
       expires:
       - '-1'
       location:
@@ -47,7 +45,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - 360c86f5-dcf8-11ea-9f2a-5cf37071153c
+      - e1f688ff-e964-11ea-b49c-5cf37071153c
       strict-transport-security:
       - max-age=15724800; includeSubDomains
     status:
@@ -70,13 +68,11 @@ interactions:
       - application/json
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-      api-key:
-      - 91E338BBE58BFFCBDD4ACA59262815D2
     method: POST
     uri: https://search22291976.search.windows.net/datasources?api-version=2020-06-30
   response:
     body:
-      string: '{"@odata.context":"https://search22291976.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D83F1C1A930A50\"","name":"another-sample","description":null,"type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null,"encryptionKey":null}'
+      string: '{"@odata.context":"https://search22291976.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D84B88C689B410\"","name":"another-sample","description":null,"type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null,"encryptionKey":null}'
     headers:
       cache-control:
       - no-cache
@@ -85,11 +81,11 @@ interactions:
       content-type:
       - application/json; odata.metadata=minimal
       date:
-      - Thu, 13 Aug 2020 00:02:00 GMT
+      - Fri, 28 Aug 2020 19:30:09 GMT
       elapsed-time:
-      - '33'
+      - '34'
       etag:
-      - W/"0x8D83F1C1A930A50"
+      - W/"0x8D84B88C689B410"
       expires:
       - '-1'
       location:
@@ -101,7 +97,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - 364c651f-dcf8-11ea-8ee3-5cf37071153c
+      - e2749f8a-e964-11ea-8e73-5cf37071153c
       strict-transport-security:
       - max-age=15724800; includeSubDomains
     status:
@@ -118,13 +114,11 @@ interactions:
       - keep-alive
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-      api-key:
-      - 91E338BBE58BFFCBDD4ACA59262815D2
     method: GET
     uri: https://search22291976.search.windows.net/datasources?api-version=2020-06-30
   response:
     body:
-      string: '{"@odata.context":"https://search22291976.search.windows.net/$metadata#datasources","value":[{"@odata.etag":"\"0x8D83F1C1A930A50\"","name":"another-sample","description":null,"type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null,"encryptionKey":null},{"@odata.etag":"\"0x8D83F1C1A7C70F8\"","name":"sample-datasource","description":null,"type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null,"encryptionKey":null}]}'
+      string: '{"@odata.context":"https://search22291976.search.windows.net/$metadata#datasources","value":[{"@odata.etag":"\"0x8D84B88C689B410\"","name":"another-sample","description":null,"type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null,"encryptionKey":null},{"@odata.etag":"\"0x8D84B88C66906AD\"","name":"sample-datasource","description":null,"type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null,"encryptionKey":null}]}'
     headers:
       cache-control:
       - no-cache
@@ -133,9 +127,9 @@ interactions:
       content-type:
       - application/json; odata.metadata=minimal
       date:
-      - Thu, 13 Aug 2020 00:02:00 GMT
+      - Fri, 28 Aug 2020 19:30:09 GMT
       elapsed-time:
-      - '35'
+      - '18'
       expires:
       - '-1'
       odata-version:
@@ -145,7 +139,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - 36607fcc-dcf8-11ea-84a3-5cf37071153c
+      - e294a766-e964-11ea-895f-5cf37071153c
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:

@@ -40,31 +40,27 @@ async def create_data_source_connection():
         connection_string=connection_string,
         container=container
     )
-    async with client:
-        result = await client.create_data_source_connection(data_source)
+    result = await client.create_data_source_connection(data_source)
     print("Create new Data Source Connection - async-sample-data-source-connection")
     # [END create_data_source_connection_async]
 
 async def list_data_source_connections():
     # [START list_data_source_connection_async]
-    async with client:
-        result = await client.get_data_source_connections()
+    result = await client.get_data_source_connections()
     names = [x.name for x in result]
     print("Found {} Data Source Connections in the service: {}".format(len(result), ", ".join(names)))
     # [END list_data_source_connection_async]
 
 async def get_data_source_connection():
     # [START get_data_source_connection_async]
-    async with client:
-        result = await client.get_data_source_connection("async-sample-data-source-connection")
-        print("Retrived Data Source Connection 'async-sample-data-source-connection'")
-        return result
+    result = await client.get_data_source_connection("async-sample-data-source-connection")
+    print("Retrived Data Source Connection 'async-sample-data-source-connection'")
+    return result
     # [END get_data_source_connection_async]
 
 async def delete_data_source_connection():
     # [START delete_data_source_connection_async]
-    async with client:
-        client.delete_data_source_connection("async-sample-data-source-connection")
+    await client.delete_data_source_connection("async-sample-data-source-connection")
     print("Data Source Connection 'async-sample-data-source-connection' successfully deleted")
     # [END delete_data_source_connection_async]
 

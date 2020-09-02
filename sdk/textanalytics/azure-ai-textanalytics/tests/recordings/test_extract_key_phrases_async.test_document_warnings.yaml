@@ -4,29 +4,29 @@ interactions:
       "language": "en"}]}'
     headers:
       Accept:
-      - application/json
+      - application/json, text/json
       Content-Length:
       - '413'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/1.0.1 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.0.1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.1/keyPhrases?showStats=false
   response:
     body:
       string: '{"documents":[{"id":"1","keyPhrases":["Thisisaveryveryverylongtextwhichgoesonforalongtimeandwhichalmost"],"warnings":[{"code":"LongWordsInDocument","message":"The
         document contains very long words (longer than 64 characters). These words
-        will be truncated and may result in unreliable model predictions."}]}],"errors":[],"modelVersion":"2019-10-01"}'
+        will be truncated and may result in unreliable model predictions."}]}],"errors":[],"modelVersion":"2020-07-01"}'
     headers:
-      apim-request-id: ed062a5f-71a5-4c7e-bb2c-a3e4ecf91d34
+      apim-request-id: 5658fa9e-daa9-41ed-a59f-4631ec3ec39e
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=1
-      date: Fri, 24 Jul 2020 16:32:48 GMT
+      date: Thu, 27 Aug 2020 19:32:06 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '5'
+      x-envoy-upstream-service-time: '6'
     status:
       code: 200
       message: OK

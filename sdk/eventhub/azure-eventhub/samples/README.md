@@ -52,16 +52,17 @@ Both [sync version](https://github.com/Azure/azure-sdk-for-python/tree/master/sd
 - [recv_for_period.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples/sync_samples/recv_for_period.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples/async_samples/recv_for_period_async.py)) - Examples to receive events for a period of time:
     - Receive events for a period of time
 
-
 - [client_identity_authentication.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples/sync_samples/client_identity_authentication.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples/async_samples/client_identity_authentication_async.py)) - Examples for authentication by Azure Active Directory:
     - Authenticating and creating the client utilizing the `azure.identity` library
-
 
 - [proxy.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples/sync_samples/proxy.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples/async_samples/proxy_async.py)) - Examples to send and receive events behind a proxy:
     - Send and receive events behind a proxy
 
 - [iot_hub_connection_string_receive_async.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples/async_samples/iot_hub_connection_string_receive_async.py) - Examples to receive events from an IoT Hub:
     - Convert an IoT Hub connection string to the built-in Event Hub endpoint and receive events from it
+
+- [authenticate_with_sas_token.py]<!--(https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples/sync_samples/authenticate_with_sas_token.py)-->
+    - Utilize a SAS token to authenticate when creating an Event Hub client.
 
 ## Prerequisites
 - Python 2.7, 3.5 or later.

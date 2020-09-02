@@ -53,6 +53,17 @@ class AutoLockRenew(object):
     """
 
     def __init__(self, executor=None, max_workers=None):
+        # type: (ThreadPoolExecutor, int) -> None
+        """Auto renew locks for messages and sessions using a background thread pool.
+
+        :param executor: A user-specified thread pool. This cannot be combined with
+         setting `max_workers`.
+        :type executor: ~concurrent.futures.ThreadPoolExecutor
+        :param max_workers: Specify the maximum workers in the thread pool. If not
+         specified the number used will be derived from the core count of the environment.
+         This cannot be combined with `executor`.
+        :type max_workers: int
+        """
         self._executor = executor or ThreadPoolExecutor(max_workers=max_workers)
         self._shutdown = threading.Event()
         self._sleep_time = 1
@@ -109,16 +120,18 @@ class AutoLockRenew(object):
                 on_lock_renew_failure(renewable, error)
 
     def register(self, renewable, timeout=300, on_lock_renew_failure=None):
+        # type: (Union[ReceivedMessage, ServiceBusSession], float, Optional[LockRenewFailureCallback]) -> None
         """Register a renewable entity for automatic lock renewal.
 
         :param renewable: A locked entity that needs to be renewed.
-        :type renewable: ~azure.servicebus.ReceivedMessage or
-         ~azure.servicebus.ServiceBusSession
-        :param float timeout: A time in seconds that the lock should be maintained for.
-         Default value is 300 (5 minutes).
-        :param Optional[LockRenewFailureCallback] on_lock_renew_failure:
-         A callback may be specified to be called when the lock is lost on the renewable that is being registered.
-         Default value is None (no callback).
+        :type renewable: Union[~azure.servicebus.ReceivedMessage, ~azure.servicebus.ServiceBusSession]
+        :param timeout: A time in seconds that the lock should be maintained for. Default value is 300 (5 minutes).
+        :type timeout: float
+        :param on_lock_renew_failure: A callback may be specified to be called when the lock is lost on the renewable
+         that is being registered. Default value is None (no callback).
+        :type on_lock_renew_failure: Optional[LockRenewFailureCallback]
+
+        :rtype: None
         """
         if self._shutdown.is_set():
             raise ServiceBusError("The AutoLockRenew has already been shutdown. Please create a new instance for"
@@ -131,6 +144,8 @@ class AutoLockRenew(object):
 
         :param wait: Whether to block until thread pool has shutdown. Default is `True`.
         :type wait: bool
+
+        :rtype: None
         """
         self._shutdown.set()
         self._executor.shutdown(wait=wait)

@@ -130,7 +130,7 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
         return element
 
     @classmethod
-    def from_connection_string(cls, conn_str: str, **kwargs) -> "ServiceBusManagementClient":
+    def from_connection_string(cls, conn_str: str, **kwargs: Any) -> "ServiceBusManagementClient":
         """Create a client from connection string.
 
         :param str conn_str: The connection string of the Service Bus Namespace.
@@ -322,7 +322,7 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
         with _handle_response_error():
             await self._impl.entity.delete(queue_name, api_version=constants.API_VERSION, **kwargs)
 
-    def list_queues(self, **kwargs) -> AsyncItemPaged[QueueProperties]:
+    def list_queues(self, **kwargs: Any) -> AsyncItemPaged[QueueProperties]:
         """List the queues of a ServiceBus namespace.
 
         :returns: An iterable (auto-paging) response of QueueProperties.
@@ -342,7 +342,7 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
         return AsyncItemPaged(
             get_next, extract_data)
 
-    def list_queues_runtime_info(self, **kwargs) -> AsyncItemPaged[QueueRuntimeProperties]:
+    def list_queues_runtime_info(self, **kwargs: Any) -> AsyncItemPaged[QueueRuntimeProperties]:
         """List the runtime information of the queues in a ServiceBus namespace.
 
         :returns: An iterable (auto-paging) response of QueueRuntimeProperties.
@@ -522,7 +522,7 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
             topic_name = topic
         await self._impl.entity.delete(topic_name, api_version=constants.API_VERSION, **kwargs)
 
-    def list_topics(self, **kwargs) -> AsyncItemPaged[TopicProperties]:
+    def list_topics(self, **kwargs: Any) -> AsyncItemPaged[TopicProperties]:
         """List the topics of a ServiceBus namespace.
 
         :returns: An iterable (auto-paging) response of TopicProperties.
@@ -541,7 +541,7 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
         return AsyncItemPaged(
             get_next, extract_data)
 
-    def list_topics_runtime_info(self, **kwargs) -> AsyncItemPaged[TopicRuntimeProperties]:
+    def list_topics_runtime_info(self, **kwargs: Any) -> AsyncItemPaged[TopicRuntimeProperties]:
         """List the topics runtime information of a ServiceBus namespace.
 
         :returns: An iterable (auto-paging) response of TopicRuntimeProperties.
@@ -753,7 +753,7 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
         await self._impl.subscription.delete(topic_name, subscription_name, api_version=constants.API_VERSION, **kwargs)
 
     def list_subscriptions(
-            self, topic: Union[str, TopicProperties], **kwargs) -> AsyncItemPaged[SubscriptionProperties]:
+            self, topic: Union[str, TopicProperties], **kwargs: Any) -> AsyncItemPaged[SubscriptionProperties]:
         """List the subscriptions of a ServiceBus Topic.
 
         :param Union[str, ~azure.servicebus.management.TopicProperties] topic: The topic that owns the subscription.
@@ -780,7 +780,7 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
             get_next, extract_data)
 
     def list_subscriptions_runtime_info(
-            self, topic: Union[str, TopicProperties], **kwargs) -> AsyncItemPaged[SubscriptionRuntimeProperties]:
+            self, topic: Union[str, TopicProperties], **kwargs: Any) -> AsyncItemPaged[SubscriptionRuntimeProperties]:
         """List the subscriptions runtime information of a ServiceBus.
 
         :param Union[str, ~azure.servicebus.management.TopicProperties] topic: The topic that owns the subscription.
@@ -960,7 +960,10 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
             topic_name, subscription_name, rule_name, api_version=constants.API_VERSION, **kwargs)
 
     def list_rules(
-            self, topic: Union[str, TopicProperties], subscription: Union[str, SubscriptionProperties], **kwargs
+            self,
+            topic: Union[str, TopicProperties],
+            subscription: Union[str, SubscriptionProperties],
+            **kwargs: Any
     ) -> AsyncItemPaged[RuleProperties]:
         """List the rules of a topic subscription.
 
