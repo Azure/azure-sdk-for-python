@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .search_management_client import SearchManagementClient
-from .version import VERSION
+from ._configuration import SearchManagementClientConfiguration
+from ._search_management_client import SearchManagementClient
+__all__ = ['SearchManagementClient', 'SearchManagementClientConfiguration']
 
-__all__ = ['SearchManagementClient']
+from .version import VERSION
 
 __version__ = VERSION
 
