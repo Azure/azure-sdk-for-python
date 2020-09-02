@@ -21,6 +21,7 @@ class EventMixin(object):
     """
     Mixin for the event models comprising of some helper methods.
     """
+    @staticmethod
     def _deserialize_data(event, event_type):
         """
         Sets the data of the desrialized event to strongly typed event object if event type exists in _event_mappings.
@@ -34,6 +35,7 @@ class EventMixin(object):
         except KeyError: # else, if custom event, then event.data is dict and should be set to None
             event.data = None
 
+    @staticmethod
     def _load(event, encode):
         """
         Load the event into the json
