@@ -80,26 +80,22 @@ class CloudEvent(EventMixin):   #pylint:disable=too-many-instance-attributes
         # type: (str, str, Any) -> None
         self.source = source
         self.type = type
-        self.specversion = kwargs.get("specversion", "1.0")
-        self.id = kwargs.get("id", str(uuid.uuid4()))
-        self.time = kwargs.get("time", dt.datetime.now(UTC()).isoformat())
-        self.data = kwargs.get("data", None)
-        self.datacontenttype = kwargs.get("datacontenttype", None)
-        self.dataschema = kwargs.get("dataschema", None)
-        self.subject = kwargs.get("subject", None)
+        self.specversion = kwargs.pop("specversion", "1.0")
+        self.id = kwargs.pop("id", str(uuid.uuid4()))
+        self.time = kwargs.pop("time", dt.datetime.now(UTC()).isoformat())
+        self.data = kwargs.pop("data", None)
+        self.datacontenttype = kwargs.pop("datacontenttype", None)
+        self.dataschema = kwargs.pop("dataschema", None)
+        self.subject = kwargs.pop("subject", None)
         self._extensions = {}
+        self._extensions.update({k:v for k, v in kwargs.pop('extensions', {}).items()})
 
-        spec_attr = [
-            'source', 'type', 'specversion', 'id', 'time',
-            'data', 'datacontenttype', 'dataschema', 'subject']
         for attr in kwargs:
-            if attr == 'extensions':
-                self._extensions.update({k:v for k, v in kwargs.get('extensions').items()})
-            elif attr not in spec_attr:
-                self._extensions.update({attr: kwargs.get(attr)})
+            self._extensions.update({attr: kwargs.get(attr)})
 
     @classmethod
-    def _from_generated(cls, generated, **kwargs):
+    def _from_generated(cls, cloud_event, **kwargs):
+        generated = InternalCloudEvent.deserialize(cloud_event)
         if generated.additional_properties:
             extensions = {k:v for k, v in generated.additional_properties.items()}
             kwargs.setdefault('extensions', extensions)
