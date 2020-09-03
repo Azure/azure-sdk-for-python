@@ -27,7 +27,6 @@ class ServersOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version to use for the request. Constant value: "2019-06-01-preview".
     """
 
     models = models
@@ -37,7 +36,6 @@ class ServersOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-06-01-preview"
 
         self.config = config
 
@@ -59,6 +57,8 @@ class ServersOperations(object):
          ~azure.mgmt.sql.models.ServerPaged[~azure.mgmt.sql.models.Server]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        api_version = "2019-06-01-preview"
+
         def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
@@ -71,7 +71,7 @@ class ServersOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             else:
                 url = next_link
@@ -132,6 +132,8 @@ class ServersOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        api_version = "2019-06-01-preview"
+
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
@@ -143,7 +145,7 @@ class ServersOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -178,6 +180,8 @@ class ServersOperations(object):
 
     def _create_or_update_initial(
             self, resource_group_name, server_name, parameters, custom_headers=None, raw=False, **operation_config):
+        api_version = "2019-06-01-preview"
+
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
@@ -189,7 +193,7 @@ class ServersOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -282,6 +286,8 @@ class ServersOperations(object):
 
     def _delete_initial(
             self, resource_group_name, server_name, custom_headers=None, raw=False, **operation_config):
+        api_version = "2019-06-01-preview"
+
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
@@ -293,7 +299,7 @@ class ServersOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -363,6 +369,8 @@ class ServersOperations(object):
 
     def _update_initial(
             self, resource_group_name, server_name, parameters, custom_headers=None, raw=False, **operation_config):
+        api_version = "2019-06-01-preview"
+
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
@@ -374,7 +382,7 @@ class ServersOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -476,6 +484,8 @@ class ServersOperations(object):
          ~azure.mgmt.sql.models.ServerPaged[~azure.mgmt.sql.models.Server]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        api_version = "2019-06-01-preview"
+
         def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
@@ -487,7 +497,7 @@ class ServersOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             else:
                 url = next_link
@@ -547,6 +557,8 @@ class ServersOperations(object):
         """
         parameters = models.CheckNameAvailabilityRequest(name=name)
 
+        api_version = "2019-06-01-preview"
+
         # Construct URL
         url = self.check_name_availability.metadata['url']
         path_format_arguments = {
@@ -556,7 +568,7 @@ class ServersOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -591,3 +603,108 @@ class ServersOperations(object):
 
         return deserialized
     check_name_availability.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Sql/checkNameAvailability'}
+
+
+    def _import_database_initial(
+            self, resource_group_name, server_name, parameters, custom_headers=None, raw=False, **operation_config):
+        api_version = "2020-02-02-preview"
+
+        # Construct URL
+        url = self.import_database.metadata['url']
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serverName': self._serialize.url("server_name", server_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(parameters, 'ImportNewDatabaseDefinition')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200, 202]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('ImportExportOperationResult', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def import_database(
+            self, resource_group_name, server_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Imports a bacpac into a new database.
+
+        :param resource_group_name: The name of the resource group that
+         contains the resource. You can obtain this value from the Azure
+         Resource Manager API or the portal.
+        :type resource_group_name: str
+        :param server_name: The name of the server.
+        :type server_name: str
+        :param parameters: The database import request parameters.
+        :type parameters: ~azure.mgmt.sql.models.ImportNewDatabaseDefinition
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns
+         ImportExportOperationResult or
+         ClientRawResponse<ImportExportOperationResult> if raw==True
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.sql.models.ImportExportOperationResult]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.sql.models.ImportExportOperationResult]]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._import_database_initial(
+            resource_group_name=resource_group_name,
+            server_name=server_name,
+            parameters=parameters,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            deserialized = self._deserialize('ImportExportOperationResult', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    import_database.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/import'}

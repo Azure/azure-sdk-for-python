@@ -66,105 +66,6 @@ class GeoBackupPolicyState(str, Enum):
     enabled = "Enabled"
 
 
-class DatabaseEdition(str, Enum):
-
-    web = "Web"
-    business = "Business"
-    basic = "Basic"
-    standard = "Standard"
-    premium = "Premium"
-    premium_rs = "PremiumRS"
-    free = "Free"
-    stretch = "Stretch"
-    data_warehouse = "DataWarehouse"
-    system = "System"
-    system2 = "System2"
-    general_purpose = "GeneralPurpose"
-    business_critical = "BusinessCritical"
-    hyperscale = "Hyperscale"
-
-
-class ServiceObjectiveName(str, Enum):
-
-    system = "System"
-    system0 = "System0"
-    system1 = "System1"
-    system2 = "System2"
-    system3 = "System3"
-    system4 = "System4"
-    system2_l = "System2L"
-    system3_l = "System3L"
-    system4_l = "System4L"
-    free = "Free"
-    basic = "Basic"
-    s0 = "S0"
-    s1 = "S1"
-    s2 = "S2"
-    s3 = "S3"
-    s4 = "S4"
-    s6 = "S6"
-    s7 = "S7"
-    s9 = "S9"
-    s12 = "S12"
-    p1 = "P1"
-    p2 = "P2"
-    p3 = "P3"
-    p4 = "P4"
-    p6 = "P6"
-    p11 = "P11"
-    p15 = "P15"
-    prs1 = "PRS1"
-    prs2 = "PRS2"
-    prs4 = "PRS4"
-    prs6 = "PRS6"
-    dw100 = "DW100"
-    dw200 = "DW200"
-    dw300 = "DW300"
-    dw400 = "DW400"
-    dw500 = "DW500"
-    dw600 = "DW600"
-    dw1000 = "DW1000"
-    dw1200 = "DW1200"
-    dw1000c = "DW1000c"
-    dw1500 = "DW1500"
-    dw1500c = "DW1500c"
-    dw2000 = "DW2000"
-    dw2000c = "DW2000c"
-    dw3000 = "DW3000"
-    dw2500c = "DW2500c"
-    dw3000c = "DW3000c"
-    dw6000 = "DW6000"
-    dw5000c = "DW5000c"
-    dw6000c = "DW6000c"
-    dw7500c = "DW7500c"
-    dw10000c = "DW10000c"
-    dw15000c = "DW15000c"
-    dw30000c = "DW30000c"
-    ds100 = "DS100"
-    ds200 = "DS200"
-    ds300 = "DS300"
-    ds400 = "DS400"
-    ds500 = "DS500"
-    ds600 = "DS600"
-    ds1000 = "DS1000"
-    ds1200 = "DS1200"
-    ds1500 = "DS1500"
-    ds2000 = "DS2000"
-    elastic_pool = "ElasticPool"
-
-
-class StorageKeyType(str, Enum):
-
-    storage_access_key = "StorageAccessKey"
-    shared_access_key = "SharedAccessKey"
-
-
-class AuthenticationType(str, Enum):
-
-    sql = "SQL"
-    ad_password = "ADPassword"
-
-
 class UnitType(str, Enum):
 
     count = "count"
@@ -255,6 +156,75 @@ class TransparentDataEncryptionStatus(str, Enum):
 
     enabled = "Enabled"
     disabled = "Disabled"
+
+
+class ServiceObjectiveName(str, Enum):
+
+    system = "System"
+    system0 = "System0"
+    system1 = "System1"
+    system2 = "System2"
+    system3 = "System3"
+    system4 = "System4"
+    system2_l = "System2L"
+    system3_l = "System3L"
+    system4_l = "System4L"
+    free = "Free"
+    basic = "Basic"
+    s0 = "S0"
+    s1 = "S1"
+    s2 = "S2"
+    s3 = "S3"
+    s4 = "S4"
+    s6 = "S6"
+    s7 = "S7"
+    s9 = "S9"
+    s12 = "S12"
+    p1 = "P1"
+    p2 = "P2"
+    p3 = "P3"
+    p4 = "P4"
+    p6 = "P6"
+    p11 = "P11"
+    p15 = "P15"
+    prs1 = "PRS1"
+    prs2 = "PRS2"
+    prs4 = "PRS4"
+    prs6 = "PRS6"
+    dw100 = "DW100"
+    dw200 = "DW200"
+    dw300 = "DW300"
+    dw400 = "DW400"
+    dw500 = "DW500"
+    dw600 = "DW600"
+    dw1000 = "DW1000"
+    dw1200 = "DW1200"
+    dw1000c = "DW1000c"
+    dw1500 = "DW1500"
+    dw1500c = "DW1500c"
+    dw2000 = "DW2000"
+    dw2000c = "DW2000c"
+    dw3000 = "DW3000"
+    dw2500c = "DW2500c"
+    dw3000c = "DW3000c"
+    dw6000 = "DW6000"
+    dw5000c = "DW5000c"
+    dw6000c = "DW6000c"
+    dw7500c = "DW7500c"
+    dw10000c = "DW10000c"
+    dw15000c = "DW15000c"
+    dw30000c = "DW30000c"
+    ds100 = "DS100"
+    ds200 = "DS200"
+    ds300 = "DS300"
+    ds400 = "DS400"
+    ds500 = "DS500"
+    ds600 = "DS600"
+    ds1000 = "DS1000"
+    ds1200 = "DS1200"
+    ds1500 = "DS1500"
+    ds2000 = "DS2000"
+    elastic_pool = "ElasticPool"
 
 
 class TransparentDataEncryptionActivityStatus(str, Enum):
@@ -460,6 +430,67 @@ class ManagementOperationState(str, Enum):
     cancelled = "Cancelled"
 
 
+class ElasticPoolState(str, Enum):
+
+    creating = "Creating"
+    ready = "Ready"
+    disabled = "Disabled"
+
+
+class ElasticPoolLicenseType(str, Enum):
+
+    license_included = "LicenseIncluded"
+    base_price = "BasePrice"
+
+
+class VulnerabilityAssessmentScanTriggerType(str, Enum):
+
+    on_demand = "OnDemand"
+    recurring = "Recurring"
+
+
+class VulnerabilityAssessmentScanState(str, Enum):
+
+    passed = "Passed"
+    failed = "Failed"
+    failed_to_run = "FailedToRun"
+    in_progress = "InProgress"
+
+
+class InstanceFailoverGroupReplicationRole(str, Enum):
+
+    primary = "Primary"
+    secondary = "Secondary"
+
+
+class InstancePoolLicenseType(str, Enum):
+
+    license_included = "LicenseIncluded"
+    base_price = "BasePrice"
+
+
+class PrivateLinkServiceConnectionStateStatus(str, Enum):
+
+    approved = "Approved"
+    pending = "Pending"
+    rejected = "Rejected"
+    disconnected = "Disconnected"
+
+
+class PrivateLinkServiceConnectionStateActionsRequire(str, Enum):
+
+    none = "None"
+
+
+class PrivateEndpointProvisioningState(str, Enum):
+
+    approving = "Approving"
+    ready = "Ready"
+    dropping = "Dropping"
+    failed = "Failed"
+    rejecting = "Rejecting"
+
+
 class CreateMode(str, Enum):
 
     default = "Default"
@@ -524,89 +555,16 @@ class DatabaseReadScale(str, Enum):
     disabled = "Disabled"
 
 
-class ElasticPoolState(str, Enum):
+class StorageAccountType(str, Enum):
 
-    creating = "Creating"
-    ready = "Ready"
-    disabled = "Disabled"
-
-
-class ElasticPoolLicenseType(str, Enum):
-
-    license_included = "LicenseIncluded"
-    base_price = "BasePrice"
-
-
-class VulnerabilityAssessmentScanTriggerType(str, Enum):
-
-    on_demand = "OnDemand"
-    recurring = "Recurring"
-
-
-class VulnerabilityAssessmentScanState(str, Enum):
-
-    passed = "Passed"
-    failed = "Failed"
-    failed_to_run = "FailedToRun"
-    in_progress = "InProgress"
-
-
-class InstanceFailoverGroupReplicationRole(str, Enum):
-
-    primary = "Primary"
-    secondary = "Secondary"
-
-
-class InstancePoolLicenseType(str, Enum):
-
-    license_included = "LicenseIncluded"
-    base_price = "BasePrice"
+    grs = "GRS"
+    lrs = "LRS"
+    zrs = "ZRS"
 
 
 class IdentityType(str, Enum):
 
     system_assigned = "SystemAssigned"
-
-
-class ManagedServerCreateMode(str, Enum):
-
-    default = "Default"
-    point_in_time_restore = "PointInTimeRestore"
-
-
-class ManagedInstanceLicenseType(str, Enum):
-
-    license_included = "LicenseIncluded"
-    base_price = "BasePrice"
-
-
-class ManagedInstanceProxyOverride(str, Enum):
-
-    proxy = "Proxy"
-    redirect = "Redirect"
-    default = "Default"
-
-
-class PrivateLinkServiceConnectionStateStatus(str, Enum):
-
-    approved = "Approved"
-    pending = "Pending"
-    rejected = "Rejected"
-    disconnected = "Disconnected"
-
-
-class PrivateLinkServiceConnectionStateActionsRequire(str, Enum):
-
-    none = "None"
-
-
-class PrivateEndpointProvisioningState(str, Enum):
-
-    approving = "Approving"
-    ready = "Ready"
-    dropping = "Dropping"
-    failed = "Failed"
-    rejecting = "Rejecting"
 
 
 class ServerPublicNetworkAccess(str, Enum):
@@ -727,6 +685,31 @@ class ManagedDatabaseCreateMode(str, Enum):
     point_in_time_restore = "PointInTimeRestore"
     recovery = "Recovery"
     restore_long_term_retention_backup = "RestoreLongTermRetentionBackup"
+
+
+class ManagedServerCreateMode(str, Enum):
+
+    default = "Default"
+    point_in_time_restore = "PointInTimeRestore"
+
+
+class ManagedInstanceLicenseType(str, Enum):
+
+    license_included = "LicenseIncluded"
+    base_price = "BasePrice"
+
+
+class ManagedInstanceProxyOverride(str, Enum):
+
+    proxy = "Proxy"
+    redirect = "Redirect"
+    default = "Default"
+
+
+class StorageKeyType(str, Enum):
+
+    shared_access_key = "SharedAccessKey"
+    storage_access_key = "StorageAccessKey"
 
 
 class LongTermRetentionDatabaseState(str, Enum):
