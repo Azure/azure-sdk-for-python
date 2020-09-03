@@ -104,6 +104,3 @@ class EventGridSerializationTests(AzureMgmtTestCase):
         }
 
         self._assert_cloud_event_serialized(expected, json)
-
-
-        
