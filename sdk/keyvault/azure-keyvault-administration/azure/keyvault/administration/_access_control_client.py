@@ -31,8 +31,8 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
         # type: (Union[str, KeyVaultRoleScope], Union[str, UUID], str, str, **Any) -> KeyVaultRoleAssignment
         """Create a role assignment.
 
-        :param role_scope: scope the role assignment will apply over. :class:`KeyVaultRoleScope` defines common broad
-            scopes. To list role definitions for a narrower scope, specify it as a string.
+        :param role_scope: scope the role assignment will apply over. :class:`KeyVaultRoleScope` defines common
+            broad scopes. Specify a narrower scope as a string.
         :type role_scope: str or KeyVaultRoleScope
         :param role_assignment_name: a name for the role assignment. Must be a UUID.
         :type role_assignment_name: str or uuid.UUID
@@ -61,8 +61,7 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
         """Delete a role assignment.
 
         :param role_scope: the assignment's scope, for example "/", "/keys", or "/keys/<specific key identifier>"
-            :class:`KeyVaultRoleScope` defines common broad scopes. To list role definitions for a narrower scope,
-            specify it as a string.
+            :class:`KeyVaultRoleScope` defines common broad scopes. Specify a narrower scope as a string.
         :type role_scope: str or KeyVaultRoleScope
         :param role_assignment_name: the assignment's name. Must be a UUID.
         :type role_assignment_name: str or uuid.UUID
@@ -80,8 +79,7 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
         """Get a role assignment.
 
         :param role_scope: the assignment's scope, for example "/", "/keys", or "/keys/<specific key identifier>"
-            :class:`KeyVaultRoleScope` defines common broad scopes. To list role definitions for a narrower scope,
-            specify it as a string.
+            :class:`KeyVaultRoleScope` defines common broad scopes. Specify a narrower scope as a string.
         :type role_scope: str or KeyVaultRoleScope
         :param role_assignment_name: the assignment's name. Must be a UUID.
         :type role_assignment_name: str or uuid.UUID
@@ -97,8 +95,8 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
         # type: (Union[str, KeyVaultRoleScope], **Any) -> ItemPaged[KeyVaultRoleAssignment]
         """List all role assignments for a scope.
 
-        :param role_scope: scope of the role assignments. :class:`KeyVaultRoleScope` defines common broad
-            scopes. To list role definitions for a narrower scope, specify it as a string.
+        :param role_scope: scope of the role assignments. :class:`KeyVaultRoleScope` defines common broad scopes.
+            Specify a narrower scope as a string.
         :type role_scope: str or KeyVaultRoleScope
         :rtype: ~azure.core.paging.ItemPaged[KeyVaultRoleAssignment]
         """
@@ -114,8 +112,8 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
         # type: (Union[str, KeyVaultRoleScope], **Any) -> ItemPaged[KeyVaultRoleDefinition]
         """List all role definitions applicable at and above a scope.
 
-        :param role_scope: scope of the role definitions. :class:`KeyVaultRoleScope` defines common broad
-            scopes. To list role definitions for a narrower scope, specify it as a string.
+        :param role_scope: scope of the role definitions. :class:`KeyVaultRoleScope` defines common broad scopes.
+            Specify a narrower scope as a string.
         :type role_scope: str or KeyVaultRoleScope
         :rtype: ~azure.core.paging.ItemPaged[KeyVaultRoleDefinition]
         """
