@@ -1096,7 +1096,7 @@ class ShareFileClient(StorageAccountHostsMixin):
     def _get_ranges_options( # type: ignore
             self, offset=None, # type: Optional[int]
             length=None, # type: Optional[int]
-            previous_sharesnapshot_diff=None,  # type: Optional[Union[str, Dict[str, Any]]]
+            previous_sharesnapshot=None,  # type: Optional[Union[str, Dict[str, Any]]]
             **kwargs
         ):
         # type: (...) -> Dict[str, Any]
@@ -1116,14 +1116,14 @@ class ShareFileClient(StorageAccountHostsMixin):
             'lease_access_conditions': access_conditions,
             'timeout': kwargs.pop('timeout', None),
             'range': content_range}
-        if previous_sharesnapshot_diff:
+        if previous_sharesnapshot:
             try:
-                options['prevsharesnapshot'] = previous_sharesnapshot_diff.snapshot # type: ignore
+                options['prevsharesnapshot'] = previous_sharesnapshot.snapshot # type: ignore
             except AttributeError:
                 try:
-                    options['prevsharesnapshot'] = previous_sharesnapshot_diff['snapshot'] # type: ignore
+                    options['prevsharesnapshot'] = previous_sharesnapshot['snapshot'] # type: ignore
                 except TypeError:
-                    options['prevsharesnapshot'] = previous_sharesnapshot_diff
+                    options['prevsharesnapshot'] = previous_sharesnapshot
         options.update(kwargs)
         return options
 
@@ -1131,7 +1131,7 @@ class ShareFileClient(StorageAccountHostsMixin):
     def get_ranges(  # type: ignore
             self, offset=None,  # type: Optional[int]
             length=None,  # type: Optional[int]
-            previous_sharesnapshot_diff=None,  # type: Optional[Union[str, Dict[str, Any]]]
+            previous_sharesnapshot=None,  # type: Optional[Union[str, Dict[str, Any]]]
             **kwargs  # type: Any
         ):
         # type: (...) -> List[Dict[str, int]]
@@ -1142,7 +1142,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             Specifies the start offset of bytes over which to get ranges.
         :param int length:
            Number of bytes to use over which to get ranges.
-        :param str previous_sharesnapshot_diff:
+        :param str previous_sharesnapshot:
             The snapshot diff parameter that contains an opaque DateTime value that
             specifies a previous file snapshot to be compared
             against a more recent snapshot or the current file.
@@ -1161,7 +1161,7 @@ class ShareFileClient(StorageAccountHostsMixin):
         options = self._get_ranges_options(
             offset=offset,
             length=length,
-            previous_sharesnapshot_diff=previous_sharesnapshot_diff,
+            previous_sharesnapshot=previous_sharesnapshot,
             **kwargs)
 
         try:
