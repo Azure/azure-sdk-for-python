@@ -38,8 +38,8 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
     ) -> KeyVaultRoleAssignment:
         """Create a role assignment.
 
-        :param role_scope: scope the role assignment will apply over. We've provided enum :class:`KeyVaultRoleScope`
-            to list the well known scopes, but those scopes are not exhaustive
+        :param role_scope: scope the role assignment will apply over. :class:`KeyVaultRoleScope` defines common broad
+            scopes. To list role definitions for a narrower scope, specify it as a string.
         :type role_scope: str or KeyVaultRoleScope
         :param role_assignment_name: a name for the role assignment. Must be a UUID.
         :type role_assignment_name: str or uuid.UUID
@@ -69,8 +69,8 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
         """Delete a role assignment.
 
         :param role_scope: the assignment's scope, for example "/", "/keys", or "/keys/<specific key identifier>".
-            We've provided enum :class:`KeyVaultRoleScope` to list the well known scopes, but those scopes are not
-            exhaustive
+            :class:`KeyVaultRoleScope` defines common broad scopes. To list role definitions for a narrower scope,
+            specify it as a string.
         :type role_scope: str or KeyVaultRoleScope
         :param role_assignment_name: the assignment's name. Must be a UUID.
         :type role_assignment_name: str or uuid.UUID
@@ -89,8 +89,8 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
         """Get a role assignment.
 
         :param role_scope: the assignment's scope, for example "/", "/keys", or "/keys/<specific key identifier>".
-            We've provided enum :class:`KeyVaultRoleScope` to list the well known scopes, but those scopes are not
-            exhaustive
+            :class:`KeyVaultRoleScope` defines common broad scopes. To list role definitions for a narrower scope,
+            specify it as a string.
         :type role_scope: str or KeyVaultRoleScope
         :param role_assignment_name: the assignment's name. Must be a UUID.
         :type role_assignment_name: str or uuid.UUID
@@ -107,8 +107,8 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
     ) -> "AsyncItemPaged[KeyVaultRoleAssignment]":
         """List all role assignments for a scope.
 
-        :param role_scope: scope of the role assignments. We've provided enum :class:`KeyVaultRoleScope`
-            to list the well known scopes, but those scopes are not exhaustive
+        :param role_scope: scope of the role assignments. :class:`KeyVaultRoleScope` defines common broad
+            scopes. To list role definitions for a narrower scope, specify it as a string.
         :type role_scope: str or KeyVaultRoleScope
         :rtype: ~azure.core.async_paging.AsyncItemPaged[KeyVaultRoleAssignment]
         """
@@ -125,8 +125,8 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
     ) -> "AsyncItemPaged[KeyVaultRoleDefinition]":
         """List all role definitions applicable at and above a scope.
 
-        :param role_scope: scope of the role definitions. We've provided enum :class:`KeyVaultRoleScope`
-            to list the well known scopes, but those scopes are not exhaustive
+        :param role_scope: scope of the role definitions. :class:`KeyVaultRoleScope` defines common broad
+            scopes. To list role definitions for a narrower scope, specify it as a string.
         :type role_scope: str or KeyVaultRoleScope
         :rtype: ~azure.core.async_paging.AsyncItemPaged[KeyVaultRoleDefinition]
         """
