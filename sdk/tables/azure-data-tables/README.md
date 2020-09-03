@@ -190,7 +190,7 @@ Querying entities in the table
 
 ```python
 from azure.data.tables import TableClient
-my_filter = "text eq Marker"
+my_filter = "text eq 'Marker'"
 table_client = TableClient.from_connection_string(conn_str="<connection_string>", table_name="mytable")
 entity = table_client.query_entities(filter=my_filter)
 ```
