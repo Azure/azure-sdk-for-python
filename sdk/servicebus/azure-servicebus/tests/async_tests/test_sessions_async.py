@@ -16,7 +16,7 @@ from datetime import datetime, timedelta
 from uamqp.errors import VendorLinkDetach
 from azure.servicebus.aio import ServiceBusClient, ReceivedMessage, AutoLockRenew
 from azure.servicebus._common.message import Message, PeekMessage
-from azure.servicebus._common.constants import ReceiveSettleMode, NEXT_AVAILABLE
+from azure.servicebus._common.constants import ReceiveSettleMode, NEXT_AVAILABLE, SubQueue
 from azure.servicebus._common.utils import utc_now
 from azure.servicebus.exceptions import (
     ServiceBusConnectionError,
@@ -257,7 +257,9 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                     await message.dead_letter(reason="Testing reason", description="Testing description")
 
             count = 0
-            async with sb_client.get_queue_deadletter_receiver(servicebus_queue.name, max_wait_time=5) as receiver:
+            async with sb_client.get_queue_receiver(servicebus_queue.name, 
+                                                    sub_queue = SubQueue.DeadLetter,
+                                                    max_wait_time=5) as receiver:
                 async for message in receiver:
                     count += 1
                     print_message(_logger, message)
@@ -360,7 +362,9 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                     messages = await receiver.receive_messages()
             assert count == 10
 
-            async with sb_client.get_queue_deadletter_receiver(servicebus_queue.name, max_wait_time=5) as session:
+            async with sb_client.get_queue_receiver(servicebus_queue.name, 
+                                                    sub_queue = SubQueue.DeadLetter,
+                                                    max_wait_time=5) as session:
                 count = 0
                 async for message in session:
                     print_message(_logger, message)
