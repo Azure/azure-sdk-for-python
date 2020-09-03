@@ -34,7 +34,7 @@ steps:
     displayName: 'Prep Environment'
 
   - ${{if eq(variables['System.TeamProject'], 'internal') }}:
-    - template: ../steps/auth_dev_feed.yml
+    - template: ../steps/auth-dev-feed.yml
       parameters: 
         DevFeedName: ${{ parameters.DevFeedName }}
 
