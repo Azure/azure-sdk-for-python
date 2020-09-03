@@ -18,7 +18,6 @@ from ._configurations_operations import ConfigurationsOperations
 from ._log_files_operations import LogFilesOperations
 from ._location_based_performance_tier_operations import LocationBasedPerformanceTierOperations
 from ._check_name_availability_operations import CheckNameAvailabilityOperations
-from ._server_security_alert_policies_operations import ServerSecurityAlertPoliciesOperations
 from ._operations import Operations
 from ._query_texts_operations import QueryTextsOperations
 from ._top_query_statistics_operations import TopQueryStatisticsOperations
@@ -29,6 +28,7 @@ from ._location_based_recommended_action_sessions_operation_status_operations im
 from ._location_based_recommended_action_sessions_result_operations import LocationBasedRecommendedActionSessionsResultOperations
 from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
 from ._private_link_resources_operations import PrivateLinkResourcesOperations
+from ._server_security_alert_policies_operations import ServerSecurityAlertPoliciesOperations
 from ._maria_db_management_client_operations import MariaDBManagementClientOperationsMixin
 
 __all__ = [
@@ -41,7 +41,6 @@ __all__ = [
     'LogFilesOperations',
     'LocationBasedPerformanceTierOperations',
     'CheckNameAvailabilityOperations',
-    'ServerSecurityAlertPoliciesOperations',
     'Operations',
     'QueryTextsOperations',
     'TopQueryStatisticsOperations',
@@ -52,5 +51,6 @@ __all__ = [
     'LocationBasedRecommendedActionSessionsResultOperations',
     'PrivateEndpointConnectionsOperations',
     'PrivateLinkResourcesOperations',
+    'ServerSecurityAlertPoliciesOperations',
     'MariaDBManagementClientOperationsMixin',
 ]
