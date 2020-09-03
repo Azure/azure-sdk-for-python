@@ -4,6 +4,7 @@ jobs:
   # Azure Cloud
   - template: ../../eng/pipelines/templates/jobs/archetype-sdk-tests.yml
     parameters:
+      JobName: AzureCloud
       AllocateResourceGroup: 'false'
       ServiceDirectory: identity
       EnvVars:
@@ -17,6 +18,7 @@ jobs:
   # Azure US Government
   - template: ../../eng/pipelines/templates/jobs/archetype-sdk-tests.yml
     parameters:
+      JobName: AzureUSGovCloud
       AllocateResourceGroup: 'false'
       ServiceDirectory: identity
       EnvVars:
@@ -30,6 +32,7 @@ jobs:
   # Azure China Cloud
   - template: ../../eng/pipelines/templates/jobs/archetype-sdk-tests.yml
     parameters:
+      JobName: AzureChinaCloud
       AllocateResourceGroup: 'false'
       ServiceDirectory: identity
       EnvVars:
