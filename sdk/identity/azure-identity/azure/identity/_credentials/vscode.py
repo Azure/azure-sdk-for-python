@@ -19,7 +19,7 @@ else:
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any
+    from typing import Any, Iterable, Optional
     from azure.core.credentials import AccessToken
 
 
@@ -68,7 +68,7 @@ class VisualStudioCodeCredential(object):
         return token
 
     def _redeem_refresh_token(self, scopes, **kwargs):
-        # type: (Sequence[str], **Any) -> Optional[AccessToken]
+        # type: (Iterable[str], **Any) -> Optional[AccessToken]
         if not self._refresh_token:
             self._refresh_token = get_credentials()
             if not self._refresh_token:

@@ -13,7 +13,7 @@ from ..._credentials.vscode import get_credentials
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any
+    from typing import Any, Iterable, Optional
     from azure.core.credentials import AccessToken
 
 
@@ -70,7 +70,7 @@ class VisualStudioCodeCredential(AsyncContextManager):
                 pass
         return token
 
-    async def _redeem_refresh_token(self, scopes: "Sequence[str]", **kwargs: "Any") -> "Optional[AccessToken]":
+    async def _redeem_refresh_token(self, scopes: "Iterable[str]", **kwargs: "Any") -> "Optional[AccessToken]":
         if not self._refresh_token:
             self._refresh_token = get_credentials()
             if not self._refresh_token:
