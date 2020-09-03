@@ -1,5 +1,11 @@
 # Release History
 
+## 2.3.0 (2020-09-03)
+
+**Features**
+
+  - Added operation group ManagedHsmsOperations
+
 ## 2.2.0 (2020-03-20)
 
 **Features**
