@@ -236,7 +236,7 @@ stages:
           pip install twine
         displayName: Install Twine
 
-      - template: ../steps/auth_dev_feed.yml
+      - template: ../steps/auth-dev-feed.yml
         parameters:
           DevFeedName: ${{ parameters.DevFeedName }}
 
