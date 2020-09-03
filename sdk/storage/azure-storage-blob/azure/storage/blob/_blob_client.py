@@ -937,8 +937,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 snapshot=self.snapshot,
                 **kwargs)
             return True
-        except StorageErrorException:
-            return False
+        except StorageErrorException as error:
+            try:
+                process_storage_error(error)
+            except ResourceNotFoundError:
+                return False
 
     @distributed_trace
     def get_blob_properties(self, **kwargs):
