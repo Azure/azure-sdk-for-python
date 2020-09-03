@@ -87,20 +87,25 @@ class CloudEvent(EventMixin):   #pylint:disable=too-many-instance-attributes
         self.datacontenttype = kwargs.get("datacontenttype", None)
         self.dataschema = kwargs.get("dataschema", None)
         self.subject = kwargs.get("subject", None)
+        self._extensions = {}
 
+        spec_attr = [
+            'source', 'type', 'specversion', 'id', 'time',
+            'data', 'datacontenttype', 'dataschema', 'subject']
         for attr in kwargs:
-            setattr(self, attr, kwargs.get(attr))
+            if attr == 'extensions':
+                self._extensions.update({k:v for k, v in kwargs.get('extensions').items()})
+            elif attr not in spec_attr:
+                self._extensions.update({attr: kwargs.get(attr)})
 
     @classmethod
     def _from_generated(cls, generated, **kwargs):
-        if not generated:
-            return {}
         return cls(
             id=generated.id,
             source=generated.source,
             type=generated.type,
             specversion=generated.specversion,
-            data=generated.data,
+            data=generated.data or generated.data_base64,
             time=generated.time,
             dataschema=generated.dataschema,
             datacontenttype=generated.datacontenttype,
@@ -110,17 +115,23 @@ class CloudEvent(EventMixin):   #pylint:disable=too-many-instance-attributes
 
     def _to_generated(self, **kwargs):
         if isinstance(self.data, six.binary_type):
-            self.data = base64.b64encode(self.data)
+            data_base64 = self.data
+            data = None
+        else:
+            data_base64 = None
+            data = self.data
         return InternalCloudEvent(
             id=self.id,
             source=self.source,
             type=self.type,
             specversion=self.specversion,
-            data=self.data,
+            data=data,
+            data_base64=data_base64,
             time=self.time,
             dataschema=self.dataschema,
             datacontenttype=self.datacontenttype,
             subject=self.subject,
+            additional_properties=self._extensions,
             **kwargs
         )
 

@@ -124,10 +124,10 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
                 extension="extension"
                 )
         client.send([cloud_event])
-        assert 'reason_code' in cloud_event.__dict__
-        assert 'extension' in cloud_event.__dict__
-        assert cloud_event.reason_code == 204
-        assert cloud_event.__dict__['reason_code'] == 204
+        internal = cloud_event._to_generated().serialize()
+        assert 'reason_code' in internal
+        assert 'extension' in internal
+        assert internal['reason_code'] == 204
 
     @pytest.mark.liveTest
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
