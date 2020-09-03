@@ -42,7 +42,7 @@ def pytest_collection_modifyitems(config, items):
 def live_cloud_environment():
     try:
         return {
-            "authority": os.environ[EnvironmentVariables.AZURE_AUTHORITY_HOST],
+            "authority": os.environ["IDENTITY_LIVE_TEST_AUTHORITY"],
             "scope": os.environ["IDENTITY_LIVE_TEST_SCOPE"],
         }
     except KeyError as ex:
