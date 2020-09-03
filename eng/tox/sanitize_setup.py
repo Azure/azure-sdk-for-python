@@ -42,7 +42,12 @@ def update_requires(setup_py_path, requires_dict):
 
 def is_required_version_on_pypi(package_name, spec):
     client = PyPIClient()
-    versions = [str(v) for v in client.get_ordered_versions(package_name) if str(v) in spec]
+    try:
+        pypi_results = client.get_ordered_versions(package_name)
+    except:
+        pypi_results = []
+
+    versions = [str(v) for v in pypi_results if str(v) in spec]
     return versions
 
 

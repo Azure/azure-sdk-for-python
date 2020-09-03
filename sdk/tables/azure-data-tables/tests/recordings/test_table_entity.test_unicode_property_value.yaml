@@ -15,13 +15,13 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 20 Aug 2020 20:17:08 GMT
+      - Wed, 02 Sep 2020 21:29:01 GMT
       User-Agent:
-      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 20 Aug 2020 20:17:08 GMT
+      - Wed, 02 Sep 2020 21:29:01 GMT
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     method: POST
     uri: https://storagename.table.core.windows.net/Tables
   response:
@@ -33,7 +33,7 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Thu, 20 Aug 2020 20:17:08 GMT
+      - Wed, 02 Sep 2020 21:29:01 GMT
       location:
       - https://storagename.table.core.windows.net/Tables('uttableac7612b8')
       server:
@@ -43,7 +43,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -63,27 +63,27 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 20 Aug 2020 20:17:08 GMT
+      - Wed, 02 Sep 2020 21:29:01 GMT
       User-Agent:
-      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 20 Aug 2020 20:17:08 GMT
+      - Wed, 02 Sep 2020 21:29:01 GMT
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     method: POST
     uri: https://storagename.table.core.windows.net/uttableac7612b8
   response:
     body:
-      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#uttableac7612b8/@Element","odata.etag":"W/\"datetime''2020-08-20T20%3A17%3A08.5746474Z''\"","PartitionKey":"pkac7612b8","RowKey":"rkac7612b8","Timestamp":"2020-08-20T20:17:08.5746474Z","Description":"\ua015"}'
+      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#uttableac7612b8/@Element","odata.etag":"W/\"datetime''2020-09-02T21%3A29%3A01.9812535Z''\"","PartitionKey":"pkac7612b8","RowKey":"rkac7612b8","Timestamp":"2020-09-02T21:29:01.9812535Z","Description":"\ua015"}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Thu, 20 Aug 2020 20:17:08 GMT
+      - Wed, 02 Sep 2020 21:29:01 GMT
       etag:
-      - W/"datetime'2020-08-20T20%3A17%3A08.5746474Z'"
+      - W/"datetime'2020-09-02T21%3A29%3A01.9812535Z'"
       location:
       - https://storagename.table.core.windows.net/uttableac7612b8(PartitionKey='pkac7612b8',RowKey='rkac7612b8')
       server:
@@ -93,7 +93,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -113,27 +113,27 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 20 Aug 2020 20:17:08 GMT
+      - Wed, 02 Sep 2020 21:29:01 GMT
       User-Agent:
-      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 20 Aug 2020 20:17:08 GMT
+      - Wed, 02 Sep 2020 21:29:01 GMT
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     method: POST
     uri: https://storagename.table.core.windows.net/uttableac7612b8
   response:
     body:
-      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#uttableac7612b8/@Element","odata.etag":"W/\"datetime''2020-08-20T20%3A17%3A08.6577262Z''\"","PartitionKey":"pkac7612b8","RowKey":"test2","Timestamp":"2020-08-20T20:17:08.6577262Z","Description":"\ua015"}'
+      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#uttableac7612b8/@Element","odata.etag":"W/\"datetime''2020-09-02T21%3A29%3A02.0182812Z''\"","PartitionKey":"pkac7612b8","RowKey":"test2","Timestamp":"2020-09-02T21:29:02.0182812Z","Description":"\ua015"}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Thu, 20 Aug 2020 20:17:08 GMT
+      - Wed, 02 Sep 2020 21:29:01 GMT
       etag:
-      - W/"datetime'2020-08-20T20%3A17%3A08.6577262Z'"
+      - W/"datetime'2020-09-02T21%3A29%3A02.0182812Z'"
       location:
       - https://storagename.table.core.windows.net/uttableac7612b8(PartitionKey='pkac7612b8',RowKey='test2')
       server:
@@ -143,7 +143,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -159,25 +159,25 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 20 Aug 2020 20:17:08 GMT
+      - Wed, 02 Sep 2020 21:29:01 GMT
       User-Agent:
-      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 20 Aug 2020 20:17:08 GMT
+      - Wed, 02 Sep 2020 21:29:01 GMT
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     method: GET
     uri: https://storagename.table.core.windows.net/uttableac7612b8()
   response:
     body:
-      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#uttableac7612b8","value":[{"odata.etag":"W/\"datetime''2020-08-20T20%3A17%3A08.5746474Z''\"","PartitionKey":"pkac7612b8","RowKey":"rkac7612b8","Timestamp":"2020-08-20T20:17:08.5746474Z","Description":"\ua015"},{"odata.etag":"W/\"datetime''2020-08-20T20%3A17%3A08.6577262Z''\"","PartitionKey":"pkac7612b8","RowKey":"test2","Timestamp":"2020-08-20T20:17:08.6577262Z","Description":"\ua015"}]}'
+      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#uttableac7612b8","value":[{"odata.etag":"W/\"datetime''2020-09-02T21%3A29%3A01.9812535Z''\"","PartitionKey":"pkac7612b8","RowKey":"rkac7612b8","Timestamp":"2020-09-02T21:29:01.9812535Z","Description":"\ua015"},{"odata.etag":"W/\"datetime''2020-09-02T21%3A29%3A02.0182812Z''\"","PartitionKey":"pkac7612b8","RowKey":"test2","Timestamp":"2020-09-02T21:29:02.0182812Z","Description":"\ua015"}]}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Thu, 20 Aug 2020 20:17:08 GMT
+      - Wed, 02 Sep 2020 21:29:01 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -185,7 +185,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     status:
       code: 200
       message: OK
@@ -193,7 +193,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -201,13 +201,13 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Thu, 20 Aug 2020 20:17:08 GMT
+      - Wed, 02 Sep 2020 21:29:01 GMT
       User-Agent:
-      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 20 Aug 2020 20:17:08 GMT
+      - Wed, 02 Sep 2020 21:29:01 GMT
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     method: DELETE
     uri: https://storagename.table.core.windows.net/Tables('uttableac7612b8')
   response:
@@ -219,13 +219,13 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 20 Aug 2020 20:17:08 GMT
+      - Wed, 02 Sep 2020 21:29:02 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options:
       - nosniff
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     status:
       code: 204
       message: No Content

@@ -12,8 +12,6 @@ interactions:
       - application/json
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-      api-key:
-      - D0860E3F9B12119CBC83332866F54068
     method: POST
     uri: https://searchd8241851.search.windows.net/synonymmaps?api-version=2020-06-30
   response:

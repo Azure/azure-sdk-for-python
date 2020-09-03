@@ -12,6 +12,7 @@ import logging
 from typing import Optional, List, Union, Iterable, TYPE_CHECKING, Callable, Any
 
 import uamqp.message
+from uamqp.constants import MessageState
 
 from .constants import (
     _BATCH_MESSAGE_OVERHEAD_COST,
@@ -54,7 +55,7 @@ from ..exceptions import (
     MessageSettleFailed,
     MessageContentTooLarge,
     ServiceBusError)
-from .utils import utc_from_timestamp, utc_now, copy_messages_to_sendable_if_needed
+from .utils import utc_from_timestamp, utc_now, transform_messages_to_sendable_if_needed
 if TYPE_CHECKING:
     from .._servicebus_receiver import ServiceBusReceiver
     from .._servicebus_session_receiver import ServiceBusSessionReceiver
@@ -153,6 +154,12 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
                 pass
         else:
             self.message.annotations[ANNOTATION_SYMBOL_KEY_MAP[key]] = value
+
+    def _to_outgoing_message(self):
+        # type: () -> Message
+        self.message.state = MessageState.WaitingToBeSent
+        self.message._response = None # pylint: disable=protected-access
+        return self
 
     @property
     def session_id(self):
@@ -515,7 +522,7 @@ class BatchMessage(object):
     def _from_list(self, messages):
         for each in messages:
             if not isinstance(each, Message):
-                raise ValueError("Only Message or an iterable object containing Message objects are accepted."
+                raise TypeError("Only Message or an iterable object containing Message objects are accepted."
                                  "Received instead: {}".format(each.__class__.__name__))
             self.add(each)
 
@@ -541,7 +548,7 @@ class BatchMessage(object):
         :rtype: None
         :raises: :class: ~azure.servicebus.exceptions.MessageContentTooLarge, when exceeding the size limit.
         """
-        message = copy_messages_to_sendable_if_needed(message)
+        message = transform_messages_to_sendable_if_needed(message)
         message_size = message.message.get_message_encoded_size()
 
         # For a BatchMessage, if the encoded_message_size of event_data is < 256, then the overhead cost to encode that

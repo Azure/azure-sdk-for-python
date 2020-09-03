@@ -32,111 +32,84 @@ from _mocks import (
 class EventGridConsumerTests(AzureMgmtTestCase):
 
     # Cloud Event tests
-    @pytest.mark.liveTest
     def test_eg_consumer_cloud_storage_dict(self, **kwargs):
         client = EventGridConsumer()
-        deserialized_event = client.deserialize_event(cloud_storage_dict)
-        event_json = deserialized_event.to_json()
-        assert deserialized_event.model.__class__ == CloudEvent
-        assert deserialized_event.model.data.__class__ == StorageBlobCreatedEventData
-        assert event_json.__class__ == dict
+        deserialized_event = client.decode_cloud_event(cloud_storage_dict)
+        assert deserialized_event.__class__ == CloudEvent
+        assert deserialized_event.data.__class__ == StorageBlobCreatedEventData
 
-    @pytest.mark.liveTest
     def test_eg_consumer_cloud_storage_string(self, **kwargs):
         client = EventGridConsumer()
-        deserialized_event = client.deserialize_event(cloud_storage_string)
-        event_json = deserialized_event.to_json()
-        assert deserialized_event.model.__class__ == CloudEvent
-        assert deserialized_event.model.data.__class__ == StorageBlobCreatedEventData
-        assert event_json.__class__ == dict
+        deserialized_event = client.decode_cloud_event(cloud_storage_string)
+        assert deserialized_event.__class__ == CloudEvent
+        assert deserialized_event.data.__class__ == StorageBlobCreatedEventData
 
-    @pytest.mark.liveTest
     def test_eg_consumer_cloud_storage_bytes(self, **kwargs):
         client = EventGridConsumer()
-        deserialized_event = client.deserialize_event(cloud_storage_bytes)
-        event_json = deserialized_event.to_json()
-        assert deserialized_event.model.__class__ == CloudEvent
-        assert deserialized_event.model.data.__class__ == StorageBlobCreatedEventData
-        assert event_json.__class__ == dict
+        deserialized_event = client.decode_cloud_event(cloud_storage_bytes)
+        assert deserialized_event.__class__ == CloudEvent
+        assert deserialized_event.data.__class__ == StorageBlobCreatedEventData
     
-    @pytest.mark.liveTest
+
     def test_eg_consumer_cloud_custom_dict(self, **kwargs):
         client = EventGridConsumer()
-        deserialized_event = client.deserialize_event(cloud_custom_dict)
-        event_json = deserialized_event.to_json()
-        assert deserialized_event.model.__class__ == CloudEvent
-        assert deserialized_event.model.data is None
-        assert event_json.__class__ == dict
+        deserialized_event = client.decode_cloud_event(cloud_custom_dict)
+        assert deserialized_event.__class__ == CloudEvent
+        assert deserialized_event.data is None
 
-    @pytest.mark.liveTest
+
     def test_eg_consumer_cloud_custom_string(self, **kwargs):
         client = EventGridConsumer()
-        deserialized_event = client.deserialize_event(cloud_custom_string)
-        event_json = deserialized_event.to_json()
-        assert deserialized_event.model.__class__ == CloudEvent
-        assert deserialized_event.model.data is None
-        assert event_json.__class__ == dict
+        deserialized_event = client.decode_cloud_event(cloud_custom_string)
+        assert deserialized_event.__class__ == CloudEvent
+        assert deserialized_event.data is None
 
-    @pytest.mark.liveTest
+
     def test_eg_consumer_cloud_custom_bytes(self, **kwargs):
         client = EventGridConsumer()
-        deserialized_event = client.deserialize_event(cloud_custom_bytes)
-        event_json = deserialized_event.to_json()
-        assert deserialized_event.model.__class__ == CloudEvent
-        assert deserialized_event.model.data is None
-        assert event_json.__class__ == dict
+        deserialized_event = client.decode_cloud_event(cloud_custom_bytes)
+        assert deserialized_event.__class__ == CloudEvent
+        assert deserialized_event.data is None
     
     # EG Event tests
-    @pytest.mark.liveTest
+
     def test_eg_consumer_eg_storage_dict(self, **kwargs):
         client = EventGridConsumer()
-        deserialized_event = client.deserialize_event(eg_storage_dict)
-        event_json = deserialized_event.to_json()
-        assert deserialized_event.model.__class__ == EventGridEvent
-        assert deserialized_event.model.data.__class__ == StorageBlobCreatedEventData
-        assert event_json.__class__ == dict
+        deserialized_event = client.decode_eventgrid_event(eg_storage_dict)
+        assert deserialized_event.__class__ == EventGridEvent
+        assert deserialized_event.data.__class__ == StorageBlobCreatedEventData
 
-    @pytest.mark.liveTest
+
     def test_eg_consumer_eg_storage_string(self, **kwargs):
         client = EventGridConsumer()
-        deserialized_event = client.deserialize_event(eg_storage_string)
-        event_json = deserialized_event.to_json()
-        assert deserialized_event.model.__class__ == EventGridEvent
-        assert deserialized_event.model.data.__class__ == StorageBlobCreatedEventData
-        assert event_json.__class__ == dict
+        deserialized_event = client.decode_eventgrid_event(eg_storage_string)
+        assert deserialized_event.__class__ == EventGridEvent
+        assert deserialized_event.data.__class__ == StorageBlobCreatedEventData
 
-    @pytest.mark.liveTest
+
     def test_eg_consumer_eg_storage_bytes(self, **kwargs):
         client = EventGridConsumer()
-        deserialized_event = client.deserialize_event(eg_storage_bytes)
-        event_json = deserialized_event.to_json()
-        assert deserialized_event.model.__class__ == EventGridEvent
-        assert deserialized_event.model.data.__class__ == StorageBlobCreatedEventData
-        assert event_json.__class__ == dict
+        deserialized_event = client.decode_eventgrid_event(eg_storage_bytes)
+        assert deserialized_event.__class__ == EventGridEvent
+        assert deserialized_event.data.__class__ == StorageBlobCreatedEventData
     
-    @pytest.mark.liveTest
+
     def test_eg_consumer_eg_custom_dict(self, **kwargs):
         client = EventGridConsumer()
-        deserialized_event = client.deserialize_event(eg_custom_dict)
-        event_json = deserialized_event.to_json()
-        assert deserialized_event.model.__class__ == EventGridEvent
-        assert deserialized_event.model.data is None
-        assert event_json.__class__ == dict
+        deserialized_event = client.decode_eventgrid_event(eg_custom_dict)
+        assert deserialized_event.__class__ == EventGridEvent
+        assert deserialized_event.data is None
 
-    @pytest.mark.liveTest
+
     def test_eg_consumer_eg_custom_string(self, **kwargs):
         client = EventGridConsumer()
-        deserialized_event = client.deserialize_event(eg_custom_string)
-        event_json = deserialized_event.to_json()
-        assert deserialized_event.model.__class__ == EventGridEvent
-        assert deserialized_event.model.data is None
-        assert event_json.__class__ == dict
+        deserialized_event = client.decode_eventgrid_event(eg_custom_string)
+        assert deserialized_event.__class__ == EventGridEvent
+        assert deserialized_event.data is None
 
-    @pytest.mark.liveTest
+
     def test_eg_consumer_eg_custom_bytes(self, **kwargs):
         client = EventGridConsumer()
-        deserialized_event = client.deserialize_event(eg_custom_bytes)
-        event_json = deserialized_event.to_json()
-        assert deserialized_event.model.__class__ == EventGridEvent
-        assert deserialized_event.model.data is None
-        assert event_json.__class__ == dict
+        deserialized_event = client.decode_eventgrid_event(eg_custom_bytes)
+        assert deserialized_event.__class__ == EventGridEvent
+        assert deserialized_event.data is None

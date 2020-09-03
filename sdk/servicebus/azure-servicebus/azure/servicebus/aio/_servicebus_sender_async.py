@@ -19,7 +19,7 @@ from .._common.constants import (
     MGMT_REQUEST_SEQUENCE_NUMBERS
 )
 from .._common import mgmt_handlers
-from .._common.utils import copy_messages_to_sendable_if_needed
+from .._common.utils import transform_messages_to_sendable_if_needed
 from ._async_utils import create_authentication
 
 if TYPE_CHECKING:
@@ -223,6 +223,9 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         :keyword str user_agent: If specified, this will be added in front of the built-in user agent string.
         :rtype: ~azure.servicebus.aio.ServiceBusSender
 
+        :raises ~azure.servicebus.ServiceBusAuthenticationError: Indicates an issue in token/identity validity.
+        :raises ~azure.servicebus.ServiceBusAuthorizationError: Indicates an access/rights related failure.
+
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/async_samples/sample_code_servicebus_async.py
@@ -269,7 +272,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 :caption: Send message.
 
         """
-        message = copy_messages_to_sendable_if_needed(message)
+        message = transform_messages_to_sendable_if_needed(message)
         try:
             batch = await self.create_batch()
             batch._from_list(message)  # pylint: disable=protected-access
@@ -278,6 +281,8 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             pass
         if isinstance(message, BatchMessage) and len(message) == 0:  # pylint: disable=len-as-condition
             raise ValueError("A BatchMessage or list of Message must have at least one Message")
+        if not isinstance(message, BatchMessage) and not isinstance(message, Message):
+            raise TypeError("Can only send azure.servicebus.<BatchMessage,Message> or lists of Messages.")
 
         await self._do_retryable_operation(
             self._send,
