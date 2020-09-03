@@ -53,9 +53,22 @@ class ManagedIdentityCredential(object):
     def __init__(self, **kwargs):
         # type: (**Any) -> None
         self._credential = None
-        if os.environ.get(EnvironmentVariables.MSI_ENDPOINT):
-            _LOGGER.info("%s will use MSI", self.__class__.__name__)
-            self._credential = MsiCredential(**kwargs)
+        if os.environ.get(EnvironmentVariables.IDENTITY_ENDPOINT) and os.environ.get(
+                EnvironmentVariables.IDENTITY_HEADER
+        ):
+            _LOGGER.info("%s will use App Service managed identity", self.__class__.__name__)
+            from .app_service import AppServiceCredential
+
+            self._credential = AppServiceCredential(**kwargs)
+        elif os.environ.get(EnvironmentVariables.MSI_ENDPOINT):
+            if os.environ.get(EnvironmentVariables.MSI_SECRET):
+                _LOGGER.info("%s will use App Service managed identity", self.__class__.__name__)
+                from .app_service import AppServiceCredential
+
+                self._credential = AppServiceCredential(**kwargs)
+            else:
+                _LOGGER.info("%s will use MSI", self.__class__.__name__)
+                self._credential = MsiCredential(**kwargs)
         else:
             _LOGGER.info("%s will use IMDS", self.__class__.__name__)
             self._credential = ImdsCredential(**kwargs)

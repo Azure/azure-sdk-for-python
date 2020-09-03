@@ -62,6 +62,8 @@ class DefaultAzureCredential(ChainedTokenCredential):
     :keyword str interactive_browser_tenant_id: Tenant ID to use when authenticating a user through
         :class:`~azure.identity.InteractiveBrowserCredential`. Defaults to the value of environment variable
         AZURE_TENANT_ID, if any. If unspecified, users will authenticate in their home tenants.
+    :keyword str managed_identity_client_id: The client ID of a user-assigned managed identity. Defaults to the value
+        of the environment variable AZURE_CLIENT_ID, if any. If not specified, a system-assigned identity will be used.
     :keyword str shared_cache_username: Preferred username for :class:`~azure.identity.SharedTokenCacheCredential`.
         Defaults to the value of environment variable AZURE_USERNAME, if any.
     :keyword str shared_cache_tenant_id: Preferred tenant for :class:`~azure.identity.SharedTokenCacheCredential`.
@@ -77,6 +79,10 @@ class DefaultAzureCredential(ChainedTokenCredential):
 
         interactive_browser_tenant_id = kwargs.pop(
             "interactive_browser_tenant_id", os.environ.get(EnvironmentVariables.AZURE_TENANT_ID)
+        )
+
+        managed_identity_client_id = kwargs.pop(
+            "managed_identity_client_id", os.environ.get(EnvironmentVariables.AZURE_CLIENT_ID)
         )
 
         shared_cache_username = kwargs.pop("shared_cache_username", os.environ.get(EnvironmentVariables.AZURE_USERNAME))
@@ -99,9 +105,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
         if not exclude_environment_credential:
             credentials.append(EnvironmentCredential(authority=authority, **kwargs))
         if not exclude_managed_identity_credential:
-            credentials.append(
-                ManagedIdentityCredential(client_id=os.environ.get(EnvironmentVariables.AZURE_CLIENT_ID), **kwargs)
-            )
+            credentials.append(ManagedIdentityCredential(client_id=managed_identity_client_id, **kwargs))
         if not exclude_shared_token_cache_credential and SharedTokenCacheCredential.supported():
             try:
                 # username and/or tenant_id are only required when the cache contains tokens for multiple identities

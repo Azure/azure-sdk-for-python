@@ -449,6 +449,31 @@ class EntityLinkingResult(msrest.serialization.Model):
         self.model_version = kwargs['model_version']
 
 
+class ErrorResponse(msrest.serialization.Model):
+    """ErrorResponse.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param error: Required. Document Error.
+    :type error: ~azure.ai.textanalytics.v3_0.models.TextAnalyticsError
+    """
+
+    _validation = {
+        'error': {'required': True},
+    }
+
+    _attribute_map = {
+        'error': {'key': 'error', 'type': 'TextAnalyticsError'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ErrorResponse, self).__init__(**kwargs)
+        self.error = kwargs['error']
+
+
 class InnerError(msrest.serialization.Model):
     """InnerError.
 

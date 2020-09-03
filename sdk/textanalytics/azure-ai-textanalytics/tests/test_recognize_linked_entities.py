@@ -3,7 +3,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-
+import os
 import pytest
 import platform
 import functools
@@ -15,7 +15,8 @@ from testcase import TextAnalyticsClientPreparer as _TextAnalyticsClientPreparer
 from azure.ai.textanalytics import (
     TextAnalyticsClient,
     TextDocumentInput,
-    VERSION
+    VERSION,
+    TextAnalyticsApiVersion,
 )
 
 # pre-apply the client_cls positional argument so it needn't be explicitly passed below
@@ -545,3 +546,57 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
             cls=callback
         )
         assert res == "cls result"
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    def test_offset_length(self, client):
+        result = client.recognize_linked_entities(["Microsoft was founded by Bill Gates and Paul Allen"])
+        entities = result[0].entities
+
+        # the entities are being returned in a non-sequential order by the service
+        microsoft_entity = [entity for entity in entities if entity.name == "Microsoft"][0]
+        bill_gates_entity = [entity for entity in entities if entity.name == "Bill Gates"][0]
+        paul_allen_entity = [entity for entity in entities if entity.name == "Paul Allen"][0]
+
+        self.assertEqual(microsoft_entity.matches[0].offset, 0)
+        self.assertEqual(microsoft_entity.matches[0].length, 9)
+
+        self.assertEqual(bill_gates_entity.matches[0].offset, 25)
+        self.assertEqual(bill_gates_entity.matches[0].length, 10)
+
+        self.assertEqual(paul_allen_entity.matches[0].offset, 40)
+        self.assertEqual(paul_allen_entity.matches[0].length, 10)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_0})
+    def test_no_offset_length_v3_linked_entity_match(self, client):
+        result = client.recognize_linked_entities(["Microsoft was founded by Bill Gates and Paul Allen"])
+        entities = result[0].entities
+
+        self.assertIsNone(entities[0].matches[0].offset)
+        self.assertIsNone(entities[0].matches[0].length)
+        self.assertIsNone(entities[1].matches[0].offset)
+        self.assertIsNone(entities[1].matches[0].length)
+        self.assertIsNone(entities[2].matches[0].offset)
+        self.assertIsNone(entities[2].matches[0].length)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_0})
+    def test_string_index_type_not_fail_v3(self, client):
+        # make sure that the addition of the string_index_type kwarg for v3.1-preview.1 doesn't
+        # cause v3.0 calls to fail
+        client.recognize_linked_entities(["please don't fail"])
+
+    # currently only have this as playback since the dev endpoint is unreliable
+    @pytest.mark.playback_test_only
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_2,
+        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
+        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net/"
+    })
+    def test_bing_id(self, client):
+        result = client.recognize_linked_entities(["Microsoft was founded by Bill Gates and Paul Allen"])
+        for doc in result:
+            for entity in doc.entities:
+                assert entity.bing_entity_search_api_id  # this checks if it's None and if it's empty

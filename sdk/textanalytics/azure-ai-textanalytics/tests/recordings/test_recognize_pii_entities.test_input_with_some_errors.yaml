@@ -5,7 +5,7 @@ interactions:
       CPF number?", "language": "en"}]}'
     headers:
       Accept:
-      - application/json
+      - application/json, text/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -15,9 +15,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/1.0.1 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.0.1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.1/entities/recognition/pii?showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.1/entities/recognition/pii?showStats=false&stringIndexType=UnicodeCodePoint
   response:
     body:
       string: '{"documents":[{"id":"3","entities":[{"text":"998.214.865-68","category":"Brazil
@@ -25,16 +25,16 @@ interactions:
         Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
         language code. Supported languages: en"}}},{"id":"2","error":{"code":"InvalidArgument","message":"Invalid
         document in request.","innererror":{"code":"InvalidDocument","message":"Document
-        text is empty."}}}],"modelVersion":"2020-04-01"}'
+        text is empty."}}}],"modelVersion":"2020-07-01"}'
     headers:
       apim-request-id:
-      - 51708468-566e-4842-8040-bba767c70b62
+      - 120bc6cc-6db4-41ef-928e-66bf40ee61ed
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=1
       date:
-      - Thu, 23 Jul 2020 17:18:49 GMT
+      - Thu, 27 Aug 2020 19:32:20 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -42,7 +42,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '81'
+      - '75'
     status:
       code: 200
       message: OK

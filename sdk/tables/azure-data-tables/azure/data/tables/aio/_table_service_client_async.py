@@ -11,19 +11,19 @@ from typing import (
 )
 
 from azure.core.async_paging import AsyncItemPaged
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import HttpResponseError, ResourceExistsError
 from azure.core.pipeline import AsyncPipeline
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
-from .. import VERSION, LocationMode
+from .. import LocationMode
 from .._base_client import parse_connection_str
-from .._generated.aio._azure_table_async import AzureTable
+from .._generated.aio._azure_table import AzureTable
 from .._generated.models import TableServiceProperties, TableProperties, QueryOptions
 from .._models import service_stats_deserialize, service_properties_deserialize
 from .._error import _process_table_error
 from .._table_service_client_base import TableServiceClientBase
-from .._models import Table
+from .._models import TableItem
 from ._policies_async import ExponentialRetry
 from ._table_client_async import TableClient
 from ._base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper
@@ -84,7 +84,6 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
             loop=loop,
             **kwargs)
         self._client = AzureTable(url=self.url, pipeline=self._pipeline, loop=loop)  # type: ignore
-        self._client._config.version = kwargs.get('api_version', VERSION)  # pylint: disable=protected-access
         self._loop = loop
 
     @classmethod
@@ -198,6 +197,30 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
         return table
 
     @distributed_trace_async
+    async def create_table_if_not_exists(
+        self,
+        table_name, # type: str
+        **kwargs # type: Any
+    ):
+        # type: (...) -> TableClient
+        """Creates a new table if it does not currently exist.
+        If the table currently exists, the current table is
+        returned.
+
+        :param table_name: The Table name.
+        :type table_name: str
+        :return: TableClient
+        :rtype: ~azure.data.tables.aio.TableClient
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        table = self.get_table_client(table_name=table_name)
+        try:
+            await table.create_table(**kwargs)
+        except ResourceExistsError:
+            pass
+        return table
+
+    @distributed_trace_async
     async def delete_table(
             self,
             table_name,  # type: str
@@ -219,13 +242,13 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
             self,
             **kwargs  # type: Any
     ):
-        # type: (...) -> AsyncItemPaged[Table]
+        # type: (...) -> AsyncItemPaged[TableItem]
         """Queries tables under the given account.
 
         :keyword int results_per_page: Number of tables per page in return ItemPaged
         :keyword Union[str, list(str)] select: Specify desired properties of a table to return certain tables
         :return: AsyncItemPaged
-        :rtype: ~AsyncItemPaged[Table]
+        :rtype: ~AsyncItemPaged[TableItem]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         user_select = kwargs.pop('select', None)
@@ -248,7 +271,7 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
             self, filter,  # type: str    pylint: disable=W0622
             **kwargs  # type: Any
     ):
-        # type: (...) -> AsyncItemPaged[Table]
+        # type: (...) -> AsyncItemPaged[TableItem]
         """Queries tables under the given account.
         :param filter: Specify a filter to return certain tables
         :type filter: str
@@ -256,7 +279,7 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
         :keyword Union[str, list(str)] select: Specify desired properties of a table to return certain tables
         :keyword dict parameters: Dictionary for formatting query with additional, user defined parameters
         :return: A query of tables
-        :rtype: AsyncItemPaged[Table]
+        :rtype: AsyncItemPaged[TableItem]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         parameters = kwargs.pop('parameters', None)

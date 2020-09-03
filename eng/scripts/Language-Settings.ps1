@@ -1,10 +1,9 @@
 $Language = "python"
-$Lang = "python"
 $PackageRepository = "PyPI"
 $packagePattern = "*.zip"
 $MetadataUri = "https://raw.githubusercontent.com/Azure/azure-sdk/master/_data/releases/latest/python-packages.csv"
 
-function Extract-python-PkgProperties ($pkgPath, $serviceName, $pkgName)
+function Get-python-PackageInfoFromRepo  ($pkgPath, $serviceDirectory, $pkgName)
 {
   $pkgName = $pkgName.Replace('_', '-')
   if (Test-Path (Join-Path $pkgPath "setup.py"))
@@ -15,7 +14,7 @@ function Extract-python-PkgProperties ($pkgPath, $serviceName, $pkgName)
     popd
     if (($setupProps -ne $null) -and ($setupProps[0] -eq $pkgName))
     {
-      return [PackageProps]::new($setupProps[0], $setupProps[1], $pkgPath, $serviceName)
+      return [PackageProps]::new($setupProps[0], $setupProps[1], $pkgPath, $serviceDirectory)
     }
   }
   return $null
@@ -25,7 +24,7 @@ function Extract-python-PkgProperties ($pkgPath, $serviceName, $pkgName)
 function IsPythonPackageVersionPublished($pkgId, $pkgVersion) {
   try 
   {
-    $existingVersion = (Invoke-RestMethod -MaximumRetryCount 3 -Method "Get" -uri "https://pypi.org/pypi/$pkgId/$pkgVersion/json").info.version
+    $existingVersion = (Invoke-RestMethod -MaximumRetryCount 3 -RetryIntervalSec 10 -Method "Get" -uri "https://pypi.org/pypi/$pkgId/$pkgVersion/json").info.version
     # if existingVersion exists, then it's already been published
     return $True
   }
@@ -47,7 +46,7 @@ function IsPythonPackageVersionPublished($pkgId, $pkgVersion) {
 }
 
 # Parse out package publishing information given a python sdist of ZIP format.
-function Parse-python-Package($pkg, $workingDirectory) {
+function Get-python-PackageInfoFromPackageFile ($pkg, $workingDirectory) {
   $pkg.Basename -match $SDIST_PACKAGE_REGEX | Out-Null
 
   $pkgId = $matches["package"]
@@ -84,7 +83,7 @@ function Parse-python-Package($pkg, $workingDirectory) {
 }
 
 # Stage and Upload Docs to blob Storage
-function StageAndUpload-python-Docs()
+function Publish-python-GithubIODocs ()
 {
   $PublishedDocs = Get-ChildItem "$DocLocation" | Where-Object -FilterScript {$_.Name.EndsWith(".zip")}
 

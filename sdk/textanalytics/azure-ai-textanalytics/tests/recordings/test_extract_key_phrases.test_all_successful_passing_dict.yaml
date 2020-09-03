@@ -5,7 +5,7 @@ interactions:
       por Bill Gates y Paul Allen", "language": "es"}]}'
     headers:
       Accept:
-      - application/json
+      - application/json, text/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -15,23 +15,23 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/1.0.1 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.0.1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.1/keyPhrases?showStats=true
   response:
     body:
       string: '{"statistics":{"documentsCount":2,"validDocumentsCount":2,"erroneousDocumentsCount":0,"transactionsCount":2},"documents":[{"id":"1","keyPhrases":["Bill
         Gates","Paul Allen","Microsoft"],"statistics":{"charactersCount":50,"transactionsCount":1},"warnings":[]},{"id":"2","keyPhrases":["Bill
-        Gates","Paul Allen","Microsoft"],"statistics":{"charactersCount":49,"transactionsCount":1},"warnings":[]}],"errors":[],"modelVersion":"2019-10-01"}'
+        Gates","Paul Allen","Microsoft"],"statistics":{"charactersCount":49,"transactionsCount":1},"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}'
     headers:
       apim-request-id:
-      - a1dc5e5b-6b95-4fba-8c0f-72fa4b1fc8cf
+      - 8c809bfa-dfb7-4940-8f8a-d0a187dee764
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=2
       date:
-      - Fri, 24 Jul 2020 16:32:47 GMT
+      - Thu, 27 Aug 2020 19:32:03 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
