@@ -3,6 +3,7 @@
 ## 4.2.1 (Unreleased)
 ### Fixed
 - Correct typing for paging methods
+- Fixed incompatibility issues with API version 2016-10-01
 
 ### Added
 - Added method `parse_key_vault_certificate_id` that parses out a full ID returned by key vault, so users

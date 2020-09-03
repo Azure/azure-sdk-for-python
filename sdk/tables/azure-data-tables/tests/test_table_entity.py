@@ -22,7 +22,8 @@ from azure.core import MatchConditions
 from azure.core.exceptions import (
     HttpResponseError,
     ResourceNotFoundError,
-    ResourceExistsError)
+    ResourceExistsError,
+    ResourceModifiedError)
 
 from azure.data.tables._entity import TableEntity, EntityProperty, EdmType
 from azure.data.tables._models import TableSasPermissions, AccessPolicy, UpdateMode
@@ -147,7 +148,7 @@ class StorageTableEntityTest(TableTestCase):
         '''
         Asserts that the entity passed in matches the default entity.
         '''
-        self.assertEqual(entity['age'], 39)
+        self.assertEqual(entity['age'].value, 39)
         self.assertEqual(entity['sex'], 'male')
         self.assertEqual(entity['married'], True)
         self.assertEqual(entity['deceased'], False)
@@ -155,12 +156,12 @@ class StorageTableEntityTest(TableTestCase):
         self.assertFalse("aquarius" in entity)
         self.assertEqual(entity['ratio'], 3.1)
         self.assertEqual(entity['evenratio'], 3.0)
-        self.assertEqual(entity['large'], 933311100)
+        self.assertEqual(entity['large'].value, 933311100)
         self.assertEqual(entity['Birthday'], datetime(1973, 10, 4, tzinfo=tzutc()))
         self.assertEqual(entity['birthday'], datetime(1970, 10, 4, tzinfo=tzutc()))
         self.assertEqual(entity['binary'].value, b'binary')
         self.assertIsInstance(entity['other'], EntityProperty)
-        self.assertEqual(entity['other'].type, EdmType.INT64)
+        self.assertEqual(entity['other'].type, EdmType.INT32)
         self.assertEqual(entity['other'].value, 20)
         self.assertEqual(entity['clsid'], uuid.UUID('c9da6455-213d-42c9-9a79-3e9149a57833'))
         # self.assertTrue('metadata' in entity.odata)
@@ -175,7 +176,7 @@ class StorageTableEntityTest(TableTestCase):
         '''
         Asserts that the entity passed in matches the default entity.
         '''
-        self.assertEqual(entity['age'], 39)
+        self.assertEqual(entity['age'].value, 39)
         self.assertEqual(entity['sex'], 'male')
         self.assertEqual(entity['married'], True)
         self.assertEqual(entity['deceased'], False)
@@ -183,12 +184,12 @@ class StorageTableEntityTest(TableTestCase):
         self.assertFalse("aquarius" in entity)
         self.assertEqual(entity['ratio'], 3.1)
         self.assertEqual(entity['evenratio'], 3.0)
-        self.assertEqual(entity['large'], 933311100)
+        self.assertEqual(entity['large'].value, 933311100)
         self.assertEqual(entity['Birthday'], datetime(1973, 10, 4, tzinfo=tzutc()))
         self.assertEqual(entity['birthday'], datetime(1970, 10, 4, tzinfo=tzutc()))
         self.assertEqual(entity['binary'].value, b'binary')
         self.assertIsInstance(entity['other'], EntityProperty)
-        self.assertEqual(entity['other'].type, EdmType.INT64)
+        self.assertEqual(entity['other'].type, EdmType.INT32)
         self.assertEqual(entity['other'].value, 20)
         self.assertEqual(entity['clsid'], uuid.UUID('c9da6455-213d-42c9-9a79-3e9149a57833'))
         # self.assertTrue('metadata' in entity.odata)
@@ -207,7 +208,7 @@ class StorageTableEntityTest(TableTestCase):
         '''
         Asserts that the entity passed in matches the default entity.
         '''
-        self.assertEqual(entity['age'], '39')
+        self.assertEqual(entity['age'].value, 39)
         self.assertEqual(entity['sex'], 'male')
         self.assertEqual(entity['married'], True)
         self.assertEqual(entity['deceased'], False)
@@ -215,14 +216,14 @@ class StorageTableEntityTest(TableTestCase):
         self.assertFalse("aquarius" in entity)
         self.assertEqual(entity['ratio'], 3.1)
         self.assertEqual(entity['evenratio'], 3.0)
-        self.assertEqual(entity['large'], '933311100')
+        self.assertEqual(entity['large'].value, 933311100)
         self.assertTrue(entity['Birthday'].startswith('1973-10-04T00:00:00'))
         self.assertTrue(entity['birthday'].startswith('1970-10-04T00:00:00'))
         self.assertTrue(entity['Birthday'].endswith('00Z'))
         self.assertTrue(entity['birthday'].endswith('00Z'))
         self.assertEqual(entity['binary'], b64encode(b'binary').decode('utf-8'))
         self.assertIsInstance(entity['other'], EntityProperty)
-        self.assertEqual(entity['other'].type, EdmType.INT64)
+        self.assertEqual(entity['other'].type, EdmType.INT32)
         self.assertEqual(entity['other'].value, 20)
         self.assertEqual(entity['clsid'], 'c9da6455-213d-42c9-9a79-3e9149a57833')
         # self.assertIsNone(entity.odata)
@@ -269,11 +270,11 @@ class StorageTableEntityTest(TableTestCase):
         self.assertEqual(entity.sign, 'aquarius')
         self.assertEqual(entity.ratio, 3.1)
         self.assertEqual(entity.evenratio, 3.0)
-        self.assertEqual(entity.large, 933311100)
+        self.assertEqual(entity.large.value, 933311100)
         self.assertEqual(entity.Birthday, datetime(1973, 10, 4, tzinfo=tzutc()))
         self.assertEqual(entity.birthday, datetime(1991, 10, 4, tzinfo=tzutc()))
         self.assertIsInstance(entity.other, EntityProperty)
-        self.assertEqual(entity.other.type, EdmType.INT64)
+        self.assertEqual(entity.other.type, EdmType.INT32)
         self.assertEqual(entity.other.value, 20)
         self.assertIsInstance(entity.clsid, uuid.UUID)
         self.assertEqual(str(entity.clsid), 'c9da6455-213d-42c9-9a79-3e9149a57833')
@@ -458,13 +459,13 @@ class StorageTableEntityTest(TableTestCase):
         try:
             # Act
             dict64 = self._create_random_base_entity_dict()
-            dict64['large'] = EntityProperty(2 ** 63)
+            dict64['large'] = EntityProperty(2 ** 63, EdmType.INT64)
 
             # Assert
             with self.assertRaises(TypeError):
                 self.table.create_entity(entity=dict64)
 
-            dict64['large'] = EntityProperty(-(2 ** 63 + 1))
+            dict64['large'] = EntityProperty(-(2 ** 63 + 1), EdmType.INT64)
             with self.assertRaises(TypeError):
                 self.table.create_entity(entity=dict64)
         finally:
@@ -640,6 +641,164 @@ class StorageTableEntityTest(TableTestCase):
                 etag=etag,
                 match_condition=MatchConditions.IfNotModified
             )
+
+            with self.assertRaises(ResourceNotFoundError):
+                resp = self.table.get_entity(partition_key=entity['PartitionKey'],
+                                            row_key=entity['RowKey'])
+
+            # Assert
+        finally:
+            self._tear_down()
+
+    # @pytest.mark.skip("pending")
+    @GlobalStorageAccountPreparer()
+    def test_get_entity_if_match_wrong_etag(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        self._set_up(storage_account, storage_account_key)
+        try:
+            table = self.ts.create_table("testtable")
+            entity = {
+                "PartitionKey": "PartitionKey",
+                "RowKey": "RowKey",
+                "Value": 1
+            }
+
+            response = table.create_entity(entity=entity)
+            old_etag = response["etag"]
+
+            entity["Value"] = 2
+            response = table.update_entity(entity=entity)
+
+            with self.assertRaises(HttpResponseError):
+                table.delete_entity(
+                    partition_key=entity['PartitionKey'],
+                    row_key=entity['RowKey'],
+                    etag=old_etag,
+                    match_condition=MatchConditions.IfNotModified
+                )
+
+        finally:
+            self._tear_down()
+
+    # @pytest.mark.skip("pending")
+    @GlobalStorageAccountPreparer()
+    def test_get_entity_if_match_modified(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        self._set_up(storage_account, storage_account_key)
+        try:
+            entity, etag = self._insert_random_entity()
+            self._create_query_table(1)
+
+            # Act
+            # Do a get and confirm the etag is parsed correctly by using it
+            # as a condition to delete.
+            resp = self.table.get_entity(partition_key=entity['PartitionKey'],
+                                         row_key=entity['RowKey'])
+
+            # This is ignoring the match_condition param and will delete the entity
+            self.table.delete_entity(
+                partition_key=resp['PartitionKey'],
+                row_key=resp['RowKey'],
+                etag=etag,
+                match_condition=MatchConditions.IfModified
+            )
+
+            with self.assertRaises(ResourceNotFoundError):
+                resp = self.table.get_entity(partition_key=entity['PartitionKey'],
+                                            row_key=entity['RowKey'])
+
+            # Assert
+        finally:
+            self._tear_down()
+
+    # @pytest.mark.skip("pending")
+    @GlobalStorageAccountPreparer()
+    def test_get_entity_if_match_unconditionally(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        self._set_up(storage_account, storage_account_key)
+        try:
+            entity, etag = self._insert_random_entity()
+            self._create_query_table(1)
+
+            # Act
+            # Do a get and confirm the etag is parsed correctly by using it
+            # as a condition to delete.
+            resp = self.table.get_entity(partition_key=entity['PartitionKey'],
+                                         row_key=entity['RowKey'])
+
+            # This is ignoring the match_condition param and will delete the entity
+            self.table.delete_entity(
+                partition_key=resp['PartitionKey'],
+                row_key=resp['RowKey'],
+                etag='abcdef',
+                match_condition=MatchConditions.Unconditionally
+            )
+
+            with self.assertRaises(ResourceNotFoundError):
+                resp = self.table.get_entity(partition_key=entity['PartitionKey'],
+                                            row_key=entity['RowKey'])
+
+            # Assert
+        finally:
+            self._tear_down()
+
+    # @pytest.mark.skip("pending")
+    @GlobalStorageAccountPreparer()
+    def test_get_entity_if_match_present(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        self._set_up(storage_account, storage_account_key)
+        try:
+            entity, etag = self._insert_random_entity()
+            self._create_query_table(1)
+
+            # Act
+            # Do a get and confirm the etag is parsed correctly by using it
+            # as a condition to delete.
+            resp = self.table.get_entity(partition_key=entity['PartitionKey'],
+                                         row_key=entity['RowKey'])
+
+            # This is ignoring the match_condition param and will delete the entity
+            self.table.delete_entity(
+                partition_key=resp['PartitionKey'],
+                row_key=resp['RowKey'],
+                etag='abcdef',
+                match_condition=MatchConditions.IfPresent
+            )
+
+            with self.assertRaises(ResourceNotFoundError):
+                resp = self.table.get_entity(partition_key=entity['PartitionKey'],
+                                            row_key=entity['RowKey'])
+
+            # Assert
+        finally:
+            self._tear_down()
+
+    # @pytest.mark.skip("pending")
+    @GlobalStorageAccountPreparer()
+    def test_get_entity_if_match_missing(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        self._set_up(storage_account, storage_account_key)
+        try:
+            entity, etag = self._insert_random_entity()
+            self._create_query_table(1)
+
+            # Act
+            # Do a get and confirm the etag is parsed correctly by using it
+            # as a condition to delete.
+            resp = self.table.get_entity(partition_key=entity['PartitionKey'],
+                                         row_key=entity['RowKey'])
+
+            # This is ignoring the match_condition param and will delete the entity
+            self.table.delete_entity(
+                partition_key=resp['PartitionKey'],
+                row_key=resp['RowKey'],
+                etag='abcdef',
+                match_condition=MatchConditions.IfMissing
+            )
+
+            with self.assertRaises(ResourceNotFoundError):
+                resp = self.table.get_entity(partition_key=entity['PartitionKey'],
+                                            row_key=entity['RowKey'])
 
             # Assert
         finally:
@@ -1373,7 +1532,7 @@ class StorageTableEntityTest(TableTestCase):
 
             # Assert
             self.assertEqual(len(entities), 2)
-            self.assertEqual(entities[0].age, 39)
+            self.assertEqual(entities[0].age.value, 39)
             self.assertEqual(entities[0].sex, 'male')
             self.assertFalse(hasattr(entities[0], "birthday"))
             self.assertFalse(hasattr(entities[0], "married"))

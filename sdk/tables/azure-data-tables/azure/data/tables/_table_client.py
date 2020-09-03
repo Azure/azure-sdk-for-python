@@ -32,7 +32,7 @@ from ._table_client_base import TableClientBase
 from ._serialize import serialize_iso
 from ._deserialize import _return_headers_and_deserialized
 from ._error import _process_table_error
-from ._models import TableEntityPropertiesPaged, UpdateMode, TableItem
+from ._models import TableEntityPropertiesPaged, UpdateMode
 
 
 class TableClient(TableClientBase):
@@ -239,6 +239,7 @@ class TableClient(TableClientBase):
         if_match, _ = _get_match_headers(kwargs=dict(kwargs, etag=kwargs.pop('etag', None),
                                                                 match_condition=kwargs.pop('match_condition', None)),
                                                     etag_param='etag', match_param='match_condition')
+
         try:
             self._client.table.delete_entity(
                 table=self.table_name,

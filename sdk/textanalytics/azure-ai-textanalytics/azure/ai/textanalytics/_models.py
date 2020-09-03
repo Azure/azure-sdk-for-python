@@ -146,6 +146,8 @@ class RecognizePiiEntitiesResult(DictMixin):
     :ivar entities: Recognized PII entities in the document.
     :vartype entities:
         list[~azure.ai.textanalytics.PiiEntity]
+    :ivar str redacted_text: Returns the text of the input document with all of the PII information
+        redacted out. Only returned for API versions v3.1-preview.2 and up.
     :ivar warnings: Warnings encountered while processing document. Results will still be returned
         if there are warnings, but they may not be fully accurate.
     :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
@@ -155,18 +157,28 @@ class RecognizePiiEntitiesResult(DictMixin):
         ~azure.ai.textanalytics.TextDocumentStatistics
     :ivar bool is_error: Boolean check for error item when iterating over list of
         results. Always False for an instance of a RecognizePiiEntitiesResult.
+    .. versionadded:: v3.1-preview.2
+        The *redacted_text* parameter.
     """
 
     def __init__(self, **kwargs):
         self.id = kwargs.get("id", None)
         self.entities = kwargs.get("entities", None)
+        self.redacted_text = kwargs.get("redacted_text", None)
         self.warnings = kwargs.get("warnings", [])
         self.statistics = kwargs.get("statistics", None)
         self.is_error = False
 
     def __repr__(self):
-        return "RecognizePiiEntitiesResult(id={}, entities={}, warnings={}, statistics={}, is_error={})" \
-            .format(self.id, repr(self.entities), repr(self.warnings), repr(self.statistics), self.is_error)[:1024]
+        return "RecognizePiiEntitiesResult(id={}, entities={}, redacted_text={}, warnings={}, " \
+            "statistics={}, is_error={})" .format(
+                self.id,
+                repr(self.entities),
+                self.redacted_text,
+                repr(self.warnings),
+                repr(self.statistics),
+                self.is_error
+            )[:1024]
 
 
 class DetectLanguageResult(DictMixin):
@@ -214,9 +226,9 @@ class CategorizedEntity(DictMixin):
     :ivar subcategory: Entity subcategory, such as Age/Year/TimeRange etc
     :vartype subcategory: str
     :ivar int offset: The entity text offset from the start of the document.
-        Returned in unicode code points. Only returned for api versions v3.1-preview.1 and up.
+        Returned in unicode code points. Only returned for API versions v3.1-preview.1 and up.
     :ivar int length: The length of the entity text. Returned
-        in unicode code points. Only returned for api versions v3.1-preview.1 and up.
+        in unicode code points. Only returned for API versions v3.1-preview.1 and up.
     :ivar confidence_score: Confidence score between 0 and 1 of the extracted
         entity.
     :vartype confidence_score: float
@@ -618,11 +630,11 @@ class LinkedEntity(DictMixin):
     :ivar data_source: Data source used to extract entity linking,
         such as Wiki/Bing etc.
     :vartype data_source: str
-    :ivar str bing_id: Bing unique identifier of the recognized entity. Use in conjunction
-        with the Bing Entity Search SDK to fetch additional relevant information. Only
-        available for API version v3.1-preview.2 and up.
+    :ivar str bing_entity_search_api_id: Bing Entity Search unique identifier of the recognized entity.
+        Use in conjunction with the Bing Entity Search SDK to fetch additional relevant information.
+        Only available for API version v3.1-preview.2 and up.
     .. versionadded:: v3.1-preview.2
-        The *bing_id* property.
+        The *bing_entity_search_api_id* property.
     """
 
     def __init__(self, **kwargs):
@@ -632,11 +644,11 @@ class LinkedEntity(DictMixin):
         self.data_source_entity_id = kwargs.get("data_source_entity_id", None)
         self.url = kwargs.get("url", None)
         self.data_source = kwargs.get("data_source", None)
-        self.bing_id = kwargs.get("bing_id", None)
+        self.bing_entity_search_api_id = kwargs.get("bing_entity_search_api_id", None)
 
     @classmethod
     def _from_generated(cls, entity):
-        bing_id = entity.bing_id if hasattr(entity, "bing_id") else None
+        bing_entity_search_api_id = entity.bing_id if hasattr(entity, "bing_id") else None
         return cls(
             name=entity.name,
             matches=[LinkedEntityMatch._from_generated(e) for e in entity.matches],  # pylint: disable=protected-access
@@ -644,19 +656,19 @@ class LinkedEntity(DictMixin):
             data_source_entity_id=entity.id,
             url=entity.url,
             data_source=entity.data_source,
-            bing_id=bing_id,
+            bing_entity_search_api_id=bing_entity_search_api_id,
         )
 
     def __repr__(self):
         return "LinkedEntity(name={}, matches={}, language={}, data_source_entity_id={}, url={}, " \
-            "data_source={}, bing_id={})".format(
+            "data_source={}, bing_entity_search_api_id={})".format(
                 self.name,
                 repr(self.matches),
                 self.language,
                 self.data_source_entity_id,
                 self.url,
                 self.data_source,
-                self.bing_id,
+                self.bing_entity_search_api_id,
         )[:1024]
 
 
@@ -671,9 +683,9 @@ class LinkedEntityMatch(DictMixin):
     :vartype confidence_score: float
     :ivar text: Entity text as appears in the request.
     :ivar int offset: The linked entity match text offset from the start of the document.
-        Returned in unicode code points. Only returned for api versions v3.1-preview.1 and up.
+        Returned in unicode code points. Only returned for API versions v3.1-preview.1 and up.
     :ivar int length: The length of the linked entity match text. Returned
-        in unicode code points. Only returned for api versions v3.1-preview.1 and up.
+        in unicode code points. Only returned for API versions v3.1-preview.1 and up.
     :vartype text: str
     .. versionadded:: v3.1-preview.1
         The *offset* and *length* properties.
@@ -785,9 +797,9 @@ class SentenceSentiment(DictMixin):
     :vartype confidence_scores:
         ~azure.ai.textanalytics.SentimentConfidenceScores
     :ivar int offset: The sentence offset from the start of the document. Returned
-        in unicode code points. Only returned for api versions v3.1-preview.1 and up.
+        in unicode code points. Only returned for API versions v3.1-preview.1 and up.
     :ivar int length: The length of the sentence. Returned
-        in unicode code points. Only returned for api versions v3.1-preview.1 and up.
+        in unicode code points. Only returned for API versions v3.1-preview.1 and up.
     :ivar mined_opinions: The list of opinions mined from this sentence.
         For example in "The food is good, but the service is bad", we would
         mind these two opinions "food is good", "service is bad". Only returned

@@ -18,7 +18,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .. import LocationMode
 from .._base_client import parse_connection_str
-from .._generated.aio._azure_table_async import AzureTable
+from .._generated.aio._azure_table import AzureTable
 from .._generated.models import TableServiceProperties, TableProperties, QueryOptions
 from .._models import service_stats_deserialize, service_properties_deserialize
 from .._error import _process_table_error

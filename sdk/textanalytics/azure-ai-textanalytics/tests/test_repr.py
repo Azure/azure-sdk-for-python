@@ -117,12 +117,12 @@ def linked_entity(linked_entity_match):
         data_source_entity_id="Bill Gates",
         url="https://en.wikipedia.org/wiki/Bill_Gates",
         data_source="wikipedia",
-        bing_id="12345678"
+        bing_entity_search_api_id="12345678"
     )
     model_repr = (
         "LinkedEntity(name=Bill Gates, matches=[{}, {}], "\
         "language=English, data_source_entity_id=Bill Gates, "\
-        "url=https://en.wikipedia.org/wiki/Bill_Gates, data_source=wikipedia, bing_id=12345678)".format(
+        "url=https://en.wikipedia.org/wiki/Bill_Gates, data_source=wikipedia, bing_entity_search_api_id=12345678)".format(
             linked_entity_match[1], linked_entity_match[1]
         )
     )
@@ -290,11 +290,13 @@ class TestRepr():
         model = _models.RecognizePiiEntitiesResult(
             id="1",
             entities=[pii_entity[0]],
+            redacted_text="***********",
             warnings=[text_analytics_warning[0]],
             statistics=text_document_statistics[0],
             is_error=False
         )
-        model_repr = "RecognizePiiEntitiesResult(id=1, entities=[{}], warnings=[{}], statistics={}, is_error=False)".format(
+        model_repr = "RecognizePiiEntitiesResult(id=1, entities=[{}], redacted_text=***********, warnings=[{}], " \
+        "statistics={}, is_error=False)".format(
             pii_entity[1], text_analytics_warning[1], text_document_statistics[1]
         )
 
