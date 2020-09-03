@@ -27,6 +27,17 @@ class MaintenanceScope(str, Enum):
     host = "Host"
     resource = "Resource"
     in_resource = "InResource"
+    os_image = "OSImage"
+    extension = "Extension"
+    in_guest_patch = "InGuestPatch"
+    sqldb = "SQLDB"
+    sql_managed_instance = "SQLManagedInstance"
+
+
+class Visibility(str, Enum):
+
+    custom = "Custom"
+    public = "Public"
 
 
 class ImpactType(str, Enum):
