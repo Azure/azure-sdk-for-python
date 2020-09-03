@@ -13,6 +13,9 @@
   (`azure.identity.aio.CertificateCredential`) will support this in a
   future version.
   ([#10816](https://github.com/Azure/azure-sdk-for-python/issues/10816))
+- `InteractiveBrowserCredential` keyword argument `redirect_uri` enables
+  authentication with a user-specified application having a custom redirect URI
+  ([#13344](https://github.com/Azure/azure-sdk-for-python/issues/13344))  
 
 ## 1.4.0 (2020-08-10)
 ### Added
