@@ -30,9 +30,9 @@ class VisualStudioCodeCredential(AsyncContextManager):
     def __init__(self, **kwargs: "Any") -> None:
         self._refresh_token = None
         self._client = kwargs.pop("_client", None)
+        self._tenant_id = kwargs.pop("tenant_id", None) or "organizations"
         if not self._client:
-            tenant_id = kwargs.pop("tenant_id", None) or "organizations"
-            self._client = AadClient(tenant_id, AZURE_VSCODE_CLIENT_ID, **kwargs)
+            self._client = AadClient(self._tenant_id, AZURE_VSCODE_CLIENT_ID, **kwargs)
 
     async def __aenter__(self):
         if self._client:
@@ -59,6 +59,11 @@ class VisualStudioCodeCredential(AsyncContextManager):
         """
         if not scopes:
             raise ValueError("'get_token' requires at least one scope")
+
+        if self._tenant_id.lower() == "adfs":
+            raise CredentialUnavailableError(
+                message="VisualStudioCodeCredential authentication unavailable. ADFS is not supported."
+            )
 
         token = self._client.get_cached_access_token(scopes)
         if not token:
