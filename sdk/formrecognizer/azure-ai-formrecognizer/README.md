@@ -100,7 +100,7 @@ with the Azure SDK, please install the `azure-identity` package:
 
 ```pip install azure-identity```
 
-You will also need to [register a new AAD application][register_aad_app] and [grant access][grant_role_access] to 
+You will also need to [register a new AAD application and grant access][register_aad_app] to 
 Form Recognizer by assigning the `"Cognitive Services User"` role to your service principal.
 
 Once completed, set the values of the client ID, tenant ID, and client secret of the AAD application as environment variables:
@@ -402,8 +402,6 @@ The following section provides several code snippets illustrating common pattern
 ### More sample code
 
 These code samples show common scenario operations with the Azure Form Recognizer client library.
-The async versions of the samples (the python sample files appended with `_async`) show asynchronous operations
-with Form Recognizer and require Python 3.5 or later.
 
 * Client authentication: [sample_authentication.py][sample_authentication]
 * Recognize receipts: [sample_recognize_receipts.py][sample_recognize_receipts]
@@ -472,7 +470,6 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [azure_portal_get_endpoint]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=multiservice%2Cwindows#get-the-keys-for-your-resource
 [cognitive_authentication_api_key]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=multiservice%2Cwindows#get-the-keys-for-your-resource
 [register_aad_app]: https://docs.microsoft.com/azure/cognitive-services/authentication#assign-a-role-to-a-service-principal
-[grant_role_access]: https://docs.microsoft.com/azure/cognitive-services/authentication#assign-a-role-to-a-service-principal
 [custom_subdomain]: https://docs.microsoft.com/azure/cognitive-services/authentication#create-a-resource-with-a-custom-subdomain
 [azure_identity]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity
 [default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity#defaultazurecredential

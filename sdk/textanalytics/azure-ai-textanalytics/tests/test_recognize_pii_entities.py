@@ -3,7 +3,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-
+import os
 import pytest
 import platform
 import functools
@@ -15,7 +15,9 @@ from testcase import TextAnalyticsClientPreparer as _TextAnalyticsClientPreparer
 from azure.ai.textanalytics import (
     TextAnalyticsClient,
     TextDocumentInput,
-    VERSION
+    VERSION,
+    TextAnalyticsApiVersion,
+    PiiEntityDomainType,
 )
 
 # pre-apply the client_cls positional argument so it needn't be explicitly passed below
@@ -84,13 +86,6 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
                 self.assertIsNotNone(entity.length)
                 self.assertNotEqual(entity.length, 0)
                 self.assertIsNotNone(entity.confidence_score)
-
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
-    def test_length_with_emoji(self, client):
-        result = client.recognize_pii_entities(["👩 SSN: 859-98-0987"])
-        self.assertEqual(result[0].entities[0].offset, 7)
-        self.assertEqual(result[0].entities[0].length, 11)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -572,3 +567,42 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
             language="en",
             raw_response_hook=callback
         )
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_0})
+    def test_recognize_pii_entities_v3(self, client):
+        with pytest.raises(NotImplementedError) as excinfo:
+            client.recognize_pii_entities(["this should fail"])
+
+        assert "'recognize_pii_entities' endpoint is only available for API version v3.1-preview.1 and up" in str(excinfo.value)
+
+    # currently only have this as playback since the dev endpoint is unreliable
+    @pytest.mark.playback_test_only
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_2,
+        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
+        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net/"
+    })
+    def test_redacted_text(self, client):
+        result = client.recognize_pii_entities(["My SSN is 859-98-0987."])
+        self.assertEqual("My SSN is ***********.", result[0].redacted_text)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    def test_redacted_text_v3_1_preview_1(self, client):
+        result = client.recognize_pii_entities(["My SSN is 859-98-0987."])
+        self.assertIsNone(result[0].redacted_text)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    def test_phi_domain_filter(self, client):
+        # without the domain filter, this should return two entities: Microsoft as an org,
+        # and the phone number. With the domain filter, it should only return one.
+        result = client.recognize_pii_entities(
+            ["I work at Microsoft and my phone number is 333-333-3333"],
+            domain_filter=PiiEntityDomainType.PROTECTED_HEALTH_INFORMATION
+        )
+        self.assertEqual(len(result[0].entities), 1)
+        self.assertEqual(result[0].entities[0].text, '333-333-3333')
+        self.assertEqual(result[0].entities[0].category, 'Phone Number')

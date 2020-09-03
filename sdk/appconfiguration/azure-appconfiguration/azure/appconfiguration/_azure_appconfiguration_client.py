@@ -508,6 +508,7 @@ class AzureAppConfigurationClient:
         :type configuration_setting: :class:`ConfigurationSetting`
         :param read_only: set the read only setting if true, else clear the read only setting
         :type read_only: bool
+        :keyword ~azure.core.MatchConditions match_condition: the match condition to use upon the etag
         :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request header
         :return: The ConfigurationSetting returned from the service
         :rtype: :class:`ConfigurationSetting`
@@ -529,11 +530,23 @@ class AzureAppConfigurationClient:
             404: ResourceNotFoundError
         }
 
+        match_condition = kwargs.pop("match_condition", MatchConditions.Unconditionally)
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        if match_condition == MatchConditions.IfModified:
+            error_map[412] = ResourceNotModifiedError
+        if match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        if match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+
         try:
             if read_only:
                 key_value = self._impl.put_lock(
                     key=configuration_setting.key,
                     label=configuration_setting.label,
+                    if_match=prep_if_match(configuration_setting.etag, match_condition),
+                    if_none_match=prep_if_none_match(configuration_setting.etag, match_condition),
                     error_map=error_map,
                     **kwargs
                 )
@@ -541,6 +554,8 @@ class AzureAppConfigurationClient:
                 key_value = self._impl.delete_lock(
                     key=configuration_setting.key,
                     label=configuration_setting.label,
+                    if_match=prep_if_match(configuration_setting.etag, match_condition),
+                    if_none_match=prep_if_none_match(configuration_setting.etag, match_condition),
                     error_map=error_map,
                     **kwargs
                 )

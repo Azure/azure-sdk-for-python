@@ -9,7 +9,7 @@ interactions:
       x-ms-version:
       - '2019-12-12'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/utcontainere9581858?restype=container
+    uri: https://storagenamestorname.blob.core.windows.net/utcontainere9581858?restype=container
   response:
     body:
       string: ''
@@ -34,7 +34,7 @@ interactions:
       x-ms-version:
       - '2019-12-12'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/utcontainersourcee9581858?restype=container
+    uri: https://storagenamestorname.blob.core.windows.net/utcontainersourcee9581858?restype=container
   response:
     body:
       string: ''
@@ -67,7 +67,7 @@ interactions:
       x-ms-version:
       - '2019-12-12'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/utcontainere9581858/blobe9581858
+    uri: https://storagenamestorname.blob.core.windows.net/utcontainere9581858/blobe9581858
   response:
     body:
       string: ''
@@ -102,7 +102,7 @@ interactions:
       x-ms-version:
       - '2019-12-12'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/utcontainere9581858/blobe9581858?comp=lease
+    uri: https://storagenamestorname.blob.core.windows.net/utcontainere9581858/blobe9581858?comp=lease
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The
@@ -136,7 +136,7 @@ interactions:
       x-ms-version:
       - '2019-12-12'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/utcontainere9581858/blobe9581858?comp=lease
+    uri: https://storagenamestorname.blob.core.windows.net/utcontainere9581858/blobe9581858?comp=lease
   response:
     body:
       string: ''
@@ -174,7 +174,7 @@ interactions:
       x-ms-version:
       - '2019-12-12'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/utcontainere9581858/blobe9581858?comp=page
+    uri: https://storagenamestorname.blob.core.windows.net/utcontainere9581858/blobe9581858?comp=page
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Error><Code>ConditionNotMet</Code><Message>The
@@ -212,7 +212,7 @@ interactions:
       x-ms-version:
       - '2019-12-12'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/utcontainere9581858/blobe9581858?comp=page
+    uri: https://storagenamestorname.blob.core.windows.net/utcontainere9581858/blobe9581858?comp=page
   response:
     body:
       string: ''
@@ -242,7 +242,7 @@ interactions:
       x-ms-version:
       - '2019-12-12'
     method: GET
-    uri: https://storagename.blob.core.windows.net/utcontainere9581858/blobe9581858?comp=pagelist
+    uri: https://storagenamestorname.blob.core.windows.net/utcontainere9581858/blobe9581858?comp=pagelist
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><PageList><PageRange><Start>0</Start><End>511</End></PageRange></PageList>"
@@ -275,7 +275,7 @@ interactions:
       x-ms-version:
       - '2019-12-12'
     method: GET
-    uri: https://storagename.blob.core.windows.net/utcontainere9581858/blobe9581858
+    uri: https://storagenamestorname.blob.core.windows.net/utcontainere9581858/blobe9581858
   response:
     body:
       string: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
@@ -315,7 +315,7 @@ interactions:
       x-ms-version:
       - '2019-12-12'
     method: GET
-    uri: https://storagename.blob.core.windows.net/utcontainere9581858/blobe9581858?comp=pagelist
+    uri: https://storagenamestorname.blob.core.windows.net/utcontainere9581858/blobe9581858?comp=pagelist
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><PageList><PageRange><Start>0</Start><End>511</End></PageRange></PageList>"

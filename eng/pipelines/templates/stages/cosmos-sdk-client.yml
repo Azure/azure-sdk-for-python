@@ -17,7 +17,13 @@ parameters:
 - name: EmulatorStartParameters
   type: string
   default: ''
-
+- name: TargetDocRepoOwner
+  type: string
+  default: MicrosoftDocs
+- name: TargetDocRepoName
+  type: string
+  default: azure-docs-sdk-python
+  
 stages:
   - stage: Build
     jobs:
@@ -66,3 +72,5 @@ stages:
         ServiceDirectory: ${{parameters.ServiceDirectory}}
         Artifacts: ${{parameters.Artifacts}}
         ArtifactName: packages
+        TargetDocRepoOwner: ${{parameters.TargetDocRepoOwner}}
+        TargetDocRepoName: ${{parameters.TargetDocRepoName}}

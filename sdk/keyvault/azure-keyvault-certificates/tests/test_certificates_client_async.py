@@ -655,7 +655,8 @@ class CertificateClientTests(KeyVaultTestCase):
     async def test_get_certificate_version(self, client, **kwargs):
         cert_name = self.get_resource_name("cert")
         policy = CertificatePolicy.get_default()
-        await asyncio.gather(*[client.create_certificate(cert_name, policy) for _ in range(self.list_test_size)])
+        for _ in range(self.list_test_size):
+            await client.create_certificate(cert_name, policy)
 
         async for version_properties in client.list_properties_of_certificate_versions(cert_name):
             cert = await client.get_certificate_version(version_properties.name, version_properties.version)

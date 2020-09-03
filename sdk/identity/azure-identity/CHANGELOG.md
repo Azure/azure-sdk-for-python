@@ -1,5 +1,19 @@
 # Release History
 
+## 1.5.0b1 (Unreleased)
+### Added
+- Application authentication APIs from 1.4.0b7
+- `ManagedIdentityCredential` supports the latest version of App Service
+  ([#11346](https://github.com/Azure/azure-sdk-for-python/issues/11346))
+- `DefaultAzureCredential` allows specifying the client ID of a user-assigned
+  managed identity via keyword argument `managed_identity_client_id`
+  ([#12991](https://github.com/Azure/azure-sdk-for-python/issues/12991)) 
+- `CertificateCredential` supports Subject Name/Issuer authentication when
+  created with `send_certificate=True`. The async `CertificateCredential`
+  (`azure.identity.aio.CertificateCredential`) will support this in a
+  future version.
+  ([#10816](https://github.com/Azure/azure-sdk-for-python/issues/10816))
+
 ## 1.4.0 (2020-08-10)
 ### Added
 - `DefaultAzureCredential` uses the value of environment variable
@@ -250,7 +264,7 @@ its use in national clouds
 ### New features:
 - `AuthorizationCodeCredential` authenticates with a previously obtained
 authorization code. See Azure Active Directory's
-[authorization code documentation](https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow)
+[authorization code documentation](https://docs.microsoft.com/azure/active-directory/develop/v2-oauth2-auth-code-flow)
 for more information about this authentication flow.
 - Multi-cloud support: client credentials accept the authority of an Azure Active
 Directory authentication endpoint as an `authority` keyword argument. Known

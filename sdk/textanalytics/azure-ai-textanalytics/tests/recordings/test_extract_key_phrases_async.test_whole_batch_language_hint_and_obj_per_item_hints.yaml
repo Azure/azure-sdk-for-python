@@ -6,13 +6,13 @@ interactions:
       "en"}]}'
     headers:
       Accept:
-      - application/json
+      - application/json, text/json
       Content-Length:
       - '253'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/1.0.1 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.0.1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.1/keyPhrases?showStats=false
   response:
@@ -21,16 +21,16 @@ interactions:
         ,\"the veterinarian\"],\"warnings\":[]},{\"id\":\"2\",\"keyPhrases\":[\"document\
         \ escrito\",\"Espa\xF1ol\"],\"warnings\":[]},{\"id\":\"3\",\"keyPhrases\"\
         :[\"\u732B\u306F\u5E78\u305B\"],\"warnings\":[]}],\"errors\":[],\"modelVersion\"\
-        :\"2019-10-01\"}"
+        :\"2020-07-01\"}"
     headers:
-      apim-request-id: 36700dd7-4ea9-41e0-9476-5d063f1ff835
+      apim-request-id: c32c9383-ddfd-4259-959b-7e2b52870d15
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Fri, 24 Jul 2020 16:32:49 GMT
+      date: Thu, 27 Aug 2020 19:32:07 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '6'
+      x-envoy-upstream-service-time: '10'
     status:
       code: 200
       message: OK

@@ -15,8 +15,8 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 from .._shared.policies_async import ExponentialRetry
 from .._shared.response_handlers import return_response_headers, process_storage_error
-from .._deserialize import get_page_ranges_result
-from .._serialize import get_modify_conditions, get_api_version
+from .._deserialize import get_page_ranges_result, parse_tags
+from .._serialize import get_modify_conditions, get_api_version, get_access_conditions
 from .._generated import VERSION
 from .._generated.aio import AzureBlobStorage
 from .._generated.models import StorageErrorException, CpkInfo
@@ -27,7 +27,6 @@ from ._upload_helpers import (
     upload_append_blob,
     upload_page_blob)
 from .._models import BlobType, BlobBlock, BlobProperties
-from .._lease import get_access_conditions
 from ._lease_async import BlobLeaseClient
 from ._download_async import StorageStreamDownloader
 
@@ -1038,7 +1037,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
                 :caption: Copy a blob from a URL.
         """
         options = self._start_copy_from_url_options(
-            source_url,
+            source_url=self._encode_source_url(source_url),
             metadata=metadata,
             incremental_copy=incremental_copy,
             **kwargs)
@@ -1288,7 +1287,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         """
         options = self._stage_block_from_url_options(
             block_id,
-            source_url,
+            source_url=self._encode_source_url(source_url),
             source_offset=source_offset,
             source_length=source_length,
             source_content_md5=source_content_md5,
@@ -1534,7 +1533,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         options = self._get_blob_tags_options(**kwargs)
         try:
             _, tags = await self._client.blob.get_tags(**options)
-            return BlobProperties._parse_tags(tags)  # pylint: disable=protected-access
+            return parse_tags(tags)  # pylint: disable=protected-access
         except StorageErrorException as error:
             process_storage_error(error)
 
@@ -1992,7 +1991,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         """
 
         options = self._upload_pages_from_url_options(
-            source_url=source_url,
+            source_url=self._encode_source_url(source_url),
             offset=offset,
             length=length,
             source_offset=source_offset,
@@ -2251,7 +2250,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             The timeout parameter is expressed in seconds.
         """
         options = self._append_block_from_url_options(
-            copy_source_url,
+            copy_source_url=self._encode_source_url(copy_source_url),
             source_offset=source_offset,
             source_length=source_length,
             **kwargs

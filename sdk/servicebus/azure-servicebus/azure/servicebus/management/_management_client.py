@@ -939,7 +939,7 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
             )
 
     def delete_rule(self, topic, subscription, rule, **kwargs):
-        # type: (Union[str, TopicProperties], Union[str, SubscriptionProperties], Union[str, RuleProperties], Any) -> None  # pylint:disable=line-too-long
+        # type: (Union[str,TopicProperties], Union[str,SubscriptionProperties], Union[str,RuleProperties], Any) -> None
         """Delete a topic subscription rule.
 
         :param Union[str, ~azure.servicebus.management.TopicProperties] topic: The topic that owns the subscription.

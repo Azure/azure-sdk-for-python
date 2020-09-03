@@ -24,6 +24,57 @@ USAGE:
     Set the environment variables with your own values before running the sample:
     1) AZURE_TEXT_ANALYTICS_ENDPOINT - the endpoint to your Cognitive Services resource.
     2) AZURE_TEXT_ANALYTICS_KEY - your Text Analytics subscription key
+
+OUTPUT:
+    In this sample we will be combing through the reviews of a potential hotel to stay at: Hotel Foo.
+    I first found a handful of reviews for Hotel Foo. Let's see if I want to stay here.
+
+
+    Let's see how many positive and negative reviews of this hotel I have right now
+    ...We have 3 positive reviews and 2 negative reviews.
+
+    Looks more positive than negative, but still pretty mixed, so I'm going to drill deeper into the opinions of individual aspects of this hotel
+
+    In order to do that, I'm going to sort them based on whether these opinions are positive, mixed, or negative
+
+
+    Let's look at the 7 positive opinions users have expressed for aspects of this hotel
+    ...Reviewers have the following opinions for the overall positive 'concierge' aspect of the hotel
+    ......'positive' opinion 'nice'
+    ...Reviewers have the following opinions for the overall positive 'AC' aspect of the hotel
+    ......'positive' opinion 'good'
+    ......'positive' opinion 'quiet'
+    ...Reviewers have the following opinions for the overall positive 'breakfast' aspect of the hotel
+    ......'positive' opinion 'good'
+    ...Reviewers have the following opinions for the overall positive 'hotel' aspect of the hotel
+    ......'positive' opinion 'good'
+    ...Reviewers have the following opinions for the overall positive 'breakfast' aspect of the hotel
+    ......'positive' opinion 'nice'
+    ...Reviewers have the following opinions for the overall positive 'shuttle service' aspect of the hotel
+    ......'positive' opinion 'loved'
+    ...Reviewers have the following opinions for the overall positive 'view' aspect of the hotel
+    ......'positive' opinion 'great'
+    ......'positive' opinion 'unobstructed'
+
+
+    Now let's look at the 1 mixed opinions users have expressed for aspects of this hotel
+    ...Reviewers have the following opinions for the overall mixed 'rooms' aspect of the hotel
+    ......'positive' opinion 'beautiful'
+    ......'negative' opinion 'dirty'
+
+
+    Finally, let's see the 4 negative opinions users have expressed for aspects of this hotel
+    ...Reviewers have the following opinions for the overall negative 'food' aspect of the hotel
+    ......'negative' opinion 'unacceptable'
+    ...Reviewers have the following opinions for the overall negative 'service' aspect of the hotel
+    ......'negative' opinion 'unacceptable'
+    ...Reviewers have the following opinions for the overall negative 'elevator' aspect of the hotel
+    ......'negative' opinion 'broken'
+    ...Reviewers have the following opinions for the overall negative 'toilet' aspect of the hotel
+    ......'negative' opinion 'smelly'
+
+
+    Looking at the breakdown, even though there were more positive opinions of this hotel, I care the most about the food and the toilets in a hotel, so I will be staying elsewhere
 """
 
 import os

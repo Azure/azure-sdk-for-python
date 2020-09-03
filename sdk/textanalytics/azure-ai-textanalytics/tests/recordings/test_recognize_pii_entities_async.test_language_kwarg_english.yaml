@@ -4,30 +4,30 @@ interactions:
       "language": "en"}]}'
     headers:
       Accept:
-      - application/json
+      - application/json, text/json
       Content-Length:
       - '93'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/1.0.1 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.0.1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.1/entities/recognition/pii?model-version=latest&showStats=true
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.1/entities/recognition/pii?model-version=latest&showStats=true&stringIndexType=UnicodeCodePoint
   response:
     body:
       string: '{"statistics":{"documentsCount":1,"validDocumentsCount":1,"erroneousDocumentsCount":0,"transactionsCount":1},"documents":[{"id":"0","statistics":{"charactersCount":35,"transactionsCount":1},"entities":[{"text":"Bill
-        Gates","category":"Person","offset":0,"length":10,"confidenceScore":0.81},{"text":"Microsoft","category":"Organization","offset":25,"length":9,"confidenceScore":0.64}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}'
+        Gates","category":"Person","offset":0,"length":10,"confidenceScore":0.81},{"text":"Microsoft","category":"Organization","offset":25,"length":9,"confidenceScore":0.64}],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}'
     headers:
-      apim-request-id: e612f043-5b57-4974-ac8f-8eaca05cdffe
+      apim-request-id: 5ad422ee-f8c3-47f5-b78c-b23eea574c45
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=1
-      date: Thu, 23 Jul 2020 17:19:52 GMT
+      date: Thu, 27 Aug 2020 19:32:24 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '72'
+      x-envoy-upstream-service-time: '68'
     status:
       code: 200
       message: OK
-    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.1/entities/recognition/pii?model-version=latest&showStats=true
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.1/entities/recognition/pii?model-version=latest&showStats=true&stringIndexType=UnicodeCodePoint
 version: 1
