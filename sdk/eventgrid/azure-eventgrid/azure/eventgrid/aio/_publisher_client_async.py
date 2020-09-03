@@ -63,6 +63,10 @@ class EventGridPublisherClient(object):
             events = [events]
 
         if all(isinstance(e, CloudEvent) for e in events) or all(_is_cloud_event(e) for e in events):
+            try:
+                events = [e._to_generated(**kwargs) for e in events]
+            except AttributeError:
+                pass # means it's a dictionary
             kwargs.setdefault("content_type", "application/cloudevents-batch+json; charset=utf-8")
             await self._client.publish_cloud_event_events(self._topic_hostname, events, **kwargs)
         elif all(isinstance(e, EventGridEvent) for e in events) or all(isinstance(e, dict) for e in events):

@@ -118,6 +118,26 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
         await client.send([cloud_event])
 
 
+    @pytest.mark.liveTest
+    @CachedResourceGroupPreparer(name_prefix='eventgridtest')
+    @CachedEventGridTopicPreparer(name_prefix='cloudeventgridtest')
+    async def test_send_cloud_event_data_with_extensions(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
+        akc_credential = AzureKeyCredential(eventgrid_topic_primary_key)
+        client = EventGridPublisherClient(eventgrid_topic_endpoint, akc_credential)
+        cloud_event = CloudEvent(
+                source = "http://samplesource.dev",
+                data = "cloudevent",
+                type="Sample.Cloud.Event",
+                reason_code=204,
+                extension="extension"
+                )
+        await client.send([cloud_event])
+        assert 'reason_code' in cloud_event.__dict__
+        assert 'extension' in cloud_event.__dict__
+        assert cloud_event.reason_code == 204
+        assert cloud_event.__dict__['reason_code'] == 204
+
+
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
     @CachedEventGridTopicPreparer(name_prefix='cloudeventgridtest')
     @pytest.mark.asyncio

@@ -7,6 +7,7 @@ from typing import Optional
 from msrest.serialization import UTC
 import datetime as dt
 import uuid
+import base64
 import json
 import six
 from ._generated import models
@@ -50,7 +51,7 @@ class EventMixin(object):
         return event
 
 
-class CloudEvent(InternalCloudEvent, EventMixin):   #pylint:disable=too-many-instance-attributes
+class CloudEvent(EventMixin):   #pylint:disable=too-many-instance-attributes
     """Properties of an event published to an Event Grid topic using the CloudEvent 1.0 Schema.
 
     All required parameters must be populated in order to send to Azure.
@@ -75,35 +76,53 @@ class CloudEvent(InternalCloudEvent, EventMixin):   #pylint:disable=too-many-ins
      unique for each distinct event.
     :type id: Optional[str]
     """
-
-    _validation = {
-        'source': {'required': True},
-        'type': {'required': True},
-    }
-
-    _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'id': {'key': 'id', 'type': 'str'},
-        'source': {'key': 'source', 'type': 'str'},
-        'data': {'key': 'data', 'type': 'object'},
-        'data_base64': {'key': 'data_base64', 'type': 'bytearray'},
-        'type': {'key': 'type', 'type': 'str'},
-        'time': {'key': 'time', 'type': 'iso-8601'},
-        'specversion': {'key': 'specversion', 'type': 'str'},
-        'dataschema': {'key': 'dataschema', 'type': 'str'},
-        'datacontenttype': {'key': 'datacontenttype', 'type': 'str'},
-        'subject': {'key': 'subject', 'type': 'str'},
-    }
-
     def __init__(self, source, type, **kwargs):
         # type: (str, str, Any) -> None
-        kwargs.setdefault('id', uuid.uuid4())
-        kwargs.setdefault("source", source)
-        kwargs.setdefault("type", type)
-        kwargs.setdefault("time", dt.datetime.now(UTC()).isoformat())
-        kwargs.setdefault("specversion", "1.0")
+        self.source = source
+        self.type = type
+        self.specversion = kwargs.get("specversion", "1.0")
+        self.id = kwargs.get("id", str(uuid.uuid4()))
+        self.time = kwargs.get("time", dt.datetime.now(UTC()).isoformat())
+        self.data = kwargs.get("data", None)
+        self.datacontenttype = kwargs.get("datacontenttype", None)
+        self.dataschema = kwargs.get("dataschema", None)
+        self.subject = kwargs.get("subject", None)
 
-        super(CloudEvent, self).__init__(**kwargs)
+        for attr in kwargs:
+            setattr(self, attr, kwargs.get(attr))
+
+    @classmethod
+    def _from_generated(cls, generated, **kwargs):
+        if not generated:
+            return {}
+        return cls(
+            id=generated.id,
+            source=generated.source,
+            type=generated.type,
+            specversion=generated.specversion,
+            data=generated.data,
+            time=generated.time,
+            dataschema=generated.dataschema,
+            datacontenttype=generated.datacontenttype,
+            subject=generated.subject,
+            **kwargs
+        )
+
+    def _to_generated(self, **kwargs):
+        if isinstance(self.data, six.binary_type):
+            self.data = base64.b64encode(self.data)
+        return InternalCloudEvent(
+            id=self.id,
+            source=self.source,
+            type=self.type,
+            specversion=self.specversion,
+            data=self.data,
+            time=self.time,
+            dataschema=self.dataschema,
+            datacontenttype=self.datacontenttype,
+            subject=self.subject,
+            **kwargs
+        )
 
 
 class EventGridEvent(InternalEventGridEvent, EventMixin):

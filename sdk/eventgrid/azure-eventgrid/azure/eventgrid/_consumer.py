@@ -20,6 +20,7 @@ if TYPE_CHECKING:
 
 _LOGGER = logging.getLogger(__name__)
 
+from ._generated.models import CloudEvent as InternalCloudEvent
 from ._models import CloudEvent, EventGridEvent
 
 class EventGridConsumer(object):
@@ -38,7 +39,9 @@ class EventGridConsumer(object):
         encode = kwargs.pop('encoding', 'utf-8')
         try:
             cloud_event = CloudEvent._from_json(cloud_event, encode)
-            deserialized_event = CloudEvent.deserialize(cloud_event)
+            deserialized_event = CloudEvent._from_generated(
+                InternalCloudEvent.deserialize(cloud_event)
+            )
             CloudEvent._deserialize_data(deserialized_event, deserialized_event.type)
             return deserialized_event 
         except Exception as err:
