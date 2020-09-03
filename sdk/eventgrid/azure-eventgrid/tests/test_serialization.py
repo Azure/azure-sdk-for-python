@@ -37,7 +37,6 @@ class EventGridSerializationTests(AzureMgmtTestCase):
                 source="http://samplesource.dev",
                 data=data,
                 type="Sample.Cloud.Event",
-                reason_code=204,
                 foo="bar",
                 extensions={'e1':1, 'e2':2}
                 )
@@ -47,9 +46,8 @@ class EventGridSerializationTests(AzureMgmtTestCase):
         internal = cloud_event._to_generated()
 
         assert internal.additional_properties is not None
-        assert 'foo' in internal.additional_properties
+        assert 'foo' not in internal.additional_properties
         assert 'e1' in internal.additional_properties
-        assert internal.additional_properties['reason_code'] == 204
 
         json  = internal.serialize()
 
@@ -58,7 +56,6 @@ class EventGridSerializationTests(AzureMgmtTestCase):
             'data_base64': encoded,
             'type':'Sample.Cloud.Event',
             'reason_code':204,
-            'foo':'bar',
             'e1':1,
             'e2':2
         }
@@ -73,7 +70,6 @@ class EventGridSerializationTests(AzureMgmtTestCase):
                 source="http://samplesource.dev",
                 data=data,
                 type="Sample.Cloud.Event",
-                reason_code=204,
                 foo="bar",
                 extensions={'e1':1, 'e2':2}
                 )
@@ -82,9 +78,8 @@ class EventGridSerializationTests(AzureMgmtTestCase):
         internal = cloud_event._to_generated()
 
         assert internal.additional_properties is not None
-        assert 'foo' in internal.additional_properties
+        assert 'foo' not in internal.additional_properties
         assert 'e1' in internal.additional_properties
-        assert internal.additional_properties['reason_code'] == 204
 
         json  = internal.serialize()
 
@@ -93,7 +88,6 @@ class EventGridSerializationTests(AzureMgmtTestCase):
             'data': data,
             'type':'Sample.Cloud.Event',
             'reason_code':204,
-            'foo':'bar',
             'e1':1,
             'e2':2
         }

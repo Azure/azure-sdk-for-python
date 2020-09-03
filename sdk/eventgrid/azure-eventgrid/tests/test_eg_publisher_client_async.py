@@ -131,8 +131,10 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
                 source = "http://samplesource.dev",
                 data = "cloudevent",
                 type="Sample.Cloud.Event",
-                reason_code=204,
-                extension="extension"
+                extensions={
+                    'reason_code':204,
+                    'extension':'hello'
+                    }
                 )
         await client.send([cloud_event])
         internal = cloud_event._to_generated().serialize()

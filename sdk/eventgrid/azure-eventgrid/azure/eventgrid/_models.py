@@ -90,9 +90,6 @@ class CloudEvent(EventMixin):   #pylint:disable=too-many-instance-attributes
         self._extensions = {}
         self._extensions.update({k:v for k, v in kwargs.pop('extensions', {}).items()})
 
-        for attr in kwargs:
-            self._extensions.update({attr: kwargs.get(attr)})
-
     @classmethod
     def _from_generated(cls, cloud_event, **kwargs):
         generated = InternalCloudEvent.deserialize(cloud_event)
