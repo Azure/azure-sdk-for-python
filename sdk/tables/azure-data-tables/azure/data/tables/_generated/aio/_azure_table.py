@@ -11,9 +11,9 @@ from typing import Any
 from azure.core import AsyncPipelineClient
 from msrest import Deserializer, Serializer
 
-from ._configuration_async import AzureTableConfiguration
-from .operations_async import TableOperations
-from .operations_async import ServiceOperations
+from ._configuration import AzureTableConfiguration
+from .operations import TableOperations
+from .operations import ServiceOperations
 from .. import models
 
 
@@ -21,9 +21,9 @@ class AzureTable(object):
     """AzureTable.
 
     :ivar table: TableOperations operations
-    :vartype table: azure.data.tables.aio.operations_async.TableOperations
+    :vartype table: azure.data.tables.aio.operations.TableOperations
     :ivar service: ServiceOperations operations
-    :vartype service: azure.data.tables.aio.operations_async.ServiceOperations
+    :vartype service: azure.data.tables.aio.operations.ServiceOperations
     :param url: The URL of the service account or table that is the target of the desired operation.
     :type url: str
     """
