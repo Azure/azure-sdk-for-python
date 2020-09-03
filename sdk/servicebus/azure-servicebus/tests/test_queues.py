@@ -1892,6 +1892,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     assert message.amqp_message.properties.subject == b"subject"
                     assert message.amqp_message.application_properties[b"application_properties"] == 1
                     assert message.amqp_message.annotations[b"annotations"] == 2
+                    # delivery_annotations and footer disabled pending uamqp bug https://github.com/Azure/azure-uamqp-python/issues/169
                     #assert message.amqp_message.delivery_annotations[b"delivery_annotations"] == 3
                     assert message.amqp_message.header.priority == 5
                     #assert message.amqp_message.footer[b"footer"] == 6
