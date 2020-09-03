@@ -7,16 +7,13 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: table_samples_client.py
+FILE: sample_update_upsert_merge_entities_async.py
 
 DESCRIPTION:
-    These samples demonstrate the following: creating and setting an access policy to generate a
-    sas token, getting a table client from a table URL, setting and getting table
-    metadata, sending messages and receiving them individually, deleting and
-    clearing all messages, and peeking and updating messages.
+    These samples demonstrate the following: updating, upserting, and merging entities.
 
 USAGE:
-    python table_samples_client.py
+    python sample_update_upsert_merge_entities_async.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
@@ -29,52 +26,6 @@ import asyncio
 
 class TableEntitySamples(object):
     connection_string = os.getenv("AZURE_TABLES_CONNECTION_STRING")
-
-    async def set_access_policy(self):
-        # [START create_table_client_from_connection_string]
-        from azure.data.tables.aio import TableClient
-        table = TableClient.from_connection_string(self.connection_string, table_name="mytable1")
-        # [END create_table_client_from_connection_string]
-
-        # Create the Table
-        await table.create_table()
-
-        try:
-            # [START set_access_policy]
-            # Create an access policy
-            from azure.data.tables import AccessPolicy, TableSasPermissions
-            access_policy = AccessPolicy()
-            access_policy.start = datetime.utcnow() - timedelta(hours=1)
-            access_policy.expiry = datetime.utcnow() + timedelta(hours=1)
-            access_policy.permission = TableSasPermissions(add=True)
-            identifiers = {'my-access-policy-id': access_policy}
-
-            # Set the access policy
-            await table.set_table_access_policy(identifiers)
-            # [END set_access_policy]
-
-            # Use the access policy to generate a SAS token
-            # [START table_client_sas_token]
-            from azure.data.tables import generate_table_sas
-            sas_token = generate_table_sas(
-                table.account_name,
-                table.table_name,
-                table.credential.account_key,
-                policy_id='my-access-policy-id'
-            )
-            # [END table_client_sas_token]
-
-            # Authenticate with the sas token
-            # [START create_table_client]
-           # token_auth_table = table.from_table_url(
-          #      table_url=table.url,
-          #      credential=sas_token
-         #   )
-            # [END create_table_client]
-
-        finally:
-            # Delete the table
-            await table.delete_table()
 
     async def create_and_get_entities(self):
         # Instantiate a table service client
@@ -92,10 +43,8 @@ class TableEntitySamples(object):
             'price': '5'
         }
         try:
-            # [START create_entity]
             created_entity = await table.create_entity(entity=my_entity)
             print("Created entity: {}".format(created_entity))
-            # [END create_entity]
 
             # [START get_entity]
             # Get Entity by partition and row key
@@ -123,44 +72,13 @@ class TableEntitySamples(object):
             # Create entities
             await table.create_entity(entity=entity)
             await table.create_entity(entity=entity1)
-            # [START query_entities]
+            # [START list_entities]
             # Query the entities in the table
             entities = list(table.list_entities())
 
             for entity, i in enumerate(entities):
                 print("Entity #{}: {}".format(entity, i))
-            # [END query_entities]
-
-        finally:
-            # Delete the table
-            await table.delete_table()
-
-    async def upsert_entities(self):
-        # Instantiate a table service client
-        from azure.data.tables.aio import TableClient
-        from azure.data.tables import UpdateMode
-        table = TableClient.from_connection_string(self.connection_string, table_name="mytable5")
-
-        # Create the table
-        await table.create_table()
-
-        entity = {'PartitionKey': 'color', 'RowKey': 'sharpie', 'text': 'Marker', 'color': 'Purple', 'price': '5'}
-        entity1 = {'PartitionKey': 'color', 'RowKey': 'crayola', 'text': 'Marker', 'color': 'Red', 'price': '3'}
-
-        try:
-            # Create entities
-            created = await table.create_entity(entity=entity)
-
-            # [START upsert_entity]
-            # Try Replace and then Insert on Fail
-            insert_entity = await table.upsert_entity(mode=UpdateMode.REPLACE, entity=entity1)
-            print("Inserted entity: {}".format(insert_entity))
-
-            # Try merge, and merge since already in table
-            created.text = "NewMarker"
-            merged_entity = await table.upsert_entity(mode=UpdateMode.MERGE, entity=entity)
-            print("Merged entity: {}".format(merged_entity))
-            # [END upsert_entity]
+            # [END list_entities]
 
         finally:
             # Delete the table
@@ -178,8 +96,19 @@ class TableEntitySamples(object):
         entity = {'PartitionKey': 'color', 'RowKey': 'sharpie', 'text': 'Marker', 'color': 'Purple', 'price': '5'}
 
         try:
-            # Create entity
+            # Create entities
             created = await table.create_entity(entity=entity)
+
+            # [START upsert_entity]
+            # Try Replace and then Insert on Fail
+            insert_entity = await table.upsert_entity(mode=UpdateMode.REPLACE, entity=entity1)
+            print("Inserted entity: {}".format(insert_entity))
+
+            # Try merge, and merge since already in table
+            created.text = "NewMarker"
+            merged_entity = await table.upsert_entity(mode=UpdateMode.MERGE, entity=entity)
+            print("Merged entity: {}".format(merged_entity))
+            # [END upsert_entity]
 
             # [START update_entity]
             # Update the entity
@@ -208,10 +137,8 @@ class TableEntitySamples(object):
 
 async def main():
     sample = TableEntitySamples()
-    # await sample.set_access_policy()
     await sample.create_and_get_entities()
     await sample.list_all_entities()
-    await sample.upsert_entities()
     await sample.update_entities()
 
 

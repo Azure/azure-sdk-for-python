@@ -1,3 +1,24 @@
+# coding: utf-8
+
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# --------------------------------------------------------------------------
+
+"""
+FILE: sample_query_table_async.py
+
+DESCRIPTION:
+    These samples demonstrate the following: querying a table for entities.
+
+USAGE:
+    python sample_query_table_async.py
+
+    Set the environment variables with your own values before running the sample:
+    1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
+"""
+
 import os
 import copy
 import random
@@ -5,9 +26,6 @@ import asyncio
 
 class SampleTablesQuery(object):
     connection_string = os.getenv("AZURE_TABLES_CONNECTION_STRING")
-    access_key = os.getenv("AZURE_TABLES_KEY")
-    account_url = os.getenv("AZURE_TABLES_ACCOUNT_URL")
-    account_name = os.getenv("AZURE_TABLES_ACCOUNT_NAME")
     table_name = "OfficeSupplies"
 
     entity_name = "marker"
@@ -42,16 +60,18 @@ class SampleTablesQuery(object):
         from azure.core.exceptions import HttpResponseError
 
         table_client = TableClient.from_connection_string(self.connection_string, self.table_name)
-
+        # [START query_entities]
         try:
-            queried_entities = table_client.query_entities(filter=self.name_filter, select=["Brand","Color"])
+            entity_name = "marker"
+            name_filter = "Name eq '{}'".format(entity_name)
+            queried_entities = table_client.query_entities(filter=name_filter, select=["Brand","Color"])
 
             for entity_chosen in queried_entities:
                 print(entity_chosen)
 
         except HttpResponseError as e:
             pass
-
+        # [END query_entities]
         finally:
             await table_client.delete_table()
 

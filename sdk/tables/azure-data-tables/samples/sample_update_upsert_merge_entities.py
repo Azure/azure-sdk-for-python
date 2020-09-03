@@ -7,73 +7,24 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: table_samples_client.py
+FILE: sample_update_upsert_merge_entities.py
 
 DESCRIPTION:
-    These samples demonstrate the following: creating and setting an access policy to generate a
-    sas token, getting a table client from a table URL, setting and getting table
-    metadata, sending messages and receiving them individually, deleting and
-    clearing all messages, and peeking and updating messages.
+    These samples demonstrate the following: updating, upserting, and merging entities.
 
 USAGE:
-    python table_samples_client.py
+    python sample_update_upsert_merge_entities.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
 """
+
 
 from datetime import datetime, timedelta
 import os
 
 
 class TableEntitySamples(object):
-    connection_string = os.getenv("AZURE_TABLES_CONNECTION_STRING")
-
-    def set_access_policy(self):
-        # [START create_table_client_from_connection_string]
-        from azure.data.tables import TableClient
-        table = TableClient.from_connection_string(self.connection_string, table_name="mytable1")
-        # [END create_table_client_from_connection_string]
-
-        # Create the Table
-        table.create_table()
-
-        try:
-            # [START set_access_policy]
-            # Create an access policy
-            from azure.data.tables import AccessPolicy, TableSasPermissions
-            access_policy = AccessPolicy()
-            access_policy.start = datetime.utcnow() - timedelta(hours=1)
-            access_policy.expiry = datetime.utcnow() + timedelta(hours=1)
-            access_policy.permission = TableSasPermissions(add=True)
-            identifiers = {'my-access-policy-id': access_policy}
-
-            # Set the access policy
-            table.set_table_access_policy(identifiers)
-            # [END set_access_policy]
-
-            # Use the access policy to generate a SAS token
-            # [START table_client_sas_token]
-            from azure.data.tables import generate_table_sas
-            sas_token = generate_table_sas(
-                table.account_name,
-                table.table_name,
-                table.credential.account_key,
-                policy_id='my-access-policy-id'
-            )
-            # [END table_client_sas_token]
-
-            # Authenticate with the sas token
-            # [START create_table_client]
-           # token_auth_table = table.from_table_url(
-          #      table_url=table.url,
-          #      credential=sas_token
-         #   )
-            # [END create_table_client]
-
-        finally:
-            # Delete the table
-            table.delete_table()
 
     def create_and_get_entities(self):
         # Instantiate a table service client
@@ -134,16 +85,16 @@ class TableEntitySamples(object):
             # Delete the table
             table.delete_table()
 
-    def upsert_entities(self):
+    def update_entities(self):
         # Instantiate a table service client
-        from azure.data.tables import TableClient, UpdateMode
-        table = TableClient.from_connection_string(self.connection_string, table_name="mytable5")
+        from azure.data.tables import TableClient
+        from azure.data.tables import UpdateMode
+        table = TableClient.from_connection_string(self.connection_string, table_name="mytable6")
 
-        # Create the table
+        # Create the table and Table Client
         table.create_table()
 
         entity = {'PartitionKey': 'color', 'RowKey': 'sharpie', 'text': 'Marker', 'color': 'Purple', 'price': '5'}
-        entity1 = {'PartitionKey': 'color', 'RowKey': 'crayola', 'text': 'Marker', 'color': 'Red', 'price': '3'}
 
         try:
             # Create entities
@@ -159,24 +110,6 @@ class TableEntitySamples(object):
             merged_entity = table.upsert_entity(mode=UpdateMode.MERGE, entity=entity)
             print("Merged entity: {}".format(merged_entity))
             # [END upsert_entity]
-
-        finally:
-            # Delete the table
-            table.delete_table()
-
-    def update_entities(self):
-        # Instantiate a table service client
-        from azure.data.tables import TableClient, UpdateMode
-        table = TableClient.from_connection_string(self.connection_string, table_name="mytable6")
-
-        # Create the table and Table Client
-        table.create_table()
-
-        entity = {'PartitionKey': 'color', 'RowKey': 'sharpie', 'text': 'Marker', 'color': 'Purple', 'price': '5'}
-
-        try:
-            # Create entity
-            created = table.create_entity(entity=entity)
 
             # [START update_entity]
             # Update the entity
@@ -201,6 +134,8 @@ class TableEntitySamples(object):
         finally:
             # Delete the table
             table.delete_table()
+
+
 
 
 if __name__ == '__main__':

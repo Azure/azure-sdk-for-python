@@ -1,3 +1,28 @@
+# coding: utf-8
+
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# --------------------------------------------------------------------------
+
+"""
+FILE: sample_create_delete_table_async.py
+
+DESCRIPTION:
+    These samples demonstrate creating and deleting individual tables from the
+    TableServiceClient and TableClient
+
+USAGE:
+    python sample_create_client_async.py
+
+    Set the environment variables with your own values before running the sample:
+    1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
+    2) AZURE_STORAGE_ACCOUNT_URL - the Table service account URL
+    3) AZURE_STORAGE_ACCOUNT_NAME - the name of the storage account
+    4) AZURE_STORAGE_ACCESS_KEY - the storage account access key
+"""
+
 import os
 import logging
 import asyncio
@@ -16,36 +41,41 @@ class CreateDeleteTable(object):
         from azure.data.tables.aio import TableServiceClient
         from azure.core.exceptions import ResourceExistsError
 
+        # [START create_table]
         table_service_client = TableServiceClient.from_connection_string(self.connection_string)
         try:
             table_item = await table_service_client.create_table(table_name=self.table_name)
             print("Created table {}!".format(table_item.table_name))
         except ResourceExistsError:
             print("Table already exists")
+        # [END create_table]
 
     async def create_if_not_exists(self):
         from azure.data.tables.aio import TableServiceClient
 
+        # [START create_if_not_exists]
         table_service_client = TableServiceClient.from_connection_string(self.connection_string)
         table_item = TableServiceClient.create_table_if_not_exists(table_name=self.table_name)
         print("Table name: {}".format(table_item.table_name))
-
+        # [END create_if_not_exists]
 
     async def delete_table(self):
         from azure.data.tables.aio import TableServiceClient
         from azure.core.exceptions import ResourceNotFoundError
 
+        # [START delete_table]
         table_service_client = TableServiceClient.from_connection_string(self.connection_string)
         try:
             await table_service_client.delete_table(table_name=self.table_name)
             print("Deleted table {}!".format(self.table_name))
         except ResourceNotFoundError:
             print("Table could not be found")
-
+        # [END delete_table]
 
     async def create_from_table_client(self):
         from azure.data.table import TableClient
 
+        # [START create_from_table_client]
         table_client = TableClient.from_connection_string(
             conn_str=self.connection_string,
             table_name=self.table_name
@@ -55,11 +85,12 @@ class CreateDeleteTable(object):
             print("Created table {}!".format(table_item.table_name))
         except ResourceExistsError:
             print("Table already exists")
-
+        # [END create_from_table_client]
 
     async def delete_from_table_client(self):
         from azure.data.table import TableClient
 
+        # [START delete_from_table_client]
         table_client = TableClient.from_connection_string(
             conn_str=self.connection_string,
             table_name=self.table_name
@@ -69,6 +100,7 @@ class CreateDeleteTable(object):
             print("Deleted table {}!".format(self.table_name))
         except ResourceExistsError:
             print("Table already exists")
+        # [END delete_from_table_client]
 
 
 async def main():

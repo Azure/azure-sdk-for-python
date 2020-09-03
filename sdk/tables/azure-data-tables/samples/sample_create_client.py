@@ -7,17 +7,13 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: table_samples_authentication.py
+FILE: sample_create_client.py
 
 DESCRIPTION:
-    These samples demonstrate authenticating a client via:
-        * connection string
-        * shared access key
-        * generating a sas token with which the returned signature can be used with
-    the credential parameter of any TableServiceClient or TableClient
+    These samples demonstrate creating a TableServiceClient and a TableClient
 
 USAGE:
-    python table_samples_authentication.py
+    python sample_create_client.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
@@ -25,7 +21,6 @@ USAGE:
     3) AZURE_STORAGE_ACCOUNT_NAME - the name of the storage account
     4) AZURE_STORAGE_ACCESS_KEY - the storage account access key
 """
-
 
 from datetime import datetime, timedelta
 import os

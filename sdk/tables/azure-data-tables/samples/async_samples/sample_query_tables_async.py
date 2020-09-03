@@ -7,14 +7,14 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: table_samples_service.py
+FILE: sample_query_tables_async.py
 
 DESCRIPTION:
-    These samples demonstrate the following: setting and getting table service properties,
-    listing the tables in the service, and getting a TableClient from a TableServiceClient.
+    These samples demonstrate the following: listing and querying all Tables within
+    a storage account.
 
 USAGE:
-    python table_samples_service.py
+    python sample_query_tables_async.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
@@ -32,13 +32,8 @@ class QueryTables(object):
         from azure.data.tables.aio import TableServiceClient
         table_service = TableServiceClient.from_connection_string(conn_str=self.connection_string)
 
-        # [START tsc_create_table]
         await table_service.create_table("mytable1")
         await table_service.create_table("mytable2")
-        await table_service.create_table("mytable3")
-        await table_service.create_table("table4")
-        await table_service.create_table("table5")
-        # [END tsc_create_table]
 
         try:
             # [START tsc_list_tables]
@@ -47,8 +42,10 @@ class QueryTables(object):
             print("Listing tables:")
             for table in list_tables:
                 print("\t{}".format(table.table_name))
+            # [END tsc_list_tables]
 
-            # Query for "table4" in the tables created
+            # [START tsc_query_tables]
+            # Query for "table1" in the tables created
             table_name = "mytable1"
             name_filter = "TableName eq '{}'".format(table_name)
             queried_tables = table_service.query_tables(filter=name_filter, results_per_page=10)
@@ -56,17 +53,15 @@ class QueryTables(object):
             print("Queried_tables")
             for table in queried_tables:
                 print("\t{}".format(table.table_name))
-            # [END tsc_list_tables]
+            # [END tsc_query_tables]
 
         finally:
-            # [START tsc_delete_table]
             await self.delete_tables()
-            # [END tsc_delete_table]
 
     async def delete_tables(self):
         from azure.data.tables.aio import TableServiceClient
         ts = TableServiceClient.from_connection_string(conn_str=self.connection_string)
-        tables = ["mytable1", "mytable2", "mytable3", "table4", "table5"]
+        tables = ["mytable1", "mytable2"]
         for table in tables:
             try:
                 await ts.delete_table(table_name=table)

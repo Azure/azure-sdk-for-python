@@ -4,7 +4,7 @@ languages:
   - python
 products:
   - azure
-  - azure-table-storage
+  - azure-data-tables
 urlFragment: tables-samples
 ---
 
@@ -20,19 +20,17 @@ These sample programs show common scenarios for the Tables client's offerings.
 
 |**File Name**|**Description**|
 |-------------|---------------|
-|[sample_authentication.py][sample_authentication] and [sample_authentication_async.py][sample_authentication_async]|Different authorization methods|
 |[sample_create_client.py][create_client] and [sample_create_client_async.py][create_client_async]|Instantiate a table client|Authorizing a `TableServiceClient` object and `TableClient` object|
-|[sample_create_delete_table.py][create_delete_table] and [sample_create_delete_table_async.py][create_delete_table_async]|Creating a table in a storage account|
-|[sample_insert_delete_entities.py][insert_delete_entities] and [sample_insert_delete_entities_async.py][insert_delete_entities_async]|Inserting and deleting individual entities into a table|
+|[sample_create_delete_table.py][create_delete_table] and [sample_create_delete_table_async.py][create_delete_table_async]|Creating and deleting a table in a storage account|
+|[sample_insert_delete_entities.py][insert_delete_entities] and [sample_insert_delete_entities_async.py][insert_delete_entities_async]|Inserting and deleting individual entities in a table|
 |[sample_query_tables.py][query_tables] and [sample_query_tables_async.py][query_tables_async]|Querying tables in a storage account|
 |[sample_update_upsert_merge_entities.py][update_upsert_merge] and [sample_update_upsert_merge_entities_async.py][update_upsert_merge_async]| Updating, upserting, and merging entities|
 
 
 ### Prerequisites
 * Python 2.7, or 3.5 or later is required to use this package.
-* You must have an [Azure subscription](https://azure.microsoft.com/free/) and an
-[Azure storage account](https://docs.microsoft.com/azure/storage/common/storage-account-overview) to use this package
- or you must have a [Azure Cosmos Account](https://docs.microsoft.com/azure/cosmos-db/account-overview).
+* You must have an [Azure subscription](https://azure.microsoft.com/free/) and either an
+[Azure storage account](https://docs.microsoft.com/azure/storage/common/storage-account-overview) or an [Azure Cosmos Account](https://docs.microsoft.com/azure/cosmos-db/account-overview) to use this package.
 
 ## Setup
 

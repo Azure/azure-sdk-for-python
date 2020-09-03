@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: table_samples_authentication.py
+FILE: sample_create_client_async.py
 
 DESCRIPTION:
     These samples demonstrate authenticating a client via:
@@ -17,7 +17,7 @@ DESCRIPTION:
     the credential parameter of any TableServiceClient or TableClient
 
 USAGE:
-    python table_samples_authentication.py
+    python sample_create_client_async.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
@@ -50,20 +50,10 @@ class CreateClients(object):
         print("Table name: {}".format(table_client.table_name))
         # [END create_table_client]
 
-    async def create_table_service_client(self):
-        # Instantiate a TableServiceClient using a shared access key
-        # [START create_table_service_client]
-        from azure.data.tables.aio import TableServiceClient
-        table_service = TableServiceClient(account_url=self.account_url, credential=self.access_key)
-        properties = await table_service.get_service_properties()
-        print("Properties: {}".format(properties))
-        # [END create_table_service_client]
-
 
 async def main():
     sample = CreateClients()
     await sample.create_table_client()
-    await sample.create_table_service_client()
 
 
 if __name__ == '__main__':
