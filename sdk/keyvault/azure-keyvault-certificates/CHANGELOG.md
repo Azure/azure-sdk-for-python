@@ -3,6 +3,7 @@
 ## 4.2.1 (Unreleased)
 ### Fixed
 - Correct typing for paging methods
+- Fixed incompatibility issues with API version 2016-10-01
 
 
 ## 4.2.0 (2020-08-11)
