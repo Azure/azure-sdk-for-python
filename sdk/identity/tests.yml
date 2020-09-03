@@ -1,6 +1,7 @@
 trigger: none
 
 jobs:
+  # Azure Cloud
   - template: ../../eng/pipelines/templates/jobs/archetype-sdk-tests.yml
     parameters:
       AllocateResourceGroup: 'false'
@@ -12,3 +13,29 @@ jobs:
         CERTIFICATE_PASSWORD: $(python-identity-certificate-password)
         PEM_CONTENT: $(python-identity-certificate)
         PEM_CONTENT_PASSWORD_PROTECTED: $(python-identity-certificate-with-password)
+
+  # Azure US Government
+  - template: ../../eng/pipelines/templates/jobs/archetype-sdk-tests.yml
+    parameters:
+      AllocateResourceGroup: 'false'
+      ServiceDirectory: identity
+      EnvVars:
+        AZURE_CLIENT_ID: $(python-identity-client-id-gov)
+        AZURE_CLIENT_SECRET: $(python-identity-client-secret-gov)
+        AZURE_TENANT_ID: $(python-identity-tenant-id-gov)
+        # CERTIFICATE_PASSWORD: $(python-identity-certificate-password-gov)
+        PEM_CONTENT: $(python-identity-certificate-gov)
+        # PEM_CONTENT_PASSWORD_PROTECTED: $(python-identity-certificate-with-password-gov)
+
+  # Azure China Cloud
+  - template: ../../eng/pipelines/templates/jobs/archetype-sdk-tests.yml
+    parameters:
+      AllocateResourceGroup: 'false'
+      ServiceDirectory: identity
+      EnvVars:
+        AZURE_CLIENT_ID: $(python-identity-client-id-cn)
+        AZURE_CLIENT_SECRET: $(python-identity-client-secret-cn)
+        AZURE_TENANT_ID: $(python-identity-tenant-id-cn)
+        # CERTIFICATE_PASSWORD: $(python-identity-certificate-password-cn)
+        PEM_CONTENT: $(python-identity-certificate-cn)
+        # PEM_CONTENT_PASSWORD_PROTECTED: $(python-identity-certificate-with-password-cn)
