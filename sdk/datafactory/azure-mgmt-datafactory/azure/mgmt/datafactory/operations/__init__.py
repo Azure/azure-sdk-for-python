@@ -24,6 +24,8 @@ from ._triggers_operations import TriggersOperations
 from ._trigger_runs_operations import TriggerRunsOperations
 from ._data_flows_operations import DataFlowsOperations
 from ._data_flow_debug_session_operations import DataFlowDebugSessionOperations
+from ._managed_virtual_networks_operations import ManagedVirtualNetworksOperations
+from ._managed_private_endpoints_operations import ManagedPrivateEndpointsOperations
 
 __all__ = [
     'Operations',
@@ -41,4 +43,6 @@ __all__ = [
     'TriggerRunsOperations',
     'DataFlowsOperations',
     'DataFlowDebugSessionOperations',
+    'ManagedVirtualNetworksOperations',
+    'ManagedPrivateEndpointsOperations',
 ]
