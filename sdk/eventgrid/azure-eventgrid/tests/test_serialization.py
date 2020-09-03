@@ -49,7 +49,7 @@ class EventGridSerializationTests(AzureMgmtTestCase):
                 )
         
         cloud_event.subject = "subject" # to test explicit setting of prop
-        encoded = base64.b64encode(data)
+        encoded = base64.b64encode(data).decode('utf-8')
         internal = cloud_event._to_generated()
 
         assert internal.additional_properties is not None
