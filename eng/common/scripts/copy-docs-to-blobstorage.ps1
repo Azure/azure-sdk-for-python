@@ -193,10 +193,9 @@ function Upload-Blobs
         [Parameter(Mandatory=$true)] [String]$DocVersion,
         [Parameter(Mandatory=$false)] [String]$ReleaseTag
     )
-    Write-Host "2"
     #eg : $BlobName = "https://azuresdkdocs.blob.core.windows.net"
     $DocDest = "$($BlobName)/`$web/$($Language)"
-    Write-Host "3"
+
     Write-Host "DocDest $($DocDest)"
     Write-Host "PkgName $($PkgName)"
     Write-Host "DocVersion $($DocVersion)"
@@ -214,6 +213,9 @@ function Upload-Blobs
                 Set-Content -Path $htmlFile -Value $updatedFileContent
             }
         }
+    } 
+    else {
+        Write-Warning "Not able to do the master link replacement, since no release tag found for the release. Please manually check."
     } 
    
     Write-Host "Uploading $($PkgName)/$($DocVersion) to $($DocDest)..."
@@ -300,7 +302,6 @@ if ($Language -eq "python")
         Write-Host "Discovered Package Version: $Version"
         Write-Host "Directory for Upload: $UnzippedDocumentationPath"
         $releaseTag = RetrieveReleaseTag "PyPI" $PublicArtifactLocation 
-        Write-Host "1"
         Upload-Blobs -DocDir $UnzippedDocumentationPath -PkgName $PkgName -DocVersion $Version -ReleaseTag $releaseTag
     }
 }
