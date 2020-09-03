@@ -22,6 +22,7 @@ jobs:
       AllocateResourceGroup: 'false'
       ServiceDirectory: identity
       EnvVars:
+        IDENTITY_LIVE_TEST_AUTHORITY: login.microsoftonline.us
         AZURE_CLIENT_ID: $(python-identity-client-id-gov)
         AZURE_CLIENT_SECRET: $(python-identity-client-secret-gov)
         AZURE_TENANT_ID: $(python-identity-tenant-id-gov)
@@ -36,6 +37,7 @@ jobs:
       AllocateResourceGroup: 'false'
       ServiceDirectory: identity
       EnvVars:
+        IDENTITY_LIVE_TEST_AUTHORITY: login.chinacloudapi.cn
         AZURE_CLIENT_ID: $(python-identity-client-id-cn)
         AZURE_CLIENT_SECRET: $(python-identity-client-secret-cn)
         AZURE_TENANT_ID: $(python-identity-tenant-id-cn)
