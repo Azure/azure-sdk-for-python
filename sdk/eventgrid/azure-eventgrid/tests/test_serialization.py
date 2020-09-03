@@ -100,6 +100,6 @@ class EventGridSerializationTests(AzureMgmtTestCase):
 
         self._assert_cloud_event_serialized(expected, json)
         if sys.version_info > (3, 5):
-            assert expected['data'] == actual['data']
+            assert expected['data'] == json['data']
         else:
-            assert expected['data_base64'] == actual['data_base64']
+            assert expected['data_base64'] == json['data_base64']

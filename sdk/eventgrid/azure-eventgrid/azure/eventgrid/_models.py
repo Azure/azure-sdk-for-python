@@ -87,19 +87,22 @@ class CloudEvent(EventMixin):   #pylint:disable=too-many-instance-attributes
         self.datacontenttype = kwargs.get("datacontenttype", None)
         self.dataschema = kwargs.get("dataschema", None)
         self.subject = kwargs.get("subject", None)
-        self.extensions = {}
+        self._extensions = {}
 
         spec_attr = [
             'source', 'type', 'specversion', 'id', 'time',
             'data', 'datacontenttype', 'dataschema', 'subject']
         for attr in kwargs:
             if attr == 'extensions':
-                self.extensions.update({k:v for k, v in kwargs.get('extensions').items()})
+                self._extensions.update({k:v for k, v in kwargs.get('extensions').items()})
             elif attr not in spec_attr:
-                self.extensions.update({attr: kwargs.get(attr)})
+                self._extensions.update({attr: kwargs.get(attr)})
 
     @classmethod
     def _from_generated(cls, generated, **kwargs):
+        if generated.additional_properties:
+            extensions = {k:v for k, v in generated.additional_properties.items()}
+            kwargs.setdefault('extensions', extensions)
         return cls(
             id=generated.id,
             source=generated.source,
@@ -110,7 +113,6 @@ class CloudEvent(EventMixin):   #pylint:disable=too-many-instance-attributes
             dataschema=generated.dataschema,
             datacontenttype=generated.datacontenttype,
             subject=generated.subject,
-            extensions=generated.additional_properties,
             **kwargs
         )
 
@@ -132,7 +134,7 @@ class CloudEvent(EventMixin):   #pylint:disable=too-many-instance-attributes
             dataschema=self.dataschema,
             datacontenttype=self.datacontenttype,
             subject=self.subject,
-            additional_properties=self.extensions,
+            additional_properties=self._extensions,
             **kwargs
         )
 
