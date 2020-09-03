@@ -14,6 +14,7 @@ import datetime as dt
 
 from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer
 
+from azure_devtools.scenario_tests import ReplayableTest
 from azure.core.credentials import AzureKeyCredential
 from azure.eventgrid import EventGridPublisherClient, CloudEvent, EventGridEvent, CustomEvent ,EventGridSharedAccessSignatureCredential, generate_shared_access_signature
 
@@ -22,6 +23,8 @@ from eventgrid_preparer import (
 )
 
 class EventGridPublisherClientTests(AzureMgmtTestCase):
+    FILTER_HEADERS = ReplayableTest.FILTER_HEADERS + ['aeg-sas-key']
+
     @pytest.mark.liveTest
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
     @CachedEventGridTopicPreparer(name_prefix='eventgridtest')
