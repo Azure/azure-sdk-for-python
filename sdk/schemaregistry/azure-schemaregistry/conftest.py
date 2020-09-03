@@ -1,0 +1,32 @@
+# ------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# -------------------------------------------------------------------------
+
+import os
+import sys
+import uuid
+
+import pytest
+
+# Ignore async tests for Python < 3.5
+collect_ignore = []
+if sys.version_info < (3, 5):
+    collect_ignore.append("tests/async_tests")
+    collect_ignore.append("samples/async_samples")
+
+
+# Note: This is duplicated between here and the basic conftest, so that it does not throw warnings if you're
+# running locally to this SDK. (Everything works properly, pytest just makes a bit of noise.)
+def pytest_configure(config):
+    # register an additional marker
+    config.addinivalue_line(
+        "markers", "liveTest: mark test to be a live test only"
+    )
+    config.addinivalue_line(
+        "markers", "live_test_only: mark test to be a live test only"
+    )
+    config.addinivalue_line(
+        "markers", "playback_test_only: mark test to be a playback test only"
+    )
