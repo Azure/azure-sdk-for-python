@@ -50,6 +50,7 @@ credential = EnvironmentCredential()
 # For example user to be logged in can be specified by the environment variable AZURE_USERNAME, consumed via the ManagedIdentityCredential
 # Alternately, one can specify the AZURE_TENANT_ID, AZURE_CLIENT_ID, and AZURE_CLIENT_SECRET to use the EnvironmentCredentialClass.
 # The docs above specify all mechanisms which the defaultCredential internally support.
+#
 # credential = DefaultAzureCredential()
 
 producer = EventHubProducerClient(fully_qualified_namespace=fully_qualified_namespace,
