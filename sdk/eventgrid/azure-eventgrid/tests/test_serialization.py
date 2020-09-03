@@ -30,12 +30,6 @@ class EventGridSerializationTests(AzureMgmtTestCase):
         assert 'id' in actual
         assert 'time' in actual
 
-        if 'data' in expected:
-            assert expected['data'] == actual['data']
-        else:
-            assert expected['data_base64'] == actual['data_base64']
-        
-
     # Cloud Event tests
     def test_cloud_event_serialization_extension_bytes(self, **kwargs):
         data = b"cloudevent"
@@ -70,6 +64,7 @@ class EventGridSerializationTests(AzureMgmtTestCase):
         }
 
         self._assert_cloud_event_serialized(expected, json)
+        assert expected['data_base64'] == json['data_base64']
 
 
     def test_cloud_event_serialization_extension_string(self, **kwargs):
@@ -104,3 +99,7 @@ class EventGridSerializationTests(AzureMgmtTestCase):
         }
 
         self._assert_cloud_event_serialized(expected, json)
+        if sys.version_info > (3, 5):
+            assert expected['data'] == actual['data']
+        else:
+            assert expected['data_base64'] == actual['data_base64']
