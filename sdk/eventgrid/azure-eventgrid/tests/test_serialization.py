@@ -102,4 +102,7 @@ class EventGridSerializationTests(AzureMgmtTestCase):
         if sys.version_info > (3, 5):
             assert expected['data'] == json['data']
         else:
+            encoded = base64.b64encode(data).decode('utf-8')
+            expected['data_base64'] = encoded
             assert expected['data_base64'] == json['data_base64']
+            assert 'data' not in json
