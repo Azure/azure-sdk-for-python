@@ -15,8 +15,8 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
-from ._configuration_async import AzureSchemaRegistryConfiguration
-from .operations_async import SchemaOperations
+from ._configuration import AzureSchemaRegistryConfiguration
+from .operations import SchemaOperations
 from .. import models
 
 
@@ -24,12 +24,11 @@ class AzureSchemaRegistry(object):
     """Azure Schema Registry is as a central schema repository for enterprise-level data infrastructure, complete with support for versioning and management.
 
     :ivar schema: SchemaOperations operations
-    :vartype schema: azure.schemaregistry._generated.aio.operations_async.SchemaOperations
+    :vartype schema: azure.schemaregistry._generated.aio.operations.SchemaOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param endpoint: The Schema Registry service endpoint, for example my-namespace.servicebus.windows.net.
     :type endpoint: str
-    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
     def __init__(

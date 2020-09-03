@@ -30,8 +30,6 @@ from devtools_testutils import AzureMgmtTestCase
 
 class SchemaRegistryAsyncTests(AzureMgmtTestCase):
 
-    @pytest.mark.liveTest
-    @pytest.mark.live_test_only
     @SchemaRegistryPreparer()
     async def test_schema_basic_async(self, schemaregistry_endpoint, schemaregistry_group, schemaregistry_tenant_id, schemaregistry_client_id, schemaregistry_client_secret, **kwargs):
         credential = ClientSecretCredential(tenant_id=schemaregistry_tenant_id, client_id=schemaregistry_client_id, client_secret=schemaregistry_client_secret)
@@ -65,8 +63,6 @@ class SchemaRegistryAsyncTests(AzureMgmtTestCase):
             assert returned_schema_properties.version == 1
             assert returned_schema_properties.serialization_type == "Avro"
 
-    @pytest.mark.liveTest
-    @pytest.mark.live_test_only
     @SchemaRegistryPreparer()
     async def test_schema_update_async(self, schemaregistry_endpoint, schemaregistry_group, schemaregistry_tenant_id, schemaregistry_client_id, schemaregistry_client_secret, **kwargs):
         credential = ClientSecretCredential(tenant_id=schemaregistry_tenant_id, client_id=schemaregistry_client_id, client_secret=schemaregistry_client_secret)
@@ -102,8 +98,6 @@ class SchemaRegistryAsyncTests(AzureMgmtTestCase):
             assert new_schema.schema_properties.version == 2
             assert new_schema.schema_properties.serialization_type == "Avro"
 
-    @pytest.mark.liveTest
-    @pytest.mark.live_test_only
     @SchemaRegistryPreparer()
     async def test_schema_negative_wrong_credential_async(self, schemaregistry_endpoint, schemaregistry_group, schemaregistry_tenant_id, schemaregistry_client_id, schemaregistry_client_secret, **kwargs):
         credential = ClientSecretCredential(tenant_id="fake", client_id="fake", client_secret="fake")
@@ -115,8 +109,6 @@ class SchemaRegistryAsyncTests(AzureMgmtTestCase):
             with pytest.raises(ClientAuthenticationError):
                 await client.register_schema(schemaregistry_group, schema_name, serialization_type, schema_str)
 
-    @pytest.mark.liveTest
-    @pytest.mark.live_test_only
     @SchemaRegistryPreparer()
     async def test_schema_negative_wrong_endpoint_async(self, schemaregistry_endpoint, schemaregistry_group, schemaregistry_tenant_id, schemaregistry_client_id, schemaregistry_client_secret, **kwargs):
         credential = ClientSecretCredential(tenant_id=schemaregistry_tenant_id, client_id=schemaregistry_client_id, client_secret=schemaregistry_client_secret)
@@ -128,8 +120,6 @@ class SchemaRegistryAsyncTests(AzureMgmtTestCase):
             with pytest.raises(ServiceRequestError):
                 await client.register_schema(schemaregistry_group, schema_name, serialization_type, schema_str)
 
-    @pytest.mark.liveTest
-    @pytest.mark.live_test_only
     @SchemaRegistryPreparer()
     async def test_schema_negative_no_schema_async(self, schemaregistry_endpoint, schemaregistry_group, schemaregistry_tenant_id, schemaregistry_client_id, schemaregistry_client_secret, **kwargs):
         credential = ClientSecretCredential(tenant_id=schemaregistry_tenant_id, client_id=schemaregistry_client_id, client_secret=schemaregistry_client_secret)

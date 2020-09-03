@@ -15,19 +15,19 @@ interactions:
       User-Agent:
       - azsdk-python-azureschemaregistry/1.0.0b1 Python/3.7.7 (Windows-10-10.0.19041-SP0)
       X-Schema-Type:
-      - avro
+      - Avro
     method: PUT
-    uri: https://sr-playground.servicebus.windows.net/$schemagroups/yuling-test-group/schemas/test-schema-dcba3084-9a8d-4b82-92ea-ddd634bcc71b?api-version=2017-04
+    uri: https://sr-playground.servicebus.windows.net/$schemagroups/yuling-test-group/schemas/test-schema-28cfcd92-8f38-461b-be52-fdd0b8b2647b?api-version=2017-04
   response:
     body:
-      string: '{"id":"e7f36b1ffc6142c2a9fe713d02a61448"}'
+      string: '{"id":"6defbafaf03c4480a9d70d5dbe78b8fb"}'
     headers:
       content-type:
       - application/json
       date:
-      - Tue, 01 Sep 2020 21:35:09 GMT
+      - Thu, 03 Sep 2020 21:35:00 GMT
       location:
-      - https://sr-playground.servicebus.windows.net:443/$schemagroups/yuling-test-group/schemas/test-schema-dcba3084-9a8d-4b82-92ea-ddd634bcc71b/versions/1?api-version=2017-04
+      - https://sr-playground.servicebus.windows.net:443/$schemagroups/yuling-test-group/schemas/test-schema-28cfcd92-8f38-461b-be52-fdd0b8b2647b/versions/1?api-version=2017-04
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -35,15 +35,15 @@ interactions:
       transfer-encoding:
       - chunked
       x-schema-id:
-      - e7f36b1ffc6142c2a9fe713d02a61448
+      - 6defbafaf03c4480a9d70d5dbe78b8fb
       x-schema-id-location:
-      - https://sr-playground.servicebus.windows.net:443/$schemagroups/getschemabyid/e7f36b1ffc6142c2a9fe713d02a61448?api-version=2017-04
+      - https://sr-playground.servicebus.windows.net:443/$schemagroups/getschemabyid/6defbafaf03c4480a9d70d5dbe78b8fb?api-version=2017-04
       x-schema-type:
       - Avro
       x-schema-version:
       - '1'
       x-schema-versions-location:
-      - https://sr-playground.servicebus.windows.net:443/$schemagroups/yuling-test-group/schemas/test-schema-dcba3084-9a8d-4b82-92ea-ddd634bcc71b/versions?api-version=2017-04
+      - https://sr-playground.servicebus.windows.net:443/$schemagroups/yuling-test-group/schemas/test-schema-28cfcd92-8f38-461b-be52-fdd0b8b2647b/versions?api-version=2017-04
     status:
       code: 200
       message: OK
@@ -63,19 +63,19 @@ interactions:
       User-Agent:
       - azsdk-python-azureschemaregistry/1.0.0b1 Python/3.7.7 (Windows-10-10.0.19041-SP0)
       X-Schema-Type:
-      - avro
+      - Avro
     method: PUT
-    uri: https://sr-playground.servicebus.windows.net/$schemagroups/yuling-test-group/schemas/test-schema-dcba3084-9a8d-4b82-92ea-ddd634bcc71b?api-version=2017-04
+    uri: https://sr-playground.servicebus.windows.net/$schemagroups/yuling-test-group/schemas/test-schema-28cfcd92-8f38-461b-be52-fdd0b8b2647b?api-version=2017-04
   response:
     body:
-      string: '{"id":"b6caf7d1944a4f8e8247cf2f2bb9c15d"}'
+      string: '{"id":"274d0cbe53ed4002b0857d61a9139e78"}'
     headers:
       content-type:
       - application/json
       date:
-      - Tue, 01 Sep 2020 21:35:09 GMT
+      - Thu, 03 Sep 2020 21:35:00 GMT
       location:
-      - https://sr-playground.servicebus.windows.net:443/$schemagroups/yuling-test-group/schemas/test-schema-dcba3084-9a8d-4b82-92ea-ddd634bcc71b/versions/2?api-version=2017-04
+      - https://sr-playground.servicebus.windows.net:443/$schemagroups/yuling-test-group/schemas/test-schema-28cfcd92-8f38-461b-be52-fdd0b8b2647b/versions/2?api-version=2017-04
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -83,15 +83,15 @@ interactions:
       transfer-encoding:
       - chunked
       x-schema-id:
-      - b6caf7d1944a4f8e8247cf2f2bb9c15d
+      - 274d0cbe53ed4002b0857d61a9139e78
       x-schema-id-location:
-      - https://sr-playground.servicebus.windows.net:443/$schemagroups/getschemabyid/b6caf7d1944a4f8e8247cf2f2bb9c15d?api-version=2017-04
+      - https://sr-playground.servicebus.windows.net:443/$schemagroups/getschemabyid/274d0cbe53ed4002b0857d61a9139e78?api-version=2017-04
       x-schema-type:
       - Avro
       x-schema-version:
       - '2'
       x-schema-versions-location:
-      - https://sr-playground.servicebus.windows.net:443/$schemagroups/yuling-test-group/schemas/test-schema-dcba3084-9a8d-4b82-92ea-ddd634bcc71b/versions?api-version=2017-04
+      - https://sr-playground.servicebus.windows.net:443/$schemagroups/yuling-test-group/schemas/test-schema-28cfcd92-8f38-461b-be52-fdd0b8b2647b/versions?api-version=2017-04
     status:
       code: 200
       message: OK
@@ -107,7 +107,7 @@ interactions:
       User-Agent:
       - azsdk-python-azureschemaregistry/1.0.0b1 Python/3.7.7 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://sr-playground.servicebus.windows.net/$schemagroups/getSchemaById/b6caf7d1944a4f8e8247cf2f2bb9c15d?api-version=2017-04
+    uri: https://sr-playground.servicebus.windows.net/$schemagroups/getSchemaById/274d0cbe53ed4002b0857d61a9139e78?api-version=2017-04
   response:
     body:
       string: '"{\"namespace\":\"example.avro\",\"type\":\"record\",\"name\":\"User\",\"fields\":[{\"name\":\"name\",\"type\":\"string\"},{\"name\":\"favorite_number\",\"type\":[\"int\",\"null\"]},{\"name\":\"favorite_food\",\"type\":[\"string\",\"null\"]}]}"'
@@ -115,9 +115,9 @@ interactions:
       content-type:
       - application/json
       date:
-      - Tue, 01 Sep 2020 21:35:11 GMT
+      - Thu, 03 Sep 2020 21:35:01 GMT
       location:
-      - https://sr-playground.servicebus.windows.net:443/$schemagroups/yuling-test-group/schemas/test-schema-dcba3084-9a8d-4b82-92ea-ddd634bcc71b/versions/2?api-version=2017-04
+      - https://sr-playground.servicebus.windows.net:443/$schemagroups/yuling-test-group/schemas/test-schema-28cfcd92-8f38-461b-be52-fdd0b8b2647b/versions/2?api-version=2017-04
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -125,15 +125,15 @@ interactions:
       transfer-encoding:
       - chunked
       x-schema-id:
-      - b6caf7d1944a4f8e8247cf2f2bb9c15d
+      - 274d0cbe53ed4002b0857d61a9139e78
       x-schema-id-location:
-      - https://sr-playground.servicebus.windows.net:443/$schemagroups/getschemabyid/b6caf7d1944a4f8e8247cf2f2bb9c15d?api-version=2017-04
+      - https://sr-playground.servicebus.windows.net:443/$schemagroups/getschemabyid/274d0cbe53ed4002b0857d61a9139e78?api-version=2017-04
       x-schema-type:
       - Avro
       x-schema-version:
       - '2'
       x-schema-versions-location:
-      - https://sr-playground.servicebus.windows.net:443/$schemagroups/yuling-test-group/schemas/test-schema-dcba3084-9a8d-4b82-92ea-ddd634bcc71b/versions?api-version=2017-04
+      - https://sr-playground.servicebus.windows.net:443/$schemagroups/yuling-test-group/schemas/test-schema-28cfcd92-8f38-461b-be52-fdd0b8b2647b/versions?api-version=2017-04
     status:
       code: 200
       message: OK

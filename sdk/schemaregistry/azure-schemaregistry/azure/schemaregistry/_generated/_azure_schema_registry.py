@@ -31,7 +31,6 @@ class AzureSchemaRegistry(object):
     :type credential: ~azure.core.credentials.TokenCredential
     :param endpoint: The Schema Registry service endpoint, for example my-namespace.servicebus.windows.net.
     :type endpoint: str
-    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
     def __init__(

@@ -7,10 +7,10 @@ to the given avro schema. It is integrated with Azure Schema Registry SDK and wi
 
 ### Install the package
 
-Install the Azure Schema Registry Avro Serializer client library for Python with [pip][pip]:
+Install the Azure Schema Registry Avro Serializer client library and Azure Identity client library for Python with [pip][pip]:
 
 ```Bash
-pip install azure-schemaregistry-avroserializer
+pip install azure-schemaregistry-avroserializer azure-identity
 ```
 
 ### Prerequisites: 
@@ -25,7 +25,7 @@ Interaction with Schema Registry Avro Serializer starts with an instance of Sche
 **Create client using the azure-identity library:**
 
 ```python
-from azure.schemaregistry.serializer.avro_serializer import SchemaRegistryAvroSerializer
+from azure.schemaregistry.serializer.avroserializer import SchemaRegistryAvroSerializer
 from azure.identity import DefaultAzureCredential
 
 credential = DefaultAzureCredential()
@@ -49,7 +49,7 @@ The following sections provide several code snippets covering some of the most c
 
 ```python
 import os
-from azure.schemaregistry.serializer.avro_serializer import SchemaRegistryAvroSerializer
+from azure.schemaregistry.serializer.avroserializer import SchemaRegistryAvroSerializer
 from azure.identity import DefaultAzureCredential
 
 token_credential = DefaultAzureCredential()
@@ -78,7 +78,7 @@ with serializer:
 
 ```python
 import os
-from azure.schemaregistry.serializer.avro_serializer import SchemaRegistryAvroSerializer
+from azure.schemaregistry.serializer.avroserializer import SchemaRegistryAvroSerializer
 from azure.identity import DefaultAzureCredential
 
 token_credential = DefaultAzureCredential()
@@ -109,7 +109,7 @@ headers, can be enabled on a client with the `logging_enable` argument:
 ```python
 import sys
 import logging
-from azure.schemaregistry.serializer.avro_serializer import SchemaRegistryAvroSerializer
+from azure.schemaregistry.serializer.avroserializer import SchemaRegistryAvroSerializer
 from azure.identity import DefaultAzureCredential
 
 # Create a logger for the SDK

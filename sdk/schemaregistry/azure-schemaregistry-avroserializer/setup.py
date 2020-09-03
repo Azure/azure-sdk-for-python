@@ -15,8 +15,8 @@ from setuptools import find_packages, setup
 PACKAGE_NAME = "azure-schemaregistry-avroserializer"
 PACKAGE_PPRINT_NAME = "Schema Registry Avro Serializer"
 
-package_folder_path = "azure/schemaregistry/serializer/avro_serializer"
-namespace_name = "azure.schemaregistry.serializer.avro_serializer"
+package_folder_path = "azure/schemaregistry/serializer/avroserializer"
+namespace_name = "azure.schemaregistry.serializer.avroserializer"
 
 # Version extraction inspired from 'requests'
 with open(os.path.join(package_folder_path, '_version.py'), 'r') as fd:

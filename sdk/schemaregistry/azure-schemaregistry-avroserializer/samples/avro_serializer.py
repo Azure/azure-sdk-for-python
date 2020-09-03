@@ -26,7 +26,7 @@
 import os
 
 from azure.identity import ClientSecretCredential
-from azure.schemaregistry.serializer.avro_serializer import SchemaRegistryAvroSerializer
+from azure.schemaregistry.serializer.avroserializer import SchemaRegistryAvroSerializer
 
 TENANT_ID=os.environ['SCHEMA_REGISTRY_AZURE_TENANT_ID']
 CLIENT_ID=os.environ['SCHEMA_REGISTRY_AZURE_CLIENT_ID']

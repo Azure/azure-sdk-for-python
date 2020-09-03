@@ -27,5 +27,4 @@ from enum import Enum
 
 
 class SerializationType(str, Enum):
-    AVRO = "Avro"
-    JSON = "Json"
+    AVRO = "avro"

@@ -24,12 +24,15 @@
 #
 # --------------------------------------------------------------------------
 from io import BytesIO
-from typing import Any, Dict, Union
+from typing import Any, Dict, Union, TYPE_CHECKING
 import avro
 
 from azure.schemaregistry import SchemaRegistryClient, SerializationType
 
 from ._avro_serializer import AvroObjectSerializer
+
+if TYPE_CHECKING:
+    from azure.core.credentials import TokenCredential
 
 
 class SchemaRegistryAvroSerializer(object):
@@ -41,11 +44,13 @@ class SchemaRegistryAvroSerializer(object):
     :param credential: To authenticate to manage the entities of the SchemaRegistry namespace.
     :type credential: TokenCredential
     :param str schema_group: Schema group under which schema should be registered.
+    :keyword str codec: The writer codec. If None, let the avro library decides.
 
     """
     def __init__(self, endpoint, credential, schema_group, **kwargs):
+        # type: (str, TokenCredential, str, Any) -> None
         self._schema_group = schema_group
-        self._avro_serializer = AvroObjectSerializer()
+        self._avro_serializer = AvroObjectSerializer(codec=kwargs.get("codec"))
         self._schema_registry_client = SchemaRegistryClient(credential=credential, endpoint=endpoint, **kwargs)
         self._id_to_schema = {}
         self._schema_to_id = {}

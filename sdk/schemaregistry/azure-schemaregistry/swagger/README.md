@@ -5,7 +5,8 @@
 ### Generation
 ```ps
 cd C:\Work\SchemaRegistry\
-autorest --v3 --python --use=@autorest/python@5.0.0-preview.6
+autorest --reset
+autorest --v3 --python
 ```
 ### Settings
 ``` yaml

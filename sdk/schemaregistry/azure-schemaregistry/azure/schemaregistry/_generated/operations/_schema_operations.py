@@ -16,7 +16,7 @@ from .. import models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Optional, TypeVar
+    from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
 
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -49,9 +49,10 @@ class SchemaOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> str
-        """Gets a registered schema by its unique ID.  Azure Schema Registry guarantees that ID is unique within a namespace.
+        """Get a registered schema by its unique ID reference.
 
-        Get a registered schema by its unique ID reference.
+        Gets a registered schema by its unique ID.  Azure Schema Registry guarantees that ID is unique
+        within a namespace.
 
         :param schema_id: References specific schema in registry namespace.
         :type schema_id: str
@@ -63,7 +64,8 @@ class SchemaOperations(object):
         cls = kwargs.pop('cls', None)  # type: ClsType[str]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-04"  # TODO: manually patch, the default value generated is "2018-01-01-preview"
+        api_version = "2017-04"
+        accept = "application/json"
 
         # Construct URL
         url = self.get_by_id.metadata['url']  # type: ignore
@@ -79,9 +81,8 @@ class SchemaOperations(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
-        # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -109,19 +110,23 @@ class SchemaOperations(object):
         self,
         group_name,  # type: str
         schema_name,  # type: str
+        x_schema_type,  # type: Union[str, "models.SerializationType"]
         schema_content,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> "models.SchemaId"
-        """Gets the ID referencing an existing schema within the specified schema group, as matched by schema content comparison.
+        """Get ID for existing schema.
 
-        Get ID for existing schema.
+        Gets the ID referencing an existing schema within the specified schema group, as matched by
+        schema content comparison.
 
         :param group_name: Schema group under which schema is registered.  Group's serialization type
          should match the serialization type specified in the request.
         :type group_name: str
         :param schema_name: Name of the registered schema.
         :type schema_name: str
+        :param x_schema_type: Serialization type for the schema being registered.
+        :type x_schema_type: str or ~azure.schemaregistry._generated.models.SerializationType
         :param schema_content: String representation of the registered schema.
         :type schema_content: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -132,9 +137,9 @@ class SchemaOperations(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SchemaId"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        x_schema_type = "avro"
-        api_version = "2017-04"  # TODO: manually patch, the default value generated is "2018-01-01-preview"
+        api_version = "2017-04"
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
 
         # Construct URL
         url = self.query_id_by_content.metadata['url']  # type: ignore
@@ -153,14 +158,12 @@ class SchemaOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['X-Schema-Type'] = self._serialize.header("x_schema_type", x_schema_type, 'str')
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(schema_content, 'str')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -187,19 +190,24 @@ class SchemaOperations(object):
         self,
         group_name,  # type: str
         schema_name,  # type: str
+        x_schema_type,  # type: Union[str, "models.SerializationType"]
         schema_content,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> "models.SchemaId"
-        """Register new schema. If schema of specified name does not exist in specified group, schema is created at version 1. If schema of specified name exists already in specified group, schema is created at latest version + 1.
+        """Register new schema.
 
-        Register new schema.
+        Register new schema. If schema of specified name does not exist in specified group, schema is
+        created at version 1. If schema of specified name exists already in specified group, schema is
+        created at latest version + 1.
 
         :param group_name: Schema group under which schema should be registered.  Group's serialization
          type should match the serialization type specified in the request.
         :type group_name: str
         :param schema_name: Name of schema being registered.
         :type schema_name: str
+        :param x_schema_type: Serialization type for the schema being registered.
+        :type x_schema_type: str or ~azure.schemaregistry._generated.models.SerializationType
         :param schema_content: String representation of the schema being registered.
         :type schema_content: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -210,9 +218,9 @@ class SchemaOperations(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SchemaId"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        x_schema_type = "avro"
-        api_version = "2017-04"  # TODO: manually patch, the default value generated is "2018-01-01-preview"
+        api_version = "2017-04"
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
 
         # Construct URL
         url = self.register.metadata['url']  # type: ignore
@@ -231,14 +239,12 @@ class SchemaOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['X-Schema-Type'] = self._serialize.header("x_schema_type", x_schema_type, 'str')
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(schema_content, 'str')
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 

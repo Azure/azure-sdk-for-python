@@ -30,8 +30,6 @@ from devtools_testutils import AzureMgmtTestCase
 
 class SchemaRegistryTests(AzureMgmtTestCase):
 
-    @pytest.mark.liveTest
-    @pytest.mark.live_test_only
     @SchemaRegistryPreparer()
     def test_schema_basic(self, schemaregistry_endpoint, schemaregistry_group, schemaregistry_tenant_id, schemaregistry_client_id, schemaregistry_client_secret, **kwargs):
         credential = ClientSecretCredential(tenant_id=schemaregistry_tenant_id, client_id=schemaregistry_client_id, client_secret=schemaregistry_client_secret)
@@ -64,8 +62,6 @@ class SchemaRegistryTests(AzureMgmtTestCase):
         assert returned_schema_properties.version == 1
         assert returned_schema_properties.serialization_type == "Avro"
 
-    @pytest.mark.liveTest
-    @pytest.mark.live_test_only
     @SchemaRegistryPreparer()
     def test_schema_update(self, schemaregistry_endpoint, schemaregistry_group, schemaregistry_tenant_id, schemaregistry_client_id, schemaregistry_client_secret, **kwargs):
         credential = ClientSecretCredential(tenant_id=schemaregistry_tenant_id, client_id=schemaregistry_client_id, client_secret=schemaregistry_client_secret)
@@ -100,8 +96,6 @@ class SchemaRegistryTests(AzureMgmtTestCase):
         assert new_schema.schema_properties.version == 2
         assert new_schema.schema_properties.serialization_type == "Avro"
 
-    @pytest.mark.liveTest
-    @pytest.mark.live_test_only
     @SchemaRegistryPreparer()
     def test_schema_same_twice(self, schemaregistry_endpoint, schemaregistry_group, schemaregistry_tenant_id, schemaregistry_client_id, schemaregistry_client_secret, **kwargs):
         credential = ClientSecretCredential(tenant_id=schemaregistry_tenant_id, client_id=schemaregistry_client_id, client_secret=schemaregistry_client_secret)
@@ -113,8 +107,6 @@ class SchemaRegistryTests(AzureMgmtTestCase):
         schema_properties_second = client.register_schema(schemaregistry_group, schema_name, serialization_type, schema_str)
         assert schema_properties.schema_id == schema_properties_second.schema_id
 
-    @pytest.mark.liveTest
-    @pytest.mark.live_test_only
     @SchemaRegistryPreparer()
     def test_schema_negative_wrong_credential(self, schemaregistry_endpoint, schemaregistry_group, schemaregistry_tenant_id, schemaregistry_client_id, schemaregistry_client_secret, **kwargs):
         credential = ClientSecretCredential(tenant_id="fake", client_id="fake", client_secret="fake")
@@ -125,8 +117,6 @@ class SchemaRegistryTests(AzureMgmtTestCase):
         with pytest.raises(ClientAuthenticationError):
             client.register_schema(schemaregistry_group, schema_name, serialization_type, schema_str)
 
-    @pytest.mark.liveTest
-    @pytest.mark.live_test_only
     @SchemaRegistryPreparer()
     def test_schema_negative_wrong_endpoint(self, schemaregistry_endpoint, schemaregistry_group, schemaregistry_tenant_id, schemaregistry_client_id, schemaregistry_client_secret, **kwargs):
         credential = ClientSecretCredential(tenant_id=schemaregistry_tenant_id, client_id=schemaregistry_client_id, client_secret=schemaregistry_client_secret)
@@ -137,8 +127,6 @@ class SchemaRegistryTests(AzureMgmtTestCase):
         with pytest.raises(ServiceRequestError):
             client.register_schema(schemaregistry_group, schema_name, serialization_type, schema_str)
 
-    @pytest.mark.liveTest
-    @pytest.mark.live_test_only
     @SchemaRegistryPreparer()
     def test_schema_negative_no_schema(self, schemaregistry_endpoint, schemaregistry_group, schemaregistry_tenant_id, schemaregistry_client_id, schemaregistry_client_secret, **kwargs):
         credential = ClientSecretCredential(tenant_id=schemaregistry_tenant_id, client_id=schemaregistry_client_id, client_secret=schemaregistry_client_secret)

@@ -28,7 +28,7 @@ from typing import Any, TYPE_CHECKING, Union
 from .._common._constants import SerializationType
 from .._common._response_handlers import _parse_response_schema_id, _parse_response_schema
 from .._common._schema import SchemaProperties, Schema
-from .._generated.aio._azure_schema_registry_async import AzureSchemaRegistry
+from .._generated.aio._azure_schema_registry import AzureSchemaRegistry
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
@@ -90,6 +90,7 @@ class SchemaRegistryClient(object):
         :param str schema_group: Schema group under which schema should be registered.
         :param str schema_name: Name of schema being registered.
         :param serialization_type: Serialization type for the schema being registered.
+         For now Avro is the only supported serialization type by the service.
         :type serialization_type: Union[str, SerializationType]
         :param str schema_content: String representation of the schema being registered.
         :rtype: SchemaProperties
@@ -113,7 +114,7 @@ class SchemaRegistryClient(object):
             group_name=schema_group,
             schema_name=schema_name,
             schema_content=schema_content,
-            # serialization_type=serialization_type,  # TODO: current swagger doesn't support the parameter
+            x_schema_type=serialization_type,
             cls=_parse_response_schema_id,
             **kwargs
         )
@@ -184,7 +185,7 @@ class SchemaRegistryClient(object):
             group_name=schema_group,
             schema_name=schema_name,
             schema_content=schema_content,
-            # serialization_type=serialization_type,  # TODO: current swagger doesn't support the parameter
+            x_schema_type=serialization_type,
             cls=_parse_response_schema_id,
             **kwargs
         )

@@ -11,12 +11,12 @@ interactions:
   response:
     body:
       string: <Error><Code>400</Code><Detail>SubCode=40000, UnknownType:The request
-        is invalid. [MGResponseHttpError=BadRequest]. TrackingId:6451c6b4-cd1d-4154-9144-1d8198dbe79c_G4,
+        is invalid. [MGResponseHttpError=BadRequest]. TrackingId:89f17396-2d5e-49d4-aaaa-402ce6f5257b_G5,
         SystemTracker:sr-playground.servicebus.windows.net:$schemagroups/getSchemaById/a,
-        Timestamp:2020-09-01T21:36:49</Detail></Error>
+        Timestamp:2020-09-03T21:36:06</Detail></Error>
     headers:
       content-type: application/xml; charset=utf-8
-      date: Tue, 01 Sep 2020 21:36:49 GMT
+      date: Thu, 03 Sep 2020 21:36:06 GMT
       server: Microsoft-HTTPAPI/2.0
       strict-transport-security: max-age=31536000
       transfer-encoding: chunked
@@ -36,11 +36,11 @@ interactions:
   response:
     body:
       string: <Error><Code>404</Code><Detail>Schema id aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-        does not exist. TrackingId:8ba23261-9feb-4628-89d5-61946780df35_G4, SystemTracker:sr-playground.servicebus.windows.net:$schemagroups/getSchemaById/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa,
-        Timestamp:2020-09-01T21:36:50</Detail></Error>
+        does not exist. TrackingId:80afec87-e5b0-4843-b1d7-1e51ed76f6f5_G5, SystemTracker:sr-playground.servicebus.windows.net:$schemagroups/getSchemaById/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa,
+        Timestamp:2020-09-03T21:36:07</Detail></Error>
     headers:
       content-type: application/xml; charset=utf-8
-      date: Tue, 01 Sep 2020 21:36:49 GMT
+      date: Thu, 03 Sep 2020 21:36:06 GMT
       server: Microsoft-HTTPAPI/2.0
       strict-transport-security: max-age=31536000
       transfer-encoding: chunked

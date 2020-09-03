@@ -7,10 +7,10 @@ Avro, Json, etc.
 
 ### Install the package
 
-Install the Azure Schema Registry client library for Python with [pip][pip]:
+Install the Azure Schema Registry client library and Azure Identity client library for Python with [pip][pip]:
 
 ```Bash
-pip install azure-schemaregistry
+pip install azure-schemaregistry azure-identity
 ```
 
 ### Prerequisites: 
@@ -91,7 +91,7 @@ schema_id = '<your-schema-id>'
 schema_registry_client = SchemaRegistryClient(endpoint=endpoint, credential=token_credential)
 with schema_registry_client:
     schema = schema_registry_client.get_schema(schema_id)
-    schema_content = schema.content
+    schema_content = schema.schema_content
 ```
 
 ### Get the id of a schema

@@ -28,10 +28,10 @@ If you do not have an existing Azure account, you may sign up for a free trial o
 
 ## Setup
 
-1. Install the Azure Schema Registry client library for Python with [pip](https://pypi.org/project/pip/):
+1. Install the Azure Schema Registry client library and Azure Identity client library for Python with [pip](https://pypi.org/project/pip/):
 
 ```bash
-pip install azure-schemaregistry
+pip install azure-schemaregistry azure-identity
 ```
 
 2. Clone or download this sample repository
