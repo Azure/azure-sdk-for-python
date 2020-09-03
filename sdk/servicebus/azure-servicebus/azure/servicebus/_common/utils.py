@@ -10,7 +10,7 @@ import logging
 import functools
 import platform
 from typing import Optional, Dict
-from msrest.serialization import UTC as utc
+from msrest.serialization import UTC
 
 
 try:
@@ -33,36 +33,12 @@ from .constants import (
 _log = logging.getLogger(__name__)
 
 
-class UTC(datetime.tzinfo):
-    """Time Zone info for handling UTC"""
-
-    def utcoffset(self, dt):
-        """UTF offset for UTC is 0."""
-        return datetime.timedelta(0)
-
-    def tzname(self, dt):
-        """Timestamp representation."""
-        return "Z"
-
-    def dst(self, dt):
-        """No daylight saving for UTC."""
-        return datetime.timedelta(hours=1)
-
-
-try:
-    from datetime import timezone  # pylint: disable=ungrouped-imports
-
-    TZ_UTC = timezone.utc  # type: ignore
-except ImportError:
-    TZ_UTC = UTC()  # type: ignore
-
-
 def utc_from_timestamp(timestamp):
-    return datetime.datetime.fromtimestamp(timestamp, tz=TZ_UTC)
+    return datetime.datetime.fromtimestamp(timestamp, tz=UTC())
 
 
 def utc_now():
-    return datetime.datetime.now(utc())
+    return datetime.datetime.now(UTC())
 
 
 def parse_conn_str(conn_str):
