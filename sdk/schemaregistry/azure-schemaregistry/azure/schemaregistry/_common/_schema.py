@@ -81,8 +81,8 @@ class SchemaProperties(DictMixin):
     """
     Meta properties of a schema.
 
-    :ivar id: References specific schema in registry namespace.
-    :type id: str
+    :ivar schema_id: References specific schema in registry namespace.
+    :type schema_id: str
     :ivar location: URL location of schema, identified by schema group, schema name, and version.
     :type location: str
     :ivar location_by_id: URL location of schema, identified by schema ID.

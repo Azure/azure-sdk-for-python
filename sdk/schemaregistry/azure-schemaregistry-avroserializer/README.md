@@ -94,7 +94,42 @@ with serializer:
 
 ## Troubleshooting
 
+### General
+
 Azure Schema Registry Avro Serializer raise exceptions defined in [Azure Core][azure_core].
+
+### Logging
+This library uses the standard
+[logging][python_logging] library for logging.
+Basic information about HTTP sessions (URLs, headers, etc.) is logged at INFO
+level.
+
+Detailed DEBUG level logging, including request/response bodies and unredacted
+headers, can be enabled on a client with the `logging_enable` argument:
+```python
+import sys
+import logging
+from azure.schemaregistry.serializer.avro_serializer import SchemaRegistryAvroSerializer
+from azure.identity import DefaultAzureCredential
+
+# Create a logger for the SDK
+logger = logging.getLogger('azure.schemaregistry')
+logger.setLevel(logging.DEBUG)
+
+# Configure a console output
+handler = logging.StreamHandler(stream=sys.stdout)
+logger.addHandler(handler)
+
+credential = DefaultAzureCredential()
+# This client will log detailed information about its HTTP sessions, at DEBUG level
+avro_serializer = SchemaRegistryAvroSerializer("you_end_point", credential, "your_group_name", logging_enable=True)
+```
+
+Similarly, `logging_enable` can enable detailed logging for a single operation,
+even when it isn't enabled for the client:
+```py
+avro_serializer.serialie(dict_data, schema_content, logging_enable=True)
+```
 
 ## Next steps
 
@@ -120,3 +155,4 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 [python]: https://www.python.org/downloads/
 [azure_core]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md
 [azure_sub]: https://azure.microsoft.com/free/
+[python_logging]: https://docs.python.org/3/library/logging.html

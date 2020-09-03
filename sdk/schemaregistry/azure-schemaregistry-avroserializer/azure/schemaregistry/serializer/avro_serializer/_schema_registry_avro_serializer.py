@@ -70,10 +70,15 @@ class SchemaRegistryAvroSerializer(object):
     def _get_schema_id(self, schema_name, schema, **kwargs):
         # type: (str, avro.schema.Schema, Any) -> str
         """
+        Get schema id from local cache with the given schema.
+        If there is no item in the local cache, get schema id from the service and cache it.
 
-        :param schema_name:
-        :param schema:
-        :return:
+        :param schema_name: Name of the schema
+        :type schema_name: str
+        :param schema: Schema object
+        :type schema: avro.schema.Schema
+        :return: Schema Id
+        :rtype: str
         """
         schema_str = str(schema)
         try:
@@ -93,9 +98,11 @@ class SchemaRegistryAvroSerializer(object):
     def _get_schema(self, schema_id, **kwargs):
         # type: (str, Any) -> str
         """
+        Get schema content from local cache with the given schema id.
+        If there is no item in the local cache, get schema from the service and cache it.
 
-        :param str schema_id:
-        :return:
+        :param str schema_id: Schema id
+        :return: Schema content
         """
         try:
             return self._id_to_schema[schema_id]
@@ -146,7 +153,7 @@ class SchemaRegistryAvroSerializer(object):
         :param bytes data: The bytes data needs to be decoded.
         :rtype: Dict[str, Any]
         """
-        record_format_identifier = data[0:4]  # pylint: disable=unused-variable
+        # record_format_identifier = data[0:4]  # The first 4 bytes are retained for future record format identifier.
         schema_id = data[4:36].decode('utf-8')
         schema_content = self._get_schema(schema_id, **kwargs)
 

@@ -7,7 +7,7 @@ Avro, Json, etc.
 
 ### Install the package
 
-Install the Azure Service Bus client library for Python with [pip][pip]:
+Install the Azure Schema Registry client library for Python with [pip][pip]:
 
 ```Bash
 pip install azure-schemaregistry
@@ -71,7 +71,7 @@ schema_content = """
 """
 
 schema_registry_client = SchemaRegistryClient(endpoint=endpoint, credential=token_credential)
-with schema_registry_client, token_credential:
+with schema_registry_client:
     schema_properties = schema_registry_client.register_schema(schema_group, schema_name, serialization_type, schema_content)
     schema_id = schema_properties.schema_id
 ```
@@ -132,10 +132,43 @@ with schema_registry_client:
 Schema Registry clients raise exceptions defined in [Azure Core][azure_core].
 
 ### Logging
+This library uses the standard
+[logging][python_logging] library for logging.
+Basic information about HTTP sessions (URLs, headers, etc.) is logged at INFO
+level.
+
+Detailed DEBUG level logging, including request/response bodies and unredacted
+headers, can be enabled on a client with the `logging_enable` argument:
+```python
+import sys
+import logging
+from azure.schemaregistry import SchemaRegistryClient
+from azure.identity import DefaultAzureCredential
+
+# Create a logger for the SDK
+logger = logging.getLogger('azure.schemaregistry')
+logger.setLevel(logging.DEBUG)
+
+# Configure a console output
+handler = logging.StreamHandler(stream=sys.stdout)
+logger.addHandler(handler)
+
+credential = DefaultAzureCredential()
+# This client will log detailed information about its HTTP sessions, at DEBUG level
+schema_registry_client = SchemaRegistryClient("you_end_point", credential, logging_enable=True)
+```
+
+Similarly, `logging_enable` can enable detailed logging for a single operation,
+even when it isn't enabled for the client:
+```py
+schema_registry_client.get_schema(schema_id, logging_enable=True)
+```
 
 ## Next steps
 
 ### More sample code
+
+Please take a look at the [samples](./samples) directory for detailed examples of how to use this library to register and retrieve schema to/from Schema Registry.
 
 ## Contributing
 
@@ -155,3 +188,4 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 [python]: https://www.python.org/downloads/
 [azure_core]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md
 [azure_sub]: https://azure.microsoft.com/free/
+[python_logging]: https://docs.python.org/3/library/logging.html

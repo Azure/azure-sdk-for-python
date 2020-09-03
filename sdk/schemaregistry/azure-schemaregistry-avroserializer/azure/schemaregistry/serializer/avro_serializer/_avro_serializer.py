@@ -23,21 +23,15 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-import abc
-from typing import BinaryIO, Union, Type, TypeVar, Optional, Any, Dict
+from typing import BinaryIO, Union, TypeVar, Dict
 from io import BytesIO
 import avro
 from avro.io import DatumWriter, DatumReader, BinaryDecoder, BinaryEncoder
 
-try:
-    ABC = abc.ABC
-except AttributeError:  # Python 2.7, abc exists, but not ABC
-    ABC = abc.ABCMeta("ABC", (object,), {"__slots__": ()})  # type: ignore
-
 ObjectType = TypeVar("ObjectType")
 
 
-class AvroObjectSerializer(ABC):
+class AvroObjectSerializer(object):
 
     def __init__(self, codec=None):
         """A Avro serializer using avro lib from Apache.
@@ -50,14 +44,16 @@ class AvroObjectSerializer(ABC):
     def serialize(
         self,
         data,  # type: ObjectType
-        schema,  # type: Optional[Any]
+        schema,  # type: Union[str, bytes, avro.schema.Schema]
     ):
-        # type: (...) -> bytes
+        # type: (ObjectType, Union[str, bytes, avro.schema.Schema]) -> bytes
         """Convert the provided value to it's binary representation and write it to the stream.
         Schema must be a Avro RecordSchema:
         https://avro.apache.org/docs/1.10.0/gettingstartedpython.html#Defining+a+schema
         :param data: An object to serialize
+        :type data: ObjectType
         :param schema: A Avro RecordSchema
+        :type schema: Union[str, bytes, avro.schema.Schema]
         """
         if not schema:
             raise ValueError("Schema is required in Avro serializer.")
@@ -82,16 +78,15 @@ class AvroObjectSerializer(ABC):
     def deserialize(
         self,
         data,  # type: Union[bytes, BinaryIO]
-        schema,  # type:
-        return_type=None,  # type: Optional[Type[ObjectType]]  # pylint: disable=unused-argument
+        schema,  # type:  Union[str, bytes, avro.schema.Schema]
     ):
-        # type: (...) -> ObjectType
+        # type: (Union[bytes, BinaryIO], Union[str, bytes, avro.schema.Schema]) -> ObjectType
         """Read the binary representation into a specific type.
         Return type will be ignored, since the schema is deduced from the provided bytes.
         :param data: A stream of bytes or bytes directly
         :type data: BinaryIO or bytes
         :param schema: A Avro RecordSchema
-        :param return_type: Return type is not supported in the Avro serializer.
+        :type schema: Union[str, bytes, avro.schema.Schema]
         :returns: An instantiated object
         :rtype: ObjectType
         """

@@ -35,8 +35,6 @@ from devtools_testutils import AzureMgmtTestCase
 
 class SchemaRegistryAvroSerializerTests(AzureMgmtTestCase):
 
-    @pytest.mark.liveTest
-    @pytest.mark.live_test_only
     def test_raw_avro_serializer(self):
         schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
         schema = avro.schema.parse(schema_str)
@@ -62,8 +60,6 @@ class SchemaRegistryAvroSerializerTests(AzureMgmtTestCase):
         assert not decoded_data["favorite_number"]
         assert not decoded_data["favorite_color"]
 
-    @pytest.mark.liveTest
-    @pytest.mark.live_test_only
     def test_raw_avro_serializer_negative(self):
         schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
         schema = avro.schema.parse(schema_str)

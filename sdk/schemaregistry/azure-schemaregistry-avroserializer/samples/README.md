@@ -11,12 +11,10 @@ urlFragment: schemaregistry-avro-serializer-samples
 # Azure Schema Registry Avro Serializer library for Python Samples
 
 These are code samples that show common scenario operations with the Schema Registry Avro Serializer library.
-The async versions of the samples (the python sample files appended with `_async`) show asynchronous operations, 
-and require Python 3.5 or later.
 
 Several Schema Registry Avro Serializer Python SDK samples are available to you in the SDK's GitHub repository. These samples provide example code for additional scenarios commonly encountered while working with Schema Registry Avro Serializer:
 
-* [avro_serializer.py](./sync_samples/avro_serializer.py) - Examples for common Schema Registry Avro Serializer tasks:
+* [avro_serializer.py](./avro_serializer.py) - Examples for common Schema Registry Avro Serializer tasks:
     * Serialize data according to the given schema
     * Deserialize data
 
@@ -27,10 +25,10 @@ If you do not have an existing Azure account, you may sign up for a free trial o
 
 ## Setup
 
-1. Install the Azure Schema Registry client library for Python with [pip](https://pypi.org/project/pip/):
+1. Install the Azure Schema Registry Avro Serializer client library for Python with [pip](https://pypi.org/project/pip/):
 
 ```bash
-pip install azure-schemaregistry-avro-serializer
+pip install azure-schemaregistry-avroserializer
 ```
 
 2. Clone or download this sample repository
