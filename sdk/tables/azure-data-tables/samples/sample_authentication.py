@@ -53,7 +53,7 @@ class TableAuthSamples(object):
         table_service = TableServiceClient(account_url=self.account_url, credential=self.access_key)
         properties = table_service.get_service_properties()
         print("Shared Key: {}".format(properties))
-        # [START auth_from_shared_key]
+        # [END auth_from_shared_key]
 
     def authentication_by_shared_access_signature(self):
         # Instantiate a TableServiceClient using a connection string

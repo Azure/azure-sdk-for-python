@@ -70,7 +70,7 @@ class SampleTablesQuery(object):
 
         except HttpResponseError as e:
             print(e.message)
-        # [START query_entities]
+        # [END query_entities]
 
         finally:
             table_client.delete_table()

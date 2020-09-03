@@ -65,7 +65,7 @@ class CreateDeleteTable(object):
             print("Deleted table {}!".format(self.table_name))
         except ResourceNotFoundError:
             print("Table could not be found")
-        # [START delete_table_from_tc]
+        # [END delete_table_from_tc]
 
     def create_from_table_client(self):
         from azure.data.table import TableClient

@@ -143,7 +143,7 @@ Two different clients are provided to interact with the various components of th
     client instances to access the tables within. It provides operations to retrieve and configure the account
     properties as well as query, create, and delete tables within the account. To perform operations on a specific table,
     retrieve a client using the `get_table_client` method.
-2. [`TableClient`][table_client_docs] -
+2. `TableClient` -
     this client represents interaction with a specific table (which need not exist yet). It provides operations to
     create, delete, or update a table and includes operations to query, get, and upsert entities
     within it.
@@ -264,12 +264,14 @@ headers, can be enabled on a client with the `logging_enable` argument:
 import sys
 import logging
 from azure.data.tables import TableServiceClient
-# Create a logger for the 'azure.data.tables' SDK
-logger = logging.getLogger('azure.data.tables')
+# Create a logger for the 'azure' SDK
+logger = logging.getLogger('azure')
 logger.setLevel(logging.DEBUG)
+
 # Configure a console output
 handler = logging.StreamHandler(stream=sys.stdout)
 logger.addHandler(handler)
+
 # This client will log detailed information about its HTTP sessions, at DEBUG level
 service_client = TableServiceClient.from_connection_string("your_connection_string", logging_enable=True)
 ```
@@ -277,7 +279,7 @@ service_client = TableServiceClient.from_connection_string("your_connection_stri
 Similarly, `logging_enable` can enable detailed logging for a single operation,
 even when it isn't enabled for the client:
 ```py
-service_client.get_service_stats(logging_enable=True)
+service_client.create_entity(entity=my_entity, logging_enable=True)
 ```
 
 ## Next steps
@@ -311,7 +313,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][msft_oss_co
 <!-- LINKS -->
 [source_code]:https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables
 [Tables_pypi]:https://aka.ms/azsdk/python/tablespypi
-[Tables_ref_docs]:https://docs.microsoft.com/en-us/azure/cosmos-db/table-introduction
+[Tables_ref_docs]:https://aka.ms/azsdk/python/tablesgitdocs
 [Tables_product_doc]:https://docs.microsoft.com/en-us/azure/cosmos-db/table-introduction
 [Tables_samples]:https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples
 
