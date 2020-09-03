@@ -17,7 +17,7 @@ param (
 . (Join-Path $PSScriptRoot artifact-metadata-parsing.ps1)
 . (Join-Path $PSScriptRoot SemVer.ps1)
 
-$releaseReplaceRegex = "(https://github.com/$RepoId/(?:blob|tree)/)master(/.*)"
+$releaseReplaceRegex = "(https://github.com/$RepoId/(?:blob|tree)/)master"
 
 function GetMetaData($lang){
   switch ($lang) {
@@ -79,7 +79,7 @@ function GetAdjustedReadmeContent($pkgInfo, $lang){
       $fileContent = $pkgInfo.ReadmeContent -replace $foundTitle, "$foundTitle - Version $($pkgInfo.PackageVersion) `n"
 
       # Replace github master link with release tag.
-      $ReplacementPattern = "`${1}$($pkgInfo.Tag)`$2"
+      $ReplacementPattern = "`${1}$($pkgInfo.Tag)"
       $fileContent = $fileContent -replace $releaseReplaceRegex, $ReplacementPattern
     }
 

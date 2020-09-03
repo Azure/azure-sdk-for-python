@@ -69,6 +69,7 @@ function ParseMavenPackage($pkg, $workingDirectory) {
     PackageId      = $pkgId
     GroupId        = $groupId
     PackageVersion = $pkgVersion
+    ReleaseTag     = "$pkgId_$pkgVersion"
     Deployable     = $forceCreate -or !(IsMavenPackageVersionPublished -pkgId $pkgId -pkgVersion $pkgVersion -groupId $groupId.Replace(".", "/"))
     ReleaseNotes   = $releaseNotes
     ReadmeContent  = $readmeContent
@@ -150,6 +151,7 @@ function ParseNPMPackage($pkg, $workingDirectory) {
   $resultObj = New-Object PSObject -Property @{
     PackageId      = $pkgId
     PackageVersion = $pkgVersion
+    ReleaseTag     = "$pkgId_$pkgVersion"
     Deployable     = $forceCreate -or !(IsNPMPackageVersionPublished -pkgId $pkgId -pkgVersion $pkgVersion)
     ReleaseNotes   = $releaseNotes
     ReadmeContent  = $readmeContent
@@ -208,6 +210,7 @@ function ParseNugetPackage($pkg, $workingDirectory) {
   return New-Object PSObject -Property @{
     PackageId      = $pkgId
     PackageVersion = $pkgVersion
+    ReleaseTag     = "$pkgId_$pkgVersion"
     Deployable     = $forceCreate -or !(IsNugetPackageVersionPublished -pkgId $pkgId -pkgVersion $pkgVersion)
     ReleaseNotes   = $releaseNotes
     ReadmeContent  = $readmeContent
@@ -272,6 +275,7 @@ function ParsePyPIPackage($pkg, $workingDirectory) {
   return New-Object PSObject -Property @{
     PackageId      = $pkgId
     PackageVersion = $pkgVersion
+    ReleaseTag     = "$pkgId_$pkgVersion"
     Deployable     = $forceCreate -or !(IsPythonPackageVersionPublished -pkgId $pkgId -pkgVersion $pkgVersion)
     ReleaseNotes   = $releaseNotes
     ReadmeContent  = $readmeContent
@@ -300,6 +304,7 @@ function ParseCArtifact($pkg, $workingDirectory) {
   return New-Object PSObject -Property @{
     PackageId      = ''
     PackageVersion = $pkgVersion
+    ReleaseTag     = $pkgVersion
     # Artifact info is always considered deployable for C becasue it is not
     # deployed anywhere. Dealing with duplicate tags happens downstream in
     # CheckArtifactShaAgainstTagsList
@@ -331,6 +336,7 @@ function ParseCppArtifact($pkg, $workingDirectory) {
   return New-Object PSObject -Property @{
     PackageId      = $pkgName
     PackageVersion = $pkgVersion
+    ReleaseTag     = "$pkgId_$pkgVersion"
     # Artifact info is always considered deployable for now becasue it is not
     # deployed anywhere. Dealing with duplicate tags happens downstream in
     # CheckArtifactShaAgainstTagsList
@@ -389,13 +395,16 @@ function GetExistingTags($apiUrl) {
 
 # Retrieve release tag for artiface package. If multiple packages, then output the first one.
 function RetrieveReleaseTag($pkgRepository, $artifactLocation, $continueOnError = $true) {
+  if (!$artifactLocation) {
+    return ""
+  }
   try {
     $pkgs, $ParsePkgInfoFn = RetrivePackages -pkgRepository $pkgRepository -artifactLocation $artifactLocation
     if (!$pkgs -or !$pkgs[0]) {
       return ""
     }
     $parsedPackage = &$ParsePkgInfoFn -pkg $pkgs[0]
-    return GenerateReleaseTag $parsedPackage.packageId $parsedPackage.PackageVersion
+    return $parsedPackage.ReleaseTag
   }
   catch {
     if ($continueOnError) {
@@ -465,13 +474,11 @@ function VerifyPackages($pkgRepository, $artifactLocation, $workingDirectory, $a
         exit(1)
       }
 
-      $tag = GenerateReleaseTag $parsedPackage.packageId $parsedPackage.PackageVersion
-
       $pkgList += New-Object PSObject -Property @{
         PackageId      = $parsedPackage.PackageId
         PackageVersion = $parsedPackage.PackageVersion
         GroupId        = $parsedPackage.GroupId
-        Tag            = $tag
+        Tag            = $parsedPackage.ReleaseTag
         ReleaseNotes   = $parsedPackage.ReleaseNotes
         ReadmeContent  = $parsedPackage.ReadmeContent
         IsPrerelease   = [AzureEngSemanticVersion]::ParseVersionString($parsedPackage.PackageVersion).IsPrerelease
@@ -528,13 +535,4 @@ function CheckArtifactShaAgainstTagsList($priorExistingTagList, $releaseSha, $ap
     Write-Host "Tags already existing with different SHA versions. Exiting."
     exit(1)
   }
-}
-
-function GenerateReleaseTag($packageId, $packageVersion) {
-  $tag =if ($packageId) {
-    "$packageId_$packageVersion"
-  } else {
-    $packageVersion
-  }
-  return $tag
 }
