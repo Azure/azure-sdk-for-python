@@ -135,7 +135,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
     async def _send(self, message, timeout=None, last_exception=None):
         await self._open()
         self._set_msg_timeout(timeout, last_exception)
-        await self._handler.send_message_async(message.message)
+        await self._handler.send_message_async(message._internal_message)
 
     async def schedule_messages(self, messages, schedule_time_utc):
         # type: (Union[Message, List[Message]], datetime.datetime) -> List[int]

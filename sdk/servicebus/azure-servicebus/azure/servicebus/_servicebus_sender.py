@@ -78,7 +78,8 @@ class SenderMixin(object):
                 message_data[MGMT_REQUEST_PARTITION_KEY] = message.partition_key
             if message.via_partition_key:
                 message_data[MGMT_REQUEST_VIA_PARTITION_KEY] = message.via_partition_key
-            message_data[MGMT_REQUEST_MESSAGE] = bytearray(message.message.encode_message())
+            message_data[MGMT_REQUEST_MESSAGE] = bytearray(
+                message._internal_message.encode_message()) # pylint: disable=protected-access
             request_body[MGMT_REQUEST_MESSAGES].append(message_data)
         return request_body
 
@@ -191,7 +192,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         # type: (Message, Optional[float], Exception) -> None
         self._open()
         self._set_msg_timeout(timeout, last_exception)
-        self._handler.send_message(message.message)
+        self._handler.send_message(message._internal_message) # pylint: disable=protected-access
 
     def schedule_messages(self, messages, schedule_time_utc):
         # type: (Union[Message, List[Message]], datetime.datetime) -> List[int]

@@ -105,9 +105,9 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
         self._amqp_header = uamqp.message.MessageHeader()
 
         if 'message' in kwargs:
-            self.message = kwargs['message']
-            self._amqp_properties = self.message.properties
-            self._amqp_header = self.message.header
+            self._internal_message = kwargs['message']
+            self._amqp_properties = self._internal_message.properties
+            self._amqp_header = self._internal_message.header
         else:
             self._build_message(body)
             self.properties = kwargs.pop("properties", None)
@@ -123,42 +123,44 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
             self.time_to_live = kwargs.pop("time_to_live", None)
             self.partition_key = kwargs.pop("partition_key", None)
             self.via_partition_key = kwargs.pop("via_partition_key", None)
+        # If _internal_message is the full message, amqp_message is the "public facing interface" for what we expose.
+        self.amqp_message = AMQPMessage(self._internal_message)
 
     def __str__(self):
-        return str(self.message)
+        return str(self._internal_message)
 
     def _build_message(self, body):
         if isinstance(body, list) and body:  # TODO: This only works for a list of bytes/strings
-            self.message = uamqp.Message(body[0], properties=self._amqp_properties, header=self._amqp_header)
+            self._internal_message = uamqp.Message(body[0], properties=self._amqp_properties, header=self._amqp_header)
             for more in body[1:]:
-                self.message._body.append(more)  # pylint: disable=protected-access
+                self._internal_message._body.append(more)  # pylint: disable=protected-access
         elif body is None:
             raise ValueError("Message body cannot be None.")
         else:
-            self.message = uamqp.Message(body, properties=self._amqp_properties, header=self._amqp_header)
+            self._internal_message = uamqp.Message(body, properties=self._amqp_properties, header=self._amqp_header)
 
     def _set_message_annotations(self, key, value):
-        if not self.message.annotations:
-            self.message.annotations = {}
+        if not self._internal_message.annotations:
+            self._internal_message.annotations = {}
 
         if isinstance(self, ReceivedMessage):
             try:
-                del self.message.annotations[key]
+                del self._internal_message.annotations[key]
             except KeyError:
                 pass
 
         if value is None:
             try:
-                del self.message.annotations[ANNOTATION_SYMBOL_KEY_MAP[key]]
+                del self._internal_message.annotations[ANNOTATION_SYMBOL_KEY_MAP[key]]
             except KeyError:
                 pass
         else:
-            self.message.annotations[ANNOTATION_SYMBOL_KEY_MAP[key]] = value
+            self._internal_message.annotations[ANNOTATION_SYMBOL_KEY_MAP[key]] = value
 
     def _to_outgoing_message(self):
         # type: () -> Message
-        self.message.state = MessageState.WaitingToBeSent
-        self.message._response = None # pylint: disable=protected-access
+        self._internal_message.state = MessageState.WaitingToBeSent
+        self._internal_message._response = None # pylint: disable=protected-access
         return self
 
     @property
@@ -191,12 +193,12 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
 
         :rtype: dict
         """
-        return self.message.application_properties
+        return self._internal_message.application_properties
 
     @properties.setter
     def properties(self, value):
         # type: (dict) -> None
-        self.message.application_properties = value
+        self._internal_message.application_properties = value
 
     @property
     def partition_key(self):
@@ -214,8 +216,8 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
         """
         p_key = None
         try:
-            p_key = self.message.annotations.get(_X_OPT_PARTITION_KEY) or \
-                self.message.annotations.get(ANNOTATION_SYMBOL_PARTITION_KEY)
+            p_key = self._internal_message.annotations.get(_X_OPT_PARTITION_KEY) or \
+                self._internal_message.annotations.get(ANNOTATION_SYMBOL_PARTITION_KEY)
             return p_key.decode('UTF-8')
         except (AttributeError, UnicodeDecodeError):
             return p_key
@@ -241,8 +243,8 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
         """
         via_p_key = None
         try:
-            via_p_key = self.message.annotations.get(_X_OPT_VIA_PARTITION_KEY) or \
-                self.message.annotations.get(ANNOTATION_SYMBOL_VIA_PARTITION_KEY)
+            via_p_key = self._internal_message.annotations.get(_X_OPT_VIA_PARTITION_KEY) or \
+                self._internal_message.annotations.get(ANNOTATION_SYMBOL_VIA_PARTITION_KEY)
             return via_p_key.decode('UTF-8')
         except (AttributeError, UnicodeDecodeError):
             return via_p_key
@@ -295,9 +297,9 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
 
         :rtype: ~datetime.datetime
         """
-        if self.message.annotations:
-            timestamp = self.message.annotations.get(_X_OPT_SCHEDULED_ENQUEUE_TIME) or \
-                self.message.annotations.get(ANNOTATION_SYMBOL_SCHEDULED_ENQUEUE_TIME)
+        if self._internal_message.annotations:
+            timestamp = self._internal_message.annotations.get(_X_OPT_SCHEDULED_ENQUEUE_TIME) or \
+                self._internal_message.annotations.get(ANNOTATION_SYMBOL_SCHEDULED_ENQUEUE_TIME)
             if timestamp:
                 try:
                     in_seconds = timestamp/1000.0
@@ -320,7 +322,7 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
 
         :rtype: bytes or Iterable[bytes]
         """
-        return self.message.get_data()
+        return self._internal_message.get_data()
 
     @property
     def content_type(self):
@@ -504,8 +506,8 @@ class BatchMessage(object):
     def __init__(self, max_size_in_bytes=None):
         # type: (Optional[int]) -> None
         self.max_size_in_bytes = max_size_in_bytes or uamqp.constants.MAX_MESSAGE_LENGTH_BYTES
-        self.message = uamqp.BatchMessage(data=[], multi_messages=False, properties=None)
-        self._size = self.message.gather()[0].get_message_encoded_size()
+        self._internal_message = uamqp.BatchMessage(data=[], multi_messages=False, properties=None)
+        self._size = self._internal_message.gather()[0].get_message_encoded_size()
         self._count = 0
         self._messages = []  # type: List[Message]
 
@@ -566,7 +568,7 @@ class BatchMessage(object):
                 )
             )
 
-        self.message._body_gen.append(message)  # pylint: disable=protected-access
+        self._internal_message._body_gen.append(message)  # pylint: disable=protected-access
         self._size = size_after_add
         self._count += 1
         self._messages.append(message)
@@ -586,7 +588,7 @@ class PeekMessage(Message):
 
     def _to_outgoing_message(self):
         # type: () -> Message
-        amqp_message = self.message
+        amqp_message = self._internal_message
         amqp_body = amqp_message._body  # pylint: disable=protected-access
 
         if isinstance(amqp_body, uamqp.message.DataBody):
@@ -621,9 +623,9 @@ class PeekMessage(Message):
 
         :rtype: str
         """
-        if self.message.application_properties:
+        if self._internal_message.application_properties:
             try:
-                return self.message.application_properties.get(PROPERTIES_DEAD_LETTER_ERROR_DESCRIPTION).decode('UTF-8')
+                return self._internal_message.application_properties.get(PROPERTIES_DEAD_LETTER_ERROR_DESCRIPTION).decode('UTF-8')
             except AttributeError:
                 pass
         return None
@@ -636,9 +638,9 @@ class PeekMessage(Message):
 
         :rtype: str
         """
-        if self.message.application_properties:
+        if self._internal_message.application_properties:
             try:
-                return self.message.application_properties.get(PROPERTIES_DEAD_LETTER_REASON).decode('UTF-8')
+                return self._internal_message.application_properties.get(PROPERTIES_DEAD_LETTER_REASON).decode('UTF-8')
             except AttributeError:
                 pass
         return None
@@ -653,9 +655,9 @@ class PeekMessage(Message):
 
         :rtype: str
         """
-        if self.message.annotations:
+        if self._internal_message.annotations:
             try:
-                return self.message.annotations.get(_X_OPT_DEAD_LETTER_SOURCE).decode('UTF-8')
+                return self._internal_message.annotations.get(_X_OPT_DEAD_LETTER_SOURCE).decode('UTF-8')
             except AttributeError:
                 pass
         return None
@@ -682,8 +684,8 @@ class PeekMessage(Message):
 
         :rtype: int
         """
-        if self.message.annotations:
-            return self.message.annotations.get(_X_OPT_ENQUEUE_SEQUENCE_NUMBER)
+        if self._internal_message.annotations:
+            return self._internal_message.annotations.get(_X_OPT_ENQUEUE_SEQUENCE_NUMBER)
         return None
 
     @property
@@ -694,8 +696,8 @@ class PeekMessage(Message):
 
         :rtype: ~datetime.datetime
         """
-        if self.message.annotations:
-            timestamp = self.message.annotations.get(_X_OPT_ENQUEUED_TIME)
+        if self._internal_message.annotations:
+            timestamp = self._internal_message.annotations.get(_X_OPT_ENQUEUED_TIME)
             if timestamp:
                 in_seconds = timestamp/1000.0
                 return utc_from_timestamp(in_seconds)
@@ -726,8 +728,8 @@ class PeekMessage(Message):
 
         :rtype: int
         """
-        if self.message.annotations:
-            return self.message.annotations.get(_X_OPT_SEQUENCE_NUMBER)
+        if self._internal_message.annotations:
+            return self._internal_message.annotations.get(_X_OPT_SEQUENCE_NUMBER)
         return None
 
 
@@ -816,12 +818,12 @@ class ReceivedMessageBase(PeekMessage):
     def _settle_via_receiver_link(self, settle_operation, dead_letter_reason=None, dead_letter_description=None):
         # type: (str, Optional[str], Optional[str]) -> Callable
         if settle_operation == MESSAGE_COMPLETE:
-            return functools.partial(self.message.accept)
+            return functools.partial(self._internal_message.accept)
         if settle_operation == MESSAGE_ABANDON:
-            return functools.partial(self.message.modify, True, False)
+            return functools.partial(self._internal_message.modify, True, False)
         if settle_operation == MESSAGE_DEAD_LETTER:
             return functools.partial(
-                self.message.reject,
+                self._internal_message.reject,
                 condition=DEADLETTERNAME,
                 description=dead_letter_description,
                 info={
@@ -830,7 +832,7 @@ class ReceivedMessageBase(PeekMessage):
                 }
             )
         if settle_operation == MESSAGE_DEFER:
-            return functools.partial(self.message.modify, True, True)
+            return functools.partial(self._internal_message.modify, True, True)
         raise ValueError("Unsupported settle operation type: {}".format(settle_operation))
 
     @property
@@ -863,10 +865,10 @@ class ReceivedMessageBase(PeekMessage):
         if self._settled:
             return None
 
-        if self.message.delivery_tag:
-            return uuid.UUID(bytes_le=self.message.delivery_tag)
+        if self._internal_message.delivery_tag:
+            return uuid.UUID(bytes_le=self._internal_message.delivery_tag)
 
-        delivery_annotations = self.message.delivery_annotations
+        delivery_annotations = self._internal_message.delivery_annotations
         if delivery_annotations:
             return delivery_annotations.get(_X_OPT_LOCK_TOKEN)
         return None
@@ -889,8 +891,8 @@ class ReceivedMessageBase(PeekMessage):
             pass
         if self._expiry:
             return self._expiry
-        if self.message.annotations and _X_OPT_LOCKED_UNTIL in self.message.annotations:
-            expiry_in_seconds = self.message.annotations[_X_OPT_LOCKED_UNTIL]/1000
+        if self._internal_message.annotations and _X_OPT_LOCKED_UNTIL in self._internal_message.annotations:
+            expiry_in_seconds = self._internal_message.annotations[_X_OPT_LOCKED_UNTIL]/1000
             self._expiry = utc_from_timestamp(expiry_in_seconds)
         return self._expiry
 
@@ -1069,3 +1071,77 @@ class ReceivedMessage(ReceivedMessageBase):
 
         expiry = self._receiver._renew_locks(token)  # type: ignore
         self._expiry = utc_from_timestamp(expiry[MGMT_RESPONSE_MESSAGE_EXPIRATION][0]/1000.0)
+
+
+class AMQPMessage(object):
+    """
+    The internal AMQP message that this ServiceBusMessage represents.
+
+    :param properties: Properties to add to the message.
+    :type properties: ~uamqp.message.MessageProperties
+    :param application_properties: Service specific application properties.
+    :type application_properties: dict
+    :param annotations: Service specific message annotations. Keys in the dictionary
+     must be `uamqp.types.AMQPSymbol` or `uamqp.types.AMQPuLong`.
+    :type annotations: dict
+    :param delivery_annotations: Delivery-specific non-standard properties at the head of the message.
+     Delivery annotations convey information from the sending peer to the receiving peer.
+     Keys in the dictionary must be `uamqp.types.AMQPSymbol` or `uamqp.types.AMQPuLong`.
+    :type annotations: dict
+    :param header: The message header.
+    :type header: ~uamqp.message.MessageHeader
+    :param header: The message footer.
+    :type header: dict
+
+    """
+    def __init__(self, message):
+        # type: (uamqp.Message) -> None
+        self._message = message
+
+    @property
+    def properties(self):
+        return self._message.properties
+
+    @properties.setter
+    def properties(self, value):
+        self._message.properties = value
+
+    @property
+    def application_properties(self):
+        return self._message.application_properties
+
+    @application_properties.setter
+    def application_properties(self, value):
+        self._message.application_properties = value
+
+    @property
+    def annotations(self):
+        return self._message.annotations
+
+    @annotations.setter
+    def annotations(self, value):
+        self._message.annotations = value
+
+    @property
+    def delivery_annotations(self):
+        return self._message.delivery_annotations
+
+    @delivery_annotations.setter
+    def delivery_annotations(self, value):
+        self._message.delivery_annotations = value
+
+    @property
+    def header(self):
+        return self._message.header
+
+    @header.setter
+    def header(self, value):
+        self._message.header = value
+
+    @property
+    def footer(self):
+        return self._message.footer
+
+    @footer.setter
+    def footer(self, value):
+        self._message.footer = value
