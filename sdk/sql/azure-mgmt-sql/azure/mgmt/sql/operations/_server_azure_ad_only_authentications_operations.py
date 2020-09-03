@@ -18,8 +18,8 @@ from msrestazure.polling.arm_polling import ARMPolling
 from .. import models
 
 
-class ServerAzureADAdministratorsOperations(object):
-    """ServerAzureADAdministratorsOperations operations.
+class ServerAzureADOnlyAuthenticationsOperations(object):
+    """ServerAzureADOnlyAuthenticationsOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -27,8 +27,8 @@ class ServerAzureADAdministratorsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version to use for the request. Constant value: "2019-06-01-preview".
-    :ivar administrator_name: The name of server active directory administrator. Constant value: "ActiveDirectory".
+    :ivar api_version: The API version to use for the request. Constant value: "2020-02-02-preview".
+    :ivar authentication_name: The name of server azure active directory only authentication. Constant value: "Default".
     """
 
     models = models
@@ -38,14 +38,14 @@ class ServerAzureADAdministratorsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-06-01-preview"
-        self.administrator_name = "ActiveDirectory"
+        self.api_version = "2020-02-02-preview"
+        self.authentication_name = "Default"
 
         self.config = config
 
     def get(
             self, resource_group_name, server_name, custom_headers=None, raw=False, **operation_config):
-        """Gets a Azure Active Directory administrator.
+        """Gets a specific Azure Active Directory only authentication property.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
@@ -58,8 +58,9 @@ class ServerAzureADAdministratorsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: ServerAzureADAdministrator or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.sql.models.ServerAzureADAdministrator or
+        :return: ServerAzureADOnlyAuthentication or ClientRawResponse if
+         raw=true
+        :rtype: ~azure.mgmt.sql.models.ServerAzureADOnlyAuthentication or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -69,7 +70,7 @@ class ServerAzureADAdministratorsOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serverName': self._serialize.url("server_name", server_name, 'str'),
-            'administratorName': self._serialize.url("self.administrator_name", self.administrator_name, 'str')
+            'authenticationName': self._serialize.url("self.authentication_name", self.authentication_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -98,25 +99,27 @@ class ServerAzureADAdministratorsOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('ServerAzureADAdministrator', response)
+            deserialized = self._deserialize('ServerAzureADOnlyAuthentication', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/administrators/{administratorName}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/azureADOnlyAuthentications/{authenticationName}'}
 
 
     def _create_or_update_initial(
-            self, resource_group_name, server_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, server_name, azure_ad_only_authentication, custom_headers=None, raw=False, **operation_config):
+        parameters = models.ServerAzureADOnlyAuthentication(azure_ad_only_authentication=azure_ad_only_authentication)
+
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serverName': self._serialize.url("server_name", server_name, 'str'),
-            'administratorName': self._serialize.url("self.administrator_name", self.administrator_name, 'str')
+            'authenticationName': self._serialize.url("self.authentication_name", self.authentication_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -136,7 +139,7 @@ class ServerAzureADAdministratorsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'ServerAzureADAdministrator')
+        body_content = self._serialize.body(parameters, 'ServerAzureADOnlyAuthentication')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -150,9 +153,9 @@ class ServerAzureADAdministratorsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('ServerAzureADAdministrator', response)
+            deserialized = self._deserialize('ServerAzureADOnlyAuthentication', response)
         if response.status_code == 201:
-            deserialized = self._deserialize('ServerAzureADAdministrator', response)
+            deserialized = self._deserialize('ServerAzureADOnlyAuthentication', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -161,8 +164,9 @@ class ServerAzureADAdministratorsOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, server_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Creates or updates an existing Azure Active Directory administrator.
+            self, resource_group_name, server_name, azure_ad_only_authentication, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Sets Server Active Directory only authentication property or updates an
+        existing server Active Directory only authentication property.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
@@ -170,34 +174,34 @@ class ServerAzureADAdministratorsOperations(object):
         :type resource_group_name: str
         :param server_name: The name of the server.
         :type server_name: str
-        :param parameters: The requested Azure Active Directory administrator
-         Resource state.
-        :type parameters: ~azure.mgmt.sql.models.ServerAzureADAdministrator
+        :param azure_ad_only_authentication: Azure Active Directory only
+         Authentication enabled.
+        :type azure_ad_only_authentication: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :return: An instance of LROPoller that returns
-         ServerAzureADAdministrator or
-         ClientRawResponse<ServerAzureADAdministrator> if raw==True
+         ServerAzureADOnlyAuthentication or
+         ClientRawResponse<ServerAzureADOnlyAuthentication> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.sql.models.ServerAzureADAdministrator]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.sql.models.ServerAzureADOnlyAuthentication]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.sql.models.ServerAzureADAdministrator]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.sql.models.ServerAzureADOnlyAuthentication]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._create_or_update_initial(
             resource_group_name=resource_group_name,
             server_name=server_name,
-            parameters=parameters,
+            azure_ad_only_authentication=azure_ad_only_authentication,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('ServerAzureADAdministrator', response)
+            deserialized = self._deserialize('ServerAzureADOnlyAuthentication', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -212,7 +216,7 @@ class ServerAzureADAdministratorsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/administrators/{administratorName}'}
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/azureADOnlyAuthentications/{authenticationName}'}
 
 
     def _delete_initial(
@@ -223,7 +227,7 @@ class ServerAzureADAdministratorsOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serverName': self._serialize.url("server_name", server_name, 'str'),
-            'administratorName': self._serialize.url("self.administrator_name", self.administrator_name, 'str')
+            'authenticationName': self._serialize.url("self.authentication_name", self.authentication_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -255,7 +259,8 @@ class ServerAzureADAdministratorsOperations(object):
 
     def delete(
             self, resource_group_name, server_name, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Deletes the Azure Active Directory administrator with the given name.
+        """Deletes an existing server Active Directory only authentication
+        property.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
@@ -294,11 +299,11 @@ class ServerAzureADAdministratorsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/administrators/{administratorName}'}
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/azureADOnlyAuthentications/{authenticationName}'}
 
     def list_by_server(
             self, resource_group_name, server_name, custom_headers=None, raw=False, **operation_config):
-        """Gets a list of Azure Active Directory administrators in a server.
+        """Gets a list of server Azure Active Directory only authentications.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
@@ -311,9 +316,9 @@ class ServerAzureADAdministratorsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of ServerAzureADAdministrator
+        :return: An iterator like instance of ServerAzureADOnlyAuthentication
         :rtype:
-         ~azure.mgmt.sql.models.ServerAzureADAdministratorPaged[~azure.mgmt.sql.models.ServerAzureADAdministrator]
+         ~azure.mgmt.sql.models.ServerAzureADOnlyAuthenticationPaged[~azure.mgmt.sql.models.ServerAzureADOnlyAuthentication]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
@@ -365,7 +370,7 @@ class ServerAzureADAdministratorsOperations(object):
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.ServerAzureADAdministratorPaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.ServerAzureADOnlyAuthenticationPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list_by_server.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/administrators'}
+    list_by_server.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/azureADOnlyAuthentications'}

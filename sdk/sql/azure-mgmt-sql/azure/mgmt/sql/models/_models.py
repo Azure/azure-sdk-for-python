@@ -280,6 +280,11 @@ class BackupShortTermRetentionPolicy(ProxyResource):
     :param retention_days: The backup retention period in days. This is how
      many days Point-in-Time Restore will be supported.
     :type retention_days: int
+    :param diff_backup_interval_in_hours: The differential backup interval in
+     hours. This is how many interval hours between each differential backup
+     will be supported. This is only applicable to live databases but not
+     dropped databases.
+    :type diff_backup_interval_in_hours: int
     """
 
     _validation = {
@@ -293,11 +298,13 @@ class BackupShortTermRetentionPolicy(ProxyResource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'retention_days': {'key': 'properties.retentionDays', 'type': 'int'},
+        'diff_backup_interval_in_hours': {'key': 'properties.diffBackupIntervalInHours', 'type': 'int'},
     }
 
     def __init__(self, **kwargs):
         super(BackupShortTermRetentionPolicy, self).__init__(**kwargs)
         self.retention_days = kwargs.get('retention_days', None)
+        self.diff_backup_interval_in_hours = kwargs.get('diff_backup_interval_in_hours', None)
 
 
 class CheckNameAvailabilityRequest(Model):
@@ -607,26 +614,29 @@ class Database(TrackedResource):
     :ivar earliest_restore_date: This records the earliest start date and time
      that restore is available for this database (ISO8601 format).
     :vartype earliest_restore_date: datetime
-    :param read_scale: If enabled, connections that have application intent
-     set to readonly in their connection string may be routed to a readonly
-     secondary replica. This property is only settable for Premium and Business
-     Critical databases. Possible values include: 'Enabled', 'Disabled'
+    :param read_scale: The state of read-only routing. If enabled, connections
+     that have application intent set to readonly in their connection string
+     may be routed to a readonly secondary replica in the same region. Possible
+     values include: 'Enabled', 'Disabled'
     :type read_scale: str or ~azure.mgmt.sql.models.DatabaseReadScale
     :param read_replica_count: The number of readonly secondary replicas
-     associated with the database to which readonly application intent
-     connections may be routed. This property is only settable for Hyperscale
-     edition databases.
+     associated with the database.
     :type read_replica_count: int
     :ivar current_sku: The name and tier of the SKU.
     :vartype current_sku: ~azure.mgmt.sql.models.Sku
     :param auto_pause_delay: Time in minutes after which database is
      automatically paused. A value of -1 means that automatic pause is disabled
     :type auto_pause_delay: int
+    :param storage_account_type: The storage account type used to store
+     backups for this database. Currently the only supported option is GRS
+     (GeoRedundantStorage). Possible values include: 'GRS', 'LRS', 'ZRS'
+    :type storage_account_type: str or
+     ~azure.mgmt.sql.models.StorageAccountType
     :param min_capacity: Minimal capacity that database will always have
      allocated, if not paused
     :type min_capacity: float
     :ivar paused_date: The date when database was paused by user configuration
-     or action (ISO8601 format). Null if the database is ready.
+     or action(ISO8601 format). Null if the database is ready.
     :vartype paused_date: datetime
     :ivar resumed_date: The date when database was resumed by user action or
      database login (ISO8601 format). Null if the database is paused.
@@ -691,6 +701,7 @@ class Database(TrackedResource):
         'read_replica_count': {'key': 'properties.readReplicaCount', 'type': 'int'},
         'current_sku': {'key': 'properties.currentSku', 'type': 'Sku'},
         'auto_pause_delay': {'key': 'properties.autoPauseDelay', 'type': 'int'},
+        'storage_account_type': {'key': 'properties.storageAccountType', 'type': 'str'},
         'min_capacity': {'key': 'properties.minCapacity', 'type': 'float'},
         'paused_date': {'key': 'properties.pausedDate', 'type': 'iso-8601'},
         'resumed_date': {'key': 'properties.resumedDate', 'type': 'iso-8601'},
@@ -729,6 +740,7 @@ class Database(TrackedResource):
         self.read_replica_count = kwargs.get('read_replica_count', None)
         self.current_sku = None
         self.auto_pause_delay = kwargs.get('auto_pause_delay', None)
+        self.storage_account_type = kwargs.get('storage_account_type', None)
         self.min_capacity = kwargs.get('min_capacity', None)
         self.paused_date = None
         self.resumed_date = None
@@ -1254,26 +1266,29 @@ class DatabaseUpdate(Model):
     :ivar earliest_restore_date: This records the earliest start date and time
      that restore is available for this database (ISO8601 format).
     :vartype earliest_restore_date: datetime
-    :param read_scale: If enabled, connections that have application intent
-     set to readonly in their connection string may be routed to a readonly
-     secondary replica. This property is only settable for Premium and Business
-     Critical databases. Possible values include: 'Enabled', 'Disabled'
+    :param read_scale: The state of read-only routing. If enabled, connections
+     that have application intent set to readonly in their connection string
+     may be routed to a readonly secondary replica in the same region. Possible
+     values include: 'Enabled', 'Disabled'
     :type read_scale: str or ~azure.mgmt.sql.models.DatabaseReadScale
     :param read_replica_count: The number of readonly secondary replicas
-     associated with the database to which readonly application intent
-     connections may be routed. This property is only settable for Hyperscale
-     edition databases.
+     associated with the database.
     :type read_replica_count: int
     :ivar current_sku: The name and tier of the SKU.
     :vartype current_sku: ~azure.mgmt.sql.models.Sku
     :param auto_pause_delay: Time in minutes after which database is
      automatically paused. A value of -1 means that automatic pause is disabled
     :type auto_pause_delay: int
+    :param storage_account_type: The storage account type used to store
+     backups for this database. Currently the only supported option is GRS
+     (GeoRedundantStorage). Possible values include: 'GRS', 'LRS', 'ZRS'
+    :type storage_account_type: str or
+     ~azure.mgmt.sql.models.StorageAccountType
     :param min_capacity: Minimal capacity that database will always have
      allocated, if not paused
     :type min_capacity: float
     :ivar paused_date: The date when database was paused by user configuration
-     or action (ISO8601 format). Null if the database is ready.
+     or action(ISO8601 format). Null if the database is ready.
     :vartype paused_date: datetime
     :ivar resumed_date: The date when database was resumed by user action or
      database login (ISO8601 format). Null if the database is paused.
@@ -1327,6 +1342,7 @@ class DatabaseUpdate(Model):
         'read_replica_count': {'key': 'properties.readReplicaCount', 'type': 'int'},
         'current_sku': {'key': 'properties.currentSku', 'type': 'Sku'},
         'auto_pause_delay': {'key': 'properties.autoPauseDelay', 'type': 'int'},
+        'storage_account_type': {'key': 'properties.storageAccountType', 'type': 'str'},
         'min_capacity': {'key': 'properties.minCapacity', 'type': 'float'},
         'paused_date': {'key': 'properties.pausedDate', 'type': 'iso-8601'},
         'resumed_date': {'key': 'properties.resumedDate', 'type': 'iso-8601'},
@@ -1364,6 +1380,7 @@ class DatabaseUpdate(Model):
         self.read_replica_count = kwargs.get('read_replica_count', None)
         self.current_sku = None
         self.auto_pause_delay = kwargs.get('auto_pause_delay', None)
+        self.storage_account_type = kwargs.get('storage_account_type', None)
         self.min_capacity = kwargs.get('min_capacity', None)
         self.paused_date = None
         self.resumed_date = None
@@ -2607,28 +2624,28 @@ class EncryptionProtector(ProxyResource):
         self.thumbprint = None
 
 
-class ExportRequest(Model):
-    """Export database parameters.
+class ExportDatabaseDefinition(Model):
+    """Contains the information necessary to perform export database operation.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param storage_key_type: Required. The type of the storage key to use.
-     Possible values include: 'StorageAccessKey', 'SharedAccessKey'
+    :param storage_key_type: Required. Storage key type. Possible values
+     include: 'SharedAccessKey', 'StorageAccessKey'
     :type storage_key_type: str or ~azure.mgmt.sql.models.StorageKeyType
-    :param storage_key: Required. The storage key to use.  If storage key type
-     is SharedAccessKey, it must be preceded with a "?."
+    :param storage_key: Required. Storage key.
     :type storage_key: str
-    :param storage_uri: Required. The storage uri to use.
+    :param storage_uri: Required. Storage Uri.
     :type storage_uri: str
-    :param administrator_login: Required. The name of the SQL administrator.
+    :param administrator_login: Required. Administrator login name.
     :type administrator_login: str
-    :param administrator_login_password: Required. The password of the SQL
-     administrator.
+    :param administrator_login_password: Required. Administrator login
+     password.
     :type administrator_login_password: str
-    :param authentication_type: The authentication type. Possible values
-     include: 'SQL', 'ADPassword'. Default value: "SQL" .
-    :type authentication_type: str or
-     ~azure.mgmt.sql.models.AuthenticationType
+    :param authentication_type: Authentication type.
+    :type authentication_type: str
+    :param network_isolation: Optional resource information to enable network
+     isolation for request.
+    :type network_isolation: ~azure.mgmt.sql.models.NetworkIsolationSettings
     """
 
     _validation = {
@@ -2640,22 +2657,24 @@ class ExportRequest(Model):
     }
 
     _attribute_map = {
-        'storage_key_type': {'key': 'storageKeyType', 'type': 'StorageKeyType'},
+        'storage_key_type': {'key': 'storageKeyType', 'type': 'str'},
         'storage_key': {'key': 'storageKey', 'type': 'str'},
         'storage_uri': {'key': 'storageUri', 'type': 'str'},
         'administrator_login': {'key': 'administratorLogin', 'type': 'str'},
         'administrator_login_password': {'key': 'administratorLoginPassword', 'type': 'str'},
-        'authentication_type': {'key': 'authenticationType', 'type': 'AuthenticationType'},
+        'authentication_type': {'key': 'authenticationType', 'type': 'str'},
+        'network_isolation': {'key': 'networkIsolation', 'type': 'NetworkIsolationSettings'},
     }
 
     def __init__(self, **kwargs):
-        super(ExportRequest, self).__init__(**kwargs)
+        super(ExportDatabaseDefinition, self).__init__(**kwargs)
         self.storage_key_type = kwargs.get('storage_key_type', None)
         self.storage_key = kwargs.get('storage_key', None)
         self.storage_uri = kwargs.get('storage_uri', None)
         self.administrator_login = kwargs.get('administrator_login', None)
         self.administrator_login_password = kwargs.get('administrator_login_password', None)
-        self.authentication_type = kwargs.get('authentication_type', "SQL")
+        self.authentication_type = kwargs.get('authentication_type', None)
+        self.network_isolation = kwargs.get('network_isolation', None)
 
 
 class ExtendedDatabaseBlobAuditingPolicy(ProxyResource):
@@ -3265,8 +3284,62 @@ class GeoBackupPolicy(ProxyResource):
         self.location = None
 
 
-class ImportExportResponse(ProxyResource):
-    """Response for Import/Export Get operation.
+class ImportExistingDatabaseDefinition(Model):
+    """Contains the information necessary to perform import operation for existing
+    database.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param storage_key_type: Required. Storage key type. Possible values
+     include: 'SharedAccessKey', 'StorageAccessKey'
+    :type storage_key_type: str or ~azure.mgmt.sql.models.StorageKeyType
+    :param storage_key: Required. Storage key.
+    :type storage_key: str
+    :param storage_uri: Required. Storage Uri.
+    :type storage_uri: str
+    :param administrator_login: Required. Administrator login name.
+    :type administrator_login: str
+    :param administrator_login_password: Required. Administrator login
+     password.
+    :type administrator_login_password: str
+    :param authentication_type: Authentication type.
+    :type authentication_type: str
+    :param network_isolation: Optional resource information to enable network
+     isolation for request.
+    :type network_isolation: ~azure.mgmt.sql.models.NetworkIsolationSettings
+    """
+
+    _validation = {
+        'storage_key_type': {'required': True},
+        'storage_key': {'required': True},
+        'storage_uri': {'required': True},
+        'administrator_login': {'required': True},
+        'administrator_login_password': {'required': True},
+    }
+
+    _attribute_map = {
+        'storage_key_type': {'key': 'storageKeyType', 'type': 'str'},
+        'storage_key': {'key': 'storageKey', 'type': 'str'},
+        'storage_uri': {'key': 'storageUri', 'type': 'str'},
+        'administrator_login': {'key': 'administratorLogin', 'type': 'str'},
+        'administrator_login_password': {'key': 'administratorLoginPassword', 'type': 'str'},
+        'authentication_type': {'key': 'authenticationType', 'type': 'str'},
+        'network_isolation': {'key': 'networkIsolation', 'type': 'NetworkIsolationSettings'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ImportExistingDatabaseDefinition, self).__init__(**kwargs)
+        self.storage_key_type = kwargs.get('storage_key_type', None)
+        self.storage_key = kwargs.get('storage_key', None)
+        self.storage_uri = kwargs.get('storage_uri', None)
+        self.administrator_login = kwargs.get('administrator_login', None)
+        self.administrator_login_password = kwargs.get('administrator_login_password', None)
+        self.authentication_type = kwargs.get('authentication_type', None)
+        self.network_isolation = kwargs.get('network_isolation', None)
+
+
+class ImportExportOperationResult(ProxyResource):
+    """An ImportExport operation result resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -3277,101 +3350,108 @@ class ImportExportResponse(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar request_type: The request type of the operation.
-    :vartype request_type: str
-    :ivar request_id: The request type of the operation.
+    :ivar request_id: Request Id.
     :vartype request_id: str
-    :ivar server_name: The name of the server.
-    :vartype server_name: str
-    :ivar database_name: The name of the database.
-    :vartype database_name: str
-    :ivar status: The status message returned from the server.
-    :vartype status: str
-    :ivar last_modified_time: The operation status last modified time.
-    :vartype last_modified_time: str
-    :ivar queued_time: The operation queued time.
+    :ivar request_type: Request type.
+    :vartype request_type: str
+    :ivar queued_time: Queued time.
     :vartype queued_time: str
-    :ivar blob_uri: The blob uri.
+    :ivar last_modified_time: Last modified time.
+    :vartype last_modified_time: str
+    :ivar blob_uri: Blob Uri.
     :vartype blob_uri: str
-    :ivar error_message: The error message returned from the server.
+    :ivar server_name: Server name.
+    :vartype server_name: str
+    :ivar database_name: Database name.
+    :vartype database_name: str
+    :ivar status: Operation status.
+    :vartype status: str
+    :ivar error_message: Error message.
     :vartype error_message: str
+    :ivar private_endpoint_connections: Gets the status of private endpoints
+     associated with this request.
+    :vartype private_endpoint_connections:
+     list[~azure.mgmt.sql.models.PrivateEndpointConnectionRequestStatus]
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'request_type': {'readonly': True},
         'request_id': {'readonly': True},
+        'request_type': {'readonly': True},
+        'queued_time': {'readonly': True},
+        'last_modified_time': {'readonly': True},
+        'blob_uri': {'readonly': True},
         'server_name': {'readonly': True},
         'database_name': {'readonly': True},
         'status': {'readonly': True},
-        'last_modified_time': {'readonly': True},
-        'queued_time': {'readonly': True},
-        'blob_uri': {'readonly': True},
         'error_message': {'readonly': True},
+        'private_endpoint_connections': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'request_type': {'key': 'properties.requestType', 'type': 'str'},
         'request_id': {'key': 'properties.requestId', 'type': 'str'},
+        'request_type': {'key': 'properties.requestType', 'type': 'str'},
+        'queued_time': {'key': 'properties.queuedTime', 'type': 'str'},
+        'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'str'},
+        'blob_uri': {'key': 'properties.blobUri', 'type': 'str'},
         'server_name': {'key': 'properties.serverName', 'type': 'str'},
         'database_name': {'key': 'properties.databaseName', 'type': 'str'},
         'status': {'key': 'properties.status', 'type': 'str'},
-        'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'str'},
-        'queued_time': {'key': 'properties.queuedTime', 'type': 'str'},
-        'blob_uri': {'key': 'properties.blobUri', 'type': 'str'},
         'error_message': {'key': 'properties.errorMessage', 'type': 'str'},
+        'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnectionRequestStatus]'},
     }
 
     def __init__(self, **kwargs):
-        super(ImportExportResponse, self).__init__(**kwargs)
-        self.request_type = None
+        super(ImportExportOperationResult, self).__init__(**kwargs)
         self.request_id = None
+        self.request_type = None
+        self.queued_time = None
+        self.last_modified_time = None
+        self.blob_uri = None
         self.server_name = None
         self.database_name = None
         self.status = None
-        self.last_modified_time = None
-        self.queued_time = None
-        self.blob_uri = None
         self.error_message = None
+        self.private_endpoint_connections = None
 
 
-class ImportExtensionRequest(Model):
-    """Import database parameters.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
+class ImportNewDatabaseDefinition(Model):
+    """Contains the information necessary to perform import operation for new
+    database.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: The name of the extension.
-    :type name: str
-    :param type: The type of the extension.
-    :type type: str
-    :param storage_key_type: Required. The type of the storage key to use.
-     Possible values include: 'StorageAccessKey', 'SharedAccessKey'
+    :param database_name: Name of the import database.
+    :type database_name: str
+    :param edition: Edition of the import database.
+    :type edition: str
+    :param service_objective_name: Service level objective name of the import
+     database.
+    :type service_objective_name: str
+    :param max_size_bytes: Max size in bytes for the import database.
+    :type max_size_bytes: str
+    :param storage_key_type: Required. Storage key type. Possible values
+     include: 'SharedAccessKey', 'StorageAccessKey'
     :type storage_key_type: str or ~azure.mgmt.sql.models.StorageKeyType
-    :param storage_key: Required. The storage key to use.  If storage key type
-     is SharedAccessKey, it must be preceded with a "?."
+    :param storage_key: Required. Storage key.
     :type storage_key: str
-    :param storage_uri: Required. The storage uri to use.
+    :param storage_uri: Required. Storage Uri.
     :type storage_uri: str
-    :param administrator_login: Required. The name of the SQL administrator.
+    :param administrator_login: Required. Administrator login name.
     :type administrator_login: str
-    :param administrator_login_password: Required. The password of the SQL
-     administrator.
+    :param administrator_login_password: Required. Administrator login
+     password.
     :type administrator_login_password: str
-    :param authentication_type: The authentication type. Possible values
-     include: 'SQL', 'ADPassword'. Default value: "SQL" .
-    :type authentication_type: str or
-     ~azure.mgmt.sql.models.AuthenticationType
-    :ivar operation_mode: Required. The type of import operation being
-     performed. This is always Import. Default value: "Import" .
-    :vartype operation_mode: str
+    :param authentication_type: Authentication type.
+    :type authentication_type: str
+    :param network_isolation: Optional resource information to enable network
+     isolation for request.
+    :type network_isolation: ~azure.mgmt.sql.models.NetworkIsolationSettings
     """
 
     _validation = {
@@ -3380,122 +3460,35 @@ class ImportExtensionRequest(Model):
         'storage_uri': {'required': True},
         'administrator_login': {'required': True},
         'administrator_login_password': {'required': True},
-        'operation_mode': {'required': True, 'constant': True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'storage_key_type': {'key': 'properties.storageKeyType', 'type': 'StorageKeyType'},
-        'storage_key': {'key': 'properties.storageKey', 'type': 'str'},
-        'storage_uri': {'key': 'properties.storageUri', 'type': 'str'},
-        'administrator_login': {'key': 'properties.administratorLogin', 'type': 'str'},
-        'administrator_login_password': {'key': 'properties.administratorLoginPassword', 'type': 'str'},
-        'authentication_type': {'key': 'properties.authenticationType', 'type': 'AuthenticationType'},
-        'operation_mode': {'key': 'properties.operationMode', 'type': 'str'},
+        'database_name': {'key': 'databaseName', 'type': 'str'},
+        'edition': {'key': 'edition', 'type': 'str'},
+        'service_objective_name': {'key': 'serviceObjectiveName', 'type': 'str'},
+        'max_size_bytes': {'key': 'maxSizeBytes', 'type': 'str'},
+        'storage_key_type': {'key': 'storageKeyType', 'type': 'str'},
+        'storage_key': {'key': 'storageKey', 'type': 'str'},
+        'storage_uri': {'key': 'storageUri', 'type': 'str'},
+        'administrator_login': {'key': 'administratorLogin', 'type': 'str'},
+        'administrator_login_password': {'key': 'administratorLoginPassword', 'type': 'str'},
+        'authentication_type': {'key': 'authenticationType', 'type': 'str'},
+        'network_isolation': {'key': 'networkIsolation', 'type': 'NetworkIsolationSettings'},
     }
 
-    operation_mode = "Import"
-
     def __init__(self, **kwargs):
-        super(ImportExtensionRequest, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.type = kwargs.get('type', None)
+        super(ImportNewDatabaseDefinition, self).__init__(**kwargs)
+        self.database_name = kwargs.get('database_name', None)
+        self.edition = kwargs.get('edition', None)
+        self.service_objective_name = kwargs.get('service_objective_name', None)
+        self.max_size_bytes = kwargs.get('max_size_bytes', None)
         self.storage_key_type = kwargs.get('storage_key_type', None)
         self.storage_key = kwargs.get('storage_key', None)
         self.storage_uri = kwargs.get('storage_uri', None)
         self.administrator_login = kwargs.get('administrator_login', None)
         self.administrator_login_password = kwargs.get('administrator_login_password', None)
-        self.authentication_type = kwargs.get('authentication_type', "SQL")
-
-
-class ImportRequest(ExportRequest):
-    """Import database parameters.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param storage_key_type: Required. The type of the storage key to use.
-     Possible values include: 'StorageAccessKey', 'SharedAccessKey'
-    :type storage_key_type: str or ~azure.mgmt.sql.models.StorageKeyType
-    :param storage_key: Required. The storage key to use.  If storage key type
-     is SharedAccessKey, it must be preceded with a "?."
-    :type storage_key: str
-    :param storage_uri: Required. The storage uri to use.
-    :type storage_uri: str
-    :param administrator_login: Required. The name of the SQL administrator.
-    :type administrator_login: str
-    :param administrator_login_password: Required. The password of the SQL
-     administrator.
-    :type administrator_login_password: str
-    :param authentication_type: The authentication type. Possible values
-     include: 'SQL', 'ADPassword'. Default value: "SQL" .
-    :type authentication_type: str or
-     ~azure.mgmt.sql.models.AuthenticationType
-    :param database_name: Required. The name of the database to import.
-    :type database_name: str
-    :param edition: Required. The edition for the database being created.
-     The list of SKUs may vary by region and support offer. To determine the
-     SKUs (including the SKU name, tier/edition, family, and capacity) that are
-     available to your subscription in an Azure region, use the
-     `Capabilities_ListByLocation` REST API or one of the following commands:
-     ```azurecli
-     az sql db list-editions -l <location> -o table
-     ````
-     ```powershell
-     Get-AzSqlServerServiceObjective -Location <location>
-     ````
-     . Possible values include: 'Web', 'Business', 'Basic', 'Standard',
-     'Premium', 'PremiumRS', 'Free', 'Stretch', 'DataWarehouse', 'System',
-     'System2', 'GeneralPurpose', 'BusinessCritical', 'Hyperscale'
-    :type edition: str or ~azure.mgmt.sql.models.DatabaseEdition
-    :param service_objective_name: Required. The name of the service objective
-     to assign to the database. Possible values include: 'System', 'System0',
-     'System1', 'System2', 'System3', 'System4', 'System2L', 'System3L',
-     'System4L', 'Free', 'Basic', 'S0', 'S1', 'S2', 'S3', 'S4', 'S6', 'S7',
-     'S9', 'S12', 'P1', 'P2', 'P3', 'P4', 'P6', 'P11', 'P15', 'PRS1', 'PRS2',
-     'PRS4', 'PRS6', 'DW100', 'DW200', 'DW300', 'DW400', 'DW500', 'DW600',
-     'DW1000', 'DW1200', 'DW1000c', 'DW1500', 'DW1500c', 'DW2000', 'DW2000c',
-     'DW3000', 'DW2500c', 'DW3000c', 'DW6000', 'DW5000c', 'DW6000c', 'DW7500c',
-     'DW10000c', 'DW15000c', 'DW30000c', 'DS100', 'DS200', 'DS300', 'DS400',
-     'DS500', 'DS600', 'DS1000', 'DS1200', 'DS1500', 'DS2000', 'ElasticPool'
-    :type service_objective_name: str or
-     ~azure.mgmt.sql.models.ServiceObjectiveName
-    :param max_size_bytes: Required. The maximum size for the newly imported
-     database.
-    :type max_size_bytes: str
-    """
-
-    _validation = {
-        'storage_key_type': {'required': True},
-        'storage_key': {'required': True},
-        'storage_uri': {'required': True},
-        'administrator_login': {'required': True},
-        'administrator_login_password': {'required': True},
-        'database_name': {'required': True},
-        'edition': {'required': True},
-        'service_objective_name': {'required': True},
-        'max_size_bytes': {'required': True},
-    }
-
-    _attribute_map = {
-        'storage_key_type': {'key': 'storageKeyType', 'type': 'StorageKeyType'},
-        'storage_key': {'key': 'storageKey', 'type': 'str'},
-        'storage_uri': {'key': 'storageUri', 'type': 'str'},
-        'administrator_login': {'key': 'administratorLogin', 'type': 'str'},
-        'administrator_login_password': {'key': 'administratorLoginPassword', 'type': 'str'},
-        'authentication_type': {'key': 'authenticationType', 'type': 'AuthenticationType'},
-        'database_name': {'key': 'databaseName', 'type': 'str'},
-        'edition': {'key': 'edition', 'type': 'str'},
-        'service_objective_name': {'key': 'serviceObjectiveName', 'type': 'str'},
-        'max_size_bytes': {'key': 'maxSizeBytes', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(ImportRequest, self).__init__(**kwargs)
-        self.database_name = kwargs.get('database_name', None)
-        self.edition = kwargs.get('edition', None)
-        self.service_objective_name = kwargs.get('service_objective_name', None)
-        self.max_size_bytes = kwargs.get('max_size_bytes', None)
+        self.authentication_type = kwargs.get('authentication_type', None)
+        self.network_isolation = kwargs.get('network_isolation', None)
 
 
 class InstanceFailoverGroup(ProxyResource):
@@ -5110,6 +5103,9 @@ class ManagedInstance(TrackedResource):
     :param sku: Managed instance SKU. Allowed values for sku.name: GP_Gen4,
      GP_Gen5, BC_Gen4, BC_Gen5
     :type sku: ~azure.mgmt.sql.models.Sku
+    :ivar provisioning_state: Possible values include: 'Creating', 'Deleting',
+     'Updating', 'Unknown', 'Succeeded', 'Failed'
+    :vartype provisioning_state: str or ~azure.mgmt.sql.models.enum
     :param managed_instance_create_mode: Specifies the mode of database
      creation.
      Default: Regular instance creation.
@@ -5186,6 +5182,12 @@ class ManagedInstance(TrackedResource):
     :param minimal_tls_version: Minimal TLS version. Allowed values: 'None',
      '1.0', '1.1', '1.2'
     :type minimal_tls_version: str
+    :param storage_account_type: The storage account type used to store
+     backups for this instance. The options are LRS (LocallyRedundantStorage),
+     ZRS (ZoneRedundantStorage) and GRS (GeoRedundantStorage). Possible values
+     include: 'GRS', 'LRS', 'ZRS'
+    :type storage_account_type: str or
+     ~azure.mgmt.sql.models.StorageAccountType
     """
 
     _validation = {
@@ -5193,6 +5195,7 @@ class ManagedInstance(TrackedResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
+        'provisioning_state': {'readonly': True},
         'fully_qualified_domain_name': {'readonly': True},
         'state': {'readonly': True},
         'dns_zone': {'readonly': True},
@@ -5206,6 +5209,7 @@ class ManagedInstance(TrackedResource):
         'tags': {'key': 'tags', 'type': '{str}'},
         'identity': {'key': 'identity', 'type': 'ResourceIdentity'},
         'sku': {'key': 'sku', 'type': 'Sku'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'managed_instance_create_mode': {'key': 'properties.managedInstanceCreateMode', 'type': 'str'},
         'fully_qualified_domain_name': {'key': 'properties.fullyQualifiedDomainName', 'type': 'str'},
         'administrator_login': {'key': 'properties.administratorLogin', 'type': 'str'},
@@ -5226,12 +5230,14 @@ class ManagedInstance(TrackedResource):
         'instance_pool_id': {'key': 'properties.instancePoolId', 'type': 'str'},
         'maintenance_configuration_id': {'key': 'properties.maintenanceConfigurationId', 'type': 'str'},
         'minimal_tls_version': {'key': 'properties.minimalTlsVersion', 'type': 'str'},
+        'storage_account_type': {'key': 'properties.storageAccountType', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(ManagedInstance, self).__init__(**kwargs)
         self.identity = kwargs.get('identity', None)
         self.sku = kwargs.get('sku', None)
+        self.provisioning_state = None
         self.managed_instance_create_mode = kwargs.get('managed_instance_create_mode', None)
         self.fully_qualified_domain_name = None
         self.administrator_login = kwargs.get('administrator_login', None)
@@ -5252,6 +5258,7 @@ class ManagedInstance(TrackedResource):
         self.instance_pool_id = kwargs.get('instance_pool_id', None)
         self.maintenance_configuration_id = kwargs.get('maintenance_configuration_id', None)
         self.minimal_tls_version = kwargs.get('minimal_tls_version', None)
+        self.storage_account_type = kwargs.get('storage_account_type', None)
 
 
 class ManagedInstanceAdministrator(ProxyResource):
@@ -5306,6 +5313,44 @@ class ManagedInstanceAdministrator(ProxyResource):
         self.login = kwargs.get('login', None)
         self.sid = kwargs.get('sid', None)
         self.tenant_id = kwargs.get('tenant_id', None)
+
+
+class ManagedInstanceAzureADOnlyAuthentication(ProxyResource):
+    """Azure Active Directory only authentication.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param azure_ad_only_authentication: Required. Azure Active Directory only
+     Authentication enabled.
+    :type azure_ad_only_authentication: bool
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'azure_ad_only_authentication': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'azure_ad_only_authentication': {'key': 'properties.azureADOnlyAuthentication', 'type': 'bool'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ManagedInstanceAzureADOnlyAuthentication, self).__init__(**kwargs)
+        self.azure_ad_only_authentication = kwargs.get('azure_ad_only_authentication', None)
 
 
 class ManagedInstanceEditionCapability(Model):
@@ -5824,6 +5869,42 @@ class ManagedInstancePairInfo(Model):
         self.partner_managed_instance_id = kwargs.get('partner_managed_instance_id', None)
 
 
+class ManagedInstancePrivateLinkServiceConnectionStateProperty(Model):
+    """ManagedInstancePrivateLinkServiceConnectionStateProperty.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param status: Required. The private link service connection status.
+    :type status: str
+    :param description: Required. The private link service connection
+     description.
+    :type description: str
+    :ivar actions_required: The private link service connection description.
+    :vartype actions_required: str
+    """
+
+    _validation = {
+        'status': {'required': True},
+        'description': {'required': True},
+        'actions_required': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'actions_required': {'key': 'actionsRequired', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ManagedInstancePrivateLinkServiceConnectionStateProperty, self).__init__(**kwargs)
+        self.status = kwargs.get('status', None)
+        self.description = kwargs.get('description', None)
+        self.actions_required = None
+
+
 class ManagedInstanceUpdate(Model):
     """An update request for an Azure SQL Database managed instance.
 
@@ -5832,6 +5913,9 @@ class ManagedInstanceUpdate(Model):
 
     :param sku: Managed instance sku
     :type sku: ~azure.mgmt.sql.models.Sku
+    :ivar provisioning_state: Possible values include: 'Creating', 'Deleting',
+     'Updating', 'Unknown', 'Succeeded', 'Failed'
+    :vartype provisioning_state: str or ~azure.mgmt.sql.models.enum
     :param managed_instance_create_mode: Specifies the mode of database
      creation.
      Default: Regular instance creation.
@@ -5908,11 +5992,18 @@ class ManagedInstanceUpdate(Model):
     :param minimal_tls_version: Minimal TLS version. Allowed values: 'None',
      '1.0', '1.1', '1.2'
     :type minimal_tls_version: str
+    :param storage_account_type: The storage account type used to store
+     backups for this instance. The options are LRS (LocallyRedundantStorage),
+     ZRS (ZoneRedundantStorage) and GRS (GeoRedundantStorage). Possible values
+     include: 'GRS', 'LRS', 'ZRS'
+    :type storage_account_type: str or
+     ~azure.mgmt.sql.models.StorageAccountType
     :param tags: Resource tags.
     :type tags: dict[str, str]
     """
 
     _validation = {
+        'provisioning_state': {'readonly': True},
         'fully_qualified_domain_name': {'readonly': True},
         'state': {'readonly': True},
         'dns_zone': {'readonly': True},
@@ -5920,6 +6011,7 @@ class ManagedInstanceUpdate(Model):
 
     _attribute_map = {
         'sku': {'key': 'sku', 'type': 'Sku'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'managed_instance_create_mode': {'key': 'properties.managedInstanceCreateMode', 'type': 'str'},
         'fully_qualified_domain_name': {'key': 'properties.fullyQualifiedDomainName', 'type': 'str'},
         'administrator_login': {'key': 'properties.administratorLogin', 'type': 'str'},
@@ -5940,12 +6032,14 @@ class ManagedInstanceUpdate(Model):
         'instance_pool_id': {'key': 'properties.instancePoolId', 'type': 'str'},
         'maintenance_configuration_id': {'key': 'properties.maintenanceConfigurationId', 'type': 'str'},
         'minimal_tls_version': {'key': 'properties.minimalTlsVersion', 'type': 'str'},
+        'storage_account_type': {'key': 'properties.storageAccountType', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
     def __init__(self, **kwargs):
         super(ManagedInstanceUpdate, self).__init__(**kwargs)
         self.sku = kwargs.get('sku', None)
+        self.provisioning_state = None
         self.managed_instance_create_mode = kwargs.get('managed_instance_create_mode', None)
         self.fully_qualified_domain_name = None
         self.administrator_login = kwargs.get('administrator_login', None)
@@ -5966,6 +6060,7 @@ class ManagedInstanceUpdate(Model):
         self.instance_pool_id = kwargs.get('instance_pool_id', None)
         self.maintenance_configuration_id = kwargs.get('maintenance_configuration_id', None)
         self.minimal_tls_version = kwargs.get('minimal_tls_version', None)
+        self.storage_account_type = kwargs.get('storage_account_type', None)
         self.tags = kwargs.get('tags', None)
 
 
@@ -6544,6 +6639,32 @@ class Name(Model):
         self.localized_value = kwargs.get('localized_value', None)
 
 
+class NetworkIsolationSettings(Model):
+    """Contains the ARM resources for which to create private endpoint connection.
+
+    :param storage_account_resource_id: The resource id for the storage
+     account used to store BACPAC file. If set, private endpoint connection
+     will be created for the storage account. Must match storage account used
+     for StorageUri parameter.
+    :type storage_account_resource_id: str
+    :param sql_server_resource_id: The resource id for the SQL server which is
+     the target of this request. If set, private endpoint connection will be
+     created for the SQL server. Must match server which is target of the
+     operation.
+    :type sql_server_resource_id: str
+    """
+
+    _attribute_map = {
+        'storage_account_resource_id': {'key': 'storageAccountResourceId', 'type': 'str'},
+        'sql_server_resource_id': {'key': 'sqlServerResourceId', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(NetworkIsolationSettings, self).__init__(**kwargs)
+        self.storage_account_resource_id = kwargs.get('storage_account_resource_id', None)
+        self.sql_server_resource_id = kwargs.get('sql_server_resource_id', None)
+
+
 class Operation(Model):
     """SQL REST API operation definition.
 
@@ -6840,6 +6961,41 @@ class PrivateEndpointConnectionProperties(Model):
         self.private_endpoint = kwargs.get('private_endpoint', None)
         self.private_link_service_connection_state = kwargs.get('private_link_service_connection_state', None)
         self.provisioning_state = None
+
+
+class PrivateEndpointConnectionRequestStatus(Model):
+    """Contains the private endpoint connection requests status.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar private_link_service_id: Resource id for which the private endpoint
+     is created.
+    :vartype private_link_service_id: str
+    :ivar private_endpoint_connection_name: The connection name for the
+     private endpoint.
+    :vartype private_endpoint_connection_name: str
+    :ivar status: Status of this private endpoint connection.
+    :vartype status: str
+    """
+
+    _validation = {
+        'private_link_service_id': {'readonly': True},
+        'private_endpoint_connection_name': {'readonly': True},
+        'status': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'private_link_service_id': {'key': 'privateLinkServiceId', 'type': 'str'},
+        'private_endpoint_connection_name': {'key': 'privateEndpointConnectionName', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PrivateEndpointConnectionRequestStatus, self).__init__(**kwargs)
+        self.private_link_service_id = None
+        self.private_endpoint_connection_name = None
+        self.status = None
 
 
 class PrivateEndpointProperty(Model):
@@ -7861,9 +8017,9 @@ class ServerAzureADAdministrator(ProxyResource):
     :type sid: str
     :param tenant_id: Tenant ID of the administrator.
     :type tenant_id: str
-    :param azure_ad_only_authentication: Azure Active Directory only
+    :ivar azure_ad_only_authentication: Azure Active Directory only
      Authentication enabled.
-    :type azure_ad_only_authentication: bool
+    :vartype azure_ad_only_authentication: bool
     """
 
     _validation = {
@@ -7873,6 +8029,7 @@ class ServerAzureADAdministrator(ProxyResource):
         'administrator_type': {'required': True, 'constant': True},
         'login': {'required': True},
         'sid': {'required': True},
+        'azure_ad_only_authentication': {'readonly': True},
     }
 
     _attribute_map = {
@@ -7893,6 +8050,44 @@ class ServerAzureADAdministrator(ProxyResource):
         self.login = kwargs.get('login', None)
         self.sid = kwargs.get('sid', None)
         self.tenant_id = kwargs.get('tenant_id', None)
+        self.azure_ad_only_authentication = None
+
+
+class ServerAzureADOnlyAuthentication(ProxyResource):
+    """Azure Active Directory only authentication.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param azure_ad_only_authentication: Required. Azure Active Directory only
+     Authentication enabled.
+    :type azure_ad_only_authentication: bool
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'azure_ad_only_authentication': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'azure_ad_only_authentication': {'key': 'properties.azureADOnlyAuthentication', 'type': 'bool'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ServerAzureADOnlyAuthentication, self).__init__(**kwargs)
         self.azure_ad_only_authentication = kwargs.get('azure_ad_only_authentication', None)
 
 
