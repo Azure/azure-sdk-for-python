@@ -40,27 +40,27 @@ class SchemaRegistryAvroSerializerTests(AzureMgmtTestCase):
     def test_raw_avro_serializer(self):
         schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
         schema = avro.schema.parse(schema_str)
-        dict_data = {"name": "Ben", "favorite_number": 7, "favorite_color": "red"}
+        dict_data = {"name": u"Ben", "favorite_number": 7, "favorite_color": u"red"}
 
-        raw_avro_object_serailizer = AvroObjectSerializer()
+        raw_avro_object_serializer = AvroObjectSerializer()
 
         # encoding part
-        encoded_payload = raw_avro_object_serailizer.serialize(dict_data, schema)
+        encoded_payload = raw_avro_object_serializer.serialize(dict_data, schema)
 
         # decoding part
-        decoded_data = raw_avro_object_serailizer.deserialize(encoded_payload, schema)
+        decoded_data = raw_avro_object_serializer.deserialize(encoded_payload, schema)
 
-        assert decoded_data['name'] == "Ben"
-        assert decoded_data['favorite_number'] == 7
-        assert decoded_data['favorite_color'] == 'red'
+        assert decoded_data["name"] == u"Ben"
+        assert decoded_data["favorite_number"] == 7
+        assert decoded_data["favorite_color"] == u"red"
 
-        dict_data_missing_optional_fields = {"name": "Alice"}
-        encoded_payload = raw_avro_object_serailizer.serialize(dict_data_missing_optional_fields, schema)
-        decoded_data = raw_avro_object_serailizer.deserialize(encoded_payload, schema)
+        dict_data_missing_optional_fields = {"name": u"Alice"}
+        encoded_payload = raw_avro_object_serializer.serialize(dict_data_missing_optional_fields, schema)
+        decoded_data = raw_avro_object_serializer.deserialize(encoded_payload, schema)
 
-        assert decoded_data['name'] == "Alice"
-        assert not decoded_data['favorite_number']
-        assert not decoded_data['favorite_color']
+        assert decoded_data["name"] == u"Alice"
+        assert not decoded_data["favorite_number"]
+        assert not decoded_data["favorite_color"]
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -68,14 +68,14 @@ class SchemaRegistryAvroSerializerTests(AzureMgmtTestCase):
         schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
         schema = avro.schema.parse(schema_str)
 
-        raw_avro_object_serailizer = AvroObjectSerializer()
-        dict_data_wrong_type = {"name": "Ben", "favorite_number": "something", "favorite_color": "red"}
+        raw_avro_object_serializer = AvroObjectSerializer()
+        dict_data_wrong_type = {"name": u"Ben", "favorite_number": u"something", "favorite_color": u"red"}
         with pytest.raises(avro.io.AvroTypeException):
-            raw_avro_object_serailizer.serialize(dict_data_wrong_type, schema)
+            raw_avro_object_serializer.serialize(dict_data_wrong_type, schema)
 
-        dict_data_missing_required_field = {"favorite_number": 7, "favorite_color": "red"}
+        dict_data_missing_required_field = {"favorite_number": 7, "favorite_color": u"red"}
         with pytest.raises(avro.io.AvroTypeException):
-            raw_avro_object_serailizer.serialize(dict_data_missing_required_field, schema)
+            raw_avro_object_serializer.serialize(dict_data_missing_required_field, schema)
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -88,12 +88,12 @@ class SchemaRegistryAvroSerializerTests(AzureMgmtTestCase):
         sr_avro_serializer = SchemaRegistryAvroSerializer(schemaregistry_endpoint, credential, schemaregistry_group)
         sr_client = SchemaRegistryClient(schemaregistry_endpoint, credential)
 
-        random_schema_namespace = 'testschema' + str(uuid.uuid4())[0:8]
+        random_schema_namespace = "testschema" + str(uuid.uuid4())[0:8]
         schema_str = "{\"namespace\":\"" + random_schema_namespace + "\"" +\
             ""","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
         schema = avro.schema.parse(schema_str)
 
-        dict_data = {"name": "Ben", "favorite_number": 7, "favorite_color": "red"}
+        dict_data = {"name": u"Ben", "favorite_number": 7, "favorite_color": u"red"}
         encoded_data = sr_avro_serializer.serialize(dict_data, schema_str)
 
         assert schema_str in sr_avro_serializer._user_input_schema_cache
@@ -101,14 +101,14 @@ class SchemaRegistryAvroSerializerTests(AzureMgmtTestCase):
 
         assert encoded_data[0:4] == b'\0\0\0\0'
         schema_id = sr_client.get_schema_id(schemaregistry_group, schema.fullname, "Avro", str(schema)).schema_id
-        assert encoded_data[4:36] == schema_id.encode('utf-8')
+        assert encoded_data[4:36] == schema_id.encode("utf-8")
 
         assert schema_id in sr_avro_serializer._id_to_schema
 
         decoded_data = sr_avro_serializer.deserialize(encoded_data)
-        assert decoded_data['name'] == "Ben"
-        assert decoded_data['favorite_number'] == 7
-        assert decoded_data['favorite_color'] == 'red'
+        assert decoded_data["name"] == u"Ben"
+        assert decoded_data["favorite_number"] == 7
+        assert decoded_data["favorite_color"] == u"red"
 
         sr_avro_serializer.close()
         sr_client.close()

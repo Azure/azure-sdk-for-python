@@ -67,6 +67,6 @@ def deserialize(serializer, bytes):
 
 if __name__ == '__main__':
     serializer = SchemaRegistryAvroSerializer(SCHEMA_REGISTRY_ENDPOINT, token_credential, SCHEMA_GROUP)
-    dict_data = {"name": "Ben", "favorite_number": 7, "favorite_color": "red"}
+    dict_data = {"name": u"Ben", "favorite_number": 7, "favorite_color": u"red"}
     payload_bytes = serialize(serializer, SCHEMA_STRING, dict_data)
     dict_data = deserialize(serializer, payload_bytes)
