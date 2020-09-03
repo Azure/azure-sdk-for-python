@@ -221,4 +221,14 @@ class RestoreOperation(_Operation):
     """
 
 
-SelectiveKeyRestoreOperation = RestoreOperation
+class SelectiveKeyRestoreOperation(_Operation):
+    """A Key Vault operation restoring a single key.
+
+    :ivar str status: status of the backup operation
+    :ivar str status_details: more details of the operation's status
+    :ivar error: Error encountered, if any, during the operation
+    :type error: ~key_vault_client.models.Error
+    :ivar datetime.datetime start_time: UTC start time of the operation
+    :ivar datetime.datetime end_time: UTC end time of the operation
+    :ivar str job_id: identifier for the operation
+    """
