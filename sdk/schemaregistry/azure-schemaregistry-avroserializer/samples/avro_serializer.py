@@ -53,20 +53,32 @@ token_credential = ClientSecretCredential(
 )
 
 
-def serialize(serializer, schema, dict_data):
-    bytes = serializer.serialize(dict_data, schema)
-    print('Encoded bytes are: ', bytes)
-    return bytes
+def serialize(serializer):
+    dict_data_ben = {"name": u"Ben", "favorite_number": 7, "favorite_color": u"red"}
+    dict_data_alice = {"name": u"Alice", "favorite_number": 15, "favorite_color": u"green"}
+
+    # Schema would be automatically registered into Schema Registry and cached locally.
+    payload_ben = serializer.serialize(dict_data_ben, SCHEMA_STRING)
+    # The second call won't trigger a service call.
+    payload_alice = serializer.serialize(dict_data_alice, SCHEMA_STRING)
+
+    print('Encoded bytes are: ', payload_ben)
+    print('Encoded bytes are: ', payload_alice)
+    return [payload_ben, payload_alice]
 
 
-def deserialize(serializer, bytes):
-    dict_data = serializer.deserialize(bytes)
+def deserialize(serializer, bytes_payload):
+    # serializer.deserialize would extract the schema id from the payload,
+    # retrieve schema from Schema Registry and cache the schema locally.
+    # If the schema id is the local cache, the call won't trigger a service call.
+    dict_data = serializer.deserialize(bytes_payload)
+
     print('Deserialized data is: ', dict_data)
     return dict_data
 
 
 if __name__ == '__main__':
     serializer = SchemaRegistryAvroSerializer(SCHEMA_REGISTRY_ENDPOINT, token_credential, SCHEMA_GROUP)
-    dict_data = {"name": u"Ben", "favorite_number": 7, "favorite_color": u"red"}
-    payload_bytes = serialize(serializer, SCHEMA_STRING, dict_data)
-    dict_data = deserialize(serializer, payload_bytes)
+    bytes_data_ben, bytes_data_alice = serialize(serializer)
+    dict_data_ben = deserialize(serializer, bytes_data_ben)
+    dict_data_alice = deserialize(serializer, bytes_data_alice)
