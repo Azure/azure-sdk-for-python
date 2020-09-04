@@ -9,7 +9,8 @@ import threading
 import datetime
 
 from azure.identity import EnvironmentCredential
-from azure.eventhub import EventData, EventHubProducerClient, EventHubConsumerClient, EventHubSharedKeyCredential, EventHubSASTokenCredential
+from azure.eventhub import EventData, EventHubProducerClient, EventHubConsumerClient, EventHubSharedKeyCredential
+from azure.eventhub._client_base import EventHubSASTokenCredential
 
 @pytest.mark.liveTest
 def test_client_secret_credential(live_eventhub):
