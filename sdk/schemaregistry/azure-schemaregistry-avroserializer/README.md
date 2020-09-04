@@ -25,13 +25,15 @@ Interaction with Schema Registry Avro Serializer starts with an instance of Sche
 **Create client using the azure-identity library:**
 
 ```python
+from azure.schemaregistry import SchemaRegistryClient
 from azure.schemaregistry.serializer.avroserializer import SchemaRegistryAvroSerializer
 from azure.identity import DefaultAzureCredential
 
 credential = DefaultAzureCredential()
 endpoint = '<< ENDPOINT OF THE SCHEMA REGISTRY >>'
 schema_group = '<< GROUP NAME OF THE SCHEMA >>'
-schema_registry_client = SchemaRegistryAvroSerializer(endpoint, credential, schema_group)
+schema_registry_client = SchemaRegistryClient(endpoint, credential)
+serializer = SchemaRegistryAvroSerializer(schema_registry_client, schema_group)
 ```
 
 ## Key concepts
@@ -49,6 +51,7 @@ The following sections provide several code snippets covering some of the most c
 
 ```python
 import os
+from azure.schemaregistry import SchemaRegistryClient
 from azure.schemaregistry.serializer.avroserializer import SchemaRegistryAvroSerializer
 from azure.identity import DefaultAzureCredential
 
@@ -56,7 +59,8 @@ token_credential = DefaultAzureCredential()
 endpoint = os.environ['SCHEMA_REGISTRY_ENDPOINT']
 schema_group = "<your-group-name>"
 
-serializer = SchemaRegistryAvroSerializer(endpoint, token_credential, schema_group)
+schema_registry_client = SchemaRegistryClient(endpoint, token_credential)
+serializer = SchemaRegistryAvroSerializer(schema_registry_client, schema_group)
 
 schema_string = """
 {"namespace": "example.avro",
@@ -78,6 +82,7 @@ with serializer:
 
 ```python
 import os
+from azure.schemaregistry import SchemaRegistryClient
 from azure.schemaregistry.serializer.avroserializer import SchemaRegistryAvroSerializer
 from azure.identity import DefaultAzureCredential
 
@@ -85,7 +90,8 @@ token_credential = DefaultAzureCredential()
 endpoint = os.environ['SCHEMA_REGISTRY_ENDPOINT']
 schema_group = "<your-group-name>"
 
-serializer = SchemaRegistryAvroSerializer(endpoint, token_credential, schema_group)
+schema_registry_client = SchemaRegistryClient(endpoint, token_credential)
+serializer = SchemaRegistryAvroSerializer(schema_registry_client, schema_group)
 
 with serializer:
     encoded_bytes = b'<data_encoded_by_azure_schema_registry_avro_serializer>'
@@ -109,6 +115,7 @@ headers, can be enabled on a client with the `logging_enable` argument:
 ```python
 import sys
 import logging
+from azure.schemaregistry import SchemaRegistryClient
 from azure.schemaregistry.serializer.avroserializer import SchemaRegistryAvroSerializer
 from azure.identity import DefaultAzureCredential
 
@@ -121,14 +128,15 @@ handler = logging.StreamHandler(stream=sys.stdout)
 logger.addHandler(handler)
 
 credential = DefaultAzureCredential()
+schema_registry_client = SchemaRegistryClient("<your-end-point>", credential)
 # This client will log detailed information about its HTTP sessions, at DEBUG level
-avro_serializer = SchemaRegistryAvroSerializer("you_end_point", credential, "your_group_name", logging_enable=True)
+serializer = SchemaRegistryAvroSerializer(schema_registry_client, "<your-group-name>", logging_enable=True)
 ```
 
 Similarly, `logging_enable` can enable detailed logging for a single operation,
 even when it isn't enabled for the client:
 ```py
-avro_serializer.serialie(dict_data, schema_content, logging_enable=True)
+serializer.serialie(dict_data, schema_content, logging_enable=True)
 ```
 
 ## Next steps

@@ -25,16 +25,15 @@ from azure.identity import ClientSecretCredential
 from azure.core.exceptions import ClientAuthenticationError, ServiceRequestError, HttpResponseError
 
 from schemaregistry_preparer import SchemaRegistryPreparer
-from devtools_testutils import AzureMgmtTestCase
+from devtools_testutils import AzureTestCase
 
 
-class SchemaRegistryTests(AzureMgmtTestCase):
+class SchemaRegistryTests(AzureTestCase):
 
     @SchemaRegistryPreparer()
-    def test_schema_basic(self, schemaregistry_endpoint, schemaregistry_group, schemaregistry_tenant_id, schemaregistry_client_id, schemaregistry_client_secret, **kwargs):
-        credential = ClientSecretCredential(tenant_id=schemaregistry_tenant_id, client_id=schemaregistry_client_id, client_secret=schemaregistry_client_secret)
-        client = SchemaRegistryClient(endpoint=schemaregistry_endpoint, credential=credential)
-        schema_name = 'test-schema-' + str(uuid.uuid4())
+    def test_schema_basic(self, schemaregistry_endpoint, schemaregistry_group, **kwargs):
+        client = self.create_basic_client(SchemaRegistryClient, endpoint=schemaregistry_endpoint)
+        schema_name = 'test-schema-basic'
         schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
         serialization_type = "Avro"
         schema_properties = client.register_schema(schemaregistry_group, schema_name, serialization_type, schema_str)
@@ -63,10 +62,9 @@ class SchemaRegistryTests(AzureMgmtTestCase):
         assert returned_schema_properties.serialization_type == "Avro"
 
     @SchemaRegistryPreparer()
-    def test_schema_update(self, schemaregistry_endpoint, schemaregistry_group, schemaregistry_tenant_id, schemaregistry_client_id, schemaregistry_client_secret, **kwargs):
-        credential = ClientSecretCredential(tenant_id=schemaregistry_tenant_id, client_id=schemaregistry_client_id, client_secret=schemaregistry_client_secret)
-        client = SchemaRegistryClient(endpoint=schemaregistry_endpoint, credential=credential)
-        schema_name = 'test-schema-' + str(uuid.uuid4())
+    def test_schema_update(self, schemaregistry_endpoint, schemaregistry_group, **kwargs):
+        client = self.create_basic_client(SchemaRegistryClient, endpoint=schemaregistry_endpoint)
+        schema_name = 'test-schema-update'
         schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
         serialization_type = "Avro"
         schema_properties = client.register_schema(schemaregistry_group, schema_name, serialization_type, schema_str)
@@ -97,10 +95,9 @@ class SchemaRegistryTests(AzureMgmtTestCase):
         assert new_schema.schema_properties.serialization_type == "Avro"
 
     @SchemaRegistryPreparer()
-    def test_schema_same_twice(self, schemaregistry_endpoint, schemaregistry_group, schemaregistry_tenant_id, schemaregistry_client_id, schemaregistry_client_secret, **kwargs):
-        credential = ClientSecretCredential(tenant_id=schemaregistry_tenant_id, client_id=schemaregistry_client_id, client_secret=schemaregistry_client_secret)
-        client = SchemaRegistryClient(endpoint=schemaregistry_endpoint, credential=credential)
-        schema_name = 'test-schema-' + str(uuid.uuid4())
+    def test_schema_same_twice(self, schemaregistry_endpoint, schemaregistry_group, **kwargs):
+        client = self.create_basic_client(SchemaRegistryClient, endpoint=schemaregistry_endpoint)
+        schema_name = 'test-schema-twice'
         schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"age","type":["int","null"]},{"name":"city","type":["string","null"]}]}"""
         serialization_type = "Avro"
         schema_properties = client.register_schema(schemaregistry_group, schema_name, serialization_type, schema_str)
@@ -108,29 +105,27 @@ class SchemaRegistryTests(AzureMgmtTestCase):
         assert schema_properties.schema_id == schema_properties_second.schema_id
 
     @SchemaRegistryPreparer()
-    def test_schema_negative_wrong_credential(self, schemaregistry_endpoint, schemaregistry_group, schemaregistry_tenant_id, schemaregistry_client_id, schemaregistry_client_secret, **kwargs):
+    def test_schema_negative_wrong_credential(self, schemaregistry_endpoint, schemaregistry_group, **kwargs):
         credential = ClientSecretCredential(tenant_id="fake", client_id="fake", client_secret="fake")
         client = SchemaRegistryClient(endpoint=schemaregistry_endpoint, credential=credential)
-        schema_name = 'test-schema-' + str(uuid.uuid4())
+        schema_name = 'test-schema-negative'
         schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
         serialization_type = "Avro"
         with pytest.raises(ClientAuthenticationError):
             client.register_schema(schemaregistry_group, schema_name, serialization_type, schema_str)
 
     @SchemaRegistryPreparer()
-    def test_schema_negative_wrong_endpoint(self, schemaregistry_endpoint, schemaregistry_group, schemaregistry_tenant_id, schemaregistry_client_id, schemaregistry_client_secret, **kwargs):
-        credential = ClientSecretCredential(tenant_id=schemaregistry_tenant_id, client_id=schemaregistry_client_id, client_secret=schemaregistry_client_secret)
-        client = SchemaRegistryClient(endpoint=str(uuid.uuid4()) + ".servicebus.windows.net", credential=credential)
-        schema_name = 'test-schema-' + str(uuid.uuid4())
+    def test_schema_negative_wrong_endpoint(self, schemaregistry_endpoint, schemaregistry_group, **kwargs):
+        client = self.create_basic_client(SchemaRegistryClient, endpoint="nonexist.servicebus.windows.net")
+        schema_name = 'test-schema-nonexist'
         schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
         serialization_type = "Avro"
         with pytest.raises(ServiceRequestError):
             client.register_schema(schemaregistry_group, schema_name, serialization_type, schema_str)
 
     @SchemaRegistryPreparer()
-    def test_schema_negative_no_schema(self, schemaregistry_endpoint, schemaregistry_group, schemaregistry_tenant_id, schemaregistry_client_id, schemaregistry_client_secret, **kwargs):
-        credential = ClientSecretCredential(tenant_id=schemaregistry_tenant_id, client_id=schemaregistry_client_id, client_secret=schemaregistry_client_secret)
-        client = SchemaRegistryClient(endpoint=schemaregistry_endpoint, credential=credential)
+    def test_schema_negative_no_schema(self, schemaregistry_endpoint, schemaregistry_group, **kwargs):
+        client = self.create_basic_client(SchemaRegistryClient, endpoint=schemaregistry_endpoint)
         with pytest.raises(HttpResponseError):
             client.get_schema('a')
 

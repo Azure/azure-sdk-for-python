@@ -30,10 +30,10 @@ from azure.identity import ClientSecretCredential
 from azure.core.exceptions import ClientAuthenticationError, ServiceRequestError, HttpResponseError
 
 from schemaregistry_preparer import SchemaRegistryPreparer
-from devtools_testutils import AzureMgmtTestCase
+from devtools_testutils import AzureTestCase
 
 
-class SchemaRegistryAvroSerializerTests(AzureMgmtTestCase):
+class SchemaRegistryAvroSerializerTests(AzureTestCase):
 
     def test_raw_avro_serializer(self):
         schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
@@ -74,13 +74,9 @@ class SchemaRegistryAvroSerializerTests(AzureMgmtTestCase):
             raw_avro_object_serializer.serialize(dict_data_missing_required_field, schema)
 
     @SchemaRegistryPreparer()
-    def test_basic_sr_avro_serializer(self, schemaregistry_endpoint, schemaregistry_group, schemaregistry_tenant_id,
-                          schemaregistry_client_id, schemaregistry_client_secret, **kwargs):
-        credential = ClientSecretCredential(tenant_id=schemaregistry_tenant_id, client_id=schemaregistry_client_id,
-                                            client_secret=schemaregistry_client_secret)
-
-        sr_avro_serializer = SchemaRegistryAvroSerializer(schemaregistry_endpoint, credential, schemaregistry_group)
-        sr_client = SchemaRegistryClient(schemaregistry_endpoint, credential)
+    def test_basic_sr_avro_serializer(self, schemaregistry_endpoint, schemaregistry_group, **kwargs):
+        sr_client = self.create_basic_client(SchemaRegistryClient, endpoint=schemaregistry_endpoint)
+        sr_avro_serializer = SchemaRegistryAvroSerializer(sr_client, schemaregistry_group)
 
         random_schema_namespace = "testschema" + str(uuid.uuid4())[0:8]
         schema_str = "{\"namespace\":\"" + random_schema_namespace + "\"" +\
@@ -105,4 +101,3 @@ class SchemaRegistryAvroSerializerTests(AzureMgmtTestCase):
         assert decoded_data["favorite_color"] == u"red"
 
         sr_avro_serializer.close()
-        sr_client.close()

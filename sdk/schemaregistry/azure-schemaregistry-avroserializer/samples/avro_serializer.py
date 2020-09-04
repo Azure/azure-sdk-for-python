@@ -26,6 +26,7 @@
 import os
 
 from azure.identity import ClientSecretCredential
+from azure.schemaregistry import SchemaRegistryClient
 from azure.schemaregistry.serializer.avroserializer import SchemaRegistryAvroSerializer
 
 TENANT_ID=os.environ['SCHEMA_REGISTRY_AZURE_TENANT_ID']
@@ -78,7 +79,9 @@ def deserialize(serializer, bytes_payload):
 
 
 if __name__ == '__main__':
-    serializer = SchemaRegistryAvroSerializer(SCHEMA_REGISTRY_ENDPOINT, token_credential, SCHEMA_GROUP)
+    schema_registry = SchemaRegistryClient(endpoint=SCHEMA_REGISTRY_ENDPOINT, credential=token_credential)
+    serializer = SchemaRegistryAvroSerializer(schema_registry, SCHEMA_GROUP)
     bytes_data_ben, bytes_data_alice = serialize(serializer)
     dict_data_ben = deserialize(serializer, bytes_data_ben)
     dict_data_alice = deserialize(serializer, bytes_data_alice)
+    serializer.close()

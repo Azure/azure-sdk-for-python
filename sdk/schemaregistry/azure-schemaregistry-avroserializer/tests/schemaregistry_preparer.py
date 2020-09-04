@@ -63,13 +63,16 @@ class SchemaRegistryPreparer(AzureMgmtPreparer):
 
     def create_resource(self, name, **kwargs):
         # TODO: right now the endpoint/group is fixed, as there is no way to create/delete resources using api, in the future we should be able to dynamically create and remove resources
-        return {
-            SCHEMA_REGISTRY_ENDPOINT_PARAM: os.environ[SCHEMA_REGISTRY_ENDPOINT_ENV_KEY_NAME],
-            SCHEMA_REGISTRY_GROUP_PARAM: os.environ[SCHEMA_REGISTRY_GROUP_ENV_KEY_NAME],
-            SCHEMA_REGISTRY_TENANT_ID_PARAM: os.environ[AZURE_TENANT_ID_ENV_KEY_NAME],
-            SCHEMA_REGISTRY_CLIENT_ID_PARAM: os.environ[AZURE_CLIENT_ID_ENV_KEY_NAME],
-            SCHEMA_REGISTRY_CLIENT_SECRET_PARAM: os.environ[AZURE_CLIENT_SECRET_ENV_KEY_NAME]
-        }
+        if self.is_live:
+            return {
+                SCHEMA_REGISTRY_ENDPOINT_PARAM: os.environ[SCHEMA_REGISTRY_ENDPOINT_ENV_KEY_NAME],
+                SCHEMA_REGISTRY_GROUP_PARAM: os.environ[SCHEMA_REGISTRY_GROUP_ENV_KEY_NAME]
+            }
+        else:
+            return {
+                SCHEMA_REGISTRY_ENDPOINT_PARAM: "fake.servicebus.windows.net",
+                SCHEMA_REGISTRY_GROUP_PARAM: "fake-group"
+            }
 
     def remove_resource(self, name, **kwargs):
         pass

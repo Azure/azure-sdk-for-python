@@ -31,27 +31,24 @@ from azure.schemaregistry import SchemaRegistryClient, SerializationType
 
 from ._avro_serializer import AvroObjectSerializer
 
-if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential
-
 
 class SchemaRegistryAvroSerializer(object):
     """
     SchemaRegistryAvroSerializer provides the ability to serialize and deserialize data according
     to the given avro schema. It would automatically register, get and cache the schema.
 
-    :param str endpoint: The Schema Registry service endpoint, for example my-namespace.servicebus.windows.net.
-    :param credential: To authenticate to manage the entities of the SchemaRegistry namespace.
-    :type credential: TokenCredential
+    :param schema_registry: The schema registry client
+     which is used to register schema and retrieve schema from the service.
+    :type schema_registry: SchemaRegistryClient
     :param str schema_group: Schema group under which schema should be registered.
     :keyword str codec: The writer codec. If None, let the avro library decides.
 
     """
-    def __init__(self, endpoint, credential, schema_group, **kwargs):
-        # type: (str, TokenCredential, str, Any) -> None
+    def __init__(self, schema_registry, schema_group, **kwargs):
+        # type: (SchemaRegistryClient, str, Any) -> None
         self._schema_group = schema_group
         self._avro_serializer = AvroObjectSerializer(codec=kwargs.get("codec"))
-        self._schema_registry_client = SchemaRegistryClient(credential=credential, endpoint=endpoint, **kwargs)
+        self._schema_registry_client = schema_registry  # type: SchemaRegistryClient
         self._id_to_schema = {}
         self._schema_to_id = {}
         self._user_input_schema_cache = {}
