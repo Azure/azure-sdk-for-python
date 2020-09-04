@@ -52,8 +52,10 @@ class AvroObjectSerializer(object):
         https://avro.apache.org/docs/1.10.0/gettingstartedpython.html#Defining+a+schema
         :param data: An object to serialize
         :type data: ObjectType
-        :param schema: A Avro RecordSchema
+        :param schema: An Avro RecordSchema
         :type schema: Union[str, bytes, avro.schema.Schema]
+        :returns: Encoded bytes
+        :rtype: bytes
         """
         if not schema:
             raise ValueError("Schema is required in Avro serializer.")
@@ -68,11 +70,9 @@ class AvroObjectSerializer(object):
             self._schema_writer_cache[str(schema)] = writer
 
         stream = BytesIO()
-
-        writer.write(data, BinaryEncoder(stream))
-        encoded_data = stream.getvalue()
-
-        stream.close()
+        with stream:
+            writer.write(data, BinaryEncoder(stream))
+            encoded_data = stream.getvalue()
         return encoded_data
 
     def deserialize(
@@ -85,7 +85,7 @@ class AvroObjectSerializer(object):
         Return type will be ignored, since the schema is deduced from the provided bytes.
         :param data: A stream of bytes or bytes directly
         :type data: BinaryIO or bytes
-        :param schema: A Avro RecordSchema
+        :param schema: An Avro RecordSchema
         :type schema: Union[str, bytes, avro.schema.Schema]
         :returns: An instantiated object
         :rtype: ObjectType
@@ -102,8 +102,8 @@ class AvroObjectSerializer(object):
             reader = DatumReader(writers_schema=schema)
             self._schema_reader_cache[str(schema)] = reader
 
-        bin_decoder = BinaryDecoder(data)
-        decoded_data = reader.read(bin_decoder)
-        data.close()
+        with data:
+            bin_decoder = BinaryDecoder(data)
+            decoded_data = reader.read(bin_decoder)
 
         return decoded_data

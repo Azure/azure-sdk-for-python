@@ -27,7 +27,7 @@ from io import BytesIO
 from typing import Any, Dict, Union
 import avro
 
-
+from ._constants import SCHEMA_ID_START_INDEX, SCHEMA_ID_LENGTH, DATA_START_INDEX
 from ._avro_serializer import AvroObjectSerializer
 
 
@@ -116,7 +116,9 @@ class SchemaRegistryAvroSerializer(object):
     def serialize(self, data, schema, **kwargs):
         # type: (Dict[str, Any], Union[str, bytes], Any) -> bytes
         """
-        Encode dict data with the given schema.
+        Encode dict data with the given schema. The returns bytes are consisted of: The first 4 bytes
+        denoting record format identifier. The following 32 bytes denoting schema id returned by schema registry
+        service. The remaining bytes are the real data payload.
 
         :param data: The dict data to be encoded.
         :param schema: The schema used to encode the data.
@@ -155,8 +157,8 @@ class SchemaRegistryAvroSerializer(object):
         :rtype: Dict[str, Any]
         """
         # record_format_identifier = data[0:4]  # The first 4 bytes are retained for future record format identifier.
-        schema_id = data[4:36].decode('utf-8')
+        schema_id = data[SCHEMA_ID_START_INDEX:(SCHEMA_ID_START_INDEX + SCHEMA_ID_LENGTH)].decode('utf-8')
         schema_content = self._get_schema(schema_id, **kwargs)
 
-        dict_data = self._avro_serializer.deserialize(data[36:], schema_content)
+        dict_data = self._avro_serializer.deserialize(data[DATA_START_INDEX:], schema_content)
         return dict_data

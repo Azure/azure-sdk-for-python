@@ -78,9 +78,7 @@ class SchemaRegistryAvroSerializerTests(AzureTestCase):
         sr_client = self.create_basic_client(SchemaRegistryClient, endpoint=schemaregistry_endpoint)
         sr_avro_serializer = SchemaRegistryAvroSerializer(sr_client, schemaregistry_group)
 
-        random_schema_namespace = "testschema" + str(uuid.uuid4())[0:8]
-        schema_str = "{\"namespace\":\"" + random_schema_namespace + "\"" +\
-            ""","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
+        schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
         schema = avro.schema.parse(schema_str)
 
         dict_data = {"name": u"Ben", "favorite_number": 7, "favorite_color": u"red"}
