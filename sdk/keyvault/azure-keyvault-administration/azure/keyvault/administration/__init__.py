@@ -4,7 +4,9 @@
 # ------------------------------------
 from ._access_control_client import KeyVaultAccessControlClient
 from ._internal.client_base import ApiVersion
-from ._models import KeyVaultPermission, KeyVaultRoleAssignment, KeyVaultRoleDefinition
+from ._models import (
+    KeyVaultPermission, KeyVaultRoleAssignment, KeyVaultRoleDefinition, KeyVaultRoleScope
+)
 
 
 __all__ = [
@@ -13,4 +15,5 @@ __all__ = [
     "KeyVaultPermission",
     "KeyVaultRoleAssignment",
     "KeyVaultRoleDefinition",
+    "KeyVaultRoleScope",
 ]

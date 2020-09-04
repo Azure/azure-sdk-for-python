@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+from enum import Enum
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -9,6 +10,14 @@ if TYPE_CHECKING:
 
 
 # pylint:disable=protected-access
+
+
+class KeyVaultRoleScope(str, Enum):
+    """Collection of well known role scopes. This list is not exhaustive"""
+
+    global_value = "/"  #: use this if you want role assignments to apply to everything on the resource
+
+    keys_value = "/keys"  #: use this if you want role assignments to apply to all keys
 
 
 class KeyVaultPermission(object):
