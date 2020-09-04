@@ -11,6 +11,7 @@ from typing import (  # pylint: disable=unused-import
 )
 
 from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.exceptions import ResourceNotFoundError
 
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 from .._shared.policies_async import ExponentialRetry
@@ -29,7 +30,6 @@ from ._upload_helpers import (
 from .._models import BlobType, BlobBlock, BlobProperties
 from ._lease_async import BlobLeaseClient
 from ._download_async import StorageStreamDownloader
-from azure.core.exceptions import ResourceNotFoundError
 
 
 if TYPE_CHECKING:

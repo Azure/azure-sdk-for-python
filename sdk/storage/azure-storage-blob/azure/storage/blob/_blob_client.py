@@ -18,6 +18,7 @@ except ImportError:
 
 import six
 from azure.core.tracing.decorator import distributed_trace
+from azure.core.exceptions import ResourceNotFoundError
 
 from ._shared import encode_base64
 from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
@@ -54,7 +55,6 @@ from ._upload_helpers import (
     upload_page_blob)
 from ._models import BlobType, BlobBlock, BlobProperties, BlobQueryError
 from ._download import StorageStreamDownloader
-from azure.core.exceptions import ResourceNotFoundError
 from ._lease import BlobLeaseClient
 
 if TYPE_CHECKING:
