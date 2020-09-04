@@ -14,7 +14,7 @@ from azure.eventhub import EventData
 from azure.eventhub.aio import EventHubConsumerClient, EventHubProducerClient, EventHubSharedKeyCredential, EventHubSASTokenCredential
 
 from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer
-from eventhub_preparer import (
+from tests.eventhub_preparer import (
     CachedEventHubNamespacePreparer, 
     CachedEventHubPreparer
 )
