@@ -12,8 +12,7 @@ param (
   [Parameter(Mandatory = $true)]
   [String]$ChangeLogPath,
   [String]$Unreleased = $True,
-  [String]$ReplaceVersion = $False,
-  [String]$ReleaseDate
+  [String]$ReplaceVersion = $False
 )
 
 
@@ -47,12 +46,8 @@ function Get-VersionTitle($Version, $Unreleased)
    # Generate version title
    $newVersionTitle = "## $Version $UNRELEASED_TAG"
    if ($Unreleased -eq $False) {
-      $actualReleaseDate = $ReleaseDate;
-
-      if (!$actualReleaseDate) {
-         $actualReleaseDate = Get-Date -Format "yyyy-MM-dd"
-      }
-      $newVersionTitle = "## $Version ($actualReleaseDate)"
+      $releaseDate = Get-Date -Format "(yyyy-MM-dd)"
+      $newVersionTitle = "## $Version $releaseDate"
    }
    return $newVersionTitle
 }
@@ -100,7 +95,7 @@ function Get-NewChangeLog( [System.Collections.ArrayList]$ChangelogLines, $Versi
       exit(0)
    }
 
-   if (($ReplaceVersion -eq $True) -and ($Unreleased -eq $False) -and $CurrentTitle.Contains($version) -and (-not $CurrentTitle.Contains($UNRELEASED_TAG)) -and (-not $ReleaseDate)) {
+   if (($ReplaceVersion -eq $True) -and ($Unreleased -eq $False) -and $CurrentTitle.Contains($version) -and (-not $CurrentTitle.Contains($UNRELEASED_TAG))) {
       Write-Host "Version is already present in change log with a release date."
       exit(0)
    }
