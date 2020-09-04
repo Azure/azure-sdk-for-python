@@ -50,7 +50,7 @@ class EventMixin(object):
         return event
 
 
-class CloudEvent(InternalCloudEvent, EventMixin):   #pylint:disable=too-many-instance-attributes
+class CloudEvent(EventMixin):   #pylint:disable=too-many-instance-attributes
     """Properties of an event published to an Event Grid topic using the CloudEvent 1.0 Schema.
 
     All required parameters must be populated in order to send to Azure.
@@ -75,35 +75,60 @@ class CloudEvent(InternalCloudEvent, EventMixin):   #pylint:disable=too-many-ins
      unique for each distinct event.
     :type id: Optional[str]
     """
-
-    _validation = {
-        'source': {'required': True},
-        'type': {'required': True},
-    }
-
-    _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'id': {'key': 'id', 'type': 'str'},
-        'source': {'key': 'source', 'type': 'str'},
-        'data': {'key': 'data', 'type': 'object'},
-        'data_base64': {'key': 'data_base64', 'type': 'bytearray'},
-        'type': {'key': 'type', 'type': 'str'},
-        'time': {'key': 'time', 'type': 'iso-8601'},
-        'specversion': {'key': 'specversion', 'type': 'str'},
-        'dataschema': {'key': 'dataschema', 'type': 'str'},
-        'datacontenttype': {'key': 'datacontenttype', 'type': 'str'},
-        'subject': {'key': 'subject', 'type': 'str'},
-    }
-
     def __init__(self, source, type, **kwargs):
         # type: (str, str, Any) -> None
-        kwargs.setdefault('id', uuid.uuid4())
-        kwargs.setdefault("source", source)
-        kwargs.setdefault("type", type)
-        kwargs.setdefault("time", dt.datetime.now(UTC()).isoformat())
-        kwargs.setdefault("specversion", "1.0")
+        self.source = source
+        self.type = type
+        self.specversion = kwargs.pop("specversion", "1.0")
+        self.id = kwargs.pop("id", str(uuid.uuid4()))
+        self.time = kwargs.pop("time", dt.datetime.now(UTC()).isoformat())
+        self.data = kwargs.pop("data", None)
+        self.datacontenttype = kwargs.pop("datacontenttype", None)
+        self.dataschema = kwargs.pop("dataschema", None)
+        self.subject = kwargs.pop("subject", None)
+        self.extensions = {}
+        self.extensions.update({k:v for k, v in kwargs.pop('extensions', {}).items()})
 
-        super(CloudEvent, self).__init__(**kwargs)
+    @classmethod
+    def _from_generated(cls, cloud_event, **kwargs):
+        generated = InternalCloudEvent.deserialize(cloud_event)
+        if generated.additional_properties:
+            extensions = {k:v for k, v in generated.additional_properties.items()}
+            kwargs.setdefault('extensions', extensions)
+        return cls(
+            id=generated.id,
+            source=generated.source,
+            type=generated.type,
+            specversion=generated.specversion,
+            data=generated.data or generated.data_base64,
+            time=generated.time,
+            dataschema=generated.dataschema,
+            datacontenttype=generated.datacontenttype,
+            subject=generated.subject,
+            **kwargs
+        )
+
+    def _to_generated(self, **kwargs):
+        if isinstance(self.data, six.binary_type):
+            data_base64 = self.data
+            data = None
+        else:
+            data_base64 = None
+            data = self.data
+        return InternalCloudEvent(
+            id=self.id,
+            source=self.source,
+            type=self.type,
+            specversion=self.specversion,
+            data=data,
+            data_base64=data_base64,
+            time=self.time,
+            dataschema=self.dataschema,
+            datacontenttype=self.datacontenttype,
+            subject=self.subject,
+            additional_properties=self.extensions,
+            **kwargs
+        )
 
 
 class EventGridEvent(InternalEventGridEvent, EventMixin):
