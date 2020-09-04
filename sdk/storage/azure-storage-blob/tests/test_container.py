@@ -828,6 +828,19 @@ class StorageContainerTest(StorageTestCase):
         self.assertEqual(blobs, ['blob1', 'blob2'])
 
     @GlobalStorageAccountPreparer()
+    def test_list_blobs_contains_last_access_time(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
+        container = self._create_container(bsc)
+        data = b'hello world'
+
+        blob_client = container.get_blob_client('blob1')
+        blob_client.upload_blob(data, standard_blob_tier=StandardBlobTier.Archive)
+
+        # Act
+        for blob_properties in container.list_blobs():
+            self.assertIsInstance(blob_properties.last_accessed_on, datetime)
+
+    @GlobalStorageAccountPreparer()
     def test_list_blobs_returns_rehydrate_priority(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
         container = self._create_container(bsc)
