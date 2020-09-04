@@ -1,7 +1,7 @@
 """
 FILE: consume_cloud_custom_data_sample.py
 DESCRIPTION:
-    These samples demonstrate creating a list of CloudEvents and sending then as a list.
+    These samples demonstrate consuming custom cloud data
 USAGE:
     python consume_cloud_custom_data_sample.py
     Set the environment variables with your own values before running the sample:

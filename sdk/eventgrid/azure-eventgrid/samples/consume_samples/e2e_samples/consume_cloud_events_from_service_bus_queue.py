@@ -1,7 +1,7 @@
 """
 FILE: consume_cloud_events_from_eventhub.py
 DESCRIPTION:
-    These samples demonstrate creating a list of CloudEvents and sending then as a list.
+    These samples demonstrate receiving events from Service Bus.
 USAGE:
     python consume_cloud_events_from_eventhub.py
     Set the environment variables with your own values before running the sample:
