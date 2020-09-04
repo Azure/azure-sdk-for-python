@@ -11,21 +11,20 @@
 **Breaking Changes**
 
 * Renamed `prefetch` to `prefetch_count`.
-* Renamed `ReceiveSettleMode` enum to `ReceiveMode`, and respectively the `mode` parameter to `receive_mode`
+* Renamed `ReceiveSettleMode` enum to `ReceiveMode`, and respectively the `mode` parameter to `receive_mode`.
 * `retry_total`, `retry_backoff_factor` and `retry_backoff_max` are now defined at the `ServiceBusClient` level and inherited by senders and receivers created from it.
 * No longer export `NEXT_AVAILABLE` in `azure.servicebus` module.  A null `session_id` will suffice.
-* Renamed parameter `message_count` to `max_message_count` as fewer messages may be present for method `peek_messages()` and `receive_messages()` 
-* Renamed `PeekMessage` to `PeekedMessage`
+* Renamed parameter `message_count` to `max_message_count` as fewer messages may be present for method `peek_messages()` and `receive_messages()`.
+* Renamed `PeekMessage` to `PeekedMessage`.
 * Renamed `get_session_state()` and `set_session_state()` to `get_state()` and `set_state()` accordingly.
-* Renamed `session_id` to `id`
-* Renamed parameter `description` to `error_description` for method `dead_letter()`
-* Renamed properties `created_time` and `modified_time` to `created_at_utc` and `modified_at_utc` within `AuthorizationRule` and `NamespaceProperties`
-* Removed parameter `requires_preprocessing` from `SqlRuleFilter` and `SqlRuleAction`
-* Removed property `namespace_type` from `NamespaceProperties`
-* Attempting to call `send_messages` on something not a `Message`, `BatchMessage`, or list of `Message`s, will now throw a `TypeError` instead of `ValueError`
+* Renamed parameter `description` to `error_description` for method `dead_letter()`.
+* Renamed properties `created_time` and `modified_time` to `created_at_utc` and `modified_at_utc` within `AuthorizationRule` and `NamespaceProperties`.
+* Removed parameter `requires_preprocessing` from `SqlRuleFilter` and `SqlRuleAction`.
+* Removed property `namespace_type` from `NamespaceProperties`.
+* Attempting to call `send_messages` on something not a `Message`, `BatchMessage`, or list of `Message`s, will now throw a `TypeError` instead of `ValueError`.
 * Sending a message twice will no longer result in a `MessageAlreadySettled` exception.
 * `ServiceBusClient.close()` now closes spawned senders and receivers.
-* Attempting to initialize a sender or receiver with a different connection string entity and specified entity (e.g. `queue_name`) will result in an AuthenticationError
+* Attempting to initialize a sender or receiver with a different connection string entity and specified entity (e.g. `queue_name`) will result in an AuthenticationError.
 
 ## 7.0.0b5 (2020-08-10)
 

@@ -271,7 +271,7 @@ class QueueProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
         qd = cls(
             name,
             authorization_rules=[AuthorizationRule._from_internal_entity(r) for r in internal_qd.authorization_rules] \
-                if internal_qd.authorization_rules else internal_qd.authorization_rules,
+                if internal_qd.authorization_rules else (internal_qd.authorization_rules or []),
             auto_delete_on_idle=internal_qd.auto_delete_on_idle,
             dead_lettering_on_message_expiration=internal_qd.dead_lettering_on_message_expiration,
             default_message_time_to_live=internal_qd.default_message_time_to_live,
@@ -991,7 +991,7 @@ class SqlRuleFilter(object):
         # type: (Optional[str], Optional[Dict[str, Union[str, int, float, bool, datetime, timedelta]]]) -> None
         self.sql_expression = sql_expression
         self.parameters = parameters
-        self.requires_preprocessing = None
+        self.requires_preprocessing = True
 
     @classmethod
     def _from_internal_entity(cls, internal_sql_rule_filter):
@@ -1058,7 +1058,7 @@ class SqlRuleAction(object):
         # type: (Optional[str], Optional[Dict[str, Union[str, int, float, bool, datetime, timedelta]]]) -> None
         self.sql_expression = sql_expression
         self.parameters = parameters
-        self.requires_preprocessing = None
+        self.requires_preprocessing = True
 
     @classmethod
     def _from_internal_entity(cls, internal_sql_rule_action):

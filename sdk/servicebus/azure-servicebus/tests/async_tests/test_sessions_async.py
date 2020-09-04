@@ -92,7 +92,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
             session = sb_client.get_queue_session_receiver(servicebus_queue.name, session_id=session_id, receive_mode=ReceiveMode.ReceiveAndDelete, max_wait_time=5)
             async for message in session:
                 messages.append(message)
-                assert session_id == session.session.id
+                assert session_id == session.session.session_id
                 assert session_id == message.session_id
                 with pytest.raises(MessageAlreadySettled):
                     await message.complete()
@@ -130,7 +130,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
             session = sb_client.get_queue_session_receiver(servicebus_queue.name, session_id=session_id, max_wait_time=5)
             async with session:
                 async for message in session:
-                    assert session_id == session.session.id
+                    assert session_id == session.session.session_id
                     assert session_id == message.session_id
                     messages.append(message)
                     await message.complete()
@@ -142,7 +142,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
 
             async with session:
                 async for message in session:
-                    assert session_id == session.session.id
+                    assert session_id == session.session.session_id
                     assert session_id == message.session_id
                     messages.append(message)
                     await message.complete()

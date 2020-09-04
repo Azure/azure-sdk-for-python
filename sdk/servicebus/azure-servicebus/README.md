@@ -264,8 +264,8 @@ with ServiceBusClient.from_connection_string(connstr) as client:
 
 When receiving from a queue, you have multiple actions you can take on the messages you receive.
 
-> **NOTE**: You can only settle `ReceivedMessage` objects which are received in `ReceiveSettleMode.PeekLock` mode (this is the default).
-> `ReceiveSettleMode.ReceiveAndDelete` mode removes the message from the queue on receipt.  `PeekedMessage` messages
+> **NOTE**: You can only settle `ReceivedMessage` objects which are received in `ReceiveMode.PeekLock` mode (this is the default).
+> `ReceiveMode.ReceiveAndDelete` mode removes the message from the queue on receipt.  `PeekedMessage` messages
 > returned from `peek()` cannot be settled, as the message lock is not taken like it is in the aforementioned receive methods.  Sessionful messages have a similar limitation.
 
 If the message has a lock as mentioned above, settlement will fail if the message lock has expired.  

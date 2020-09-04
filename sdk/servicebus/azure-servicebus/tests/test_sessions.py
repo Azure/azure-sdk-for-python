@@ -157,7 +157,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
             messages = []
             with sb_client.get_queue_session_receiver(servicebus_queue.name, session_id=session_id, max_wait_time=5) as session:
                 for message in session:
-                    assert session_id == session.session.id 
+                    assert session_id == session.session.session_id 
                     assert session_id == message.session_id
                     messages.append(message)
                     message.complete()
@@ -169,7 +169,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
 
                 with session:
                     for message in session:
-                        assert session_id == session.session.id
+                        assert session_id == session.session.session_id
                         assert session_id == message.session_id
                         messages.append(message)
                         message.complete()
