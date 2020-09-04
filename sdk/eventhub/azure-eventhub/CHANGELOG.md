@@ -1,10 +1,10 @@
 # Release History
 
-## 5.2.0 (2020-09-07)
+## 5.2.0 (2020-09-08)
 
 **New Features**
 
-- Connection strings used with `from_connection_string` methods now supports using the `sharedaccesstoken` key in leiu of `sharedaccesskey` and `sharedaccesskeyname`, taking the string of the properly constructed token as value.
+- Connection strings used with `from_connection_string` methods now supports using the `SharedAccessSignature` key in leiu of `sharedaccesskey` and `sharedaccesskeyname`, taking the string of the properly constructed token as value.
 
 ## 5.2.0b1 (2020-07-06)
 
