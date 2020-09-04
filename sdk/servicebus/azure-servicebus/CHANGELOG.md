@@ -4,6 +4,7 @@
 
 **New Features**
 * Messages can now be sent twice in succession.
+* Internal AMQP message properties (header, footer, annotations, properties, etc) are now exposed via `Message.amqp_message`
 
 **Breaking Changes**
 
