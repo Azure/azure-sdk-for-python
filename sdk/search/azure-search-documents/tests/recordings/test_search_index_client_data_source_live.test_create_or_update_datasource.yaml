@@ -1,7 +1,7 @@
 interactions:
 - request:
     body: '{"name": "sample-datasource", "type": "azureblob", "credentials": {"connectionString":
-      "DefaultEndpointsProtocol=https;AccountName=storagename;AccountKey=NzhL3hKZbJBuJ2484dPTR+xF30kYaWSSCbs2BzLgVVI1woqeST/1IgqaLm6QAOTxtGvxctSNbIR/1hW8yH+bJg==;EndpointSuffix=core.windows.net"},
+      "connection_string"},
       "container": {"name": "searchcontainer"}}'
     headers:
       Accept:
@@ -97,7 +97,7 @@ interactions:
       message: OK
 - request:
     body: '{"name": "sample-datasource", "description": "updated", "type": "azureblob",
-      "credentials": {"connectionString": "DefaultEndpointsProtocol=https;AccountName=storagename;AccountKey=NzhL3hKZbJBuJ2484dPTR+xF30kYaWSSCbs2BzLgVVI1woqeST/1IgqaLm6QAOTxtGvxctSNbIR/1hW8yH+bJg==;EndpointSuffix=core.windows.net"},
+      "credentials": {"connectionString": "connection_string"},
       "container": {"name": "searchcontainer"}}'
     headers:
       Accept:
