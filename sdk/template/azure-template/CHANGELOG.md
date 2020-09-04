@@ -1,6 +1,6 @@
 # Release History
 
-## 0.0.13b2 (2020-09-04)
+## 0.0.18b2 (2020-09-04)
 - Testing release tag version
 
 ## 0.0.13b1 (2020-08-27)
