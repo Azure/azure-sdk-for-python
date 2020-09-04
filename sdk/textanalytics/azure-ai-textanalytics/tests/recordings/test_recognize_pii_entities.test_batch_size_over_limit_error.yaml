@@ -713,7 +713,7 @@ interactions:
       "1000", "text": "hello world", "language": "en"}]}'
     headers:
       Accept:
-      - application/json
+      - application/json, text/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -723,20 +723,20 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/1.0.1 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.0.1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.1/entities/recognition/pii?showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.1/entities/recognition/pii?showStats=false&stringIndexType=UnicodeCodePoint
   response:
     body:
       string: '{"error":{"code":"InvalidRequest","message":"Invalid document in request.","innererror":{"code":"InvalidDocumentBatch","message":"Batch
-        request contains too many records. Max 1000 records are permitted."}}}'
+        request contains too many records. Max 5 records are permitted."}}}'
     headers:
       apim-request-id:
-      - 6218bc52-cde1-4519-8dc8-4b4092efdf08
+      - 2ea55982-d5ac-4b50-97d5-7c373c7d0081
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 23 Jul 2020 17:18:44 GMT
+      - Thu, 27 Aug 2020 19:32:19 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:

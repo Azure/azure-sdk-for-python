@@ -11,18 +11,19 @@ from typing import (
 )
 
 from azure.core.async_paging import AsyncItemPaged
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import HttpResponseError, ResourceExistsError
 from azure.core.pipeline import AsyncPipeline
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
-from .. import VERSION, LocationMode
-from .._generated.aio._azure_table_async import AzureTable
+from .. import LocationMode
+from .._base_client import parse_connection_str
+from .._generated.aio._azure_table import AzureTable
 from .._generated.models import TableServiceProperties, TableProperties, QueryOptions
 from .._models import service_stats_deserialize, service_properties_deserialize
-from .._error import _validate_table_name, _process_table_error
+from .._error import _process_table_error
 from .._table_service_client_base import TableServiceClientBase
-from .._models import Table
+from .._models import TableItem
 from ._policies_async import ExponentialRetry
 from ._table_client_async import TableClient
 from ._base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper
@@ -53,19 +54,19 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../samples/table_samples_authentication_async.py
-            :start-after: [START async_create_table_service_client]
-            :end-before: [END async_create_table_service_client]
+        .. literalinclude:: ../samples/sample_authentication_async.py
+            :start-after: [START auth_from_shared_key]
+            :end-before: [END auth_from_shared_key]
             :language: python
             :dedent: 8
             :caption: Creating the tableServiceClient with an account url and credential.
 
-        .. literalinclude:: ../samples/table_samples_authentication_async.py
-            :start-after: [START async_create_table_service_client_token]
-            :end-before: [END async_create_table_service_client_token]
+        .. literalinclude:: ../samples/sample_authentication_async.py
+            :start-after: [START auth_by_sas]
+            :end-before: [END auth_by_sas]
             :language: python
             :dedent: 8
-            :caption: Creating the tableServiceClient with Azure Identity credentials.
+            :caption: Creating the tableServiceClient with Shared Access Signature.
     """
 
     def __init__(
@@ -83,8 +84,34 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
             loop=loop,
             **kwargs)
         self._client = AzureTable(url=self.url, pipeline=self._pipeline, loop=loop)  # type: ignore
-        self._client._config.version = kwargs.get('api_version', VERSION)  # pylint: disable=protected-access
         self._loop = loop
+
+    @classmethod
+    def from_connection_string(
+            cls, conn_str, # type: any
+            **kwargs # type: Any
+    ): # type: (...) -> TableServiceClient
+        """Create TableServiceClient from a Connection String.
+
+        :param conn_str:
+            A connection string to an Azure Storage or Cosmos account.
+        :type conn_str: str
+        :returns: A Table service client.
+        :rtype: ~azure.data.tables.TableServiceClient
+
+        .. admonition:: Example:
+
+        .. literalinclude:: ../samples/sample_authentication_async.py
+            :start-after: [START auth_from_connection_string]
+            :end-before: [END auth_from_connection_string]
+            :language: python
+            :dedent: 8
+            :caption: Creating the tableServiceClient from a connection string.
+
+        """
+        account_url, credential = parse_connection_str(
+            conn_str=conn_str, credential=None, service='table', keyword_args=kwargs)
+        return cls(account_url, credential=credential, **kwargs)
 
     @distributed_trace_async
     async def get_service_stats(self, **kwargs):
@@ -174,12 +201,51 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
         :return: TableClient, or the result of cls(response)
         :rtype: ~azure.data.tables.TableClient or None
         :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        _validate_table_name(table_name)
 
-        table_properties = TableProperties(table_name=table_name, **kwargs)
-        await self._client.table.create(table_properties=table_properties, **kwargs)
-        table = self.get_table_client(table=table_name)
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_create_delete_table_async.py
+                :start-after: [START create_table]
+                :end-before: [END create_table]
+                :language: python
+                :dedent: 8
+                :caption: Creating a table from TableServiceClient.
+        """
+        table = self.get_table_client(table_name=table_name)
+        await table.create_table(**kwargs)
+        return table
+
+    @distributed_trace_async
+    async def create_table_if_not_exists(
+        self,
+        table_name, # type: str
+        **kwargs # type: Any
+    ):
+        # type: (...) -> TableClient
+        """Creates a new table if it does not currently exist.
+        If the table currently exists, the current table is
+        returned.
+
+        :param table_name: The Table name.
+        :type table_name: str
+        :return: TableClient
+        :rtype: ~azure.data.tables.aio.TableClient
+        :raises: ~azure.core.exceptions.HttpResponseError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_create_delete_table_async.py
+                :start-after: [START create_if_not_exists]
+                :end-before: [END create_if_not_exists]
+                :language: python
+                :dedent: 8
+                :caption: Creating a table if it does not already exist
+        """
+        table = self.get_table_client(table_name=table_name)
+        try:
+            await table.create_table(**kwargs)
+        except ResourceExistsError:
+            pass
         return table
 
     @distributed_trace_async
@@ -195,24 +261,41 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
         :type table_name: str
         :return: None
         :rtype: ~None
-         """
-        _validate_table_name(table_name)
 
-        await self._client.table.delete(table=table_name, **kwargs)
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_create_delete_table_async.py
+                :start-after: [START delete_table]
+                :end-before: [END delete_table]
+                :language: python
+                :dedent: 8
+                :caption: Deleting a table
+         """
+        table = self.get_table_client(table_name=table_name)
+        await table.delete_table(**kwargs)
 
     @distributed_trace
     def list_tables(
             self,
             **kwargs  # type: Any
     ):
-        # type: (...) -> AsyncItemPaged[Table]
+        # type: (...) -> AsyncItemPaged[TableItem]
         """Queries tables under the given account.
 
         :keyword int results_per_page: Number of tables per page in return ItemPaged
         :keyword Union[str, list(str)] select: Specify desired properties of a table to return certain tables
         :return: AsyncItemPaged
-        :rtype: ~AsyncItemPaged[Table]
+        :rtype: ~AsyncItemPaged[TableItem]
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_query_tables_async.py
+                :start-after: [START tsc_list_tables]
+                :end-before: [END tsc_list_tables]
+                :language: python
+                :dedent: 8
+                :caption: Listing all tables in an account
         """
         user_select = kwargs.pop('select', None)
         if user_select and not isinstance(user_select, str):
@@ -231,11 +314,10 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
 
     @distributed_trace
     def query_tables(
-            self,
-            filter,  # pylint: disable=W0622
+            self, filter,  # type: str    pylint: disable=W0622
             **kwargs  # type: Any
     ):
-        # type: (...) -> AsyncItemPaged[Table]
+        # type: (...) -> AsyncItemPaged[TableItem]
         """Queries tables under the given account.
         :param filter: Specify a filter to return certain tables
         :type filter: str
@@ -243,8 +325,17 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
         :keyword Union[str, list(str)] select: Specify desired properties of a table to return certain tables
         :keyword dict parameters: Dictionary for formatting query with additional, user defined parameters
         :return: A query of tables
-        :rtype: AsyncItemPaged[Table]
+        :rtype: AsyncItemPaged[TableItem]
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_query_tables_async.py
+                :start-after: [START tsc_query_tables]
+                :end-before: [END tsc_query_tables]
+                :language: python
+                :dedent: 8
+                :caption: Querying tables in an account given specific parameters
         """
         parameters = kwargs.pop('parameters', None)
         filter = self._parameter_filter_substitution(parameters, filter)  # pylint: disable=W0622
@@ -262,24 +353,23 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
             page_iterator_class=TablePropertiesPaged
         )
 
-    def get_table_client(self, table, **kwargs):
-        # type: (Union[TableProperties, str], Optional[Any]) -> TableClient
+    def get_table_client(
+            self, table_name, # type: str
+            **kwargs # type: Optional[Any]
+    ):
+        # type: (...) -> TableClient
         """Get a client to interact with the specified table.
 
-               The table need not already exist.
+        The table need not already exist.
 
-               :param table:
-                   The queue. This can either be the name of the queue,
-                   or an instance of QueueProperties.
-               :type table: str or ~azure.storage.table.TableProperties
-               :returns: A :class:`~azure.data.tables.TableClient` object.
-               :rtype: ~azure.data.tables.TableClient
+        :param table:
+            The queue. This can either be the name of the queue,
+            or an instance of QueueProperties.
+        :type table: str or ~azure.storage.table.TableProperties
+        :returns: A :class:`~azure.data.tables.TableClient` object.
+        :rtype: ~azure.data.tables.TableClient
 
-               """
-        try:
-            table_name = table.name
-        except AttributeError:
-            table_name = table
+        """
 
         _pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(self._pipeline._transport),  # pylint: disable = protected-access

@@ -36,13 +36,25 @@ class InteractiveBrowserCredential(InteractiveCredential):
           authenticate work or school accounts.
     :keyword str client_id: Client ID of the Azure Active Directory application users will sign in to. If
           unspecified, the Azure CLI's ID will be used.
+    :keyword str redirect_uri: a redirect URI for the application identified by `client_id` as configured in Azure
+          Active Directory, for example "http://localhost:8400". This is only required when passing a value for
+          `client_id`, and must match a redirect URI in the application's registration. The credential must be able to
+          bind a socket to this URI.
+    :keyword AuthenticationRecord authentication_record: :class:`AuthenticationRecord` returned by :func:`authenticate`
+    :keyword bool disable_automatic_authentication: if True, :func:`get_token` will raise
+          :class:`AuthenticationRequiredError` when user interaction is required to acquire a token. Defaults to False.
+    :keyword bool enable_persistent_cache: if True, the credential will store tokens in a persistent cache shared by
+         other user credentials. Defaults to False.
+    :keyword bool allow_unencrypted_cache: if True, the credential will fall back to a plaintext cache on platforms
+          where encryption is unavailable. Default to False. Has no effect when `enable_persistent_cache` is False.
     :keyword int timeout: seconds to wait for the user to complete authentication. Defaults to 300 (5 minutes).
     """
 
     def __init__(self, **kwargs):
         # type: (**Any) -> None
+        self._redirect_uri = kwargs.pop("redirect_uri", None)
         self._timeout = kwargs.pop("timeout", 300)
-        self._server_class = kwargs.pop("server_class", AuthCodeRedirectServer)  # facilitate mocking
+        self._server_class = kwargs.pop("_server_class", AuthCodeRedirectServer)
         client_id = kwargs.pop("client_id", AZURE_CLI_CLIENT_ID)
         super(InteractiveBrowserCredential, self).__init__(client_id=client_id, **kwargs)
 
@@ -50,17 +62,24 @@ class InteractiveBrowserCredential(InteractiveCredential):
     def _request_token(self, *scopes, **kwargs):
         # type: (*str, **Any) -> dict
 
-        # start an HTTP server on localhost to receive the redirect
-        redirect_uri = None
-        for port in range(8400, 9000):
+        # start an HTTP server to receive the redirect
+        server = None
+        redirect_uri = self._redirect_uri
+        if redirect_uri:
             try:
-                server = self._server_class(port, timeout=self._timeout)
-                redirect_uri = "http://localhost:{}".format(port)
-                break
+                server = self._server_class(redirect_uri, timeout=self._timeout)
             except socket.error:
-                continue  # keep looking for an open port
+                raise CredentialUnavailableError(message="Couldn't start an HTTP server on " + redirect_uri)
+        else:
+            for port in range(8400, 9000):
+                try:
+                    redirect_uri = "http://localhost:{}".format(port)
+                    server = self._server_class(redirect_uri, timeout=self._timeout)
+                    break
+                except socket.error:
+                    continue  # keep looking for an open port
 
-        if not redirect_uri:
+        if not server:
             raise CredentialUnavailableError(message="Couldn't start an HTTP server on localhost")
 
         # get the url the user must visit to authenticate
@@ -85,7 +104,6 @@ class InteractiveBrowserCredential(InteractiveCredential):
         # redeem the authorization code for a token
         code = self._parse_response(request_state, response)
         return app.acquire_token_by_authorization_code(code, scopes=scopes, redirect_uri=redirect_uri, **kwargs)
-
 
     @staticmethod
     def _parse_response(request_state, response):

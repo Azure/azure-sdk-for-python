@@ -6,11 +6,11 @@
 
 import functools
 from typing import Any, Union
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import HttpResponseError, ResourceExistsError
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline import Pipeline
-from ._models import Table
+from ._models import TableItem
 
 from ._generated import AzureTable
 from ._generated.models import TableProperties, TableServiceProperties, QueryOptions
@@ -18,7 +18,6 @@ from ._models import TablePropertiesPaged, service_stats_deserialize, service_pr
 from ._base_client import parse_connection_str, TransportWrapper
 from ._models import LocationMode
 from ._error import _process_table_error
-from ._version import VERSION
 from ._table_client import TableClient
 from ._table_service_client_base import TableServiceClientBase
 
@@ -43,11 +42,26 @@ class TableServiceClient(TableServiceClientBase):
             key.
         :type credential: str
         :returns: None
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_authentication.py
+                :start-after: [START auth_from_sas]
+                :end-before: [END auth_from_sas]
+                :language: python
+                :dedent: 8
+                :caption: Authenticating a TableServiceClient from a Shared Access Key
+
+            .. literalinclude:: ../samples/sample_authentication.py
+                :start-after: [START auth_from_shared_key]
+                :end-before: [END auth_from_shared_key]
+                :language: python
+                :dedent: 8
+                :caption: Authenticating a TableServiceClient from a Shared Account Key
         """
 
         super(TableServiceClient, self).__init__(account_url, service='table', credential=credential, **kwargs)
         self._client = AzureTable(self.url, pipeline=self._pipeline)
-        self._client._config.version = kwargs.get('api_version', VERSION)  # pylint: disable=protected-access
 
     @classmethod
     def from_connection_string(
@@ -61,11 +75,18 @@ class TableServiceClient(TableServiceClientBase):
         :type conn_str: str
         :returns: A Table service client.
         :rtype: ~azure.data.tables.TableServiceClient
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_authentication.py
+                :start-after: [START auth_from_connection_string]
+                :end-before: [END auth_from_connection_string]
+                :language: python
+                :dedent: 8
+                :caption: Authenticating a TableServiceClient from a connection_string
         """
-        account_url, secondary, credential = parse_connection_str(
-            conn_str=conn_str, credential=None, service='table')
-        if 'secondary_hostname' not in kwargs:
-            kwargs['secondary_hostname'] = secondary
+        account_url, credential = parse_connection_str(
+            conn_str=conn_str, credential=None, service='table', keyword_args=kwargs)
         return cls(account_url, credential=credential, **kwargs)
 
     @distributed_trace
@@ -153,9 +174,51 @@ class TableServiceClient(TableServiceClientBase):
         :return: TableClient
         :rtype: ~azure.data.tables.TableClient
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_create_delete_table.py
+                :start-after: [START create_table_from_tc]
+                :end-before: [END create_table_from_tc]
+                :language: python
+                :dedent: 8
+                :caption: Creating a table from the TableServiceClient object
         """
         table = self.get_table_client(table_name=table_name)
         table.create_table(**kwargs)
+        return table
+
+    @distributed_trace
+    def create_table_if_not_exists(
+        self,
+        table_name, # type: str
+        **kwargs # type: Any
+    ):
+        # type: (...) -> TableClient
+        """Creates a new table if it does not currently exist.
+        If the table currently exists, the current table is
+        returned.
+
+        :param table_name: The Table name.
+        :type table_name: str
+        :return: TableClient
+        :rtype: ~azure.data.tables.TableClient
+        :raises: ~azure.core.exceptions.HttpResponseError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_create_delete_table.py
+                :start-after: [START create_table_if_not_exists]
+                :end-before: [END create_table_if_not_exists]
+                :language: python
+                :dedent: 8
+                :caption: Deleting a table from the TableServiceClient object
+        """
+        table = self.get_table_client(table_name=table_name)
+        try:
+            table.create_table(**kwargs)
+        except ResourceExistsError:
+            pass
         return table
 
     @distributed_trace
@@ -171,6 +234,15 @@ class TableServiceClient(TableServiceClientBase):
         :type table_name: str
         :return: None
         :rtype: None
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_create_delete_table.py
+                :start-after: [START delete_table_from_tc]
+                :end-before: [END delete_table_from_tc]
+                :language: python
+                :dedent: 8
+                :caption: Deleting a table from the TableServiceClient object
         """
         table = self.get_table_client(table_name=table_name)
         table.delete_table(**kwargs)
@@ -181,7 +253,7 @@ class TableServiceClient(TableServiceClientBase):
             filter,  # pylint: disable=W0622
             **kwargs  # type: Any
     ):
-        # type: (...) -> ItemPaged[Table]
+        # type: (...) -> ItemPaged[TableItem]
         """Queries tables under the given account.
         :param filter: Specify a filter to return certain tables
         :type filter: str
@@ -189,8 +261,17 @@ class TableServiceClient(TableServiceClientBase):
         :keyword Union[str, list(str)] select: Specify desired properties of a table to return certain tables
         :keyword dict parameters: Dictionary for formatting query with additional, user defined parameters
         :return: A query of tables
-        :rtype: ItemPaged[Table]
+        :rtype: ItemPaged[TableItem]
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_query_tables.py
+                :start-after: [START tsc_query_tables]
+                :end-before: [END tsc_query_tables]
+                :language: python
+                :dedent: 8
+                :caption: Querying tables in a storage account
         """
         parameters = kwargs.pop('parameters', None)
         filter = self._parameter_filter_substitution(parameters, filter)  # pylint: disable=W0622
@@ -213,14 +294,23 @@ class TableServiceClient(TableServiceClientBase):
             self,
             **kwargs  # type: Any
     ):
-        # type: (...) -> ItemPaged[Table]
+        # type: (...) -> ItemPaged[TableItem]
         """Queries tables under the given account.
 
         :keyword int results_per_page: Number of tables per page in return ItemPaged
         :keyword Union[str, list(str)] select: Specify desired properties of a table to return certain tables
         :return: A query of tables
-        :rtype: ItemPaged[Table]
+        :rtype: ItemPaged[TableItem]
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_query_tables.py
+                :start-after: [START tsc_list_tables]
+                :end-before: [END tsc_list_tables]
+                :language: python
+                :dedent: 8
+                :caption: Listing all tables in a storage account
         """
         user_select = kwargs.pop('select', None)
         if user_select and not isinstance(user_select, str):

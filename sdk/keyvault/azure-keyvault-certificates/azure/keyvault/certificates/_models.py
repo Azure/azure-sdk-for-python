@@ -450,21 +450,18 @@ class CertificateOperation(object):
     def _from_certificate_operation_bundle(cls, certificate_operation_bundle):
         # type: (models.CertificateOperation) -> CertificateOperation
         """Construct a CertificateOperation from an autorest-generated CertificateOperation"""
+
+        issuer_parameters = certificate_operation_bundle.issuer_parameters
         return cls(
             cert_operation_id=certificate_operation_bundle.id,
-            issuer_name=(certificate_operation_bundle.issuer_parameters.name
-                if certificate_operation_bundle.issuer_parameters
-                else None),
+            issuer_name=issuer_parameters.name,
             certificate_type=(
                 certificate_operation_bundle.issuer_parameters.certificate_type
                 if certificate_operation_bundle.issuer_parameters
                 else None
             ),
-            certificate_transparency=(
-                certificate_operation_bundle.issuer_parameters.certificate_transparency
-                if certificate_operation_bundle.issuer_parameters
-                else None
-            ),
+            # 2016-10-01 IssuerParameters doesn't have certificate_transparency
+            certificate_transparency=getattr(issuer_parameters, "certificate_transparency", None),
             csr=certificate_operation_bundle.csr,
             cancellation_requested=certificate_operation_bundle.cancellation_requested,
             status=certificate_operation_bundle.status,
@@ -667,7 +664,7 @@ class CertificatePolicy(object):
             issuer_parameters = models.IssuerParameters(
                 name=self.issuer_name,
                 certificate_type=self.certificate_type,
-                certificate_transparency=self.certificate_transparency,
+                certificate_transparency=self.certificate_transparency,  # 2016-10-01 model will ignore this
             )
         else:
             issuer_parameters = None
@@ -775,27 +772,23 @@ class CertificatePolicy(object):
         else:
             key_usage = None
         key_properties = certificate_policy_bundle.key_properties
+        curve_name = getattr(key_properties, "curve", None)  # missing from 2016-10-01 KeyProperties
+        if curve_name:
+            curve_name = KeyCurveName(curve_name)
+
+        issuer_parameters = certificate_policy_bundle.issuer_parameters
         return cls(
-            issuer_name=(certificate_policy_bundle.issuer_parameters.name
-                if certificate_policy_bundle.issuer_parameters else None
-            ),
+            issuer_name=issuer_parameters.name,
             subject=(x509_certificate_properties.subject if x509_certificate_properties else None),
-            certificate_type=(
-                certificate_policy_bundle.issuer_parameters.certificate_type
-                if certificate_policy_bundle.issuer_parameters
-                else None
-            ),
-            certificate_transparency=(
-                certificate_policy_bundle.issuer_parameters.certificate_transparency
-                if certificate_policy_bundle.issuer_parameters
-                else None
-            ),
+            certificate_type=issuer_parameters.certificate_type,
+            # 2016-10-01 IssuerParameters doesn't have certificate_transparency
+            certificate_transparency=getattr(issuer_parameters, "certificate_transparency", None),
             lifetime_actions=lifetime_actions,
             exportable=key_properties.exportable if key_properties else None,
             key_type=KeyType(key_properties.key_type) if key_properties and key_properties.key_type else None,
             key_size=key_properties.key_size if key_properties else None,
             reuse_key=key_properties.reuse_key if key_properties else None,
-            key_curve_name=KeyCurveName(key_properties.curve) if key_properties and key_properties.curve else None,
+            key_curve_name=curve_name,
             enhanced_key_usage=x509_certificate_properties.ekus if x509_certificate_properties else None,
             key_usage=key_usage,
             content_type=(

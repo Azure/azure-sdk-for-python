@@ -24,6 +24,7 @@ import config
 #    2.4 - Create container with unique key
 #    2.5 - Create Container with partition key V2
 #    2.6 - Create Container with partition key V1
+#    2.7 - Create Container with analytical store enabled
 #
 # 3. Manage Container Provisioned Throughput
 #    3.1 - Get Container provisioned throughput (RU/s)
@@ -67,8 +68,8 @@ def find_container(db, id):
 
 
 def create_container(db, id):
-    """ Execute the most basic Create of container.
-    This will create a container with 400 RUs throughput and default indexing policy """
+    """ Execute basic container creation.
+    This will create containers with 400 RUs with different indexing, partitioning, and storage options """
 
     partition_key = PartitionKey(path='/id', kind='Hash')
     print("\n2.1 Create Container - Basic")
@@ -84,9 +85,8 @@ def create_container(db, id):
 
     try:
         coll = {
-            "id": "container_custom_index_policy",
+            "id": id+"_container_custom_index_policy",
             "indexingPolicy": {
-                "indexingMode": "lazy",
                 "automatic": False
             }
         }
@@ -107,9 +107,8 @@ def create_container(db, id):
     print("\n2.3 Create Container - With custom provisioned throughput")
 
     try:
-        coll = {"id": "container_custom_throughput"}
         container = db.create_container(
-            id=coll['id'],
+            id=id+"_container_custom_throughput",
             partition_key=partition_key,
             offer_throughput=400
         )
@@ -122,7 +121,7 @@ def create_container(db, id):
 
     try:
         container = db.create_container(
-            id="container_unique_keys",
+            id= id+"_container_unique_keys",
             partition_key=partition_key,
             unique_key_policy={'uniqueKeys': [{'paths': ['/field1/field2', '/field3']}]}
         )
@@ -138,7 +137,7 @@ def create_container(db, id):
 
     try:
         container = db.create_container(
-            id="container_partition_key_v2",
+            id=id+"_container_partition_key_v2",
             partition_key=PartitionKey(path='/id', kind='Hash')
         )
         properties = container.read()
@@ -152,7 +151,7 @@ def create_container(db, id):
 
     try:
         container = db.create_container(
-            id="container_partition_key_v1",
+            id=id+"_container_partition_key_v1",
             partition_key=PartitionKey(path='/id', kind='Hash', version=1)
         )
         properties = container.read()
@@ -161,6 +160,22 @@ def create_container(db, id):
 
     except exceptions.CosmosResourceExistsError:
         print('A container with id \'container_partition_key_v1\' already exists')
+
+    print("\n2.7 Create Container - With analytical store enabled")
+
+    try:
+        container = db.create_container(
+            id=id+"_container_analytical_store",
+            partition_key=PartitionKey(path='/id', kind='Hash'),analytical_storage_ttl=-1
+
+        )
+        properties = container.read()
+        print('Container with id \'{0}\' created'.format(container.id))
+        print('Partition Key - \'{0}\''.format(properties['partitionKey']))
+
+    except exceptions.CosmosResourceExistsError:
+        print('A container with id \'_container_analytical_store\' already exists')
+
 
 
 def manage_provisioned_throughput(db, id):

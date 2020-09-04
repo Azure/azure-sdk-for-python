@@ -51,8 +51,7 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
         self._max_wait_time = kwargs.get("max_wait_time", None)
 
     def _build_message(self, received, message_type=ReceivedMessage):
-        message = message_type(message=received, mode=self._mode)
-        message._receiver = self  # pylint: disable=protected-access
+        message = message_type(message=received, mode=self._mode, receiver=self)
         self._last_received_sequenced_number = message.sequence_number
         return message
 

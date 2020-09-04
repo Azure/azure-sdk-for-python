@@ -1,0 +1,158 @@
+interactions:
+- request:
+    body: '{"name": "test-syn-map", "format": "solr", "synonyms": "USA, United States,
+      United States of America\nWashington, Wash. => WA"}'
+    headers:
+      Accept:
+      - application/json;odata.metadata=minimal
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '127'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://searchfabb2026.search.windows.net/synonymmaps?api-version=2020-06-30
+  response:
+    body:
+      string: '{"@odata.context":"https://searchfabb2026.search.windows.net/$metadata#synonymmaps/$entity","@odata.etag":"\"0x8D84B8A22BED907\"","name":"test-syn-map","format":"solr","synonyms":"USA,
+        United States, United States of America\nWashington, Wash. => WA","encryptionKey":null}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '272'
+      content-type:
+      - application/json; odata.metadata=minimal
+      date:
+      - Fri, 28 Aug 2020 19:39:53 GMT
+      elapsed-time:
+      - '38'
+      etag:
+      - W/"0x8D84B8A22BED907"
+      expires:
+      - '-1'
+      location:
+      - https://searchfabb2026.search.windows.net/synonymmaps('test-syn-map')?api-version=2020-06-30
+      odata-version:
+      - '4.0'
+      pragma:
+      - no-cache
+      preference-applied:
+      - odata.include-annotations="*"
+      request-id:
+      - 3e4b8219-e966-11ea-8c23-5cf37071153c
+      strict-transport-security:
+      - max-age=15724800; includeSubDomains
+    status:
+      code: 201
+      message: Created
+- request:
+    body: '{"name": "test-syn-map", "format": "solr", "synonyms": "W\na\ns\nh\ni\nn\ng\nt\no\nn\n,\n
+      \nW\na\ns\nh\n.\n \n=\n>\n \nW\nA"}'
+    headers:
+      Accept:
+      - application/json;odata.metadata=minimal
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '125'
+      Content-Type:
+      - application/json
+      Prefer:
+      - return=representation
+      User-Agent:
+      - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+    method: PUT
+    uri: https://searchfabb2026.search.windows.net/synonymmaps('test-syn-map')?api-version=2020-06-30
+  response:
+    body:
+      string: '{"@odata.context":"https://searchfabb2026.search.windows.net/$metadata#synonymmaps/$entity","@odata.etag":"\"0x8D84B8A22DC034D\"","name":"test-syn-map","format":"solr","synonyms":"W\na\ns\nh\ni\nn\ng\nt\no\nn\n,\n
+        \nW\na\ns\nh\n.\n \n=\n>\n \nW\nA","encryptionKey":null}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '270'
+      content-type:
+      - application/json; odata.metadata=minimal
+      date:
+      - Fri, 28 Aug 2020 19:39:53 GMT
+      elapsed-time:
+      - '23'
+      etag:
+      - W/"0x8D84B8A22DC034D"
+      expires:
+      - '-1'
+      odata-version:
+      - '4.0'
+      pragma:
+      - no-cache
+      preference-applied:
+      - odata.include-annotations="*"
+      request-id:
+      - 3ec8cd68-e966-11ea-bc7e-5cf37071153c
+      strict-transport-security:
+      - max-age=15724800; includeSubDomains
+      vary:
+      - Accept-Encoding
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata.metadata=minimal
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      If-Match:
+      - '"0x8D84B8A22BED907"'
+      User-Agent:
+      - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+    method: DELETE
+    uri: https://searchfabb2026.search.windows.net/synonymmaps('test-syn-map')?api-version=2020-06-30
+  response:
+    body:
+      string: '{"error":{"code":"","message":"The precondition given in one of the
+        request headers evaluated to false. No change was made to the resource from
+        this request."}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-language:
+      - en
+      content-length:
+      - '160'
+      content-type:
+      - application/json; odata.metadata=minimal
+      date:
+      - Fri, 28 Aug 2020 19:39:53 GMT
+      elapsed-time:
+      - '5'
+      expires:
+      - '-1'
+      odata-version:
+      - '4.0'
+      pragma:
+      - no-cache
+      preference-applied:
+      - odata.include-annotations="*"
+      request-id:
+      - 3ee62b8a-e966-11ea-a027-5cf37071153c
+      strict-transport-security:
+      - max-age=15724800; includeSubDomains
+    status:
+      code: 412
+      message: Precondition Failed
+version: 1

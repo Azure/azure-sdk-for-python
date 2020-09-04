@@ -693,12 +693,12 @@ class DataLakeFileClient(PathClient):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/blob_samples_query.py
+            .. literalinclude:: ../samples/datalake_samples_query.py
                 :start-after: [START query]
                 :end-before: [END query]
                 :language: python
                 :dedent: 4
-                :caption: select/project on blob/or blob snapshot data by providing simple query expressions.
+                :caption: select/project on datalake file data by providing simple query expressions.
         """
         query_expression = query_expression.replace("from DataLakeStorage", "from BlobStorage")
         blob_quick_query_reader = self._blob_client.query_blob(query_expression,
