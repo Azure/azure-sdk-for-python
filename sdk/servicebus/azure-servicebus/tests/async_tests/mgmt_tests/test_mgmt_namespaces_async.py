@@ -20,5 +20,5 @@ class ServiceBusManagementClientNamespaceAsyncTests(AzureMgmtTestCase):
         mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
         properties = await mgmt_service.get_namespace_properties()
         assert properties
-        assert properties.messaging_sku = 'Standard'
+        assert properties.messaging_sku == 'Standard'
         assert properties.name == servicebus_namespace.name
