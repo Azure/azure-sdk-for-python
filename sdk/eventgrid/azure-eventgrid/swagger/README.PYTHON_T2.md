@@ -31,5 +31,5 @@ input-file:
 
 python: true
 v3: true
-use: "@autorest/python@5.2.0-preview.1"
+use: "@autorest/python@5.1.0-preview.7"
 ```
