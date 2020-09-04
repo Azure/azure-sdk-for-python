@@ -28,8 +28,8 @@ authentication as demonstrated below.
 
 ### Authenticate the client
 This document demonstrates using [DefaultAzureCredential][default_cred_ref]
-to authenticate as a service principal. However, [KeyVaultAccessControlClient][rbac_client_docs]
-accepts any [azure-identity][azure_identity] credential. See the
+to authenticate as a service principal. However, this package's clients
+accept any [azure-identity][azure_identity] credential. See the
 [azure-identity][azure_identity] documentation for more information about other
 credentials.
 
@@ -88,7 +88,7 @@ a more appropriate name for your service principal.
 Once the **AZURE_CLIENT_ID**, **AZURE_CLIENT_SECRET** and
 **AZURE_TENANT_ID** environment variables are set,
 [DefaultAzureCredential][default_cred_ref] will be able to authenticate the
-[KeyVaultAccessControlClient][rbac_client_docs].
+clients.
 
 There are two clients available in this package, below are snippets demonstrating how to construct
 each one of these clients. Constructing a client also requires your vault's URL, which you can
@@ -278,7 +278,7 @@ print(restore_operation.job_id)
 ## Troubleshooting
 ### General
 Key Vault clients raise exceptions defined in [azure-core][azure_core_exceptions].
-For example, if you try to get a role assignment that doesn't exist, [KeyVaultAccessControlClient][rbac_client_docs]
+For example, if you try to get a role assignment that doesn't exist, KeyVaultAccessControlClient
 raises [ResourceNotFoundError](https://aka.ms/azsdk-python-core-exceptions-resource-not-found-error):
 
 ```python
@@ -329,9 +329,8 @@ additional questions or comments.
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
 [keyvault_docs]: https://docs.microsoft.com/azure/key-vault/
 [pip]: https://pypi.org/project/pip/
-[pypi_package_administration]: https://pypi.org/project/azure-keyvault-administration/
+[pypi_package_administration]: https://aka.ms/azsdk/python/keyvault-administration/pypi
 [reference_docs]: https://aka.ms/azsdk/python/keyvault-administration/docs
-[rbac_client_docs]: https://aka.ms/azsdk/python/keyvault-administration/docs#azure.keyvault.administration.KeyVaultAccessControlClient
 
 
 ![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-net%2Fsdk%2Ftables%2FAzure.Data.Tables%2FREADME.png)
