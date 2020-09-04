@@ -170,7 +170,7 @@ def validating_transport(requests, responses):
         try:
             expected_request, response = next(sessions)
         except StopIteration:
-            assert False, "unexpected request: {}".format(request)
+            assert False, "unexpected request: {} {}".format(request.method, request.url)
         expected_request.assert_matches(request)
         return response
 
