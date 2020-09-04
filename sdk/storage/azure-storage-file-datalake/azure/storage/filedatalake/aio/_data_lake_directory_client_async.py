@@ -279,7 +279,7 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
             new_dir_sas = new_path_and_token[1] or self._query_str.strip('?')
         except IndexError:
             if not self._raw_credential and new_file_system != self.file_system_name:
-                raise ValueError("please provide the sas token for the new file")
+                raise ValueError("please provide the sas token for the new directory")
             if not self._raw_credential and new_file_system == self.file_system_name:
                 new_dir_sas = self._query_str.strip('?')
 
