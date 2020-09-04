@@ -85,7 +85,7 @@ class ReceivedMessage(sync_message.ReceivedMessageBase):
         or processing. The queue can also be configured to send expired messages to the Dead Letter queue.
 
         :param str reason: The reason for dead-lettering the message.
-        :param str error_description: The detailed description for dead-lettering the message.
+        :param str error_description: The detailed error description for dead-lettering the message.
         :rtype: None
         :raises: ~azure.servicebus.exceptions.MessageAlreadySettled if the message has been settled.
         :raises: ~azure.servicebus.exceptions.MessageLockExpired if message lock has already expired.
