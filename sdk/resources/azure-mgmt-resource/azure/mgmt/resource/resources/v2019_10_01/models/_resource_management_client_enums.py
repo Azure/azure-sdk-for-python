@@ -86,13 +86,13 @@ class ResourceIdentityType(str, Enum):
     system_assigned_user_assigned = "SystemAssigned, UserAssigned"
     none = "None"
 
-class TagsPatchResourceOperation(str, Enum):
+class TagsPatchOperation(str, Enum):
     """The operation type for the patch API.
     """
 
-    replace = "Replace"
-    merge = "Merge"
-    delete = "Delete"
+    replace = "Replace"  #: The 'replace' option replaces the entire set of existing tags with a new set.
+    merge = "Merge"  #: The 'merge' option allows adding tags with new names and updating the values of tags with existing names.
+    delete = "Delete"  #: The 'delete' option allows selectively deleting tags based on given names or name/value pairs.
 
 class WhatIfResultFormat(str, Enum):
     """The format of the What-If results

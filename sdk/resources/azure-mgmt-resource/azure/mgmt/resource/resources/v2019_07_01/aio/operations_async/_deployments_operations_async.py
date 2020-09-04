@@ -69,7 +69,6 @@ class DeploymentsOperations:
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
 
-        # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -88,7 +87,7 @@ class DeploymentsOperations:
         scope: str,
         deployment_name: str,
         **kwargs
-    ) -> None:
+    ) -> AsyncLROPoller[None]:
         """Deletes a deployment from the deployment history.
 
         A template deployment that is currently running cannot be deleted. Deleting a template
@@ -109,8 +108,8 @@ class DeploymentsOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: None, or the result of cls(response)
-        :rtype: None
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -186,7 +185,6 @@ class DeploymentsOperations:
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
 
-        # Construct and send request
         request = self._client.head(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -231,7 +229,6 @@ class DeploymentsOperations:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'Deployment')
         body_content_kwargs['content'] = body_content
@@ -244,7 +241,6 @@ class DeploymentsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('DeploymentExtended', pipeline_response)
 
@@ -263,7 +259,7 @@ class DeploymentsOperations:
         deployment_name: str,
         parameters: "models.Deployment",
         **kwargs
-    ) -> "models.DeploymentExtended":
+    ) -> AsyncLROPoller["models.DeploymentExtended"]:
         """Deploys resources at a given scope.
 
         You can provide the template and parameters directly in the request or link to JSON files.
@@ -280,8 +276,8 @@ class DeploymentsOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: DeploymentExtended, or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.resources.v2019_07_01.models.DeploymentExtended
+        :return: An instance of AsyncLROPoller that returns either DeploymentExtended or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.resource.resources.v2019_07_01.models.DeploymentExtended]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -362,7 +358,6 @@ class DeploymentsOperations:
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -421,7 +416,6 @@ class DeploymentsOperations:
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
 
-        # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -479,7 +473,6 @@ class DeploymentsOperations:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'Deployment')
         body_content_kwargs['content'] = body_content
@@ -492,7 +485,6 @@ class DeploymentsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('DeploymentValidateResult', pipeline_response)
 
@@ -543,7 +535,6 @@ class DeploymentsOperations:
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -587,6 +578,10 @@ class DeploymentsOperations:
         api_version = "2019-07-01"
 
         def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = 'application/json'
+
             if not next_link:
                 # Construct URL
                 url = self.list_at_scope.metadata['url']  # type: ignore
@@ -602,15 +597,11 @@ class DeploymentsOperations:
                     query_parameters['$top'] = self._serialize.query("top", top, 'int')
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
+                request = self._client.get(url, query_parameters, header_parameters)
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
+                request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         async def extract_data(pipeline_response):
@@ -661,7 +652,6 @@ class DeploymentsOperations:
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
 
-        # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -679,7 +669,7 @@ class DeploymentsOperations:
         self,
         deployment_name: str,
         **kwargs
-    ) -> None:
+    ) -> AsyncLROPoller[None]:
         """Deletes a deployment from the deployment history.
 
         A template deployment that is currently running cannot be deleted. Deleting a template
@@ -698,8 +688,8 @@ class DeploymentsOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: None, or the result of cls(response)
-        :rtype: None
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -770,7 +760,6 @@ class DeploymentsOperations:
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
 
-        # Construct and send request
         request = self._client.head(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -813,7 +802,6 @@ class DeploymentsOperations:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'Deployment')
         body_content_kwargs['content'] = body_content
@@ -826,7 +814,6 @@ class DeploymentsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('DeploymentExtended', pipeline_response)
 
@@ -844,7 +831,7 @@ class DeploymentsOperations:
         deployment_name: str,
         parameters: "models.Deployment",
         **kwargs
-    ) -> "models.DeploymentExtended":
+    ) -> AsyncLROPoller["models.DeploymentExtended"]:
         """Deploys resources at tenant scope.
 
         You can provide the template and parameters directly in the request or link to JSON files.
@@ -859,8 +846,8 @@ class DeploymentsOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: DeploymentExtended, or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.resources.v2019_07_01.models.DeploymentExtended
+        :return: An instance of AsyncLROPoller that returns either DeploymentExtended or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.resource.resources.v2019_07_01.models.DeploymentExtended]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -936,7 +923,6 @@ class DeploymentsOperations:
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -991,7 +977,6 @@ class DeploymentsOperations:
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
 
-        # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -1045,7 +1030,6 @@ class DeploymentsOperations:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'Deployment')
         body_content_kwargs['content'] = body_content
@@ -1058,7 +1042,6 @@ class DeploymentsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('DeploymentValidateResult', pipeline_response)
 
@@ -1105,7 +1088,6 @@ class DeploymentsOperations:
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -1146,6 +1128,10 @@ class DeploymentsOperations:
         api_version = "2019-07-01"
 
         def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = 'application/json'
+
             if not next_link:
                 # Construct URL
                 url = self.list_at_tenant_scope.metadata['url']  # type: ignore
@@ -1157,15 +1143,11 @@ class DeploymentsOperations:
                     query_parameters['$top'] = self._serialize.query("top", top, 'int')
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
+                request = self._client.get(url, query_parameters, header_parameters)
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
+                request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         async def extract_data(pipeline_response):
@@ -1218,7 +1200,6 @@ class DeploymentsOperations:
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
 
-        # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -1237,7 +1218,7 @@ class DeploymentsOperations:
         group_id: str,
         deployment_name: str,
         **kwargs
-    ) -> None:
+    ) -> AsyncLROPoller[None]:
         """Deletes a deployment from the deployment history.
 
         A template deployment that is currently running cannot be deleted. Deleting a template
@@ -1258,8 +1239,8 @@ class DeploymentsOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: None, or the result of cls(response)
-        :rtype: None
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -1335,7 +1316,6 @@ class DeploymentsOperations:
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
 
-        # Construct and send request
         request = self._client.head(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -1380,7 +1360,6 @@ class DeploymentsOperations:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'Deployment')
         body_content_kwargs['content'] = body_content
@@ -1393,7 +1372,6 @@ class DeploymentsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('DeploymentExtended', pipeline_response)
 
@@ -1412,7 +1390,7 @@ class DeploymentsOperations:
         deployment_name: str,
         parameters: "models.Deployment",
         **kwargs
-    ) -> "models.DeploymentExtended":
+    ) -> AsyncLROPoller["models.DeploymentExtended"]:
         """Deploys resources at management group scope.
 
         You can provide the template and parameters directly in the request or link to JSON files.
@@ -1429,8 +1407,8 @@ class DeploymentsOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: DeploymentExtended, or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.resources.v2019_07_01.models.DeploymentExtended
+        :return: An instance of AsyncLROPoller that returns either DeploymentExtended or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.resource.resources.v2019_07_01.models.DeploymentExtended]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -1511,7 +1489,6 @@ class DeploymentsOperations:
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -1570,7 +1547,6 @@ class DeploymentsOperations:
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
 
-        # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -1628,7 +1604,6 @@ class DeploymentsOperations:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'Deployment')
         body_content_kwargs['content'] = body_content
@@ -1641,7 +1616,6 @@ class DeploymentsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('DeploymentValidateResult', pipeline_response)
 
@@ -1692,7 +1666,6 @@ class DeploymentsOperations:
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -1736,6 +1709,10 @@ class DeploymentsOperations:
         api_version = "2019-07-01"
 
         def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = 'application/json'
+
             if not next_link:
                 # Construct URL
                 url = self.list_at_management_group_scope.metadata['url']  # type: ignore
@@ -1751,15 +1728,11 @@ class DeploymentsOperations:
                     query_parameters['$top'] = self._serialize.query("top", top, 'int')
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
+                request = self._client.get(url, query_parameters, header_parameters)
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
+                request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         async def extract_data(pipeline_response):
@@ -1811,7 +1784,6 @@ class DeploymentsOperations:
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
 
-        # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -1829,7 +1801,7 @@ class DeploymentsOperations:
         self,
         deployment_name: str,
         **kwargs
-    ) -> None:
+    ) -> AsyncLROPoller[None]:
         """Deletes a deployment from the deployment history.
 
         A template deployment that is currently running cannot be deleted. Deleting a template
@@ -1848,8 +1820,8 @@ class DeploymentsOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: None, or the result of cls(response)
-        :rtype: None
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -1921,7 +1893,6 @@ class DeploymentsOperations:
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
 
-        # Construct and send request
         request = self._client.head(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -1965,7 +1936,6 @@ class DeploymentsOperations:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'Deployment')
         body_content_kwargs['content'] = body_content
@@ -1978,7 +1948,6 @@ class DeploymentsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('DeploymentExtended', pipeline_response)
 
@@ -1996,7 +1965,7 @@ class DeploymentsOperations:
         deployment_name: str,
         parameters: "models.Deployment",
         **kwargs
-    ) -> "models.DeploymentExtended":
+    ) -> AsyncLROPoller["models.DeploymentExtended"]:
         """Deploys resources at subscription scope.
 
         You can provide the template and parameters directly in the request or link to JSON files.
@@ -2011,8 +1980,8 @@ class DeploymentsOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: DeploymentExtended, or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.resources.v2019_07_01.models.DeploymentExtended
+        :return: An instance of AsyncLROPoller that returns either DeploymentExtended or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.resource.resources.v2019_07_01.models.DeploymentExtended]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -2089,7 +2058,6 @@ class DeploymentsOperations:
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -2145,7 +2113,6 @@ class DeploymentsOperations:
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
 
-        # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -2200,7 +2167,6 @@ class DeploymentsOperations:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'Deployment')
         body_content_kwargs['content'] = body_content
@@ -2213,7 +2179,6 @@ class DeploymentsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('DeploymentValidateResult', pipeline_response)
 
@@ -2231,8 +2196,8 @@ class DeploymentsOperations:
         deployment_name: str,
         parameters: "models.DeploymentWhatIf",
         **kwargs
-    ) -> "models.WhatIfOperationResult":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WhatIfOperationResult"]
+    ) -> Optional["models.WhatIfOperationResult"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.WhatIfOperationResult"]]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-07-01"
@@ -2255,7 +2220,6 @@ class DeploymentsOperations:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'DeploymentWhatIf')
         body_content_kwargs['content'] = body_content
@@ -2288,7 +2252,7 @@ class DeploymentsOperations:
         deployment_name: str,
         parameters: "models.DeploymentWhatIf",
         **kwargs
-    ) -> "models.WhatIfOperationResult":
+    ) -> AsyncLROPoller["models.WhatIfOperationResult"]:
         """Returns changes that will be made by the deployment if executed at the scope of the
     subscription.
 
@@ -2302,8 +2266,8 @@ class DeploymentsOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: WhatIfOperationResult, or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.resources.v2019_07_01.models.WhatIfOperationResult
+        :return: An instance of AsyncLROPoller that returns either WhatIfOperationResult or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.resource.resources.v2019_07_01.models.WhatIfOperationResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -2380,7 +2344,6 @@ class DeploymentsOperations:
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -2421,6 +2384,10 @@ class DeploymentsOperations:
         api_version = "2019-07-01"
 
         def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = 'application/json'
+
             if not next_link:
                 # Construct URL
                 url = self.list_at_subscription_scope.metadata['url']  # type: ignore
@@ -2436,15 +2403,11 @@ class DeploymentsOperations:
                     query_parameters['$top'] = self._serialize.query("top", top, 'int')
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
+                request = self._client.get(url, query_parameters, header_parameters)
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
+                request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         async def extract_data(pipeline_response):
@@ -2498,7 +2461,6 @@ class DeploymentsOperations:
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
 
-        # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -2517,7 +2479,7 @@ class DeploymentsOperations:
         resource_group_name: str,
         deployment_name: str,
         **kwargs
-    ) -> None:
+    ) -> AsyncLROPoller[None]:
         """Deletes a deployment from the deployment history.
 
         A template deployment that is currently running cannot be deleted. Deleting a template
@@ -2540,8 +2502,8 @@ class DeploymentsOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: None, or the result of cls(response)
-        :rtype: None
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -2619,7 +2581,6 @@ class DeploymentsOperations:
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
 
-        # Construct and send request
         request = self._client.head(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -2665,7 +2626,6 @@ class DeploymentsOperations:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'Deployment')
         body_content_kwargs['content'] = body_content
@@ -2678,7 +2638,6 @@ class DeploymentsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('DeploymentExtended', pipeline_response)
 
@@ -2697,7 +2656,7 @@ class DeploymentsOperations:
         deployment_name: str,
         parameters: "models.Deployment",
         **kwargs
-    ) -> "models.DeploymentExtended":
+    ) -> AsyncLROPoller["models.DeploymentExtended"]:
         """Deploys resources to a resource group.
 
         You can provide the template and parameters directly in the request or link to JSON files.
@@ -2715,8 +2674,8 @@ class DeploymentsOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: DeploymentExtended, or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.resources.v2019_07_01.models.DeploymentExtended
+        :return: An instance of AsyncLROPoller that returns either DeploymentExtended or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.resource.resources.v2019_07_01.models.DeploymentExtended]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -2798,7 +2757,6 @@ class DeploymentsOperations:
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -2858,7 +2816,6 @@ class DeploymentsOperations:
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
 
-        # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -2918,7 +2875,6 @@ class DeploymentsOperations:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'Deployment')
         body_content_kwargs['content'] = body_content
@@ -2931,7 +2887,6 @@ class DeploymentsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('DeploymentValidateResult', pipeline_response)
 
@@ -2950,8 +2905,8 @@ class DeploymentsOperations:
         deployment_name: str,
         parameters: "models.DeploymentWhatIf",
         **kwargs
-    ) -> "models.WhatIfOperationResult":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WhatIfOperationResult"]
+    ) -> Optional["models.WhatIfOperationResult"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.WhatIfOperationResult"]]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-07-01"
@@ -2975,7 +2930,6 @@ class DeploymentsOperations:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'DeploymentWhatIf')
         body_content_kwargs['content'] = body_content
@@ -3009,7 +2963,7 @@ class DeploymentsOperations:
         deployment_name: str,
         parameters: "models.DeploymentWhatIf",
         **kwargs
-    ) -> "models.WhatIfOperationResult":
+    ) -> AsyncLROPoller["models.WhatIfOperationResult"]:
         """Returns changes that will be made by the deployment if executed at the scope of the resource
     group.
 
@@ -3026,8 +2980,8 @@ class DeploymentsOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: WhatIfOperationResult, or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.resources.v2019_07_01.models.WhatIfOperationResult
+        :return: An instance of AsyncLROPoller that returns either WhatIfOperationResult or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.resource.resources.v2019_07_01.models.WhatIfOperationResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -3109,7 +3063,6 @@ class DeploymentsOperations:
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -3154,6 +3107,10 @@ class DeploymentsOperations:
         api_version = "2019-07-01"
 
         def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = 'application/json'
+
             if not next_link:
                 # Construct URL
                 url = self.list_by_resource_group.metadata['url']  # type: ignore
@@ -3170,15 +3127,11 @@ class DeploymentsOperations:
                     query_parameters['$top'] = self._serialize.query("top", top, 'int')
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
+                request = self._client.get(url, query_parameters, header_parameters)
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
+                request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         async def extract_data(pipeline_response):
@@ -3237,7 +3190,6 @@ class DeploymentsOperations:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(template, 'object')
         body_content_kwargs['content'] = body_content
