@@ -72,7 +72,7 @@ def test_client_sas_credential(live_eventhub):
         producer_client.send_batch(batch)
 
     # Finally let's do it with SAS token + conn str
-    token_conn_str = "Endpoint=sb://{}/;SharedAccessToken={};".format(hostname, token.decode())
+    token_conn_str = "Endpoint=sb://{}/;SharedAccessSignature={};".format(hostname, token.decode())
     conn_str_producer_client = EventHubProducerClient.from_connection_string(token_conn_str,
                                                                              eventhub_name=live_eventhub['event_hub'])
 
@@ -80,13 +80,3 @@ def test_client_sas_credential(live_eventhub):
         batch = conn_str_producer_client.create_batch(partition_id='0')
         batch.add(EventData(body='A single message'))
         conn_str_producer_client.send_batch(batch)
-
-        # Finally let's do it with SAS token + conn str
-        token_conn_str = "Endpoint=sb://{}/;SharedAccessToken={};".format(hostname, token.decode())
-        conn_str_producer_client = EventHubProducerClient.from_connection_string(token_conn_str,
-                                                                                 eventhub_name=live_eventhub['event_hub'])
-
-        with conn_str_producer_client:
-            batch = conn_str_producer_client.create_batch(partition_id='0')
-            batch.add(EventData(body='A single message'))
-            conn_str_producer_client.send_batch(batch)

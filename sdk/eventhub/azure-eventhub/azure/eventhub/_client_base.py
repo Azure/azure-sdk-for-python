@@ -49,8 +49,8 @@ def _parse_conn_str(conn_str, kwargs):
     shared_access_key_name = None
     shared_access_key = None
     entity_path = None  # type: Optional[str]
-    shared_access_token = None  # type: Optional[str]
-    shared_access_token_expiry = None # type: Optional[int]
+    shared_access_signature = None  # type: Optional[str]
+    shared_access_signature_expiry = None # type: Optional[int]
     eventhub_name = kwargs.pop("eventhub_name", None)  # type: Optional[str]
     for element in conn_str.split(";"):
         key, _, value = element.partition("=")
@@ -64,16 +64,16 @@ def _parse_conn_str(conn_str, kwargs):
             shared_access_key = value
         elif key.lower() == "entitypath":
             entity_path = value
-        elif key.lower() == "sharedaccesstoken":
-            shared_access_token = value
+        elif key.lower() == "sharedaccesssignature":
+            shared_access_signature = value
             try:
                 # Expiry can be stored in the "se=<timestamp>" clause of the token. ('&'-separated key-value pairs)
-                shared_access_token_expiry = int(shared_access_token.split('se=')[1].split('&')[0]) # type: ignore
+                shared_access_signature_expiry = int(shared_access_signature.split('se=')[1].split('&')[0]) # type: ignore
             except (IndexError, TypeError, ValueError): # Fallback since technically expiry is optional.
                 # An arbitrary, absurdly large number, since you can't renew.
-                shared_access_token_expiry = int(time.time() * 2)
-            print(shared_access_token_expiry)
-    if not (all([endpoint, shared_access_key_name, shared_access_key]) or all([endpoint, shared_access_token])):
+                shared_access_signature_expiry = int(time.time() * 2)
+            print(shared_access_signature_expiry)
+    if not (all([endpoint, shared_access_key_name, shared_access_key]) or all([endpoint, shared_access_signature])):
         raise ValueError(
             "Invalid connection string. Should be in the format: "
             "Endpoint=sb://<FQDN>/;SharedAccessKeyName=<KeyName>;SharedAccessKey=<KeyValue>"
@@ -88,8 +88,8 @@ def _parse_conn_str(conn_str, kwargs):
             str(shared_access_key_name) if shared_access_key_name else None,
             str(shared_access_key) if shared_access_key else None,
             entity,
-            str(shared_access_token) if shared_access_token else None,
-            shared_access_token_expiry)
+            str(shared_access_signature) if shared_access_signature else None,
+            shared_access_signature_expiry)
 
 
 def _generate_sas_token(uri, policy, key, expiry=None):

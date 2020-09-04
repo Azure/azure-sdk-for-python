@@ -90,7 +90,7 @@ class AsyncEventHubAuthTests(AzureMgmtTestCase):
             await producer_client.send_batch(batch)
 
         # Finally let's do it with SAS token + conn str
-        token_conn_str = "Endpoint=sb://{}/;SharedAccessToken={};".format(hostname, token.decode())
+        token_conn_str = "Endpoint=sb://{}/;SharedAccessSignature={};".format(hostname, token.decode())
         conn_str_producer_client = EventHubProducerClient.from_connection_string(token_conn_str,
                                                                                  eventhub_name=eventhub.name)
 
