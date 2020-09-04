@@ -82,6 +82,7 @@ azure-mgmt-trafficmanager~=0.50.0
 azure-mgmt-web~=0.35.0
 azure-nspkg
 azure-keyvault-nspkg
+azure-schemaregistry<2.0.0,>=1.0.0b1
 azure-search-nspkg
 azure-security-nspkg
 azure-synapse-nspkg
