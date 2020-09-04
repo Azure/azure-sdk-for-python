@@ -83,6 +83,7 @@ azure-mgmt-trafficmanager~=0.50.0
 azure-mgmt-web~=0.35.0
 azure-nspkg
 azure-keyvault-nspkg
+azure-schemaregistry<2.0.0,>=1.0.0b1
 azure-search-nspkg
 azure-security-nspkg
 azure-synapse-nspkg
@@ -112,6 +113,7 @@ aiodns>=2.0
 python-dateutil>=2.8.0
 six>=1.6
 isodate>=0.6.0
+avro<2.0.0,>=1.10.0
 #override azure azure-keyvault~=1.0
 #override azure-mgmt-core azure-core<2.0.0,>=1.7.0
 #override azure-appconfiguration azure-core<2.0.0,>=1.0.0
