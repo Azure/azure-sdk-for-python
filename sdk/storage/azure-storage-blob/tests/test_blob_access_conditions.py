@@ -636,6 +636,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         self.assertIsInstance(lat, datetime)
         self.assertIsInstance(new_lat, datetime)
         self.assertGreater(new_lat, lat)
+        self.assertIsInstance(blob.download_blob().properties.last_accessed_on, datetime)
 
     @GlobalStorageAccountPreparer()
     def test_set_blob_properties_with_if_match(self, resource_group, location, storage_account, storage_account_key):
