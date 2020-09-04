@@ -52,8 +52,8 @@ class LogAnalyticsOperations(object):
         parameters,  # type: "models.RequestRateByIntervalInput"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.LogAnalyticsOperationResult"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.LogAnalyticsOperationResult"]
+        # type: (...) -> Optional["models.LogAnalyticsOperationResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.LogAnalyticsOperationResult"]]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2018-04-01"
@@ -76,7 +76,6 @@ class LogAnalyticsOperations(object):
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'RequestRateByIntervalInput')
         body_content_kwargs['content'] = body_content
@@ -105,7 +104,7 @@ class LogAnalyticsOperations(object):
         parameters,  # type: "models.RequestRateByIntervalInput"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller["models.LogAnalyticsOperationResult"]
         """Export logs that show Api requests made by this subscription in the given time window to show
     throttling activities.
 
@@ -168,8 +167,8 @@ class LogAnalyticsOperations(object):
         parameters,  # type: "models.LogAnalyticsInputBase"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.LogAnalyticsOperationResult"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.LogAnalyticsOperationResult"]
+        # type: (...) -> Optional["models.LogAnalyticsOperationResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.LogAnalyticsOperationResult"]]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2018-04-01"
@@ -192,7 +191,6 @@ class LogAnalyticsOperations(object):
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'LogAnalyticsInputBase')
         body_content_kwargs['content'] = body_content
@@ -221,7 +219,7 @@ class LogAnalyticsOperations(object):
         parameters,  # type: "models.LogAnalyticsInputBase"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller["models.LogAnalyticsOperationResult"]
         """Export logs that show total throttled Api requests for this subscription in the given time
     window.
 
