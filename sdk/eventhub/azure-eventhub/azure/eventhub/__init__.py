@@ -13,7 +13,7 @@ __version__ = VERSION
 
 from ._producer_client import EventHubProducerClient
 from ._consumer_client import EventHubConsumerClient
-from ._client_base import EventHubSharedKeyCredential, EventHubSASTokenCredential
+from ._client_base import EventHubSharedKeyCredential
 from ._eventprocessor.checkpoint_store import CheckpointStore
 from ._eventprocessor.common import CloseReason, LoadBalancingStrategy
 from ._eventprocessor.partition_context import PartitionContext
@@ -27,7 +27,6 @@ __all__ = [
     "EventHubConsumerClient",
     "TransportType",
     "EventHubSharedKeyCredential",
-    "EventHubSASTokenCredential",
     "CheckpointStore",
     "CloseReason",
     "LoadBalancingStrategy",
