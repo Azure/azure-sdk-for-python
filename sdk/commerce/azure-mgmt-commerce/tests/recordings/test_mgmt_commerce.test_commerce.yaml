@@ -1,6 +1,8 @@
 interactions:
 - request:
-    body: null
+    body: '{"name": "sample-datasource", "type": "azureblob", "credentials": {"connectionString":
+      "DefaultEndpointsProtocol=https;AccountName=storagename;AccountKey=NzhL3hKZbJBuJ2484dPTR+xF30kYaWSSCbs2BzLgVVI1woqeST/1IgqaLm6QAOTxtGvxctSNbIR/1hW8yH+bJg==;EndpointSuffix=core.windows.net"},
+      "container": {"name": "searchcontainer"}}'
     headers:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
