@@ -8,6 +8,7 @@ from msrest.serialization import UTC
 import datetime as dt
 import uuid
 import json
+import six
 from ._generated import models
 from ._generated.models import StorageBlobCreatedEventData, \
     EventGridEvent as InternalEventGridEvent, \
@@ -15,7 +16,41 @@ from ._generated.models import StorageBlobCreatedEventData, \
 from ._shared.mixins import DictMixin
 from ._event_mappings import _event_mappings
 
-class CloudEvent(InternalCloudEvent):   #pylint:disable=too-many-instance-attributes
+
+class EventMixin(object):
+    """
+    Mixin for the event models comprising of some helper methods.
+    """
+    @staticmethod
+    def _deserialize_data(event, event_type):
+        """
+        Sets the data of the desrialized event to strongly typed event object if event type exists in _event_mappings.
+        Otherwise, sets it to None.
+
+        :param str event_type: The event_type of the EventGridEvent object or the type of the CloudEvent object.
+        """
+        # if system event type defined, set event.data to system event object
+        try:
+            event.data = (_event_mappings[event_type]).deserialize(event.data)
+        except KeyError: # else, if custom event, then event.data is dict and should be set to None
+            event.data = None
+
+    @staticmethod
+    def _from_json(event, encode):
+        """
+        Load the event into the json
+        :param dict eventgrid_event: The event to be deserialized.
+        :type eventgrid_event: Union[str, dict, bytes]
+        :param str encode: The encoding to be used. Defaults to 'utf-8'
+        """
+        if isinstance(event, six.binary_type):
+            event = json.loads(event.decode(encode))
+        elif isinstance(event, six.string_types):
+            event = json.loads(event)
+        return event
+
+
+class CloudEvent(EventMixin):   #pylint:disable=too-many-instance-attributes
     """Properties of an event published to an Event Grid topic using the CloudEvent 1.0 Schema.
 
     All required parameters must be populated in order to send to Azure.
@@ -40,38 +75,63 @@ class CloudEvent(InternalCloudEvent):   #pylint:disable=too-many-instance-attrib
      unique for each distinct event.
     :type id: Optional[str]
     """
-
-    _validation = {
-        'source': {'required': True},
-        'type': {'required': True},
-    }
-
-    _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'id': {'key': 'id', 'type': 'str'},
-        'source': {'key': 'source', 'type': 'str'},
-        'data': {'key': 'data', 'type': 'object'},
-        'data_base64': {'key': 'data_base64', 'type': 'bytearray'},
-        'type': {'key': 'type', 'type': 'str'},
-        'time': {'key': 'time', 'type': 'iso-8601'},
-        'specversion': {'key': 'specversion', 'type': 'str'},
-        'dataschema': {'key': 'dataschema', 'type': 'str'},
-        'datacontenttype': {'key': 'datacontenttype', 'type': 'str'},
-        'subject': {'key': 'subject', 'type': 'str'},
-    }
-
     def __init__(self, source, type, **kwargs):
         # type: (str, str, Any) -> None
-        kwargs.setdefault('id', uuid.uuid4())
-        kwargs.setdefault("source", source)
-        kwargs.setdefault("type", type)
-        kwargs.setdefault("time", dt.datetime.now(UTC()).isoformat())
-        kwargs.setdefault("specversion", "1.0")
+        self.source = source
+        self.type = type
+        self.specversion = kwargs.pop("specversion", "1.0")
+        self.id = kwargs.pop("id", str(uuid.uuid4()))
+        self.time = kwargs.pop("time", dt.datetime.now(UTC()).isoformat())
+        self.data = kwargs.pop("data", None)
+        self.datacontenttype = kwargs.pop("datacontenttype", None)
+        self.dataschema = kwargs.pop("dataschema", None)
+        self.subject = kwargs.pop("subject", None)
+        self.extensions = {}
+        self.extensions.update({k:v for k, v in kwargs.pop('extensions', {}).items()})
 
-        super(CloudEvent, self).__init__(**kwargs)
+    @classmethod
+    def _from_generated(cls, cloud_event, **kwargs):
+        generated = InternalCloudEvent.deserialize(cloud_event)
+        if generated.additional_properties:
+            extensions = {k:v for k, v in generated.additional_properties.items()}
+            kwargs.setdefault('extensions', extensions)
+        return cls(
+            id=generated.id,
+            source=generated.source,
+            type=generated.type,
+            specversion=generated.specversion,
+            data=generated.data or generated.data_base64,
+            time=generated.time,
+            dataschema=generated.dataschema,
+            datacontenttype=generated.datacontenttype,
+            subject=generated.subject,
+            **kwargs
+        )
+
+    def _to_generated(self, **kwargs):
+        if isinstance(self.data, six.binary_type):
+            data_base64 = self.data
+            data = None
+        else:
+            data_base64 = None
+            data = self.data
+        return InternalCloudEvent(
+            id=self.id,
+            source=self.source,
+            type=self.type,
+            specversion=self.specversion,
+            data=data,
+            data_base64=data_base64,
+            time=self.time,
+            dataschema=self.dataschema,
+            datacontenttype=self.datacontenttype,
+            subject=self.subject,
+            additional_properties=self.extensions,
+            **kwargs
+        )
 
 
-class EventGridEvent(InternalEventGridEvent):
+class EventGridEvent(InternalEventGridEvent, EventMixin):
     """Properties of an event published to an Event Grid topic using the EventGrid Schema.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -130,62 +190,6 @@ class EventGridEvent(InternalEventGridEvent):
         super(EventGridEvent, self).__init__(**kwargs)
 
 
-class DeserializedEvent():
-    """The container for the deserialized event model and mapping of event envelope properties.
-        :param dict event: dict
-    """
-
-    def __init__(self, event):
-        # type: (Any) -> None
-        self._model = None
-        self._event_dict = event
-    
-    def to_json(self):
-        # type: () -> dict
-        return self._event_dict
-
-    @property
-    def model(self):
-        # type: () -> Union[CloudEvent, EventGridEvent]
-        """
-        Returns strongly typed EventGridEvent/CloudEvent object defined by the format of the properties.
-        All properties of the model are strongly typed (ie. for an EventGridEvent, event_time property will return a datetime.datetime object).
-
-        model.data: Returns a system event type(StorageBlobCreated, StorageBlobDeleted, etc.). If model.type/model.event_type is not defined in the 
-          system registry, returns None.
-
-        :raise: :class:`ValueError`, when events do not follow CloudEvent or EventGridEvent schema.
-
-        :rtype: Union[CloudEvent, EventGridEvent]
-        """
-        if not self._model:
-            try:
-                if 'specversion' in self._event_dict.keys():
-                    self._model = CloudEvent.deserialize(self._event_dict)
-                    event_type = self._model.type
-                else:
-                    self._model = EventGridEvent.deserialize(self._event_dict)
-                    event_type = self._model.event_type
-            except:
-                raise ValueError("Event is not correctly formatted CloudEvent or EventGridEvent.")
-
-            self._deserialize_data(event_type)
-
-        return self._model
-    
-    def _deserialize_data(self, event_type):
-        """
-        Sets self._model.data to strongly typed event object if event type exists in _event_mappings.
-        Otherwise, sets self._model.data to None.
-
-        :param str event_type: The event_type of the EventGridEvent object or the type of the CloudEvent object.
-        """
-        # if system event type defined, set model.data to system event object
-        try:
-            self._model.data = (_event_mappings[event_type]).deserialize(self._model.data)
-        except KeyError: # else, if custom event, then model.data is dict and should be set to None
-            self._model.data = None
-    
 class CustomEvent(DictMixin):
     """The wrapper class for a CustomEvent, to be used when publishing events.
        :param dict args: dict
