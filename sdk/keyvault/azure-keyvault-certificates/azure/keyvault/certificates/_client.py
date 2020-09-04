@@ -31,7 +31,8 @@ except ImportError:
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import
-    from typing import Any, Dict, List, Optional, Iterable
+    from typing import Any, Dict, Iterable, List, Optional
+    from azure.core.paging import ItemPaged
 
 
 class CertificateClient(KeyVaultClientBase):
@@ -530,7 +531,7 @@ class CertificateClient(KeyVaultClientBase):
 
     @distributed_trace
     def list_deleted_certificates(self, **kwargs):
-        # type: (**Any) -> Iterable[DeletedCertificate]
+        # type: (**Any) -> ItemPaged[DeletedCertificate]
         """Lists the currently-recoverable deleted certificates. Possible only if vault is soft-delete enabled.
 
         Requires certificates/get/list permission. Retrieves the certificates in the current vault which
@@ -554,6 +555,11 @@ class CertificateClient(KeyVaultClientBase):
         """
         max_page_size = kwargs.pop("max_page_size", None)
 
+        if self.api_version == "2016-10-01" and kwargs.get("include_pending"):
+            raise NotImplementedError(
+                "The 'include_pending' parameter to `list_deleted_certificates` "
+                "is only available for API versions v7.0 and up"
+            )
         return self._client.get_deleted_certificates(
             vault_base_url=self._vault_url,
             maxresults=max_page_size,
@@ -566,7 +572,7 @@ class CertificateClient(KeyVaultClientBase):
 
     @distributed_trace
     def list_properties_of_certificates(self, **kwargs):
-        # type: (**Any) -> Iterable[CertificateProperties]
+        # type: (**Any) -> ItemPaged[CertificateProperties]
         """List identifiers and properties of all certificates in the vault.
 
         Requires certificates/list permission.
@@ -588,6 +594,12 @@ class CertificateClient(KeyVaultClientBase):
         """
         max_page_size = kwargs.pop("max_page_size", None)
 
+        if self.api_version == "2016-10-01" and kwargs.get("include_pending"):
+            raise NotImplementedError(
+                "The 'include_pending' parameter to `list_properties_of_certificates` "
+                "is only available for API versions v7.0 and up"
+            )
+
         return self._client.get_certificates(
             vault_base_url=self._vault_url,
             maxresults=max_page_size,
@@ -598,7 +610,7 @@ class CertificateClient(KeyVaultClientBase):
 
     @distributed_trace
     def list_properties_of_certificate_versions(self, certificate_name, **kwargs):
-        # type: (str, **Any) -> Iterable[CertificateProperties]
+        # type: (str, **Any) -> ItemPaged[CertificateProperties]
         """List the identifiers and properties of a certificate's versions.
 
         Requires certificates/list permission.
@@ -989,7 +1001,7 @@ class CertificateClient(KeyVaultClientBase):
 
     @distributed_trace
     def list_properties_of_issuers(self, **kwargs):
-        # type: (**Any) -> Iterable[IssuerProperties]
+        # type: (**Any) -> ItemPaged[IssuerProperties]
         """Lists properties of the certificate issuers for the key vault.
 
         Requires the certificates/manageissuers/getissuers permission.

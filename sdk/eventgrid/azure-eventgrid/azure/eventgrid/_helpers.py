@@ -12,6 +12,7 @@ from azure.core.credentials import AzureKeyCredential
 from ._shared_access_signature_credential import EventGridSharedAccessSignatureCredential
 from ._signature_credential_policy import EventGridSharedAccessSignatureCredentialPolicy
 from . import _constants as constants
+from ._event_mappings import _event_mappings
 
 def generate_shared_access_signature(topic_hostname, shared_access_key, expiration_date_utc, **kwargs):
     # type: (str, str, datetime.Datetime, Any) -> str
@@ -70,3 +71,11 @@ def _get_authentication_policy(credential):
     if isinstance(credential, EventGridSharedAccessSignatureCredential):
         authentication_policy = EventGridSharedAccessSignatureCredentialPolicy(credential=credential, name=constants.EVENTGRID_TOKEN_HEADER)
     return authentication_policy
+
+def _is_cloud_event(event):
+    # type: dict -> bool
+    required = ('id', 'source', 'specversion', 'type')
+    try:
+        return all([_ in event for _ in required]) and event['specversion'] == "1.0"
+    except TypeError:
+        return False

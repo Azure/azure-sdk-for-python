@@ -12,8 +12,6 @@ interactions:
       - application/json
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-      api-key:
-      - EF67F019320A950DE6995FD1A346DB62
     method: POST
     uri: https://search8fce1702.search.windows.net/skillsets?api-version=2020-06-30
   response:
@@ -44,8 +42,6 @@ interactions:
       - application/json;odata.metadata=minimal
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-      api-key:
-      - EF67F019320A950DE6995FD1A346DB62
     method: GET
     uri: https://search8fce1702.search.windows.net/skillsets?api-version=2020-06-30
   response:

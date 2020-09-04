@@ -20,6 +20,7 @@ from azure.keyvault.certificates import (
     LifetimeAction,
     CertificateIssuer,
     IssuerProperties,
+    ApiVersion,
 )
 from azure.keyvault.certificates.aio import CertificateClient
 from azure.keyvault.certificates._shared import parse_vault_id
@@ -655,7 +656,8 @@ class CertificateClientTests(KeyVaultTestCase):
     async def test_get_certificate_version(self, client, **kwargs):
         cert_name = self.get_resource_name("cert")
         policy = CertificatePolicy.get_default()
-        await asyncio.gather(*[client.create_certificate(cert_name, policy) for _ in range(self.list_test_size)])
+        for _ in range(self.list_test_size):
+            await client.create_certificate(cert_name, policy)
 
         async for version_properties in client.list_properties_of_certificate_versions(cert_name):
             cert = await client.get_certificate_version(version_properties.name, version_properties.version)
@@ -674,6 +676,36 @@ class CertificateClientTests(KeyVaultTestCase):
             assert version_properties.vault_url == cert.properties.vault_url
             assert version_properties.version == cert.properties.version
             assert version_properties.x509_thumbprint == cert.properties.x509_thumbprint
+
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @KeyVaultPreparer()
+    @KeyVaultClientPreparer(client_kwargs={"api_version": ApiVersion.V2016_10_01})
+    async def test_list_properties_of_certificates_2016_10_01(self, client, **kwargs):
+        certs = client.list_properties_of_certificates()
+        async for cert in certs:
+            pass
+
+        with pytest.raises(NotImplementedError) as excinfo:
+            certs = client.list_properties_of_certificates(include_pending=True)
+            async for cert in certs:
+                pass
+
+        assert "The 'include_pending' parameter to `list_properties_of_certificates` is only available for API versions v7.0 and up" in str(excinfo.value)
+
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @KeyVaultPreparer()
+    @KeyVaultClientPreparer(client_kwargs={"api_version": ApiVersion.V2016_10_01})
+    async def test_list_deleted_certificates_2016_10_01(self, client, **kwargs):
+        certs = client.list_deleted_certificates()
+        async for cert in certs:
+            pass
+
+        with pytest.raises(NotImplementedError) as excinfo:
+            certs = client.list_deleted_certificates(include_pending=True)
+            async for cert in certs:
+                pass
+
+        assert "The 'include_pending' parameter to `list_deleted_certificates` is only available for API versions v7.0 and up" in str(excinfo.value)
 
     class _CustomHookPolicy(object):
         pass
