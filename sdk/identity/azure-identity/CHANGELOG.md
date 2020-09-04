@@ -21,6 +21,13 @@
   Async credentials (those in `azure.identity.aio`) will support ADFS in a
   future release.
   ([#12696](https://github.com/Azure/azure-sdk-for-python/issues/12696))
+- `InteractiveBrowserCredential` keyword argument `redirect_uri` enables
+  authentication with a user-specified application having a custom redirect URI
+  ([#13344](https://github.com/Azure/azure-sdk-for-python/issues/13344))  
+
+### Breaking changes
+- Removed `authentication_record` keyword argument from the async
+  `SharedTokenCacheCredential`, i.e. `azure.identity.aio.SharedTokenCacheCredential`
 
 ## 1.4.0 (2020-08-10)
 ### Added

@@ -183,12 +183,10 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         source_hostname = parsed_source_url.netloc.rstrip('/')
         source_path = unquote(parsed_source_url.path)
         source_query = parsed_source_url.query
-        return "{}://{}{}?{}".format(
-            source_scheme,
-            source_hostname,
-            quote(source_path, safe='~/'),
-            source_query
-        )
+        result = ["{}://{}{}".format(source_scheme, source_hostname, quote(source_path, safe='~/'))]
+        if source_query:
+            result.append(source_query)
+        return '?'.join(result)
 
     @classmethod
     def from_blob_url(cls, blob_url, credential=None, snapshot=None, **kwargs):
