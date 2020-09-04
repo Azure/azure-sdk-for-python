@@ -90,10 +90,12 @@ Once the **AZURE_CLIENT_ID**, **AZURE_CLIENT_SECRET** and
 [DefaultAzureCredential][default_cred_ref] will be able to authenticate the
 [KeyVaultAccessControlClient][rbac_client_docs].
 
-Constructing the client also requires your vault's URL, which you can
+There are two clients available in this package, below are snippets demonstrating how to construct
+each one of these clients. Constructing a client also requires your vault's URL, which you can
 get from the Azure CLI or the Azure Portal. In the Azure Portal, this URL is
 the vault's "DNS Name".
 
+##### Create a KeyVaultAccessControlClient
 ```python
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.administration import KeyVaultAccessControlClient
@@ -102,6 +104,17 @@ credential = DefaultAzureCredential()
 
 client = KeyVaultAccessControlClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
 ```
+
+##### Create a KeyVaultBackupClient
+```python
+from azure.identity import DefaultAzureCredential
+from azure.keyvault.administration import KeyVaultBackupClient
+
+credential = DefaultAzureCredential()
+
+client = KeyVaultBackupClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
+```
+
 ## Key concepts
 
 ### Role Definition
@@ -115,12 +128,20 @@ A role assignment is the association of a role definition to a service principal
 ### KeyVaultAccessControlClient
 A `KeyVaultAccessControlClient` manages role definitions and role assignments.
 
+### KeyVaultBackupClient
+A `KeyVaultBackupClient` performs full key backups, full key restores, and selective key restores.
+
 ## Examples
 This section conntains code snippets covering common tasks:
-* [List the role definitions](#list-the-role-definitions "List the role definitions")
-* [Create, Get, and Delete a role assignment](#create-get-and-delete-a-role-assignment "Create, Get, and Delete a role assignment")
+* Access Control
+    * [List all role definitions](#list-all-role-definitions "List all role definitions")
+    * [List all role assignments](#list-all-role-assignments "List all role assignments")
+    * [Create, Get, and Delete a role assignment](#create-get-and-delete-a-role-assignment "Create, Get, and Delete a role assignment")
+* Backup and Restore
+    * [Perform a full key backup](#perform-a-full-key-backup "Perform a full key backup")
+    * [Perform a full key restore](#perform-a-full-key-restore "Perform a full key restore")
 
-### List the role definitions
+### List all role definitions
 List the role definitions available for assignment.
 
 ```python
@@ -132,7 +153,7 @@ credential = DefaultAzureCredential()
 client = KeyVaultAccessControlClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
 
 # this is the global scope. This will list all role definitions available for assignment
-role_definitions = client.list_role_definitions(role_scope="/")
+role_definitions = client.list_role_definitions(role_scope=KeyVaultRoleScope.global_value)
 
 for role_definition in role_definitions:
     print(role_definition.id)
@@ -140,8 +161,28 @@ for role_definition in role_definitions:
     print(role_definition.description)
 ```
 
+### List all role assignments
+Before creating a new role assignment in the [next snippet](#create-get-and-delete-a-role-assignment), list all of the current role assignments
+
+```python
+from azure.identity import DefaultAzureCredential
+from azure.keyvault.administration import KeyVaultAccessControlClient
+
+credential = DefaultAzureCredential()
+
+client = KeyVaultAccessControlClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
+
+# this is the global scope. This will list all role assignments available for assignment
+role_assignments = client.list_role_assignments(role_scope=KeyVaultRoleScope.global_value)
+
+for role_assignment in role_assignments:
+    print(role_assignment.name)
+    print(role_assignment.principal_id)
+    print(role_assignment.role_definition_id)
+```
+
 ### Create, Get, and Delete a role assignment
-Assign a role to a service principal. This will require a role definition id from the list retrieved in the [above snippet](#list-the-role-definitions) and the principal object id retrieved in the [Create and Get credentials](#create-and-get-credentials)
+Assign a role to a service principal. This will require a role definition id from the list retrieved in the [above snippet](#list-all-role-definitions) and the principal object id retrieved in the [Create and Get credentials](#create-and-get-credentials)
 
 ```python
 import uuid
@@ -174,9 +215,67 @@ role_assignment = client.delete_role_assignment(role_scope, role_assignment.name
 print(role_assignment.name)
 print(role_assignment.principal_id)
 print(role_assignment.role_definition_id)
-
 ```
 
+### Perform a full key backup
+Back up your entire collection of keys. The backing store for full key backups is a blob storage container using Shared Access Signature authentication.
+
+For more details on creating a SAS token using the `BlobServiceClient`, see the sample [here](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/storage/azure-storage-blob/samples/blob_samples_authentication.py#L105).
+Alternatively, it is possible to [generate a SAS token in Storage Explorer](https://docs.microsoft.com/en-us/azure/vs-azure-tools-storage-manage-with-storage-explorer?tabs=windows#generate-a-shared-access-signature-in-storage-explorer)
+
+```python
+from azure.identity import DefaultAzureCredential
+from azure.keyvault.administration import KeyVaultBackupClient
+from azure.core.exceptions import ResourceNotFoundError
+
+credential = DefaultAzureCredential()
+client = KeyVaultBackupClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
+
+blob_storage_uri = "<your-blob-storage-uri>"  # the URI to your storage account. Should contain the name of the specific container
+sas_token = "<your-sas-token>"  # replace with the sas token to your storage account. See this snippet's description on help to retrieve
+
+# performing a full key backup is a long-running operation. Calling `result()` on the poller will wait
+# until the backup is completed, then return an object representing the backup operation.
+backup_operation = client.begin_full_backup(blob_storage_uri, sas_token).result()
+
+# this is the URI of the Azure blob storage container which contains the backup
+azure_storage_blob_container_uri = backup_operation.azure_storage_blob_container_uri
+
+print(backup_operation.status)
+print(backup_operation.job_id)
+print(azure_storage_blob_container_uri)
+```
+
+
+### Perform a full key restore
+Restore your entire collection of keys from a backup. The data source for a full key restore is a storage blob accessed using Shared Access Signature authentication.
+You will also need the `azure_storage_blob_container_uri` from the [above snippet](#perform-a-full-key-backup).
+
+For more details on creating a SAS token using the `BlobServiceClient`, see the sample [here](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/storage/azure-storage-blob/samples/blob_samples_authentication.py#L105).
+Alternatively, it is possible to [generate a SAS token in Storage Explorer](https://docs.microsoft.com/en-us/azure/vs-azure-tools-storage-manage-with-storage-explorer?tabs=windows#generate-a-shared-access-signature-in-storage-explorer)
+
+```python
+from azure.identity import DefaultAzureCredential
+from azure.keyvault.administration import KeyVaultBackupClient
+from azure.core.exceptions import ResourceNotFoundError
+
+credential = DefaultAzureCredential()
+client = KeyVaultBackupClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
+
+blob_storage_uri = "<your-blob-storage-uri>"  # the URI to your storage account. Should contain the name of the specific container
+sas_token = "<your-sas-token>"  # replace with the sas token to your storage account. See this snippet's description on help to retrieve
+
+# Replace <azure-storage-blob-container-uri> with the blob storage container returned in the previous example
+azure_storage_blob_container_uri = "<azure-storage-blob-container-uri>"
+folder_name = azure_storage_blob_container_uri.split("/")[-1]
+
+# performing a full key restore is a long-running operation. Calling `result()` on the poller will wait
+# until the restore is completed, then return an object representing the restore operation.
+restore_operation = client.begin_full_restore(blob_storage_uri, sas_token, folder_name).result()
+
+print(restore_operation.status)
+print(restore_operation.job_id)
+```
 
 ## Troubleshooting
 ### General
