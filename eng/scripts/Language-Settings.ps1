@@ -101,7 +101,7 @@ function Publish-python-GithubIODocs ()
     Write-Host "Discovered Package Name: $PkgName"
     Write-Host "Discovered Package Version: $Version"
     Write-Host "Directory for Upload: $UnzippedDocumentationPath"
-
-    Upload-Blobs -DocDir $UnzippedDocumentationPath -PkgName $PkgName -DocVersion $Version
+    $releaseTag = RetrieveReleaseTag "PyPI" $PublicArtifactLocation
+    Upload-Blobs -DocDir $UnzippedDocumentationPath -PkgName $PkgName -DocVersion $Version -ReleaseTag $releaseTag
   }
 }
