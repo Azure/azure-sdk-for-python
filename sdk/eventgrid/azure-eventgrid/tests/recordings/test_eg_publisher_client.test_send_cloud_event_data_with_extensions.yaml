@@ -1,10 +1,8 @@
 interactions:
 - request:
-    body: '[{"customSubject": "sample", "customEventType": "sample.event", "customDataVersion":
-      "2.0", "customId": "1234", "customEventTime": "2020-09-03T21:37:32.857620+00:00",
-      "customData": "sample data"}, {"customSubject": "sample2", "customEventType":
-      "sample.event", "customDataVersion": "2.0", "customId": "12345", "customEventTime":
-      "2020-09-03T21:37:32.857620+00:00", "customData": "sample data 2"}]'
+    body: '[{"reason_code": 204, "extension": "extension", "id": "9da8e4ce-df2c-4480-b809-c7132fb3ee74",
+      "source": "http://samplesource.dev", "data": "cloudevent", "type": "Sample.Cloud.Event",
+      "time": "2020-09-03T21:37:15.165652Z", "specversion": "1.0"}]'
     headers:
       Accept:
       - '*/*'
@@ -13,13 +11,13 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '396'
+      - '244'
       Content-Type:
-      - application/json
+      - application/cloudevents-batch+json; charset=utf-8
       User-Agent:
       - azsdk-python-eventgridpublisherclient/unknown Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://customeventgridtestegtopic.westus-1.eventgrid.azure.net/api/events?api-version=2018-01-01
+    uri: https://cloudeventgridtestegtopic.westus-1.eventgrid.azure.net/api/events?api-version=2018-01-01
   response:
     body:
       string: ''
@@ -29,7 +27,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 03 Sep 2020 21:37:31 GMT
+      - Thu, 03 Sep 2020 21:37:13 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:

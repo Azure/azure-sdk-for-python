@@ -1,11 +1,11 @@
 interactions:
 - request:
-    body: '[{"id": "48538bd7-cfcc-4244-a06a-80787bb464c2", "source": "http://samplesource.dev",
-      "data": "cloudevent", "type": "Sample.Cloud.Event", "time": "2020-09-03T21:37:48.405133Z",
+    body: '[{"id": "13ae3fbd-e54d-4e18-87d7-3a84e8b8927f", "source": "http://samplesource.dev",
+      "data_base64": "Y2xvdWRldmVudA==", "type": "Sample.Cloud.Event", "time": "2020-09-04T17:09:37.664287Z",
       "specversion": "1.0"}]'
     headers:
       Content-Length:
-      - '198'
+      - '211'
       Content-Type:
       - application/cloudevents-batch+json; charset=utf-8
       User-Agent:
@@ -18,11 +18,11 @@ interactions:
     headers:
       api-supported-versions: '2018-01-01'
       content-length: '0'
-      date: Thu, 03 Sep 2020 21:37:46 GMT
+      date: Fri, 04 Sep 2020 17:09:35 GMT
       server: Microsoft-HTTPAPI/2.0
       strict-transport-security: max-age=31536000; includeSubDomains
     status:
       code: 200
       message: OK
-    url: https://cloudeventgridtestoc4o4l.westus-1.eventgrid.azure.net/api/events?api-version=2018-01-01
+    url: https://cloudeventgridtestdfyfhi.westus-1.eventgrid.azure.net/api/events?api-version=2018-01-01
 version: 1
