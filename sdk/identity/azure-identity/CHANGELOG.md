@@ -1,6 +1,6 @@
 # Release History
 
-## 1.5.0b1 (Unreleased)
+## 1.5.0b1 (2020-09-08)
 ### Added
 - Application authentication APIs from 1.4.0b7
 - `ManagedIdentityCredential` supports the latest version of App Service
@@ -13,6 +13,14 @@
   (`azure.identity.aio.CertificateCredential`) will support this in a
   future version.
   ([#10816](https://github.com/Azure/azure-sdk-for-python/issues/10816))
+- Credentials in `azure.identity` support ADFS authorities, excepting
+  `VisualStudioCodeCredential`. To configure a credential for this, configure
+  the credential with `authority` and `tenant_id="adfs"` keyword arguments, for
+  example
+  `ClientSecretCredential(authority="<your ADFS URI>", tenant_id="adfs")`.
+  Async credentials (those in `azure.identity.aio`) will support ADFS in a
+  future release.
+  ([#12696](https://github.com/Azure/azure-sdk-for-python/issues/12696))
 - `InteractiveBrowserCredential` keyword argument `redirect_uri` enables
   authentication with a user-specified application having a custom redirect URI
   ([#13344](https://github.com/Azure/azure-sdk-for-python/issues/13344))  
