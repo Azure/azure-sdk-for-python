@@ -11,7 +11,7 @@ This preview package for Python enables users to get blob change feed events. Th
 ### Prerequisites
 * Python 2.7, or 3.5 or later is required to use this package.
 * You must have an [Azure subscription](https://azure.microsoft.com/free/) and an
-[Azure storage account](https://docs.microsoft.com/en-us/azure/storage/blobs/data-lake-storage-quickstart-create-account) to use this package.
+[Azure storage account](https://docs.microsoft.com/azure/storage/blobs/data-lake-storage-quickstart-create-account) to use this package.
 
 ### Install the package
 Install the Azure Storage Blob ChangeFeed client library for Python with [pip](https://pypi.org/project/pip/):
@@ -36,9 +36,9 @@ az storage account create -n my-storage-account-name -g my-resource-group
 ```
 
 To enable changefeed you can use:
-[Azure Portal](https://docs.microsoft.com/en-us/azure/storage/blobs/storage-blob-change-feed?tabs=azure-portal#enable-and-disable-the-change-feed)
-[Azure PowerShell](https://docs.microsoft.com/en-us/azure/storage/blobs/storage-blob-change-feed?tabs=azure-powershell#enable-and-disable-the-change-feed)
-or [Template](https://docs.microsoft.com/en-us/azure/storage/blobs/storage-blob-change-feed?tabs=template#enable-and-disable-the-change-feed)
+[Azure Portal](https://docs.microsoft.com/azure/storage/blobs/storage-blob-change-feed?tabs=azure-portal#enable-and-disable-the-change-feed)
+[Azure PowerShell](https://docs.microsoft.com/azure/storage/blobs/storage-blob-change-feed?tabs=azure-powershell#enable-and-disable-the-change-feed)
+or [Template](https://docs.microsoft.com/azure/storage/blobs/storage-blob-change-feed?tabs=template#enable-and-disable-the-change-feed)
 
 ### Authenticate the client
 

@@ -24,6 +24,7 @@ database service.
 """
 
 from collections import deque
+import copy
 from .. import _retry_utility
 from .. import http_constants
 
@@ -43,12 +44,17 @@ class _QueryExecutionContextBase(object):
         self._client = client
         self._options = options
         self._is_change_feed = "changeFeed" in options and options["changeFeed"] is True
-        self._continuation = None
-        if "continuation" in options and self._is_change_feed:
-            self._continuation = options["continuation"]
+        self._continuation = self._get_initial_continuation()
         self._has_started = False
         self._has_finished = False
         self._buffer = deque()
+
+    def _get_initial_continuation(self):
+        if "continuation" in self._options:
+            if "enableCrossPartitionQuery" in self._options:
+                raise ValueError("continuation tokens are not supported for cross-partition queries.")
+            return self._options["continuation"]
+        return None
 
     def _has_more_pages(self):
         return not self._has_started or self._continuation
@@ -112,8 +118,9 @@ class _QueryExecutionContextBase(object):
         while self._continuation or not self._has_started:
             if not self._has_started:
                 self._has_started = True
-            self._options["continuation"] = self._continuation
-            (fetched_items, response_headers) = fetch_function(self._options)
+            new_options = copy.deepcopy(self._options)
+            new_options["continuation"] = self._continuation
+            (fetched_items, response_headers) = fetch_function(new_options)
             continuation_key = http_constants.HttpHeaders.Continuation
             # Use Etag as continuation token for change feed queries.
             if self._is_change_feed:

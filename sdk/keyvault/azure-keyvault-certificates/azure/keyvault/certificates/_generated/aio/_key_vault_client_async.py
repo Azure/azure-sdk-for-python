@@ -37,65 +37,13 @@ class KeyVaultClient(KeyVaultClientOperationsMixin, MultiApiClientMixin, _SDKCli
      missing in profile.
     :param profile: A profile definition, from KnownProfiles to dict.
     :type profile: azure.profiles.KnownProfiles
-    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
-    DEFAULT_API_VERSION = '7.1'
+    DEFAULT_API_VERSION = '2016-10-01'
     _PROFILE_TAG = "azure.keyvault.KeyVaultClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
             None: DEFAULT_API_VERSION,
-            'backup_key': '7.0',
-            'backup_secret': '7.0',
-            'backup_storage_account': '7.0',
-            'create_key': '7.0',
-            'decrypt': '7.0',
-            'delete_key': '7.0',
-            'delete_sas_definition': '7.0',
-            'delete_secret': '7.0',
-            'delete_storage_account': '7.0',
-            'encrypt': '7.0',
-            'get_deleted_key': '7.0',
-            'get_deleted_keys': '7.0',
-            'get_deleted_sas_definition': '7.0',
-            'get_deleted_sas_definitions': '7.0',
-            'get_deleted_secret': '7.0',
-            'get_deleted_secrets': '7.0',
-            'get_deleted_storage_account': '7.0',
-            'get_deleted_storage_accounts': '7.0',
-            'get_key': '7.0',
-            'get_key_versions': '7.0',
-            'get_keys': '7.0',
-            'get_sas_definition': '7.0',
-            'get_sas_definitions': '7.0',
-            'get_secret': '7.0',
-            'get_secret_versions': '7.0',
-            'get_secrets': '7.0',
-            'get_storage_account': '7.0',
-            'get_storage_accounts': '7.0',
-            'import_key': '7.0',
-            'purge_deleted_key': '7.0',
-            'purge_deleted_secret': '7.0',
-            'purge_deleted_storage_account': '7.0',
-            'recover_deleted_key': '7.0',
-            'recover_deleted_sas_definition': '7.0',
-            'recover_deleted_secret': '7.0',
-            'recover_deleted_storage_account': '7.0',
-            'regenerate_storage_account_key': '7.0',
-            'restore_key': '7.0',
-            'restore_secret': '7.0',
-            'restore_storage_account': '7.0',
-            'set_sas_definition': '7.0',
-            'set_secret': '7.0',
-            'set_storage_account': '7.0',
-            'sign': '7.0',
-            'unwrap_key': '7.0',
-            'update_key': '7.0',
-            'update_sas_definition': '7.0',
-            'update_secret': '7.0',
-            'update_storage_account': '7.0',
-            'verify': '7.0',
-            'wrap_key': '7.0',
         }},
         _PROFILE_TAG + " latest"
     )

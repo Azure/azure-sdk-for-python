@@ -66,10 +66,10 @@ you must use an OAuth authentication method which gives you a token:
 
 Certificate authentication does not allow you to record HTTP queries for testing.
 
-### Get a token with Azure Active Directory user/password. This is considered deprecated and should not be used anymore (https://docs.microsoft.com/en-us/python/azure/python-sdk-azure-authenticate?view=azure-python#mgmt-auth-legacy).
+### Get a token with Azure Active Directory user/password. This is considered deprecated and should not be used anymore (https://docs.microsoft.com/python/azure/python-sdk-azure-authenticate?view=azure-python#mgmt-auth-legacy).
 
 1.  Connect to the [Azure Classic Portal](https://manage.windowsazure.com/) with your admin account.
-2.  Create a user in your default AAD https://azure.microsoft.com/en-us/documentation/articles/active-directory-create-users/
+2.  Create a user in your default AAD https://azure.microsoft.com/documentation/articles/active-directory-create-users/
    **You must NOT activate Multi-Factor Authentication!**
 3.  Go to Settings - Administrators.
 4.  Click on *Add* and enter the email of the new user.
@@ -89,13 +89,13 @@ credentials = UserPassCredentials(
 ### Get a token with Active Directory application and service principal
 
 Follow this detailed tutorial to set up an Active Directory application and service principal:
-https://azure.microsoft.com/en-us/documentation/articles/resource-group-create-service-principal-portal/
+https://azure.microsoft.com/documentation/articles/resource-group-create-service-principal-portal/
 
 To use the credentials from Python,
 you need the application ID (a.k.a. client ID),
 authentication key (a.k.a. client secret),
 tenant ID and subscription ID from the Azure portal for use in the next step.
-[This section of the above tutorial](https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal#get-application-id-and-authentication-key)
+[This section of the above tutorial](https://docs.microsoft.com/azure/azure-resource-manager/resource-group-create-service-principal-portal#get-application-id-and-authentication-key)
 describes where to find them
 (besides the subscription ID,
 which is in the "Overview" section of the "Subscriptions" blade.)

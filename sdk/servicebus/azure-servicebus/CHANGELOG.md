@@ -2,6 +2,15 @@
 
 ## 7.0.0b6 (Unreleased)
 
+**New Features**
+* Messages can now be sent twice in succession.
+
+**Breaking Changes**
+
+* Attempting to call `send_messages` on something not a `Message`, `BatchMessage`, or list of `Message`s, will now throw a `TypeError` instead of `ValueError`
+* Sending a message twice will no longer result in a MessageAlreadySettled exception.
+* `ServiceBusClient.close()` now closes spawned senders and receivers.
+* Attempting to initialize a sender or receiver with a different connection string entity and specified entity (e.g. `queue_name`) will result in an AuthenticationError
 
 ## 7.0.0b5 (2020-08-10)
 

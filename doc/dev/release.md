@@ -16,11 +16,11 @@ Python packages are uploaded to [PyPI](https://pypi.org/). Once you've uploaded 
 
 ### Production - Deploy with Azure Dev Ops
 
-To avoid "accidental" pushes to our target repositories, [approval](https://docs.microsoft.com/en-us/azure/devops/pipelines/release/approvals/approvals?view=azure-devops) will be requested directly prior to the final PyPI publish. Reference this [wiki page](https://aka.ms/python-approval-groups) and click on `Release to PyPI Approvers` to add yourself to the group for PyPI publishing. 
+To avoid "accidental" pushes to our target repositories, [approval](https://docs.microsoft.com/azure/devops/pipelines/release/approvals/approvals?view=azure-devops) will be requested directly prior to the final PyPI publish. Reference this [wiki page](https://aka.ms/python-approval-groups) and click on `Release to PyPI Approvers` to add yourself to the group for PyPI publishing. 
 
 Instead of a single central pipeline, the python SDK has moved to `service directory` associated build pipelines. These are driven by yml templates at the root of each service folder. [Example for storage service folder.](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/storage/ci.yml#L44)
 
-As an aside, please note that the preview feature `multi-stage pipelines` must be enabled to properly interact with unified pipelines. If you aren't aware, find out how to enable by visiting [this link.](https://docs.microsoft.com/en-us/azure/devops/project/navigation/preview-features?view=azure-devops)
+As an aside, please note that the preview feature `multi-stage pipelines` must be enabled to properly interact with unified pipelines. If you aren't aware, find out how to enable by visiting [this link.](https://docs.microsoft.com/azure/devops/project/navigation/preview-features?view=azure-devops)
 
 #### Releasing Through Unified Pipelines
 
