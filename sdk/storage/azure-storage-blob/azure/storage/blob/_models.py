@@ -505,7 +505,7 @@ class BlobProperties(DictMixin):
     :ivar ~datetime.datetime last_accessed_on:
         Indicates when the last Read/Write operation was performed on a Blob.
 
-        .. versionadded:: 12.5.0
+        .. versionadded:: 12.6.0
 
     :ivar int tag_count:
         Tags count on this blob.
