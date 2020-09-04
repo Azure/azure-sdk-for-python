@@ -75,6 +75,20 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
 
     @pytest.mark.liveTest
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
+    @CachedEventGridTopicPreparer(name_prefix='eventgridtest')
+    def test_send_event_grid_event_data_bytes(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
+        akc_credential = AzureKeyCredential(eventgrid_topic_primary_key)
+        client = EventGridPublisherClient(eventgrid_topic_endpoint, akc_credential)
+        eg_event = EventGridEvent(
+                subject="sample", 
+                data=b"eventgridevent", 
+                event_type="Sample.EventGrid.Event",
+                data_version="2.0"
+                )
+        client.send(eg_event)
+
+    @pytest.mark.liveTest
+    @CachedResourceGroupPreparer(name_prefix='eventgridtest')
     @CachedEventGridTopicPreparer(name_prefix='cloudeventgridtest')
     def test_send_cloud_event_data_dict(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
         akc_credential = AzureKeyCredential(eventgrid_topic_primary_key)
@@ -99,6 +113,18 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
                 )
         client.send(cloud_event)
 
+    @pytest.mark.liveTest
+    @CachedResourceGroupPreparer(name_prefix='eventgridtest')
+    @CachedEventGridTopicPreparer(name_prefix='cloudeventgridtest')
+    def test_send_cloud_event_data_bytes(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
+        akc_credential = AzureKeyCredential(eventgrid_topic_primary_key)
+        client = EventGridPublisherClient(eventgrid_topic_endpoint, akc_credential)
+        cloud_event = CloudEvent(
+                source = "http://samplesource.dev",
+                data = b"cloudevent",
+                type="Sample.Cloud.Event"
+                )
+        client.send(cloud_event)
 
     @pytest.mark.liveTest
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')

@@ -87,8 +87,8 @@ class CloudEvent(EventMixin):   #pylint:disable=too-many-instance-attributes
         self.datacontenttype = kwargs.pop("datacontenttype", None)
         self.dataschema = kwargs.pop("dataschema", None)
         self.subject = kwargs.pop("subject", None)
-        self._extensions = {}
-        self._extensions.update({k:v for k, v in kwargs.pop('extensions', {}).items()})
+        self.extensions = {}
+        self.extensions.update({k:v for k, v in kwargs.pop('extensions', {}).items()})
 
     @classmethod
     def _from_generated(cls, cloud_event, **kwargs):
@@ -127,7 +127,7 @@ class CloudEvent(EventMixin):   #pylint:disable=too-many-instance-attributes
             dataschema=self.dataschema,
             datacontenttype=self.datacontenttype,
             subject=self.subject,
-            additional_properties=self._extensions,
+            additional_properties=self.extensions,
             **kwargs
         )
 
