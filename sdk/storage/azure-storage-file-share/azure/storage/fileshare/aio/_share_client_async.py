@@ -29,6 +29,8 @@ from .._serialize import get_api_version
 from .._share_client import ShareClient as ShareClientBase
 from ._directory_client_async import ShareDirectoryClient
 from ._file_client_async import ShareFileClient
+from .._lease import ShareLeaseClient
+
 
 if TYPE_CHECKING:
     from .._models import ShareProperties, AccessPolicy
@@ -125,6 +127,41 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
             self.url, share_name=self.share_name, file_path=file_path, snapshot=self.snapshot,
             credential=self.credential, api_version=self.api_version, _hosts=self._hosts, _configuration=self._config,
             _pipeline=_pipeline, _location_mode=self._location_mode, loop=self._loop)
+
+    @distributed_trace_async()
+    async def acquire_lease(self, lease_duration=-1, lease_id=None, **kwargs):
+        # type: (int, Optional[str], **Any) -> ShareLeaseClient
+        """Requests a new lease.
+
+        If the share does not have an active lease, the Share
+        Service creates a lease on the blob and returns a new lease.
+
+        :param int lease_duration:
+            Specifies the duration of the lease, in seconds, or negative one
+            (-1) for a lease that never expires. A non-infinite lease can be
+            between 15 and 60 seconds. A lease duration cannot be changed
+            using renew or change. Default is -1 (infinite lease).
+        :param str lease_id:
+            Proposed lease ID, in a GUID string format. The Share Service
+            returns 400 (Invalid request) if the proposed lease ID is not
+            in the correct format.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: A ShareLeaseClient object.
+        :rtype: ~azure.storage.fileshare.ShareLeaseClient
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/file_samples_share.py
+                :start-after: [START acquire_lease_on_share]
+                :end-before: [END acquire_lease_on_share]
+                :language: python
+                :dedent: 8
+                :caption: Acquiring a lease on a share.
+        """
+        lease = ShareLeaseClient(self, lease_id=lease_id)  # type: ignore
+        lease.acquire(lease_duration, **kwargs)
+        return lease
 
     @distributed_trace_async
     async def create_share(self, **kwargs):
