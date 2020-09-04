@@ -11,7 +11,7 @@ from azure.eventgrid import EventGridConsumer
 consumer = EventGridConsumer()
 
 # returns List[DeserializedEvent]
-deserialized_events = consumer.deserialize_events(service_bus_received_message)
+deserialized_events = consumer.decode_eventgrid_event(service_bus_received_message)
 
 # CloudEvent schema
 for event in deserialized_events:

@@ -36,9 +36,9 @@ eg_storage_string = json.dumps(eg_storage_dict)
 eg_storage_bytes = bytes(eg_storage_string, "utf-8")
 
 client = EventGridConsumer()
-deserialized_dict_event = client.deserialize_event(eg_storage_dict)
-deserialized_str_event = client.deserialize_event(eg_storage_string)
-deserialized_bytes_event = client.deserialize_event(eg_storage_bytes)
+deserialized_dict_event = client.decode_eventgrid_event(eg_storage_dict)
+deserialized_str_event = client.decode_eventgrid_event(eg_storage_string)
+deserialized_bytes_event = client.decode_eventgrid_event(eg_storage_bytes)
 
 print(deserialized_bytes_event.model == deserialized_str_event.model)
 print(deserialized_bytes_event.model == deserialized_dict_event.model)
