@@ -1,10 +1,22 @@
+# --------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# --------------------------------------------------------------------------
+"""
+FILE: cs4_consume_custom_events.py
+DESCRIPTION:
+    These samples demonstrate deserializing a custom event
+USAGE:
+    python cs4_consume_custom_events.py
+"""
 import os
 from azure.eventgrid import EventGridConsumer
 
 consumer = EventGridConsumer()
 
 # returns List[DeserializedEvent]
-deserialized_events = consumer.deserialize_events(service_bus_received_message)
+deserialized_events = consumer.decode_eventgrid_event(service_bus_received_message)
 
 # EventGridEvent schema, with custom event type
 for event in deserialized_events:
