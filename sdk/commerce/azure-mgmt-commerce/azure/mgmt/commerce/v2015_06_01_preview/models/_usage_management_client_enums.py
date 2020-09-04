@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .usage_aggregates_operations import UsageAggregatesOperations
-from .rate_card_operations import RateCardOperations
+from enum import Enum
 
-__all__ = [
-    'UsageAggregatesOperations',
-    'RateCardOperations',
-]
+
+class AggregationGranularity(str, Enum):
+
+    daily = "Daily"
+    hourly = "Hourly"
