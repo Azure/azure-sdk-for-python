@@ -48,7 +48,7 @@ class KeyVaultBackupClient(KeyVaultClientBase):
 
     def begin_full_restore(self, blob_storage_uri, sas_token, folder_name, **kwargs):
         # type: (str, str, str, **Any) -> LROPoller[RestoreOperation]
-        """Restore a Key Vault backup.
+        """Restore a full backup of a Key Vault.
 
         :param str blob_storage_uri: URI of the blob storage resource in which the backup is stored
         :param str sas_token: a Shared Access Signature (SAS) token authorizing access to the blob storage resource

@@ -211,7 +211,7 @@ class BackupOperation(_Operation):
 class RestoreOperation(_Operation):
     """A Key Vault restore operation.
 
-    :ivar str status: status of the backup operation
+    :ivar str status: status of the operation
     :ivar str status_details: more details of the operation's status
     :ivar error: Error encountered, if any, during the operation
     :type error: ~key_vault_client.models.Error
@@ -224,7 +224,7 @@ class RestoreOperation(_Operation):
 class SelectiveKeyRestoreOperation(_Operation):
     """A Key Vault operation restoring a single key.
 
-    :ivar str status: status of the backup operation
+    :ivar str status: status of the operation
     :ivar str status_details: more details of the operation's status
     :ivar error: Error encountered, if any, during the operation
     :type error: ~key_vault_client.models.Error
