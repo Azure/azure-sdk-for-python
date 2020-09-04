@@ -55,6 +55,7 @@ from ._upload_helpers import (
 from ._models import BlobType, BlobBlock, BlobProperties, BlobQueryError
 from ._download import StorageStreamDownloader
 from ._lease import BlobLeaseClient, get_access_conditions
+from azure.core.exceptions import ResourceNotFoundError
 
 if TYPE_CHECKING:
     from datetime import datetime

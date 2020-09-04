@@ -30,6 +30,8 @@ from .._models import BlobType, BlobBlock, BlobProperties
 from .._lease import get_access_conditions
 from ._lease_async import BlobLeaseClient
 from ._download_async import StorageStreamDownloader
+from azure.core.exceptions import ResourceNotFoundError
+
 
 if TYPE_CHECKING:
     from datetime import datetime
