@@ -186,12 +186,23 @@ class GeneralNameReplacer(RecordingProcessor):
     def process_response(self, response):
         for old, new in self.names_name:
             if is_text_payload(response) and response['body']['string']:
-                response['body']['string'] = response['body']['string'].replace(old, new)
+                if self._has_xml_bom(response['body']['string']):
+                    response['body']['string'] = response['body']['string'][3:].replace(old, new)
+                    response['body']['string'] = u'\xef\xbb\xbf' + response['body']['string']
+                else:
+                    response['body']['string'] = response['body']['string'].replace(old, new)
 
             self.replace_header(response, 'location', old, new)
             self.replace_header(response, 'azure-asyncoperation', old, new)
 
         return response
+
+    def _has_xml_bom(self, test_string):
+        if isinstance(test_string, unicode):
+            return test_string[0:3] == u'\xef\xbb\xbf'
+        if isinstance(test_string, str):
+            return test_string[0:3] == '\xef\xbb\xbf'
+        return False
 
 
 class RequestUrlNormalizer(RecordingProcessor):
