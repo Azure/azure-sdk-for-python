@@ -6,5 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._event_grid_publisher_client import EventGridPublisherClient
-__all__ = ['EventGridPublisherClient']
+from ._event_grid_publisher_client_operations import EventGridPublisherClientOperationsMixin
+
+__all__ = [
+    'EventGridPublisherClientOperationsMixin',
+]
