@@ -1090,11 +1090,11 @@ class AMQPMessage(object):
     :param delivery_annotations: Delivery-specific non-standard properties at the head of the message.
      Delivery annotations convey information from the sending peer to the receiving peer.
      Keys in the dictionary must be `uamqp.types.AMQPSymbol` or `uamqp.types.AMQPuLong`.
-    :type annotations: dict
+    :type delivery_annotations: dict
     :param header: The message header.
     :type header: ~uamqp.message.MessageHeader
-    :param header: The message footer.
-    :type header: dict
+    :param footer: The message footer.
+    :type footer: dict
 
     """
     def __init__(self, message):
