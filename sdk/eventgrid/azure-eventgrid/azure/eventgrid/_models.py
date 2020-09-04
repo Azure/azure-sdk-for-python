@@ -7,7 +7,6 @@ from typing import Optional
 from msrest.serialization import UTC
 import datetime as dt
 import uuid
-import base64
 import json
 import six
 from ._generated import models
