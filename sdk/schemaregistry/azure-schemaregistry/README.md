@@ -3,6 +3,8 @@
 Azure Schema Registry is a service that provides the ability to store and retrieve different types of schemas such as
 Avro, Json, etc.
 
+[Source code][source_code] | [Package (PyPi)][pypi] | [API reference documentation][api_reference] | [Samples][sr_samples] | [Changelog][change_log]
+
 ## Getting started
 
 ### Install the package
@@ -41,9 +43,9 @@ schema_registry_client = SchemaRegistryClient(endpoint, credential)
 
 The following sections provide several code snippets covering some of the most common Schema Registry tasks, including:
 
-- [Register a schema](register-a-schema)
-- [Get the schema by id](get-the-schema-by-id)
-- [Get the id of a schema](get-the-id-of-a-schema)
+- [Register a schema](#register-a-schema)
+- [Get the schema by id](#get-the-schema-by-id)
+- [Get the id of a schema](#get-the-id-of-a-schema)
 
 ### Register a schema
 
@@ -168,7 +170,7 @@ schema_registry_client.get_schema(schema_id, logging_enable=True)
 
 ### More sample code
 
-Please take a look at the [samples](./samples) directory for detailed examples of how to use this library to register and retrieve schema to/from Schema Registry.
+Please take a look at the [samples][sr_samples] directory for detailed examples of how to use this library to register and retrieve schema to/from Schema Registry.
 
 ## Contributing
 
@@ -184,8 +186,14 @@ This project has adopted the [Microsoft Open Source Code of Conduct](https://ope
 For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
 contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
 
+<!-- LINKS -->
 [pip]: https://pypi.org/project/pip/
+[pypi]: https://pypi.org/project/azure-schemaregistry
 [python]: https://www.python.org/downloads/
 [azure_core]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md
 [azure_sub]: https://azure.microsoft.com/free/
 [python_logging]: https://docs.python.org/3/library/logging.html
+[sr_samples]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/schemaregistry/azure-schemaregistry/samples
+[api_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-schemaregistry/latest/index.html
+[source_code]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/schemaregistry/azure-schemaregistry
+[change_log]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/schemaregistry/azure-schemaregistry/CHANGELOG.md

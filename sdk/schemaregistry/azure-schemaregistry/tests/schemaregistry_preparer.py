@@ -32,14 +32,8 @@ from devtools_testutils import (
 
 SCHEMA_REGISTRY_ENDPOINT_PARAM = "schemaregistry_endpoint"
 SCHEMA_REGISTRY_GROUP_PARAM = "schemaregistry_group"
-SCHEMA_REGISTRY_TENANT_ID_PARAM = "schemaregistry_tenant_id"
-SCHEMA_REGISTRY_CLIENT_ID_PARAM = "schemaregistry_client_id"
-SCHEMA_REGISTRY_CLIENT_SECRET_PARAM = "schemaregistry_client_secret"
 SCHEMA_REGISTRY_ENDPOINT_ENV_KEY_NAME = 'SCHEMA_REGISTRY_ENDPOINT'
 SCHEMA_REGISTRY_GROUP_ENV_KEY_NAME = 'SCHEMA_REGISTRY_GROUP'
-AZURE_TENANT_ID_ENV_KEY_NAME = 'SCHEMA_REGISTRY_AZURE_TENANT_ID'
-AZURE_CLIENT_ID_ENV_KEY_NAME = 'SCHEMA_REGISTRY_AZURE_CLIENT_ID'
-AZURE_CLIENT_SECRET_ENV_KEY_NAME = 'SCHEMA_REGISTRY_AZURE_CLIENT_SECRET'
 
 
 class SchemaRegistryNamespacePreparer(AzureMgmtPreparer):
@@ -70,8 +64,8 @@ class SchemaRegistryPreparer(AzureMgmtPreparer):
             }
         else:
             return {
-                SCHEMA_REGISTRY_ENDPOINT_PARAM: "fake.servicebus.windows.net",
-                SCHEMA_REGISTRY_GROUP_PARAM: "fake-group"
+                SCHEMA_REGISTRY_ENDPOINT_PARAM: "sr-playground.servicebus.windows.net",
+                SCHEMA_REGISTRY_GROUP_PARAM: "azsdk_python_test_group"
             }
 
     def remove_resource(self, name, **kwargs):

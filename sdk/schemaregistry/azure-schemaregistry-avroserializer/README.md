@@ -3,6 +3,8 @@
 Azure Schema Registry Avro Serializer provides the ability to serialize and deserialize data according
 to the given avro schema. It is integrated with Azure Schema Registry SDK and will automatically register and get schema.
 
+[Source code][source_code] | [Package (PyPi)][pypi] | [API reference documentation][api_docs] | [Samples][sr_avro_samples] | [Changelog][change_log]
+
 ## Getting started
 
 ### Install the package
@@ -44,8 +46,8 @@ serializer = SchemaRegistryAvroSerializer(schema_registry_client, schema_group)
 
 The following sections provide several code snippets covering some of the most common Schema Registry tasks, including:
 
-- [Serialization](serialization)
-- [Deserialization](deserialization)
+- [Serialization](#serialization)
+- [Deserialization](#deserialization)
 
 ### Serialization
 
@@ -143,7 +145,7 @@ serializer.serialie(dict_data, schema_content, logging_enable=True)
 
 ### More sample code
 
-Please find further examples in the [samples](./samples) directory demonstrating common Azure Schema Registry Avro Serializer scenarios.
+Please find further examples in the [samples][sr_avro_samples] directory demonstrating common Azure Schema Registry Avro Serializer scenarios.
 
 ## Contributing
 
@@ -159,8 +161,14 @@ This project has adopted the [Microsoft Open Source Code of Conduct](https://ope
 For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
 contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
 
+<!-- LINKS -->
 [pip]: https://pypi.org/project/pip/
+[pypi]: https://pypi.org/project/azure-schemaregistry-avroserializer
 [python]: https://www.python.org/downloads/
 [azure_core]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md
 [azure_sub]: https://azure.microsoft.com/free/
 [python_logging]: https://docs.python.org/3/library/logging.html
+[sr_avro_samples]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/schemaregistry/azure-schemaregistry-avroserializer/samples
+[api_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-schemaregistry-avroserializer/latest/index.html
+[source_code]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/schemaregistry/azure-schemaregistry-avroserializer
+[change_log]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/schemaregistry/azure-schemaregistry-avroserializer/CHANGELOG.md

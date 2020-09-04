@@ -16,7 +16,7 @@ and require Python 3.5 or later.
 
 Several Schema Registry Python SDK samples are available to you in the SDK's GitHub repository. These samples provide example code for additional scenarios commonly encountered while working with Schema Registry:
 
-* [schema_registry.py](./sync_samples/schema_registry.py) ([async version](./async_samples/schema_registry_async.py)) - Examples for common Schema Registry tasks:
+* [schema_registry.py][schema_registry_sample] ([async version][schema_registry_async_sample]) - Examples for common Schema Registry tasks:
     * Register a schema
     * Get schema by id
     * Get schema id
@@ -45,5 +45,10 @@ pip install azure-schemaregistry azure-identity
 
 ## Next steps
 
-Check out the [API reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-schemaregistry/latest/index.html) to learn more about
+Check out the [API reference documentation][api_reference] to learn more about
 what you can do with the Azure Schema Registry client library.
+
+<!-- LINKS -->
+[schema_registry_sample]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/schemaregistry/azure-schemaregistry/samples/sync_samples/schema_registry.py
+[schema_registry_async_sample]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/schemaregistry/azure-schemaregistry/samples/async_samples/schema_registry_async.py
+[api_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-schemaregistry/latest/index.html

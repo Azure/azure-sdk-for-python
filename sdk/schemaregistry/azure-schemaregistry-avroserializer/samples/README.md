@@ -14,7 +14,7 @@ These are code samples that show common scenario operations with the Schema Regi
 
 Several Schema Registry Avro Serializer Python SDK samples are available to you in the SDK's GitHub repository. These samples provide example code for additional scenarios commonly encountered while working with Schema Registry Avro Serializer:
 
-* [avro_serializer.py](./avro_serializer.py) - Examples for common Schema Registry Avro Serializer tasks:
+* [avro_serializer.py][avro_serializer_sample] - Examples for common Schema Registry Avro Serializer tasks:
     * Serialize data according to the given schema
     * Deserialize data
 
@@ -42,5 +42,9 @@ pip install azure-schemaregistry-avroserializer azure-identity
 
 ## Next steps
 
-Check out the [API reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-schemaregistry-avro-serializer/latest/index.html) to learn more about
+Check out the [API reference documentation][api_reference] to learn more about
 what you can do with the Azure Schema Registry Avro Serializer library.
+
+<!-- LINKS -->
+[avro_serializer_sample]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/schemaregistry/azure-schemaregistry-avroserializer/samples/avro_serializer.py
+[api_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-schemaregistry-avroserializer/latest/index.html
