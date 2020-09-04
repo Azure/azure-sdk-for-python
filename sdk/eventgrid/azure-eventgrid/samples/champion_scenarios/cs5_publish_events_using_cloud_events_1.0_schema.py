@@ -1,3 +1,8 @@
+# --------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# --------------------------------------------------------------------------
 """
 FILE: cs5_publish_events_using_cloud_events_1.0_schema.py
 DESCRIPTION:

@@ -1,3 +1,8 @@
+# --------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# --------------------------------------------------------------------------
 """
 FILE: publish_cloud_events_to_domain_topic_sample.py
 DESCRIPTION:
