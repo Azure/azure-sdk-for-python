@@ -1,6 +1,6 @@
 # Azure KeyVault Administration client library for Python
 Azure Key Vault helps solve the following problems:
-- Vault administration (this library) - full backup / restore, and key-level role-based access control (RBAC) of vaults.
+- Vault administration (this library) - role-based access control (RBAC), and vault-level backup and restore options
 - Cryptographic key management ([azure-keyvault-keys](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys)) - create, store, and control
 access to the keys used to encrypt your data
 - Secrets management
@@ -226,7 +226,6 @@ Alternatively, it is possible to [generate a SAS token in Storage Explorer](http
 ```python
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.administration import KeyVaultBackupClient
-from azure.core.exceptions import ResourceNotFoundError
 
 credential = DefaultAzureCredential()
 client = KeyVaultBackupClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
@@ -257,7 +256,6 @@ Alternatively, it is possible to [generate a SAS token in Storage Explorer](http
 ```python
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.administration import KeyVaultBackupClient
-from azure.core.exceptions import ResourceNotFoundError
 
 credential = DefaultAzureCredential()
 client = KeyVaultBackupClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
