@@ -98,13 +98,9 @@ class ChangeFeedSamples(object):
         # Instantiate a ChangeFeedClient
         cf_client = ChangeFeedClient("https://{}.blob.core.windows.net".format(self.ACCOUNT_NAME),
                                      credential=self.ACCOUNT_KEY)
-
-        start_time = datetime(2020, 9, 1, 1)
         token = None
-
         while True:
-            # start_time will be ignored if start_time and continuation_token are both non-empty
-            change_feed = cf_client.list_changes(start_time=start_time).by_page(continuation_token=token)
+            change_feed = cf_client.list_changes(results_per_page=500).by_page(continuation_token=token)
 
             for page in change_feed:
                 for event in page:

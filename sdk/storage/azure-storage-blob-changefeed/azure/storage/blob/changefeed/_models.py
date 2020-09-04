@@ -51,14 +51,13 @@ class ChangeFeedPaged(PageIterator):
             start_time=None,
             end_time=None,
             continuation_token=None):
+        if (start_time or end_time) and continuation_token:
+            raise ValueError("start_time/end_time and continuation_token shouldn't be specified at the same time")
         super(ChangeFeedPaged, self).__init__(
             get_next=self._get_next_cf,
             extract_data=self._extract_data_cb,
             continuation_token=continuation_token or ""
         )
-        # If start_time and continuation_token are both set, start_time will be ignored.
-        start_time = None if start_time and continuation_token else start_time
-
         continuation_token = eval(continuation_token) if continuation_token else None
 
         if continuation_token and container_client.primary_hostname != continuation_token['UrlHost']:

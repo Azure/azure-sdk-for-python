@@ -265,6 +265,13 @@ class StorageChangeFeedTest(StorageTestCase):
         self.assertIsNotNone(dict_token['CurrentSegmentCursor']['SegmentPath'])
         self.assertIsNotNone(dict_token['CurrentSegmentCursor']['CurrentShardPath'])
 
+        # make sure end_time and continuation_token are mutual exclusive
+        with self.assertRaises(ValueError):
+            cf_client.list_changes(results_per_page=50, end_time=datetime.now()).by_page(continuation_token=token)
+        # make sure start_time and continuation_token are mutual exclusive
+        with self.assertRaises(ValueError):
+            cf_client.list_changes(results_per_page=50, start_time=datetime.now()).by_page(continuation_token=token)
+
         # restart using the continuation token after waiting for 2 minutes
         change_feed2 = cf_client.list_changes(results_per_page=50).by_page(continuation_token=token)
         events2 = list()
@@ -305,5 +312,5 @@ class StorageChangeFeedTest(StorageTestCase):
                 event4.append(event)
         token4 = change_feed4.continuation_token
         dict_token4 = eval(token4)
-        self.assertEqual()
+        self.assertEqual(len(dict_token3['CurrentSegmentCursor']['ShardCursors']), 1)
         self.assertEqual(len(dict_token4['CurrentSegmentCursor']['ShardCursors']), 3)
