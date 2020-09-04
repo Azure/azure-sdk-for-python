@@ -20,10 +20,10 @@
 #   ClassicAdministrators: 1/1
 #   GlobalAdministrator: 0/1
 #   ProviderOperationsMetadata: 2/2
-#   Permissions: 1/2
-#   RoleDefinitions: 0/5
+#   Permissions: 2/2
+#   RoleDefinitions: 3/5
 #   DenyAssignments: 3/6
-#   RoleAssignments: 9/10
+#   RoleAssignments: 10/10
 
 import unittest
 
@@ -49,6 +49,11 @@ class MgmtAuthorizationTest(AzureMgmtTestCase):
         self.mgmt_client_default = self.create_mgmt_client(
             azure.mgmt.authorization.AuthorizationManagementClient
         )
+        if self.is_live:
+            from azure.mgmt.resource import ResourceManagementClient
+            self.resource_client = self.create_mgmt_client(
+                ResourceManagementClient
+            )
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_deny_assignment(self, resource_group):
@@ -125,6 +130,50 @@ class MgmtAuthorizationTest(AzureMgmtTestCase):
         result = self.mgmt_client.role_assignments.delete_by_id(role_id=ROLE_ID)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    def test_list_by_resource(self, resource_group):
+
+        SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
+        RESOURCE_NAME = "resourcexxx"
+        RESOURCE_GROUP = resource_group.name
+        RESOURCE_ID = "/subscriptions/{guid}/resourceGroups/{resourcegroupname}/providers/{resourceprovidernamespace}/{resourcetype}/{resourcename}".format(
+            guid=SUBSCRIPTION_ID,
+            resourcegroupname=RESOURCE_GROUP,
+            resourceprovidernamespace="Microsoft.Compute",
+            resourcetype="availabilitySets",
+            resourcename=RESOURCE_NAME
+        )
+
+        if self.is_live:
+            create_result = self.resource_client.resources.begin_create_or_update_by_id(
+                RESOURCE_ID,
+                parameters={'location': AZURE_LOCATION},
+                api_version="2019-07-01"
+            )
+            result = create_result.result()
+
+#--------------------------------------------------------------------------
+        # /Permissions/get/GetConfigurations[get]
+#--------------------------------------------------------------------------
+        result = self.mgmt_client.permissions.list_for_resource(
+            resource_group_name=RESOURCE_GROUP,
+            resource_provider_namespace="Microsoft.Compute",
+            parent_resource_path="",
+            resource_type="availabilitySets",
+            resource_name=RESOURCE_NAME
+        )
+
+#--------------------------------------------------------------------------
+        # /RoleAssignments/get/GetConfigurations[get]
+#--------------------------------------------------------------------------
+        result = self.mgmt_client.role_assignments.list_for_resource(
+            resource_group_name=RESOURCE_GROUP,
+            resource_provider_namespace="Microsoft.Compute",
+            parent_resource_path="",
+            resource_type="availabilitySets",
+            resource_name=RESOURCE_NAME
+        )
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_role_assignment(self, resource_group):
 
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
@@ -162,16 +211,6 @@ class MgmtAuthorizationTest(AzureMgmtTestCase):
         result = self.mgmt_client.permissions.list_for_resource_group(resource_group_name=RESOURCE_GROUP)
 
 #--------------------------------------------------------------------------
-        # /Permissions/get/GetConfigurations[get]
-#--------------------------------------------------------------------------
-        # result = self.mgmt_client.permissions.list_for_resource(resource_group_name=RESOURCE_GROUP)
-
-#--------------------------------------------------------------------------
-        # /RoleAssignments/get/GetConfigurations[get]
-#--------------------------------------------------------------------------
-        # result = self.mgmt_client.role_assignments.list_for_resource(resource_group_name=RESOURCE_GROUP, resource_provider_namespace=)
-
-#--------------------------------------------------------------------------
         # /ClassicAdministrators/get/GetConfigurations[get]
 #--------------------------------------------------------------------------
         result = self.mgmt_client_default.classic_administrators.list()
@@ -192,11 +231,6 @@ class MgmtAuthorizationTest(AzureMgmtTestCase):
         result = self.mgmt_client.provider_operations_metadata.list()
 
 #--------------------------------------------------------------------------
-        # /Permissions/get/GetConfigurations[get]
-#--------------------------------------------------------------------------
-        result = self.mgmt_client.permissions.list_for_resource_group(resource_group_name=RESOURCE_GROUP)
-
-#--------------------------------------------------------------------------
         # /RoleAssignments/get/GetConfigurations[get]
 #--------------------------------------------------------------------------
         result = self.mgmt_client.role_assignments.list_for_resource_group(resource_group_name=RESOURCE_GROUP)
@@ -211,22 +245,14 @@ class MgmtAuthorizationTest(AzureMgmtTestCase):
 #--------------------------------------------------------------------------
         result = self.mgmt_client.role_assignments.delete(scope=SCOPE, role_assignment_name=ROLE_ASSIGNMENT_NAME)
 
-
-    # @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    # def test_role_definition(self, resource_group):
-    @unittest.skip("(RoleDefinitionLimitExceeded) Role definition limit exceeded. No more role definitions can be created.")
     def test_role_definition(self):
 
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
-        # RESOURCE_GROUP = resource_group.name
-        # SCOPE = "subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}".format(
-        #     subscriptionId=SUBSCRIPTION_ID,
-        #     resourceGroupName=RESOURCE_GROUP
-        # )
         SCOPE = "subscriptions/{subscriptionId}".format(
             subscriptionId=SUBSCRIPTION_ID
         )
-        ROLE_DEFINITION_ID = "b24988ac-6180-42a0-ab88-20f7382dd24e"
+        # ROLE_DEFINITION_ID = "b24988ac-6180-42a0-ab88-20f7382dd24e"
+        ROLE_DEFINITION_ID = "7b266cd7-0bba-4ae2-8423-90ede5e1e898"
         
 #--------------------------------------------------------------------------
         # /RoleDefinitions/put/GetConfigurations[put]
@@ -236,214 +262,53 @@ class MgmtAuthorizationTest(AzureMgmtTestCase):
           "type": "CustomRole",
           "description": "Role description",
           "assignable_scopes": [
-            SCOPE
+            # "/"
+            "/" + SCOPE
           ],
           "permissions": [
             {
-              "actions": [
-                "*/read"
+              "not_data_actions": [
+                "Microsoft.Storage/storageAccounts/blobServices/containers/blobs/write"
               ],
-              "notActions": []
+              "actions": [
+                "Microsoft.Compute/*/read",
+                "Microsoft.Compute/virtualMachines/start/action",
+                "Microsoft.Compute/virtualMachines/restart/action",
+                "Microsoft.Network/*/read",
+                "Microsoft.Storage/*/read",
+                "Microsoft.Authorization/*/read",
+                "Microsoft.Resources/subscriptions/resourceGroups/read",
+                "Microsoft.Resources/subscriptions/resourceGroups/resources/read",
+                "Microsoft.Insights/alertRules/*"
+              ],
+              "data_actions": [
+                "Microsoft.Storage/storageAccounts/blobServices/containers/blobs/*"
+              ]
             }
           ]
         }
-        result = self.mgmt_client.role_definitions.create_or_update(scope=SCOPE, role_definition_id=ROLE_DEFINITION_ID, role_definition=BODY)
+        # result = self.mgmt_client_default.role_definitions.create_or_update(scope=SCOPE, role_definition_id=ROLE_DEFINITION_ID, role_definition=BODY)
 
 #--------------------------------------------------------------------------
         # /RoleDefinitions/get/GetConfigurations[get]
 #--------------------------------------------------------------------------
-        result = self.mgmt_client.role_definitions.get(scope=SCOPE, role_definition_id=ROLE_DEFINITION_ID)
+        result = self.mgmt_client_default.role_definitions.get(scope=SCOPE, role_definition_id=ROLE_DEFINITION_ID)
 
 #--------------------------------------------------------------------------
         # /RoleDefinitions/get/GetConfigurations[get]
 #--------------------------------------------------------------------------
         ROLE_DEFINITION_ID_URL = SCOPE + "/providers/Microsoft.Authorization/roleDefinitions/{roleDefinitionId}".format(roleDefinitionId=ROLE_DEFINITION_ID)
-        result = self.mgmt_client.role_definitions.get_by_id(scope=SCOPE, role_definition_id=ROLE_DEFINITION_ID_URL)
+        result = self.mgmt_client_default.role_definitions.get_by_id(role_definition_id=ROLE_DEFINITION_ID_URL)
 
 #--------------------------------------------------------------------------
         # /RoleDefinitions/get/GetConfigurations[get]
 #--------------------------------------------------------------------------
-        result = self.mgmt_client.role_definitions.list(scope=SCOPE)
+        result = self.mgmt_client_default.role_definitions.list(scope=SCOPE)
 
 #--------------------------------------------------------------------------
         # /RoleDefinitions/delete/GetConfigurations[delete]
 #--------------------------------------------------------------------------
-        result = self.mgmt_client.role_definitions.delete(scope=SCOPE, role_definition_id=ROLE_DEFINITION_ID)
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    def test_authorization(self, resource_group):
-
-        SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
-        TENANT_ID = self.settings.TENANT_ID
-        RESOURCE_GROUP = resource_group.name
-        RESOURCE_PROVIDER_NAMESPACE = "myResourceProvider"
-        RESOURCE_TYPE = "myResourceType"
-        # {RESOURCE_NAME}_NAME = "myResource"
-        # MICROSOFT.AUTHORIZATION_NAME = "myMicrosoftAuthorization"
-        ROLE_DEFINITION_ID = "myRoleDefinitionId"
-        ROLE_DEFINITION_NAME = "myRoleDefinition"
-        DENY_ASSIGNMENT_ID = "myDenyAssignmentId"
-        ROLE_ASSIGNMENT_NAME = "myRoleAssignment"
-
-        SCOPE = "subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}".format(
-            subscriptionId=SUBSCRIPTION_ID,
-            resourceGroupName=RESOURCE_GROUP
-        )
-
-#--------------------------------------------------------------------------
-        # /RoleAssignments/put/GetConfigurations[put]
-#--------------------------------------------------------------------------
-        BODY = {
-          "condition": "@Resource[Microsoft.Storage/storageAccounts/blobServices/containers:ContainerName] StringEqualsIgnoreCase 'foo_storage_container'",
-          "condition_version": "1.0",
-          "description": "Grants UserFoo role assignment bar in scope baz",
-          "role_definition_id": "/subscriptions/" + SUBSCRIPTION_ID + "/providers/Microsoft.Authorization/roleDefinitions/" + ROLE_DEFINITION_NAME,
-          "principal_id": "d93a38bc-d029-4160-bfb0-fbda779ac214",
-          "principal_type": "User",
-          "can_delegate": False
-        }
-        result = self.mgmt_client.role_assignments.create(scope=SCOPE, role_assignment_name=ROLE_ASSIGNMENT_NAME, parameters=BODY)
-
-#--------------------------------------------------------------------------
-        # /RoleDefinitions/put/GetConfigurations[put]
-#--------------------------------------------------------------------------
-        BODY = {}
-        result = self.mgmt_client.role_definitions.create_or_update(scope=SCOPE, role_definition_id=ROLE_DEFINITION_ID, role_definition=BODY)
-
-#--------------------------------------------------------------------------
-        # /RoleAssignments/put/GetConfigurations[put]
-#--------------------------------------------------------------------------
-        BODY = {
-          "condition": "@Resource[Microsoft.Storage/storageAccounts/blobServices/containers:ContainerName] StringEqualsIgnoreCase 'foo_storage_container'",
-          "condition_version": "1.0",
-          "description": "Grants UserFoo role assignment bar in scope baz",
-          "role_definition_id": "/subscriptions/" + SUBSCRIPTION_ID + "/providers/Microsoft.Authorization/roleDefinitions/" + ROLE_DEFINITION_NAME,
-          "principal_id": "d93a38bc-d029-4160-bfb0-fbda779ac214",
-          "principal_type": "User",
-          "can_delegate": False
-        }
-        # result = self.mgmt_client.role_assignments.create(role_assignment_name=ROLE_ASSIGNMENT_NAME, parameters=BODY)
-
-#--------------------------------------------------------------------------
-        # /DenyAssignments/get/GetConfigurations[get]
-#--------------------------------------------------------------------------
-        result = self.mgmt_client.deny_assignments.list_for_resource(resource_group_name=RESOURCE_GROUP, resource_type=RESOURCE_TYPE)
-
-#--------------------------------------------------------------------------
-        # /RoleAssignments/get/GetConfigurations[get]
-#--------------------------------------------------------------------------
-        result = self.mgmt_client.role_assignments.list_for_resource(resource_group_name=RESOURCE_GROUP, resource_type=RESOURCE_TYPE)
-
-#--------------------------------------------------------------------------
-        # /Permissions/get/GetConfigurations[get]
-#--------------------------------------------------------------------------
-        result = self.mgmt_client.permissions.list_for_resource_group(resource_group_name=RESOURCE_GROUP)
-
-#--------------------------------------------------------------------------
-        # /DenyAssignments/get/GetConfigurations[get]
-#--------------------------------------------------------------------------
-        result = self.mgmt_client.deny_assignments.list_for_resource(resource_group_name=RESOURCE_GROUP, resource_type=RESOURCE_TYPE)
-
-#--------------------------------------------------------------------------
-        # /RoleAssignments/get/GetConfigurations[get]
-#--------------------------------------------------------------------------
-        result = self.mgmt_client.role_assignments.list_for_resource(resource_group_name=RESOURCE_GROUP, resource_type=RESOURCE_TYPE)
-
-#--------------------------------------------------------------------------
-        # /Permissions/get/GetConfigurations[get]
-#--------------------------------------------------------------------------
-        result = self.mgmt_client.permissions.list_for_resource_group(resource_group_name=RESOURCE_GROUP)
-
-#--------------------------------------------------------------------------
-        # /ClassicAdministrators/get/GetConfigurations[get]
-#--------------------------------------------------------------------------
-        result = self.mgmt_client.classic_administrators.list()
-
-#--------------------------------------------------------------------------
-        # /ProviderOperationsMetadata/get/GetConfigurations[get]
-#--------------------------------------------------------------------------
-        result = self.mgmt_client.provider_operations_metadata.get(resource_provider_namespace=RESOURCE_PROVIDER_NAMESPACE)
-
-#--------------------------------------------------------------------------
-        # /DenyAssignments/get/GetConfigurations[get]
-#--------------------------------------------------------------------------
-        result = self.mgmt_client.deny_assignments.list_for_resource(resource_group_name=RESOURCE_GROUP, resource_type=RESOURCE_TYPE)
-
-#--------------------------------------------------------------------------
-        # /RoleAssignments/get/GetConfigurations[get]
-#--------------------------------------------------------------------------
-        result = self.mgmt_client.role_assignments.list_for_resource(resource_group_name=RESOURCE_GROUP, resource_type=RESOURCE_TYPE)
-
-#--------------------------------------------------------------------------
-        # /RoleAssignments/get/GetConfigurations[get]
-#--------------------------------------------------------------------------
-        result = self.mgmt_client.role_assignments.list_for_resource(resource_group_name=RESOURCE_GROUP, resource_type=RESOURCE_TYPE)
-
-#--------------------------------------------------------------------------
-        # /RoleDefinitions/get/GetConfigurations[get]
-#--------------------------------------------------------------------------
-        result = self.mgmt_client.role_definitions.get(role_definition_id=ROLE_DEFINITION_ID)
-
-#--------------------------------------------------------------------------
-        # /DenyAssignments/get/GetConfigurations[get]
-#--------------------------------------------------------------------------
-        result = self.mgmt_client.deny_assignments.list_for_resource(resource_group_name=RESOURCE_GROUP, resource_type=RESOURCE_TYPE)
-
-#--------------------------------------------------------------------------
-        # /RoleDefinitions/get/GetConfigurations[get]
-#--------------------------------------------------------------------------
-        result = self.mgmt_client.role_definitions.get(role_definition_id=ROLE_DEFINITION_ID)
-
-#--------------------------------------------------------------------------
-        # /DenyAssignments/get/GetConfigurations[get]
-#--------------------------------------------------------------------------
-        result = self.mgmt_client.deny_assignments.list_for_resource(resource_group_name=RESOURCE_GROUP, resource_type=RESOURCE_TYPE)
-
-#--------------------------------------------------------------------------
-        # /RoleAssignments/get/GetConfigurations[get]
-#--------------------------------------------------------------------------
-        result = self.mgmt_client.role_assignments.list_for_resource(resource_group_name=RESOURCE_GROUP, resource_type=RESOURCE_TYPE)
-
-#--------------------------------------------------------------------------
-        # /ProviderOperationsMetadata/get/GetConfigurations[get]
-#--------------------------------------------------------------------------
-        result = self.mgmt_client.provider_operations_metadata.get(resource_provider_namespace=RESOURCE_PROVIDER_NAMESPACE)
-
-#--------------------------------------------------------------------------
-        # /DenyAssignments/get/GetConfigurations[get]
-#--------------------------------------------------------------------------
-        result = self.mgmt_client.deny_assignments.list_for_resource(resource_group_name=RESOURCE_GROUP, resource_type=RESOURCE_TYPE)
-
-#--------------------------------------------------------------------------
-        # /RoleDefinitions/get/GetConfigurations[get]
-#--------------------------------------------------------------------------
-        result = self.mgmt_client.role_definitions.get(role_definition_id=ROLE_DEFINITION_ID)
-
-#--------------------------------------------------------------------------
-        # /RoleAssignments/get/GetConfigurations[get]
-#--------------------------------------------------------------------------
-        result = self.mgmt_client.role_assignments.list_for_resource(resource_group_name=RESOURCE_GROUP, resource_type=RESOURCE_TYPE)
-
-#--------------------------------------------------------------------------
-        # /GlobalAdministrator/post/GetConfigurations[post]
-#--------------------------------------------------------------------------
-        result = self.mgmt_client.global_administrator.elevate_access()
-
-#--------------------------------------------------------------------------
-        # /RoleAssignments/delete/GetConfigurations[delete]
-#--------------------------------------------------------------------------
-        result = self.mgmt_client.role_assignments.delete(role_assignment_name=ROLE_ASSIGNMENT_NAME)
-
-#--------------------------------------------------------------------------
-        # /RoleDefinitions/delete/GetConfigurations[delete]
-#--------------------------------------------------------------------------
-        result = self.mgmt_client.role_definitions.delete(role_definition_id=ROLE_DEFINITION_ID)
-
-#--------------------------------------------------------------------------
-        # /RoleAssignments/delete/GetConfigurations[delete]
-#--------------------------------------------------------------------------
-        result = self.mgmt_client.role_assignments.delete(role_assignment_name=ROLE_ASSIGNMENT_NAME)
-
+        # result = self.mgmt_client_default.role_definitions.delete(scope=SCOPE, role_definition_id=ROLE_DEFINITION_ID)
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':
