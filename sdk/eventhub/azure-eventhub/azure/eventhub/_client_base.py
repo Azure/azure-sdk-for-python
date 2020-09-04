@@ -68,7 +68,8 @@ def _parse_conn_str(conn_str, kwargs):
             shared_access_signature = value
             try:
                 # Expiry can be stored in the "se=<timestamp>" clause of the token. ('&'-separated key-value pairs)
-                shared_access_signature_expiry = int(shared_access_signature.split('se=')[1].split('&')[0]) # type: ignore
+                # type: ignore
+                shared_access_signature_expiry = int(shared_access_signature.split('se=')[1].split('&')[0])
             except (IndexError, TypeError, ValueError): # Fallback since technically expiry is optional.
                 # An arbitrary, absurdly large number, since you can't renew.
                 shared_access_signature_expiry = int(time.time() * 2)
