@@ -5,7 +5,6 @@
 **New Features**
 
 - Connection strings used with `from_connection_string` methods now supports using the `sharedaccesstoken` key in leiu of `sharedaccesskey` and `sharedaccesskeyname`, taking the string of the properly constructed token as value.
-- `EventHubSASTokenCredential` is now exported to allow authentication using a SAS token in the client initializer.
 
 ## 5.2.0b1 (2020-07-06)
 
