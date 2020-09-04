@@ -18,6 +18,7 @@ except ImportError:
 
 import six
 from azure.core.tracing.decorator import distributed_trace
+from azure.core.exceptions import ResourceNotFoundError
 
 from ._shared import encode_base64
 from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
@@ -928,6 +929,31 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             self._client.blob.undelete(timeout=kwargs.pop('timeout', None), **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
+
+    @distributed_trace()
+    def exists(self, **kwargs):
+        # type: (**Any) -> bool
+        """
+        Returns True if a blob exists with the defined parameters, and returns
+        False otherwise.
+
+        :param str version_id:
+            The version id parameter is an opaque DateTime
+            value that, when present, specifies the version of the blob to check if it exists.
+        :param int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: boolean
+        """
+        try:
+            self._client.blob.get_properties(
+                snapshot=self.snapshot,
+                **kwargs)
+            return True
+        except StorageErrorException as error:
+            try:
+                process_storage_error(error)
+            except ResourceNotFoundError:
+                return False
 
     @distributed_trace
     def get_blob_properties(self, **kwargs):
