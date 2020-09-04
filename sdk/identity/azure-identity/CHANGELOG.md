@@ -17,7 +17,7 @@
   `VisualStudioCodeCredential`. To configure a credential for this, configure
   the credential with `authority` and `tenant_id="adfs"` keyword arguments, for
   example
-  `ClientSecretCredential(authority="<your ADFS URI>", tenant_id="adfs")` 
+  `ClientSecretCredential(authority="<your ADFS URI>", tenant_id="adfs")`.
   Async credentials (those in `azure.identity.aio`) will support ADFS in a
   future release.
   ([#12696](https://github.com/Azure/azure-sdk-for-python/issues/12696))
