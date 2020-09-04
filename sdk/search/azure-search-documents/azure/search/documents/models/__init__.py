@@ -24,11 +24,8 @@
 #
 # --------------------------------------------------------------------------
 
-from .._internal import (
-    IndexAction,
-    IndexingResult,
-    odata,
-)
+from .._internal._generated.models import IndexAction, IndexingResult
+from .._internal._search_client import odata
 
 
 __all__ = (

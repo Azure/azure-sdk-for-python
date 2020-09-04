@@ -7,30 +7,20 @@
 import uuid
 
 from typing import (  # pylint: disable=unused-import
-    Union, Optional, Any, IO, Iterable, AnyStr, Dict, List, Tuple,
-    TypeVar, TYPE_CHECKING
+    Union, Optional, Any, TypeVar, TYPE_CHECKING
 )
 
 from azure.core.tracing.decorator import distributed_trace
 
 from ._shared.response_handlers import return_response_headers, process_storage_error
-from ._generated.models import StorageErrorException, LeaseAccessConditions
+from ._generated.models import StorageErrorException
 from ._serialize import get_modify_conditions
 
 if TYPE_CHECKING:
     from datetime import datetime
-    from ._generated.operations import BlobOperations, ContainerOperations
+
     BlobClient = TypeVar("BlobClient")
     ContainerClient = TypeVar("ContainerClient")
-
-
-def get_access_conditions(lease):
-    # type: (Optional[Union[BlobLeaseClient, str]]) -> Union[LeaseAccessConditions, None]
-    try:
-        lease_id = lease.id # type: ignore
-    except AttributeError:
-        lease_id = lease # type: ignore
-    return LeaseAccessConditions(lease_id=lease_id) if lease_id else None
 
 
 class BlobLeaseClient(object):

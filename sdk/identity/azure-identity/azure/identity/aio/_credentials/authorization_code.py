@@ -5,8 +5,7 @@
 from typing import TYPE_CHECKING
 
 from azure.core.exceptions import ClientAuthenticationError
-from .base import AsyncCredentialBase
-from .._internal import AadClient
+from .._internal import AadClient, AsyncContextManager
 from .._internal.decorators import log_get_token_async
 
 if TYPE_CHECKING:
@@ -15,7 +14,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import AccessToken
 
 
-class AuthorizationCodeCredential(AsyncCredentialBase):
+class AuthorizationCodeCredential(AsyncContextManager):
     """Authenticates by redeeming an authorization code previously obtained from Azure Active Directory.
 
     See https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow for more information

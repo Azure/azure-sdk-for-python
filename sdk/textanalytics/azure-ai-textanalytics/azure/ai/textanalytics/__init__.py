@@ -31,6 +31,7 @@ from ._models import (
     OpinionSentiment,
     RecognizePiiEntitiesResult,
     PiiEntity,
+    PiiEntityDomainType,
 )
 
 __all__ = [
@@ -59,6 +60,7 @@ __all__ = [
     'OpinionSentiment',
     'RecognizePiiEntitiesResult',
     'PiiEntity',
+    'PiiEntityDomainType',
 ]
 
 __version__ = VERSION

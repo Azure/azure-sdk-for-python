@@ -1,6 +1,8 @@
 # Release History
 ## 12.1.2 (Unreleased)
 
+## 12.1.1 (2020-08-13)
+- Patch release to update the minimum dependency requirement.
 
 ## 12.1.0 (2020-08-12)
 - Added `query_file` API to enable users to select/project on DataLake file data by providing simple query expressions.

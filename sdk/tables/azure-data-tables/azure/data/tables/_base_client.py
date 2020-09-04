@@ -50,11 +50,12 @@ from ._policies import (
     StorageRequestHook,
     StorageResponseHook,
     StorageLoggingPolicy,
-    StorageHosts, ExponentialRetry,
+    StorageHosts,
+    TablesRetryPolicy,
 )
-from ._version import VERSION
 from ._error import _process_table_error
 from ._models import PartialBatchErrorException
+from ._sdk_moniker import SDK_MONIKER
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -337,7 +338,7 @@ def format_shared_key_credential(account, credential):
     return credential
 
 
-def parse_connection_str(conn_str, credential, service):
+def parse_connection_str(conn_str, credential, service, keyword_args):
     conn_str = conn_str.rstrip(";")
     conn_settings = [s.split("=", 1) for s in conn_str.split(";")]
     if any(len(tup) != 2 for tup in conn_settings):
@@ -378,16 +379,20 @@ def parse_connection_str(conn_str, credential, service):
             )
         except KeyError:
             raise ValueError("Connection string missing required connection details.")
-    return primary, secondary, credential
+
+    if 'secondary_hostname' not in keyword_args:
+        keyword_args['secondary_hostname'] = secondary
+
+    return primary, credential
 
 
 def create_configuration(**kwargs):
     # type: (**Any) -> Configuration
     config = Configuration(**kwargs)
     config.headers_policy = StorageHeadersPolicy(**kwargs)
-    config.user_agent_policy = UserAgentPolicy(
-        sdk_moniker="storage-{}/{}".format(kwargs.pop('storage_sdk'), VERSION), **kwargs)
-    config.retry_policy = kwargs.get("retry_policy") or ExponentialRetry(**kwargs)
+    config.user_agent_policy = UserAgentPolicy(sdk_moniker=SDK_MONIKER, **kwargs)
+        # sdk_moniker="storage-{}/{}".format(kwargs.pop('storage_sdk'), VERSION), **kwargs)
+    config.retry_policy = kwargs.get("retry_policy") or TablesRetryPolicy(**kwargs)
     config.logging_policy = StorageLoggingPolicy(**kwargs)
     config.proxy_policy = ProxyPolicy(**kwargs)
 
