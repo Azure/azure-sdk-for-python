@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: !!python/unicode '{"TableName": "uttable97d21773"}'
+    body: '{"TableName": "uttable97d21773"}'
     headers:
       Accept:
       - application/json;odata=minimalmetadata
@@ -15,27 +15,27 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Fri, 04 Sep 2020 23:53:53 GMT
+      - Sat, 05 Sep 2020 00:18:03 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b1 Python/2.7.18 (Windows-10-10.0.19041)
+      - azsdk-python-data-tables/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 04 Sep 2020 23:53:53 GMT
+      - Sat, 05 Sep 2020 00:18:03 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
-    uri: !!python/unicode https://storagename.table.core.windows.net/Tables
+    uri: https://storagename.table.core.windows.net/Tables
   response:
     body:
-      string: !!python/unicode '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#Tables/@Element","TableName":"uttable97d21773"}'
+      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#Tables/@Element","TableName":"uttable97d21773"}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Fri, 04 Sep 2020 23:53:53 GMT
+      - Sat, 05 Sep 2020 00:18:03 GMT
       location:
-      - !!python/unicode https://storagename.table.core.windows.net/Tables('uttable97d21773')
+      - https://storagename.table.core.windows.net/Tables('uttable97d21773')
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -48,191 +48,177 @@ interactions:
       code: 201
       message: Created
 - request:
-    body: !!python/unicode '{"key253@odata.type": "Edm.Binary", "key46@odata.type":
-      "Edm.Binary", "key175@odata.type": "Edm.Binary", "key194@odata.type": "Edm.Binary",
-      "key170@odata.type": "Edm.Binary", "key121@odata.type": "Edm.Binary", "key73":
-      "dmFsdWU3Mw==", "key19": "dmFsdWUxOQ==", "key18": "dmFsdWUxOA==", "key17": "dmFsdWUxNw==",
-      "key16": "dmFsdWUxNg==", "key15": "dmFsdWUxNQ==", "key14": "dmFsdWUxNA==", "key13":
-      "dmFsdWUxMw==", "key12": "dmFsdWUxMg==", "key11": "dmFsdWUxMQ==", "key10": "dmFsdWUxMA==",
-      "key21@odata.type": "Edm.Binary", "key249@odata.type": "Edm.Binary", "key245":
-      "dmFsdWUyNDU=", "key187@odata.type": "Edm.Binary", "key119@odata.type": "Edm.Binary",
-      "key164@odata.type": "Edm.Binary", "key247@odata.type": "Edm.Binary", "key80":
-      "dmFsdWU4MA==", "key81": "dmFsdWU4MQ==", "key73@odata.type": "Edm.Binary", "key83":
-      "dmFsdWU4Mw==", "key84": "dmFsdWU4NA==", "key85": "dmFsdWU4NQ==", "key86": "dmFsdWU4Ng==",
-      "key87": "dmFsdWU4Nw==", "key88": "dmFsdWU4OA==", "key89": "dmFsdWU4OQ==", "PartitionKey":
-      "pk97d21773", "key103@odata.type": "Edm.Binary", "key220@odata.type": "Edm.Binary",
-      "key223@odata.type": "Edm.Binary", "key180": "dmFsdWUxODA=", "key181": "dmFsdWUxODE=",
-      "key182": "dmFsdWUxODI=", "key183": "dmFsdWUxODM=", "key184": "dmFsdWUxODQ=",
-      "key185": "dmFsdWUxODU=", "key186": "dmFsdWUxODY=", "key187": "dmFsdWUxODc=",
-      "key188": "dmFsdWUxODg=", "key220": "dmFsdWUyMjA=", "key223": "dmFsdWUyMjM=",
-      "key222": "dmFsdWUyMjI=", "key225": "dmFsdWUyMjU=", "key224": "dmFsdWUyMjQ=",
-      "key227": "dmFsdWUyMjc=", "key226": "dmFsdWUyMjY=", "key193@odata.type": "Edm.Binary",
-      "key82@odata.type": "Edm.Binary", "key139@odata.type": "Edm.Binary", "key178@odata.type":
-      "Edm.Binary", "key114@odata.type": "Edm.Binary", "key78@odata.type": "Edm.Binary",
-      "key204@odata.type": "Edm.Binary", "key61@odata.type": "Edm.Binary", "key139":
-      "dmFsdWUxMzk=", "key138": "dmFsdWUxMzg=", "key244@odata.type": "Edm.Binary",
-      "key135": "dmFsdWUxMzU=", "key134": "dmFsdWUxMzQ=", "key137": "dmFsdWUxMzc=",
-      "key136": "dmFsdWUxMzY=", "key57@odata.type": "Edm.Binary", "key130": "dmFsdWUxMzA=",
-      "key133": "dmFsdWUxMzM=", "key132": "dmFsdWUxMzI=", "key1@odata.type": "Edm.Binary",
-      "key148@odata.type": "Edm.Binary", "key133@odata.type": "Edm.Binary", "key207@odata.type":
-      "Edm.Binary", "key74@odata.type": "Edm.Binary", "key138@odata.type": "Edm.Binary",
-      "key209@odata.type": "Edm.Binary", "key62@odata.type": "Edm.Binary", "key177@odata.type":
-      "Edm.Binary", "key168@odata.type": "Edm.Binary", "key53@odata.type": "Edm.Binary",
-      "key206@odata.type": "Edm.Binary", "key101@odata.type": "Edm.Binary", "key50@odata.type":
-      "Edm.Binary", "key26@odata.type": "Edm.Binary", "key24@odata.type": "Edm.Binary",
-      "key68@odata.type": "Edm.Binary", "key44": "dmFsdWU0NA==", "key45": "dmFsdWU0NQ==",
-      "key46": "dmFsdWU0Ng==", "key47": "dmFsdWU0Nw==", "key40": "dmFsdWU0MA==", "key41":
-      "dmFsdWU0MQ==", "key42": "dmFsdWU0Mg==", "key43": "dmFsdWU0Mw==", "key48": "dmFsdWU0OA==",
-      "key49": "dmFsdWU0OQ==", "key202@odata.type": "Edm.Binary", "key128@odata.type":
-      "Edm.Binary", "key181@odata.type": "Edm.Binary", "key134@odata.type": "Edm.Binary",
-      "key83@odata.type": "Edm.Binary", "key238@odata.type": "Edm.Binary", "key43@odata.type":
-      "Edm.Binary", "key144@odata.type": "Edm.Binary", "key239@odata.type": "Edm.Binary",
-      "key108@odata.type": "Edm.Binary", "key20@odata.type": "Edm.Binary", "key90@odata.type":
-      "Edm.Binary", "key41@odata.type": "Edm.Binary", "key107@odata.type": "Edm.Binary",
-      "key110@odata.type": "Edm.Binary", "key159@odata.type": "Edm.Binary", "key96@odata.type":
-      "Edm.Binary", "key171": "dmFsdWUxNzE=", "key170": "dmFsdWUxNzA=", "key173":
-      "dmFsdWUxNzM=", "key172": "dmFsdWUxNzI=", "key175": "dmFsdWUxNzU=", "key174":
-      "dmFsdWUxNzQ=", "key177": "dmFsdWUxNzc=", "key176": "dmFsdWUxNzY=", "key179":
-      "dmFsdWUxNzk=", "key178": "dmFsdWUxNzg=", "key58@odata.type": "Edm.Binary",
-      "key186@odata.type": "Edm.Binary", "key250": "dmFsdWUyNTA=", "key251": "dmFsdWUyNTE=",
-      "key252": "dmFsdWUyNTI=", "key253": "dmFsdWUyNTM=", "key254": "dmFsdWUyNTQ=",
-      "key28@odata.type": "Edm.Binary", "key101": "dmFsdWUxMDE=", "key188@odata.type":
-      "Edm.Binary", "key241@odata.type": "Edm.Binary", "key213@odata.type": "Edm.Binary",
-      "key88@odata.type": "Edm.Binary", "key250@odata.type": "Edm.Binary", "key152@odata.type":
-      "Edm.Binary", "key172@odata.type": "Edm.Binary", "key219@odata.type": "Edm.Binary",
-      "key182@odata.type": "Edm.Binary", "key36@odata.type": "Edm.Binary", "key87@odata.type":
-      "Edm.Binary", "key82": "dmFsdWU4Mg==", "key64@odata.type": "Edm.Binary", "key52@odata.type":
-      "Edm.Binary", "key80@odata.type": "Edm.Binary", "key13@odata.type": "Edm.Binary",
-      "key140@odata.type": "Edm.Binary", "key254@odata.type": "Edm.Binary", "key147@odata.type":
-      "Edm.Binary", "key7@odata.type": "Edm.Binary", "key122@odata.type": "Edm.Binary",
-      "key218@odata.type": "Edm.Binary", "key37@odata.type": "Edm.Binary", "key237@odata.type":
-      "Edm.Binary", "key92@odata.type": "Edm.Binary", "key235@odata.type": "Edm.Binary",
-      "key146@odata.type": "Edm.Binary", "key79": "dmFsdWU3OQ==", "key78": "dmFsdWU3OA==",
-      "key75": "dmFsdWU3NQ==", "key74": "dmFsdWU3NA==", "key77": "dmFsdWU3Nw==", "key76":
-      "dmFsdWU3Ng==", "key71": "dmFsdWU3MQ==", "key70": "dmFsdWU3MA==", "key137@odata.type":
-      "Edm.Binary", "key72": "dmFsdWU3Mg==", "key185@odata.type": "Edm.Binary", "key118@odata.type":
-      "Edm.Binary", "key199": "dmFsdWUxOTk=", "key198": "dmFsdWUxOTg=", "key197":
-      "dmFsdWUxOTc=", "key196": "dmFsdWUxOTY=", "key195": "dmFsdWUxOTU=", "key194":
-      "dmFsdWUxOTQ=", "key193": "dmFsdWUxOTM=", "key192": "dmFsdWUxOTI=", "key191":
-      "dmFsdWUxOTE=", "key190": "dmFsdWUxOTA=", "key95@odata.type": "Edm.Binary",
-      "key167@odata.type": "Edm.Binary", "key225@odata.type": "Edm.Binary", "key216@odata.type":
-      "Edm.Binary", "key108": "dmFsdWUxMDg=", "key109": "dmFsdWUxMDk=", "key123@odata.type":
-      "Edm.Binary", "key100": "dmFsdWUxMDA=", "key25@odata.type": "Edm.Binary", "key102":
-      "dmFsdWUxMDI=", "key103": "dmFsdWUxMDM=", "key104": "dmFsdWUxMDQ=", "key105":
-      "dmFsdWUxMDU=", "key106": "dmFsdWUxMDY=", "key107": "dmFsdWUxMDc=", "key229":
-      "dmFsdWUyMjk=", "key242@odata.type": "Edm.Binary", "key59@odata.type": "Edm.Binary",
-      "key228": "dmFsdWUyMjg=", "key57": "dmFsdWU1Nw==", "key27@odata.type": "Edm.Binary",
-      "key142@odata.type": "Edm.Binary", "key176@odata.type": "Edm.Binary", "key86@odata.type":
-      "Edm.Binary", "key215": "dmFsdWUyMTU=", "key221@odata.type": "Edm.Binary", "key214":
-      "dmFsdWUyMTQ=", "key221": "dmFsdWUyMjE=", "key216": "dmFsdWUyMTY=", "key217":
-      "dmFsdWUyMTc=", "key210": "dmFsdWUyMTA=", "key211": "dmFsdWUyMTE=", "key212":
-      "dmFsdWUyMTI=", "key189": "dmFsdWUxODk=", "key60@odata.type": "Edm.Binary",
-      "key218": "dmFsdWUyMTg=", "key219": "dmFsdWUyMTk=", "key155@odata.type": "Edm.Binary",
-      "key192@odata.type": "Edm.Binary", "key213": "dmFsdWUyMTM=", "key55@odata.type":
-      "Edm.Binary", "key38@odata.type": "Edm.Binary", "key160@odata.type": "Edm.Binary",
-      "key2@odata.type": "Edm.Binary", "key85@odata.type": "Edm.Binary", "key227@odata.type":
-      "Edm.Binary", "RowKey@odata.type": "Edm.String", "key66@odata.type": "Edm.Binary",
-      "key199@odata.type": "Edm.Binary", "key63@odata.type": "Edm.Binary", "key35@odata.type":
-      "Edm.Binary", "key198@odata.type": "Edm.Binary", "key31": "dmFsdWUzMQ==", "key30":
-      "dmFsdWUzMA==", "key33": "dmFsdWUzMw==", "key32": "dmFsdWUzMg==", "key35": "dmFsdWUzNQ==",
-      "key34": "dmFsdWUzNA==", "key37": "dmFsdWUzNw==", "key36": "dmFsdWUzNg==", "key39":
-      "dmFsdWUzOQ==", "key38": "dmFsdWUzOA==", "key4@odata.type": "Edm.Binary", "key77@odata.type":
-      "Edm.Binary", "key97@odata.type": "Edm.Binary", "key158@odata.type": "Edm.Binary",
-      "key234@odata.type": "Edm.Binary", "key129@odata.type": "Edm.Binary", "key212@odata.type":
-      "Edm.Binary", "key117@odata.type": "Edm.Binary", "key18@odata.type": "Edm.Binary",
-      "key230@odata.type": "Edm.Binary", "key33@odata.type": "Edm.Binary", "key69@odata.type":
-      "Edm.Binary", "key44@odata.type": "Edm.Binary", "key39@odata.type": "Edm.Binary",
-      "key240@odata.type": "Edm.Binary", "key10@odata.type": "Edm.Binary", "key148":
-      "dmFsdWUxNDg=", "key149": "dmFsdWUxNDk=", "key144": "dmFsdWUxNDQ=", "key145":
-      "dmFsdWUxNDU=", "key146": "dmFsdWUxNDY=", "key147": "dmFsdWUxNDc=", "key140":
-      "dmFsdWUxNDA=", "key14@odata.type": "Edm.Binary", "key124@odata.type": "Edm.Binary",
-      "key143": "dmFsdWUxNDM=", "key208@odata.type": "Edm.Binary", "key104@odata.type":
-      "Edm.Binary", "key249": "dmFsdWUyNDk=", "key248": "dmFsdWUyNDg=", "key247":
-      "dmFsdWUyNDc=", "key246": "dmFsdWUyNDY=", "key19@odata.type": "Edm.Binary",
-      "key244": "dmFsdWUyNDQ=", "key243": "dmFsdWUyNDM=", "key242": "dmFsdWUyNDI=",
-      "key241": "dmFsdWUyNDE=", "key240": "dmFsdWUyNDA=", "key120@odata.type": "Edm.Binary",
-      "key210@odata.type": "Edm.Binary", "key112@odata.type": "Edm.Binary", "key190@odata.type":
-      "Edm.Binary", "key89@odata.type": "Edm.Binary", "key141@odata.type": "Edm.Binary",
-      "key157@odata.type": "Edm.Binary", "key98@odata.type": "Edm.Binary", "key251@odata.type":
-      "Edm.Binary", "key162": "dmFsdWUxNjI=", "key6@odata.type": "Edm.Binary", "key163":
-      "dmFsdWUxNjM=", "key222@odata.type": "Edm.Binary", "key243@odata.type": "Edm.Binary",
-      "key84@odata.type": "Edm.Binary", "key149@odata.type": "Edm.Binary", "key32@odata.type":
-      "Edm.Binary", "key131": "dmFsdWUxMzE=", "key211@odata.type": "Edm.Binary", "key105@odata.type":
-      "Edm.Binary", "key65@odata.type": "Edm.Binary", "key224@odata.type": "Edm.Binary",
-      "key126@odata.type": "Edm.Binary", "key93@odata.type": "Edm.Binary", "key215@odata.type":
-      "Edm.Binary", "key136@odata.type": "Edm.Binary", "key179@odata.type": "Edm.Binary",
-      "key70@odata.type": "Edm.Binary", "key95": "dmFsdWU5NQ==", "key5@odata.type":
-      "Edm.Binary", "key16@odata.type": "Edm.Binary", "key94": "dmFsdWU5NA==", "key68":
-      "dmFsdWU2OA==", "key69": "dmFsdWU2OQ==", "key66": "dmFsdWU2Ng==", "key67": "dmFsdWU2Nw==",
-      "key64": "dmFsdWU2NA==", "key65": "dmFsdWU2NQ==", "key62": "dmFsdWU2Mg==", "key63":
-      "dmFsdWU2Mw==", "key60": "dmFsdWU2MA==", "key61": "dmFsdWU2MQ==", "key152":
-      "dmFsdWUxNTI=", "key233@odata.type": "Edm.Binary", "key203@odata.type": "Edm.Binary",
-      "key99": "dmFsdWU5OQ==", "key98": "dmFsdWU5OA==", "key232@odata.type": "Edm.Binary",
-      "key51@odata.type": "Edm.Binary", "key117": "dmFsdWUxMTc=", "key116": "dmFsdWUxMTY=",
-      "key115": "dmFsdWUxMTU=", "key114": "dmFsdWUxMTQ=", "key113": "dmFsdWUxMTM=",
-      "key112": "dmFsdWUxMTI=", "key111": "dmFsdWUxMTE=", "key110": "dmFsdWUxMTA=",
-      "key29@odata.type": "Edm.Binary", "key119": "dmFsdWUxMTk=", "key118": "dmFsdWUxMTg=",
-      "key49@odata.type": "Edm.Binary", "key171@odata.type": "Edm.Binary", "key248@odata.type":
-      "Edm.Binary", "key195@odata.type": "Edm.Binary", "key246@odata.type": "Edm.Binary",
-      "key9@odata.type": "Edm.Binary", "key34@odata.type": "Edm.Binary", "key22@odata.type":
-      "Edm.Binary", "key17@odata.type": "Edm.Binary", "key226@odata.type": "Edm.Binary",
-      "key8@odata.type": "Edm.Binary", "key102@odata.type": "Edm.Binary", "key203":
-      "dmFsdWUyMDM=", "key202": "dmFsdWUyMDI=", "key201": "dmFsdWUyMDE=", "key200":
-      "dmFsdWUyMDA=", "key207": "dmFsdWUyMDc=", "key206": "dmFsdWUyMDY=", "key205":
-      "dmFsdWUyMDU=", "key204": "dmFsdWUyMDQ=", "key209": "dmFsdWUyMDk=", "key208":
-      "dmFsdWUyMDg=", "key9": "dmFsdWU5", "key8": "dmFsdWU4", "key30@odata.type":
-      "Edm.Binary", "key3": "dmFsdWUz", "key2": "dmFsdWUy", "key1": "dmFsdWUx", "key0":
-      "dmFsdWUw", "key7": "dmFsdWU3", "key6": "dmFsdWU2", "key5": "dmFsdWU1", "key4":
-      "dmFsdWU0", "key106@odata.type": "Edm.Binary", "key239": "dmFsdWUyMzk=", "key163@odata.type":
-      "Edm.Binary", "key174@odata.type": "Edm.Binary", "key67@odata.type": "Edm.Binary",
-      "key0@odata.type": "Edm.Binary", "PartitionKey@odata.type": "Edm.String", "key72@odata.type":
-      "Edm.Binary", "key154@odata.type": "Edm.Binary", "key45@odata.type": "Edm.Binary",
-      "key236": "dmFsdWUyMzY=", "key22": "dmFsdWUyMg==", "key23": "dmFsdWUyMw==",
-      "key20": "dmFsdWUyMA==", "key21": "dmFsdWUyMQ==", "key26": "dmFsdWUyNg==", "key27":
-      "dmFsdWUyNw==", "key24": "dmFsdWUyNA==", "key25": "dmFsdWUyNQ==", "key28": "dmFsdWUyOA==",
-      "key29": "dmFsdWUyOQ==", "key109@odata.type": "Edm.Binary", "key184@odata.type":
-      "Edm.Binary", "key229@odata.type": "Edm.Binary", "key143@odata.type": "Edm.Binary",
-      "key100@odata.type": "Edm.Binary", "key79@odata.type": "Edm.Binary", "key97":
-      "dmFsdWU5Nw==", "key96": "dmFsdWU5Ng==", "key159": "dmFsdWUxNTk=", "key158":
-      "dmFsdWUxNTg=", "key93": "dmFsdWU5Mw==", "key92": "dmFsdWU5Mg==", "key91": "dmFsdWU5MQ==",
-      "key90": "dmFsdWU5MA==", "key153": "dmFsdWUxNTM=", "key150@odata.type": "Edm.Binary",
-      "key151": "dmFsdWUxNTE=", "key150": "dmFsdWUxNTA=", "key157": "dmFsdWUxNTc=",
-      "key156": "dmFsdWUxNTY=", "key155": "dmFsdWUxNTU=", "key154": "dmFsdWUxNTQ=",
-      "key153@odata.type": "Edm.Binary", "key131@odata.type": "Edm.Binary", "key238":
-      "dmFsdWUyMzg=", "key56@odata.type": "Edm.Binary", "key232": "dmFsdWUyMzI=",
-      "key233": "dmFsdWUyMzM=", "key230": "dmFsdWUyMzA=", "key231": "dmFsdWUyMzE=",
-      "key135@odata.type": "Edm.Binary", "key237": "dmFsdWUyMzc=", "key234": "dmFsdWUyMzQ=",
-      "key235": "dmFsdWUyMzU=", "key180@odata.type": "Edm.Binary", "key81@odata.type":
-      "Edm.Binary", "key205@odata.type": "Edm.Binary", "key217@odata.type": "Edm.Binary",
-      "key12@odata.type": "Edm.Binary", "key162@odata.type": "Edm.Binary", "key128":
-      "dmFsdWUxMjg=", "key228@odata.type": "Edm.Binary", "key126": "dmFsdWUxMjY=",
-      "key127": "dmFsdWUxMjc=", "key124": "dmFsdWUxMjQ=", "key125": "dmFsdWUxMjU=",
-      "key122": "dmFsdWUxMjI=", "key123": "dmFsdWUxMjM=", "key120": "dmFsdWUxMjA=",
-      "key121": "dmFsdWUxMjE=", "key113@odata.type": "Edm.Binary", "key231@odata.type":
-      "Edm.Binary", "key15@odata.type": "Edm.Binary", "key115@odata.type": "Edm.Binary",
-      "key197@odata.type": "Edm.Binary", "key47@odata.type": "Edm.Binary", "key130@odata.type":
-      "Edm.Binary", "key94@odata.type": "Edm.Binary", "key189@odata.type": "Edm.Binary",
-      "key129": "dmFsdWUxMjk=", "key132@odata.type": "Edm.Binary", "key200@odata.type":
-      "Edm.Binary", "key99@odata.type": "Edm.Binary", "key156@odata.type": "Edm.Binary",
-      "key169@odata.type": "Edm.Binary", "key125@odata.type": "Edm.Binary", "key196@odata.type":
-      "Edm.Binary", "key245@odata.type": "Edm.Binary", "key236@odata.type": "Edm.Binary",
-      "key91@odata.type": "Edm.Binary", "key59": "dmFsdWU1OQ==", "key58": "dmFsdWU1OA==",
-      "key53": "dmFsdWU1Mw==", "key52": "dmFsdWU1Mg==", "key51": "dmFsdWU1MQ==", "key50":
-      "dmFsdWU1MA==", "key48@odata.type": "Edm.Binary", "key56": "dmFsdWU1Ng==", "key55":
-      "dmFsdWU1NQ==", "key54": "dmFsdWU1NA==", "key54@odata.type": "Edm.Binary", "key71@odata.type":
-      "Edm.Binary", "key183@odata.type": "Edm.Binary", "key214@odata.type": "Edm.Binary",
-      "key23@odata.type": "Edm.Binary", "key166@odata.type": "Edm.Binary", "key173@odata.type":
-      "Edm.Binary", "key151@odata.type": "Edm.Binary", "key145@odata.type": "Edm.Binary",
-      "key3@odata.type": "Edm.Binary", "key161@odata.type": "Edm.Binary", "key160":
-      "dmFsdWUxNjA=", "key161": "dmFsdWUxNjE=", "key166": "dmFsdWUxNjY=", "key167":
-      "dmFsdWUxNjc=", "key164": "dmFsdWUxNjQ=", "key165": "dmFsdWUxNjU=", "key168":
-      "dmFsdWUxNjg=", "key169": "dmFsdWUxNjk=", "key141": "dmFsdWUxNDE=", "key31@odata.type":
-      "Edm.Binary", "key142": "dmFsdWUxNDI=", "key111@odata.type": "Edm.Binary", "key201@odata.type":
-      "Edm.Binary", "key75@odata.type": "Edm.Binary", "key127@odata.type": "Edm.Binary",
-      "RowKey": "rk97d21773", "key76@odata.type": "Edm.Binary", "key40@odata.type":
-      "Edm.Binary", "key42@odata.type": "Edm.Binary", "key11@odata.type": "Edm.Binary",
-      "key116@odata.type": "Edm.Binary", "key191@odata.type": "Edm.Binary", "key252@odata.type":
-      "Edm.Binary", "key165@odata.type": "Edm.Binary"}'
+    body: '{"PartitionKey": "pk97d21773", "PartitionKey@odata.type": "Edm.String",
+      "RowKey": "rk97d21773", "RowKey@odata.type": "Edm.String", "key0": "value0",
+      "key0@odata.type": "Edm.String", "key1": "value1", "key1@odata.type": "Edm.String",
+      "key2": "value2", "key2@odata.type": "Edm.String", "key3": "value3", "key3@odata.type":
+      "Edm.String", "key4": "value4", "key4@odata.type": "Edm.String", "key5": "value5",
+      "key5@odata.type": "Edm.String", "key6": "value6", "key6@odata.type": "Edm.String",
+      "key7": "value7", "key7@odata.type": "Edm.String", "key8": "value8", "key8@odata.type":
+      "Edm.String", "key9": "value9", "key9@odata.type": "Edm.String", "key10": "value10",
+      "key10@odata.type": "Edm.String", "key11": "value11", "key11@odata.type": "Edm.String",
+      "key12": "value12", "key12@odata.type": "Edm.String", "key13": "value13", "key13@odata.type":
+      "Edm.String", "key14": "value14", "key14@odata.type": "Edm.String", "key15":
+      "value15", "key15@odata.type": "Edm.String", "key16": "value16", "key16@odata.type":
+      "Edm.String", "key17": "value17", "key17@odata.type": "Edm.String", "key18":
+      "value18", "key18@odata.type": "Edm.String", "key19": "value19", "key19@odata.type":
+      "Edm.String", "key20": "value20", "key20@odata.type": "Edm.String", "key21":
+      "value21", "key21@odata.type": "Edm.String", "key22": "value22", "key22@odata.type":
+      "Edm.String", "key23": "value23", "key23@odata.type": "Edm.String", "key24":
+      "value24", "key24@odata.type": "Edm.String", "key25": "value25", "key25@odata.type":
+      "Edm.String", "key26": "value26", "key26@odata.type": "Edm.String", "key27":
+      "value27", "key27@odata.type": "Edm.String", "key28": "value28", "key28@odata.type":
+      "Edm.String", "key29": "value29", "key29@odata.type": "Edm.String", "key30":
+      "value30", "key30@odata.type": "Edm.String", "key31": "value31", "key31@odata.type":
+      "Edm.String", "key32": "value32", "key32@odata.type": "Edm.String", "key33":
+      "value33", "key33@odata.type": "Edm.String", "key34": "value34", "key34@odata.type":
+      "Edm.String", "key35": "value35", "key35@odata.type": "Edm.String", "key36":
+      "value36", "key36@odata.type": "Edm.String", "key37": "value37", "key37@odata.type":
+      "Edm.String", "key38": "value38", "key38@odata.type": "Edm.String", "key39":
+      "value39", "key39@odata.type": "Edm.String", "key40": "value40", "key40@odata.type":
+      "Edm.String", "key41": "value41", "key41@odata.type": "Edm.String", "key42":
+      "value42", "key42@odata.type": "Edm.String", "key43": "value43", "key43@odata.type":
+      "Edm.String", "key44": "value44", "key44@odata.type": "Edm.String", "key45":
+      "value45", "key45@odata.type": "Edm.String", "key46": "value46", "key46@odata.type":
+      "Edm.String", "key47": "value47", "key47@odata.type": "Edm.String", "key48":
+      "value48", "key48@odata.type": "Edm.String", "key49": "value49", "key49@odata.type":
+      "Edm.String", "key50": "value50", "key50@odata.type": "Edm.String", "key51":
+      "value51", "key51@odata.type": "Edm.String", "key52": "value52", "key52@odata.type":
+      "Edm.String", "key53": "value53", "key53@odata.type": "Edm.String", "key54":
+      "value54", "key54@odata.type": "Edm.String", "key55": "value55", "key55@odata.type":
+      "Edm.String", "key56": "value56", "key56@odata.type": "Edm.String", "key57":
+      "value57", "key57@odata.type": "Edm.String", "key58": "value58", "key58@odata.type":
+      "Edm.String", "key59": "value59", "key59@odata.type": "Edm.String", "key60":
+      "value60", "key60@odata.type": "Edm.String", "key61": "value61", "key61@odata.type":
+      "Edm.String", "key62": "value62", "key62@odata.type": "Edm.String", "key63":
+      "value63", "key63@odata.type": "Edm.String", "key64": "value64", "key64@odata.type":
+      "Edm.String", "key65": "value65", "key65@odata.type": "Edm.String", "key66":
+      "value66", "key66@odata.type": "Edm.String", "key67": "value67", "key67@odata.type":
+      "Edm.String", "key68": "value68", "key68@odata.type": "Edm.String", "key69":
+      "value69", "key69@odata.type": "Edm.String", "key70": "value70", "key70@odata.type":
+      "Edm.String", "key71": "value71", "key71@odata.type": "Edm.String", "key72":
+      "value72", "key72@odata.type": "Edm.String", "key73": "value73", "key73@odata.type":
+      "Edm.String", "key74": "value74", "key74@odata.type": "Edm.String", "key75":
+      "value75", "key75@odata.type": "Edm.String", "key76": "value76", "key76@odata.type":
+      "Edm.String", "key77": "value77", "key77@odata.type": "Edm.String", "key78":
+      "value78", "key78@odata.type": "Edm.String", "key79": "value79", "key79@odata.type":
+      "Edm.String", "key80": "value80", "key80@odata.type": "Edm.String", "key81":
+      "value81", "key81@odata.type": "Edm.String", "key82": "value82", "key82@odata.type":
+      "Edm.String", "key83": "value83", "key83@odata.type": "Edm.String", "key84":
+      "value84", "key84@odata.type": "Edm.String", "key85": "value85", "key85@odata.type":
+      "Edm.String", "key86": "value86", "key86@odata.type": "Edm.String", "key87":
+      "value87", "key87@odata.type": "Edm.String", "key88": "value88", "key88@odata.type":
+      "Edm.String", "key89": "value89", "key89@odata.type": "Edm.String", "key90":
+      "value90", "key90@odata.type": "Edm.String", "key91": "value91", "key91@odata.type":
+      "Edm.String", "key92": "value92", "key92@odata.type": "Edm.String", "key93":
+      "value93", "key93@odata.type": "Edm.String", "key94": "value94", "key94@odata.type":
+      "Edm.String", "key95": "value95", "key95@odata.type": "Edm.String", "key96":
+      "value96", "key96@odata.type": "Edm.String", "key97": "value97", "key97@odata.type":
+      "Edm.String", "key98": "value98", "key98@odata.type": "Edm.String", "key99":
+      "value99", "key99@odata.type": "Edm.String", "key100": "value100", "key100@odata.type":
+      "Edm.String", "key101": "value101", "key101@odata.type": "Edm.String", "key102":
+      "value102", "key102@odata.type": "Edm.String", "key103": "value103", "key103@odata.type":
+      "Edm.String", "key104": "value104", "key104@odata.type": "Edm.String", "key105":
+      "value105", "key105@odata.type": "Edm.String", "key106": "value106", "key106@odata.type":
+      "Edm.String", "key107": "value107", "key107@odata.type": "Edm.String", "key108":
+      "value108", "key108@odata.type": "Edm.String", "key109": "value109", "key109@odata.type":
+      "Edm.String", "key110": "value110", "key110@odata.type": "Edm.String", "key111":
+      "value111", "key111@odata.type": "Edm.String", "key112": "value112", "key112@odata.type":
+      "Edm.String", "key113": "value113", "key113@odata.type": "Edm.String", "key114":
+      "value114", "key114@odata.type": "Edm.String", "key115": "value115", "key115@odata.type":
+      "Edm.String", "key116": "value116", "key116@odata.type": "Edm.String", "key117":
+      "value117", "key117@odata.type": "Edm.String", "key118": "value118", "key118@odata.type":
+      "Edm.String", "key119": "value119", "key119@odata.type": "Edm.String", "key120":
+      "value120", "key120@odata.type": "Edm.String", "key121": "value121", "key121@odata.type":
+      "Edm.String", "key122": "value122", "key122@odata.type": "Edm.String", "key123":
+      "value123", "key123@odata.type": "Edm.String", "key124": "value124", "key124@odata.type":
+      "Edm.String", "key125": "value125", "key125@odata.type": "Edm.String", "key126":
+      "value126", "key126@odata.type": "Edm.String", "key127": "value127", "key127@odata.type":
+      "Edm.String", "key128": "value128", "key128@odata.type": "Edm.String", "key129":
+      "value129", "key129@odata.type": "Edm.String", "key130": "value130", "key130@odata.type":
+      "Edm.String", "key131": "value131", "key131@odata.type": "Edm.String", "key132":
+      "value132", "key132@odata.type": "Edm.String", "key133": "value133", "key133@odata.type":
+      "Edm.String", "key134": "value134", "key134@odata.type": "Edm.String", "key135":
+      "value135", "key135@odata.type": "Edm.String", "key136": "value136", "key136@odata.type":
+      "Edm.String", "key137": "value137", "key137@odata.type": "Edm.String", "key138":
+      "value138", "key138@odata.type": "Edm.String", "key139": "value139", "key139@odata.type":
+      "Edm.String", "key140": "value140", "key140@odata.type": "Edm.String", "key141":
+      "value141", "key141@odata.type": "Edm.String", "key142": "value142", "key142@odata.type":
+      "Edm.String", "key143": "value143", "key143@odata.type": "Edm.String", "key144":
+      "value144", "key144@odata.type": "Edm.String", "key145": "value145", "key145@odata.type":
+      "Edm.String", "key146": "value146", "key146@odata.type": "Edm.String", "key147":
+      "value147", "key147@odata.type": "Edm.String", "key148": "value148", "key148@odata.type":
+      "Edm.String", "key149": "value149", "key149@odata.type": "Edm.String", "key150":
+      "value150", "key150@odata.type": "Edm.String", "key151": "value151", "key151@odata.type":
+      "Edm.String", "key152": "value152", "key152@odata.type": "Edm.String", "key153":
+      "value153", "key153@odata.type": "Edm.String", "key154": "value154", "key154@odata.type":
+      "Edm.String", "key155": "value155", "key155@odata.type": "Edm.String", "key156":
+      "value156", "key156@odata.type": "Edm.String", "key157": "value157", "key157@odata.type":
+      "Edm.String", "key158": "value158", "key158@odata.type": "Edm.String", "key159":
+      "value159", "key159@odata.type": "Edm.String", "key160": "value160", "key160@odata.type":
+      "Edm.String", "key161": "value161", "key161@odata.type": "Edm.String", "key162":
+      "value162", "key162@odata.type": "Edm.String", "key163": "value163", "key163@odata.type":
+      "Edm.String", "key164": "value164", "key164@odata.type": "Edm.String", "key165":
+      "value165", "key165@odata.type": "Edm.String", "key166": "value166", "key166@odata.type":
+      "Edm.String", "key167": "value167", "key167@odata.type": "Edm.String", "key168":
+      "value168", "key168@odata.type": "Edm.String", "key169": "value169", "key169@odata.type":
+      "Edm.String", "key170": "value170", "key170@odata.type": "Edm.String", "key171":
+      "value171", "key171@odata.type": "Edm.String", "key172": "value172", "key172@odata.type":
+      "Edm.String", "key173": "value173", "key173@odata.type": "Edm.String", "key174":
+      "value174", "key174@odata.type": "Edm.String", "key175": "value175", "key175@odata.type":
+      "Edm.String", "key176": "value176", "key176@odata.type": "Edm.String", "key177":
+      "value177", "key177@odata.type": "Edm.String", "key178": "value178", "key178@odata.type":
+      "Edm.String", "key179": "value179", "key179@odata.type": "Edm.String", "key180":
+      "value180", "key180@odata.type": "Edm.String", "key181": "value181", "key181@odata.type":
+      "Edm.String", "key182": "value182", "key182@odata.type": "Edm.String", "key183":
+      "value183", "key183@odata.type": "Edm.String", "key184": "value184", "key184@odata.type":
+      "Edm.String", "key185": "value185", "key185@odata.type": "Edm.String", "key186":
+      "value186", "key186@odata.type": "Edm.String", "key187": "value187", "key187@odata.type":
+      "Edm.String", "key188": "value188", "key188@odata.type": "Edm.String", "key189":
+      "value189", "key189@odata.type": "Edm.String", "key190": "value190", "key190@odata.type":
+      "Edm.String", "key191": "value191", "key191@odata.type": "Edm.String", "key192":
+      "value192", "key192@odata.type": "Edm.String", "key193": "value193", "key193@odata.type":
+      "Edm.String", "key194": "value194", "key194@odata.type": "Edm.String", "key195":
+      "value195", "key195@odata.type": "Edm.String", "key196": "value196", "key196@odata.type":
+      "Edm.String", "key197": "value197", "key197@odata.type": "Edm.String", "key198":
+      "value198", "key198@odata.type": "Edm.String", "key199": "value199", "key199@odata.type":
+      "Edm.String", "key200": "value200", "key200@odata.type": "Edm.String", "key201":
+      "value201", "key201@odata.type": "Edm.String", "key202": "value202", "key202@odata.type":
+      "Edm.String", "key203": "value203", "key203@odata.type": "Edm.String", "key204":
+      "value204", "key204@odata.type": "Edm.String", "key205": "value205", "key205@odata.type":
+      "Edm.String", "key206": "value206", "key206@odata.type": "Edm.String", "key207":
+      "value207", "key207@odata.type": "Edm.String", "key208": "value208", "key208@odata.type":
+      "Edm.String", "key209": "value209", "key209@odata.type": "Edm.String", "key210":
+      "value210", "key210@odata.type": "Edm.String", "key211": "value211", "key211@odata.type":
+      "Edm.String", "key212": "value212", "key212@odata.type": "Edm.String", "key213":
+      "value213", "key213@odata.type": "Edm.String", "key214": "value214", "key214@odata.type":
+      "Edm.String", "key215": "value215", "key215@odata.type": "Edm.String", "key216":
+      "value216", "key216@odata.type": "Edm.String", "key217": "value217", "key217@odata.type":
+      "Edm.String", "key218": "value218", "key218@odata.type": "Edm.String", "key219":
+      "value219", "key219@odata.type": "Edm.String", "key220": "value220", "key220@odata.type":
+      "Edm.String", "key221": "value221", "key221@odata.type": "Edm.String", "key222":
+      "value222", "key222@odata.type": "Edm.String", "key223": "value223", "key223@odata.type":
+      "Edm.String", "key224": "value224", "key224@odata.type": "Edm.String", "key225":
+      "value225", "key225@odata.type": "Edm.String", "key226": "value226", "key226@odata.type":
+      "Edm.String", "key227": "value227", "key227@odata.type": "Edm.String", "key228":
+      "value228", "key228@odata.type": "Edm.String", "key229": "value229", "key229@odata.type":
+      "Edm.String", "key230": "value230", "key230@odata.type": "Edm.String", "key231":
+      "value231", "key231@odata.type": "Edm.String", "key232": "value232", "key232@odata.type":
+      "Edm.String", "key233": "value233", "key233@odata.type": "Edm.String", "key234":
+      "value234", "key234@odata.type": "Edm.String", "key235": "value235", "key235@odata.type":
+      "Edm.String", "key236": "value236", "key236@odata.type": "Edm.String", "key237":
+      "value237", "key237@odata.type": "Edm.String", "key238": "value238", "key238@odata.type":
+      "Edm.String", "key239": "value239", "key239@odata.type": "Edm.String", "key240":
+      "value240", "key240@odata.type": "Edm.String", "key241": "value241", "key241@odata.type":
+      "Edm.String", "key242": "value242", "key242@odata.type": "Edm.String", "key243":
+      "value243", "key243@odata.type": "Edm.String", "key244": "value244", "key244@odata.type":
+      "Edm.String", "key245": "value245", "key245@odata.type": "Edm.String", "key246":
+      "value246", "key246@odata.type": "Edm.String", "key247": "value247", "key247@odata.type":
+      "Edm.String", "key248": "value248", "key248@odata.type": "Edm.String", "key249":
+      "value249", "key249@odata.type": "Edm.String", "key250": "value250", "key250@odata.type":
+      "Edm.String", "key251": "value251", "key251@odata.type": "Edm.String", "key252":
+      "value252", "key252@odata.type": "Edm.String", "key253": "value253", "key253@odata.type":
+      "Edm.String", "key254": "value254", "key254@odata.type": "Edm.String"}'
     headers:
       Accept:
       - application/json;odata=minimalmetadata
@@ -241,33 +227,33 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '15425'
+      - '14335'
       Content-Type:
       - application/json;odata=nometadata
       DataServiceVersion:
       - '3.0'
       Date:
-      - Fri, 04 Sep 2020 23:53:53 GMT
+      - Sat, 05 Sep 2020 00:18:03 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b1 Python/2.7.18 (Windows-10-10.0.19041)
+      - azsdk-python-data-tables/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 04 Sep 2020 23:53:53 GMT
+      - Sat, 05 Sep 2020 00:18:03 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
-    uri: !!python/unicode https://storagename.table.core.windows.net/uttable97d21773
+    uri: https://storagename.table.core.windows.net/uttable97d21773
   response:
     body:
-      string: !!python/unicode '{"odata.error":{"code":"TooManyProperties","message":{"lang":"en-US","value":"The
+      string: '{"odata.error":{"code":"TooManyProperties","message":{"lang":"en-US","value":"The
         entity contains more properties than allowed. Each entity can include up to
-        252 properties to store data. Each entity also has 3 system properties.\nRequestId:c25890f2-4002-0063-3d16-835e15000000\nTime:2020-09-04T23:53:53.7215477Z"}}}'
+        252 properties to store data. Each entity also has 3 system properties.\nRequestId:e24714ae-7002-001d-7c1a-835fdd000000\nTime:2020-09-05T00:18:03.6890088Z"}}}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Fri, 04 Sep 2020 23:53:53 GMT
+      - Sat, 05 Sep 2020 00:18:03 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -291,25 +277,25 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Fri, 04 Sep 2020 23:53:53 GMT
+      - Sat, 05 Sep 2020 00:18:03 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b1 Python/2.7.18 (Windows-10-10.0.19041)
+      - azsdk-python-data-tables/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 04 Sep 2020 23:53:53 GMT
+      - Sat, 05 Sep 2020 00:18:03 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
-    uri: !!python/unicode https://storagename.table.core.windows.net/Tables('uttable97d21773')
+    uri: https://storagename.table.core.windows.net/Tables('uttable97d21773')
   response:
     body:
-      string: !!python/unicode 
+      string: ''
     headers:
       cache-control:
       - no-cache
       content-length:
       - '0'
       date:
-      - Fri, 04 Sep 2020 23:53:53 GMT
+      - Sat, 05 Sep 2020 00:18:03 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options:

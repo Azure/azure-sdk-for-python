@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: !!python/unicode '{"TableName": "uttablee10d18a6"}'
+    body: '{"TableName": "uttablee10d18a6"}'
     headers:
       Accept:
       - application/json;odata=minimalmetadata
@@ -15,27 +15,27 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Fri, 04 Sep 2020 23:53:52 GMT
+      - Sat, 05 Sep 2020 00:18:02 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b1 Python/2.7.18 (Windows-10-10.0.19041)
+      - azsdk-python-data-tables/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 04 Sep 2020 23:53:52 GMT
+      - Sat, 05 Sep 2020 00:18:02 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
-    uri: !!python/unicode https://storagename.table.core.windows.net/Tables
+    uri: https://storagename.table.core.windows.net/Tables
   response:
     body:
-      string: !!python/unicode '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#Tables/@Element","TableName":"uttablee10d18a6"}'
+      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#Tables/@Element","TableName":"uttablee10d18a6"}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Fri, 04 Sep 2020 23:53:52 GMT
+      - Sat, 05 Sep 2020 00:18:02 GMT
       location:
-      - !!python/unicode https://storagename.table.core.windows.net/Tables('uttablee10d18a6')
+      - https://storagename.table.core.windows.net/Tables('uttablee10d18a6')
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -48,10 +48,10 @@ interactions:
       code: 201
       message: Created
 - request:
-    body: !!python/unicode '{"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa":
-      "YmFkdmFs", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@odata.type":
-      "Edm.Binary", "RowKey@odata.type": "Edm.String", "PartitionKey@odata.type":
-      "Edm.String", "PartitionKey": "pke10d18a6", "RowKey": "rke10d18a6"}'
+    body: '{"PartitionKey": "pke10d18a6", "PartitionKey@odata.type": "Edm.String",
+      "RowKey": "rke10d18a6", "RowKey@odata.type": "Edm.String", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa":
+      "badval", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@odata.type":
+      "Edm.String"}'
     headers:
       Accept:
       - application/json;odata=minimalmetadata
@@ -60,32 +60,32 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '687'
+      - '685'
       Content-Type:
       - application/json;odata=nometadata
       DataServiceVersion:
       - '3.0'
       Date:
-      - Fri, 04 Sep 2020 23:53:53 GMT
+      - Sat, 05 Sep 2020 00:18:03 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b1 Python/2.7.18 (Windows-10-10.0.19041)
+      - azsdk-python-data-tables/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 04 Sep 2020 23:53:53 GMT
+      - Sat, 05 Sep 2020 00:18:03 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
-    uri: !!python/unicode https://storagename.table.core.windows.net/uttablee10d18a6
+    uri: https://storagename.table.core.windows.net/uttablee10d18a6
   response:
     body:
-      string: !!python/unicode '{"odata.error":{"code":"PropertyNameTooLong","message":{"lang":"en-US","value":"The
-        property name exceeds the maximum allowed length (255).\nRequestId:8ae78643-d002-006d-4e16-83b21e000000\nTime:2020-09-04T23:53:53.1940395Z"}}}'
+      string: '{"odata.error":{"code":"PropertyNameTooLong","message":{"lang":"en-US","value":"The
+        property name exceeds the maximum allowed length (255).\nRequestId:ad9fdcc3-5002-0067-031a-833590000000\nTime:2020-09-05T00:18:03.4300385Z"}}}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Fri, 04 Sep 2020 23:53:52 GMT
+      - Sat, 05 Sep 2020 00:18:02 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -109,25 +109,25 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Fri, 04 Sep 2020 23:53:53 GMT
+      - Sat, 05 Sep 2020 00:18:03 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b1 Python/2.7.18 (Windows-10-10.0.19041)
+      - azsdk-python-data-tables/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 04 Sep 2020 23:53:53 GMT
+      - Sat, 05 Sep 2020 00:18:03 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
-    uri: !!python/unicode https://storagename.table.core.windows.net/Tables('uttablee10d18a6')
+    uri: https://storagename.table.core.windows.net/Tables('uttablee10d18a6')
   response:
     body:
-      string: !!python/unicode 
+      string: ''
     headers:
       cache-control:
       - no-cache
       content-length:
       - '0'
       date:
-      - Fri, 04 Sep 2020 23:53:52 GMT
+      - Sat, 05 Sep 2020 00:18:02 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options:

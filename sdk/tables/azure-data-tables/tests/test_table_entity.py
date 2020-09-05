@@ -151,9 +151,9 @@ class StorageTableEntityTest(TableTestCase):
         return {
             'PartitionKey': partition,
             'RowKey': row,
-            'age': 'abc',
-            'sex': 'female',
-            'sign': 'aquarius',
+            'age': u'abc',
+            'sex': u'female',
+            'sign': u'aquarius',
             'birthday': datetime(1991, 10, 4, tzinfo=tzutc())
         }
 

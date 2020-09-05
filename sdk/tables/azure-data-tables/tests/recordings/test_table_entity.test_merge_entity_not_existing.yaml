@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: !!python/unicode '{"TableName": "uttablee64a13f7"}'
+    body: '{"TableName": "uttablee64a13f7"}'
     headers:
       Accept:
       - application/json;odata=minimalmetadata
@@ -15,27 +15,27 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Fri, 04 Sep 2020 23:53:58 GMT
+      - Sat, 05 Sep 2020 00:18:06 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b1 Python/2.7.18 (Windows-10-10.0.19041)
+      - azsdk-python-data-tables/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 04 Sep 2020 23:53:58 GMT
+      - Sat, 05 Sep 2020 00:18:06 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
-    uri: !!python/unicode https://storagename.table.core.windows.net/Tables
+    uri: https://storagename.table.core.windows.net/Tables
   response:
     body:
-      string: !!python/unicode '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#Tables/@Element","TableName":"uttablee64a13f7"}'
+      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#Tables/@Element","TableName":"uttablee64a13f7"}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Fri, 04 Sep 2020 23:53:58 GMT
+      - Sat, 05 Sep 2020 00:18:06 GMT
       location:
-      - !!python/unicode https://storagename.table.core.windows.net/Tables('uttablee64a13f7')
+      - https://storagename.table.core.windows.net/Tables('uttablee64a13f7')
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -48,11 +48,11 @@ interactions:
       code: 201
       message: Created
 - request:
-    body: !!python/unicode '{"sex@odata.type": "Edm.Binary", "age@odata.type": "Edm.Binary",
-      "PartitionKey": "pke64a13f7", "RowKey@odata.type": "Edm.String", "PartitionKey@odata.type":
-      "Edm.String", "age": "YWJj", "sex": "ZmVtYWxl", "birthday@odata.type": "Edm.DateTime",
-      "birthday": "1991-10-04T00:00:00Z", "RowKey": "rke64a13f7", "sign": "YXF1YXJpdXM=",
-      "sign@odata.type": "Edm.Binary"}'
+    body: '{"PartitionKey": "pke64a13f7", "PartitionKey@odata.type": "Edm.String",
+      "RowKey": "rke64a13f7", "RowKey@odata.type": "Edm.String", "age": "abc", "age@odata.type":
+      "Edm.String", "sex": "female", "sex@odata.type": "Edm.String", "sign": "aquarius",
+      "sign@odata.type": "Edm.String", "birthday": "1991-10-04T00:00:00Z", "birthday@odata.type":
+      "Edm.DateTime"}'
     headers:
       Accept:
       - application/json
@@ -61,34 +61,34 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '360'
+      - '353'
       Content-Type:
       - application/json
       DataServiceVersion:
       - '3.0'
       Date:
-      - Fri, 04 Sep 2020 23:53:58 GMT
+      - Sat, 05 Sep 2020 00:18:07 GMT
       If-Match:
       - '*'
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b1 Python/2.7.18 (Windows-10-10.0.19041)
+      - azsdk-python-data-tables/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 04 Sep 2020 23:53:58 GMT
+      - Sat, 05 Sep 2020 00:18:07 GMT
       x-ms-version:
       - '2019-02-02'
     method: PATCH
-    uri: !!python/unicode https://storagename.table.core.windows.net/uttablee64a13f7(PartitionKey='pke64a13f7',RowKey='rke64a13f7')
+    uri: https://storagename.table.core.windows.net/uttablee64a13f7(PartitionKey='pke64a13f7',RowKey='rke64a13f7')
   response:
     body:
-      string: !!python/unicode '{"odata.error":{"code":"ResourceNotFound","message":{"lang":"en-US","value":"The
-        specified resource does not exist.\nRequestId:e7e57fa5-e002-0065-5716-83a96d000000\nTime:2020-09-04T23:53:58.7798438Z"}}}'
+      string: '{"odata.error":{"code":"ResourceNotFound","message":{"lang":"en-US","value":"The
+        specified resource does not exist.\nRequestId:942742c7-8002-0047-2b1a-83595c000000\nTime:2020-09-05T00:18:07.1202510Z"}}}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Fri, 04 Sep 2020 23:53:58 GMT
+      - Sat, 05 Sep 2020 00:18:06 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -112,25 +112,25 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Fri, 04 Sep 2020 23:53:58 GMT
+      - Sat, 05 Sep 2020 00:18:07 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b1 Python/2.7.18 (Windows-10-10.0.19041)
+      - azsdk-python-data-tables/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 04 Sep 2020 23:53:58 GMT
+      - Sat, 05 Sep 2020 00:18:07 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
-    uri: !!python/unicode https://storagename.table.core.windows.net/Tables('uttablee64a13f7')
+    uri: https://storagename.table.core.windows.net/Tables('uttablee64a13f7')
   response:
     body:
-      string: !!python/unicode 
+      string: ''
     headers:
       cache-control:
       - no-cache
       content-length:
       - '0'
       date:
-      - Fri, 04 Sep 2020 23:53:58 GMT
+      - Sat, 05 Sep 2020 00:18:06 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options:
