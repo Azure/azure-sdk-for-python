@@ -49,6 +49,8 @@ Both [sync version](./sync_samples) and [async version](./async_samples) of samp
     - Cancel scheduled messages from a topic
 - [client_identity_authentication.py](./sync_samples/client_identity_authentication.py) ([async_version](./async_samples/client_identity_authentication_async.py)) - Examples to authenticate the client by Azure Activate Directory
     - Authenticate and create the client utilizing the `azure.identity` library
+- [authenticate_client_connstr.py](./sync_samples/authenticate_client_connstr.py) ([async_version](./async_samples/authenticate_client_connstr_async.py)) - Examples to authenticate the client by Connection String
+    - Authenticate and create the client utilizing the connection string available in the Azure portal or via Azure CLI.
 - [proxy.py](./sync_samples/proxy.py) ([async_version](./async_samples/proxy_async.py)) - Examples to send message behind a proxy:
     - Send message behind a proxy
 - [auto_lock_renew.py](./sync_samples/auto_lock_renew.py) ([async_version](./async_samples/auto_lock_renew_async.py)) - Examples to show usage of AutoLockRenew:

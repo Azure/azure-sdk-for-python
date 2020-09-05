@@ -148,7 +148,7 @@ class StorageTableEntityTest(TableTestCase):
         '''
         Asserts that the entity passed in matches the default entity.
         '''
-        self.assertEqual(entity['age'], 39)
+        self.assertEqual(entity['age'].value, 39)
         self.assertEqual(entity['sex'], 'male')
         self.assertEqual(entity['married'], True)
         self.assertEqual(entity['deceased'], False)
@@ -156,7 +156,7 @@ class StorageTableEntityTest(TableTestCase):
         self.assertFalse("aquarius" in entity)
         self.assertEqual(entity['ratio'], 3.1)
         self.assertEqual(entity['evenratio'], 3.0)
-        self.assertEqual(entity['large'], 933311100)
+        self.assertEqual(entity['large'].value, 933311100)
         self.assertEqual(entity['Birthday'], datetime(1973, 10, 4, tzinfo=tzutc()))
         self.assertEqual(entity['birthday'], datetime(1970, 10, 4, tzinfo=tzutc()))
         self.assertEqual(entity['binary'].value, b'binary')
@@ -176,7 +176,7 @@ class StorageTableEntityTest(TableTestCase):
         '''
         Asserts that the entity passed in matches the default entity.
         '''
-        self.assertEqual(entity['age'], 39)
+        self.assertEqual(entity['age'].value, 39)
         self.assertEqual(entity['sex'], 'male')
         self.assertEqual(entity['married'], True)
         self.assertEqual(entity['deceased'], False)
@@ -184,7 +184,7 @@ class StorageTableEntityTest(TableTestCase):
         self.assertFalse("aquarius" in entity)
         self.assertEqual(entity['ratio'], 3.1)
         self.assertEqual(entity['evenratio'], 3.0)
-        self.assertEqual(entity['large'], 933311100)
+        self.assertEqual(entity['large'].value, 933311100)
         self.assertEqual(entity['Birthday'], datetime(1973, 10, 4, tzinfo=tzutc()))
         self.assertEqual(entity['birthday'], datetime(1970, 10, 4, tzinfo=tzutc()))
         self.assertEqual(entity['binary'].value, b'binary')
@@ -208,7 +208,7 @@ class StorageTableEntityTest(TableTestCase):
         '''
         Asserts that the entity passed in matches the default entity.
         '''
-        self.assertEqual(entity['age'], '39')
+        self.assertEqual(entity['age'].value, 39)
         self.assertEqual(entity['sex'], 'male')
         self.assertEqual(entity['married'], True)
         self.assertEqual(entity['deceased'], False)
@@ -216,7 +216,7 @@ class StorageTableEntityTest(TableTestCase):
         self.assertFalse("aquarius" in entity)
         self.assertEqual(entity['ratio'], 3.1)
         self.assertEqual(entity['evenratio'], 3.0)
-        self.assertEqual(entity['large'], '933311100')
+        self.assertEqual(entity['large'].value, 933311100)
         self.assertTrue(entity['Birthday'].startswith('1973-10-04T00:00:00'))
         self.assertTrue(entity['birthday'].startswith('1970-10-04T00:00:00'))
         self.assertTrue(entity['Birthday'].endswith('00Z'))
@@ -270,7 +270,7 @@ class StorageTableEntityTest(TableTestCase):
         self.assertEqual(entity.sign, 'aquarius')
         self.assertEqual(entity.ratio, 3.1)
         self.assertEqual(entity.evenratio, 3.0)
-        self.assertEqual(entity.large, 933311100)
+        self.assertEqual(entity.large.value, 933311100)
         self.assertEqual(entity.Birthday, datetime(1973, 10, 4, tzinfo=tzutc()))
         self.assertEqual(entity.birthday, datetime(1991, 10, 4, tzinfo=tzutc()))
         self.assertIsInstance(entity.other, EntityProperty)
@@ -1532,7 +1532,7 @@ class StorageTableEntityTest(TableTestCase):
 
             # Assert
             self.assertEqual(len(entities), 2)
-            self.assertEqual(entities[0].age, 39)
+            self.assertEqual(entities[0].age.value, 39)
             self.assertEqual(entities[0].sex, 'male')
             self.assertFalse(hasattr(entities[0], "birthday"))
             self.assertFalse(hasattr(entities[0], "married"))

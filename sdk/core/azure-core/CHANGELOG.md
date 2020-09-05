@@ -1,8 +1,11 @@
 
 # Release History
 
-## 1.8.1 (Unreleased)
+## 1.8.1 (2020-09-08)
 
+### Bug fixes
+
+- SAS credential replicated "/" fix #13159
 
 ## 1.8.0 (2020-08-10)
 

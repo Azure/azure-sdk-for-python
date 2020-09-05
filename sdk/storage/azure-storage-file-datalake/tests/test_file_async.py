@@ -716,6 +716,44 @@ class FileTest(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_rename_file_to_existing_file())
 
+    async def _test_rename_file_with_file_sas(self):
+        # SAS URL is calculated from storage key, so this test runs live only
+        if TestMode.need_recording_file(self.test_mode):
+            return
+        token = generate_file_sas(self.dsc.account_name,
+                                  self.file_system_name,
+                                  None,
+                                  "oldfile",
+                                  self.settings.STORAGE_DATA_LAKE_ACCOUNT_KEY,
+                                  permission=FileSasPermissions(read=True, create=True, write=True, delete=True),
+                                  expiry=datetime.utcnow() + timedelta(hours=1),
+                                  )
+
+        new_token = generate_file_sas(self.dsc.account_name,
+                                      self.file_system_name,
+                                      None,
+                                      "newname",
+                                      self.settings.STORAGE_DATA_LAKE_ACCOUNT_KEY,
+                                      permission=FileSasPermissions(read=True, create=True, write=True, delete=True),
+                                      expiry=datetime.utcnow() + timedelta(hours=1),
+                                      )
+
+        # read the created file which is under root directory
+        file_client = DataLakeFileClient(self.dsc.url, self.file_system_name, "oldfile", credential=token)
+        await file_client.create_file()
+        data_bytes = b"abc"
+        await file_client.append_data(data_bytes, 0, 3)
+        await file_client.flush_data(3)
+        new_client = await file_client.rename_file(file_client.file_system_name+'/'+'newname'+'?'+new_token)
+
+        data = await (await new_client.download_file()).readall()
+        self.assertEqual(data, data_bytes)
+        self.assertEqual(new_client.path_name, "newname")
+
+    def test_rename_file_with_file_sas_async(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_rename_file_with_file_sas())
+
     async def _test_rename_file_will_not_change_existing_directory(self):
         if TestMode.need_recording_file(self.test_mode):
             return
