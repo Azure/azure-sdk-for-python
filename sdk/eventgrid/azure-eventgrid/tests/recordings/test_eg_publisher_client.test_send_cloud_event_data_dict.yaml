@@ -1,7 +1,7 @@
 interactions:
 - request:
-    body: '[{"id": "51c18497-2a25-45f1-b9ba-fdaf08c00263", "source": "http://samplesource.dev",
-      "data": {"sample": "cloudevent"}, "type": "Sample.Cloud.Event", "time": "2020-08-19T03:36:42.304479Z",
+    body: '[{"id": "51c747e0-7e8f-467c-80e4-920fdf1d95d2", "source": "http://samplesource.dev",
+      "data": {"sample": "cloudevent"}, "type": "Sample.Cloud.Event", "time": "2020-09-03T21:37:14.383108Z",
       "specversion": "1.0"}]'
     headers:
       Accept:
@@ -16,8 +16,6 @@ interactions:
       - application/cloudevents-batch+json; charset=utf-8
       User-Agent:
       - azsdk-python-eventgridpublisherclient/unknown Python/3.7.3 (Windows-10-10.0.18362-SP0)
-      aeg-sas-key:
-      - dHUaOOg5xRj+D7iH/AC92GyHweLx9ugrDuMDg4e5Xvw=
     method: POST
     uri: https://cloudeventgridtestegtopic.westus-1.eventgrid.azure.net/api/events?api-version=2018-01-01
   response:
@@ -29,7 +27,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 19 Aug 2020 03:36:43 GMT
+      - Thu, 03 Sep 2020 21:37:12 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:

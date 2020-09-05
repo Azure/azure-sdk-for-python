@@ -65,10 +65,15 @@ For example, `https://<my-custom-subdomain>.cognitiveservices.azure.com/`.
 Install the Azure Text Analytics client library for Python with [pip][pip]:
 
 ```bash
-pip install azure-ai-textanalytics
+pip install azure-ai-textanalytics --pre
 ```
+> This table shows the relationship between SDK versions and supported API versions of the service
+>| SDK version      | Supported API version of service |
+>| ----------- | ----------- |
+>| Latest GA release (can be installed by removing the `--pre` flag)      | 3.0       |
+>| Latest release (beta)   | 3.0, 3.1-preview        |
 
-> Note: This version of the client library supports the v3.0 version of the Text Analytics service
+
 
 ### Authenticate the client
 #### Get the endpoint

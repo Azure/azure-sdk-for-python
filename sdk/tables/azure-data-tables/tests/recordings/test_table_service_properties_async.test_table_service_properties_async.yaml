@@ -12,11 +12,11 @@ interactions:
       Content-Type:
       - application/xml
       Date:
-      - Fri, 04 Sep 2020 23:47:14 GMT
+      - Fri, 04 Sep 2020 23:58:56 GMT
       User-Agent:
       - azsdk-python-data-tables/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 04 Sep 2020 23:47:14 GMT
+      - Fri, 04 Sep 2020 23:58:56 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -25,25 +25,25 @@ interactions:
     body:
       string: ''
     headers:
-      date: Fri, 04 Sep 2020 23:47:14 GMT
+      date: Fri, 04 Sep 2020 23:58:56 GMT
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-ms-version: '2019-02-02'
     status:
       code: 202
       message: Accepted
-    url: https://pyacrstorage54hu5ws5glex.table.core.windows.net/?restype=service&comp=properties
+    url: https://pyacrstorageok324lpz7akw.table.core.windows.net/?restype=service&comp=properties
 - request:
     body: null
     headers:
       Accept:
       - application/xml
       Date:
-      - Fri, 04 Sep 2020 23:47:44 GMT
+      - Fri, 04 Sep 2020 23:59:26 GMT
       User-Agent:
       - azsdk-python-data-tables/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 04 Sep 2020 23:47:44 GMT
+      - Fri, 04 Sep 2020 23:59:26 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
@@ -54,12 +54,12 @@ interactions:
         /></StorageServiceProperties>"
     headers:
       content-type: application/xml
-      date: Fri, 04 Sep 2020 23:47:44 GMT
+      date: Fri, 04 Sep 2020 23:59:26 GMT
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-ms-version: '2019-02-02'
     status:
       code: 200
       message: OK
-    url: https://pyacrstorage54hu5ws5glex.table.core.windows.net/?restype=service&comp=properties
+    url: https://pyacrstorageok324lpz7akw.table.core.windows.net/?restype=service&comp=properties
 version: 1
