@@ -15,11 +15,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Wed, 02 Sep 2020 21:28:58 GMT
+      - Sat, 05 Sep 2020 00:18:13 GMT
       User-Agent:
       - azsdk-python-data-tables/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 02 Sep 2020 21:28:58 GMT
+      - Sat, 05 Sep 2020 00:18:13 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
@@ -33,7 +33,7 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Wed, 02 Sep 2020 21:28:58 GMT
+      - Sat, 05 Sep 2020 00:18:13 GMT
       location:
       - https://storagename.table.core.windows.net/Tables('uttable973c1208')
       server:
@@ -48,12 +48,13 @@ interactions:
       code: 201
       message: Created
 - request:
-    body: '{"PartitionKey": "pk973c1208", "RowKey": "rk973c1208", "age": 39, "sex":
-      "male", "married": true, "deceased": false, "ratio": 3.1, "evenratio": 3.0,
-      "large": 933311100, "Birthday": "1973-10-04T00:00:00Z", "Birthday@odata.type":
-      "Edm.DateTime", "birthday": "1970-10-04T00:00:00Z", "birthday@odata.type": "Edm.DateTime",
-      "binary": "YmluYXJ5", "binary@odata.type": "Edm.Binary", "other": 20, "clsid":
-      "c9da6455-213d-42c9-9a79-3e9149a57833", "clsid@odata.type": "Edm.Guid"}'
+    body: '{"PartitionKey": "pk973c1208", "PartitionKey@odata.type": "Edm.String",
+      "RowKey": "rk973c1208", "RowKey@odata.type": "Edm.String", "age": 39, "sex":
+      "male", "sex@odata.type": "Edm.String", "married": true, "deceased": false,
+      "ratio": 3.1, "evenratio": 3.0, "large": 933311100, "Birthday": "1973-10-04T00:00:00Z",
+      "Birthday@odata.type": "Edm.DateTime", "birthday": "1970-10-04T00:00:00Z", "birthday@odata.type":
+      "Edm.DateTime", "binary": "YmluYXJ5", "binary@odata.type": "Edm.Binary", "other":
+      20, "clsid": "c9da6455-213d-42c9-9a79-3e9149a57833", "clsid@odata.type": "Edm.Guid"}'
     headers:
       Accept:
       - application/json;odata=minimalmetadata
@@ -62,32 +63,32 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '469'
+      - '577'
       Content-Type:
       - application/json;odata=nometadata
       DataServiceVersion:
       - '3.0'
       Date:
-      - Wed, 02 Sep 2020 21:28:58 GMT
+      - Sat, 05 Sep 2020 00:18:13 GMT
       User-Agent:
       - azsdk-python-data-tables/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 02 Sep 2020 21:28:58 GMT
+      - Sat, 05 Sep 2020 00:18:13 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
-    uri: https://storagename.table.core.windows.net/uttable973c1208?se=2020-09-02T22%3A28%3A58Z&sp=a&sv=2019-02-02&tn=uttable973c1208&spk=test&srk=test1&epk=test&erk=test1&sig=4Cx5TAZJsDPPIeP4fXXn7wQFQyBOqIb93NMKv7u7HiI%3D
+    uri: https://storagename.table.core.windows.net/uttable973c1208?se=2020-09-05T01%3A18%3A13Z&sp=a&sv=2019-02-02&tn=uttable973c1208&spk=test&srk=test1&epk=test&erk=test1&sig=If2P5bKKSTLb%2BjiR6dV%2F%2B%2F6RCV%2FlpG5j1b2ByI1%2F8IU%3D
   response:
     body:
       string: '{"odata.error":{"code":"AuthorizationFailure","message":{"lang":"en-US","value":"This
-        request is not authorized to perform this operation.\nRequestId:b77115cc-7002-008c-5e70-81326d000000\nTime:2020-09-02T21:28:59.3114179Z"}}}'
+        request is not authorized to perform this operation.\nRequestId:ecb03e07-f002-0043-571a-83acde000000\nTime:2020-09-05T00:18:13.5133218Z"}}}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Wed, 02 Sep 2020 21:28:58 GMT
+      - Sat, 05 Sep 2020 00:18:13 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -111,11 +112,11 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Wed, 02 Sep 2020 21:28:58 GMT
+      - Sat, 05 Sep 2020 00:18:13 GMT
       User-Agent:
       - azsdk-python-data-tables/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 02 Sep 2020 21:28:58 GMT
+      - Sat, 05 Sep 2020 00:18:13 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
@@ -129,7 +130,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 02 Sep 2020 21:28:58 GMT
+      - Sat, 05 Sep 2020 00:18:13 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options:

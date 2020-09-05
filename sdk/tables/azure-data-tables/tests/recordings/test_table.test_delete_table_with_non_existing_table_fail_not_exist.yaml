@@ -11,26 +11,26 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Wed, 02 Sep 2020 21:28:35 GMT
+      - Fri, 04 Sep 2020 23:53:33 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b1 Python/2.7.18 (Windows-10-10.0.19041)
       x-ms-date:
-      - Wed, 02 Sep 2020 21:28:35 GMT
+      - Fri, 04 Sep 2020 23:53:33 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
-    uri: https://storagename.table.core.windows.net/Tables('pytablesynca12c1b7c')
+    uri: !!python/unicode https://storagename.table.core.windows.net/Tables('pytablesynca12c1b7c')
   response:
     body:
-      string: '{"odata.error":{"code":"ResourceNotFound","message":{"lang":"en-US","value":"The
-        specified resource does not exist.\nRequestId:cf8063ed-c002-0099-2770-8125de000000\nTime:2020-09-02T21:28:36.4489653Z"}}}'
+      string: !!python/unicode '{"odata.error":{"code":"ResourceNotFound","message":{"lang":"en-US","value":"The
+        specified resource does not exist.\nRequestId:d5f391d6-2002-0037-6016-83b49f000000\nTime:2020-09-04T23:53:34.1838558Z"}}}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Wed, 02 Sep 2020 21:28:35 GMT
+      - Fri, 04 Sep 2020 23:53:33 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
