@@ -14,7 +14,7 @@ from ._models import QueueRuntimeProperties, QueueProperties, TopicRuntimeProper
     SqlRuleAction
 
 __all__ = [
-    'ServiceBusManagementClient',
+    'ServiceBusAdministrationClient',
     'AuthorizationRule',
     'MessageCountDetails',
     'QueueProperties',

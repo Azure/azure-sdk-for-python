@@ -17,7 +17,7 @@ Example to show managing queue entities under a ServiceBus Namespace, including
 # pylint: disable=C0111
 
 import os
-from azure.servicebus.management import ServiceBusManagementClient
+from azure.servicebus.management import ServiceBusAdministrationClient
 
 CONNECTION_STR = os.environ['SERVICE_BUS_CONNECTION_STR']
 QUEUE_NAME = "sb_mgmt_demo_queue"
@@ -70,7 +70,7 @@ def get_queue_runtime_info(servicebus_mgmt_client):
     print("")
 
 
-with ServiceBusManagementClient.from_connection_string(CONNECTION_STR) as servicebus_mgmt_client:
+with ServiceBusAdministrationClient.from_connection_string(CONNECTION_STR) as servicebus_mgmt_client:
     create_queue(servicebus_mgmt_client)
     list_queues(servicebus_mgmt_client)
     get_and_update_queue(servicebus_mgmt_client)
