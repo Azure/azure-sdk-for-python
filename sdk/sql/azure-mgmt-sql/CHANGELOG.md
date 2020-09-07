@@ -1,5 +1,30 @@
 # Release History
 
+## 0.21.0 (2020-09-03)
+
+**Features**
+
+  - Model DatabaseUpdate has a new parameter storage_account_type
+  - Model Database has a new parameter storage_account_type
+  - Model BackupShortTermRetentionPolicy has a new parameter diff_backup_interval_in_hours
+  - Model ManagedInstance has a new parameter storage_account_type
+  - Model ManagedInstance has a new parameter provisioning_state
+  - Model ManagedInstanceUpdate has a new parameter storage_account_type
+  - Model ManagedInstanceUpdate has a new parameter provisioning_state
+  - Added operation DatabasesOperations.list_inaccessible_by_server
+  - Added operation ServersOperations.import_database
+  - Added operation group ImportExportOperations
+  - Added operation group ServerAzureADOnlyAuthenticationsOperations
+  - Added operation group ManagedInstanceAzureADOnlyAuthenticationsOperations
+
+**Breaking changes**
+
+  - Operation BackupShortTermRetentionPoliciesOperations.create_or_update has a new signature
+  - Operation BackupShortTermRetentionPoliciesOperations.update has a new signature
+  - Removed operation DatabasesOperations.import_method
+  - Removed operation DatabasesOperations.create_import_operation
+  - Removed operation ServerAzureADAdministratorsOperations.disable_azure_ad_only_authentication
+
 ## 0.20.0 (2020-06-22)
 
 **Features**
