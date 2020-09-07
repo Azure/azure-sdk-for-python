@@ -20,6 +20,7 @@ from .operations_async import DiagnosticSettingsCategoryOperations
 from .operations_async import DiagnosticSettingsOperations
 from .operations_async import MetricDefinitionsOperations
 from .operations_async import MetricsOperations
+from .operations_async import SubscriptionDiagnosticSettingsOperations
 from .. import models
 
 
@@ -34,6 +35,8 @@ class MonitorClient(object):
     :vartype metric_definitions: $(python-base-namespace).v2017_05_01_preview.aio.operations_async.MetricDefinitionsOperations
     :ivar metrics: MetricsOperations operations
     :vartype metrics: $(python-base-namespace).v2017_05_01_preview.aio.operations_async.MetricsOperations
+    :ivar subscription_diagnostic_settings: SubscriptionDiagnosticSettingsOperations operations
+    :vartype subscription_diagnostic_settings: $(python-base-namespace).v2017_05_01_preview.aio.operations_async.SubscriptionDiagnosticSettingsOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param str base_url: Service URL
@@ -62,6 +65,8 @@ class MonitorClient(object):
         self.metric_definitions = MetricDefinitionsOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.metrics = MetricsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.subscription_diagnostic_settings = SubscriptionDiagnosticSettingsOperations(
             self._client, self._config, self._serialize, self._deserialize)
 
     async def close(self) -> None:

@@ -35,7 +35,8 @@
         "diagnostic_settings_category": "DiagnosticSettingsCategoryOperations",
         "diagnostic_settings": "DiagnosticSettingsOperations",
         "metric_definitions": "MetricDefinitionsOperations",
-        "metrics": "MetricsOperations"
+        "metrics": "MetricsOperations",
+        "subscription_diagnostic_settings": "SubscriptionDiagnosticSettingsOperations"
     },
     "operation_mixins": {
     },
