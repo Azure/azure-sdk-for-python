@@ -26,19 +26,6 @@ class StatusLevelTypes(str, Enum):
     error = "Error"
 
 
-class SkuTier(str, Enum):
-
-    free = "Free"
-    basic = "Basic"
-    standard = "Standard"
-    premium = "Premium"
-
-
-class ResourceIdentityType(str, Enum):
-
-    system_assigned = "SystemAssigned"
-
-
 class InstanceViewTypes(str, Enum):
 
     instance_view = "instanceView"
