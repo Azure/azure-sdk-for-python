@@ -159,7 +159,104 @@ class ErrorDetail(Model):
 
 
 class ErrorResponse(Model):
+    """Error response.
+
+    Contains details when the response code indicates an error.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param error: Required. The error details.
+    :type error: ~azure.mgmt.hybridcompute.models.ErrorDetail
+    """
+
+    _validation = {
+        'error': {'required': True},
+    }
+
+    _attribute_map = {
+        'error': {'key': 'error', 'type': 'ErrorDetail'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ErrorResponse, self).__init__(**kwargs)
+        self.error = kwargs.get('error', None)
+
+
+class ErrorResponseException(HttpOperationError):
+    """Server responsed with exception of type: 'ErrorResponse'.
+
+    :param deserialize: A deserializer
+    :param response: Server response to be deserialized.
+    """
+
+    def __init__(self, deserialize, response, *args):
+
+        super(ErrorResponseException, self).__init__(deserialize, response, 'ErrorResponse', *args)
+
+
+class ErrorResponseV2(Model):
     """The resource management error response.
+
+    :param error: The error object.
+    :type error: ~azure.mgmt.hybridcompute.models.ErrorResponseV2Error
+    """
+
+    _attribute_map = {
+        'error': {'key': 'error', 'type': 'ErrorResponseV2Error'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ErrorResponseV2, self).__init__(**kwargs)
+        self.error = kwargs.get('error', None)
+
+
+class ErrorResponseV2Exception(HttpOperationError):
+    """Server responsed with exception of type: 'ErrorResponseV2'.
+
+    :param deserialize: A deserializer
+    :param response: Server response to be deserialized.
+    """
+
+    def __init__(self, deserialize, response, *args):
+
+        super(ErrorResponseV2Exception, self).__init__(deserialize, response, 'ErrorResponseV2', *args)
+
+
+class ErrorResponseCommon(ErrorResponseV2):
+    """The resource management error response.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param error: The error object.
+    :type error: ~azure.mgmt.hybridcompute.models.ErrorResponseV2Error
+    :ivar details: The error details.
+    :vartype details:
+     list[~azure.mgmt.hybridcompute.models.ErrorResponseCommon]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info:
+     list[~azure.mgmt.hybridcompute.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        'details': {'readonly': True},
+        'additional_info': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'error': {'key': 'error', 'type': 'ErrorResponseV2Error'},
+        'details': {'key': 'details', 'type': '[ErrorResponseCommon]'},
+        'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ErrorResponseCommon, self).__init__(**kwargs)
+        self.details = None
+        self.additional_info = None
+
+
+class ErrorResponseV2Error(Model):
+    """The error object.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -171,7 +268,7 @@ class ErrorResponse(Model):
     :ivar target: The error target.
     :vartype target: str
     :ivar details: The error details.
-    :vartype details: list[~azure.mgmt.hybridcompute.models.ErrorResponse]
+    :vartype details: list[~azure.mgmt.hybridcompute.models.ErrorResponseV2]
     :ivar additional_info: The error additional info.
     :vartype additional_info:
      list[~azure.mgmt.hybridcompute.models.ErrorAdditionalInfo]
@@ -189,12 +286,12 @@ class ErrorResponse(Model):
         'code': {'key': 'code', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
         'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorResponse]'},
+        'details': {'key': 'details', 'type': '[ErrorResponseV2]'},
         'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
     }
 
     def __init__(self, **kwargs):
-        super(ErrorResponse, self).__init__(**kwargs)
+        super(ErrorResponseV2Error, self).__init__(**kwargs)
         self.code = None
         self.message = None
         self.target = None
@@ -202,30 +299,123 @@ class ErrorResponse(Model):
         self.additional_info = None
 
 
-class ErrorResponseException(HttpOperationError):
-    """Server responsed with exception of type: 'ErrorResponse'.
-
-    :param deserialize: A deserializer
-    :param response: Server response to be deserialized.
-    """
-
-    def __init__(self, deserialize, response, *args):
-
-        super(ErrorResponseException, self).__init__(deserialize, response, 'ErrorResponse', *args)
-
-
-class Identity(Model):
-    """Identity for the resource.
+class PrivateLinkScopesResource(Model):
+    """An azure resource object.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar principal_id: The principal ID of resource identity.
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Azure resource Id
+    :vartype id: str
+    :ivar name: Azure resource name
+    :vartype name: str
+    :ivar type: Azure resource type
+    :vartype type: str
+    :param location: Required. Resource location
+    :type location: str
+    :param tags: Resource tags
+    :type tags: dict[str, str]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'location': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PrivateLinkScopesResource, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.location = kwargs.get('location', None)
+        self.tags = kwargs.get('tags', None)
+
+
+class HybridComputePrivateLinkScope(PrivateLinkScopesResource):
+    """An Azure Arc PrivateLinkScope definition.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Azure resource Id
+    :vartype id: str
+    :ivar name: Azure resource name
+    :vartype name: str
+    :ivar type: Azure resource type
+    :vartype type: str
+    :param location: Required. Resource location
+    :type location: str
+    :param tags: Resource tags
+    :type tags: dict[str, str]
+    :param public_network_access: Indicates whether machines associated with
+     the private link scope can also use public Azure Arc service endpoints.
+     Possible values include: 'Enabled', 'Disabled'. Default value: "Disabled"
+     .
+    :type public_network_access: str or
+     ~azure.mgmt.hybridcompute.models.PublicNetworkAccessType
+    :ivar provisioning_state: Current state of this PrivateLinkScope: whether
+     or not is has been provisioned within the resource group it is defined.
+     Users cannot change this value but are able to read from it. Values will
+     include Provisioning ,Succeeded, Canceled and Failed.
+    :vartype provisioning_state: str
+    :ivar private_endpoint_connections: List of private endpoint connections.
+    :vartype private_endpoint_connections:
+     list[~azure.mgmt.hybridcompute.models.PrivateEndpointConnection]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'location': {'required': True},
+        'provisioning_state': {'readonly': True},
+        'private_endpoint_connections': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(HybridComputePrivateLinkScope, self).__init__(**kwargs)
+        self.public_network_access = kwargs.get('public_network_access', "Disabled")
+        self.provisioning_state = None
+        self.private_endpoint_connections = None
+
+
+class Identity(Model):
+    """Managed Identity.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param type: The identity type.
+    :type type: str
+    :ivar principal_id: The identity's principal id.
     :vartype principal_id: str
-    :ivar tenant_id: The tenant ID of resource.
+    :ivar tenant_id: The identity's tenant id.
     :vartype tenant_id: str
-    :param type: The identity type. Possible values include: 'SystemAssigned'
-    :type type: str or ~azure.mgmt.hybridcompute.models.ResourceIdentityType
     """
 
     _validation = {
@@ -234,16 +424,16 @@ class Identity(Model):
     }
 
     _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
         'principal_id': {'key': 'principalId', 'type': 'str'},
         'tenant_id': {'key': 'tenantId', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'ResourceIdentityType'},
     }
 
     def __init__(self, **kwargs):
         super(Identity, self).__init__(**kwargs)
+        self.type = kwargs.get('type', None)
         self.principal_id = None
         self.tenant_id = None
-        self.type = kwargs.get('type', None)
 
 
 class LocationData(Model):
@@ -378,9 +568,22 @@ class Machine(TrackedResource):
     :ivar os_version: The version of Operating System running on the hybrid
      machine.
     :vartype os_version: str
+    :ivar vm_uuid: Specifies the Arc Machine's unique SMBIOS ID
+    :vartype vm_uuid: str
     :param extensions: Machine Extensions information
     :type extensions:
      list[~azure.mgmt.hybridcompute.models.MachineExtensionInstanceView]
+    :ivar os_sku: Specifies the Operating System product SKU.
+    :vartype os_sku: str
+    :ivar domain_name: Specifies the Windows domain name.
+    :vartype domain_name: str
+    :ivar ad_fqdn: Specifies the AD fully qualified display name.
+    :vartype ad_fqdn: str
+    :ivar dns_fqdn: Specifies the DNS fully qualified display name.
+    :vartype dns_fqdn: str
+    :ivar private_link_scoped_resources: List of private link scoped resources
+     associated with this machine.
+    :vartype private_link_scoped_resources: list[str]
     :param identity:
     :type identity: ~azure.mgmt.hybridcompute.models.MachineIdentity
     """
@@ -399,6 +602,12 @@ class Machine(TrackedResource):
         'machine_fqdn': {'readonly': True},
         'os_name': {'readonly': True},
         'os_version': {'readonly': True},
+        'vm_uuid': {'readonly': True},
+        'os_sku': {'readonly': True},
+        'domain_name': {'readonly': True},
+        'ad_fqdn': {'readonly': True},
+        'dns_fqdn': {'readonly': True},
+        'private_link_scoped_resources': {'readonly': True},
     }
 
     _attribute_map = {
@@ -420,7 +629,13 @@ class Machine(TrackedResource):
         'client_public_key': {'key': 'properties.clientPublicKey', 'type': 'str'},
         'os_name': {'key': 'properties.osName', 'type': 'str'},
         'os_version': {'key': 'properties.osVersion', 'type': 'str'},
+        'vm_uuid': {'key': 'properties.vmUuid', 'type': 'str'},
         'extensions': {'key': 'properties.extensions', 'type': '[MachineExtensionInstanceView]'},
+        'os_sku': {'key': 'properties.osSku', 'type': 'str'},
+        'domain_name': {'key': 'properties.domainName', 'type': 'str'},
+        'ad_fqdn': {'key': 'properties.adFqdn', 'type': 'str'},
+        'dns_fqdn': {'key': 'properties.dnsFqdn', 'type': 'str'},
+        'private_link_scoped_resources': {'key': 'properties.privateLinkScopedResources', 'type': '[str]'},
         'identity': {'key': 'identity', 'type': 'MachineIdentity'},
     }
 
@@ -439,7 +654,13 @@ class Machine(TrackedResource):
         self.client_public_key = kwargs.get('client_public_key', None)
         self.os_name = None
         self.os_version = None
+        self.vm_uuid = None
         self.extensions = kwargs.get('extensions', None)
+        self.os_sku = None
+        self.domain_name = None
+        self.ad_fqdn = None
+        self.dns_fqdn = None
+        self.private_link_scoped_resources = None
         self.identity = kwargs.get('identity', None)
 
 
@@ -803,12 +1024,12 @@ class MachineIdentity(Identity):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar principal_id: The principal ID of resource identity.
+    :param type: The identity type.
+    :type type: str
+    :ivar principal_id: The identity's principal id.
     :vartype principal_id: str
-    :ivar tenant_id: The tenant ID of resource.
+    :ivar tenant_id: The identity's tenant id.
     :vartype tenant_id: str
-    :param type: The identity type. Possible values include: 'SystemAssigned'
-    :type type: str or ~azure.mgmt.hybridcompute.models.ResourceIdentityType
     """
 
     _validation = {
@@ -817,9 +1038,9 @@ class MachineIdentity(Identity):
     }
 
     _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
         'principal_id': {'key': 'principalId', 'type': 'str'},
         'tenant_id': {'key': 'tenantId', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'ResourceIdentityType'},
     }
 
     def __init__(self, **kwargs):
@@ -864,9 +1085,22 @@ class MachineProperties(Model):
     :ivar os_version: The version of Operating System running on the hybrid
      machine.
     :vartype os_version: str
+    :ivar vm_uuid: Specifies the Arc Machine's unique SMBIOS ID
+    :vartype vm_uuid: str
     :param extensions: Machine Extensions information
     :type extensions:
      list[~azure.mgmt.hybridcompute.models.MachineExtensionInstanceView]
+    :ivar os_sku: Specifies the Operating System product SKU.
+    :vartype os_sku: str
+    :ivar domain_name: Specifies the Windows domain name.
+    :vartype domain_name: str
+    :ivar ad_fqdn: Specifies the AD fully qualified display name.
+    :vartype ad_fqdn: str
+    :ivar dns_fqdn: Specifies the DNS fully qualified display name.
+    :vartype dns_fqdn: str
+    :ivar private_link_scoped_resources: List of private link scoped resources
+     associated with this machine.
+    :vartype private_link_scoped_resources: list[str]
     """
 
     _validation = {
@@ -879,6 +1113,12 @@ class MachineProperties(Model):
         'machine_fqdn': {'readonly': True},
         'os_name': {'readonly': True},
         'os_version': {'readonly': True},
+        'vm_uuid': {'readonly': True},
+        'os_sku': {'readonly': True},
+        'domain_name': {'readonly': True},
+        'ad_fqdn': {'readonly': True},
+        'dns_fqdn': {'readonly': True},
+        'private_link_scoped_resources': {'readonly': True},
     }
 
     _attribute_map = {
@@ -895,7 +1135,13 @@ class MachineProperties(Model):
         'client_public_key': {'key': 'clientPublicKey', 'type': 'str'},
         'os_name': {'key': 'osName', 'type': 'str'},
         'os_version': {'key': 'osVersion', 'type': 'str'},
+        'vm_uuid': {'key': 'vmUuid', 'type': 'str'},
         'extensions': {'key': 'extensions', 'type': '[MachineExtensionInstanceView]'},
+        'os_sku': {'key': 'osSku', 'type': 'str'},
+        'domain_name': {'key': 'domainName', 'type': 'str'},
+        'ad_fqdn': {'key': 'adFqdn', 'type': 'str'},
+        'dns_fqdn': {'key': 'dnsFqdn', 'type': 'str'},
+        'private_link_scoped_resources': {'key': 'privateLinkScopedResources', 'type': '[str]'},
     }
 
     def __init__(self, **kwargs):
@@ -913,7 +1159,13 @@ class MachineProperties(Model):
         self.client_public_key = kwargs.get('client_public_key', None)
         self.os_name = None
         self.os_version = None
+        self.vm_uuid = None
         self.extensions = kwargs.get('extensions', None)
+        self.os_sku = None
+        self.domain_name = None
+        self.ad_fqdn = None
+        self.dns_fqdn = None
+        self.private_link_scoped_resources = None
 
 
 class OSProfile(Model):
@@ -961,48 +1213,6 @@ class MachinePropertiesOsProfile(OSProfile):
         super(MachinePropertiesOsProfile, self).__init__(**kwargs)
 
 
-class MachineReconnect(Model):
-    """Describes a hybrid machine reconnect.
-
-    :param vm_id: Specifies the hybrid machine unique ID.
-    :type vm_id: str
-    :param client_public_key: Public Key that the client provides to be used
-     during initial resource onboarding.
-    :type client_public_key: str
-    """
-
-    _attribute_map = {
-        'vm_id': {'key': 'properties.vmId', 'type': 'str'},
-        'client_public_key': {'key': 'properties.clientPublicKey', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(MachineReconnect, self).__init__(**kwargs)
-        self.vm_id = kwargs.get('vm_id', None)
-        self.client_public_key = kwargs.get('client_public_key', None)
-
-
-class MachineReconnectProperties(Model):
-    """Describes the properties required to reconnect a hybrid machine.
-
-    :param vm_id: Specifies the hybrid machine unique ID.
-    :type vm_id: str
-    :param client_public_key: Public Key that the client provides to be used
-     during initial resource onboarding.
-    :type client_public_key: str
-    """
-
-    _attribute_map = {
-        'vm_id': {'key': 'vmId', 'type': 'str'},
-        'client_public_key': {'key': 'clientPublicKey', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(MachineReconnectProperties, self).__init__(**kwargs)
-        self.vm_id = kwargs.get('vm_id', None)
-        self.client_public_key = kwargs.get('client_public_key', None)
-
-
 class MachineUpdate(UpdateResource):
     """Describes a hybrid machine Update.
 
@@ -1011,12 +1221,12 @@ class MachineUpdate(UpdateResource):
 
     :param tags: Resource tags
     :type tags: dict[str, str]
-    :ivar principal_id: The principal ID of resource identity.
+    :param type: The identity type.
+    :type type: str
+    :ivar principal_id: The identity's principal id.
     :vartype principal_id: str
-    :ivar tenant_id: The tenant ID of resource.
+    :ivar tenant_id: The identity's tenant id.
     :vartype tenant_id: str
-    :param type: The identity type. Possible values include: 'SystemAssigned'
-    :type type: str or ~azure.mgmt.hybridcompute.models.ResourceIdentityType
     :param location_data:
     :type location_data: ~azure.mgmt.hybridcompute.models.LocationData
     """
@@ -1028,17 +1238,17 @@ class MachineUpdate(UpdateResource):
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
+        'type': {'key': 'identity.type', 'type': 'str'},
         'principal_id': {'key': 'identity.principalId', 'type': 'str'},
         'tenant_id': {'key': 'identity.tenantId', 'type': 'str'},
-        'type': {'key': 'identity.type', 'type': 'ResourceIdentityType'},
         'location_data': {'key': 'properties.locationData', 'type': 'LocationData'},
     }
 
     def __init__(self, **kwargs):
         super(MachineUpdate, self).__init__(**kwargs)
+        self.type = kwargs.get('type', None)
         self.principal_id = None
         self.tenant_id = None
-        self.type = kwargs.get('type', None)
         self.location_data = kwargs.get('location_data', None)
 
 
@@ -1144,51 +1354,6 @@ class OperationValueDisplayModel(Model):
         self.provider = None
 
 
-class Plan(Model):
-    """Plan for the resource.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param name: Required. A user defined name of the 3rd Party Artifact that
-     is being procured.
-    :type name: str
-    :param publisher: Required. The publisher of the 3rd Party Artifact that
-     is being bought. E.g. NewRelic
-    :type publisher: str
-    :param product: Required. The 3rd Party artifact that is being procured.
-     E.g. NewRelic. Product maps to the OfferID specified for the artifact at
-     the time of Data Market onboarding.
-    :type product: str
-    :param promotion_code: A publisher provided promotion code as provisioned
-     in Data Market for the said product/artifact.
-    :type promotion_code: str
-    :param version: The version of the desired product/artifact.
-    :type version: str
-    """
-
-    _validation = {
-        'name': {'required': True},
-        'publisher': {'required': True},
-        'product': {'required': True},
-    }
-
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'publisher': {'key': 'publisher', 'type': 'str'},
-        'product': {'key': 'product', 'type': 'str'},
-        'promotion_code': {'key': 'promotionCode', 'type': 'str'},
-        'version': {'key': 'version', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(Plan, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.publisher = kwargs.get('publisher', None)
-        self.product = kwargs.get('product', None)
-        self.promotion_code = kwargs.get('promotion_code', None)
-        self.version = kwargs.get('version', None)
-
-
 class ProxyResource(Resource):
     """The resource model definition for a ARM proxy resource. It will have
     everything other than required location and tags.
@@ -1222,10 +1387,8 @@ class ProxyResource(Resource):
         super(ProxyResource, self).__init__(**kwargs)
 
 
-class ResourceModelWithAllowedPropertySet(Model):
-    """The resource model definition containing the full set of allowed properties
-    for a resource. Except properties bag, there cannot be a top level property
-    outside of this set.
+class PrivateEndpointConnection(ProxyResource):
+    """A private endpoint connection.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -1236,227 +1399,197 @@ class ResourceModelWithAllowedPropertySet(Model):
     :ivar name: The name of the resource
     :vartype name: str
     :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts..
+     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
     :vartype type: str
-    :param location: The geo-location where the resource lives
-    :type location: str
-    :param managed_by: The  fully qualified resource ID of the resource that
-     manages this resource. Indicates if this resource is managed by another
-     azure resource. If this is present, complete mode deployment will not
-     delete the resource if it is removed from the template since it is managed
-     by another resource.
-    :type managed_by: str
-    :param kind: Metadata used by portal/tooling/etc to render different UX
-     experiences for resources of the same type; e.g. ApiApps are a kind of
-     Microsoft.Web/sites type.  If supported, the resource provider must
-     validate and persist this value.
-    :type kind: str
-    :ivar etag: The etag field is *not* required. If it is provided in the
-     response body, it must also be provided as a header per the normal etag
-     convention.  Entity tags are used for comparing two or more entities from
-     the same requested resource. HTTP/1.1 uses entity tags in the etag
-     (section 14.19), If-Match (section 14.24), If-None-Match (section 14.26),
-     and If-Range (section 14.27) header fields.
-    :vartype etag: str
-    :param tags: Resource tags.
-    :type tags: dict[str, str]
-    :param identity:
-    :type identity:
-     ~azure.mgmt.hybridcompute.models.ResourceModelWithAllowedPropertySetIdentity
-    :param sku:
-    :type sku:
-     ~azure.mgmt.hybridcompute.models.ResourceModelWithAllowedPropertySetSku
-    :param plan:
-    :type plan:
-     ~azure.mgmt.hybridcompute.models.ResourceModelWithAllowedPropertySetPlan
+    :param private_endpoint: Private endpoint which the connection belongs to.
+    :type private_endpoint:
+     ~azure.mgmt.hybridcompute.models.PrivateEndpointProperty
+    :param private_link_service_connection_state: Connection state of the
+     private endpoint connection.
+    :type private_link_service_connection_state:
+     ~azure.mgmt.hybridcompute.models.PrivateLinkServiceConnectionStateProperty
+    :ivar provisioning_state: State of the private endpoint connection.
+    :vartype provisioning_state: str
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'kind': {'pattern': r'^[-\w\._,\(\)]+$'},
-        'etag': {'readonly': True},
+        'provisioning_state': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'managed_by': {'key': 'managedBy', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'identity': {'key': 'identity', 'type': 'ResourceModelWithAllowedPropertySetIdentity'},
-        'sku': {'key': 'sku', 'type': 'ResourceModelWithAllowedPropertySetSku'},
-        'plan': {'key': 'plan', 'type': 'ResourceModelWithAllowedPropertySetPlan'},
+        'private_endpoint': {'key': 'properties.privateEndpoint', 'type': 'PrivateEndpointProperty'},
+        'private_link_service_connection_state': {'key': 'properties.privateLinkServiceConnectionState', 'type': 'PrivateLinkServiceConnectionStateProperty'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(ResourceModelWithAllowedPropertySet, self).__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.location = kwargs.get('location', None)
-        self.managed_by = kwargs.get('managed_by', None)
-        self.kind = kwargs.get('kind', None)
-        self.etag = None
-        self.tags = kwargs.get('tags', None)
-        self.identity = kwargs.get('identity', None)
-        self.sku = kwargs.get('sku', None)
-        self.plan = kwargs.get('plan', None)
+        super(PrivateEndpointConnection, self).__init__(**kwargs)
+        self.private_endpoint = kwargs.get('private_endpoint', None)
+        self.private_link_service_connection_state = kwargs.get('private_link_service_connection_state', None)
+        self.provisioning_state = None
 
 
-class ResourceModelWithAllowedPropertySetIdentity(Identity):
-    """ResourceModelWithAllowedPropertySetIdentity.
+class PrivateEndpointProperty(Model):
+    """Private endpoint which the connection belongs to.
+
+    :param id: Resource id of the private endpoint.
+    :type id: str
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PrivateEndpointProperty, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+
+
+class PrivateLinkResource(ProxyResource):
+    """A private link resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar principal_id: The principal ID of resource identity.
-    :vartype principal_id: str
-    :ivar tenant_id: The tenant ID of resource.
-    :vartype tenant_id: str
-    :param type: The identity type. Possible values include: 'SystemAssigned'
-    :type type: str or ~azure.mgmt.hybridcompute.models.ResourceIdentityType
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
+    :vartype id: str
+    :ivar name: The name of the resource
+    :vartype name: str
+    :ivar type: The type of the resource. Ex-
+     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :vartype type: str
+    :ivar group_id: The private link resource group id.
+    :vartype group_id: str
+    :ivar required_members: The private link resource required member names.
+    :vartype required_members: list[str]
+    :ivar required_zone_names: Required DNS zone names of the the private link
+     resource.
+    :vartype required_zone_names: list[str]
     """
 
     _validation = {
-        'principal_id': {'readonly': True},
-        'tenant_id': {'readonly': True},
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'group_id': {'readonly': True},
+        'required_members': {'readonly': True},
+        'required_zone_names': {'readonly': True},
     }
 
     _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'ResourceIdentityType'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'group_id': {'key': 'properties.groupId', 'type': 'str'},
+        'required_members': {'key': 'properties.requiredMembers', 'type': '[str]'},
+        'required_zone_names': {'key': 'properties.requiredZoneNames', 'type': '[str]'},
     }
 
     def __init__(self, **kwargs):
-        super(ResourceModelWithAllowedPropertySetIdentity, self).__init__(**kwargs)
+        super(PrivateLinkResource, self).__init__(**kwargs)
+        self.group_id = None
+        self.required_members = None
+        self.required_zone_names = None
 
 
-class ResourceModelWithAllowedPropertySetPlan(Plan):
-    """ResourceModelWithAllowedPropertySetPlan.
+class PrivateLinkServiceConnectionStateProperty(Model):
+    """State of the private endpoint connection.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. A user defined name of the 3rd Party Artifact that
-     is being procured.
-    :type name: str
-    :param publisher: Required. The publisher of the 3rd Party Artifact that
-     is being bought. E.g. NewRelic
-    :type publisher: str
-    :param product: Required. The 3rd Party artifact that is being procured.
-     E.g. NewRelic. Product maps to the OfferID specified for the artifact at
-     the time of Data Market onboarding.
-    :type product: str
-    :param promotion_code: A publisher provided promotion code as provisioned
-     in Data Market for the said product/artifact.
-    :type promotion_code: str
-    :param version: The version of the desired product/artifact.
-    :type version: str
+    :param status: Required. The private link service connection status.
+    :type status: str
+    :param description: Required. The private link service connection
+     description.
+    :type description: str
+    :ivar actions_required: The actions required for private link service
+     connection.
+    :vartype actions_required: str
     """
 
     _validation = {
-        'name': {'required': True},
-        'publisher': {'required': True},
-        'product': {'required': True},
+        'status': {'required': True},
+        'description': {'required': True},
+        'actions_required': {'readonly': True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'publisher': {'key': 'publisher', 'type': 'str'},
-        'product': {'key': 'product', 'type': 'str'},
-        'promotion_code': {'key': 'promotionCode', 'type': 'str'},
-        'version': {'key': 'version', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'actions_required': {'key': 'actionsRequired', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(ResourceModelWithAllowedPropertySetPlan, self).__init__(**kwargs)
+        super(PrivateLinkServiceConnectionStateProperty, self).__init__(**kwargs)
+        self.status = kwargs.get('status', None)
+        self.description = kwargs.get('description', None)
+        self.actions_required = None
 
 
-class Sku(Model):
-    """The resource model definition representing SKU.
+class ScopedResource(ProxyResource):
+    """A private link scoped resource.
 
-    All required parameters must be populated in order to send to Azure.
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
 
-    :param name: Required. The name of the SKU. Ex - P3. It is typically a
-     letter+number code
-    :type name: str
-    :param tier: This field is required to be implemented by the Resource
-     Provider if the service has more than one tier, but is not required on a
-     PUT. Possible values include: 'Free', 'Basic', 'Standard', 'Premium'
-    :type tier: str or ~azure.mgmt.hybridcompute.models.SkuTier
-    :param size: The SKU size. When the name field is the combination of tier
-     and some other value, this would be the standalone code.
-    :type size: str
-    :param family: If the service has different generations of hardware, for
-     the same SKU, then that can be captured here.
-    :type family: str
-    :param capacity: If the SKU supports scale out/in then the capacity
-     integer should be included. If scale out/in is not possible for the
-     resource this may be omitted.
-    :type capacity: int
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
+    :vartype id: str
+    :ivar name: The name of the resource
+    :vartype name: str
+    :ivar type: The type of the resource. Ex-
+     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :vartype type: str
+    :param linked_resource_id: The resource id of the scoped Azure monitor
+     resource.
+    :type linked_resource_id: str
+    :ivar provisioning_state: State of the private endpoint connection.
+    :vartype provisioning_state: str
     """
 
     _validation = {
-        'name': {'required': True},
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'provisioning_state': {'readonly': True},
     }
 
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
-        'tier': {'key': 'tier', 'type': 'SkuTier'},
-        'size': {'key': 'size', 'type': 'str'},
-        'family': {'key': 'family', 'type': 'str'},
-        'capacity': {'key': 'capacity', 'type': 'int'},
+        'type': {'key': 'type', 'type': 'str'},
+        'linked_resource_id': {'key': 'properties.linkedResourceId', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(Sku, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.tier = kwargs.get('tier', None)
-        self.size = kwargs.get('size', None)
-        self.family = kwargs.get('family', None)
-        self.capacity = kwargs.get('capacity', None)
+        super(ScopedResource, self).__init__(**kwargs)
+        self.linked_resource_id = kwargs.get('linked_resource_id', None)
+        self.provisioning_state = None
 
 
-class ResourceModelWithAllowedPropertySetSku(Sku):
-    """ResourceModelWithAllowedPropertySetSku.
+class TagsResource(Model):
+    """A container holding only the Tags for a resource, allowing the user to
+    update the tags on a PrivateLinkScope instance.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param name: Required. The name of the SKU. Ex - P3. It is typically a
-     letter+number code
-    :type name: str
-    :param tier: This field is required to be implemented by the Resource
-     Provider if the service has more than one tier, but is not required on a
-     PUT. Possible values include: 'Free', 'Basic', 'Standard', 'Premium'
-    :type tier: str or ~azure.mgmt.hybridcompute.models.SkuTier
-    :param size: The SKU size. When the name field is the combination of tier
-     and some other value, this would be the standalone code.
-    :type size: str
-    :param family: If the service has different generations of hardware, for
-     the same SKU, then that can be captured here.
-    :type family: str
-    :param capacity: If the SKU supports scale out/in then the capacity
-     integer should be included. If scale out/in is not possible for the
-     resource this may be omitted.
-    :type capacity: int
+    :param tags: Resource tags
+    :type tags: dict[str, str]
     """
 
-    _validation = {
-        'name': {'required': True},
-    }
-
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'tier': {'key': 'tier', 'type': 'SkuTier'},
-        'size': {'key': 'size', 'type': 'str'},
-        'family': {'key': 'family', 'type': 'str'},
-        'capacity': {'key': 'capacity', 'type': 'int'},
+        'tags': {'key': 'tags', 'type': '{str}'},
     }
 
     def __init__(self, **kwargs):
-        super(ResourceModelWithAllowedPropertySetSku, self).__init__(**kwargs)
+        super(TagsResource, self).__init__(**kwargs)
+        self.tags = kwargs.get('tags', None)
