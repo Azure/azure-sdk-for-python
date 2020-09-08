@@ -32,11 +32,8 @@ class EventGridPublisherClient(object):
 
     :param str topic_hostname: The topic endpoint to send the events to.
     :param credential: The credential object used for authentication which implements
-    SAS key authentication or SAS token authentication.
-    :type credential: Union[
-        ~azure.core.credentials.AzureKeyCredential,
-        azure.eventgrid.EventGridSharedAccessSignatureCredential
-    ]
+     SAS key authentication or SAS token authentication.
+    :type credential: ~azure.core.credentials.AzureKeyCredential or EventGridSharedAccessSignatureCredential
     """
 
     def __init__(self, topic_hostname, credential, **kwargs):
@@ -54,8 +51,8 @@ class EventGridPublisherClient(object):
         :param  events: A list or an instance of CloudEvent/EventGridEvent/CustomEvent to be sent.
         :type events: SendType
         :keyword str content_type: The type of content to be used to send the events.
-        Has default value "application/json; charset=utf-8" for EventGridEvents,
-        with "cloudevents-batch+json" for CloudEvents
+         Has default value "application/json; charset=utf-8" for EventGridEvents,
+         with "cloudevents-batch+json" for CloudEvents
         :rtype: None
         :raises: :class:`ValueError`, when events do not follow specified SendType.
          """

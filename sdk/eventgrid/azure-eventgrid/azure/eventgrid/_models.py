@@ -151,7 +151,7 @@ class EventGridEvent(InternalEventGridEvent, EventMixin):
      unique for each distinct event.
     :type id: Optional[str]
     :param event_time: Optional.The time (in UTC) of the event. If not provided,
-    it will be the time (in UTC) the event was generated.
+     it will be the time (in UTC) the event was generated.
     :type event_time: Optional[~datetime.datetime]
     """
 
