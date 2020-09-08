@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .usage_management_client import UsageManagementClient
-from .version import VERSION
+from ._configuration import UsageManagementClientConfiguration
+from ._usage_management_client import UsageManagementClient
+__all__ = ['UsageManagementClient', 'UsageManagementClientConfiguration']
 
-__all__ = ['UsageManagementClient']
+from .version import VERSION
 
 __version__ = VERSION
 
