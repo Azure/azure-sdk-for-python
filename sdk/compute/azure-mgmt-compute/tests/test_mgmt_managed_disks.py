@@ -316,7 +316,7 @@ class MgmtManagedDisksTest(AzureMgmtTestCase):
             )
         snapshot = async_snapshot_creation.result()
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(location='eastus')
     def test_create_virtual_machine_scale_set(self, resource_group, location):
 
         names = self.get_resource_names('pyvmir')
