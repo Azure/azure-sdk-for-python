@@ -2308,7 +2308,7 @@ class StorageCommonBlobTest(StorageTestCase):
         self.assertEqual(permission.read, True)
         self.assertEqual(permission.delete, True)
         self.assertEqual(permission.write, True)
-        self.assertEqual(permission._str, 'wrdx')
+        self.assertEqual(permission._str, 'rwdx')
 
     @GlobalStorageAccountPreparer()
     def test_transport_closed_only_once(self, resource_group, location, storage_account, storage_account_key):

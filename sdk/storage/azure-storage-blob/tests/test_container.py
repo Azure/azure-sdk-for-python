@@ -1706,7 +1706,7 @@ class StorageContainerTest(StorageTestCase):
         self.assertEqual(permission.read, True)
         self.assertEqual(permission.list, True)
         self.assertEqual(permission.write, True)
-        self.assertEqual(permission._str, 'wrlx')
+        self.assertEqual(permission._str, 'rwxl')
 
     @GlobalStorageAccountPreparer()
     def test_download_blob(self, resource_group, location, storage_account, storage_account_key):
