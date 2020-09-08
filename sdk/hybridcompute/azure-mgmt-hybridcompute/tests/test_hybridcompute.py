@@ -15,7 +15,7 @@ class HybridComputeTests(AzureMgmtTestCase):
 
     def test_get(self):
         resource_group_name = 'azure-sdk-test'
-        machine_name = 'DESKTOP-ROKPM1C'
+        machine_name = 'DESKTOP-RUC1OF2'
         machine = self.client.machines.get(
             resource_group_name,
             machine_name
@@ -34,7 +34,7 @@ class HybridComputeTests(AzureMgmtTestCase):
 
     def test_delete(self):
         resource_group_name = 'azure-sdk-test'
-        machine_name = 'DESKTOP-ROKPM1C'
+        machine_name = 'DESKTOP-RUC1OF2'
 
         machine = self.client.machines.get(
             resource_group_name,
