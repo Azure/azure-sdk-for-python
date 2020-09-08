@@ -44,15 +44,15 @@ if not version:
     raise RuntimeError('Cannot find version information')
 
 with open("README.md", encoding="utf-8") as f:
-    README = f.read()
+    readme = f.read()
 with open("CHANGELOG.md", encoding="utf-8") as f:
-    CHANGELOG = f.read()
+    changelog = f.read()
 
 setup(
     name=PACKAGE_NAME,
     version=version,
     description='Microsoft Azure {} Client Library for Python'.format(PACKAGE_PPRINT_NAME),
-    long_description=README + '\n\n' + CHANGELOG,
+    long_description=readme + '\n\n' + changelog,
     long_description_content_type='text/markdown',
     license='MIT License',
     author='Microsoft Corporation',
