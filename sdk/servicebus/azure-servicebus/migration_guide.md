@@ -75,8 +75,8 @@ semantics with the sender or receiver lifetime.
 ### Managing queues
 | In v0.50 | Equivalent in v7 | Sample |
 |---|---|---|
-| `azure.servicebus.control_client.ServiceBusService().create_queue(queue_name)` | `azure.servicebus.management.ServiceBusManagementClient().create_queue(queue_name)` | [Create a queue](./samples/sync_samples/mgmt_queue.py) |
-| `azure.servicebus.ServiceBusClient().list_queues()` | `azure.servicebus.management.ServiceBusManagementClient().list_queues()` | [List queues](./samples/sync_samples/mgmt_queue.py ) |
+| `azure.servicebus.control_client.ServiceBusService().create_queue(queue_name)` | `azure.servicebus.management.ServiceBusAdministrationClient().create_queue(queue_name)` | [Create a queue](./samples/sync_samples/mgmt_queue.py) |
+| `azure.servicebus.ServiceBusClient().list_queues()` | `azure.servicebus.management.ServiceBusAdministrationClient().list_queues()` | [List queues](./samples/sync_samples/mgmt_queue.py ) |
 
 ### Working with AutoLockRenew
 | In v0.50 | Equivalent in v7 | Sample |
