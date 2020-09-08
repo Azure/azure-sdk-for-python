@@ -11,7 +11,8 @@ import pytest
 import time
 from datetime import datetime, timedelta
 
-from azure.servicebus import ServiceBusClient, Message, PeekMessage, ReceiveSettleMode, ServiceBusSharedKeyCredential
+from azure.servicebus import ServiceBusClient, Message, PeekMessage, ReceiveSettleMode
+from azure.servicebus._base_handler import ServiceBusSharedKeyCredential
 from azure.servicebus.exceptions import ServiceBusError
 
 from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer, CachedResourceGroupPreparer

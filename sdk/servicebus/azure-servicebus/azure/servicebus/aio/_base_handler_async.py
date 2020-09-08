@@ -22,10 +22,32 @@ from ..exceptions import (
     _create_servicebus_exception
 )
 
+from azure.core.credentials import AccessToken
 if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential, AccessToken
+    from azure.core.credentials import TokenCredential
 
 _LOGGER = logging.getLogger(__name__)
+
+
+class ServiceBusSASTokenCredential(object):
+    """The shared access token credential used for authentication.
+    :param str token: The shared access token string
+    :param int expiry: The epoch timestamp
+    """
+    def __init__(self, token: str, expiry: int) -> None:
+        """
+        :param str token: The shared access token string
+        :param int expiry: The epoch timestamp
+        """
+        self.token = token
+        self.expiry = expiry
+        self.token_type = b"servicebus.windows.net:sastoken"
+
+    async def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:  # pylint:disable=unused-argument
+        """
+        This method is automatically called when token is about to expire.
+        """
+        return AccessToken(self.token, self.expiry)
 
 
 class ServiceBusSharedKeyCredential(object):
@@ -68,6 +90,15 @@ class BaseHandler:
         self._handler = None  # type: uamqp.AMQPClient
         self._auth_uri = None
         self._properties = create_properties(self._config.user_agent)
+
+    def _convert_connection_string_to_kwargs(self, conn_str, **kwargs):
+        return BaseHandlerSync._convert_connection_string_to_kwargs(self, conn_str, kwargs)
+
+    def _create_credential_from_connection_string_parameters(self, token, token_expiry, policy, key):
+        if token and token_expiry:
+            return ServiceBusSASTokenCredential(token, token_expiry)
+        elif policy and key:
+            return ServiceBusSharedKeyCredential(policy, key)
 
     async def __aenter__(self):
         await self._open_with_retry()

@@ -10,7 +10,7 @@ import msrest
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceExistsError
 from azure.servicebus.aio.management import ServiceBusManagementClient
 from azure.servicebus.management import QueueProperties
-from azure.servicebus.aio import ServiceBusSharedKeyCredential
+from azure.servicebus.aio._base_handler_async import ServiceBusSharedKeyCredential
 from azure.servicebus._common.utils import utc_now
 
 from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer
