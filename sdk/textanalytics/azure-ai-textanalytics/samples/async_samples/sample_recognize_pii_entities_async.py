@@ -11,7 +11,7 @@ FILE: sample_recognize_pii_entities_async.py
 
 DESCRIPTION:
     This sample demonstrates how to recognize personally identifiable information in a batch of documents.
-    The endpoint recognize_pii_entities is only available for API version v3.1-preview.1 and up.
+    The endpoint recognize_pii_entities is only available for API version v3.1-preview and up.
 
 USAGE:
     python sample_recognize_pii_entities_async.py
