@@ -11,7 +11,7 @@ import uamqp
 from uamqp import SendClient, types
 from uamqp.authentication.common import AMQPAuth
 
-from ._base_handler import BaseHandler, ServiceBusSharedKeyCredential
+from ._base_handler import BaseHandler
 from ._common import mgmt_handlers
 from ._common.message import Message, BatchMessage
 from .exceptions import (
@@ -297,7 +297,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 :caption: Create a new instance of the ServiceBusSender from connection string.
 
         """
-        constructor_args = self._convert_connection_string_to_kwargs(
+        constructor_args = cls._convert_connection_string_to_kwargs(
             conn_str,
             **kwargs
         )

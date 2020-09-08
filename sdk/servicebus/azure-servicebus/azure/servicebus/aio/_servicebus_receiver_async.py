@@ -11,7 +11,7 @@ from typing import Any, TYPE_CHECKING, List, Optional, AsyncIterator
 from uamqp import ReceiveClientAsync, types, Message
 from uamqp.constants import SenderSettleMode
 
-from ._base_handler_async import BaseHandler, ServiceBusSharedKeyCredential
+from ._base_handler_async import BaseHandler
 from ._async_message import ReceivedMessage
 from .._common.receiver_mixins import ReceiverMixin
 from .._common.constants import (
@@ -359,7 +359,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
                 :caption: Create a new instance of the ServiceBusReceiver from connection string.
 
         """
-        constructor_args = self._convert_connection_string_to_kwargs(
+        constructor_args = cls._convert_connection_string_to_kwargs(
             conn_str,
             **kwargs
         )

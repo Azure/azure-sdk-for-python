@@ -9,7 +9,8 @@ import datetime
 import logging
 import functools
 import platform
-from typing import Optional, Dict
+import time
+from typing import Optional, Dict, Tuple
 try:
     from urlparse import urlparse
 except ImportError:
@@ -66,10 +67,10 @@ def utc_now():
 # This parse_conn_str is used for mgmt, the other in base_handler for handlers.  Should be unified.
 def parse_conn_str(conn_str):
     # type: (str) -> Tuple[str, Optional[str], Optional[str], str, Optional[str], Optional[int]]
-    endpoint = None
-    shared_access_key_name = None
-    shared_access_key = None
-    entity_path = None
+    endpoint = ''
+    shared_access_key_name = None # type: Optional[str]
+    shared_access_key = None # type: Optional[str]
+    entity_path = ''
     shared_access_signature = None  # type: Optional[str]
     shared_access_signature_expiry = None # type: Optional[int]
     for element in conn_str.split(';'):
@@ -93,10 +94,10 @@ def parse_conn_str(conn_str):
                 shared_access_signature_expiry = int(time.time() * 2)
     if not (all((endpoint, shared_access_key_name, shared_access_key)) or all((endpoint, shared_access_signature))):
         raise ValueError("Invalid connection string")
-    return (endpoint, 
+    return (endpoint,
             str(shared_access_key_name) if shared_access_key_name else None,
             str(shared_access_key) if shared_access_key else None,
-            entity_path, 
+            entity_path,
             str(shared_access_signature) if shared_access_signature else None,
             shared_access_signature_expiry)
 

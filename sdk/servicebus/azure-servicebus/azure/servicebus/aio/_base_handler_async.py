@@ -9,7 +9,10 @@ from typing import TYPE_CHECKING, Any
 
 import uamqp
 from uamqp.message import MessageProperties
-from .._base_handler import _generate_sas_token, _AccessToken
+
+from azure.core.credentials import AccessToken
+
+from .._base_handler import _generate_sas_token, _AccessToken, BaseHandler as BaseHandlerSync
 from .._common._configuration import Configuration
 from .._common.utils import create_properties
 from .._common.constants import (
@@ -22,7 +25,6 @@ from ..exceptions import (
     _create_servicebus_exception
 )
 
-from azure.core.credentials import AccessToken
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
@@ -91,14 +93,16 @@ class BaseHandler:
         self._auth_uri = None
         self._properties = create_properties(self._config.user_agent)
 
-    def _convert_connection_string_to_kwargs(self, conn_str, **kwargs):
-        return BaseHandlerSync._convert_connection_string_to_kwargs(self, conn_str, kwargs)
+    @classmethod
+    def _convert_connection_string_to_kwargs(cls, conn_str, **kwargs):
+        # pylint:disable=protected-access
+        return BaseHandlerSync._convert_connection_string_to_kwargs(conn_str, **kwargs)
 
-    def _create_credential_from_connection_string_parameters(self, token, token_expiry, policy, key):
+    @classmethod
+    def _create_credential_from_connection_string_parameters(cls, token, token_expiry, policy, key):
         if token and token_expiry:
             return ServiceBusSASTokenCredential(token, token_expiry)
-        elif policy and key:
-            return ServiceBusSharedKeyCredential(policy, key)
+        return ServiceBusSharedKeyCredential(policy, key)
 
     async def __aenter__(self):
         await self._open_with_retry()

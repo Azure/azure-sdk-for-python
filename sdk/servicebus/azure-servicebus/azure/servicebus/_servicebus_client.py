@@ -153,7 +153,7 @@ class ServiceBusClient(object):
         if token and token_expiry:
             credential = ServiceBusSASTokenCredential(token, token_expiry)
         elif policy and key:
-            credential = ServiceBusSharedKeyCredential(policy, key)
+            credential = ServiceBusSharedKeyCredential(policy, key) # type: ignore
         return cls(
             fully_qualified_namespace=host,
             entity_name=entity_in_conn_str or kwargs.pop("entity_name", None),

@@ -7,7 +7,7 @@ import logging
 import uuid
 import time
 from datetime import timedelta
-from typing import cast, Optional, Tuple, TYPE_CHECKING, Dict, Any, Callable, Type
+from typing import cast, Optional, Tuple, TYPE_CHECKING, Dict, Any, Callable
 
 try:
     from urllib import quote_plus  # type: ignore
@@ -17,6 +17,8 @@ except ImportError:
 import uamqp
 from uamqp import utils
 from uamqp.message import MessageProperties
+
+from azure.core.credentials import AccessToken
 
 from ._common._configuration import Configuration
 from .exceptions import (
@@ -33,7 +35,6 @@ from ._common.constants import (
     ASSOCIATEDLINKPROPERTYNAME
 )
 
-from azure.core.credentials import AccessToken
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
@@ -42,7 +43,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 def _parse_conn_str(conn_str):
-    # type: (str) -> Tuple[str, str, str, str]
+    # type: (str) -> Tuple[str, Optional[str], Optional[str], str, Optional[str], Optional[int]]
     endpoint = None
     shared_access_key_name = None
     shared_access_key = None
@@ -82,10 +83,10 @@ def _parse_conn_str(conn_str):
     else:
         host = str(endpoint)
 
-    return (host, 
+    return (host,
             str(shared_access_key_name) if shared_access_key_name else None,
             str(shared_access_key) if shared_access_key else None,
-            entity, 
+            entity,
             str(shared_access_signature) if shared_access_signature else None,
             shared_access_signature_expiry)
 
@@ -174,40 +175,40 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         self._auth_uri = None
         self._properties = create_properties(self._config.user_agent)
 
-
-    def _convert_connection_string_to_kwargs(self, conn_str, **kwargs):
-        # type: (str, Type, Any) -> Dict[str, Any]
+    @classmethod
+    def _convert_connection_string_to_kwargs(cls, conn_str, **kwargs):
+        # type: (str, Any) -> Dict[str, Any]
         host, policy, key, entity_in_conn_str, token, token_expiry = _parse_conn_str(conn_str)
         queue_name = kwargs.get("queue_name")
         topic_name = kwargs.get("topic_name")
         if not (queue_name or topic_name or entity_in_conn_str):
             raise ValueError("Entity name is missing. Please specify `queue_name` or `topic_name`"
                              " or use a connection string including the entity information.")
-    
+
         if queue_name and topic_name:
             raise ValueError("`queue_name` and `topic_name` can not be specified simultaneously.")
-    
+
         entity_in_kwargs = queue_name or topic_name
         if entity_in_conn_str and entity_in_kwargs and (entity_in_conn_str != entity_in_kwargs):
             raise ServiceBusAuthenticationError(
                 "Entity names do not match, the entity name in connection string is {};"
                 " the entity name in parameter is {}.".format(entity_in_conn_str, entity_in_kwargs)
             )
-    
+
         kwargs["fully_qualified_namespace"] = host
         kwargs["entity_name"] = entity_in_conn_str or entity_in_kwargs
         # This has to be defined seperately to support sync vs async credentials.
-        kwargs["credential"] = self._create_credential_from_connection_string_parameters(token,
+        kwargs["credential"] = cls._create_credential_from_connection_string_parameters(token,
                                                                                          token_expiry,
                                                                                          policy,
                                                                                          key)
         return kwargs
 
-    def _create_credential_from_connection_string_parameters(self, token, token_expiry, policy, key):
+    @classmethod
+    def _create_credential_from_connection_string_parameters(cls, token, token_expiry, policy, key):
         if token and token_expiry:
             return ServiceBusSASTokenCredential(token, token_expiry)
-        elif policy and key:
-            return ServiceBusSharedKeyCredential(policy, key)
+        return ServiceBusSharedKeyCredential(policy, key)
 
     def __enter__(self):
         self._open_with_retry()

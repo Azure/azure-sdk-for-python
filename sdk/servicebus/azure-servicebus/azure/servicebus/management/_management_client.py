@@ -130,11 +130,11 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         :param str conn_str: The connection string of the Service Bus Namespace.
         :rtype: ~azure.servicebus.management.ServiceBusAdministrationClient
         """
-        endpoint, shared_access_key_name, shared_access_key, token, token_expiry, _ = parse_conn_str(conn_str)
+        endpoint, shared_access_key_name, shared_access_key, _, token, token_expiry = parse_conn_str(conn_str)
         if token and token_expiry:
             credential = ServiceBusSASTokenCredential(token, token_expiry)
         elif shared_access_key_name and shared_access_key:
-            credential = ServiceBusSharedKeyCredential(shared_access_key_name, shared_access_key)
+            credential = ServiceBusSharedKeyCredential(shared_access_key_name, shared_access_key) # type: ignore
         if "//" in endpoint:
             endpoint = endpoint[endpoint.index("//") + 2:]
         return cls(endpoint, credential, **kwargs)
