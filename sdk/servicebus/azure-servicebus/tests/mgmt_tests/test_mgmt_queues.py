@@ -245,13 +245,11 @@ class ServiceBusManagementClientQueueTests(AzureMgmtTestCase):
             enable_batched_operations=True,
             enable_express=True,
             enable_partitioning=True,
-            is_anonymous_accessible=True,
             lock_duration=datetime.timedelta(seconds=13),
             max_delivery_count=14,
             max_size_in_megabytes=3072,
             #requires_duplicate_detection=True,
-            requires_session=True,
-            support_ordering=True
+            requires_session=True
         )
         try:
             queue = mgmt_service.get_queue(queue_name)
@@ -263,7 +261,6 @@ class ServiceBusManagementClientQueueTests(AzureMgmtTestCase):
             assert queue.enable_batched_operations == True
             assert queue.enable_express == True
             assert queue.enable_partitioning == True
-            assert queue.is_anonymous_accessible == True
             assert queue.lock_duration == datetime.timedelta(seconds=13)
             assert queue.max_delivery_count == 14
             assert queue.max_size_in_megabytes % 3072 == 0  # TODO: In my local test, I don't see a multiple of the input number. To confirm
@@ -272,7 +269,6 @@ class ServiceBusManagementClientQueueTests(AzureMgmtTestCase):
             # To know more visit https://aka.ms/sbResourceMgrExceptions. 
             #assert queue.requires_duplicate_detection == True
             assert queue.requires_session == True
-            assert queue.support_ordering == True
         finally:
             mgmt_service.delete_queue(queue_name)
 
@@ -314,13 +310,11 @@ class ServiceBusManagementClientQueueTests(AzureMgmtTestCase):
             queue_description.enable_batched_operations = True
             queue_description.enable_express = True
             #queue_description.enable_partitioning = True # Cannot be changed after creation
-            queue_description.is_anonymous_accessible = True
             queue_description.lock_duration = datetime.timedelta(seconds=13)
             queue_description.max_delivery_count = 14
             queue_description.max_size_in_megabytes = 3072
             #queue_description.requires_duplicate_detection = True # Read only
             #queue_description.requires_session = True # Cannot be changed after creation
-            queue_description.support_ordering = True
 
             mgmt_service.update_queue(queue_description)
             queue_description = mgmt_service.get_queue(queue_name)
@@ -332,13 +326,11 @@ class ServiceBusManagementClientQueueTests(AzureMgmtTestCase):
             assert queue_description.enable_batched_operations == True
             assert queue_description.enable_express == True
             #assert queue_description.enable_partitioning == True
-            assert queue_description.is_anonymous_accessible == True
             assert queue_description.lock_duration == datetime.timedelta(seconds=13)
             assert queue_description.max_delivery_count == 14
             assert queue_description.max_size_in_megabytes == 3072
             #assert queue_description.requires_duplicate_detection == True
             #assert queue_description.requires_session == True
-            assert queue_description.support_ordering == True
         finally:
             mgmt_service.delete_queue(queue_name)
 
