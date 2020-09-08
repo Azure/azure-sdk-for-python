@@ -744,6 +744,7 @@ class StorageBlobAccessConditionsAsyncTest(AsyncStorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
+    @pytest.mark.playback_test_only
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_if_blob_exists(self, resource_group, location, storage_account, storage_account_key):
