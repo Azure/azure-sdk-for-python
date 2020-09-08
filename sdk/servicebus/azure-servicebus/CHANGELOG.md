@@ -11,7 +11,7 @@
 * Sending a message twice will no longer result in a MessageAlreadySettled exception.
 * `ServiceBusClient.close()` now closes spawned senders and receivers.
 * Attempting to initialize a sender or receiver with a different connection string entity and specified entity (e.g. `queue_name`) will result in an AuthenticationError
-* `get_dead_letter_[queue,subscription]_receiver()` has been removed.  To connect to a dead letter queue, utilize the `SubQueue` parameter of `get_[queue,subscription]_receiver()` provided with a value from the `SubQueue` enum
+* `get_dead_letter_[queue,subscription]_receiver()` has been removed.  To connect to a dead letter queue, utilize the `sub_queue` parameter of `get_[queue,subscription]_receiver()` provided with a value from the `SubQueue` enum
 
 ## 7.0.0b5 (2020-08-10)
 
