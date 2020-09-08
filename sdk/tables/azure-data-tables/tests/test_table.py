@@ -455,13 +455,13 @@ class StorageTableTest(TableTestCase):
         table = self._create_table(tsc)
         try:
             entity = {
-                'PartitionKey': 'test',
-                'RowKey': 'test1',
-                'text': 'hello',
+                'PartitionKey': u'test',
+                'RowKey': u'test1',
+                'text': u'hello',
             }
             table.upsert_entity(mode=UpdateMode.MERGE, entity=entity)
 
-            entity['RowKey'] = 'test2'
+            entity['RowKey'] = u'test2'
             table.upsert_entity(mode=UpdateMode.MERGE, entity=entity)
 
             token = generate_account_sas(
@@ -483,8 +483,8 @@ class StorageTableTest(TableTestCase):
 
             # Assert
             self.assertEqual(len(entities), 2)
-            self.assertEqual(entities[0].text, 'hello')
-            self.assertEqual(entities[1].text, 'hello')
+            self.assertEqual(entities[0].text.value, 'hello')
+            self.assertEqual(entities[1].text.value, 'hello')
         finally:
             self._delete_table(table=table, ts=tsc)
 
