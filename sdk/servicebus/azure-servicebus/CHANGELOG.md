@@ -6,9 +6,11 @@
 * Messages can now be sent twice in succession.
 * Connection strings now support 
 * Connection strings used with `from_connection_string` methods now support using the `SharedAccessSignature` key in leiu of `sharedaccesskey` and `sharedaccesskeyname`, taking the string of the properly constructed token as value.
+* Internal AMQP message properties (header, footer, annotations, properties, etc) are now exposed via `Message.amqp_message`
 
 **Breaking Changes**
 
+* Rename `ServiceBusManagementClient` to `ServiceBusAdministrationClient`
 * Attempting to call `send_messages` on something not a `Message`, `BatchMessage`, or list of `Message`s, will now throw a `TypeError` instead of `ValueError`
 * Sending a message twice will no longer result in a MessageAlreadySettled exception.
 * `ServiceBusClient.close()` now closes spawned senders and receivers.
