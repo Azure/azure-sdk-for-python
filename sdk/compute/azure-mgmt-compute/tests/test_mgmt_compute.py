@@ -169,7 +169,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
             vhd_name,
         )
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(location='eastus')
     def test_virtual_machines_operations(self, resource_group, location):
         virtual_machines_models = self.compute_client.virtual_machines.models
         names = self.get_resource_names('pyvmir')
@@ -249,7 +249,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
         async_vm_delete = self.compute_client.virtual_machines.delete(resource_group.name, names.vm)
         async_vm_delete.wait()
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(location='eastus')
     def test_virtual_machine_capture(self, resource_group, location):
         virtual_machines_models = self.compute_client.virtual_machines.models
         names = self.get_resource_names('pyvmir')
@@ -309,7 +309,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
         capture_result = async_capture.result()
         assert capture_result.content_version == "1.0.0.0"
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(location='eastus')
     def test_vm_extensions(self, resource_group, location):
         #WARNING: this test may take 40 mins to complete against live server
         virtual_machines_models = self.compute_client.virtual_machines.models

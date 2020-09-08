@@ -46,7 +46,7 @@ class MgmtMSIComputeTest(AzureMgmtTestCase):
             self.get_resource_name(base + 'sub'),
         )
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(location='eastus')
     def test_create_msi_enabled_vm(self, resource_group, location):
         virtual_machines_models = self.compute_client.virtual_machines.models
 
