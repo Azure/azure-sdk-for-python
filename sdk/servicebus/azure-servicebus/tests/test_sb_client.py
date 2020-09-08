@@ -217,3 +217,13 @@ class ServiceBusClientTests(AzureMgmtTestCase):
             assert len(client._handlers) == 0
             with client.get_queue_sender(servicebus_queue.name) as sender:
                 sender.send_messages(Message("foo"))
+
+        # This is disabled pending UAMQP fix https://github.com/Azure/azure-uamqp-python/issues/170
+        #
+        #token_conn_str_without_se = token_conn_str.split('se=')[0] + token_conn_str.split('se=')[1].split('&')[1]
+        #
+        #client = ServiceBusClient.from_connection_string(token_conn_str_without_se)
+        #with client:
+        #    assert len(client._handlers) == 0
+        #    with client.get_queue_sender(servicebus_queue.name) as sender:
+        #        sender.send_messages(Message("foo"))

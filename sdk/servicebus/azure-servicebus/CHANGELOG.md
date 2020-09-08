@@ -4,7 +4,6 @@
 
 **New Features**
 * Messages can now be sent twice in succession.
-* Connection strings now support 
 * Connection strings used with `from_connection_string` methods now support using the `SharedAccessSignature` key in leiu of `sharedaccesskey` and `sharedaccesskeyname`, taking the string of the properly constructed token as value.
 * Internal AMQP message properties (header, footer, annotations, properties, etc) are now exposed via `Message.amqp_message`
 
