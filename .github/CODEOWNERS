@@ -67,6 +67,9 @@
 # PRLabel: %Recovery Services
 /sdk/recoveryservices/                                               @DheerendraRathor
 
+# PRLabel: %Schema Registry
+/sdk/schemaregistry/                                                 @yunhaoling
+
 # PRLabel: %Search
 /sdk/search/                                                         @xiangyan99 @rakshith91
 
