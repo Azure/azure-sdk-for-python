@@ -44,7 +44,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential  # pylint:disable=ungrouped-imports
 
 
-class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
+class ServiceBusAdministrationClient:  #pylint:disable=too-many-public-methods
     """Use this client to create, update, list, and delete resources of a ServiceBus namespace.
 
     :param str fully_qualified_namespace: The fully qualified host name for the Service Bus namespace.
@@ -64,7 +64,7 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
         self._pipeline = self._build_pipeline()
         self._impl = ServiceBusManagementClientImpl(endpoint=fully_qualified_namespace, pipeline=self._pipeline)
 
-    async def __aenter__(self) -> "ServiceBusManagementClient":
+    async def __aenter__(self) -> "ServiceBusAdministrationClient":
         await self._impl.__aenter__()
         return self
 
@@ -130,11 +130,11 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
         return element
 
     @classmethod
-    def from_connection_string(cls, conn_str: str, **kwargs: Any) -> "ServiceBusManagementClient":
+    def from_connection_string(cls, conn_str: str, **kwargs: Any) -> "ServiceBusAdministrationClient":
         """Create a client from connection string.
 
         :param str conn_str: The connection string of the Service Bus Namespace.
-        :rtype: ~azure.servicebus.management.aio.ServiceBusManagementClient
+        :rtype: ~azure.servicebus.management.aio.ServiceBusAdministrationClient
         """
         endpoint, shared_access_key_name, shared_access_key, _ = parse_conn_str(conn_str)
         if "//" in endpoint:

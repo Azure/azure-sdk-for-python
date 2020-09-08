@@ -41,7 +41,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential  # pylint:disable=ungrouped-imports
 
 
-class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
+class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
     """Use this client to create, update, list, and delete resources of a ServiceBus namespace.
 
     :param str fully_qualified_namespace: The fully qualified host name for the Service Bus namespace.
@@ -124,11 +124,11 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
 
     @classmethod
     def from_connection_string(cls, conn_str, **kwargs):
-        # type: (str, Any) -> ServiceBusManagementClient
+        # type: (str, Any) -> ServiceBusAdministrationClient
         """Create a client from connection string.
 
         :param str conn_str: The connection string of the Service Bus Namespace.
-        :rtype: ~azure.servicebus.management.ServiceBusManagementClient
+        :rtype: ~azure.servicebus.management.ServiceBusAdministrationClient
         """
         endpoint, shared_access_key_name, shared_access_key, _ = parse_conn_str(conn_str)
         if "//" in endpoint:
