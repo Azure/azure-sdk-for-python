@@ -56,7 +56,7 @@
 /sdk/datadatamigration/                                              @vchske
 
 # PRLabel: %Event Grid
-/sdk/eventgrid/                                                      @kalyanaj
+/sdk/eventgrid/                                                      @lmazuel @rakshith91 @KieranBrantnerMagee
 
 # PRLabel: %HDInsight
 /sdk/hdinsight/                                                      @idear1203
