@@ -302,18 +302,14 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
                 **kwargs
             )
 
-    def delete_queue(self, queue, **kwargs):
-        # type: (Union[str, QueueProperties], Any) -> None
+    def delete_queue(self, queue_name, **kwargs):
+        # type: (str, Any) -> None
         """Delete a queue.
 
-        :param Union[str, azure.servicebus.management.QueueProperties] queue: The name of the queue or
+        :param str queue: The name of the queue or
          a `QueueProperties` with name.
         :rtype: None
         """
-        try:
-            queue_name = queue.name  # type: ignore
-        except AttributeError:
-            queue_name = queue
         if not queue_name:
             raise ValueError("queue_name must not be None or empty")
         with _handle_response_error():
@@ -519,17 +515,13 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
                 **kwargs
             )
 
-    def delete_topic(self, topic, **kwargs):
-        # type: (Union[str, TopicProperties], Any) -> None
+    def delete_topic(self, topic_name, **kwargs):
+        # type: (str, Any) -> None
         """Delete a topic.
 
-        :param Union[str, ~azure.servicebus.management.TopicProperties] topic: The topic to be deleted.
+        :param str topic_name: The topic to be deleted.
         :rtype: None
         """
-        try:
-            topic_name = topic.name  # type: ignore
-        except AttributeError:
-            topic_name = topic
         self._impl.entity.delete(topic_name, api_version=constants.API_VERSION, **kwargs)
 
     def list_topics(self, **kwargs):
@@ -572,18 +564,14 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
         return ItemPaged(
             get_next, extract_data)
 
-    def get_subscription(self, topic, subscription_name, **kwargs):
-        # type: (Union[str, TopicProperties], str, Any) -> SubscriptionProperties
+    def get_subscription(self, topic_name, subscription_name, **kwargs):
+        # type: (str, str, Any) -> SubscriptionProperties
         """Get the properties of a topic subscription.
 
-        :param Union[str, ~azure.servicebus.management.TopicProperties] topic: The topic that owns the subscription.
+        :param str topic_name: The topic that owns the subscription.
         :param str subscription_name: name of the subscription.
         :rtype: ~azure.servicebus.management.SubscriptionProperties
         """
-        try:
-            topic_name = topic.name  # type: ignore
-        except AttributeError:
-            topic_name = topic
         entry_ele = self._get_subscription_element(topic_name, subscription_name, **kwargs)
         entry = SubscriptionDescriptionEntry.deserialize(entry_ele)
         if not entry.content:
@@ -593,18 +581,14 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
             entry.title, entry.content.subscription_description)
         return subscription
 
-    def get_subscription_runtime_info(self, topic, subscription_name, **kwargs):
-        # type: (Union[str, TopicProperties], str, Any) -> SubscriptionRuntimeProperties
+    def get_subscription_runtime_info(self, topic_name, subscription_name, **kwargs):
+        # type: (str, str, Any) -> SubscriptionRuntimeProperties
         """Get a topic subscription runtime info.
 
-        :param Union[str, ~azure.servicebus.management.TopicProperties] topic: The topic that owns the subscription.
+        :param str topic_name: The topic that owns the subscription.
         :param str subscription_name: name of the subscription.
         :rtype: ~azure.servicebus.management.SubscriptionRuntimeProperties
         """
-        try:
-            topic_name = topic.name  # type: ignore
-        except AttributeError:
-            topic_name = topic
         entry_ele = self._get_subscription_element(topic_name, subscription_name, **kwargs)
         entry = SubscriptionDescriptionEntry.deserialize(entry_ele)
         if not entry.content:
@@ -614,11 +598,11 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
             entry.title, entry.content.subscription_description)
         return subscription
 
-    def create_subscription(self, topic, name, **kwargs):
-        # type: (Union[str, TopicProperties], str, Any) -> SubscriptionProperties
+    def create_subscription(self, topic_name, name, **kwargs):
+        # type: (str, str, Any) -> SubscriptionProperties
         """Create a topic subscription.
 
-        :param Union[str, ~azure.servicebus.management.TopicProperties] topic: The topic that will own the
+        :param str topic_name: The topic that will own the
          to-be-created subscription.
         :param name: Name of the subscription.
         :type name: str
@@ -659,10 +643,6 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
         :type auto_delete_on_idle: ~datetime.timedelta
         :rtype:  ~azure.servicebus.management.SubscriptionProperties
         """
-        try:
-            topic_name = topic.name  # type: ignore
-        except AttributeError:
-            topic_name = topic
         subscription = SubscriptionProperties(
             name,
             lock_duration=kwargs.pop("lock_duration", None),
@@ -702,22 +682,18 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
             name, entry.content.subscription_description)
         return result
 
-    def update_subscription(self, topic, subscription, **kwargs):
-        # type: (Union[str, TopicProperties], SubscriptionProperties, Any) -> None
+    def update_subscription(self, topic_name, subscription, **kwargs):
+        # type: (str, SubscriptionProperties, Any) -> None
         """Update a subscription.
 
         Before calling this method, you should use `get_subscription`, `update_subscription` or `list_subscription`
         to get a `SubscriptionProperties` instance, then update the properties.
 
-        :param Union[str, ~azure.servicebus.management.TopicProperties] topic: The topic that owns the subscription.
+        :param str topic_name: The topic that owns the subscription.
         :param ~azure.servicebus.management.SubscriptionProperties subscription: The subscription that is returned
          from `get_subscription`, `update_subscription` or `list_subscription` and has the updated properties.
         :rtype: None
         """
-        try:
-            topic_name = topic.name  # type: ignore
-        except AttributeError:
-            topic_name = topic
 
         to_update = subscription._to_internal_entity()
 
@@ -740,38 +716,25 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
                 **kwargs
             )
 
-    def delete_subscription(self, topic, subscription, **kwargs):
-        # type: (Union[str, TopicProperties], Union[str, SubscriptionProperties], Any) -> None
+    def delete_subscription(self, topic_name, subscription_name, **kwargs):
+        # type: (str, str, Any) -> None
         """Delete a topic subscription.
 
-        :param Union[str, ~azure.servicebus.management.TopicProperties] topic: The topic that owns the subscription.
-        :param Union[str, ~azure.servicebus.management.SubscriptionProperties] subscription: The subscription to
+        :param str topic_name: The topic that owns the subscription.
+        :param str subscription_name: The subscription to
          be deleted.
         :rtype: None
         """
-        try:
-            topic_name = topic.name  # type: ignore
-        except AttributeError:
-            topic_name = topic
-        try:
-            subscription_name = subscription.name  # type: ignore
-        except AttributeError:
-            subscription_name = subscription
         self._impl.subscription.delete(topic_name, subscription_name, api_version=constants.API_VERSION, **kwargs)
 
-    def list_subscriptions(self, topic, **kwargs):
-        # type: (Union[str, TopicProperties], Any) -> ItemPaged[SubscriptionProperties]
+    def list_subscriptions(self, topic_name, **kwargs):
+        # type: (str, Any) -> ItemPaged[SubscriptionProperties]
         """List the subscriptions of a ServiceBus Topic.
 
-        :param Union[str, ~azure.servicebus.management.TopicProperties] topic: The topic that owns the subscription.
+        :param str topic_name: The topic that owns the subscription.
         :returns: An iterable (auto-paging) response of SubscriptionProperties.
         :rtype: ~azure.core.paging.ItemPaged[~azure.servicebus.management.SubscriptionProperties]
         """
-        try:
-            topic_name = topic.name  # type: ignore
-        except AttributeError:
-            topic_name = topic
-
         def entry_to_subscription(entry):
             subscription = SubscriptionProperties._from_internal_entity(
                 entry.title, entry.content.subscription_description)
@@ -786,19 +749,14 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
         return ItemPaged(
             get_next, extract_data)
 
-    def list_subscriptions_runtime_info(self, topic, **kwargs):
+    def list_subscriptions_runtime_info(self, topic_name, **kwargs):
         # type: (Union[str, TopicProperties], Any) -> ItemPaged[SubscriptionRuntimeProperties]
         """List the subscriptions runtime information of a ServiceBus Topic.
 
-        :param Union[str, ~azure.servicebus.management.TopicProperties] topic: The topic that owns the subscription.
+        :param str topic_name: The topic that owns the subscription.
         :returns: An iterable (auto-paging) response of SubscriptionRuntimeProperties.
         :rtype: ~azure.core.paging.ItemPaged[~azure.servicebus.management.SubscriptionRuntimeProperties]
         """
-        try:
-            topic_name = topic.name  # type: ignore
-        except AttributeError:
-            topic_name = topic
-
         def entry_to_subscription(entry):
             subscription = SubscriptionRuntimeProperties._from_internal_entity(
                 entry.title, entry.content.subscription_description)
@@ -813,24 +771,16 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
         return ItemPaged(
             get_next, extract_data)
 
-    def get_rule(self, topic, subscription, rule_name, **kwargs):
+    def get_rule(self, topic_name, subscription_name, rule_name, **kwargs):
         # type: (Union[str, TopicProperties], Union[str, SubscriptionProperties], str, Any) -> RuleProperties
         """Get the properties of a topic subscription rule.
 
-        :param Union[str, ~azure.servicebus.management.TopicProperties] topic: The topic that owns the subscription.
-        :param Union[str, ~azure.servicebus.management.SubscriptionProperties] subscription: The subscription that
+        :param str topic_name: The topic that owns the subscription.
+        :param str subscription_name: The subscription that
          owns the rule.
         :param str rule_name: Name of the rule.
         :rtype: ~azure.servicebus.management.RuleProperties
         """
-        try:
-            topic_name = topic.name  # type: ignore
-        except AttributeError:
-            topic_name = topic
-        try:
-            subscription_name = subscription.name  # type: ignore
-        except AttributeError:
-            subscription_name = subscription
         entry_ele = self._get_rule_element(topic_name, subscription_name, rule_name, **kwargs)
         entry = RuleDescriptionEntry.deserialize(entry_ele)
         if not entry.content:
@@ -841,13 +791,13 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
         deserialize_rule_key_values(entry_ele, rule_description)  # to remove after #3535 is released.
         return rule_description
 
-    def create_rule(self, topic, subscription, name, **kwargs):
-        # type: (Union[str, TopicProperties], Union[str, SubscriptionProperties], str, Any) -> RuleProperties
+    def create_rule(self, topic_name, subscription_name, name, **kwargs):
+        # type: (str, str, str, Any) -> RuleProperties
         """Create a rule for a topic subscription.
 
-        :param Union[str, ~azure.servicebus.management.TopicProperties] topic: The topic that will own the
+        :param str topic_name: The topic that will own the
          to-be-created subscription rule.
-        :param Union[str, ~azure.servicebus.management.SubscriptionProperties] subscription: The subscription that
+        :param str subscription_name: The subscription that
          will own the to-be-created rule.
         :param name: Name of the rule.
         :type name: str
@@ -859,15 +809,6 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
 
         :rtype: ~azure.servicebus.management.RuleProperties
         """
-
-        try:
-            topic_name = topic.name  # type: ignore
-        except AttributeError:
-            topic_name = topic
-        try:
-            subscription_name = subscription.name  # type: ignore
-        except AttributeError:
-            subscription_name = subscription
         rule = RuleProperties(
             name,
             filter=kwargs.pop("filter", None),
@@ -894,29 +835,20 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
         deserialize_rule_key_values(entry_ele, result)  # to remove after #3535 is released.
         return result
 
-    def update_rule(self, topic, subscription, rule, **kwargs):
-        # type: (Union[str, TopicProperties], Union[str, SubscriptionProperties], RuleProperties, Any) -> None
+    def update_rule(self, topic_name, subscription_name, rule, **kwargs):
+        # type: (str, str, RuleProperties, Any) -> None
         """Update a rule.
 
         Before calling this method, you should use `get_rule`, `create_rule` or `list_rules` to get a `RuleProperties`
         instance, then update the properties.
 
-        :param Union[str, ~azure.servicebus.management.TopicProperties] topic: The topic that owns the subscription.
-        :param Union[str, ~azure.servicebus.management.SubscriptionProperties] subscription: The subscription that
+        :param str topic_name: The topic that owns the subscription.
+        :param str subscription_name: The subscription that
          owns this rule.
         :param ~azure.servicebus.management.RuleProperties rule: The rule that is returned from `get_rule`,
         `create_rule`, or `list_rules` and has the updated properties.
         :rtype: None
         """
-
-        try:
-            topic_name = topic.name  # type: ignore
-        except AttributeError:
-            topic_name = topic
-        try:
-            subscription_name = subscription.name  # type: ignore
-        except AttributeError:
-            subscription_name = subscription
 
         to_update = rule._to_internal_entity()
 
@@ -938,49 +870,28 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
                 **kwargs
             )
 
-    def delete_rule(self, topic, subscription, rule, **kwargs):
-        # type: (Union[str,TopicProperties], Union[str,SubscriptionProperties], Union[str,RuleProperties], Any) -> None
+    def delete_rule(self, topic_name, subscription_name, rule_name, **kwargs):
+        # type: (str, str, str, Any) -> None
         """Delete a topic subscription rule.
 
-        :param Union[str, ~azure.servicebus.management.TopicProperties] topic: The topic that owns the subscription.
-        :param Union[str, ~azure.servicebus.management.SubscriptionProperties] subscription: The subscription that
+        :param str topic_name: The topic that owns the subscription.
+        :param str subscription_name: The subscription that
          owns the topic.
-        :param Union[str, ~azure.servicebus.management.RuleProperties] rule: The to-be-deleted rule.
+        :param str rule_name: The to-be-deleted rule.
         :rtype: None
         """
-        try:
-            topic_name = topic.name  # type: ignore
-        except AttributeError:
-            topic_name = topic
-        try:
-            subscription_name = subscription.name  # type: ignore
-        except AttributeError:
-            subscription_name = subscription
-        try:
-            rule_name = rule.name  # type: ignore
-        except AttributeError:
-            rule_name = rule
         self._impl.rule.delete(topic_name, subscription_name, rule_name, api_version=constants.API_VERSION, **kwargs)
 
-    def list_rules(self, topic, subscription, **kwargs):
-        # type: (Union[str, TopicProperties], Union[str, SubscriptionProperties], Any) -> ItemPaged[RuleProperties]
+    def list_rules(self, topic_name, subscription_name, **kwargs):
+        # type: (str, str, Any) -> ItemPaged[RuleProperties]
         """List the rules of a topic subscription.
 
-        :param Union[str, ~azure.servicebus.management.TopicProperties] topic: The topic that owns the subscription.
-        :param Union[str, ~azure.servicebus.management.SubscriptionProperties] subscription: The subscription that
+        :param str topic_name: The topic that owns the subscription.
+        :param str subscription_name: The subscription that
          owns the rules.
         :returns: An iterable (auto-paging) response of RuleProperties.
         :rtype: ~azure.core.paging.ItemPaged[~azure.servicebus.management.RuleProperties]
         """
-        try:
-            topic_name = topic.name  # type: ignore
-        except AttributeError:
-            topic_name = topic
-        try:
-            subscription_name = subscription.name  # type: ignore
-        except AttributeError:
-            subscription_name = subscription
-
         def entry_to_rule(ele, entry):
             """
             `ele` will be removed after https://github.com/Azure/autorest/issues/3535 is released.
