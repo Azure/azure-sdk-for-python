@@ -1,5 +1,8 @@
 # Release History
 
+## 4.2.2 (Unreleased)
+
+
 ## 4.2.1 (2020-09-08)
 ### Fixed
 - Correct typing for paging methods
