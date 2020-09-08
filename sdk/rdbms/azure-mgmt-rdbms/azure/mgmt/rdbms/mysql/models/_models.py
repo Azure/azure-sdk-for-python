@@ -158,7 +158,7 @@ class AzureEntityResource(Resource):
 class CloudError(Model):
     """An error response from the Batch service.
 
-    :param error:
+    :param error: Error message
     :type error: ~azure.mgmt.rdbms.mysql.models.ErrorResponse
     """
 
@@ -1977,6 +1977,22 @@ class ServerUpdateParameters(Model):
         self.public_network_access = kwargs.get('public_network_access', None)
         self.replication_role = kwargs.get('replication_role', None)
         self.tags = kwargs.get('tags', None)
+
+
+class ServerUpgradeParameters(Model):
+    """ServerUpgradeParameters.
+
+    :param target_server_version: Represents an server storage profile.
+    :type target_server_version: str
+    """
+
+    _attribute_map = {
+        'target_server_version': {'key': 'properties.targetServerVersion', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ServerUpgradeParameters, self).__init__(**kwargs)
+        self.target_server_version = kwargs.get('target_server_version', None)
 
 
 class Sku(Model):
