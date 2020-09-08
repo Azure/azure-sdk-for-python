@@ -5,11 +5,11 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING, Sequence
-import json
+from typing import TYPE_CHECKING
 
-from azure.core import PipelineClient
-from msrest import Deserializer, Serializer
+from ._models import CloudEvent, EventGridEvent, CustomEvent
+from ._helpers import _get_topic_hostname_only_fqdn, _get_authentication_policy, _is_cloud_event
+from ._generated._event_grid_publisher_client import EventGridPublisherClient as EventGridPublisherClientImpl
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -25,18 +25,17 @@ if TYPE_CHECKING:
         List[Dict]
     ]
 
-from ._models import CloudEvent, EventGridEvent, CustomEvent
-from ._helpers import _get_topic_hostname_only_fqdn, _get_authentication_policy, _is_cloud_event
-from ._generated._event_grid_publisher_client import EventGridPublisherClient as EventGridPublisherClientImpl
-from . import _constants as constants
-
 
 class EventGridPublisherClient(object):
     """EventGrid Python Publisher Client.
 
     :param str topic_hostname: The topic endpoint to send the events to.
-    :param credential: The credential object used for authentication which implements SAS key authentication or SAS token authentication.
-    :type credential: Union[~azure.core.credentials.AzureKeyCredential, azure.eventgrid.EventGridSharedAccessSignatureCredential]
+    :param credential: The credential object used for authentication which
+    implements SAS key authentication or SAS token authentication.
+    :type credential: Union[
+        ~azure.core.credentials.AzureKeyCredential,
+        azure.eventgrid.EventGridSharedAccessSignatureCredential
+        ]
     """
 
     def __init__(self, topic_hostname, credential, **kwargs):
@@ -54,7 +53,8 @@ class EventGridPublisherClient(object):
         :param events: A list or an instance of CloudEvent/EventGridEvent/CustomEvent to be sent.
         :type events: SendType
         :keyword str content_type: The type of content to be used to send the events.
-        Has default value "application/json; charset=utf-8" for EventGridEvents, with "cloudevents-batch+json" for CloudEvents
+        Has default value "application/json; charset=utf-8" for EventGridEvents,
+        with "cloudevents-batch+json" for CloudEvents
         :rtype: None
         :raises: :class:`ValueError`, when events do not follow specified SendType.
          """
@@ -63,7 +63,7 @@ class EventGridPublisherClient(object):
 
         if all(isinstance(e, CloudEvent) for e in events) or all(_is_cloud_event(e) for e in events):
             try:
-                events = [e._to_generated(**kwargs) for e in events]
+                events = [e._to_generated(**kwargs) for e in events] # pylint: disable=protected-access
             except AttributeError:
                 pass # means it's a dictionary
             kwargs.setdefault("content_type", "application/cloudevents-batch+json; charset=utf-8")

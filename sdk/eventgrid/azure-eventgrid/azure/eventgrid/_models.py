@@ -3,16 +3,12 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 # pylint:disable=protected-access
-from typing import Optional
-from msrest.serialization import UTC
 import datetime as dt
 import uuid
 import json
 import six
-from ._generated import models
-from ._generated.models import StorageBlobCreatedEventData, \
-    EventGridEvent as InternalEventGridEvent, \
-    CloudEvent as InternalCloudEvent
+from msrest.serialization import UTC
+from ._generated.models import EventGridEvent as InternalEventGridEvent, CloudEvent as InternalCloudEvent
 from ._shared.mixins import DictMixin
 from ._event_mappings import _event_mappings
 
@@ -55,8 +51,8 @@ class CloudEvent(EventMixin):   #pylint:disable=too-many-instance-attributes
 
     All required parameters must be populated in order to send to Azure.
 
-    :param source: Required. Identifies the context in which an event happened. The combination of id and source must be 
-        unique for each distinct event. If publishing to a domain topic, source must be the domain name.
+    :param source: Required. Identifies the context in which an event happened. The combination of id and source must
+        be unique for each distinct event. If publishing to a domain topic, source must be the domain name.
     :type source: str
     :param data: Event data specific to the event type.
     :type data: object
@@ -75,7 +71,7 @@ class CloudEvent(EventMixin):   #pylint:disable=too-many-instance-attributes
      unique for each distinct event.
     :type id: Optional[str]
     """
-    def __init__(self, source, type, **kwargs):
+    def __init__(self, source, type, **kwargs): # pylint: disable=redefined-builtin
         # type: (str, str, Any) -> None
         self.source = source
         self.type = type
@@ -87,13 +83,13 @@ class CloudEvent(EventMixin):   #pylint:disable=too-many-instance-attributes
         self.dataschema = kwargs.pop("dataschema", None)
         self.subject = kwargs.pop("subject", None)
         self.extensions = {}
-        self.extensions.update({k:v for k, v in kwargs.pop('extensions', {}).items()})
+        self.extensions.update(dict(kwargs.pop('extensions', {})))
 
     @classmethod
     def _from_generated(cls, cloud_event, **kwargs):
         generated = InternalCloudEvent.deserialize(cloud_event)
         if generated.additional_properties:
-            extensions = {k:v for k, v in generated.additional_properties.items()}
+            extensions = dict(generated.additional_properties)
             kwargs.setdefault('extensions', extensions)
         return cls(
             id=generated.id,
@@ -154,7 +150,8 @@ class EventGridEvent(InternalEventGridEvent, EventMixin):
     :param id: Optional. An identifier for the event. The combination of id and source must be
      unique for each distinct event.
     :type id: Optional[str]
-    :param event_time: Optional.The time (in UTC) of the event. If not provided, it will be the time (in UTC) the event was generated.
+    :param event_time: Optional.The time (in UTC) of the event. If not provided,
+    it will be the time (in UTC) the event was generated.
     :type event_time: Optional[~datetime.datetime]
     """
 
