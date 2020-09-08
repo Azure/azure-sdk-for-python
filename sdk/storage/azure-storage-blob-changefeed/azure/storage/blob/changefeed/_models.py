@@ -58,17 +58,17 @@ class ChangeFeedPaged(PageIterator):
             extract_data=self._extract_data_cb,
             continuation_token=continuation_token or ""
         )
-        continuation_token = json.loads(continuation_token) if continuation_token else None
+        dict_continuation_token = json.loads(continuation_token) if continuation_token else None  # type: dict
 
-        if continuation_token and (container_client.primary_hostname != continuation_token["UrlHost"]):
+        if dict_continuation_token and (container_client.primary_hostname != dict_continuation_token["UrlHost"]):  # pylint: disable=unsubscriptable-object
             raise ValueError("The token is not for the current storage account.")
-        if continuation_token and (continuation_token["CursorVersion"] != 1):
+        if dict_continuation_token and (dict_continuation_token["CursorVersion"] != 1):  # pylint: disable=unsubscriptable-object
             raise ValueError("The CursorVersion is not supported by the current SDK.")
         self.results_per_page = results_per_page or 5000
         self.current_page = None
         self._change_feed = ChangeFeed(container_client, self.results_per_page, start_time=start_time,
                                        end_time=end_time,
-                                       cf_cursor=continuation_token)
+                                       cf_cursor=dict_continuation_token)
 
     def _get_next_cf(self, continuation_token):  # pylint:disable=unused-argument
         try:
