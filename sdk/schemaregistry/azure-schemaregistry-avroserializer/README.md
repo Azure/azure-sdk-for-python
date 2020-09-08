@@ -3,7 +3,7 @@
 Azure Schema Registry Avro Serializer provides the ability to serialize and deserialize data according
 to the given avro schema. It is integrated with Azure Schema Registry SDK and will automatically register and get schema.
 
-[Source code][source_code] | [Package (PyPi)][pypi] | [API reference documentation][api_docs] | [Samples][sr_avro_samples] | [Changelog][change_log]
+[Source code][source_code] | [Package (PyPi)][pypi] | [API reference documentation][api_reference] | [Samples][sr_avro_samples] | [Changelog][change_log]
 
 ## Getting started
 
