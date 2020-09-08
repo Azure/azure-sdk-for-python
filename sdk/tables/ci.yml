@@ -37,4 +37,6 @@ extends:
     Artifacts:
     - name: azure_data_tables
       safeName: azuredatatables
+    - name: azure_data_nspkg
+      safeName: azuredatanspkg
 
