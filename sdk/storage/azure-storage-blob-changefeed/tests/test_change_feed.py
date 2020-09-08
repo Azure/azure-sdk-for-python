@@ -133,7 +133,7 @@ class StorageChangeFeedTest(StorageTestCase):
                 events.append(event)
         token = change_feed.continuation_token
 
-        dict_token = eval(token)
+        dict_token = json.loads(token)
         self.assertTrue(len(events) > 0)
         self.assertEqual(dict_token['CursorVersion'], 1)
         self.assertIsNotNone(dict_token['UrlHost'])
@@ -160,7 +160,7 @@ class StorageChangeFeedTest(StorageTestCase):
 
         # restart using the continuation token which has Non-zero EventIndex for 3 shards
         token2 = change_feed2.continuation_token
-        dict_token2 = eval(token2)
+        dict_token2 = json.loads(token2)
         self.assertEqual(len(dict_token2['CurrentSegmentCursor']['ShardCursors']), 3)
         self.assertNotEqual(dict_token2['CurrentSegmentCursor']['ShardCursors'][0]['EventIndex'], 0)
         self.assertNotEqual(dict_token2['CurrentSegmentCursor']['ShardCursors'][1]['EventIndex'], 0)
@@ -187,7 +187,7 @@ class StorageChangeFeedTest(StorageTestCase):
             events_on_first_page.append(event)
 
         token = change_feed.continuation_token
-        dict_token = eval(token)
+        dict_token = json.loads(token)
 
         self.assertEqual(len(events_on_first_page), 3)
         self.assertEqual(dict_token['CursorVersion'], 1)
@@ -224,7 +224,7 @@ class StorageChangeFeedTest(StorageTestCase):
 
         token = change_feed.continuation_token
 
-        dict_token = eval(token)
+        dict_token = json.loads(token)
         self.assertEqual(dict_token['CursorVersion'], 1)
         self.assertIsNotNone(dict_token['EndTime'])
         self.assertIsNotNone(dict_token['UrlHost'])
@@ -257,7 +257,7 @@ class StorageChangeFeedTest(StorageTestCase):
                 events.append(event)
         token = change_feed.continuation_token
 
-        dict_token = eval(token)
+        dict_token = json.loads(token)
         self.assertTrue(len(events) > 0)
         self.assertEqual(dict_token['CursorVersion'], 1)
         self.assertIsNotNone(dict_token['UrlHost'])
@@ -284,7 +284,7 @@ class StorageChangeFeedTest(StorageTestCase):
 
         # restart using the continuation token which has Non-zero EventIndex for 3 shards
         token2 = change_feed2.continuation_token
-        dict_token2 = eval(token2)
+        dict_token2 = json.loads(token2)
         self.assertEqual(len(dict_token2['CurrentSegmentCursor']['ShardCursors']), 3)
 
         change_feed3 = cf_client.list_changes(results_per_page=50).by_page(continuation_token=token2)
@@ -294,23 +294,28 @@ class StorageChangeFeedTest(StorageTestCase):
                 events3.append(event)
 
         token3 = change_feed3.continuation_token
-        dict_token3 = eval(token3)
+        dict_token3 = json.loads(token3)
 
         self.assertNotEqual(events3, 0)
         self.assertEqual(len(dict_token3['CurrentSegmentCursor']['ShardCursors']), 3)
         self.assertEqual(len(events)+len(events2)+len(events3), len(all_events))
 
-        # make sure list_changes is working if only 1 shard cursor is in shard cursor list
-        dict_token3['CurrentSegmentCursor']['ShardCursors'].pop(0)
-        dict_token3['CurrentSegmentCursor']['ShardCursors'].pop(0)
-        token_with_1_shard = str(dict_token3)
-        change_feed4 = cf_client.list_changes(results_per_page=50).by_page(continuation_token=token_with_1_shard)
-        event4 = list()
+    @GlobalStorageAccountPreparer()
+    def test_list_3_shards_events_works_with_1_shard_cursor(self, resource_group, location, storage_account, storage_account_key):
+        cf_client = ChangeFeedClient(self.account_url(storage_account, "blob"), storage_account_key)
+        start_time = datetime(2020, 8, 5, 17)
+        end_time = datetime(2020, 8, 5, 17, 15)
+        change_feed = cf_client.list_changes(results_per_page=1, start_time=start_time, end_time=end_time).by_page()
+        next(change_feed)
+        token_with_1_shard = change_feed.continuation_token
+
+        change_feed = cf_client.list_changes(results_per_page=50).by_page(continuation_token=token_with_1_shard)
+        events = list()
         for _ in range(0, 2):
-            page = next(change_feed4)
+            page = next(change_feed)
             for event in page:
-                event4.append(event)
-        token4 = change_feed4.continuation_token
-        dict_token4 = eval(token4)
-        self.assertEqual(len(dict_token3['CurrentSegmentCursor']['ShardCursors']), 1)
-        self.assertEqual(len(dict_token4['CurrentSegmentCursor']['ShardCursors']), 3)
+                events.append(event)
+        dict_token = json.loads(change_feed.continuation_token)
+        dict_token_with_1_shard = json.loads(token_with_1_shard)
+        self.assertEqual(len(dict_token_with_1_shard['CurrentSegmentCursor']['ShardCursors']), 1)
+        self.assertEqual(len(dict_token['CurrentSegmentCursor']['ShardCursors']), 3)
