@@ -71,10 +71,12 @@ def _parse_conn_str(conn_str):
             except (IndexError, TypeError, ValueError): # Fallback since technically expiry is optional.
                 # An arbitrary, absurdly large number, since you can't renew.
                 shared_access_signature_expiry = int(time.time() * 2)
-    if not (all((endpoint, shared_access_key_name, shared_access_key)) or all((endpoint, shared_access_signature))):
+    if not (all((endpoint, shared_access_key_name, shared_access_key)) or all((endpoint, shared_access_signature))) \
+        or all((shared_access_key_name, shared_access_signature)): # this latter clause since we don't accept both
         raise ValueError(
             "Invalid connection string. Should be in the format: "
             "Endpoint=sb://<FQDN>/;SharedAccessKeyName=<KeyName>;SharedAccessKey=<KeyValue>"
+            "\nWith alternate option of providing SharedAccessSignature instead of SharedAccessKeyName and Key"
         )
     entity = cast(str, entity_path)
     left_slash_pos = cast(str, endpoint).find("//")
