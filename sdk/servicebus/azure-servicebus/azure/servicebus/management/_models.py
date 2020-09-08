@@ -112,9 +112,9 @@ class QueueProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
     :ivar duplicate_detection_history_time_window: ISO 8601 timeSpan structure that defines the
      duration of the duplicate detection history. The default value is 10 minutes.
     :type duplicate_detection_history_time_window: ~datetime.timedelta
-    :ivar entity_availability_status: Availibility status of the entity. Possible values include:
+    :ivar availability_status: Availibility status of the entity. Possible values include:
      "Available", "Limited", "Renaming", "Restoring", "Unknown".
-    :type entity_availability_status: str or
+    :type availability_status: str or
      ~azure.servicebus.management.EntityAvailabilityStatus
     :ivar enable_batched_operations: Value that indicates whether server-side batched operations
      are enabled.
@@ -177,7 +177,7 @@ class QueueProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
         self.dead_lettering_on_message_expiration = extract_kwarg('dead_lettering_on_message_expiration')
         self.default_message_time_to_live = extract_kwarg('default_message_time_to_live')
         self.duplicate_detection_history_time_window = extract_kwarg('duplicate_detection_history_time_window')
-        self.entity_availability_status = extract_kwarg('entity_availability_status')
+        self.availability_status = extract_kwarg('availability_status')
         self.enable_batched_operations = extract_kwarg('enable_batched_operations')
         self.enable_express = extract_kwarg('enable_express')
         self.enable_partitioning = extract_kwarg('enable_partitioning')
@@ -206,7 +206,7 @@ class QueueProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
             dead_lettering_on_message_expiration=internal_qd.dead_lettering_on_message_expiration,
             default_message_time_to_live=internal_qd.default_message_time_to_live,
             duplicate_detection_history_time_window=internal_qd.duplicate_detection_history_time_window,
-            entity_availability_status=internal_qd.entity_availability_status,
+            availability_status=internal_qd.entity_availability_status,
             enable_batched_operations=internal_qd.enable_batched_operations,
             enable_express=internal_qd.enable_express,
             enable_partitioning=internal_qd.enable_partitioning,
@@ -235,7 +235,7 @@ class QueueProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
         self._internal_qd.dead_lettering_on_message_expiration = self.dead_lettering_on_message_expiration
         self._internal_qd.default_message_time_to_live = self.default_message_time_to_live
         self._internal_qd.duplicate_detection_history_time_window = self.duplicate_detection_history_time_window
-        self._internal_qd.entity_availability_status = self.entity_availability_status
+        self._internal_qd.entity_availability_status = self.availability_status
         self._internal_qd.enable_batched_operations = self.enable_batched_operations
         self._internal_qd.enable_express = self.enable_express
         self._internal_qd.enable_partitioning = self.enable_partitioning
@@ -403,9 +403,9 @@ class TopicProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
     :ivar enable_partitioning: A value that indicates whether the topic is to be partitioned
      across multiple message brokers.
     :type enable_partitioning: bool
-    :ivar entity_availability_status: Availability status of the entity. Possible values include:
+    :ivar availability_status: Availability status of the entity. Possible values include:
      "Available", "Limited", "Renaming", "Restoring", "Unknown".
-    :type entity_availability_status: str or
+    :type availability_status: str or
      ~azure.servicebus.management.EntityAvailabilityStatus
     :ivar enable_subscription_partitioning: A value that indicates whether the topic's
      subscription is to be partitioned.
@@ -440,7 +440,7 @@ class TopicProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
         self.support_ordering = extract_kwarg('support_ordering')
         self.auto_delete_on_idle = extract_kwarg('auto_delete_on_idle')
         self.enable_partitioning = extract_kwarg('enable_partitioning')
-        self.entity_availability_status = extract_kwarg('entity_availability_status')
+        self.availability_status = extract_kwarg('availability_status')
         self.enable_subscription_partitioning = extract_kwarg('enable_subscription_partitioning')
         self.enable_express = extract_kwarg('enable_express')
         self.user_metadata = extract_kwarg('user_metadata')
@@ -464,7 +464,7 @@ class TopicProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
             support_ordering=internal_td.support_ordering,
             auto_delete_on_idle=internal_td.auto_delete_on_idle,
             enable_partitioning=internal_td.enable_partitioning,
-            entity_availability_status=internal_td.entity_availability_status,
+            availability_status=internal_td.entity_availability_status,
             enable_subscription_partitioning=internal_td.enable_subscription_partitioning,
             enable_express=internal_td.enable_express,
             user_metadata=internal_td.user_metadata
@@ -488,7 +488,7 @@ class TopicProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
         self._internal_td.support_ordering = self.support_ordering
         self._internal_td.auto_delete_on_idle = self.auto_delete_on_idle
         self._internal_td.enable_partitioning = self.enable_partitioning
-        self._internal_td.entity_availability_status = self.entity_availability_status
+        self._internal_td.entity_availability_status = self.availability_status
         self._internal_td.enable_subscription_partitioning = self.enable_subscription_partitioning
         self._internal_td.enable_express = self.enable_express
         self._internal_td.user_metadata = self.user_metadata
@@ -614,9 +614,9 @@ class SubscriptionProperties(DictMixin):  # pylint:disable=too-many-instance-att
     :ivar auto_delete_on_idle: ISO 8601 timeSpan idle interval after which the subscription is
      automatically deleted. The minimum duration is 5 minutes.
     :type auto_delete_on_idle: ~datetime.timedelta
-    :ivar entity_availability_status: Availability status of the entity. Possible values include:
+    :ivar availability_status: Availability status of the entity. Possible values include:
      "Available", "Limited", "Renaming", "Restoring", "Unknown".
-    :type entity_availability_status: str or
+    :type availability_status: str or
      ~azure.servicebus.management.EntityAvailabilityStatus
     """
     def __init__(self, name, **kwargs):
@@ -640,7 +640,7 @@ class SubscriptionProperties(DictMixin):  # pylint:disable=too-many-instance-att
         self.user_metadata = extract_kwarg('user_metadata')
         self.forward_dead_lettered_messages_to = extract_kwarg('forward_dead_lettered_messages_to')
         self.auto_delete_on_idle = extract_kwarg('auto_delete_on_idle')
-        self.entity_availability_status = extract_kwarg('entity_availability_status')
+        self.availability_status = extract_kwarg('availability_status')
 
         validate_extraction_missing_args(extraction_missing_args)
 
@@ -662,7 +662,7 @@ class SubscriptionProperties(DictMixin):  # pylint:disable=too-many-instance-att
             user_metadata=internal_subscription.user_metadata,
             forward_dead_lettered_messages_to=internal_subscription.forward_dead_lettered_messages_to,
             auto_delete_on_idle=internal_subscription.auto_delete_on_idle,
-            entity_availability_status=internal_subscription.entity_availability_status
+            availability_status=internal_subscription.entity_availability_status
         )
         subscription._internal_sd = deepcopy(internal_subscription)
         return subscription
@@ -684,7 +684,7 @@ class SubscriptionProperties(DictMixin):  # pylint:disable=too-many-instance-att
         self._internal_sd.user_metadata = self.user_metadata
         self._internal_sd.forward_dead_lettered_messages_to = self.forward_dead_lettered_messages_to
         self._internal_sd.auto_delete_on_idle = self.auto_delete_on_idle
-        self._internal_sd.entity_availability_status = self.entity_availability_status
+        self._internal_sd.entity_availability_status = self.availability_status
 
         return self._internal_sd
 
