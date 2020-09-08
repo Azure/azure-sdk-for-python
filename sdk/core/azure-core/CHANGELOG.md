@@ -1,6 +1,9 @@
 
 # Release History
 
+## 1.8.2 (Unreleased)
+
+
 ## 1.8.1 (2020-09-08)
 
 ### Bug fixes
