@@ -56,8 +56,6 @@ class ServiceBusAdministrationClientTopicAsyncTests(AzureMgmtTestCase):
                 enable_batched_operations=True,
                 enable_express=True,
                 enable_partitioning=True,
-                enable_subscription_partitioning=True,
-                is_anonymous_accessible=True,
                 max_size_in_megabytes=3072
             )
             topic = await mgmt_service.get_topic(topic_name)
@@ -68,8 +66,6 @@ class ServiceBusAdministrationClientTopicAsyncTests(AzureMgmtTestCase):
             assert topic.enable_batched_operations
             assert topic.enable_express
             assert topic.enable_partitioning
-            assert topic.enable_subscription_partitioning
-            assert topic.is_anonymous_accessible
             assert topic.max_size_in_megabytes % 3072 == 0
         finally:
             await mgmt_service.delete_topic(topic_name)
@@ -109,7 +105,6 @@ class ServiceBusAdministrationClientTopicAsyncTests(AzureMgmtTestCase):
             topic_description.enable_batched_operations = True
             topic_description.enable_express = True
             # topic_description.enable_partitioning = True # Cannot be changed after creation
-            topic_description.is_anonymous_accessible = True
             topic_description.max_size_in_megabytes = 3072
             # topic_description.requires_duplicate_detection = True # Read only
             # topic_description.requires_session = True # Cannot be changed after creation
@@ -124,7 +119,6 @@ class ServiceBusAdministrationClientTopicAsyncTests(AzureMgmtTestCase):
             assert topic_description.enable_batched_operations == True
             assert topic_description.enable_express == True
             # assert topic_description.enable_partitioning == True
-            assert topic_description.is_anonymous_accessible == True
             assert topic_description.max_size_in_megabytes == 3072
             # assert topic_description.requires_duplicate_detection == True
             # assert topic_description.requires_session == True
