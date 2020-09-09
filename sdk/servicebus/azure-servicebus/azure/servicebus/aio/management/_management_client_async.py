@@ -44,7 +44,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential  # pylint:disable=ungrouped-imports
 
 
-class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
+class ServiceBusAdministrationClient:  #pylint:disable=too-many-public-methods
     """Use this client to create, update, list, and delete resources of a ServiceBus namespace.
 
     :param str fully_qualified_namespace: The fully qualified host name for the Service Bus namespace.
@@ -64,7 +64,7 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
         self._pipeline = self._build_pipeline()
         self._impl = ServiceBusManagementClientImpl(endpoint=fully_qualified_namespace, pipeline=self._pipeline)
 
-    async def __aenter__(self) -> "ServiceBusManagementClient":
+    async def __aenter__(self) -> "ServiceBusAdministrationClient":
         await self._impl.__aenter__()
         return self
 
@@ -130,11 +130,11 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
         return element
 
     @classmethod
-    def from_connection_string(cls, conn_str: str, **kwargs: Any) -> "ServiceBusManagementClient":
+    def from_connection_string(cls, conn_str: str, **kwargs: Any) -> "ServiceBusAdministrationClient":
         """Create a client from connection string.
 
         :param str conn_str: The connection string of the Service Bus Namespace.
-        :rtype: ~azure.servicebus.management.aio.ServiceBusManagementClient
+        :rtype: ~azure.servicebus.management.aio.ServiceBusAdministrationClient
         """
         endpoint, shared_access_key_name, shared_access_key, _ = parse_conn_str(conn_str)
         if "//" in endpoint:
@@ -198,9 +198,6 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
         :keyword enable_partitioning: A value that indicates whether the queue is to be partitioned
          across multiple message brokers.
         :type enable_partitioning: bool
-        :keyword is_anonymous_accessible: A value indicating if the resource can be accessed without
-         authorization.
-        :type is_anonymous_accessible: bool
         :keyword lock_duration: ISO 8601 timespan duration of a peek-lock; that is, the amount of time
          that the message is locked for other receivers. The maximum value for LockDuration is 5
          minutes; the default value is 1 minute.
@@ -223,8 +220,6 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
         :keyword user_metadata: Custom metdata that user can associate with the description. Max length
          is 1024 chars.
         :type user_metadata: str
-        :keyword support_ordering: A value that indicates whether the queue supports ordering.
-        :type support_ordering: bool
         :keyword forward_dead_lettered_messages_to: The name of the recipient entity to which all the
          dead-lettered messages of this subscription are forwarded to.
         :type forward_dead_lettered_messages_to: str
@@ -238,18 +233,16 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
             dead_lettering_on_message_expiration=kwargs.pop("dead_lettering_on_message_expiration", None),
             default_message_time_to_live=kwargs.pop("default_message_time_to_live", None),
             duplicate_detection_history_time_window=kwargs.pop("duplicate_detection_history_time_window", None),
-            entity_availability_status=kwargs.pop("entity_availability_status", None),
+            availability_status=None,
             enable_batched_operations=kwargs.pop("enable_batched_operations", None),
             enable_express=kwargs.pop("enable_express", None),
             enable_partitioning=kwargs.pop("enable_partitioning", None),
-            is_anonymous_accessible=kwargs.pop("is_anonymous_accessible", None),
             lock_duration=kwargs.pop("lock_duration", None),
             max_delivery_count=kwargs.pop("max_delivery_count", None),
             max_size_in_megabytes=kwargs.pop("max_size_in_megabytes", None),
             requires_duplicate_detection=kwargs.pop("requires_duplicate_detection", None),
             requires_session=kwargs.pop("requires_session", None),
             status=kwargs.pop("status", None),
-            support_ordering=kwargs.pop("support_ordering", None),
             forward_to=kwargs.pop("forward_to", None),
             forward_dead_lettered_messages_to=kwargs.pop("forward_dead_lettered_messages_to", None),
             user_metadata=kwargs.pop("user_metadata", None)
@@ -413,9 +406,6 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
         :type size_in_bytes: int
         :keyword filtering_messages_before_publishing: Filter messages before publishing.
         :type filtering_messages_before_publishing: bool
-        :keyword is_anonymous_accessible: A value indicating if the resource can be accessed without
-         authorization.
-        :type is_anonymous_accessible: bool
         :keyword authorization_rules: Authorization rules for resource.
         :type authorization_rules:
          list[~azure.servicebus.management.AuthorizationRule]
@@ -427,9 +417,6 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
         :keyword enable_partitioning: A value that indicates whether the topic is to be partitioned
          across multiple message brokers.
         :type enable_partitioning: bool
-        :keyword enable_subscription_partitioning: A value that indicates whether the topic's
-         subscription is to be partitioned.
-        :type enable_subscription_partitioning: bool
         :keyword enable_express: A value that indicates whether Express Entities are enabled. An express
          queue holds a message in memory temporarily before writing it to persistent storage.
         :type enable_express: bool
@@ -447,14 +434,12 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
             duplicate_detection_history_time_window=kwargs.pop("duplicate_detection_history_time_window", None),
             enable_batched_operations=kwargs.pop("enable_batched_operations", None),
             size_in_bytes=kwargs.pop("size_in_bytes", None),
-            is_anonymous_accessible=kwargs.pop("is_anonymous_accessible", None),
             authorization_rules=kwargs.pop("authorization_rules", None),
             status=kwargs.pop("status", None),
             support_ordering=kwargs.pop("support_ordering", None),
             auto_delete_on_idle=kwargs.pop("auto_delete_on_idle", None),
             enable_partitioning=kwargs.pop("enable_partitioning", None),
-            entity_availability_status=kwargs.pop("entity_availability_status", None),
-            enable_subscription_partitioning=kwargs.pop("enable_subscription_partitioning", None),
+            availability_status=None,
             enable_express=kwargs.pop("enable_express", None),
             user_metadata=kwargs.pop("user_metadata", None)
         )
@@ -669,7 +654,7 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
             user_metadata=kwargs.pop("user_metadata", None),
             forward_dead_lettered_messages_to=kwargs.pop("forward_dead_lettered_messages_to", None),
             auto_delete_on_idle=kwargs.pop("auto_delete_on_idle", None),
-            entity_availability_status=kwargs.pop("entity_availability_status", None),
+            availability_status=None,
         )
         to_create = subscription._to_internal_entity()  # type: ignore  # pylint:disable=protected-access
 

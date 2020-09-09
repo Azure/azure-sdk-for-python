@@ -28,7 +28,15 @@ try:
 except ImportError:  # python < 3.3
     from mock import Mock, patch  # type: ignore
 
-from helpers import build_aad_response, build_id_token, mock_response, Request, validating_transport
+from helpers import (
+    build_aad_response,
+    build_id_token,
+    get_discovery_response,
+    mock_response,
+    msal_validating_transport,
+    Request,
+    validating_transport,
+)
 
 
 def test_supported():
@@ -513,8 +521,13 @@ def test_authority_environment_variable():
 
 def test_authentication_record_empty_cache():
     record = AuthenticationRecord("tenant_id", "client_id", "authority", "home_account_id", "username")
-    transport = Mock(side_effect=Exception("the credential shouldn't send a request"))
-    credential = SharedTokenCacheCredential(authentication_record=record, transport=transport, _cache=TokenCache())
+
+    def send(request, **_):
+        # expecting only MSAL discovery requests
+        assert request.method == 'GET'
+        return get_discovery_response()
+
+    credential = SharedTokenCacheCredential(authentication_record=record, transport=Mock(send=send), _cache=TokenCache())
 
     with pytest.raises(CredentialUnavailableError):
         credential.get_token("scope")
@@ -529,13 +542,17 @@ def test_authentication_record_no_match():
     username = "me"
     record = AuthenticationRecord(tenant_id, client_id, authority, home_account_id, username)
 
-    transport = Mock(side_effect=Exception("the credential shouldn't send a request"))
+    def send(request, **_):
+        # expecting only MSAL discovery requests
+        assert request.method == 'GET'
+        return get_discovery_response()
+
     cache = populated_cache(
         get_account_event(
             "not-" + username, "not-" + object_id, "different-" + tenant_id, client_id="not-" + client_id,
         ),
     )
-    credential = SharedTokenCacheCredential(authentication_record=record, transport=transport, _cache=cache)
+    credential = SharedTokenCacheCredential(authentication_record=record, transport=Mock(send=send), _cache=cache)
 
     with pytest.raises(CredentialUnavailableError):
         credential.get_token("scope")
@@ -557,7 +574,8 @@ def test_authentication_record():
     )
     cache = populated_cache(account)
 
-    transport = validating_transport(
+    transport = msal_validating_transport(
+        endpoint="https://{}/{}".format(authority, tenant_id),
         requests=[Request(authority=authority, required_data={"refresh_token": expected_refresh_token})],
         responses=[mock_response(json_payload=build_aad_response(access_token=expected_access_token))],
     )
@@ -593,7 +611,8 @@ def test_auth_record_multiple_accounts_for_username():
         ),
     )
 
-    transport = validating_transport(
+    transport = msal_validating_transport(
+        endpoint="https://{}/{}".format(authority, tenant_id),
         requests=[Request(authority=authority, required_data={"refresh_token": expected_refresh_token})],
         responses=[mock_response(json_payload=build_aad_response(access_token=expected_access_token))],
     )
@@ -741,19 +760,22 @@ def test_authentication_record_authenticating_tenant():
     """when given a record and 'tenant_id', the credential should authenticate in the latter"""
 
     expected_tenant_id = "tenant-id"
-    record = AuthenticationRecord("not- " + expected_tenant_id, "...", "...", "...", "...")
+    record = AuthenticationRecord("not- " + expected_tenant_id, "...", "localhost", "...", "...")
 
-    with patch.object(SharedTokenCacheCredential, "_get_auth_client") as get_auth_client:
-        credential = SharedTokenCacheCredential(
-            authentication_record=record, _cache=TokenCache(), tenant_id=expected_tenant_id
-        )
-        with pytest.raises(CredentialUnavailableError):
-            # this raises because the cache is empty
-            credential.get_token("scope")
+    def mock_send(request, **_):
+        if not request.body:
+            return get_discovery_response()
+        assert request.url.startswith("https://localhost/" + expected_tenant_id)
+        return mock_response(json_payload=build_aad_response(access_token="*"))
 
-    assert get_auth_client.call_count == 1
-    _, kwargs = get_auth_client.call_args
-    assert kwargs["tenant_id"] == expected_tenant_id
+    transport = Mock(send=Mock(wraps=mock_send))
+    credential = SharedTokenCacheCredential(
+        authentication_record=record, _cache=TokenCache(), tenant_id=expected_tenant_id, transport=transport
+    )
+    with pytest.raises(CredentialUnavailableError):
+        credential.get_token("scope")  # this raises because the cache is empty
+
+    assert transport.send.called
 
 
 def get_account_event(

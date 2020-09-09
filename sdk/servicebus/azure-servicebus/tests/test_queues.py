@@ -17,6 +17,7 @@ import uamqp
 from azure.servicebus import ServiceBusClient, AutoLockRenew, TransportType
 from azure.servicebus._common.message import Message, PeekMessage, ReceivedMessage, BatchMessage
 from azure.servicebus._common.constants import (
+    SubQueue,
     ReceiveSettleMode,
     _X_OPT_LOCK_TOKEN,
     _X_OPT_PARTITION_KEY,
@@ -509,8 +510,9 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     message.dead_letter(reason="Testing reason", description="Testing description")
     
             count = 0
-            with sb_client.get_queue_deadletter_receiver(servicebus_queue.name,
-                                                   max_wait_time=5) as receiver:
+            with sb_client.get_queue_receiver(servicebus_queue.name,
+                                              sub_queue = SubQueue.DeadLetter,
+                                              max_wait_time=5) as receiver:
                 for message in receiver:
                     count += 1
                     print_message(_logger, message)
@@ -632,8 +634,9 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     count += 1
             assert count == 0
 
-            with sb_client.get_queue_deadletter_receiver(
+            with sb_client.get_queue_receiver(
                     servicebus_queue.name,
+                    sub_queue = SubQueue.DeadLetter,
                     max_wait_time=5,
                     mode=ReceiveSettleMode.PeekLock) as dl_receiver:
                 count = 0
@@ -679,8 +682,9 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     
             assert count == 10
 
-            with sb_client.get_queue_deadletter_receiver(
+            with sb_client.get_queue_receiver(
                     servicebus_queue.name,
+                    sub_queue = SubQueue.DeadLetter,
                     max_wait_time=5,
                     mode=ReceiveSettleMode.PeekLock) as dl_receiver:
                 count = 0
@@ -961,8 +965,9 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 messages = receiver.receive_messages(5, max_wait_time=10)
             assert not messages
 
-            with sb_client.get_queue_deadletter_receiver(
+            with sb_client.get_queue_receiver(
                     servicebus_queue.name,
+                    sub_queue = SubQueue.DeadLetter,
                     max_wait_time=5,
                     mode=ReceiveSettleMode.PeekLock) as dl_receiver:
                 count = 0
@@ -1857,3 +1862,43 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                                                   mode=2) as receiver:
                 
                     raise Exception("Should not get here, should fail fast.")
+
+
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusQueuePreparer(name_prefix='servicebustest')
+    def test_message_inner_amqp_properties(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+        
+        message = Message("body")
+
+        with pytest.raises(TypeError):
+            message.amqp_message.properties = {"properties":1}
+        message.amqp_message.properties.subject = "subject"
+
+        message.amqp_message.application_properties = {b"application_properties":1}
+
+        message.amqp_message.annotations = {b"annotations":2}
+        message.amqp_message.delivery_annotations = {b"delivery_annotations":3}
+
+        with pytest.raises(TypeError):
+            message.amqp_message.header = {"header":4}
+        message.amqp_message.header.priority = 5
+
+        message.amqp_message.footer = {b"footer":6}
+
+        with ServiceBusClient.from_connection_string(
+            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+
+            with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+                sender.send_messages(message)
+                with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5) as receiver:
+                    message = receiver.receive_messages()[0]
+                    assert message.amqp_message.properties.subject == b"subject"
+                    assert message.amqp_message.application_properties[b"application_properties"] == 1
+                    assert message.amqp_message.annotations[b"annotations"] == 2
+                    # delivery_annotations and footer disabled pending uamqp bug https://github.com/Azure/azure-uamqp-python/issues/169
+                    #assert message.amqp_message.delivery_annotations[b"delivery_annotations"] == 3
+                    assert message.amqp_message.header.priority == 5
+                    #assert message.amqp_message.footer[b"footer"] == 6

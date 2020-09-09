@@ -72,6 +72,7 @@ class ServiceOperations(object):
         restype = "service"
         comp = "properties"
         content_type = kwargs.pop("content_type", "application/xml")
+        accept = "application/xml"
 
         # Construct URL
         url = self.set_properties.metadata['url']  # type: ignore
@@ -93,12 +94,12 @@ class ServiceOperations(object):
         if request_id_parameter is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter", request_id_parameter, 'str')
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(table_service_properties, 'TableServiceProperties', is_xml=True)
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -142,6 +143,7 @@ class ServiceOperations(object):
         error_map.update(kwargs.pop('error_map', {}))
         restype = "service"
         comp = "properties"
+        accept = "application/xml"
 
         # Construct URL
         url = self.get_properties.metadata['url']  # type: ignore
@@ -162,7 +164,7 @@ class ServiceOperations(object):
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if request_id_parameter is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter", request_id_parameter, 'str')
-        header_parameters['Accept'] = 'application/xml'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -211,6 +213,7 @@ class ServiceOperations(object):
         error_map.update(kwargs.pop('error_map', {}))
         restype = "service"
         comp = "stats"
+        accept = "application/xml"
 
         # Construct URL
         url = self.get_statistics.metadata['url']  # type: ignore
@@ -231,7 +234,7 @@ class ServiceOperations(object):
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if request_id_parameter is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter", request_id_parameter, 'str')
-        header_parameters['Accept'] = 'application/xml'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
