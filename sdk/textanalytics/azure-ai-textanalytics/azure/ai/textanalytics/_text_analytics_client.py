@@ -23,7 +23,8 @@ from ._response_handlers import (
     key_phrases_result,
     sentiment_result,
     language_result,
-    pii_entities_result
+    pii_entities_result,
+    healthcare_entities_result
 )
 
 if TYPE_CHECKING:
@@ -360,6 +361,54 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             )
         except HttpResponseError as error:
             process_http_response_error(error)
+
+    @distributed_trace
+    def recognize_healthcare_entities(  # type: ignore
+        self,
+        documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
+        **kwargs  # type: Any
+    ):
+        """Recognize healthcare entities and identify relationships between these entities in a batch of documents.
+
+        Returns a list of healthcare entities and relations found in text.  Entities are associated with references
+        that can be found in existing knowledge bases, such as UMLS, CHV, MSH, etc.  Relations are comprised of a pair
+        of entities and a directional relationship.
+
+        :param documents: The set of documents to process as part of this batch.
+            If you wish to specify the ID and language on a per-item basis you must
+            use as input a list[:class:`~azure.ai.textanalytics.TextDocumentInput`] or a list of
+            dict representations of :class:`~azure.ai.textanalytics.TextDocumentInput`, like
+            `{"id": "1", "language": "en", "text": "hello world"}`.
+        :type documents:
+            list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or
+            list[dict[str, str]]
+        :keyword str language: The 2 letter ISO 639-1 representation of language for the
+            entire batch. For example, use "en" for English; "es" for Spanish etc.
+            If not set, uses "en" for English as default. Per-document language will
+            take precedence over whole batch language. See https://aka.ms/talangs for
+            supported languages in Text Analytics API.
+        :keyword str model_version: This value indicates which model will
+            be used for scoring, e.g. "latest", "2019-10-01". If a model-version
+            is not specified, the API will default to the latest, non-preview version.
+        :keyword bool show_stats: If set to true, response will contain document level statistics.
+        :return: The combined list of :class:`~azure.ai.textanalytics.RecognizeHealthcareEntitiesResult`
+            and :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents
+            were passed in.
+        :rtype: list[~azure.ai.textanalytics.RecognizeHealthcareEntitiesResult,
+            ~azure.ai.textanalytics.DocumentError]
+        :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_recognize_healthcare_entities.py
+                :start-after: [START recognize_healthcare_entities]
+                :end-before: [END recognize_healthcare_entities]
+                :language: python
+                :dedent: 8
+                :caption: Recognize healthcare entities in a batch of documents.
+        """
+
+        pass
 
     @distributed_trace
     def extract_key_phrases(  # type: ignore
