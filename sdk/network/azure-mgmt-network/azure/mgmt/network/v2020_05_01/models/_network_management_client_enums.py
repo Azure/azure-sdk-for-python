@@ -374,12 +374,6 @@ class ExpressRoutePortsEncapsulation(str, Enum):
     qin_q = "QinQ"
 
 
-class FirewallPolicyIntrusionSystemMode(str, Enum):
-
-    enabled = "Enabled"
-    disabled = "Disabled"
-
-
 class FirewallPolicyNatRuleCollectionActionType(str, Enum):
 
     dnat = "DNAT"
