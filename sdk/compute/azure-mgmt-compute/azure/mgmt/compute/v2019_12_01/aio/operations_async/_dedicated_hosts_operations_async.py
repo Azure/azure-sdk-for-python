@@ -76,7 +76,6 @@ class DedicatedHostsOperations:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'DedicatedHost')
         body_content_kwargs['content'] = body_content
@@ -89,7 +88,6 @@ class DedicatedHostsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('DedicatedHost', pipeline_response)
 
@@ -109,7 +107,7 @@ class DedicatedHostsOperations:
         host_name: str,
         parameters: "models.DedicatedHost",
         **kwargs
-    ) -> "models.DedicatedHost":
+    ) -> AsyncLROPoller["models.DedicatedHost"]:
         """Create or update a dedicated host .
 
         :param resource_group_name: The name of the resource group.
@@ -126,8 +124,8 @@ class DedicatedHostsOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: DedicatedHost, or the result of cls(response)
-        :rtype: ~azure.mgmt.compute.v2019_12_01.models.DedicatedHost
+        :return: An instance of AsyncLROPoller that returns either DedicatedHost or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.compute.v2019_12_01.models.DedicatedHost]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -204,7 +202,6 @@ class DedicatedHostsOperations:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'DedicatedHostUpdate')
         body_content_kwargs['content'] = body_content
@@ -232,7 +229,7 @@ class DedicatedHostsOperations:
         host_name: str,
         parameters: "models.DedicatedHostUpdate",
         **kwargs
-    ) -> "models.DedicatedHost":
+    ) -> AsyncLROPoller["models.DedicatedHost"]:
         """Update an dedicated host .
 
         :param resource_group_name: The name of the resource group.
@@ -249,8 +246,8 @@ class DedicatedHostsOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: DedicatedHost, or the result of cls(response)
-        :rtype: ~azure.mgmt.compute.v2019_12_01.models.DedicatedHost
+        :return: An instance of AsyncLROPoller that returns either DedicatedHost or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.compute.v2019_12_01.models.DedicatedHost]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -323,7 +320,6 @@ class DedicatedHostsOperations:
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
 
-        # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -343,7 +339,7 @@ class DedicatedHostsOperations:
         host_group_name: str,
         host_name: str,
         **kwargs
-    ) -> None:
+    ) -> AsyncLROPoller[None]:
         """Delete a dedicated host.
 
         :param resource_group_name: The name of the resource group.
@@ -358,8 +354,8 @@ class DedicatedHostsOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: None, or the result of cls(response)
-        :rtype: None
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -447,7 +443,6 @@ class DedicatedHostsOperations:
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -488,6 +483,10 @@ class DedicatedHostsOperations:
         api_version = "2019-12-01"
 
         def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = 'application/json'
+
             if not next_link:
                 # Construct URL
                 url = self.list_by_host_group.metadata['url']  # type: ignore
@@ -501,15 +500,11 @@ class DedicatedHostsOperations:
                 query_parameters = {}  # type: Dict[str, Any]
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
+                request = self._client.get(url, query_parameters, header_parameters)
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
+                request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         async def extract_data(pipeline_response):
