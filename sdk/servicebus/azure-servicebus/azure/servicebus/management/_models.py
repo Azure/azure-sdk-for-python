@@ -125,9 +125,6 @@ class QueueProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
     :ivar enable_partitioning: A value that indicates whether the queue is to be partitioned
      across multiple message brokers.
     :type enable_partitioning: bool
-    :ivar is_anonymous_accessible: A value indicating if the resource can be accessed without
-     authorization.
-    :type is_anonymous_accessible: bool
     :ivar lock_duration: ISO 8601 timespan duration of a peek-lock; that is, the amount of time
      that the message is locked for other receivers. The maximum value for LockDuration is 5
      minutes; the default value is 1 minute.
@@ -153,8 +150,6 @@ class QueueProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
     :ivar user_metadata: Custom metdata that user can associate with the description. Max length
      is 1024 chars.
     :type user_metadata: str
-    :ivar support_ordering: A value that indicates whether the queue supports ordering.
-    :type support_ordering: bool
     :ivar forward_dead_lettered_messages_to: The name of the recipient entity to which all the
      dead-lettered messages of this subscription are forwarded to.
     :type forward_dead_lettered_messages_to: str
@@ -181,14 +176,12 @@ class QueueProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
         self.enable_batched_operations = extract_kwarg('enable_batched_operations')
         self.enable_express = extract_kwarg('enable_express')
         self.enable_partitioning = extract_kwarg('enable_partitioning')
-        self.is_anonymous_accessible = extract_kwarg('is_anonymous_accessible')
         self.lock_duration = extract_kwarg('lock_duration')
         self.max_delivery_count = extract_kwarg('max_delivery_count')
         self.max_size_in_megabytes = extract_kwarg('max_size_in_megabytes')
         self.requires_duplicate_detection = extract_kwarg('requires_duplicate_detection')
         self.requires_session = extract_kwarg('requires_session')
         self.status = extract_kwarg('status')
-        self.support_ordering = extract_kwarg('support_ordering')
         self.forward_to = extract_kwarg('forward_to')
         self.user_metadata = extract_kwarg('user_metadata')
         self.forward_dead_lettered_messages_to = extract_kwarg('forward_dead_lettered_messages_to')
@@ -210,14 +203,12 @@ class QueueProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
             enable_batched_operations=internal_qd.enable_batched_operations,
             enable_express=internal_qd.enable_express,
             enable_partitioning=internal_qd.enable_partitioning,
-            is_anonymous_accessible=internal_qd.is_anonymous_accessible,
             lock_duration=internal_qd.lock_duration,
             max_delivery_count=internal_qd.max_delivery_count,
             max_size_in_megabytes=internal_qd.max_size_in_megabytes,
             requires_duplicate_detection=internal_qd.requires_duplicate_detection,
             requires_session=internal_qd.requires_session,
             status=internal_qd.status,
-            support_ordering=internal_qd.support_ordering,
             forward_to=internal_qd.forward_to,
             forward_dead_lettered_messages_to=internal_qd.forward_dead_lettered_messages_to,
             user_metadata=internal_qd.user_metadata
@@ -239,14 +230,12 @@ class QueueProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
         self._internal_qd.enable_batched_operations = self.enable_batched_operations
         self._internal_qd.enable_express = self.enable_express
         self._internal_qd.enable_partitioning = self.enable_partitioning
-        self._internal_qd.is_anonymous_accessible = self.is_anonymous_accessible
         self._internal_qd.lock_duration = self.lock_duration
         self._internal_qd.max_delivery_count = self.max_delivery_count
         self._internal_qd.max_size_in_megabytes = self.max_size_in_megabytes
         self._internal_qd.requires_duplicate_detection = self.requires_duplicate_detection
         self._internal_qd.requires_session = self.requires_session
         self._internal_qd.status = self.status
-        self._internal_qd.support_ordering = self.support_ordering
         self._internal_qd.forward_to = self.forward_to
         self._internal_qd.forward_dead_lettered_messages_to = self.forward_dead_lettered_messages_to
         self._internal_qd.user_metadata = self.user_metadata
@@ -386,9 +375,6 @@ class TopicProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
     :type size_in_bytes: int
     :ivar filtering_messages_before_publishing: Filter messages before publishing.
     :type filtering_messages_before_publishing: bool
-    :ivar is_anonymous_accessible: A value indicating if the resource can be accessed without
-     authorization.
-    :type is_anonymous_accessible: bool
     :ivar authorization_rules: Authorization rules for resource.
     :type authorization_rules:
      list[~azure.servicebus.management.AuthorizationRule]
@@ -407,9 +393,6 @@ class TopicProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
      "Available", "Limited", "Renaming", "Restoring", "Unknown".
     :type entity_availability_status: str or
      ~azure.servicebus.management.EntityAvailabilityStatus
-    :ivar enable_subscription_partitioning: A value that indicates whether the topic's
-     subscription is to be partitioned.
-    :type enable_subscription_partitioning: bool
     :ivar enable_express: A value that indicates whether Express Entities are enabled. An express
      queue holds a message in memory temporarily before writing it to persistent storage.
     :type enable_express: bool
@@ -434,14 +417,12 @@ class TopicProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
         self.duplicate_detection_history_time_window = extract_kwarg('duplicate_detection_history_time_window')
         self.enable_batched_operations = extract_kwarg('enable_batched_operations')
         self.size_in_bytes = extract_kwarg('size_in_bytes')
-        self.is_anonymous_accessible = extract_kwarg('is_anonymous_accessible')
         self.authorization_rules = extract_kwarg('authorization_rules')
         self.status = extract_kwarg('status')
         self.support_ordering = extract_kwarg('support_ordering')
         self.auto_delete_on_idle = extract_kwarg('auto_delete_on_idle')
         self.enable_partitioning = extract_kwarg('enable_partitioning')
         self.entity_availability_status = extract_kwarg('entity_availability_status')
-        self.enable_subscription_partitioning = extract_kwarg('enable_subscription_partitioning')
         self.enable_express = extract_kwarg('enable_express')
         self.user_metadata = extract_kwarg('user_metadata')
 
@@ -458,14 +439,12 @@ class TopicProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
             duplicate_detection_history_time_window=internal_td.duplicate_detection_history_time_window,
             enable_batched_operations=internal_td.enable_batched_operations,
             size_in_bytes=internal_td.size_in_bytes,
-            is_anonymous_accessible=internal_td.is_anonymous_accessible,
             authorization_rules=internal_td.authorization_rules,
             status=internal_td.status,
             support_ordering=internal_td.support_ordering,
             auto_delete_on_idle=internal_td.auto_delete_on_idle,
             enable_partitioning=internal_td.enable_partitioning,
             entity_availability_status=internal_td.entity_availability_status,
-            enable_subscription_partitioning=internal_td.enable_subscription_partitioning,
             enable_express=internal_td.enable_express,
             user_metadata=internal_td.user_metadata
         )
@@ -482,14 +461,12 @@ class TopicProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
         self._internal_td.duplicate_detection_history_time_window = self.duplicate_detection_history_time_window
         self._internal_td.enable_batched_operations = self.enable_batched_operations
         self._internal_td.size_in_bytes = self.size_in_bytes
-        self._internal_td.is_anonymous_accessible = self.is_anonymous_accessible
         self._internal_td.authorization_rules = self.authorization_rules
         self._internal_td.status = self.status
         self._internal_td.support_ordering = self.support_ordering
         self._internal_td.auto_delete_on_idle = self.auto_delete_on_idle
         self._internal_td.enable_partitioning = self.enable_partitioning
         self._internal_td.entity_availability_status = self.entity_availability_status
-        self._internal_td.enable_subscription_partitioning = self.enable_subscription_partitioning
         self._internal_td.enable_express = self.enable_express
         self._internal_td.user_metadata = self.user_metadata
 

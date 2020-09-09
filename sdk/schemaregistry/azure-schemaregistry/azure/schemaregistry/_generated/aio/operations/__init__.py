@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._schema_operations_async import SchemaOperations
+from ._schema_operations import SchemaOperations
 
 __all__ = [
     'SchemaOperations',

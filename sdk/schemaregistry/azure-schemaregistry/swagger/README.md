@@ -5,7 +5,8 @@
 ### Generation
 ```ps
 cd C:\Work\SchemaRegistry\
-autorest --v3 --python --use=@autorest/python@5.0.0-preview.6
+autorest --reset
+autorest --v3 --python
 ```
 ### Settings
 ``` yaml
@@ -16,5 +17,7 @@ no-namespace-folders: true
 license-header: MICROSOFT_MIT_NO_VERSION
 clear-output-folder: true
 python: true
+add-credential: true
+credential-scopes: "https://eventhubs.azure.net/.default"
 package-version: "1.0.0b1"
 ```
