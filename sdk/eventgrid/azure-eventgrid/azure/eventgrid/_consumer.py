@@ -7,12 +7,8 @@
 # --------------------------------------------------------------------------
 
 from typing import TYPE_CHECKING
-import json
-import six
 import logging
-
-from azure.core import PipelineClient
-from msrest import Deserializer, Serializer
+from ._models import CloudEvent, EventGridEvent
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -20,31 +16,53 @@ if TYPE_CHECKING:
 
 _LOGGER = logging.getLogger(__name__)
 
-from ._models import DeserializedEvent
-
 class EventGridConsumer(object):
     """
-    A consumer responsible for deserializing event handler messages, to allow for access to strongly typed Event objects.
+    A consumer responsible for deserializing event handler messages, to allow for
+    access to strongly typed Event objects.
     """
+    def decode_cloud_event(self, cloud_event, **kwargs): # pylint: disable=no-self-use
+        # type: (Union[str, dict, bytes], Any) -> CloudEvent
+        """Single event following CloudEvent schema will be parsed and returned as Deserialized Event.
+        :param cloud_event: The event to be deserialized.
+        :type cloud_event: Union[str, dict, bytes]
+        :rtype: CloudEvent
 
-    def deserialize_event(self, event, **kwargs):
-        # type: (Union[str, dict, bytes]) -> models.DeserializedEvent
-        """Single event following CloudEvent/EventGridEvent schema will be parsed and returned as DeserializedEvent.
-        :param event: The event to be deserialized.
-        :type event: Union[str, dict, bytes]
-        :rtype: models.DeserializedEvent
-
-        :raise: :class:`ValueError`, when events do not follow CloudEvent or EventGridEvent schema.
+        :raise: :class:`ValueError`, when events do not follow CloudEvent schema.
         """
         encode = kwargs.pop('encoding', 'utf-8')
         try:
-            if isinstance(event, six.binary_type):
-                event = json.loads(event.decode(encode))
-            elif isinstance(event, six.string_types):
-                event = json.loads(event)
-            return DeserializedEvent(event)
+            cloud_event = CloudEvent._from_json(cloud_event, encode) # pylint: disable=protected-access
+            deserialized_event = CloudEvent._from_generated(cloud_event) # pylint: disable=protected-access
+            CloudEvent._deserialize_data(deserialized_event, deserialized_event.type) # pylint: disable=protected-access
+            return deserialized_event
         except Exception as err:
-            _LOGGER.error('Error: cannot deserialize event. Event does not have a valid format. Event must be a string, dict, or bytes following the CloudEvent/EventGridEvent schema.')
-            _LOGGER.error('Your event: {}'.format(event))
+            _LOGGER.error('Error: cannot deserialize event. Event does not have a valid format. \
+                Event must be a string, dict, or bytes following the CloudEvent schema.')
+            _LOGGER.error('Your event: %s', cloud_event)
             _LOGGER.error(err)
-            raise ValueError('Error: cannot deserialize event. Event does not have a valid format. Event must be a string, dict, or bytes following the CloudEvent/EventGridEvent schema.')
+            raise ValueError('Error: cannot deserialize event. Event does not have a valid format. \
+                Event must be a string, dict, or bytes following the CloudEvent schema.')
+
+    def decode_eventgrid_event(self, eventgrid_event, **kwargs): # pylint: disable=no-self-use
+        # type: (Union[str, dict, bytes], Any) -> EventGridEvent
+        """Single event following EventGridEvent schema will be parsed and returned as Deserialized Event.
+        :param eventgrid_event: The event to be deserialized.
+        :type eventgrid_event: Union[str, dict, bytes]
+        :rtype: EventGridEvent
+
+        :raise: :class:`ValueError`, when events do not follow EventGridEvent schema.
+        """
+        encode = kwargs.pop('encoding', 'utf-8')
+        try:
+            eventgrid_event = EventGridEvent._from_json(eventgrid_event, encode) # pylint: disable=protected-access
+            deserialized_event = EventGridEvent.deserialize(eventgrid_event)
+            EventGridEvent._deserialize_data(deserialized_event, deserialized_event.event_type) # pylint: disable=protected-access
+            return deserialized_event
+        except Exception as err:
+            _LOGGER.error('Error: cannot deserialize event. Event does not have a valid format. \
+                Event must be a string, dict, or bytes following the CloudEvent schema.')
+            _LOGGER.error('Your event: %s', eventgrid_event)
+            _LOGGER.error(err)
+            raise ValueError('Error: cannot deserialize event. Event does not have a valid format. \
+                Event must be a string, dict, or bytes following the CloudEvent schema.')

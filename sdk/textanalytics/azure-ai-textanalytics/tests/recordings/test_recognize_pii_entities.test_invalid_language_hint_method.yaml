@@ -4,7 +4,7 @@ interactions:
       in an invalid language hint", "language": "notalanguage"}]}'
     headers:
       Accept:
-      - application/json
+      - application/json, text/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -14,21 +14,21 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/1.0.1 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.0.1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.1/entities/recognition/pii?showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.1/entities/recognition/pii?showStats=false&stringIndexType=UnicodeCodePoint
   response:
     body:
       string: '{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
         Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
-        language code. Supported languages: en"}}}],"modelVersion":"2020-04-01"}'
+        language code. Supported languages: en"}}}],"modelVersion":"2020-07-01"}'
     headers:
       apim-request-id:
-      - 091a3f26-8289-46b5-84e9-53e768af8099
+      - 1b0f61a4-f15f-42c4-99b7-19607b852cb1
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 23 Jul 2020 17:18:49 GMT
+      - Thu, 27 Aug 2020 19:32:20 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:

@@ -12,8 +12,6 @@ interactions:
       - application/json
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-      api-key:
-      - F48E595CDA022E19CFA34C6BE3710645
     method: POST
     uri: https://search38bc1d8a.search.windows.net/synonymmaps?api-version=2020-06-30
   response:
@@ -54,8 +52,6 @@ interactions:
       - return=representation
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-      api-key:
-      - F48E595CDA022E19CFA34C6BE3710645
     method: PUT
     uri: https://search38bc1d8a.search.windows.net/synonymmaps('test-syn-map')?api-version=2020-06-30
   response:
@@ -90,8 +86,6 @@ interactions:
       - '"0x8D83F23CDE1996D"'
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-      api-key:
-      - F48E595CDA022E19CFA34C6BE3710645
     method: DELETE
     uri: https://search38bc1d8a.search.windows.net/synonymmaps('test-syn-map')?api-version=2020-06-30
   response:

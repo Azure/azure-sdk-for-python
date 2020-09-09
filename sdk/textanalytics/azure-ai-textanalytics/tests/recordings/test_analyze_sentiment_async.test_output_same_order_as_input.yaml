@@ -6,29 +6,29 @@ interactions:
       "en"}]}'
     headers:
       Accept:
-      - application/json
+      - application/json, text/json
       Content-Length:
       - '249'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/1.0.1 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.0.1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.1/sentiment?showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.1/sentiment?showStats=false&stringIndexType=UnicodeCodePoint
   response:
     body:
       string: '{"documents":[{"id":"1","sentiment":"neutral","confidenceScores":{"positive":0.06,"neutral":0.9,"negative":0.04},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.06,"neutral":0.9,"negative":0.04},"offset":0,"length":3,"text":"one"}],"warnings":[]},{"id":"2","sentiment":"neutral","confidenceScores":{"positive":0.01,"neutral":0.97,"negative":0.02},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.01,"neutral":0.97,"negative":0.02},"offset":0,"length":3,"text":"two"}],"warnings":[]},{"id":"3","sentiment":"neutral","confidenceScores":{"positive":0.05,"neutral":0.93,"negative":0.02},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.05,"neutral":0.93,"negative":0.02},"offset":0,"length":5,"text":"three"}],"warnings":[]},{"id":"4","sentiment":"neutral","confidenceScores":{"positive":0.03,"neutral":0.96,"negative":0.01},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.03,"neutral":0.96,"negative":0.01},"offset":0,"length":4,"text":"four"}],"warnings":[]},{"id":"5","sentiment":"neutral","confidenceScores":{"positive":0.05,"neutral":0.93,"negative":0.02},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.05,"neutral":0.93,"negative":0.02},"offset":0,"length":4,"text":"five"}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}'
     headers:
-      apim-request-id: 9f933ebf-771d-46ae-9f5e-964ab45d069f
+      apim-request-id: 07188c04-7822-46a0-bf68-772f63d9ead4
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=5
-      date: Fri, 24 Jul 2020 16:32:43 GMT
+      date: Thu, 27 Aug 2020 19:31:54 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '98'
+      x-envoy-upstream-service-time: '87'
     status:
       code: 200
       message: OK
-    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.1/sentiment?showStats=false
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.1/sentiment?showStats=false&stringIndexType=UnicodeCodePoint
 version: 1

@@ -1,6 +1,8 @@
 # Release History
 
 ## 4.2.1 (Unreleased)
+### Fixed
+- Correct typing for async paging methods
 
 
 ## 4.2.0 (2020-08-11)

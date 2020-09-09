@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: '{"TableName": "pytablesync9a730b0b"}'
+    body: !!python/unicode '{"TableName": "pytablesync9a730b0b"}'
     headers:
       Accept:
       - application/json;odata=minimalmetadata
@@ -15,27 +15,27 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Mon, 06 Jul 2020 18:27:12 GMT
+      - Fri, 04 Sep 2020 23:53:34 GMT
       User-Agent:
-      - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b1 Python/2.7.18 (Windows-10-10.0.19041)
       x-ms-date:
-      - Mon, 06 Jul 2020 18:27:12 GMT
+      - Fri, 04 Sep 2020 23:53:34 GMT
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     method: POST
-    uri: https://storagename.table.core.windows.net/Tables
+    uri: !!python/unicode https://storagename.table.core.windows.net/Tables
   response:
     body:
-      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#Tables/@Element","TableName":"pytablesync9a730b0b"}'
+      string: !!python/unicode '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#Tables/@Element","TableName":"pytablesync9a730b0b"}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Mon, 06 Jul 2020 18:27:05 GMT
+      - Fri, 04 Sep 2020 23:53:34 GMT
       location:
-      - https://storagename.table.core.windows.net/Tables('pytablesync9a730b0b')
+      - !!python/unicode https://storagename.table.core.windows.net/Tables('pytablesync9a730b0b')
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -43,7 +43,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -59,25 +59,25 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Mon, 06 Jul 2020 18:27:13 GMT
+      - Fri, 04 Sep 2020 23:53:34 GMT
       User-Agent:
-      - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b1 Python/2.7.18 (Windows-10-10.0.19041)
       x-ms-date:
-      - Mon, 06 Jul 2020 18:27:13 GMT
+      - Fri, 04 Sep 2020 23:53:34 GMT
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     method: GET
-    uri: https://storagename.table.core.windows.net/Tables
+    uri: !!python/unicode https://storagename.table.core.windows.net/Tables
   response:
     body:
-      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#Tables","value":[{"TableName":"pytablesync9a730b0b"}]}'
+      string: !!python/unicode '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#Tables","value":[{"TableName":"pytablesync9a730b0b"}]}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Mon, 06 Jul 2020 18:27:05 GMT
+      - Fri, 04 Sep 2020 23:53:34 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -85,7 +85,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     status:
       code: 200
       message: OK
@@ -93,7 +93,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -101,31 +101,31 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Mon, 06 Jul 2020 18:27:13 GMT
+      - Fri, 04 Sep 2020 23:53:34 GMT
       User-Agent:
-      - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b1 Python/2.7.18 (Windows-10-10.0.19041)
       x-ms-date:
-      - Mon, 06 Jul 2020 18:27:13 GMT
+      - Fri, 04 Sep 2020 23:53:34 GMT
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     method: DELETE
-    uri: https://storagename.table.core.windows.net/Tables('pytablesync9a730b0b')
+    uri: !!python/unicode https://storagename.table.core.windows.net/Tables('pytablesync9a730b0b')
   response:
     body:
-      string: ''
+      string: !!python/unicode 
     headers:
       cache-control:
       - no-cache
       content-length:
       - '0'
       date:
-      - Mon, 06 Jul 2020 18:27:05 GMT
+      - Fri, 04 Sep 2020 23:53:34 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options:
       - nosniff
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     status:
       code: 204
       message: No Content

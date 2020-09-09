@@ -6,6 +6,7 @@
 # pylint: disable=too-few-public-methods, too-many-instance-attributes
 # pylint: disable=super-init-not-called, too-many-lines
 import collections
+import copy
 import json
 from datetime import datetime
 
@@ -26,7 +27,7 @@ class ChangeFeedPaged(PageIterator):
 
     :ivar int results_per_page:
         The maximum number of results retrieved per API call.
-    :ivar dict continuation_token:
+    :ivar str continuation_token:
         The continuation token to retrieve the next page of results.
     :ivar current_page:
         The current page of listed results.
@@ -41,7 +42,7 @@ class ChangeFeedPaged(PageIterator):
         Filters the results to return only events which happened after this time.
     :param datetime end_time:
         Filters the results to return only events which happened before this time.
-    :param dict continuation_token:
+    :param str continuation_token:
         An continuation token with which to start listing events from the previous position.
     """
     def __init__(
@@ -50,17 +51,24 @@ class ChangeFeedPaged(PageIterator):
             start_time=None,
             end_time=None,
             continuation_token=None):
-        if start_time and continuation_token:
-            raise ValueError("start_time and continuation_token shouldn't be specified at the same time")
+        if (start_time or end_time) and continuation_token:
+            raise ValueError("start_time/end_time and continuation_token shouldn't be specified at the same time")
         super(ChangeFeedPaged, self).__init__(
             get_next=self._get_next_cf,
             extract_data=self._extract_data_cb,
             continuation_token=continuation_token or ""
         )
+        dict_continuation_token = json.loads(continuation_token) if continuation_token else None  # type: dict
+
+        if dict_continuation_token and (container_client.primary_hostname != dict_continuation_token["UrlHost"]):  # pylint: disable=unsubscriptable-object
+            raise ValueError("The token is not for the current storage account.")
+        if dict_continuation_token and (dict_continuation_token["CursorVersion"] != 1):  # pylint: disable=unsubscriptable-object
+            raise ValueError("The CursorVersion is not supported by the current SDK.")
         self.results_per_page = results_per_page or 5000
         self.current_page = None
         self._change_feed = ChangeFeed(container_client, self.results_per_page, start_time=start_time,
-                                       end_time=end_time, cf_cursor=continuation_token)
+                                       end_time=end_time,
+                                       cf_cursor=dict_continuation_token)
 
     def _get_next_cf(self, continuation_token):  # pylint:disable=unused-argument
         try:
@@ -71,10 +79,13 @@ class ChangeFeedPaged(PageIterator):
 
     def _extract_data_cb(self, event_list):
         self.current_page = event_list
-
-        if self._change_feed.cursor:
-            return self._change_feed.cursor, self.current_page
-        return None, self.current_page
+        try:
+            cursor = copy.deepcopy(self._change_feed.cursor)
+            shard_cursors = cursor["CurrentSegmentCursor"]["ShardCursors"]
+            cursor["CurrentSegmentCursor"]["ShardCursors"] = list(shard_cursors.values())
+        except AttributeError:
+            pass
+        return json.dumps(cursor), self.current_page
 
 
 class ChangeFeed(object):
@@ -84,9 +95,21 @@ class ChangeFeed(object):
         self._segment_paths_generator = None
         self.current_segment = None
         self.start_time = start_time
-        self.end_time = end_time
-        self._initialize(cf_cursor=cf_cursor)
-        self.cursor = None
+
+        # the end time is in str format
+        end_time_in_cursor = cf_cursor["EndTime"] if cf_cursor else None
+        # convert the end time in str format to a datetime object
+        end_time_in_cursor_obj = \
+            datetime.strptime(end_time_in_cursor, "%Y-%m-%dT%H:%M:%S+00:00") if end_time_in_cursor else None
+        # self.end_time is in datetime format
+        self.end_time = end_time or end_time_in_cursor_obj
+
+        cur_segment_cursor = cf_cursor["CurrentSegmentCursor"] if cf_cursor else None
+
+        self.cursor = {"CursorVersion": 1,
+                       "EndTime": self.end_time.strftime("%Y-%m-%dT%H:%M:%S+00:00") if self.end_time else "",
+                       "UrlHost": self.client.primary_hostname}
+        self._initialize(cur_segment_cursor=cur_segment_cursor)
 
     def __iter__(self):
         return self
@@ -103,16 +126,15 @@ class ChangeFeed(object):
         self.current_segment.page_size = self.page_size
 
         while len(change_feed) < self.page_size and self.current_segment:
+            temp_segment = self.current_segment
             try:
                 page_of_events = next(self.current_segment)
                 # extend the current page of events
                 change_feed.extend(page_of_events)
                 remaining_to_load -= len(page_of_events)
-                self.cursor = {"segment_path": self.current_segment.segment_path,
-                               "segment_cursor": self.current_segment.cursor}
             except StopIteration:
-                self.cursor = None
                 self.current_segment = self._get_next_segment(next(self._segment_paths_generator), remaining_to_load)
+            self.cursor["CurrentSegmentCursor"] = temp_segment.cursor
 
         if not change_feed:
             raise StopIteration
@@ -120,12 +142,12 @@ class ChangeFeed(object):
 
     next = __next__  # Python 2 compatibility.
 
-    def _initialize(self, cf_cursor=None):
+    def _initialize(self, cur_segment_cursor=None):
         try:
             start_year = self.start_time.year
         except AttributeError:
             try:
-                start_date = self._parse_datetime_from_segment_path(cf_cursor.get('segment_path'))
+                start_date = self._parse_datetime_from_segment_path(cur_segment_cursor.get("SegmentPath"))
                 start_year = start_date.year
             except AttributeError:
                 start_year = ""
@@ -140,14 +162,14 @@ class ChangeFeed(object):
                 next_segment_path = next(self._segment_paths_generator)
 
         # if change_feed_cursor is specified, start from the specified segment
-        if cf_cursor:
-            while next_segment_path and next_segment_path != cf_cursor['segment_path']:
+        if cur_segment_cursor:
+            while next_segment_path and next_segment_path != cur_segment_cursor["SegmentPath"]:
                 next_segment_path = next(self._segment_paths_generator)
 
         self.current_segment = self._get_next_segment(
             next_segment_path,
             self.page_size,
-            segment_cursor=cf_cursor['segment_cursor'] if cf_cursor else None)
+            segment_cursor=cur_segment_cursor if cur_segment_cursor else None)
 
     def _get_next_segment(self, segment_path, page_size, segment_cursor=None):
         if segment_path:
@@ -163,7 +185,7 @@ class ChangeFeed(object):
             for path in paths:
                 yield path.name
 
-            # if not searching by prefix, all paths would have been iterated already, so it's time to yield None
+            # if not searching by prefix, all paths would have been iterated already, so it"s time to yield None
             if not start_year:
                 break
             # search the segment prefixed with next year.
@@ -199,9 +221,10 @@ class Segment(object):
         self.segment_path = segment_path
         self.page_size = page_size
         self.shards = collections.deque()
+        self.cursor = {"ShardCursors": {}, "SegmentPath": self.segment_path}
         self._initialize(segment_cursor=segment_cursor)
-        # cursor is in this format {"segment_path", path, "cur_shard": shard_path, "segment_cursor": shard_cursors_dict}
-        self.cursor = {'shard_cursors': {}}
+        # cursor is in this format:
+        # {"segment_path", path, "CurrentShardPath": shard_path, "segment_cursor": ShardCursors dict}
 
     def __iter__(self):
         return self
@@ -214,10 +237,12 @@ class Segment(object):
                 event = next(shard)
                 segment_events.append(event)
                 self.shards.append(shard)
-                self.cursor['shard_cursors'][shard.shard_path] = shard.cursor
-                self.cursor['cur_shard'] = shard.shard_path
             except StopIteration:
-                self.cursor['shard_cursors'][shard.shard_path] = "EOF"
+                pass
+
+            # update cursor
+            self.cursor["ShardCursors"][shard.shard_path] = shard.cursor
+            self.cursor["CurrentShardPath"] = shard.shard_path
 
         if not segment_events:
             raise StopIteration
@@ -231,32 +256,25 @@ class Segment(object):
         segment_content = segment_content.decode()
         segment_dict = json.loads(segment_content)
 
-        # Don't read unfinalized segment, else the items events will change for every time reading
-        if segment_dict['status'] != 'Finalized':
-            return
-
-        raw_shard_paths = segment_dict['chunkFilePaths']
+        raw_shard_paths = segment_dict["chunkFilePaths"]
         shard_paths = []
         # to strip the overhead of all raw shard paths
         for raw_shard_path in raw_shard_paths:
-            shard_paths.append(raw_shard_path.replace('$blobchangefeed/', '', 1))
+            shard_paths.append(raw_shard_path.replace("$blobchangefeed/", "", 1))
 
         # TODO: we can optimize to initiate shards in parallel
         if not segment_cursor:
             for shard_path in shard_paths:
                 self.shards.append(Shard(self.client, shard_path))
         else:
-            start_shard_path = segment_cursor['cur_shard']
+            start_shard_path = segment_cursor["CurrentShardPath"]
+            shard_cursors = {shard_cursor["CurrentChunkPath"][:-10]: shard_cursor
+                             for shard_cursor in segment_cursor["ShardCursors"]}
 
             if shard_paths:
-                # Initialize all shards using the shard cursors, skip those finished shards
+                # Initialize all shards using the shard cursors
                 for shard_path in shard_paths:
-                    if segment_cursor['shard_cursors'].get(shard_path) != "EOF":
-                        self.shards.append(Shard(self.client, shard_path,
-                                                 segment_cursor['shard_cursors'].get(shard_path)))
-                    else:
-                        # if the shards has reached EOF, track it in cursor
-                        self.cursor['shard_cursors'][shard_path] = "EOF"
+                    self.shards.append(Shard(self.client, shard_path, shard_cursors.get(shard_path)))
 
                 # the move the shard behind start_shard_path one to the left most place, the left most shard is the next
                 # shard we should read based on continuation token.
@@ -271,8 +289,8 @@ class Shard(object):
         self.shard_path = shard_path
         self.current_chunk = None
         self.unprocessed_chunk_path_props = []
-        self._initialize(shard_cursor=shard_cursor)
         self.cursor = None  # to track the chunk info we are reading
+        self._initialize(shard_cursor=shard_cursor)
 
     def __iter__(self):
         return self
@@ -280,12 +298,12 @@ class Shard(object):
     def __next__(self):
         next_event = None
         while not next_event and self.current_chunk:
+            temp_chunk = self.current_chunk
             try:
                 next_event = next(self.current_chunk)
-                self.cursor = {'chunk_path': self.current_chunk.chunk_path, 'chunk_cursor': self.current_chunk.cursor}
             except StopIteration:
-                self.cursor = None
                 self.current_chunk = self._get_next_chunk()
+            self.cursor = temp_chunk.cursor
 
         if not next_event:
             raise StopIteration
@@ -301,9 +319,9 @@ class Shard(object):
         # move cursor to the expected chunk
         if shard_cursor:
             while self.unprocessed_chunk_path_props and \
-                    self.unprocessed_chunk_path_props[0].name != shard_cursor.get('chunk_path'):
+                    self.unprocessed_chunk_path_props[0].name != shard_cursor.get("CurrentChunkPath"):
                 self.unprocessed_chunk_path_props.popleft()
-            self.current_chunk = self._get_next_chunk(chunk_cursor=shard_cursor.get('chunk_cursor'))
+            self.current_chunk = self._get_next_chunk(chunk_cursor=shard_cursor)
         else:
             self.current_chunk = self._get_next_chunk()
 
@@ -319,7 +337,7 @@ class Chunk(object):
         self.client = client
         self.chunk_path = chunk_path
         self.file_reader = None
-        self.cursor = None  # to track the current position in avro file
+        self.cursor = {"CurrentChunkPath": chunk_path}  # to track the current position in avro file
         self._data_stream = None
         self._initialize(chunk_cursor=chunk_cursor)
 
@@ -329,13 +347,12 @@ class Chunk(object):
     def __next__(self):
         try:
             event = next(self.file_reader)
-            self.cursor = {'id': event['id'],
-                           'position': self._data_stream.event_position,
-                           'block_count': self._data_stream.block_count
-                           }
+            self.cursor["EventIndex"] = self._data_stream.event_index
+            self.cursor["BlockOffset"] = self._data_stream.object_position
             return event
         except StopIteration:
-            self.cursor = None
+            self.cursor["EventIndex"] = self._data_stream.event_index
+            self.cursor["BlockOffset"] = self._data_stream.object_position
             raise StopIteration
 
     next = __next__  # Python 2 compatibility.
@@ -344,18 +361,17 @@ class Chunk(object):
         # To get all events in a chunk
         blob_client = self.client.get_blob_client(self.chunk_path)
 
-        file_offset = chunk_cursor.get('position') if chunk_cursor else 0
-        block_count = chunk_cursor.get('block_count') if chunk_cursor else 0
+        file_offset = chunk_cursor.get("BlockOffset") if chunk_cursor else 0
 
         # An offset means the avro data doesn't have avro header,
         # so only when the data stream has a offset we need header stream to help
         header_stream = ChangeFeedStreamer(blob_client) if file_offset else None
-        self._data_stream = ChangeFeedStreamer(blob_client, chunk_file_start=file_offset, block_count=block_count)
+        self._data_stream = ChangeFeedStreamer(blob_client, chunk_file_start=file_offset)
         self.file_reader = DataFileReader(self._data_stream, DatumReader(), header_reader=header_stream)
 
-        # After initializing DataFileReader, data_stream cursor has been moved to the data part(DataFileReader read
-        # the header part during initialization)
-        self._data_stream.event_position = self._data_stream.tell()
+        event_index = chunk_cursor.get("EventIndex") if chunk_cursor else 0
+        for _ in range(0, event_index):
+            next(self.file_reader)
 
 
 class ChangeFeedStreamer(object):
@@ -363,16 +379,19 @@ class ChangeFeedStreamer(object):
     File-like streaming iterator.
     """
 
-    def __init__(self, blob_client, chunk_file_start=0, block_count=0):
+    def __init__(self, blob_client, chunk_file_start=0):
         self._chunk_file_start = chunk_file_start or 0  # this value will never be updated
         self._download_offset = self._chunk_file_start  # range start of the next download
-        self.event_position = self._chunk_file_start  # track the most recently read sync marker position
-        self.block_count = block_count
+        self.object_position = self._chunk_file_start  # track the most recently read sync marker position
+        self.event_index = 0
         self._point = self._chunk_file_start  # file cursor position relative to the whole chunk file, not the buffered
         self._chunk_size = 4 * 1024 * 1024
-        self._buf = b''
+        self._buf = b""
         self._buf_start = self._chunk_file_start  # the start position of the chunk file to buffer
-        self._iterator = blob_client.download_blob(offset=self._chunk_file_start).chunks()
+        self._chunk_size_snapshot = blob_client.get_blob_properties().size
+        length = self._chunk_size_snapshot - self._chunk_file_start
+        self._iterator = blob_client.download_blob(offset=self._chunk_file_start,
+                                                   length=length).chunks() if length > 0 else iter(list())
 
     def __len__(self):
         return self._download_offset
@@ -433,5 +452,8 @@ class ChangeFeedStreamer(object):
 
         return data
 
-    def track_event_position(self):
-        self.event_position = self.tell()
+    def track_object_position(self):
+        self.object_position = self.tell()
+
+    def set_object_index(self, event_index):
+        self.event_index = event_index

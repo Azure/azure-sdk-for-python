@@ -103,7 +103,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         fully_qualified_namespace: str,
         credential: "TokenCredential",
         **kwargs: Any
-    ):
+    ) -> None:
         self._message_iter = None  # type: Optional[AsyncIterator[ReceivedMessage]]
         if kwargs.get("entity_name"):
             super(ServiceBusReceiver, self).__init__(
@@ -293,6 +293,15 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
          timeout period, the iterator will stop.
 
          :rtype AsyncIterator[ReceivedMessage]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_code_servicebus.py
+                :start-after: [START receive_forever_async]
+                :end-before: [END receive_forever_async]
+                :language: python
+                :dedent: 4
+                :caption: Receive indefinitely from an iterator in streaming fashion.
         """
         return self._IterContextualWrapper(self, max_wait_time)
 
@@ -304,7 +313,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
     ) -> "ServiceBusReceiver":
         """Create a ServiceBusReceiver from a connection string.
 
-        :param conn_str: The connection string of a Service Bus.
+        :param str conn_str: The connection string of a Service Bus.
         :keyword str queue_name: The path of specific Service Bus Queue the client connects to.
         :keyword str topic_name: The path of specific Service Bus Topic which contains the Subscription
          the client connects to.
@@ -337,6 +346,9 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
          In the case of prefetch being 0, `ServiceBusReceiver.receive` would try to cache `max_batch_size` (if provided)
          within its request to the service.
         :rtype: ~azure.servicebus.aio.ServiceBusReceiver
+
+        :raises ~azure.servicebus.ServiceBusAuthenticationError: Indicates an issue in token/identity validity.
+        :raises ~azure.servicebus.ServiceBusAuthorizationError: Indicates an access/rights related failure.
 
         .. admonition:: Example:
 
@@ -437,14 +449,15 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
 
         self._populate_message_properties(message)
 
-        handler = functools.partial(mgmt_handlers.deferred_message_op, mode=self._mode, message_type=ReceivedMessage)
+        handler = functools.partial(mgmt_handlers.deferred_message_op,
+                                    mode=self._mode,
+                                    message_type=ReceivedMessage,
+                                    receiver=self)
         messages = await self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_RECEIVE_BY_SEQUENCE_NUMBER,
             message,
             handler
         )
-        for m in messages:
-            m._receiver = self  # pylint: disable=protected-access
         return messages
 
     async def peek_messages(self, message_count=1, sequence_number=0):

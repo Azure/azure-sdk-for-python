@@ -8,7 +8,7 @@ import pytest
 import datetime
 
 import msrest
-from azure.servicebus.aio.management import ServiceBusManagementClient
+from azure.servicebus.aio.management import ServiceBusAdministrationClient
 from azure.servicebus.management import SubscriptionProperties
 from utilities import get_logger
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
@@ -24,11 +24,11 @@ from mgmt_test_utilities_async import async_pageable_to_list, clear_topics
 _logger = get_logger(logging.DEBUG)
 
 
-class ServiceBusManagementClientSubscriptionAsyncTests(AzureMgmtTestCase):
+class ServiceBusAdministrationClientSubscriptionAsyncTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     async def test_async_mgmt_subscription_create_by_name(self, servicebus_namespace_connection_string, **kwargs):
-        mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
         await clear_topics(mgmt_service)
         topic_name = "topic_testaddf"
         subscription_name = "sub_testkkk"
@@ -38,7 +38,7 @@ class ServiceBusManagementClientSubscriptionAsyncTests(AzureMgmtTestCase):
             await mgmt_service.create_subscription(topic_name, subscription_name)
             subscription = await mgmt_service.get_subscription(topic_name, subscription_name)
             assert subscription.name == subscription_name
-            assert subscription.entity_availability_status == 'Available'
+            assert subscription.availability_status == 'Available'
             assert subscription.status == 'Active'
         finally:
             await mgmt_service.delete_subscription(topic_name, subscription_name)
@@ -47,7 +47,7 @@ class ServiceBusManagementClientSubscriptionAsyncTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     async def test_async_mgmt_subscription_create_with_subscription_description(self, servicebus_namespace_connection_string, **kwargs):
-        mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
         await clear_topics(mgmt_service)
         topic_name = "iweidk"
         subscription_name = "kdosako"
@@ -80,7 +80,7 @@ class ServiceBusManagementClientSubscriptionAsyncTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     async def test_async_mgmt_subscription_create_duplicate(self, servicebus_namespace_connection_string, **kwargs):
-        mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
         await clear_topics(mgmt_service)
         topic_name = "dqkodq"
         subscription_name = 'kkaqo'
@@ -96,7 +96,7 @@ class ServiceBusManagementClientSubscriptionAsyncTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     async def test_async_mgmt_subscription_update_success(self, servicebus_namespace_connection_string, **kwargs):
-        mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
         await clear_topics(mgmt_service)
         topic_name = "fjrui"
         subscription_name = "eqkovc"
@@ -137,7 +137,7 @@ class ServiceBusManagementClientSubscriptionAsyncTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     async def test_async_mgmt_subscription_update_invalid(self, servicebus_namespace_connection_string, **kwargs):
-        mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
         await clear_topics(mgmt_service)
         topic_name = "dfjfj"
         subscription_name = "kwqxc"
@@ -177,7 +177,7 @@ class ServiceBusManagementClientSubscriptionAsyncTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     async def test_async_mgmt_subscription_delete(self, servicebus_namespace_connection_string):
-        mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
         await clear_topics(mgmt_service)
         topic_name = 'test_topicgda'
         subscription_name_1 = 'test_sub1da'
@@ -207,7 +207,7 @@ class ServiceBusManagementClientSubscriptionAsyncTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     async def test_async_mgmt_subscription_list(self, servicebus_namespace_connection_string, **kwargs):
-        mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
         await clear_topics(mgmt_service)
         topic_name = 'lkoqxc'
         subscription_name_1 = 'testsub1'
@@ -231,7 +231,7 @@ class ServiceBusManagementClientSubscriptionAsyncTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     async def test_async_mgmt_subscription_list_runtime_info(self, servicebus_namespace_connection_string, **kwargs):
-        mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
         await clear_topics(mgmt_service)
         topic_name = 'dkoamv'
         subscription_name = 'cxqplc'
@@ -271,7 +271,7 @@ class ServiceBusManagementClientSubscriptionAsyncTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     async def test_async_mgmt_subscription_get_runtime_info_basic(self, servicebus_namespace_connection_string):
-        mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
         await clear_topics(mgmt_service)
         topic_name = 'dcvxqa'
         subscription_name = 'xvazzag'

@@ -15,8 +15,6 @@ interactions:
       - return=representation
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-      api-key:
-      - 4B3A99553A2532B061D6C99EB7B5F6D2
     method: PUT
     uri: https://search73bb1e5f.search.windows.net/skillsets('test-ss')?api-version=2020-06-30
   response:
@@ -56,8 +54,6 @@ interactions:
       - return=representation
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-      api-key:
-      - 4B3A99553A2532B061D6C99EB7B5F6D2
     method: PUT
     uri: https://search73bb1e5f.search.windows.net/skillsets('test-ss')?api-version=2020-06-30
   response:
@@ -89,8 +85,6 @@ interactions:
       - application/json;odata.metadata=minimal
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-      api-key:
-      - 4B3A99553A2532B061D6C99EB7B5F6D2
     method: GET
     uri: https://search73bb1e5f.search.windows.net/skillsets?api-version=2020-06-30
   response:
@@ -121,8 +115,6 @@ interactions:
       - application/json;odata.metadata=minimal
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-      api-key:
-      - 4B3A99553A2532B061D6C99EB7B5F6D2
     method: GET
     uri: https://search73bb1e5f.search.windows.net/skillsets('test-ss')?api-version=2020-06-30
   response:
