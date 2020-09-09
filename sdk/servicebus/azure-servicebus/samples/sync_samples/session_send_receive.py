@@ -43,15 +43,15 @@ def send_batch_message(sender):
 
 def receive_batch_message(receiver):
     session = receiver.session
-    session.set_session_state("START")
-    print("Session state:", session.get_session_state())
+    session.set_state("START")
+    print("Session state:", session.get_state())
     received_msgs = receiver.receive_messages(max_batch_size=10, max_wait_time=5)
     for msg in received_msgs:
         print(str(msg))
         msg.complete()
         session.renew_lock()
-    session.set_session_state("END")
-    print("Session state:", session.get_session_state())
+    session.set_state("END")
+    print("Session state:", session.get_state())
 
 
 if __name__ == '__main__':
