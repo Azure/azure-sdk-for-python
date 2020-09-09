@@ -1,7 +1,7 @@
 # Release History
 
-## 0.0.18b3 (Unreleased)
-
+## 0.0.18b3 (2020-09-09)
+- Enable master link replacement feature.
 
 ## 0.0.18b2 (2020-09-04)
 - Testing release tag version
