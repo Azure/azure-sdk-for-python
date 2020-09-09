@@ -52,6 +52,7 @@ try:
     from ._models_py3 import ServerPropertiesForRestore
     from ._models_py3 import ServerSecurityAlertPolicy
     from ._models_py3 import ServerUpdateParameters
+    from ._models_py3 import ServerUpgradeParameters
     from ._models_py3 import Sku
     from ._models_py3 import StorageProfile
     from ._models_py3 import TagsObject
@@ -103,6 +104,7 @@ except (SyntaxError, ImportError):
     from ._models import ServerPropertiesForRestore
     from ._models import ServerSecurityAlertPolicy
     from ._models import ServerUpdateParameters
+    from ._models import ServerUpgradeParameters
     from ._models import Sku
     from ._models import StorageProfile
     from ._models import TagsObject
@@ -189,6 +191,7 @@ __all__ = [
     'ServerPropertiesForRestore',
     'ServerSecurityAlertPolicy',
     'ServerUpdateParameters',
+    'ServerUpgradeParameters',
     'Sku',
     'StorageProfile',
     'TagsObject',
