@@ -908,6 +908,28 @@ class StorageFileTest(StorageTestCase):
         self.assertEqual(len(ranges), 0)
 
     @GlobalStorageAccountPreparer()
+    def test_list_ranges_diff(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
+        file_name = self._get_file_reference()
+        file_client = ShareFileClient(
+            self.account_url(storage_account, "file"),
+            share_name=self.share_name,
+            file_path=file_name,
+            credential=storage_account_key)
+        file_client.create_file(2048)
+        share_client = self.fsc.get_share_client(self.share_name)
+        snapshot1 = share_client.create_snapshot()
+
+        data = self.get_random_bytes(1536)
+        file_client.upload_range(data, offset=0, length=1536)
+        snapshot2 = share_client.create_snapshot()
+
+        file_client.clear_range(offset=0, length=1536)
+
+        ranges1 = file_client.get_ranges(previous_sharesnapshot=snapshot1)
+        ranges2 = file_client.get_ranges(previous_sharesnapshot=snapshot2['snapshot'])
+
+    @GlobalStorageAccountPreparer()
     def test_list_ranges_2(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         file_name = self._get_file_reference()
