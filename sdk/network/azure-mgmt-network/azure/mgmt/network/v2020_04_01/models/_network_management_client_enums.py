@@ -456,13 +456,6 @@ class FirewallPolicyFilterRuleActionType(str, Enum):
     allow = "Allow"
     deny = "Deny"
 
-class FirewallPolicyIntrusionSystemMode(str, Enum):
-    """The operation mode for Intrusion system mode.
-    """
-
-    enabled = "Enabled"
-    disabled = "Disabled"
-
 class FirewallPolicyRuleConditionApplicationProtocolType(str, Enum):
     """The application protocol type of a Rule condition.
     """

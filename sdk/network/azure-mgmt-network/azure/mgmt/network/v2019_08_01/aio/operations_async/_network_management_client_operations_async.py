@@ -62,7 +62,6 @@ class NetworkManagementClientOperationsMixin:
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -119,7 +118,6 @@ class NetworkManagementClientOperationsMixin:
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -142,8 +140,8 @@ class NetworkManagementClientOperationsMixin:
         virtual_wan_name: str,
         vpn_client_params: "models.VirtualWanVpnProfileParameters",
         **kwargs
-    ) -> "models.VpnProfileResponse":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VpnProfileResponse"]
+    ) -> Optional["models.VpnProfileResponse"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.VpnProfileResponse"]]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-08-01"
@@ -167,7 +165,6 @@ class NetworkManagementClientOperationsMixin:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(vpn_client_params, 'VirtualWanVpnProfileParameters')
         body_content_kwargs['content'] = body_content
@@ -196,7 +193,7 @@ class NetworkManagementClientOperationsMixin:
         virtual_wan_name: str,
         vpn_client_params: "models.VirtualWanVpnProfileParameters",
         **kwargs
-    ) -> "models.VpnProfileResponse":
+    ) -> AsyncLROPoller["models.VpnProfileResponse"]:
         """Generates a unique VPN profile for P2S clients for VirtualWan and associated
     VpnServerConfiguration combination in the specified resource group.
 
@@ -214,8 +211,8 @@ class NetworkManagementClientOperationsMixin:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: VpnProfileResponse, or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2019_08_01.models.VpnProfileResponse
+        :return: An instance of AsyncLROPoller that returns either VpnProfileResponse or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2019_08_01.models.VpnProfileResponse]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]

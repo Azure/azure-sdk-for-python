@@ -82,7 +82,6 @@ class VpnGatewaysOperations:
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -130,7 +129,6 @@ class VpnGatewaysOperations:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(vpn_gateway_parameters, 'VpnGateway')
         body_content_kwargs['content'] = body_content
@@ -143,7 +141,6 @@ class VpnGatewaysOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('VpnGateway', pipeline_response)
 
@@ -162,7 +159,7 @@ class VpnGatewaysOperations:
         gateway_name: str,
         vpn_gateway_parameters: "models.VpnGateway",
         **kwargs
-    ) -> "models.VpnGateway":
+    ) -> AsyncLROPoller["models.VpnGateway"]:
         """Creates a virtual wan vpn gateway if it doesn't exist else updates the existing gateway.
 
         :param resource_group_name: The resource group name of the VpnGateway.
@@ -178,8 +175,8 @@ class VpnGatewaysOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: VpnGateway, or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2019_09_01.models.VpnGateway
+        :return: An instance of AsyncLROPoller that returns either VpnGateway or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2019_09_01.models.VpnGateway]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -266,7 +263,6 @@ class VpnGatewaysOperations:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(vpn_gateway_parameters, 'TagsObject')
         body_content_kwargs['content'] = body_content
@@ -314,7 +310,6 @@ class VpnGatewaysOperations:
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
 
-        # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -333,7 +328,7 @@ class VpnGatewaysOperations:
         resource_group_name: str,
         gateway_name: str,
         **kwargs
-    ) -> None:
+    ) -> AsyncLROPoller[None]:
         """Deletes a virtual wan vpn gateway.
 
         :param resource_group_name: The resource group name of the VpnGateway.
@@ -346,8 +341,8 @@ class VpnGatewaysOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: None, or the result of cls(response)
-        :rtype: None
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -391,8 +386,8 @@ class VpnGatewaysOperations:
         resource_group_name: str,
         gateway_name: str,
         **kwargs
-    ) -> "models.VpnGateway":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VpnGateway"]
+    ) -> Optional["models.VpnGateway"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.VpnGateway"]]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-09-01"
@@ -414,7 +409,6 @@ class VpnGatewaysOperations:
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -438,7 +432,7 @@ class VpnGatewaysOperations:
         resource_group_name: str,
         gateway_name: str,
         **kwargs
-    ) -> "models.VpnGateway":
+    ) -> AsyncLROPoller["models.VpnGateway"]:
         """Resets the primary of the vpn gateway in the specified resource group.
 
         :param resource_group_name: The resource group name of the VpnGateway.
@@ -451,8 +445,8 @@ class VpnGatewaysOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: VpnGateway, or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2019_09_01.models.VpnGateway
+        :return: An instance of AsyncLROPoller that returns either VpnGateway or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2019_09_01.models.VpnGateway]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -514,6 +508,10 @@ class VpnGatewaysOperations:
         api_version = "2019-09-01"
 
         def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = 'application/json'
+
             if not next_link:
                 # Construct URL
                 url = self.list_by_resource_group.metadata['url']  # type: ignore
@@ -526,15 +524,11 @@ class VpnGatewaysOperations:
                 query_parameters = {}  # type: Dict[str, Any]
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
+                request = self._client.get(url, query_parameters, header_parameters)
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
+                request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         async def extract_data(pipeline_response):
@@ -578,6 +572,10 @@ class VpnGatewaysOperations:
         api_version = "2019-09-01"
 
         def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = 'application/json'
+
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']  # type: ignore
@@ -589,15 +587,11 @@ class VpnGatewaysOperations:
                 query_parameters = {}  # type: Dict[str, Any]
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
+                request = self._client.get(url, query_parameters, header_parameters)
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
+                request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         async def extract_data(pipeline_response):
