@@ -5,7 +5,7 @@ languages:
 products:
   - azure
   - azure-schema-registry-avro-serializer
-urlFragment: schemaregistry-avro-serializer-samples
+urlFragment: schemaregistry-avroserializer-samples
 ---
 
 # Azure Schema Registry Avro Serializer library for Python Samples
