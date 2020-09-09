@@ -1,7 +1,8 @@
 # Release History
 
-## 12.1.3 (Unreleased)
-
+## 12.1.3 (2020-09-10)
+**Fixes**
+- Fixed QueueClient type declaration (#11392). 
 
 ## 12.1.2 (2020-6-12)
 **Notes**
