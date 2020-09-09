@@ -41,7 +41,9 @@ class RecognizeHealthcareEntitiesSample(object):
             "Subject is taking 100mg of ibuprofen twice daily."
         ]
 
-        result = text_analytics_client.recognize_healthcare_entities(documents)
+        poller = text_analytics_client.begin_recognize_healthcare_entities(documents)
+        result = poller.result()
+
         docs = [doc for doc in result if not doc.is_error]
 
         for idx, doc in enumerate(docs):

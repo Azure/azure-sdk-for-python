@@ -376,16 +376,15 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             process_http_response_error(error)
 
     @distributed_trace
-    def recognize_healthcare_entities(  # type: ignore
+    def begin_recognize_healthcare_entities(  # type: ignore
         self,
         documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
         **kwargs  # type: Any
-    ):
+    ):  # type: (...) -> LROPoller[None]
         """Recognize healthcare entities and identify relationships between these entities in a batch of documents.
 
-        Returns a list of healthcare entities and relations found in text.  Entities are associated with references
-        that can be found in existing knowledge bases, such as UMLS, CHV, MSH, etc.  Relations are comprised of a pair
-        of entities and a directional relationship.
+        Entities are associated with references that can be found in existing knowledge bases, such as UMLS, CHV, MSH, etc.
+        Relations are comprised of a pair of entities and a directional relationship.
 
         :param documents: The set of documents to process as part of this batch.
             If you wish to specify the ID and language on a per-item basis you must
@@ -404,11 +403,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
         :keyword bool show_stats: If set to true, response will contain document level statistics.
-        :return: The combined list of :class:`~azure.ai.textanalytics.RecognizeHealthcareEntitiesResult`
-            and :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents
-            were passed in.
-        :rtype: list[~azure.ai.textanalytics.RecognizeHealthcareEntitiesResult,
-            ~azure.ai.textanalytics.DocumentError]
+        :return: An instance of LROPoller that returns either None or the result of the operation.
+        :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
 
         .. admonition:: Example:
@@ -573,3 +569,44 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             raise error
         except HttpResponseError as error:
             process_http_response_error(error)
+
+    @distributed_trace
+    def begin_analyze_text(  # type: ignore
+        self,
+        documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
+        **kwargs  # type: Any
+    ):  # type: (...) -> LROPoller[None]):
+        """Start a long-running operation to perform a variety of text analysis tasks over a batch of documents.
+
+        :param documents: The set of documents to process as part of this batch.
+            If you wish to specify the ID and language on a per-item basis you must
+            use as input a list[:class:`~azure.ai.textanalytics.TextDocumentInput`] or a list of
+            dict representations of :class:`~azure.ai.textanalytics.TextDocumentInput`, like
+            `{"id": "1", "language": "en", "text": "hello world"}`.
+        :type documents:
+            list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or
+            list[dict[str, str]]
+        :keyword str language: The 2 letter ISO 639-1 representation of language for the
+            entire batch. For example, use "en" for English; "es" for Spanish etc.
+            If not set, uses "en" for English as default. Per-document language will
+            take precedence over whole batch language. See https://aka.ms/talangs for
+            supported languages in Text Analytics API.
+        :keyword bool show_stats: If set to true, response will contain document level statistics.
+        :keyword tasks: A list of tasks to include in the analysis.  Each task object encapsulates the parameters
+            used for the particular task type.
+        :type tasks: list[Union[~azure.ai.textanalytics.EntitiesRecognitionTask, 
+            ~azure.ai.textanalytics.PiiEntitiesRecognitionTask, ~azure.ai.textanalytics.EntityLinkingTask,
+            ~azure.ai.textanalytics.KeyPhraseExtractionTask, ~azure.ai.textanalytics.SentimentAnalysisTask]]
+        :return: An instance of LROPoller that returns either None or the result of the operation.
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_analyze_text.py
+                :start-after: [START analyze_text]
+                :end-before: [END analyze_text]
+                :language: python
+                :dedent: 8
+                :caption: Start a long-running operation to perform a variety of text analysis tasks over a batch of documents.
+        """

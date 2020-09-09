@@ -108,7 +108,7 @@ class AnalyzeTextSample(object):
             for idx, doc in enumerate(docs):
                 print("Document text: {}\n".format(documents[idx]))
                 print("Key Phrases: {}\n".format(doc.key_phrases))
-            print("------------------------------------------")
+                print("------------------------------------------")
 
         for task in result.sentiment_analysis_tasks:
             print("Results of task '{}':".format(task.name))
