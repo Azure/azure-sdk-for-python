@@ -348,6 +348,15 @@ class HyperVGenerationType(str, Enum):
     v2 = "V2"
 
 
+class RebootStatus(str, Enum):
+
+    not_needed = "NotNeeded"
+    required = "Required"
+    started = "Started"
+    failed = "Failed"
+    completed = "Completed"
+
+
 class UpgradeMode(str, Enum):
 
     automatic = "Automatic"
