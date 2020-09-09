@@ -34,6 +34,7 @@ from ._serialize import serialize_iso
 from ._deserialize import _return_headers_and_deserialized
 from ._error import _process_table_error
 from ._models import TableEntityPropertiesPaged, UpdateMode
+from ._table_batch import TableBatchOperations
 
 
 class TableClient(TableClientBase):

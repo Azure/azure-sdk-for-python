@@ -281,7 +281,6 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         pipeline_response = self._pipeline.run(
             request, stream=False, **kwargs
         )
-        print("RESPONSE: {}".format(pipeline_response))
         response = pipeline_response.http_response
 
         try:

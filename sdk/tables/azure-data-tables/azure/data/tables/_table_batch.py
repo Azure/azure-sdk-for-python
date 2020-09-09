@@ -34,66 +34,7 @@ class TableBatchOperations(object):
         self.table_name = table_name
 
         self._partition_key = None
-        # self._request_entities = []
         self._requests = []
-
-        # self._initialize_request()
-
-    def _initialize_request(
-        self, **kwargs # type: Any
-    ):
-        # (...) -> None
-
-        cls = kwargs.pop('cls', None)
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop('error_map', {}))
-
-        _format = None
-        query_options = kwargs.pop('query_options', None)
-        if query_options is not None:
-            _format = query_options.format
-        data_service_version = "3.0"
-        content_type = kwargs.pop("content_type", "application/json;odata=nometadata")
-
-        # Construct url
-        url = self.insert_entity_metadata['url']
-        path_format_arguments = {
-            'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'table': self._serialize.url("table", self.table_name, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-        print("URL: {}".format(url))
-
-        # Construct parameters
-        # TODO: are query_parameters necessary?
-        query_parameters = {}
-        if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query('timeout', timeout, 'int', minimum=0)
-        if _format is not None:
-            query_parameters['$format'] = self._serialize.query('format', _format, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['x-ms-version'] = self._serialize.headers('self._config.version', self._config.version, 'str')
-        if request_id_parameter is not None:
-            header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter", request_id_parameter, 'str')
-        header_parameters['DataServiceVersion'] = self._serialize.header("data_service_version", data_service_version, 'str')
-        if response_preference is not None:
-            header_parameters['Prefer'] = self._serialize.header("response_preference", response_preference, 'str')
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json;odata=minimalmetadata'
-
-
-        self._url = url
-        self._query_parameters = query_parameters
-        self._header_parameters = header_parameters
-        print(url)
-        print(query_parameters)
-        print(header_parameters)
-        print(body_content_kwargs)
-        # request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-        # print(request)
-        print(type(self._client._pipeline))
 
 
     def commit(
@@ -115,37 +56,7 @@ class TableBatchOperations(object):
         """
         # TODO: add this if necessary
         # self._validate_not_none('table_name', table_name)
-
-
         self._client._client._batch_send(self._requests, **kwargs)
-
-        # request = HttpRequest()
-        # request.method = 'POST'
-        # request.host_locations = self._get_host_locations()
-        # request.path = '/' + '$batch'
-        # request.query = {'timeout': _int_to_str(timeout)}
-
-        # # Update the batch operation requests with table and client specific info
-        # for row_key, batch_request in batch._requests:
-        #     if batch_request.method == 'POST':
-        #         batch_request.path = '/' + _to_str(table_name)
-        #     else:
-        #         batch_request.path = _get_entity_path(table_name, batch._partition_key, row_key)
-        #     if self.is_emulated:
-        #         batch_request.path = '/' + DEV_ACCOUNT_NAME + batch_request.path
-        #     _update_request(batch_request, X_MS_VERSION, USER_AGENT_STRING)
-
-        # # Construct the batch body
-        # request.body, boundary = _convert_batch_to_json(batch._requests)
-        # request.headers = {'Content-Type': boundary}
-
-        # # Perform the batch request and return the response
-        # return self._perform_request(request, _parse_batch_response)
-
-
-
-        # self._client.post()
-        # pass
 
 
     def _verify_partition_key(
@@ -160,13 +71,14 @@ class TableBatchOperations(object):
 
 
     def create_entity(
-            self,
-            entity, # type: Union[Dict, TableEntity]
-            timeout=None, # type: Optional[int]
-            request_id_parameter=None, # type: Optional[str]
-            response_preference=None, # type: Optional[Union[str, "models.ResponseFormat"]]
-            query_options=None, # type: Optional["models.QueryOptions"]
-            **kwargs # type: Any
+        self,
+        table, # type: str
+        entity, # type: Union[Dict, TableEntity]
+        timeout=None, # type: Optional[int]
+        request_id_parameter=None, # type: Optional[str]
+        response_preference=None, # type: Optional[Union[str, "models.ResponseFormat"]]
+        query_options=None, # type: Optional["models.QueryOptions"]
+        **kwargs # type: Any
     ):
         # (...) -> None
         '''
@@ -176,6 +88,9 @@ class TableBatchOperations(object):
 
         The operation will not be executed until the batch is committed
 
+        :param: table:
+            The table to perform the operation on
+        :type: table: str
         :param: entity:
             The entity to insert. Can be a dict or an entity object
             Must contain a PartitionKey and a RowKey.
@@ -187,7 +102,7 @@ class TableBatchOperations(object):
         else:
             raise ValueError('PartitionKey and RowKey were not provided in entity')
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[Dict[str, object]]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[Dict[str, object]]]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
 
@@ -196,9 +111,11 @@ class TableBatchOperations(object):
             _format = query_options.format
         data_service_version = "3.0"
         content_type = kwargs.pop("content_type", "application/json;odata=nometadata")
+        accept = "application/json;odata=minimalmetadata"
 
         # Construct URL
-        url = self.create_entity.metadata['url']  # type: ignore
+        # url = self.create_entity.metadata['url']  # type: ignore
+        url = "/{}".format(self.table_name)
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
             'table': self._serialize.url("table", self.table_name, 'str'),
@@ -221,26 +138,17 @@ class TableBatchOperations(object):
         if response_preference is not None:
             header_parameters['Prefer'] = self._serialize.header("response_preference", response_preference, 'str')
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json;odata=minimalmetadata'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         if entity is not None:
             body_content = self._serialize.body(entity, '{object}')
         else:
             body_content = None
         body_content_kwargs['content'] = body_content
-        print("URL: {}".format(url))
-        print("QPs: {}".format(query_parameters))
-        print("HPs: {}".format(header_parameters))
-        print("BCkwargs: {}".format(body_content_kwargs))
-        print("TYPE: {}".format(type(self._client._client)))
         request = self._client._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-        print("REQ BODY: {}".format(request.body))
-        print("\n\n")
         self._requests.append(request)
-    create_entity.metadata = {'url': '/{table_name}'}  # type: ignore
-
+    
 
     def update_entity(
             self, entity, # type: Union[Entity, dict]
@@ -298,6 +206,7 @@ class TableBatchOperations(object):
         '''
 
         pass
+
 
     def delete_entity(
             self, partition_key, # type: str

@@ -168,7 +168,7 @@ class StorageTableBatchTest(TableTestCase):
             entity.test5 = datetime.utcnow()
 
             batch = self.table.create_batch()
-            batch.create_entity(entity)
+            batch.create_entity(table=self.table.table_name, entity=entity)
             resp = self.table.commit_batch(batch)
 
             # Assert
