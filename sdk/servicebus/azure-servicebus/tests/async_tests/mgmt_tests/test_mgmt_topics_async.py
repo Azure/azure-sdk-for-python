@@ -36,7 +36,7 @@ class ServiceBusAdministrationClientTopicAsyncTests(AzureMgmtTestCase):
             await mgmt_service.create_topic(topic_name)
             topic = await mgmt_service.get_topic(topic_name)
             assert topic.name == topic_name
-            assert topic.entity_availability_status == 'Available'
+            assert topic.availability_status == 'Available'
             assert topic.status == 'Active'
         finally:
             await mgmt_service.delete_topic(topic_name)

@@ -237,7 +237,7 @@ class ServiceBusAdministrationClient:  #pylint:disable=too-many-public-methods
             dead_lettering_on_message_expiration=kwargs.pop("dead_lettering_on_message_expiration", None),
             default_message_time_to_live=kwargs.pop("default_message_time_to_live", None),
             duplicate_detection_history_time_window=kwargs.pop("duplicate_detection_history_time_window", None),
-            entity_availability_status=kwargs.pop("entity_availability_status", None),
+            availability_status=None,
             enable_batched_operations=kwargs.pop("enable_batched_operations", None),
             enable_express=kwargs.pop("enable_express", None),
             enable_partitioning=kwargs.pop("enable_partitioning", None),
@@ -443,7 +443,7 @@ class ServiceBusAdministrationClient:  #pylint:disable=too-many-public-methods
             support_ordering=kwargs.pop("support_ordering", None),
             auto_delete_on_idle=kwargs.pop("auto_delete_on_idle", None),
             enable_partitioning=kwargs.pop("enable_partitioning", None),
-            entity_availability_status=kwargs.pop("entity_availability_status", None),
+            availability_status=None,
             enable_express=kwargs.pop("enable_express", None),
             user_metadata=kwargs.pop("user_metadata", None)
         )
@@ -658,7 +658,7 @@ class ServiceBusAdministrationClient:  #pylint:disable=too-many-public-methods
             user_metadata=kwargs.pop("user_metadata", None),
             forward_dead_lettered_messages_to=kwargs.pop("forward_dead_lettered_messages_to", None),
             auto_delete_on_idle=kwargs.pop("auto_delete_on_idle", None),
-            entity_availability_status=kwargs.pop("entity_availability_status", None),
+            availability_status=None,
         )
         to_create = subscription._to_internal_entity()  # type: ignore  # pylint:disable=protected-access
 

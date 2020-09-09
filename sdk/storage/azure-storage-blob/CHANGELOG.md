@@ -1,7 +1,15 @@
 # Release History
 
-## 12.5.0 (Unreleased)
+## 12.5.0 (2020-09-10)
+**New features**
+- Added support for checking if a blob exists using the `exists` method (#13221).
 
+**Fixes**
+- Fixed source URLs special characters issue. Users can now have special characters in their source URLs for `copy_blob_from_url`, `upload_blob_from_url` etc (#13275).
+- Fixed authorization header on asyncio requests containing url-encoded-able characters (#11028).
+- Fixed SAS credentials URL malformation when using local Azurite container (#11941).
+- Fixed issue with permission string causing an authentication failure (#13099).
+- Support for returning snapshot value in `get_blob_properties` response (#13287).
 
 ## 12.4.0 (2020-08-12)
 **New features**

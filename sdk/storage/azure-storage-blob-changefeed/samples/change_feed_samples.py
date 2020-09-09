@@ -22,6 +22,8 @@ USAGE:
 
 import os
 from datetime import datetime
+from time import sleep
+
 from azure.storage.blob.changefeed import ChangeFeedClient
 
 
@@ -35,7 +37,7 @@ class ChangeFeedSamples(object):
         # Instantiate a ChangeFeedClient
         # [START list_events_by_page]
         # [START create_change_feed_client]
-        cf_client = ChangeFeedClient("http://{}.blob.core.windows.net".format(self.ACCOUNT_NAME),
+        cf_client = ChangeFeedClient("https://{}.blob.core.windows.net".format(self.ACCOUNT_NAME),
                                      credential=self.ACCOUNT_KEY)
         # [END create_change_feed_client]
 
@@ -54,7 +56,7 @@ class ChangeFeedSamples(object):
 
     def list_all_events(self):
         # [START list_all_events]
-        cf_client = ChangeFeedClient("http://{}.blob.core.windows.net".format(self.ACCOUNT_NAME),
+        cf_client = ChangeFeedClient("https://{}.blob.core.windows.net".format(self.ACCOUNT_NAME),
                                      credential=self.ACCOUNT_KEY)
         change_feed = cf_client.list_changes()
 
@@ -64,9 +66,9 @@ class ChangeFeedSamples(object):
     # [END list_all_events]
 
     def list_range_of_events(self):
-        cf_client = ChangeFeedClient("http://{}.blob.core.windows.net".format(self.ACCOUNT_NAME),
+        cf_client = ChangeFeedClient("https://{}.blob.core.windows.net".format(self.ACCOUNT_NAME),
                                      credential=self.ACCOUNT_KEY)
-        start_time = datetime(2019, 1, 1)
+        start_time = datetime(2020, 8, 18, 10)
         end_time = datetime(2020, 3, 4)
         change_feed = cf_client.list_changes(start_time=start_time, end_time=end_time)
 
@@ -77,7 +79,7 @@ class ChangeFeedSamples(object):
     def list_events_using_continuation_token(self):
 
         # Instantiate a ChangeFeedClient
-        cf_client = ChangeFeedClient("http://{}.blob.core.windows.net".format(self.ACCOUNT_NAME),
+        cf_client = ChangeFeedClient("https://{}.blob.core.windows.net".format(self.ACCOUNT_NAME),
                                      credential=self.ACCOUNT_KEY)
         # to get continuation token
         change_feed = cf_client.list_changes(results_per_page=2).by_page()
@@ -87,10 +89,26 @@ class ChangeFeedSamples(object):
         token = change_feed.continuation_token
 
         # restart using the continuation token
-        change_feed2 = cf_client.list_changes(results_per_page=3).by_page(continuation_token=token)
+        change_feed2 = cf_client.list_changes(results_per_page=56).by_page(continuation_token=token)
         change_feed_page2 = next(change_feed2)
         for event in change_feed_page2:
             print(event)
+
+    def list_events_in_live_mode(self):
+        # Instantiate a ChangeFeedClient
+        cf_client = ChangeFeedClient("https://{}.blob.core.windows.net".format(self.ACCOUNT_NAME),
+                                     credential=self.ACCOUNT_KEY)
+        token = None
+        while True:
+            change_feed = cf_client.list_changes(results_per_page=500).by_page(continuation_token=token)
+
+            for page in change_feed:
+                for event in page:
+                    print(event)
+            token = change_feed.continuation_token
+
+            sleep(60)
+            print("continue printing events")
 
 
 if __name__ == '__main__':
@@ -99,4 +117,5 @@ if __name__ == '__main__':
     sample.list_all_events()
     sample.list_range_of_events()
     sample.list_events_using_continuation_token()
+    sample.list_events_in_live_mode()
 
