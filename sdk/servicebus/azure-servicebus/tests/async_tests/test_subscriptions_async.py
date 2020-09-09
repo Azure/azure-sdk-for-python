@@ -11,7 +11,7 @@ import pytest
 import time
 from datetime import datetime, timedelta
 
-from azure.servicebus import Message, PeekMessage, ReceiveSettleMode
+from azure.servicebus import Message, ReceiveMode
 from azure.servicebus.aio import ServiceBusClient, ServiceBusSharedKeyCredential
 from azure.servicebus.exceptions import ServiceBusError
 from azure.servicebus._common.constants import SubQueue
@@ -106,8 +106,8 @@ class ServiceBusSubscriptionAsyncTests(AzureMgmtTestCase):
                 topic_name=servicebus_topic.name,
                 subscription_name=servicebus_subscription.name,
                 max_wait_time=5,
-                mode=ReceiveSettleMode.PeekLock,
-                prefetch=10
+                receive_mode=ReceiveMode.PeekLock,
+                prefetch_count=10
             ) as receiver:
 
                 async with sb_client.get_topic_sender(servicebus_topic.name) as sender:
@@ -121,7 +121,7 @@ class ServiceBusSubscriptionAsyncTests(AzureMgmtTestCase):
                     for message in messages:
                         print_message(_logger, message)
                         count += 1
-                        await message.dead_letter(reason="Testing reason", description="Testing description")
+                        await message.dead_letter(reason="Testing reason", error_description="Testing description")
                     messages = await receiver.receive_messages()
 
                 assert count == 10
@@ -130,7 +130,7 @@ class ServiceBusSubscriptionAsyncTests(AzureMgmtTestCase):
                 topic_name=servicebus_topic.name,
                 subscription_name=servicebus_subscription.name,
                 max_wait_time=5,
-                mode=ReceiveSettleMode.PeekLock
+                receive_mode=ReceiveMode.PeekLock
             ) as receiver:
                 count = 0
                 async for message in receiver:
@@ -144,7 +144,7 @@ class ServiceBusSubscriptionAsyncTests(AzureMgmtTestCase):
                 subscription_name=servicebus_subscription.name,
                 sub_queue = SubQueue.DeadLetter,
                 max_wait_time=5,
-                mode=ReceiveSettleMode.PeekLock
+                receive_mode=ReceiveMode.PeekLock
             ) as dl_receiver:
                 count = 0
                 async for message in dl_receiver:

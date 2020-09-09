@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 import logging
+import datetime
 from typing import TYPE_CHECKING, Union, Optional
 import six
 
@@ -20,7 +21,6 @@ from .exceptions import SessionLockExpired
 from ._common import mgmt_handlers
 
 if TYPE_CHECKING:
-    import datetime
     from ._servicebus_session_receiver import ServiceBusSessionReceiver
     from .aio._servicebus_session_receiver_async import ServiceBusSessionReceiver as ServiceBusSessionReceiverAsync
 
@@ -30,7 +30,7 @@ _LOGGER = logging.getLogger(__name__)
 class BaseSession(object):
     def __init__(self, session_id, receiver, encoding="UTF-8"):
         # type: (str, Union[ServiceBusSessionReceiver, ServiceBusSessionReceiverAsync], str) -> None
-        self._session_id = session_id
+        self._id = session_id
         self._receiver = receiver
         self._encoding = encoding
         self._session_start = None
@@ -58,7 +58,7 @@ class BaseSession(object):
 
         :rtype: str
         """
-        return self._session_id
+        return self._id
 
     @property
     def locked_until_utc(self):
@@ -90,7 +90,7 @@ class ServiceBusSession(BaseSession):
             :caption: Get session from a receiver
     """
 
-    def get_session_state(self):
+    def get_state(self):
         # type: () -> str
         """Get the session state.
 
@@ -110,20 +110,20 @@ class ServiceBusSession(BaseSession):
         self._check_live()
         response = self._receiver._mgmt_request_response_with_retry(  # pylint: disable=protected-access
             REQUEST_RESPONSE_GET_SESSION_STATE_OPERATION,
-            {MGMT_REQUEST_SESSION_ID: self.session_id},
+            {MGMT_REQUEST_SESSION_ID: self._id},
             mgmt_handlers.default
         )
         session_state = response.get(MGMT_RESPONSE_SESSION_STATE)
         if isinstance(session_state, six.binary_type):
-            session_state = session_state.decode('UTF-8')
+            session_state = session_state.decode(self._encoding)
         return session_state
 
-    def set_session_state(self, state):
+    def set_state(self, state):
         # type: (Union[str, bytes, bytearray]) -> None
         """Set the session state.
 
         :param state: The state value.
-        :type state: str, bytes or bytearray
+        :type state: Union[str, bytes, bytearray]
 
         .. admonition:: Example:
 
@@ -138,12 +138,12 @@ class ServiceBusSession(BaseSession):
         state = state.encode(self._encoding) if isinstance(state, six.text_type) else state
         return self._receiver._mgmt_request_response_with_retry(  # pylint: disable=protected-access
             REQUEST_RESPONSE_SET_SESSION_STATE_OPERATION,
-            {MGMT_REQUEST_SESSION_ID: self.session_id, MGMT_REQUEST_SESSION_STATE: bytearray(state)},
+            {MGMT_REQUEST_SESSION_ID: self._id, MGMT_REQUEST_SESSION_STATE: bytearray(state)},
             mgmt_handlers.default
         )
 
     def renew_lock(self):
-        # type: () -> None
+        # type: () -> datetime.datetime
         """Renew the session lock.
 
         This operation must be performed periodically in order to retain a lock on the
@@ -153,6 +153,9 @@ class ServiceBusSession(BaseSession):
 
         This operation can also be performed as a threaded background task by registering the session
         with an `azure.servicebus.AutoLockRenew` instance.
+
+        :returns: The utc datetime the lock is set to expire at.
+        :rtype: datetime.datetime
 
         .. admonition:: Example:
 
@@ -166,7 +169,10 @@ class ServiceBusSession(BaseSession):
         self._check_live()
         expiry = self._receiver._mgmt_request_response_with_retry(  # pylint: disable=protected-access
             REQUEST_RESPONSE_RENEW_SESSION_LOCK_OPERATION,
-            {MGMT_REQUEST_SESSION_ID: self.session_id},
+            {MGMT_REQUEST_SESSION_ID: self._id},
             mgmt_handlers.default
         )
-        self._locked_until_utc = utc_from_timestamp(expiry[MGMT_RESPONSE_RECEIVER_EXPIRATION]/1000.0)
+        expiry_timestamp = expiry[MGMT_RESPONSE_RECEIVER_EXPIRATION]/1000.0
+        self._locked_until_utc = utc_from_timestamp(expiry_timestamp) # type: datetime.datetime
+
+        return self._locked_until_utc
