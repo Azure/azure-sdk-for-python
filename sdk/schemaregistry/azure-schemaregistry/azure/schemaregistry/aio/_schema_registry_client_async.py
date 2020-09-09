@@ -97,7 +97,7 @@ class SchemaRegistryClient(object):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_code_schemaregistry.py
+            .. literalinclude:: ../samples/async_samples/sample_code_schemaregistry_async.py
                 :start-after: [START register_schema_async]
                 :end-before: [END register_schema_async]
                 :language: python
@@ -133,7 +133,7 @@ class SchemaRegistryClient(object):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_code_schemaregistry.py
+            .. literalinclude:: ../samples/async_samples/sample_code_schemaregistry_async.py
                 :start-after: [START get_schema_async]
                 :end-before: [END get_schema_async]
                 :language: python
@@ -173,7 +173,7 @@ class SchemaRegistryClient(object):
                 :end-before: [END get_schema_id_async]
                 :language: python
                 :dedent: 4
-                :caption:Get schema id.
+                :caption: Get schema by id.
 
         """
         try:

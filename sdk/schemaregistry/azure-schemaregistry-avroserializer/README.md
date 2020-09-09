@@ -1,9 +1,10 @@
 # Azure Schema Registry Avro Serializer client library for Python
 
-Azure Schema Registry Avro Serializer provides the ability to serialize and deserialize data according
-to the given avro schema. It is integrated with Azure Schema Registry SDK and will automatically register and get schema.
+Azure Schema Registry is a schema repository service hosted by Azure Event Hubs, providing schema storage, versioning,
+and management. This package provides an Avro serializer capable of serializing and deserializing payloads containing
+Schema Registry schema identifiers and Avro-encoded data.
 
-[Source code][source_code] | [Package (PyPi)][pypi] | [API reference documentation][api_docs] | [Samples][sr_avro_samples] | [Changelog][change_log]
+[Source code][source_code] | [Package (PyPi)][pypi] | [API reference documentation][api_reference] | [Samples][sr_avro_samples] | [Changelog][change_log]
 
 ## Getting started
 
@@ -18,7 +19,7 @@ pip install azure-schemaregistry-avroserializer azure-identity
 ### Prerequisites: 
 To use this package, you must have:
 * Azure subscription - [Create a free account][azure_sub]
-* Azure Schema Registry
+* [Azure Schema Registry][schemaregistry_service]
 * Python 2.7, 3.5 or later - [Install Python][python]
 
 ### Authenticate the client
@@ -40,7 +41,34 @@ serializer = SchemaRegistryAvroSerializer(schema_registry_client, schema_group)
 
 ## Key concepts
 
-- Avro: Apache Avro™ is a data serialization system.
+### SchemaRegistryAvroSerializer
+
+Provides API to serialize to and deserialize from Avro Binary Encoding plus a
+header with schema ID. Uses [SchemaRegistryClient][schemaregistry_client] to get schema IDs from schema content or vice versa.
+
+### Message format
+
+The same format is used by schema registry serializers across Azure SDK languages.
+
+Messages are encoded as follows:
+
+- 4 bytes: Format Indicator
+
+  - Currently always zero to indicate format below.
+
+- 32 bytes: Schema ID
+
+  - UTF-8 hexadecimal representation of GUID.
+  - 32 hex digits, no hyphens.
+  - Same format and byte order as string from Schema Registry service.
+
+- Remaining bytes: Avro payload (in general, format-specific payload)
+
+  - Avro Binary Encoding
+  - NOT Avro Object Container File, which includes the schema and defeats the
+    purpose of this serialzer to move the schema out of the message payload and
+    into the schema registry.
+
 
 ## Examples
 
@@ -172,3 +200,5 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 [api_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-schemaregistry-avroserializer/latest/index.html
 [source_code]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/schemaregistry/azure-schemaregistry-avroserializer
 [change_log]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/schemaregistry/azure-schemaregistry-avroserializer/CHANGELOG.md
+[schemaregistry_client]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/schemaregistry/azure-schemaregistry
+[schemaregistry_service]: https://aka.ms/schemaregistry
