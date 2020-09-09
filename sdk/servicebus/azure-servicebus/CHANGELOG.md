@@ -17,6 +17,7 @@
 * Remove `is_anonymous_accessible` from management entities.
 * Remove `support_ordering` from `create_queue` and `QueueProperties`
 * Remove `enable_subscription_partitioning` from `create_topic` and `TopicProperties`
+* `get_dead_letter_[queue,subscription]_receiver()` has been removed.  To connect to a dead letter queue, utilize the `sub_queue` parameter of `get_[queue,subscription]_receiver()` provided with a value from the `SubQueue` enum
 * No longer export `ServiceBusSharedKeyCredential`
 
 ## 7.0.0b5 (2020-08-10)

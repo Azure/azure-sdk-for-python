@@ -15,6 +15,7 @@ from azure.servicebus import Message, PeekMessage, ReceiveSettleMode
 from azure.servicebus.aio import ServiceBusClient
 from azure.servicebus.aio._base_handler_async import ServiceBusSharedKeyCredential
 from azure.servicebus.exceptions import ServiceBusError
+from azure.servicebus._common.constants import SubQueue
 
 from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer, CachedResourceGroupPreparer
 from servicebus_preparer import (
@@ -139,9 +140,10 @@ class ServiceBusSubscriptionAsyncTests(AzureMgmtTestCase):
                     count += 1
             assert count == 0
 
-            async with sb_client.get_subscription_deadletter_receiver(
+            async with sb_client.get_subscription_receiver(
                 topic_name=servicebus_topic.name,
                 subscription_name=servicebus_subscription.name,
+                sub_queue = SubQueue.DeadLetter,
                 max_wait_time=5,
                 mode=ReceiveSettleMode.PeekLock
             ) as dl_receiver:

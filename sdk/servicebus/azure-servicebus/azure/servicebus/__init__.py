@@ -14,7 +14,7 @@ from ._servicebus_receiver import ServiceBusReceiver
 from ._servicebus_session_receiver import ServiceBusSessionReceiver
 from ._servicebus_session import ServiceBusSession
 from ._common.message import Message, BatchMessage, PeekMessage, ReceivedMessage
-from ._common.constants import ReceiveSettleMode, NEXT_AVAILABLE
+from ._common.constants import ReceiveSettleMode, SubQueue
 from ._common.auto_lock_renewer import AutoLockRenew
 
 TransportType = constants.TransportType
@@ -25,7 +25,7 @@ __all__ = [
     'PeekMessage',
     'ReceivedMessage',
     'ReceiveSettleMode',
-    'NEXT_AVAILABLE',
+    'SubQueue',
     'ServiceBusClient',
     'ServiceBusReceiver',
     'ServiceBusSessionReceiver',
