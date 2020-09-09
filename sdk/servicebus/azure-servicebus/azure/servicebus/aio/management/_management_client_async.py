@@ -137,8 +137,6 @@ class ServiceBusAdministrationClient:  #pylint:disable=too-many-public-methods
         :rtype: ~azure.servicebus.management.aio.ServiceBusAdministrationClient
         """
         endpoint, shared_access_key_name, shared_access_key, _, token, token_expiry = parse_conn_str(conn_str)
-        print(conn_str)
-        print(shared_access_key_name)
         if token and token_expiry:
             credential = ServiceBusSASTokenCredential(token, token_expiry)
         elif shared_access_key_name and shared_access_key:
