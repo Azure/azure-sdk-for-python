@@ -715,6 +715,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         self.assertEqual(properties.size, 11)
         self.assertEqual(properties.lease.status, 'unlocked')
 
+    @pytest.mark.playback_test_only
     @GlobalStorageAccountPreparer()
     def test_if_blob_exists(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
