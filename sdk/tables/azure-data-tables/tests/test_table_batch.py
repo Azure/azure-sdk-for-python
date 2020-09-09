@@ -16,7 +16,7 @@ from dateutil.tz import tzutc
 from azure.core import MatchConditions
 from azure.core.exceptions import (
     ResourceExistsError)
-from azure.data.tables import EdmType, TableEntity, EntityProperty
+from azure.data.tables import EdmType, TableEntity, EntityProperty, UpdateMode
 
 from _shared.testcase import GlobalStorageAccountPreparer, TableTestCase, LogCaptured
 
@@ -151,7 +151,7 @@ class StorageTableBatchTest(TableTestCase):
         self.assertIsInstance(entity.timestamp, datetime)
 
     #--Test cases for batch ---------------------------------------------
-    # @pytest.mark.skip("pending")
+    # @pytest.mark.skip("Error with successful return not being deserialized")
     @GlobalStorageAccountPreparer()
     def test_batch_insert(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -168,7 +168,41 @@ class StorageTableBatchTest(TableTestCase):
             entity.test5 = datetime.utcnow()
 
             batch = self.table.create_batch()
-            batch.create_entity(table=self.table.table_name, entity=entity)
+            batch.create_entity(entity)
+            resp = self.table.commit_batch(batch)
+
+            # Assert
+            self.assertIsNotNone(resp)
+            e = self.table.get_entity(row_key=entity.RowKey, partition_key=entity.PartitionKey)
+            self.assertEqual(e.test, entity.test.value)
+            self.assertEqual(e.test2.value, entity.test2)
+            self.assertEqual(e.test3.value, entity.test3)
+            self.assertEqual(e.test4.value, entity.test4.value)
+        finally:
+            self._tear_down()
+
+    @pytest.mark.skip("pending")
+    @GlobalStorageAccountPreparer()
+    def test_batch_single_update(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        self._set_up(storage_account, storage_account_key)
+        try:
+            # Act
+            entity = TableEntity()
+            entity.PartitionKey = '001'
+            entity.RowKey = 'batch_insert'
+            entity.test = EntityProperty(True)
+            entity.test2 = 'value'
+            entity.test3 = 3
+            entity.test4 = EntityProperty(1234567890)
+            entity.test5 = datetime.utcnow()
+            self.table.create_entity(entity)
+
+            entity.test3 = 5
+            entity.test5 = datetime.utcnow()
+
+            batch = self.table.create_batch()
+            batch.update_entity(entity, mode=UpdateMode.MERGE)
             resp = self.table.commit_batch(batch)
 
             # Assert

@@ -262,10 +262,12 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         """
         # Pop it here, so requests doesn't feel bad about additional kwarg
         raise_on_any_failure = kwargs.pop("raise_on_any_failure", True)
+        policies = [StorageHeadersPolicy()]
+
         changeset = HttpRequest('POST', None)
         changeset.set_multipart_mixed(
             *reqs,
-            policies = [StorageHeadersPolicy(), self._credential_policy],
+            policies=policies,
             boundary="changeset_{}".format(uuid4())
         )
         request = self._client._client.post(  # pylint: disable=protected-access
@@ -276,10 +278,15 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
                 'MaxDataServiceVersion': '3.0;NetFx',
             }
         )
-        request.set_multipart_mixed(changeset, boundary="batch_{}".format(uuid4()))
+        request.set_multipart_mixed(
+            changeset,
+            policies=policies,
+            enforce_https=False,
+            boundary="batch_{}".format(uuid4())
+        )
 
         pipeline_response = self._pipeline.run(
-            request, stream=False, **kwargs
+            request, **kwargs
         )
         response = pipeline_response.http_response
 
