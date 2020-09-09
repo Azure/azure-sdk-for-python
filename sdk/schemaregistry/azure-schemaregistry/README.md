@@ -1,7 +1,8 @@
 # Azure Schema Registry client library for Python
 
-Azure Schema Registry is a service that provides the ability to store and retrieve different types of schemas such as
-Avro, Json, etc.
+Azure Schema Registry is a schema repository service hosted by Azure Event Hubs, providing schema storage, versioning,
+and management. The registry is leveraged by serializers to reduce payload size while describing payload structure with
+schema identifiers rather than full schemas.
 
 [Source code][source_code] | [Package (PyPi)][pypi] | [API reference documentation][api_reference] | [Samples][sr_samples] | [Changelog][change_log]
 
@@ -18,7 +19,7 @@ pip install azure-schemaregistry azure-identity
 ### Prerequisites: 
 To use this package, you must have:
 * Azure subscription - [Create a free account][azure_sub]
-* Azure Schema Registry
+* [Azure Schema Registry][schemaregistry_service]
 * Python 2.7, 3.5 or later - [Install Python][python]
 
 ### Authenticate the client
@@ -38,6 +39,8 @@ schema_registry_client = SchemaRegistryClient(endpoint, credential)
 ## Key concepts
 
 - Schema: Schema is the organization or structure for data.
+
+- SchemaRegistryClient: `SchemaRegistryClient ` provides the API for storing and retrieving schemas in schema registry.
 
 ## Examples
 
@@ -197,3 +200,4 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 [api_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-schemaregistry/latest/index.html
 [source_code]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/schemaregistry/azure-schemaregistry
 [change_log]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/schemaregistry/azure-schemaregistry/CHANGELOG.md
+[schemaregistry_service]: https://aka.ms/schemaregistry

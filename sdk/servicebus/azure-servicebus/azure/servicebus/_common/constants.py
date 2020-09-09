@@ -115,6 +115,11 @@ class SessionFilter(Enum):
     NextAvailable = 0
 
 
+class SubQueue(Enum):
+    DeadLetter = 1
+    TransferDeadLetter = 2
+
+
 ANNOTATION_SYMBOL_PARTITION_KEY = types.AMQPSymbol(_X_OPT_PARTITION_KEY)
 ANNOTATION_SYMBOL_VIA_PARTITION_KEY = types.AMQPSymbol(_X_OPT_VIA_PARTITION_KEY)
 ANNOTATION_SYMBOL_SCHEDULED_ENQUEUE_TIME = types.AMQPSymbol(_X_OPT_SCHEDULED_ENQUEUE_TIME)
