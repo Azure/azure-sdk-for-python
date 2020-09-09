@@ -199,7 +199,7 @@ class ServiceBusAdministrationClientQueueAsyncTests(AzureMgmtTestCase):
         try:
             queue = await mgmt_service.get_queue(queue_name)
             assert queue.name == queue_name
-            assert queue.entity_availability_status == 'Available'
+            assert queue.availability_status == 'Available'
             assert queue.status == 'Active'
             # assert created_at < queue.created_at < utc_now() + datetime.timedelta(minutes=10) # TODO: Should be created_at_utc for consistency with dataplane.
         finally:
