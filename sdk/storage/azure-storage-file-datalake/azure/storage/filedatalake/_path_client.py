@@ -5,10 +5,10 @@
 # --------------------------------------------------------------------------
 
 try:
-    from urllib.parse import urlparse, quote, unquote
+    from urllib.parse import urlparse, quote
 except ImportError:
     from urlparse import urlparse # type: ignore
-    from urllib2 import quote, unquote  # type: ignore
+    from urllib2 import quote  # type: ignore
 
 import six
 
@@ -409,7 +409,7 @@ class PathClient(StorageAccountHostsMixin):
             path_http_headers = get_path_http_headers(content_settings)
 
         options = {
-            'rename_source': quote(unquote(rename_source)),
+            'rename_source': rename_source,
             'path_http_headers': path_http_headers,
             'lease_access_conditions': access_conditions,
             'source_lease_id': source_lease_id,

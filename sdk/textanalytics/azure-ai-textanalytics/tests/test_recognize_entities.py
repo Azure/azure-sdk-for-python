@@ -15,7 +15,8 @@ from testcase import TextAnalyticsClientPreparer as _TextAnalyticsClientPreparer
 from azure.ai.textanalytics import (
     TextAnalyticsClient,
     TextDocumentInput,
-    VERSION
+    VERSION,
+    TextAnalyticsApiVersion,
 )
 
 # pre-apply the client_cls positional argument so it needn't be explicitly passed below
@@ -543,3 +544,38 @@ class TestRecognizeEntities(TextAnalyticsTest):
             cls=callback
         )
         assert res == "cls result"
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    def test_offset_length(self, client):
+        result = client.recognize_entities(["Microsoft was founded by Bill Gates and Paul Allen"])
+        entities = result[0].entities
+
+        self.assertEqual(entities[0].offset, 0)
+        self.assertEqual(entities[0].length, 9)
+
+        self.assertEqual(entities[1].offset, 25)
+        self.assertEqual(entities[1].length, 10)
+
+        self.assertEqual(entities[2].offset, 40)
+        self.assertEqual(entities[2].length, 10)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_0})
+    def test_no_offset_length_v3_categorized_entities(self, client):
+        result = client.recognize_entities(["Microsoft was founded by Bill Gates and Paul Allen"])
+        entities = result[0].entities
+
+        self.assertIsNone(entities[0].offset)
+        self.assertIsNone(entities[0].length)
+        self.assertIsNone(entities[1].offset)
+        self.assertIsNone(entities[1].length)
+        self.assertIsNone(entities[2].offset)
+        self.assertIsNone(entities[2].length)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_0})
+    def test_string_index_type_not_fail_v3(self, client):
+        # make sure that the addition of the string_index_type kwarg for v3.1-preview.1 doesn't
+        # cause v3.0 calls to fail
+        client.recognize_entities(["please don't fail"])

@@ -1,12 +1,42 @@
 # Release History
 
-## 1.4.0b8 (Unreleased)
+## 1.5.0b1 (2020-09-08)
+### Added
+- Application authentication APIs from 1.4.0b7
+- `ManagedIdentityCredential` supports the latest version of App Service
+  ([#11346](https://github.com/Azure/azure-sdk-for-python/issues/11346))
+- `DefaultAzureCredential` allows specifying the client ID of a user-assigned
+  managed identity via keyword argument `managed_identity_client_id`
+  ([#12991](https://github.com/Azure/azure-sdk-for-python/issues/12991)) 
+- `CertificateCredential` supports Subject Name/Issuer authentication when
+  created with `send_certificate=True`. The async `CertificateCredential`
+  (`azure.identity.aio.CertificateCredential`) will support this in a
+  future version.
+  ([#10816](https://github.com/Azure/azure-sdk-for-python/issues/10816))
+- Credentials in `azure.identity` support ADFS authorities, excepting
+  `VisualStudioCodeCredential`. To configure a credential for this, configure
+  the credential with `authority` and `tenant_id="adfs"` keyword arguments, for
+  example
+  `ClientSecretCredential(authority="<your ADFS URI>", tenant_id="adfs")`.
+  Async credentials (those in `azure.identity.aio`) will support ADFS in a
+  future release.
+  ([#12696](https://github.com/Azure/azure-sdk-for-python/issues/12696))
+- `InteractiveBrowserCredential` keyword argument `redirect_uri` enables
+  authentication with a user-specified application having a custom redirect URI
+  ([#13344](https://github.com/Azure/azure-sdk-for-python/issues/13344))  
+
+### Breaking changes
+- Removed `authentication_record` keyword argument from the async
+  `SharedTokenCacheCredential`, i.e. `azure.identity.aio.SharedTokenCacheCredential`
+
+## 1.4.0 (2020-08-10)
+### Added
 - `DefaultAzureCredential` uses the value of environment variable
 `AZURE_CLIENT_ID` to configure a user-assigned managed identity.
 ([#10931](https://github.com/Azure/azure-sdk-for-python/issues/10931))
-- Renamed `VSCodeCredential` to `VisualStudioCodeCredential`
 
 ### Breaking Changes
+- Renamed `VSCodeCredential` to `VisualStudioCodeCredential`
 - Removed application authentication APIs added in 1.4.0 beta versions. These
   will be reintroduced in 1.5.0b1. Passing the keyword arguments below
   generally won't cause a runtime error, but the arguments have no effect.
@@ -249,7 +279,7 @@ its use in national clouds
 ### New features:
 - `AuthorizationCodeCredential` authenticates with a previously obtained
 authorization code. See Azure Active Directory's
-[authorization code documentation](https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow)
+[authorization code documentation](https://docs.microsoft.com/azure/active-directory/develop/v2-oauth2-auth-code-flow)
 for more information about this authentication flow.
 - Multi-cloud support: client credentials accept the authority of an Azure Active
 Directory authentication endpoint as an `authority` keyword argument. Known

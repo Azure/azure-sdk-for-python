@@ -250,7 +250,7 @@ class _TableQueryStringConstants(QueryStringConstants):
 class _TableSharedAccessHelper(_SharedAccessHelper):
 
     def __init__(self):
-        super().__init__()
+        super(_TableSharedAccessHelper, self).__init__()
         self.query_dict = {}
 
     def add_table_access_ranges(self, table_name, start_pk, start_rk,

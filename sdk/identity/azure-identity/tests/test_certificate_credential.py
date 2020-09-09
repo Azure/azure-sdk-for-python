@@ -15,9 +15,18 @@ from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import padding
 from msal import TokenCache
 import pytest
+import six
 from six.moves.urllib_parse import urlparse
 
-from helpers import build_aad_response, urlsafeb64_decode, mock_response, Request, validating_transport
+from helpers import (
+    build_aad_response,
+    get_discovery_response,
+    urlsafeb64_decode,
+    mock_response,
+    msal_validating_transport,
+    Request,
+    validating_transport,
+)
 
 try:
     from unittest.mock import Mock, patch
@@ -41,11 +50,12 @@ def test_no_scopes():
 def test_policies_configurable():
     policy = Mock(spec_set=SansIOHTTPPolicy, on_request=Mock())
 
-    def send(*_, **__):
-        return mock_response(json_payload=build_aad_response(access_token="**"))
+    transport = msal_validating_transport(
+        requests=[Request()], responses=[mock_response(json_payload=build_aad_response(access_token="**"))],
+    )
 
     credential = CertificateCredential(
-        "tenant-id", "client-id", CERT_PATH, policies=[ContentDecodePolicy(), policy], transport=Mock(send=send)
+        "tenant-id", "client-id", CERT_PATH, policies=[ContentDecodePolicy(), policy], transport=transport
     )
 
     credential.get_token("scope")
@@ -54,7 +64,7 @@ def test_policies_configurable():
 
 
 def test_user_agent():
-    transport = validating_transport(
+    transport = msal_validating_transport(
         requests=[Request(required_headers={"User-Agent": USER_AGENT})],
         responses=[mock_response(json_payload=build_aad_response(access_token="**"))],
     )
@@ -65,39 +75,42 @@ def test_user_agent():
 
 
 @pytest.mark.parametrize("authority", ("localhost", "https://localhost"))
-@pytest.mark.parametrize("cert_path,cert_password", BOTH_CERTS)
-def test_request_url(cert_path, cert_password, authority):
+def test_authority(authority):
     """the credential should accept an authority, with or without scheme, as an argument or environment variable"""
 
     tenant_id = "expected_tenant"
-    access_token = "***"
     parsed_authority = urlparse(authority)
-    expected_netloc = parsed_authority.netloc or authority  # "localhost" parses to netloc "", path "localhost"
+    expected_netloc = parsed_authority.netloc or authority
+    expected_authority = "https://{}/{}".format(expected_netloc, tenant_id)
 
-    def mock_send(request, **kwargs):
-        actual = urlparse(request.url)
-        assert actual.scheme == "https"
-        assert actual.netloc == expected_netloc
-        assert actual.path.startswith("/" + tenant_id)
-        return mock_response(json_payload={"token_type": "Bearer", "expires_in": 42, "access_token": access_token})
-
-    cred = CertificateCredential(
-        tenant_id, "client-id", cert_path, password=cert_password, transport=Mock(send=mock_send), authority=authority
+    mock_ctor = Mock(
+        return_value=Mock(acquire_token_silent_with_error=lambda *_, **__: {"access_token": "**", "expires_in": 42})
     )
-    token = cred.get_token("scope")
-    assert token.token == access_token
+
+    credential = CertificateCredential(tenant_id, "client-id", CERT_PATH, authority=authority)
+    with patch("msal.ConfidentialClientApplication", mock_ctor):
+        # must call get_token because the credential constructs the MSAL application lazily
+        credential.get_token("scope")
+
+    assert mock_ctor.call_count == 1
+    _, kwargs = mock_ctor.call_args
+    assert kwargs["authority"] == expected_authority
+    mock_ctor.reset_mock()
 
     # authority can be configured via environment variable
     with patch.dict("os.environ", {EnvironmentVariables.AZURE_AUTHORITY_HOST: authority}, clear=True):
-        credential = CertificateCredential(
-            tenant_id, "client-id", cert_path, password=cert_password, transport=Mock(send=mock_send)
-        )
+        credential = CertificateCredential(tenant_id, "client-id", CERT_PATH, authority=authority)
+    with patch("msal.ConfidentialClientApplication", mock_ctor):
         credential.get_token("scope")
-    assert token.token == access_token
+
+    assert mock_ctor.call_count == 1
+    _, kwargs = mock_ctor.call_args
+    assert kwargs["authority"] == expected_authority
 
 
 @pytest.mark.parametrize("cert_path,cert_password", BOTH_CERTS)
-def test_request_body(cert_path, cert_password):
+@pytest.mark.parametrize("send_certificate", (True, False))
+def test_request_body(cert_path, cert_password, send_certificate):
     access_token = "***"
     authority = "authority.com"
     client_id = "client-id"
@@ -105,22 +118,31 @@ def test_request_body(cert_path, cert_password):
     tenant_id = "tenant"
 
     def mock_send(request, **kwargs):
+        if not request.body:
+            return get_discovery_response()
+
         assert request.body["grant_type"] == "client_credentials"
         assert request.body["scope"] == expected_scope
 
         with open(cert_path, "rb") as cert_file:
-            validate_jwt(request, client_id, cert_file.read())
+            validate_jwt(request, client_id, cert_file.read(), expect_x5c=send_certificate)
 
-        return mock_response(json_payload={"token_type": "Bearer", "expires_in": 42, "access_token": access_token})
+        return mock_response(json_payload=build_aad_response(access_token=access_token))
 
     cred = CertificateCredential(
-        tenant_id, client_id, cert_path, password=cert_password, transport=Mock(send=mock_send), authority=authority
+        tenant_id,
+        client_id,
+        cert_path,
+        password=cert_password,
+        transport=Mock(send=mock_send),
+        authority=authority,
+        send_certificate=send_certificate,
     )
     token = cred.get_token(expected_scope)
     assert token.token == access_token
 
 
-def validate_jwt(request, client_id, pem_bytes):
+def validate_jwt(request, client_id, pem_bytes, expect_x5c=False):
     """Validate the request meets AAD's expectations for a client credential grant using a certificate, as documented
     at https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-certificate-credentials
     """
@@ -128,18 +150,30 @@ def validate_jwt(request, client_id, pem_bytes):
     cert = x509.load_pem_x509_certificate(pem_bytes, default_backend())
 
     # jwt is of the form 'header.payload.signature'; 'signature' is 'header.payload' signed with cert's private key
-    jwt = request.body["client_assertion"]
+    jwt = six.ensure_str(request.body["client_assertion"])
     header, payload, signature = (urlsafeb64_decode(s) for s in jwt.split("."))
     signed_part = jwt[: jwt.rfind(".")]
+
     claims = json.loads(payload.decode("utf-8"))
+    assert claims["aud"] == request.url
+    assert claims["iss"] == claims["sub"] == client_id
 
     deserialized_header = json.loads(header.decode("utf-8"))
     assert deserialized_header["alg"] == "RS256"
     assert deserialized_header["typ"] == "JWT"
-    assert urlsafeb64_decode(deserialized_header["x5t"]) == cert.fingerprint(hashes.SHA1())  # nosec
+    if expect_x5c:
+        # x5c should have all the certs in the PEM file, in order, minus headers and footers
+        pem_lines = pem_bytes.decode("utf-8").splitlines()
+        header = "-----BEGIN CERTIFICATE-----"
+        assert len(deserialized_header["x5c"]) == pem_lines.count(header)
 
-    assert claims["aud"] == request.url
-    assert claims["iss"] == claims["sub"] == client_id
+        # concatenate the PEM file's certs, removing headers and footers
+        chain_start = pem_lines.index(header)
+        pem_chain_content = "".join(line for line in pem_lines[chain_start:] if not line.startswith("-" * 5))
+        assert "".join(deserialized_header["x5c"]) == pem_chain_content, "JWT's x5c claim contains unexpected content"
+    else:
+        assert "x5c" not in deserialized_header
+    assert urlsafeb64_decode(deserialized_header["x5t"]) == cert.fingerprint(hashes.SHA1())  # nosec
 
     cert.public_key().verify(signature, signed_part.encode("utf-8"), padding.PKCS1v15(), hashes.SHA256())
 
@@ -157,20 +191,20 @@ def test_enable_persistent_cache(cert_path, cert_password):
         CertificateCredential(*required_arguments, password=cert_password)
 
         # allowing an unencrypted cache doesn't count as opting in to the persistent cache
-        CertificateCredential(*required_arguments, password=cert_password, _allow_unencrypted_cache=True)
+        CertificateCredential(*required_arguments, password=cert_password, allow_unencrypted_cache=True)
 
     # keyword argument opts in to persistent cache
     with patch(persistent_cache + ".msal_extensions") as mock_extensions:
-        CertificateCredential(*required_arguments, password=cert_password, _enable_persistent_cache=True)
+        CertificateCredential(*required_arguments, password=cert_password, enable_persistent_cache=True)
     assert mock_extensions.PersistedTokenCache.call_count == 1
 
     # opting in on an unsupported platform raises an exception
     with patch(persistent_cache + ".sys.platform", "commodore64"):
         with pytest.raises(NotImplementedError):
-            CertificateCredential(*required_arguments, password=cert_password, _enable_persistent_cache=True)
+            CertificateCredential(*required_arguments, password=cert_password, enable_persistent_cache=True)
         with pytest.raises(NotImplementedError):
             CertificateCredential(
-                *required_arguments, password=cert_password, _enable_persistent_cache=True, _allow_unencrypted_cache=True
+                *required_arguments, password=cert_password, enable_persistent_cache=True, allow_unencrypted_cache=True
             )
 
 
@@ -187,7 +221,7 @@ def test_persistent_cache_linux(mock_extensions, cert_path, cert_password):
 
     # the credential should prefer an encrypted cache even when the user allows an unencrypted one
     CertificateCredential(
-        *required_arguments, password=cert_password, _enable_persistent_cache=True, _allow_unencrypted_cache=True
+        *required_arguments, password=cert_password, enable_persistent_cache=True, allow_unencrypted_cache=True
     )
     assert mock_extensions.PersistedTokenCache.called_with(mock_extensions.LibsecretPersistence)
     mock_extensions.PersistedTokenCache.reset_mock()
@@ -197,10 +231,10 @@ def test_persistent_cache_linux(mock_extensions, cert_path, cert_password):
 
     # encryption unavailable, no opt in to unencrypted cache -> credential should raise
     with pytest.raises(ValueError):
-        CertificateCredential(*required_arguments, password=cert_password, _enable_persistent_cache=True)
+        CertificateCredential(*required_arguments, password=cert_password, enable_persistent_cache=True)
 
     CertificateCredential(
-        *required_arguments, password=cert_password, _enable_persistent_cache=True, _allow_unencrypted_cache=True
+        *required_arguments, password=cert_password, enable_persistent_cache=True, allow_unencrypted_cache=True
     )
     assert mock_extensions.PersistedTokenCache.called_with(mock_extensions.FilePersistence)
 
@@ -211,10 +245,10 @@ def test_persistent_cache_multiple_clients(cert_path, cert_password):
 
     access_token_a = "token a"
     access_token_b = "not " + access_token_a
-    transport_a = validating_transport(
+    transport_a = msal_validating_transport(
         requests=[Request()], responses=[mock_response(json_payload=build_aad_response(access_token=access_token_a))]
     )
-    transport_b = validating_transport(
+    transport_b = msal_validating_transport(
         requests=[Request()], responses=[mock_response(json_payload=build_aad_response(access_token=access_token_b))]
     )
 
@@ -222,11 +256,11 @@ def test_persistent_cache_multiple_clients(cert_path, cert_password):
     with patch("azure.identity._internal.persistent_cache._load_persistent_cache") as mock_cache_loader:
         mock_cache_loader.return_value = Mock(wraps=cache)
         credential_a = CertificateCredential(
-            "tenant", "client-a", cert_path, password=cert_password, _enable_persistent_cache=True, transport=transport_a
+            "tenant", "client-a", cert_path, password=cert_password, enable_persistent_cache=True, transport=transport_a
         )
         assert mock_cache_loader.call_count == 1, "credential should load the persistent cache"
         credential_b = CertificateCredential(
-            "tenant", "client-b", cert_path, password=cert_password, _enable_persistent_cache=True, transport=transport_b
+            "tenant", "client-b", cert_path, password=cert_password, enable_persistent_cache=True, transport=transport_b
         )
         assert mock_cache_loader.call_count == 2, "credential should load the persistent cache"
 
@@ -234,9 +268,9 @@ def test_persistent_cache_multiple_clients(cert_path, cert_password):
     scope = "scope"
     token_a = credential_a.get_token(scope)
     assert token_a.token == access_token_a
-    assert transport_a.send.call_count == 1
+    assert transport_a.send.call_count == 3  # two MSAL discovery requests, one token request
 
     # B should get a different token for the same scope
     token_b = credential_b.get_token(scope)
     assert token_b.token == access_token_b
-    assert transport_b.send.call_count == 1
+    assert transport_b.send.call_count == 3

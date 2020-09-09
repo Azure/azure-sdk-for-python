@@ -27,9 +27,6 @@ import asyncio
 
 class DetectLanguageSampleAsync(object):
 
-    endpoint = os.environ["AZURE_TEXT_ANALYTICS_ENDPOINT"]
-    key = os.environ["AZURE_TEXT_ANALYTICS_KEY"]
-
     async def detect_language_async(self):
         # [START detect_language_async]
         from azure.core.credentials import AzureKeyCredential

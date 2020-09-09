@@ -186,8 +186,11 @@ class GeneralNameReplacer(RecordingProcessor):
     def process_response(self, response):
         for old, new in self.names_name:
             if is_text_payload(response) and response['body']['string']:
-                response['body']['string'] = response['body']['string'].replace(old, new)
-
+                try:
+                    response['body']['string'] = response['body']['string'].replace(old, new)
+                except UnicodeDecodeError:
+                    body = response['body']['string']
+                    response['body']['string'].decode('utf8', 'backslashreplace').replace(old, new).encode('utf8', 'backslashreplace')
             self.replace_header(response, 'location', old, new)
             self.replace_header(response, 'azure-asyncoperation', old, new)
 

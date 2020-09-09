@@ -403,6 +403,9 @@ class EventHubConsumerClient(ClientBase):
          For detailed partition context information, please refer to
          :class:`PartitionContext<azure.eventhub.PartitionContext>`.
         :type on_event_batch: Callable[~azure.eventhub.PartitionContext, List[~azure.eventhub.EventData]]
+        :keyword int max_batch_size: The maximum number of events in a batch passed to callback `on_event_batch`.
+         If the actual received number of events is larger than `max_batch_size`, the received events are divided into
+         batches and call the callback for each batch with up to `max_batch_size` events.
         :keyword float max_wait_time: The maximum interval in seconds that the event processor will wait before
          calling the callback.
          If no events are received within this interval, the `on_event_batch` callback will be called

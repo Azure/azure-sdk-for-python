@@ -1,0 +1,336 @@
+# Azure KeyVault Administration client library for Python
+Azure Key Vault helps solve the following problems:
+- Vault administration (this library) - role-based access control (RBAC), and vault-level backup and restore options
+- Cryptographic key management ([azure-keyvault-keys](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys)) - create, store, and control
+access to the keys used to encrypt your data
+- Secrets management
+([azure-keyvault-secrets](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-secrets)) -
+securely store and control access to tokens, passwords, certificates, API keys,
+and other secrets
+- Certificate management
+([azure-keyvault-certificates](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-certificates)) -
+create, manage, and deploy public and private SSL/TLS certificates
+
+## Getting started
+### Install packages
+Install [azure-keyvault-administration][pypi_package_administration] and
+[azure-identity][azure_identity_pypi] with [pip][pip]:
+```Bash
+pip install azure-keyvault-administration azure-identity
+```
+[azure-identity][azure_identity] is used for Azure Active Directory
+authentication as demonstrated below.
+
+### Prerequisites
+* An [Azure subscription][azure_sub]
+* Python 2.7, 3.5.3, or later
+* A Key Vault. If you need to create one, See the final two steps in the next section for details on creating the Key Vault with the Azure CLI.
+
+### Authenticate the client
+This document demonstrates using [DefaultAzureCredential][default_cred_ref]
+to authenticate as a service principal. However, this package's clients
+accept any [azure-identity][azure_identity] credential. See the
+[azure-identity][azure_identity] documentation for more information about other
+credentials.
+
+#### Create and Get credentials
+This [Azure Cloud Shell][azure_cloud_shell] snippet shows how to create a
+new service principal. Before using it, replace "your-application-name" with
+a more appropriate name for your service principal.
+
+* Create a service principal:
+    ```Bash
+    az ad sp create-for-rbac --name http://your-application-name --skip-assignment
+    ```
+
+    > Output:
+    > ```json
+    > {
+    >     "appId": "generated app id",
+    >     "displayName": "your-application-name",
+    >     "name": "http://your-application-name",
+    >     "password": "random password",
+    >     "tenant": "tenant id"
+    > }
+    > ```
+
+* Take note of the service principal objectId
+    ```Bash
+    az ad sp show --id <appId> --query objectId
+    ```
+
+
+    > Output:
+    > ```
+    > "<your-service-principal-object-id>"
+    > ```
+
+* Use the output to set **AZURE_CLIENT_ID** ("appId" above), **AZURE_CLIENT_SECRET**
+    ("password" above) and **AZURE_TENANT_ID** ("tenant" above) environment variables.
+    The following example shows a way to do this in Bash:
+    ```Bash
+    export AZURE_CLIENT_ID="generated app id"
+    export AZURE_CLIENT_SECRET="random password"
+    export AZURE_TENANT_ID="tenant id"
+    ```
+
+* Create the Key Vault and grant the above mentioned application authorization to perform administrative operations on the Azure Key Vault (replace `<your-resource-group-name>` and `<your-key-vault-name>` with your own, unique names and `<your-service-principal-object-id>` with the value from above):
+    ```Bash
+    az keyvault create --hsm-name <your-key-vault-name> --resource-group <your-resource-group-name> --administrators <your-service-principal-object-id> --location <your-azure-location>
+    ```
+
+* Use the above mentioned Azure Key Vault name to retrieve details of your Vault which also contains your Azure Key Vault URL:
+    ```Bash
+    az keyvault show --hsm-name <your-key-vault-name>
+    ```
+
+#### Create a client
+Once the **AZURE_CLIENT_ID**, **AZURE_CLIENT_SECRET** and
+**AZURE_TENANT_ID** environment variables are set,
+[DefaultAzureCredential][default_cred_ref] will be able to authenticate the
+clients.
+
+There are two clients available in this package, below are snippets demonstrating how to construct
+each one of these clients. Constructing a client also requires your vault's URL, which you can
+get from the Azure CLI or the Azure Portal. In the Azure Portal, this URL is
+the vault's "DNS Name".
+
+##### Create a KeyVaultAccessControlClient
+```python
+from azure.identity import DefaultAzureCredential
+from azure.keyvault.administration import KeyVaultAccessControlClient
+
+credential = DefaultAzureCredential()
+
+client = KeyVaultAccessControlClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
+```
+
+##### Create a KeyVaultBackupClient
+```python
+from azure.identity import DefaultAzureCredential
+from azure.keyvault.administration import KeyVaultBackupClient
+
+credential = DefaultAzureCredential()
+
+client = KeyVaultBackupClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
+```
+
+## Key concepts
+
+### Role Definition
+A role definition defines the operations that can be performed, such as read, write, and delete. It can also define the operations that are excluded from allowed operations.
+
+A role definition is specified as part of a role assignment.
+
+### Role Assignment.
+A role assignment is the association of a role definition to a service principal. They can be created, listed, fetched individually, and deleted.
+
+### KeyVaultAccessControlClient
+A `KeyVaultAccessControlClient` manages role definitions and role assignments.
+
+### KeyVaultBackupClient
+A `KeyVaultBackupClient` performs full key backups, full key restores, and selective key restores.
+
+## Examples
+This section conntains code snippets covering common tasks:
+* Access Control
+    * [List all role definitions](#list-all-role-definitions "List all role definitions")
+    * [List all role assignments](#list-all-role-assignments "List all role assignments")
+    * [Create, Get, and Delete a role assignment](#create-get-and-delete-a-role-assignment "Create, Get, and Delete a role assignment")
+* Backup and Restore
+    * [Perform a full key backup](#perform-a-full-key-backup "Perform a full key backup")
+    * [Perform a full key restore](#perform-a-full-key-restore "Perform a full key restore")
+
+### List all role definitions
+List the role definitions available for assignment.
+
+```python
+from azure.identity import DefaultAzureCredential
+from azure.keyvault.administration import KeyVaultAccessControlClient
+
+credential = DefaultAzureCredential()
+
+client = KeyVaultAccessControlClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
+
+# this is the global scope. This will list all role definitions available for assignment
+role_definitions = client.list_role_definitions(role_scope=KeyVaultRoleScope.global_value)
+
+for role_definition in role_definitions:
+    print(role_definition.id)
+    print(role_definition.role_name)
+    print(role_definition.description)
+```
+
+### List all role assignments
+Before creating a new role assignment in the [next snippet](#create-get-and-delete-a-role-assignment), list all of the current role assignments
+
+```python
+from azure.identity import DefaultAzureCredential
+from azure.keyvault.administration import KeyVaultAccessControlClient
+
+credential = DefaultAzureCredential()
+
+client = KeyVaultAccessControlClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
+
+# this is the global scope. This will list all role assignments available for assignment
+role_assignments = client.list_role_assignments(role_scope=KeyVaultRoleScope.global_value)
+
+for role_assignment in role_assignments:
+    print(role_assignment.name)
+    print(role_assignment.principal_id)
+    print(role_assignment.role_definition_id)
+```
+
+### Create, Get, and Delete a role assignment
+Assign a role to a service principal. This will require a role definition id from the list retrieved in the [above snippet](#list-all-role-definitions) and the principal object id retrieved in the [Create and Get credentials](#create-and-get-credentials)
+
+```python
+import uuid
+from azure.identity import DefaultAzureCredential
+from azure.keyvault.administration import KeyVaultAccessControlClient
+
+credential = DefaultAzureCredential()
+
+client = KeyVaultAccessControlClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
+
+role_scope = "/"  # setting the scope to the global scope
+role_assignment_name = uuid.uuid4()
+role_definition_id = "<role-definition-id>"  # Replace <role-definition-id> with the id of a definition returned from the previous example
+principal_id = "<your-service-principal-object-id>"
+
+# first, let's create the role assignment
+role_assignment = client.create_role_assignment(role_scope, role_assignment_name, role_definition_id, principal_id)
+print(role_assignment.name)
+print(role_assignment.principal_id)
+print(role_assignment.role_definition_id)
+
+# now, we get it
+role_assignment = client.get_role_assignment(role_scope, role_assignment.name)
+print(role_assignment.name)
+print(role_assignment.principal_id)
+print(role_assignment.role_definition_id)
+
+# finally, we delete this role assignment
+role_assignment = client.delete_role_assignment(role_scope, role_assignment.name)
+print(role_assignment.name)
+print(role_assignment.principal_id)
+print(role_assignment.role_definition_id)
+```
+
+### Perform a full key backup
+Back up your entire collection of keys. The backing store for full key backups is a blob storage container using Shared Access Signature authentication.
+
+For more details on creating a SAS token using the `BlobServiceClient`, see the sample [here](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/storage/azure-storage-blob/samples/blob_samples_authentication.py#L105).
+Alternatively, it is possible to [generate a SAS token in Storage Explorer](https://docs.microsoft.com/en-us/azure/vs-azure-tools-storage-manage-with-storage-explorer?tabs=windows#generate-a-shared-access-signature-in-storage-explorer)
+
+```python
+from azure.identity import DefaultAzureCredential
+from azure.keyvault.administration import KeyVaultBackupClient
+
+credential = DefaultAzureCredential()
+client = KeyVaultBackupClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
+
+blob_storage_uri = "<your-blob-storage-uri>"  # the URI to your storage account. Should contain the name of the specific container
+sas_token = "<your-sas-token>"  # replace with the sas token to your storage account. See this snippet's description on help to retrieve
+
+# performing a full key backup is a long-running operation. Calling `result()` on the poller will wait
+# until the backup is completed, then return an object representing the backup operation.
+backup_operation = client.begin_full_backup(blob_storage_uri, sas_token).result()
+
+# this is the URI of the Azure blob storage container which contains the backup
+azure_storage_blob_container_uri = backup_operation.azure_storage_blob_container_uri
+
+print(backup_operation.status)
+print(backup_operation.job_id)
+print(azure_storage_blob_container_uri)
+```
+
+
+### Perform a full key restore
+Restore your entire collection of keys from a backup. The data source for a full key restore is a storage blob accessed using Shared Access Signature authentication.
+You will also need the `azure_storage_blob_container_uri` from the [above snippet](#perform-a-full-key-backup).
+
+For more details on creating a SAS token using the `BlobServiceClient`, see the sample [here](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/storage/azure-storage-blob/samples/blob_samples_authentication.py#L105).
+Alternatively, it is possible to [generate a SAS token in Storage Explorer](https://docs.microsoft.com/en-us/azure/vs-azure-tools-storage-manage-with-storage-explorer?tabs=windows#generate-a-shared-access-signature-in-storage-explorer)
+
+```python
+from azure.identity import DefaultAzureCredential
+from azure.keyvault.administration import KeyVaultBackupClient
+
+credential = DefaultAzureCredential()
+client = KeyVaultBackupClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
+
+blob_storage_uri = "<your-blob-storage-uri>"  # the URI to your storage account. Should contain the name of the specific container
+sas_token = "<your-sas-token>"  # replace with the sas token to your storage account. See this snippet's description on help to retrieve
+
+# Replace <azure-storage-blob-container-uri> with the blob storage container returned in the previous example
+azure_storage_blob_container_uri = "<azure-storage-blob-container-uri>"
+folder_name = azure_storage_blob_container_uri.split("/")[-1]
+
+# performing a full key restore is a long-running operation. Calling `result()` on the poller will wait
+# until the restore is completed, then return an object representing the restore operation.
+restore_operation = client.begin_full_restore(blob_storage_uri, sas_token, folder_name).result()
+
+print(restore_operation.status)
+print(restore_operation.job_id)
+```
+
+## Troubleshooting
+### General
+Key Vault clients raise exceptions defined in [azure-core][azure_core_exceptions].
+For example, if you try to get a role assignment that doesn't exist, KeyVaultAccessControlClient
+raises [ResourceNotFoundError](https://aka.ms/azsdk-python-core-exceptions-resource-not-found-error):
+
+```python
+from azure.identity import DefaultAzureCredential
+from azure.keyvault.administration import KeyVaultAccessControlClient
+from azure.core.exceptions import ResourceNotFoundError
+
+credential = DefaultAzureCredential()
+client = KeyVaultAccessControlClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
+
+try:
+    client.get_role_assignment("/", "which-does-not-exist")
+except ResourceNotFoundError as e:
+    print(e.message)
+```
+
+## Next steps
+
+Content forthcoming
+
+###  Additional Documentation
+For more extensive documentation on Azure Key Vault, see the
+[API reference documentation][reference_docs].
+
+## Contributing
+This project welcomes contributions and suggestions. Most contributions require
+you to agree to a Contributor License Agreement (CLA) declaring that you have
+the right to, and actually do, grant us the rights to use your contribution.
+For details, visit https://cla.microsoft.com.
+
+When you submit a pull request, a CLA-bot will automatically determine whether
+you need to provide a CLA and decorate the PR appropriately (e.g., label,
+comment). Simply follow the instructions provided by the bot. You will only
+need to do this once across all repos using our CLA.
+
+This project has adopted the
+[Microsoft Open Source Code of Conduct][code_of_conduct]. For more information,
+see the Code of Conduct FAQ or contact opencode@microsoft.com with any
+additional questions or comments.
+
+<!-- LINKS -->
+[azure_cloud_shell]: https://shell.azure.com/bash
+[azure_core_exceptions]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/core/azure-core#azure-core-library-exceptions
+[azure_identity]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity
+[azure_identity_pypi]: https://pypi.org/project/azure-identity/
+[azure_sub]: https://azure.microsoft.com/free/
+[default_cred_ref]: https://aka.ms/azsdk/python/identity/docs#azure.identity.DefaultAzureCredential
+[code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
+[keyvault_docs]: https://docs.microsoft.com/azure/key-vault/
+[pip]: https://pypi.org/project/pip/
+[pypi_package_administration]: https://aka.ms/azsdk/python/keyvault-administration/pypi
+[reference_docs]: https://aka.ms/azsdk/python/keyvault-administration/docs
+
+
+![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fsdk%2Fkeyvault%2Fazure-keyvault-administration%2FREADME.png)

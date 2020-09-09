@@ -176,9 +176,11 @@ class FormRecognizerTest(AzureTestCase):
             if not page.lines and not actual_page.lines:
                 continue
             for p, a in zip(page.lines, actual_page.lines):
+                self.assertEqual(p.kind, "line")
                 self.assertEqual(p.text, a.text)
                 self.assertBoundingBoxTransformCorrect(p.bounding_box, a.bounding_box)
                 for wp, wa, in zip(p.words, a.words):
+                    self.assertEqual(wp.kind, "word")
                     self.assertEqual(wp.text, wa.text)
                     self.assertEqual(wp.confidence, wa.confidence if wa.confidence is not None else 1.0)
                     self.assertBoundingBoxTransformCorrect(wp.bounding_box, wa.bounding_box)
@@ -204,13 +206,14 @@ class FormRecognizerTest(AzureTestCase):
     def assertFieldElementsTransFormCorrect(self, field_elements, actual_elements, read_result):
         if field_elements is None and actual_elements is None:
             return
-        for receipt, actual in zip(field_elements, actual_elements):
+        for element, actual in zip(field_elements, actual_elements):
             nums = [int(s) for s in re.findall(r'\d+', actual)]
             read, line, word = nums[0:3]
-            text_element = read_result[read].lines[line].words[word]
-            self.assertEqual(receipt.text, text_element.text)
-            self.assertEqual(receipt.confidence, text_element.confidence if text_element.confidence is not None else 1.0)
-            self.assertBoundingBoxTransformCorrect(receipt.bounding_box, text_element.bounding_box)
+            actual_element = read_result[read].lines[line].words[word]
+            self.assertEqual(element.text, actual_element.text)
+            self.assertEqual(element.confidence, actual_element.confidence if actual_element.confidence is not None else 1.0)
+            self.assertEqual(element.kind, "word")
+            self.assertBoundingBoxTransformCorrect(element.bounding_box, actual_element.bounding_box)
 
     def assertLabeledFormFieldDictTransformCorrect(self, form_fields, actual_fields, read_results=None):
         if actual_fields is None:
@@ -368,7 +371,9 @@ class FormRecognizerTest(AzureTestCase):
                     self.assertIsNotNone(line.text)
                     self.assertIsNotNone(line.page_number)
                     self.assertBoundingBoxHasPoints(line.bounding_box)
+                    self.assertEqual(line.kind, "line")
                     for word in line.words:
+                        self.assertEqual(word.kind, "word")
                         self.assertFormWordHasValues(word, page.page_number)
 
             if page.tables:
@@ -386,6 +391,7 @@ class FormRecognizerTest(AzureTestCase):
                         self.assertFieldElementsHasValues(cell.field_elements, page.page_number)
 
     def assertFormWordHasValues(self, word, page_number):
+        self.assertEqual(word.kind, "word")
         self.assertIsNotNone(word.confidence)
         self.assertIsNotNone(word.text)
         self.assertBoundingBoxHasPoints(word.bounding_box)
@@ -587,8 +593,7 @@ def form_recognizer_account():
         random_name_enabled=True,
         kind="formrecognizer",
         name_prefix='pycog',
-        location=REGION,
-        custom_subdomain_name="formrecognizeraccount"
+        location=REGION
     )
 
     try:

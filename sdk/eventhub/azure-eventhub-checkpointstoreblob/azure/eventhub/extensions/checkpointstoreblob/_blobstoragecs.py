@@ -11,7 +11,7 @@ from collections import defaultdict
 
 from azure.eventhub import CheckpointStore  # type: ignore  # pylint: disable=no-name-in-module
 from azure.eventhub.exceptions import OwnershipLostError  # type: ignore
-from azure.core.exceptions import ResourceModifiedError, ResourceExistsError  # type: ignore
+from azure.core.exceptions import ResourceModifiedError, ResourceExistsError, ResourceNotFoundError  # type: ignore
 from ._vendor.storage.blob import BlobClient, ContainerClient
 from ._vendor.storage.blob._shared.base_client import parse_connection_str
 
@@ -136,9 +136,14 @@ class BlobCheckpointStore(CheckpointStore):
             ownership["partition_id"],
         )
         blob_name = blob_name.lower()
-        uploaded_blob_properties = self._get_blob_client(blob_name).upload_blob(
-            data=UPLOAD_DATA, overwrite=True, metadata=metadata, **etag_match
-        )
+        blob_client = self._get_blob_client(blob_name)
+        try:
+            uploaded_blob_properties = blob_client.set_blob_metadata(metadata, **etag_match)
+        except ResourceNotFoundError:
+            logger.info("Upload ownership blob %r because it hasn't existed in the container yet.", blob_name)
+            uploaded_blob_properties = blob_client.upload_blob(
+                data=UPLOAD_DATA, overwrite=True, metadata=metadata, **etag_match
+            )
         ownership["etag"] = uploaded_blob_properties["etag"]
         ownership["last_modified_time"] = _to_timestamp(
             uploaded_blob_properties["last_modified"]
@@ -235,9 +240,14 @@ class BlobCheckpointStore(CheckpointStore):
             checkpoint["partition_id"],
         )
         blob_name = blob_name.lower()
-        self._get_blob_client(blob_name).upload_blob(
-            data=UPLOAD_DATA, overwrite=True, metadata=metadata
-        )
+        blob_client = self._get_blob_client(blob_name)
+        try:
+            blob_client.set_blob_metadata(metadata)
+        except ResourceNotFoundError:
+            logger.info("Upload checkpoint blob %r because it hasn't existed in the container yet.", blob_name)
+            blob_client.upload_blob(
+                data=UPLOAD_DATA, overwrite=True, metadata=metadata
+            )
 
     def list_checkpoints(
         self, fully_qualified_namespace, eventhub_name, consumer_group

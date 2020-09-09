@@ -21,7 +21,7 @@ from ._utils import (
 )
 from ..._headers_mixin import HeadersMixin
 from ..._version import SDK_MONIKER
-from ... import SearchClient
+from ..._internal._search_client import SearchClient
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports

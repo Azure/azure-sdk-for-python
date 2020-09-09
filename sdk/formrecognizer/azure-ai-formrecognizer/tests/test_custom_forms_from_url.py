@@ -87,7 +87,7 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
                 form_url="https://badurl.jpg"
             )
             form = poller.result()
-        self.assertIsNotNone(e.value.error.code)
+        self.assertEqual(e.value.error.code, "2003")
         self.assertIsNotNone(e.value.error.message)
 
     @GlobalFormRecognizerAccountPreparer()

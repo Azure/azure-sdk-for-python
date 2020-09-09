@@ -16,25 +16,25 @@ interactions:
       User-Agent:
       - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://formrecognizeraccount.cognitiveservices.azure.com/formrecognizer/v2.0/custom/models
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/custom/models
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - 8eae94f4-3de2-48fc-a1db-7c96a1d421f7
+      - ba5dfe1d-9560-4c92-be07-4922679436e9
       content-length:
       - '0'
       date:
-      - Fri, 07 Aug 2020 21:38:43 GMT
+      - Fri, 10 Jul 2020 18:58:03 GMT
       location:
-      - https://formrecognizeraccount.cognitiveservices.azure.com/formrecognizer/v2.0/custom/models/baeb76b9-a4e5-4f6c-b46e-31901a000b45
+      - https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/custom/models/a457bc7d-89f0-4a04-9ed4-11c03cbe260c
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '233'
+      - '70'
     status:
       code: 201
       message: Created
@@ -50,12 +50,12 @@ interactions:
       User-Agent:
       - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: GET
-    uri: https://formrecognizeraccount.cognitiveservices.azure.com/formrecognizer/v2.0/custom/models/baeb76b9-a4e5-4f6c-b46e-31901a000b45?includeKeys=true
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/custom/models/a457bc7d-89f0-4a04-9ed4-11c03cbe260c?includeKeys=true
   response:
     body:
-      string: '{"modelInfo": {"modelId": "baeb76b9-a4e5-4f6c-b46e-31901a000b45", "status":
-        "ready", "createdDateTime": "2020-08-07T21:38:43Z", "lastUpdatedDateTime":
-        "2020-08-07T21:38:45Z"}, "trainResult": {"averageModelAccuracy": 0.889, "trainingDocuments":
+      string: '{"modelInfo": {"modelId": "a457bc7d-89f0-4a04-9ed4-11c03cbe260c", "status":
+        "ready", "createdDateTime": "2020-07-10T18:58:03Z", "lastUpdatedDateTime":
+        "2020-07-10T18:58:05Z"}, "trainResult": {"averageModelAccuracy": 0.889, "trainingDocuments":
         [{"documentName": "multipage_invoice1.pdf", "pages": 3, "status": "succeeded"},
         {"documentName": "multipage_invoice2.pdf", "pages": 3, "status": "succeeded"},
         {"documentName": "multipage_invoice3.pdf", "pages": 3, "status": "succeeded"},
@@ -74,11 +74,11 @@ interactions:
         1.0}, {"fieldName": "Total2", "accuracy": 1.0}], "errors": []}}'
     headers:
       apim-request-id:
-      - e961bbe6-f247-4f37-a949-a99279e552c5
+      - 8f9cfb84-c1ba-4574-846b-98e723b907cd
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 07 Aug 2020 21:38:47 GMT
+      - Fri, 10 Jul 2020 18:58:07 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -86,7 +86,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '25'
+      - '51'
     status:
       code: 200
       message: OK
