@@ -1,4 +1,4 @@
-## 12.0.0b2 (2020-9-9)
+## 12.0.0b2 (2020-9-10)
 **Breaking changes**
 - Change the `continuation_token` from a dict to a str.
 - `start_time`/`end_time` and `continuation_token` are mutually exclusive now.
