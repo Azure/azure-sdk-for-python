@@ -779,7 +779,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
             async with sb_client.get_queue_receiver(servicebus_queue.name, 
                                                     sub_queue = SubQueue.DeadLetter,
                                                     max_wait_time=5, 
-                                                    receive_mode=ReceiveSettleMode.PeekLock) as receiver:
+                                                    receive_mode=ReceiveMode.PeekLock) as receiver:
                 count = 0
                 async for message in receiver:
                     print_message(_logger, message)
