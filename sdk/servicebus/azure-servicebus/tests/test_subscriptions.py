@@ -13,6 +13,7 @@ from datetime import datetime, timedelta
 
 from azure.servicebus import ServiceBusClient, Message, ReceiveMode, ServiceBusSharedKeyCredential
 from azure.servicebus.exceptions import ServiceBusError
+from azure.servicebus._common.constants import SubQueue
 
 from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer, CachedResourceGroupPreparer
 from servicebus_preparer import (
@@ -158,9 +159,10 @@ class ServiceBusSubscriptionTests(AzureMgmtTestCase):
                     count += 1
             assert count == 0
 
-            with sb_client.get_subscription_deadletter_receiver(
+            with sb_client.get_subscription_receiver(
                 topic_name=servicebus_topic.name,
                 subscription_name=servicebus_subscription.name,
+                sub_queue = SubQueue.DeadLetter,
                 max_wait_time=5,
                 receive_mode=ReceiveMode.PeekLock
             ) as dl_receiver:

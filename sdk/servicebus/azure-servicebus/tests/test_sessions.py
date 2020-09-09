@@ -15,7 +15,7 @@ from datetime import datetime, timedelta
 
 from azure.servicebus import ServiceBusClient, AutoLockRenew
 from azure.servicebus._common.message import Message, PeekedMessage, ReceivedMessage
-from azure.servicebus._common.constants import ReceiveMode, NEXT_AVAILABLE
+from azure.servicebus._common.constants import ReceiveMode, NEXT_AVAILABLE, SubQueue
 from azure.servicebus._common.utils import utc_now
 from azure.servicebus.exceptions import (
     ServiceBusConnectionError,
@@ -332,7 +332,9 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                     message.dead_letter(reason="Testing reason", error_description="Testing description")
 
             count = 0
-            with sb_client.get_queue_deadletter_receiver(servicebus_queue.name, max_wait_time=5) as receiver:
+            with sb_client.get_queue_receiver(servicebus_queue.name, 
+                                              sub_queue = SubQueue.DeadLetter,
+                                              max_wait_time=5) as receiver:
                 for message in receiver:
                     count += 1
                     print_message(_logger, message)
@@ -444,8 +446,9 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                     messages = receiver.receive_messages()
             assert count == 10
 
-            with sb_client.get_queue_deadletter_receiver(servicebus_queue.name,
-                                                      max_wait_time=5) as session:
+            with sb_client.get_queue_receiver(servicebus_queue.name,
+                                              sub_queue = SubQueue.DeadLetter,
+                                              max_wait_time=5) as session:
                 count = 0
                 for message in session:
                     print_message(_logger, message)

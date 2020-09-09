@@ -5,7 +5,7 @@
 #--------------------------------------------------------------------------
 import pytest
 
-from azure.servicebus.aio.management import ServiceBusManagementClient
+from azure.servicebus.aio.management import ServiceBusAdministrationClient
 
 from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer
 from servicebus_preparer import CachedServiceBusNamespacePreparer
@@ -17,7 +17,7 @@ class ServiceBusManagementClientNamespaceAsyncTests(AzureMgmtTestCase):
     async def test_async_mgmt_namespace_get_properties(self, servicebus_namespace_connection_string,
                                                         servicebus_namespace, servicebus_namespace_key_name,
                                                         servicebus_namespace_primary_key):
-        mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
         properties = await mgmt_service.get_namespace_properties()
         assert properties
         assert properties.messaging_sku == 'Standard'

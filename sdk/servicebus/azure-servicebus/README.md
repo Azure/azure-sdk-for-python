@@ -282,7 +282,7 @@ with ServiceBusClient.from_connection_string(connstr) as client:
 
 #### [DeadLetter][deadletter_reference]
 
-Transfer the message from the primary queue into a special "dead-letter sub-queue" where it can be accessed using the `ServiceBusClient.get_<queue|subscription>_deadletter_receiver` function and consumed from like any other receiver. (see sample [here](./samples/sync_samples/receive_deadlettered_messages.py))
+Transfer the message from the primary queue into a special "dead-letter sub-queue" where it can be accessed using the `ServiceBusClient.get_<queue|subscription>_receiver` function with parameter `sub_queue=SubQueue.DeadLetter` and consumed from like any other receiver. (see sample [here](./samples/sync_samples/receive_deadlettered_messages.py))
 
 ```Python
 from azure.servicebus import ServiceBusClient

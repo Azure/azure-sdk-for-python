@@ -56,7 +56,7 @@
 /sdk/datadatamigration/                                              @vchske
 
 # PRLabel: %Event Grid
-/sdk/eventgrid/                                                      @kalyanaj
+/sdk/eventgrid/                                                      @lmazuel @rakshith91 @KieranBrantnerMagee
 
 # PRLabel: %HDInsight
 /sdk/hdinsight/                                                      @idear1203
@@ -66,6 +66,9 @@
 
 # PRLabel: %Recovery Services
 /sdk/recoveryservices/                                               @DheerendraRathor
+
+# PRLabel: %Schema Registry
+/sdk/schemaregistry/                                                 @yunhaoling
 
 # PRLabel: %Search
 /sdk/search/                                                         @xiangyan99 @rakshith91

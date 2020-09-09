@@ -18,6 +18,7 @@ from azure.servicebus import ServiceBusClient, AutoLockRenew, TransportType
 from azure.servicebus._common.message import Message, PeekedMessage, ReceivedMessage, BatchMessage
 from azure.servicebus._common.constants import (
     ReceiveMode,
+    SubQueue,
     _X_OPT_LOCK_TOKEN,
     _X_OPT_PARTITION_KEY,
     _X_OPT_VIA_PARTITION_KEY,
@@ -509,8 +510,9 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     message.dead_letter(reason="Testing reason", error_description="Testing description")
     
             count = 0
-            with sb_client.get_queue_deadletter_receiver(servicebus_queue.name,
-                                                   max_wait_time=5) as receiver:
+            with sb_client.get_queue_receiver(servicebus_queue.name,
+                                              sub_queue = SubQueue.DeadLetter,
+                                              max_wait_time=5) as receiver:
                 for message in receiver:
                     count += 1
                     print_message(_logger, message)
@@ -632,8 +634,9 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     count += 1
             assert count == 0
 
-            with sb_client.get_queue_deadletter_receiver(
+            with sb_client.get_queue_receiver(
                     servicebus_queue.name,
+                    sub_queue = SubQueue.DeadLetter,
                     max_wait_time=5,
                     receive_mode=ReceiveMode.PeekLock) as dl_receiver:
                 count = 0
@@ -679,8 +682,9 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     
             assert count == 10
 
-            with sb_client.get_queue_deadletter_receiver(
+            with sb_client.get_queue_receiver(
                     servicebus_queue.name,
+                    sub_queue = SubQueue.DeadLetter,
                     max_wait_time=5,
                     receive_mode=ReceiveMode.PeekLock) as dl_receiver:
                 count = 0
@@ -961,8 +965,9 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 messages = receiver.receive_messages(5, max_wait_time=10)
             assert not messages
 
-            with sb_client.get_queue_deadletter_receiver(
+            with sb_client.get_queue_receiver(
                     servicebus_queue.name,
+                    sub_queue = SubQueue.DeadLetter,
                     max_wait_time=5,
                     receive_mode=ReceiveMode.PeekLock) as dl_receiver:
                 count = 0

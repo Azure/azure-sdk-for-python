@@ -48,7 +48,7 @@ class SchemaProperties(object):
             :end-before: [END print_schema_properties]
             :language: python
             :dedent: 4
-            :caption: SchemaId object.
+            :caption: SchemaProperties object.
 
     """
     def __init__(
