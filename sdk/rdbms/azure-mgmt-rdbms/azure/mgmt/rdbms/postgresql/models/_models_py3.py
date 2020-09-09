@@ -1719,8 +1719,10 @@ class ServerUpdateParameters(Model):
 class Sku(Model):
     """Billing information related properties of a server.
 
-    :param name: The name of the sku, typically, tier + family + cores, e.g.
-     B_Gen4_1, GP_Gen5_8.
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The name of the sku, typically, tier + family +
+     cores, e.g. B_Gen4_1, GP_Gen5_8.
     :type name: str
     :param tier: The tier of the particular SKU, e.g. Basic. Possible values
      include: 'Basic', 'GeneralPurpose', 'MemoryOptimized'
@@ -1735,6 +1737,7 @@ class Sku(Model):
     """
 
     _validation = {
+        'name': {'required': True},
         'capacity': {'minimum': 0},
     }
 
@@ -1746,7 +1749,7 @@ class Sku(Model):
         'family': {'key': 'family', 'type': 'str'},
     }
 
-    def __init__(self, *, name: str=None, tier=None, capacity: int=None, size: str=None, family: str=None, **kwargs) -> None:
+    def __init__(self, *, name: str, tier=None, capacity: int=None, size: str=None, family: str=None, **kwargs) -> None:
         super(Sku, self).__init__(**kwargs)
         self.name = name
         self.tier = tier
