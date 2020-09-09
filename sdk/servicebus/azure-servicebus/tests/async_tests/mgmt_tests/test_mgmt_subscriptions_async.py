@@ -38,7 +38,7 @@ class ServiceBusAdministrationClientSubscriptionAsyncTests(AzureMgmtTestCase):
             await mgmt_service.create_subscription(topic_name, subscription_name)
             subscription = await mgmt_service.get_subscription(topic_name, subscription_name)
             assert subscription.name == subscription_name
-            assert subscription.entity_availability_status == 'Available'
+            assert subscription.availability_status == 'Available'
             assert subscription.status == 'Active'
         finally:
             await mgmt_service.delete_subscription(topic_name, subscription_name)

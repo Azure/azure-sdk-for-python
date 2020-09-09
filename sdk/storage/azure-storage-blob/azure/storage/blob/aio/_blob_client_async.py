@@ -567,6 +567,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         except StorageErrorException as error:
             process_storage_error(error)
         blob_props.name = self.blob_name
+        blob_props.snapshot = self.snapshot
         blob_props.container = self.container_name
         return blob_props # type: ignore
 
