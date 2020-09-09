@@ -15,8 +15,7 @@ from azure.common import AzureHttpError, AzureConflictHttpError
 from azure.mgmt.servicebus.models import AccessRights
 from azure.servicebus import ServiceBusClient, ServiceBusSender
 from azure.servicebus._base_handler import ServiceBusSharedKeyCredential
-from azure.servicebus._common.message import Message, PeekMessage
-from azure.servicebus._common.constants import ReceiveSettleMode
+from azure.servicebus._common.message import Message, PeekedMessage
 from azure.servicebus.exceptions import (
     ServiceBusError,
     ServiceBusConnectionError,
@@ -88,7 +87,7 @@ class ServiceBusClientTests(AzureMgmtTestCase):
 
         with client:
             with client.get_queue_receiver(servicebus_queue.name) as receiver:
-                messages = receiver.receive_messages(max_batch_size=1, max_wait_time=1)
+                messages = receiver.receive_messages(max_message_count=1, max_wait_time=1)
 
             with pytest.raises(ServiceBusAuthorizationError): 
                 with client.get_queue_sender(servicebus_queue.name) as sender:
@@ -106,7 +105,7 @@ class ServiceBusClientTests(AzureMgmtTestCase):
         with client:
             with pytest.raises(ServiceBusError):
                 with client.get_queue_receiver(servicebus_queue.name) as receiver:
-                    messages = receiver.receive_messages(max_batch_size=1, max_wait_time=1)
+                    messages = receiver.receive_messages(max_message_count=1, max_wait_time=1)
 
             with client.get_queue_sender(servicebus_queue.name) as sender:
                 sender.send_messages(Message("test"))
