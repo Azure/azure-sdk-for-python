@@ -40,6 +40,24 @@ class KeySource(str, Enum):
     microsoft_key_vault = "Microsoft.KeyVault"
 
 
+class PrivateLinkConnectionStatus(str, Enum):
+
+    pending = "Pending"
+    approved = "Approved"
+    rejected = "Rejected"
+    disconnected = "Disconnected"
+
+
+class EndPointProvisioningState(str, Enum):
+
+    creating = "Creating"
+    updating = "Updating"
+    deleting = "Deleting"
+    succeeded = "Succeeded"
+    canceled = "Canceled"
+    failed = "Failed"
+
+
 class NetworkRuleIPAction(str, Enum):
 
     allow = "Allow"

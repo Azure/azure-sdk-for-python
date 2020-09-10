@@ -21,6 +21,7 @@ try:
     from ._models_py3 import Cluster
     from ._models_py3 import ClusterQuotaConfigurationProperties
     from ._models_py3 import ClusterSku
+    from ._models_py3 import ConnectionState
     from ._models_py3 import ConsumerGroup
     from ._models_py3 import Destination
     from ._models_py3 import EHNamespace
@@ -39,6 +40,10 @@ try:
     from ._models_py3 import NWRuleSetVirtualNetworkRules
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
+    from ._models_py3 import PrivateEndpoint
+    from ._models_py3 import PrivateEndpointConnection
+    from ._models_py3 import PrivateLinkResource
+    from ._models_py3 import PrivateLinkResourcesListResult
     from ._models_py3 import RegenerateAccessKeyParameters
     from ._models_py3 import Resource
     from ._models_py3 import Sku
@@ -57,6 +62,7 @@ except (SyntaxError, ImportError):
     from ._models import Cluster
     from ._models import ClusterQuotaConfigurationProperties
     from ._models import ClusterSku
+    from ._models import ConnectionState
     from ._models import ConsumerGroup
     from ._models import Destination
     from ._models import EHNamespace
@@ -75,6 +81,10 @@ except (SyntaxError, ImportError):
     from ._models import NWRuleSetVirtualNetworkRules
     from ._models import Operation
     from ._models import OperationDisplay
+    from ._models import PrivateEndpoint
+    from ._models import PrivateEndpointConnection
+    from ._models import PrivateLinkResource
+    from ._models import PrivateLinkResourcesListResult
     from ._models import RegenerateAccessKeyParameters
     from ._models import Resource
     from ._models import Sku
@@ -90,6 +100,7 @@ from ._paged_models import EventhubPaged
 from ._paged_models import IpFilterRulePaged
 from ._paged_models import MessagingRegionsPaged
 from ._paged_models import OperationPaged
+from ._paged_models import PrivateEndpointConnectionPaged
 from ._paged_models import VirtualNetworkRulePaged
 from ._event_hub_management_client_enums import (
     IPAction,
@@ -97,6 +108,8 @@ from ._event_hub_management_client_enums import (
     SkuTier,
     IdentityType,
     KeySource,
+    PrivateLinkConnectionStatus,
+    EndPointProvisioningState,
     NetworkRuleIPAction,
     DefaultAction,
     AccessRights,
@@ -120,6 +133,7 @@ __all__ = [
     'Cluster',
     'ClusterQuotaConfigurationProperties',
     'ClusterSku',
+    'ConnectionState',
     'ConsumerGroup',
     'Destination',
     'EHNamespace',
@@ -138,6 +152,10 @@ __all__ = [
     'NWRuleSetVirtualNetworkRules',
     'Operation',
     'OperationDisplay',
+    'PrivateEndpoint',
+    'PrivateEndpointConnection',
+    'PrivateLinkResource',
+    'PrivateLinkResourcesListResult',
     'RegenerateAccessKeyParameters',
     'Resource',
     'Sku',
@@ -149,6 +167,7 @@ __all__ = [
     'EHNamespacePaged',
     'VirtualNetworkRulePaged',
     'AuthorizationRulePaged',
+    'PrivateEndpointConnectionPaged',
     'ArmDisasterRecoveryPaged',
     'EventhubPaged',
     'ConsumerGroupPaged',
@@ -159,6 +178,8 @@ __all__ = [
     'SkuTier',
     'IdentityType',
     'KeySource',
+    'PrivateLinkConnectionStatus',
+    'EndPointProvisioningState',
     'NetworkRuleIPAction',
     'DefaultAction',
     'AccessRights',
