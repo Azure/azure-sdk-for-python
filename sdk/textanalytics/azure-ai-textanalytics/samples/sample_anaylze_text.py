@@ -135,3 +135,8 @@ class AnalyzeTextSample(object):
                 print("------------------------------------------")
 
         # [END analyze_text]
+
+
+if __name__ == "__main__":
+    sample = AnalyzeTextSample()
+    sample.analyze_text()
