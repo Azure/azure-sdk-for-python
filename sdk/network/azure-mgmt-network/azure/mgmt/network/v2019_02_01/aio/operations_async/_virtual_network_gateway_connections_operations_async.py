@@ -74,7 +74,6 @@ class VirtualNetworkGatewayConnectionsOperations:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'VirtualNetworkGatewayConnection')
         body_content_kwargs['content'] = body_content
@@ -87,7 +86,6 @@ class VirtualNetworkGatewayConnectionsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('VirtualNetworkGatewayConnection', pipeline_response)
 
@@ -106,7 +104,7 @@ class VirtualNetworkGatewayConnectionsOperations:
         virtual_network_gateway_connection_name: str,
         parameters: "models.VirtualNetworkGatewayConnection",
         **kwargs
-    ) -> "models.VirtualNetworkGatewayConnection":
+    ) -> AsyncLROPoller["models.VirtualNetworkGatewayConnection"]:
         """Creates or updates a virtual network gateway connection in the specified resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -123,8 +121,8 @@ class VirtualNetworkGatewayConnectionsOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: VirtualNetworkGatewayConnection, or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2019_02_01.models.VirtualNetworkGatewayConnection
+        :return: An instance of AsyncLROPoller that returns either VirtualNetworkGatewayConnection or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2019_02_01.models.VirtualNetworkGatewayConnection]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -207,7 +205,6 @@ class VirtualNetworkGatewayConnectionsOperations:
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -251,7 +248,6 @@ class VirtualNetworkGatewayConnectionsOperations:
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
 
-        # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -270,7 +266,7 @@ class VirtualNetworkGatewayConnectionsOperations:
         resource_group_name: str,
         virtual_network_gateway_connection_name: str,
         **kwargs
-    ) -> None:
+    ) -> AsyncLROPoller[None]:
         """Deletes the specified virtual network Gateway connection.
 
         :param resource_group_name: The name of the resource group.
@@ -284,8 +280,8 @@ class VirtualNetworkGatewayConnectionsOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: None, or the result of cls(response)
-        :rtype: None
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -355,7 +351,6 @@ class VirtualNetworkGatewayConnectionsOperations:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'TagsObject')
         body_content_kwargs['content'] = body_content
@@ -382,7 +377,7 @@ class VirtualNetworkGatewayConnectionsOperations:
         virtual_network_gateway_connection_name: str,
         parameters: "models.TagsObject",
         **kwargs
-    ) -> "models.VirtualNetworkGatewayConnection":
+    ) -> AsyncLROPoller["models.VirtualNetworkGatewayConnection"]:
         """Updates a virtual network gateway connection tags.
 
         :param resource_group_name: The name of the resource group.
@@ -398,8 +393,8 @@ class VirtualNetworkGatewayConnectionsOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: VirtualNetworkGatewayConnection, or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2019_02_01.models.VirtualNetworkGatewayConnection
+        :return: An instance of AsyncLROPoller that returns either VirtualNetworkGatewayConnection or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2019_02_01.models.VirtualNetworkGatewayConnection]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -473,7 +468,6 @@ class VirtualNetworkGatewayConnectionsOperations:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'ConnectionSharedKey')
         body_content_kwargs['content'] = body_content
@@ -486,7 +480,6 @@ class VirtualNetworkGatewayConnectionsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('ConnectionSharedKey', pipeline_response)
 
@@ -505,7 +498,7 @@ class VirtualNetworkGatewayConnectionsOperations:
         virtual_network_gateway_connection_name: str,
         parameters: "models.ConnectionSharedKey",
         **kwargs
-    ) -> "models.ConnectionSharedKey":
+    ) -> AsyncLROPoller["models.ConnectionSharedKey"]:
         """The Put VirtualNetworkGatewayConnectionSharedKey operation sets the virtual network gateway
     connection shared key for passed virtual network gateway connection in the specified resource
     group through Network resource provider.
@@ -523,8 +516,8 @@ class VirtualNetworkGatewayConnectionsOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: ConnectionSharedKey, or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2019_02_01.models.ConnectionSharedKey
+        :return: An instance of AsyncLROPoller that returns either ConnectionSharedKey or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2019_02_01.models.ConnectionSharedKey]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -608,7 +601,6 @@ class VirtualNetworkGatewayConnectionsOperations:
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -646,6 +638,10 @@ class VirtualNetworkGatewayConnectionsOperations:
         api_version = "2019-02-01"
 
         def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = 'application/json'
+
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']  # type: ignore
@@ -658,15 +654,11 @@ class VirtualNetworkGatewayConnectionsOperations:
                 query_parameters = {}  # type: Dict[str, Any]
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
+                request = self._client.get(url, query_parameters, header_parameters)
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
+                request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         async def extract_data(pipeline_response):
@@ -699,8 +691,8 @@ class VirtualNetworkGatewayConnectionsOperations:
         virtual_network_gateway_connection_name: str,
         parameters: "models.ConnectionResetSharedKey",
         **kwargs
-    ) -> "models.ConnectionResetSharedKey":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ConnectionResetSharedKey"]
+    ) -> Optional["models.ConnectionResetSharedKey"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.ConnectionResetSharedKey"]]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-02-01"
@@ -724,7 +716,6 @@ class VirtualNetworkGatewayConnectionsOperations:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'ConnectionResetSharedKey')
         body_content_kwargs['content'] = body_content
@@ -753,7 +744,7 @@ class VirtualNetworkGatewayConnectionsOperations:
         virtual_network_gateway_connection_name: str,
         parameters: "models.ConnectionResetSharedKey",
         **kwargs
-    ) -> "models.ConnectionResetSharedKey":
+    ) -> AsyncLROPoller["models.ConnectionResetSharedKey"]:
         """The VirtualNetworkGatewayConnectionResetSharedKey operation resets the virtual network gateway
     connection shared key for passed virtual network gateway connection in the specified resource
     group through Network resource provider.
@@ -772,8 +763,8 @@ class VirtualNetworkGatewayConnectionsOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: ConnectionResetSharedKey, or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2019_02_01.models.ConnectionResetSharedKey
+        :return: An instance of AsyncLROPoller that returns either ConnectionResetSharedKey or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2019_02_01.models.ConnectionResetSharedKey]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
