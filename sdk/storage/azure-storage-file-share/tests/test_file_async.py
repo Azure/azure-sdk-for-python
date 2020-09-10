@@ -977,6 +977,47 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
+    async def test_list_ranges_diff(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
+        file_name = self._get_file_reference()
+        await self._setup_share(storage_account, storage_account_key)
+        file_client = ShareFileClient(
+            self.account_url(storage_account, "file"),
+            share_name=self.share_name,
+            file_path=file_name,
+            credential=storage_account_key)
+
+        await file_client.create_file(2048)
+        share_client = self.fsc.get_share_client(self.share_name)
+        snapshot1 = await share_client.create_snapshot()
+
+        data = self.get_random_bytes(1536)
+        await file_client.upload_range(data, offset=0, length=1536)
+        snapshot2 = await share_client.create_snapshot()
+        await file_client.clear_range(offset=512, length=512)
+
+        ranges1 = await file_client.get_ranges(previous_sharesnapshot=snapshot1)
+        ranges2 = await file_client.get_ranges(previous_sharesnapshot=snapshot2['snapshot'])
+
+        # Assert
+        self.assertIsNotNone(ranges1)
+        self.assertIsInstance(ranges1, list)
+        self.assertEqual(len(ranges1), 3)
+        self.assertEqual(ranges1[0]['start'], 0)
+        self.assertEqual(ranges1[0]['end'], 511)
+        self.assertEqual(ranges1[1]['start'], 512)
+        self.assertEqual(ranges1[1]['end'], 1023)
+        self.assertEqual(ranges1[2]['start'], 1024)
+        self.assertEqual(ranges1[2]['end'], 1535)
+
+        self.assertIsNotNone(ranges2)
+        self.assertIsInstance(ranges2, list)
+        self.assertEqual(len(ranges2), 1)
+        self.assertEqual(ranges2[0]['start'], 512)
+        self.assertEqual(ranges2[0]['end'], 1023)
+
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
     async def test_list_ranges_2_async(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         file_name = self._get_file_reference()

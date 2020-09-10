@@ -924,40 +924,6 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         except StorageErrorException as error:
             process_storage_error(error)
 
-    async def _get_ranges_options( # type: ignore
-            self, offset=None, # type: Optional[int]
-            length=None, # type: Optional[int]
-            previous_sharesnapshot=None,  # type: Optional[Union[str, Dict[str, Any]]]
-            **kwargs
-        ):
-        # type: (...) -> Dict[str, Any]
-        if self.require_encryption or (self.key_encryption_key is not None):
-            raise ValueError("Unsupported method for encryption.")
-        access_conditions = get_access_conditions(kwargs.pop('lease', None))
-
-        content_range = None
-        if offset is not None:
-            if length is not None:
-                end_range = offset + length - 1  # Reformat to an inclusive range index
-                content_range = 'bytes={0}-{1}'.format(offset, end_range)
-            else:
-                content_range = 'bytes={0}-'.format(offset)
-        options = {
-            'sharesnapshot': self.snapshot,
-            'lease_access_conditions': access_conditions,
-            'timeout': kwargs.pop('timeout', None),
-            'range': content_range}
-        if previous_sharesnapshot:
-            try:
-                options['prevsharesnapshot'] = previous_sharesnapshot.snapshot # type: ignore
-            except AttributeError:
-                try:
-                    options['prevsharesnapshot'] = previous_sharesnapshot['snapshot'] # type: ignore
-                except TypeError:
-                    options['prevsharesnapshot'] = previous_sharesnapshot
-        options.update(kwargs)
-        return options
-
     @distributed_trace_async
     async def get_ranges(  # type: ignore
         self,
@@ -989,7 +955,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         :returns: A list of valid ranges.
         :rtype: List[dict[str, int]]
         """
-        options = await self._get_ranges_options(
+        options = self._get_ranges_options(
             offset=offset,
             length=length,
             previous_sharesnapshot=previous_sharesnapshot,
