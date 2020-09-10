@@ -55,7 +55,7 @@ class ShareLeaseClient(object):
         if hasattr(client, 'file_name'):
             self._client = client._client.file  # type: ignore # pylint: disable=protected-access
             self.snapshot = None
-        if hasattr(client, 'share_name'):
+        elif hasattr(client, 'share_name'):
             self._client = client._client.share
             self.snapshot = client.snapshot
         else:
