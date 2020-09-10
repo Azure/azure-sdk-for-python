@@ -7,6 +7,7 @@ import uuid
 from cryptography.exceptions import InvalidSignature
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.asymmetric.ec import (
+    EllipticCurvePrivateKey,
     EllipticCurvePrivateNumbers,
     EllipticCurvePublicNumbers,
     SECP256R1,
@@ -67,7 +68,7 @@ class EllipticCurveKey(Key):
         return cls(x, y, d, kid=jwk.kid, curve=jwk.crv)
 
     def is_private_key(self):
-        return self._private_key is not None
+        return isinstance(self._private_key, EllipticCurvePrivateKey)
 
     def decrypt(self, cipher_text, **kwargs):
         raise NotImplementedError("Local decryption isn't supported with elliptic curve keys")
