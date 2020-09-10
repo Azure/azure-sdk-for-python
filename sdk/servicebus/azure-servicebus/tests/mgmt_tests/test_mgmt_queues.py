@@ -15,7 +15,7 @@ from azure.servicebus.management import ServiceBusAdministrationClient, QueuePro
 from azure.servicebus._common.utils import utc_now
 from utilities import get_logger
 from azure.core.exceptions import HttpResponseError, ServiceRequestError, ResourceNotFoundError, ResourceExistsError
-from azure.servicebus import ServiceBusSharedKeyCredential
+from azure.servicebus._base_handler import ServiceBusSharedKeyCredential
 
 from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer
 from servicebus_preparer import (

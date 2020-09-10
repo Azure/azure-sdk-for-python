@@ -11,7 +11,8 @@ import pytest
 import time
 from datetime import datetime, timedelta
 
-from azure.servicebus import ServiceBusClient, Message, ReceiveMode, ServiceBusSharedKeyCredential
+from azure.servicebus import ServiceBusClient, Message, ReceiveMode
+from azure.servicebus._base_handler import ServiceBusSharedKeyCredential
 from azure.servicebus.exceptions import ServiceBusError
 from azure.servicebus._common.constants import SubQueue
 
