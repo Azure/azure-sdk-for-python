@@ -7,10 +7,6 @@
   - REST call api-version changes from 2020-03-01-preview to 2020-08-01
   - DataSourceType has new enum values
 
-**Breaking changes**
-
-  - retention_in_days minimum changes from -1 to 30
-
 ## 0.7.0 (2020-07-09)
 
 **Features**
