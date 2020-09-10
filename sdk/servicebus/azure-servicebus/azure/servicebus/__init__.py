@@ -13,7 +13,6 @@ from ._servicebus_sender import ServiceBusSender
 from ._servicebus_receiver import ServiceBusReceiver
 from ._servicebus_session_receiver import ServiceBusSessionReceiver
 from ._servicebus_session import ServiceBusSession
-from ._base_handler import ServiceBusSharedKeyCredential
 from ._common.message import Message, BatchMessage, PeekedMessage, ReceivedMessage
 from ._common.constants import ReceiveMode, SubQueue
 from ._common.auto_lock_renewer import AutoLockRenew
@@ -32,7 +31,6 @@ __all__ = [
     'ServiceBusSessionReceiver',
     'ServiceBusSession',
     'ServiceBusSender',
-    'ServiceBusSharedKeyCredential',
     'TransportType',
     'AutoLockRenew'
 ]
