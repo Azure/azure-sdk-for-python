@@ -8,6 +8,8 @@
 
 from ._clusters_operations import ClustersOperations
 from ._namespaces_operations import NamespacesOperations
+from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
+from ._private_link_resources_operations import PrivateLinkResourcesOperations
 from ._configuration_operations import ConfigurationOperations
 from ._disaster_recovery_configs_operations import DisasterRecoveryConfigsOperations
 from ._event_hubs_operations import EventHubsOperations
@@ -18,6 +20,8 @@ from ._regions_operations import RegionsOperations
 __all__ = [
     'ClustersOperations',
     'NamespacesOperations',
+    'PrivateEndpointConnectionsOperations',
+    'PrivateLinkResourcesOperations',
     'ConfigurationOperations',
     'DisasterRecoveryConfigsOperations',
     'EventHubsOperations',

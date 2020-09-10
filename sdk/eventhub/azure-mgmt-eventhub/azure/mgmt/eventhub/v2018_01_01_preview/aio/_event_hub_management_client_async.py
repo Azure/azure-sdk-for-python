@@ -18,6 +18,8 @@ if TYPE_CHECKING:
 from ._configuration_async import EventHubManagementClientConfiguration
 from .operations_async import ClustersOperations
 from .operations_async import NamespacesOperations
+from .operations_async import PrivateEndpointConnectionsOperations
+from .operations_async import PrivateLinkResourcesOperations
 from .operations_async import ConfigurationOperations
 from .operations_async import DisasterRecoveryConfigsOperations
 from .operations_async import EventHubsOperations
@@ -34,6 +36,10 @@ class EventHubManagementClient(object):
     :vartype clusters: azure.mgmt.eventhub.v2018_01_01_preview.aio.operations_async.ClustersOperations
     :ivar namespaces: NamespacesOperations operations
     :vartype namespaces: azure.mgmt.eventhub.v2018_01_01_preview.aio.operations_async.NamespacesOperations
+    :ivar private_endpoint_connections: PrivateEndpointConnectionsOperations operations
+    :vartype private_endpoint_connections: azure.mgmt.eventhub.v2018_01_01_preview.aio.operations_async.PrivateEndpointConnectionsOperations
+    :ivar private_link_resources: PrivateLinkResourcesOperations operations
+    :vartype private_link_resources: azure.mgmt.eventhub.v2018_01_01_preview.aio.operations_async.PrivateLinkResourcesOperations
     :ivar configuration: ConfigurationOperations operations
     :vartype configuration: azure.mgmt.eventhub.v2018_01_01_preview.aio.operations_async.ConfigurationOperations
     :ivar disaster_recovery_configs: DisasterRecoveryConfigsOperations operations
@@ -73,6 +79,10 @@ class EventHubManagementClient(object):
         self.clusters = ClustersOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.namespaces = NamespacesOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.private_link_resources = PrivateLinkResourcesOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.configuration = ConfigurationOperations(
             self._client, self._config, self._serialize, self._deserialize)

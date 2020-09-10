@@ -29,6 +29,17 @@ class EncodingCaptureDescription(str, Enum):
     avro = "Avro"
     avro_deflate = "AvroDeflate"
 
+class EndPointProvisioningState(str, Enum):
+    """Provisioning state of the Private Endpoint Connection.
+    """
+
+    creating = "Creating"
+    updating = "Updating"
+    deleting = "Deleting"
+    succeeded = "Succeeded"
+    canceled = "Canceled"
+    failed = "Failed"
+
 class EntityStatus(str, Enum):
     """Enumerates the possible values for the status of the Event Hub.
     """
@@ -56,6 +67,15 @@ class KeyType(str, Enum):
 
     primary_key = "PrimaryKey"
     secondary_key = "SecondaryKey"
+
+class PrivateLinkConnectionStatus(str, Enum):
+    """Status of the connection.
+    """
+
+    pending = "Pending"
+    approved = "Approved"
+    rejected = "Rejected"
+    disconnected = "Disconnected"
 
 class ProvisioningStateDR(str, Enum):
     """Provisioning state of the Alias(Disaster Recovery configuration) - possible values 'Accepted'
