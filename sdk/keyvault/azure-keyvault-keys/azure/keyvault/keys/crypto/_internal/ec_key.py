@@ -19,26 +19,32 @@ from cryptography.hazmat.primitives.asymmetric.ec import (
 from ._internal import _bytes_to_int, asn1_der_to_ecdsa, ecdsa_to_asn1_der
 from .key import Key
 from .algorithms.ecdsa import Es256, Es512, Es384, Ecdsa256
+from ... import KeyCurveName
 
-_crypto_crv_to_kv_crv = {"secp256r1": "P-256", "secp384r1": "P-384", "secp521r1": "P-521", "secp256k1": "P-256K"}
+_crypto_crv_to_kv_crv = {
+    "secp256r1": KeyCurveName.p_256,
+    "secp384r1": KeyCurveName.p_384,
+    "secp521r1": KeyCurveName.p_521,
+    "secp256k1": KeyCurveName.p_256_k,
+}
 _kv_crv_to_crypto_cls = {
-    "P-256": SECP256R1,
-    "P-256K": SECP256K1,
-    "P-384": SECP384R1,
-    "P-521": SECP521R1,
-    "SECP256K1": SECP256K1,
+    KeyCurveName.p_256: SECP256R1,
+    KeyCurveName.p_256_k: SECP256K1,
+    KeyCurveName.p_384: SECP384R1,
+    KeyCurveName.p_521: SECP521R1,
+    "SECP256K1": SECP256K1,  # "SECP256K1" is from Key Vault 2016-10-01
 }
 _curve_to_default_algo = {
-    "P-256": Es256.name(),
-    "P-256K": Ecdsa256.name(),
-    "P-384": Es384.name(),
-    "P-521": Es512.name(),
-    "SECP256K1": Ecdsa256.name(),
+    KeyCurveName.p_256: Es256.name(),
+    KeyCurveName.p_256_k: Ecdsa256.name(),
+    KeyCurveName.p_384: Es384.name(),
+    KeyCurveName.p_521: Es512.name(),
+    "SECP256K1": Ecdsa256.name(),  # "SECP256K1" is from Key Vault 2016-10-01
 }
 
 
 class EllipticCurveKey(Key):
-    _supported_signature_algorithms = _curve_to_default_algo.values()
+    _supported_signature_algorithms = frozenset(_curve_to_default_algo.values())
 
     def __init__(self, x, y, d=None, kid=None, curve=None):
         super(EllipticCurveKey, self).__init__()

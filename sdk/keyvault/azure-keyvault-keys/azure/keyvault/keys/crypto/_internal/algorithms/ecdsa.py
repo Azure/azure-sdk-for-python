@@ -11,6 +11,7 @@ from cryptography.hazmat.primitives.asymmetric import utils
 
 from ..algorithm import SignatureAlgorithm
 from ..transform import SignatureTransform
+from ..._enums import SignatureAlgorithm as KeyVaultSignatureAlgorithm
 
 if sys.version_info < (3, 3):
     abstractproperty = abc.abstractproperty
@@ -18,6 +19,7 @@ else:  # abc.abstractproperty is deprecated as of 3.3
     import functools
 
     abstractproperty = functools.partial(property, abc.abstractmethod)
+
 
 class _EcdsaSignatureTransform(SignatureTransform):
     def __init__(self, key, hash_algorithm):
@@ -43,25 +45,25 @@ class _Ecdsa(SignatureAlgorithm):
 
 
 class Ecdsa256(_Ecdsa):
-    _name = "ES256K"
+    _name = KeyVaultSignatureAlgorithm.es256_k
     _default_hash_algorithm = hashes.SHA256()
     coordinate_length = 32
 
 
 class Es256(_Ecdsa):
-    _name = "ES256"
+    _name = KeyVaultSignatureAlgorithm.es256
     _default_hash_algorithm = hashes.SHA256()
     coordinate_length = 32
 
 
 class Es384(_Ecdsa):
-    _name = "ES384"
+    _name = KeyVaultSignatureAlgorithm.es384
     _default_hash_algorithm = hashes.SHA384()
     coordinate_length = 48
 
 
 class Es512(_Ecdsa):
-    _name = "ES512"
+    _name = KeyVaultSignatureAlgorithm.es512
     _default_hash_algorithm = hashes.SHA512()
     coordinate_length = 66
 
