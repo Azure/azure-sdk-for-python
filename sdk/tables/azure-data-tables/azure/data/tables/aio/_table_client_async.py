@@ -88,6 +88,15 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         :type table_name: str
         :returns: A table client.
         :rtype: ~azure.data.tables.TableClient
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_create_client_async.py
+                :start-after: [START create_table_client]
+                :end-before: [END create_table_client]
+                :language: python
+                :dedent: 8
+                :caption: Creating the TableClient from a connection string.
         """
         account_url, credential = parse_connection_str(
             conn_str=conn_str, credential=None, service='table', keyword_args=kwargs)
@@ -196,6 +205,15 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         :return: Dictionary of operation metadata returned from service
         :rtype: dict[str,str]
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_create_delete_table_async.py
+                :start-after: [START create_table]
+                :end-before: [END create_table]
+                :language: python
+                :dedent: 8
+                :caption: Creating a table from the TableClient object.
         """
         table_properties = TableProperties(table_name=self.table_name, **kwargs)
         try:
@@ -215,6 +233,15 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         """Creates a new table under the given account.
         :return: None
         :rtype: None
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_create_delete_table_async.py
+                :start-after: [START delete_table]
+                :end-before: [END delete_table]
+                :language: python
+                :dedent: 8
+                :caption: Deleting a table from the TableClient object.
         """
         try:
             await self._client.table.delete(table=self.table_name, **kwargs)
@@ -239,6 +266,15 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_insert_delete_entities_async.py
+                :start-after: [START delete_entity]
+                :end-before: [END delete_entity]
+                :language: python
+                :dedent: 8
+                :caption: Adding an entity to a Table
         """
         if_match, _ = _get_match_headers(kwargs=dict(kwargs, etag=kwargs.pop('etag', None),
                                                                 match_condition=kwargs.pop('match_condition', None)),
@@ -266,6 +302,15 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         :return: Dictionary of operation metadata returned from service
         :rtype: dict[str,str]
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_insert_delete_entities_async.py
+                :start-after: [START create_entity]
+                :end-before: [END create_entity]
+                :language: python
+                :dedent: 8
+                :caption: Adding an entity to a Table
         """
         if "PartitionKey" in entity and "RowKey" in entity:
             entity = _add_entity_properties(entity)
@@ -306,6 +351,15 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         :return: Dictionary of operation metadata returned from service
         :rtype: dict[str,str]
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_update_upsert_merge_entities_async.py
+                :start-after: [START update_entity]
+                :end-before: [END update_entity]
+                :language: python
+                :dedent: 8
+                :caption: Querying entities from a TableClient
         """
         if_match, _ = _get_match_headers(kwargs=dict(kwargs, etag=kwargs.pop('etag', None),
                                                                 match_condition=kwargs.pop('match_condition', None)),
@@ -352,6 +406,15 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         :return: Query of table entities
         :rtype: AsyncItemPaged[TableEntity]
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_update_upsert_merge_entities_async.py
+                :start-after: [START list_entities]
+                :end-before: [END list_entities]
+                :language: python
+                :dedent: 8
+                :caption: Querying entities from a TableClient
         """
         user_select = kwargs.pop('select', None)
         if user_select and not isinstance(user_select, str):
@@ -383,6 +446,15 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         :return: Query of table entities
         :rtype: ItemPaged[TableEntity]
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_query_table_async.py
+                :start-after: [START query_entities]
+                :end-before: [END query_entities]
+                :language: python
+                :dedent: 8
+                :caption: Querying entities from a TableClient
         """
         parameters = kwargs.pop('parameters', None)
         filter = self._parameter_filter_substitution(parameters, filter)  # pylint: disable = W0622
@@ -419,6 +491,15 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         :return: TableEntity mapping str to azure.data.tables.EntityProperty
         :rtype: ~azure.data.tables.TableEntity
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_update_upsert_merge_entities.py
+                :start-after: [START get_entity]
+                :end-before: [END get_entity]
+                :language: python
+                :dedent: 8
+                :caption: Getting an entity from PartitionKey and RowKey
         """
         try:
             entity = await self._client.table.query_entities_with_partition_and_row_key(table=self.table_name,
@@ -448,6 +529,15 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         :return: Dictionary of operation metadata returned from service
         :rtype: dict[str,str]
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_update_upsert_merge_entities_async.py
+                :start-after: [START upsert_entity]
+                :end-before: [END upsert_entity]
+                :language: python
+                :dedent: 8
+                :caption: Update/Merge or Insert an entity into a table
         """
 
         partition_key = entity['PartitionKey']

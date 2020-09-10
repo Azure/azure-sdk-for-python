@@ -6,5 +6,5 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._azure_schema_registry_async import AzureSchemaRegistry
+from ._azure_schema_registry import AzureSchemaRegistry
 __all__ = ['AzureSchemaRegistry']

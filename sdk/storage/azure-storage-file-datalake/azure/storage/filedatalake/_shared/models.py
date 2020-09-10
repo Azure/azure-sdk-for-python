@@ -387,7 +387,7 @@ class AccountSasPermissions(object):
         parsed = cls(read=p_read, write=p_write, delete=p_delete, delete_previous_version=p_delete_previous_version,
                      list=p_list, add=p_add, create=p_create, update=p_update, process=p_process, tag=p_tag,
                      filter_by_tags=p_filter_by_tags)
-        parsed._str = permission # pylint: disable = protected-access
+
         return parsed
 
 

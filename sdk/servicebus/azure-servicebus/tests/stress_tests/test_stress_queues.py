@@ -11,7 +11,7 @@ import sys
 import time
 
 from azure.servicebus import ServiceBusClient
-from azure.servicebus._common.constants import ReceiveSettleMode
+from azure.servicebus._common.constants import ReceiveMode
 
 from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer
 
@@ -108,7 +108,7 @@ class ServiceBusQueueStressTests(AzureMgmtTestCase):
             servicebus_namespace_connection_string, debug=False)
 
         stress_test = StressTestRunner(senders = [sb_client.get_queue_sender(servicebus_queue.name)],
-                                       receivers = [sb_client.get_queue_receiver(servicebus_queue.name, mode=ReceiveSettleMode.ReceiveAndDelete)],
+                                       receivers = [sb_client.get_queue_receiver(servicebus_queue.name, receive_mode=ReceiveMode.ReceiveAndDelete)],
                                        duration=timedelta(seconds=60))
 
         result = stress_test.Run()
@@ -147,9 +147,9 @@ class ServiceBusQueueStressTests(AzureMgmtTestCase):
             servicebus_namespace_connection_string, debug=False)
 
         stress_test = StressTestRunner(senders = [sb_client.get_queue_sender(servicebus_queue.name)],
-                                       receivers = [sb_client.get_queue_receiver(servicebus_queue.name, prefetch=50)],
+                                       receivers = [sb_client.get_queue_receiver(servicebus_queue.name, prefetch_count=50)],
                                        duration = timedelta(seconds=60),
-                                       max_batch_size = 50)
+                                       max_message_count = 50)
 
         result = stress_test.Run()
         assert(result.total_sent > 0)

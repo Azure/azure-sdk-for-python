@@ -9,9 +9,9 @@ import datetime
 import logging
 import functools
 import platform
-from typing import Optional, Dict
+import time
+from typing import Optional, Dict, Tuple
 from msrest.serialization import UTC
-
 
 try:
     from urlparse import urlparse
@@ -41,11 +41,15 @@ def utc_now():
     return datetime.datetime.now(UTC())
 
 
+# This parse_conn_str is used for mgmt, the other in base_handler for handlers.  Should be unified.
 def parse_conn_str(conn_str):
-    endpoint = None
-    shared_access_key_name = None
-    shared_access_key = None
-    entity_path = None
+    # type: (str) -> Tuple[str, Optional[str], Optional[str], str, Optional[str], Optional[int]]
+    endpoint = ""
+    shared_access_key_name = None  # type: Optional[str]
+    shared_access_key = None  # type: Optional[str]
+    entity_path = ""
+    shared_access_signature = None  # type: Optional[str]
+    shared_access_signature_expiry = None  # type: Optional[int]
     for element in conn_str.split(";"):
         key, _, value = element.partition("=")
         if key.lower() == "endpoint":
@@ -56,9 +60,40 @@ def parse_conn_str(conn_str):
             shared_access_key = value
         elif key.lower() == "entitypath":
             entity_path = value
-    if not all([endpoint, shared_access_key_name, shared_access_key]):
-        raise ValueError("Invalid connection string")
-    return endpoint, shared_access_key_name, shared_access_key, entity_path
+        elif key.lower() == "sharedaccesssignature":
+            shared_access_signature = value
+            try:
+                # Expiry can be stored in the "se=<timestamp>" clause of the token. ('&'-separated key-value pairs)
+                # type: ignore
+                shared_access_signature_expiry = int(
+                    shared_access_signature.split("se=")[1].split("&")[0]
+                )
+            except (
+                IndexError,
+                TypeError,
+                ValueError,
+            ):  # Fallback since technically expiry is optional.
+                # An arbitrary, absurdly large number, since you can't renew.
+                shared_access_signature_expiry = int(time.time() * 2)
+    if not (
+        all((endpoint, shared_access_key_name, shared_access_key))
+        or all((endpoint, shared_access_signature))
+    ) or all(
+        (shared_access_key_name, shared_access_signature)
+    ):  # this latter clause since we don't accept both
+        raise ValueError(
+            "Invalid connection string. Should be in the format: "
+            "Endpoint=sb://<FQDN>/;SharedAccessKeyName=<KeyName>;SharedAccessKey=<KeyValue>"
+            "\nWith alternate option of providing SharedAccessSignature instead of SharedAccessKeyName and Key"
+        )
+    return (
+        endpoint,
+        str(shared_access_key_name) if shared_access_key_name else None,
+        str(shared_access_key) if shared_access_key else None,
+        entity_path,
+        str(shared_access_signature) if shared_access_signature else None,
+        shared_access_signature_expiry,
+    )
 
 
 def build_uri(address, entity):

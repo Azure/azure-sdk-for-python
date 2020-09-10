@@ -145,7 +145,7 @@ def _to_entity_int(value):
 
 
 def _to_entity_str(value):
-    return None, value
+    return EdmType.STRING, value
 
 
 def _to_entity_none(value):  # pylint:disable=W0613
@@ -159,10 +159,19 @@ _PYTHON_TO_ENTITY_CONVERSIONS = {
     bool: _to_entity_bool,
     datetime: _to_entity_datetime,
     float: _to_entity_float,
-    str: _to_entity_str,
-    bytes: _to_entity_binary,
     UUID: _to_entity_guid
 }
+try:
+    _PYTHON_TO_ENTITY_CONVERSIONS.update({
+        unicode: _to_entity_str,
+        str: _to_entity_binary,
+        long: _to_entity_int32,
+    })
+except NameError:
+    _PYTHON_TO_ENTITY_CONVERSIONS.update({
+        str: _to_entity_str,
+        bytes: _to_entity_binary,
+    })
 
 # Conversion from Edm type to a function which returns a tuple of the
 # type string and content string.

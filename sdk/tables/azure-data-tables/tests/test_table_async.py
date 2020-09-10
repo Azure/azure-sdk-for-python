@@ -220,8 +220,7 @@ class TableTestAsync(AsyncTableTestCase):
         self.assertEqual(len(small_page), 3)
         self.assertGreaterEqual(len(big_page), 4)
 
-    # @pytest.mark.skip("pending")
-    # TODO: the small_page is getting 16, can't figure it out, skipping for now
+    @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     async def test_list_tables_with_num_results(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -482,8 +481,8 @@ class TableTestAsync(AsyncTableTestCase):
 
             # Assert
             self.assertEqual(len(entities), 1)
-            # self.assertEqual(entities[0].text, 'hello')
-            # self.assertEqual(entities[1].text, 'hello')
+            self.assertEqual(entities[0].text.value, 'hello')
+            self.assertEqual(entities[1].text.value, 'hello')
         finally:
             await self._delete_table(table=table, ts=tsc)
 
