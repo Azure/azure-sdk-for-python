@@ -216,14 +216,11 @@ def _add_entity_properties(source):
     for name, value in source.items():
         mtype = ''
 
-        if isinstance(name, Enum):
-            try:
-                name = unicode(name)
-            except NameError:
-                name = str(name)
-
         if isinstance(value, Enum):
-            conv = _PYTHON_TO_ENTITY_CONVERSIONS.get(str)
+            try:
+                conv = _PYTHON_TO_ENTITY_CONVERSIONS.get(unicode)
+            except NameError:
+                conv = _PYTHON_TO_ENTITY_CONVERSIONS.get(str)
             mtype, value = conv(value)
         elif isinstance(value, EntityProperty):
             conv = _EDM_TO_ENTITY_CONVERSIONS.get(value.type)
