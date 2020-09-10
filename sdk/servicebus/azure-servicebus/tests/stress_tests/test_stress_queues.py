@@ -71,7 +71,7 @@ class ServiceBusQueueStressTests(AzureMgmtTestCase):
 
         stress_test = StressTestRunner(senders = [sb_client.get_queue_sender(servicebus_queue.name)],
                                        receivers = [sb_client.get_queue_receiver(servicebus_queue.name)],
-                                       duration=timedelta(seconds=3600 * 24 * 3),
+                                       duration=timedelta(seconds=60),
                                        send_batch_size=5)
 
         result = stress_test.Run()
