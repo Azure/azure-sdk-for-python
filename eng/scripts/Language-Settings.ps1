@@ -83,7 +83,7 @@ function Get-python-PackageInfoFromPackageFile ($pkg, $workingDirectory) {
 }
 
 # Stage and Upload Docs to blob Storage
-function Publish-python-GithubIODocs ()
+function Publish-python-GithubIODocs ($DocLocation, $PublicArtifactLocation)
 {
   $PublishedDocs = Get-ChildItem "$DocLocation" | Where-Object -FilterScript {$_.Name.EndsWith(".zip")}
 

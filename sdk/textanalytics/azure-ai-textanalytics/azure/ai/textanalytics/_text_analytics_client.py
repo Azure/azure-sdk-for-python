@@ -300,7 +300,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         except NotImplementedError as error:
             if "APIVersion v3.0 is not available" in str(error):
                 raise NotImplementedError(
-                    "'recognize_pii_entities' endpoint is only available for API version v3.1-preview.1 and up"
+                    "'recognize_pii_entities' endpoint is only available for API version v3.1-preview and up"
                 )
             raise error
         except HttpResponseError as error:
@@ -513,7 +513,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             aspect-based sentiment analysis). If set to true, the returned
             :class:`~azure.ai.textanalytics.SentenceSentiment` objects
             will have property `mined_opinions` containing the result of this analysis. Only available for
-            API version v3.1-preview.1.
+            API version v3.1-preview and up.
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
@@ -523,7 +523,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
         :keyword bool show_stats: If set to true, response will contain document level statistics.
-        .. versionadded:: v3.1-preview.1
+        .. versionadded:: v3.1-preview
             The *show_opinion_mining* parameter.
         :return: The combined list of :class:`~azure.ai.textanalytics.AnalyzeSentimentResult` and
             :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents were
@@ -563,7 +563,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         except TypeError as error:
             if "opinion_mining" in str(error):
                 raise NotImplementedError(
-                    "'show_opinion_mining' is only available for API version v3.1-preview.1 and up"
+                    "'show_opinion_mining' is only available for API version v3.1-preview and up"
                 )
             raise error
         except HttpResponseError as error:
