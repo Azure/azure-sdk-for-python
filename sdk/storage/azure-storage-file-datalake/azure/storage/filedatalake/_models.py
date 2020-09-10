@@ -230,9 +230,7 @@ class PathProperties(object):
     :ivar content_length: the size of file if the path is a file.
     """
     def __init__(self, **kwargs):
-        super(PathProperties, self).__init__(
-            **kwargs
-        )
+        super(PathProperties, self).__init__()
         self.name = kwargs.pop('name', None)
         self.owner = kwargs.get('owner', None)
         self.group = kwargs.get('group', None)
