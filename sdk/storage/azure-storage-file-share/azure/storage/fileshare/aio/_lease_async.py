@@ -22,6 +22,7 @@ if TYPE_CHECKING:
     ShareFileClient = TypeVar("ShareFileClient")
     ShareClient = TypeVar("ShareClient")
 
+
 class ShareLeaseClient(LeaseClientBase):
     """Creates a new ShareLeaseClient.
 

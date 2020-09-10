@@ -184,6 +184,105 @@ class StorageShareTest(StorageTestCase):
                 props = restored_share_client.get_share_properties()
                 self.assertIsNotNone(props)
 
+    @GlobalStorageAccountPreparer()
+    def test_lease_share_acquire_and_release(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
+        share_client = self._create_share()
+        # Act
+        lease = share_client.acquire_lease()
+        lease.release()
+        # Assert
+
+    @GlobalStorageAccountPreparer()
+    def test_lease_share_renew(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
+        share_client = self._create_share()
+        lease = share_client.acquire_lease(lease_duration=15)
+        self.sleep(10)
+        lease_id_start = lease.id
+
+        # Act
+        lease.renew()
+
+        # Assert
+        self.assertEqual(lease.id, lease_id_start)
+        self.sleep(5)
+        with self.assertRaises(HttpResponseError):
+            share_client.delete_share()
+        self.sleep(10)
+        share_client.delete_share()
+
+    @GlobalStorageAccountPreparer()
+    def test_lease_share_break_period(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
+        share_client = self._create_share()
+
+        # Act
+        lease = share_client.acquire_lease(lease_duration=15)
+
+        # Assert
+        lease.break_lease(break_period=5)
+        self.sleep(6)
+        with self.assertRaises(HttpResponseError):
+            share_client.delete_share(lease=lease)
+
+    @GlobalStorageAccountPreparer()
+    def test_lease_share_with_duration(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
+        share_client = self._create_share()
+
+        # Act
+        lease = share_client.acquire_lease(lease_duration=15)
+
+        # Assert
+        with self.assertRaises(HttpResponseError):
+            share_client.acquire_lease()
+        self.sleep(15)
+        share_client.acquire_lease()
+
+    @GlobalStorageAccountPreparer()
+    def test_lease_share_twice(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
+        share_client = self._create_share()
+
+        # Act
+        lease = share_client.acquire_lease(lease_duration=15)
+
+        # Assert
+        lease2 = share_client.acquire_lease(lease_id=lease.id)
+        self.assertEqual(lease.id, lease2.id)
+
+    @GlobalStorageAccountPreparer()
+    def test_lease_share_with_proposed_lease_id(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
+        share_client = self._create_share()
+
+        # Act
+        proposed_lease_id = '55e97f64-73e8-4390-838d-d9e84a374321'
+        lease = share_client.acquire_lease(lease_id=proposed_lease_id)
+
+        # Assert
+        self.assertEqual(proposed_lease_id, lease.id)
+
+    @GlobalStorageAccountPreparer()
+    def test_lease_share_change_lease_id(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
+        share_client = self._create_share()
+
+        # Act
+        lease_id = '29e0b239-ecda-4f69-bfa3-95f6af91464c'
+        lease = share_client.acquire_lease()
+        lease_id1 = lease.id
+        lease.change(proposed_lease_id=lease_id)
+        lease.renew()
+        lease_id2 = lease.id
+
+        # Assert
+        self.assertIsNotNone(lease_id1)
+        self.assertIsNotNone(lease_id2)
+        self.assertNotEqual(lease_id1, lease_id)
+        self.assertEqual(lease_id2, lease_id)
+
     @pytest.mark.playback_test_only
     @GlobalStorageAccountPreparer()
     def test_restore_to_existing_share(self, resource_group, location, storage_account, storage_account_key):

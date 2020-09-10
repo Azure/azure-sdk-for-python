@@ -1,0 +1,171 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.18362-SP0)
+      x-ms-date:
+      - Thu, 10 Sep 2020 23:24:14 GMT
+      x-ms-version:
+      - '2020-02-10'
+    method: PUT
+    uri: https://storagename.file.core.windows.net/share4ddb1042?restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Thu, 10 Sep 2020 23:24:34 GMT
+      etag:
+      - '"0x8D855E0ADD7E8E8"'
+      last-modified:
+      - Thu, 10 Sep 2020 23:24:35 GMT
+      server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version:
+      - '2020-02-10'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.18362-SP0)
+      x-ms-date:
+      - Thu, 10 Sep 2020 23:24:34 GMT
+      x-ms-lease-action:
+      - acquire
+      x-ms-lease-duration:
+      - '15'
+      x-ms-proposed-lease-id:
+      - 7a9fb38c-4285-484b-aeb9-8150e505bb27
+      x-ms-version:
+      - '2020-02-10'
+    method: PUT
+    uri: https://storagename.file.core.windows.net/share4ddb1042?comp=lease&restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Thu, 10 Sep 2020 23:24:35 GMT
+      etag:
+      - '"0x8D855E0ADD7E8E8"'
+      last-modified:
+      - Thu, 10 Sep 2020 23:24:35 GMT
+      server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-lease-id:
+      - 7a9fb38c-4285-484b-aeb9-8150e505bb27
+      x-ms-version:
+      - '2020-02-10'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.18362-SP0)
+      x-ms-date:
+      - Thu, 10 Sep 2020 23:24:35 GMT
+      x-ms-lease-action:
+      - break
+      x-ms-lease-break-period:
+      - '5'
+      x-ms-version:
+      - '2020-02-10'
+    method: PUT
+    uri: https://storagename.file.core.windows.net/share4ddb1042?comp=lease&restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Thu, 10 Sep 2020 23:24:35 GMT
+      etag:
+      - '"0x8D855E0ADD7E8E8"'
+      last-modified:
+      - Thu, 10 Sep 2020 23:24:35 GMT
+      server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-lease-time:
+      - '5'
+      x-ms-version:
+      - '2020-02-10'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.18362-SP0)
+      x-ms-date:
+      - Thu, 10 Sep 2020 23:24:41 GMT
+      x-ms-lease-id:
+      - 7a9fb38c-4285-484b-aeb9-8150e505bb27
+      x-ms-version:
+      - '2020-02-10'
+    method: DELETE
+    uri: https://storagename.file.core.windows.net/share4ddb1042?restype=share
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseLost</Code><Message>A
+        lease ID was specified, but the lease for the file share has expired.\nRequestId:1f694760-501a-0029-72c9-87e4b6000000\nTime:2020-09-10T23:24:42.3180288Z</Message></Error>"
+    headers:
+      content-length:
+      - '249'
+      content-type:
+      - application/xml
+      date:
+      - Thu, 10 Sep 2020 23:24:41 GMT
+      server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code:
+      - LeaseLost
+      x-ms-version:
+      - '2020-02-10'
+    status:
+      code: 412
+      message: A lease ID was specified, but the lease for the file share has expired.
+version: 1
