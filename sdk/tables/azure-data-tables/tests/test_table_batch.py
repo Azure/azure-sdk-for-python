@@ -15,12 +15,20 @@ from dateutil.tz import tzutc
 
 from azure.core import MatchConditions
 from azure.core.exceptions import (
-    ResourceExistsError)
+    ResourceExistsError,
+    ResourceNotFoundError,
+    HttpResponseError
+)
 from azure.data.tables import EdmType, TableEntity, EntityProperty, UpdateMode
 
 from _shared.testcase import GlobalStorageAccountPreparer, TableTestCase, LogCaptured
 
-from azure.data.tables import TableServiceClient, TableEntity
+from azure.data.tables._models import PartialBatchErrorException
+from azure.data.tables import (
+    TableServiceClient,
+    TableEntity,
+    UpdateMode,
+)
 
 #------------------------------------------------------------------------------
 TEST_TABLE_PREFIX = 'table'
@@ -60,18 +68,28 @@ class StorageTableBatchTest(TableTestCase):
         self.test_tables.append(table_name)
         return self.ts.get_table_client(table_name)
 
+    def _create_pk_rk(self, pk, rk):
+        try:
+            pk = pk if pk is not None else self.get_resource_name('pk').decode('utf-8')
+            rk = rk if rk is not None else self.get_resource_name('rk').decode('utf-8')
+        except AttributeError:
+            pk = pk if pk is not None else self.get_resource_name('pk')
+            rk = rk if rk is not None else self.get_resource_name('rk')
+        return pk, rk
+
     def _create_random_entity_dict(self, pk=None, rk=None):
-        '''
+        """
         Creates a dictionary-based entity with fixed values, using all
         of the supported data types.
-        '''
-        partition = pk if pk is not None else self.get_resource_name('pk')
-        row = rk if rk is not None else self.get_resource_name('rk')
+        """
+        # partition = pk if pk is not None else self.get_resource_name('pk').decode('utf-8')
+        # row = rk if rk is not None else self.get_resource_name('rk').decode('utf-8')
+        partition, row = self._create_pk_rk(pk, rk)
         properties = {
             'PartitionKey': partition,
             'RowKey': row,
             'age': 39,
-            'sex': 'male',
+            'sex': u'male',
             'married': True,
             'deceased': False,
             'optional': None,
@@ -81,10 +99,10 @@ class StorageTableBatchTest(TableTestCase):
             'Birthday': datetime(1973, 10, 4, tzinfo=tzutc()),
             'birthday': datetime(1970, 10, 4, tzinfo=tzutc()),
             'binary': b'binary',
-            'other': EntityProperty(20, EdmType.INT32),
+            'other': EntityProperty(value=20, type=EdmType.INT32),
             'clsid': uuid.UUID('c9da6455-213d-42c9-9a79-3e9149a57833')
         }
-        return Entity(**properties)
+        return TableEntity(**properties)
 
     def _create_updated_entity_dict(self, partition, row):
         '''
@@ -151,7 +169,6 @@ class StorageTableBatchTest(TableTestCase):
         self.assertIsInstance(entity.timestamp, datetime)
 
     #--Test cases for batch ---------------------------------------------
-    # @pytest.mark.skip("Error with successful return not being deserialized")
     @GlobalStorageAccountPreparer()
     def test_batch_insert(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -181,7 +198,7 @@ class StorageTableBatchTest(TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("pending")
+    @pytest.mark.skip("tuple issue desc. within")
     @GlobalStorageAccountPreparer()
     def test_batch_single_update(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -196,30 +213,34 @@ class StorageTableBatchTest(TableTestCase):
             entity.test3 = 3
             entity.test4 = EntityProperty(1234567890)
             entity.test5 = datetime.utcnow()
-            self.table.create_entity(entity)
+
+            resp = self.table.create_entity(entity)
+            self.assertIsNotNone(resp)
 
             entity.test3 = 5
             entity.test5 = datetime.utcnow()
 
             batch = self.table.create_batch()
+            # NOTE: issue is in _HTTPResponseBase._decode_parts, the changeset_requests is an empty
+            # tuple when it is expecting a List[HttpRequest]
             batch.update_entity(entity, mode=UpdateMode.MERGE)
             resp = self.table.commit_batch(batch)
 
             # Assert
             self.assertIsNotNone(resp)
-            result, headers = self.table.read_item('001', 'batch_insert', response_hook=lambda e, h: (e, h))
-            self.assertEqual(list(resp)[0].headers['Etag'], headers['etag'])
+            result = self.table.get_entity(row_key=entity.RowKey, partition_key=entity.PartitionKey)
+            self.assertEqual(resp['Etag'], headers['etag'])
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("pending")
+    @pytest.mark.skip("tuple issue desc. above")
     @GlobalStorageAccountPreparer()
     def test_batch_update(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         self._set_up(storage_account, storage_account_key)
         try:
             # Act
-            entity = Entity()
+            entity = TableEntity()
             entity.PartitionKey = '001'
             entity.RowKey = 'batch_update'
             entity.test = EntityProperty(True)
@@ -227,32 +248,32 @@ class StorageTableBatchTest(TableTestCase):
             entity.test3 = 3
             entity.test4 = EntityProperty(1234567890)
             entity.test5 = datetime.utcnow()
-            self.table.create_item(entity)
+            self.table.create_entity(entity)
 
-            entity = self.table.read_item('001', 'batch_update')
+            entity = self.table.get_entity('001', 'batch_update')
             self.assertEqual(3, entity.test3)
             entity.test2 = 'value1'
 
             batch = self.table.create_batch()
-            batch.update_item(entity)
+            batch.update_entity(entity)
             resp = self.table.commit_batch(batch)
 
             # Assert
             self.assertIsNotNone(resp)
-            result, headers = self.table.read_item('001', 'batch_update', response_hook=lambda e, h: (e, h))
+            result, headers = self.table.get_entity('001', 'batch_update', response_hook=lambda e, h: (e, h))
             self.assertEqual('value1', result.test2)
             self.assertEqual(list(resp)[0].headers['Etag'], headers['etag'])
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("pending")
+    @pytest.mark.skip("tuple issue desc. above")
     @GlobalStorageAccountPreparer()
     def test_batch_merge(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         self._set_up(storage_account, storage_account_key)
         try:
             # Act
-            entity = Entity()
+            entity = TableEntity()
             entity.PartitionKey = '001'
             entity.RowKey = 'batch_merge'
             entity.test = EntityProperty(True)
@@ -260,91 +281,87 @@ class StorageTableBatchTest(TableTestCase):
             entity.test3 = 3
             entity.test4 = EntityProperty(1234567890)
             entity.test5 = datetime.utcnow()
-            self.table.create_item(entity)
+            self.table.create_entity(entity)
 
-            entity = self.table.read_item('001', 'batch_merge')
+            resp_entity = self.table.get_entity(partition_key='001', row_key='batch_merge')
             self.assertEqual(3, entity.test3)
-            entity = Entity()
+            entity = TableEntity()
             entity.PartitionKey = '001'
             entity.RowKey = 'batch_merge'
             entity.test2 = 'value1'
 
             batch = self.table.create_batch()
-            batch.update_item(entity, mode='MERGE')
+            batch.update_entity(entity, mode=UpdateMode.MERGE)
             resp = self.table.commit_batch(batch)
 
             # Assert
             self.assertIsNotNone(resp)
-            entity, headers = self.table.read_item('001', 'batch_merge', response_hook=lambda e, h: (e, h))
+            resp_entity = self.table.get_entity(partition_key='001', row_key='batch_merge')
             self.assertEqual('value1', entity.test2)
             self.assertEqual(1234567890, entity.test4)
             self.assertEqual(list(resp)[0].headers['Etag'], headers['etag'])
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("pending")
+    @pytest.mark.skip("tuple issue desc. above")
     @GlobalStorageAccountPreparer()
     def test_batch_update_if_match(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         self._set_up(storage_account, storage_account_key)
         try:
             entity = self._create_random_entity_dict()
-            etag = self.table.create_item(entity, response_hook=lambda e, h: h['etag'])
+            resp = self.table.create_entity(entity=entity)
+            etag = resp['etag']
 
             # Act
             sent_entity = self._create_updated_entity_dict(entity['PartitionKey'], entity['RowKey'])
             batch = self.table.create_batch()
-            batch.update_item(sent_entity, etag=etag, match_condition=MatchConditions.IfNotModified)
+            batch.update_entity(sent_entity, etag=etag, match_condition=MatchConditions.IfNotModified)
             resp = self.table.commit_batch(batch)
 
             # Assert
             self.assertIsNotNone(resp)
-            entity, headers = self.table.read_item(entity['PartitionKey'], entity['RowKey'], response_hook=lambda e, h: (e, h))
+            entity = self.table.get_entity(partition_key=entity['PartitionKey'], row_key=entity['RowKey'])
             self._assert_updated_entity(entity)
-            self.assertEqual(list(resp)[0].headers['Etag'], headers['etag'])
+            self.assertEqual(entity['Etag'], headers['etag'])
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("pending")
+    @pytest.mark.skip("tuple issue desc. above")
     @GlobalStorageAccountPreparer()
     def test_batch_update_if_doesnt_match(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         self._set_up(storage_account, storage_account_key)
         try:
             entity = self._create_random_entity_dict()
-            self.table.create_item(entity)
+            self.table.create_entity(entity)
 
             # Act
             sent_entity1 = self._create_updated_entity_dict(entity['PartitionKey'], entity['RowKey'])
 
             batch = self.table.create_batch()
-            batch.update_item(
+            batch.update_entity(
                 sent_entity1,
                 etag=u'W/"datetime\'2012-06-15T22%3A51%3A44.9662825Z\'"',
                 match_condition=MatchConditions.IfNotModified)
-            try:
+
+            with self.assertRaises(PartialBatchErrorException):
                 self.table.commit_batch(batch)
-            except PartialBatchErrorException as error:
-                pass  # TODO
-                #self.assertEqual(error.code, 'UpdateConditionNotSatisfied')
-                #self.assertTrue('The update condition specified in the request was not satisfied.' in str(error))
-            else:
-                self.fail('AzureBatchOperationError was expected')
 
             # Assert
-            received_entity = self.table.read_item(entity['PartitionKey'], entity['RowKey'])
+            received_entity = self.table.get_entity(entity['PartitionKey'], entity['RowKey'])
             self._assert_default_entity(received_entity)
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("pending")
+    @pytest.mark.skip("upsert is not yet implemented")
     @GlobalStorageAccountPreparer()
     def test_batch_insert_replace(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         self._set_up(storage_account, storage_account_key)
         try:
             # Act
-            entity = Entity()
+            entity = TableEntity()
             entity.PartitionKey = '001'
             entity.RowKey = 'batch_insert_replace'
             entity.test = True
@@ -359,7 +376,7 @@ class StorageTableBatchTest(TableTestCase):
 
             # Assert
             self.assertIsNotNone(resp)
-            entity, headers = self.table.read_item('001', 'batch_insert_replace', response_hook=lambda e, h: (e, h))
+            entity = self.table.get_entity('001', 'batch_insert_replace')
             self.assertIsNotNone(entity)
             self.assertEqual('value', entity.test2)
             self.assertEqual(1234567890, entity.test4)
@@ -367,14 +384,14 @@ class StorageTableBatchTest(TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("pending")
+    @pytest.mark.skip("upsert is not yet implemented")
     @GlobalStorageAccountPreparer()
     def test_batch_insert_merge(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         self._set_up(storage_account, storage_account_key)
         try:
             # Act
-            entity = Entity()
+            entity = TableEntity()
             entity.PartitionKey = '001'
             entity.RowKey = 'batch_insert_merge'
             entity.test = True
@@ -384,12 +401,12 @@ class StorageTableBatchTest(TableTestCase):
             entity.test5 = datetime.utcnow()
 
             batch = self.table.create_batch()
-            batch.upsert_item(entity, mode='MERGE')
+            batch.upsert_item(entity, mode=UpdateMode.MERGE)
             resp = self.table.commit_batch(batch)
 
             # Assert
             self.assertIsNotNone(resp)
-            entity, headers = self.table.read_item('001', 'batch_insert_merge', response_hook=lambda e, h: (e, h))
+            entity = self.table.get_entity('001', 'batch_insert_merge')
             self.assertIsNotNone(entity)
             self.assertEqual('value', entity.test2)
             self.assertEqual(1234567890, entity.test4)
@@ -397,14 +414,14 @@ class StorageTableBatchTest(TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("pending")
+    @pytest.mark.skip("tuple issue desc. above")
     @GlobalStorageAccountPreparer()
     def test_batch_delete(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         self._set_up(storage_account, storage_account_key)
         try:
             # Act
-            entity = Entity()
+            entity = TableEntity()
             entity.PartitionKey = '001'
             entity.RowKey = 'batch_delete'
             entity.test = EntityProperty(True)
@@ -412,14 +429,17 @@ class StorageTableBatchTest(TableTestCase):
             entity.test3 = 3
             entity.test4 = EntityProperty(1234567890)
             entity.test5 = datetime.utcnow()
-            self.table.create_item(entity)
+            self.table.create_entity(entity)
 
-            entity = self.table.read_item('001', 'batch_delete')
-            self.assertEqual(3, entity.test3)
+            entity = self.table.get_entity(partition_key='001', row_key='batch_delete')
+            self.assertEqual(3, entity.test3.value)
 
             batch = self.table.create_batch()
-            batch.delete_item('001', 'batch_delete')
+            batch.delete_entity('001', 'batch_delete')
             resp = self.table.commit_batch(batch)
+
+            with self.assertRaises(ResourceNotFoundError):
+                entity = self.table.get_entity(partition_key='001', row_key='batch_delete')
 
             # Assert
             self.assertIsNotNone(resp)
@@ -427,14 +447,13 @@ class StorageTableBatchTest(TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_batch_inserts(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         self._set_up(storage_account, storage_account_key)
         try:
             # Act
-            entity = Entity()
+            entity = TableEntity()
             entity.PartitionKey = 'batch_inserts'
             entity.test = EntityProperty(True)
             entity.test2 = 'value'
@@ -447,7 +466,7 @@ class StorageTableBatchTest(TableTestCase):
                 batch.create_entity(entity)
             self.table.commit_batch(batch)
 
-            entities = list(self.table.query_items("PartitionKey eq 'batch_inserts'"))
+            entities = list(self.table.query_entities("PartitionKey eq 'batch_inserts'"))
 
             # Assert
             self.assertIsNotNone(entities)
@@ -455,14 +474,13 @@ class StorageTableBatchTest(TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_batch_all_operations_together(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         self._set_up(storage_account, storage_account_key)
         try:
             # Act
-            entity = Entity()
+            entity = TableEntity()
             entity.PartitionKey = '003'
             entity.RowKey = 'batch_all_operations_together-1'
             entity.test = EntityProperty(True)
@@ -470,47 +488,47 @@ class StorageTableBatchTest(TableTestCase):
             entity.test3 = 3
             entity.test4 = EntityProperty(1234567890)
             entity.test5 = datetime.utcnow()
-            self.table.create_item(entity)
+            self.table.create_entity(entity)
             entity.RowKey = 'batch_all_operations_together-2'
-            self.table.create_item(entity)
+            self.table.create_entity(entity)
             entity.RowKey = 'batch_all_operations_together-3'
-            self.table.create_item(entity)
+            self.table.create_entity(entity)
             entity.RowKey = 'batch_all_operations_together-4'
-            self.table.create_item(entity)
+            self.table.create_entity(entity)
 
             batch = self.table.create_batch()
             entity.RowKey = 'batch_all_operations_together'
             batch.create_entity(entity)
             entity.RowKey = 'batch_all_operations_together-1'
-            batch.delete_item(entity.PartitionKey, entity.RowKey)
+            batch.delete_entity(entity.PartitionKey, entity.RowKey)
             entity.RowKey = 'batch_all_operations_together-2'
             entity.test3 = 10
-            batch.update_item(entity)
+            batch.update_entity(entity)
             entity.RowKey = 'batch_all_operations_together-3'
             entity.test3 = 100
-            batch.update_item(entity, mode='MERGE')
-            entity.RowKey = 'batch_all_operations_together-4'
-            entity.test3 = 10
-            batch.upsert_item(entity)
-            entity.RowKey = 'batch_all_operations_together-5'
-            batch.upsert_item(entity, mode='MERGE')
+            batch.update_entity(entity, mode=UpdateMode.MERGE)
+            # TODO: upsert is not yet implemented
+            # entity.RowKey = 'batch_all_operations_together-4'
+            # entity.test3 = 10
+            # batch.upsert_item(entity)
+            # entity.RowKey = 'batch_all_operations_together-5'
+            # batch.upsert_item(entity, mode=UpdateMode.MERGE)
             resp = self.table.commit_batch(batch)
 
             # Assert
-            self.assertEqual(6, len(list(resp)))
-            entities = list(self.table.query_items("PartitionKey eq '003'"))
+            self.assertIsNotNone(resp)
+            entities = list(self.table.query_entities("PartitionKey eq '003'"))
             self.assertEqual(5, len(entities))
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_batch_all_operations_together_context_manager(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         self._set_up(storage_account, storage_account_key)
         try:
             # Act
-            entity = Entity()
+            entity = TableEntity()
             entity.PartitionKey = '003'
             entity.RowKey = 'batch_all_operations_together-1'
             entity.test = EntityProperty(True)
@@ -518,38 +536,39 @@ class StorageTableBatchTest(TableTestCase):
             entity.test3 = 3
             entity.test4 = EntityProperty(1234567890)
             entity.test5 = datetime.utcnow()
-            self.table.create_item(entity)
+            self.table.create_entity(entity)
             entity.RowKey = 'batch_all_operations_together-2'
-            self.table.create_item(entity)
+            self.table.create_entity(entity)
             entity.RowKey = 'batch_all_operations_together-3'
-            self.table.create_item(entity)
+            self.table.create_entity(entity)
             entity.RowKey = 'batch_all_operations_together-4'
-            self.table.create_item(entity)
+            self.table.create_entity(entity)
 
             with self.table.create_batch() as batch:
                 entity.RowKey = 'batch_all_operations_together'
                 batch.create_entity(entity)
                 entity.RowKey = 'batch_all_operations_together-1'
-                batch.delete_item(entity.PartitionKey, entity.RowKey)
+                batch.delete_entity(entity.PartitionKey, entity.RowKey)
                 entity.RowKey = 'batch_all_operations_together-2'
                 entity.test3 = 10
-                batch.update_item(entity)
+                batch.update_entity(entity)
                 entity.RowKey = 'batch_all_operations_together-3'
                 entity.test3 = 100
-                batch.update_item(entity, mode='MERGE')
-                entity.RowKey = 'batch_all_operations_together-4'
-                entity.test3 = 10
-                batch.upsert_item(entity)
-                entity.RowKey = 'batch_all_operations_together-5'
-                batch.upsert_item(entity, mode='MERGE')
+                batch.update_entity(entity, mode=UpdateMode.MERGE)
+                # TODO: upsert is not yet implemented
+                # entity.RowKey = 'batch_all_operations_together-4'
+                # entity.test3 = 10
+                # batch.upsert_item(entity)
+                # entity.RowKey = 'batch_all_operations_together-5'
+                # batch.upsert_item(entity, mode=UpdateMode.MERGE)
 
             # Assert
-            entities = list(self.table.query_items("PartitionKey eq '003'"))
+            entities = list(self.table.query_entities("PartitionKey eq '003'"))
             self.assertEqual(5, len(entities))
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("pending")
+    @pytest.mark.skip("Not sure this is how the batching should operate, will consult w/ Anna")
     @GlobalStorageAccountPreparer()
     def test_batch_reuse(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -559,7 +578,7 @@ class StorageTableBatchTest(TableTestCase):
             table2.create_table()
 
             # Act
-            entity = Entity()
+            entity = TableEntity()
             entity.PartitionKey = '003'
             entity.RowKey = 'batch_all_operations_together-1'
             entity.test = EntityProperty(True)
@@ -568,7 +587,7 @@ class StorageTableBatchTest(TableTestCase):
             entity.test4 = EntityProperty(1234567890)
             entity.test5 = datetime.utcnow()
 
-            batch = TableBatchClient()
+            batch = self.table.create_batch()
             batch.create_entity(entity)
             entity.RowKey = 'batch_all_operations_together-2'
             batch.create_entity(entity)
@@ -584,71 +603,73 @@ class StorageTableBatchTest(TableTestCase):
             entity.RowKey = 'batch_all_operations_together'
             batch.create_entity(entity)
             entity.RowKey = 'batch_all_operations_together-1'
-            batch.delete_item(entity.PartitionKey, entity.RowKey)
+            batch.delete_entity(entity.PartitionKey, entity.RowKey)
             entity.RowKey = 'batch_all_operations_together-2'
             entity.test3 = 10
-            batch.update_item(entity)
+            batch.update_entity(entity)
             entity.RowKey = 'batch_all_operations_together-3'
             entity.test3 = 100
-            batch.update_item(entity, mode='MERGE')
-            entity.RowKey = 'batch_all_operations_together-4'
-            entity.test3 = 10
-            batch.upsert_item(entity)
-            entity.RowKey = 'batch_all_operations_together-5'
-            batch.upsert_item(entity, mode='MERGE')
+            batch.update_entity(entity, mode=UpdateMode.MERGE)
+            # TODO: upsert not yet implemented
+            # entity.RowKey = 'batch_all_operations_together-4'
+            # entity.test3 = 10
+            # batch.upsert_item(entity)
+            # entity.RowKey = 'batch_all_operations_together-5'
+            # batch.upsert_item(entity, mode=UpdateMode.MERGE)
 
             self.table.commit_batch(batch)
             resp = table2.commit_batch(batch)
 
             # Assert
             self.assertEqual(6, len(list(resp)))
-            entities = list(self.table.query_items("PartitionKey eq '003'"))
+            entities = list(self.table.query_entities("PartitionKey eq '003'"))
             self.assertEqual(5, len(entities))
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("pending")
+    @pytest.mark.skip("This does not throw an error, but it should")
     @GlobalStorageAccountPreparer()
     def test_batch_same_row_operations_fail(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         self._set_up(storage_account, storage_account_key)
         try:
             entity = self._create_random_entity_dict('001', 'batch_negative_1')
-            self.table.create_item(entity)
+            self.table.create_entity(entity)
 
             # Act
             batch = self.table.create_batch()
 
             entity = self._create_updated_entity_dict(
                 '001', 'batch_negative_1')
-            batch.update_item(entity)
+            batch.update_entity(entity)
             entity = self._create_random_entity_dict(
                 '001', 'batch_negative_1')
 
             # Assert
-            with self.assertRaises(ValueError):
-                batch.update_item(entity, mode='MERGE')
+            with self.assertRaises(HttpResponseError):
+                batch.update_entity(entity, mode=UpdateMode.MERGE)
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("pending")
+    @pytest.mark.skip("This does not throw an error, but it should")
     @GlobalStorageAccountPreparer()
     def test_batch_different_partition_operations_fail(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         self._set_up(storage_account, storage_account_key)
         try:
             entity = self._create_random_entity_dict('001', 'batch_negative_1')
-            self.table.create_item(entity)
+            self.table.create_entity(entity)
 
             # Act
             batch = self.table.create_batch()
 
             entity = self._create_updated_entity_dict(
                 '001', 'batch_negative_1')
-            batch.update_item(entity)
+            batch.update_entity(entity)
 
             entity = self._create_random_entity_dict(
                 '002', 'batch_negative_1')
+            batch.create_entity(entity)
 
             # Assert
             with self.assertRaises(ValueError):
@@ -656,20 +677,20 @@ class StorageTableBatchTest(TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("pending")
+    @pytest.mark.skip("This does not throw an error, but it should")
     @GlobalStorageAccountPreparer()
     def test_batch_too_many_ops(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         self._set_up(storage_account, storage_account_key)
         try:
             entity = self._create_random_entity_dict('001', 'batch_negative_1')
-            self.table.create_item(entity)
+            self.table.create_entity(entity)
 
             # Act
             with self.assertRaises(ValueError):
                 batch = self.table.create_batch()
                 for i in range(0, 101):
-                    entity = Entity()
+                    entity = TableEntity()
                     entity.PartitionKey = 'large'
                     entity.RowKey = 'item{0}'.format(i)
                     batch.create_entity(entity)

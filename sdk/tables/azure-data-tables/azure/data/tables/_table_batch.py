@@ -27,20 +27,20 @@ class TableBatchOperations(object):
     TODO: confirm # of entities, payload size, partition group
     '''
 
-    def __init__(self, client, serializer, deserializer, config, table_name):
+    def __init__(self, client, serializer, deserializer, config, table_name, table_client):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
         self._config = config
         self.table_name = table_name
+        self._table_client = table_client
 
         self._partition_key = None
         self._requests = []
 
 
     def commit(
-        self, table_name, # type: str
-        **kwargs
+        self, **kwargs # type: Any
     ):
         """
         Commits a :class:`~azure.storage.table.TableBatchOperations` request.
@@ -56,8 +56,8 @@ class TableBatchOperations(object):
         :rtype: list(:class:`~azure.data.tables.models.AzureBatchOperationError`, str)
         """
         # TODO: add this if necessary
-        # self._validate_not_none('table_name', table_name)
-        self._client._client._batch_send(self._requests, **kwargs)
+        self._table_client._batch_send(*self._requests, **kwargs)
+        # self._client._client._batch_send(self._requests, **kwargs)
 
 
     def _verify_partition_key(
@@ -493,7 +493,7 @@ class TableBatchOperations(object):
             'partitionKey': self._serialize.url("partition_key", partition_key, 'str'),
             'rowKey': self._serialize.url("row_key", row_key, 'str'),
         }
-        url = self._client_client.format_url(url, **path_format_arguments)
+        url = self._client._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
@@ -738,5 +738,4 @@ class TableBatchOperations(object):
             self, *args # type: Any
     ):
         # (...) -> None
-        self.close()
-        self._client.__exit__(*args)
+        self.commit()

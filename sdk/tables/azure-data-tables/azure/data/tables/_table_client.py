@@ -579,7 +579,8 @@ class TableClient(TableClientBase):
             self._client._serialize,
             self._client._deserialize,
             self._client._config,
-            self.table_name
+            self.table_name,
+            self
         )
 
     def commit_batch(
