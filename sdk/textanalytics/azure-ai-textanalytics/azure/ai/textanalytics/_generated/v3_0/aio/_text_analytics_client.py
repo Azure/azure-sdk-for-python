@@ -15,8 +15,8 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
-from ._configuration_async import TextAnalyticsClientConfiguration
-from .operations_async import TextAnalyticsClientOperationsMixin
+from ._configuration import TextAnalyticsClientConfiguration
+from .operations import TextAnalyticsClientOperationsMixin
 from .. import models
 
 
@@ -35,7 +35,7 @@ class TextAnalyticsClient(TextAnalyticsClientOperationsMixin):
         endpoint: str,
         **kwargs: Any
     ) -> None:
-        base_url = '{Endpoint}/text/analytics/v3.1-preview.2'
+        base_url = '{Endpoint}/text/analytics/v3.0'
         self._config = TextAnalyticsClientConfiguration(credential, endpoint, **kwargs)
         self._client = AsyncPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
