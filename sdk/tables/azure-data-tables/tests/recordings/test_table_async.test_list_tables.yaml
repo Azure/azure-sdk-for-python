@@ -11,13 +11,13 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 30 Jul 2020 13:31:11 GMT
+      - Fri, 04 Sep 2020 23:53:35 GMT
       User-Agent:
-      - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 30 Jul 2020 13:31:11 GMT
+      - Fri, 04 Sep 2020 23:53:35 GMT
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     method: POST
     uri: https://storagename.table.core.windows.net/Tables
   response:
@@ -26,16 +26,16 @@ interactions:
     headers:
       cache-control: no-cache
       content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
-      date: Thu, 30 Jul 2020 13:31:10 GMT
+      date: Fri, 04 Sep 2020 23:53:35 GMT
       location: https://storagename.table.core.windows.net/Tables('pytableasynce6450d88')
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-ms-version: '2019-07-07'
+      x-ms-version: '2019-02-02'
     status:
       code: 201
       message: Created
-    url: https://pyacrstorageq3qeesbeuztp.table.core.windows.net/Tables
+    url: https://pyacrstorageok324lpz7akw.table.core.windows.net/Tables
 - request:
     body: null
     headers:
@@ -44,28 +44,57 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 30 Jul 2020 13:31:12 GMT
+      - Fri, 04 Sep 2020 23:53:36 GMT
       User-Agent:
-      - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 30 Jul 2020 13:31:12 GMT
+      - Fri, 04 Sep 2020 23:53:36 GMT
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     method: GET
     uri: https://storagename.table.core.windows.net/Tables
   response:
     body:
-      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#Tables","value":[{"TableName":"pytableasynce6450d88"}]}'
+      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#Tables","value":[{"TableName":"listtable051291081"},{"TableName":"listtable0aab312c0"},{"TableName":"listtable151291081"},{"TableName":"listtable1aab312c0"},{"TableName":"listtable251291081"},{"TableName":"listtable2aab312c0"},{"TableName":"listtable351291081"},{"TableName":"listtable3aab312c0"},{"TableName":"pytableasynce6450d88"}]}'
     headers:
       cache-control: no-cache
       content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
-      date: Thu, 30 Jul 2020 13:31:10 GMT
+      date: Fri, 04 Sep 2020 23:53:35 GMT
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-ms-version: '2019-07-07'
+      x-ms-version: '2019-02-02'
     status:
       code: 200
       message: OK
-    url: https://pyacrstorageq3qeesbeuztp.table.core.windows.net/Tables
+    url: https://pyacrstorageok324lpz7akw.table.core.windows.net/Tables
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Date:
+      - Fri, 04 Sep 2020 23:53:36 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Fri, 04 Sep 2020 23:53:36 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: DELETE
+    uri: https://storagename.table.core.windows.net/Tables('pytableasynce6450d88')
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control: no-cache
+      content-length: '0'
+      date: Fri, 04 Sep 2020 23:53:35 GMT
+      server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      x-content-type-options: nosniff
+      x-ms-version: '2019-02-02'
+    status:
+      code: 204
+      message: No Content
+    url: https://pyacrstorageok324lpz7akw.table.core.windows.net/Tables('pytableasynce6450d88')
 version: 1

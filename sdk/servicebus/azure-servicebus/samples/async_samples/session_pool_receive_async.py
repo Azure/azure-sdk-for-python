@@ -21,10 +21,10 @@ SESSION_QUEUE_NAME = os.environ["SERVICE_BUS_SESSION_QUEUE_NAME"]
 async def message_processing(servicebus_client, queue_name):
     while True:
         try:
-            async with servicebus_client.get_queue_session_receiver(queue_name, idle_timeout=1) as receiver:
+            async with servicebus_client.get_queue_session_receiver(queue_name, max_wait_time=1) as receiver:
                 renewer = AutoLockRenew()
                 renewer.register(receiver.session)
-                await receiver.session.set_session_state("OPEN")
+                await receiver.session.set_state("OPEN")
                 async for message in receiver:
                     print("Message: {}".format(message))
                     print("Time to live: {}".format(message.time_to_live))
@@ -36,9 +36,9 @@ async def message_processing(servicebus_client, queue_name):
                     print("Enqueued time: {}".format(message.enqueued_time_utc))
                     await message.complete()
                     if str(message) == 'shutdown':
-                        await receiver.session.set_session_state("CLOSED")
+                        await receiver.session.set_state("CLOSED")
                         break
-                await renewer.shutdown()
+                await renewer.close()
         except NoActiveSession:
             print("There are no non-empty sessions remaining; exiting.  This may present as a UserError in the azure portal.")
             return

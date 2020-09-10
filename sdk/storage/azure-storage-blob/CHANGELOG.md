@@ -1,5 +1,31 @@
 # Release History
 
+## 12.5.0 (2020-09-10)
+**New features**
+- Added support for checking if a blob exists using the `exists` method (#13221).
+
+**Fixes**
+- Fixed source URLs special characters issue. Users can now have special characters in their source URLs for `copy_blob_from_url`, `upload_blob_from_url` etc (#13275).
+- Fixed authorization header on asyncio requests containing url-encoded-able characters (#11028).
+- Fixed SAS credentials URL malformation when using local Azurite container (#11941).
+- Fixed issue with permission string causing an authentication failure (#13099).
+- Support for returning snapshot value in `get_blob_properties` response (#13287).
+
+## 12.4.0 (2020-08-12)
+**New features**
+- Added support for Object Replication Service on `list_blobs` and `get_blob_properties`.
+- Added more support for blob tags. Added `if_tags_match_condition` that allow a user to specify a SQL statement for the blob's tags to satisfy.
+- Added support for setting and getting the `default_index_document_path` of `StaticWebsite` property on the service client.
+- Added `rehydrate_priority` to BlobProperties.
+- Added support to seal an append blob. Added `test_seal_append_blob`. Added ability to specify `seal_destination_blob` on `start_copy_from_url`. `is_append_blob_sealed` property returned on get_blob_properties/download_blob/list_blobs.
+- Added support to set tier on a snapshot or version.
+
+**Fixes**
+- Fixed the bug when parsing blob url with '/' in blob name (#12563, #12568).
+- Support batch delete empty blob list (#12778, #12779).
+- Fixed `blob_samples_query` bug.
+- Fixed empty etag in acquire_blob response (#8490).
+
 ## 12.4.0b1 (2020-07-07)
 **New features**
 - Added `query_blob` API to enable users to select/project on block blob or block blob snapshot data by providing simple query expressions.

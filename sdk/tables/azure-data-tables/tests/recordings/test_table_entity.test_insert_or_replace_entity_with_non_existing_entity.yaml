@@ -15,13 +15,13 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 30 Jul 2020 14:24:53 GMT
+      - Sat, 05 Sep 2020 00:18:06 GMT
       User-Agent:
-      - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 30 Jul 2020 14:24:53 GMT
+      - Sat, 05 Sep 2020 00:18:06 GMT
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     method: POST
     uri: https://storagename.table.core.windows.net/Tables
   response:
@@ -33,7 +33,7 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Thu, 30 Jul 2020 14:24:52 GMT
+      - Sat, 05 Sep 2020 00:18:06 GMT
       location:
       - https://storagename.table.core.windows.net/Tables('uttable419d1e08')
       server:
@@ -43,35 +43,37 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
 - request:
-    body: '{"PartitionKey": "pk419d1e08", "RowKey": "rk419d1e08", "age": "abc", "sex":
-      "female", "sign": "aquarius", "birthday": "1991-10-04T00:00:00Z", "birthday@odata.type":
+    body: '{"PartitionKey": "pk419d1e08", "PartitionKey@odata.type": "Edm.String",
+      "RowKey": "rk419d1e08", "RowKey@odata.type": "Edm.String", "age": "abc", "age@odata.type":
+      "Edm.String", "sex": "female", "sex@odata.type": "Edm.String", "sign": "aquarius",
+      "sign@odata.type": "Edm.String", "birthday": "1991-10-04T00:00:00Z", "birthday@odata.type":
       "Edm.DateTime"}'
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
-      - '180'
+      - '353'
       Content-Type:
       - application/json
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 30 Jul 2020 14:24:53 GMT
+      - Sat, 05 Sep 2020 00:18:06 GMT
       User-Agent:
-      - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 30 Jul 2020 14:24:53 GMT
+      - Sat, 05 Sep 2020 00:18:06 GMT
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     method: PUT
     uri: https://storagename.table.core.windows.net/uttable419d1e08(PartitionKey='pk419d1e08',RowKey='rk419d1e08')
   response:
@@ -83,15 +85,15 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 30 Jul 2020 14:24:52 GMT
+      - Sat, 05 Sep 2020 00:18:06 GMT
       etag:
-      - W/"datetime'2020-07-30T14%3A24%3A52.7533942Z'"
+      - W/"datetime'2020-09-05T00%3A18%3A06.5204794Z'"
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options:
       - nosniff
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     status:
       code: 204
       message: No Content
@@ -107,27 +109,27 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 30 Jul 2020 14:24:53 GMT
+      - Sat, 05 Sep 2020 00:18:06 GMT
       User-Agent:
-      - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 30 Jul 2020 14:24:53 GMT
+      - Sat, 05 Sep 2020 00:18:06 GMT
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     method: GET
     uri: https://storagename.table.core.windows.net/uttable419d1e08(PartitionKey='pk419d1e08',RowKey='rk419d1e08')
   response:
     body:
-      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#uttable419d1e08/@Element","odata.etag":"W/\"datetime''2020-07-30T14%3A24%3A52.7533942Z''\"","PartitionKey":"pk419d1e08","RowKey":"rk419d1e08","Timestamp":"2020-07-30T14:24:52.7533942Z","age":"abc","birthday@odata.type":"Edm.DateTime","birthday":"1991-10-04T00:00:00Z","sex":"female","sign":"aquarius"}'
+      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#uttable419d1e08/@Element","odata.etag":"W/\"datetime''2020-09-05T00%3A18%3A06.5204794Z''\"","PartitionKey":"pk419d1e08","RowKey":"rk419d1e08","Timestamp":"2020-09-05T00:18:06.5204794Z","age":"abc","birthday@odata.type":"Edm.DateTime","birthday":"1991-10-04T00:00:00Z","sex":"female","sign":"aquarius"}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Thu, 30 Jul 2020 14:24:52 GMT
+      - Sat, 05 Sep 2020 00:18:06 GMT
       etag:
-      - W/"datetime'2020-07-30T14%3A24%3A52.7533942Z'"
+      - W/"datetime'2020-09-05T00%3A18%3A06.5204794Z'"
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -135,7 +137,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     status:
       code: 200
       message: OK
@@ -143,7 +145,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -151,13 +153,13 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Thu, 30 Jul 2020 14:24:53 GMT
+      - Sat, 05 Sep 2020 00:18:06 GMT
       User-Agent:
-      - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 30 Jul 2020 14:24:53 GMT
+      - Sat, 05 Sep 2020 00:18:06 GMT
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     method: DELETE
     uri: https://storagename.table.core.windows.net/Tables('uttable419d1e08')
   response:
@@ -169,13 +171,13 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 30 Jul 2020 14:24:52 GMT
+      - Sat, 05 Sep 2020 00:18:06 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options:
       - nosniff
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     status:
       code: 204
       message: No Content

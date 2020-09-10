@@ -1,17 +1,53 @@
 # Release History
 
+## 7.0.0b6 (2020-09-10)
+
+**New Features**
+
+* `renew_lock()` now returns the UTC datetime that the lock is set to expire at.
+* `receive_deferred_messages()` can now take a single sequence number as well as a list of sequence numbers.
+* Messages can now be sent twice in succession.
+* Connection strings used with `from_connection_string` methods now support using the `SharedAccessSignature` key in leiu of `sharedaccesskey` and `sharedaccesskeyname`, taking the string of the properly constructed token as value.
+* Internal AMQP message properties (header, footer, annotations, properties, etc) are now exposed via `Message.amqp_message`
+
+**Breaking Changes**
+
+* Renamed `prefetch` to `prefetch_count`.
+* Renamed `ReceiveSettleMode` enum to `ReceiveMode`, and respectively the `mode` parameter to `receive_mode`.
+* `retry_total`, `retry_backoff_factor` and `retry_backoff_max` are now defined at the `ServiceBusClient` level and inherited by senders and receivers created from it.
+* No longer export `NEXT_AVAILABLE` in `azure.servicebus` module.  A null `session_id` will suffice.
+* Renamed parameter `message_count` to `max_message_count` as fewer messages may be present for method `peek_messages()` and `receive_messages()`.
+* Renamed `PeekMessage` to `PeekedMessage`.
+* Renamed `get_session_state()` and `set_session_state()` to `get_state()` and `set_state()` accordingly.
+* Renamed parameter `description` to `error_description` for method `dead_letter()`.
+* Renamed properties `created_time` and `modified_time` to `created_at_utc` and `modified_at_utc` within `AuthorizationRule` and `NamespaceProperties`.
+* Removed parameter `requires_preprocessing` from `SqlRuleFilter` and `SqlRuleAction`.
+* Removed property `namespace_type` from `NamespaceProperties`.
+* Rename `ServiceBusManagementClient` to `ServiceBusAdministrationClient`
+* Attempting to call `send_messages` on something not a `Message`, `BatchMessage`, or list of `Message`s, will now throw a `TypeError` instead of `ValueError`
+* Sending a message twice will no longer result in a MessageAlreadySettled exception.
+* `ServiceBusClient.close()` now closes spawned senders and receivers.
+* Attempting to initialize a sender or receiver with a different connection string entity and specified entity (e.g. `queue_name`) will result in an AuthenticationError
+* Remove `is_anonymous_accessible` from management entities.
+* Remove `support_ordering` from `create_queue` and `QueueProperties`
+* Remove `enable_subscription_partitioning` from `create_topic` and `TopicProperties`
+* `get_dead_letter_[queue,subscription]_receiver()` has been removed.  To connect to a dead letter queue, utilize the `sub_queue` parameter of `get_[queue,subscription]_receiver()` provided with a value from the `SubQueue` enum
+* No longer export `ServiceBusSharedKeyCredential`
+* Rename `entity_availability_status` to `availability_status`
+
 ## 7.0.0b5 (2020-08-10)
 
 **New Features**
 
 * Added new properties to Message, PeekMessage and ReceivedMessage: `content_type`, `correlation_id`, `label`,
 `message_id`, `reply_to`, `reply_to_session_id` and `to`. Please refer to the docstring for further information.
-* Added new properties to PeekedMessaged and ReceivedMessage: `enqueued_sequence_number`, `dead_letter_error_description`,
+* Added new properties to PeekMessage and ReceivedMessage: `enqueued_sequence_number`, `dead_letter_error_description`,
 `dead_letter_reason`, `dead_letter_source`, `delivery_count` and `expires_at_utc`. Please refer to the docstring for further information.
 * Added support for sending received messages via `ServiceBusSender.send_messages`.
 * Added `on_lock_renew_failure` as a parameter to `AutoLockRenew.register`, taking a callback for when the lock is lost non-intentially (e.g. not via settling, shutdown, or autolockrenew duration completion).
 * Added new supported value types int, float, datetime and timedelta for `CorrelationFilter.properties`.
 * Added new properties `parameters` and `requires_preprocessing` to `SqlRuleFilter` and `SqlRuleAction`.
+* Added an explicit method to fetch the continuous receiving iterator, `get_streaming_message_iter()` such that `max_wait_time` can be specified as an override.
 
 **Breaking Changes**
 
@@ -21,24 +57,22 @@
   - Removed property `enqueue_sequence_number`.
   - Removed property `annotations`.
   - Removed instance variable `header`.
-
 * Removed several properties and instance variables on PeekMessage and ReceivedMessage.
   - Removed property `partition_id` on both type.
   - Removed property `settled` on both type.
   - Removed instance variable `received_timestamp_utc` on both type.
   - Removed property `settled` on `PeekMessage`.
   - Removed property `expired` on `ReceivedMessage`.
-
 * `AutoLockRenew.sleep_time` and `AutoLockRenew.renew_period` have been made internal as `_sleep_time` and `_renew_period` respectively, as it is not expected a user will have to interact with them.
 * `AutoLockRenew.shutdown` is now `AutoLockRenew.close` to normalize with other equivalent behaviors.
-
 * Renamed `QueueDescription`, `TopicDescription`, `SubscriptionDescription` and `RuleDescription` to `QueueProperties`, `TopicProperties`, `SubscriptionProperties`, and `RuleProperties`.
 * Renamed `QueueRuntimeInfo`, `TopicRuntimeInfo`, and `SubscriptionRuntimeInfo` to `QueueRuntimeProperties`, `TopicRuntimeProperties`, and `SubscriptionRuntimeProperties`.
 * Removed param `queue` from `create_queue`, `topic` from `create_topic`, `subscription` from `create_subscription` and `rule` from `create_rule`
  of `ServiceBusManagementClient`. Added param `name` to them and keyword arguments for queue properties, topic properties, subscription properties and rule properties.
 * Removed model class attributes related keyword arguments from `update_queue` and `update_topic` of `ServiceBusManagementClient`. This is to encourage utilizing the model class instance instead as returned from a create_\*, list_\* or get_\* operation to ensure it is properly populated.  Properties may still be modified.
 * Model classes `QueueProperties`, `TopicProperties`, `SubscriptionProperties` and `RuleProperties` require all arguments to be present for creation.  This is to protect against lack of partial updates by requiring all properties to be specified.
-
+* Renamed `idle_timeout` in `get_<queue/subscription>_receiver()` to `max_wait_time` to normalize with naming elsewhere.
+* Updated uAMQP dependency to 1.2.10 such that the receiver does not shut down when generator times out, and can be received from again.
 
 ## 7.0.0b4 (2020-07-06)
 

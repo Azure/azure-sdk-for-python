@@ -62,7 +62,7 @@ container = database.get_container_client(container_name)
 # [START list_containers]
 database = client.get_database_client(database_name)
 for container in database.list_containers():
-    print("Container ID: {}".format(container.id))
+    print("Container ID: {}".format(container['id']))
 # [END list_containers]
 
 # Insert new items by defining a dict and calling Container.upsert_item

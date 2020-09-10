@@ -6,7 +6,7 @@ interactions:
       was not as good as I hoped.", "language": ""}]}'
     headers:
       Accept:
-      - application/json
+      - application/json, text/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -16,21 +16,23 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/1.0.1 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.1/entities/recognition/pii?showStats=false
+    uri: https://westcentralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.2/entities/recognition/pii?showStats=false&stringIndexType=UnicodeCodePoint
   response:
     body:
-      string: '{"documents":[{"id":"0","entities":[],"warnings":[]},{"id":"1","entities":[],"warnings":[]},{"id":"2","entities":[],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}'
+      string: '{"documents":[{"redactedText":"This was the best day of my life.","id":"0","entities":[],"warnings":[]},{"redactedText":"I
+        did not like the hotel we stayed at. It was too expensive.","id":"1","entities":[],"warnings":[]},{"redactedText":"The
+        restaurant was not as good as I hoped.","id":"2","entities":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}'
     headers:
       apim-request-id:
-      - 0f25d1cb-0166-4738-8795-84c423d91cea
+      - 28f165ac-5570-4d6e-bbf0-74f822ec5713
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=3
       date:
-      - Thu, 23 Jul 2020 17:18:55 GMT
+      - Thu, 10 Sep 2020 15:25:45 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -38,7 +40,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '89'
+      - '73'
     status:
       code: 200
       message: OK

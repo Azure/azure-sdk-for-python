@@ -1,7 +1,13 @@
 # Release History
 
-## 5.2.0b2 (Unreleased)
+## 5.2.1 (Unreleased)
 
+
+## 5.2.0 (2020-09-08)
+
+**New Features**
+
+- Connection strings used with `from_connection_string` methods now supports using the `SharedAccessSignature` key in leiu of `sharedaccesskey` and `sharedaccesskeyname`, taking the string of the properly constructed token as value.
 
 ## 5.2.0b1 (2020-07-06)
 
@@ -155,7 +161,7 @@ after which the underlying connection will close if there is no further activity
 **Breaking changes**
 
 - Removed support for IoT Hub direct connection.
-    - [EventHubs compatible connection string](https://docs.microsoft.com/en-us/azure/iot-hub/iot-hub-devguide-messages-read-builtin) of an IotHub can be used to create `EventHubClient` and read properties or events from an IoT Hub.
+    - [EventHubs compatible connection string](https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-messages-read-builtin) of an IotHub can be used to create `EventHubClient` and read properties or events from an IoT Hub.
 - Removed support for sending EventData to IoT Hub.
 - Removed parameter `exception` in method `close()` of `EventHubConsumer` and `EventHubProcuer`.
 - Updated uAMQP dependency to 1.2.3.
@@ -194,7 +200,7 @@ after which the underlying connection will close if there is no further activity
     - `backoff_max`: The maximum delay time in total.
 - Added support for context manager on `EventHubClient`.
 - Added new error type `OperationTimeoutError` for send operation.
-- Introduced a new class `EventProcessor` which replaces the older concept of [Event Processor Host](https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-event-processor-host). This early preview is intended to allow users to test the new design using a single instance of `EventProcessor`. The ability to checkpoints to a durable store will be added in future updates.
+- Introduced a new class `EventProcessor` which replaces the older concept of [Event Processor Host](https://docs.microsoft.com/azure/event-hubs/event-hubs-event-processor-host). This early preview is intended to allow users to test the new design using a single instance of `EventProcessor`. The ability to checkpoints to a durable store will be added in future updates.
     - `EventProcessor`: EventProcessor creates and runs consumers for all partitions of the eventhub.
     - `PartitionManager`: PartitionManager defines the interface for getting/claiming ownerships of partitions and updating checkpoints.
     - `PartitionProcessor`: PartitionProcessor defines the interface for processing events.

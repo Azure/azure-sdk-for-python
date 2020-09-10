@@ -11,12 +11,13 @@ from typing import (  # pylint: disable=unused-import
 )
 
 from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.exceptions import ResourceNotFoundError
 
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 from .._shared.policies_async import ExponentialRetry
 from .._shared.response_handlers import return_response_headers, process_storage_error
-from .._deserialize import get_page_ranges_result
-from .._serialize import get_modify_conditions, get_api_version
+from .._deserialize import get_page_ranges_result, parse_tags
+from .._serialize import get_modify_conditions, get_api_version, get_access_conditions
 from .._generated import VERSION
 from .._generated.aio import AzureBlobStorage
 from .._generated.models import StorageErrorException, CpkInfo
@@ -27,9 +28,9 @@ from ._upload_helpers import (
     upload_append_blob,
     upload_page_blob)
 from .._models import BlobType, BlobBlock, BlobProperties
-from .._lease import get_access_conditions
 from ._lease_async import BlobLeaseClient
 from ._download_async import StorageStreamDownloader
+
 
 if TYPE_CHECKING:
     from datetime import datetime
@@ -461,6 +462,31 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             process_storage_error(error)
 
     @distributed_trace_async
+    async def exists(self, **kwargs):
+        # type: (**Any) -> bool
+        """
+        Returns True if a blob exists with the defined parameters, and returns
+        False otherwise.
+
+        :param str version_id:
+            The version id parameter is an opaque DateTime
+            value that, when present, specifies the version of the blob to check if it exists.
+        :param int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: boolean
+        """
+        try:
+            await self._client.blob.get_properties(
+                snapshot=self.snapshot,
+                **kwargs)
+            return True
+        except StorageErrorException as error:
+            try:
+                process_storage_error(error)
+            except ResourceNotFoundError:
+                return False
+
+    @distributed_trace_async
     async def get_blob_properties(self, **kwargs):
         # type: (Any) -> BlobProperties
         """Returns all user-defined metadata, standard HTTP properties, and
@@ -541,6 +567,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         except StorageErrorException as error:
             process_storage_error(error)
         blob_props.name = self.blob_name
+        blob_props.snapshot = self.snapshot
         blob_props.container = self.container_name
         return blob_props # type: ignore
 
@@ -1018,6 +1045,11 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             this is only applicable to block blobs on standard storage accounts.
         :keyword ~azure.storage.blob.RehydratePriority rehydrate_priority:
             Indicates the priority with which to rehydrate an archived blob
+        :keyword bool seal_destination_blob:
+            Seal the destination append blob. This operation is only for append blob.
+
+            .. versionadded:: 12.4.0
+
         :keyword bool requires_sync:
             Enforces that the service will not return a response until the copy is complete.
         :returns: A dictionary of copy properties (etag, last_modified, copy_id, copy_status).
@@ -1033,7 +1065,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
                 :caption: Copy a blob from a URL.
         """
         options = self._start_copy_from_url_options(
-            source_url,
+            source_url=self._encode_source_url(source_url),
             metadata=metadata,
             incremental_copy=incremental_copy,
             **kwargs)
@@ -1283,7 +1315,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         """
         options = self._stage_block_from_url_options(
             block_id,
-            source_url,
+            source_url=self._encode_source_url(source_url),
             source_offset=source_offset,
             source_length=source_length,
             source_content_md5=source_content_md5,
@@ -1529,7 +1561,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         options = self._get_blob_tags_options(**kwargs)
         try:
             _, tags = await self._client.blob.get_tags(**options)
-            return BlobProperties._parse_tags(tags)  # pylint: disable=protected-access
+            return parse_tags(tags)  # pylint: disable=protected-access
         except StorageErrorException as error:
             process_storage_error(error)
 
@@ -1987,7 +2019,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         """
 
         options = self._upload_pages_from_url_options(
-            source_url=source_url,
+            source_url=self._encode_source_url(source_url),
             offset=offset,
             length=length,
             source_offset=source_offset,
@@ -2246,12 +2278,57 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             The timeout parameter is expressed in seconds.
         """
         options = self._append_block_from_url_options(
-            copy_source_url,
+            copy_source_url=self._encode_source_url(copy_source_url),
             source_offset=source_offset,
             source_length=source_length,
             **kwargs
         )
         try:
             return await self._client.append_blob.append_block_from_url(**options)  # type: ignore
+        except StorageErrorException as error:
+            process_storage_error(error)
+
+    @distributed_trace_async()
+    async def seal_append_blob(self, **kwargs):
+        # type: (...) -> Dict[str, Union[str, datetime, int]]
+        """The Seal operation seals the Append Blob to make it read-only.
+
+            .. versionadded:: 12.4.0
+
+        :keyword int appendpos_condition:
+            Optional conditional header, used only for the Append Block operation.
+            A number indicating the byte offset to compare. Append Block will
+            succeed only if the append position is equal to this number. If it
+            is not, the request will fail with the AppendPositionConditionNotMet error
+            (HTTP status code 412 - Precondition Failed).
+        :keyword lease:
+            Required if the blob has an active lease. Value can be a BlobLeaseClient object
+            or the lease ID as a string.
+        :paramtype lease: ~azure.storage.blob.BlobLeaseClient or str
+        :keyword ~datetime.datetime if_modified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only
+            if the resource has been modified since the specified time.
+        :keyword ~datetime.datetime if_unmodified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only if
+            the resource has not been modified since the specified date/time.
+        :keyword str etag:
+            An ETag value, or the wildcard character (*). Used to check if the resource has changed,
+            and act according to the condition specified by the `match_condition` parameter.
+        :keyword ~azure.core.MatchConditions match_condition:
+            The match condition to use upon the etag.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: Blob-updated property dict (Etag, last modified, append offset, committed block count).
+        :rtype: dict(str, Any)
+        """
+        options = self._seal_append_blob_options(**kwargs)
+        try:
+            return await self._client.append_blob.seal(**options) # type: ignore
         except StorageErrorException as error:
             process_storage_error(error)

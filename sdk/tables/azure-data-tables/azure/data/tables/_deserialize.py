@@ -16,7 +16,6 @@ from azure.core.exceptions import ResourceExistsError
 
 from ._entity import EntityProperty, EdmType, TableEntity
 from ._common_conversion import _decode_base64_to_bytes
-from ._generated.models import TableProperties
 from ._error import TableErrorCode
 
 if TYPE_CHECKING:
@@ -62,11 +61,11 @@ def _deserialize_table_creation(response, _, headers):
 
 
 def _from_entity_binary(value):
-    return EntityProperty(EdmType.BINARY, _decode_base64_to_bytes(value))
+    return EntityProperty(_decode_base64_to_bytes(value))
 
 
 def _from_entity_int32(value):
-    return EntityProperty(EdmType.INT32, int(value))
+    return EntityProperty(int(value))
 
 
 zero = datetime.timedelta(0)  # same as 00:00
@@ -93,6 +92,8 @@ def _from_entity_datetime(value):
 def _from_entity_guid(value):
     return UUID(value)
 
+def _from_entity_str(value):
+    return EntityProperty(value=value, type=EdmType.STRING)
 
 _EDM_TYPES = [EdmType.BINARY, EdmType.INT64, EdmType.GUID, EdmType.DATETIME,
               EdmType.STRING, EdmType.INT32, EdmType.DOUBLE, EdmType.BOOLEAN]
@@ -104,6 +105,7 @@ _ENTITY_TO_PYTHON_CONVERSIONS = {
     EdmType.DOUBLE: float,
     EdmType.DATETIME: _from_entity_datetime,
     EdmType.GUID: _from_entity_guid,
+    EdmType.STRING: _from_entity_str
 }
 
 
@@ -160,8 +162,16 @@ def _convert_to_entity(entry_element):
         mtype = edmtypes.get(name)
 
         # Add type for Int32
-        if type(value) is int:  # pylint:disable=C0123
+        if type(value) is int and mtype is None:  # pylint:disable=C0123
             mtype = EdmType.INT32
+
+        # Add type for String, keeps
+        try:
+            if type(value) is unicode and mtype is None: # pylint:disable=C0123
+                mtype = EdmType.STRING
+        except NameError:
+            if type(value) is str and mtype is None: # pylint:disable=C0123
+                mtype = EdmType.STRING
 
         # no type info, property should parse automatically
         if not mtype:
@@ -207,3 +217,12 @@ def _return_headers_and_deserialized(response, deserialized, response_headers): 
 
 def _return_context_and_deserialized(response, deserialized, response_headers):  # pylint: disable=unused-argument
     return response.http_response.location_mode, deserialized, response_headers
+
+
+def _trim_service_metadata(metadata):
+    # type: (dict[str,str] -> None)
+    return {
+        "date": metadata.pop("date", None),
+        "etag": metadata.pop("etag", None),
+        "version": metadata.pop("version", None)
+    }

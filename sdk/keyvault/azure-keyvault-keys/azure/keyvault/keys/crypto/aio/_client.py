@@ -344,8 +344,9 @@ class CryptographyClient(AsyncKeyVaultClientBase):
 
         :param algorithm: verification algorithm
         :type algorithm: :class:`~azure.keyvault.keys.crypto.SignatureAlgorithm`
-        :param bytes digest:
-        :param bytes signature:
+        :param bytes digest: Pre-hashed digest corresponding to **signature**. The hash algorithm used must be
+          compatible with **algorithm**.
+        :param bytes signature: signature to verify
         :rtype: :class:`~azure.keyvault.keys.crypto.VerifyResult`
 
         Example:

@@ -13,7 +13,7 @@ from time import sleep
 import pytest
 import requests
 
-from _shared.testcase import StorageTestCase, LogCaptured, GlobalStorageAccountPreparer
+from _shared.testcase import StorageTestCase, LogCaptured, GlobalStorageAccountPreparer, GlobalResourceGroupPreparer, StorageAccountPreparer
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceExistsError, ResourceModifiedError
 from azure.storage.blob import (
     BlobServiceClient,
@@ -25,7 +25,7 @@ from azure.storage.blob import (
     PremiumPageBlobTier,
     generate_container_sas,
     PartialBatchErrorException,
-    generate_account_sas, ResourceTypes, AccountSasPermissions)
+    generate_account_sas, ResourceTypes, AccountSasPermissions, ContainerClient, ContentSettings)
 
 #------------------------------------------------------------------------------
 TEST_CONTAINER_PREFIX = 'container'
@@ -827,6 +827,20 @@ class StorageContainerTest(StorageTestCase):
 
         self.assertEqual(blobs, ['blob1', 'blob2'])
 
+    @GlobalStorageAccountPreparer()
+    def test_list_blobs_returns_rehydrate_priority(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
+        container = self._create_container(bsc)
+        data = b'hello world'
+
+        blob_client = container.get_blob_client('blob1')
+        blob_client.upload_blob(data, standard_blob_tier=StandardBlobTier.Archive)
+        blob_client.set_standard_blob_tier(StandardBlobTier.Hot)
+
+        # Act
+        for blob_properties in container.list_blobs():
+            if blob_properties.name == blob_client.blob_name:
+                self.assertEqual(blob_properties.rehydrate_priority, "Standard")
 
     @GlobalStorageAccountPreparer()
     def test_list_blobs(self, resource_group, location, storage_account, storage_account_key):
@@ -849,6 +863,31 @@ class StorageContainerTest(StorageTestCase):
         self.assertEqual(blobs[1].content_settings.content_type,
                          'application/octet-stream')
         self.assertIsNotNone(blobs[0].creation_time)
+
+    @pytest.mark.playback_test_only
+    @GlobalStorageAccountPreparer()
+    def test_list_blobs_with_object_replication_policy(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
+        container = self._create_container(bsc)
+        data = b'hello world'
+        b_c = container.get_blob_client('blob1')
+        b_c.upload_blob(data, overwrite=True)
+        metadata = {'hello': 'world', 'number': '42'}
+        b_c.set_blob_metadata(metadata)
+
+        prop = b_c.get_blob_properties()
+
+        container.get_blob_client('blob2').upload_blob(data, overwrite=True)
+
+        # Act
+        blobs_list = container.list_blobs()
+        number_of_blobs_with_policy = 0
+        for blob in blobs_list:
+            if blob.object_replication_source_properties != None:
+                number_of_blobs_with_policy += 1
+
+        # Assert
+        self.assertIsNot(number_of_blobs_with_policy, 0)
 
     @GlobalStorageAccountPreparer()
     def test_list_blobs_leased_blob(self, resource_group, location, storage_account, storage_account_key):
@@ -935,13 +974,17 @@ class StorageContainerTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_list_blobs_with_include_metadata(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
-        pytest.skip("Waiting on metadata XML fix in msrest")
+        # pytest.skip("Waiting on metadata XML fix in msrest")
         container = self._create_container(bsc)
         data = b'hello world'
+        content_settings = ContentSettings(
+            content_language='spanish',
+            content_disposition='inline')
         blob1 = container.get_blob_client('blob1')
-        blob1.upload_blob(data, metadata={'number': '1', 'name': 'bob'})
+        blob1.upload_blob(data, overwrite=True, content_settings=content_settings, metadata={'number': '1', 'name': 'bob'})
         blob1.create_snapshot()
-        container.get_blob_client('blob2').upload_blob(data, metadata={'number': '2', 'name': 'car'})
+
+        container.get_blob_client('blob2').upload_blob(data, overwrite=True, content_settings=content_settings, metadata={'number': '2', 'name': 'car'})
 
         # Act
         blobs =list(container.list_blobs(include="metadata"))
@@ -954,6 +997,8 @@ class StorageContainerTest(StorageTestCase):
         self.assertEqual(blobs[1].name, 'blob2')
         self.assertEqual(blobs[1].metadata['number'], '2')
         self.assertEqual(blobs[1].metadata['name'], 'car')
+        self.assertEqual(blobs[1].content_settings.content_language, 'spanish')
+        self.assertEqual(blobs[1].content_settings.content_disposition, 'inline')
 
     @GlobalStorageAccountPreparer()
     def test_list_blobs_with_include_uncommittedblobs(self, resource_group, location, storage_account, storage_account_key):
@@ -1034,6 +1079,11 @@ class StorageContainerTest(StorageTestCase):
         self.assertNamedItemInContainer(resp, 'b/')
         self.assertNamedItemInContainer(resp, 'blob4')
 
+    def test_batch_delete_empty_blob_list(self):
+        container_client = ContainerClient("https://mystorageaccount.blob.core.windows.net", "container")
+        blob_list = list()
+        container_client.delete_blobs(*blob_list)
+
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="Batch not supported on Python 2.7")
     @GlobalStorageAccountPreparer()
     def test_delete_blobs_simple(self, resource_group, location, storage_account, storage_account_key):
@@ -1063,7 +1113,8 @@ class StorageContainerTest(StorageTestCase):
         assert response[2].status_code == 202
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="Batch not supported on Python 2.7")
-    @GlobalStorageAccountPreparer()
+    @GlobalResourceGroupPreparer()
+    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='storagename')
     def test_delete_blobs_with_if_tags(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
@@ -1269,8 +1320,67 @@ class StorageContainerTest(StorageTestCase):
             raise_on_any_failure=False
         )
 
+    @pytest.mark.playback_test_only
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="Batch not supported on Python 2.7")
     @GlobalStorageAccountPreparer()
+    def test_batch_set_standard_blob_tier_for_version(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
+        container = self._create_container(bsc)
+        tiers = [StandardBlobTier.Archive, StandardBlobTier.Cool, StandardBlobTier.Hot]
+
+        for tier in tiers:
+            response = container.delete_blobs(
+                'blob1',
+                'blob2',
+                'blob3',
+                raise_on_any_failure=False
+            )
+            blob = container.get_blob_client('blob1')
+            blob2 = container.get_blob_client('blob2')
+            blob3 = container.get_blob_client('blob3')
+            data = b'hello world'
+            resp1 = blob.upload_blob(data, overwrite=True)
+            resp2 = blob2.upload_blob(data, overwrite=True)
+            resp3 = blob3.upload_blob(data, overwrite=True)
+            snapshot = blob3.create_snapshot()
+
+            data2 = b'abc'
+            blob.upload_blob(data2, overwrite=True)
+            blob2.upload_blob(data2, overwrite=True)
+            blob3.upload_blob(data2, overwrite=True)
+
+            prop = blob.get_blob_properties()
+
+            parts = container.set_standard_blob_tier_blobs(
+                tier,
+                prop,
+                {'name': 'blob2', 'version_id': resp2['version_id']},
+                {'name': 'blob3', 'snapshot': snapshot['snapshot']},
+                raise_on_any_failure=False
+            )
+
+            parts = list(parts)
+            assert len(parts) == 3
+
+            assert parts[0].status_code in [200, 202]
+            assert parts[1].status_code in [200, 202]
+            assert parts[2].status_code in [200, 202]
+
+            blob_ref2 = blob.get_blob_properties()
+            assert tier == blob_ref2.blob_tier
+            assert not blob_ref2.blob_tier_inferred
+            assert blob_ref2.blob_tier_change_time is not None
+
+        response = container.delete_blobs(
+            'blob1',
+            'blob2',
+            'blob3',
+            raise_on_any_failure=False
+        )
+        
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="Batch not supported on Python 2.7")
+    @GlobalResourceGroupPreparer()
+    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='storagename')
     def test_standard_blob_tier_with_if_tags(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
         container = self._create_container(bsc)
@@ -1596,7 +1706,7 @@ class StorageContainerTest(StorageTestCase):
         self.assertEqual(permission.read, True)
         self.assertEqual(permission.list, True)
         self.assertEqual(permission.write, True)
-        self.assertEqual(permission._str, 'wrlx')
+        self.assertEqual(permission._str, 'rwxl')
 
     @GlobalStorageAccountPreparer()
     def test_download_blob(self, resource_group, location, storage_account, storage_account_key):

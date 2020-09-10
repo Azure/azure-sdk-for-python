@@ -20,19 +20,18 @@ from ...management._generated.models import QueueDescriptionFeed, TopicDescripti
     QueueDescriptionEntry, SubscriptionDescriptionFeed, SubscriptionDescriptionEntry, RuleDescriptionEntry, \
     RuleDescriptionFeed, NamespacePropertiesEntry, CreateTopicBody, CreateTopicBodyContent, \
     TopicDescriptionFeed, CreateSubscriptionBody, CreateSubscriptionBodyContent, CreateRuleBody, \
-    CreateRuleBodyContent, CreateQueueBody, CreateQueueBodyContent, \
-    NamespaceProperties
+    CreateRuleBodyContent, CreateQueueBody, CreateQueueBodyContent
 
 from ..._common.utils import parse_conn_str
 from ..._common.constants import JWT_TOKEN_SCOPE
-from ...aio._base_handler_async import ServiceBusSharedKeyCredential
+from ...aio._base_handler_async import ServiceBusSharedKeyCredential, ServiceBusSASTokenCredential
 from ...management._generated.aio._configuration_async import ServiceBusManagementClientConfiguration
 from ...management._generated.aio._service_bus_management_client_async import ServiceBusManagementClient \
     as ServiceBusManagementClientImpl
 from ...management import _constants as constants
 from ._shared_key_policy_async import AsyncServiceBusSharedKeyCredentialPolicy
 from ...management._models import QueueRuntimeProperties, QueueProperties, TopicProperties, TopicRuntimeProperties, \
-    SubscriptionProperties, SubscriptionRuntimeProperties, RuleProperties
+    SubscriptionProperties, SubscriptionRuntimeProperties, RuleProperties, NamespaceProperties
 from ...management._xml_workaround_policy import ServiceBusXMLWorkaroundPolicy
 from ...management._handle_response_error import _handle_response_error
 from ...management._model_workaround import avoid_timedelta_overflow
@@ -44,17 +43,17 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential  # pylint:disable=ungrouped-imports
 
 
-class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
+class ServiceBusAdministrationClient:  #pylint:disable=too-many-public-methods
     """Use this client to create, update, list, and delete resources of a ServiceBus namespace.
 
     :param str fully_qualified_namespace: The fully qualified host name for the Service Bus namespace.
     :param credential: To authenticate to manage the entities of the ServiceBus namespace.
-    :type credential: Union[AsyncTokenCredential, ~azure.servicebus.aio.ServiceBusSharedKeyCredential]
+    :type credential: AsyncTokenCredential
     """
 
     def __init__(
             self, fully_qualified_namespace: str,
-            credential: Union["AsyncTokenCredential", ServiceBusSharedKeyCredential],
+            credential: Union["AsyncTokenCredential"],
             **kwargs) -> None:
 
         self.fully_qualified_namespace = fully_qualified_namespace
@@ -64,7 +63,7 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
         self._pipeline = self._build_pipeline()
         self._impl = ServiceBusManagementClientImpl(endpoint=fully_qualified_namespace, pipeline=self._pipeline)
 
-    async def __aenter__(self) -> "ServiceBusManagementClient":
+    async def __aenter__(self) -> "ServiceBusAdministrationClient":
         await self._impl.__aenter__()
         return self
 
@@ -130,16 +129,20 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
         return element
 
     @classmethod
-    def from_connection_string(cls, conn_str: str, **kwargs) -> "ServiceBusManagementClient":
+    def from_connection_string(cls, conn_str: str, **kwargs: Any) -> "ServiceBusAdministrationClient":
         """Create a client from connection string.
 
         :param str conn_str: The connection string of the Service Bus Namespace.
-        :rtype: ~azure.servicebus.management.aio.ServiceBusManagementClient
+        :rtype: ~azure.servicebus.management.aio.ServiceBusAdministrationClient
         """
-        endpoint, shared_access_key_name, shared_access_key, _ = parse_conn_str(conn_str)
+        endpoint, shared_access_key_name, shared_access_key, _, token, token_expiry = parse_conn_str(conn_str)
+        if token and token_expiry:
+            credential = ServiceBusSASTokenCredential(token, token_expiry)
+        elif shared_access_key_name and shared_access_key:
+            credential = ServiceBusSharedKeyCredential(shared_access_key_name, shared_access_key) # type: ignore
         if "//" in endpoint:
             endpoint = endpoint[endpoint.index("//")+2:]
-        return cls(endpoint, ServiceBusSharedKeyCredential(shared_access_key_name, shared_access_key), **kwargs)
+        return cls(endpoint, credential, **kwargs) # type: ignore
 
     async def get_queue(self, queue_name: str, **kwargs) -> QueueProperties:
         """Get the properties of a queue.
@@ -155,7 +158,7 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
             entry.content.queue_description)
         return queue_description
 
-    async def get_queue_runtime_info(self, queue_name: str, **kwargs) -> QueueRuntimeProperties:
+    async def get_queue_runtime_properties(self, queue_name: str, **kwargs) -> QueueRuntimeProperties:
         """Get the runtime information of a queue.
 
         :param str queue_name: The name of the queue.
@@ -165,9 +168,9 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
         entry = QueueDescriptionEntry.deserialize(entry_ele)
         if not entry.content:
             raise ResourceNotFoundError("Queue {} does not exist".format(queue_name))
-        runtime_info = QueueRuntimeProperties._from_internal_entity(queue_name,
+        runtime_properties = QueueRuntimeProperties._from_internal_entity(queue_name,
             entry.content.queue_description)
-        return runtime_info
+        return runtime_properties
 
     async def create_queue(self, name: str, **kwargs) -> QueueProperties:
         """Create a queue.
@@ -198,9 +201,6 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
         :keyword enable_partitioning: A value that indicates whether the queue is to be partitioned
          across multiple message brokers.
         :type enable_partitioning: bool
-        :keyword is_anonymous_accessible: A value indicating if the resource can be accessed without
-         authorization.
-        :type is_anonymous_accessible: bool
         :keyword lock_duration: ISO 8601 timespan duration of a peek-lock; that is, the amount of time
          that the message is locked for other receivers. The maximum value for LockDuration is 5
          minutes; the default value is 1 minute.
@@ -223,8 +223,6 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
         :keyword user_metadata: Custom metdata that user can associate with the description. Max length
          is 1024 chars.
         :type user_metadata: str
-        :keyword support_ordering: A value that indicates whether the queue supports ordering.
-        :type support_ordering: bool
         :keyword forward_dead_lettered_messages_to: The name of the recipient entity to which all the
          dead-lettered messages of this subscription are forwarded to.
         :type forward_dead_lettered_messages_to: str
@@ -238,18 +236,16 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
             dead_lettering_on_message_expiration=kwargs.pop("dead_lettering_on_message_expiration", None),
             default_message_time_to_live=kwargs.pop("default_message_time_to_live", None),
             duplicate_detection_history_time_window=kwargs.pop("duplicate_detection_history_time_window", None),
-            entity_availability_status=kwargs.pop("entity_availability_status", None),
+            availability_status=None,
             enable_batched_operations=kwargs.pop("enable_batched_operations", None),
             enable_express=kwargs.pop("enable_express", None),
             enable_partitioning=kwargs.pop("enable_partitioning", None),
-            is_anonymous_accessible=kwargs.pop("is_anonymous_accessible", None),
             lock_duration=kwargs.pop("lock_duration", None),
             max_delivery_count=kwargs.pop("max_delivery_count", None),
             max_size_in_megabytes=kwargs.pop("max_size_in_megabytes", None),
             requires_duplicate_detection=kwargs.pop("requires_duplicate_detection", None),
             requires_session=kwargs.pop("requires_session", None),
             status=kwargs.pop("status", None),
-            support_ordering=kwargs.pop("support_ordering", None),
             forward_to=kwargs.pop("forward_to", None),
             forward_dead_lettered_messages_to=kwargs.pop("forward_dead_lettered_messages_to", None),
             user_metadata=kwargs.pop("user_metadata", None)
@@ -322,7 +318,7 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
         with _handle_response_error():
             await self._impl.entity.delete(queue_name, api_version=constants.API_VERSION, **kwargs)
 
-    def list_queues(self, **kwargs) -> AsyncItemPaged[QueueProperties]:
+    def list_queues(self, **kwargs: Any) -> AsyncItemPaged[QueueProperties]:
         """List the queues of a ServiceBus namespace.
 
         :returns: An iterable (auto-paging) response of QueueProperties.
@@ -342,7 +338,7 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
         return AsyncItemPaged(
             get_next, extract_data)
 
-    def list_queues_runtime_info(self, **kwargs) -> AsyncItemPaged[QueueRuntimeProperties]:
+    def list_queues_runtime_properties(self, **kwargs: Any) -> AsyncItemPaged[QueueRuntimeProperties]:
         """List the runtime information of the queues in a ServiceBus namespace.
 
         :returns: An iterable (auto-paging) response of QueueRuntimeProperties.
@@ -375,7 +371,7 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
         topic_description = TopicProperties._from_internal_entity(topic_name, entry.content.topic_description)
         return topic_description
 
-    async def get_topic_runtime_info(self, topic_name: str, **kwargs) -> TopicRuntimeProperties:
+    async def get_topic_runtime_properties(self, topic_name: str, **kwargs) -> TopicRuntimeProperties:
         """Get the runtime information of a topic.
 
         :param str topic_name: The name of the topic.
@@ -413,9 +409,6 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
         :type size_in_bytes: int
         :keyword filtering_messages_before_publishing: Filter messages before publishing.
         :type filtering_messages_before_publishing: bool
-        :keyword is_anonymous_accessible: A value indicating if the resource can be accessed without
-         authorization.
-        :type is_anonymous_accessible: bool
         :keyword authorization_rules: Authorization rules for resource.
         :type authorization_rules:
          list[~azure.servicebus.management.AuthorizationRule]
@@ -427,9 +420,6 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
         :keyword enable_partitioning: A value that indicates whether the topic is to be partitioned
          across multiple message brokers.
         :type enable_partitioning: bool
-        :keyword enable_subscription_partitioning: A value that indicates whether the topic's
-         subscription is to be partitioned.
-        :type enable_subscription_partitioning: bool
         :keyword enable_express: A value that indicates whether Express Entities are enabled. An express
          queue holds a message in memory temporarily before writing it to persistent storage.
         :type enable_express: bool
@@ -447,14 +437,12 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
             duplicate_detection_history_time_window=kwargs.pop("duplicate_detection_history_time_window", None),
             enable_batched_operations=kwargs.pop("enable_batched_operations", None),
             size_in_bytes=kwargs.pop("size_in_bytes", None),
-            is_anonymous_accessible=kwargs.pop("is_anonymous_accessible", None),
             authorization_rules=kwargs.pop("authorization_rules", None),
             status=kwargs.pop("status", None),
             support_ordering=kwargs.pop("support_ordering", None),
             auto_delete_on_idle=kwargs.pop("auto_delete_on_idle", None),
             enable_partitioning=kwargs.pop("enable_partitioning", None),
-            entity_availability_status=kwargs.pop("entity_availability_status", None),
-            enable_subscription_partitioning=kwargs.pop("enable_subscription_partitioning", None),
+            availability_status=None,
             enable_express=kwargs.pop("enable_express", None),
             user_metadata=kwargs.pop("user_metadata", None)
         )
@@ -522,7 +510,7 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
             topic_name = topic
         await self._impl.entity.delete(topic_name, api_version=constants.API_VERSION, **kwargs)
 
-    def list_topics(self, **kwargs) -> AsyncItemPaged[TopicProperties]:
+    def list_topics(self, **kwargs: Any) -> AsyncItemPaged[TopicProperties]:
         """List the topics of a ServiceBus namespace.
 
         :returns: An iterable (auto-paging) response of TopicProperties.
@@ -541,7 +529,7 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
         return AsyncItemPaged(
             get_next, extract_data)
 
-    def list_topics_runtime_info(self, **kwargs) -> AsyncItemPaged[TopicRuntimeProperties]:
+    def list_topics_runtime_properties(self, **kwargs: Any) -> AsyncItemPaged[TopicRuntimeProperties]:
         """List the topics runtime information of a ServiceBus namespace.
 
         :returns: An iterable (auto-paging) response of TopicRuntimeProperties.
@@ -582,7 +570,7 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
             entry.title, entry.content.subscription_description)
         return subscription
 
-    async def get_subscription_runtime_info(
+    async def get_subscription_runtime_properties(
             self, topic: Union[str, TopicProperties], subscription_name: str, **kwargs
     ) -> SubscriptionRuntimeProperties:
         """Get a topic subscription runtime info.
@@ -669,7 +657,7 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
             user_metadata=kwargs.pop("user_metadata", None),
             forward_dead_lettered_messages_to=kwargs.pop("forward_dead_lettered_messages_to", None),
             auto_delete_on_idle=kwargs.pop("auto_delete_on_idle", None),
-            entity_availability_status=kwargs.pop("entity_availability_status", None),
+            availability_status=None,
         )
         to_create = subscription._to_internal_entity()  # type: ignore  # pylint:disable=protected-access
 
@@ -753,7 +741,7 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
         await self._impl.subscription.delete(topic_name, subscription_name, api_version=constants.API_VERSION, **kwargs)
 
     def list_subscriptions(
-            self, topic: Union[str, TopicProperties], **kwargs) -> AsyncItemPaged[SubscriptionProperties]:
+            self, topic: Union[str, TopicProperties], **kwargs: Any) -> AsyncItemPaged[SubscriptionProperties]:
         """List the subscriptions of a ServiceBus Topic.
 
         :param Union[str, ~azure.servicebus.management.TopicProperties] topic: The topic that owns the subscription.
@@ -779,8 +767,8 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
         return AsyncItemPaged(
             get_next, extract_data)
 
-    def list_subscriptions_runtime_info(
-            self, topic: Union[str, TopicProperties], **kwargs) -> AsyncItemPaged[SubscriptionRuntimeProperties]:
+    def list_subscriptions_runtime_properties(
+            self, topic: Union[str, TopicProperties], **kwargs: Any) -> AsyncItemPaged[SubscriptionRuntimeProperties]:
         """List the subscriptions runtime information of a ServiceBus.
 
         :param Union[str, ~azure.servicebus.management.TopicProperties] topic: The topic that owns the subscription.
@@ -866,7 +854,7 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
             name,
             filter=kwargs.pop("filter", None),
             action=kwargs.pop("action", None),
-            created_at=None
+            created_at_utc=None
         )
         to_create = rule._to_internal_entity()
 
@@ -960,7 +948,10 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
             topic_name, subscription_name, rule_name, api_version=constants.API_VERSION, **kwargs)
 
     def list_rules(
-            self, topic: Union[str, TopicProperties], subscription: Union[str, SubscriptionProperties], **kwargs
+            self,
+            topic: Union[str, TopicProperties],
+            subscription: Union[str, SubscriptionProperties],
+            **kwargs: Any
     ) -> AsyncItemPaged[RuleProperties]:
         """List the rules of a topic subscription.
 
@@ -1004,7 +995,8 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
         """
         entry_el = await self._impl.namespace.get(api_version=constants.API_VERSION, **kwargs)
         namespace_entry = NamespacePropertiesEntry.deserialize(entry_el)
-        return namespace_entry.content.namespace_properties
+        return NamespaceProperties._from_internal_entity(namespace_entry.title,
+                                                         namespace_entry.content.namespace_properties)
 
     async def close(self) -> None:
         await self._impl.close()

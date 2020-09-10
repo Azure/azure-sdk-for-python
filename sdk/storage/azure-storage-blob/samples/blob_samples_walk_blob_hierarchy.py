@@ -43,7 +43,7 @@ import sys
 
 from azure.storage.blob import BlobServiceClient
 
-from azure.storage.blob._models import BlobPrefix
+from azure.storage.blob import BlobPrefix
 
 try:
     CONNECTION_STRING = os.environ['AZURE_STORAGE_CONNECTION_STRING']

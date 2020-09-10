@@ -6,7 +6,7 @@ interactions:
       "CA"}]}'
     headers:
       Accept:
-      - application/json
+      - application/json, text/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -16,64 +16,21 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/1.0.1 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.1/languages?showStats=false
+    uri: https://westcentralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.2/languages?showStats=false
   response:
     body:
-      string: '{"documents":[{"id":"1","detectedLanguage":{"name":"English","iso6391Name":"en","confidenceScore":1.0},"warnings":[]},{"id":"2","detectedLanguage":{"name":"English","iso6391Name":"en","confidenceScore":1.0},"warnings":[]},{"id":"3","detectedLanguage":{"name":"English","iso6391Name":"en","confidenceScore":1.0},"warnings":[]}],"errors":[],"modelVersion":"2019-10-01"}'
+      string: '{"documents":[{"id":"1","detectedLanguage":{"name":"English","iso6391Name":"en","confidenceScore":1.0},"warnings":[]},{"id":"2","detectedLanguage":{"name":"English","iso6391Name":"en","confidenceScore":1.0},"warnings":[]},{"id":"3","detectedLanguage":{"name":"English","iso6391Name":"en","confidenceScore":1.0},"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}'
     headers:
       apim-request-id:
-      - a263b0ec-bd7f-46fc-b278-898936be3abf
+      - db2b80e1-b1cc-44f4-ac7d-2716d2b60ae9
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=3
       date:
-      - Fri, 24 Jul 2020 16:32:44 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '15'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: '{"documents": [{"id": "1", "text": "I will go to the park.", "countryHint":
-      "DE"}, {"id": "2", "text": "I did not like the hotel we stayed at.", "countryHint":
-      "DE"}, {"id": "3", "text": "The restaurant had really good food.", "countryHint":
-      "DE"}]}'
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '249'
-      Content-Type:
-      - application/json
-      User-Agent:
-      - azsdk-python-ai-textanalytics/1.0.1 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-    method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.1/languages?showStats=false
-  response:
-    body:
-      string: '{"documents":[{"id":"1","detectedLanguage":{"name":"English","iso6391Name":"en","confidenceScore":1.0},"warnings":[]},{"id":"2","detectedLanguage":{"name":"English","iso6391Name":"en","confidenceScore":1.0},"warnings":[]},{"id":"3","detectedLanguage":{"name":"English","iso6391Name":"en","confidenceScore":1.0},"warnings":[]}],"errors":[],"modelVersion":"2019-10-01"}'
-    headers:
-      apim-request-id:
-      - e0cd65c2-3d62-485b-85a3-72aa09bfe905
-      content-type:
-      - application/json; charset=utf-8
-      csp-billing-usage:
-      - CognitiveServices.TextAnalytics.BatchScoring=3
-      date:
-      - Fri, 24 Jul 2020 16:32:44 GMT
+      - Thu, 10 Sep 2020 15:25:29 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -87,12 +44,12 @@ interactions:
       message: OK
 - request:
     body: '{"documents": [{"id": "1", "text": "I will go to the park.", "countryHint":
-      "CA"}, {"id": "2", "text": "I did not like the hotel we stayed at.", "countryHint":
-      "CA"}, {"id": "3", "text": "The restaurant had really good food.", "countryHint":
-      "CA"}]}'
+      "DE"}, {"id": "2", "text": "I did not like the hotel we stayed at.", "countryHint":
+      "DE"}, {"id": "3", "text": "The restaurant had really good food.", "countryHint":
+      "DE"}]}'
     headers:
       Accept:
-      - application/json
+      - application/json, text/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -102,21 +59,21 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/1.0.1 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.1/languages?showStats=false
+    uri: https://westcentralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.2/languages?showStats=false
   response:
     body:
-      string: '{"documents":[{"id":"1","detectedLanguage":{"name":"English","iso6391Name":"en","confidenceScore":1.0},"warnings":[]},{"id":"2","detectedLanguage":{"name":"English","iso6391Name":"en","confidenceScore":1.0},"warnings":[]},{"id":"3","detectedLanguage":{"name":"English","iso6391Name":"en","confidenceScore":1.0},"warnings":[]}],"errors":[],"modelVersion":"2019-10-01"}'
+      string: '{"documents":[{"id":"1","detectedLanguage":{"name":"English","iso6391Name":"en","confidenceScore":1.0},"warnings":[]},{"id":"2","detectedLanguage":{"name":"English","iso6391Name":"en","confidenceScore":1.0},"warnings":[]},{"id":"3","detectedLanguage":{"name":"English","iso6391Name":"en","confidenceScore":1.0},"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}'
     headers:
       apim-request-id:
-      - a22d55b3-a257-473b-b03e-84f66b7dd1aa
+      - d40754f7-a643-4bbd-8d31-c99a990a7cbc
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=3
       date:
-      - Fri, 24 Jul 2020 16:32:44 GMT
+      - Thu, 10 Sep 2020 15:25:29 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -124,7 +81,50 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '8'
+      - '6'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"documents": [{"id": "1", "text": "I will go to the park.", "countryHint":
+      "CA"}, {"id": "2", "text": "I did not like the hotel we stayed at.", "countryHint":
+      "CA"}, {"id": "3", "text": "The restaurant had really good food.", "countryHint":
+      "CA"}]}'
+    headers:
+      Accept:
+      - application/json, text/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '249'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+    method: POST
+    uri: https://westcentralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.2/languages?showStats=false
+  response:
+    body:
+      string: '{"documents":[{"id":"1","detectedLanguage":{"name":"English","iso6391Name":"en","confidenceScore":1.0},"warnings":[]},{"id":"2","detectedLanguage":{"name":"English","iso6391Name":"en","confidenceScore":1.0},"warnings":[]},{"id":"3","detectedLanguage":{"name":"English","iso6391Name":"en","confidenceScore":1.0},"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}'
+    headers:
+      apim-request-id:
+      - e790726d-eec8-4e72-bb8e-8ffd38f0774c
+      content-type:
+      - application/json; charset=utf-8
+      csp-billing-usage:
+      - CognitiveServices.TextAnalytics.BatchScoring=3
+      date:
+      - Thu, 10 Sep 2020 15:25:29 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '6'
     status:
       code: 200
       message: OK

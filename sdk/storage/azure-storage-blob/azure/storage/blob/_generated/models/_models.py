@@ -216,7 +216,7 @@ class BlobItemInternal(Model):
         'properties': {'key': 'Properties', 'type': 'BlobPropertiesInternal', 'xml': {'name': 'Properties'}},
         'metadata': {'key': 'Metadata', 'type': 'BlobMetadata', 'xml': {'name': 'Metadata'}},
         'blob_tags': {'key': 'BlobTags', 'type': 'BlobTags', 'xml': {'name': 'BlobTags'}},
-        'object_replication_metadata': {'key': 'ObjectReplicationMetadata', 'type': '{str}', 'xml': {'name': 'ObjectReplicationMetadata'}},
+        'object_replication_metadata': {'key': 'OrMetadata', 'type': '{str}', 'xml': {'name': 'OrMetadata'}},
     }
     _xml_map = {
         'name': 'Blob'

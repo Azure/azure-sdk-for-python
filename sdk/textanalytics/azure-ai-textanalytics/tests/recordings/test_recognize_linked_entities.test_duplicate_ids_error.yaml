@@ -4,7 +4,7 @@ interactions:
       "1", "text": "I did not like the hotel we stayed at.", "language": "en"}]}'
     headers:
       Accept:
-      - application/json
+      - application/json, text/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -14,20 +14,20 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/1.0.1 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.1/entities/linking?showStats=false
+    uri: https://westcentralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.2/entities/linking?showStats=false&stringIndexType=UnicodeCodePoint
   response:
     body:
       string: '{"error":{"code":"InvalidRequest","message":"Invalid document in request.","innererror":{"code":"InvalidDocument","message":"Request
         contains duplicated Ids. Make sure each document has a unique Id."}}}'
     headers:
       apim-request-id:
-      - d11116e6-97e4-4297-8f54-157582fb352f
+      - ce1442a5-fc47-4b81-afdc-e6626517b35d
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 24 Jul 2020 16:32:53 GMT
+      - Thu, 10 Sep 2020 15:25:41 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -35,7 +35,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '6'
+      - '4'
     status:
       code: 400
       message: Bad Request

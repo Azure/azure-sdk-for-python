@@ -52,16 +52,20 @@ Both [sync version](https://github.com/Azure/azure-sdk-for-python/tree/master/sd
 - [recv_for_period.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples/sync_samples/recv_for_period.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples/async_samples/recv_for_period_async.py)) - Examples to receive events for a period of time:
     - Receive events for a period of time
 
-
 - [client_identity_authentication.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples/sync_samples/client_identity_authentication.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples/async_samples/client_identity_authentication_async.py)) - Examples for authentication by Azure Active Directory:
     - Authenticating and creating the client utilizing the `azure.identity` library
 
+- [connection_string_authentication.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples/sync_samples/connection_string_authentication.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples/async_samples/connection_string_authentication_async.py)) - Examples for authentication by connection string:
+    - Authenticating and creating the client utilizing a connection string.
 
 - [proxy.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples/sync_samples/proxy.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples/async_samples/proxy_async.py)) - Examples to send and receive events behind a proxy:
     - Send and receive events behind a proxy
 
 - [iot_hub_connection_string_receive_async.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples/async_samples/iot_hub_connection_string_receive_async.py) - Examples to receive events from an IoT Hub:
     - Convert an IoT Hub connection string to the built-in Event Hub endpoint and receive events from it
+
+- [authenticate_with_sas_token.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub/samples/sync_samples/authenticate_with_sas_token.py)
+    - Utilize a SAS token to authenticate when creating an Event Hub client.
 
 ## Prerequisites
 - Python 2.7, 3.5 or later.
@@ -70,10 +74,10 @@ If you do not have an existing Azure account, you may sign up for a free trial o
 
 - **Event Hubs namespace with an Event Hub:** To interact with Azure Event Hubs, you'll also need to have a namespace and Event Hub  available.
 If you are not familiar with creating Azure resources, you may wish to follow the step-by-step guide
-for [creating an Event Hub using the Azure portal](https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-create).
+for [creating an Event Hub using the Azure portal](https://docs.microsoft.com/azure/event-hubs/event-hubs-create).
 There, you can also find detailed instructions for using the Azure CLI, Azure PowerShell, or Azure Resource Manager (ARM) templates to create an Event Hub.
 
-- **Azure Storage Account (Optional)**: To run receiving samples with blob checkpoint store for persist checkpoint, you need to [create an Azure Storage account](https://docs.microsoft.com/en-us/azure/storage/common/storage-quickstart-create-account?tabs=azure-portal) and a [Blob Container](https://docs.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-portal#create-a-container).
+- **Azure Storage Account (Optional)**: To run receiving samples with blob checkpoint store for persist checkpoint, you need to [create an Azure Storage account](https://docs.microsoft.com/azure/storage/common/storage-quickstart-create-account?tabs=azure-portal) and a [Blob Container](https://docs.microsoft.com/azure/storage/blobs/storage-quickstart-blobs-portal#create-a-container).
 
 ## Setup
 
@@ -103,5 +107,5 @@ pip install azure-eventhub-checkpointstoreblob-aio  # async version
 
 ## Next steps
 
-Check out the [API reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.2.0b1/azure.eventhub.html) to learn more about
+Check out the [API reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/latest/azure.eventhub.html) to learn more about
 what you can do with the Azure Event Hubs client library.

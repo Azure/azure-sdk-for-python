@@ -83,10 +83,11 @@ class StorageCommonBlobTest(StorageTestCase):
     def _get_blob_reference(self):
         return self.get_resource_name(TEST_BLOB_PREFIX)
 
-    def _create_block_blob(self, overwrite=False, tags=None):
+    def _create_block_blob(self, standard_blob_tier=None, overwrite=False, tags=None):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
-        blob.upload_blob(self.byte_data, length=len(self.byte_data), overwrite=overwrite, tags=tags)
+        blob.upload_blob(self.byte_data, length=len(self.byte_data), standard_blob_tier=standard_blob_tier, 
+                         overwrite=overwrite, tags=tags)
         return blob_name
 
     def _create_empty_block_blob(self, overwrite=False, tags=None):
@@ -158,7 +159,7 @@ class StorageCommonBlobTest(StorageTestCase):
         self.assertTrue(exists)
 
     @GlobalResourceGroupPreparer()
-    @StorageAccountPreparer(location="canadacentral", name_prefix='storagename')
+    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='storagename')
     def test_blob_exists_with_if_tags(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         tags = {"tag1 name": "my tag", "tag2": "secondtag", "tag3": "thirdtag"}
@@ -192,10 +193,11 @@ class StorageCommonBlobTest(StorageTestCase):
 
         # Act
         blob = self.bsc.get_blob_client(self.container_name, blob_name, snapshot=snapshot)
-        exists = blob.get_blob_properties()
+        prop = blob.get_blob_properties()
 
         # Assert
-        self.assertTrue(exists)
+        self.assertTrue(prop)
+        self.assertEqual(snapshot['snapshot'], prop.snapshot)
 
 
     @GlobalStorageAccountPreparer()
@@ -237,7 +239,7 @@ class StorageCommonBlobTest(StorageTestCase):
         self.assertEqual(data.readall(), blob_data)
 
     @GlobalResourceGroupPreparer()
-    @StorageAccountPreparer(location="canadacentral", name_prefix='storagename')
+    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='storagename')
     def test_create_blob_with_if_tags(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         tags = {"tag1 name": "my tag", "tag2": "secondtag", "tag3": "thirdtag"}
@@ -458,7 +460,7 @@ class StorageCommonBlobTest(StorageTestCase):
         self.assertEqual(props.content_settings.content_disposition, 'inline')
 
     @GlobalResourceGroupPreparer()
-    @StorageAccountPreparer(location="canadacentral", name_prefix='storagename')
+    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='storagename')
     def test_set_blob_properties_with_if_tags(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         tags = {"tag1 name": "my tag", "tag2": "secondtag", "tag3": "thirdtag"}
@@ -517,6 +519,21 @@ class StorageCommonBlobTest(StorageTestCase):
         self.assertEqual(props.lease.status, 'unlocked')
         self.assertIsNotNone(props.creation_time)
 
+    @GlobalStorageAccountPreparer()
+    def test_get_blob_properties_returns_rehydrate_priority(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
+        blob_name = self._create_block_blob(standard_blob_tier=StandardBlobTier.Archive, overwrite=True)
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob.set_standard_blob_tier(StandardBlobTier.Hot, rehydrate_priority=RehydratePriority.high)
+
+        # Act
+        props = blob.get_blob_properties()
+
+        # Assert
+        self.assertIsInstance(props, BlobProperties)
+        self.assertEqual(props.blob_type, BlobType.BlockBlob)
+        self.assertEqual(props.size, len(self.byte_data))
+        self.assertEqual(props.rehydrate_priority, 'High')
 
     # This test is to validate that the ErrorCode is retrieved from the header during a
     # HEAD request.
@@ -682,7 +699,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @pytest.mark.live_test_only
     @GlobalResourceGroupPreparer()
-    @StorageAccountPreparer(location="canadacentral", name_prefix='storagename')
+    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='storagename')
     def test_set_blob_metadata_with_if_tags(self, resource_group, location, storage_account, storage_account_key):
         # bug in devtools...converts upper case header to lowercase
         # passes live.
@@ -741,7 +758,7 @@ class StorageCommonBlobTest(StorageTestCase):
         self.assertIsNone(resp)
 
     @GlobalResourceGroupPreparer()
-    @StorageAccountPreparer(location="canadacentral", name_prefix='storagename')
+    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='storagename')
     def test_delete_blob_with_if_tags(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         tags = {"tag1 name": "my tag", "tag2": "secondtag", "tag3": "thirdtag"}
@@ -1135,7 +1152,7 @@ class StorageCommonBlobTest(StorageTestCase):
         self.assertEqual(copy_content, self.byte_data)
 
     @GlobalResourceGroupPreparer()
-    @StorageAccountPreparer(location="canadacentral", name_prefix='storagename')
+    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='storagename')
     def test_async_copy_blob_with_if_tags(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         source_tags = {"source": "source tag"}
@@ -2291,7 +2308,7 @@ class StorageCommonBlobTest(StorageTestCase):
         self.assertEqual(permission.read, True)
         self.assertEqual(permission.delete, True)
         self.assertEqual(permission.write, True)
-        self.assertEqual(permission._str, 'wrdx')
+        self.assertEqual(permission._str, 'rwdx')
 
     @GlobalStorageAccountPreparer()
     def test_transport_closed_only_once(self, resource_group, location, storage_account, storage_account_key):
@@ -2307,5 +2324,29 @@ class StorageCommonBlobTest(StorageTestCase):
             bsc.get_service_properties()
             assert transport.session is not None
 
+    @pytest.mark.playback_test_only
+    @GlobalStorageAccountPreparer()
+    def test_set_blob_tier_for_a_version(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
+        blob_name = self.get_resource_name("blobtodelete")
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        data_for_the_first_version = "abc"
+        data_for_the_second_version = "efgefgefg"
+        resp = blob.upload_blob(data_for_the_first_version, overwrite=True)
+        self.assertIsNotNone(resp['version_id'])
+        blob.upload_blob(data_for_the_second_version, overwrite=True)
+        blob.set_standard_blob_tier(StandardBlobTier.Cool)
+        blob.set_standard_blob_tier(StandardBlobTier.Cool, rehydrate_priority=RehydratePriority.high, version_id=resp['version_id'])
+        blob.set_standard_blob_tier(StandardBlobTier.Hot, version_id=resp['version_id'])
+        # Act
+        props = blob.get_blob_properties(version_id=resp['version_id'])
+        origin_props = blob.get_blob_properties()
+
+        # Assert
+        self.assertIsInstance(props, BlobProperties)
+        self.assertEqual(props.blob_type, BlobType.BlockBlob)
+        self.assertEqual(props.size, len(data_for_the_first_version))
+        self.assertEqual(props.blob_tier, 'Hot')
+        self.assertEqual(origin_props.blob_tier, 'Cool')
 
 #------------------------------------------------------------------------------

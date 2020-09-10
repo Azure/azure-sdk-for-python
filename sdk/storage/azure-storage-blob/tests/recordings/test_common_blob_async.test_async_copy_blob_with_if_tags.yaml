@@ -9,7 +9,7 @@ interactions:
       x-ms-version:
       - '2019-12-12'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/utcontainer90b116fe?timeout=5&restype=container
+    uri: https://storagenamestorname.blob.core.windows.net/utcontainer90b116fe?timeout=5&restype=container
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerAlreadyExists</Code><Message>The
@@ -43,7 +43,7 @@ interactions:
       x-ms-version:
       - '2019-12-12'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/utcontainer90b116fe/blob90b116fe
+    uri: https://storagenamestorname.blob.core.windows.net/utcontainer90b116fe/blob90b116fe
   response:
     body:
       string: ''
@@ -78,7 +78,7 @@ interactions:
       x-ms-version:
       - '2019-12-12'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/utcontainer90b116fe/blob1copy
+    uri: https://storagenamestorname.blob.core.windows.net/utcontainer90b116fe/blob1copy
   response:
     body:
       string: ''
@@ -113,7 +113,7 @@ interactions:
       x-ms-version:
       - '2019-12-12'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/utcontainer90b116fe/blob1copy?comp=tags
+    uri: https://storagenamestorname.blob.core.windows.net/utcontainer90b116fe/blob1copy?comp=tags
   response:
     body:
       string: ''
@@ -143,7 +143,7 @@ interactions:
       x-ms-version:
       - '2019-12-12'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/utcontainer90b116fe/blob1copy?comp=tags
+    uri: https://storagenamestorname.blob.core.windows.net/utcontainer90b116fe/blob1copy?comp=tags
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Error><Code>ConditionNotMet</Code><Message>The
@@ -177,7 +177,7 @@ interactions:
       x-ms-version:
       - '2019-12-12'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/utcontainer90b116fe/blob1copy?comp=tags
+    uri: https://storagenamestorname.blob.core.windows.net/utcontainer90b116fe/blob1copy?comp=tags
   response:
     body:
       string: ''
@@ -203,7 +203,7 @@ interactions:
       x-ms-version:
       - '2019-12-12'
     method: GET
-    uri: https://storagename.blob.core.windows.net/utcontainer90b116fe/blob1copy?comp=tags
+    uri: https://storagenamestorname.blob.core.windows.net/utcontainer90b116fe/blob1copy?comp=tags
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Error><Code>ConditionNotMet</Code><Message>The
@@ -233,7 +233,7 @@ interactions:
       x-ms-version:
       - '2019-12-12'
     method: GET
-    uri: https://storagename.blob.core.windows.net/utcontainer90b116fe/blob1copy?comp=tags
+    uri: https://storagenamestorname.blob.core.windows.net/utcontainer90b116fe/blob1copy?comp=tags
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Tags><TagSet><Tag><Key>tag1</Key><Value>first
@@ -264,7 +264,7 @@ interactions:
       x-ms-version:
       - '2019-12-12'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/utcontainer90b116fe/blob1copy
+    uri: https://storagenamestorname.blob.core.windows.net/utcontainer90b116fe/blob1copy
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The
@@ -296,7 +296,7 @@ interactions:
       x-ms-version:
       - '2019-12-12'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/utcontainer90b116fe/blob1copy
+    uri: https://storagenamestorname.blob.core.windows.net/utcontainer90b116fe/blob1copy
   response:
     body:
       string: ''
@@ -330,7 +330,7 @@ interactions:
       x-ms-version:
       - '2019-12-12'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/utcontainer90b116fe/blob1copy
+    uri: https://storagenamestorname.blob.core.windows.net/utcontainer90b116fe/blob1copy
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The
@@ -362,7 +362,7 @@ interactions:
       x-ms-version:
       - '2019-12-12'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/utcontainer90b116fe/blob1copy
+    uri: https://storagenamestorname.blob.core.windows.net/utcontainer90b116fe/blob1copy
   response:
     body:
       string: ''
@@ -396,7 +396,7 @@ interactions:
       x-ms-version:
       - '2019-12-12'
     method: GET
-    uri: https://storagename.blob.core.windows.net/utcontainer90b116fe/blob1copy
+    uri: https://storagenamestorname.blob.core.windows.net/utcontainer90b116fe/blob1copy
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The
@@ -428,7 +428,7 @@ interactions:
       x-ms-version:
       - '2019-12-12'
     method: GET
-    uri: https://storagename.blob.core.windows.net/utcontainer90b116fe/blob1copy
+    uri: https://storagenamestorname.blob.core.windows.net/utcontainer90b116fe/blob1copy
   response:
     body:
       string: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa

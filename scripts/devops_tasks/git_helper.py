@@ -15,13 +15,14 @@ logging.getLogger().setLevel(logging.INFO)
 
 # Oldest release of SDK packages that should be skipped
 EXCLUDED_PACKAGE_VERSIONS = {
-    'azure-storage-file-share': ['12.0.0', '12.0.0b5'],
-    'azure-storage-queue': ['0.37.0', '1.0.0', '1.1.0', '1.2.0rc1', '1.3.0', '1.4.0', '2.0.0', '2.0.1', '2.1.0'],
-    'azure-storage-file': ['0.37.0', '1.0.0', '1.1.0', '1.2.0rc1', '1.3.0', '1.3.1', '1.4.0', '2.0.0', '2.0.1', '2.1.0'],
-    'azure-storage-blob': ['0.37.0', '0.37.1', '1.0.0', '1.1.0', '1.2.0rc1', '1.3.0', '1.3.1', '1.4.0', '1.5.0', '2.0.0', '2.0.1', '2.1.0',],
-    'azure-eventhub': ['0.2.0', '1.0.0', '1.1.0', '1.1.1', '1.2.0rc1', '1.2.0', '1.3.0', '1.3.1', '1.3.2', '1.3.3',],
-    'azure-cosmos': ['3.0.0', '3.0.1', '3.0.2', '3.1.0', '3.1.1', '3.1.2', '3.2.0'],
-    'azure-servicebus': ['0.20.0rc1', '0.20.0rc2', '0.20.0', '0.20.1', '0.20.2', '0.20.3', '0.21.0', '0.21.1', '0.50.0', '0.50.1', '0.50.2', '0.50.3']
+    'azure-storage-file-share': '12.0.0',
+    'azure-storage-queue': '2.1.0',
+    'azure-storage-file': '2.1.0',
+    'azure-storage-blob': '2.1.0',
+    'azure-eventhub': '1.3.3',
+    'azure-cosmos': '3.2.0',
+    'azure-servicebus': '0.50.3',
+    'azure-eventgrid': '1.3.0',
 }
 
 # This method identifies release tag for latest or oldest released version of a given package
@@ -41,7 +42,7 @@ def get_release_tag(dep_pkg_name, isLatest):
 
     # filter excluded versions
     if dep_pkg_name in EXCLUDED_PACKAGE_VERSIONS:
-        versions = [v for v in versions if  v not in EXCLUDED_PACKAGE_VERSIONS[dep_pkg_name]]
+        versions = [v for v in versions if  parse(v) > parse(EXCLUDED_PACKAGE_VERSIONS[dep_pkg_name])]
         logging.info("Filtered versions for {0} is: {1}".format(dep_pkg_name, versions))
 
     if not versions:

@@ -4,35 +4,35 @@ interactions:
       "Microsoft fue fundado por Bill Gates y Paul Allen", "language": "es"}]}'
     headers:
       Accept:
-      - application/json
+      - application/json, text/json
       Content-Length:
       - '150'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/1.0.1 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.1/entities/linking?showStats=false
+    uri: https://westcentralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.2/entities/linking?showStats=false&stringIndexType=UnicodeCodePoint
   response:
     body:
-      string: '{"documents":[{"id":"2","entities":[{"name":"Bill Gates","matches":[{"text":"Bill
-        Gates","offset":26,"length":10,"confidenceScore":0.37}],"language":"es","id":"Bill
-        Gates","url":"https://es.wikipedia.org/wiki/Bill_Gates","dataSource":"Wikipedia"},{"name":"Paul
+      string: '{"documents":[{"id":"2","entities":[{"bingId":"a093e9b9-90f5-a3d5-c4b8-5855e1b01f85","name":"Microsoft","matches":[{"text":"Microsoft","offset":0,"length":9,"confidenceScore":0.38}],"language":"es","id":"Microsoft","url":"https://es.wikipedia.org/wiki/Microsoft","dataSource":"Wikipedia"},{"bingId":"0d47c987-0042-5576-15e8-97af601614fa","name":"Bill
+        Gates","matches":[{"text":"Bill Gates","offset":26,"length":10,"confidenceScore":0.37}],"language":"es","id":"Bill
+        Gates","url":"https://es.wikipedia.org/wiki/Bill_Gates","dataSource":"Wikipedia"},{"bingId":"df2c4376-9923-6a54-893f-2ee5a5badbc7","name":"Paul
         Allen","matches":[{"text":"Paul Allen","offset":39,"length":10,"confidenceScore":0.9}],"language":"es","id":"Paul
-        Allen","url":"https://es.wikipedia.org/wiki/Paul_Allen","dataSource":"Wikipedia"},{"name":"Microsoft","matches":[{"text":"Microsoft","offset":0,"length":9,"confidenceScore":0.38}],"language":"es","id":"Microsoft","url":"https://es.wikipedia.org/wiki/Microsoft","dataSource":"Wikipedia"}],"warnings":[]}],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
+        Allen","url":"https://es.wikipedia.org/wiki/Paul_Allen","dataSource":"Wikipedia"}],"warnings":[]}],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
         document in request.","innererror":{"code":"InvalidDocument","message":"Document
         text is empty."}}}],"modelVersion":"2020-02-01"}'
     headers:
-      apim-request-id: b9b8759e-0f33-43bc-8cc2-aa235472e7d0
+      apim-request-id: 7200b65a-e567-41be-9370-e09a622ba405
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=1
-      date: Fri, 24 Jul 2020 16:32:53 GMT
+      date: Thu, 10 Sep 2020 15:25:41 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '15'
+      x-envoy-upstream-service-time: '17'
     status:
       code: 200
       message: OK
-    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.1/entities/linking?showStats=false
+    url: https://westcentralus.api.cognitive.microsoft.com//text/analytics/v3.1-preview.2/entities/linking?showStats=false&stringIndexType=UnicodeCodePoint
 version: 1

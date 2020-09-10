@@ -18,8 +18,9 @@ from ._generated.models import QueueDescription as InternalQueueDescription, \
     SqlRuleAction as InternalSqlRuleAction, \
     EmptyRuleAction as InternalEmptyRuleAction, \
     CorrelationFilter as InternalCorrelationFilter, \
+    NamespaceProperties as InternalNamespaceProperties, \
     SqlFilter as InternalSqlFilter, TrueFilter as InternalTrueFilter, FalseFilter as InternalFalseFilter, \
-    KeyValue
+    KeyValue, AuthorizationRule as InternalAuthorizationRule
 
 from ._model_workaround import adjust_attribute_map
 from ._constants import RULE_SQL_COMPATIBILITY_LEVEL
@@ -27,6 +28,9 @@ from ._constants import RULE_SQL_COMPATIBILITY_LEVEL
 adjust_attribute_map()
 
 
+# These helpers are to ensure that the Properties objects can't be constructed without all args present,
+# as a compromise between our use of kwargs to flatten arg-lists and trying to de-incentivise manual instantiation
+# while still trying to provide some guardrails.
 def extract_kwarg_template(kwargs, extraction_missing_args, name):
     try:
         return kwargs[name]
@@ -92,6 +96,71 @@ class DictMixin(object):
         return default
 
 
+class NamespaceProperties(DictMixin):
+    """The metadata related to a Service Bus namespace.
+
+    :ivar alias: Alias for the geo-disaster recovery Service Bus namespace.
+    :type alias: str
+    :ivar created_at_utc: The exact time the namespace was created.
+    :type created_at_utc: ~datetime.datetime
+    :ivar messaging_sku: The SKU for the messaging entity. Possible values include: "Basic",
+     "Standard", "Premium".
+    :type messaging_sku: str or ~azure.servicebus.management._generated.models.MessagingSku
+    :ivar messaging_units: The number of messaging units allocated to the namespace.
+    :type messaging_units: int
+    :ivar modified_at_utc: The exact time the namespace was last modified.
+    :type modified_at_utc: ~datetime.datetime
+    :ivar name: Name of the namespace.
+    :type name: str
+    """
+    def __init__(
+        self,
+        name,
+        **kwargs
+    ):
+        # type: (str, Any) -> None
+        self.name = name
+
+        extraction_missing_args = []  # type: List[str]
+        extract_kwarg = functools.partial(extract_kwarg_template, kwargs, extraction_missing_args)
+
+        self.name = name
+        self.alias = extract_kwarg('alias')
+        self.created_at_utc = extract_kwarg('created_at_utc')
+        self.messaging_sku = extract_kwarg('messaging_sku')
+        self.messaging_units = extract_kwarg('messaging_units')
+        self.modified_at_utc = extract_kwarg('modified_at_utc')
+        self.namespace_type = extract_kwarg('namespace_type')
+
+        validate_extraction_missing_args(extraction_missing_args)
+
+
+    @classmethod
+    def _from_internal_entity(cls, name, internal_entity):
+        # type: (str, InternalNamespaceProperties) -> NamespaceProperties
+        namespace_properties = cls(
+            name,
+            alias=internal_entity.alias,
+            created_at_utc=internal_entity.created_time,
+            messaging_sku=internal_entity.messaging_sku,
+            messaging_units=internal_entity.messaging_units,
+            modified_at_utc=internal_entity.modified_time,
+            namespace_type=internal_entity.namespace_type,
+        )
+        return namespace_properties
+
+    def _to_internal_entity(self):
+        internal_entity = InternalNamespaceProperties()
+        internal_entity.alias = self.alias
+        internal_entity.created_time = self.created_at_utc
+        internal_entity.messaging_sku = self.messaging_sku
+        internal_entity.messaging_units = self.messaging_units
+        internal_entity.modified_time = self.modified_at_utc
+        internal_entity.namespace_type = self.namespace_type
+
+        return internal_entity
+
+
 class QueueProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
     """Properties of a Service Bus queue resource.
 
@@ -112,9 +181,9 @@ class QueueProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
     :ivar duplicate_detection_history_time_window: ISO 8601 timeSpan structure that defines the
      duration of the duplicate detection history. The default value is 10 minutes.
     :type duplicate_detection_history_time_window: ~datetime.timedelta
-    :ivar entity_availability_status: Availibility status of the entity. Possible values include:
+    :ivar availability_status: Availibility status of the entity. Possible values include:
      "Available", "Limited", "Renaming", "Restoring", "Unknown".
-    :type entity_availability_status: str or
+    :type availability_status: str or
      ~azure.servicebus.management.EntityAvailabilityStatus
     :ivar enable_batched_operations: Value that indicates whether server-side batched operations
      are enabled.
@@ -125,9 +194,6 @@ class QueueProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
     :ivar enable_partitioning: A value that indicates whether the queue is to be partitioned
      across multiple message brokers.
     :type enable_partitioning: bool
-    :ivar is_anonymous_accessible: A value indicating if the resource can be accessed without
-     authorization.
-    :type is_anonymous_accessible: bool
     :ivar lock_duration: ISO 8601 timespan duration of a peek-lock; that is, the amount of time
      that the message is locked for other receivers. The maximum value for LockDuration is 5
      minutes; the default value is 1 minute.
@@ -153,8 +219,6 @@ class QueueProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
     :ivar user_metadata: Custom metdata that user can associate with the description. Max length
      is 1024 chars.
     :type user_metadata: str
-    :ivar support_ordering: A value that indicates whether the queue supports ordering.
-    :type support_ordering: bool
     :ivar forward_dead_lettered_messages_to: The name of the recipient entity to which all the
      dead-lettered messages of this subscription are forwarded to.
     :type forward_dead_lettered_messages_to: str
@@ -177,18 +241,16 @@ class QueueProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
         self.dead_lettering_on_message_expiration = extract_kwarg('dead_lettering_on_message_expiration')
         self.default_message_time_to_live = extract_kwarg('default_message_time_to_live')
         self.duplicate_detection_history_time_window = extract_kwarg('duplicate_detection_history_time_window')
-        self.entity_availability_status = extract_kwarg('entity_availability_status')
+        self.availability_status = extract_kwarg('availability_status')
         self.enable_batched_operations = extract_kwarg('enable_batched_operations')
         self.enable_express = extract_kwarg('enable_express')
         self.enable_partitioning = extract_kwarg('enable_partitioning')
-        self.is_anonymous_accessible = extract_kwarg('is_anonymous_accessible')
         self.lock_duration = extract_kwarg('lock_duration')
         self.max_delivery_count = extract_kwarg('max_delivery_count')
         self.max_size_in_megabytes = extract_kwarg('max_size_in_megabytes')
         self.requires_duplicate_detection = extract_kwarg('requires_duplicate_detection')
         self.requires_session = extract_kwarg('requires_session')
         self.status = extract_kwarg('status')
-        self.support_ordering = extract_kwarg('support_ordering')
         self.forward_to = extract_kwarg('forward_to')
         self.user_metadata = extract_kwarg('user_metadata')
         self.forward_dead_lettered_messages_to = extract_kwarg('forward_dead_lettered_messages_to')
@@ -201,23 +263,22 @@ class QueueProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
         # type: (str, InternalQueueDescription) -> QueueProperties
         qd = cls(
             name,
-            authorization_rules=internal_qd.authorization_rules,
+            authorization_rules=[AuthorizationRule._from_internal_entity(r) for r in internal_qd.authorization_rules] \
+                if internal_qd.authorization_rules else (internal_qd.authorization_rules or []),
             auto_delete_on_idle=internal_qd.auto_delete_on_idle,
             dead_lettering_on_message_expiration=internal_qd.dead_lettering_on_message_expiration,
             default_message_time_to_live=internal_qd.default_message_time_to_live,
             duplicate_detection_history_time_window=internal_qd.duplicate_detection_history_time_window,
-            entity_availability_status=internal_qd.entity_availability_status,
+            availability_status=internal_qd.entity_availability_status,
             enable_batched_operations=internal_qd.enable_batched_operations,
             enable_express=internal_qd.enable_express,
             enable_partitioning=internal_qd.enable_partitioning,
-            is_anonymous_accessible=internal_qd.is_anonymous_accessible,
             lock_duration=internal_qd.lock_duration,
             max_delivery_count=internal_qd.max_delivery_count,
             max_size_in_megabytes=internal_qd.max_size_in_megabytes,
             requires_duplicate_detection=internal_qd.requires_duplicate_detection,
             requires_session=internal_qd.requires_session,
             status=internal_qd.status,
-            support_ordering=internal_qd.support_ordering,
             forward_to=internal_qd.forward_to,
             forward_dead_lettered_messages_to=internal_qd.forward_dead_lettered_messages_to,
             user_metadata=internal_qd.user_metadata
@@ -230,23 +291,22 @@ class QueueProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
             internal_qd = InternalQueueDescription()
             self._internal_qd = internal_qd
 
-        self._internal_qd.authorization_rules = self.authorization_rules
+        self._internal_qd.authorization_rules = [r._to_internal_entity() for r in self.authorization_rules] \
+            if self.authorization_rules else self.authorization_rules
         self._internal_qd.auto_delete_on_idle = self.auto_delete_on_idle
         self._internal_qd.dead_lettering_on_message_expiration = self.dead_lettering_on_message_expiration
         self._internal_qd.default_message_time_to_live = self.default_message_time_to_live
         self._internal_qd.duplicate_detection_history_time_window = self.duplicate_detection_history_time_window
-        self._internal_qd.entity_availability_status = self.entity_availability_status
+        self._internal_qd.entity_availability_status = self.availability_status
         self._internal_qd.enable_batched_operations = self.enable_batched_operations
         self._internal_qd.enable_express = self.enable_express
         self._internal_qd.enable_partitioning = self.enable_partitioning
-        self._internal_qd.is_anonymous_accessible = self.is_anonymous_accessible
         self._internal_qd.lock_duration = self.lock_duration
         self._internal_qd.max_delivery_count = self.max_delivery_count
         self._internal_qd.max_size_in_megabytes = self.max_size_in_megabytes
         self._internal_qd.requires_duplicate_detection = self.requires_duplicate_detection
         self._internal_qd.requires_session = self.requires_session
         self._internal_qd.status = self.status
-        self._internal_qd.support_ordering = self.support_ordering
         self._internal_qd.forward_to = self.forward_to
         self._internal_qd.forward_dead_lettered_messages_to = self.forward_dead_lettered_messages_to
         self._internal_qd.user_metadata = self.user_metadata
@@ -260,7 +320,8 @@ class QueueRuntimeProperties(object):
     def __init__(
         self,
     ):
-        self._name = None
+    # type: () -> None
+        self._name = None # type: Optional[str]
         self._internal_qr = None  # type: Optional[InternalQueueDescription]
 
     @classmethod
@@ -280,7 +341,7 @@ class QueueRuntimeProperties(object):
         return self._name
 
     @property
-    def accessed_at(self):
+    def accessed_at_utc(self):
         """Last time a message was sent, or the last time there was a receive request to this queue.
 
         :rtype:  ~datetime.datetime
@@ -288,7 +349,7 @@ class QueueRuntimeProperties(object):
         return self._internal_qr.accessed_at
 
     @property
-    def created_at(self):
+    def created_at_utc(self):
         """The exact time the queue was created.
 
         :rtype: ~datetime.datetime
@@ -296,7 +357,7 @@ class QueueRuntimeProperties(object):
         return self._internal_qr.created_at
 
     @property
-    def updated_at(self):
+    def updated_at_utc(self):
         """The exact the entity was updated.
 
         :rtype: ~datetime.datetime
@@ -385,9 +446,6 @@ class TopicProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
     :type size_in_bytes: int
     :ivar filtering_messages_before_publishing: Filter messages before publishing.
     :type filtering_messages_before_publishing: bool
-    :ivar is_anonymous_accessible: A value indicating if the resource can be accessed without
-     authorization.
-    :type is_anonymous_accessible: bool
     :ivar authorization_rules: Authorization rules for resource.
     :type authorization_rules:
      list[~azure.servicebus.management.AuthorizationRule]
@@ -402,13 +460,10 @@ class TopicProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
     :ivar enable_partitioning: A value that indicates whether the topic is to be partitioned
      across multiple message brokers.
     :type enable_partitioning: bool
-    :ivar entity_availability_status: Availability status of the entity. Possible values include:
+    :ivar availability_status: Availability status of the entity. Possible values include:
      "Available", "Limited", "Renaming", "Restoring", "Unknown".
-    :type entity_availability_status: str or
+    :type availability_status: str or
      ~azure.servicebus.management.EntityAvailabilityStatus
-    :ivar enable_subscription_partitioning: A value that indicates whether the topic's
-     subscription is to be partitioned.
-    :type enable_subscription_partitioning: bool
     :ivar enable_express: A value that indicates whether Express Entities are enabled. An express
      queue holds a message in memory temporarily before writing it to persistent storage.
     :type enable_express: bool
@@ -433,14 +488,12 @@ class TopicProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
         self.duplicate_detection_history_time_window = extract_kwarg('duplicate_detection_history_time_window')
         self.enable_batched_operations = extract_kwarg('enable_batched_operations')
         self.size_in_bytes = extract_kwarg('size_in_bytes')
-        self.is_anonymous_accessible = extract_kwarg('is_anonymous_accessible')
         self.authorization_rules = extract_kwarg('authorization_rules')
         self.status = extract_kwarg('status')
         self.support_ordering = extract_kwarg('support_ordering')
         self.auto_delete_on_idle = extract_kwarg('auto_delete_on_idle')
         self.enable_partitioning = extract_kwarg('enable_partitioning')
-        self.entity_availability_status = extract_kwarg('entity_availability_status')
-        self.enable_subscription_partitioning = extract_kwarg('enable_subscription_partitioning')
+        self.availability_status = extract_kwarg('availability_status')
         self.enable_express = extract_kwarg('enable_express')
         self.user_metadata = extract_kwarg('user_metadata')
 
@@ -457,14 +510,13 @@ class TopicProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
             duplicate_detection_history_time_window=internal_td.duplicate_detection_history_time_window,
             enable_batched_operations=internal_td.enable_batched_operations,
             size_in_bytes=internal_td.size_in_bytes,
-            is_anonymous_accessible=internal_td.is_anonymous_accessible,
-            authorization_rules=internal_td.authorization_rules,
+            authorization_rules=[AuthorizationRule._from_internal_entity(r) for r in internal_td.authorization_rules] \
+                if internal_td.authorization_rules else internal_td.authorization_rules,
             status=internal_td.status,
             support_ordering=internal_td.support_ordering,
             auto_delete_on_idle=internal_td.auto_delete_on_idle,
             enable_partitioning=internal_td.enable_partitioning,
-            entity_availability_status=internal_td.entity_availability_status,
-            enable_subscription_partitioning=internal_td.enable_subscription_partitioning,
+            availability_status=internal_td.entity_availability_status,
             enable_express=internal_td.enable_express,
             user_metadata=internal_td.user_metadata
         )
@@ -481,14 +533,13 @@ class TopicProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
         self._internal_td.duplicate_detection_history_time_window = self.duplicate_detection_history_time_window
         self._internal_td.enable_batched_operations = self.enable_batched_operations
         self._internal_td.size_in_bytes = self.size_in_bytes
-        self._internal_td.is_anonymous_accessible = self.is_anonymous_accessible
-        self._internal_td.authorization_rules = self.authorization_rules
+        self._internal_td.authorization_rules = [r._to_internal_entity() for r in self.authorization_rules] \
+            if self.authorization_rules else self.authorization_rules
         self._internal_td.status = self.status
         self._internal_td.support_ordering = self.support_ordering
         self._internal_td.auto_delete_on_idle = self.auto_delete_on_idle
         self._internal_td.enable_partitioning = self.enable_partitioning
-        self._internal_td.entity_availability_status = self.entity_availability_status
-        self._internal_td.enable_subscription_partitioning = self.enable_subscription_partitioning
+        self._internal_td.entity_availability_status = self.availability_status
         self._internal_td.enable_express = self.enable_express
         self._internal_td.user_metadata = self.user_metadata
 
@@ -501,7 +552,8 @@ class TopicRuntimeProperties(object):
     def __init__(
         self,
     ):
-        self._name = None
+        # type: () -> None
+        self._name = None # type: Optional[str]
         self._internal_td = None  # type: Optional[InternalTopicDescription]
 
     @classmethod
@@ -521,7 +573,7 @@ class TopicRuntimeProperties(object):
         return self._name
 
     @property
-    def accessed_at(self):
+    def accessed_at_utc(self):
         """Last time a message was sent, or the last time there was a receive request
 
         :rtype: ~datetime.datetime
@@ -529,7 +581,7 @@ class TopicRuntimeProperties(object):
         return self._internal_td.accessed_at
 
     @property
-    def created_at(self):
+    def created_at_utc(self):
         """The exact time the queue was created.
 
         :rtype: ~datetime.datetime
@@ -537,7 +589,7 @@ class TopicRuntimeProperties(object):
         return self._internal_td.created_at
 
     @property
-    def updated_at(self):
+    def updated_at_utc(self):
         """The exact time the entity was updated.
 
         :rtype: ~datetime.datetime
@@ -612,9 +664,9 @@ class SubscriptionProperties(DictMixin):  # pylint:disable=too-many-instance-att
     :ivar auto_delete_on_idle: ISO 8601 timeSpan idle interval after which the subscription is
      automatically deleted. The minimum duration is 5 minutes.
     :type auto_delete_on_idle: ~datetime.timedelta
-    :ivar entity_availability_status: Availability status of the entity. Possible values include:
+    :ivar availability_status: Availability status of the entity. Possible values include:
      "Available", "Limited", "Renaming", "Restoring", "Unknown".
-    :type entity_availability_status: str or
+    :type availability_status: str or
      ~azure.servicebus.management.EntityAvailabilityStatus
     """
     def __init__(self, name, **kwargs):
@@ -638,7 +690,7 @@ class SubscriptionProperties(DictMixin):  # pylint:disable=too-many-instance-att
         self.user_metadata = extract_kwarg('user_metadata')
         self.forward_dead_lettered_messages_to = extract_kwarg('forward_dead_lettered_messages_to')
         self.auto_delete_on_idle = extract_kwarg('auto_delete_on_idle')
-        self.entity_availability_status = extract_kwarg('entity_availability_status')
+        self.availability_status = extract_kwarg('availability_status')
 
         validate_extraction_missing_args(extraction_missing_args)
 
@@ -660,7 +712,7 @@ class SubscriptionProperties(DictMixin):  # pylint:disable=too-many-instance-att
             user_metadata=internal_subscription.user_metadata,
             forward_dead_lettered_messages_to=internal_subscription.forward_dead_lettered_messages_to,
             auto_delete_on_idle=internal_subscription.auto_delete_on_idle,
-            entity_availability_status=internal_subscription.entity_availability_status
+            availability_status=internal_subscription.entity_availability_status
         )
         subscription._internal_sd = deepcopy(internal_subscription)
         return subscription
@@ -682,7 +734,7 @@ class SubscriptionProperties(DictMixin):  # pylint:disable=too-many-instance-att
         self._internal_sd.user_metadata = self.user_metadata
         self._internal_sd.forward_dead_lettered_messages_to = self.forward_dead_lettered_messages_to
         self._internal_sd.auto_delete_on_idle = self.auto_delete_on_idle
-        self._internal_sd.entity_availability_status = self.entity_availability_status
+        self._internal_sd.entity_availability_status = self.availability_status
 
         return self._internal_sd
 
@@ -692,8 +744,9 @@ class SubscriptionRuntimeProperties(object):
 
     """
     def __init__(self):
+        # type: () -> None
         self._internal_sd = None  # type: Optional[InternalSubscriptionDescription]
-        self._name = None
+        self._name = None # type: Optional[str]
 
     @classmethod
     def _from_internal_entity(cls, name, internal_subscription):
@@ -713,7 +766,7 @@ class SubscriptionRuntimeProperties(object):
         return self._name
 
     @property
-    def accessed_at(self):
+    def accessed_at_utc(self):
         """Last time a message was sent, or the last time there was a receive request
 
         :rtype: ~datetime.datetime
@@ -721,7 +774,7 @@ class SubscriptionRuntimeProperties(object):
         return self._internal_sd.accessed_at
 
     @property
-    def created_at(self):
+    def created_at_utc(self):
         """The exact time the subscription was created.
 
         :rtype: ~datetime.datetime
@@ -729,7 +782,7 @@ class SubscriptionRuntimeProperties(object):
         return self._internal_sd.created_at
 
     @property
-    def updated_at(self):
+    def updated_at_utc(self):
         """The exact time the entity is updated.
 
         :rtype: ~datetime.datetime
@@ -787,8 +840,8 @@ class RuleProperties(DictMixin):
      ~azure.servicebus.management.SqlRuleFilter]
     :ivar action: The action of the rule.
     :type action: Optional[~azure.servicebus.management.SqlRuleAction]
-    :ivar created_at: The exact time the rule was created.
-    :type created_at: ~datetime.datetime
+    :ivar created_at_utc: The exact time the rule was created.
+    :type created_at_utc: ~datetime.datetime
     """
 
     def __init__(self, name, **kwargs):
@@ -802,7 +855,7 @@ class RuleProperties(DictMixin):
 
         self.filter = extract_kwarg('filter')
         self.action = extract_kwarg('action')
-        self.created_at = extract_kwarg('created_at')
+        self.created_at_utc = extract_kwarg('created_at_utc')
 
         validate_extraction_missing_args(extraction_missing_args)
 
@@ -815,7 +868,7 @@ class RuleProperties(DictMixin):
             if internal_rule.filter and isinstance(internal_rule.filter, tuple(RULE_CLASS_MAPPING.keys())) else None,
             action=RULE_CLASS_MAPPING[type(internal_rule.action)]._from_internal_entity(internal_rule.action)
             if internal_rule.action and isinstance(internal_rule.action, tuple(RULE_CLASS_MAPPING.keys())) else None,
-            created_at=internal_rule.created_at
+            created_at_utc=internal_rule.created_at
         )
         rule._internal_rule = deepcopy(internal_rule)
         return rule
@@ -826,7 +879,7 @@ class RuleProperties(DictMixin):
             self._internal_rule = InternalRuleDescription()
         self._internal_rule.filter = self.filter._to_internal_entity() if self.filter else TRUE_FILTER  # type: ignore
         self._internal_rule.action = self.action._to_internal_entity() if self.action else EMPTY_RULE_ACTION
-        self._internal_rule.created_at = self.created_at
+        self._internal_rule.created_at = self.created_at_utc
         self._internal_rule.name = self.name
 
         return self._internal_rule
@@ -910,15 +963,12 @@ class SqlRuleFilter(object):
     :type sql_expression: str
     :param parameters: Sets the value of the sql expression parameters if any.
     :type parameters: dict[str, Union[str, int, float, bool, datetime, timedelta]]
-    :param requires_preprocessing: Value that indicates whether the rule
-     filter requires preprocessing. Default value: True .
-    :type requires_preprocessing: bool
     """
-    def __init__(self, sql_expression=None, parameters=None, requires_preprocessing=True):
-        # type: (Optional[str], Optional[Dict[str, Union[str, int, float, bool, datetime, timedelta]]], bool) -> None
+    def __init__(self, sql_expression=None, parameters=None):
+        # type: (Optional[str], Optional[Dict[str, Union[str, int, float, bool, datetime, timedelta]]]) -> None
         self.sql_expression = sql_expression
         self.parameters = parameters
-        self.requires_preprocessing = requires_preprocessing
+        self.requires_preprocessing = True
 
     @classmethod
     def _from_internal_entity(cls, internal_sql_rule_filter):
@@ -944,7 +994,8 @@ class TrueRuleFilter(SqlRuleFilter):
     """A sql filter with a sql expression that is always True
     """
     def __init__(self):
-        super(TrueRuleFilter, self).__init__("1=1", None, True)
+        # type: () -> None
+        super(TrueRuleFilter, self).__init__("1=1", None)
 
     def _to_internal_entity(self):
         internal_entity = InternalTrueFilter()
@@ -959,7 +1010,8 @@ class FalseRuleFilter(SqlRuleFilter):
     """A sql filter with a sql expression that is always True
     """
     def __init__(self):
-        super(FalseRuleFilter, self).__init__("1>1", None, True)
+        # type: () -> None
+        super(FalseRuleFilter, self).__init__("1>1", None)
 
     def _to_internal_entity(self):
         internal_entity = InternalFalseFilter()
@@ -977,15 +1029,13 @@ class SqlRuleAction(object):
     :type sql_expression: str
     :param parameters: Sets the value of the sql expression parameters if any.
     :type parameters: dict[str, Union[str, int, float, bool, datetime, timedelta]]
-    :param requires_preprocessing: Value that indicates whether the rule
-     action requires preprocessing. Default value: True .
     :type requires_preprocessing: bool
     """
-    def __init__(self, sql_expression=None, parameters=None, requires_preprocessing=True):
-        # type: (Optional[str], Optional[Dict[str, Union[str, int, float, bool, datetime, timedelta]]], bool) -> None
+    def __init__(self, sql_expression=None, parameters=None):
+        # type: (Optional[str], Optional[Dict[str, Union[str, int, float, bool, datetime, timedelta]]]) -> None
         self.sql_expression = sql_expression
         self.parameters = parameters
-        self.requires_preprocessing = requires_preprocessing
+        self.requires_preprocessing = True
 
     @classmethod
     def _from_internal_entity(cls, internal_sql_rule_action):
@@ -1015,3 +1065,69 @@ RULE_CLASS_MAPPING = {
 }  # type: Dict[Type[Model], Type]
 EMPTY_RULE_ACTION = InternalEmptyRuleAction()
 TRUE_FILTER = TrueRuleFilter()
+
+
+class AuthorizationRule(object):
+    """Authorization rule of an entity.
+
+    :param type: The authorization type.
+    :type type: str
+    :param claim_type: The claim type.
+    :type claim_type: str
+    :param claim_value: The claim value.
+    :type claim_value: str
+    :param rights: Access rights of the entity. Values are 'Send', 'Listen', or 'Manage'.
+    :type rights: list[AccessRights]
+    :param created_at_utc: The date and time when the authorization rule was created.
+    :type created_at_utc: ~datetime.datetime
+    :param modified_at_utc: The date and time when the authorization rule was modified.
+    :type modified_at_utc: ~datetime.datetime
+    :param key_name: The authorization rule key name.
+    :type key_name: str
+    :param primary_key: The primary key of the authorization rule.
+    :type primary_key: str
+    :param secondary_key: The primary key of the authorization rule.
+    :type secondary_key: str
+    """
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        # type: (Any) -> None
+        self.type = kwargs.get('type', None)
+        self.claim_type = kwargs.get('claim_type', None)
+        self.claim_value = kwargs.get('claim_value', None)
+        self.rights = kwargs.get('rights', None)
+        self.created_at_utc = kwargs.get('created_at_utc', None)
+        self.modified_at_utc = kwargs.get('modified_at_utc', None)
+        self.key_name = kwargs.get('key_name', None)
+        self.primary_key = kwargs.get('primary_key', None)
+        self.secondary_key = kwargs.get('secondary_key', None)
+
+    @classmethod
+    def _from_internal_entity(cls, internal_authorization_rule):
+        authorization_rule = cls()
+        authorization_rule.claim_type = internal_authorization_rule.claim_type
+        authorization_rule.claim_value = internal_authorization_rule.claim_value
+        authorization_rule.rights = internal_authorization_rule.rights
+        authorization_rule.created_at_utc = internal_authorization_rule.created_time
+        authorization_rule.modified_at_utc = internal_authorization_rule.modified_time
+        authorization_rule.key_name = internal_authorization_rule.key_name
+        authorization_rule.primary_key = internal_authorization_rule.primary_key
+        authorization_rule.secondary_key = internal_authorization_rule.secondary_key
+
+        return authorization_rule
+
+    def _to_internal_entity(self):
+        # type: () -> InternalAuthorizationRule
+        internal_entity = InternalAuthorizationRule()
+        internal_entity.claim_type = self.claim_type
+        internal_entity.claim_value = self.claim_value
+        internal_entity.rights = self.rights
+        internal_entity.created_time = self.created_at_utc
+        internal_entity.modified_time = self.modified_at_utc
+        internal_entity.key_name = self.key_name
+        internal_entity.primary_key = self.primary_key
+        internal_entity.secondary_key = self.secondary_key
+        return internal_entity

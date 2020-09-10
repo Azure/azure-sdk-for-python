@@ -48,7 +48,7 @@ from azure.storage.blob import (
     AccessPolicy,
     ResourceTypes,
     AccountSasPermissions,
-    StandardBlobTier)
+    StandardBlobTier, RehydratePriority)
 
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from _shared.testcase import GlobalStorageAccountPreparer, GlobalResourceGroupPreparer
@@ -103,10 +103,11 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
     def _get_blob_reference(self):
         return self.get_resource_name(TEST_BLOB_PREFIX)
 
-    async def _create_block_blob(self, overwrite=False, tags=None):
+    async def _create_block_blob(self, overwrite=False, tags=None, standard_blob_tier=None):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
-        await blob.upload_blob(self.byte_data, length=len(self.byte_data), overwrite=overwrite, tags=tags)
+        await blob.upload_blob(self.byte_data, length=len(self.byte_data), overwrite=overwrite, tags=tags,
+                              standard_blob_tier=standard_blob_tier)
         return blob_name
 
     async def _create_empty_block_blob(self, overwrite=False, tags=None):
@@ -180,7 +181,7 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
         self.assertTrue(exists)
 
     @GlobalResourceGroupPreparer()
-    @StorageAccountPreparer(location="canadacentral", name_prefix='storagename')
+    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='storagename')
     @AsyncStorageTestCase.await_prepared_test
     async def test_blob_exists_with_if_tags(self, resource_group, location, storage_account, storage_account_key):
         await self._setup(storage_account, storage_account_key)
@@ -219,10 +220,11 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
 
         # Act
         blob = self.bsc.get_blob_client(self.container_name, blob_name, snapshot=snapshot)
-        exists = await blob.get_blob_properties()
+        prop = await blob.get_blob_properties()
 
         # Assert
-        self.assertTrue(exists)
+        self.assertTrue(prop)
+        self.assertEqual(snapshot['snapshot'], prop.snapshot)
 
 
     @GlobalStorageAccountPreparer()
@@ -271,6 +273,24 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
         content = data.decode('utf-8')
         self.assertEqual(content, blob_data)
 
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_create_blob_with_equal_sign(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        await self._setup(storage_account, storage_account_key)
+        blob_name = '=ques=tion!'
+        blob_data = u'???'
+
+        # Act
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        await blob.upload_blob(blob_data)
+
+        # Assert
+        stream = await blob.download_blob()
+        data = await stream.readall()
+        self.assertIsNotNone(data)
+        content = data.decode('utf-8')
+        self.assertEqual(content, blob_data)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -520,7 +540,7 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
         self.assertEqual(props.content_settings.content_disposition, 'inline')
 
     @GlobalResourceGroupPreparer()
-    @StorageAccountPreparer(location="canadacentral", name_prefix='storagename')
+    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='storagename')
     @AsyncStorageTestCase.await_prepared_test
     async def test_set_blob_properties_with_if_tags(self, resource_group, location, storage_account, storage_account_key):
         await self._setup(storage_account, storage_account_key)
@@ -584,6 +604,23 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
         self.assertEqual(props.lease.status, 'unlocked')
         self.assertIsNotNone(props.creation_time)
 
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_get_blob_properties_returns_rehydrate_priority(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        await self._setup(storage_account, storage_account_key)
+        blob_name = await self._create_block_blob(standard_blob_tier=StandardBlobTier.Archive)
+
+        # Act
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        await blob.set_standard_blob_tier(StandardBlobTier.Hot, rehydrate_priority=RehydratePriority.high)
+        props = await blob.get_blob_properties()
+
+        # Assert
+        self.assertIsInstance(props, BlobProperties)
+        self.assertEqual(props.blob_type, BlobType.BlockBlob)
+        self.assertEqual(props.size, len(self.byte_data))
+        self.assertEqual(props.rehydrate_priority, 'High')
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -775,7 +812,7 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
 
     @pytest.mark.live_test_only
     @GlobalResourceGroupPreparer()
-    @StorageAccountPreparer(location="canadacentral", name_prefix='storagename')
+    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='storagename')
     @AsyncStorageTestCase.await_prepared_test
     async def test_set_blob_metadata_with_if_tags(self, resource_group, location, storage_account, storage_account_key):
         # bug in devtools...converts upper case header to lowercase
@@ -839,7 +876,7 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
         self.assertIsNone(resp)
 
     @GlobalResourceGroupPreparer()
-    @StorageAccountPreparer(location="canadacentral", name_prefix='storagename')
+    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='storagename')
     @AsyncStorageTestCase.await_prepared_test
     async def test_delete_blob_with_if_tags(self, resource_group, location, storage_account, storage_account_key):
         await self._setup(storage_account, storage_account_key)
@@ -1278,7 +1315,7 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
             await self._disable_soft_delete()
 
     @GlobalResourceGroupPreparer()
-    @StorageAccountPreparer(location="canadacentral", name_prefix='storagename')
+    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='storagename')
     @AsyncStorageTestCase.await_prepared_test
     async def test_async_copy_blob_with_if_tags(self, resource_group, location, storage_account, storage_account_key):
         await self._setup(storage_account, storage_account_key)

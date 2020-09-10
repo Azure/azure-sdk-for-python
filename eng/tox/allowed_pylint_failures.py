@@ -36,7 +36,6 @@ PYLINT_ACCEPTABLE_FAILURES = [
     "azure-common",
     "azure-nspkg",
     "azure-servicemanagement-legacy",
-    "azure-eventgrid",
     "azure-graphrbac",
     "azure-loganalytics",
     "azure-servicefabric",
@@ -47,4 +46,5 @@ PYLINT_ACCEPTABLE_FAILURES = [
     "azure-synapse-spark",
     "azure-synapse-accesscontrol",
     "azure-synapse-nspkg",
+    "azure-ai-anomalydetector",
 ]
