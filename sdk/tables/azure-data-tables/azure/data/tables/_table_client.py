@@ -32,7 +32,6 @@ from ._base_client import parse_connection_str
 from ._table_client_base import TableClientBase
 from ._serialize import serialize_iso
 from ._deserialize import _return_headers_and_deserialized
-from ._error import _process_table_error
 from ._models import TableEntityPropertiesPaged, UpdateMode
 from ._table_batch import TableBatchOperations
 
@@ -566,13 +565,25 @@ class TableClient(TableClientBase):
                 **kwargs
             )
 
+    @distributed_trace
     def create_batch(
-        self
+        self, **kwargs # type: Dict[str, Any]
     ):
         # (...) -> TableBatchOperations
-        """
+        """Update/Merge or Insert entity into table.
+
+        .. admonition:: Example:
+            # TODO:
+
+            .. literalinclude:: ../samples/.py
+                :start-after: [START abcd]
+                :end-before: [END abcd]
+                :language: python
+                :dedent: 8
+                :caption: abcd
         return: Table batch operation for inserting new operations
         rtype: ~azure.data.tables.TableBatchOperations
+        :raises: None
         """
         return TableBatchOperations(
             self._client,
@@ -580,7 +591,8 @@ class TableClient(TableClientBase):
             self._client._deserialize,
             self._client._config,
             self.table_name,
-            self
+            self,
+            **kwargs
         )
 
     def commit_batch(
@@ -588,5 +600,20 @@ class TableClient(TableClientBase):
         batch, # type: TableBatchOperations
         **kwargs # type: Any
     ):
-        # (...) -> HttpResponse
-        return self._batch_send(*batch._requests, **kwargs)
+        # (...) -> None
+        """Commit a TableBatchOperations to send requests to the server
+
+        .. admonition:: Example:
+            # TODO:
+
+            .. literalinclude:: ../samples/.py
+                :start-after: [START abcd]
+                :end-before: [END abcd]
+                :language: python
+                :dedent: 8
+                :caption: abcd
+        return: Table batch operation for inserting new operations
+        rtype: ~azure.data.tables.TableBatchOperations
+        :raises: None
+        """
+        return self._batch_send(*batch._requests, **kwargs) # pylint:disable=protected-access

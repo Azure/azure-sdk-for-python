@@ -12,6 +12,7 @@ import pytest
 import uuid
 from datetime import datetime
 from dateutil.tz import tzutc
+import sys
 
 from azure.core import MatchConditions
 from azure.core.exceptions import (
@@ -161,6 +162,7 @@ class StorageTableBatchTest(TableTestCase):
         self.assertIsNotNone(entity['_metadata']['etag'])
 
     #--Test cases for batch ---------------------------------------------
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @GlobalStorageAccountPreparer()
     def test_batch_insert(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -190,6 +192,7 @@ class StorageTableBatchTest(TableTestCase):
         finally:
             self._tear_down()
 
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @GlobalStorageAccountPreparer()
     def test_batch_single_update(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -224,6 +227,7 @@ class StorageTableBatchTest(TableTestCase):
         finally:
             self._tear_down()
 
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @GlobalStorageAccountPreparer()
     def test_batch_update(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -257,6 +261,7 @@ class StorageTableBatchTest(TableTestCase):
         finally:
             self._tear_down()
 
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @GlobalStorageAccountPreparer()
     def test_batch_merge(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -294,6 +299,7 @@ class StorageTableBatchTest(TableTestCase):
         finally:
             self._tear_down()
 
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @GlobalStorageAccountPreparer()
     def test_batch_update_if_match(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -321,6 +327,7 @@ class StorageTableBatchTest(TableTestCase):
         finally:
             self._tear_down()
 
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @GlobalStorageAccountPreparer()
     def test_batch_update_if_doesnt_match(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -409,6 +416,7 @@ class StorageTableBatchTest(TableTestCase):
         finally:
             self._tear_down()
 
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @GlobalStorageAccountPreparer()
     def test_batch_delete(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -437,6 +445,7 @@ class StorageTableBatchTest(TableTestCase):
         finally:
             self._tear_down()
 
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @GlobalStorageAccountPreparer()
     def test_batch_inserts(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -464,6 +473,7 @@ class StorageTableBatchTest(TableTestCase):
         finally:
             self._tear_down()
 
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @GlobalStorageAccountPreparer()
     def test_batch_all_operations_together(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -512,6 +522,7 @@ class StorageTableBatchTest(TableTestCase):
         finally:
             self._tear_down()
 
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @GlobalStorageAccountPreparer()
     def test_batch_all_operations_together_context_manager(self, resource_group, location, storage_account, storage_account_key):
         # Arrange

@@ -34,7 +34,6 @@ from azure.core.pipeline.transport import (
     RequestsTransport,
     HttpTransport,
     HttpRequest,
-    HttpResponse
 )
 from azure.core.pipeline.policies import (
     RedirectPolicy,
@@ -258,6 +257,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         self, *reqs,  # type: List[HttpRequest]
         **kwargs
     ):
+        # (...) -> List[HttpResponse]
         """Given a series of request, do a Storage batch call.
         """
         # Pop it here, so requests doesn't feel bad about additional kwarg

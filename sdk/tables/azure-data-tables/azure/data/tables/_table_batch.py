@@ -3,16 +3,15 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import TYPE_CHECKING
-import warnings
-
-from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import  ResourceExistsError, ResourceNotFoundError
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
 from ._deserialize import _return_headers_and_deserialized
 from ._models import PartialBatchErrorException, UpdateMode
 from ._serialize import _get_match_headers, _add_entity_properties
+from ._generated.models import (
+    QueryOptions
+)
 
 class TableBatchOperations(object):
     '''
@@ -27,7 +26,16 @@ class TableBatchOperations(object):
     TODO: confirm # of entities, payload size, partition group
     '''
 
-    def __init__(self, client, serializer, deserializer, config, table_name, table_client):
+    def __init__(
+        self,
+        client, # type: AzureTable
+        serializer, # type: msrest.Serializer
+        deserializer, # type: msrest.Deserializer
+        config, # type: AzureTableConfiguration
+        table_name, # type: str
+        table_client, # type: TableClient
+        **kwargs # type: Dict[str, Any]
+    ):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
@@ -35,7 +43,7 @@ class TableBatchOperations(object):
         self.table_name = table_name
         self._table_client = table_client
 
-        self._partition_key = None
+        self._partition_key = kwargs.pop('partition_key', None)
         self._requests = []
 
 
@@ -55,7 +63,7 @@ class TableBatchOperations(object):
         entity,  # type: Union[TableEntity, Dict[str,str]]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Dict[str,str]
+        # type: (...) -> None
         """Insert entity in a table.
 
         :param entity: The properties for the table entity.
@@ -82,6 +90,24 @@ class TableBatchOperations(object):
             entity=entity,
             cls=kwargs.pop('cls', _return_headers_and_deserialized),
             **kwargs)
+
+
+    def _parameter_filter_substitution(
+            self,
+            parameters,  # type: dict[str,str]
+            filter  # type: str # pylint:disable=redefined-builtin
+    ):
+        """Replace user defined parameter in filter
+        :param parameters: User defined parameters
+        :param filter: Filter for querying
+        """
+        if parameters:
+            filter_start = filter.split('@')[0]
+            selected = filter.split('@')[1]
+            for key, value in parameters.items():
+                if key == selected:
+                    filter = filter_start.replace('@', value)
+        return filter
 
 
     def _batch_create_entity(
@@ -116,7 +142,6 @@ class TableBatchOperations(object):
         else:
             raise ValueError('PartitionKey and RowKey were not provided in entity')
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[Dict[str, object]]]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
 
@@ -133,7 +158,7 @@ class TableBatchOperations(object):
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
             'table': self._serialize.url("table", table, 'str'),
         }
-        url = self._client._client.format_url(url, **path_format_arguments)
+        url = self._client._client.format_url(url, **path_format_arguments) # pylint:disable=protected-access
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
@@ -144,13 +169,18 @@ class TableBatchOperations(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
+        header_parameters['x-ms-version'] = self._serialize.header(
+            "self._config.version", self._config.version, 'str')
         if request_id_parameter is not None:
-            header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter", request_id_parameter, 'str')
-        header_parameters['DataServiceVersion'] = self._serialize.header("data_service_version", data_service_version, 'str')
+            header_parameters['x-ms-client-request-id'] = self._serialize.header(
+                "request_id_parameter", request_id_parameter, 'str')
+        header_parameters['DataServiceVersion'] = self._serialize.header(
+            "data_service_version", data_service_version, 'str')
         if response_preference is not None:
-            header_parameters['Prefer'] = self._serialize.header("response_preference", response_preference, 'str')
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+            header_parameters['Prefer'] = self._serialize.header(
+                "response_preference", response_preference, 'str')
+        header_parameters['Content-Type'] = self._serialize.header(
+            "content_type", content_type, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
@@ -159,7 +189,7 @@ class TableBatchOperations(object):
         else:
             body_content = None
         body_content_kwargs['content'] = body_content
-        request = self._client._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
+        request = self._client._client.post(url, query_parameters, header_parameters, **body_content_kwargs) # pylint:disable=protected-access
         self._requests.append(request)
     _batch_create_entity.metadata = {'url': '/{table}'}  # type: ignore
 
@@ -233,12 +263,10 @@ class TableBatchOperations(object):
         :type table_entity_properties: dict[str, object]
         :param query_options: Parameter group.
         :type query_options: ~azure.data.tables.models.QueryOptions
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
 
@@ -257,7 +285,7 @@ class TableBatchOperations(object):
             'partitionKey': self._serialize.url("partition_key", partition_key, 'str'),
             'rowKey': self._serialize.url("row_key", row_key, 'str'),
         }
-        url = self._client._client.format_url(url, **path_format_arguments)
+        url = self._client._client.format_url(url, **path_format_arguments) # pylint:disable=protected-access
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
@@ -270,8 +298,10 @@ class TableBatchOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if request_id_parameter is not None:
-            header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter", request_id_parameter, 'str')
-        header_parameters['DataServiceVersion'] = self._serialize.header("data_service_version", data_service_version, 'str')
+            header_parameters['x-ms-client-request-id'] = self._serialize.header(
+                "request_id_parameter", request_id_parameter, 'str')
+        header_parameters['DataServiceVersion'] = self._serialize.header(
+            "data_service_version", data_service_version, 'str')
         if if_match is not None:
             header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
@@ -283,9 +313,10 @@ class TableBatchOperations(object):
         else:
             body_content = None
         body_content_kwargs['content'] = body_content
-        request = self._client._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
+        request = self._client._client.put(url, query_parameters, header_parameters, **body_content_kwargs) # pylint:disable=protected-access
         self._requests.append(request)
-    _batch_update_entity.metadata = {'url': '/{table}(PartitionKey=\'{partitionKey}\',RowKey=\'{rowKey}\')'}  # type: ignore
+    _batch_update_entity.metadata = {
+        'url': '/{table}(PartitionKey=\'{partitionKey}\',RowKey=\'{rowKey}\')'}  # type: ignore
 
 
     def _batch_merge_entity(
@@ -324,11 +355,10 @@ class TableBatchOperations(object):
         :param query_options: Parameter group.
         :type query_options: ~azure.data.tables.models.QueryOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
 
@@ -347,7 +377,7 @@ class TableBatchOperations(object):
             'partitionKey': self._serialize.url("partition_key", partition_key, 'str'),
             'rowKey': self._serialize.url("row_key", row_key, 'str'),
         }
-        url = self._client._client.format_url(url, **path_format_arguments)
+        url = self._client._client.format_url(url, **path_format_arguments) # pylint:disable=protected-access
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
@@ -360,11 +390,14 @@ class TableBatchOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if request_id_parameter is not None:
-            header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter", request_id_parameter, 'str')
-        header_parameters['DataServiceVersion'] = self._serialize.header("data_service_version", data_service_version, 'str')
+            header_parameters['x-ms-client-request-id'] = self._serialize.header(
+                "request_id_parameter", request_id_parameter, 'str')
+        header_parameters['DataServiceVersion'] = self._serialize.header(
+            "data_service_version", data_service_version, 'str')
         if if_match is not None:
             header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Content-Type'] = self._serialize.header(
+            "content_type", content_type, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
@@ -373,9 +406,9 @@ class TableBatchOperations(object):
         else:
             body_content = None
         body_content_kwargs['content'] = body_content
-        request = self._client._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
+        request = self._client._client.patch(url, query_parameters, header_parameters, **body_content_kwargs) # pylint:disable=protected-access
         self._requests.append(request)
-    _batch_merge_entity.metadata = {'url': '/{table}(PartitionKey=\'{partitionKey}\',RowKey=\'{rowKey}\')'}  # type: ignore
+    _batch_merge_entity.metadata = {'url': '/{table}(PartitionKey=\'{partitionKey}\',RowKey=\'{rowKey}\')'}
 
 
     def delete_entity(
@@ -451,11 +484,10 @@ class TableBatchOperations(object):
         :param query_options: Parameter group.
         :type query_options: ~azure.data.tables.models.QueryOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
 
@@ -473,7 +505,7 @@ class TableBatchOperations(object):
             'partitionKey': self._serialize.url("partition_key", partition_key, 'str'),
             'rowKey': self._serialize.url("row_key", row_key, 'str'),
         }
-        url = self._client._client.format_url(url, **path_format_arguments)
+        url = self._client._client.format_url(url, **path_format_arguments) # pylint:disable=protected-access
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
@@ -486,23 +518,25 @@ class TableBatchOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if request_id_parameter is not None:
-            header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter", request_id_parameter, 'str')
-        header_parameters['DataServiceVersion'] = self._serialize.header("data_service_version", data_service_version, 'str')
+            header_parameters['x-ms-client-request-id'] = self._serialize.header(
+                "request_id_parameter", request_id_parameter, 'str')
+        header_parameters['DataServiceVersion'] = self._serialize.header(
+            "data_service_version", data_service_version, 'str')
         header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
-        request = self._client._client.delete(url, query_parameters, header_parameters)
+        request = self._client._client.delete(url, query_parameters, header_parameters) # pylint:disable=protected-access
         self._requests.append(request)
-    _batch_delete_entity.metadata = {'url': '/{table}(PartitionKey=\'{partitionKey}\',RowKey=\'{rowKey}\')'}  # type: ignore
+    _batch_delete_entity.metadata = {'url': '/{table}(PartitionKey=\'{partitionKey}\',RowKey=\'{rowKey}\')'}
 
 
-    def upsert_entity(  # pylint:disable=R1710
+    def upsert_entity(
         self,
         entity,  # type: Union[TableEntity, Dict[str,str]]
         mode=UpdateMode.MERGE,  # type: UpdateMode
         **kwargs  # type: Any
     ):
-        # type: (...) -> Dict[str,str]
+        # type: (...) -> None
         """Update/Merge or Insert entity into table.
 
         :param entity: The properties for the table entity.
@@ -548,8 +582,8 @@ class TableBatchOperations(object):
 
     def query_entities(
         self,
-        filter,  # type: str  # pylint: disable = W0622
-        **kwargs
+        filter,  # type: str # pylint:disable=redefined-builtin
+        **kwargs # type: Dict[str, Any]
     ):
         # type: (...) -> ItemPaged[TableEntity]
         """Lists entities in a table.
@@ -572,7 +606,7 @@ class TableBatchOperations(object):
                 :caption: Query entities held within a table
         """
         parameters = kwargs.pop('parameters', None)
-        filter = self._parameter_filter_substitution(parameters, filter)  # pylint: disable = W0622
+        filter = self._parameter_filter_substitution(parameters, filter)
 
         user_select = kwargs.pop('select', None)
         if user_select and not isinstance(user_select, str):
@@ -580,7 +614,7 @@ class TableBatchOperations(object):
 
         query_options = QueryOptions(top=kwargs.pop('results_per_page', None), select=user_select,
                                      filter=filter)
-        self._batch_query(self.table_name, **kwargs)
+        self._batch_query(self.table_name, query_options=query_options, **kwargs)
 
 
     def _batch_query(
@@ -614,7 +648,6 @@ class TableBatchOperations(object):
         :rtype: ~azure.data.tables.models.TableEntityQueryResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.TableEntityQueryResponse"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
 
@@ -636,7 +669,7 @@ class TableBatchOperations(object):
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
             'table': self._serialize.url("table", table, 'str'),
         }
-        url = self._client._client.format_url(url, **path_format_arguments)
+        url = self._client._client.format_url(url, **path_format_arguments) # pylint:disable=protected-access
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
@@ -651,7 +684,8 @@ class TableBatchOperations(object):
         if _filter is not None:
             query_parameters['$filter'] = self._serialize.query("filter", _filter, 'str')
         if next_partition_key is not None:
-            query_parameters['NextPartitionKey'] = self._serialize.query("next_partition_key", next_partition_key, 'str')
+            query_parameters['NextPartitionKey'] = self._serialize.query(
+                "next_partition_key", next_partition_key, 'str')
         if next_row_key is not None:
             query_parameters['NextRowKey'] = self._serialize.query("next_row_key", next_row_key, 'str')
 
@@ -659,18 +693,19 @@ class TableBatchOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if request_id_parameter is not None:
-            header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter", request_id_parameter, 'str')
-        header_parameters['DataServiceVersion'] = self._serialize.header("data_service_version", data_service_version, 'str')
+            header_parameters['x-ms-client-request-id'] = self._serialize.header(
+                "request_id_parameter", request_id_parameter, 'str')
+        header_parameters['DataServiceVersion'] = self._serialize.header(
+            "data_service_version", data_service_version, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
-        request = self._client._client.get(url, query_parameters, header_parameters)
+        request = self._client._client.get(url, query_parameters, header_parameters) # pylint:disable=protected-access
         self._requests.append(request)
     _batch_query.metadata = {'url': '/{table}()'}  # type: ignore
 
 
     def __enter__(self):
         # type: (...) -> TableBatchOperations
-        # TODO: self._client should probably be a PipelineClient of some sorts
         self._client.__enter__() # TODO: borrowing from search
         return self
 
