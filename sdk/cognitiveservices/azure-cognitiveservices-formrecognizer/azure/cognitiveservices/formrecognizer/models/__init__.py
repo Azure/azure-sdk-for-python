@@ -10,55 +10,108 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .train_request_py3 import TrainRequest
-    from .form_document_report_py3 import FormDocumentReport
-    from .form_operation_error_py3 import FormOperationError
-    from .train_result_py3 import TrainResult
-    from .keys_result_py3 import KeysResult
-    from .model_result_py3 import ModelResult
-    from .models_result_py3 import ModelsResult
-    from .inner_error_py3 import InnerError
-    from .error_information_py3 import ErrorInformation
-    from .error_response_py3 import ErrorResponse, ErrorResponseException
-    from .extracted_token_py3 import ExtractedToken
-    from .extracted_key_value_pair_py3 import ExtractedKeyValuePair
-    from .extracted_table_column_py3 import ExtractedTableColumn
-    from .extracted_table_py3 import ExtractedTable
-    from .extracted_page_py3 import ExtractedPage
-    from .analyze_result_py3 import AnalyzeResult
+    from ._models_py3 import AnalyzeOperationResult
+    from ._models_py3 import AnalyzeResult
+    from ._models_py3 import CopyAuthorizationResult
+    from ._models_py3 import CopyOperationResult
+    from ._models_py3 import CopyRequest
+    from ._models_py3 import CopyResult
+    from ._models_py3 import DataTable
+    from ._models_py3 import DataTableCell
+    from ._models_py3 import DocumentResult
+    from ._models_py3 import ErrorInformation
+    from ._models_py3 import ErrorResponse, ErrorResponseException
+    from ._models_py3 import FieldValue
+    from ._models_py3 import FormFieldsReport
+    from ._models_py3 import KeysResult
+    from ._models_py3 import KeyValueElement
+    from ._models_py3 import KeyValuePair
+    from ._models_py3 import Model
+    from ._models_py3 import ModelInfo
+    from ._models_py3 import ModelsModel
+    from ._models_py3 import ModelsSummary
+    from ._models_py3 import PageResult
+    from ._models_py3 import ReadResult
+    from ._models_py3 import SourcePath
+    from ._models_py3 import TextLine
+    from ._models_py3 import TextWord
+    from ._models_py3 import TrainingDocumentInfo
+    from ._models_py3 import TrainRequest
+    from ._models_py3 import TrainResult
+    from ._models_py3 import TrainSourceFilter
 except (SyntaxError, ImportError):
-    from .train_request import TrainRequest
-    from .form_document_report import FormDocumentReport
-    from .form_operation_error import FormOperationError
-    from .train_result import TrainResult
-    from .keys_result import KeysResult
-    from .model_result import ModelResult
-    from .models_result import ModelsResult
-    from .inner_error import InnerError
-    from .error_information import ErrorInformation
-    from .error_response import ErrorResponse, ErrorResponseException
-    from .extracted_token import ExtractedToken
-    from .extracted_key_value_pair import ExtractedKeyValuePair
-    from .extracted_table_column import ExtractedTableColumn
-    from .extracted_table import ExtractedTable
-    from .extracted_page import ExtractedPage
-    from .analyze_result import AnalyzeResult
+    from ._models import AnalyzeOperationResult
+    from ._models import AnalyzeResult
+    from ._models import CopyAuthorizationResult
+    from ._models import CopyOperationResult
+    from ._models import CopyRequest
+    from ._models import CopyResult
+    from ._models import DataTable
+    from ._models import DataTableCell
+    from ._models import DocumentResult
+    from ._models import ErrorInformation
+    from ._models import ErrorResponse, ErrorResponseException
+    from ._models import FieldValue
+    from ._models import FormFieldsReport
+    from ._models import KeysResult
+    from ._models import KeyValueElement
+    from ._models import KeyValuePair
+    from ._models import Model
+    from ._models import ModelInfo
+    from ._models import ModelsModel
+    from ._models import ModelsSummary
+    from ._models import PageResult
+    from ._models import ReadResult
+    from ._models import SourcePath
+    from ._models import TextLine
+    from ._models import TextWord
+    from ._models import TrainingDocumentInfo
+    from ._models import TrainRequest
+    from ._models import TrainResult
+    from ._models import TrainSourceFilter
+from ._form_recognizer_client_enums import (
+    FieldValueType,
+    Language,
+    LengthUnit,
+    ModelStatus,
+    OperationStatus,
+    TrainStatus,
+)
 
 __all__ = [
-    'TrainRequest',
-    'FormDocumentReport',
-    'FormOperationError',
-    'TrainResult',
-    'KeysResult',
-    'ModelResult',
-    'ModelsResult',
-    'InnerError',
+    'AnalyzeOperationResult',
+    'AnalyzeResult',
+    'CopyAuthorizationResult',
+    'CopyOperationResult',
+    'CopyRequest',
+    'CopyResult',
+    'DataTable',
+    'DataTableCell',
+    'DocumentResult',
     'ErrorInformation',
     'ErrorResponse', 'ErrorResponseException',
-    'ExtractedToken',
-    'ExtractedKeyValuePair',
-    'ExtractedTableColumn',
-    'ExtractedTable',
-    'ExtractedPage',
-    'AnalyzeResult',
+    'FieldValue',
+    'FormFieldsReport',
+    'KeysResult',
+    'KeyValueElement',
+    'KeyValuePair',
+    'Model',
+    'ModelInfo',
+    'ModelsModel',
+    'ModelsSummary',
+    'PageResult',
+    'ReadResult',
+    'SourcePath',
+    'TextLine',
+    'TextWord',
+    'TrainingDocumentInfo',
+    'TrainRequest',
+    'TrainResult',
+    'TrainSourceFilter',
+    'OperationStatus',
+    'LengthUnit',
+    'Language',
+    'FieldValueType',
+    'TrainStatus',
+    'ModelStatus',
 ]
