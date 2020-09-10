@@ -44,7 +44,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
             self,
             account_url,  # type: str
             table_name,  # type: str
-            credential,  # type : Optional[Any]=None
+            credential=None,  # type : Optional[Any]=None
             **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -163,7 +163,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
                 **kwargs)
         except HttpResponseError as error:
             _process_table_error(error)
-        return {s.id: s.access_policy or AccessPolicy() for s in identifiers}
+        return {s.id: s.access_policy or AccessPolicy(start=None, expiry=None, permission=None) for s in identifiers}
 
     @distributed_trace_async
     async def set_table_access_policy(

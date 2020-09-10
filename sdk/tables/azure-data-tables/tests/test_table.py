@@ -247,7 +247,7 @@ class StorageTableTest(TableTestCase):
         self.assertGreaterEqual(len(big_page), 4)
 
     @GlobalStorageAccountPreparer()
-    def test_query_tables_with_marker(self, resource_group, location, storage_account, storage_account_key):
+    def test_list_tables_with_marker(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         ts = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
         prefix = 'listtable'

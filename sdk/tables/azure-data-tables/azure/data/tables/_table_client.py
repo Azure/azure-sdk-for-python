@@ -155,7 +155,7 @@ class TableClient(TableClientBase):
                 **kwargs)
         except HttpResponseError as error:
             _process_table_error(error)
-        return {s.id: s.access_policy or AccessPolicy(start=None, expiry=None, permission=None) for s in identifiers}  # pylint: disable=E1125
+        return {s.id: s.access_policy or AccessPolicy(start=None, expiry=None, permission=None) for s in identifiers}
 
     @distributed_trace
     def set_table_access_policy(

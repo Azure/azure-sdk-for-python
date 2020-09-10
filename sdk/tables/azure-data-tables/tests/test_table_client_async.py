@@ -18,8 +18,6 @@ from azure.core.exceptions import HttpResponseError
 SERVICES = {
     TableServiceClient: 'table',
     TableClient: 'table',
-    #TableServiceClient: 'cosmos',
-    #TableClient: 'cosmos',
 }
 
 _CONNECTION_ENDPOINTS = {'table': 'TableEndpoint', 'cosmos': 'TableEndpoint'}
@@ -357,7 +355,6 @@ class StorageTableClientTest(TableTestCase):
             self.assertTrue(service._primary_endpoint.startswith('https://www.mydomain.com'))
             # self.assertTrue(service.secondary_endpoint.startswith('https://www-sec.mydomain.com'))
 
-    @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     async def test_create_service_with_custom_account_endpoint_path_async(self, resource_group, location, storage_account, storage_account_key):
         custom_account_url = "http://local-machine:11002/custom/account/path/" + self.sas_token
@@ -378,7 +375,6 @@ class StorageTableClientTest(TableTestCase):
         self.assertEqual(service.account_name, None)
         self.assertEqual(service.credential, None)
         self.assertEqual(service._primary_hostname, 'local-machine:11002/custom/account/path')
-        # mine doesnt have a question mark at the end
         self.assertTrue(service.url.startswith('http://local-machine:11002/custom/account/path'))
 
         service = TableClient(account_url=custom_account_url, table_name="foo")
@@ -395,6 +391,7 @@ class StorageTableClientTest(TableTestCase):
         self.assertEqual(service._primary_hostname, 'local-machine:11002/custom/account/path')
         self.assertTrue(service.url.startswith('http://local-machine:11002/custom/account/path'))
 
+    # TODO: AsyncItemPaged is not iterable
     @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     async def test_user_agent_default_async(self, resource_group, location, storage_account, storage_account_key):
@@ -412,6 +409,7 @@ class StorageTableClientTest(TableTestCase):
         tables = list(service.list_tables(raw_response_hook=callback))
         self.assertIsInstance(tables, list)
 
+    # TODO: AsyncItemPaged is not iterable
     @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     async def test_user_agent_custom_async(self, resource_group, location, storage_account, storage_account_key):
@@ -445,6 +443,7 @@ class StorageTableClientTest(TableTestCase):
         tables = list(service.list_tables(raw_response_hook=callback, user_agent="TestApp/v2.0"))
         self.assertIsInstance(tables, list)
 
+    # TODO: AsyncItemPaged is not iterable
     @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     async def test_user_agent_append_async(self, resource_group, location, storage_account, storage_account_key):
@@ -498,7 +497,7 @@ class StorageTableClientTest(TableTestCase):
 
         assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.""" in str(excinfo)
 
-    @GlobalStorageAccountPreparer() 
+    @GlobalStorageAccountPreparer()
     async def test_error_with_malformed_conn_str_async(self):
         # Arrange
 
