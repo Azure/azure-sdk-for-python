@@ -40,15 +40,14 @@ class ExposureControlOperations(object):
         self.config = config
 
     def get_feature_value(
-            self, location_id, feature_name=None, feature_type=None, custom_headers=None, raw=False, **operation_config):
+            self, location_id, exposure_control_request, custom_headers=None, raw=False, **operation_config):
         """Get exposure control feature for specific location.
 
         :param location_id: The location identifier.
         :type location_id: str
-        :param feature_name: The feature name.
-        :type feature_name: str
-        :param feature_type: The feature type.
-        :type feature_type: str
+        :param exposure_control_request: The exposure control request.
+        :type exposure_control_request:
+         ~azure.mgmt.datafactory.models.ExposureControlRequest
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -59,8 +58,6 @@ class ExposureControlOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        exposure_control_request = models.ExposureControlRequest(feature_name=feature_name, feature_type=feature_type)
-
         # Construct URL
         url = self.get_feature_value.metadata['url']
         path_format_arguments = {
@@ -108,17 +105,16 @@ class ExposureControlOperations(object):
     get_feature_value.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.DataFactory/locations/{locationId}/getFeatureValue'}
 
     def get_feature_value_by_factory(
-            self, resource_group_name, factory_name, feature_name=None, feature_type=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, factory_name, exposure_control_request, custom_headers=None, raw=False, **operation_config):
         """Get exposure control feature for specific factory.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
         :param factory_name: The factory name.
         :type factory_name: str
-        :param feature_name: The feature name.
-        :type feature_name: str
-        :param feature_type: The feature type.
-        :type feature_type: str
+        :param exposure_control_request: The exposure control request.
+        :type exposure_control_request:
+         ~azure.mgmt.datafactory.models.ExposureControlRequest
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -129,8 +125,6 @@ class ExposureControlOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        exposure_control_request = models.ExposureControlRequest(feature_name=feature_name, feature_type=feature_type)
-
         # Construct URL
         url = self.get_feature_value_by_factory.metadata['url']
         path_format_arguments = {
@@ -179,16 +173,17 @@ class ExposureControlOperations(object):
     get_feature_value_by_factory.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/getFeatureValue'}
 
     def query_feature_values_by_factory(
-            self, resource_group_name, factory_name, exposure_control_requests, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, factory_name, exposure_control_batch_request, custom_headers=None, raw=False, **operation_config):
         """Get list of exposure control features for specific factory.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
         :param factory_name: The factory name.
         :type factory_name: str
-        :param exposure_control_requests: List of exposure control features.
-        :type exposure_control_requests:
-         list[~azure.mgmt.datafactory.models.ExposureControlRequest]
+        :param exposure_control_batch_request: The exposure control request
+         for list of features.
+        :type exposure_control_batch_request:
+         ~azure.mgmt.datafactory.models.ExposureControlBatchRequest
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -199,8 +194,6 @@ class ExposureControlOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        exposure_control_batch_request = models.ExposureControlBatchRequest(exposure_control_requests=exposure_control_requests)
-
         # Construct URL
         url = self.query_feature_values_by_factory.metadata['url']
         path_format_arguments = {

@@ -1880,7 +1880,7 @@ class FormatWriteSettings(Model):
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: JsonWriteSettings, DelimitedTextWriteSettings,
-    AvroWriteSettings
+    OrcWriteSettings, AvroWriteSettings, ParquetWriteSettings
 
     All required parameters must be populated in order to send to Azure.
 
@@ -1901,7 +1901,7 @@ class FormatWriteSettings(Model):
     }
 
     _subtype_map = {
-        'type': {'JsonWriteSettings': 'JsonWriteSettings', 'DelimitedTextWriteSettings': 'DelimitedTextWriteSettings', 'AvroWriteSettings': 'AvroWriteSettings'}
+        'type': {'JsonWriteSettings': 'JsonWriteSettings', 'DelimitedTextWriteSettings': 'DelimitedTextWriteSettings', 'OrcWriteSettings': 'OrcWriteSettings', 'AvroWriteSettings': 'AvroWriteSettings', 'ParquetWriteSettings': 'ParquetWriteSettings'}
     }
 
     def __init__(self, **kwargs):
@@ -1925,6 +1925,15 @@ class AvroWriteSettings(FormatWriteSettings):
     :type record_name: str
     :param record_namespace: Record namespace in the write result.
     :type record_namespace: str
+    :param max_rows_per_file: Limit the written file's row count to be smaller
+     than or equal to the specified count. Type: integer (or Expression with
+     resultType integer).
+    :type max_rows_per_file: object
+    :param file_name_prefix: Specifies the file name pattern
+     <fileNamePrefix>_<fileIndex>.<fileExtension> when copy from non-file based
+     store without partitionOptions. Type: string (or Expression with
+     resultType string).
+    :type file_name_prefix: object
     """
 
     _validation = {
@@ -1936,12 +1945,16 @@ class AvroWriteSettings(FormatWriteSettings):
         'type': {'key': 'type', 'type': 'str'},
         'record_name': {'key': 'recordName', 'type': 'str'},
         'record_namespace': {'key': 'recordNamespace', 'type': 'str'},
+        'max_rows_per_file': {'key': 'maxRowsPerFile', 'type': 'object'},
+        'file_name_prefix': {'key': 'fileNamePrefix', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
         super(AvroWriteSettings, self).__init__(**kwargs)
         self.record_name = kwargs.get('record_name', None)
         self.record_namespace = kwargs.get('record_namespace', None)
+        self.max_rows_per_file = kwargs.get('max_rows_per_file', None)
+        self.file_name_prefix = kwargs.get('file_name_prefix', None)
         self.type = 'AvroWriteSettings'
 
 
@@ -7998,7 +8011,8 @@ class CompressionReadSettings(Model):
     """Compression read settings.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: ZipDeflateReadSettings
+    sub-classes are: TarGZipReadSettings, TarReadSettings,
+    ZipDeflateReadSettings
 
     All required parameters must be populated in order to send to Azure.
 
@@ -8019,7 +8033,7 @@ class CompressionReadSettings(Model):
     }
 
     _subtype_map = {
-        'type': {'ZipDeflateReadSettings': 'ZipDeflateReadSettings'}
+        'type': {'TarGZipReadSettings': 'TarGZipReadSettings', 'TarReadSettings': 'TarReadSettings', 'ZipDeflateReadSettings': 'ZipDeflateReadSettings'}
     }
 
     def __init__(self, **kwargs):
@@ -10220,7 +10234,8 @@ class DatasetCompression(Model):
     """The compression method used on a dataset.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: DatasetZipDeflateCompression, DatasetDeflateCompression,
+    sub-classes are: DatasetTarGZipCompression, DatasetTarCompression,
+    DatasetZipDeflateCompression, DatasetDeflateCompression,
     DatasetGZipCompression, DatasetBZip2Compression
 
     All required parameters must be populated in order to send to Azure.
@@ -10242,7 +10257,7 @@ class DatasetCompression(Model):
     }
 
     _subtype_map = {
-        'type': {'ZipDeflate': 'DatasetZipDeflateCompression', 'Deflate': 'DatasetDeflateCompression', 'GZip': 'DatasetGZipCompression', 'BZip2': 'DatasetBZip2Compression'}
+        'type': {'TarGZip': 'DatasetTarGZipCompression', 'Tar': 'DatasetTarCompression', 'ZipDeflate': 'DatasetZipDeflateCompression', 'Deflate': 'DatasetDeflateCompression', 'GZip': 'DatasetGZipCompression', 'BZip2': 'DatasetBZip2Compression'}
     }
 
     def __init__(self, **kwargs):
@@ -10454,6 +10469,62 @@ class DatasetResource(SubResource):
     def __init__(self, **kwargs):
         super(DatasetResource, self).__init__(**kwargs)
         self.properties = kwargs.get('properties', None)
+
+
+class DatasetTarCompression(DatasetCompression):
+    """The Tar archive method used on a dataset.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param type: Required. Constant filled by server.
+    :type type: str
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(DatasetTarCompression, self).__init__(**kwargs)
+        self.type = 'Tar'
+
+
+class DatasetTarGZipCompression(DatasetCompression):
+    """The TarGZip compression method used on a dataset.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :param level: The TarGZip compression level.
+    :type level: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'level': {'key': 'level', 'type': 'object'},
+    }
+
+    def __init__(self, **kwargs):
+        super(DatasetTarGZipCompression, self).__init__(**kwargs)
+        self.level = kwargs.get('level', None)
+        self.type = 'TarGZip'
 
 
 class DatasetZipDeflateCompression(DatasetCompression):
@@ -11081,6 +11152,15 @@ class DelimitedTextWriteSettings(FormatWriteSettings):
     :param file_extension: Required. The file extension used to create the
      files. Type: string (or Expression with resultType string).
     :type file_extension: object
+    :param max_rows_per_file: Limit the written file's row count to be smaller
+     than or equal to the specified count. Type: integer (or Expression with
+     resultType integer).
+    :type max_rows_per_file: object
+    :param file_name_prefix: Specifies the file name pattern
+     <fileNamePrefix>_<fileIndex>.<fileExtension> when copy from non-file based
+     store without partitionOptions. Type: string (or Expression with
+     resultType string).
+    :type file_name_prefix: object
     """
 
     _validation = {
@@ -11093,12 +11173,16 @@ class DelimitedTextWriteSettings(FormatWriteSettings):
         'type': {'key': 'type', 'type': 'str'},
         'quote_all_text': {'key': 'quoteAllText', 'type': 'object'},
         'file_extension': {'key': 'fileExtension', 'type': 'object'},
+        'max_rows_per_file': {'key': 'maxRowsPerFile', 'type': 'object'},
+        'file_name_prefix': {'key': 'fileNamePrefix', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
         super(DelimitedTextWriteSettings, self).__init__(**kwargs)
         self.quote_all_text = kwargs.get('quote_all_text', None)
         self.file_extension = kwargs.get('file_extension', None)
+        self.max_rows_per_file = kwargs.get('max_rows_per_file', None)
+        self.file_name_prefix = kwargs.get('file_name_prefix', None)
         self.type = 'DelimitedTextWriteSettings'
 
 
@@ -23093,6 +23177,8 @@ class OrcSink(CopySink):
     :type type: str
     :param store_settings: ORC store settings.
     :type store_settings: ~azure.mgmt.datafactory.models.StoreWriteSettings
+    :param format_settings: ORC format settings.
+    :type format_settings: ~azure.mgmt.datafactory.models.OrcWriteSettings
     """
 
     _validation = {
@@ -23108,11 +23194,13 @@ class OrcSink(CopySink):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'store_settings': {'key': 'storeSettings', 'type': 'StoreWriteSettings'},
+        'format_settings': {'key': 'formatSettings', 'type': 'OrcWriteSettings'},
     }
 
     def __init__(self, **kwargs):
         super(OrcSink, self).__init__(**kwargs)
         self.store_settings = kwargs.get('store_settings', None)
+        self.format_settings = kwargs.get('format_settings', None)
         self.type = 'OrcSink'
 
 
@@ -23165,6 +23253,45 @@ class OrcSource(CopySource):
         self.store_settings = kwargs.get('store_settings', None)
         self.additional_columns = kwargs.get('additional_columns', None)
         self.type = 'OrcSource'
+
+
+class OrcWriteSettings(FormatWriteSettings):
+    """Orc write settings.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :param max_rows_per_file: Limit the written file's row count to be smaller
+     than or equal to the specified count. Type: integer (or Expression with
+     resultType integer).
+    :type max_rows_per_file: object
+    :param file_name_prefix: Specifies the file name pattern
+     <fileNamePrefix>_<fileIndex>.<fileExtension> when copy from non-file based
+     store without partitionOptions. Type: string (or Expression with
+     resultType string).
+    :type file_name_prefix: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'max_rows_per_file': {'key': 'maxRowsPerFile', 'type': 'object'},
+        'file_name_prefix': {'key': 'fileNamePrefix', 'type': 'object'},
+    }
+
+    def __init__(self, **kwargs):
+        super(OrcWriteSettings, self).__init__(**kwargs)
+        self.max_rows_per_file = kwargs.get('max_rows_per_file', None)
+        self.file_name_prefix = kwargs.get('file_name_prefix', None)
+        self.type = 'OrcWriteSettings'
 
 
 class PackageStore(Model):
@@ -23351,6 +23478,8 @@ class ParquetSink(CopySink):
     :type type: str
     :param store_settings: Parquet store settings.
     :type store_settings: ~azure.mgmt.datafactory.models.StoreWriteSettings
+    :param format_settings: Parquet format settings.
+    :type format_settings: ~azure.mgmt.datafactory.models.ParquetWriteSettings
     """
 
     _validation = {
@@ -23366,11 +23495,13 @@ class ParquetSink(CopySink):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'store_settings': {'key': 'storeSettings', 'type': 'StoreWriteSettings'},
+        'format_settings': {'key': 'formatSettings', 'type': 'ParquetWriteSettings'},
     }
 
     def __init__(self, **kwargs):
         super(ParquetSink, self).__init__(**kwargs)
         self.store_settings = kwargs.get('store_settings', None)
+        self.format_settings = kwargs.get('format_settings', None)
         self.type = 'ParquetSink'
 
 
@@ -23423,6 +23554,45 @@ class ParquetSource(CopySource):
         self.store_settings = kwargs.get('store_settings', None)
         self.additional_columns = kwargs.get('additional_columns', None)
         self.type = 'ParquetSource'
+
+
+class ParquetWriteSettings(FormatWriteSettings):
+    """Parquet write settings.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :param max_rows_per_file: Limit the written file's row count to be smaller
+     than or equal to the specified count. Type: integer (or Expression with
+     resultType integer).
+    :type max_rows_per_file: object
+    :param file_name_prefix: Specifies the file name pattern
+     <fileNamePrefix>_<fileIndex>.<fileExtension> when copy from non-file based
+     store without partitionOptions. Type: string (or Expression with
+     resultType string).
+    :type file_name_prefix: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'max_rows_per_file': {'key': 'maxRowsPerFile', 'type': 'object'},
+        'file_name_prefix': {'key': 'fileNamePrefix', 'type': 'object'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ParquetWriteSettings, self).__init__(**kwargs)
+        self.max_rows_per_file = kwargs.get('max_rows_per_file', None)
+        self.file_name_prefix = kwargs.get('file_name_prefix', None)
+        self.type = 'ParquetWriteSettings'
 
 
 class PaypalLinkedService(LinkedService):
@@ -32039,6 +32209,70 @@ class SybaseTableDataset(Dataset):
         super(SybaseTableDataset, self).__init__(**kwargs)
         self.table_name = kwargs.get('table_name', None)
         self.type = 'SybaseTable'
+
+
+class TarGZipReadSettings(CompressionReadSettings):
+    """The TarGZip compression read settings.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :param preserve_compression_file_name_as_folder: Preserve the compression
+     file name as folder path. Type: boolean (or Expression with resultType
+     boolean).
+    :type preserve_compression_file_name_as_folder: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'preserve_compression_file_name_as_folder': {'key': 'preserveCompressionFileNameAsFolder', 'type': 'object'},
+    }
+
+    def __init__(self, **kwargs):
+        super(TarGZipReadSettings, self).__init__(**kwargs)
+        self.preserve_compression_file_name_as_folder = kwargs.get('preserve_compression_file_name_as_folder', None)
+        self.type = 'TarGZipReadSettings'
+
+
+class TarReadSettings(CompressionReadSettings):
+    """The Tar compression read settings.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :param preserve_compression_file_name_as_folder: Preserve the compression
+     file name as folder path. Type: boolean (or Expression with resultType
+     boolean).
+    :type preserve_compression_file_name_as_folder: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'preserve_compression_file_name_as_folder': {'key': 'preserveCompressionFileNameAsFolder', 'type': 'object'},
+    }
+
+    def __init__(self, **kwargs):
+        super(TarReadSettings, self).__init__(**kwargs)
+        self.preserve_compression_file_name_as_folder = kwargs.get('preserve_compression_file_name_as_folder', None)
+        self.type = 'TarReadSettings'
 
 
 class TeradataLinkedService(LinkedService):

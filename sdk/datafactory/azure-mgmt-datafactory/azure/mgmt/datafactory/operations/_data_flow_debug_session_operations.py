@@ -294,15 +294,16 @@ class DataFlowDebugSessionOperations(object):
     add_data_flow.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/addDataFlowToDebugSession'}
 
     def delete(
-            self, resource_group_name, factory_name, session_id=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, factory_name, request, custom_headers=None, raw=False, **operation_config):
         """Deletes a data flow debug session.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
         :param factory_name: The factory name.
         :type factory_name: str
-        :param session_id: The ID of data flow debug session.
-        :type session_id: str
+        :param request: Data flow debug session definition for deletion
+        :type request:
+         ~azure.mgmt.datafactory.models.DeleteDataFlowDebugSessionRequest
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -312,8 +313,6 @@ class DataFlowDebugSessionOperations(object):
         :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        request = models.DeleteDataFlowDebugSessionRequest(session_id=session_id)
-
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
