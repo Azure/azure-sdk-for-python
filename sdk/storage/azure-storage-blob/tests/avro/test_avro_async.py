@@ -5,7 +5,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
+import asyncio
 import inspect
 import os
 from io import BytesIO
@@ -65,7 +65,7 @@ class AvroReaderTestsAsync(unittest.TestCase):
         cls._samples_dir_root = os.path.join(os.path.dirname(test_file_path), 'samples')
 
     @pytest.mark.asyncio
-    async def test_reader(self):
+    async def _test_reader(self):
         correct = 0
         nitems = 10
         for iexample, (writer_schema, datum) in enumerate(SCHEMAS_TO_VALIDATE):
@@ -84,8 +84,12 @@ class AvroReaderTestsAsync(unittest.TestCase):
             correct,
             len(CODECS_TO_VALIDATE) * len(SCHEMAS_TO_VALIDATE))
 
+    def test_reader(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_reader())
+
     @pytest.mark.asyncio
-    async def test_change_feed(self):
+    async def _test_change_feed(self):
         file_path = os.path.join(AvroReaderTestsAsync._samples_dir_root, 'changeFeed.avro')
         with open(file_path, 'rb') as reader:
             datum_reader = AsyncDatumReader()
@@ -98,8 +102,12 @@ class AvroReaderTestsAsync(unittest.TestCase):
                 expected_record = CHANGE_FEED_RECORD
                 self.assertEqual(expected_record, data[0])
 
+    def test_change_feed(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_change_feed())
+
     @pytest.mark.asyncio
-    async def test_with_hearder_reader(self):
+    async def _test_with_hearder_reader(self):
         # Note: only when the data stream doesn't have header, we need header stream to help
         file_path = os.path.join(AvroReaderTestsAsync._samples_dir_root, 'changeFeed.avro')
         # this data stream has header
@@ -128,14 +136,18 @@ class AvroReaderTestsAsync(unittest.TestCase):
         async for record in df_reader:
             records.append(record)
         self.assertEqual(CHANGE_FEED_RECORD, records[0])
-        self.assertIsNot(partial_data_stream.event_position, 0)
+        self.assertIsNot(partial_data_stream.object_position, 0)
 
+    def test_with_hearder_reader(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_with_hearder_reader())
 
 class _HeaderStream(object):
     def __init__(self):
         self._bytes_stream = BytesIO()
-        self.event_position = 0
+        self.object_position = 0
         self.block_count = 0
+        self.event_index = 0
 
     async def seek(self, *args, **kwargs):
         return self._bytes_stream.seek(*args, **kwargs)
@@ -149,8 +161,11 @@ class _HeaderStream(object):
     async def tell(self, *args, **kwargs):
         return self._bytes_stream.tell(*args, **kwargs)
 
-    async def track_event_position(self):
-        self.event_position = self.tell()
+    async def track_object_position(self):
+        self.object_position = self.tell()
+
+    async def set_object_index(self, event_index):
+        self.event_index = event_index
 
     async def close(self):
         self._bytes_stream.close()

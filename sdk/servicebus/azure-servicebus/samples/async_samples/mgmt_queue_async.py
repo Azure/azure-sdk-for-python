@@ -18,7 +18,7 @@ Example to show managing queue entities under a ServiceBus Namespace asynchronou
 
 import os
 import asyncio
-from azure.servicebus.aio.management import ServiceBusManagementClient
+from azure.servicebus.aio.management import ServiceBusAdministrationClient
 
 CONNECTION_STR = os.environ['SERVICE_BUS_CONNECTION_STR']
 QUEUE_NAME = "sb_mgmt_demo_queue"
@@ -72,7 +72,7 @@ async def get_queue_runtime_info(servicebus_mgmt_client):
 
 
 async def main():
-    async with ServiceBusManagementClient.from_connection_string(CONNECTION_STR) as servicebus_mgmt_client:
+    async with ServiceBusAdministrationClient.from_connection_string(CONNECTION_STR) as servicebus_mgmt_client:
         await create_queue(servicebus_mgmt_client)
         await list_queues(servicebus_mgmt_client)
         await get_and_update_queue(servicebus_mgmt_client)

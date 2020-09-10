@@ -92,6 +92,8 @@ def _from_entity_datetime(value):
 def _from_entity_guid(value):
     return UUID(value)
 
+def _from_entity_str(value):
+    return EntityProperty(value=value, type=EdmType.STRING)
 
 _EDM_TYPES = [EdmType.BINARY, EdmType.INT64, EdmType.GUID, EdmType.DATETIME,
               EdmType.STRING, EdmType.INT32, EdmType.DOUBLE, EdmType.BOOLEAN]
@@ -103,6 +105,7 @@ _ENTITY_TO_PYTHON_CONVERSIONS = {
     EdmType.DOUBLE: float,
     EdmType.DATETIME: _from_entity_datetime,
     EdmType.GUID: _from_entity_guid,
+    EdmType.STRING: _from_entity_str
 }
 
 
@@ -159,8 +162,16 @@ def _convert_to_entity(entry_element):
         mtype = edmtypes.get(name)
 
         # Add type for Int32
-        if type(value) is int:  # pylint:disable=C0123
+        if type(value) is int and mtype is None:  # pylint:disable=C0123
             mtype = EdmType.INT32
+
+        # Add type for String, keeps
+        try:
+            if type(value) is unicode and mtype is None: # pylint:disable=C0123
+                mtype = EdmType.STRING
+        except NameError:
+            if type(value) is str and mtype is None: # pylint:disable=C0123
+                mtype = EdmType.STRING
 
         # no type info, property should parse automatically
         if not mtype:

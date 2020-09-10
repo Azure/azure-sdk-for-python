@@ -6,8 +6,6 @@ interactions:
       - application/json;odata.metadata=none
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-      api-key:
-      - 7B5FD022BEF2C7F9EE1F0FD374508A32
     method: GET
     uri: https://search5c91905.search.windows.net/indexes('drgqefsg')/docs('1000')?api-version=2020-06-30
   response:
@@ -16,11 +14,11 @@ interactions:
     headers:
       cache-control: no-cache
       content-length: '0'
-      date: Thu, 13 Aug 2020 00:48:32 GMT
-      elapsed-time: '127'
+      date: Fri, 28 Aug 2020 20:50:38 GMT
+      elapsed-time: '66'
       expires: '-1'
       pragma: no-cache
-      request-id: b5fc0124-dcfe-11ea-bc26-5cf37071153c
+      request-id: 20cadcef-e970-11ea-b2ce-5cf37071153c
       strict-transport-security: max-age=15724800; includeSubDomains
     status:
       code: 404

@@ -262,6 +262,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
         :keyword bool show_stats: If set to true, response will contain document level statistics.
+        :keyword domain_filter: Filters the response entities to ones only included in the specified domain.
+            I.e., if set to 'PHI', will only return entities in the Protected Healthcare Information domain.
+            See https://aka.ms/tanerpii for more information.
+        :paramtype domain_filter: str or ~azure.ai.textanalytics.PiiEntityDomainType
         :return: The combined list of :class:`~azure.ai.textanalytics.RecognizePiiEntitiesResult`
             and :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents
             were passed in.
@@ -283,6 +287,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         docs = _validate_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
+        domain_filter = kwargs.pop("domain_filter", None)
+
         if self._string_code_unit:
             kwargs.update({"string_index_type": self._string_code_unit})
         try:
@@ -290,6 +296,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 documents=docs,
                 model_version=model_version,
                 show_stats=show_stats,
+                domain=domain_filter,
                 cls=kwargs.pop("cls", pii_entities_result),
                 **kwargs
             )
