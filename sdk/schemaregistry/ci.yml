@@ -30,3 +30,5 @@ extends:
     Artifacts:
     - name: azure_schemaregistry
       safeName: azureschemaregistry
+    - name: azure_schemaregistry_avroserializer
+      safeName: azureschemaregistryavroserializer
