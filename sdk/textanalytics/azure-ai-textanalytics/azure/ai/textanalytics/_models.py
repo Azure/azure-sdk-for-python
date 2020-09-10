@@ -181,50 +181,6 @@ class RecognizePiiEntitiesResult(DictMixin):
             )[:1024]
 
 
-class RecognizeHealthcareEntitiesResult(DictMixin):
-    """
-    RecognizeHealthcareEntitiesResult is a result object which contains
-    the recognized Healthcare entities and relations from a particular document.
-
-    :ivar str id: Unique, non-empty document identifier that matches the
-        document id that was passed in with the request. If not specified
-        in the request, an id is assigned for the document.
-    :ivar entities: Recognized Healthcare entities in the document.
-    :vartype entities:
-        list[~azure.ai.textanalytics.HealthcareEntity]
-    :ivar relations: A list of detected relations between recognized entities.
-        list[~azure.ai.textanalytics.HealthcareRelation]
-    :ivar warnings: Warnings encountered while processing document. Results will still be returned
-        if there are warnings, but they may not be fully accurate.
-    :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
-    :ivar statistics: If show_stats=true was specified in the request this
-        field will contain information about the document payload.
-    :vartype statistics:
-        ~azure.ai.textanalytics.TextDocumentStatistics
-    :ivar bool is_error: Boolean check for error item when iterating over list of
-        results. Always False for an instance of a RecognizeHealthcareEntitiesResult.
-    """
-
-    def __init__(self, **kwargs):
-        self.id = kwargs.get("id", None)
-        self.entities = kwargs.get("entities", None)
-        self.relations = kwargs.get("relations", None)
-        self.warnings = kwargs.get("warnings", [])
-        self.statistics = kwargs.get("statistics", None)
-        self.is_error = False
-
-    def __repr__(self):
-        return "RecognizeHealthcareEntitiesResult(id={}, entities={}, relations={}, warnings={}, statistics={}, \
-        is_error={})".format(
-            self.id,
-            self.entities,
-            self.relations,
-            self.warnings,
-            self.statistics,
-            self.is_error
-        )[:1024]
-
-
 class DetectLanguageResult(DictMixin):
     """DetectLanguageResult is a result object which contains
     the detected language of a particular document.
@@ -366,87 +322,6 @@ class PiiEntity(DictMixin):
                 self.confidence_score
             )[:1024]
         )
-
-
-class HealthcareEntity(DictMixin):
-    """HealthcareEntity contains information about a Healthcare entity found in text.
-
-        :ivar str text: Entity text as appears in the request.
-        :ivar str category: Entity category, such as Dosage or MedicationName, etc.
-        :ivar str subcategory: Entity subcategory.  # TODO: add subcategory examples
-        :ivar int offset: The Healthcare entity text offset from the start of the document.
-        :ivar int length: The length of the Healthcare entity text.
-        :ivar float confidence_score: Confidence score between 0 and 1 of the extracted
-            entity.
-        :ivar links: A collection of entity references in known data sources.
-        vartype links: list[~azure.ai.textanalytics.HealthcareEntityLink]
-    """
-
-    def __init__(self, **kwargs):
-        self.text = kwargs.get("text", None)
-        self.category = kwargs.get("category", None)
-        self.subcategory = kwargs.get("subcategory", None)
-        self.offset = kwargs.get("offset", None)
-        self.length = kwargs.get("length", None)
-        self.confidence_score = kwargs.get("confidence_score", None)
-        self.links = kwargs.get("links", [])
-
-    def __repr__(self):
-        return "HealthcareEntity(text={}, category={}, subcategory={}, offset={}, length={}, confidence_score={},\
-        links={})".format(
-            self.text,
-            self.category,
-            self.subcategory,
-            self.offset,
-            self.length,
-            self.confidence_score,
-            repr(self.links)
-        )
-
-
-class HealthcareRelation(DictMixin):
-    """
-    HealthcareRelation contains information describing a relationship between two entities found in text.
-
-    :ivar str type: The type of relation, such as DosageOfMedication or FrequencyOfMedication, etc.
-    :ivar bool is_bidirectional: Boolean value indicating that the relationship between the two entities is
-        bidirectional.  If true the relation between the entities is bidirectional, otherwise directionality
-        is source to target.
-    ivar source: A reference to an extracted Healthcare entity representing the source of the relation.
-    vartype source: ~azure.ai.textanalytics.HealthcareEntity
-    ivar target: A reference to an extracted Healthcare entity representing the target of the relation.
-    vartype target: ~azure.ai.textanalytics.HealthcareEntity
-    """
-
-    def __init__(self, **kwargs):
-        self.type = kwargs.get("type", None)
-        self.is_bidirectional = kwargs.get("is_bidirectional", None)
-        self.source = kwargs.get("source", None)
-        self.target = kwargs.get("target", None)
-
-    def __repr__(self):
-        return "HealthcareRelation(type={}, is_bidirectional={}, source={}, target={})".format(
-            self.type,
-            self.is_bidirectional,
-            repr(self.source),
-            repr(self.target)
-        )
-
-
-class HealthcareEntityLink(DictMixin):
-    """
-    HealthcareEntityLink contains information representing an entity reference in a known data source.
-
-    :ivar str id: ID of the entity in the given source catalog.
-    :ivar str data_source: The entity catalog from where the entity was identified, such as UMLS, CHV, MSH, etc.
-    """
-
-    def __init__(self, **kwargs):
-        self.id = kwargs.get("id", None)
-        self.data_source = kwargs.get("data_source", None)
-
-    def __repr__(self):
-        return "HealthcareEntityLink(id={}, data_source={})".format(self.id, self.data_source)
 
 
 class TextAnalyticsError(DictMixin):
