@@ -134,6 +134,7 @@ stages:
                           BlobSASKey: '$(azure-sdk-docs-prod-sas)'
                           BlobName: '$(azure-sdk-docs-prod-blob-name)'
                           TargetLanguage: 'python'
+                          ArtifactLocation: '$(Pipeline.Workspace)/${{parameters.ArtifactName}}'
                           # we override the regular script path because we have cloned the build tools repo as a separate artifact.
                           ScriptPath: 'eng/common/scripts/copy-docs-to-blobstorage.ps1'
 
