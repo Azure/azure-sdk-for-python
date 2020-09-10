@@ -66,7 +66,7 @@ class StorageFileTest(StorageTestCase):
 
         remote_url = self.account_url(rmt_account, "file")
         remote_credential = rmt_key
-        
+
         if rmt_account:
             self.fsc2 = ShareServiceClient(remote_url, credential=remote_credential)
             self.remote_share_name = None
@@ -917,7 +917,6 @@ class StorageFileTest(StorageTestCase):
             file_path=file_name,
             credential=storage_account_key)
 
-        self.fsc.create_share(self.share_name)
         file_client.create_file(2048)
         share_client = self.fsc.get_share_client(self.share_name)
         snapshot1 = share_client.create_snapshot()
