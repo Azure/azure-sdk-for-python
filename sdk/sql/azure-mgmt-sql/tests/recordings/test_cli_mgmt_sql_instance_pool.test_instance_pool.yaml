@@ -20,10 +20,10 @@ interactions:
   response:
     body:
       string: "{\r\n  \"name\": \"myVirtualNetwork\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/myVirtualNetwork\"\
-        ,\r\n  \"etag\": \"W/\\\"2f02e1b1-320f-428f-90f4-cc8d4eff1005\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"f3b0e7a2-3fae-4683-9ae8-206e2bc0b6f6\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/virtualNetworks\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n \
-        \   \"resourceGuid\": \"5f3f2110-5942-4e30-86c4-0b8b3f951551\",\r\n    \"\
+        \   \"resourceGuid\": \"0c21e6d9-83ba-4dc2-a3e8-aaa979f8ff86\",\r\n    \"\
         addressSpace\": {\r\n      \"addressPrefixes\": [\r\n        \"10.0.0.0/16\"\
         \r\n      ]\r\n    },\r\n    \"subnets\": [],\r\n    \"virtualNetworkPeerings\"\
         : [],\r\n    \"enableDdosProtection\": false,\r\n    \"enableVmProtection\"\
@@ -32,7 +32,7 @@ interactions:
       azure-asyncnotification:
       - Enabled
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/68b517cf-ff94-4098-8a2c-49632785faf5?api-version=2020-04-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/1402c7e1-3b32-4a2c-a9b5-95619880af9d?api-version=2020-04-01
       cache-control:
       - no-cache
       content-length:
@@ -40,7 +40,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 27 Aug 2020 09:43:23 GMT
+      - Fri, 04 Sep 2020 08:02:21 GMT
       expires:
       - '-1'
       pragma:
@@ -53,9 +53,9 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 9e18439a-af80-4b67-8d92-d0fedfff55ad
+      - 1957cd3d-ca91-4351-ac34-5534468b514b
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1197'
+      - '1199'
     status:
       code: 201
       message: Created
@@ -71,7 +71,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/16.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/68b517cf-ff94-4098-8a2c-49632785faf5?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/1402c7e1-3b32-4a2c-a9b5-95619880af9d?api-version=2020-04-01
   response:
     body:
       string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
@@ -83,7 +83,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 27 Aug 2020 09:43:27 GMT
+      - Fri, 04 Sep 2020 08:02:25 GMT
       expires:
       - '-1'
       pragma:
@@ -100,7 +100,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - d3e9664e-7f47-4701-902f-b1ecdd2a9209
+      - 57f6c733-c47a-4844-9bb7-881a6c4037a7
     status:
       code: 200
       message: OK
@@ -120,10 +120,10 @@ interactions:
   response:
     body:
       string: "{\r\n  \"name\": \"myVirtualNetwork\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/myVirtualNetwork\"\
-        ,\r\n  \"etag\": \"W/\\\"a23e0f42-2e46-4edc-8c98-4ae83481eabf\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"6fb2b004-666b-46be-9839-d510d8eb7a4e\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/virtualNetworks\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n\
-        \    \"resourceGuid\": \"5f3f2110-5942-4e30-86c4-0b8b3f951551\",\r\n    \"\
+        \    \"resourceGuid\": \"0c21e6d9-83ba-4dc2-a3e8-aaa979f8ff86\",\r\n    \"\
         addressSpace\": {\r\n      \"addressPrefixes\": [\r\n        \"10.0.0.0/16\"\
         \r\n      ]\r\n    },\r\n    \"subnets\": [],\r\n    \"virtualNetworkPeerings\"\
         : [],\r\n    \"enableDdosProtection\": false,\r\n    \"enableVmProtection\"\
@@ -136,9 +136,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 27 Aug 2020 09:43:27 GMT
+      - Fri, 04 Sep 2020 08:02:26 GMT
       etag:
-      - W/"a23e0f42-2e46-4edc-8c98-4ae83481eabf"
+      - W/"6fb2b004-666b-46be-9839-d510d8eb7a4e"
       expires:
       - '-1'
       pragma:
@@ -155,7 +155,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - b4ca240f-1fba-4f19-8c85-8825175f874d
+      - 4a43fac6-dfb4-4773-8137-2e345e1e7855
     status:
       code: 200
       message: OK
@@ -175,26 +175,26 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/16.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/myVirtualNetwork/subnets/mySubnet?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/myVirtualNetwork/subnets/InstancePool?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"name\": \"mySubnet\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/myVirtualNetwork/subnets/mySubnet\"\
-        ,\r\n  \"etag\": \"W/\\\"32a937a4-8fb5-4c54-94a4-1c2d3be72b80\\\"\",\r\n \
+      string: "{\r\n  \"name\": \"InstancePool\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/myVirtualNetwork/subnets/InstancePool\"\
+        ,\r\n  \"etag\": \"W/\\\"6cc0aa61-f70b-4ca1-9b51-f9e6dd921d0c\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n    \"\
         addressPrefix\": \"10.0.0.0/24\",\r\n    \"delegations\": [],\r\n    \"privateEndpointNetworkPolicies\"\
         : \"Enabled\",\r\n    \"privateLinkServiceNetworkPolicies\": \"Enabled\"\r\
         \n  },\r\n  \"type\": \"Microsoft.Network/virtualNetworks/subnets\"\r\n}"
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/1a1fc897-3cc1-414f-8020-3ac9340ae13d?api-version=2020-04-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/66143fd8-3961-4771-a955-89f7a4056840?api-version=2020-04-01
       cache-control:
       - no-cache
       content-length:
-      - '598'
+      - '606'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 27 Aug 2020 09:43:28 GMT
+      - Fri, 04 Sep 2020 08:02:26 GMT
       expires:
       - '-1'
       pragma:
@@ -207,9 +207,9 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - b82ee95e-ef23-4b78-a3c5-403633b8549f
+      - e1a1e1bf-2bdd-40e1-ae9c-ba2db3485924
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1196'
+      - '1198'
     status:
       code: 201
       message: Created
@@ -225,7 +225,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/16.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/1a1fc897-3cc1-414f-8020-3ac9340ae13d?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/66143fd8-3961-4771-a955-89f7a4056840?api-version=2020-04-01
   response:
     body:
       string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
@@ -237,7 +237,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 27 Aug 2020 09:43:31 GMT
+      - Fri, 04 Sep 2020 08:02:30 GMT
       expires:
       - '-1'
       pragma:
@@ -254,7 +254,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 9de6558a-78c2-4eee-af69-af6eeb4fab66
+      - 1f7c6329-aab1-41a6-9b30-00ee22ce8c10
     status:
       code: 200
       message: OK
@@ -270,11 +270,11 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-network/16.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/myVirtualNetwork/subnets/mySubnet?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/myVirtualNetwork/subnets/InstancePool?api-version=2020-04-01
   response:
     body:
-      string: "{\r\n  \"name\": \"mySubnet\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/myVirtualNetwork/subnets/mySubnet\"\
-        ,\r\n  \"etag\": \"W/\\\"1ac67e6c-e9d0-40bb-b85a-dee27c8d9ccf\\\"\",\r\n \
+      string: "{\r\n  \"name\": \"InstancePool\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/myVirtualNetwork/subnets/InstancePool\"\
+        ,\r\n  \"etag\": \"W/\\\"8d1c0fd9-0fac-47e8-bf95-1c0a86075b20\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"\
         addressPrefix\": \"10.0.0.0/24\",\r\n    \"delegations\": [],\r\n    \"privateEndpointNetworkPolicies\"\
         : \"Enabled\",\r\n    \"privateLinkServiceNetworkPolicies\": \"Enabled\"\r\
@@ -283,13 +283,13 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '599'
+      - '607'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 27 Aug 2020 09:43:32 GMT
+      - Fri, 04 Sep 2020 08:02:30 GMT
       etag:
-      - W/"1ac67e6c-e9d0-40bb-b85a-dee27c8d9ccf"
+      - W/"8d1c0fd9-0fac-47e8-bf95-1c0a86075b20"
       expires:
       - '-1'
       pragma:
@@ -306,13 +306,13 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 62d50183-1392-4004-8fff-7718e7f21791
+      - fb2af576-45cf-4da3-87d1-d5df1b5ef5c7
     status:
       code: 200
       message: OK
 - request:
     body: 'b''b\''{"location": "westeurope", "sku": {"name": "GP_Gen5", "tier": "GeneralPurpose",
-      "family": "Gen5"}, "properties": {"subnetId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/myVirtualNetwork/subnets/mySubnet",
+      "family": "Gen5"}, "properties": {"subnetId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/myVirtualNetwork/subnets/InstancePool",
       "vCores": 8, "licenseType": "LicenseIncluded"}}\'''''
     headers:
       Accept:
@@ -322,7 +322,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '397'
+      - '401'
       Content-Type:
       - application/json
       User-Agent:
@@ -331,22 +331,22 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/instancePools/myinstancepool?api-version=2018-06-01-preview
   response:
     body:
-      string: '{"operation":"UpsertInstancePoolAsync","startTime":"2020-08-27T09:43:40.71Z"}'
+      string: '{"operation":"UpsertInstancePoolAsync","startTime":"2020-09-04T08:02:37.383Z"}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/westeurope/instancePoolAzureAsyncOperation/d148aba6-cf6e-4763-b2d9-9748eaf330c7?api-version=2018-06-01-preview
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/westeurope/instancePoolAzureAsyncOperation/1ae65089-cd18-4a89-8773-f37a1d0d7178?api-version=2018-06-01-preview
       cache-control:
       - no-cache
       content-length:
-      - '77'
+      - '78'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 27 Aug 2020 09:43:41 GMT
+      - Fri, 04 Sep 2020 08:02:36 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/westeurope/instancePoolOperationResults/d148aba6-cf6e-4763-b2d9-9748eaf330c7?api-version=2018-06-01-preview
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/westeurope/instancePoolOperationResults/1ae65089-cd18-4a89-8773-f37a1d0d7178?api-version=2018-06-01-preview
       pragma:
       - no-cache
       server:
@@ -372,20 +372,20 @@ interactions:
       User-Agent:
       - azsdk-python-mgmt-sql/0.9.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/westeurope/instancePoolAzureAsyncOperation/d148aba6-cf6e-4763-b2d9-9748eaf330c7?api-version=2018-06-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Sql/locations/westeurope/instancePoolAzureAsyncOperation/1ae65089-cd18-4a89-8773-f37a1d0d7178?api-version=2018-06-01-preview
   response:
     body:
-      string: '{"name":"d148aba6-cf6e-4763-b2d9-9748eaf330c7","status":"Failed","startTime":"2020-08-27T09:43:40.71Z","error":{"code":"InternalServerError","message":"An
-        unexpected error occured while processing the request. Tracking ID: ''ccd1a96d-4b5a-4e01-9a73-16e8a5275615''"}}'
+      string: '{"name":"1ae65089-cd18-4a89-8773-f37a1d0d7178","status":"Failed","startTime":"2020-09-04T08:02:37.383Z","error":{"code":"InternalServerError","message":"An
+        unexpected error occured while processing the request. Tracking ID: ''4f7e6fac-8822-4eee-a725-74a36d498c34''"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '264'
+      - '265'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 27 Aug 2020 09:44:41 GMT
+      - Fri, 04 Sep 2020 08:03:37 GMT
       expires:
       - '-1'
       pragma:

@@ -1,0 +1,90 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-sql/0.9.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Sql/locations/eastus/usages?api-version=2015-05-01-preview
+  response:
+    body:
+      string: '{"value":[{"properties":{"displayName":"Regional Server Quota for eastus","currentValue":0.0,"limit":20.0,"unit":"Count"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Sql/locations/eastus/usages/ServerQuota","name":"ServerQuota","type":"Microsoft.Sql/locations/usages"},{"properties":{"displayName":"Free
+        Database Count per Subscription for eastus","currentValue":0.0,"limit":1.0,"unit":"Count"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Sql/locations/eastus/usages/SubscriptionFreeDatabaseCount","name":"SubscriptionFreeDatabaseCount","type":"Microsoft.Sql/locations/usages"},{"properties":{"displayName":"Free
+        to Basic Database Upgrade count-down in eastus","currentValue":365.0,"limit":365.0,"unit":"Count"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Sql/locations/eastus/usages/SubscriptionFreeDatabaseDaysLeft","name":"SubscriptionFreeDatabaseDaysLeft","type":"Microsoft.Sql/locations/usages"},{"properties":{"displayName":"Subnet
+        Quota","currentValue":1.0,"limit":8.0,"unit":"Count"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Sql/locations/eastus/usages/SubnetQuota","name":"SubnetQuota","type":"Microsoft.Sql/locations/usages"},{"properties":{"displayName":"VCore
+        Quota","currentValue":8.0,"limit":960.0,"unit":"Count"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Sql/locations/eastus/usages/VCoreQuota","name":"VCoreQuota","type":"Microsoft.Sql/locations/usages"}]}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1547'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 08 Sep 2020 06:28:40 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-sql/0.9.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Sql/locations/eastus/usages/ServerQuota?api-version=2015-05-01-preview
+  response:
+    body:
+      string: '{"properties":{"displayName":"Regional Server Quota for eastus","currentValue":0.0,"limit":20.0,"unit":"Count"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Sql/locations/eastus/usages/ServerQuota","name":"ServerQuota","type":"Microsoft.Sql/locations/usages"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '292'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 08 Sep 2020 06:28:40 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+version: 1

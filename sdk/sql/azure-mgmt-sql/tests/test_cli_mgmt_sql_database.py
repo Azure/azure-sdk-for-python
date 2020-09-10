@@ -21,6 +21,12 @@
 #   BackupLongTermRetentionPolicies: 3/3
 #   DatabaseOperations: 0/2
 #   WorkloadGroups: 0/4
+#   WorkloadClassifiers: 4/4
+#   DatabaseThreatDetectionPolicies: 2/2
+#   ServiceTierAdvisors: 2/2
+#   DatabaseAutomaticTuning: 2/2
+#   RestorePoints: 0/4
+#   BackupShortTermRetentionPolicies: 4/4
 
 import unittest
 
@@ -36,6 +42,360 @@ class MgmtSqlTest(AzureMgmtTestCase):
         self.mgmt_client = self.create_mgmt_client(
             azure.mgmt.sql.SqlManagementClient
         )
+
+        if self.is_live:
+            from azure.mgmt.storage import StorageManagementClient
+            self.storage_client = self.create_mgmt_client(
+                StorageManagementClient
+            )
+
+    def create_blob_container(self, location, group_name, account_name, container_name):
+
+        # StorageAccountCreate[put]
+        BODY = {
+          "sku": {
+            "name": "Standard_GRS"
+          },
+          "kind": "StorageV2",
+          "location": location,
+          "encryption": {
+            "services": {
+              "file": {
+                "key_type": "Account",
+                "enabled": True
+              },
+              "blob": {
+                "key_type": "Account",
+                "enabled": True
+              }
+            },
+            "key_source": "Microsoft.Storage"
+          },
+          "tags": {
+            "key1": "value1",
+            "key2": "value2"
+          }
+        }
+        result = self.storage_client.storage_accounts.begin_create(group_name, account_name, BODY)
+        storageaccount = result.result()
+
+        # PutContainers[put]
+        result = self.storage_client.blob_containers.create(group_name, account_name, container_name, {})
+
+        # StorageAccountRegenerateKey[post]
+        BODY = {
+          "key_name": "key2"
+        }
+        key = self.storage_client.storage_accounts.regenerate_key(group_name, account_name, BODY)
+        return key.keys[0].value
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    def test_backup_short_term_retention_policy(self, resource_group):
+
+        RESOURCE_GROUP = resource_group.name
+        DATABASE_NAME = "mydatabase"
+        SERVER_NAME = "myserverxpxy"
+        POLICY_NAME = "default"
+
+#--------------------------------------------------------------------------
+        # /Servers/put/Create server[put]
+#--------------------------------------------------------------------------
+        BODY = {
+          "location": AZURE_LOCATION,
+          "administrator_login": "dummylogin",
+          "administrator_login_password": "Un53cuRE!"
+        }
+        result = self.mgmt_client.servers.begin_create_or_update(resource_group_name=RESOURCE_GROUP, server_name=SERVER_NAME, parameters=BODY)
+        result = result.result()
+
+#--------------------------------------------------------------------------
+        # /Databases/put/Creates a database [put]
+#--------------------------------------------------------------------------
+        BODY = {
+          "location": AZURE_LOCATION,
+          "sku": {
+            "name": "BC_Gen5",
+            "capacity": 2
+          }
+        }
+        result = self.mgmt_client.databases.begin_create_or_update(resource_group_name=RESOURCE_GROUP, server_name=SERVER_NAME, database_name=DATABASE_NAME, parameters=BODY)
+        result = result.result()
+
+#--------------------------------------------------------------------------
+        # /BackupShortTermRetentionPolicies/put/Update the short term retention policy for the database.[put]
+#--------------------------------------------------------------------------
+        BODY = {
+          "retention_days": "14"
+        }
+        result = self.mgmt_client.backup_short_term_retention_policies.begin_create_or_update(resource_group_name=RESOURCE_GROUP, server_name=SERVER_NAME, database_name=DATABASE_NAME, policy_name=POLICY_NAME, parameters=BODY)
+        result = result.result()
+
+#--------------------------------------------------------------------------
+        # /BackupShortTermRetentionPolicies/get/Get the short term retention policy for the database.[get]
+#--------------------------------------------------------------------------
+        result = self.mgmt_client.backup_short_term_retention_policies.get(resource_group_name=RESOURCE_GROUP, server_name=SERVER_NAME, database_name=DATABASE_NAME, policy_name=POLICY_NAME)
+
+#--------------------------------------------------------------------------
+        # /BackupShortTermRetentionPolicies/get/Get the short term retention policy for the database.[get]
+#--------------------------------------------------------------------------
+        result = self.mgmt_client.backup_short_term_retention_policies.list_by_database(resource_group_name=RESOURCE_GROUP, server_name=SERVER_NAME, database_name=DATABASE_NAME)
+
+#--------------------------------------------------------------------------
+        # /BackupShortTermRetentionPolicies/patch/Update the short term retention policy for the database.[patch]
+#--------------------------------------------------------------------------
+        BODY = {
+          "retention_days": "14"
+        }
+        result = self.mgmt_client.backup_short_term_retention_policies.begin_update(resource_group_name=RESOURCE_GROUP, server_name=SERVER_NAME, database_name=DATABASE_NAME, policy_name=POLICY_NAME, parameters=BODY)
+        result = result.result()
+
+#--------------------------------------------------------------------------
+        # /Databases/delete/Deletes a database.[delete]
+#--------------------------------------------------------------------------
+        result = self.mgmt_client.databases.begin_delete(resource_group_name=RESOURCE_GROUP, server_name=SERVER_NAME, database_name=DATABASE_NAME)
+        result = result.result()
+
+#--------------------------------------------------------------------------
+        # /Servers/delete/Delete server[delete]
+#--------------------------------------------------------------------------
+        result = self.mgmt_client.servers.begin_delete(resource_group_name=RESOURCE_GROUP, server_name=SERVER_NAME)
+        result = result.result()
+
+    @unittest.skip("(FeatureDisabledOnSelectedEdition) This feature is not available for the selected database's edition (BusinessCritical).")
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    def test_restore_points(self, resource_group):
+
+        RESOURCE_GROUP = resource_group.name
+        DATABASE_NAME = "mydatabase"
+        SERVER_NAME = "myserverxpxy"
+
+#--------------------------------------------------------------------------
+        # /Servers/put/Create server[put]
+#--------------------------------------------------------------------------
+        BODY = {
+          "location": AZURE_LOCATION,
+          "administrator_login": "dummylogin",
+          "administrator_login_password": "Un53cuRE!"
+        }
+        result = self.mgmt_client.servers.begin_create_or_update(resource_group_name=RESOURCE_GROUP, server_name=SERVER_NAME, parameters=BODY)
+        result = result.result()
+
+#--------------------------------------------------------------------------
+        # /Databases/put/Creates a database [put]
+#--------------------------------------------------------------------------
+        BODY = {
+          "location": AZURE_LOCATION,
+          "sku": {
+            "name": "BC_Gen5",
+            "capacity": 2
+          }
+        }
+        result = self.mgmt_client.databases.begin_create_or_update(resource_group_name=RESOURCE_GROUP, server_name=SERVER_NAME, database_name=DATABASE_NAME, parameters=BODY)
+        result = result.result()
+
+#--------------------------------------------------------------------------
+        # /RestorePoints/post/Creates datawarehouse database restore point.[post]
+#--------------------------------------------------------------------------
+        BODY = {
+          "restore_point_label": "mylabel"
+        }
+        result = self.mgmt_client.restore_points.begin_create(resource_group_name=RESOURCE_GROUP, server_name=SERVER_NAME, database_name=DATABASE_NAME, parameters=BODY)
+        result = result.result()
+
+#--------------------------------------------------------------------------
+        # /RestorePoints/get/List datawarehouse database restore points.[get]
+#--------------------------------------------------------------------------
+        result = self.mgmt_client.restore_points.list_by_database(resource_group_name=RESOURCE_GROUP, server_name=SERVER_NAME, database_name=DATABASE_NAME)
+        RESTORE_POINT_NAME = result.next().name
+
+#--------------------------------------------------------------------------
+        # /RestorePoints/get/Gets a database restore point.[get]
+#--------------------------------------------------------------------------
+        result = self.mgmt_client.restore_points.get(resource_group_name=RESOURCE_GROUP, server_name=SERVER_NAME, database_name=DATABASE_NAME, restore_point_name=RESTORE_POINT_NAME)
+
+#--------------------------------------------------------------------------
+        # /RestorePoints/delete/Deletes a restore point.[delete]
+#--------------------------------------------------------------------------
+        result = self.mgmt_client.restore_points.delete(resource_group_name=RESOURCE_GROUP, server_name=SERVER_NAME, database_name=DATABASE_NAME, restore_point_name=RESTORE_POINT_NAME)
+
+#--------------------------------------------------------------------------
+        # /Databases/delete/Deletes a database.[delete]
+#--------------------------------------------------------------------------
+        result = self.mgmt_client.databases.begin_delete(resource_group_name=RESOURCE_GROUP, server_name=SERVER_NAME, database_name=DATABASE_NAME)
+        result = result.result()
+
+#--------------------------------------------------------------------------
+        # /Servers/delete/Delete server[delete]
+#--------------------------------------------------------------------------
+        result = self.mgmt_client.servers.begin_delete(resource_group_name=RESOURCE_GROUP, server_name=SERVER_NAME)
+        result = result.result()
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    def test_database_automatic_tuning(self, resource_group):
+
+        RESOURCE_GROUP = resource_group.name
+        DATABASE_NAME = "mydatabase"
+        SERVER_NAME = "myserverxpxy"
+        AUTOMATIC_TUNING_NAME = "current"
+        
+#--------------------------------------------------------------------------
+        # /Servers/put/Create server[put]
+#--------------------------------------------------------------------------
+        BODY = {
+          "location": AZURE_LOCATION,
+          "administrator_login": "dummylogin",
+          "administrator_login_password": "Un53cuRE!"
+        }
+        result = self.mgmt_client.servers.begin_create_or_update(resource_group_name=RESOURCE_GROUP, server_name=SERVER_NAME, parameters=BODY)
+        result = result.result()
+
+#--------------------------------------------------------------------------
+        # /Databases/put/Creates a database [put]
+#--------------------------------------------------------------------------
+        BODY = {
+          "location": AZURE_LOCATION
+        }
+        result = self.mgmt_client.databases.begin_create_or_update(resource_group_name=RESOURCE_GROUP, server_name=SERVER_NAME, database_name=DATABASE_NAME, parameters=BODY)
+        result = result.result()
+
+#--------------------------------------------------------------------------
+        # /DatabaseAutomaticTuning/get/Get a database's automatic tuning settings[get]
+#--------------------------------------------------------------------------
+        result = self.mgmt_client.database_automatic_tuning.get(resource_group_name=RESOURCE_GROUP, server_name=SERVER_NAME, database_name=DATABASE_NAME)
+
+#--------------------------------------------------------------------------
+        # /DatabaseAutomaticTuning/patch/Updates database automatic tuning settings with minimal properties[patch]
+#--------------------------------------------------------------------------
+        BODY = {
+          "desired_state": "Auto"
+        }
+        result = self.mgmt_client.database_automatic_tuning.update(resource_group_name=RESOURCE_GROUP, server_name=SERVER_NAME, database_name=DATABASE_NAME, parameters=BODY)
+
+#--------------------------------------------------------------------------
+        # /Databases/delete/Deletes a database.[delete]
+#--------------------------------------------------------------------------
+        result = self.mgmt_client.databases.begin_delete(resource_group_name=RESOURCE_GROUP, server_name=SERVER_NAME, database_name=DATABASE_NAME)
+        result = result.result()
+
+#--------------------------------------------------------------------------
+        # /Servers/delete/Delete server[delete]
+#--------------------------------------------------------------------------
+        result = self.mgmt_client.servers.begin_delete(resource_group_name=RESOURCE_GROUP, server_name=SERVER_NAME)
+        result = result.result()
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    def test_service_tier_advisor(self, resource_group):
+
+        SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
+        RESOURCE_GROUP = resource_group.name
+        DATABASE_NAME = "mydatabase"
+        SERVER_NAME = "myserverxpxy"
+        
+#--------------------------------------------------------------------------
+        # /Servers/put/Create server[put]
+#--------------------------------------------------------------------------
+        BODY = {
+          "location": AZURE_LOCATION,
+          "administrator_login": "dummylogin",
+          "administrator_login_password": "Un53cuRE!"
+        }
+        result = self.mgmt_client.servers.begin_create_or_update(resource_group_name=RESOURCE_GROUP, server_name=SERVER_NAME, parameters=BODY)
+        result = result.result()
+
+#--------------------------------------------------------------------------
+        # /Databases/put/Creates a database [put]
+#--------------------------------------------------------------------------
+        BODY = {
+          "location": AZURE_LOCATION
+        }
+        result = self.mgmt_client.databases.begin_create_or_update(resource_group_name=RESOURCE_GROUP, server_name=SERVER_NAME, database_name=DATABASE_NAME, parameters=BODY)
+        result = result.result()
+
+#--------------------------------------------------------------------------
+        # /ServiceTierAdvisors/get/Get a list of a service tier advisors[get]
+#--------------------------------------------------------------------------
+        result = self.mgmt_client.service_tier_advisors.list_by_database(resource_group_name=RESOURCE_GROUP, server_name=SERVER_NAME, database_name=DATABASE_NAME)
+        SERVICE_TIER_ADVISOR_NAME = result.next().name
+    
+#--------------------------------------------------------------------------
+        # /ServiceTierAdvisors/get/Get a service tier advisor[get]
+#--------------------------------------------------------------------------
+        result = self.mgmt_client.service_tier_advisors.get(resource_group_name=RESOURCE_GROUP, server_name=SERVER_NAME, database_name=DATABASE_NAME, service_tier_advisor_name=SERVICE_TIER_ADVISOR_NAME)
+
+#--------------------------------------------------------------------------
+        # /Databases/delete/Deletes a database.[delete]
+#--------------------------------------------------------------------------
+        result = self.mgmt_client.databases.begin_delete(resource_group_name=RESOURCE_GROUP, server_name=SERVER_NAME, database_name=DATABASE_NAME)
+        result = result.result()
+
+#--------------------------------------------------------------------------
+        # /Servers/delete/Delete server[delete]
+#--------------------------------------------------------------------------
+        result = self.mgmt_client.servers.begin_delete(resource_group_name=RESOURCE_GROUP, server_name=SERVER_NAME)
+        result = result.result()
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    def test_database_threat_detection_policy(self, resource_group):
+
+        RESOURCE_GROUP = resource_group.name
+        SERVER_NAME = "myserverxpxyz"
+        DATABASE_NAME = "mydatabase"
+        STORAGE_ACCOUNT_NAME = "mystorageaccountxyc"
+        BLOB_CONTAINER_NAME = "myblobcontainer"
+        SECURITY_ALERT_POLICY_NAME = "default"
+
+        if self.is_live:
+            ACCESS_KEY = self.create_blob_container(AZURE_LOCATION, RESOURCE_GROUP, STORAGE_ACCOUNT_NAME, BLOB_CONTAINER_NAME)
+        else:
+            ACCESS_KEY = "accesskey"
+
+#--------------------------------------------------------------------------
+        # /Servers/put/Create server[put]
+#--------------------------------------------------------------------------
+        BODY = {
+          "location": AZURE_LOCATION,
+          "administrator_login": "dummylogin",
+          "administrator_login_password": "Un53cuRE!",
+          "version": "12.0"
+        }
+        result = self.mgmt_client.servers.begin_create_or_update(resource_group_name=RESOURCE_GROUP, server_name=SERVER_NAME, parameters=BODY)
+        result = result.result()
+
+#--------------------------------------------------------------------------
+        # /Databases/put/Creates a database [put]
+#--------------------------------------------------------------------------
+        BODY = {
+          "location": AZURE_LOCATION
+        }
+        result = self.mgmt_client.databases.begin_create_or_update(resource_group_name=RESOURCE_GROUP, server_name=SERVER_NAME, database_name=DATABASE_NAME, parameters=BODY)
+        result = result.result()
+
+#--------------------------------------------------------------------------
+        # /DatabaseThreatDetectionPolicies/put/Create database security alert policy min[put]
+#--------------------------------------------------------------------------
+        BODY = {
+          "state": "Enabled",
+          "storage_account_access_key": ACCESS_KEY,
+          "storage_endpoint": "https://" + STORAGE_ACCOUNT_NAME + ".blob.core.windows.net"
+        }
+        result = self.mgmt_client.database_threat_detection_policies.create_or_update(resource_group_name=RESOURCE_GROUP, server_name=SERVER_NAME, database_name=DATABASE_NAME, security_alert_policy_name=SECURITY_ALERT_POLICY_NAME, parameters=BODY)
+
+#--------------------------------------------------------------------------
+        # /DatabaseThreatDetectionPolicies/get/Get database security alert policy[get]
+#--------------------------------------------------------------------------
+        result = self.mgmt_client.database_threat_detection_policies.get(resource_group_name=RESOURCE_GROUP, server_name=SERVER_NAME, database_name=DATABASE_NAME, security_alert_policy_name=SECURITY_ALERT_POLICY_NAME)
+
+#--------------------------------------------------------------------------
+        # /Databases/delete/Deletes a database.[delete]
+#--------------------------------------------------------------------------
+        result = self.mgmt_client.databases.begin_delete(resource_group_name=RESOURCE_GROUP, server_name=SERVER_NAME, database_name=DATABASE_NAME)
+        result = result.result()
+
+#--------------------------------------------------------------------------
+        # /Servers/delete/Delete server[delete]
+#--------------------------------------------------------------------------
+        result = self.mgmt_client.servers.begin_delete(resource_group_name=RESOURCE_GROUP, server_name=SERVER_NAME)
+        result = result.result()
 
     @unittest.skip("unavailable")
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
