@@ -123,12 +123,12 @@ class GlobalCosmosAccountPreparer(AzureMgmtPreparer):
         if self.is_live:
             self.test_class_instance.scrubber.register_name_pair(
                 storage_account.name,
-                "storagename"
+                "cosmosname"
             )
         else:
-            name = "storagename"
+            name = "cosmosname"
             storage_account.name = name
-            storage_account.primary_endpoints.table = 'https://{}.{}.core.windows.net'.format(name, 'table')
+            storage_account.primary_endpoints.table = 'https://{}.{}.azure.com'.format(name, 'documents')
 
         return {
             'location': 'westus',
