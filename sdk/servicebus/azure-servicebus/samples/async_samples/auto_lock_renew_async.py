@@ -38,7 +38,7 @@ async def renew_lock_on_message_received_from_non_sessionful_entity():
         renewer = AutoLockRenew()
 
         async with servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME, prefetch_count=10) as receiver:
-            received_msgs = await receiver.receive_messages(max_batch_size=10, max_wait_time=5)
+            received_msgs = await receiver.receive_messages(max_message_count=10, max_wait_time=5)
 
             for msg in received_msgs:
                 # automatically renew the lock on each message for 100 seconds
@@ -75,7 +75,7 @@ async def renew_lock_on_session_of_the_sessionful_entity():
             renewer.register(receiver.session, timeout=100)
             print('Register session into AutoLockRenew.')
 
-            received_msgs = await receiver.receive_messages(max_batch_size=10, max_wait_time=5)
+            received_msgs = await receiver.receive_messages(max_message_count=10, max_wait_time=5)
             await asyncio.sleep(100)  # message handling for long period (E.g. application logic)
 
             for msg in received_msgs:
@@ -104,7 +104,7 @@ async def renew_lock_with_lock_renewal_failure_callback():
                     # handle any processing on the message or session that was in progress.
                     print("Intentionally failed to renew lock on {} due to {}".format(renewable, error))
 
-                received_msgs = await receiver.receive_messages(max_batch_size=1, max_wait_time=5)
+                received_msgs = await receiver.receive_messages(max_message_count=1, max_wait_time=5)
 
                 for msg in received_msgs:
                     # automatically renew the lock on each message for 120 seconds

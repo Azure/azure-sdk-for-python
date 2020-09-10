@@ -409,7 +409,7 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 [cloud_shell]: https://docs.microsoft.com/azure/cloud-shell/overview
 [cloud_shell_bash]: https://shell.azure.com/bash
 [pip]: https://pypi.org/project/pip/
-[pypi]: https://pypi.org/project/azure-servicebus/7.0.0b4/
+[pypi]: https://pypi.org/project/azure-servicebus/7.0.0b6/
 [python]: https://www.python.org/downloads/
 [venv]: https://docs.python.org/3/library/venv.html
 [virtualenv]: https://virtualenv.pypa.io
