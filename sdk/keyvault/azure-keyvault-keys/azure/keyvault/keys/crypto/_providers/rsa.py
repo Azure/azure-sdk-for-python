@@ -10,6 +10,7 @@ from ... import KeyOperation, KeyType
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import
+    from .local_provider import Algorithm
     from .._internal import Key
     from ... import KeyVaultKey
 
@@ -23,8 +24,14 @@ class RsaCryptographyProvider(LocalCryptographyProvider):
             raise ValueError('"key" must be an RSA or RSA-HSM key')
         return RsaKey.from_jwk(key.key)
 
-    def supports(self, operation):
-        # type: (KeyOperation) -> bool
-        if operation in _PRIVATE_KEY_OPERATIONS:
-            return self._internal_key.is_private_key()
-        return True
+    def supports(self, operation, algorithm):
+        # type: (KeyOperation, Algorithm) -> bool
+        if operation in _PRIVATE_KEY_OPERATIONS and not self._internal_key.is_private_key():
+            return False
+        if operation in (KeyOperation.decrypt, KeyOperation.encrypt):
+            return algorithm in self._internal_key.supported_encryption_algorithms
+        if operation in (KeyOperation.unwrap_key, KeyOperation.wrap_key):
+            return algorithm in self._internal_key.supported_key_wrap_algorithms
+        if operation in (KeyOperation.sign, KeyOperation.verify):
+            return algorithm in self._internal_key.supported_signature_algorithms
+        return False

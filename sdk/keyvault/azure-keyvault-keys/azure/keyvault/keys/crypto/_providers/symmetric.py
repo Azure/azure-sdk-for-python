@@ -10,6 +10,7 @@ from ... import KeyOperation, KeyType
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import
+    from .local_provider import Algorithm
     from .._internal import Key
     from ... import KeyVaultKey
 
@@ -21,6 +22,9 @@ class SymmetricCryptographyProvider(LocalCryptographyProvider):
             raise ValueError('"key" must be an oct (symmetric) key')
         return SymmetricKey.from_jwk(key.key)
 
-    def supports(self, operation):
-        # type: (KeyOperation) -> bool
-        return operation in (KeyOperation.unwrap_key, KeyOperation.wrap_key)
+    def supports(self, operation, algorithm):
+        # type: (KeyOperation, Algorithm) -> bool
+        return (
+            operation in (KeyOperation.unwrap_key, KeyOperation.wrap_key)
+            and algorithm in self._internal_key.supported_key_wrap_algorithms
+        )

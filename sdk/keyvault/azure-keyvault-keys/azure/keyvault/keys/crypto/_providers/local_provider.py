@@ -17,9 +17,12 @@ except AttributeError:  # Python 2.7
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import
+    from typing import Union
     from .._internal.key import Key
     from .. import EncryptionAlgorithm, KeyWrapAlgorithm, SignatureAlgorithm
     from ... import KeyVaultKey
+
+    Algorithm = Union[EncryptionAlgorithm, KeyWrapAlgorithm, SignatureAlgorithm]
 
 
 class LocalCryptographyProvider(ABC):
@@ -35,8 +38,8 @@ class LocalCryptographyProvider(ABC):
         pass
 
     @abc.abstractmethod
-    def supports(self, operation):
-        # type: (KeyOperation) -> bool
+    def supports(self, operation, algorithm):
+        # type: (KeyOperation, Algorithm) -> bool
         pass
 
     @property
@@ -48,45 +51,47 @@ class LocalCryptographyProvider(ABC):
         """
         return self._key.id
 
-    def _raise_if_unsupported(self, operation):
-        # type: (KeyOperation) -> None
-        if not self.supports(operation):
-            raise ValueError('This key does not support the "{}" operation'.format(operation))
+    def _raise_if_unsupported(self, operation, algorithm):
+        # type: (KeyOperation, Algorithm) -> None
+        if not self.supports(operation, algorithm):
+            raise NotImplementedError(
+                'This key does not support the "{}" operation with algorithm "{}"'.format(operation, algorithm)
+            )
         if operation not in self._allowed_ops:
             raise AzureError('This key does not allow the "{}" operation'.format(operation))
 
     def encrypt(self, algorithm, plaintext):
         # type: (EncryptionAlgorithm, bytes) -> EncryptResult
-        self._raise_if_unsupported(KeyOperation.encrypt)
+        self._raise_if_unsupported(KeyOperation.encrypt, algorithm)
         ciphertext = self._internal_key.encrypt(plaintext, algorithm=algorithm.value)
         return EncryptResult(key_id=self._key.id, algorithm=algorithm, ciphertext=ciphertext)
 
     def decrypt(self, algorithm, ciphertext):
         # type: (EncryptionAlgorithm, bytes) -> DecryptResult
-        self._raise_if_unsupported(KeyOperation.decrypt)
+        self._raise_if_unsupported(KeyOperation.decrypt, algorithm)
         plaintext = self._internal_key.decrypt(ciphertext, iv=None, algorithm=algorithm.value)
         return DecryptResult(key_id=self._key.id, algorithm=algorithm, plaintext=plaintext)
 
     def wrap_key(self, algorithm, key):
         # type: (KeyWrapAlgorithm, bytes) -> WrapResult
-        self._raise_if_unsupported(KeyOperation.wrap_key)
+        self._raise_if_unsupported(KeyOperation.wrap_key, algorithm)
         encrypted_key = self._internal_key.wrap_key(key, algorithm=algorithm.value)
         return WrapResult(key_id=self._key.id, algorithm=algorithm, encrypted_key=encrypted_key)
 
     def unwrap_key(self, algorithm, encrypted_key):
         # type: (KeyWrapAlgorithm, bytes) -> UnwrapResult
-        self._raise_if_unsupported(KeyOperation.unwrap_key)
+        self._raise_if_unsupported(KeyOperation.unwrap_key, algorithm)
         unwrapped_key = self._internal_key.unwrap_key(encrypted_key, algorithm=algorithm.value)
         return UnwrapResult(key_id=self._key.id, algorithm=algorithm, key=unwrapped_key)
 
     def sign(self, algorithm, digest):
         # type: (SignatureAlgorithm, bytes) -> SignResult
-        self._raise_if_unsupported(KeyOperation.sign)
+        self._raise_if_unsupported(KeyOperation.sign, algorithm)
         signature = self._internal_key.sign(digest, algorithm=algorithm.value)
         return SignResult(key_id=self._key.id, algorithm=algorithm, signature=signature)
 
     def verify(self, algorithm, digest, signature):
         # type: (SignatureAlgorithm, bytes, bytes) -> VerifyResult
-        self._raise_if_unsupported(KeyOperation.verify)
+        self._raise_if_unsupported(KeyOperation.verify, algorithm)
         is_valid = self._internal_key.verify(digest, signature, algorithm=algorithm.value)
         return VerifyResult(key_id=self._key.id, algorithm=algorithm, is_valid=is_valid)

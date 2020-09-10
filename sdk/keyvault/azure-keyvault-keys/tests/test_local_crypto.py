@@ -87,3 +87,86 @@ def test_symmetric_wrap_unwrap():
 
     unwrap_result = provider.unwrap_key(wrap_result.algorithm, wrap_result.encrypted_key)
     assert unwrap_result.key == key_bytes
+
+
+@pytest.mark.parametrize("key", RSA_KEYS.values())
+@pytest.mark.parametrize(
+    "algorithm",
+    [a for a in KeyWrapAlgorithm if not a.startswith("RSA")] + [a for a in SignatureAlgorithm if a.startswith("ES")],
+)
+def test_unsupported_rsa_operations(key, algorithm):
+    """The crypto provider should raise NotImplementedError when a key doesn't support an operation or algorithm"""
+
+    provider = get_local_cryptography_provider(key)
+    if isinstance(algorithm, EncryptionAlgorithm):
+        with pytest.raises(NotImplementedError):
+            provider.encrypt(algorithm, b"...")
+        with pytest.raises(NotImplementedError):
+            provider.decrypt(algorithm, b"...")
+    if isinstance(algorithm, KeyWrapAlgorithm):
+        with pytest.raises(NotImplementedError):
+            provider.wrap_key(algorithm, b"...")
+        with pytest.raises(NotImplementedError):
+            provider.unwrap_key(algorithm, b"...")
+    elif isinstance(algorithm, SignatureAlgorithm):
+        with pytest.raises(NotImplementedError):
+            provider.sign(algorithm, b"...")
+        with pytest.raises(NotImplementedError):
+            provider.verify(algorithm, b"...", b"...")
+
+
+@pytest.mark.parametrize("key", EC_KEYS.values())
+@pytest.mark.parametrize(
+    "algorithm",
+    [a for a in KeyWrapAlgorithm if a.startswith("RSA")]
+    + [a for a in SignatureAlgorithm if not a.startswith("ES")]
+    + list(EncryptionAlgorithm),
+)
+def test_unsupported_ec_operations(key, algorithm):
+    """The crypto provider should raise NotImplementedError when a key doesn't support an operation or algorithm"""
+
+    provider = get_local_cryptography_provider(key)
+    if isinstance(algorithm, EncryptionAlgorithm):
+        with pytest.raises(NotImplementedError):
+            provider.encrypt(algorithm, b"...")
+        with pytest.raises(NotImplementedError):
+            provider.decrypt(algorithm, b"...")
+    if isinstance(algorithm, KeyWrapAlgorithm):
+        with pytest.raises(NotImplementedError):
+            provider.wrap_key(algorithm, b"...")
+        with pytest.raises(NotImplementedError):
+            provider.unwrap_key(algorithm, b"...")
+    elif isinstance(algorithm, SignatureAlgorithm):
+        with pytest.raises(NotImplementedError):
+            provider.sign(algorithm, b"...")
+        with pytest.raises(NotImplementedError):
+            provider.verify(algorithm, b"...", b"...")
+
+
+@pytest.mark.parametrize(
+    "algorithm",
+    [a for a in KeyWrapAlgorithm if a != KeyWrapAlgorithm.aes_256]
+    + list(SignatureAlgorithm)
+    + list(EncryptionAlgorithm),
+)
+def test_unsupported_symmetric_operations(algorithm):
+    """The crypto provider should raise NotImplementedError when a key doesn't support an operation or algorithm"""
+
+    jwk = {"k": os.urandom(32), "kty": "oct", "key_ops": ("unwrapKey", "wrapKey")}
+    key = KeyVaultKey(key_id="http://localhost/keys/key/version", jwk=jwk)
+    provider = get_local_cryptography_provider(key)
+    if isinstance(algorithm, EncryptionAlgorithm):
+        with pytest.raises(NotImplementedError):
+            provider.encrypt(algorithm, b"...")
+        with pytest.raises(NotImplementedError):
+            provider.decrypt(algorithm, b"...")
+    if isinstance(algorithm, KeyWrapAlgorithm):
+        with pytest.raises(NotImplementedError):
+            provider.wrap_key(algorithm, b"...")
+        with pytest.raises(NotImplementedError):
+            provider.unwrap_key(algorithm, b"...")
+    elif isinstance(algorithm, SignatureAlgorithm):
+        with pytest.raises(NotImplementedError):
+            provider.sign(algorithm, b"...")
+        with pytest.raises(NotImplementedError):
+            provider.verify(algorithm, b"...", b"...")
