@@ -906,6 +906,8 @@ class StorageTableEntityTest(TableTestCase):
             received_entity = self.table.get_entity(partition_key=entity.PartitionKey,
                                                     row_key=entity.RowKey)
 
+            with self.assertRaises(KeyError):
+                del received_entity['property_that_does_not_exist']
             self._assert_valid_metadata(resp)
             self._assert_updated_entity(received_entity)
         finally:

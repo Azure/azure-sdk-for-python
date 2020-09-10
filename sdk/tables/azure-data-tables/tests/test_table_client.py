@@ -164,6 +164,10 @@ class StorageTableClientTest(TableTestCase):
             with self.assertRaises(ValueError) as e:
                 test_service = service_type('testaccount', credential='', table_name='foo')
 
+            # test non-string account URL
+            with self.assertRaises(ValueError):
+                test_service = service_type(account_url=123456, credential=storage_account_key, table_name='foo')
+
             self.assertEqual(
                 str(e.exception), "You need to provide either a SAS token or an account shared key to authenticate.")
 
