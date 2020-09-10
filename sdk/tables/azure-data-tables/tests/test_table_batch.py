@@ -120,42 +120,36 @@ class StorageTableBatchTest(TableTestCase):
             'birthday': datetime(1991, 10, 4, tzinfo=tzutc())
         }
 
-    def _assert_default_entity(self, entity, headers=None):
+    def _assert_default_entity(self, entity):
         '''
         Asserts that the entity passed in matches the default entity.
         '''
-        self.assertEqual(entity['age'], 39)
-        self.assertEqual(entity['sex'], 'male')
+        self.assertEqual(entity['age'].value, 39)
+        self.assertEqual(entity['sex'].value, 'male')
         self.assertEqual(entity['married'], True)
         self.assertEqual(entity['deceased'], False)
         self.assertFalse("optional" in entity)
-        self.assertFalse("aquarius" in entity)
         self.assertEqual(entity['ratio'], 3.1)
         self.assertEqual(entity['evenratio'], 3.0)
-        self.assertEqual(entity['large'], 933311100)
+        self.assertEqual(entity['large'].value, 933311100)
         self.assertEqual(entity['Birthday'], datetime(1973, 10, 4, tzinfo=tzutc()))
         self.assertEqual(entity['birthday'], datetime(1970, 10, 4, tzinfo=tzutc()))
-        self.assertEqual(entity['binary'], b'binary')
+        self.assertEqual(entity['binary'].value, b'binary')
         self.assertIsInstance(entity['other'], EntityProperty)
         self.assertEqual(entity['other'].type, EdmType.INT32)
         self.assertEqual(entity['other'].value, 20)
         self.assertEqual(entity['clsid'], uuid.UUID('c9da6455-213d-42c9-9a79-3e9149a57833'))
-        self.assertTrue('metadata' in entity.odata)
-        self.assertIsNotNone(entity.timestamp)
-        self.assertIsInstance(entity.timestamp, datetime)
-        if headers:
-            self.assertTrue("etag" in headers)
-            self.assertIsNotNone(headers['etag'])
+        self.assertTrue('_metadata' in entity)
 
     def _assert_updated_entity(self, entity):
         '''
         Asserts that the entity passed in matches the updated entity.
         '''
-        self.assertEqual(entity.age, 'abc')
-        self.assertEqual(entity.sex, 'female')
+        self.assertEqual(entity.age.value, 'abc')
+        self.assertEqual(entity.sex.value, 'female')
         self.assertFalse(hasattr(entity, "married"))
         self.assertFalse(hasattr(entity, "deceased"))
-        self.assertEqual(entity.sign, 'aquarius')
+        self.assertEqual(entity.sign.value, 'aquarius')
         self.assertFalse(hasattr(entity, "optional"))
         self.assertFalse(hasattr(entity, "ratio"))
         self.assertFalse(hasattr(entity, "evenratio"))
@@ -164,9 +158,7 @@ class StorageTableBatchTest(TableTestCase):
         self.assertEqual(entity.birthday, datetime(1991, 10, 4, tzinfo=tzutc()))
         self.assertFalse(hasattr(entity, "other"))
         self.assertFalse(hasattr(entity, "clsid"))
-        self.assertIsNotNone(entity.odata['etag'])
-        self.assertIsNotNone(entity.timestamp)
-        self.assertIsInstance(entity.timestamp, datetime)
+        self.assertIsNotNone(entity['_metadata']['etag'])
 
     #--Test cases for batch ---------------------------------------------
     @GlobalStorageAccountPreparer()
@@ -198,7 +190,6 @@ class StorageTableBatchTest(TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("tuple issue desc. within")
     @GlobalStorageAccountPreparer()
     def test_batch_single_update(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -221,19 +212,18 @@ class StorageTableBatchTest(TableTestCase):
             entity.test5 = datetime.utcnow()
 
             batch = self.table.create_batch()
-            # NOTE: issue is in _HTTPResponseBase._decode_parts, the changeset_requests is an empty
-            # tuple when it is expecting a List[HttpRequest]
             batch.update_entity(entity, mode=UpdateMode.MERGE)
-            resp = self.table.commit_batch(batch)
+            self.table.commit_batch(batch)
 
             # Assert
             self.assertIsNotNone(resp)
             result = self.table.get_entity(row_key=entity.RowKey, partition_key=entity.PartitionKey)
-            self.assertEqual(resp['Etag'], headers['etag'])
+            self.assertEqual(result.PartitionKey, u'001')
+            self.assertEqual(result.RowKey, u'batch_insert')
+            self.assertEqual(result.test3.value, 5)
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("tuple issue desc. above")
     @GlobalStorageAccountPreparer()
     def test_batch_update(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -241,18 +231,18 @@ class StorageTableBatchTest(TableTestCase):
         try:
             # Act
             entity = TableEntity()
-            entity.PartitionKey = '001'
-            entity.RowKey = 'batch_update'
+            entity.PartitionKey = u'001'
+            entity.RowKey = u'batch_update'
             entity.test = EntityProperty(True)
-            entity.test2 = 'value'
+            entity.test2 = u'value'
             entity.test3 = 3
             entity.test4 = EntityProperty(1234567890)
             entity.test5 = datetime.utcnow()
             self.table.create_entity(entity)
 
-            entity = self.table.get_entity('001', 'batch_update')
-            self.assertEqual(3, entity.test3)
-            entity.test2 = 'value1'
+            entity = self.table.get_entity(u'001', u'batch_update')
+            self.assertEqual(3, entity.test3.value)
+            entity.test2 = u'value1'
 
             batch = self.table.create_batch()
             batch.update_entity(entity)
@@ -260,13 +250,13 @@ class StorageTableBatchTest(TableTestCase):
 
             # Assert
             self.assertIsNotNone(resp)
-            result, headers = self.table.get_entity('001', 'batch_update', response_hook=lambda e, h: (e, h))
-            self.assertEqual('value1', result.test2)
-            self.assertEqual(list(resp)[0].headers['Etag'], headers['etag'])
+            result = self.table.get_entity('001', 'batch_update')
+            self.assertEqual('value1', result.test2.value)
+            self.assertEqual(entity.PartitionKey, u'001')
+            self.assertEqual(entity.RowKey, u'batch_update')
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("tuple issue desc. above")
     @GlobalStorageAccountPreparer()
     def test_batch_merge(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -274,21 +264,21 @@ class StorageTableBatchTest(TableTestCase):
         try:
             # Act
             entity = TableEntity()
-            entity.PartitionKey = '001'
-            entity.RowKey = 'batch_merge'
+            entity.PartitionKey = u'001'
+            entity.RowKey = u'batch_merge'
             entity.test = EntityProperty(True)
-            entity.test2 = 'value'
+            entity.test2 = u'value'
             entity.test3 = 3
             entity.test4 = EntityProperty(1234567890)
             entity.test5 = datetime.utcnow()
             self.table.create_entity(entity)
 
-            resp_entity = self.table.get_entity(partition_key='001', row_key='batch_merge')
+            resp_entity = self.table.get_entity(partition_key=u'001', row_key=u'batch_merge')
             self.assertEqual(3, entity.test3)
             entity = TableEntity()
-            entity.PartitionKey = '001'
-            entity.RowKey = 'batch_merge'
-            entity.test2 = 'value1'
+            entity.PartitionKey = u'001'
+            entity.RowKey = u'batch_merge'
+            entity.test2 = u'value1'
 
             batch = self.table.create_batch()
             batch.update_entity(entity, mode=UpdateMode.MERGE)
@@ -296,14 +286,14 @@ class StorageTableBatchTest(TableTestCase):
 
             # Assert
             self.assertIsNotNone(resp)
-            resp_entity = self.table.get_entity(partition_key='001', row_key='batch_merge')
-            self.assertEqual('value1', entity.test2)
-            self.assertEqual(1234567890, entity.test4)
-            self.assertEqual(list(resp)[0].headers['Etag'], headers['etag'])
+            resp_entity = self.table.get_entity(partition_key=u'001', row_key=u'batch_merge')
+            self.assertEqual(entity.test2, resp_entity.test2.value)
+            self.assertEqual(1234567890, resp_entity.test4.value)
+            self.assertEqual(entity.PartitionKey, resp_entity.PartitionKey)
+            self.assertEqual(entity.RowKey, resp_entity.RowKey)
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("tuple issue desc. above")
     @GlobalStorageAccountPreparer()
     def test_batch_update_if_match(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -316,18 +306,21 @@ class StorageTableBatchTest(TableTestCase):
             # Act
             sent_entity = self._create_updated_entity_dict(entity['PartitionKey'], entity['RowKey'])
             batch = self.table.create_batch()
-            batch.update_entity(sent_entity, etag=etag, match_condition=MatchConditions.IfNotModified)
+            batch.update_entity(
+                sent_entity,
+                etag=etag,
+                match_condition=MatchConditions.IfNotModified,
+                mode=UpdateMode.REPLACE
+            )
             resp = self.table.commit_batch(batch)
 
             # Assert
             self.assertIsNotNone(resp)
             entity = self.table.get_entity(partition_key=entity['PartitionKey'], row_key=entity['RowKey'])
             self._assert_updated_entity(entity)
-            self.assertEqual(entity['Etag'], headers['etag'])
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("tuple issue desc. above")
     @GlobalStorageAccountPreparer()
     def test_batch_update_if_doesnt_match(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -343,9 +336,11 @@ class StorageTableBatchTest(TableTestCase):
             batch.update_entity(
                 sent_entity1,
                 etag=u'W/"datetime\'2012-06-15T22%3A51%3A44.9662825Z\'"',
-                match_condition=MatchConditions.IfNotModified)
+                match_condition=MatchConditions.IfNotModified
+            )
 
-            with self.assertRaises(PartialBatchErrorException):
+            # TODO: This should be a PartialBatchErrorException
+            with self.assertRaises(HttpResponseError):
                 self.table.commit_batch(batch)
 
             # Assert
@@ -414,7 +409,6 @@ class StorageTableBatchTest(TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("tuple issue desc. above")
     @GlobalStorageAccountPreparer()
     def test_batch_delete(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -422,28 +416,24 @@ class StorageTableBatchTest(TableTestCase):
         try:
             # Act
             entity = TableEntity()
-            entity.PartitionKey = '001'
-            entity.RowKey = 'batch_delete'
+            entity.PartitionKey = u'001'
+            entity.RowKey = u'batch_delete'
             entity.test = EntityProperty(True)
-            entity.test2 = 'value'
+            entity.test2 = u'value'
             entity.test3 = 3
             entity.test4 = EntityProperty(1234567890)
             entity.test5 = datetime.utcnow()
             self.table.create_entity(entity)
 
-            entity = self.table.get_entity(partition_key='001', row_key='batch_delete')
+            entity = self.table.get_entity(partition_key=u'001', row_key=u'batch_delete')
             self.assertEqual(3, entity.test3.value)
 
             batch = self.table.create_batch()
-            batch.delete_entity('001', 'batch_delete')
-            resp = self.table.commit_batch(batch)
+            batch.delete_entity(partition_key=entity.PartitionKey, row_key=entity.RowKey)
+            self.table.commit_batch(batch)
 
             with self.assertRaises(ResourceNotFoundError):
-                entity = self.table.get_entity(partition_key='001', row_key='batch_delete')
-
-            # Assert
-            self.assertIsNotNone(resp)
-            self.assertEqual(list(resp)[0].status_code, 204)
+                entity = self.table.get_entity(partition_key=entity.PartitionKey, row_key=entity.RowKey)
         finally:
             self._tear_down()
 
@@ -518,7 +508,7 @@ class StorageTableBatchTest(TableTestCase):
             # Assert
             self.assertIsNotNone(resp)
             entities = list(self.table.query_entities("PartitionKey eq '003'"))
-            self.assertEqual(5, len(entities))
+            self.assertEqual(4, len(entities))
         finally:
             self._tear_down()
 
@@ -564,7 +554,7 @@ class StorageTableBatchTest(TableTestCase):
 
             # Assert
             entities = list(self.table.query_entities("PartitionKey eq '003'"))
-            self.assertEqual(5, len(entities))
+            self.assertEqual(4, len(entities))
         finally:
             self._tear_down()
 

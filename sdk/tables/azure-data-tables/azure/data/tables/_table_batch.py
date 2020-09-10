@@ -39,27 +39,6 @@ class TableBatchOperations(object):
         self._requests = []
 
 
-    def commit(
-        self, **kwargs # type: Any
-    ):
-        """
-        Commits a :class:`~azure.storage.table.TableBatchOperations` request.
-        :param str table_name:
-            The name of the table to commit the batch to.
-        :param TableBatch batch:
-            The batch to commit.
-        :param int timeout:
-            The server timeout, expressed in seconds.
-        :return:
-            A list of the batch responses corresponding to the requests in the batch.
-            The items could either be an etag, in case of success, or an error object in case of failure.
-        :rtype: list(:class:`~azure.data.tables.models.AzureBatchOperationError`, str)
-        """
-        # TODO: add this if necessary
-        self._table_client._batch_send(*self._requests, **kwargs)
-        # self._client._client._batch_send(self._requests, **kwargs)
-
-
     def _verify_partition_key(
         self, entity # type: Union[Entity, dict]
     ):
@@ -152,7 +131,7 @@ class TableBatchOperations(object):
         url = self._batch_create_entity.metadata['url']  # type: ignore
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            'table': self._serialize.url("table", self.table_name, 'str'),
+            'table': self._serialize.url("table", table, 'str'),
         }
         url = self._client._client.format_url(url, **path_format_arguments)
 
@@ -204,8 +183,8 @@ class TableBatchOperations(object):
                 table=self.table_name,
                 partition_key=partition_key,
                 row_key=row_key,
-                table_entity_properties=entity,
                 if_match=if_match or "*",
+                table_entity_properties=entity,
                 cls=kwargs.pop('cls', _return_headers_and_deserialized),
                 **kwargs)
         elif mode is UpdateMode.MERGE:
@@ -395,6 +374,7 @@ class TableBatchOperations(object):
             body_content = None
         body_content_kwargs['content'] = body_content
         request = self._client._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
+        self._requests.append(request)
     _batch_merge_entity.metadata = {'url': '/{table}(PartitionKey=\'{partitionKey}\',RowKey=\'{rowKey}\')'}  # type: ignore
 
 
@@ -512,6 +492,7 @@ class TableBatchOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client._client.delete(url, query_parameters, header_parameters)
+        self._requests.append(request)
     _batch_delete_entity.metadata = {'url': '/{table}(PartitionKey=\'{partitionKey}\',RowKey=\'{rowKey}\')'}  # type: ignore
 
 
@@ -687,46 +668,6 @@ class TableBatchOperations(object):
     _batch_query.metadata = {'url': '/{table}()'}  # type: ignore
 
 
-    def _add_to_batch(
-            self, partition_key, # type: str
-            row_key, # type: str
-            request # type: ???  # TODO
-    ):
-        '''
-        Validates batch-specific rules.
-
-        :param str partition_key:
-            PartitionKey of the entity.
-        :param str row_key:
-            RowKey of the entity.
-        :param request:
-            the request to insert, update or delete entity
-        '''
-        if self._partition_key:
-            if self._partition_key != partition_key:
-                # TODO
-                # raise PartialBatchErrorException()
-                pass
-        else:
-            self._partition_key = partition_key
-
-        if row_key in self._row_keys:
-            # TODO
-            # how should we handle multiple operations on a certain row
-            # raise PartialBatchErrorException
-            pass
-        else:
-            self._row_keys.append(row_key)
-
-        if len(self._requests) >= 100:
-            # TODO
-            # Is this limit real?
-            # riase PartialBatchErrorException
-            pass
-
-        self._requests.append((row_key, request))
-
-
     def __enter__(self):
         # type: (...) -> TableBatchOperations
         # TODO: self._client should probably be a PipelineClient of some sorts
@@ -735,7 +676,8 @@ class TableBatchOperations(object):
 
 
     def __exit__(
-            self, *args # type: Any
+            self, *args, # type: Any
+            **kwargs # type: Any
     ):
         # (...) -> None
-        self.commit()
+        self._table_client._batch_send(*self._requests, **kwargs)
