@@ -23,8 +23,7 @@ from ._response_handlers import (
     key_phrases_result,
     sentiment_result,
     language_result,
-    pii_entities_result,
-    healthcare_entities_result
+    pii_entities_result
 )
 
 if TYPE_CHECKING:
