@@ -14,8 +14,8 @@ from msrest import Serializer, Deserializer
 
 from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
-from ._configuration_async import TextAnalyticsClientConfiguration
-from ._operations_mixin_async import TextAnalyticsClientOperationsMixin
+from ._configuration import TextAnalyticsClientConfiguration
+from ._operations_mixin import TextAnalyticsClientOperationsMixin
 class _SDKClient(object):
     def __init__(self, *args, **kwargs):
         """This is a fake class to support current implemetation of MultiApiClientMixin."

@@ -47,11 +47,11 @@ class TextAnalyticsClientOperationsMixin(object):
         """
         api_version = self._get_api_version('entities_linking')
         if api_version == 'v3.0':
-            from ..v3_0.aio.operations_async import TextAnalyticsClientOperationsMixin as OperationClass
+            from ..v3_0.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
         elif api_version == 'v3.1-preview.1':
-            from ..v3_1_preview_1.aio.operations_async import TextAnalyticsClientOperationsMixin as OperationClass
+            from ..v3_1_preview_1.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
         elif api_version == 'v3.1-preview.2':
-            from ..v3_1_preview_2.aio.operations_async import TextAnalyticsClientOperationsMixin as OperationClass
+            from ..v3_1_preview_2.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         mixin_instance = OperationClass()
@@ -90,11 +90,11 @@ class TextAnalyticsClientOperationsMixin(object):
         """
         api_version = self._get_api_version('entities_recognition_general')
         if api_version == 'v3.0':
-            from ..v3_0.aio.operations_async import TextAnalyticsClientOperationsMixin as OperationClass
+            from ..v3_0.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
         elif api_version == 'v3.1-preview.1':
-            from ..v3_1_preview_1.aio.operations_async import TextAnalyticsClientOperationsMixin as OperationClass
+            from ..v3_1_preview_1.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
         elif api_version == 'v3.1-preview.2':
-            from ..v3_1_preview_2.aio.operations_async import TextAnalyticsClientOperationsMixin as OperationClass
+            from ..v3_1_preview_2.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         mixin_instance = OperationClass()
@@ -142,9 +142,9 @@ class TextAnalyticsClientOperationsMixin(object):
         """
         api_version = self._get_api_version('entities_recognition_pii')
         if api_version == 'v3.1-preview.1':
-            from ..v3_1_preview_1.aio.operations_async import TextAnalyticsClientOperationsMixin as OperationClass
+            from ..v3_1_preview_1.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
         elif api_version == 'v3.1-preview.2':
-            from ..v3_1_preview_2.aio.operations_async import TextAnalyticsClientOperationsMixin as OperationClass
+            from ..v3_1_preview_2.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         mixin_instance = OperationClass()
@@ -182,11 +182,11 @@ class TextAnalyticsClientOperationsMixin(object):
         """
         api_version = self._get_api_version('key_phrases')
         if api_version == 'v3.0':
-            from ..v3_0.aio.operations_async import TextAnalyticsClientOperationsMixin as OperationClass
+            from ..v3_0.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
         elif api_version == 'v3.1-preview.1':
-            from ..v3_1_preview_1.aio.operations_async import TextAnalyticsClientOperationsMixin as OperationClass
+            from ..v3_1_preview_1.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
         elif api_version == 'v3.1-preview.2':
-            from ..v3_1_preview_2.aio.operations_async import TextAnalyticsClientOperationsMixin as OperationClass
+            from ..v3_1_preview_2.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         mixin_instance = OperationClass()
@@ -225,11 +225,11 @@ class TextAnalyticsClientOperationsMixin(object):
         """
         api_version = self._get_api_version('languages')
         if api_version == 'v3.0':
-            from ..v3_0.aio.operations_async import TextAnalyticsClientOperationsMixin as OperationClass
+            from ..v3_0.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
         elif api_version == 'v3.1-preview.1':
-            from ..v3_1_preview_1.aio.operations_async import TextAnalyticsClientOperationsMixin as OperationClass
+            from ..v3_1_preview_1.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
         elif api_version == 'v3.1-preview.2':
-            from ..v3_1_preview_2.aio.operations_async import TextAnalyticsClientOperationsMixin as OperationClass
+            from ..v3_1_preview_2.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         mixin_instance = OperationClass()
@@ -268,11 +268,11 @@ class TextAnalyticsClientOperationsMixin(object):
         """
         api_version = self._get_api_version('sentiment')
         if api_version == 'v3.0':
-            from ..v3_0.aio.operations_async import TextAnalyticsClientOperationsMixin as OperationClass
+            from ..v3_0.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
         elif api_version == 'v3.1-preview.1':
-            from ..v3_1_preview_1.aio.operations_async import TextAnalyticsClientOperationsMixin as OperationClass
+            from ..v3_1_preview_1.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
         elif api_version == 'v3.1-preview.2':
-            from ..v3_1_preview_2.aio.operations_async import TextAnalyticsClientOperationsMixin as OperationClass
+            from ..v3_1_preview_2.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         mixin_instance = OperationClass()

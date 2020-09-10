@@ -305,7 +305,7 @@ and [supported types][linked_entities_categories].
 
 ### Recognize PII entities
 [recognize_pii_entities][recognize_pii_entities] recognizes and categorizes Personally Identifiable Information (PII) entities in its input text, such as
-Social Security Numbers, bank account information, credit card numbers, and more. This endpoint is only available for v3.1-preview.1 and up.
+Social Security Numbers, bank account information, credit card numbers, and more. This endpoint is only available for v3.1-preview and up.
 
 ```python
 from azure.core.credentials import AzureKeyCredential
