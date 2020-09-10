@@ -1,12 +1,13 @@
 # Release History
 
-## 7.0.0b6 (Unreleased)
+## 7.0.0b6 (2020-09-10)
 
 **New Features**
 
 * `renew_lock()` now returns the UTC datetime that the lock is set to expire at.
 * `receive_deferred_messages()` can now take a single sequence number as well as a list of sequence numbers.
 * Messages can now be sent twice in succession.
+* Connection strings used with `from_connection_string` methods now support using the `SharedAccessSignature` key in leiu of `sharedaccesskey` and `sharedaccesskeyname`, taking the string of the properly constructed token as value.
 * Internal AMQP message properties (header, footer, annotations, properties, etc) are now exposed via `Message.amqp_message`
 
 **Breaking Changes**
@@ -31,6 +32,7 @@
 * Remove `support_ordering` from `create_queue` and `QueueProperties`
 * Remove `enable_subscription_partitioning` from `create_topic` and `TopicProperties`
 * `get_dead_letter_[queue,subscription]_receiver()` has been removed.  To connect to a dead letter queue, utilize the `sub_queue` parameter of `get_[queue,subscription]_receiver()` provided with a value from the `SubQueue` enum
+* No longer export `ServiceBusSharedKeyCredential`
 * Rename `entity_availability_status` to `availability_status`
 
 ## 7.0.0b5 (2020-08-10)

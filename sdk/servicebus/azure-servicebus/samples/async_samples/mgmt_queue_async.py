@@ -59,15 +59,15 @@ async def get_and_update_queue(servicebus_mgmt_client):
     await servicebus_mgmt_client.update_queue(queue_properties)
 
 
-async def get_queue_runtime_info(servicebus_mgmt_client):
-    print("-- Get Queue Runtime Info")
-    queue_runtime_info = await servicebus_mgmt_client.get_queue_runtime_info(QUEUE_NAME)
-    print("Queue Name:", queue_runtime_info.name)
-    print("Queue Runtime Info:")
-    print("Updated at:", queue_runtime_info.updated_at)
-    print("Size in Bytes:", queue_runtime_info.size_in_bytes)
-    print("Message Count:", queue_runtime_info.total_message_count)
-    print("Please refer to QueueRuntimeInfo from complete available runtime information.")
+async def get_queue_runtime_properties(servicebus_mgmt_client):
+    print("-- Get Queue Runtime Properties")
+    queue_runtime_properties = await servicebus_mgmt_client.get_queue_runtime_properties(QUEUE_NAME)
+    print("Queue Name:", queue_runtime_properties.name)
+    print("Queue Runtime Properties:")
+    print("Updated at:", queue_runtime_properties.updated_at_utc)
+    print("Size in Bytes:", queue_runtime_properties.size_in_bytes)
+    print("Message Count:", queue_runtime_properties.total_message_count)
+    print("Please refer to QueueRuntimeProperties from complete available runtime properties.")
     print("")
 
 
@@ -76,7 +76,7 @@ async def main():
         await create_queue(servicebus_mgmt_client)
         await list_queues(servicebus_mgmt_client)
         await get_and_update_queue(servicebus_mgmt_client)
-        await get_queue_runtime_info(servicebus_mgmt_client)
+        await get_queue_runtime_properties(servicebus_mgmt_client)
         await delete_queue(servicebus_mgmt_client)
 
 loop = asyncio.get_event_loop()

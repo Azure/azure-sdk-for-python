@@ -27,7 +27,7 @@ from ._xml_workaround_policy import ServiceBusXMLWorkaroundPolicy
 
 from .._common.constants import JWT_TOKEN_SCOPE
 from .._common.utils import parse_conn_str
-from .._base_handler import ServiceBusSharedKeyCredential
+from .._base_handler import ServiceBusSharedKeyCredential, ServiceBusSASTokenCredential
 from ._shared_key_policy import ServiceBusSharedKeyCredentialPolicy
 from ._generated._configuration import ServiceBusManagementClientConfiguration
 from ._generated._service_bus_management_client import ServiceBusManagementClient as ServiceBusManagementClientImpl
@@ -46,11 +46,11 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
 
     :param str fully_qualified_namespace: The fully qualified host name for the Service Bus namespace.
     :param credential: To authenticate to manage the entities of the ServiceBus namespace.
-    :type credential: Union[TokenCredential, azure.servicebus.ServiceBusSharedKeyCredential]
+    :type credential: TokenCredential
     """
 
     def __init__(self, fully_qualified_namespace, credential, **kwargs):
-        # type: (str, Union[TokenCredential, ServiceBusSharedKeyCredential], Dict[str, Any]) -> None
+        # type: (str, TokenCredential, Dict[str, Any]) -> None
         self.fully_qualified_namespace = fully_qualified_namespace
         self._credential = credential
         self._endpoint = "https://" + fully_qualified_namespace
@@ -130,10 +130,14 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         :param str conn_str: The connection string of the Service Bus Namespace.
         :rtype: ~azure.servicebus.management.ServiceBusAdministrationClient
         """
-        endpoint, shared_access_key_name, shared_access_key, _ = parse_conn_str(conn_str)
+        endpoint, shared_access_key_name, shared_access_key, _, token, token_expiry = parse_conn_str(conn_str)
+        if token and token_expiry:
+            credential = ServiceBusSASTokenCredential(token, token_expiry)
+        elif shared_access_key_name and shared_access_key:
+            credential = ServiceBusSharedKeyCredential(shared_access_key_name, shared_access_key) # type: ignore
         if "//" in endpoint:
             endpoint = endpoint[endpoint.index("//") + 2:]
-        return cls(endpoint, ServiceBusSharedKeyCredential(shared_access_key_name, shared_access_key), **kwargs)
+        return cls(endpoint, credential, **kwargs)
 
     def get_queue(self, queue_name, **kwargs):
         # type: (str, Any) -> QueueProperties
