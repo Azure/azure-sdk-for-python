@@ -107,4 +107,4 @@ class LocationBasedPerformanceTierOperations(object):
         deserialized = models.PerformanceTierPropertiesPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.DBforMariaDB/locations/{locationName}/performanceTiers'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.DBForMariaDB/locations/{locationName}/performanceTiers'}

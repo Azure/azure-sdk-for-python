@@ -22,6 +22,8 @@ class MariaDBManagementClientOperationsMixin(object):
 
     def _create_recommended_action_session_initial(
             self, resource_group_name, server_name, advisor_name, database_name, custom_headers=None, raw=False, **operation_config):
+        api_version = "2018-06-01"
+
         # Construct URL
         url = self.create_recommended_action_session.metadata['url']
         path_format_arguments = {
@@ -34,7 +36,7 @@ class MariaDBManagementClientOperationsMixin(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str', min_length=1)
         query_parameters['databaseName'] = self._serialize.query("database_name", database_name, 'str')
 
         # Construct headers
