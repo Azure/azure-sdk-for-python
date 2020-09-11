@@ -13,11 +13,11 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Thu, 10 Sep 2020 23:47:19 GMT
+      - Fri, 11 Sep 2020 01:42:18 GMT
       x-ms-version:
       - '2020-02-10'
     method: PUT
-    uri: https://storagename.file.core.windows.net/sharee52d0d77?restype=share
+    uri: https://storagename.file.core.windows.net/teste52d0d77?restype=share
   response:
     body:
       string: ''
@@ -25,11 +25,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 10 Sep 2020 23:47:26 GMT
+      - Fri, 11 Sep 2020 01:42:19 GMT
       etag:
-      - '"0x8D855E3DFBB5CB3"'
+      - '"0x8D855F3EC19CB5C"'
       last-modified:
-      - Thu, 10 Sep 2020 23:47:27 GMT
+      - Fri, 11 Sep 2020 01:42:19 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -51,17 +51,17 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Thu, 10 Sep 2020 23:47:26 GMT
+      - Fri, 11 Sep 2020 01:42:19 GMT
       x-ms-lease-action:
       - acquire
       x-ms-lease-duration:
       - '15'
       x-ms-proposed-lease-id:
-      - 96f7ece9-bac7-4aec-bbd3-8473590ea48a
+      - 9d30f9b9-bb64-4b99-ba8b-87ffbefb4c67
       x-ms-version:
       - '2020-02-10'
     method: PUT
-    uri: https://storagename.file.core.windows.net/sharee52d0d77?comp=lease&restype=share
+    uri: https://storagename.file.core.windows.net/teste52d0d77?comp=lease&restype=share
   response:
     body:
       string: ''
@@ -69,15 +69,15 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 10 Sep 2020 23:47:27 GMT
+      - Fri, 11 Sep 2020 01:42:19 GMT
       etag:
-      - '"0x8D855E3DFBB5CB3"'
+      - '"0x8D855F3EC19CB5C"'
       last-modified:
-      - Thu, 10 Sep 2020 23:47:27 GMT
+      - Fri, 11 Sep 2020 01:42:19 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-lease-id:
-      - 96f7ece9-bac7-4aec-bbd3-8473590ea48a
+      - 9d30f9b9-bb64-4b99-ba8b-87ffbefb4c67
       x-ms-version:
       - '2020-02-10'
     status:
@@ -97,17 +97,17 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Thu, 10 Sep 2020 23:47:27 GMT
+      - Fri, 11 Sep 2020 01:42:19 GMT
       x-ms-lease-action:
       - acquire
       x-ms-lease-duration:
       - '-1'
       x-ms-proposed-lease-id:
-      - 96f7ece9-bac7-4aec-bbd3-8473590ea48a
+      - 9d30f9b9-bb64-4b99-ba8b-87ffbefb4c67
       x-ms-version:
       - '2020-02-10'
     method: PUT
-    uri: https://storagename.file.core.windows.net/sharee52d0d77?comp=lease&restype=share
+    uri: https://storagename.file.core.windows.net/teste52d0d77?comp=lease&restype=share
   response:
     body:
       string: ''
@@ -115,15 +115,15 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 10 Sep 2020 23:47:27 GMT
+      - Fri, 11 Sep 2020 01:42:19 GMT
       etag:
-      - '"0x8D855E3DFBB5CB3"'
+      - '"0x8D855F3EC19CB5C"'
       last-modified:
-      - Thu, 10 Sep 2020 23:47:27 GMT
+      - Fri, 11 Sep 2020 01:42:19 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-lease-id:
-      - 96f7ece9-bac7-4aec-bbd3-8473590ea48a
+      - 9d30f9b9-bb64-4b99-ba8b-87ffbefb4c67
       x-ms-version:
       - '2020-02-10'
     status:

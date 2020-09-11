@@ -13,11 +13,11 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Fri, 11 Sep 2020 01:44:25 GMT
+      - Fri, 11 Sep 2020 01:43:50 GMT
       x-ms-version:
       - '2020-02-10'
     method: PUT
-    uri: https://storagename.file.core.windows.net/test708a1115?restype=share
+    uri: https://storagename.file.core.windows.net/testdfa11382?restype=share
   response:
     body:
       string: ''
@@ -25,11 +25,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 11 Sep 2020 01:44:26 GMT
+      - Fri, 11 Sep 2020 01:43:50 GMT
       etag:
-      - '"0x8D855F437DBEA20"'
+      - '"0x8D855F4229FBAAC"'
       last-modified:
-      - Fri, 11 Sep 2020 01:44:27 GMT
+      - Fri, 11 Sep 2020 01:43:51 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -51,17 +51,59 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Fri, 11 Sep 2020 01:44:26 GMT
+      - Fri, 11 Sep 2020 01:43:50 GMT
+      x-ms-meta-hello:
+      - world
+      x-ms-meta-number:
+      - '43'
+      x-ms-version:
+      - '2020-02-10'
+    method: PUT
+    uri: https://storagename.file.core.windows.net/testdfa11382?restype=share&comp=metadata
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Fri, 11 Sep 2020 01:43:50 GMT
+      etag:
+      - '"0x8D855F422BEA24C"'
+      last-modified:
+      - Fri, 11 Sep 2020 01:43:51 GMT
+      server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version:
+      - '2020-02-10'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.18362-SP0)
+      x-ms-date:
+      - Fri, 11 Sep 2020 01:43:51 GMT
       x-ms-lease-action:
       - acquire
       x-ms-lease-duration:
-      - '15'
+      - '-1'
       x-ms-proposed-lease-id:
-      - a2ad2e08-7b63-4fb7-8927-4282fa338eab
+      - 716ea9cb-18d5-4a68-978b-fc1917f03cc8
       x-ms-version:
       - '2020-02-10'
     method: PUT
-    uri: https://storagename.file.core.windows.net/test708a1115?comp=lease&restype=share
+    uri: https://storagename.file.core.windows.net/testdfa11382?comp=lease&restype=share
   response:
     body:
       string: ''
@@ -69,15 +111,15 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 11 Sep 2020 01:44:26 GMT
+      - Fri, 11 Sep 2020 01:43:50 GMT
       etag:
-      - '"0x8D855F437DBEA20"'
+      - '"0x8D855F422BEA24C"'
       last-modified:
-      - Fri, 11 Sep 2020 01:44:27 GMT
+      - Fri, 11 Sep 2020 01:43:51 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-lease-id:
-      - a2ad2e08-7b63-4fb7-8927-4282fa338eab
+      - 716ea9cb-18d5-4a68-978b-fc1917f03cc8
       x-ms-version:
       - '2020-02-10'
     status:
@@ -92,70 +134,57 @@ interactions:
       - gzip, deflate
       Connection:
       - keep-alive
-      Content-Length:
-      - '0'
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Fri, 11 Sep 2020 01:44:26 GMT
+      - Fri, 11 Sep 2020 01:43:51 GMT
       x-ms-lease-id:
-      - a2ad2e08-7b63-4fb7-8927-4282fa338eab
+      - 716ea9cb-18d5-4a68-978b-fc1917f03cc8
       x-ms-version:
       - '2020-02-10'
-    method: DELETE
-    uri: https://storagename.file.core.windows.net/test708a1115?restype=share
+    method: GET
+    uri: https://storagename.file.core.windows.net/testdfa11382?restype=share
   response:
     body:
       string: ''
     headers:
+      access-control-allow-origin:
+      - '*'
+      access-control-expose-headers:
+      - x-ms-meta-hello,x-ms-meta-number
       content-length:
       - '0'
       date:
-      - Fri, 11 Sep 2020 01:44:27 GMT
+      - Fri, 11 Sep 2020 01:43:50 GMT
+      etag:
+      - '"0x8D855F422BEA24C"'
+      last-modified:
+      - Fri, 11 Sep 2020 01:43:51 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-access-tier:
+      - TransactionOptimized
+      x-ms-access-tier-change-time:
+      - Fri, 11 Sep 2020 01:43:51 GMT
+      x-ms-has-immutability-policy:
+      - 'false'
+      x-ms-has-legal-hold:
+      - 'false'
+      x-ms-lease-duration:
+      - infinite
+      x-ms-lease-state:
+      - leased
+      x-ms-lease-status:
+      - locked
+      x-ms-meta-hello:
+      - world
+      x-ms-meta-number:
+      - '43'
+      x-ms-share-quota:
+      - '5120'
       x-ms-version:
       - '2020-02-10'
     status:
-      code: 202
-      message: Accepted
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.18362-SP0)
-      x-ms-date:
-      - Fri, 11 Sep 2020 01:44:27 GMT
-      x-ms-version:
-      - '2020-02-10'
-    method: GET
-    uri: https://storagename.file.core.windows.net/test708a1115?restype=share
-  response:
-    body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareNotFound</Code><Message>The
-        specified share does not exist.\nRequestId:8ecd6858-301a-003f-53dd-871261000000\nTime:2020-09-11T01:44:27.9081669Z</Message></Error>"
-    headers:
-      access-control-allow-origin:
-      - '*'
-      content-length:
-      - '217'
-      content-type:
-      - application/xml
-      date:
-      - Fri, 11 Sep 2020 01:44:27 GMT
-      server:
-      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-error-code:
-      - ShareNotFound
-      x-ms-version:
-      - '2020-02-10'
-    status:
-      code: 404
-      message: The specified share does not exist.
+      code: 200
+      message: OK
 version: 1
