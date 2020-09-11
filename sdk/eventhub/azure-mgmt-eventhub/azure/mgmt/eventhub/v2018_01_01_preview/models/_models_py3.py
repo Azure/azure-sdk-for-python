@@ -1024,6 +1024,9 @@ class NetworkRuleSet(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
+    :param trusted_service_access_enabled: Value that indicates whether
+     Trusted Service Access is Enabled or not.
+    :type trusted_service_access_enabled: bool
     :param default_action: Default Action for Network Rule Set. Possible
      values include: 'Allow', 'Deny'
     :type default_action: str or
@@ -1046,13 +1049,15 @@ class NetworkRuleSet(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'trusted_service_access_enabled': {'key': 'properties.trustedServiceAccessEnabled', 'type': 'bool'},
         'default_action': {'key': 'properties.defaultAction', 'type': 'str'},
         'virtual_network_rules': {'key': 'properties.virtualNetworkRules', 'type': '[NWRuleSetVirtualNetworkRules]'},
         'ip_rules': {'key': 'properties.ipRules', 'type': '[NWRuleSetIpRules]'},
     }
 
-    def __init__(self, *, default_action=None, virtual_network_rules=None, ip_rules=None, **kwargs) -> None:
+    def __init__(self, *, trusted_service_access_enabled: bool=None, default_action=None, virtual_network_rules=None, ip_rules=None, **kwargs) -> None:
         super(NetworkRuleSet, self).__init__(**kwargs)
+        self.trusted_service_access_enabled = trusted_service_access_enabled
         self.default_action = default_action
         self.virtual_network_rules = virtual_network_rules
         self.ip_rules = ip_rules

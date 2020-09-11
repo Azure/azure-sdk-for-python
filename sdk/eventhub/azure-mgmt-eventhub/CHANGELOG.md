@@ -1,5 +1,11 @@
 # Release History
 
+## 4.1.0 (2020-09-04)
+
+**Features**
+
+  - Model NetworkRuleSet has a new parameter trusted_service_access_enabled
+
 ## 4.0.0 (2020-06-12)
 
 **Features**

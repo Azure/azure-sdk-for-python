@@ -68,6 +68,8 @@ class MgmtEventHubTest(AzureMgmtTestCase):
         self.assertEqual(createdeventhubresponse.name,eventhub_name)
         self.assertEqual(createdeventhubresponse.capture_description.interval_in_seconds, 120)
 
+
+
         #Get the created eventhub
         geteventhubresponse = self.eventhub_client.event_hubs.get(resource_group_name, namespace_name, eventhub_name)
         self.assertEqual(geteventhubresponse.name, eventhub_name)
