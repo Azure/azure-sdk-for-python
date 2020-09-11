@@ -13,8 +13,8 @@ from azure.core import MatchConditions
 
 from ._models import (
     ContainerEncryptionScope,
-    DelimitedJsonDialect
-)
+    DelimitedJsonDialect,
+    ArrowDialect)
 from ._generated.models import (
     ModifiedAccessConditions,
     SourceModifiedAccessConditions,
@@ -24,6 +24,7 @@ from ._generated.models import (
     QuerySerialization,
     DelimitedTextConfiguration,
     JsonTextConfiguration,
+    ArrowConfiguration,
     QueryFormatType,
     BlobTag,
     BlobTags, LeaseAccessConditions
@@ -182,6 +183,13 @@ def serialize_query_format(formater):
             type=QueryFormatType.delimited,
             delimited_text_configuration=serialization_settings
         )
+    elif isinstance(formater, list):
+        serialization_settings = ArrowConfiguration(
+            schema=formater
+        )
+        qq_format = QueryFormat(
+            type=QueryFormatType.arrow,
+            arrow_configuration=serialization_settings)
     elif not formater:
         return None
     else:

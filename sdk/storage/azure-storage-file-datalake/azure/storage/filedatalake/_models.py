@@ -17,6 +17,7 @@ from azure.storage.blob import ContainerSasPermissions, BlobSasPermissions
 from azure.storage.blob import AccessPolicy as BlobAccessPolicy
 from azure.storage.blob import DelimitedTextDialect as BlobDelimitedTextDialect
 from azure.storage.blob import DelimitedJsonDialect as BlobDelimitedJSON
+from azure.storage.blob import ArrowDialect as BlobArrowDialect
 from azure.storage.blob._generated.models import StorageErrorException
 from azure.storage.blob._models import ContainerPropertiesPaged
 from ._deserialize import return_headers_and_deserialized_path_list
@@ -625,6 +626,30 @@ class DelimitedTextDialect(BlobDelimitedTextDialect):
         data will be returned inclusive of the first line. If set to True, the data will be returned exclusive
         of the first line.
     """
+
+
+class ArrowDialect(BlobArrowDialect):
+    """field of an arrow schema.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param str type: Required.
+    :keyword str name: The name of the field.
+    :keyword int precision: The precision of the field.
+    :keyword int scale: The scale of the field.
+    """
+    def __init__(self, type, **kwargs):
+        super(ArrowDialect, self).__init__(type, **kwargs)
+
+
+class ArrowType (str, Enum):
+
+    INT64 = "int64"
+    BOOL = "bool"
+    TIMESTAMP = "timestamp[ms]"
+    STRING = "string"
+    DOUBLE = "double"
+    DECIMAL = 'decimal'
 
 
 class DataLakeFileQueryError(object):

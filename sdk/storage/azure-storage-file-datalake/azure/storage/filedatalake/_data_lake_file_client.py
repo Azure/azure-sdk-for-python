@@ -665,6 +665,7 @@ class DataLakeFileClient(PathClient):
             according to that profile. This value can be a DelimitedTextDialect or a DelimitedJsonDialect.
         :paramtype output_format:
             ~azure.storage.filedatalake.DelimitedTextDialect or ~azure.storage.filedatalake.DelimitedJsonDialect
+            or list[~azure.storage.filedatalake.ArrowDialect]
         :keyword lease:
             Required if the file has an active lease. Value can be a DataLakeLeaseClient object
             or the lease ID as a string.

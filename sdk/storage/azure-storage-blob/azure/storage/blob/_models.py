@@ -9,7 +9,7 @@
 from enum import Enum
 
 from azure.core.paging import PageIterator
-from azure.storage.blob._generated.models import FilterBlobItem
+from azure.storage.blob._generated.models import FilterBlobItem, ArrowField
 
 from ._shared import decode_base64_to_text
 from ._shared.response_handlers import return_context_and_deserialized, process_storage_error
@@ -1097,6 +1097,30 @@ class DelimitedTextDialect(object):
         self.lineterminator = kwargs.pop('lineterminator', '\n')
         self.escapechar = kwargs.pop('escapechar', "")
         self.has_header = kwargs.pop('has_header', False)
+
+
+class ArrowDialect(ArrowField):
+    """field of an arrow schema.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param ~azure.storage.blob.ArrowType type: Arrow field type.
+    :keyword str name: The name of the field.
+    :keyword int precision: The precision of the field.
+    :keyword int scale: The scale of the field.
+    """
+    def __init__(self, type, **kwargs):
+        super(ArrowDialect, self).__init__(type=type, **kwargs)
+
+
+class ArrowType (str, Enum):
+
+    INT64 = "int64"
+    BOOL = "bool"
+    TIMESTAMP = "timestamp[ms]"
+    STRING = "string"
+    DOUBLE = "double"
+    DECIMAL = 'decimal'
 
 
 class ObjectReplicationPolicy(DictMixin):

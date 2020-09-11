@@ -683,13 +683,19 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             try:
                 delimiter = input_format.lineterminator
             except AttributeError:
-                delimiter = input_format.delimiter
+                try:
+                    delimiter = input_format.delimiter
+                except AttributeError:
+                    raise ValueError("The Type of blob_format can only be DelimitedTextDialect or DelimitedJsonDialect")
         output_format = kwargs.pop('output_format', None)
         if output_format:
             try:
                 delimiter = output_format.lineterminator
             except AttributeError:
-                delimiter = output_format.delimiter
+                try:
+                    delimiter = output_format.delimiter
+                except AttributeError:
+                    pass
         else:
             output_format = input_format
         query_request = QueryRequest(
@@ -742,6 +748,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             as it is represented in the blob. By providing an output format, the blob data will be reformatted
             according to that profile. This value can be a DelimitedTextDialect or a DelimitedJsonDialect.
         :paramtype output_format: ~azure.storage.blob.DelimitedTextDialect or ~azure.storage.blob.DelimitedJsonDialect
+            or list[~azure.storage.blob.ArrowDialect]
         :keyword lease:
             Required if the blob has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
