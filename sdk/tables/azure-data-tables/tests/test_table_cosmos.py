@@ -36,6 +36,7 @@ from azure.core.pipeline.policies import (
 from _shared.testcase import (
     TableTestCase,
     GlobalCosmosAccountPreparer,
+    GlobalStorageAccountPreparer
 )
 from azure.data.tables._authentication import SharedKeyCredentialPolicy
 from azure.core.pipeline.transport import RequestsTransport
@@ -117,6 +118,7 @@ class StorageTableTest(TableTestCase):
     @GlobalCosmosAccountPreparer()
     def test_create_table(self, resource_group, location, storage_account, storage_account_key):
         # # Arrange
+        print(storage_account)
         ts = TableServiceClient(self.account_url(storage_account, "cosmos"), storage_account_key)
 
         table_name = self._get_table_reference()
@@ -132,6 +134,7 @@ class StorageTableTest(TableTestCase):
     @GlobalCosmosAccountPreparer()
     def test_create_table_fail_on_exist(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
+        print(storage_account)
         ts = TableServiceClient(self.account_url(storage_account, "cosmos"), storage_account_key)
         table_name = self._get_table_reference()
 

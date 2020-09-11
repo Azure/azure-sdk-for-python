@@ -24,13 +24,13 @@ FakeStorageAccount = FakeResource
 # Cosmos Account Preparer and its shorthand decorator
 
 class CosmosAccountPreparer(AzureMgmtPreparer):
-    def __init(
+    def __init__(
         self,
         name_prefix='',
         sku='Standard_LRS',
         location='westus',
         kind='StorageV2',
-        parameter_name='storage_account',
+        parameter_name='cosmos_account',
         resource_group_parameter_name=RESOURCE_GROUP_PARAM,
         disable_recording=True,
         playback_fake_resource=None,
@@ -57,7 +57,7 @@ class CosmosAccountPreparer(AzureMgmtPreparer):
 
     def create_resource(self, name, **kwargs):
         if self.is_live:
-            self.client = self.create_mgmt_client(CosmosManagementClient)
+            self.client = self.create_mgmt_client(CosmosDBManagementClient)
             group = self._get_resource_group(**kwargs)
             cosmos_async_operation = self.client.database_accounts.create_or_update(
                 group.name,
@@ -67,8 +67,6 @@ class CosmosAccountPreparer(AzureMgmtPreparer):
                     'locations': [{
                         self.location,
                     }],
-                    # 'kind': self.kind,
-                    # 'enable_https_traffic_only': True,
                 }
             )
             self.resource = cosmos_async_operation.result()
@@ -83,7 +81,7 @@ class CosmosAccountPreparer(AzureMgmtPreparer):
                 self.resource_moniker
             )
         else:
-            self.resource = StorageAccount(
+            self.resource = (
                 location=self.location,
             )
             self.resource.name = name
