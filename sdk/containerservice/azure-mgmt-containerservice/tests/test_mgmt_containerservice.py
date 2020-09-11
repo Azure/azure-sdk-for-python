@@ -52,7 +52,7 @@ class MgmtContainerServiceTest(AzureMgmtTestCase):
 
         return subnet.id
 
-    @ResourceGroupPreparer(location='westus')
+    @ResourceGroupPreparer(location='eastus')
     def test_container(self, resource_group, location):
         container_name = self.get_resource_name('pycontainer')
 
@@ -71,7 +71,7 @@ class MgmtContainerServiceTest(AzureMgmtTestCase):
                 },
                 "master_profile": {
                     "count": 1,
-                    "dns_prefix": "MasterPrefixTest",
+                    "dns_prefix": "masterPrefixTest",
                     "vm_size": ContainerServiceVMSizeTypes.standard_d2_v2,
                     "vnet_subnet_id": subnet_id
                 },

@@ -1,5 +1,28 @@
 # Release History
 
+## 9.4.0 (2020-09-11)
+
+**Features**
+
+  - Model ManagedClusterAgentPoolProfile has a new parameter power_state
+  - Model ManagedClusterAgentPoolProfile has a new parameter os_disk_type
+  - Model ManagedClusterPropertiesAutoScalerProfile has a new parameter max_empty_bulk_delete
+  - Model ManagedClusterPropertiesAutoScalerProfile has a new parameter skip_nodes_with_local_storage
+  - Model ManagedClusterPropertiesAutoScalerProfile has a new parameter max_total_unready_percentage
+  - Model ManagedClusterPropertiesAutoScalerProfile has a new parameter ok_total_unready_count
+  - Model ManagedClusterPropertiesAutoScalerProfile has a new parameter expander
+  - Model ManagedClusterPropertiesAutoScalerProfile has a new parameter skip_nodes_with_system_pods
+  - Model ManagedClusterPropertiesAutoScalerProfile has a new parameter new_pod_scale_up_delay
+  - Model AgentPool has a new parameter power_state
+  - Model AgentPool has a new parameter os_disk_type
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter power_state
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter os_disk_type
+  - Model ManagedCluster has a new parameter power_state
+  - Added operation ManagedClustersOperations.start
+  - Added operation ManagedClustersOperations.stop
+  - Added operation group ResolvePrivateLinkServiceIdOperations
+  - Added operation group PrivateLinkResourcesOperations
+
 ## 9.3.0 (2020-08-24)
 
 **Features**
