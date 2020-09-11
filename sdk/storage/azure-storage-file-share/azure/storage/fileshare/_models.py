@@ -304,6 +304,7 @@ class ShareProperties(DictMixin):
         self.provisioned_egress_mbps = kwargs.get('x-ms-share-provisioned-egress-mbps')
         self.provisioned_ingress_mbps = kwargs.get('x-ms-share-provisioned-ingress-mbps')
         self.provisioned_iops = kwargs.get('x-ms-share-provisioned-iops')
+        self.lease = LeaseProperties(**kwargs)
 
     @classmethod
     def _from_generated(cls, generated):
@@ -322,6 +323,7 @@ class ShareProperties(DictMixin):
         props.provisioned_egress_mbps = generated.properties.provisioned_egress_mbps
         props.provisioned_ingress_mbps = generated.properties.provisioned_ingress_mbps
         props.provisioned_iops = generated.properties.provisioned_iops
+        props.lease = LeaseProperties._from_generated(generated)  # pylint: disable=protected-access
         return props
 
 

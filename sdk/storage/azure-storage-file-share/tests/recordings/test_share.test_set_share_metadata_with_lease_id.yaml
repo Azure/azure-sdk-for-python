@@ -13,56 +13,11 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Fri, 11 Sep 2020 00:46:01 GMT
+      - Fri, 11 Sep 2020 00:00:34 GMT
       x-ms-version:
       - '2020-02-10'
     method: PUT
-    uri: https://storagename.file.core.windows.net/share14ddb1042?restype=share
-  response:
-    body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareAlreadyExists</Code><Message>The
-        specified share already exists.\nRequestId:011e3cdf-a01a-0094-01d4-876dab000000\nTime:2020-09-11T00:46:02.3271417Z</Message></Error>"
-    headers:
-      content-length:
-      - '222'
-      content-type:
-      - application/xml
-      date:
-      - Fri, 11 Sep 2020 00:46:02 GMT
-      server:
-      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-error-code:
-      - ShareAlreadyExists
-      x-ms-version:
-      - '2020-02-10'
-    status:
-      code: 409
-      message: The specified share already exists.
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.18362-SP0)
-      x-ms-date:
-      - Fri, 11 Sep 2020 00:46:01 GMT
-      x-ms-lease-action:
-      - acquire
-      x-ms-lease-duration:
-      - '15'
-      x-ms-proposed-lease-id:
-      - 39c60f39-dc0b-40c7-a784-f209262b2bbd
-      x-ms-version:
-      - '2020-02-10'
-    method: PUT
-    uri: https://storagename.file.core.windows.net/share14ddb1042?comp=lease&restype=share
+    uri: https://storagename.file.core.windows.net/sharee121138e?restype=share
   response:
     body:
       string: ''
@@ -70,15 +25,13 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 11 Sep 2020 00:46:02 GMT
+      - Fri, 11 Sep 2020 00:00:53 GMT
       etag:
-      - '"0x8D855EC02779909"'
+      - '"0x8D855E5C07A7C91"'
       last-modified:
-      - Fri, 11 Sep 2020 00:45:41 GMT
+      - Fri, 11 Sep 2020 00:00:53 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-lease-id:
-      - 39c60f39-dc0b-40c7-a784-f209262b2bbd
       x-ms-version:
       - '2020-02-10'
     status:
@@ -98,15 +51,17 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Fri, 11 Sep 2020 00:46:02 GMT
+      - Fri, 11 Sep 2020 00:00:53 GMT
       x-ms-lease-action:
-      - break
-      x-ms-lease-break-period:
-      - '5'
+      - acquire
+      x-ms-lease-duration:
+      - '-1'
+      x-ms-proposed-lease-id:
+      - e09e30b1-736a-4875-979c-f52bb7c1f74f
       x-ms-version:
       - '2020-02-10'
     method: PUT
-    uri: https://storagename.file.core.windows.net/share14ddb1042?comp=lease&restype=share
+    uri: https://storagename.file.core.windows.net/sharee121138e?comp=lease&restype=share
   response:
     body:
       string: ''
@@ -114,20 +69,20 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 11 Sep 2020 00:46:02 GMT
+      - Fri, 11 Sep 2020 00:00:53 GMT
       etag:
-      - '"0x8D855EC02779909"'
+      - '"0x8D855E5C07A7C91"'
       last-modified:
-      - Fri, 11 Sep 2020 00:45:41 GMT
+      - Fri, 11 Sep 2020 00:00:53 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-lease-time:
-      - '5'
+      x-ms-lease-id:
+      - e09e30b1-736a-4875-979c-f52bb7c1f74f
       x-ms-version:
       - '2020-02-10'
     status:
-      code: 202
-      message: Accepted
+      code: 201
+      message: Created
 - request:
     body: null
     headers:
@@ -142,31 +97,94 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Fri, 11 Sep 2020 00:46:08 GMT
+      - Fri, 11 Sep 2020 00:00:53 GMT
       x-ms-lease-id:
-      - 39c60f39-dc0b-40c7-a784-f209262b2bbd
+      - e09e30b1-736a-4875-979c-f52bb7c1f74f
+      x-ms-meta-hello:
+      - world
+      x-ms-meta-number:
+      - '43'
       x-ms-version:
       - '2020-02-10'
-    method: DELETE
-    uri: https://storagename.file.core.windows.net/share14ddb1042?restype=share
+    method: PUT
+    uri: https://storagename.file.core.windows.net/sharee121138e?restype=share&comp=metadata
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseLost</Code><Message>A
-        lease ID was specified, but the lease for the file share has expired.\nRequestId:011e3d04-a01a-0094-1ad4-876dab000000\nTime:2020-09-11T00:46:09.0609169Z</Message></Error>"
+      string: ''
     headers:
       content-length:
-      - '249'
-      content-type:
-      - application/xml
+      - '0'
       date:
-      - Fri, 11 Sep 2020 00:46:08 GMT
+      - Fri, 11 Sep 2020 00:00:54 GMT
+      etag:
+      - '"0x8D855E5C0C0BD1C"'
+      last-modified:
+      - Fri, 11 Sep 2020 00:00:54 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-error-code:
-      - LeaseLost
       x-ms-version:
       - '2020-02-10'
     status:
-      code: 412
-      message: A lease ID was specified, but the lease for the file share has expired.
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.18362-SP0)
+      x-ms-date:
+      - Fri, 11 Sep 2020 00:00:53 GMT
+      x-ms-version:
+      - '2020-02-10'
+    method: GET
+    uri: https://storagename.file.core.windows.net/sharee121138e?restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      access-control-allow-origin:
+      - '*'
+      access-control-expose-headers:
+      - x-ms-meta-hello,x-ms-meta-number
+      content-length:
+      - '0'
+      date:
+      - Fri, 11 Sep 2020 00:00:54 GMT
+      etag:
+      - '"0x8D855E5C0C0BD1C"'
+      last-modified:
+      - Fri, 11 Sep 2020 00:00:54 GMT
+      server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-access-tier:
+      - TransactionOptimized
+      x-ms-access-tier-change-time:
+      - Fri, 11 Sep 2020 00:00:53 GMT
+      x-ms-has-immutability-policy:
+      - 'false'
+      x-ms-has-legal-hold:
+      - 'false'
+      x-ms-lease-duration:
+      - infinite
+      x-ms-lease-state:
+      - leased
+      x-ms-lease-status:
+      - locked
+      x-ms-meta-hello:
+      - world
+      x-ms-meta-number:
+      - '43'
+      x-ms-share-quota:
+      - '5120'
+      x-ms-version:
+      - '2020-02-10'
+    status:
+      code: 200
+      message: OK
 version: 1
