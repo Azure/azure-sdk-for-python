@@ -19,6 +19,11 @@ from .operations import AccountsOperations
 from .operations import PoolsOperations
 from .operations import VolumesOperations
 from .operations import SnapshotsOperations
+from .operations import SnapshotPoliciesOperations
+from .operations import AccountBackupsOperations
+from .operations import BackupsOperations
+from .operations import BackupPoliciesOperations
+from .operations import VaultsOperations
 from . import models
 
 
@@ -40,6 +45,16 @@ class AzureNetAppFilesManagementClient(SDKClient):
     :vartype volumes: azure.mgmt.netapp.operations.VolumesOperations
     :ivar snapshots: Snapshots operations
     :vartype snapshots: azure.mgmt.netapp.operations.SnapshotsOperations
+    :ivar snapshot_policies: SnapshotPolicies operations
+    :vartype snapshot_policies: azure.mgmt.netapp.operations.SnapshotPoliciesOperations
+    :ivar account_backups: AccountBackups operations
+    :vartype account_backups: azure.mgmt.netapp.operations.AccountBackupsOperations
+    :ivar backups: Backups operations
+    :vartype backups: azure.mgmt.netapp.operations.BackupsOperations
+    :ivar backup_policies: BackupPolicies operations
+    :vartype backup_policies: azure.mgmt.netapp.operations.BackupPoliciesOperations
+    :ivar vaults: Vaults operations
+    :vartype vaults: azure.mgmt.netapp.operations.VaultsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -58,7 +73,7 @@ class AzureNetAppFilesManagementClient(SDKClient):
         super(AzureNetAppFilesManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2020-02-01'
+        self.api_version = '2020-06-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -73,4 +88,14 @@ class AzureNetAppFilesManagementClient(SDKClient):
         self.volumes = VolumesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.snapshots = SnapshotsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.snapshot_policies = SnapshotPoliciesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.account_backups = AccountBackupsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.backups = BackupsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.backup_policies = BackupPoliciesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.vaults = VaultsOperations(
             self._client, self.config, self._serialize, self._deserialize)

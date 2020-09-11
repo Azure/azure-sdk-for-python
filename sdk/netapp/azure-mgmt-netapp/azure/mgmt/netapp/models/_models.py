@@ -15,20 +15,27 @@ from msrest.serialization import Model
 class ActiveDirectory(Model):
     """Active Directory.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param active_directory_id: Id of the Active Directory
     :type active_directory_id: str
     :param username: Username of Active Directory domain administrator
     :type username: str
     :param password: Plain text password of Active Directory domain
-     administrator
+     administrator, value is masked in the response
     :type password: str
     :param domain: Name of the Active Directory domain
     :type domain: str
     :param dns: Comma separated list of DNS server IP addresses (IPv4 only)
      for the Active Directory domain
     :type dns: str
-    :param status: Status of the Active Directory
-    :type status: str
+    :ivar status: Status of the Active Directory. Possible values include:
+     'Created', 'InUse', 'Deleted', 'Error', 'Updating'
+    :vartype status: str or ~azure.mgmt.netapp.models.ActiveDirectoryStatus
+    :ivar status_details: Any details in regards to the Status of the Active
+     Directory
+    :vartype status_details: str
     :param smb_server_name: NetBIOS name of the SMB server. This name will be
      registered as a computer account in the AD and used to mount volumes
     :type smb_server_name: str
@@ -42,7 +49,27 @@ class ActiveDirectory(Model):
      active directory group. A list of unique usernames without domain
      specifier
     :type backup_operators: list[str]
+    :param kdc_ip: kdc server IP addresses for the active directory machine.
+     This optional parameter is used only while creating kerberos volume.
+    :type kdc_ip: str
+    :param ad_name: Name of the active directory machine. This optional
+     parameter is used only while creating kerberos volume
+    :type ad_name: str
+    :param server_root_ca_certificate: When LDAP over SSL/TLS is enabled, the
+     LDAP client is required to have base64 encoded Active Directory
+     Certificate Service's self-signed root CA certificate, this optional
+     parameter is used only for dual protocol with LDAP user-mapping volumes.
+    :type server_root_ca_certificate: str
     """
+
+    _validation = {
+        'dns': {'pattern': r'^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)((, ?)(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))*$'},
+        'status': {'readonly': True},
+        'status_details': {'readonly': True},
+        'kdc_ip': {'pattern': r'^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)((, ?)(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))*$'},
+        'ad_name': {'max_length': 64, 'min_length': 1},
+        'server_root_ca_certificate': {'max_length': 10240, 'min_length': 1},
+    }
 
     _attribute_map = {
         'active_directory_id': {'key': 'activeDirectoryId', 'type': 'str'},
@@ -51,10 +78,14 @@ class ActiveDirectory(Model):
         'domain': {'key': 'domain', 'type': 'str'},
         'dns': {'key': 'dns', 'type': 'str'},
         'status': {'key': 'status', 'type': 'str'},
+        'status_details': {'key': 'statusDetails', 'type': 'str'},
         'smb_server_name': {'key': 'smbServerName', 'type': 'str'},
         'organizational_unit': {'key': 'organizationalUnit', 'type': 'str'},
         'site': {'key': 'site', 'type': 'str'},
         'backup_operators': {'key': 'backupOperators', 'type': '[str]'},
+        'kdc_ip': {'key': 'kdcIP', 'type': 'str'},
+        'ad_name': {'key': 'adName', 'type': 'str'},
+        'server_root_ca_certificate': {'key': 'serverRootCACertificate', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -64,11 +95,15 @@ class ActiveDirectory(Model):
         self.password = kwargs.get('password', None)
         self.domain = kwargs.get('domain', None)
         self.dns = kwargs.get('dns', None)
-        self.status = kwargs.get('status', None)
+        self.status = None
+        self.status_details = None
         self.smb_server_name = kwargs.get('smb_server_name', None)
         self.organizational_unit = kwargs.get('organizational_unit', None)
         self.site = kwargs.get('site', None)
         self.backup_operators = kwargs.get('backup_operators', None)
+        self.kdc_ip = kwargs.get('kdc_ip', None)
+        self.ad_name = kwargs.get('ad_name', None)
+        self.server_root_ca_certificate = kwargs.get('server_root_ca_certificate', None)
 
 
 class AuthorizeRequest(Model):
@@ -85,6 +120,370 @@ class AuthorizeRequest(Model):
     def __init__(self, **kwargs):
         super(AuthorizeRequest, self).__init__(**kwargs)
         self.remote_volume_resource_id = kwargs.get('remote_volume_resource_id', None)
+
+
+class Backup(Model):
+    """Backup of a Volume.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param location: Required. Resource location
+    :type location: str
+    :ivar id: Resource Id
+    :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
+    :ivar creation_date: name. The creation date of the backup
+    :vartype creation_date: datetime
+    :ivar provisioning_state: Azure lifecycle management
+    :vartype provisioning_state: str
+    :ivar size: Size of backup
+    :vartype size: long
+    :param label: Label for backup
+    :type label: str
+    :ivar backup_type: Type of backup adhoc or scheduled
+    :vartype backup_type: str
+    """
+
+    _validation = {
+        'location': {'required': True},
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'creation_date': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+        'size': {'readonly': True},
+        'backup_type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'location': {'key': 'location', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'creation_date': {'key': 'properties.creationDate', 'type': 'iso-8601'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'size': {'key': 'properties.size', 'type': 'long'},
+        'label': {'key': 'properties.label', 'type': 'str'},
+        'backup_type': {'key': 'properties.backupType', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(Backup, self).__init__(**kwargs)
+        self.location = kwargs.get('location', None)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.creation_date = None
+        self.provisioning_state = None
+        self.size = None
+        self.label = kwargs.get('label', None)
+        self.backup_type = None
+
+
+class BackupPatch(Model):
+    """Backup patch.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param tags: Resource tags
+    :type tags: dict[str, str]
+    :ivar creation_date: name. The creation date of the backup
+    :vartype creation_date: datetime
+    :ivar provisioning_state: Azure lifecycle management
+    :vartype provisioning_state: str
+    :ivar size: Size of backup
+    :vartype size: long
+    :param label: Label for backup
+    :type label: str
+    :ivar backup_type: Type of backup adhoc or scheduled
+    :vartype backup_type: str
+    """
+
+    _validation = {
+        'creation_date': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+        'size': {'readonly': True},
+        'backup_type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'creation_date': {'key': 'properties.creationDate', 'type': 'iso-8601'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'size': {'key': 'properties.size', 'type': 'long'},
+        'label': {'key': 'properties.label', 'type': 'str'},
+        'backup_type': {'key': 'properties.backupType', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(BackupPatch, self).__init__(**kwargs)
+        self.tags = kwargs.get('tags', None)
+        self.creation_date = None
+        self.provisioning_state = None
+        self.size = None
+        self.label = kwargs.get('label', None)
+        self.backup_type = None
+
+
+class BackupPolicy(Model):
+    """Backup policy information.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param location: Required. Resource location
+    :type location: str
+    :ivar id: Resource Id
+    :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
+    :param tags: Resource tags
+    :type tags: dict[str, str]
+    :ivar name1: Name of backup policy
+    :vartype name1: str
+    :ivar provisioning_state: Azure lifecycle management
+    :vartype provisioning_state: str
+    :param daily_backups_to_keep: Daily backups count to keep
+    :type daily_backups_to_keep: int
+    :param weekly_backups_to_keep: Weekly backups count to keep
+    :type weekly_backups_to_keep: int
+    :param monthly_backups_to_keep: Monthly backups count to keep
+    :type monthly_backups_to_keep: int
+    :param yearly_backups_to_keep: Yearly backups count to keep
+    :type yearly_backups_to_keep: int
+    :param volumes_assigned: Volumes using current backup policy
+    :type volumes_assigned: int
+    :param enabled: The property to decide policy is enabled or not
+    :type enabled: bool
+    :param volume_backups: A list of volumes assigned to this policy
+    :type volume_backups: list[~azure.mgmt.netapp.models.VolumeBackups]
+    """
+
+    _validation = {
+        'location': {'required': True},
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'name1': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'location': {'key': 'location', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'name1': {'key': 'properties.name', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'daily_backups_to_keep': {'key': 'properties.dailyBackupsToKeep', 'type': 'int'},
+        'weekly_backups_to_keep': {'key': 'properties.weeklyBackupsToKeep', 'type': 'int'},
+        'monthly_backups_to_keep': {'key': 'properties.monthlyBackupsToKeep', 'type': 'int'},
+        'yearly_backups_to_keep': {'key': 'properties.yearlyBackupsToKeep', 'type': 'int'},
+        'volumes_assigned': {'key': 'properties.volumesAssigned', 'type': 'int'},
+        'enabled': {'key': 'properties.enabled', 'type': 'bool'},
+        'volume_backups': {'key': 'properties.volumeBackups', 'type': '[VolumeBackups]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(BackupPolicy, self).__init__(**kwargs)
+        self.location = kwargs.get('location', None)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.tags = kwargs.get('tags', None)
+        self.name1 = None
+        self.provisioning_state = None
+        self.daily_backups_to_keep = kwargs.get('daily_backups_to_keep', None)
+        self.weekly_backups_to_keep = kwargs.get('weekly_backups_to_keep', None)
+        self.monthly_backups_to_keep = kwargs.get('monthly_backups_to_keep', None)
+        self.yearly_backups_to_keep = kwargs.get('yearly_backups_to_keep', None)
+        self.volumes_assigned = kwargs.get('volumes_assigned', None)
+        self.enabled = kwargs.get('enabled', None)
+        self.volume_backups = kwargs.get('volume_backups', None)
+
+
+class BackupPolicyDetails(Model):
+    """Backup policy properties.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param location: Resource location
+    :type location: str
+    :ivar id: Resource Id
+    :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
+    :param tags: Resource tags
+    :type tags: dict[str, str]
+    :ivar name1: Name of backup policy
+    :vartype name1: str
+    :ivar provisioning_state: Azure lifecycle management
+    :vartype provisioning_state: str
+    :param daily_backups_to_keep: Daily backups count to keep
+    :type daily_backups_to_keep: int
+    :param weekly_backups_to_keep: Weekly backups count to keep
+    :type weekly_backups_to_keep: int
+    :param monthly_backups_to_keep: Monthly backups count to keep
+    :type monthly_backups_to_keep: int
+    :param yearly_backups_to_keep: Yearly backups count to keep
+    :type yearly_backups_to_keep: int
+    :param volumes_assigned: Volumes using current backup policy
+    :type volumes_assigned: int
+    :param enabled: The property to decide policy is enabled or not
+    :type enabled: bool
+    :param volume_backups: A list of volumes assigned to this policy
+    :type volume_backups: list[~azure.mgmt.netapp.models.VolumeBackups]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'name1': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'location': {'key': 'location', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'name1': {'key': 'properties.name', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'daily_backups_to_keep': {'key': 'properties.dailyBackupsToKeep', 'type': 'int'},
+        'weekly_backups_to_keep': {'key': 'properties.weeklyBackupsToKeep', 'type': 'int'},
+        'monthly_backups_to_keep': {'key': 'properties.monthlyBackupsToKeep', 'type': 'int'},
+        'yearly_backups_to_keep': {'key': 'properties.yearlyBackupsToKeep', 'type': 'int'},
+        'volumes_assigned': {'key': 'properties.volumesAssigned', 'type': 'int'},
+        'enabled': {'key': 'properties.enabled', 'type': 'bool'},
+        'volume_backups': {'key': 'properties.volumeBackups', 'type': '[VolumeBackups]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(BackupPolicyDetails, self).__init__(**kwargs)
+        self.location = kwargs.get('location', None)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.tags = kwargs.get('tags', None)
+        self.name1 = None
+        self.provisioning_state = None
+        self.daily_backups_to_keep = kwargs.get('daily_backups_to_keep', None)
+        self.weekly_backups_to_keep = kwargs.get('weekly_backups_to_keep', None)
+        self.monthly_backups_to_keep = kwargs.get('monthly_backups_to_keep', None)
+        self.yearly_backups_to_keep = kwargs.get('yearly_backups_to_keep', None)
+        self.volumes_assigned = kwargs.get('volumes_assigned', None)
+        self.enabled = kwargs.get('enabled', None)
+        self.volume_backups = kwargs.get('volume_backups', None)
+
+
+class BackupPolicyPatch(Model):
+    """Backup policy Details for create and update.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param location: Resource location
+    :type location: str
+    :ivar name: Name of backup policy
+    :vartype name: str
+    :ivar provisioning_state: Azure lifecycle management
+    :vartype provisioning_state: str
+    :param daily_backups_to_keep: Daily backups count to keep
+    :type daily_backups_to_keep: int
+    :param weekly_backups_to_keep: Weekly backups count to keep
+    :type weekly_backups_to_keep: int
+    :param monthly_backups_to_keep: Monthly backups count to keep
+    :type monthly_backups_to_keep: int
+    :param yearly_backups_to_keep: Yearly backups count to keep
+    :type yearly_backups_to_keep: int
+    :param volumes_assigned: Volumes using current backup policy
+    :type volumes_assigned: int
+    :param enabled: The property to decide policy is enabled or not
+    :type enabled: bool
+    :param volume_backups: A list of volumes assigned to this policy
+    :type volume_backups: list[~azure.mgmt.netapp.models.VolumeBackups]
+    """
+
+    _validation = {
+        'name': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'location': {'key': 'location', 'type': 'str'},
+        'name': {'key': 'properties.name', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'daily_backups_to_keep': {'key': 'properties.dailyBackupsToKeep', 'type': 'int'},
+        'weekly_backups_to_keep': {'key': 'properties.weeklyBackupsToKeep', 'type': 'int'},
+        'monthly_backups_to_keep': {'key': 'properties.monthlyBackupsToKeep', 'type': 'int'},
+        'yearly_backups_to_keep': {'key': 'properties.yearlyBackupsToKeep', 'type': 'int'},
+        'volumes_assigned': {'key': 'properties.volumesAssigned', 'type': 'int'},
+        'enabled': {'key': 'properties.enabled', 'type': 'bool'},
+        'volume_backups': {'key': 'properties.volumeBackups', 'type': '[VolumeBackups]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(BackupPolicyPatch, self).__init__(**kwargs)
+        self.location = kwargs.get('location', None)
+        self.name = None
+        self.provisioning_state = None
+        self.daily_backups_to_keep = kwargs.get('daily_backups_to_keep', None)
+        self.weekly_backups_to_keep = kwargs.get('weekly_backups_to_keep', None)
+        self.monthly_backups_to_keep = kwargs.get('monthly_backups_to_keep', None)
+        self.yearly_backups_to_keep = kwargs.get('yearly_backups_to_keep', None)
+        self.volumes_assigned = kwargs.get('volumes_assigned', None)
+        self.enabled = kwargs.get('enabled', None)
+        self.volume_backups = kwargs.get('volume_backups', None)
+
+
+class BackupsList(Model):
+    """List of Backups.
+
+    :param value: A list of Backups
+    :type value: list[~azure.mgmt.netapp.models.Backup]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[Backup]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(BackupsList, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+
+
+class BreakReplicationRequest(Model):
+    """Break replication request.
+
+    :param force_break_replication: If replication is in status transferring
+     and you want to force break the replication, set to true
+    :type force_break_replication: bool
+    """
+
+    _attribute_map = {
+        'force_break_replication': {'key': 'forceBreakReplication', 'type': 'bool'},
+    }
+
+    def __init__(self, **kwargs):
+        super(BreakReplicationRequest, self).__init__(**kwargs)
+        self.force_break_replication = kwargs.get('force_break_replication', None)
 
 
 class CapacityPool(Model):
@@ -117,6 +516,13 @@ class CapacityPool(Model):
     :type service_level: str or ~azure.mgmt.netapp.models.ServiceLevel
     :ivar provisioning_state: Azure lifecycle management
     :vartype provisioning_state: str
+    :ivar total_throughput_mibps: Total throughput of pool in Mibps
+    :vartype total_throughput_mibps: float
+    :ivar utilized_throughput_mibps: Utilized throughput of pool in Mibps
+    :vartype utilized_throughput_mibps: float
+    :param qos_type: qosType. The qos type of the pool. Possible values
+     include: 'Auto', 'Manual'. Default value: "Auto" .
+    :type qos_type: str or ~azure.mgmt.netapp.models.QosType
     """
 
     _validation = {
@@ -128,6 +534,8 @@ class CapacityPool(Model):
         'size': {'required': True, 'maximum': 549755813888000, 'minimum': 4398046511104},
         'service_level': {'required': True},
         'provisioning_state': {'readonly': True},
+        'total_throughput_mibps': {'readonly': True, 'multiple': 0.001},
+        'utilized_throughput_mibps': {'readonly': True, 'multiple': 0.001},
     }
 
     _attribute_map = {
@@ -140,6 +548,9 @@ class CapacityPool(Model):
         'size': {'key': 'properties.size', 'type': 'long'},
         'service_level': {'key': 'properties.serviceLevel', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'total_throughput_mibps': {'key': 'properties.totalThroughputMibps', 'type': 'float'},
+        'utilized_throughput_mibps': {'key': 'properties.utilizedThroughputMibps', 'type': 'float'},
+        'qos_type': {'key': 'properties.qosType', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -153,6 +564,9 @@ class CapacityPool(Model):
         self.size = kwargs.get('size', None)
         self.service_level = kwargs.get('service_level', "Premium")
         self.provisioning_state = None
+        self.total_throughput_mibps = None
+        self.utilized_throughput_mibps = None
+        self.qos_type = kwargs.get('qos_type', "Auto")
 
 
 class CapacityPoolPatch(Model):
@@ -175,10 +589,9 @@ class CapacityPoolPatch(Model):
      are in 4TiB chunks (value must be multiply of 4398046511104). Default
      value: 4398046511104 .
     :type size: long
-    :param service_level: serviceLevel. The service level of the file system.
-     Possible values include: 'Standard', 'Premium', 'Ultra'. Default value:
-     "Premium" .
-    :type service_level: str or ~azure.mgmt.netapp.models.ServiceLevel
+    :param qos_type: qosType. The qos type of the pool. Possible values
+     include: 'Auto', 'Manual'. Default value: "Auto" .
+    :type qos_type: str or ~azure.mgmt.netapp.models.QosType
     """
 
     _validation = {
@@ -195,7 +608,7 @@ class CapacityPoolPatch(Model):
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'size': {'key': 'properties.size', 'type': 'long'},
-        'service_level': {'key': 'properties.serviceLevel', 'type': 'str'},
+        'qos_type': {'key': 'properties.qosType', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -206,7 +619,40 @@ class CapacityPoolPatch(Model):
         self.type = None
         self.tags = kwargs.get('tags', None)
         self.size = kwargs.get('size', 4398046511104)
-        self.service_level = kwargs.get('service_level', "Premium")
+        self.qos_type = kwargs.get('qos_type', "Auto")
+
+
+class CheckAvailabilityResponse(Model):
+    """Information regarding availability of a resource.
+
+    :param is_available: <code>true</code> indicates name is valid and
+     available. <code>false</code> indicates the name is invalid, unavailable,
+     or both.
+    :type is_available: bool
+    :param reason: <code>Invalid</code> indicates the name provided does not
+     match Azure App Service naming requirements. <code>AlreadyExists</code>
+     indicates that the name is already in use and is therefore unavailable.
+     Possible values include: 'Invalid', 'AlreadyExists'
+    :type reason: str or ~azure.mgmt.netapp.models.InAvailabilityReasonType
+    :param message: If reason == invalid, provide the user with the reason why
+     the given name is invalid, and provide the resource naming requirements so
+     that the user can select a valid name. If reason == AlreadyExists, explain
+     that resource name is already in use, and direct them to select a
+     different name.
+    :type message: str
+    """
+
+    _attribute_map = {
+        'is_available': {'key': 'isAvailable', 'type': 'bool'},
+        'reason': {'key': 'reason', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(CheckAvailabilityResponse, self).__init__(**kwargs)
+        self.is_available = kwargs.get('is_available', None)
+        self.reason = kwargs.get('reason', None)
+        self.message = kwargs.get('message', None)
 
 
 class CloudError(Model):
@@ -215,6 +661,36 @@ class CloudError(Model):
 
     _attribute_map = {
     }
+
+
+class DailySchedule(Model):
+    """Daily Schedule properties.
+
+    :param snapshots_to_keep: Daily snapshot count to keep
+    :type snapshots_to_keep: int
+    :param hour: Indicates which hour in UTC timezone a snapshot should be
+     taken
+    :type hour: int
+    :param minute: Indicates which minute snapshot should be taken
+    :type minute: int
+    :param used_bytes: Resource size in bytes, current storage usage for the
+     volume in bytes
+    :type used_bytes: long
+    """
+
+    _attribute_map = {
+        'snapshots_to_keep': {'key': 'snapshotsToKeep', 'type': 'int'},
+        'hour': {'key': 'hour', 'type': 'int'},
+        'minute': {'key': 'minute', 'type': 'int'},
+        'used_bytes': {'key': 'usedBytes', 'type': 'long'},
+    }
+
+    def __init__(self, **kwargs):
+        super(DailySchedule, self).__init__(**kwargs)
+        self.snapshots_to_keep = kwargs.get('snapshots_to_keep', None)
+        self.hour = kwargs.get('hour', None)
+        self.minute = kwargs.get('minute', None)
+        self.used_bytes = kwargs.get('used_bytes', None)
 
 
 class Dimension(Model):
@@ -246,6 +722,24 @@ class ExportPolicyRule(Model):
     :type unix_read_only: bool
     :param unix_read_write: Read and write access
     :type unix_read_write: bool
+    :param kerberos5_read_only: Kerberos5 Read only access. To be use with
+     swagger version 2020-05-01 or later. Default value: False .
+    :type kerberos5_read_only: bool
+    :param kerberos5_read_write: Kerberos5 Read and write access. To be use
+     with swagger version 2020-05-01 or later. Default value: False .
+    :type kerberos5_read_write: bool
+    :param kerberos5i_read_only: Kerberos5i Read only access. To be use with
+     swagger version 2020-05-01 or later. Default value: False .
+    :type kerberos5i_read_only: bool
+    :param kerberos5i_read_write: Kerberos5i Read and write access. To be use
+     with swagger version 2020-05-01 or later. Default value: False .
+    :type kerberos5i_read_write: bool
+    :param kerberos5p_read_only: Kerberos5p Read only access. To be use with
+     swagger version 2020-05-01 or later. Default value: False .
+    :type kerberos5p_read_only: bool
+    :param kerberos5p_read_write: Kerberos5p Read and write access. To be use
+     with swagger version 2020-05-01 or later. Default value: False .
+    :type kerberos5p_read_write: bool
     :param cifs: Allows CIFS protocol
     :type cifs: bool
     :param nfsv3: Allows NFSv3 protocol. Enable only for NFSv3 type volumes
@@ -256,16 +750,25 @@ class ExportPolicyRule(Model):
     :param allowed_clients: Client ingress specification as comma separated
      string with IPv4 CIDRs, IPv4 host addresses and host names
     :type allowed_clients: str
+    :param has_root_access: Has root access to volume. Default value: True .
+    :type has_root_access: bool
     """
 
     _attribute_map = {
         'rule_index': {'key': 'ruleIndex', 'type': 'int'},
         'unix_read_only': {'key': 'unixReadOnly', 'type': 'bool'},
         'unix_read_write': {'key': 'unixReadWrite', 'type': 'bool'},
+        'kerberos5_read_only': {'key': 'kerberos5ReadOnly', 'type': 'bool'},
+        'kerberos5_read_write': {'key': 'kerberos5ReadWrite', 'type': 'bool'},
+        'kerberos5i_read_only': {'key': 'kerberos5iReadOnly', 'type': 'bool'},
+        'kerberos5i_read_write': {'key': 'kerberos5iReadWrite', 'type': 'bool'},
+        'kerberos5p_read_only': {'key': 'kerberos5pReadOnly', 'type': 'bool'},
+        'kerberos5p_read_write': {'key': 'kerberos5pReadWrite', 'type': 'bool'},
         'cifs': {'key': 'cifs', 'type': 'bool'},
         'nfsv3': {'key': 'nfsv3', 'type': 'bool'},
         'nfsv41': {'key': 'nfsv41', 'type': 'bool'},
         'allowed_clients': {'key': 'allowedClients', 'type': 'str'},
+        'has_root_access': {'key': 'hasRootAccess', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs):
@@ -273,10 +776,42 @@ class ExportPolicyRule(Model):
         self.rule_index = kwargs.get('rule_index', None)
         self.unix_read_only = kwargs.get('unix_read_only', None)
         self.unix_read_write = kwargs.get('unix_read_write', None)
+        self.kerberos5_read_only = kwargs.get('kerberos5_read_only', False)
+        self.kerberos5_read_write = kwargs.get('kerberos5_read_write', False)
+        self.kerberos5i_read_only = kwargs.get('kerberos5i_read_only', False)
+        self.kerberos5i_read_write = kwargs.get('kerberos5i_read_write', False)
+        self.kerberos5p_read_only = kwargs.get('kerberos5p_read_only', False)
+        self.kerberos5p_read_write = kwargs.get('kerberos5p_read_write', False)
         self.cifs = kwargs.get('cifs', None)
         self.nfsv3 = kwargs.get('nfsv3', None)
         self.nfsv41 = kwargs.get('nfsv41', None)
         self.allowed_clients = kwargs.get('allowed_clients', None)
+        self.has_root_access = kwargs.get('has_root_access', True)
+
+
+class HourlySchedule(Model):
+    """Hourly Schedule properties.
+
+    :param snapshots_to_keep: Hourly snapshot count to keep
+    :type snapshots_to_keep: int
+    :param minute: Indicates which minute snapshot should be taken
+    :type minute: int
+    :param used_bytes: Resource size in bytes, current storage usage for the
+     volume in bytes
+    :type used_bytes: long
+    """
+
+    _attribute_map = {
+        'snapshots_to_keep': {'key': 'snapshotsToKeep', 'type': 'int'},
+        'minute': {'key': 'minute', 'type': 'int'},
+        'used_bytes': {'key': 'usedBytes', 'type': 'long'},
+    }
+
+    def __init__(self, **kwargs):
+        super(HourlySchedule, self).__init__(**kwargs)
+        self.snapshots_to_keep = kwargs.get('snapshots_to_keep', None)
+        self.minute = kwargs.get('minute', None)
+        self.used_bytes = kwargs.get('used_bytes', None)
 
 
 class MetricSpecification(Model):
@@ -330,6 +865,41 @@ class MetricSpecification(Model):
         self.resource_id_dimension_name_override = kwargs.get('resource_id_dimension_name_override', None)
 
 
+class MonthlySchedule(Model):
+    """Monthly Schedule properties.
+
+    :param snapshots_to_keep: Monthly snapshot count to keep
+    :type snapshots_to_keep: int
+    :param days_of_month: Indicates which days of the month snapshot should be
+     taken. A comma delimited string.
+    :type days_of_month: str
+    :param hour: Indicates which hour in UTC timezone a snapshot should be
+     taken
+    :type hour: int
+    :param minute: Indicates which minute snapshot should be taken
+    :type minute: int
+    :param used_bytes: Resource size in bytes, current storage usage for the
+     volume in bytes
+    :type used_bytes: long
+    """
+
+    _attribute_map = {
+        'snapshots_to_keep': {'key': 'snapshotsToKeep', 'type': 'int'},
+        'days_of_month': {'key': 'daysOfMonth', 'type': 'str'},
+        'hour': {'key': 'hour', 'type': 'int'},
+        'minute': {'key': 'minute', 'type': 'int'},
+        'used_bytes': {'key': 'usedBytes', 'type': 'long'},
+    }
+
+    def __init__(self, **kwargs):
+        super(MonthlySchedule, self).__init__(**kwargs)
+        self.snapshots_to_keep = kwargs.get('snapshots_to_keep', None)
+        self.days_of_month = kwargs.get('days_of_month', None)
+        self.hour = kwargs.get('hour', None)
+        self.minute = kwargs.get('minute', None)
+        self.used_bytes = kwargs.get('used_bytes', None)
+
+
 class MountTarget(Model):
     """Mount Target.
 
@@ -356,20 +926,6 @@ class MountTarget(Model):
     :type file_system_id: str
     :ivar ip_address: ipAddress. The mount target's IPv4 address
     :vartype ip_address: str
-    :param subnet: subnet. The subnet
-    :type subnet: str
-    :param start_ip: startIp. The start of IPv4 address range to use when
-     creating a new mount target
-    :type start_ip: str
-    :param end_ip: endIp. The end of IPv4 address range to use when creating a
-     new mount target
-    :type end_ip: str
-    :param gateway: gateway. The gateway of the IPv4 address range to use when
-     creating a new mount target
-    :type gateway: str
-    :param netmask: netmask. The netmask of the IPv4 address range to use when
-     creating a new mount target
-    :type netmask: str
     :param smb_server_fqdn: smbServerFQDN. The SMB server's Fully Qualified
      Domain Name, FQDN
     :type smb_server_fqdn: str
@@ -394,11 +950,6 @@ class MountTarget(Model):
         'mount_target_id': {'key': 'properties.mountTargetId', 'type': 'str'},
         'file_system_id': {'key': 'properties.fileSystemId', 'type': 'str'},
         'ip_address': {'key': 'properties.ipAddress', 'type': 'str'},
-        'subnet': {'key': 'properties.subnet', 'type': 'str'},
-        'start_ip': {'key': 'properties.startIp', 'type': 'str'},
-        'end_ip': {'key': 'properties.endIp', 'type': 'str'},
-        'gateway': {'key': 'properties.gateway', 'type': 'str'},
-        'netmask': {'key': 'properties.netmask', 'type': 'str'},
         'smb_server_fqdn': {'key': 'properties.smbServerFqdn', 'type': 'str'},
     }
 
@@ -412,11 +963,6 @@ class MountTarget(Model):
         self.mount_target_id = None
         self.file_system_id = kwargs.get('file_system_id', None)
         self.ip_address = None
-        self.subnet = kwargs.get('subnet', None)
-        self.start_ip = kwargs.get('start_ip', None)
-        self.end_ip = kwargs.get('end_ip', None)
-        self.gateway = kwargs.get('gateway', None)
-        self.netmask = kwargs.get('netmask', None)
         self.smb_server_fqdn = kwargs.get('smb_server_fqdn', None)
 
 
@@ -436,20 +982,6 @@ class MountTargetProperties(Model):
     :type file_system_id: str
     :ivar ip_address: ipAddress. The mount target's IPv4 address
     :vartype ip_address: str
-    :param subnet: subnet. The subnet
-    :type subnet: str
-    :param start_ip: startIp. The start of IPv4 address range to use when
-     creating a new mount target
-    :type start_ip: str
-    :param end_ip: endIp. The end of IPv4 address range to use when creating a
-     new mount target
-    :type end_ip: str
-    :param gateway: gateway. The gateway of the IPv4 address range to use when
-     creating a new mount target
-    :type gateway: str
-    :param netmask: netmask. The netmask of the IPv4 address range to use when
-     creating a new mount target
-    :type netmask: str
     :param smb_server_fqdn: smbServerFQDN. The SMB server's Fully Qualified
      Domain Name, FQDN
     :type smb_server_fqdn: str
@@ -465,11 +997,6 @@ class MountTargetProperties(Model):
         'mount_target_id': {'key': 'mountTargetId', 'type': 'str'},
         'file_system_id': {'key': 'fileSystemId', 'type': 'str'},
         'ip_address': {'key': 'ipAddress', 'type': 'str'},
-        'subnet': {'key': 'subnet', 'type': 'str'},
-        'start_ip': {'key': 'startIp', 'type': 'str'},
-        'end_ip': {'key': 'endIp', 'type': 'str'},
-        'gateway': {'key': 'gateway', 'type': 'str'},
-        'netmask': {'key': 'netmask', 'type': 'str'},
         'smb_server_fqdn': {'key': 'smbServerFqdn', 'type': 'str'},
     }
 
@@ -478,11 +1005,6 @@ class MountTargetProperties(Model):
         self.mount_target_id = None
         self.file_system_id = kwargs.get('file_system_id', None)
         self.ip_address = None
-        self.subnet = kwargs.get('subnet', None)
-        self.start_ip = kwargs.get('start_ip', None)
-        self.end_ip = kwargs.get('end_ip', None)
-        self.gateway = kwargs.get('gateway', None)
-        self.netmask = kwargs.get('netmask', None)
         self.smb_server_fqdn = kwargs.get('smb_server_fqdn', None)
 
 
@@ -647,6 +1169,65 @@ class OperationDisplay(Model):
         self.description = kwargs.get('description', None)
 
 
+class PoolChangeRequest(Model):
+    """Pool change request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param new_pool_resource_id: Required. Resource id of the pool to move
+     volume to
+    :type new_pool_resource_id: str
+    """
+
+    _validation = {
+        'new_pool_resource_id': {'required': True},
+    }
+
+    _attribute_map = {
+        'new_pool_resource_id': {'key': 'newPoolResourceId', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PoolChangeRequest, self).__init__(**kwargs)
+        self.new_pool_resource_id = kwargs.get('new_pool_resource_id', None)
+
+
+class QuotaAvailabilityRequest(Model):
+    """Quota availability request content.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. Name of the resource to verify.
+    :type name: str
+    :param type: Required. Resource type used for verification. Possible
+     values include: 'Microsoft.NetApp/netAppAccounts',
+     'Microsoft.NetApp/netAppAccounts/capacityPools',
+     'Microsoft.NetApp/netAppAccounts/capacityPools/volumes',
+     'Microsoft.NetApp/netAppAccounts/capacityPools/volumes/snapshots'
+    :type type: str or ~azure.mgmt.netapp.models.CheckQuotaNameResourceTypes
+    :param resource_group: Required. Resource group name.
+    :type resource_group: str
+    """
+
+    _validation = {
+        'name': {'required': True},
+        'type': {'required': True},
+        'resource_group': {'required': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'resource_group': {'key': 'resourceGroup', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(QuotaAvailabilityRequest, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.type = kwargs.get('type', None)
+        self.resource_group = kwargs.get('resource_group', None)
+
+
 class ReplicationObject(Model):
     """Replication properties.
 
@@ -659,7 +1240,7 @@ class ReplicationObject(Model):
      'dst'
     :type endpoint_type: str or ~azure.mgmt.netapp.models.EndpointType
     :param replication_schedule: Required. Schedule. Possible values include:
-     '_10minutely', 'hourly', 'daily', 'weekly', 'monthly'
+     '_10minutely', 'hourly', 'daily'
     :type replication_schedule: str or
      ~azure.mgmt.netapp.models.ReplicationSchedule
     :param remote_volume_resource_id: Required. The resource ID of the remote
@@ -726,39 +1307,6 @@ class ReplicationStatus(Model):
         self.mirror_state = kwargs.get('mirror_state', None)
         self.total_progress = kwargs.get('total_progress', None)
         self.error_message = kwargs.get('error_message', None)
-
-
-class ResourceNameAvailability(Model):
-    """Information regarding availability of a resource name.
-
-    :param is_available: <code>true</code> indicates name is valid and
-     available. <code>false</code> indicates the name is invalid, unavailable,
-     or both.
-    :type is_available: bool
-    :param reason: <code>Invalid</code> indicates the name provided does not
-     match Azure App Service naming requirements. <code>AlreadyExists</code>
-     indicates that the name is already in use and is therefore unavailable.
-     Possible values include: 'Invalid', 'AlreadyExists'
-    :type reason: str or ~azure.mgmt.netapp.models.InAvailabilityReasonType
-    :param message: If reason == invalid, provide the user with the reason why
-     the given name is invalid, and provide the resource naming requirements so
-     that the user can select a valid name. If reason == AlreadyExists, explain
-     that resource name is already in use, and direct them to select a
-     different name.
-    :type message: str
-    """
-
-    _attribute_map = {
-        'is_available': {'key': 'isAvailable', 'type': 'bool'},
-        'reason': {'key': 'reason', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(ResourceNameAvailability, self).__init__(**kwargs)
-        self.is_available = kwargs.get('is_available', None)
-        self.reason = kwargs.get('reason', None)
-        self.message = kwargs.get('message', None)
 
 
 class ResourceNameAvailabilityRequest(Model):
@@ -869,6 +1417,252 @@ class Snapshot(Model):
         self.provisioning_state = None
 
 
+class SnapshotPolicy(Model):
+    """Snapshot policy information.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param location: Required. Resource location
+    :type location: str
+    :ivar id: Resource Id
+    :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
+    :param tags: Resource tags
+    :type tags: dict[str, str]
+    :param hourly_schedule: hourlySchedule. Schedule for hourly snapshots
+    :type hourly_schedule: object
+    :param daily_schedule: dailySchedule. Schedule for daily snapshots
+    :type daily_schedule: object
+    :param weekly_schedule: weeklySchedule. Schedule for weekly snapshots
+    :type weekly_schedule: object
+    :param monthly_schedule: monthlySchedule. Schedule for monthly snapshots
+    :type monthly_schedule: object
+    :param enabled: The property to decide policy is enabled or not
+    :type enabled: bool
+    """
+
+    _validation = {
+        'location': {'required': True},
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'location': {'key': 'location', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'hourly_schedule': {'key': 'properties.hourlySchedule', 'type': 'object'},
+        'daily_schedule': {'key': 'properties.dailySchedule', 'type': 'object'},
+        'weekly_schedule': {'key': 'properties.weeklySchedule', 'type': 'object'},
+        'monthly_schedule': {'key': 'properties.monthlySchedule', 'type': 'object'},
+        'enabled': {'key': 'properties.enabled', 'type': 'bool'},
+    }
+
+    def __init__(self, **kwargs):
+        super(SnapshotPolicy, self).__init__(**kwargs)
+        self.location = kwargs.get('location', None)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.tags = kwargs.get('tags', None)
+        self.hourly_schedule = kwargs.get('hourly_schedule', None)
+        self.daily_schedule = kwargs.get('daily_schedule', None)
+        self.weekly_schedule = kwargs.get('weekly_schedule', None)
+        self.monthly_schedule = kwargs.get('monthly_schedule', None)
+        self.enabled = kwargs.get('enabled', None)
+
+
+class SnapshotPolicyDetails(Model):
+    """Snapshot policy properties.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param location: Resource location
+    :type location: str
+    :ivar id: Resource Id
+    :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
+    :param tags: Resource tags
+    :type tags: dict[str, str]
+    :param hourly_schedule: hourlySchedule. Schedule for hourly snapshots
+    :type hourly_schedule: object
+    :param daily_schedule: dailySchedule. Schedule for daily snapshots
+    :type daily_schedule: object
+    :param weekly_schedule: weeklySchedule. Schedule for weekly snapshots
+    :type weekly_schedule: object
+    :param monthly_schedule: monthlySchedule. Schedule for monthly snapshots
+    :type monthly_schedule: object
+    :param enabled: The property to decide policy is enabled or not
+    :type enabled: bool
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'location': {'key': 'location', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'hourly_schedule': {'key': 'properties.hourlySchedule', 'type': 'object'},
+        'daily_schedule': {'key': 'properties.dailySchedule', 'type': 'object'},
+        'weekly_schedule': {'key': 'properties.weeklySchedule', 'type': 'object'},
+        'monthly_schedule': {'key': 'properties.monthlySchedule', 'type': 'object'},
+        'enabled': {'key': 'properties.enabled', 'type': 'bool'},
+    }
+
+    def __init__(self, **kwargs):
+        super(SnapshotPolicyDetails, self).__init__(**kwargs)
+        self.location = kwargs.get('location', None)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.tags = kwargs.get('tags', None)
+        self.hourly_schedule = kwargs.get('hourly_schedule', None)
+        self.daily_schedule = kwargs.get('daily_schedule', None)
+        self.weekly_schedule = kwargs.get('weekly_schedule', None)
+        self.monthly_schedule = kwargs.get('monthly_schedule', None)
+        self.enabled = kwargs.get('enabled', None)
+
+
+class SnapshotPolicyPatch(Model):
+    """Snapshot policy Details for create and update.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param location: Resource location
+    :type location: str
+    :ivar id: Resource Id
+    :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
+    :param tags: Resource tags
+    :type tags: dict[str, str]
+    :param hourly_schedule: hourlySchedule. Schedule for hourly snapshots
+    :type hourly_schedule: object
+    :param daily_schedule: dailySchedule. Schedule for daily snapshots
+    :type daily_schedule: object
+    :param weekly_schedule: weeklySchedule. Schedule for weekly snapshots
+    :type weekly_schedule: object
+    :param monthly_schedule: monthlySchedule. Schedule for monthly snapshots
+    :type monthly_schedule: object
+    :param enabled: The property to decide policy is enabled or not
+    :type enabled: bool
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'location': {'key': 'location', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'hourly_schedule': {'key': 'properties.hourlySchedule', 'type': 'object'},
+        'daily_schedule': {'key': 'properties.dailySchedule', 'type': 'object'},
+        'weekly_schedule': {'key': 'properties.weeklySchedule', 'type': 'object'},
+        'monthly_schedule': {'key': 'properties.monthlySchedule', 'type': 'object'},
+        'enabled': {'key': 'properties.enabled', 'type': 'bool'},
+    }
+
+    def __init__(self, **kwargs):
+        super(SnapshotPolicyPatch, self).__init__(**kwargs)
+        self.location = kwargs.get('location', None)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.tags = kwargs.get('tags', None)
+        self.hourly_schedule = kwargs.get('hourly_schedule', None)
+        self.daily_schedule = kwargs.get('daily_schedule', None)
+        self.weekly_schedule = kwargs.get('weekly_schedule', None)
+        self.monthly_schedule = kwargs.get('monthly_schedule', None)
+        self.enabled = kwargs.get('enabled', None)
+
+
+class SnapshotPolicyVolumeList(Model):
+    """Volumes associated with snapshot policy.
+
+    :param value: List of volumes
+    :type value: list[object]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[object]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(SnapshotPolicyVolumeList, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+
+
+class Vault(Model):
+    """Vault information.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param location: Required. Resource location
+    :type location: str
+    :ivar id: Resource Id
+    :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
+    :param vault_name: Vault Name
+    :type vault_name: str
+    """
+
+    _validation = {
+        'location': {'required': True},
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'location': {'key': 'location', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'vault_name': {'key': 'properties.vaultName', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(Vault, self).__init__(**kwargs)
+        self.location = kwargs.get('location', None)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.vault_name = kwargs.get('vault_name', None)
+
+
 class Volume(Model):
     """Volume resource.
 
@@ -911,6 +1705,9 @@ class Volume(Model):
     :param snapshot_id: Snapshot ID. UUID v4 or resource identifier used to
      identify the Snapshot.
     :type snapshot_id: str
+    :param backup_id: Backup ID. UUID v4 or resource identifier used to
+     identify the Backup.
+    :type backup_id: str
     :ivar baremetal_tenant_id: Baremetal Tenant ID. Unique Baremetal Tenant
      Identifier.
     :vartype baremetal_tenant_id: str
@@ -931,6 +1728,15 @@ class Volume(Model):
      contain a read-only .snapshot directory which provides access to each of
      the volume's snapshots (default to true).
     :type snapshot_directory_visible: bool
+    :param kerberos_enabled: Describe if a volume is KerberosEnabled. To be
+     use with swagger version 2020-05-01 or later. Default value: False .
+    :type kerberos_enabled: bool
+    :param security_style: The security style of volume. Possible values
+     include: 'ntfs', 'unix'
+    :type security_style: str or ~azure.mgmt.netapp.models.SecurityStyle
+    :param throughput_mibps: Maximum throughput in Mibps that can be achieved
+     by this volume.
+    :type throughput_mibps: float
     """
 
     _validation = {
@@ -943,8 +1749,10 @@ class Volume(Model):
         'usage_threshold': {'required': True, 'maximum': 109951162777600, 'minimum': 107374182400},
         'provisioning_state': {'readonly': True},
         'snapshot_id': {'max_length': 36, 'min_length': 36, 'pattern': r'^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}|(\\?([^\/]*[\/])*)([^\/]+)$'},
+        'backup_id': {'max_length': 36, 'min_length': 36, 'pattern': r'^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}|(\\?([^\/]*[\/])*)([^\/]+)$'},
         'baremetal_tenant_id': {'readonly': True, 'max_length': 36, 'min_length': 36, 'pattern': r'^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'},
         'subnet_id': {'required': True},
+        'throughput_mibps': {'maximum': 4500, 'minimum': 1, 'multiple': 0.001},
     }
 
     _attribute_map = {
@@ -961,6 +1769,7 @@ class Volume(Model):
         'protocol_types': {'key': 'properties.protocolTypes', 'type': '[str]'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'snapshot_id': {'key': 'properties.snapshotId', 'type': 'str'},
+        'backup_id': {'key': 'properties.backupId', 'type': 'str'},
         'baremetal_tenant_id': {'key': 'properties.baremetalTenantId', 'type': 'str'},
         'subnet_id': {'key': 'properties.subnetId', 'type': 'str'},
         'mount_targets': {'key': 'properties.mountTargets', 'type': '[MountTargetProperties]'},
@@ -968,6 +1777,9 @@ class Volume(Model):
         'data_protection': {'key': 'properties.dataProtection', 'type': 'VolumePropertiesDataProtection'},
         'is_restoring': {'key': 'properties.isRestoring', 'type': 'bool'},
         'snapshot_directory_visible': {'key': 'properties.snapshotDirectoryVisible', 'type': 'bool'},
+        'kerberos_enabled': {'key': 'properties.kerberosEnabled', 'type': 'bool'},
+        'security_style': {'key': 'properties.securityStyle', 'type': 'str'},
+        'throughput_mibps': {'key': 'properties.throughputMibps', 'type': 'float'},
     }
 
     def __init__(self, **kwargs):
@@ -985,6 +1797,7 @@ class Volume(Model):
         self.protocol_types = kwargs.get('protocol_types', None)
         self.provisioning_state = None
         self.snapshot_id = kwargs.get('snapshot_id', None)
+        self.backup_id = kwargs.get('backup_id', None)
         self.baremetal_tenant_id = None
         self.subnet_id = kwargs.get('subnet_id', None)
         self.mount_targets = kwargs.get('mount_targets', None)
@@ -992,6 +1805,61 @@ class Volume(Model):
         self.data_protection = kwargs.get('data_protection', None)
         self.is_restoring = kwargs.get('is_restoring', None)
         self.snapshot_directory_visible = kwargs.get('snapshot_directory_visible', None)
+        self.kerberos_enabled = kwargs.get('kerberos_enabled', False)
+        self.security_style = kwargs.get('security_style', None)
+        self.throughput_mibps = kwargs.get('throughput_mibps', None)
+
+
+class VolumeBackupProperties(Model):
+    """Volume Backup Properties.
+
+    :param backup_policy_id: Backup Policy Resource ID
+    :type backup_policy_id: str
+    :param policy_enforced: Policy Enforced
+    :type policy_enforced: bool
+    :param vault_id: Vault Resource ID
+    :type vault_id: str
+    :param backup_enabled: Backup Enabled
+    :type backup_enabled: bool
+    """
+
+    _attribute_map = {
+        'backup_policy_id': {'key': 'backupPolicyId', 'type': 'str'},
+        'policy_enforced': {'key': 'policyEnforced', 'type': 'bool'},
+        'vault_id': {'key': 'vaultId', 'type': 'str'},
+        'backup_enabled': {'key': 'backupEnabled', 'type': 'bool'},
+    }
+
+    def __init__(self, **kwargs):
+        super(VolumeBackupProperties, self).__init__(**kwargs)
+        self.backup_policy_id = kwargs.get('backup_policy_id', None)
+        self.policy_enforced = kwargs.get('policy_enforced', None)
+        self.vault_id = kwargs.get('vault_id', None)
+        self.backup_enabled = kwargs.get('backup_enabled', None)
+
+
+class VolumeBackups(Model):
+    """Volume details using the backup policy.
+
+    :param volume_name: Volume name
+    :type volume_name: str
+    :param backups_count: Total count of backups for volume
+    :type backups_count: int
+    :param policy_enabled: Policy enabled
+    :type policy_enabled: bool
+    """
+
+    _attribute_map = {
+        'volume_name': {'key': 'volumeName', 'type': 'str'},
+        'backups_count': {'key': 'backupsCount', 'type': 'int'},
+        'policy_enabled': {'key': 'policyEnabled', 'type': 'bool'},
+    }
+
+    def __init__(self, **kwargs):
+        super(VolumeBackups, self).__init__(**kwargs)
+        self.volume_name = kwargs.get('volume_name', None)
+        self.backups_count = kwargs.get('backups_count', None)
+        self.policy_enabled = kwargs.get('policy_enabled', None)
 
 
 class VolumePatch(Model):
@@ -1022,6 +1890,13 @@ class VolumePatch(Model):
     :param export_policy: exportPolicy. Set of export policy rules
     :type export_policy:
      ~azure.mgmt.netapp.models.VolumePatchPropertiesExportPolicy
+    :param throughput_mibps: Maximum throughput in Mibps that can be achieved
+     by this volume.
+    :type throughput_mibps: float
+    :param data_protection: DataProtection. DataProtection type volumes
+     include an object containing details of the replication
+    :type data_protection:
+     ~azure.mgmt.netapp.models.VolumePatchPropertiesDataProtection
     """
 
     _validation = {
@@ -1029,6 +1904,7 @@ class VolumePatch(Model):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'usage_threshold': {'maximum': 109951162777600, 'minimum': 107374182400},
+        'throughput_mibps': {'maximum': 4500, 'minimum': 1, 'multiple': 0.001},
     }
 
     _attribute_map = {
@@ -1040,6 +1916,8 @@ class VolumePatch(Model):
         'service_level': {'key': 'properties.serviceLevel', 'type': 'str'},
         'usage_threshold': {'key': 'properties.usageThreshold', 'type': 'long'},
         'export_policy': {'key': 'properties.exportPolicy', 'type': 'VolumePatchPropertiesExportPolicy'},
+        'throughput_mibps': {'key': 'properties.throughputMibps', 'type': 'float'},
+        'data_protection': {'key': 'properties.dataProtection', 'type': 'VolumePatchPropertiesDataProtection'},
     }
 
     def __init__(self, **kwargs):
@@ -1052,6 +1930,27 @@ class VolumePatch(Model):
         self.service_level = kwargs.get('service_level', "Premium")
         self.usage_threshold = kwargs.get('usage_threshold', 107374182400)
         self.export_policy = kwargs.get('export_policy', None)
+        self.throughput_mibps = kwargs.get('throughput_mibps', None)
+        self.data_protection = kwargs.get('data_protection', None)
+
+
+class VolumePatchPropertiesDataProtection(Model):
+    """DataProtection.
+
+    DataProtection type volumes include an object containing details of the
+    replication.
+
+    :param backup: Backup. Backup Properties
+    :type backup: ~azure.mgmt.netapp.models.VolumeBackupProperties
+    """
+
+    _attribute_map = {
+        'backup': {'key': 'backup', 'type': 'VolumeBackupProperties'},
+    }
+
+    def __init__(self, **kwargs):
+        super(VolumePatchPropertiesDataProtection, self).__init__(**kwargs)
+        self.backup = kwargs.get('backup', None)
 
 
 class VolumePatchPropertiesExportPolicy(Model):
@@ -1078,6 +1977,8 @@ class VolumePropertiesDataProtection(Model):
     DataProtection type volumes include an object containing details of the
     replication.
 
+    :param backup: Backup. Backup Properties
+    :type backup: ~azure.mgmt.netapp.models.VolumeBackupProperties
     :param replication: Replication. Replication properties
     :type replication: ~azure.mgmt.netapp.models.ReplicationObject
     :param snapshot: Snapshot. Snapshot properties.
@@ -1085,12 +1986,14 @@ class VolumePropertiesDataProtection(Model):
     """
 
     _attribute_map = {
+        'backup': {'key': 'backup', 'type': 'VolumeBackupProperties'},
         'replication': {'key': 'replication', 'type': 'ReplicationObject'},
         'snapshot': {'key': 'snapshot', 'type': 'VolumeSnapshotProperties'},
     }
 
     def __init__(self, **kwargs):
         super(VolumePropertiesDataProtection, self).__init__(**kwargs)
+        self.backup = kwargs.get('backup', None)
         self.replication = kwargs.get('replication', None)
         self.snapshot = kwargs.get('snapshot', None)
 
@@ -1143,3 +2046,39 @@ class VolumeSnapshotProperties(Model):
     def __init__(self, **kwargs):
         super(VolumeSnapshotProperties, self).__init__(**kwargs)
         self.snapshot_policy_id = kwargs.get('snapshot_policy_id', None)
+
+
+class WeeklySchedule(Model):
+    """Weekly Schedule properties, make a snapshot every week at a specific day or
+    days.
+
+    :param snapshots_to_keep: Weekly snapshot count to keep
+    :type snapshots_to_keep: int
+    :param day: Indicates which weekdays snapshot should be taken, accepts a
+     comma separated list of week day names in english
+    :type day: str
+    :param hour: Indicates which hour in UTC timezone a snapshot should be
+     taken
+    :type hour: int
+    :param minute: Indicates which minute snapshot should be taken
+    :type minute: int
+    :param used_bytes: Resource size in bytes, current storage usage for the
+     volume in bytes
+    :type used_bytes: long
+    """
+
+    _attribute_map = {
+        'snapshots_to_keep': {'key': 'snapshotsToKeep', 'type': 'int'},
+        'day': {'key': 'day', 'type': 'str'},
+        'hour': {'key': 'hour', 'type': 'int'},
+        'minute': {'key': 'minute', 'type': 'int'},
+        'used_bytes': {'key': 'usedBytes', 'type': 'long'},
+    }
+
+    def __init__(self, **kwargs):
+        super(WeeklySchedule, self).__init__(**kwargs)
+        self.snapshots_to_keep = kwargs.get('snapshots_to_keep', None)
+        self.day = kwargs.get('day', None)
+        self.hour = kwargs.get('hour', None)
+        self.minute = kwargs.get('minute', None)
+        self.used_bytes = kwargs.get('used_bytes', None)

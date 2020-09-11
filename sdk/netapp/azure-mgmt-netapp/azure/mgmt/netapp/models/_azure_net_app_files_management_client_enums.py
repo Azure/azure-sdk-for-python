@@ -26,11 +26,34 @@ class CheckNameResourceTypes(str, Enum):
     microsoft_net_appnet_app_accountscapacity_poolsvolumessnapshots = "Microsoft.NetApp/netAppAccounts/capacityPools/volumes/snapshots"
 
 
+class CheckQuotaNameResourceTypes(str, Enum):
+
+    microsoft_net_appnet_app_accounts = "Microsoft.NetApp/netAppAccounts"
+    microsoft_net_appnet_app_accountscapacity_pools = "Microsoft.NetApp/netAppAccounts/capacityPools"
+    microsoft_net_appnet_app_accountscapacity_poolsvolumes = "Microsoft.NetApp/netAppAccounts/capacityPools/volumes"
+    microsoft_net_appnet_app_accountscapacity_poolsvolumessnapshots = "Microsoft.NetApp/netAppAccounts/capacityPools/volumes/snapshots"
+
+
+class ActiveDirectoryStatus(str, Enum):
+
+    created = "Created"  #: Active Directory created but not in use
+    in_use = "InUse"  #: Active Directory in use by SMB Volume
+    deleted = "Deleted"  #: Active Directory Deleted
+    error = "Error"  #: Error with the Active Directory
+    updating = "Updating"  #: Active Directory Updating
+
+
 class ServiceLevel(str, Enum):
 
     standard = "Standard"  #: Standard service level
     premium = "Premium"  #: Premium service level
     ultra = "Ultra"  #: Ultra service level
+
+
+class QosType(str, Enum):
+
+    auto = "Auto"  #: qos type Auto
+    manual = "Manual"  #: qos type Manual
 
 
 class EndpointType(str, Enum):
@@ -44,8 +67,12 @@ class ReplicationSchedule(str, Enum):
     _10minutely = "_10minutely"
     hourly = "hourly"
     daily = "daily"
-    weekly = "weekly"
-    monthly = "monthly"
+
+
+class SecurityStyle(str, Enum):
+
+    ntfs = "ntfs"
+    unix = "unix"
 
 
 class RelationshipStatus(str, Enum):
