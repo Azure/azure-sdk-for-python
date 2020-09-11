@@ -118,7 +118,7 @@ class ShareLeaseClient(LeaseClientBase):
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
         :keyword str if_tags_match_condition
-            Specify a SQL where clause on blob tags to operate only on blob with a matching value.
+            Specify a SQL where clause on share tags to operate only on share with a matching value.
             eg. "\"tagname\"='my tag'"
 
             .. versionadded:: 12.4.0

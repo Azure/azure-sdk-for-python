@@ -263,7 +263,7 @@ class ShareClient(StorageAccountHostsMixin):
         """Requests a new lease.
 
         If the share does not have an active lease, the Share
-        Service creates a lease on the blob and returns a new lease.
+        Service creates a lease on the share and returns a new lease.
 
         :param int lease_duration:
             Specifies the duration of the lease, in seconds, or negative one
