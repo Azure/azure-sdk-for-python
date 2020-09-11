@@ -131,7 +131,7 @@ if ($pkgs) {
     } else {
       Write-Host "Unable to parse a header out of the readmecontent for PackageId $($packageInfo.PackageId)"
     }
-  } 
+  }
 }
 else {
   Write-Host "No readmes discovered for doc release under folder $ArtifactLocation."
