@@ -87,7 +87,7 @@ class ShareLeaseClient(LeaseClientBase):
                 proposed_lease_id=self.id,
                 cls=return_response_headers,
                 **kwargs) if isinstance(self._client, FileOperations) \
-                else self._client.acquire_lease(
+                else await self._client.acquire_lease(
                 timeout=kwargs.pop('timeout', None),
                 duration=lease_duration,
                 sharesnapshot=self.snapshot,
@@ -159,7 +159,7 @@ class ShareLeaseClient(LeaseClientBase):
                 timeout=kwargs.pop('timeout', None),
                 cls=return_response_headers,
                 **kwargs) if isinstance(self._client, FileOperations) \
-                else self._client.renew_lease(
+                else await self._client.renew_lease(
                 lease_id=self.id,
                 timeout=kwargs.pop('timeout', None),
                 sharesnapshot=self.snapshot,
@@ -193,7 +193,7 @@ class ShareLeaseClient(LeaseClientBase):
                 timeout=kwargs.pop('timeout', None),
                 cls=return_response_headers,
                 **kwargs) if isinstance(self._client, FileOperations) \
-                else self._client.change_lease(
+                else await self._client.change_lease(
                 lease_id=self.id,
                 proposed_lease_id=proposed_lease_id,
                 timeout=kwargs.pop('timeout', None),
@@ -228,7 +228,7 @@ class ShareLeaseClient(LeaseClientBase):
                 timeout=kwargs.pop('timeout', None),
                 cls=return_response_headers,
                 **kwargs) if isinstance(self._client, FileOperations) \
-                else self._client.break_lease(
+                else await self._client.break_lease(
                 timeout=kwargs.pop('timeout', None),
                 sharesnapshot=self.snapshot,
                 cls=return_response_headers,
