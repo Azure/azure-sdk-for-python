@@ -12,6 +12,8 @@
 import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
+from msrest.polling import LROPoller, NoPolling
+from msrestazure.polling.arm_polling import ARMPolling
 
 from .. import models
 
@@ -195,35 +197,9 @@ class IntegrationRuntimesOperations(object):
         return deserialized
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/integrationRuntimes/{integrationRuntimeName}'}
 
-    def create(
+
+    def _create_initial(
             self, resource_group_name, workspace_name, integration_runtime_name, properties, if_match=None, custom_headers=None, raw=False, **operation_config):
-        """Create integration runtime.
-
-        Create an integration runtime.
-
-        :param resource_group_name: The name of the resource group. The name
-         is case insensitive.
-        :type resource_group_name: str
-        :param workspace_name: The name of the workspace
-        :type workspace_name: str
-        :param integration_runtime_name: Integration runtime name
-        :type integration_runtime_name: str
-        :param properties: Integration runtime properties.
-        :type properties: ~azure.mgmt.synapse.models.IntegrationRuntime
-        :param if_match: ETag of the integration runtime entity. Should only
-         be specified for update, for which it should match existing entity or
-         can be * for unconditional update.
-        :type if_match: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: IntegrationRuntimeResource or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.synapse.models.IntegrationRuntimeResource or
-         ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
         integration_runtime = models.IntegrationRuntimeResource(properties=properties)
 
         # Construct URL
@@ -260,12 +236,13 @@ class IntegrationRuntimesOperations(object):
         request = self._client.put(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 202]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
 
         deserialized = None
+
         if response.status_code == 200:
             deserialized = self._deserialize('IntegrationRuntimeResource', response)
 
@@ -274,13 +251,12 @@ class IntegrationRuntimesOperations(object):
             return client_raw_response
 
         return deserialized
-    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/integrationRuntimes/{integrationRuntimeName}'}
 
-    def delete(
-            self, resource_group_name, workspace_name, integration_runtime_name, custom_headers=None, raw=False, **operation_config):
-        """Delete integration runtime.
+    def create(
+            self, resource_group_name, workspace_name, integration_runtime_name, properties, if_match=None, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Create integration runtime.
 
-        Delete an integration runtime.
+        Create an integration runtime.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
@@ -289,15 +265,58 @@ class IntegrationRuntimesOperations(object):
         :type workspace_name: str
         :param integration_runtime_name: Integration runtime name
         :type integration_runtime_name: str
+        :param properties: Integration runtime properties.
+        :type properties: ~azure.mgmt.synapse.models.IntegrationRuntime
+        :param if_match: ETag of the integration runtime entity. Should only
+         be specified for update, for which it should match existing entity or
+         can be * for unconditional update.
+        :type if_match: str
         :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns
+         IntegrationRuntimeResource or
+         ClientRawResponse<IntegrationRuntimeResource> if raw==True
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.synapse.models.IntegrationRuntimeResource]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.synapse.models.IntegrationRuntimeResource]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        raw_result = self._create_initial(
+            resource_group_name=resource_group_name,
+            workspace_name=workspace_name,
+            integration_runtime_name=integration_runtime_name,
+            properties=properties,
+            if_match=if_match,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            deserialized = self._deserialize('IntegrationRuntimeResource', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/integrationRuntimes/{integrationRuntimeName}'}
+
+
+    def _delete_initial(
+            self, resource_group_name, workspace_name, integration_runtime_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
@@ -325,7 +344,7 @@ class IntegrationRuntimesOperations(object):
         request = self._client.delete(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 204]:
+        if response.status_code not in [200, 202, 204]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
@@ -333,6 +352,52 @@ class IntegrationRuntimesOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+
+    def delete(
+            self, resource_group_name, workspace_name, integration_runtime_name, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Delete integration runtime.
+
+        Delete an integration runtime.
+
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
+        :type resource_group_name: str
+        :param workspace_name: The name of the workspace
+        :type workspace_name: str
+        :param integration_runtime_name: Integration runtime name
+        :type integration_runtime_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns None or
+         ClientRawResponse<None> if raw==True
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._delete_initial(
+            resource_group_name=resource_group_name,
+            workspace_name=workspace_name,
+            integration_runtime_name=integration_runtime_name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            if raw:
+                client_raw_response = ClientRawResponse(None, response)
+                return client_raw_response
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/integrationRuntimes/{integrationRuntimeName}'}
 
     def upgrade(
