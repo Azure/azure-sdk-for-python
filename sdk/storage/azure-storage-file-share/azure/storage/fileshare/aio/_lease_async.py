@@ -14,7 +14,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from .._shared.response_handlers import return_response_headers, process_storage_error
 from .._generated.models import (
     StorageErrorException)
-from .._generated.operations import FileOperations
+from .._generated.aio.operations_async._file_operations_async import FileOperations
 from .._lease import ShareLeaseClient as LeaseClientBase
 
 if TYPE_CHECKING:
