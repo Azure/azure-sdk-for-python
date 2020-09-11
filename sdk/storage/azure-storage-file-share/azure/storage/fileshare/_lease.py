@@ -155,8 +155,8 @@ class ShareLeaseClient(object):
     def release(self, **kwargs):
         # type: (Any) -> None
         """Releases the lease. The lease may be released if the lease ID specified on the request matches
-        that associated with the share or file. Releasing the lease allows another client to immediately acquire the lease
-        for the share or file as soon as the release is complete.
+        that associated with the share or file. Releasing the lease allows another client to immediately acquire
+        the lease for the share or file as soon as the release is complete.
 
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
