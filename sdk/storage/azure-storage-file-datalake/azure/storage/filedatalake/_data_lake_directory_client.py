@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from ._deserialize import deserialize_dir_properties
 from ._shared.base_client import parse_connection_str
 from ._data_lake_file_client import DataLakeFileClient
 from ._models import DirectoryProperties
@@ -230,7 +231,7 @@ class DataLakeDirectoryClient(PathClient):
                 :dedent: 4
                 :caption: Getting the properties for a file/directory.
         """
-        return self._get_path_properties(cls=DirectoryProperties._deserialize_dir_properties, **kwargs)  # pylint: disable=protected-access
+        return self._get_path_properties(cls=deserialize_dir_properties, **kwargs)  # pylint: disable=protected-access
 
     def rename_directory(self, new_name,  # type: str
                          **kwargs):

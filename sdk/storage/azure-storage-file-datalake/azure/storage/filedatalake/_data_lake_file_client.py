@@ -16,7 +16,7 @@ from ._generated.models import StorageErrorException
 from ._download import StorageStreamDownloader
 from ._path_client import PathClient
 from ._serialize import get_mod_conditions, get_path_http_headers, get_access_conditions, add_metadata_headers
-from ._deserialize import process_storage_error
+from ._deserialize import process_storage_error, deserialize_file_properties
 from ._models import FileProperties, DataLakeFileQueryError
 
 
@@ -240,7 +240,7 @@ class DataLakeFileClient(PathClient):
                 :dedent: 4
                 :caption: Getting the properties for a file.
         """
-        return self._get_path_properties(cls=FileProperties._deserialize_file_properties, **kwargs)  # pylint: disable=protected-access
+        return self._get_path_properties(cls=deserialize_file_properties, **kwargs)  # pylint: disable=protected-access
 
     def set_file_expiry(self, expiry_options,  # type: str
                         expires_on=None,   # type: Optional[Union[datetime, int]]
@@ -258,7 +258,8 @@ class DataLakeFileClient(PathClient):
             The timeout parameter is expressed in seconds.
         :rtype: None
         """
-        return self._blob_client._client.blob.set_expiry(expiry_options, expires_on=expires_on, **kwargs) # pylint: disable=protected-access
+        return self._datalake_client_for_blob_operation.path\
+            .set_expiry(expiry_options, expires_on=expires_on, **kwargs) # pylint: disable=protected-access
 
     def _upload_options(  # pylint:disable=too-many-statements
             self, data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]

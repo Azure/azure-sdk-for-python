@@ -8,7 +8,7 @@
 from ._download_async import StorageStreamDownloader
 from ._path_client_async import PathClient
 from .._data_lake_file_client import DataLakeFileClient as DataLakeFileClientBase
-from .._deserialize import process_storage_error
+from .._deserialize import process_storage_error, deserialize_file_properties
 from .._generated.models import StorageErrorException
 from .._models import FileProperties
 from ..aio._upload_helper import upload_datalake_file
@@ -202,7 +202,7 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
                 :dedent: 4
                 :caption: Getting the properties for a file.
         """
-        return await self._get_path_properties(cls=FileProperties._deserialize_file_properties, **kwargs)  # pylint: disable=protected-access
+        return await self._get_path_properties(cls=deserialize_file_properties, **kwargs)  # pylint: disable=protected-access
 
     async def set_file_expiry(self, expiry_options,  # type: str
                               expires_on=None,  # type: Optional[Union[datetime, int]]

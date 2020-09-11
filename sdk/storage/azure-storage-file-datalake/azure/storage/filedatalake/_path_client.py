@@ -79,6 +79,9 @@ class PathClient(StorageAccountHostsMixin):
         # ADLS doesn't support secondary endpoint, make sure it's empty
         self._hosts[LocationMode.SECONDARY] = ""
         self._client = DataLakeStorageClient(self.url, file_system_name, path_name, pipeline=self._pipeline)
+        self._datalake_client_for_blob_operation = DataLakeStorageClient(self._blob_client.url,
+                                                                         file_system_name, path_name,
+                                                                         pipeline=self._pipeline)
 
     def __exit__(self, *args):
         self._blob_client.close()

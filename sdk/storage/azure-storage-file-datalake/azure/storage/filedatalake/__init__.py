@@ -18,7 +18,6 @@ from ._models import (
     DirectoryProperties,
     FileProperties,
     PathProperties,
-    PathPropertiesPaged,
     LeaseProperties,
     ContentSettings,
     AccountSasPermissions,
@@ -32,6 +31,7 @@ from ._models import (
     DelimitedJsonDialect,
     DataLakeFileQueryError
 )
+from ._list_paths_helper import PathPropertiesPaged
 from ._shared_access_signature import generate_account_sas, generate_file_system_sas, generate_directory_sas, \
     generate_file_sas
 
@@ -60,7 +60,6 @@ __all__ = [
     'DirectoryProperties',
     'FileProperties',
     'PathProperties',
-    'PathPropertiesPaged',
     'LeaseProperties',
     'ContentSettings',
     'AccountSasPermissions',
