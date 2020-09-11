@@ -29,7 +29,7 @@ from .._serialize import get_api_version, get_access_conditions
 from .._share_client import ShareClient as ShareClientBase
 from ._directory_client_async import ShareDirectoryClient
 from ._file_client_async import ShareFileClient
-from .._lease import ShareLeaseClient
+from ..aio._lease_async import ShareLeaseClient
 
 
 if TYPE_CHECKING:
