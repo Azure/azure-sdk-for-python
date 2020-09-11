@@ -6,6 +6,7 @@
 
 import logging
 import sys
+import locale
 
 try:
     from urllib.parse import urlparse, unquote
@@ -30,7 +31,7 @@ from . import sign_string
 
 
 logger = logging.getLogger(__name__)
-
+locale.setlocale(locale.LC_ALL, "")
 
 
 # wraps a given exception with the desired exception type
@@ -92,10 +93,19 @@ class SharedKeyCredentialPolicy(SansIOHTTPPolicy):
     def _get_canonicalized_headers(request):
         string_to_sign = ''
         x_ms_headers = []
+        x_ms_headers_dict = {}
+        x_ms_headers_strings = []
         for name, value in request.http_request.headers.items():
             if name.startswith('x-ms-'):
                 x_ms_headers.append((name.lower(), value))
-        x_ms_headers.sort()
+        for tup in x_ms_headers:
+            tup_string = ''.join(tup)
+            x_ms_headers_dict[tup_string] = tup
+            x_ms_headers_strings.append(tup_string)
+
+        x_ms_headers_strings.sort(key=locale.strxfrm)
+        x_ms_headers = [x_ms_headers_dict[sorted_string] for sorted_string in x_ms_headers_strings]
+
         for name, value in x_ms_headers:
             if value is not None:
                 string_to_sign += ''.join([name, ':', value, '\n'])
