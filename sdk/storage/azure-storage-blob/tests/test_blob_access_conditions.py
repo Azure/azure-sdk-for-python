@@ -286,6 +286,22 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
     @GlobalStorageAccountPreparer()
+    def test_header_metadata_sort_in_upload_blob(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+        self._setup()
+        data = b'hello world'
+        container, blob = self._create_container_and_block_blob(
+            self.container_name, 'blob1', data, bsc)
+        test_datetime = (datetime.utcnow() -
+                         timedelta(minutes=15))
+        metadata = {'i0': 'a',
+                    'i_': 'a',
+                    '_a_': 'd'
+                    }
+        # Act
+        resp = blob.upload_blob(data, length=len(data), if_modified_since=test_datetime, metadata=metadata)
+
+    @GlobalStorageAccountPreparer()
     def test_put_blob_with_if_modified(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
