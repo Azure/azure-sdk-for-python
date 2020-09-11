@@ -3,9 +3,17 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import os
+
+import msal
 from six.moves.urllib_parse import urlparse
 
 from .._constants import EnvironmentVariables, KnownAuthorities
+
+
+class _TokenCache(object):
+    """Wrapper for in memory token caches"""
+    def __init__(self):
+        self._cache = msal.TokenCache()
 
 
 def normalize_authority(authority):
@@ -67,6 +75,7 @@ def _scopes_to_resource(*scopes):
 
 __all__ = [
     "_scopes_to_resource",
+    "_TokenCache",
     "AadClient",
     "AadClientBase",
     "AuthCodeRedirectServer",
