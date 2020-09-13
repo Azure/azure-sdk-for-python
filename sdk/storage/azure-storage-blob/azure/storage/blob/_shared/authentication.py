@@ -31,7 +31,7 @@ from . import sign_string
 
 
 logger = logging.getLogger(__name__)
-locale.setlocale(locale.LC_COLLATE, "sv_SE.UTF-8")
+locale.setlocale(locale.LC_COLLATE, "en_US.UTF-8")
 
 
 # wraps a given exception with the desired exception type
