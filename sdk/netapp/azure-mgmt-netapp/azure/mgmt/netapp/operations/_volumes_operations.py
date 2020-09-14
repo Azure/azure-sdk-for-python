@@ -27,7 +27,7 @@ class VolumesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Constant value: "2020-02-01".
+    :ivar api_version: Version of the API to be used with the client request. Constant value: "2020-06-01".
     """
 
     models = models
@@ -37,7 +37,7 @@ class VolumesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2020-02-01"
+        self.api_version = "2020-06-01"
 
         self.config = config
 
@@ -598,7 +598,11 @@ class VolumesOperations(object):
 
 
     def _break_replication_initial(
-            self, resource_group_name, account_name, pool_name, volume_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, pool_name, volume_name, force_break_replication=None, custom_headers=None, raw=False, **operation_config):
+        body = None
+        if force_break_replication is not None:
+            body = models.BreakReplicationRequest(force_break_replication=force_break_replication)
+
         # Construct URL
         url = self.break_replication.metadata['url']
         path_format_arguments = {
@@ -616,6 +620,7 @@ class VolumesOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -623,8 +628,14 @@ class VolumesOperations(object):
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
+        # Construct body
+        if body is not None:
+            body_content = self._serialize.body(body, 'BreakReplicationRequest')
+        else:
+            body_content = None
+
         # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
@@ -637,7 +648,7 @@ class VolumesOperations(object):
             return client_raw_response
 
     def break_replication(
-            self, resource_group_name, account_name, pool_name, volume_name, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, account_name, pool_name, volume_name, force_break_replication=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Break volume replication.
 
         Break the replication connection on the destination volume.
@@ -650,6 +661,9 @@ class VolumesOperations(object):
         :type pool_name: str
         :param volume_name: The name of the volume
         :type volume_name: str
+        :param force_break_replication: If replication is in status
+         transferring and you want to force break the replication, set to true
+        :type force_break_replication: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -666,6 +680,7 @@ class VolumesOperations(object):
             account_name=account_name,
             pool_name=pool_name,
             volume_name=volume_name,
+            force_break_replication=force_break_replication,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
@@ -1032,3 +1047,190 @@ class VolumesOperations(object):
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     authorize_replication.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/authorizeReplication'}
+
+
+    def _re_initialize_replication_initial(
+            self, resource_group_name, account_name, pool_name, volume_name, custom_headers=None, raw=False, **operation_config):
+        # Construct URL
+        url = self.re_initialize_replication.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'accountName': self._serialize.url("account_name", account_name, 'str'),
+            'poolName': self._serialize.url("pool_name", pool_name, 'str', max_length=64, min_length=1, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$'),
+            'volumeName': self._serialize.url("volume_name", volume_name, 'str', max_length=64, min_length=1, pattern=r'^[a-zA-Z][a-zA-Z0-9\-_]{0,63}$')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200, 202]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+
+    def re_initialize_replication(
+            self, resource_group_name, account_name, pool_name, volume_name, custom_headers=None, raw=False, polling=True, **operation_config):
+        """ReInitialize volume replication.
+
+        Re-Initializes the replication connection on the destination volume.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param account_name: The name of the NetApp account
+        :type account_name: str
+        :param pool_name: The name of the capacity pool
+        :type pool_name: str
+        :param volume_name: The name of the volume
+        :type volume_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns None or
+         ClientRawResponse<None> if raw==True
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._re_initialize_replication_initial(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            pool_name=pool_name,
+            volume_name=volume_name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            if raw:
+                client_raw_response = ClientRawResponse(None, response)
+                return client_raw_response
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    re_initialize_replication.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/reinitializeReplication'}
+
+
+    def _pool_change_initial(
+            self, resource_group_name, account_name, pool_name, volume_name, new_pool_resource_id, custom_headers=None, raw=False, **operation_config):
+        body = models.PoolChangeRequest(new_pool_resource_id=new_pool_resource_id)
+
+        # Construct URL
+        url = self.pool_change.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'accountName': self._serialize.url("account_name", account_name, 'str'),
+            'poolName': self._serialize.url("pool_name", pool_name, 'str', max_length=64, min_length=1, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$'),
+            'volumeName': self._serialize.url("volume_name", volume_name, 'str', max_length=64, min_length=1, pattern=r'^[a-zA-Z][a-zA-Z0-9\-_]{0,63}$')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(body, 'PoolChangeRequest')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200, 202]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+
+    def pool_change(
+            self, resource_group_name, account_name, pool_name, volume_name, new_pool_resource_id, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Change pool for volume.
+
+        Moves volume to another pool.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param account_name: The name of the NetApp account
+        :type account_name: str
+        :param pool_name: The name of the capacity pool
+        :type pool_name: str
+        :param volume_name: The name of the volume
+        :type volume_name: str
+        :param new_pool_resource_id: Resource id of the pool to move volume to
+        :type new_pool_resource_id: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns None or
+         ClientRawResponse<None> if raw==True
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._pool_change_initial(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            pool_name=pool_name,
+            volume_name=volume_name,
+            new_pool_resource_id=new_pool_resource_id,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            if raw:
+                client_raw_response = ClientRawResponse(None, response)
+                return client_raw_response
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    pool_change.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/poolChange'}

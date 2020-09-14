@@ -77,3 +77,55 @@ class SnapshotPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(SnapshotPaged, self).__init__(*args, **kwargs)
+class SnapshotPolicyPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`SnapshotPolicy <azure.mgmt.netapp.models.SnapshotPolicy>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[SnapshotPolicy]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(SnapshotPolicyPaged, self).__init__(*args, **kwargs)
+class BackupPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Backup <azure.mgmt.netapp.models.Backup>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Backup]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(BackupPaged, self).__init__(*args, **kwargs)
+class BackupPolicyPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`BackupPolicy <azure.mgmt.netapp.models.BackupPolicy>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[BackupPolicy]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(BackupPolicyPaged, self).__init__(*args, **kwargs)
+class VaultPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Vault <azure.mgmt.netapp.models.Vault>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Vault]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(VaultPaged, self).__init__(*args, **kwargs)
