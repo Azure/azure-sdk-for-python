@@ -10,8 +10,8 @@ class FormRecognizerApiVersion(str, Enum):
     """Form Recognizer API versions supported by this package"""
 
     #: this is the default version
-    V2_1_PREVIEW_1 = "v2.1-preview.1"
-    V2_0 = "v2.0"
+    V2_1_PREVIEW_1 = "2.1-preview.1"
+    V2_0 = "2.0"
 
 
 def validate_api_version(api_version):
