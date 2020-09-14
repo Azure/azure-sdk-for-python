@@ -8,8 +8,8 @@ This package has been tested with Python 2.7, 3.4, 3.5, 3.6 and 3.7.
 
 Microsoft Azure Service Bus supports a set of cloud-based, message-oriented middleware technologies including reliable message queuing and durable publish/subscribe messaging.
 
-* [SDK source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus)
-* [SDK reference documentation](https://docs.microsoft.com/python/api/overview/azure/servicebus/client?view=azure-python)
+* [SDK source code](https://github.com/Azure/azure-sdk-for-python/tree/servicebus_v0.50.3/sdk/servicebus/azure-servicebus)
+* [SDK reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/0.50.3/index.html)
 * [Service Bus documentation](https://docs.microsoft.com/azure/service-bus-messaging/)
 
 
