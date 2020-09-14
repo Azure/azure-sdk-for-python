@@ -27,4 +27,4 @@ pylint==1.8.4; python_version < '3.4'
 pylint==2.5.2; python_version >= '3.4'
 
 ../../../tools/azure-devtools
-../../../tools/azure-sdk-tools --no-dependencies
+../../../tools/azure-sdk-tools
