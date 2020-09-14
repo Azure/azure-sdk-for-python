@@ -95,6 +95,7 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
            * 2018-11-01: :mod:`v2018_11_01.models<azure.mgmt.storage.v2018_11_01.models>`
            * 2019-04-01: :mod:`v2019_04_01.models<azure.mgmt.storage.v2019_04_01.models>`
            * 2019-06-01: :mod:`v2019_06_01.models<azure.mgmt.storage.v2019_06_01.models>`
+           * 2020-08-01-preview: :mod:`v2020_08_01_preview.models<azure.mgmt.storage.v2020_08_01_preview.models>`
         """
         if api_version == '2015-06-15':
             from ..v2015_06_15 import models
@@ -129,6 +130,9 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2019-06-01':
             from ..v2019_06_01 import models
             return models
+        elif api_version == '2020-08-01-preview':
+            from ..v2020_08_01_preview import models
+            return models
         raise NotImplementedError("APIVersion {} is not available".format(api_version))
 
     @property
@@ -141,6 +145,7 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
            * 2018-11-01: :class:`BlobContainersOperations<azure.mgmt.storage.v2018_11_01.aio.operations_async.BlobContainersOperations>`
            * 2019-04-01: :class:`BlobContainersOperations<azure.mgmt.storage.v2019_04_01.aio.operations_async.BlobContainersOperations>`
            * 2019-06-01: :class:`BlobContainersOperations<azure.mgmt.storage.v2019_06_01.aio.operations_async.BlobContainersOperations>`
+           * 2020-08-01-preview: :class:`BlobContainersOperations<azure.mgmt.storage.v2020_08_01_preview.aio.operations_async.BlobContainersOperations>`
         """
         api_version = self._get_api_version('blob_containers')
         if api_version == '2018-02-01':
@@ -155,6 +160,8 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
             from ..v2019_04_01.aio.operations_async import BlobContainersOperations as OperationClass
         elif api_version == '2019-06-01':
             from ..v2019_06_01.aio.operations_async import BlobContainersOperations as OperationClass
+        elif api_version == '2020-08-01-preview':
+            from ..v2020_08_01_preview.aio.operations_async import BlobContainersOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -167,6 +174,7 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
            * 2018-11-01: :class:`BlobServicesOperations<azure.mgmt.storage.v2018_11_01.aio.operations_async.BlobServicesOperations>`
            * 2019-04-01: :class:`BlobServicesOperations<azure.mgmt.storage.v2019_04_01.aio.operations_async.BlobServicesOperations>`
            * 2019-06-01: :class:`BlobServicesOperations<azure.mgmt.storage.v2019_06_01.aio.operations_async.BlobServicesOperations>`
+           * 2020-08-01-preview: :class:`BlobServicesOperations<azure.mgmt.storage.v2020_08_01_preview.aio.operations_async.BlobServicesOperations>`
         """
         api_version = self._get_api_version('blob_services')
         if api_version == '2018-07-01':
@@ -177,6 +185,21 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
             from ..v2019_04_01.aio.operations_async import BlobServicesOperations as OperationClass
         elif api_version == '2019-06-01':
             from ..v2019_06_01.aio.operations_async import BlobServicesOperations as OperationClass
+        elif api_version == '2020-08-01-preview':
+            from ..v2020_08_01_preview.aio.operations_async import BlobServicesOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def deleted_accounts(self):
+        """Instance depends on the API version:
+
+           * 2020-08-01-preview: :class:`DeletedAccountsOperations<azure.mgmt.storage.v2020_08_01_preview.aio.operations_async.DeletedAccountsOperations>`
+        """
+        api_version = self._get_api_version('deleted_accounts')
+        if api_version == '2020-08-01-preview':
+            from ..v2020_08_01_preview.aio.operations_async import DeletedAccountsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -186,10 +209,13 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2019-06-01: :class:`EncryptionScopesOperations<azure.mgmt.storage.v2019_06_01.aio.operations_async.EncryptionScopesOperations>`
+           * 2020-08-01-preview: :class:`EncryptionScopesOperations<azure.mgmt.storage.v2020_08_01_preview.aio.operations_async.EncryptionScopesOperations>`
         """
         api_version = self._get_api_version('encryption_scopes')
         if api_version == '2019-06-01':
             from ..v2019_06_01.aio.operations_async import EncryptionScopesOperations as OperationClass
+        elif api_version == '2020-08-01-preview':
+            from ..v2020_08_01_preview.aio.operations_async import EncryptionScopesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -200,12 +226,15 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
 
            * 2019-04-01: :class:`FileServicesOperations<azure.mgmt.storage.v2019_04_01.aio.operations_async.FileServicesOperations>`
            * 2019-06-01: :class:`FileServicesOperations<azure.mgmt.storage.v2019_06_01.aio.operations_async.FileServicesOperations>`
+           * 2020-08-01-preview: :class:`FileServicesOperations<azure.mgmt.storage.v2020_08_01_preview.aio.operations_async.FileServicesOperations>`
         """
         api_version = self._get_api_version('file_services')
         if api_version == '2019-04-01':
             from ..v2019_04_01.aio.operations_async import FileServicesOperations as OperationClass
         elif api_version == '2019-06-01':
             from ..v2019_06_01.aio.operations_async import FileServicesOperations as OperationClass
+        elif api_version == '2020-08-01-preview':
+            from ..v2020_08_01_preview.aio.operations_async import FileServicesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -216,12 +245,15 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
 
            * 2019-04-01: :class:`FileSharesOperations<azure.mgmt.storage.v2019_04_01.aio.operations_async.FileSharesOperations>`
            * 2019-06-01: :class:`FileSharesOperations<azure.mgmt.storage.v2019_06_01.aio.operations_async.FileSharesOperations>`
+           * 2020-08-01-preview: :class:`FileSharesOperations<azure.mgmt.storage.v2020_08_01_preview.aio.operations_async.FileSharesOperations>`
         """
         api_version = self._get_api_version('file_shares')
         if api_version == '2019-04-01':
             from ..v2019_04_01.aio.operations_async import FileSharesOperations as OperationClass
         elif api_version == '2019-06-01':
             from ..v2019_06_01.aio.operations_async import FileSharesOperations as OperationClass
+        elif api_version == '2020-08-01-preview':
+            from ..v2020_08_01_preview.aio.operations_async import FileSharesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -234,6 +266,7 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
            * 2018-11-01: :class:`ManagementPoliciesOperations<azure.mgmt.storage.v2018_11_01.aio.operations_async.ManagementPoliciesOperations>`
            * 2019-04-01: :class:`ManagementPoliciesOperations<azure.mgmt.storage.v2019_04_01.aio.operations_async.ManagementPoliciesOperations>`
            * 2019-06-01: :class:`ManagementPoliciesOperations<azure.mgmt.storage.v2019_06_01.aio.operations_async.ManagementPoliciesOperations>`
+           * 2020-08-01-preview: :class:`ManagementPoliciesOperations<azure.mgmt.storage.v2020_08_01_preview.aio.operations_async.ManagementPoliciesOperations>`
         """
         api_version = self._get_api_version('management_policies')
         if api_version == '2018-07-01':
@@ -244,6 +277,8 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
             from ..v2019_04_01.aio.operations_async import ManagementPoliciesOperations as OperationClass
         elif api_version == '2019-06-01':
             from ..v2019_06_01.aio.operations_async import ManagementPoliciesOperations as OperationClass
+        elif api_version == '2020-08-01-preview':
+            from ..v2020_08_01_preview.aio.operations_async import ManagementPoliciesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -253,10 +288,13 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2019-06-01: :class:`ObjectReplicationPoliciesOperations<azure.mgmt.storage.v2019_06_01.aio.operations_async.ObjectReplicationPoliciesOperations>`
+           * 2020-08-01-preview: :class:`ObjectReplicationPoliciesOperations<azure.mgmt.storage.v2020_08_01_preview.aio.operations_async.ObjectReplicationPoliciesOperations>`
         """
         api_version = self._get_api_version('object_replication_policies')
         if api_version == '2019-06-01':
             from ..v2019_06_01.aio.operations_async import ObjectReplicationPoliciesOperations as OperationClass
+        elif api_version == '2020-08-01-preview':
+            from ..v2020_08_01_preview.aio.operations_async import ObjectReplicationPoliciesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -273,6 +311,7 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
            * 2018-11-01: :class:`Operations<azure.mgmt.storage.v2018_11_01.aio.operations_async.Operations>`
            * 2019-04-01: :class:`Operations<azure.mgmt.storage.v2019_04_01.aio.operations_async.Operations>`
            * 2019-06-01: :class:`Operations<azure.mgmt.storage.v2019_06_01.aio.operations_async.Operations>`
+           * 2020-08-01-preview: :class:`Operations<azure.mgmt.storage.v2020_08_01_preview.aio.operations_async.Operations>`
         """
         api_version = self._get_api_version('operations')
         if api_version == '2017-06-01':
@@ -291,6 +330,8 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
             from ..v2019_04_01.aio.operations_async import Operations as OperationClass
         elif api_version == '2019-06-01':
             from ..v2019_06_01.aio.operations_async import Operations as OperationClass
+        elif api_version == '2020-08-01-preview':
+            from ..v2020_08_01_preview.aio.operations_async import Operations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -300,10 +341,13 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2019-06-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.storage.v2019_06_01.aio.operations_async.PrivateEndpointConnectionsOperations>`
+           * 2020-08-01-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.storage.v2020_08_01_preview.aio.operations_async.PrivateEndpointConnectionsOperations>`
         """
         api_version = self._get_api_version('private_endpoint_connections')
         if api_version == '2019-06-01':
             from ..v2019_06_01.aio.operations_async import PrivateEndpointConnectionsOperations as OperationClass
+        elif api_version == '2020-08-01-preview':
+            from ..v2020_08_01_preview.aio.operations_async import PrivateEndpointConnectionsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -313,10 +357,13 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2019-06-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.storage.v2019_06_01.aio.operations_async.PrivateLinkResourcesOperations>`
+           * 2020-08-01-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.storage.v2020_08_01_preview.aio.operations_async.PrivateLinkResourcesOperations>`
         """
         api_version = self._get_api_version('private_link_resources')
         if api_version == '2019-06-01':
             from ..v2019_06_01.aio.operations_async import PrivateLinkResourcesOperations as OperationClass
+        elif api_version == '2020-08-01-preview':
+            from ..v2020_08_01_preview.aio.operations_async import PrivateLinkResourcesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -326,10 +373,13 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2019-06-01: :class:`QueueOperations<azure.mgmt.storage.v2019_06_01.aio.operations_async.QueueOperations>`
+           * 2020-08-01-preview: :class:`QueueOperations<azure.mgmt.storage.v2020_08_01_preview.aio.operations_async.QueueOperations>`
         """
         api_version = self._get_api_version('queue')
         if api_version == '2019-06-01':
             from ..v2019_06_01.aio.operations_async import QueueOperations as OperationClass
+        elif api_version == '2020-08-01-preview':
+            from ..v2020_08_01_preview.aio.operations_async import QueueOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -339,10 +389,13 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2019-06-01: :class:`QueueServicesOperations<azure.mgmt.storage.v2019_06_01.aio.operations_async.QueueServicesOperations>`
+           * 2020-08-01-preview: :class:`QueueServicesOperations<azure.mgmt.storage.v2020_08_01_preview.aio.operations_async.QueueServicesOperations>`
         """
         api_version = self._get_api_version('queue_services')
         if api_version == '2019-06-01':
             from ..v2019_06_01.aio.operations_async import QueueServicesOperations as OperationClass
+        elif api_version == '2020-08-01-preview':
+            from ..v2020_08_01_preview.aio.operations_async import QueueServicesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -359,6 +412,7 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
            * 2018-11-01: :class:`SkusOperations<azure.mgmt.storage.v2018_11_01.aio.operations_async.SkusOperations>`
            * 2019-04-01: :class:`SkusOperations<azure.mgmt.storage.v2019_04_01.aio.operations_async.SkusOperations>`
            * 2019-06-01: :class:`SkusOperations<azure.mgmt.storage.v2019_06_01.aio.operations_async.SkusOperations>`
+           * 2020-08-01-preview: :class:`SkusOperations<azure.mgmt.storage.v2020_08_01_preview.aio.operations_async.SkusOperations>`
         """
         api_version = self._get_api_version('skus')
         if api_version == '2017-06-01':
@@ -377,6 +431,8 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
             from ..v2019_04_01.aio.operations_async import SkusOperations as OperationClass
         elif api_version == '2019-06-01':
             from ..v2019_06_01.aio.operations_async import SkusOperations as OperationClass
+        elif api_version == '2020-08-01-preview':
+            from ..v2020_08_01_preview.aio.operations_async import SkusOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -396,6 +452,7 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
            * 2018-11-01: :class:`StorageAccountsOperations<azure.mgmt.storage.v2018_11_01.aio.operations_async.StorageAccountsOperations>`
            * 2019-04-01: :class:`StorageAccountsOperations<azure.mgmt.storage.v2019_04_01.aio.operations_async.StorageAccountsOperations>`
            * 2019-06-01: :class:`StorageAccountsOperations<azure.mgmt.storage.v2019_06_01.aio.operations_async.StorageAccountsOperations>`
+           * 2020-08-01-preview: :class:`StorageAccountsOperations<azure.mgmt.storage.v2020_08_01_preview.aio.operations_async.StorageAccountsOperations>`
         """
         api_version = self._get_api_version('storage_accounts')
         if api_version == '2015-06-15':
@@ -420,6 +477,8 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
             from ..v2019_04_01.aio.operations_async import StorageAccountsOperations as OperationClass
         elif api_version == '2019-06-01':
             from ..v2019_06_01.aio.operations_async import StorageAccountsOperations as OperationClass
+        elif api_version == '2020-08-01-preview':
+            from ..v2020_08_01_preview.aio.operations_async import StorageAccountsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -429,10 +488,13 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2019-06-01: :class:`TableOperations<azure.mgmt.storage.v2019_06_01.aio.operations_async.TableOperations>`
+           * 2020-08-01-preview: :class:`TableOperations<azure.mgmt.storage.v2020_08_01_preview.aio.operations_async.TableOperations>`
         """
         api_version = self._get_api_version('table')
         if api_version == '2019-06-01':
             from ..v2019_06_01.aio.operations_async import TableOperations as OperationClass
+        elif api_version == '2020-08-01-preview':
+            from ..v2020_08_01_preview.aio.operations_async import TableOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -442,10 +504,13 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2019-06-01: :class:`TableServicesOperations<azure.mgmt.storage.v2019_06_01.aio.operations_async.TableServicesOperations>`
+           * 2020-08-01-preview: :class:`TableServicesOperations<azure.mgmt.storage.v2020_08_01_preview.aio.operations_async.TableServicesOperations>`
         """
         api_version = self._get_api_version('table_services')
         if api_version == '2019-06-01':
             from ..v2019_06_01.aio.operations_async import TableServicesOperations as OperationClass
+        elif api_version == '2020-08-01-preview':
+            from ..v2020_08_01_preview.aio.operations_async import TableServicesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -487,6 +552,7 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
            * 2018-11-01: :class:`UsagesOperations<azure.mgmt.storage.v2018_11_01.aio.operations_async.UsagesOperations>`
            * 2019-04-01: :class:`UsagesOperations<azure.mgmt.storage.v2019_04_01.aio.operations_async.UsagesOperations>`
            * 2019-06-01: :class:`UsagesOperations<azure.mgmt.storage.v2019_06_01.aio.operations_async.UsagesOperations>`
+           * 2020-08-01-preview: :class:`UsagesOperations<azure.mgmt.storage.v2020_08_01_preview.aio.operations_async.UsagesOperations>`
         """
         api_version = self._get_api_version('usages')
         if api_version == '2018-03-01-preview':
@@ -499,6 +565,8 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
             from ..v2019_04_01.aio.operations_async import UsagesOperations as OperationClass
         elif api_version == '2019-06-01':
             from ..v2019_06_01.aio.operations_async import UsagesOperations as OperationClass
+        elif api_version == '2020-08-01-preview':
+            from ..v2020_08_01_preview.aio.operations_async import UsagesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))

@@ -30,7 +30,7 @@ class BlobContainersOperations(object):
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.storage.v2019_06_01.models
+    :type models: ~azure.mgmt.storage.v2020_08_01_preview.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -75,13 +75,13 @@ class BlobContainersOperations(object):
         :type include: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ListContainerItems or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.storage.v2019_06_01.models.ListContainerItems]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.storage.v2020_08_01_preview.models.ListContainerItems]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ListContainerItems"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01"
+        api_version = "2020-08-01-preview"
 
         def prepare_request(next_link=None):
             # Construct headers
@@ -164,16 +164,16 @@ class BlobContainersOperations(object):
          by a letter or number.
         :type container_name: str
         :param blob_container: Properties of the blob container to create.
-        :type blob_container: ~azure.mgmt.storage.v2019_06_01.models.BlobContainer
+        :type blob_container: ~azure.mgmt.storage.v2020_08_01_preview.models.BlobContainer
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: BlobContainer, or the result of cls(response)
-        :rtype: ~azure.mgmt.storage.v2019_06_01.models.BlobContainer
+        :rtype: ~azure.mgmt.storage.v2020_08_01_preview.models.BlobContainer
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.BlobContainer"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01"
+        api_version = "2020-08-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
@@ -244,16 +244,16 @@ class BlobContainersOperations(object):
          by a letter or number.
         :type container_name: str
         :param blob_container: Properties to update for the blob container.
-        :type blob_container: ~azure.mgmt.storage.v2019_06_01.models.BlobContainer
+        :type blob_container: ~azure.mgmt.storage.v2020_08_01_preview.models.BlobContainer
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: BlobContainer, or the result of cls(response)
-        :rtype: ~azure.mgmt.storage.v2019_06_01.models.BlobContainer
+        :rtype: ~azure.mgmt.storage.v2020_08_01_preview.models.BlobContainer
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.BlobContainer"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01"
+        api_version = "2020-08-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
@@ -319,13 +319,13 @@ class BlobContainersOperations(object):
         :type container_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: BlobContainer, or the result of cls(response)
-        :rtype: ~azure.mgmt.storage.v2019_06_01.models.BlobContainer
+        :rtype: ~azure.mgmt.storage.v2020_08_01_preview.models.BlobContainer
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.BlobContainer"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01"
+        api_version = "2020-08-01-preview"
 
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
@@ -391,7 +391,7 @@ class BlobContainersOperations(object):
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01"
+        api_version = "2020-08-01-preview"
 
         # Construct URL
         url = self.delete.metadata['url']  # type: ignore
@@ -449,16 +449,16 @@ class BlobContainersOperations(object):
          by a letter or number.
         :type container_name: str
         :param legal_hold: The LegalHold property that will be set to a blob container.
-        :type legal_hold: ~azure.mgmt.storage.v2019_06_01.models.LegalHold
+        :type legal_hold: ~azure.mgmt.storage.v2020_08_01_preview.models.LegalHold
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: LegalHold, or the result of cls(response)
-        :rtype: ~azure.mgmt.storage.v2019_06_01.models.LegalHold
+        :rtype: ~azure.mgmt.storage.v2020_08_01_preview.models.LegalHold
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.LegalHold"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01"
+        api_version = "2020-08-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
@@ -525,16 +525,16 @@ class BlobContainersOperations(object):
          by a letter or number.
         :type container_name: str
         :param legal_hold: The LegalHold property that will be clear from a blob container.
-        :type legal_hold: ~azure.mgmt.storage.v2019_06_01.models.LegalHold
+        :type legal_hold: ~azure.mgmt.storage.v2020_08_01_preview.models.LegalHold
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: LegalHold, or the result of cls(response)
-        :rtype: ~azure.mgmt.storage.v2019_06_01.models.LegalHold
+        :rtype: ~azure.mgmt.storage.v2020_08_01_preview.models.LegalHold
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.LegalHold"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01"
+        api_version = "2020-08-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
@@ -607,17 +607,17 @@ class BlobContainersOperations(object):
         :type if_match: str
         :param parameters: The ImmutabilityPolicy Properties that will be created or updated to a blob
          container.
-        :type parameters: ~azure.mgmt.storage.v2019_06_01.models.ImmutabilityPolicy
+        :type parameters: ~azure.mgmt.storage.v2020_08_01_preview.models.ImmutabilityPolicy
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ImmutabilityPolicy, or the result of cls(response)
-        :rtype: ~azure.mgmt.storage.v2019_06_01.models.ImmutabilityPolicy
+        :rtype: ~azure.mgmt.storage.v2020_08_01_preview.models.ImmutabilityPolicy
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ImmutabilityPolicy"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         immutability_policy_name = "default"
-        api_version = "2019-06-01"
+        api_version = "2020-08-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
@@ -697,14 +697,14 @@ class BlobContainersOperations(object):
         :type if_match: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ImmutabilityPolicy, or the result of cls(response)
-        :rtype: ~azure.mgmt.storage.v2019_06_01.models.ImmutabilityPolicy
+        :rtype: ~azure.mgmt.storage.v2020_08_01_preview.models.ImmutabilityPolicy
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ImmutabilityPolicy"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         immutability_policy_name = "default"
-        api_version = "2019-06-01"
+        api_version = "2020-08-01-preview"
 
         # Construct URL
         url = self.get_immutability_policy.metadata['url']  # type: ignore
@@ -777,14 +777,14 @@ class BlobContainersOperations(object):
         :type if_match: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ImmutabilityPolicy, or the result of cls(response)
-        :rtype: ~azure.mgmt.storage.v2019_06_01.models.ImmutabilityPolicy
+        :rtype: ~azure.mgmt.storage.v2020_08_01_preview.models.ImmutabilityPolicy
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ImmutabilityPolicy"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         immutability_policy_name = "default"
-        api_version = "2019-06-01"
+        api_version = "2020-08-01-preview"
 
         # Construct URL
         url = self.delete_immutability_policy.metadata['url']  # type: ignore
@@ -854,13 +854,13 @@ class BlobContainersOperations(object):
         :type if_match: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ImmutabilityPolicy, or the result of cls(response)
-        :rtype: ~azure.mgmt.storage.v2019_06_01.models.ImmutabilityPolicy
+        :rtype: ~azure.mgmt.storage.v2020_08_01_preview.models.ImmutabilityPolicy
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ImmutabilityPolicy"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01"
+        api_version = "2020-08-01-preview"
 
         # Construct URL
         url = self.lock_immutability_policy.metadata['url']  # type: ignore
@@ -931,16 +931,16 @@ class BlobContainersOperations(object):
         :type if_match: str
         :param parameters: The ImmutabilityPolicy Properties that will be extended for a blob
          container.
-        :type parameters: ~azure.mgmt.storage.v2019_06_01.models.ImmutabilityPolicy
+        :type parameters: ~azure.mgmt.storage.v2020_08_01_preview.models.ImmutabilityPolicy
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ImmutabilityPolicy, or the result of cls(response)
-        :rtype: ~azure.mgmt.storage.v2019_06_01.models.ImmutabilityPolicy
+        :rtype: ~azure.mgmt.storage.v2020_08_01_preview.models.ImmutabilityPolicy
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ImmutabilityPolicy"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01"
+        api_version = "2020-08-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
@@ -1013,16 +1013,16 @@ class BlobContainersOperations(object):
          by a letter or number.
         :type container_name: str
         :param parameters: Lease Container request body.
-        :type parameters: ~azure.mgmt.storage.v2019_06_01.models.LeaseContainerRequest
+        :type parameters: ~azure.mgmt.storage.v2020_08_01_preview.models.LeaseContainerRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: LeaseContainerResponse, or the result of cls(response)
-        :rtype: ~azure.mgmt.storage.v2019_06_01.models.LeaseContainerResponse
+        :rtype: ~azure.mgmt.storage.v2020_08_01_preview.models.LeaseContainerResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.LeaseContainerResponse"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-06-01"
+        api_version = "2020-08-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
