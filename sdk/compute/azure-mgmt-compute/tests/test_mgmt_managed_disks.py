@@ -136,7 +136,7 @@ class MgmtManagedDisksTest(AzureMgmtTestCase):
         )
         disk_resource = async_creation.result()
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(location='eastus')
     def test_create_vm_implicit_md(self, resource_group, location):
         '''Create a VM with implicit MD'''
         virtual_machine_models = self.compute_client.virtual_machines.models
@@ -182,7 +182,7 @@ class MgmtManagedDisksTest(AzureMgmtTestCase):
             resource_group.name,
             'mySecondDisk',
             {
-                'location': self.region,
+                'location': 'eastus',
                 'disk_size_gb': 20,
                 'creation_data': {
                     'create_option': disks_models.DiskCreateOption.empty
@@ -316,7 +316,7 @@ class MgmtManagedDisksTest(AzureMgmtTestCase):
             )
         snapshot = async_snapshot_creation.result()
 
-    @ResourceGroupPreparer()
+    @ResourceGroupPreparer(location='eastus')
     def test_create_virtual_machine_scale_set(self, resource_group, location):
 
         names = self.get_resource_names('pyvmir')

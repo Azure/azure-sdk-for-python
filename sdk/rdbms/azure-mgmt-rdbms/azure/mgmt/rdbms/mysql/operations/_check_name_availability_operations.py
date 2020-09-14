@@ -102,4 +102,4 @@ class CheckNameAvailabilityOperations(object):
             return client_raw_response
 
         return deserialized
-    execute.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.DBforMySQL/checkNameAvailability'}
+    execute.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.DBForMySQL/checkNameAvailability'}

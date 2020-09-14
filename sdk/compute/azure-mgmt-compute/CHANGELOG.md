@@ -1,5 +1,21 @@
 # Release History
 
+## 13.1.0 (2020-09-08)
+
+**Features**
+
+  - Model Snapshot has a new parameter disk_state
+  - Model VirtualMachineScaleSetExtensionUpdate has a new parameter enable_automatic_upgrade
+  - Model VirtualMachineInstanceView has a new parameter patch_status
+  - Model VirtualMachineInstanceView has a new parameter vm_health
+  - Model VirtualMachineExtensionUpdate has a new parameter enable_automatic_upgrade
+  - Model CreationData has a new parameter logical_sector_size
+  - Model Disk has a new parameter tier
+  - Model DiskUpdate has a new parameter tier
+  - Model VirtualMachineScaleSetExtension has a new parameter enable_automatic_upgrade
+  - Model VirtualMachineExtension has a new parameter enable_automatic_upgrade
+  - Added operation DiskEncryptionSetsOperations.list_associated_resources
+
 ## 13.0.0 (2020-07-06)
 
 **Features**
