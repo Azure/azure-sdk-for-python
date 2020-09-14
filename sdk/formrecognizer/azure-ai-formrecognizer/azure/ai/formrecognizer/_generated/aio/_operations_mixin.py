@@ -108,6 +108,7 @@ class FormRecognizerClientOperationsMixin(object):
     async def begin_analyze_receipt_async(
         self,
         include_text_details: Optional[bool] = False,
+        locale: Optional[str] = None,
         file_stream: Optional[Union[IO, "models.SourcePath"]] = None,
         **kwargs
     ) -> AsyncLROPoller[None]:
@@ -115,11 +116,14 @@ class FormRecognizerClientOperationsMixin(object):
 
         Extract field text and semantic values from a given receipt document. The input document must
         be of one of the supported content types - 'application/pdf', 'image/jpeg', 'image/png' or
-        'image/tiff'. Alternatively, use 'application/json' type to specify the location (Uri or local
-        path) of the document to be analyzed.
+        'image/tiff'. Alternatively, use 'application/json' type to specify the location (Uri) of the
+        document to be analyzed.
 
         :param include_text_details: Include text lines and element references in the result.
         :type include_text_details: bool
+        :param locale: Locale of the receipt. Supported locales include: en-AU, en-CA, en-GB, en-IN,
+         en-US(default).
+        :type locale: str
         :param file_stream: .json, .pdf, .jpg, .png or .tiff type file stream.
         :type file_stream: IO or ~azure.ai.formrecognizer.models.SourcePath
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -145,7 +149,7 @@ class FormRecognizerClientOperationsMixin(object):
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
-        return await mixin_instance.begin_analyze_receipt_async(include_text_details, file_stream, **kwargs)
+        return await mixin_instance.begin_analyze_receipt_async(include_text_details, locale, file_stream, **kwargs)
 
     async def begin_analyze_with_custom_model(
         self,
@@ -190,7 +194,11 @@ class FormRecognizerClientOperationsMixin(object):
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
-        return await mixin_instance.begin_analyze_with_custom_model(model_id, include_text_details, file_stream, **kwargs)
+        # FIXME: this is handwritten
+        if api_version == '2.0':
+            return mixin_instance.begin_analyze_receipt_async(include_text_details, file_stream, **kwargs)
+        elif api_version == '2.1-preview.1':
+            return mixin_instance.begin_analyze_receipt_async(include_text_details, locale, file_stream, **kwargs)
 
     async def begin_compose_custom_models_async(
         self,

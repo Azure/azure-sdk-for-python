@@ -45,11 +45,12 @@ class FormRecognizerClient(FormRecognizerClientOperationsMixin, MultiApiClientMi
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
-    DEFAULT_API_VERSION = '2.0'
+    DEFAULT_API_VERSION = '2.1-preview.1'
     _PROFILE_TAG = "azure.ai.formrecognizer.FormRecognizerClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
             None: DEFAULT_API_VERSION,
+            'train_custom_model_async': '2.0',
         }},
         _PROFILE_TAG + " latest"
     )
