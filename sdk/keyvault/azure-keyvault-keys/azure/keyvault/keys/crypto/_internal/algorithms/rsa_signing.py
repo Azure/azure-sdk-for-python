@@ -7,6 +7,7 @@ from cryptography.hazmat.primitives.asymmetric import padding, utils
 
 from ..algorithm import SignatureAlgorithm
 from ..transform import SignatureTransform
+from ..._enums import SignatureAlgorithm as KeyVaultSignatureAlgorithm
 
 
 class RsaSignatureTransform(SignatureTransform):
@@ -17,7 +18,7 @@ class RsaSignatureTransform(SignatureTransform):
         self._hash_algorithm = hash_algorithm
 
     def sign(self, digest):
-        return self._key.sign(digest, self._padding_function(digest), self._hash_algorithm)
+        return self._key.sign(digest, self._padding_function(digest), utils.Prehashed(self._hash_algorithm))
 
     def verify(self, digest, signature):
         self._key.verify(signature, digest, self._padding_function(digest), utils.Prehashed(self._hash_algorithm))
@@ -37,32 +38,32 @@ class RsaSsaPss(SignatureAlgorithm):
 
 
 class Ps256(RsaSsaPss):
-    _name = "PS256"
+    _name = KeyVaultSignatureAlgorithm.ps256
     _default_hash_algorithm = hashes.SHA256()
 
 
 class Ps384(RsaSsaPss):
-    _name = "PS384"
+    _name = KeyVaultSignatureAlgorithm.ps384
     _default_hash_algorithm = hashes.SHA384()
 
 
 class Ps512(RsaSsaPss):
-    _name = "PS512"
+    _name = KeyVaultSignatureAlgorithm.ps512
     _default_hash_algorithm = hashes.SHA512()
 
 
 class Rs256(RsaSsaPkcs1v15):
-    _name = "RS256"
+    _name = KeyVaultSignatureAlgorithm.rs256
     _default_hash_algorithm = hashes.SHA256()
 
 
 class Rs384(RsaSsaPkcs1v15):
-    _name = "RS384"
+    _name = KeyVaultSignatureAlgorithm.rs384
     _default_hash_algorithm = hashes.SHA384()
 
 
 class Rs512(RsaSsaPkcs1v15):
-    _name = "RS512"
+    _name = KeyVaultSignatureAlgorithm.rs512
     _default_hash_algorithm = hashes.SHA512()
 
 
