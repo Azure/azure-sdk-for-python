@@ -256,7 +256,7 @@ stages:
 
       - ${{ each artifact in parameters.Artifacts }}:
         - ${{if ne(artifact.skipPublishDevFeed, 'true')}}:
-            - pwsh: |
+          - pwsh: |
               Get-ChildItem $(Pipeline.Workspace)/${{parameters.ArtifactName}}
               New-Item -Type Directory -Name ${{artifact.safeName}} -Path $(Pipeline.Workspace)
               $underscorePrefix = "${{artifact.name}}"
