@@ -255,23 +255,24 @@ stages:
           artifactFeeds: $(DevFeedName)
 
       - ${{ each artifact in parameters.Artifacts }}:
-        - pwsh: |
-            Get-ChildItem $(Pipeline.Workspace)/${{parameters.ArtifactName}}
-            New-Item -Type Directory -Name ${{artifact.safeName}} -Path $(Pipeline.Workspace)
-            $underscorePrefix = "${{artifact.name}}"
-            $dashPrefix = "${{artifact.name}}".Replace("_", "-")
-            Copy-Item $(Pipeline.Workspace)/${{parameters.ArtifactName}}/$dashPrefix-[0-9]*.[0-9]*.[0-9]*a[0-9]* $(Pipeline.Workspace)/${{artifact.safeName}}
-            Copy-Item $(Pipeline.Workspace)/${{parameters.ArtifactName}}/$underscorePrefix-[0-9]*.[0-9]*.[0-9]*a[0-9]* $(Pipeline.Workspace)/${{artifact.safeName}}
-            Get-ChildItem $(Pipeline.Workspace)/${{artifact.safeName}}
+        - ${{if ne(artifact.skipPublishDevFeed, 'true')}}:
+            - pwsh: |
+              Get-ChildItem $(Pipeline.Workspace)/${{parameters.ArtifactName}}
+              New-Item -Type Directory -Name ${{artifact.safeName}} -Path $(Pipeline.Workspace)
+              $underscorePrefix = "${{artifact.name}}"
+              $dashPrefix = "${{artifact.name}}".Replace("_", "-")
+              Copy-Item $(Pipeline.Workspace)/${{parameters.ArtifactName}}/$dashPrefix-[0-9]*.[0-9]*.[0-9]*a[0-9]* $(Pipeline.Workspace)/${{artifact.safeName}}
+              Copy-Item $(Pipeline.Workspace)/${{parameters.ArtifactName}}/$underscorePrefix-[0-9]*.[0-9]*.[0-9]*a[0-9]* $(Pipeline.Workspace)/${{artifact.safeName}}
+              Get-ChildItem $(Pipeline.Workspace)/${{artifact.safeName}}
 
-            $fileCount = (Get-ChildItem $(Pipeline.Workspace)/${{artifact.safeName}} | Measure-Object).Count
-            if ($fileCount -eq 0) { 
-              Write-Host "No alpha packages for ${{artifact.safeName}} to publish."
-              exit 0
-            }
+              $fileCount = (Get-ChildItem $(Pipeline.Workspace)/${{artifact.safeName}} | Measure-Object).Count
+              if ($fileCount -eq 0) { 
+                Write-Host "No alpha packages for ${{artifact.safeName}} to publish."
+                exit 0
+              }
 
-            twine upload --repository $(DevFeedName) --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/${{artifact.safeName}}/*a*.whl
-            echo "Uploaded whl to devops feed $(DevFeedName)"
-            twine upload --repository $(DevFeedName) --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/${{artifact.safeName}}/*a*.zip
-            echo "Uploaded sdist to devops feed $(DevFeedName)"
-          displayName: 'Publish ${{artifact.name}} alpha package'
+              twine upload --repository $(DevFeedName) --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/${{artifact.safeName}}/*a*.whl
+              echo "Uploaded whl to devops feed $(DevFeedName)"
+              twine upload --repository $(DevFeedName) --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/${{artifact.safeName}}/*a*.zip
+              echo "Uploaded sdist to devops feed $(DevFeedName)"
+            displayName: 'Publish ${{artifact.name}} alpha package'       
