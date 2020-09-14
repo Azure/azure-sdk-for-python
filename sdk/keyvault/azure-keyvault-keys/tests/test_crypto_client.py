@@ -254,38 +254,20 @@ class CryptoClientTests(KeyVaultTestCase):
         the_year_3000 = datetime(3000, 1, 1, tzinfo=_UTC)
 
         rsa_wrap_algorithms = [algo for algo in KeyWrapAlgorithm if algo.startswith("RSA")]
-        rsa_not_yet_valid = key_client.create_rsa_key("rsa-not-yet-valid", not_before=the_year_3000)
-        test_operations(rsa_not_yet_valid, [str(the_year_3000)], EncryptionAlgorithm, rsa_wrap_algorithms)
-
-        ec_not_yet_valid = key_client.create_ec_key("ec-not-yet-valid", not_before=the_year_3000)
-        test_operations(
-            ec_not_yet_valid, [str(the_year_3000)], encrypt_algorithms=[], wrap_algorithms=[KeyWrapAlgorithm.aes_256]
-        )
+        not_yet_valid_key = key_client.create_rsa_key("rsa-not-yet-valid", not_before=the_year_3000)
+        test_operations(not_yet_valid_key, [str(the_year_3000)], EncryptionAlgorithm, rsa_wrap_algorithms)
 
         # nor should they succeed with a key whose exp has passed
         the_year_2000 = datetime(2000, 1, 1, tzinfo=_UTC)
 
-        rsa_expired = key_client.create_rsa_key("rsa-expired", expires_on=the_year_2000)
-        test_operations(rsa_expired, [str(the_year_2000)], EncryptionAlgorithm, rsa_wrap_algorithms)
-
-        ec_expired = key_client.create_ec_key("ec-expired", expires_on=the_year_2000)
-        test_operations(
-            ec_expired, [str(the_year_2000)], encrypt_algorithms=[], wrap_algorithms=[KeyWrapAlgorithm.aes_256]
-        )
+        expired_key = key_client.create_rsa_key("rsa-expired", expires_on=the_year_2000)
+        test_operations(expired_key, [str(the_year_2000)], EncryptionAlgorithm, rsa_wrap_algorithms)
 
         # when exp and nbf are set, error messages should contain both
         the_year_3001 = datetime(3001, 1, 1, tzinfo=_UTC)
 
-        rsa_valid = key_client.create_rsa_key("rsa-valid", not_before=the_year_3000, expires_on=the_year_3001)
-        test_operations(rsa_valid, (str(the_year_3000), str(the_year_3001)), EncryptionAlgorithm, rsa_wrap_algorithms)
-
-        ec_valid = key_client.create_ec_key("ec-valid", not_before=the_year_3000, expires_on=the_year_3001)
-        test_operations(
-            ec_valid,
-            (str(the_year_3000), str(the_year_3001)),
-            encrypt_algorithms=[],
-            wrap_algorithms=[KeyWrapAlgorithm.aes_256],
-        )
+        valid_key = key_client.create_rsa_key("rsa-valid", not_before=the_year_3000, expires_on=the_year_3001)
+        test_operations(valid_key, (str(the_year_3000), str(the_year_3001)), EncryptionAlgorithm, rsa_wrap_algorithms)
 
     class _CustomHookPolicy(object):
         pass
