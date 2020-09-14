@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .billing_management_client import BillingManagementClient
-from .version import VERSION
+from ._configuration import BillingManagementClientConfiguration
+from ._billing_management_client import BillingManagementClient
+__all__ = ['BillingManagementClient', 'BillingManagementClientConfiguration']
 
-__all__ = ['BillingManagementClient']
+from .version import VERSION
 
 __version__ = VERSION
 
