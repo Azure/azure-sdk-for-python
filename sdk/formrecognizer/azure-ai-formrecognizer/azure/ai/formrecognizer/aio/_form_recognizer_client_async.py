@@ -77,11 +77,12 @@ class FormRecognizerClient(object):
 
         authentication_policy = get_authentication_policy(credential)
         polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
-        api_version = kwargs.pop('api_version', None)
+        api_version = kwargs.pop('api_version', FormRecognizerApiVersion.V3_1_PREVIEW_1)
         validate_api_version(api_version)
         self._client = FormRecognizer(
             endpoint=endpoint,
             credential=credential,  # type: ignore
+            api_version=api_version,
             sdk_moniker=USER_AGENT,
             authentication_policy=authentication_policy,
             polling_interval=polling_interval,

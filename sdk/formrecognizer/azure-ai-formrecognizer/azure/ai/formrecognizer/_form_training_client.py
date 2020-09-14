@@ -30,12 +30,12 @@ from ._helpers import error_map, get_authentication_policy, POLLING_INTERVAL, Tr
 from ._models import (
     CustomFormModelInfo,
     AccountProperties,
-    CustomFormModel
+    CustomFormModel,
 )
 from ._polling import TrainingPolling, CopyPolling
 from ._user_agent import USER_AGENT
 from ._form_recognizer_client import FormRecognizerClient
-from ._api_versions import validate_api_version
+from ._api_versions import FormRecognizerApiVersion, validate_api_version
 if TYPE_CHECKING:
     from azure.core.credentials import AzureKeyCredential, TokenCredential
     from azure.core.pipeline import PipelineResponse
@@ -85,11 +85,12 @@ class FormTrainingClient(object):
         self._credential = credential
         authentication_policy = get_authentication_policy(credential)
         polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
-        api_version = kwargs.pop('api_version', None)
+        api_version = kwargs.pop('api_version', FormRecognizerApiVersion.V3_1_PREVIEW_1)
         validate_api_version(api_version)
         self._client = FormRecognizer(
             endpoint=self._endpoint,
             credential=self._credential,  # type: ignore
+            api_version=api_version,
             sdk_moniker=USER_AGENT,
             authentication_policy=authentication_policy,
             polling_interval=polling_interval,
