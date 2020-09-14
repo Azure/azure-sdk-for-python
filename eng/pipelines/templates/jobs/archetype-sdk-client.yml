@@ -40,6 +40,7 @@ parameters:
       CoverageArg: '--disablecov'
       RunForPR: false
   AdditionalTestMatrix: []
+  DevFeedName: 'public/azure-sdk-for-python'
 
 jobs:
   - job: 'Build'
