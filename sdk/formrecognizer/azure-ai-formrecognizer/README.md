@@ -402,8 +402,6 @@ The following section provides several code snippets illustrating common pattern
 ### More sample code
 
 These code samples show common scenario operations with the Azure Form Recognizer client library.
-The async versions of the samples (the python sample files appended with `_async`) show asynchronous operations
-with Form Recognizer and require Python 3.5 or later.
 
 * Client authentication: [sample_authentication.py][sample_authentication]
 * Recognize receipts: [sample_recognize_receipts.py][sample_recognize_receipts]

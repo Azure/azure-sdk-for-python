@@ -1,7 +1,7 @@
 interactions:
 - request:
     body: '{"name": "sample-datasource", "type": "azureblob", "credentials": {"connectionString":
-      "DefaultEndpointsProtocol=https;AccountName=storagename;AccountKey=NzhL3hKZbJBuJ2484dPTR+xF30kYaWSSCbs2BzLgVVI1woqeST/1IgqaLm6QAOTxtGvxctSNbIR/1hW8yH+bJg==;EndpointSuffix=core.windows.net"},
+      "connection_string"},
       "container": {"name": "searchcontainer"}}'
     headers:
       Accept:
@@ -12,8 +12,6 @@ interactions:
       - application/json
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-      api-key:
-      - 906C2AB6265E1FF77E55BB5F3363D162
     method: POST
     uri: https://search72cd1e61.search.windows.net/datasources?api-version=2020-06-30
   response:
@@ -44,8 +42,6 @@ interactions:
       - application/json;odata.metadata=minimal
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-      api-key:
-      - 906C2AB6265E1FF77E55BB5F3363D162
     method: GET
     uri: https://search72cd1e61.search.windows.net/datasources?api-version=2020-06-30
   response:
@@ -71,7 +67,7 @@ interactions:
     url: https://search72cd1e61.search.windows.net/datasources?api-version=2020-06-30
 - request:
     body: '{"name": "sample-datasource", "description": "updated", "type": "azureblob",
-      "credentials": {"connectionString": "DefaultEndpointsProtocol=https;AccountName=storagename;AccountKey=NzhL3hKZbJBuJ2484dPTR+xF30kYaWSSCbs2BzLgVVI1woqeST/1IgqaLm6QAOTxtGvxctSNbIR/1hW8yH+bJg==;EndpointSuffix=core.windows.net"},
+      "credentials": {"connectionString": "connection_string"},
       "container": {"name": "searchcontainer"}}'
     headers:
       Accept:
@@ -84,8 +80,6 @@ interactions:
       - return=representation
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-      api-key:
-      - 906C2AB6265E1FF77E55BB5F3363D162
     method: PUT
     uri: https://search72cd1e61.search.windows.net/datasources('sample-datasource')?api-version=2020-06-30
   response:
@@ -117,8 +111,6 @@ interactions:
       - application/json;odata.metadata=minimal
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-      api-key:
-      - 906C2AB6265E1FF77E55BB5F3363D162
     method: GET
     uri: https://search72cd1e61.search.windows.net/datasources?api-version=2020-06-30
   response:
@@ -149,8 +141,6 @@ interactions:
       - application/json;odata.metadata=minimal
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-      api-key:
-      - 906C2AB6265E1FF77E55BB5F3363D162
     method: GET
     uri: https://search72cd1e61.search.windows.net/datasources('sample-datasource')?api-version=2020-06-30
   response:

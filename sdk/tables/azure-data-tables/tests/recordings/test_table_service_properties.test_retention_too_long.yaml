@@ -5,7 +5,7 @@ interactions:
       <StorageServiceProperties><MinuteMetrics><Version>1.0</Version><Enabled>true</Enabled><IncludeAPIs>true</IncludeAPIs><RetentionPolicy><Enabled>true</Enabled><Days>366</Days></RetentionPolicy></MinuteMetrics></StorageServiceProperties>'
     headers:
       Accept:
-      - '*/*'
+      - application/xml
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -15,13 +15,13 @@ interactions:
       Content-Type:
       - application/xml
       Date:
-      - Mon, 27 Jul 2020 14:13:17 GMT
+      - Fri, 04 Sep 2020 23:54:21 GMT
       User-Agent:
-      - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Mon, 27 Jul 2020 14:13:17 GMT
+      - Fri, 04 Sep 2020 23:54:21 GMT
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     method: PUT
     uri: https://storagename.table.core.windows.net/?restype=service&comp=properties
   response:
@@ -29,22 +29,22 @@ interactions:
       string: '<?xml version="1.0" encoding="utf-8"?><m:error xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"><m:code>InvalidXmlDocument</m:code><m:message
         xml:lang="en-US">XML specified is not syntactically valid.
 
-        RequestId:64885058-b002-006e-2a20-647748000000
+        RequestId:387e7202-3002-0071-5816-835152000000
 
-        Time:2020-07-27T14:13:17.6459931Z</m:message></m:error>'
+        Time:2020-09-04T23:54:21.8864855Z</m:message></m:error>'
     headers:
       content-length:
       - '327'
       content-type:
       - application/xml
       date:
-      - Mon, 27 Jul 2020 14:13:17 GMT
+      - Fri, 04 Sep 2020 23:54:21 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
       - InvalidXmlDocument
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     status:
       code: 400
       message: XML specified is not syntactically valid.

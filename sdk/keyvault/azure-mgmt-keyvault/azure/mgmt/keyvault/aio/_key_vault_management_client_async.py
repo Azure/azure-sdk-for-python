@@ -86,6 +86,7 @@ class KeyVaultManagementClient(MultiApiClientMixin, _SDKClient):
            * 2016-10-01: :mod:`v2016_10_01.models<azure.mgmt.keyvault.v2016_10_01.models>`
            * 2018-02-14: :mod:`v2018_02_14.models<azure.mgmt.keyvault.v2018_02_14.models>`
            * 2019-09-01: :mod:`v2019_09_01.models<azure.mgmt.keyvault.v2019_09_01.models>`
+           * 2020-04-01-preview: :mod:`v2020_04_01_preview.models<azure.mgmt.keyvault.v2020_04_01_preview.models>`
         """
         if api_version == '2016-10-01':
             from ..v2016_10_01 import models
@@ -96,7 +97,23 @@ class KeyVaultManagementClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2019-09-01':
             from ..v2019_09_01 import models
             return models
+        elif api_version == '2020-04-01-preview':
+            from ..v2020_04_01_preview import models
+            return models
         raise NotImplementedError("APIVersion {} is not available".format(api_version))
+
+    @property
+    def managed_hsms(self):
+        """Instance depends on the API version:
+
+           * 2020-04-01-preview: :class:`ManagedHsmsOperations<azure.mgmt.keyvault.v2020_04_01_preview.aio.operations_async.ManagedHsmsOperations>`
+        """
+        api_version = self._get_api_version('managed_hsms')
+        if api_version == '2020-04-01-preview':
+            from ..v2020_04_01_preview.aio.operations_async import ManagedHsmsOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def operations(self):
@@ -105,6 +122,7 @@ class KeyVaultManagementClient(MultiApiClientMixin, _SDKClient):
            * 2016-10-01: :class:`Operations<azure.mgmt.keyvault.v2016_10_01.aio.operations_async.Operations>`
            * 2018-02-14: :class:`Operations<azure.mgmt.keyvault.v2018_02_14.aio.operations_async.Operations>`
            * 2019-09-01: :class:`Operations<azure.mgmt.keyvault.v2019_09_01.aio.operations_async.Operations>`
+           * 2020-04-01-preview: :class:`Operations<azure.mgmt.keyvault.v2020_04_01_preview.aio.operations_async.Operations>`
         """
         api_version = self._get_api_version('operations')
         if api_version == '2016-10-01':
@@ -113,6 +131,8 @@ class KeyVaultManagementClient(MultiApiClientMixin, _SDKClient):
             from ..v2018_02_14.aio.operations_async import Operations as OperationClass
         elif api_version == '2019-09-01':
             from ..v2019_09_01.aio.operations_async import Operations as OperationClass
+        elif api_version == '2020-04-01-preview':
+            from ..v2020_04_01_preview.aio.operations_async import Operations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -123,12 +143,15 @@ class KeyVaultManagementClient(MultiApiClientMixin, _SDKClient):
 
            * 2018-02-14: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.keyvault.v2018_02_14.aio.operations_async.PrivateEndpointConnectionsOperations>`
            * 2019-09-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.keyvault.v2019_09_01.aio.operations_async.PrivateEndpointConnectionsOperations>`
+           * 2020-04-01-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.keyvault.v2020_04_01_preview.aio.operations_async.PrivateEndpointConnectionsOperations>`
         """
         api_version = self._get_api_version('private_endpoint_connections')
         if api_version == '2018-02-14':
             from ..v2018_02_14.aio.operations_async import PrivateEndpointConnectionsOperations as OperationClass
         elif api_version == '2019-09-01':
             from ..v2019_09_01.aio.operations_async import PrivateEndpointConnectionsOperations as OperationClass
+        elif api_version == '2020-04-01-preview':
+            from ..v2020_04_01_preview.aio.operations_async import PrivateEndpointConnectionsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -139,12 +162,15 @@ class KeyVaultManagementClient(MultiApiClientMixin, _SDKClient):
 
            * 2018-02-14: :class:`PrivateLinkResourcesOperations<azure.mgmt.keyvault.v2018_02_14.aio.operations_async.PrivateLinkResourcesOperations>`
            * 2019-09-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.keyvault.v2019_09_01.aio.operations_async.PrivateLinkResourcesOperations>`
+           * 2020-04-01-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.keyvault.v2020_04_01_preview.aio.operations_async.PrivateLinkResourcesOperations>`
         """
         api_version = self._get_api_version('private_link_resources')
         if api_version == '2018-02-14':
             from ..v2018_02_14.aio.operations_async import PrivateLinkResourcesOperations as OperationClass
         elif api_version == '2019-09-01':
             from ..v2019_09_01.aio.operations_async import PrivateLinkResourcesOperations as OperationClass
+        elif api_version == '2020-04-01-preview':
+            from ..v2020_04_01_preview.aio.operations_async import PrivateLinkResourcesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -156,6 +182,7 @@ class KeyVaultManagementClient(MultiApiClientMixin, _SDKClient):
            * 2016-10-01: :class:`VaultsOperations<azure.mgmt.keyvault.v2016_10_01.aio.operations_async.VaultsOperations>`
            * 2018-02-14: :class:`VaultsOperations<azure.mgmt.keyvault.v2018_02_14.aio.operations_async.VaultsOperations>`
            * 2019-09-01: :class:`VaultsOperations<azure.mgmt.keyvault.v2019_09_01.aio.operations_async.VaultsOperations>`
+           * 2020-04-01-preview: :class:`VaultsOperations<azure.mgmt.keyvault.v2020_04_01_preview.aio.operations_async.VaultsOperations>`
         """
         api_version = self._get_api_version('vaults')
         if api_version == '2016-10-01':
@@ -164,6 +191,8 @@ class KeyVaultManagementClient(MultiApiClientMixin, _SDKClient):
             from ..v2018_02_14.aio.operations_async import VaultsOperations as OperationClass
         elif api_version == '2019-09-01':
             from ..v2019_09_01.aio.operations_async import VaultsOperations as OperationClass
+        elif api_version == '2020-04-01-preview':
+            from ..v2020_04_01_preview.aio.operations_async import VaultsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))

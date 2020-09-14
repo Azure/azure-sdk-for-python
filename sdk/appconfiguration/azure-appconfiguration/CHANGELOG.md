@@ -3,8 +3,14 @@
 
 -------------------
 
-## 1.0.2 (Unreleased)
+## 1.1.1 (Unreleased)
 
+
+## 1.1.0 (2020-09-08)
+
+### Features
+
+- Added match condition support for `set_read_only` method    #13276
 
 ## 1.0.1 (2020-08-10)
 

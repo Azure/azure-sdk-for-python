@@ -41,11 +41,16 @@ Both [sync version](./sync_samples) and [async version](./async_samples) of samp
 - [session_send_receive.py](./sync_samples/session_send_receive.py) ([async_version](./async_samples/session_send_receive_async.py)) - Examples to send messages to and receive messages from a session-enabled service bus queue:
     - Send messages to a session-enabled queue
     - Receive messages from session-enabled queue
-- [schedule_messages_and_cancellation](./sync_samples/schedule_messages_and_cancellation.py) ([async_version](./async_samples/schedule_messages_and_cancellation_async.py)) - Examples to schedule messages and cancel scheduled message:
-    - Schedule a single message or multiples messages to a queue
+- [schedule_messages_and_cancellation](./sync_samples/schedule_messages_and_cancellation.py) ([async_version](./async_samples/schedule_messages_and_cancellation_async.py)) - Examples to schedule messages and cancel scheduled messages on a service bus queue:
+    - Schedule a single message or multiple messages to a queue
     - Cancel scheduled messages from a queue
+- [schedule_topic_messages_and_cancellation](./sync_samples/schedule_topic_messages_and_cancellation.py) ([async_version](./async_samples/schedule_topic_messages_and_cancellation_async.py)) - Examples to schedule messages and cancel scheduled messages on a service bus topic:
+    - Schedule a single message or multiple messages to a topic
+    - Cancel scheduled messages from a topic
 - [client_identity_authentication.py](./sync_samples/client_identity_authentication.py) ([async_version](./async_samples/client_identity_authentication_async.py)) - Examples to authenticate the client by Azure Activate Directory
     - Authenticate and create the client utilizing the `azure.identity` library
+- [authenticate_client_connstr.py](./sync_samples/authenticate_client_connstr.py) ([async_version](./async_samples/authenticate_client_connstr_async.py)) - Examples to authenticate the client by Connection String
+    - Authenticate and create the client utilizing the connection string available in the Azure portal or via Azure CLI.
 - [proxy.py](./sync_samples/proxy.py) ([async_version](./async_samples/proxy_async.py)) - Examples to send message behind a proxy:
     - Send message behind a proxy
 - [auto_lock_renew.py](./sync_samples/auto_lock_renew.py) ([async_version](./async_samples/auto_lock_renew_async.py)) - Examples to show usage of AutoLockRenew:

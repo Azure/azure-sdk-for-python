@@ -5,7 +5,7 @@ interactions:
       <StorageServiceProperties><Logging><Version>1.0</Version><Delete>true</Delete><Read>true</Read><Write>true</Write><RetentionPolicy><Enabled>true</Enabled><Days>5</Days></RetentionPolicy></Logging></StorageServiceProperties>'
     headers:
       Accept:
-      - '*/*'
+      - application/xml
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -15,13 +15,13 @@ interactions:
       Content-Type:
       - application/xml
       Date:
-      - Mon, 27 Jul 2020 14:14:18 GMT
+      - Fri, 04 Sep 2020 23:55:22 GMT
       User-Agent:
-      - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Mon, 27 Jul 2020 14:14:18 GMT
+      - Fri, 04 Sep 2020 23:55:22 GMT
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     method: PUT
     uri: https://storagename.table.core.windows.net/?restype=service&comp=properties
   response:
@@ -29,13 +29,13 @@ interactions:
       string: ''
     headers:
       date:
-      - Mon, 27 Jul 2020 14:14:18 GMT
+      - Fri, 04 Sep 2020 23:55:22 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
       - chunked
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     status:
       code: 202
       message: Accepted
@@ -49,13 +49,13 @@ interactions:
       Connection:
       - keep-alive
       Date:
-      - Mon, 27 Jul 2020 14:14:49 GMT
+      - Fri, 04 Sep 2020 23:55:53 GMT
       User-Agent:
-      - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Mon, 27 Jul 2020 14:14:49 GMT
+      - Fri, 04 Sep 2020 23:55:53 GMT
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     method: GET
     uri: https://storagename.table.core.windows.net/?restype=service&comp=properties
   response:
@@ -66,7 +66,7 @@ interactions:
       content-type:
       - application/xml
       date:
-      - Mon, 27 Jul 2020 14:14:48 GMT
+      - Fri, 04 Sep 2020 23:55:52 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -74,7 +74,7 @@ interactions:
       vary:
       - Origin
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     status:
       code: 200
       message: OK

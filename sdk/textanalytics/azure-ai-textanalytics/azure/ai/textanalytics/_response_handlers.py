@@ -134,6 +134,7 @@ def pii_entities_result(entity, results):  # pylint: disable=unused-argument
     return RecognizePiiEntitiesResult(
         id=entity.id,
         entities=[PiiEntity._from_generated(e) for e in entity.entities],  # pylint: disable=protected-access
+        redacted_text=entity.redacted_text if hasattr(entity, "redacted_text") else None,
         warnings=[TextAnalyticsWarning._from_generated(w) for w in entity.warnings],  # pylint: disable=protected-access
         statistics=TextDocumentStatistics._from_generated(entity.statistics),  # pylint: disable=protected-access
     )

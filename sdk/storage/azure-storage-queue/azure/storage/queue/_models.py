@@ -409,7 +409,7 @@ class QueueSasPermissions(object):
         p_process = 'p' in permission
 
         parsed = cls(p_read, p_add, p_update, p_process)
-        parsed._str = permission # pylint: disable = protected-access
+
         return parsed
 
 

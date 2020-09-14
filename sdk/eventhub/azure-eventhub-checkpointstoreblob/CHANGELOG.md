@@ -1,7 +1,11 @@
 # Release History
 
-## 1.1.1 (Unreleased)
+## 1.1.2 (Unreleased)
 
+
+## 1.1.1 (2020-09-08)
+**Bug fixes**
+- Fixed a bug that may gradually slow down retrieving checkpoint data from the storage blob if the storage account "File share soft delete" is enabled. #12836
 
 ## 1.1.0 (2020-03-09)
 

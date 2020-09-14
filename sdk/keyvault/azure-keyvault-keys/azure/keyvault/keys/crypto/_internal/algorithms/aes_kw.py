@@ -7,6 +7,7 @@ from cryptography.hazmat.backends import default_backend
 
 from ..algorithm import AsymmetricEncryptionAlgorithm
 from ..transform import CryptoTransform
+from ..._enums import KeyWrapAlgorithm
 
 
 class _AesKeyWrapTransform(CryptoTransform):
@@ -59,7 +60,7 @@ class AesKw192(_AesKeyWrap):
 
 class AesKw256(_AesKeyWrap):
     _key_size = 256
-    _name = "A256KW"
+    _name = KeyWrapAlgorithm.aes_256
 
 
 AesKw128.register()
