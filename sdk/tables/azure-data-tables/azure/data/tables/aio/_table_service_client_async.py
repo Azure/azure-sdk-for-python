@@ -101,12 +101,12 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
 
         .. admonition:: Example:
 
-        .. literalinclude:: ../samples/async_samples/sample_authentication_async.py
-            :start-after: [START auth_from_connection_string]
-            :end-before: [END auth_from_connection_string]
-            :language: python
-            :dedent: 8
-            :caption: Creating the tableServiceClient from a connection string.
+            .. literalinclude:: ../samples/async_samples/sample_authentication_async.py
+                :start-after: [START auth_from_connection_string]
+                :end-before: [END auth_from_connection_string]
+                :language: python
+                :dedent: 8
+                :caption: Creating the tableServiceClient from a connection string
 
         """
         account_url, credential = parse_connection_str(
