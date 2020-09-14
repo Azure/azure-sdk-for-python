@@ -74,7 +74,7 @@ setup(
         "azure-core<2.0.0,>=1.0.0",
         "cryptography>=2.1.4",
         "msal<1.6.0,>=1.3.0",
-        "msal-extensions~=0.2.2",
+        "msal-extensions~=0.3.0",
         "six>=1.6",
     ],
     extras_require={
