@@ -83,9 +83,11 @@ class FormRecognizerClient(object):
             polling_interval=polling_interval,
             **kwargs
         )
+        self._deserialize = _get_deserialize()
+        self._generated_models = self._client.models(self.api_version)
 
     def _receipt_callback(self, raw_response, _, headers):  # pylint: disable=unused-argument
-        analyze_result = self._client._deserialize(AnalyzeOperationResult, raw_response)
+        analyze_result = self._deserialize(self._generated_models.AnalyzeOperationResult, raw_response)
         return prepare_receipt(analyze_result)
 
     @distributed_trace
@@ -194,7 +196,7 @@ class FormRecognizerClient(object):
         )
 
     def _content_callback(self, raw_response, _, headers):  # pylint: disable=unused-argument
-        analyze_result = self._client._deserialize(AnalyzeOperationResult, raw_response)
+        analyze_result = self._deserialize(self._generated_models.AnalyzeOperationResult, raw_response)
         return prepare_content_result(analyze_result)
 
     @distributed_trace
@@ -326,7 +328,7 @@ class FormRecognizerClient(object):
             content_type = get_content_type(form)
 
         def analyze_callback(raw_response, _, headers):  # pylint: disable=unused-argument
-            analyze_result = self._client._deserialize(AnalyzeOperationResult, raw_response)
+            analyze_result = self._deserialize(self._generated_models.AnalyzeOperationResult, raw_response)
             return prepare_form_result(analyze_result, model_id)
 
         deserialization_callback = cls if cls else analyze_callback
@@ -372,7 +374,7 @@ class FormRecognizerClient(object):
         include_field_elements = kwargs.pop("include_field_elements", False)
 
         def analyze_callback(raw_response, _, headers):  # pylint: disable=unused-argument
-            analyze_result = self._client._deserialize(AnalyzeOperationResult, raw_response)
+            analyze_result = self._deserialize(self._generated_models.AnalyzeOperationResult, raw_response)
             return prepare_form_result(analyze_result, model_id)
 
         deserialization_callback = cls if cls else analyze_callback

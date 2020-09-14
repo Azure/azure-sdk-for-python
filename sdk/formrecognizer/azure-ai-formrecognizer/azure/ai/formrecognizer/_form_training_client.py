@@ -22,11 +22,12 @@ from ._generated.models import (
     TrainRequest,
     TrainSourceFilter,
     CopyRequest,
-    Model,
     CopyOperationResult,
     CopyAuthorizationResult
 )
-from ._helpers import error_map, get_authentication_policy, POLLING_INTERVAL, TransportWrapper
+from ._helpers import (
+    error_map, get_authentication_policy, POLLING_INTERVAL, TransportWrapper, _get_deserialize
+)
 from ._models import (
     CustomFormModelInfo,
     AccountProperties,
@@ -96,6 +97,8 @@ class FormTrainingClient(object):
             polling_interval=polling_interval,
             **kwargs
         )
+        self._deserialize = _get_deserialize()
+        self._generated_models = self._client.models(self.api_version)
 
     @distributed_trace
     def begin_training(self, training_files_url, use_training_labels, **kwargs):
@@ -138,11 +141,11 @@ class FormTrainingClient(object):
         """
 
         def callback_v2_0(raw_response):
-            model = self._client._deserialize(Model, raw_response)
+            model = self._deserialize(self._generated_models.Model, raw_response)
             return CustomFormModel._from_generated(model)
 
         def callback_v2_1(raw_response, _, headers):  # pylint: disable=unused-argument
-            model = self._client._deserialize(Model, raw_response)
+            model = self._deserialize(self._generated_models.Model, raw_response)
             return CustomFormModel._from_generated(model)
 
         cls = kwargs.pop("cls", None)
@@ -381,7 +384,7 @@ class FormTrainingClient(object):
         continuation_token = kwargs.pop("continuation_token", None)
 
         def _copy_callback(raw_response, _, headers):  # pylint: disable=unused-argument
-            copy_result = self._client._deserialize(CopyOperationResult, raw_response)
+            copy_result = self._deserialize(self._generated_models.CopyOperationResult, raw_response)
             return CustomFormModelInfo._from_generated(copy_result, target["modelId"])
 
         return self._client.begin_copy_custom_model(  # type: ignore
