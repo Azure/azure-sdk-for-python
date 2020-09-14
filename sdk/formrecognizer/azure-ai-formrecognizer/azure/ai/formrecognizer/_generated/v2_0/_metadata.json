@@ -8,7 +8,8 @@
         "base_url": null,
         "custom_base_url": "\u0027{endpoint}/formrecognizer/v2.0\u0027",
         "azure_arm": false,
-        "has_lro_operations": true
+        "has_lro_operations": true,
+        "client_side_validation": false
     },
     "global_parameters": {
         "sync_method": {
