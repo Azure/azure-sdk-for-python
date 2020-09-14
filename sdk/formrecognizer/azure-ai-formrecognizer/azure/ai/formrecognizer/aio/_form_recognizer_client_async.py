@@ -16,7 +16,7 @@ from typing import (
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.polling import AsyncLROPoller
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
-from .._generated.aio._form_recognizer_client_async import FormRecognizerClient as FormRecognizer
+from .._generated.aio._form_recognizer_client import FormRecognizerClient as FormRecognizer
 from .._response_handlers import (
     prepare_receipt,
     prepare_content_result,
@@ -26,7 +26,7 @@ from .._generated.models import AnalyzeOperationResult
 from .._helpers import get_content_type, get_authentication_policy, error_map, POLLING_INTERVAL
 from .._user_agent import USER_AGENT
 from .._polling import AnalyzePolling
-from .._api_versions import validate_api_version
+from .._api_versions import validate_api_version, FormRecognizerApiVersion
 from .._models import FormPage, RecognizedForm
 if TYPE_CHECKING:
     from azure.core.credentials import AzureKeyCredential
@@ -77,12 +77,12 @@ class FormRecognizerClient(object):
 
         authentication_policy = get_authentication_policy(credential)
         polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
-        api_version = kwargs.pop('api_version', FormRecognizerApiVersion.V3_1_PREVIEW_1)
-        validate_api_version(api_version)
+        self.api_version = kwargs.pop('api_version', FormRecognizerApiVersion.V2_1_PREVIEW_1)
+        validate_api_version(self.api_version)
         self._client = FormRecognizer(
             endpoint=endpoint,
             credential=credential,  # type: ignore
-            api_version=api_version,
+            api_version=self.api_version,
             sdk_moniker=USER_AGENT,
             authentication_policy=authentication_policy,
             polling_interval=polling_interval,

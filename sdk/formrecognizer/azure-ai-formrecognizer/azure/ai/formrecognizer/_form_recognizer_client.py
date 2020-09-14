@@ -23,7 +23,7 @@ from ._response_handlers import (
     prepare_form_result
 )
 from ._generated.models import AnalyzeOperationResult
-from ._api_versions import validate_api_version
+from ._api_versions import FormRecognizerApiVersion, validate_api_version
 from ._helpers import get_content_type, get_authentication_policy, error_map, POLLING_INTERVAL
 from ._user_agent import USER_AGENT
 from ._polling import AnalyzePolling
@@ -72,12 +72,12 @@ class FormRecognizerClient(object):
 
         authentication_policy = get_authentication_policy(credential)
         polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
-        api_version = kwargs.pop('api_version', FormRecognizerApiVersion.V3_1_PREVIEW_1)
-        validate_api_version(api_version)
+        self.api_version = kwargs.pop('api_version', FormRecognizerApiVersion.V2_1_PREVIEW_1)
+        validate_api_version(self.api_version)
         self._client = FormRecognizer(
             endpoint=endpoint,
             credential=credential,  # type: ignore
-            api_version=api_version,
+            api_version=self.api_version,
             sdk_moniker=USER_AGENT,
             authentication_policy=authentication_policy,
             polling_interval=polling_interval,

@@ -85,12 +85,12 @@ class FormTrainingClient(object):
         self._credential = credential
         authentication_policy = get_authentication_policy(credential)
         polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
-        api_version = kwargs.pop('api_version', FormRecognizerApiVersion.V3_1_PREVIEW_1)
-        validate_api_version(api_version)
+        self.api_version = kwargs.pop('api_version', FormRecognizerApiVersion.V2_1_PREVIEW_1)
+        validate_api_version(self.api_version)
         self._client = FormRecognizer(
             endpoint=self._endpoint,
             credential=self._credential,  # type: ignore
-            api_version=api_version,
+            api_version=self.api_version,
             sdk_moniker=USER_AGENT,
             authentication_policy=authentication_policy,
             polling_interval=polling_interval,
@@ -137,43 +137,65 @@ class FormTrainingClient(object):
                 :caption: Training a model (without labels) with your custom forms.
         """
 
-        def callback(raw_response):
+        def callback_v2_0(raw_response):
+            model = self._client._deserialize(Model, raw_response)
+            return CustomFormModel._from_generated(model)
+
+        def callback_v2_1(raw_response, _, headers):  # pylint: disable=unused-argument
             model = self._client._deserialize(Model, raw_response)
             return CustomFormModel._from_generated(model)
 
         cls = kwargs.pop("cls", None)
         continuation_token = kwargs.pop("continuation_token", None)
         polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
-        deserialization_callback = cls if cls else callback
 
-        if continuation_token:
-            return LROPoller.from_continuation_token(
-                polling_method=LROBasePolling(timeout=polling_interval, lro_algorithms=[TrainingPolling()], **kwargs),
-                continuation_token=continuation_token,
-                client=self._client._client,
-                deserialization_callback=deserialization_callback
-            )
-
-        response = self._client.train_custom_model_async(  # type: ignore
-            train_request=TrainRequest(
-                source=training_files_url,
-                use_label_file=use_training_labels,
-                source_filter=TrainSourceFilter(
-                    prefix=kwargs.pop("prefix", ""),
-                    include_sub_folders=kwargs.pop("include_subfolders", False),
+        if self.api_version == "v2.0":
+            deserialization_callback = cls if cls else callback_v2_0
+            if continuation_token:
+                return LROPoller.from_continuation_token(
+                    polling_method=LROBasePolling(timeout=polling_interval, lro_algorithms=[TrainingPolling()], **kwargs),
+                    continuation_token=continuation_token,
+                    client=self._client._client,
+                    deserialization_callback=deserialization_callback
                 )
-            ),
-            cls=lambda pipeline_response, _, response_headers: pipeline_response,
-            error_map=error_map,
-            **kwargs
-        )  # type: PipelineResponseType
 
-        return LROPoller(
-            self._client._client,
-            response,
-            deserialization_callback,
-            LROBasePolling(timeout=polling_interval, lro_algorithms=[TrainingPolling()], **kwargs)
-        )
+            response = self._client.train_custom_model_async(  # type: ignore
+                train_request=TrainRequest(
+                    source=training_files_url,
+                    use_label_file=use_training_labels,
+                    source_filter=TrainSourceFilter(
+                        prefix=kwargs.pop("prefix", ""),
+                        include_sub_folders=kwargs.pop("include_subfolders", False),
+                    )
+                ),
+                cls=lambda pipeline_response, _, response_headers: pipeline_response,
+                error_map=error_map,
+                **kwargs
+            )  # type: PipelineResponseType
+
+            return LROPoller(
+                self._client._client,
+                response,
+                deserialization_callback,
+                LROBasePolling(timeout=polling_interval, lro_algorithms=[TrainingPolling()], **kwargs)
+            )
+        else:
+            deserialization_callback = cls if cls else callback_v2_1
+            return self._client.begin_train_custom_model_async(  # type: ignore
+                train_request=TrainRequest(
+                    source=training_files_url,
+                    use_label_file=use_training_labels,
+                    source_filter=TrainSourceFilter(
+                        prefix=kwargs.pop("prefix", ""),
+                        include_sub_folders=kwargs.pop("include_subfolders", False),
+                    ),
+                ),
+                cls=deserialization_callback,
+                continuation_token=continuation_token,
+                polling=LROBasePolling(timeout=polling_interval, lro_algorithms=[TrainingPolling()], **kwargs),
+                error_map=error_map,
+                **kwargs
+            )
 
     @distributed_trace
     def delete_model(self, model_id, **kwargs):
