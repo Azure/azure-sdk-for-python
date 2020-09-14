@@ -2589,7 +2589,7 @@ interactions:
       DQoxNDcwNDgNCiUlRU9GDQo=
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -2599,27 +2599,27 @@ interactions:
       Content-Type:
       - application/pdf
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/layout/analyze
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/layout/analyze
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - 8deabd4a-f9eb-4490-8ec8-35b10aed48e2
+      - 490580f4-06b7-488d-95fc-b3fcb79acaeb
       content-length:
       - '0'
       date:
-      - Fri, 10 Jul 2020 18:40:18 GMT
+      - Mon, 14 Sep 2020 19:23:27 GMT
       operation-location:
-      - https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/layout/analyzeResults/8deabd4a-f9eb-4490-8ec8-35b10aed48e2
+      - https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/layout/analyzeResults/490580f4-06b7-488d-95fc-b3fcb79acaeb
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '75'
+      - '66'
     status:
       code: 202
       message: Accepted
@@ -2633,31 +2633,66 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/layout/analyzeResults/8deabd4a-f9eb-4490-8ec8-35b10aed48e2
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/layout/analyzeResults/490580f4-06b7-488d-95fc-b3fcb79acaeb
   response:
     body:
-      string: '{"status": "succeeded", "createdDateTime": "2020-07-10T18:40:18Z",
-        "lastUpdatedDateTime": "2020-07-10T18:40:21Z", "analyzeResult": {"version":
-        "2.0.0", "readResults": [{"page": 1, "language": "en", "angle": 0, "width":
-        8.5, "height": 11, "unit": "inch", "lines": [{"boundingBox": [0.5384, 1.1583,
-        1.4466, 1.1583, 1.4466, 1.3534, 0.5384, 1.3534], "text": "Contoso", "words":
-        [{"boundingBox": [0.5384, 1.1583, 1.4466, 1.1583, 1.4466, 1.3534, 0.5384,
-        1.3534], "text": "Contoso", "confidence": 1}]}, {"boundingBox": [0.7994, 1.5143,
-        1.3836, 1.5143, 1.3836, 1.6154, 0.7994, 1.6154], "text": "Address:", "words":
-        [{"boundingBox": [0.7994, 1.5143, 1.3836, 1.5143, 1.3836, 1.6154, 0.7994,
-        1.6154], "text": "Address:", "confidence": 1}]}, {"boundingBox": [4.4033,
-        1.5114, 5.8155, 1.5114, 5.8155, 1.6155, 4.4033, 1.6155], "text": "Invoice
-        For: Microsoft", "words": [{"boundingBox": [4.4033, 1.5143, 4.8234, 1.5143,
-        4.8234, 1.6155, 4.4033, 1.6155], "text": "Invoice", "confidence": 1}, {"boundingBox":
-        [4.8793, 1.5143, 5.1013, 1.5143, 5.1013, 1.6154, 4.8793, 1.6154], "text":
-        "For:", "confidence": 1}, {"boundingBox": [5.2045, 1.5114, 5.8155, 1.5114,
-        5.8155, 1.6151, 5.2045, 1.6151], "text": "Microsoft", "confidence": 1}]},
-        {"boundingBox": [0.8106, 1.7033, 2.1445, 1.7033, 2.1445, 1.8342, 0.8106, 1.8342],
-        "text": "1 Redmond way Suite", "words": [{"boundingBox": [0.8106, 1.708, 0.8463,
-        1.708, 0.8463, 1.8053, 0.8106, 1.8053], "text": "1", "confidence": 1}, {"boundingBox":
-        [0.923, 1.7047, 1.5018, 1.7047, 1.5018, 1.8068, 0.923, 1.8068], "text": "Redmond",
+      string: '{"status": "running", "createdDateTime": "2020-09-14T19:23:28Z", "lastUpdatedDateTime":
+        "2020-09-14T19:23:28Z"}'
+    headers:
+      apim-request-id:
+      - 5ee4e7d5-90a1-47d4-9bbd-9c39a84dc597
+      content-length:
+      - '106'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 14 Sep 2020 19:23:32 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '10'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/layout/analyzeResults/490580f4-06b7-488d-95fc-b3fcb79acaeb
+  response:
+    body:
+      string: '{"status": "succeeded", "createdDateTime": "2020-09-14T19:23:28Z",
+        "lastUpdatedDateTime": "2020-09-14T19:23:35Z", "analyzeResult": {"version":
+        "2.1.0", "readResults": [{"page": 1, "angle": 0, "width": 8.5, "height": 11,
+        "unit": "inch", "lines": [{"boundingBox": [0.5384, 1.1583, 1.4466, 1.1583,
+        1.4466, 1.3534, 0.5384, 1.3534], "text": "Contoso", "words": [{"boundingBox":
+        [0.5384, 1.1583, 1.4466, 1.1583, 1.4466, 1.3534, 0.5384, 1.3534], "text":
+        "Contoso", "confidence": 1}]}, {"boundingBox": [0.7994, 1.5143, 1.3836, 1.5143,
+        1.3836, 1.6154, 0.7994, 1.6154], "text": "Address:", "words": [{"boundingBox":
+        [0.7994, 1.5143, 1.3836, 1.5143, 1.3836, 1.6154, 0.7994, 1.6154], "text":
+        "Address:", "confidence": 1}]}, {"boundingBox": [4.4033, 1.5114, 5.8155, 1.5114,
+        5.8155, 1.6155, 4.4033, 1.6155], "text": "Invoice For: Microsoft", "words":
+        [{"boundingBox": [4.4033, 1.5143, 4.8234, 1.5143, 4.8234, 1.6155, 4.4033,
+        1.6155], "text": "Invoice", "confidence": 1}, {"boundingBox": [4.8793, 1.5143,
+        5.1013, 1.5143, 5.1013, 1.6154, 4.8793, 1.6154], "text": "For:", "confidence":
+        1}, {"boundingBox": [5.2045, 1.5114, 5.8155, 1.5114, 5.8155, 1.6151, 5.2045,
+        1.6151], "text": "Microsoft", "confidence": 1}]}, {"boundingBox": [0.8106,
+        1.7033, 2.1445, 1.7033, 2.1445, 1.8342, 0.8106, 1.8342], "text": "1 Redmond
+        way Suite", "words": [{"boundingBox": [0.8106, 1.708, 0.8463, 1.708, 0.8463,
+        1.8053, 0.8106, 1.8053], "text": "1", "confidence": 1}, {"boundingBox": [0.923,
+        1.7047, 1.5018, 1.7047, 1.5018, 1.8068, 0.923, 1.8068], "text": "Redmond",
         "confidence": 1}, {"boundingBox": [1.5506, 1.7309, 1.7949, 1.7309, 1.7949,
         1.8342, 1.5506, 1.8342], "text": "way", "confidence": 1}, {"boundingBox":
         [1.8415, 1.7033, 2.1445, 1.7033, 2.1445, 1.8078, 1.8415, 1.8078], "text":
@@ -2718,16 +2753,21 @@ interactions:
         3.5321, 5.3871, 3.5321], "text": "$56,651.49", "confidence": 1}]}, {"boundingBox":
         [6.2285, 3.4114, 6.3919, 3.4114, 6.3919, 3.5119, 6.2285, 3.5119], "text":
         "PT", "words": [{"boundingBox": [6.2285, 3.4114, 6.3919, 3.4114, 6.3919, 3.5119,
-        6.2285, 3.5119], "text": "PT", "confidence": 1}]}]}], "pageResults": [{"page":
-        1, "tables": [{"rows": 2, "columns": 6, "cells": [{"rowIndex": 0, "columnIndex":
-        0, "text": "Invoice Number", "boundingBox": [0.5075, 2.8088, 1.9061, 2.8088,
-        1.9061, 3.3219, 0.5075, 3.3219], "elements": ["#/readResults/0/lines/8/words/0",
-        "#/readResults/0/lines/8/words/1"]}, {"rowIndex": 0, "columnIndex": 1, "text":
-        "Invoice Date", "boundingBox": [1.9061, 2.8088, 3.3074, 2.8088, 3.3074, 3.3219,
-        1.9061, 3.3219], "elements": ["#/readResults/0/lines/9/words/0", "#/readResults/0/lines/9/words/1"]},
-        {"rowIndex": 0, "columnIndex": 2, "text": "Invoice Due Date", "boundingBox":
-        [3.3074, 2.8088, 4.7074, 2.8088, 4.7074, 3.3219, 3.3074, 3.3219], "elements":
-        ["#/readResults/0/lines/10/words/0", "#/readResults/0/lines/10/words/1", "#/readResults/0/lines/10/words/2"]},
+        6.2285, 3.5119], "text": "PT", "confidence": 1}]}], "selectionMarks": [{"boundingBox":
+        [0, 9.8562, 1.1255, 9.8562, 1.1255, 10.9934, 0, 10.9934], "confidence": 0.881,
+        "state": "unselected"}, {"boundingBox": [0, 10.4809, 1.854, 10.4809, 1.854,
+        10.9976, 0, 10.9976], "confidence": 0.69, "state": "unselected"}, {"boundingBox":
+        [7.5162, 10.3545, 8.4955, 10.3545, 8.4955, 11, 7.5162, 11], "confidence":
+        0.553, "state": "unselected"}]}], "pageResults": [{"page": 1, "tables": [{"rows":
+        2, "columns": 6, "cells": [{"rowIndex": 0, "columnIndex": 0, "text": "Invoice
+        Number", "boundingBox": [0.5075, 2.8088, 1.9061, 2.8088, 1.9061, 3.3219, 0.5075,
+        3.3219], "elements": ["#/readResults/0/lines/8/words/0", "#/readResults/0/lines/8/words/1"]},
+        {"rowIndex": 0, "columnIndex": 1, "text": "Invoice Date", "boundingBox": [1.9061,
+        2.8088, 3.3074, 2.8088, 3.3074, 3.3219, 1.9061, 3.3219], "elements": ["#/readResults/0/lines/9/words/0",
+        "#/readResults/0/lines/9/words/1"]}, {"rowIndex": 0, "columnIndex": 2, "text":
+        "Invoice Due Date", "boundingBox": [3.3074, 2.8088, 4.7074, 2.8088, 4.7074,
+        3.3219, 3.3074, 3.3219], "elements": ["#/readResults/0/lines/10/words/0",
+        "#/readResults/0/lines/10/words/1", "#/readResults/0/lines/10/words/2"]},
         {"rowIndex": 0, "columnIndex": 3, "text": "Charges", "boundingBox": [4.7074,
         2.8088, 5.386, 2.8088, 5.386, 3.3219, 4.7074, 3.3219], "elements": ["#/readResults/0/lines/11/words/0"]},
         {"rowIndex": 0, "columnIndex": 5, "text": "VAT ID", "boundingBox": [6.1051,
@@ -2746,19 +2786,19 @@ interactions:
         3.859], "elements": ["#/readResults/0/lines/17/words/0"]}]}]}]}}'
     headers:
       apim-request-id:
-      - 4b1de50c-8c28-4032-9a3c-0e9fb186ea26
+      - 96a626b3-0a5f-482a-91e5-988060751c18
+      content-length:
+      - '7988'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 10 Jul 2020 18:40:23 GMT
+      - Mon, 14 Sep 2020 19:23:37 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '22'
+      - '21'
     status:
       code: 200
       message: OK

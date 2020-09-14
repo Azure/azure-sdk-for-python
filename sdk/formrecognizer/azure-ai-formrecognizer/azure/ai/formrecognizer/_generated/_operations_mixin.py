@@ -66,6 +66,7 @@ class FormRecognizerClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.begin_analyze_business_card_async(include_text_details, locale, file_stream, **kwargs)
 
@@ -104,6 +105,7 @@ class FormRecognizerClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.begin_analyze_layout_async(file_stream, **kwargs)
 
@@ -145,6 +147,7 @@ class FormRecognizerClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.begin_analyze_receipt_async(include_text_details, file_stream, **kwargs)
 
@@ -189,6 +192,7 @@ class FormRecognizerClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.begin_analyze_with_custom_model(model_id, include_text_details, file_stream, **kwargs)
 
@@ -224,6 +228,7 @@ class FormRecognizerClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.begin_compose_custom_models_async(compose_request, **kwargs)
 
@@ -263,6 +268,7 @@ class FormRecognizerClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.begin_copy_custom_model(model_id, copy_request, **kwargs)
 
@@ -304,6 +310,7 @@ class FormRecognizerClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.begin_train_custom_model_async(train_request, **kwargs)
 
@@ -335,6 +342,7 @@ class FormRecognizerClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.delete_custom_model(model_id, **kwargs)
 
@@ -362,6 +370,7 @@ class FormRecognizerClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.generate_model_copy_authorization(**kwargs)
 
@@ -390,6 +399,7 @@ class FormRecognizerClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.get_analyze_business_card_result(result_id, **kwargs)
 
@@ -423,6 +433,7 @@ class FormRecognizerClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.get_analyze_form_result(model_id, result_id, **kwargs)
 
@@ -453,6 +464,7 @@ class FormRecognizerClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.get_analyze_layout_result(result_id, **kwargs)
 
@@ -483,6 +495,7 @@ class FormRecognizerClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.get_analyze_receipt_result(result_id, **kwargs)
 
@@ -516,6 +529,7 @@ class FormRecognizerClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.get_custom_model(model_id, include_keys, **kwargs)
 
@@ -549,6 +563,7 @@ class FormRecognizerClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.get_custom_model_copy_result(model_id, result_id, **kwargs)
 
@@ -576,6 +591,7 @@ class FormRecognizerClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.get_custom_models(**kwargs)
 
@@ -603,6 +619,7 @@ class FormRecognizerClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.list_custom_models(**kwargs)
 
@@ -639,5 +656,6 @@ class FormRecognizerClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.train_custom_model_async(train_request, **kwargs)

@@ -30,7 +30,7 @@ from .._generated.models import (
     CopyOperationResult,
     CopyAuthorizationResult
 )
-from .._helpers import error_map, get_authentication_policy, POLLING_INTERVAL
+from .._helpers import _get_deserialize, error_map, get_authentication_policy, POLLING_INTERVAL
 from .._models import (
     CustomFormModelInfo,
     AccountProperties,
@@ -160,7 +160,7 @@ class FormTrainingClient(object):
         continuation_token = kwargs.pop("continuation_token", None)
         polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
 
-        if self.api_version == "v2.0":
+        if self.api_version == "2.0":
             deserialization_callback = cls if cls else callback_v2_0
             if continuation_token:
                 return AsyncLROPoller.from_continuation_token(

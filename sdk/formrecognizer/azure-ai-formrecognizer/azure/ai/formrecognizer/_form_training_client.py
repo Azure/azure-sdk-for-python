@@ -152,7 +152,7 @@ class FormTrainingClient(object):
         continuation_token = kwargs.pop("continuation_token", None)
         polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
 
-        if self.api_version == "v2.0":
+        if self.api_version == "2.0":
             deserialization_callback = cls if cls else callback_v2_0
             if continuation_token:
                 return LROPoller.from_continuation_token(

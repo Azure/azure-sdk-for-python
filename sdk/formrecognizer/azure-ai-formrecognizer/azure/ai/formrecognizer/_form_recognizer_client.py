@@ -24,7 +24,7 @@ from ._response_handlers import (
 )
 from ._generated.models import AnalyzeOperationResult
 from ._api_versions import FormRecognizerApiVersion, validate_api_version
-from ._helpers import get_content_type, get_authentication_policy, error_map, POLLING_INTERVAL
+from ._helpers import _get_deserialize, get_content_type, get_authentication_policy, error_map, POLLING_INTERVAL
 from ._user_agent import USER_AGENT
 from ._polling import AnalyzePolling
 if TYPE_CHECKING:
