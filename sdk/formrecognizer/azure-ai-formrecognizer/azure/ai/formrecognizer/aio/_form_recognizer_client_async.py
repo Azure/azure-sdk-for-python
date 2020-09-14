@@ -142,20 +142,23 @@ class FormRecognizerClient(object):
             raise TypeError("Call begin_recognize_receipts_from_url() to analyze a receipt from a URL.")
 
         include_field_elements = kwargs.pop("include_field_elements", False)
-        if self.api_version == "2.1-preview.1":
-            kwargs.update({"locale": locale})
+        cls = kwargs.pop("cls", self._receipt_callback)
+        polling = AsyncLROBasePolling(
+                timeout=polling_interval,
+                **kwargs
+            )
         if content_type is None:
             content_type = get_content_type(receipt)
+
+        if self.api_version == "2.1-preview.1":
+            kwargs.update({"locale": locale})
 
         return await self._client.begin_analyze_receipt_async(  # type: ignore
             file_stream=receipt,
             content_type=content_type,
             include_text_details=include_field_elements,
-            cls=kwargs.pop("cls", self._receipt_callback),
-            polling=AsyncLROBasePolling(
-                timeout=polling_interval,
-                **kwargs
-            ),
+            cls=cls,
+            polling=polling,
             error_map=error_map,
             continuation_token=continuation_token,
             **kwargs
@@ -199,17 +202,20 @@ class FormRecognizerClient(object):
         polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
         continuation_token = kwargs.pop("continuation_token", None)
         include_field_elements = kwargs.pop("include_field_elements", False)
+        cls = kwargs.pop("cls", self._receipt_callback)
+        polling = AsyncLROBasePolling(
+                timeout=polling_interval,
+                **kwargs
+            )
+
         if self.api_version == "2.1-preview.1":
             kwargs.update({"locale": locale})
 
         return await self._client.begin_analyze_receipt_async(  # type: ignore
             file_stream={"source": receipt_url},
             include_text_details=include_field_elements,
-            cls=kwargs.pop("cls", self._receipt_callback),
-            polling=AsyncLROBasePolling(
-                timeout=polling_interval,
-                **kwargs
-            ),
+            cls=cls,
+            polling=polling,
             error_map=error_map,
             continuation_token=continuation_token,
             **kwargs

@@ -8,13 +8,14 @@
 import functools
 from testcase import GlobalFormRecognizerAccountPreparer
 from testcase import GlobalClientPreparer as _GlobalClientPreparer
+from asynctestcase import AsyncFormRecognizerTest
 from azure.ai.formrecognizer.aio import FormRecognizerClient, FormTrainingClient
 from azure.ai.formrecognizer import FormRecognizerApiVersion
 
 FormRecognizerClientPreparer = functools.partial(_GlobalClientPreparer, FormRecognizerClient)
 FormTrainingClientPreparer = functools.partial(_GlobalClientPreparer, FormTrainingClient)
 
-class TestMultiapi():
+class TestMultiapi(AsyncFormRecognizerTest):
     @GlobalFormRecognizerAccountPreparer()
     @FormRecognizerClientPreparer()
     def test_default_api_version_form_recognizer_client(self, client):

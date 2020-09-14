@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: null
+    body: '%PDFUUU'
     headers:
       Accept:
       - application/json
@@ -9,26 +9,26 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '0'
+      - '7'
       Content-Type:
       - application/pdf
       User-Agent:
       - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/prebuilt/receipt/analyze?includeTextDetails=false&locale=b%27%25PDFUUU%27
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/prebuilt/receipt/analyze?includeTextDetails=false
   response:
     body:
-      string: '{"error": {"code": "InvalidImage", "innerError": {"requestId": "7e6e9015-43a3-4e13-93a6-7e94d7caebdc"},
-        "message": "The input data is not a valid image or password protected."}}'
+      string: '{"error": {"code": "BadArgument", "innerError": {"requestId": "1075aeac-62d8-4fe8-af48-82e953be7545"},
+        "message": "Bad or unrecognizable request JSON or binary file."}}'
     headers:
       apim-request-id:
-      - 7e6e9015-43a3-4e13-93a6-7e94d7caebdc
+      - 1075aeac-62d8-4fe8-af48-82e953be7545
       content-length:
-      - '170'
+      - '161'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 14 Sep 2020 20:46:28 GMT
+      - Mon, 14 Sep 2020 22:40:23 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
