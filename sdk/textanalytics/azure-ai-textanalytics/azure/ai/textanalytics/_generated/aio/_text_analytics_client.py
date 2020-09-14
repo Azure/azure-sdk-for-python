@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from azure.core import PipelineClient
+from azure.core import AsyncPipelineClient
 from msrest import Serializer, Deserializer
 
 from azure.profiles import KnownProfiles, ProfileDefinition
@@ -35,7 +35,7 @@ class TextAnalyticsClient(TextAnalyticsClientOperationsMixin, MultiApiClientMixi
     group is not described in the profile.
 
     :param credential: Credential needed for the client to connect to Azure.
-    :type credential: ~azure.core.credentials.TokenCredential
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param endpoint: Supported Cognitive Services endpoints (protocol and hostname, for example: https://westus.api.cognitive.microsoft.com).
     :type endpoint: str
     :param str api_version: API version to use if no profile is provided, or if
@@ -56,12 +56,12 @@ class TextAnalyticsClient(TextAnalyticsClientOperationsMixin, MultiApiClientMixi
 
     def __init__(
         self,
-        credential,  # type: "TokenCredential"
+        credential,  # type: "AsyncTokenCredential"
         endpoint,  # type: str
         api_version=None,
         profile=KnownProfiles.default,
         **kwargs  # type: Any
-    ):
+    ) -> None:
         if api_version == 'v3.0':
             base_url = '{Endpoint}/text/analytics/v3.0'
         elif api_version == 'v3.1-preview.1':
@@ -71,7 +71,7 @@ class TextAnalyticsClient(TextAnalyticsClientOperationsMixin, MultiApiClientMixi
         else:
             raise ValueError("API version {} is not available".format(api_version))
         self._config = TextAnalyticsClientConfiguration(credential, endpoint, **kwargs)
-        self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client = AsyncPipelineClient(base_url=base_url, config=self._config, **kwargs)
         super(TextAnalyticsClient, self).__init__(
             api_version=api_version,
             profile=profile
@@ -90,20 +90,20 @@ class TextAnalyticsClient(TextAnalyticsClientOperationsMixin, MultiApiClientMixi
            * v3.2-preview.1: :mod:`v3_2_preview_1.models<azure.ai.textanalytics.v3_2_preview_1.models>`
         """
         if api_version == 'v3.0':
-            from .v3_0 import models
+            from ..v3_0 import models
             return models
         elif api_version == 'v3.1-preview.1':
-            from .v3_1_preview_1 import models
+            from ..v3_1_preview_1 import models
             return models
         elif api_version == 'v3.2-preview.1':
-            from .v3_2_preview_1 import models
+            from ..v3_2_preview_1 import models
             return models
         raise ValueError("API version {} is not available".format(api_version))
 
-    def close(self):
-        self._client.close()
-    def __enter__(self):
-        self._client.__enter__()
+    async def close(self):
+        await self._client.close()
+    async def __aenter__(self):
+        await self._client.__aenter__()
         return self
-    def __exit__(self, *exc_details):
-        self._client.__exit__(*exc_details)
+    async def __aexit__(self, *exc_details):
+        await self._client.__aexit__(*exc_details)

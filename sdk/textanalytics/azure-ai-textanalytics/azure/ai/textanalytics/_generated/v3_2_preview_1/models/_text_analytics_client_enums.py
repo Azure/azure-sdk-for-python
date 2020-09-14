@@ -50,6 +50,7 @@ class ErrorCodeValue(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     INVALID_ARGUMENT = "InvalidArgument"
     INTERNAL_SERVER_ERROR = "InternalServerError"
     SERVICE_UNAVAILABLE = "ServiceUnavailable"
+    NOT_FOUND = "NotFound"
 
 class InnerErrorCodeValue(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Error code.
@@ -65,6 +66,11 @@ class InnerErrorCodeValue(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     UNSUPPORTED_LANGUAGE_CODE = "UnsupportedLanguageCode"
     INVALID_COUNTRY_HINT = "InvalidCountryHint"
 
+class PiiTaskParametersDomain(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    PHI = "phi"
+    NONE = "none"
+
 class SentenceSentimentValue(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The predicted Sentiment for the sentence.
     """
@@ -72,6 +78,16 @@ class SentenceSentimentValue(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)
     POSITIVE = "positive"
     NEUTRAL = "neutral"
     NEGATIVE = "negative"
+
+class State(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    NOTSTARTED = "notstarted"
+    RUNNING = "running"
+    SUCCEEDED = "succeeded"
+    FAILED = "failed"
+    CANCELLED = "cancelled"
+    CANCELLING = "cancelling"
+    PARTIALLYCOMPLETED = "partiallycompleted"
 
 class StringIndexType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 

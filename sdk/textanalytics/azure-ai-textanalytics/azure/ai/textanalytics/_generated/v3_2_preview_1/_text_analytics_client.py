@@ -13,7 +13,7 @@ from msrest import Deserializer, Serializer
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any
+    from typing import Any, Optional, Union
 
     from azure.core.credentials import TokenCredential
 
@@ -23,23 +23,27 @@ from . import models
 
 
 class TextAnalyticsClient(TextAnalyticsClientOperationsMixin):
-    """The Text Analytics API is a suite of text analytics web services built with best-in-class Microsoft machine learning algorithms. The API can be used to analyze unstructured text for tasks such as sentiment analysis, key phrase extraction and language detection. No training data is needed to use this API; just bring your text data. This API uses advanced natural language processing techniques to deliver best in class predictions. Further documentation can be found in https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview.
+    """The Text Analytics API is a suite of natural language processing (NLP)  services built with best-in-class Microsoft machine learning algorithms.  The API can be used to analyze unstructured text for tasks such as sentiment analysis,  key phrase extraction and language detection. Further documentation can be found in :code:`<a href="https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview">https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview</a>`.
 
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
     :param endpoint: Supported Cognitive Services endpoints (protocol and hostname, for example: https://westus.api.cognitive.microsoft.com).
     :type endpoint: str
+    :param string_index_type: (Optional) Specifies the method used to interpret string offsets.  Defaults to Text Elements (Graphemes) according to Unicode v8.0.0. For additional information see https://aka.ms/text-analytics-offsets.
+    :type string_index_type: str or ~azure.ai.textanalytics.v3_2_preview_1.models.StringIndexType
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
     def __init__(
         self,
         credential,  # type: "TokenCredential"
         endpoint,  # type: str
+        string_index_type=None,  # type: Optional[Union[str, "models.StringIndexType"]]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        base_url = '{Endpoint}/text/analytics/v3.1-preview.1'
-        self._config = TextAnalyticsClientConfiguration(credential, endpoint, **kwargs)
+        base_url = '{Endpoint}/text/analytics/v3.2-preview.1'
+        self._config = TextAnalyticsClientConfiguration(credential, endpoint, string_index_type, **kwargs)
         self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
