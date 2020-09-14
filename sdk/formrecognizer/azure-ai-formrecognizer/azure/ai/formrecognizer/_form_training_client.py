@@ -421,6 +421,7 @@ class FormTrainingClient(object):
             endpoint=self._endpoint,
             credential=self._credential,
             pipeline=_pipeline,
+            api_version=self.api_version,
             **kwargs
         )
         # need to share config, but can't pass as a keyword into client

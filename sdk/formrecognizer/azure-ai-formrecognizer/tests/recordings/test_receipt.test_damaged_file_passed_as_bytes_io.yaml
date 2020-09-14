@@ -1,45 +1,40 @@
 interactions:
 - request:
-    body: !!python/object/new:_io.BytesIO
-      state: !!python/tuple
-      - !!binary |
-        JVBERlVVVQ==
-      - 0
-      - null
+    body: null
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
-      - '7'
+      - '0'
       Content-Type:
       - application/pdf
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/prebuilt/receipt/analyze?includeTextDetails=false
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/prebuilt/receipt/analyze?includeTextDetails=false&locale=%3C_io.BytesIO%20object%20at%200x06D0DF60%3E
   response:
     body:
-      string: '{"error": {"code": "BadArgument", "innerError": {"requestId": "3f99b361-d1a3-4b32-a99f-3e72f6c0855a"},
-        "message": "Bad or unrecognizable request JSON or binary file."}}'
+      string: '{"error": {"code": "InvalidImage", "innerError": {"requestId": "ae4f3719-78d2-43c3-931a-364a1c1f243d"},
+        "message": "The input data is not a valid image or password protected."}}'
     headers:
       apim-request-id:
-      - 3f99b361-d1a3-4b32-a99f-3e72f6c0855a
+      - ae4f3719-78d2-43c3-931a-364a1c1f243d
+      content-length:
+      - '170'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 10 Jul 2020 18:53:07 GMT
+      - Mon, 14 Sep 2020 20:46:28 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '6'
+      - '5'
     status:
       code: 400
       message: Bad Request

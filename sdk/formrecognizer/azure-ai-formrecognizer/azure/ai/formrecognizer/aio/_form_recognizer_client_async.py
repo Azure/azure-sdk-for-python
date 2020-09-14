@@ -134,7 +134,7 @@ class FormRecognizerClient(object):
                 :dedent: 8
                 :caption: Recognize US sales receipt fields.
         """
-
+        locale = kwargs.pop("locale", None)
         polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
         continuation_token = kwargs.pop("continuation_token", None)
         content_type = kwargs.pop("content_type", None)
@@ -142,7 +142,8 @@ class FormRecognizerClient(object):
             raise TypeError("Call begin_recognize_receipts_from_url() to analyze a receipt from a URL.")
 
         include_field_elements = kwargs.pop("include_field_elements", False)
-
+        if self.api_version == "2.1-preview.1":
+            kwargs.update({"locale": locale})
         if content_type is None:
             content_type = get_content_type(receipt)
 
@@ -194,10 +195,12 @@ class FormRecognizerClient(object):
                 :dedent: 8
                 :caption: Recognize US sales receipt fields from a URL.
         """
-
+        locale = kwargs.pop("locale", None)
         polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
         continuation_token = kwargs.pop("continuation_token", None)
         include_field_elements = kwargs.pop("include_field_elements", False)
+        if self.api_version == "2.1-preview.1":
+            kwargs.update({"locale": locale})
 
         return await self._client.begin_analyze_receipt_async(  # type: ignore
             file_stream={"source": receipt_url},
