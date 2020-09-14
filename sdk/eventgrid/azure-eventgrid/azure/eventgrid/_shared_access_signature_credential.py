@@ -22,7 +22,7 @@ class EventGridSharedAccessSignatureCredential(object):
         :rtype: str
         """
         return self._signature
-    
+
     def update(self, signature):
         # type: (str) -> None
         """

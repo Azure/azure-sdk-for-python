@@ -260,10 +260,10 @@ class RegressionTest:
         installed_pkgs = get_installed_packages(site_packages)
         logging.info("Installed packages: {}".format(installed_pkgs))
         # Verify installed package version
-        # Search for exact version or dev build version of current version.
+        # Search for exact version or alpha build version of current version.
         pkg_search_string = "{0}=={1}".format(package, version)
-        dev_build_search_string = "{0}=={1}.dev".format(package, version)
-        return any(p == pkg_search_string or p.startswith(dev_build_search_string) for p in installed_pkgs)
+        alpha_build_search_string = "{0}=={1}a".format(package, version)
+        return any(p == pkg_search_string or p.startswith(alpha_build_search_string) for p in installed_pkgs)
 
 
 # This method identifies package dependency map for all packages in azure sdk

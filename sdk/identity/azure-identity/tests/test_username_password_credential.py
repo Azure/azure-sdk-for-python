@@ -35,7 +35,8 @@ def test_policies_configurable():
 
     transport = validating_transport(
         requests=[Request()] * 3,
-        responses=[get_discovery_response()] * 2 + [mock_response(json_payload=build_aad_response(access_token="**"))],
+        responses=[get_discovery_response()] * 2
+        + [mock_response(json_payload=build_aad_response(access_token="**", id_token=build_id_token()))],
     )
     credential = UsernamePasswordCredential("client-id", "username", "password", policies=[policy], transport=transport)
 
@@ -47,7 +48,8 @@ def test_policies_configurable():
 def test_user_agent():
     transport = validating_transport(
         requests=[Request()] * 2 + [Request(required_headers={"User-Agent": USER_AGENT})],
-        responses=[get_discovery_response()] * 2 + [mock_response(json_payload=build_aad_response(access_token="**"))],
+        responses=[get_discovery_response()] * 2
+        + [mock_response(json_payload=build_aad_response(access_token="**", id_token=build_id_token()))],
     )
 
     credential = UsernamePasswordCredential("client-id", "username", "password", transport=transport)
@@ -57,6 +59,7 @@ def test_user_agent():
 
 def test_username_password_credential():
     expected_token = "access-token"
+    client_id = "client-id"
     transport = validating_transport(
         requests=[Request()] * 3,  # not validating requests because they're formed by MSAL
         responses=[
@@ -66,18 +69,13 @@ def test_username_password_credential():
             mock_response(json_payload={}),
             # token request
             mock_response(
-                json_payload={
-                    "access_token": expected_token,
-                    "expires_in": 42,
-                    "token_type": "Bearer",
-                    "ext_expires_in": 42,
-                }
+                json_payload=build_aad_response(access_token=expected_token, id_token=build_id_token(aud=client_id))
             ),
         ],
     )
 
     credential = UsernamePasswordCredential(
-        client_id="some-guid",
+        client_id=client_id,
         username="user@azure",
         password="secret_password",
         transport=transport,

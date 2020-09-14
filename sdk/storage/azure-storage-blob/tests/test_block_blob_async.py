@@ -11,6 +11,7 @@ import pytest
 import asyncio
 import uuid
 
+from datetime import datetime, timedelta
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceModifiedError
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
@@ -22,7 +23,9 @@ from azure.storage.blob import (
     BlobType,
     ContentSettings,
     BlobBlock,
-    StandardBlobTier
+    StandardBlobTier,
+    generate_blob_sas,
+    BlobSasPermissions
 )
 
 from azure.storage.blob.aio import (
@@ -77,6 +80,24 @@ class StorageBlockBlobTestAsync(AsyncStorageTestCase):
     def _get_blob_reference(self):
         return self.get_resource_name(TEST_BLOB_PREFIX)
 
+    def _get_blob_with_special_chars_reference(self):
+        return 'भारत¥test/testsubÐirÍ/'+self.get_resource_name('srcÆblob')
+
+    async def _create_source_blob_url_with_special_chars(self, tags=None):
+        blob_name = self._get_blob_with_special_chars_reference()
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        await blob.upload_blob(self.get_random_bytes(8 * 1024))
+        sas_token_for_special_chars = generate_blob_sas(
+            blob.account_name,
+            blob.container_name,
+            blob.blob_name,
+            snapshot=blob.snapshot,
+            account_key=blob.credential.account_key,
+            permission=BlobSasPermissions(read=True),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+        )
+        return BlobClient.from_blob_url(blob.url, credential=sas_token_for_special_chars).url
+
     async def _create_blob(self, tags=None):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
@@ -114,6 +135,50 @@ class StorageBlockBlobTestAsync(AsyncStorageTestCase):
             self.assertIn('content_crc64', headers)
 
         # Assert
+
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_copy_blob_async(self, resource_group, location, storage_account, storage_account_key):
+        await self._setup(storage_account, storage_account_key)
+        dest_blob = await self._create_blob()
+        source_blob_url = await self._create_source_blob_url_with_special_chars()
+
+        # Act
+        copy_props = await dest_blob.start_copy_from_url(source_blob_url, requires_sync=True)
+
+        # Assert
+        self.assertIsNotNone(copy_props)
+        self.assertIsNotNone(copy_props['copy_id'])
+        self.assertEqual('success', copy_props['copy_status'])
+
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_put_block_from_url_and_commit(self, resource_group, location, storage_account, storage_account_key):
+        await self._setup(storage_account, storage_account_key)
+        dest_blob = await self._create_blob()
+        source_blob_url = await self._create_source_blob_url_with_special_chars()
+        split = 4 * 1024
+        # Act part 1: make put block from url calls
+        await dest_blob.stage_block_from_url(
+            block_id=1,
+            source_url=source_blob_url,
+            source_offset=0,
+            source_length=split)
+        await dest_blob.stage_block_from_url(
+            block_id=2,
+            source_url=source_blob_url,
+            source_offset=split,
+            source_length=split)
+
+        # Assert blocks
+        committed, uncommitted = await dest_blob.get_block_list('all')
+        self.assertEqual(len(uncommitted), 2)
+        self.assertEqual(len(committed), 0)
+        # Act part 2: commit the blocks
+        await dest_blob.commit_block_list(['1', '2'])
+        committed, uncommitted = await dest_blob.get_block_list('all')
+        self.assertEqual(len(uncommitted), 0)
+        self.assertEqual(len(committed), 2)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test

@@ -19,20 +19,20 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.0.1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.1/keyPhrases?showStats=false
+    uri: https://westcentralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.2/keyPhrases?showStats=false
   response:
     body:
       string: '{"error":{"code":"InvalidRequest","message":"Invalid document in request.","innererror":{"code":"InvalidDocumentBatch","message":"Batch
         request contains too many records. Max 10 records are permitted."}}}'
     headers:
       apim-request-id:
-      - 32aca0b0-ae54-41c6-b833-e24b10930ea9
+      - ebf4e15b-572f-45a5-80b5-8f689cd41467
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 26 Aug 2020 21:20:47 GMT
+      - Thu, 10 Sep 2020 15:25:31 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:

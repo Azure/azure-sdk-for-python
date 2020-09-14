@@ -10,24 +10,24 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.0.1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.1/sentiment?showStats=false&stringIndexType=TextElements_v8
+    uri: https://westcentralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.2/sentiment?showStats=false&stringIndexType=UnicodeCodePoint
   response:
     body:
       string: '{"documents":[],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
         Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
         language code. Supported languages: de,en,es,fr,it,ja,ko,nl,no,pt-PT,tr,zh-Hans,zh-Hant"}}}],"modelVersion":"2020-04-01"}'
     headers:
-      apim-request-id: 4f3c88a3-62b9-41d8-88f5-a4a0ac392040
+      apim-request-id: 5945b4bd-cf25-47b6-89f8-fc8707c03a94
       content-type: application/json; charset=utf-8
-      date: Wed, 26 Aug 2020 21:20:40 GMT
+      date: Thu, 10 Sep 2020 15:25:22 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '3'
+      x-envoy-upstream-service-time: '2'
     status:
       code: 200
       message: OK
-    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.1/sentiment?showStats=false&stringIndexType=TextElements_v8
+    url: https://westcentralus.api.cognitive.microsoft.com//text/analytics/v3.1-preview.2/sentiment?showStats=false&stringIndexType=UnicodeCodePoint
 version: 1

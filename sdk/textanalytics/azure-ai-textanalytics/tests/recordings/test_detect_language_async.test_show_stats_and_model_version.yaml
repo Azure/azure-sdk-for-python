@@ -12,25 +12,25 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.0.1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.1/languages?model-version=latest&showStats=true
+    uri: https://westcentralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.2/languages?model-version=latest&showStats=true
   response:
     body:
       string: '{"statistics":{"documentsCount":5,"validDocumentsCount":4,"erroneousDocumentsCount":1,"transactionsCount":4},"documents":[{"id":"56","detectedLanguage":{"name":"(Unknown)","iso6391Name":"(Unknown)","confidenceScore":0.0},"statistics":{"charactersCount":2,"transactionsCount":1},"warnings":[]},{"id":"0","detectedLanguage":{"name":"(Unknown)","iso6391Name":"(Unknown)","confidenceScore":0.0},"statistics":{"charactersCount":2,"transactionsCount":1},"warnings":[]},{"id":"19","detectedLanguage":{"name":"(Unknown)","iso6391Name":"(Unknown)","confidenceScore":0.0},"statistics":{"charactersCount":2,"transactionsCount":1},"warnings":[]},{"id":"1","detectedLanguage":{"name":"(Unknown)","iso6391Name":"(Unknown)","confidenceScore":0.0},"statistics":{"charactersCount":2,"transactionsCount":1},"warnings":[]}],"errors":[{"id":"22","error":{"code":"InvalidArgument","message":"Invalid
         document in request.","innererror":{"code":"InvalidDocument","message":"Document
         text is empty."}}}],"modelVersion":"2020-07-01"}'
     headers:
-      apim-request-id: bcaa4128-f00f-4fdc-8ba0-edabdde09241
+      apim-request-id: 68f7bda3-4699-45ff-90a8-e3e60d565a91
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=4
-      date: Wed, 26 Aug 2020 21:20:46 GMT
+      date: Thu, 10 Sep 2020 15:25:31 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '9'
+      x-envoy-upstream-service-time: '7'
     status:
       code: 200
       message: OK
-    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.1/languages?model-version=latest&showStats=true
+    url: https://westcentralus.api.cognitive.microsoft.com//text/analytics/v3.1-preview.2/languages?model-version=latest&showStats=true
 version: 1

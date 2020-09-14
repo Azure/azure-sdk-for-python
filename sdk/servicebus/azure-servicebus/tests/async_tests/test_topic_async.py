@@ -14,7 +14,8 @@ from datetime import datetime, timedelta
 
 from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer, CachedResourceGroupPreparer
 
-from azure.servicebus.aio import ServiceBusClient, ServiceBusSharedKeyCredential
+from azure.servicebus.aio import ServiceBusClient
+from azure.servicebus.aio._base_handler_async import ServiceBusSharedKeyCredential
 from azure.servicebus._common.message import Message
 from servicebus_preparer import (
     ServiceBusNamespacePreparer,
