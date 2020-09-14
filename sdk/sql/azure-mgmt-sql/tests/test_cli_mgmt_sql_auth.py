@@ -7,7 +7,7 @@
 #--------------------------------------------------------------------------
 
 # Current Operation Coverage:
-#   ServerKeys: 0/4
+#   ServerKeys: 4/4
 #   ServerAzureADOnlyAuthentications: 0/4
 
 import unittest
@@ -31,7 +31,7 @@ class MgmtSqlTest(AzureMgmtTestCase):
                 KeyVaultManagementClient
             )
 
-    def create_key(self, group_name, location, key_vault, tenant_id, object_id):
+    def create_key(self, group_name, location, key_vault, tenant_id, object_id, object_id_2):
         if self.is_live:
             result = self.keyvault_client.vaults.begin_create_or_update(
                 group_name,
@@ -40,6 +40,7 @@ class MgmtSqlTest(AzureMgmtTestCase):
                   'location': location,
                   'properties': {
                     'sku': {
+                      'family': 'A',
                       'name': 'standard'
                     },
                     'tenant_id': tenant_id,
@@ -49,27 +50,76 @@ class MgmtSqlTest(AzureMgmtTestCase):
                         "object_id": object_id,
                         "permissions": {
                           "keys": [
-                            "encrypt",
-                            "decrypt",
-                            "wrapKey",
-                            "unwrapKey",
-                            "sign",
-                            "verify",
                             "get",
-                            "list",
                             "create",
+                            "delete",
+                            "list",
                             "update",
                             "import",
+                            "backup",
+                            "restore",
+                            "recover"
+                          ],
+                          "secrets": [
+                            "get",
+                            "list",
+                            "set",
                             "delete",
                             "backup",
                             "restore",
-                            "recover",
-                            "purge"
+                            "recover"
+                          ],
+                          "certificates": [
+                            "get",
+                            "list",
+                            "delete",
+                            "create",
+                            "import",
+                            "update",
+                            "managecontacts",
+                            "getissuers",
+                            "listissuers",
+                            "setissuers",
+                            "deleteissuers",
+                            "manageissuers",
+                            "recover"
+                          ],
+                          "storage": [
+                            "get",
+                            "list",
+                            "delete",
+                            "set",
+                            "update",
+                            "regeneratekey",
+                            "setsas",
+                            "listsas",
+                            "getsas",
+                            "deletesas"
+                          ]
+                        }
+                      },
+                      {
+                        "tenantId": tenant_id,
+                        "objectId": object_id_2,
+                        "permissions": {
+                          "keys": [
+                            "unwrapKey",
+                            "get",
+                            "wrapKey",
+                            "list"
                           ]
                         }
                       }
                     ],
                     'enabled_for_disk_encryption': True,
+                    'enable_soft_delete': True,
+                    'soft_delete_retention_in_days': 90,
+                    'nework_acls': {
+                      'bypass': 'AzureServices',
+                      'default_action': "Allow",
+                      'ip_rules': [],
+                      'virtual_network_rules': []
+                    }
                   }
                 }
             ).result()
@@ -102,25 +152,32 @@ class MgmtSqlTest(AzureMgmtTestCase):
         CLIENT_OID = self.settings.CLIENT_OID if self.is_live else "000"
         RESOURCE_GROUP = resource_group.name
         SERVER_NAME = "myserverxpcz"
-        KEY_VAULT_NAME = "mykeyvaultaxcydzc"
-        KEY_NAME = "mykeyzz"
-
-        VAULT_ID, KEY_URI = self.create_key(RESOURCE_GROUP, AZURE_LOCATION, KEY_VAULT_NAME, TENANT_ID, CLIENT_OID)
+        KEY_VAULT_NAME = self.get_resource_name("keyvaultxmmxh")
+        # KEY_NAME = "mykeyzz"
 
 #--------------------------------------------------------------------------
         # /Servers/put/Create server[put]
 #--------------------------------------------------------------------------
         BODY = {
           "location": AZURE_LOCATION,
+          "identity": {
+            "type": "SystemAssigned"
+          },
           "administrator_login": "dummylogin",
-          "administrator_login_password": "Un53cuRE!"
+          "administrator_login_password": "Un53cuRE!",
+          "version": "12.0",
+          "public_network_access":"Enabled"
         }
         result = self.mgmt_client.servers.begin_create_or_update(resource_group_name=RESOURCE_GROUP, server_name=SERVER_NAME, parameters=BODY)
-        result = result.result()
+        server = result.result()
+        oid2 = server.identity.principal_id
+
+        VAULT_ID, KEY_URI = self.create_key(RESOURCE_GROUP, AZURE_LOCATION, KEY_VAULT_NAME, TENANT_ID, CLIENT_OID, oid2)
 
 #--------------------------------------------------------------------------
         # /ServerKeys/put/Creates or updates a server key[put]
 #--------------------------------------------------------------------------
+        KEY_NAME = KEY_VAULT_NAME + "_testkey_" + KEY_URI.split("/")[-1]
         BODY = {
           "server_key_type": "AzureKeyVault",
         #   "uri": "https://someVault.vault.azure.net/keys/someKey/01234567890123456789012345678901"

@@ -21,11 +21,11 @@
 #   BackupLongTermRetentionPolicies: 3/3
 #   DatabaseOperations: 0/2
 #   WorkloadGroups: 0/4
-#   WorkloadClassifiers: 4/4
+#   WorkloadClassifiers: 0/4
 #   DatabaseThreatDetectionPolicies: 2/2
 #   ServiceTierAdvisors: 2/2
 #   DatabaseAutomaticTuning: 2/2
-#   RestorePoints: 0/4
+#   RestorePoints: 4/4
 #   BackupShortTermRetentionPolicies: 4/4
 
 import unittest
@@ -161,7 +161,6 @@ class MgmtSqlTest(AzureMgmtTestCase):
         result = self.mgmt_client.servers.begin_delete(resource_group_name=RESOURCE_GROUP, server_name=SERVER_NAME)
         result = result.result()
 
-    @unittest.skip("(FeatureDisabledOnSelectedEdition) This feature is not available for the selected database's edition (BusinessCritical).")
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_restore_points(self, resource_group):
 
@@ -186,8 +185,8 @@ class MgmtSqlTest(AzureMgmtTestCase):
         BODY = {
           "location": AZURE_LOCATION,
           "sku": {
-            "name": "BC_Gen5",
-            "capacity": 2
+            "name": "DataWarehouse",
+            "tier": "DataWarehouse"
           }
         }
         result = self.mgmt_client.databases.begin_create_or_update(resource_group_name=RESOURCE_GROUP, server_name=SERVER_NAME, database_name=DATABASE_NAME, parameters=BODY)
@@ -464,6 +463,68 @@ class MgmtSqlTest(AzureMgmtTestCase):
         # /Servers/delete/Delete server[delete]
 #--------------------------------------------------------------------------
         result = self.mgmt_client.servers.begin_delete(resource_group_name=RESOURCE_GROUP, server_name=SERVER_NAME)
+        result = result.result()
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    def test_long_term_retention_backup(self, resource_group):
+
+        RESOURCE_GROUP = resource_group.name
+        LONG_TERM_RETENTION_SERVER_NAME = "myserverxpxyz"
+        LONG_TERM_RETENTION_DATABASE_NAME = "mydatabase"
+        LOCATION_NAME = AZURE_LOCATION
+        BACKUP_NAME = ""
+        POLICY_NAME = "Default
+
+#--------------------------------------------------------------------------
+        # /LongTermRetentionBackups/get/Get the long term retention backup.[get]
+#--------------------------------------------------------------------------
+        # result = self.mgmt_client.long_term_retention_backups.get_by_resource_group(resource_group_name=RESOURCE_GROUP, location_name=LOCATION_NAME, long_term_retention_server_name=LONG_TERM_RETENTION_SERVER_NAME, long_term_retention_database_name=LONG_TERM_RETENTION_DATABASE_NAME, backup_name=BACKUP_NAME)
+
+#--------------------------------------------------------------------------
+        # /LongTermRetentionBackups/get/Get all long term retention backups under the database.[get]
+#--------------------------------------------------------------------------
+        result = self.mgmt_client.long_term_retention_backups.list_by_resource_group_database(resource_group_name=RESOURCE_GROUP, location_name=LOCATION_NAME, long_term_retention_server_name=LONG_TERM_RETENTION_SERVER_NAME, long_term_retention_database_name=LONG_TERM_RETENTION_DATABASE_NAME)
+
+#--------------------------------------------------------------------------
+        # /LongTermRetentionBackups/get/Get the long term retention backup.[get]
+#--------------------------------------------------------------------------
+        # result = self.mgmt_client.long_term_retention_backups.get_by_resource_group(resource_group_name=RESOURCE_GROUP, location_name=LOCATION_NAME, long_term_retention_server_name=LONG_TERM_RETENTION_SERVER_NAME, long_term_retention_database_name=LONG_TERM_RETENTION_DATABASE_NAME, backup_name=BACKUP_NAME)
+
+#--------------------------------------------------------------------------
+        # /LongTermRetentionBackups/get/Get all long term retention backups under the database.[get]
+#--------------------------------------------------------------------------
+        result = self.mgmt_client.long_term_retention_backups.list_by_resource_group_database(resource_group_name=RESOURCE_GROUP, location_name=LOCATION_NAME, long_term_retention_server_name=LONG_TERM_RETENTION_SERVER_NAME, long_term_retention_database_name=LONG_TERM_RETENTION_DATABASE_NAME)
+
+#--------------------------------------------------------------------------
+        # /LongTermRetentionBackups/get/Get all long term retention backups under the server.[get]
+#--------------------------------------------------------------------------
+        result = self.mgmt_client.long_term_retention_backups.list_by_resource_group_server(resource_group_name=RESOURCE_GROUP, location_name=LOCATION_NAME, long_term_retention_server_name=LONG_TERM_RETENTION_SERVER_NAME)
+
+#--------------------------------------------------------------------------
+        # /LongTermRetentionBackups/get/Get all long term retention backups under the server.[get]
+#--------------------------------------------------------------------------
+        result = self.mgmt_client.long_term_retention_backups.list_by_resource_group_server(resource_group_name=RESOURCE_GROUP, location_name=LOCATION_NAME, long_term_retention_server_name=LONG_TERM_RETENTION_SERVER_NAME)
+
+#--------------------------------------------------------------------------
+        # /LongTermRetentionBackups/get/Get all long term retention backups under the location.[get]
+#--------------------------------------------------------------------------
+        result = self.mgmt_client.long_term_retention_backups.list_by_resource_group_location(resource_group_name=RESOURCE_GROUP, location_name=LOCATION_NAME)
+
+#--------------------------------------------------------------------------
+        # /LongTermRetentionBackups/get/Get all long term retention backups under the location.[get]
+#--------------------------------------------------------------------------
+        result = self.mgmt_client.long_term_retention_backups.list_by_resource_group_location(resource_group_name=RESOURCE_GROUP, location_name=LOCATION_NAME)
+
+#--------------------------------------------------------------------------
+        # /LongTermRetentionBackups/delete/Delete the long term retention backup.[delete]
+#--------------------------------------------------------------------------
+        result = self.mgmt_client.long_term_retention_backups.begin_delete_by_resource_group(resource_group_name=RESOURCE_GROUP, location_name=LOCATION_NAME, long_term_retention_server_name=LONG_TERM_RETENTION_SERVER_NAME, long_term_retention_database_name=LONG_TERM_RETENTION_DATABASE_NAME, backup_name=BACKUP_NAME)
+        result = result.result()
+
+#--------------------------------------------------------------------------
+        # /LongTermRetentionBackups/delete/Delete the long term retention backup.[delete]
+#--------------------------------------------------------------------------
+        result = self.mgmt_client.long_term_retention_backups.begin_delete_by_resource_group(resource_group_name=RESOURCE_GROUP, location_name=LOCATION_NAME, long_term_retention_server_name=LONG_TERM_RETENTION_SERVER_NAME, long_term_retention_database_name=LONG_TERM_RETENTION_DATABASE_NAME, backup_name=BACKUP_NAME)
         result = result.result()
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)

@@ -11,8 +11,8 @@
 #   ServerUsages: 1/1
 #   FirewallRules: 4/4
 #   ServerCommunicationLinks: 4/4
-#   ServerBlobAuditingPolicies: 0/3
-#   ExtendedServerBlobAuditingPolicies: 0/3
+#   ServerBlobAuditingPolicies: 3/3
+#   ExtendedServerBlobAuditingPolicies: 3/3
 #   ServerDnsAliases: 5/5
 #   Capabilities: 1/1
 #   ServerAzureADAdministrators: 0/4
@@ -336,6 +336,7 @@ class MgmtSqlTest(AzureMgmtTestCase):
     def test_server_azure_adadministrator(self, resource_group):
 
         TENANT_ID = self.settings.TENANT_ID
+        CLIENT_OID = self.settings.CLIENT_OID
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
         RESOURCE_GROUP = resource_group.name
         SERVER_NAME = "myserverxpxy"
@@ -358,7 +359,8 @@ class MgmtSqlTest(AzureMgmtTestCase):
         BODY = {
           "administrator_type": "ActiveDirectory",
           "login": "bob@contoso.com",
-          "sid": "c6b82b90-a647-49cb-8a62-0d2d3cb7ac7c",
+        #   "sid": "c6b82b90-a647-49cb-8a62-0d2d3cb7ac7c",
+          "sid": CLIENT_OID,
           "tenant_id": TENANT_ID
         }
         result = self.mgmt_client.server_azure_ad_administrators.begin_create_or_update(resource_group_name=RESOURCE_GROUP, server_name=SERVER_NAME, administrator_name=ADMINISTRATOR_NAME, parameters=BODY)
@@ -443,7 +445,7 @@ class MgmtSqlTest(AzureMgmtTestCase):
         result = self.mgmt_client.servers.begin_delete(resource_group_name=RESOURCE_GROUP, server_name=SERVER_NAME)
         result = result.result()
 
-    @unittest.skip("unavailable")
+    # @unittest.skip("unavailable")
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_server_blob_auditing_policy(self, resource_group):
 
@@ -451,6 +453,14 @@ class MgmtSqlTest(AzureMgmtTestCase):
         SERVER_NAME = "myserverxpxy"
         PARTNER_SERVER_NAME = "mypartnerserverxpxy"
         COMMUNICATION_LINK_NAME = "mycommunicationlink"
+        STORAGE_ACCOUNT_NAME = "mystorageaccountxyc"
+        BLOB_CONTAINER_NAME = "myblobcontainer"
+        SECURITY_ALERT_POLICY_NAME = "default"
+
+        if self.is_live:
+            ACCESS_KEY = self.create_blob_container(AZURE_LOCATION, RESOURCE_GROUP, STORAGE_ACCOUNT_NAME, BLOB_CONTAINER_NAME)
+        else:
+            ACCESS_KEY = "accesskey"
  
 #--------------------------------------------------------------------------
         # /Servers/put/Create server[put]
@@ -468,8 +478,10 @@ class MgmtSqlTest(AzureMgmtTestCase):
 #--------------------------------------------------------------------------
         BODY = {
           "state": "Enabled",
-          "storage_account_access_key": "sdlfkjabc+sdlfkjsdlkfsjdfLDKFTERLKFDFKLjsdfksjdflsdkfD2342309432849328476458/3RSD==",
-          "storage_endpoint": "https://mystorage.blob.core.windows.net"
+        #   "storage_account_access_key": "sdlfkjabc+sdlfkjsdlkfsjdfLDKFTERLKFDFKLjsdfksjdflsdkfD2342309432849328476458/3RSD==",
+          "storage_account_access_key": ACCESS_KEY,
+        #   "storage_endpoint": "https://mystorage.blob.core.windows.net"
+          "storage_endpoint": "https://" + STORAGE_ACCOUNT_NAME + ".blob.core.windows.net"
         }
         result = self.mgmt_client.server_blob_auditing_policies.begin_create_or_update(resource_group_name=RESOURCE_GROUP, server_name=SERVER_NAME, parameters=BODY)
         result = result.result()
@@ -479,8 +491,10 @@ class MgmtSqlTest(AzureMgmtTestCase):
 #--------------------------------------------------------------------------
         BODY = {
           "state": "Enabled",
-          "storage_account_access_key": "sdlfkjabc+sdlfkjsdlkfsjdfLDKFTERLKFDFKLjsdfksjdflsdkfD2342309432849328476458/3RSD==",
-          "storage_endpoint": "https://mystorage.blob.core.windows.net"
+        #   "storage_account_access_key": "sdlfkjabc+sdlfkjsdlkfsjdfLDKFTERLKFDFKLjsdfksjdflsdkfD2342309432849328476458/3RSD==",
+          "storage_account_access_key": ACCESS_KEY,
+        #   "storage_endpoint": "https://mystorage.blob.core.windows.net"
+          "storage_endpoint": "https://" + STORAGE_ACCOUNT_NAME + ".blob.core.windows.net"
         }
         result = self.mgmt_client.extended_server_blob_auditing_policies.begin_create_or_update(resource_group_name=RESOURCE_GROUP, server_name=SERVER_NAME, parameters=BODY)
         result = result.result()
