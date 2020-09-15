@@ -284,10 +284,10 @@ class ShareFileClient(StorageAccountHostsMixin):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/file_samples_client.py
-                :start-after: [START acquire_lease_on_file]
-                :end-before: [END acquire_lease_on_file]
+                :start-after: [START acquire_and_release_lease_on_file]
+                :end-before: [END acquire_and_release_lease_on_file]
                 :language: python
-                :dedent: 8
+                :dedent: 12
                 :caption: Acquiring a lease on a file.
         """
         lease = ShareLeaseClient(self, lease_id=lease_id)  # type: ignore
