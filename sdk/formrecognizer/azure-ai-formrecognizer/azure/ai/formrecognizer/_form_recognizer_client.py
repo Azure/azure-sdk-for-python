@@ -188,7 +188,7 @@ class FormRecognizerClient(object):
         include_field_elements = kwargs.pop("include_field_elements", False)
         cls = kwargs.pop("cls", self._receipt_callback)
         polling = LROBasePolling(timeout=polling_interval, **kwargs)
-        if self.api_version == "2.1-preview.1":
+        if self.api_version == "2.1-preview.1" and locale:
             kwargs.update({"locale": locale})
         return self._client.begin_analyze_receipt_async(  # type: ignore
             file_stream={"source": receipt_url},

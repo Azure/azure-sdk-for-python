@@ -149,7 +149,7 @@ class FormRecognizerClient(object):
         if content_type is None:
             content_type = get_content_type(receipt)
 
-        if self.api_version == "2.1-preview.1":
+        if self.api_version == "2.1-preview.1" and locale:
             kwargs.update({"locale": locale})
 
         return await self._client.begin_analyze_receipt_async(  # type: ignore
@@ -207,7 +207,7 @@ class FormRecognizerClient(object):
                 **kwargs
             )
 
-        if self.api_version == "2.1-preview.1":
+        if self.api_version == "2.1-preview.1" and locale:
             kwargs.update({"locale": locale})
 
         return await self._client.begin_analyze_receipt_async(  # type: ignore
