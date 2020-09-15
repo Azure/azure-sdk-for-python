@@ -23,8 +23,8 @@ from .operations import LogFilesOperations
 from .operations import ServerAdministratorsOperations
 from .operations import LocationBasedPerformanceTierOperations
 from .operations import CheckNameAvailabilityOperations
-from .operations import ServerSecurityAlertPoliciesOperations
 from .operations import Operations
+from .operations import ServerSecurityAlertPoliciesOperations
 from .operations import PrivateEndpointConnectionsOperations
 from .operations import PrivateLinkResourcesOperations
 from .operations import ServerKeysOperations
@@ -57,10 +57,10 @@ class PostgreSQLManagementClient(SDKClient):
     :vartype location_based_performance_tier: azure.mgmt.rdbms.postgresql.operations.LocationBasedPerformanceTierOperations
     :ivar check_name_availability: CheckNameAvailability operations
     :vartype check_name_availability: azure.mgmt.rdbms.postgresql.operations.CheckNameAvailabilityOperations
-    :ivar server_security_alert_policies: ServerSecurityAlertPolicies operations
-    :vartype server_security_alert_policies: azure.mgmt.rdbms.postgresql.operations.ServerSecurityAlertPoliciesOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.rdbms.postgresql.operations.Operations
+    :ivar server_security_alert_policies: ServerSecurityAlertPolicies operations
+    :vartype server_security_alert_policies: azure.mgmt.rdbms.postgresql.operations.ServerSecurityAlertPoliciesOperations
     :ivar private_endpoint_connections: PrivateEndpointConnections operations
     :vartype private_endpoint_connections: azure.mgmt.rdbms.postgresql.operations.PrivateEndpointConnectionsOperations
     :ivar private_link_resources: PrivateLinkResources operations
@@ -106,9 +106,9 @@ class PostgreSQLManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.check_name_availability = CheckNameAvailabilityOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.server_security_alert_policies = ServerSecurityAlertPoliciesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.server_security_alert_policies = ServerSecurityAlertPoliciesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
