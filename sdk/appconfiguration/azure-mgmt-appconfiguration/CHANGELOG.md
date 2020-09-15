@@ -4,10 +4,7 @@
 
 **Features**
 
-  - Model ConfigurationStoreUpdateParameters has a new parameter properties
-  - Added operation ConfigurationStoresOperations.create
-  - Added operation ConfigurationStoresOperations.update
-  - Added operation ConfigurationStoresOperations.delete
+  - Model ConfigurationStoreUpdateParameters has a new parameter public_network_access
 
 **Breaking changes**
 
