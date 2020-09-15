@@ -65,7 +65,8 @@ class ApplicationInsightsManagementClient(MultiApiClientMixin, SDKClient):
             'ea_subscription_rollback_to_legacy_pricing_model': '2017-10-01',
             'export_configurations': '2015-05-01',
             'favorites': '2015-05-01',
-            'operations': '2015-05-01',
+            'my_workbooks': '2015-05-01',
+            'operations': '2019-09-01-preview',
             'proactive_detection_configurations': '2018-05-01-preview',
             'queries': '2019-09-01-preview',
             'query_packs': '2019-09-01-preview',
@@ -332,14 +333,30 @@ class ApplicationInsightsManagementClient(MultiApiClientMixin, SDKClient):
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
+    def my_workbooks(self):
+        """Instance depends on the API version:
+
+           * 2015-05-01: :class:`MyWorkbooksOperations<azure.mgmt.applicationinsights.v2015_05_01.operations.MyWorkbooksOperations>`
+        """
+        api_version = self._get_api_version('my_workbooks')
+        if api_version == '2015-05-01':
+            from .v2015_05_01.operations import MyWorkbooksOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
     def operations(self):
         """Instance depends on the API version:
 
            * 2015-05-01: :class:`Operations<azure.mgmt.applicationinsights.v2015_05_01.operations.Operations>`
+           * 2019-09-01-preview: :class:`Operations<azure.mgmt.applicationinsights.v2019_09_01_preview.operations.Operations>`
         """
         api_version = self._get_api_version('operations')
         if api_version == '2015-05-01':
             from .v2015_05_01.operations import Operations as OperationClass
+        elif api_version == '2019-09-01-preview':
+            from .v2019_09_01_preview.operations import Operations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))

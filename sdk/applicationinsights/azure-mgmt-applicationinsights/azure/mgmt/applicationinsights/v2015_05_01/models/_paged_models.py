@@ -116,3 +116,16 @@ class WorkbookPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(WorkbookPaged, self).__init__(*args, **kwargs)
+class MyWorkbookPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`MyWorkbook <azure.mgmt.applicationinsights.v2015_05_01.models.MyWorkbook>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[MyWorkbook]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(MyWorkbookPaged, self).__init__(*args, **kwargs)
