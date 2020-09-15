@@ -22,7 +22,6 @@ from ._generated.models import (
     TrainRequest,
     TrainSourceFilter,
     CopyRequest,
-    CopyOperationResult,
     CopyAuthorizationResult
 )
 from ._helpers import (
@@ -156,7 +155,9 @@ class FormTrainingClient(object):
             deserialization_callback = cls if cls else callback_v2_0
             if continuation_token:
                 return LROPoller.from_continuation_token(
-                    polling_method=LROBasePolling(timeout=polling_interval, lro_algorithms=[TrainingPolling()], **kwargs),
+                    polling_method=LROBasePolling(
+                        timeout=polling_interval, lro_algorithms=[TrainingPolling()], **kwargs
+                    ),
                     continuation_token=continuation_token,
                     client=self._client._client,
                     deserialization_callback=deserialization_callback
@@ -182,23 +183,23 @@ class FormTrainingClient(object):
                 deserialization_callback,
                 LROBasePolling(timeout=polling_interval, lro_algorithms=[TrainingPolling()], **kwargs)
             )
-        else:
-            deserialization_callback = cls if cls else callback_v2_1
-            return self._client.begin_train_custom_model_async(  # type: ignore
-                train_request=TrainRequest(
-                    source=training_files_url,
-                    use_label_file=use_training_labels,
-                    source_filter=TrainSourceFilter(
-                        prefix=kwargs.pop("prefix", ""),
-                        include_sub_folders=kwargs.pop("include_subfolders", False),
-                    ),
+
+        deserialization_callback = cls if cls else callback_v2_1
+        return self._client.begin_train_custom_model_async(  # type: ignore
+            train_request=TrainRequest(
+                source=training_files_url,
+                use_label_file=use_training_labels,
+                source_filter=TrainSourceFilter(
+                    prefix=kwargs.pop("prefix", ""),
+                    include_sub_folders=kwargs.pop("include_subfolders", False),
                 ),
-                cls=deserialization_callback,
-                continuation_token=continuation_token,
-                polling=LROBasePolling(timeout=polling_interval, lro_algorithms=[TrainingPolling()], **kwargs),
-                error_map=error_map,
-                **kwargs
-            )
+            ),
+            cls=deserialization_callback,
+            continuation_token=continuation_token,
+            polling=LROBasePolling(timeout=polling_interval, lro_algorithms=[TrainingPolling()], **kwargs),
+            error_map=error_map,
+            **kwargs
+        )
 
     @distributed_trace
     def delete_model(self, model_id, **kwargs):

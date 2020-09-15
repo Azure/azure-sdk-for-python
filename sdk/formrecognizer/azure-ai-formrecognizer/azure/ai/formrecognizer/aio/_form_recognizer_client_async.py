@@ -22,7 +22,6 @@ from .._response_handlers import (
     prepare_content_result,
     prepare_form_result
 )
-from .._generated.models import AnalyzeOperationResult
 from .._helpers import _get_deserialize, get_content_type, get_authentication_policy, error_map, POLLING_INTERVAL
 from .._user_agent import USER_AGENT
 from .._polling import AnalyzePolling

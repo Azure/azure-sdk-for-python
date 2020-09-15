@@ -25,9 +25,7 @@ from .._generated.aio._form_recognizer_client import FormRecognizerClient as For
 from .._generated.models import (
     TrainRequest,
     TrainSourceFilter,
-    Model,
     CopyRequest,
-    CopyOperationResult,
     CopyAuthorizationResult
 )
 from .._helpers import _get_deserialize, error_map, get_authentication_policy, POLLING_INTERVAL
@@ -198,23 +196,23 @@ class FormTrainingClient(object):
                     **kwargs
                 )
             )
-        else:
-            deserialization_callback = cls if cls else callback_v2_1
-            return await self._client.begin_train_custom_model_async(  # type: ignore
-                train_request=TrainRequest(
-                    source=training_files_url,
-                    use_label_file=use_training_labels,
-                    source_filter=TrainSourceFilter(
-                        prefix=kwargs.pop("prefix", ""),
-                        include_sub_folders=kwargs.pop("include_subfolders", False),
-                    ),
+
+        deserialization_callback = cls if cls else callback_v2_1
+        return await self._client.begin_train_custom_model_async(  # type: ignore
+            train_request=TrainRequest(
+                source=training_files_url,
+                use_label_file=use_training_labels,
+                source_filter=TrainSourceFilter(
+                    prefix=kwargs.pop("prefix", ""),
+                    include_sub_folders=kwargs.pop("include_subfolders", False),
                 ),
-                cls=deserialization_callback,
-                continuation_token=continuation_token,
-                polling=AsyncLROBasePolling(timeout=polling_interval, lro_algorithms=[TrainingPolling()], **kwargs),
-                error_map=error_map,
-                **kwargs
-            )
+            ),
+            cls=deserialization_callback,
+            continuation_token=continuation_token,
+            polling=AsyncLROBasePolling(timeout=polling_interval, lro_algorithms=[TrainingPolling()], **kwargs),
+            error_map=error_map,
+            **kwargs
+        )
 
     @distributed_trace_async
     async def delete_model(self, model_id: str, **kwargs: Any) -> None:
