@@ -12,7 +12,7 @@ FILE: sample_analyze_sentiment_with_opinion_mining.py
 DESCRIPTION:
     This sample demonstrates how to analyze sentiment on a more granular level, mining individual
     opinions from reviews (also known as aspect-based sentiment analysis).
-    This feature is only available for clients with api version v3.1-preview.1.
+    This feature is only available for clients with api version v3.1-preview and up.
 
     In this sample, we will be a customer who is trying to figure out whether they should stay
     at a specific hotel. We will be looking at which aspects of the hotel are good, and which are

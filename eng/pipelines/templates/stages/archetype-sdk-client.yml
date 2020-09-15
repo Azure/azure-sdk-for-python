@@ -26,6 +26,9 @@ parameters:
 - name: AdditionalTestMatrix
   type: object
   default: []
+- name: DevFeedName
+  type: string
+  default: public/azure-sdk-for-python
 
 stages:
   - stage: Build
@@ -38,6 +41,7 @@ stages:
         InjectedPackages: ${{parameters.InjectedPackages}}
         SkipPythonVersion: ${{parameters.SkipPythonVersion}}
         AdditionalTestMatrix: ${{parameters.AdditionalTestMatrix}}
+        DevFeedName: ${{parameters.DevFeedName}}
 
   # The Prerelease and Release stages are conditioned on whether we are building a pull request and the branch.
   - ${{if and(ne(variables['Build.Reason'], 'PullRequest'), eq(variables['System.TeamProject'], 'internal'))}}:
@@ -50,3 +54,4 @@ stages:
         DocArtifact: documentation
         TargetDocRepoOwner: ${{parameters.TargetDocRepoOwner}}
         TargetDocRepoName: ${{parameters.TargetDocRepoName}}
+        DevFeedName: ${{parameters.DevFeedName}}

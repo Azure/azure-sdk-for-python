@@ -7,6 +7,7 @@ import uuid
 from cryptography.exceptions import InvalidSignature
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.asymmetric.rsa import (
+    RSAPrivateKey,
     RSAPrivateNumbers,
     RSAPublicNumbers,
     generate_private_key,
@@ -15,26 +16,25 @@ from cryptography.hazmat.primitives.asymmetric.rsa import (
     rsa_crt_iqmp,
 )
 
-from azure.keyvault.keys._models import JsonWebKey
 from ._internal import _bytes_to_int, _int_to_bytes
 from .key import Key
 from .algorithms import Ps256, Ps384, Ps512, Rsa1_5, RsaOaep, RsaOaep256, Rs256, Rs384, Rs512
+from ... import JsonWebKey, KeyOperation
 
 
 class RsaKey(Key):  # pylint:disable=too-many-public-methods
-    PUBLIC_KEY_DEFAULT_OPS = ["encrypt", "wrapKey", "verify"]
-    PRIVATE_KEY_DEFAULT_OPS = ["encrypt", "decrypt", "wrapKey", "unwrapKey", "verify", "sign"]
-
-    _supported_encryption_algorithms = [Rsa1_5.name(), RsaOaep.name(), RsaOaep256.name()]
-    _supported_key_wrap_algorithms = [Rsa1_5.name(), RsaOaep.name(), RsaOaep256.name()]
-    _supported_signature_algorithms = [
-        Ps256.name(),
-        Ps384.name(),
-        Ps512.name(),
-        Rs256.name(),
-        Rs384.name(),
-        Rs512.name(),
+    PUBLIC_KEY_DEFAULT_OPS = [KeyOperation.encrypt, KeyOperation.wrap_key, KeyOperation.verify]
+    PRIVATE_KEY_DEFAULT_OPS = PUBLIC_KEY_DEFAULT_OPS + [
+        KeyOperation.decrypt,
+        KeyOperation.unwrap_key,
+        KeyOperation.sign,
     ]
+
+    _supported_encryption_algorithms = frozenset((Rsa1_5.name(), RsaOaep.name(), RsaOaep256.name()))
+    _supported_key_wrap_algorithms = frozenset((Rsa1_5.name(), RsaOaep.name(), RsaOaep256.name()))
+    _supported_signature_algorithms = frozenset(
+        (Ps256.name(), Ps384.name(), Ps512.name(), Rs256.name(), Rs384.name(), Rs512.name(),)
+    )
 
     def __init__(self, kid=None):
         super(RsaKey, self).__init__()
@@ -212,10 +212,7 @@ class RsaKey(Key):  # pylint:disable=too-many-public-methods
         return decryptor.transform(encrypted_key)
 
     def is_private_key(self):
-        # return isinstance(self._rsa_impl, RSAPrivateKey)
-        # TODO returning False here even if someone sneaked in private key material because
-        # currently we don't want to perform decrypt/unwrap/sign locally
-        return False
+        return isinstance(self._rsa_impl, RSAPrivateKey)
 
     def _public_key_material(self):
         return self.public_key.public_numbers()

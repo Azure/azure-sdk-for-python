@@ -14,6 +14,7 @@ import pytest
 import uuid
 from base64 import b64encode
 from datetime import datetime, timedelta
+from enum import Enum
 
 from azure.data.tables import TableServiceClient, TableClient, generate_table_sas
 from dateutil.tz import tzutc, tzoffset
@@ -303,7 +304,6 @@ class StorageTableEntityTest(TableTestCase):
         self.assertIn("etag", keys)
         self.assertEqual(len(keys), 3)
 
-
     # --Test cases for entities ------------------------------------------
     @GlobalStorageAccountPreparer()
     def test_insert_etag(self, resource_group, location, storage_account, storage_account_key):
@@ -589,6 +589,36 @@ class StorageTableEntityTest(TableTestCase):
                 resp = self.table.create_entity(entity=entity)
 
             # Assert
+        finally:
+            self._tear_down()
+
+    @GlobalStorageAccountPreparer()
+    def test_insert_entity_with_enums(self, resource_group, location, storage_account,
+                                                         storage_account_key):
+        # Arrange
+        self._set_up(storage_account, storage_account_key)
+        try:
+            # Act
+            class Color(Enum):
+                RED = 1
+                BLUE = 2
+                YELLOW = 3
+
+            pk, rk = self._create_pk_rk(None, None)
+            entity = TableEntity()
+            entity.PartitionKey = pk
+            entity.RowKey = rk
+            entity.test1 = Color.YELLOW
+            entity.test2 = Color.BLUE
+            entity.test3 = Color.RED
+
+
+            self.table.create_entity(entity=entity)
+            resp_entity = self.table.get_entity(partition_key=pk, row_key=rk)
+            assert str(entity.test1) == resp_entity.test1.value
+            assert str(entity.test2) == resp_entity.test2.value
+            assert str(entity.test3) == resp_entity.test3.value
+
         finally:
             self._tear_down()
 

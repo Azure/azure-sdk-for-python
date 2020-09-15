@@ -1,10 +1,1 @@
 https://docs.microsoft.com/python/api/overview/azure/{{package_doc_id}}
-https://pypi.org/project/azure-schemaregistry
-https://azuresdkdocs.blob.core.windows.net/$web/python/azure-schemaregistry/latest/index.html
-https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/schemaregistry/azure-schemaregistry/samples/sync_samples/schema_registry.py
-https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/schemaregistry/azure-schemaregistry/samples/async_samples/schema_registry_async.py
-https://pypi.org/project/azure-schemaregistry-avroserializer
-https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/schemaregistry/azure-schemaregistry-avroserializer/CHANGELOG.md
-https://azuresdkdocs.blob.core.windows.net/$web/python/azure-schemaregistry-avroserializer/latest/index.html
-https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/schemaregistry/azure-schemaregistry-avroserializer/samples
-https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/schemaregistry/azure-schemaregistry-avroserializer/samples/avro_serializer.py

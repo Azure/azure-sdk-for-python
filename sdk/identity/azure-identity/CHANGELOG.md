@@ -1,5 +1,8 @@
 # Release History
 
+## 1.5.0b2 (Unreleased)
+
+
 ## 1.5.0b1 (2020-09-08)
 ### Added
 - Application authentication APIs from 1.4.0b7

@@ -305,7 +305,7 @@ and [supported types][linked_entities_categories].
 
 ### Recognize PII entities
 [recognize_pii_entities][recognize_pii_entities] recognizes and categorizes Personally Identifiable Information (PII) entities in its input text, such as
-Social Security Numbers, bank account information, credit card numbers, and more. This endpoint is only available for v3.1-preview.1 and up.
+Social Security Numbers, bank account information, credit card numbers, and more. This endpoint is only available for v3.1-preview and up.
 
 ```python
 from azure.core.credentials import AzureKeyCredential
@@ -322,13 +322,15 @@ documents = [
 ]
 response = text_analytics_client.recognize_pii_entities(documents, language="en")
 result = [doc for doc in response if not doc.is_error]
-for doc in result:
+for idx, doc in enumerate(result):
+    print("Document text: {}".format(documents[idx]))
+    print("Redacted document text: {}".format(doc.redacted_text))
     for entity in doc.entities:
-        print("Entity: {}".format(entity.text))
-        print("...Category: {}".format(entity.category))
-        print("...Confidence Score: {}".format(entity.confidence_score))
-        print("...Offset: {}".format(entity.offset))
-        print("...Length: {}".format(entity.length))
+        print("...Entity: {}".format(entity.text))
+        print("......Category: {}".format(entity.category))
+        print("......Confidence Score: {}".format(entity.confidence_score))
+        print("......Offset: {}".format(entity.offset))
+        print("......Length: {}".format(entity.length))
 ```
 
 The returned response is a heterogeneous list of result and error objects: list[[RecognizePiiEntitiesResult][recognize_pii_entities_result], [DocumentError][document_error]]
