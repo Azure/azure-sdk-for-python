@@ -1,16 +1,26 @@
 # Release History
 
-## 3.0.0 (2020-09-14)
+## 3.0.0rc1 (2020-09-15)
 
 **Features**
 
-  - Added operation ServersOperations.upgrade
+  - Model NameAvailability has a new parameter name
+  - Model NameAvailability has a new parameter type
   - Added operation ServersOperations.start
   - Added operation ServersOperations.stop
+  - Added operation ConfigurationsOperations.update
+  - Added operation group VirtualNetworkSubnetUsageOperations
+  - Added operation group LocationBasedCapabilitiesOperations
+  - Added operation group CheckVirtualNetworkSubnetUsageOperations
 
 **Breaking changes**
 
-  - Parameter name of model Sku is now required
+  - Model NameAvailability no longer has parameter reason
+  - Model StorageProfile no longer has parameter geo_redundant_backup
+  - Model StorageProfile no longer has parameter storage_autogrow
+  - Model Server has a new signature
+  - Model Sku has a new signature
+  - Removed operation ConfigurationsOperations.create_or_update
 
 ## 2.2.0 (2020-03-25)
 
