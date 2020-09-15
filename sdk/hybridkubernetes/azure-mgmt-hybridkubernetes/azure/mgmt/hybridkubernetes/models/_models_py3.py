@@ -13,6 +13,84 @@ from msrest.serialization import Model
 from msrest.exceptions import HttpOperationError
 
 
+class AuthenticationCertificateDetails(Model):
+    """AuthenticationCertificateDetails.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param certificate_data: Required. Base64 encoded client certificate data.
+    :type certificate_data: str
+    :param key_data: Required. Base64 encoded key data.
+    :type key_data: str
+    """
+
+    _validation = {
+        'certificate_data': {'required': True},
+        'key_data': {'required': True},
+    }
+
+    _attribute_map = {
+        'certificate_data': {'key': 'certificateData', 'type': 'str'},
+        'key_data': {'key': 'keyData', 'type': 'str'},
+    }
+
+    def __init__(self, *, certificate_data: str, key_data: str, **kwargs) -> None:
+        super(AuthenticationCertificateDetails, self).__init__(**kwargs)
+        self.certificate_data = certificate_data
+        self.key_data = key_data
+
+
+class AuthenticationDetails(Model):
+    """AuthenticationDetails.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param authentication_method: Required. The mode of client authentication.
+     Possible values include: 'Token', 'ClientCertificate'
+    :type authentication_method: str or
+     ~azure.mgmt.hybridkubernetes.models.AuthenticationMethod
+    :param value: Required.
+    :type value:
+     ~azure.mgmt.hybridkubernetes.models.AuthenticationDetailsValue
+    """
+
+    _validation = {
+        'authentication_method': {'required': True},
+        'value': {'required': True},
+    }
+
+    _attribute_map = {
+        'authentication_method': {'key': 'authenticationMethod', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'AuthenticationDetailsValue'},
+    }
+
+    def __init__(self, *, authentication_method, value, **kwargs) -> None:
+        super(AuthenticationDetails, self).__init__(**kwargs)
+        self.authentication_method = authentication_method
+        self.value = value
+
+
+class AuthenticationDetailsValue(Model):
+    """AuthenticationDetailsValue.
+
+    :param token: Authentication token.
+    :type token: str
+    :param client_certificate:
+    :type client_certificate:
+     ~azure.mgmt.hybridkubernetes.models.AuthenticationCertificateDetails
+    """
+
+    _attribute_map = {
+        'token': {'key': 'token', 'type': 'str'},
+        'client_certificate': {'key': 'clientCertificate', 'type': 'AuthenticationCertificateDetails'},
+    }
+
+    def __init__(self, *, token: str=None, client_certificate=None, **kwargs) -> None:
+        super(AuthenticationDetailsValue, self).__init__(**kwargs)
+        self.token = token
+        self.client_certificate = client_certificate
+
+
 class Resource(Model):
     """Resource.
 

@@ -10,6 +10,9 @@
 # --------------------------------------------------------------------------
 
 try:
+    from ._models_py3 import AuthenticationCertificateDetails
+    from ._models_py3 import AuthenticationDetails
+    from ._models_py3 import AuthenticationDetailsValue
     from ._models_py3 import AzureEntityResource
     from ._models_py3 import ConnectedCluster
     from ._models_py3 import ConnectedClusterAADProfile
@@ -25,6 +28,9 @@ try:
     from ._models_py3 import Resource
     from ._models_py3 import TrackedResource
 except (SyntaxError, ImportError):
+    from ._models import AuthenticationCertificateDetails
+    from ._models import AuthenticationDetails
+    from ._models import AuthenticationDetailsValue
     from ._models import AzureEntityResource
     from ._models import ConnectedCluster
     from ._models import ConnectedClusterAADProfile
@@ -44,9 +50,13 @@ from ._paged_models import OperationPaged
 from ._connected_kubernetes_client_enums import (
     ResourceIdentityType,
     ProvisioningState,
+    AuthenticationMethod,
 )
 
 __all__ = [
+    'AuthenticationCertificateDetails',
+    'AuthenticationDetails',
+    'AuthenticationDetailsValue',
     'AzureEntityResource',
     'ConnectedCluster',
     'ConnectedClusterAADProfile',
@@ -65,4 +75,5 @@ __all__ = [
     'OperationPaged',
     'ResourceIdentityType',
     'ProvisioningState',
+    'AuthenticationMethod',
 ]

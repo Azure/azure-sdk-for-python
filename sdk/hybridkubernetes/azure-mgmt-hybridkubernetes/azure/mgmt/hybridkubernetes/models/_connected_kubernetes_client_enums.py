@@ -27,3 +27,9 @@ class ProvisioningState(str, Enum):
     updating = "Updating"
     deleting = "Deleting"
     accepted = "Accepted"
+
+
+class AuthenticationMethod(str, Enum):
+
+    token = "Token"
+    client_certificate = "ClientCertificate"
