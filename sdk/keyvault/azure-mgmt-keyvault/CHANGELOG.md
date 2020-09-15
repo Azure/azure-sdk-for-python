@@ -2,37 +2,6 @@
 
 ## 7.0.0 (2020-09-15)
 
-**Features**
-
-  - Added operation VaultsOperations.purge_deleted
-  - Added operation VaultsOperations.create_or_update
-
-**Breaking changes**
-
-  - Parameter location of model Vault is now required
-  - Parameter location of model Resource is now required
-  - Operation VaultsOperations.list_by_subscription has a new signature
-  - Operation VaultsOperations.list_by_resource_group has a new signature
-  - Operation VaultsOperations.list has a new signature
-  - Operation VaultsOperations.get_deleted has a new signature
-  - Operation VaultsOperations.get has a new signature
-  - Operation VaultsOperations.delete has a new signature
-  - Operation VaultsOperations.check_name_availability has a new signature
-  - Operation VaultsOperations.list_deleted has a new signature
-  - Operation VaultsOperations.update_access_policy has a new signature
-  - Operation VaultsOperations.update has a new signature
-  - Operation Operations.list has a new signature
-  - Model VaultPatchProperties no longer has parameter soft_delete_retention_in_days
-  - Model VaultPatchProperties no longer has parameter enable_rbac_authorization
-  - Model VaultProperties no longer has parameter private_endpoint_connections
-  - Model VaultProperties no longer has parameter soft_delete_retention_in_days
-  - Model VaultProperties no longer has parameter enable_rbac_authorization
-  - Removed operation VaultsOperations.begin_purge_deleted
-  - Removed operation VaultsOperations.begin_create_or_update
-  - Removed operation group PrivateLinkResourcesOperations
-  - Removed operation group ManagedHsmsOperations
-  - Removed operation group PrivateEndpointConnectionsOperations
-
 ## 7.0.0b3 (2020-09-09)
 
 **Features**
