@@ -1,5 +1,17 @@
 # Release History
 
+## 3.0.0 (2020-09-14)
+
+**Features**
+
+  - Added operation ServersOperations.upgrade
+  - Added operation ServersOperations.start
+  - Added operation ServersOperations.stop
+
+**Breaking changes**
+
+  - Parameter name of model Sku is now required
+
 ## 2.2.0 (2020-03-25)
 
 **Features**
