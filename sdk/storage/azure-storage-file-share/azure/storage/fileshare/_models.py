@@ -136,6 +136,10 @@ class CorsRule(GeneratedCorsRule):
 
 
 class ProtocolProperties(GeneratedProtocolSettings):
+    """Protocol Properties class used by the set and get service properties methods in the share service.
+
+    Contains protocol properties of the share service such as the SMB setting of the share service.
+    """
     def __init__(self, smb_settings=None):
         self.smb_settings = smb_settings
 
@@ -933,4 +937,5 @@ def service_properties_deserialize(generated):
         'hour_metrics': Metrics._from_generated(generated.hour_metrics),  # pylint: disable=protected-access
         'minute_metrics': Metrics._from_generated(generated.minute_metrics),  # pylint: disable=protected-access
         'cors': [CorsRule._from_generated(cors) for cors in generated.cors],  # pylint: disable=protected-access
+        'protocol_settings': ProtocolProperties._from_generated(generated.protocol_settings), # pylint: disable=protected-access
     }
