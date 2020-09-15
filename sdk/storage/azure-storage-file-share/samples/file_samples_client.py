@@ -108,7 +108,7 @@ class FileSamples(object):
     def acquire_file_lease(self):
         # Instantiate the ShareClient from a connection string
         from azure.storage.fileshare import ShareClient
-        share = ShareClient.from_connection_string(self.connection_string, "filesamples2")
+        share = ShareClient.from_connection_string(self.connection_string, "filesamples3")
 
         # Create the share
         share.create_share()
@@ -128,6 +128,7 @@ class FileSamples(object):
         finally:
             # Delete the share
             share.delete_share()
+
 
 if __name__ == '__main__':
     sample = FileSamples()
