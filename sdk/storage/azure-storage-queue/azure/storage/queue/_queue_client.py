@@ -500,6 +500,17 @@ class QueueClient(StorageAccountHostsMixin):
             messages to retrieve from the queue, up to a maximum of 32. If
             fewer are visible, the visible messages are returned. By default,
             a single message is retrieved from the queue with this operation.
+            When retrieving these pages it is important to pass the output to `by_page()`.
+            These pages and their content can be iterated through using `next()`.
+            .. admonition:: Example:
+
+                .. literalinclude:: ../samples/queue_samples_message.py
+                    :start-after: [START receive_messages_listing]
+                    :end-before: [END receive_messages_listing]
+                    :language: python
+                    :dedent: 12
+                    :caption: List pages and corresponding messages from the queue.
+
         :keyword int visibility_timeout:
             If not specified, the default value is 0. Specifies the
             new visibility timeout value, in seconds, relative to server time.

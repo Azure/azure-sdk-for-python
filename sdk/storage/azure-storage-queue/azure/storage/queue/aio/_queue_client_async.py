@@ -419,6 +419,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
             messages to retrieve from the queue, up to a maximum of 32. If
             fewer are visible, the visible messages are returned. By default,
             a single message is retrieved from the queue with this operation.
+            When retrieving these pages it is important to pass the output to `by_page()`.
         :keyword int visibility_timeout:
             If not specified, the default value is 0. Specifies the
             new visibility timeout value, in seconds, relative to server time.
