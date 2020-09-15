@@ -282,8 +282,8 @@ class ShareClient(StorageAccountHostsMixin):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/file_samples_share.py
-                :start-after: [START acquire_lease_on_share]
-                :end-before: [END acquire_lease_on_share]
+                :start-after: [START acquire_and_release_lease_on_share]
+                :end-before: [END acquire_and_release_lease_on_share]
                 :language: python
                 :dedent: 8
                 :caption: Acquiring a lease on a share.
