@@ -19,8 +19,8 @@ from ._log_files_operations import LogFilesOperations
 from ._server_administrators_operations import ServerAdministratorsOperations
 from ._location_based_performance_tier_operations import LocationBasedPerformanceTierOperations
 from ._check_name_availability_operations import CheckNameAvailabilityOperations
-from ._server_security_alert_policies_operations import ServerSecurityAlertPoliciesOperations
 from ._operations import Operations
+from ._server_security_alert_policies_operations import ServerSecurityAlertPoliciesOperations
 from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
 from ._private_link_resources_operations import PrivateLinkResourcesOperations
 from ._server_keys_operations import ServerKeysOperations
@@ -36,8 +36,8 @@ __all__ = [
     'ServerAdministratorsOperations',
     'LocationBasedPerformanceTierOperations',
     'CheckNameAvailabilityOperations',
-    'ServerSecurityAlertPoliciesOperations',
     'Operations',
+    'ServerSecurityAlertPoliciesOperations',
     'PrivateEndpointConnectionsOperations',
     'PrivateLinkResourcesOperations',
     'ServerKeysOperations',
