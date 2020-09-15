@@ -273,10 +273,10 @@ class QueueMessageSamples(object):
 
 if __name__ == '__main__':
     sample = QueueMessageSamples()
-    #sample.set_access_policy()
-    #sample.queue_metadata()
-    #sample.send_and_receive_messages()
+    sample.set_access_policy()
+    sample.queue_metadata()
+    sample.send_and_receive_messages()
     sample.list_message_pages()
-    #sample.delete_and_clear_messages()
-    #sample.peek_messages()
-    #sample.update_message()
+    sample.delete_and_clear_messages()
+    sample.peek_messages()
+    sample.update_message()
