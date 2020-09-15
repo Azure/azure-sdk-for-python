@@ -202,6 +202,10 @@ class TextAnalyticsClientOperationsMixin(object):
         api_version = self._get_api_version('entities_linking')
         if api_version == 'v3.0':
             from ..v3_0.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
+        elif api_version == 'v3.1-preview.1':
+            from ..v3_1_preview_1.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
+        elif api_version == 'v3.1-preview.2':
+            from ..v3_1_preview_2.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
         elif api_version == 'v3.2-preview.1':
             from ..v3_2_preview_1.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
@@ -243,6 +247,10 @@ class TextAnalyticsClientOperationsMixin(object):
         api_version = self._get_api_version('entities_recognition_general')
         if api_version == 'v3.0':
             from ..v3_0.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
+        elif api_version == 'v3.1-preview.1':
+            from ..v3_1_preview_1.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
+        elif api_version == 'v3.1-preview.2':
+            from ..v3_1_preview_2.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
         elif api_version == 'v3.2-preview.1':
             from ..v3_2_preview_1.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
@@ -292,7 +300,11 @@ class TextAnalyticsClientOperationsMixin(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('entities_recognition_pii')
-        if api_version == 'v3.2-preview.1':
+        if api_version == 'v3.1-preview.1':
+            from ..v3_1_preview_1.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
+        elif api_version == 'v3.1-preview.2':
+            from ..v3_1_preview_2.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
+        elif api_version == 'v3.2-preview.1':
             from ..v3_2_preview_1.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'entities_recognition_pii'".format(api_version))
@@ -372,6 +384,10 @@ class TextAnalyticsClientOperationsMixin(object):
         api_version = self._get_api_version('key_phrases')
         if api_version == 'v3.0':
             from ..v3_0.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
+        elif api_version == 'v3.1-preview.1':
+            from ..v3_1_preview_1.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
+        elif api_version == 'v3.1-preview.2':
+            from ..v3_1_preview_2.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
         elif api_version == 'v3.2-preview.1':
             from ..v3_2_preview_1.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
@@ -413,6 +429,10 @@ class TextAnalyticsClientOperationsMixin(object):
         api_version = self._get_api_version('languages')
         if api_version == 'v3.0':
             from ..v3_0.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
+        elif api_version == 'v3.1-preview.1':
+            from ..v3_1_preview_1.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
+        elif api_version == 'v3.1-preview.2':
+            from ..v3_1_preview_2.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
         elif api_version == 'v3.2-preview.1':
             from ..v3_2_preview_1.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
@@ -454,6 +474,10 @@ class TextAnalyticsClientOperationsMixin(object):
         api_version = self._get_api_version('sentiment')
         if api_version == 'v3.0':
             from ..v3_0.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
+        elif api_version == 'v3.1-preview.1':
+            from ..v3_1_preview_1.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
+        elif api_version == 'v3.1-preview.2':
+            from ..v3_1_preview_2.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
         elif api_version == 'v3.2-preview.1':
             from ..v3_2_preview_1.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
