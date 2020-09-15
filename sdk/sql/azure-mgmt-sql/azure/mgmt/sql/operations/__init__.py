@@ -103,6 +103,7 @@ from ._managed_databases_operations import ManagedDatabasesOperations
 from ._server_azure_ad_only_authentications_operations import ServerAzureADOnlyAuthenticationsOperations
 from ._import_export_operations import ImportExportOperations
 from ._managed_instance_azure_ad_only_authentications_operations import ManagedInstanceAzureADOnlyAuthenticationsOperations
+from ._server_trust_groups_operations import ServerTrustGroupsOperations
 
 __all__ = [
     'RecoverableDatabasesOperations',
@@ -199,4 +200,5 @@ __all__ = [
     'ServerAzureADOnlyAuthenticationsOperations',
     'ImportExportOperations',
     'ManagedInstanceAzureADOnlyAuthenticationsOperations',
+    'ServerTrustGroupsOperations',
 ]

@@ -8408,6 +8408,28 @@ class ServerDnsAliasAcquisition(Model):
         self.old_server_dns_alias_id = old_server_dns_alias_id
 
 
+class ServerInfo(Model):
+    """Server info for the server trust group.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param server_id: Required. Server Id.
+    :type server_id: str
+    """
+
+    _validation = {
+        'server_id': {'required': True},
+    }
+
+    _attribute_map = {
+        'server_id': {'key': 'serverId', 'type': 'str'},
+    }
+
+    def __init__(self, *, server_id: str, **kwargs) -> None:
+        super(ServerInfo, self).__init__(**kwargs)
+        self.server_id = server_id
+
+
 class ServerKey(ProxyResource):
     """A server key.
 
@@ -8577,6 +8599,49 @@ class ServerSecurityAlertPolicy(ProxyResource):
         self.storage_account_access_key = storage_account_access_key
         self.retention_days = retention_days
         self.creation_time = None
+
+
+class ServerTrustGroup(ProxyResource):
+    """A server trust group.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param group_members: Required. Group members information for the server
+     trust group.
+    :type group_members: list[~azure.mgmt.sql.models.ServerInfo]
+    :param trust_scopes: Required. Trust scope of the server trust group.
+    :type trust_scopes: list[str]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'group_members': {'required': True},
+        'trust_scopes': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'group_members': {'key': 'properties.groupMembers', 'type': '[ServerInfo]'},
+        'trust_scopes': {'key': 'properties.trustScopes', 'type': '[str]'},
+    }
+
+    def __init__(self, *, group_members, trust_scopes, **kwargs) -> None:
+        super(ServerTrustGroup, self).__init__(**kwargs)
+        self.group_members = group_members
+        self.trust_scopes = trust_scopes
 
 
 class ServerUpdate(Model):
