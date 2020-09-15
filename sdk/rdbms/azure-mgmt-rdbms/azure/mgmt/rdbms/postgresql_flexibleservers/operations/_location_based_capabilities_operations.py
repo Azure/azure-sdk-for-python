@@ -16,8 +16,8 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class LocationBasedPerformanceTierOperations(object):
-    """LocationBasedPerformanceTierOperations operations.
+class LocationBasedCapabilitiesOperations(object):
+    """LocationBasedCapabilitiesOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -25,7 +25,7 @@ class LocationBasedPerformanceTierOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version to use for this operation. Constant value: "2017-12-01".
+    :ivar api_version: The API version to use for this operation. Constant value: "2020-02-14-privatepreview".
     """
 
     models = models
@@ -35,14 +35,13 @@ class LocationBasedPerformanceTierOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-12-01"
+        self.api_version = "2020-02-14-privatepreview"
 
         self.config = config
 
-    def list(
+    def execute(
             self, location_name, custom_headers=None, raw=False, **operation_config):
-        """List all the performance tiers at specified location in a given
-        subscription.
+        """Get capabilities at specified location in a given subscription.
 
         :param location_name: The name of the location.
         :type location_name: str
@@ -51,15 +50,15 @@ class LocationBasedPerformanceTierOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of PerformanceTierProperties
+        :return: An iterator like instance of CapabilityProperties
         :rtype:
-         ~azure.mgmt.rdbms.postgresql.models.PerformanceTierPropertiesPaged[~azure.mgmt.rdbms.postgresql.models.PerformanceTierProperties]
+         ~azure.mgmt.rdbms.postgresql_flexibleservers.models.CapabilityPropertiesPaged[~azure.mgmt.rdbms.postgresql_flexibleservers.models.CapabilityProperties]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
-                url = self.list.metadata['url']
+                url = self.execute.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
                     'locationName': self._serialize.url("location_name", location_name, 'str')
@@ -104,7 +103,7 @@ class LocationBasedPerformanceTierOperations(object):
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.PerformanceTierPropertiesPaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.CapabilityPropertiesPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.DBForPostgreSQL/locations/{locationName}/performanceTiers'}
+    execute.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.DBForPostgreSql/locations/{locationName}/capabilities'}

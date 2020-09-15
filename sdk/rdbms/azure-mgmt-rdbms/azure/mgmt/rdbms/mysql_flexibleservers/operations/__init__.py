@@ -11,34 +11,24 @@
 
 from ._servers_operations import ServersOperations
 from ._replicas_operations import ReplicasOperations
+from ._server_keys_operations import ServerKeysOperations
 from ._firewall_rules_operations import FirewallRulesOperations
-from ._virtual_network_rules_operations import VirtualNetworkRulesOperations
 from ._databases_operations import DatabasesOperations
 from ._configurations_operations import ConfigurationsOperations
-from ._log_files_operations import LogFilesOperations
-from ._server_administrators_operations import ServerAdministratorsOperations
-from ._location_based_performance_tier_operations import LocationBasedPerformanceTierOperations
+from ._location_based_capabilities_operations import LocationBasedCapabilitiesOperations
+from ._check_virtual_network_subnet_usage_operations import CheckVirtualNetworkSubnetUsageOperations
 from ._check_name_availability_operations import CheckNameAvailabilityOperations
 from ._operations import Operations
-from ._server_security_alert_policies_operations import ServerSecurityAlertPoliciesOperations
-from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
-from ._private_link_resources_operations import PrivateLinkResourcesOperations
-from ._server_keys_operations import ServerKeysOperations
 
 __all__ = [
     'ServersOperations',
     'ReplicasOperations',
+    'ServerKeysOperations',
     'FirewallRulesOperations',
-    'VirtualNetworkRulesOperations',
     'DatabasesOperations',
     'ConfigurationsOperations',
-    'LogFilesOperations',
-    'ServerAdministratorsOperations',
-    'LocationBasedPerformanceTierOperations',
+    'LocationBasedCapabilitiesOperations',
+    'CheckVirtualNetworkSubnetUsageOperations',
     'CheckNameAvailabilityOperations',
     'Operations',
-    'ServerSecurityAlertPoliciesOperations',
-    'PrivateEndpointConnectionsOperations',
-    'PrivateLinkResourcesOperations',
-    'ServerKeysOperations',
 ]

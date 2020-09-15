@@ -16,8 +16,8 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class CheckNameAvailabilityOperations(object):
-    """CheckNameAvailabilityOperations operations.
+class CheckVirtualNetworkSubnetUsageOperations(object):
+    """CheckVirtualNetworkSubnetUsageOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -25,7 +25,7 @@ class CheckNameAvailabilityOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version to use for this operation. Constant value: "2017-12-01".
+    :ivar api_version: The API version to use for this operation. Constant value: "2020-07-01-privatepreview".
     """
 
     models = models
@@ -35,34 +35,37 @@ class CheckNameAvailabilityOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-12-01"
+        self.api_version = "2020-07-01-privatepreview"
 
         self.config = config
 
     def execute(
-            self, name, type=None, custom_headers=None, raw=False, **operation_config):
-        """Check the availability of name for resource.
+            self, location_name, virtual_network_arm_resource_id=None, custom_headers=None, raw=False, **operation_config):
+        """Get virtual network subnet usage for a given vNet resource id.
 
-        :param name: Resource name to verify.
-        :type name: str
-        :param type: Resource type used for verification.
-        :type type: str
+        :param location_name: The name of the location.
+        :type location_name: str
+        :param virtual_network_arm_resource_id: Virtual network resource id.
+        :type virtual_network_arm_resource_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: NameAvailability or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.rdbms.postgresql.models.NameAvailability or
-         ~msrest.pipeline.ClientRawResponse
+        :return: VirtualNetworkSubnetUsageResult or ClientRawResponse if
+         raw=true
+        :rtype:
+         ~azure.mgmt.rdbms.mysql_flexibleservers.models.VirtualNetworkSubnetUsageResult
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        name_availability_request = models.NameAvailabilityRequest(name=name, type=type)
+        parameters = models.VirtualNetworkSubnetUsageParameter(virtual_network_arm_resource_id=virtual_network_arm_resource_id)
 
         # Construct URL
         url = self.execute.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1)
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
+            'locationName': self._serialize.url("location_name", location_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -82,7 +85,7 @@ class CheckNameAvailabilityOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(name_availability_request, 'NameAvailabilityRequest')
+        body_content = self._serialize.body(parameters, 'VirtualNetworkSubnetUsageParameter')
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -95,11 +98,11 @@ class CheckNameAvailabilityOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('NameAvailability', response)
+            deserialized = self._deserialize('VirtualNetworkSubnetUsageResult', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    execute.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.DBForPostgreSQL/checkNameAvailability'}
+    execute.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.DBForMySql/locations/{locationName}/checkVirtualNetworkSubnetUsage'}

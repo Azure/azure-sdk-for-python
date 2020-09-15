@@ -25,7 +25,7 @@ class CheckNameAvailabilityOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version to use for this operation. Constant value: "2017-12-01".
+    :ivar api_version: The API version to use for this operation. Constant value: "2020-02-14-privatepreview".
     """
 
     models = models
@@ -35,7 +35,7 @@ class CheckNameAvailabilityOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-12-01"
+        self.api_version = "2020-02-14-privatepreview"
 
         self.config = config
 
@@ -53,8 +53,9 @@ class CheckNameAvailabilityOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: NameAvailability or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.rdbms.postgresql.models.NameAvailability or
-         ~msrest.pipeline.ClientRawResponse
+        :rtype:
+         ~azure.mgmt.rdbms.postgresql_flexibleservers.models.NameAvailability
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         name_availability_request = models.NameAvailabilityRequest(name=name, type=type)
@@ -102,4 +103,4 @@ class CheckNameAvailabilityOperations(object):
             return client_raw_response
 
         return deserialized
-    execute.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.DBForPostgreSQL/checkNameAvailability'}
+    execute.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.DBForPostgreSql/checkNameAvailability'}
