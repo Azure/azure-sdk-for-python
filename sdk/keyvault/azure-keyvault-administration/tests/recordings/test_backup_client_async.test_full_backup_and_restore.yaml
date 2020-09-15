@@ -1,0 +1,186 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '0'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-administration/4.0.0b2 Python/3.5.4 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://managedhsm/backup?api-version=7.2-preview
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control: no-cache
+      content-length: '0'
+      content-security-policy: default-src 'self'
+      content-type: application/json; charset=utf-8
+      strict-transport-security: max-age=31536000; includeSubDomains
+      www-authenticate: Bearer authorization="https://login.windows-ppe.net/f686d426-8d16-42db-81b7-ab578e110ccd",
+        resource="https://managedhsm-int.azure-int.net"
+      x-content-type-options: nosniff
+      x-frame-options: SAMEORIGIN
+      x-ms-server-latency: '1'
+    status:
+      code: 401
+      message: Unauthorized
+    url: https://eastus2.chriss-eu2.managedhsm-int.azure-int.net/backup?api-version=7.2-preview
+- request:
+    body: '{"token": "redacted", "storageResourceUri": "https://storname.blob.core.windows.net/containerukawv6vxixb3rhm"}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '233'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-administration/4.0.0b2 Python/3.5.4 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://managedhsm/backup?api-version=7.2-preview
+  response:
+    body:
+      string: '{"status":"InProgress","statusDetails":null,"error":{"code":null,"message":null,"innererror":null},"startTime":1599693526,"endTime":null,"jobId":"c41d7765beaa4c3eae7a1e6159f9efb2","azureStorageBlobContainerUri":null}'
+    headers:
+      azure-asyncoperation: https://managedhsm/backup/c41d7765beaa4c3eae7a1e6159f9efb2/pending
+      cache-control: no-cache
+      content-length: '216'
+      content-security-policy: default-src 'self'
+      content-type: application/json; charset=utf-8
+      date: Wed, 09 Sep 2020 23:18:46 GMT
+      server: Kestrel
+      strict-transport-security: max-age=31536000; includeSubDomains
+      x-content-type-options: nosniff
+      x-frame-options: SAMEORIGIN
+      x-ms-keyvault-network-info: addr=24.17.201.78
+      x-ms-keyvault-region: EASTUS
+      x-ms-server-latency: '1033'
+    status:
+      code: 202
+      message: null
+    url: https://eastus2.chriss-eu2.managedhsm-int.azure-int.net/backup?api-version=7.2-preview
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-keyvault-administration/4.0.0b2 Python/3.5.4 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://managedhsm/backup/c41d7765beaa4c3eae7a1e6159f9efb2/pending
+  response:
+    body:
+      string: '{"azureStorageBlobContainerUri":"https://storname.blob.core.windows.net/containerukawv6vxixb3rhm/mhsm-chriss-eu2-2020090923184683","endTime":1599693537,"error":null,"jobId":"c41d7765beaa4c3eae7a1e6159f9efb2","startTime":1599693526,"status":"Succeeded","statusDetails":null}'
+    headers:
+      cache-control: no-cache
+      content-length: '289'
+      content-security-policy: default-src 'self'
+      content-type: application/json; charset=utf-8
+      date: Wed, 09 Sep 2020 23:18:57 GMT
+      server: Kestrel
+      strict-transport-security: max-age=31536000; includeSubDomains
+      x-content-type-options: nosniff
+      x-frame-options: SAMEORIGIN
+      x-ms-build-version: 1.0.20200909-2-c73be597-develop
+      x-ms-keyvault-network-info: addr=24.17.201.78
+      x-ms-keyvault-region: EASTUS
+      x-ms-server-latency: '641'
+    status:
+      code: 200
+      message: OK
+    url: https://eastus2.chriss-eu2.managedhsm-int.azure-int.net/backup/c41d7765beaa4c3eae7a1e6159f9efb2/pending
+- request:
+    body: '{"folderToRestore": "mhsm-chriss-eu2-2020090923184683", "sasTokenParameters":
+      {"token": "redacted", "storageResourceUri": "https://storname.blob.core.windows.net/containerukawv6vxixb3rhm"}}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '312'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-administration/4.0.0b2 Python/3.5.4 (Windows-10-10.0.19041-SP0)
+    method: PUT
+    uri: https://managedhsm/restore?api-version=7.2-preview
+  response:
+    body:
+      string: '{"endTime":null,"error":{"code":null,"innererror":null,"message":null},"jobId":"e82968b7701143aeaddcc851525eca02","startTime":1599693539,"status":"InProgress","statusDetails":null}'
+    headers:
+      azure-asyncoperation: https://managedhsm/restore/e82968b7701143aeaddcc851525eca02/pending
+      cache-control: no-cache
+      content-length: '180'
+      content-security-policy: default-src 'self'
+      content-type: application/json; charset=utf-8
+      date: Wed, 09 Sep 2020 23:18:59 GMT
+      server: Kestrel
+      strict-transport-security: max-age=31536000; includeSubDomains
+      x-content-type-options: nosniff
+      x-frame-options: SAMEORIGIN
+      x-ms-keyvault-network-info: addr=24.17.201.78
+      x-ms-keyvault-region: EASTUS
+      x-ms-server-latency: '932'
+    status:
+      code: 202
+      message: null
+    url: https://eastus2.chriss-eu2.managedhsm-int.azure-int.net/restore?api-version=7.2-preview
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-keyvault-administration/4.0.0b2 Python/3.5.4 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://managedhsm/restore/e82968b7701143aeaddcc851525eca02/pending
+  response:
+    body:
+      string: '{"endTime":null,"error":{"code":null,"innererror":null,"message":null},"jobId":"e82968b7701143aeaddcc851525eca02","startTime":1599693539,"status":"InProgress","statusDetails":null}'
+    headers:
+      cache-control: no-cache
+      content-length: '180'
+      content-security-policy: default-src 'self'
+      content-type: application/json; charset=utf-8
+      date: Wed, 09 Sep 2020 23:19:10 GMT
+      server: Kestrel
+      strict-transport-security: max-age=31536000; includeSubDomains
+      x-content-type-options: nosniff
+      x-frame-options: SAMEORIGIN
+      x-ms-build-version: 1.0.20200909-2-c73be597-develop
+      x-ms-keyvault-network-info: addr=24.17.201.78
+      x-ms-keyvault-region: EASTUS
+      x-ms-server-latency: '675'
+    status:
+      code: 200
+      message: OK
+    url: https://eastus2.chriss-eu2.managedhsm-int.azure-int.net/restore/e82968b7701143aeaddcc851525eca02/pending
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-keyvault-administration/4.0.0b2 Python/3.5.4 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://managedhsm/restore/e82968b7701143aeaddcc851525eca02/pending
+  response:
+    body:
+      string: '{"endTime":1599693551,"error":null,"jobId":"e82968b7701143aeaddcc851525eca02","startTime":1599693539,"status":"Succeeded","statusDetails":null}'
+    headers:
+      cache-control: no-cache
+      content-length: '143'
+      content-security-policy: default-src 'self'
+      content-type: application/json; charset=utf-8
+      date: Wed, 09 Sep 2020 23:19:17 GMT
+      server: Kestrel
+      strict-transport-security: max-age=31536000; includeSubDomains
+      x-content-type-options: nosniff
+      x-frame-options: SAMEORIGIN
+      x-ms-build-version: 1.0.20200909-2-c73be597-develop
+      x-ms-keyvault-network-info: addr=24.17.201.78
+      x-ms-keyvault-region: EASTUS
+      x-ms-server-latency: '629'
+    status:
+      code: 200
+      message: OK
+    url: https://eastus2.chriss-eu2.managedhsm-int.azure-int.net/restore/e82968b7701143aeaddcc851525eca02/pending
+version: 1

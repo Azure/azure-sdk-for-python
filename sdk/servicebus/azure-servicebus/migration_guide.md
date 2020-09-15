@@ -43,6 +43,7 @@ semantics with the sender or receiver lifetime.
 |---|---|---|
 | `QueueClient.from_connection_string().get_receiver().fetch_next()  and ServiceBusClient.from_connection_string().get_queue().get_receiver().fetch_next()`| `ServiceBusClient.from_connection_string().get_queue_receiver().receive_messages()`| [Get a receiver and receive a single batch of messages](./samples/sync_samples/receive_queue.py) |
 | `QueueClient.from_connection_string().get_receiver().peek()  and ServiceBusClient.from_connection_string().get_queue().get_receiver().peek()`| `ServiceBusClient.from_connection_string().get_queue_receiver().peek_messages()`| [Get a receiver and receive a single batch of messages](./samples/sync_samples/receive_queue.py) |
+| `QueueClient.from_connection_string().get_deadletter_receiver()  and ServiceBusClient.from_connection_string().get_queue().get_deadletter_receiver()`| `ServiceBusClient.from_connection_string().get_queue_receiver(sub_queue=SubQueue.DeadLetter)`| [Get a deadletter receiver](./samples/sync_samples/receive_queue.py) |
 
 ### Sending messages
 
@@ -64,7 +65,7 @@ semantics with the sender or receiver lifetime.
 |---|---|---|
 | `queue_client.send(message, session='foo')  and queue_client.get_sender(session='foo').send(message)`| `sb_client.get_queue_sender().send_messages(Message('body', session_id='foo'))`| [Send a message to a session](./samples/sync_samples/session_send_receive.py) |
 | `AutoLockRenew().register(queue_client.get_receiver(session='foo'))`| `AutoLockRenew().register(sb_client.get_queue_session_receiver(session_id='foo').session)`| [Access a session and ensure its lock is auto-renewed](./samples/sync_samples/session_send_receive.py) |
-| `receiver.get_session_state()` | `receiver.session.get_session_state()` | [Perform session specific operations on a receiver](./samples/sync_samples/session_send_receive.py)
+| `receiver.get_session_state()` | `receiver.session.get_state()` | [Perform session specific operations on a receiver](./samples/sync_samples/session_send_receive.py)
 
 ### Working with UTC time
 | In v0.50 | Equivalent in v7 | Note |
@@ -75,8 +76,8 @@ semantics with the sender or receiver lifetime.
 ### Managing queues
 | In v0.50 | Equivalent in v7 | Sample |
 |---|---|---|
-| `azure.servicebus.control_client.ServiceBusService().create_queue(queue_name)` | `azure.servicebus.management.ServiceBusManagementClient().create_queue(queue_name)` | [Create a queue](./samples/sync_samples/mgmt_queue.py) |
-| `azure.servicebus.ServiceBusClient().list_queues()` | `azure.servicebus.management.ServiceBusManagementClient().list_queues()` | [List queues](./samples/sync_samples/mgmt_queue.py ) |
+| `azure.servicebus.control_client.ServiceBusService().create_queue(queue_name)` | `azure.servicebus.management.ServiceBusAdministrationClient().create_queue(queue_name)` | [Create a queue](./samples/sync_samples/mgmt_queue.py) |
+| `azure.servicebus.ServiceBusClient().list_queues()` | `azure.servicebus.management.ServiceBusAdministrationClient().list_queues()` | [List queues](./samples/sync_samples/mgmt_queue.py ) |
 
 ### Working with AutoLockRenew
 | In v0.50 | Equivalent in v7 | Sample |
@@ -122,10 +123,10 @@ with queue_client.get_receiver(idle_timeout=1, mode=ReceiveSettleMode.PeekLock, 
 
 Becomes this in v7:
 ```python
-with ServiceBusClient.from_connection_string(conn_str=CONNECTION_STR) as client:
+with ServiceBusClient.from_connection_string(conn_str=CONNECTION_STR, receive_mode=ReceiveMode.PeekLock) as client:
 
     with client.get_queue_receiver(queue_name=QUEUE_NAME) as receiver:
-        batch = receiver.receive_messages(max_batch_size=10, max_wait_time=5)
+        batch = receiver.receive_messages(max_message_count=10, max_wait_time=5)
         for message in batch:
             print("Message: {}".format(message))
             message.complete()

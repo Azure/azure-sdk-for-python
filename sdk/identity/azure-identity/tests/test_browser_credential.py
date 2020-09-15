@@ -22,14 +22,15 @@ from helpers import (
     build_id_token,
     get_discovery_response,
     mock_response,
+    msal_validating_transport,
     Request,
     validating_transport,
 )
 
 try:
-    from unittest.mock import Mock, patch
+    from unittest.mock import ANY, Mock, patch
 except ImportError:  # python < 3.3
-    from mock import Mock, patch  # type: ignore
+    from mock import ANY, Mock, patch  # type: ignore
 
 
 WEBBROWSER_OPEN = InteractiveBrowserCredential.__module__ + ".webbrowser.open"
@@ -77,7 +78,7 @@ def test_authenticate():
                 _cache=TokenCache(),
                 authority=environment,
                 client_id=client_id,
-                server_class=server_class,
+                _server_class=server_class,
                 tenant_id=tenant_id,
                 transport=transport,
             )
@@ -126,7 +127,7 @@ def test_policies_configurable():
     server_class = Mock(return_value=Mock(wait_for_redirect=lambda: auth_code_response))
 
     credential = InteractiveBrowserCredential(
-        policies=[policy], client_id=client_id, transport=transport, server_class=server_class, _cache=TokenCache()
+        policies=[policy], client_id=client_id, transport=transport, _server_class=server_class, _cache=TokenCache()
     )
 
     with patch("azure.identity._credentials.browser.uuid.uuid4", lambda: oauth_state):
@@ -152,7 +153,7 @@ def test_user_agent():
     server_class = Mock(return_value=Mock(wait_for_redirect=lambda: auth_code_response))
 
     credential = InteractiveBrowserCredential(
-        client_id=client_id, transport=transport, server_class=server_class, _cache=TokenCache()
+        client_id=client_id, transport=transport, _server_class=server_class, _cache=TokenCache()
     )
 
     with patch("azure.identity._credentials.browser.uuid.uuid4", lambda: oauth_state):
@@ -160,7 +161,8 @@ def test_user_agent():
 
 
 @patch("azure.identity._credentials.browser.webbrowser.open")
-def test_interactive_credential(mock_open):
+@pytest.mark.parametrize("redirect_url", ("https://localhost:8042", None))
+def test_interactive_credential(mock_open, redirect_url):
     mock_open.side_effect = _validate_auth_request_url
     oauth_state = "state"
     client_id = "client-id"
@@ -171,17 +173,15 @@ def test_interactive_credential(mock_open):
     tenant_id = "tenant_id"
     endpoint = "https://{}/{}".format(authority, tenant_id)
 
-    discovery_response = get_discovery_response(endpoint=endpoint)
-    transport = validating_transport(
-        requests=[Request(url_substring=endpoint)] * 3
+    transport = msal_validating_transport(
+        endpoint="https://{}/{}".format(authority, tenant_id),
+        requests=[Request(url_substring=endpoint)]
         + [
             Request(
                 authority=authority, url_substring=endpoint, required_data={"refresh_token": expected_refresh_token}
             )
         ],
         responses=[
-            discovery_response,  # instance discovery
-            discovery_response,  # tenant discovery
             mock_response(
                 json_payload=build_aad_response(
                     access_token=expected_token,
@@ -203,16 +203,18 @@ def test_interactive_credential(mock_open):
     auth_code_response = {"code": "authorization-code", "state": [oauth_state]}
     server_class = Mock(return_value=Mock(wait_for_redirect=lambda: auth_code_response))
 
-    credential = InteractiveBrowserCredential(
-        authority=authority,
-        tenant_id=tenant_id,
-        client_id=client_id,
-        server_class=server_class,
-        transport=transport,
-        instance_discovery=False,
-        validate_authority=False,
-        _cache=TokenCache(),
-    )
+    args = {
+        "authority": authority,
+        "tenant_id": tenant_id,
+        "client_id": client_id,
+        "transport": transport,
+        "_cache": TokenCache(),
+        "_server_class": server_class,
+    }
+    if redirect_url:  # avoid passing redirect_url=None
+        args["redirect_uri"] = redirect_url
+
+    credential = InteractiveBrowserCredential(**args)
 
     # The credential's auth code request includes a uuid which must be included in the redirect. Patching to
     # set the uuid requires less code here than a proper mock server.
@@ -220,20 +222,19 @@ def test_interactive_credential(mock_open):
         token = credential.get_token("scope")
     assert token.token == expected_token
     assert mock_open.call_count == 1
+    assert server_class.call_count == 1
+
+    if redirect_url:
+        server_class.assert_called_once_with(redirect_url, timeout=ANY)
 
     # token should be cached, get_token shouldn't prompt again
     token = credential.get_token("scope")
     assert token.token == expected_token
     assert mock_open.call_count == 1
-
-    # As of MSAL 1.0.0, applications build a new client every time they redeem a refresh token.
-    # Here we patch the private method they use for the sake of test coverage.
-    # TODO: this will probably break when this MSAL behavior changes
-    app = credential._get_app()
-    app._build_client = lambda *_: app.client  # pylint:disable=protected-access
-    now = time.time()
+    assert server_class.call_count == 1
 
     # expired access token -> credential should use refresh token instead of prompting again
+    now = time.time()
     with patch("time.time", lambda: now + expires_in):
         token = credential.get_token("scope")
     assert token.token == expected_token
@@ -259,7 +260,7 @@ def test_interactive_credential_timeout():
 
     credential = InteractiveBrowserCredential(
         client_id="guid",
-        server_class=server_class,
+        _server_class=server_class,
         timeout=timeout,
         transport=transport,
         instance_discovery=False,  # kwargs are passed to MSAL; this one prevents an AAD verification request
@@ -277,7 +278,8 @@ def test_redirect_server():
     for _ in range(4):
         try:
             port = random.randint(1024, 65535)
-            server = AuthCodeRedirectServer(port, timeout=10)
+            url = "http://127.0.0.1:{}".format(port)
+            server = AuthCodeRedirectServer(url, timeout=10)
             break
         except socket.error:
             continue  # keep looking for an open port
@@ -293,8 +295,7 @@ def test_redirect_server():
     thread.start()
 
     # send a request, verify the server exposes the query
-    url = "http://127.0.0.1:{}/?{}={}".format(port, expected_param, expected_value)  # nosec
-    response = urllib.request.urlopen(url)  # nosec
+    response = urllib.request.urlopen(url + "?{}={}".format(expected_param, expected_value))  # nosec
 
     assert response.code == 200
     assert server.query_params[expected_param] == [expected_value]
@@ -304,7 +305,7 @@ def test_redirect_server():
 def test_no_browser():
     transport = validating_transport(requests=[Request()] * 2, responses=[get_discovery_response()] * 2)
     credential = InteractiveBrowserCredential(
-        client_id="client-id", server_class=Mock(), transport=transport, _cache=TokenCache()
+        client_id="client-id", _server_class=Mock(), transport=transport, _cache=TokenCache()
     )
     with pytest.raises(ClientAuthenticationError, match=r".*browser.*"):
         credential.get_token("scope")
@@ -313,9 +314,23 @@ def test_no_browser():
 def test_cannot_bind_port():
     """get_token should raise CredentialUnavailableError when the redirect listener can't bind a port"""
 
-    credential = InteractiveBrowserCredential(server_class=Mock(side_effect=socket.error))
+    credential = InteractiveBrowserCredential(_server_class=Mock(side_effect=socket.error))
     with pytest.raises(CredentialUnavailableError):
         credential.get_token("scope")
+
+
+def test_cannot_bind_redirect_uri():
+    """When a user specifies a redirect URI, the credential shouldn't attempt to bind another"""
+
+    expected_uri = "http://localhost:42"
+
+    server = Mock(side_effect=socket.error)
+    credential = InteractiveBrowserCredential(redirect_uri=expected_uri, _server_class=server)
+
+    with pytest.raises(CredentialUnavailableError):
+        credential.get_token("scope")
+
+    server.assert_called_once_with(expected_uri, timeout=ANY)
 
 
 def _validate_auth_request_url(url):

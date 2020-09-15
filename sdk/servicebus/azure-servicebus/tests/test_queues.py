@@ -15,9 +15,10 @@ import calendar
 
 import uamqp
 from azure.servicebus import ServiceBusClient, AutoLockRenew, TransportType
-from azure.servicebus._common.message import Message, PeekMessage, ReceivedMessage, BatchMessage
+from azure.servicebus._common.message import Message, PeekedMessage, ReceivedMessage, BatchMessage
 from azure.servicebus._common.constants import (
-    ReceiveSettleMode,
+    ReceiveMode,
+    SubQueue,
     _X_OPT_LOCK_TOKEN,
     _X_OPT_PARTITION_KEY,
     _X_OPT_VIA_PARTITION_KEY,
@@ -63,7 +64,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 sender.send_messages(Message("Message {}".format(i)))
 
         with sb_client.get_queue_receiver(servicebus_queue.name, 
-                                          mode=ReceiveSettleMode.ReceiveAndDelete, 
+                                          receive_mode=ReceiveMode.ReceiveAndDelete, 
                                           max_wait_time=10) as receiver:
             batch = receiver.receive_messages()
             count = len(batch)
@@ -213,7 +214,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     
             messages = []
             with sb_client.get_queue_receiver(servicebus_queue.name, 
-                                              mode=ReceiveSettleMode.ReceiveAndDelete, 
+                                              receive_mode=ReceiveMode.ReceiveAndDelete, 
                                               max_wait_time=8) as receiver:
                 for message in receiver:
                     assert not message.properties
@@ -238,7 +239,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     
             messages = []
             with sb_client.get_queue_receiver(servicebus_queue.name, 
-                                              mode=ReceiveSettleMode.ReceiveAndDelete, 
+                                              receive_mode=ReceiveMode.ReceiveAndDelete, 
                                               max_wait_time=5) as receiver:
                 for message in receiver:
                     messages.append(message)
@@ -295,7 +296,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     
             with sb_client.get_queue_receiver(servicebus_queue.name, 
                                               max_wait_time=5, 
-                                              mode=ReceiveSettleMode.PeekLock) as receiver:
+                                              receive_mode=ReceiveMode.PeekLock) as receiver:
             
                 with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                     for i in range(10):
@@ -327,7 +328,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
         with ServiceBusClient.from_connection_string(
             servicebus_namespace_connection_string, logging_enable=False) as sb_client:
     
-            with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5, mode=ReceiveSettleMode.PeekLock) as receiver:
+            with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5, receive_mode=ReceiveMode.PeekLock) as receiver:
             
                 with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                     for i in range(10):
@@ -346,7 +347,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     
             assert count == 10
     
-            with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=20, mode=ReceiveSettleMode.PeekLock) as receiver:
+            with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=20, receive_mode=ReceiveMode.PeekLock) as receiver:
                 count = 0
                 for message in receiver:
                     print_message(_logger, message)
@@ -369,7 +370,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             with sb_client.get_queue_receiver(
                 servicebus_queue.name, 
                 max_wait_time=5, 
-                mode=ReceiveSettleMode.PeekLock) as receiver:
+                receive_mode=ReceiveMode.PeekLock) as receiver:
             
                 with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                     for i in range(10):
@@ -384,7 +385,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     message.defer()
     
             assert count == 10
-            with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5, mode=ReceiveSettleMode.PeekLock) as receiver:
+            with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5, receive_mode=ReceiveMode.PeekLock) as receiver:
                 count = 0
                 for message in receiver:
                     print_message(_logger, message)
@@ -406,7 +407,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             deferred_messages = []
             with sb_client.get_queue_receiver(servicebus_queue.name, 
                                                  max_wait_time=5, 
-                                                 mode=ReceiveSettleMode.PeekLock) as receiver:
+                                                 receive_mode=ReceiveMode.PeekLock) as receiver:
             
                 with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                     for i in range(10):
@@ -449,7 +450,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     
             with sb_client.get_queue_receiver(servicebus_queue.name, 
                                         max_wait_time=5, 
-                                        mode=ReceiveSettleMode.PeekLock) as receiver:
+                                        receive_mode=ReceiveMode.PeekLock) as receiver:
                 count = 0
                 for message in receiver:
                     deferred_messages.append(message.sequence_number)
@@ -461,7 +462,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     
             with sb_client.get_queue_receiver(servicebus_queue.name, 
                                            max_wait_time=5, 
-                                           mode=ReceiveSettleMode.PeekLock) as receiver:
+                                           receive_mode=ReceiveMode.PeekLock) as receiver:
                 deferred = receiver.receive_deferred_messages(deferred_messages)
                 assert len(deferred) == 10
                 for message in deferred:
@@ -490,7 +491,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     
             with sb_client.get_queue_receiver(servicebus_queue.name, 
                                               max_wait_time=5, 
-                                              mode=ReceiveSettleMode.PeekLock) as receiver:
+                                              receive_mode=ReceiveMode.PeekLock) as receiver:
                 count = 0
                 for message in receiver:
                     deferred_messages.append(message.sequence_number)
@@ -506,11 +507,12 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 assert len(deferred) == 10
                 for message in deferred:
                     assert isinstance(message, ReceivedMessage)
-                    message.dead_letter(reason="Testing reason", description="Testing description")
+                    message.dead_letter(reason="Testing reason", error_description="Testing description")
     
             count = 0
-            with sb_client.get_queue_deadletter_receiver(servicebus_queue.name,
-                                                   max_wait_time=5) as receiver:
+            with sb_client.get_queue_receiver(servicebus_queue.name,
+                                              sub_queue = SubQueue.DeadLetter,
+                                              max_wait_time=5) as receiver:
                 for message in receiver:
                     count += 1
                     print_message(_logger, message)
@@ -545,7 +547,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     
             assert count == 10
             with sb_client.get_queue_receiver(servicebus_queue.name, 
-                                              mode=ReceiveSettleMode.ReceiveAndDelete, 
+                                              receive_mode=ReceiveMode.ReceiveAndDelete, 
                                               max_wait_time=5) as receiver:
                 deferred = receiver.receive_deferred_messages(deferred_messages)
                 assert len(deferred) == 10
@@ -569,7 +571,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             deferred_messages = []
             with sb_client.get_queue_receiver(servicebus_queue.name, 
                                                  max_wait_time=5, 
-                                                 mode=ReceiveSettleMode.PeekLock) as receiver:
+                                                 receive_mode=ReceiveMode.PeekLock) as receiver:
             
                 with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                     for i in range(3):
@@ -603,8 +605,8 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     
             with sb_client.get_queue_receiver(servicebus_queue.name, 
                                            max_wait_time=5, 
-                                           mode=ReceiveSettleMode.PeekLock, 
-                                           prefetch=10) as receiver:
+                                           receive_mode=ReceiveMode.PeekLock, 
+                                           prefetch_count=10) as receiver:
             
                 with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                     for i in range(10):
@@ -617,14 +619,14 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     for message in messages:
                         print_message(_logger, message)
                         count += 1
-                        message.dead_letter(reason="Testing reason", description="Testing description")
+                        message.dead_letter(reason="Testing reason", error_description="Testing description")
                     messages = receiver.receive_messages()
     
             assert count == 10
     
             with sb_client.get_queue_receiver(servicebus_queue.name,
                                               max_wait_time=5, 
-                                              mode=ReceiveSettleMode.PeekLock) as receiver:
+                                              receive_mode=ReceiveMode.PeekLock) as receiver:
                 count = 0
                 for message in receiver:
                     print_message(_logger, message)
@@ -632,10 +634,11 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     count += 1
             assert count == 0
 
-            with sb_client.get_queue_deadletter_receiver(
+            with sb_client.get_queue_receiver(
                     servicebus_queue.name,
+                    sub_queue = SubQueue.DeadLetter,
                     max_wait_time=5,
-                    mode=ReceiveSettleMode.PeekLock) as dl_receiver:
+                    receive_mode=ReceiveMode.PeekLock) as dl_receiver:
                 count = 0
                 for message in dl_receiver:
                     message.complete()
@@ -658,8 +661,8 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     
             with sb_client.get_queue_receiver(servicebus_queue.name,
                                            max_wait_time=5,
-                                           mode=ReceiveSettleMode.PeekLock, 
-                                           prefetch=10) as receiver:
+                                           receive_mode=ReceiveMode.PeekLock, 
+                                           prefetch_count=10) as receiver:
             
                 with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                     for i in range(10):
@@ -671,7 +674,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 while messages:
                     for message in messages:
                         print_message(_logger, message)
-                        message.dead_letter(reason="Testing reason", description="Testing description")
+                        message.dead_letter(reason="Testing reason", error_description="Testing description")
                         count += 1
                     messages = receiver.receive_messages()
     
@@ -679,10 +682,11 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     
             assert count == 10
 
-            with sb_client.get_queue_deadletter_receiver(
+            with sb_client.get_queue_receiver(
                     servicebus_queue.name,
+                    sub_queue = SubQueue.DeadLetter,
                     max_wait_time=5,
-                    mode=ReceiveSettleMode.PeekLock) as dl_receiver:
+                    receive_mode=ReceiveMode.PeekLock) as dl_receiver:
                 count = 0
                 for message in dl_receiver:
                     print_message(_logger, message)
@@ -730,7 +734,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             with sb_client.get_queue_receiver(servicebus_queue.name) as receiver:
                 messages = receiver.peek_messages(5)
                 assert len(messages) == 5
-                assert all(isinstance(m, PeekMessage) for m in messages)
+                assert all(isinstance(m, PeekedMessage) for m in messages)
                 for message in messages:
                     print_message(_logger, message)
                     with pytest.raises(AttributeError):
@@ -749,7 +753,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
 
             receiver = sb_client.get_queue_receiver(servicebus_queue.name,
                                            max_wait_time=5,
-                                           mode=ReceiveSettleMode.PeekLock)
+                                           receive_mode=ReceiveMode.PeekLock)
             sender = sb_client.get_queue_sender(servicebus_queue.name)
             with receiver, sender:
                 for i in range(5):
@@ -770,7 +774,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     
                 messages = receiver.peek_messages(5)
                 assert len(messages) > 0
-                assert all(isinstance(m, PeekMessage) for m in messages)
+                assert all(isinstance(m, PeekedMessage) for m in messages)
                 for message in messages:
                     print_message(_logger, message)
                     assert b''.join(message.body) == b'Test message'
@@ -818,8 +822,8 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     
             with sb_client.get_queue_receiver(servicebus_queue.name,
                                                  max_wait_time=5, 
-                                                 mode=ReceiveSettleMode.PeekLock, 
-                                                 prefetch=10) as receiver:
+                                                 receive_mode=ReceiveMode.PeekLock, 
+                                                 prefetch_count=10) as receiver:
                 messages = receiver.peek_messages(10)
                 assert len(messages) == 0
     
@@ -858,8 +862,8 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             locks = 3
             with sb_client.get_queue_receiver(servicebus_queue.name,
                                               max_wait_time=5, 
-                                              mode=ReceiveSettleMode.PeekLock, 
-                                              prefetch=10) as receiver:
+                                              receive_mode=ReceiveMode.PeekLock, 
+                                              prefetch_count=10) as receiver:
                 with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                     for i in range(locks):
                         message = Message("Test message no. {}".format(i))
@@ -905,8 +909,8 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             messages = []
             with sb_client.get_queue_receiver(servicebus_queue.name,
                                                  max_wait_time=5, 
-                                                 mode=ReceiveSettleMode.PeekLock, 
-                                                 prefetch=10) as receiver:
+                                                 receive_mode=ReceiveMode.PeekLock, 
+                                                 prefetch_count=10) as receiver:
                 for message in receiver:
                     if not messages:
                         messages.append(message)
@@ -957,14 +961,15 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 sender.send_messages(message)
     
             time.sleep(30)
-            with sb_client.get_queue_receiver(servicebus_queue.name, prefetch=5) as receiver:
+            with sb_client.get_queue_receiver(servicebus_queue.name, prefetch_count=5) as receiver:
                 messages = receiver.receive_messages(5, max_wait_time=10)
             assert not messages
 
-            with sb_client.get_queue_deadletter_receiver(
+            with sb_client.get_queue_receiver(
                     servicebus_queue.name,
+                    sub_queue = SubQueue.DeadLetter,
                     max_wait_time=5,
-                    mode=ReceiveSettleMode.PeekLock) as dl_receiver:
+                    receive_mode=ReceiveMode.PeekLock) as dl_receiver:
                 count = 0
                 for message in dl_receiver:
                     print_message(_logger, message)
@@ -1103,7 +1108,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 sender.send_messages(message)
     
             with sb_client.get_queue_receiver(servicebus_queue.name,
-                                                 mode=ReceiveSettleMode.ReceiveAndDelete) as receiver:
+                                                 receive_mode=ReceiveMode.ReceiveAndDelete) as receiver:
                 messages = receiver.receive_messages(max_wait_time=10)
                 assert len(messages) == 1
                 received = messages[0]
@@ -1237,7 +1242,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
 
             scheduled_enqueue_time = (utc_now() + timedelta(minutes=2)).replace(microsecond=0)
             sender = sb_client.get_queue_sender(servicebus_queue.name)
-            receiver = sb_client.get_queue_receiver(servicebus_queue.name, prefetch=20)
+            receiver = sb_client.get_queue_receiver(servicebus_queue.name, prefetch_count=20)
 
             with sender, receiver:
                 content = str(uuid.uuid4())
@@ -1344,7 +1349,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 message = Message("Test")
                 sender.send_messages(message)
 
-            with sb_client.get_queue_receiver(servicebus_queue.name, mode=ReceiveSettleMode.ReceiveAndDelete) as receiver:
+            with sb_client.get_queue_receiver(servicebus_queue.name, receive_mode=ReceiveMode.ReceiveAndDelete) as receiver:
                 assert receiver._config.transport_type == TransportType.AmqpOverWebsocket
                 messages = receiver.receive_messages(max_wait_time=5)
                 assert len(messages) == 1
@@ -1815,6 +1820,38 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusQueuePreparer(name_prefix='servicebustest')
+    def test_queue_send_twice(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+        with ServiceBusClient.from_connection_string(
+            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+
+            with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+                message = Message("Message")
+                message2 = Message("Message2")
+                # first test batch message resending.
+                batch_message = sender.create_batch()
+                batch_message._from_list([message, message2])  # pylint: disable=protected-access
+                sender.send_messages(batch_message)
+                sender.send_messages(batch_message)
+                messages = []
+                with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5) as receiver:
+                    for message in receiver:
+                        messages.append(message)
+                assert len(messages) == 4
+                # then normal message resending
+                sender.send_messages(message)
+                sender.send_messages(message)
+                messages = []
+                with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5) as receiver:
+                    for message in receiver:
+                        messages.append(message)
+                assert len(messages) == 2
+
+
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @CachedServiceBusQueuePreparer(name_prefix='servicebustest')
     def test_queue_receiver_invalid_mode(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
         
@@ -1825,3 +1862,42 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                                               max_wait_time="oij") as receiver:
             
                 assert receiver
+
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusQueuePreparer(name_prefix='servicebustest')
+    def test_message_inner_amqp_properties(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+        
+        message = Message("body")
+
+        with pytest.raises(TypeError):
+            message.amqp_message.properties = {"properties":1}
+        message.amqp_message.properties.subject = "subject"
+
+        message.amqp_message.application_properties = {b"application_properties":1}
+
+        message.amqp_message.annotations = {b"annotations":2}
+        message.amqp_message.delivery_annotations = {b"delivery_annotations":3}
+
+        with pytest.raises(TypeError):
+            message.amqp_message.header = {"header":4}
+        message.amqp_message.header.priority = 5
+
+        message.amqp_message.footer = {b"footer":6}
+
+        with ServiceBusClient.from_connection_string(
+            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+
+            with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+                sender.send_messages(message)
+                with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5) as receiver:
+                    message = receiver.receive_messages()[0]
+                    assert message.amqp_message.properties.subject == b"subject"
+                    assert message.amqp_message.application_properties[b"application_properties"] == 1
+                    assert message.amqp_message.annotations[b"annotations"] == 2
+                    # delivery_annotations and footer disabled pending uamqp bug https://github.com/Azure/azure-uamqp-python/issues/169
+                    #assert message.amqp_message.delivery_annotations[b"delivery_annotations"] == 3
+                    assert message.amqp_message.header.priority == 5
+                    #assert message.amqp_message.footer[b"footer"] == 6

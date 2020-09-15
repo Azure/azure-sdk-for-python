@@ -163,7 +163,7 @@ class StorageTableBatchTest(TableTestCase):
         entity.test5 = EntityProperty(u"stringystring")
         entity.test6 = EntityProperty(3.14159)
         entity.test7 = EntityProperty(100)
-        entity.test8 = EntityProperty(10, EdmType.INT32)
+        entity.test8 = EntityProperty(2 ** 33, EdmType.INT64)
 
         # Assert
         self.assertEqual(entity.test.type, EdmType.BOOLEAN)
@@ -172,8 +172,8 @@ class StorageTableBatchTest(TableTestCase):
         self.assertEqual(entity.test4.type, EdmType.DATETIME)
         self.assertEqual(entity.test5.type, EdmType.STRING)
         self.assertEqual(entity.test6.type, EdmType.DOUBLE)
-        self.assertEqual(entity.test7.type, EdmType.INT64)
-        self.assertEqual(entity.test8.type, EdmType.INT32)
+        self.assertEqual(entity.test7.type, EdmType.INT32)
+        self.assertEqual(entity.test8.type, EdmType.INT64)
 
 
     @pytest.mark.skip("pending")

@@ -161,14 +161,15 @@ class AvroReaderTests(unittest.TestCase):
         df_reader = DataFileReader(partial_data_stream, DatumReader(), header_reader=header_stream)
         records = list(df_reader)
         self.assertEqual(CHANGE_FEED_RECORD, records[0])
-        self.assertIsNot(partial_data_stream.event_position, 0)
+        self.assertIsNot(partial_data_stream.object_position, 0)
 
 
 class _HeaderStream(object):
     def __init__(self):
         self._bytes_stream = BytesIO()
-        self.event_position = 0
+        self.object_position = 0
         self.block_count = 0
+        self.event_index = 0
 
     def seek(self, *args, **kwargs):
         return self._bytes_stream.seek(*args, **kwargs)
@@ -182,5 +183,8 @@ class _HeaderStream(object):
     def tell(self, *args, **kwargs):
         return self._bytes_stream.tell(*args, **kwargs)
 
-    def track_event_position(self):
-        self.event_position = self.tell()
+    def track_object_position(self):
+        self.object_position = self.tell()
+
+    def set_object_index(self, event_index):
+        self.event_index = event_index

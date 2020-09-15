@@ -7,7 +7,7 @@
 
 import pytest
 from azure.ai.textanalytics import _models
-from azure.ai.textanalytics._generated.v3_1_preview_1 import models as _generated_models
+from azure.ai.textanalytics._generated.v3_1_preview_2 import models as _generated_models
 
 # All features return a tuple of the object and the repr of the obejct
 
@@ -117,12 +117,12 @@ def linked_entity(linked_entity_match):
         data_source_entity_id="Bill Gates",
         url="https://en.wikipedia.org/wiki/Bill_Gates",
         data_source="wikipedia",
-        bing_id="12345678"
+        bing_entity_search_api_id="12345678"
     )
     model_repr = (
         "LinkedEntity(name=Bill Gates, matches=[{}, {}], "\
         "language=English, data_source_entity_id=Bill Gates, "\
-        "url=https://en.wikipedia.org/wiki/Bill_Gates, data_source=wikipedia, bing_id=12345678)".format(
+        "url=https://en.wikipedia.org/wiki/Bill_Gates, data_source=wikipedia, bing_entity_search_api_id=12345678)".format(
             linked_entity_match[1], linked_entity_match[1]
         )
     )

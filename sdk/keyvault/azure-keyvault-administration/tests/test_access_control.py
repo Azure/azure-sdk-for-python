@@ -6,7 +6,7 @@ import functools
 import os
 import uuid
 
-from azure.keyvault.administration import KeyVaultAccessControlClient
+from azure.keyvault.administration import KeyVaultAccessControlClient, KeyVaultRoleScope
 from devtools_testutils import KeyVaultPreparer, ResourceGroupPreparer
 import pytest
 
@@ -41,7 +41,7 @@ class AccessControlTests(KeyVaultTestCase):
     @KeyVaultPreparer()
     @AccessControlClientPreparer()
     def test_list_role_definitions(self, client):
-        definitions = [d for d in client.list_role_definitions("/")]
+        definitions = [d for d in client.list_role_definitions(KeyVaultRoleScope.global_value)]
         assert len(definitions)
 
         for definition in definitions:
@@ -58,7 +58,7 @@ class AccessControlTests(KeyVaultTestCase):
     @KeyVaultPreparer()
     @AccessControlClientPreparer()
     def test_role_assignment(self, client):
-        scope = "/"
+        scope = KeyVaultRoleScope.global_value
         definitions = [d for d in client.list_role_definitions(scope)]
 
         # assign an arbitrary role to the service principal authenticating these requests

@@ -1,11 +1,14 @@
 # Release History
 
-## 11.1.0b2 (Unreleased)
+## 11.1.0b3 (Unreleased)
+
+
+## 11.1.0b2 (2020-09-08)
 
 **Features**
 
 - Added `azure.search.documents.RequestEntityTooLargeError`
-- `Flush` method in `BatchClient` now will not return untill all actions are done
+- `Flush` method in `BatchClient` now will not return until all actions are done
 
 **Breaking Changes**
 

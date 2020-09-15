@@ -37,22 +37,22 @@ class DictMixin(object):
     def __str__(self):
         return str({k: v for k, v in self.__dict__.items() if not k.startswith('_')})
 
-    def has_key(self, k, **kwargs):
+    def has_key(self, k):
         return k in self.__dict__
 
     def update(self, *args, **kwargs):
         return self.__dict__.update(*args, **kwargs)
 
-    def keys(self, **kwargs):
+    def keys(self):
         return [k for k in self.__dict__ if not k.startswith('_')]
 
-    def values(self, **kwargs):
+    def values(self):
         return [v for k, v in self.__dict__.items() if not k.startswith('_')]
 
-    def items(self, **kwargs):
+    def items(self):
         return [(k, v) for k, v in self.__dict__.items() if not k.startswith('_')]
 
-    def get(self, key, default=None, **kwargs):
+    def get(self, key, default=None):
         if key in self.__dict__:
             return self.__dict__[key]
         return default

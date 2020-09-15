@@ -3,18 +3,18 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-from ._management_client import ServiceBusManagementClient
-from ._generated.models import AuthorizationRule, MessageCountDetails, \
+from ._management_client import ServiceBusAdministrationClient
+from ._generated.models import MessageCountDetails, \
     AccessRights, EntityAvailabilityStatus, EntityStatus, \
-    NamespaceProperties, MessagingSku, NamespaceType
+    MessagingSku, NamespaceType
 
 from ._models import QueueRuntimeProperties, QueueProperties, TopicRuntimeProperties, TopicProperties, \
     SubscriptionRuntimeProperties, SubscriptionProperties, RuleProperties, \
     TrueRuleFilter, FalseRuleFilter, SqlRuleFilter, CorrelationRuleFilter, \
-    SqlRuleAction
+    SqlRuleAction, AuthorizationRule, NamespaceProperties
 
 __all__ = [
-    'ServiceBusManagementClient',
+    'ServiceBusAdministrationClient',
     'AuthorizationRule',
     'MessageCountDetails',
     'QueueProperties',

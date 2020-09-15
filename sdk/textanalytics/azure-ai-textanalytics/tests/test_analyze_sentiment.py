@@ -664,7 +664,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         with pytest.raises(NotImplementedError) as excinfo:
             client.analyze_sentiment(["will fail"], show_opinion_mining=True)
 
-        assert "'show_opinion_mining' is only available for API version v3.1-preview.1 and up" in str(excinfo.value)
+        assert "'show_opinion_mining' is only available for API version v3.1-preview and up" in str(excinfo.value)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()

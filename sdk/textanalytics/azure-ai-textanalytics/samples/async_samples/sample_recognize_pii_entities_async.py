@@ -11,7 +11,7 @@ FILE: sample_recognize_pii_entities_async.py
 
 DESCRIPTION:
     This sample demonstrates how to recognize personally identifiable information in a batch of documents.
-    The endpoint recognize_pii_entities is only available for API version v3.1-preview.1 and up.
+    The endpoint recognize_pii_entities is only available for API version v3.1-preview and up.
 
 USAGE:
     python sample_recognize_pii_entities_async.py
@@ -51,10 +51,11 @@ class RecognizePiiEntitiesSampleAsync(object):
 
         for idx, doc in enumerate(docs):
             print("Document text: {}".format(documents[idx]))
+            print("Redacted document text: {}".format(doc.redacted_text))
             for entity in doc.entities:
-                print("Entity: {}".format(entity.text))
-                print("Category: {}".format(entity.category))
-                print("Confidence Score: {}\n".format(entity.confidence_score))
+                print("...Entity: {}".format(entity.text))
+                print("......Category: {}".format(entity.category))
+                print("......Confidence Score: {}\n".format(entity.confidence_score))
         # [END recognize_pii_entities_async]
 
 

@@ -7,20 +7,15 @@
 # --------------------------------------------------------------------------
 
 from typing import Any, TYPE_CHECKING
-
-from azure.core import AsyncPipelineClient
-from msrest import Deserializer, Serializer
+from azure.core.credentials import AzureKeyCredential
 
 from .._models import CloudEvent, EventGridEvent, CustomEvent
 from .._helpers import _get_topic_hostname_only_fqdn, _get_authentication_policy, _is_cloud_event
-from azure.core.pipeline.policies import AzureKeyCredentialPolicy
-from azure.core.credentials import AzureKeyCredential
 from .._generated.aio import EventGridPublisherClient as EventGridPublisherClientAsync
-from .. import _constants as constants
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Union, Dict, List
+    from typing import Union, Dict, List
     SendType = Union[
         CloudEvent,
         EventGridEvent,
@@ -36,8 +31,9 @@ class EventGridPublisherClient(object):
     """Asynchronous EventGrid Python Publisher Client.
 
     :param str topic_hostname: The topic endpoint to send the events to.
-    :param credential: The credential object used for authentication which implements SAS key authentication or SAS token authentication.
-    :type credential: Union[~azure.core.credentials.AzureKeyCredential, azure.eventgrid.EventGridSharedAccessSignatureCredential]
+    :param credential: The credential object used for authentication which implements
+     SAS key authentication or SAS token authentication.
+    :type credential: ~azure.core.credentials.AzureKeyCredential or EventGridSharedAccessSignatureCredential
     """
 
     def __init__(self, topic_hostname, credential, **kwargs):
@@ -52,17 +48,22 @@ class EventGridPublisherClient(object):
         # type: (SendType) -> None
         """Sends event data to topic hostname specified during client initialization.
 
-        :param  events: A list of CloudEvent/EventGridEvent/CustomEvent to be sent.
-        :type events: Union[List[models.CloudEvent], List[models.EventGridEvent], List[models.CustomEvent]]
+        :param  events: A list or an instance of CloudEvent/EventGridEvent/CustomEvent to be sent.
+        :type events: SendType
         :keyword str content_type: The type of content to be used to send the events.
-        Has default value "application/json; charset=utf-8" for EventGridEvents, with "cloudevents-batch+json" for CloudEvents
+         Has default value "application/json; charset=utf-8" for EventGridEvents,
+         with "cloudevents-batch+json" for CloudEvents
         :rtype: None
-        :raise: :class:`ValueError`, when events do not follow specified SendType.
+        :raises: :class:`ValueError`, when events do not follow specified SendType.
          """
         if not isinstance(events, list):
             events = [events]
 
         if all(isinstance(e, CloudEvent) for e in events) or all(_is_cloud_event(e) for e in events):
+            try:
+                events = [e._to_generated(**kwargs) for e in events] # pylint: disable=protected-access
+            except AttributeError:
+                pass # means it's a dictionary
             kwargs.setdefault("content_type", "application/cloudevents-batch+json; charset=utf-8")
             await self._client.publish_cloud_event_events(self._topic_hostname, events, **kwargs)
         elif all(isinstance(e, EventGridEvent) for e in events) or all(isinstance(e, dict) for e in events):
@@ -73,4 +74,3 @@ class EventGridPublisherClient(object):
             await self._client.publish_custom_event_events(self._topic_hostname, serialized_events, **kwargs)
         else:
             raise ValueError("Event schema is not correct.")
-    

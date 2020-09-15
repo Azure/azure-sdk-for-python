@@ -927,7 +927,7 @@ class ContainerSasPermissions(object):
         p_tag = 't' in permission
         parsed = cls(read=p_read, write=p_write, delete=p_delete, list=p_list,
                      delete_previous_version=p_delete_previous_version, tag=p_tag)
-        parsed._str = permission # pylint: disable = protected-access
+
         return parsed
 
 
@@ -996,7 +996,7 @@ class BlobSasPermissions(object):
 
         parsed = cls(read=p_read, add=p_add, create=p_create, write=p_write, delete=p_delete,
                      delete_previous_version=p_delete_previous_version, tag=p_tag)
-        parsed._str = permission # pylint: disable = protected-access
+
         return parsed
 
 

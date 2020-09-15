@@ -17,7 +17,7 @@ Example to show managing queue entities under a ServiceBus Namespace, including
 # pylint: disable=C0111
 
 import os
-from azure.servicebus.management import ServiceBusManagementClient
+from azure.servicebus.management import ServiceBusAdministrationClient
 
 CONNECTION_STR = os.environ['SERVICE_BUS_CONNECTION_STR']
 QUEUE_NAME = "sb_mgmt_demo_queue"
@@ -58,21 +58,21 @@ def get_and_update_queue(servicebus_mgmt_client):
     servicebus_mgmt_client.update_queue(queue_properties)
 
 
-def get_queue_runtime_info(servicebus_mgmt_client):
-    print("-- Get Queue Runtime Info")
-    queue_runtime_info = servicebus_mgmt_client.get_queue_runtime_info(QUEUE_NAME)
-    print("Queue Name:", queue_runtime_info.name)
-    print("Queue Runtime Info:")
-    print("Updated at:", queue_runtime_info.updated_at)
-    print("Size in Bytes:", queue_runtime_info.size_in_bytes)
-    print("Message Count:", queue_runtime_info.total_message_count)
-    print("Please refer to QueueRuntimeInfo from complete available runtime information.")
+def get_queue_runtime_properties(servicebus_mgmt_client):
+    print("-- Get Queue Runtime Properties")
+    get_queue_runtime_properties = servicebus_mgmt_client.get_queue_runtime_properties(QUEUE_NAME)
+    print("Queue Name:", get_queue_runtime_properties.name)
+    print("Queue Runtime Properties:")
+    print("Updated at:", get_queue_runtime_properties.updated_at_utc)
+    print("Size in Bytes:", get_queue_runtime_properties.size_in_bytes)
+    print("Message Count:", get_queue_runtime_properties.total_message_count)
+    print("Please refer to QueueRuntimeProperties from complete available runtime properties.")
     print("")
 
 
-with ServiceBusManagementClient.from_connection_string(CONNECTION_STR) as servicebus_mgmt_client:
+with ServiceBusAdministrationClient.from_connection_string(CONNECTION_STR) as servicebus_mgmt_client:
     create_queue(servicebus_mgmt_client)
     list_queues(servicebus_mgmt_client)
     get_and_update_queue(servicebus_mgmt_client)
-    get_queue_runtime_info(servicebus_mgmt_client)
+    get_queue_runtime_properties(servicebus_mgmt_client)
     delete_queue(servicebus_mgmt_client)
