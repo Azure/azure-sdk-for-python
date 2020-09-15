@@ -14,6 +14,7 @@ from ._generated.models import StorageErrorException
 from ._generated.models import Metrics as GeneratedMetrics
 from ._generated.models import RetentionPolicy as GeneratedRetentionPolicy
 from ._generated.models import CorsRule as GeneratedCorsRule
+from ._generated.models import ProtocolSettings as GeneratedProtocolSettings
 from ._generated.models import AccessPolicy as GenAccessPolicy
 from ._generated.models import DirectoryItem
 
@@ -132,6 +133,16 @@ class CorsRule(GeneratedCorsRule):
             exposed_headers=[generated.exposed_headers],
             max_age_in_seconds=generated.max_age_in_seconds,
         )
+
+
+class ProtocolProperties(GeneratedProtocolSettings):
+    def __init__(self, smb_settings=None):
+        self.smb_settings = smb_settings
+
+    @classmethod
+    def _from_generated(cls, generated):
+        return cls(
+            smb_settings=generated.smb_settings)
 
 
 class AccessPolicy(GenAccessPolicy):
