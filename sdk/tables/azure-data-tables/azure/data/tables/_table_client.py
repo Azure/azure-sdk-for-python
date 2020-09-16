@@ -532,7 +532,6 @@ class TableClient(TableClientBase):
         partition_key = entity['PartitionKey']
         row_key = entity['RowKey']
         entity = _add_entity_properties(entity)
-
         try:
             metadata = None
             if mode is UpdateMode.MERGE:
@@ -556,10 +555,5 @@ class TableClient(TableClientBase):
                 raise ValueError("""Update mode {} is not supported.
                     For a list of supported modes see the UpdateMode enum""".format(mode))
             return _trim_service_metadata(metadata)
-        except ResourceNotFoundError:
-            return self.create_entity(
-                partition_key=partition_key,
-                row_key=row_key,
-                table_entity_properties=entity,
-                **kwargs
-            )
+        except HttpResponseError as error:
+            _process_table_error(error)
