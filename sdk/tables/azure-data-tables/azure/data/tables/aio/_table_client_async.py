@@ -567,10 +567,5 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
                 raise ValueError("""Update mode {} is not supported.
                     For a list of supported modes see the UpdateMode enum""".format(mode))
             return _trim_service_metadata(metadata)
-        except ResourceNotFoundError:
-            return await self.create_entity(
-                partition_key=partition_key,
-                row_key=row_key,
-                table_entity_properties=entity,
-                **kwargs
-            )
+        except HttpResponseError as error:
+            _process_table_error(error)
