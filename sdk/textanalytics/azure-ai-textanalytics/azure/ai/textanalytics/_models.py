@@ -820,7 +820,7 @@ class SentenceSentiment(DictMixin):
         self.mined_opinions = kwargs.get("mined_opinions", None)
 
     @classmethod
-    def _from_generated(cls, sentence, results):
+    def _from_generated(cls, sentence, results, sentiment):
         offset = sentence.offset
         length = sentence.length
         if isinstance(sentence, _v3_0_models.SentenceSentiment):
@@ -830,7 +830,7 @@ class SentenceSentiment(DictMixin):
             length = None
         if hasattr(sentence, "aspects"):
             mined_opinions = (
-                [MinedOpinion._from_generated(aspect, results) for aspect in sentence.aspects]  # pylint: disable=protected-access
+                [MinedOpinion._from_generated(aspect, results, sentiment) for aspect in sentence.aspects]  # pylint: disable=protected-access
                 if sentence.aspects else []
             )
         else:
@@ -871,7 +871,7 @@ class MinedOpinion(DictMixin):
         self.opinions = kwargs.get("opinions", None)
 
     @staticmethod
-    def _get_opinions(relations, results):
+    def _get_opinions(relations, results, sentiment):
         if not relations:
             return []
         opinion_relations = [r.ref for r in relations if r.relation_type == "opinion"]
@@ -882,16 +882,17 @@ class MinedOpinion(DictMixin):
             sentence_index = nums[1]
             opinion_index = nums[2]
             opinions.append(
-                results[document_index].sentences[sentence_index].opinions[opinion_index]
+                sentiment.sentences[sentence_index].opinions[opinion_index]
             )
         return opinions
 
     @classmethod
-    def _from_generated(cls, aspect, results):
+    def _from_generated(cls, aspect, results, sentiment):
         return cls(
             aspect=AspectSentiment._from_generated(aspect),  # pylint: disable=protected-access
             opinions=[
-                OpinionSentiment._from_generated(opinion) for opinion in cls._get_opinions(aspect.relations, results)  # pylint: disable=protected-access
+                OpinionSentiment._from_generated(opinion)
+                for opinion in cls._get_opinions(aspect.relations, results, sentiment)  # pylint: disable=protected-access
             ],
         )
 
