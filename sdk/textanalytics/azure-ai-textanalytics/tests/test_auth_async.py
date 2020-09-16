@@ -29,7 +29,6 @@ class TestAuth(AsyncTextAnalyticsTest):
     @pytest.mark.live_test_only
     @GlobalTextAnalyticsAccountPreparer()
     async def test_active_directory_auth(self):
-        pytest.skip("v3.1-preview.2 doesn't have AAD yet")
         token = self.generate_oauth_token()
         endpoint = self.get_oauth_endpoint()
         text_analytics = TextAnalyticsClient(endpoint, token)
