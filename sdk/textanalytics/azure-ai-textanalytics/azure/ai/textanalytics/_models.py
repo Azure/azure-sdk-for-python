@@ -871,14 +871,13 @@ class MinedOpinion(DictMixin):
         self.opinions = kwargs.get("opinions", None)
 
     @staticmethod
-    def _get_opinions(relations, results, sentiment):
+    def _get_opinions(relations, results, sentiment):  # pylint: disable=unused-argument
         if not relations:
             return []
         opinion_relations = [r.ref for r in relations if r.relation_type == "opinion"]
         opinions = []
         for opinion_relation in opinion_relations:
             nums = _get_indices(opinion_relation)
-            document_index = nums[0]
             sentence_index = nums[1]
             opinion_index = nums[2]
             opinions.append(
@@ -891,8 +890,8 @@ class MinedOpinion(DictMixin):
         return cls(
             aspect=AspectSentiment._from_generated(aspect),  # pylint: disable=protected-access
             opinions=[
-                OpinionSentiment._from_generated(opinion)
-                for opinion in cls._get_opinions(aspect.relations, results, sentiment)  # pylint: disable=protected-access
+                OpinionSentiment._from_generated(opinion)  # pylint: disable=protected-access
+                for opinion in cls._get_opinions(aspect.relations, results, sentiment)
             ],
         )
 
