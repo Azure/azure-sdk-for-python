@@ -439,7 +439,7 @@ class Dataset(msrest.serialization.Model):
     """The Azure Data Factory nested object which identifies data within different data stores, such as tables, files, folders, and documents.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AmazonMWSObjectDataset, AmazonRedshiftTableDataset, AvroDataset, AzureDataExplorerTableDataset, AzureMariaDBTableDataset, AzureMySqlTableDataset, AzurePostgreSqlTableDataset, AzureSearchIndexDataset, AzureSqlDWTableDataset, AzureSqlMITableDataset, AzureSqlTableDataset, AzureTableDataset, BinaryDataset, CassandraTableDataset, CommonDataServiceForAppsEntityDataset, ConcurObjectDataset, CosmosDbMongoDbApiCollectionDataset, CosmosDbSqlApiCollectionDataset, CouchbaseTableDataset, Db2TableDataset, DelimitedTextDataset, DocumentDbCollectionDataset, DrillTableDataset, DynamicsAXResourceDataset, DynamicsCrmEntityDataset, DynamicsEntityDataset, EloquaObjectDataset, GoogleAdWordsObjectDataset, GoogleBigQueryObjectDataset, GreenplumTableDataset, HBaseObjectDataset, HiveObjectDataset, HubspotObjectDataset, ImpalaObjectDataset, InformixTableDataset, JiraObjectDataset, JsonDataset, MagentoObjectDataset, MariaDBTableDataset, MarketoObjectDataset, MicrosoftAccessTableDataset, MongoDbCollectionDataset, MongoDbV2CollectionDataset, MySqlTableDataset, NetezzaTableDataset, ODataResourceDataset, OdbcTableDataset, Office365Dataset, OracleServiceCloudObjectDataset, OracleTableDataset, OrcDataset, ParquetDataset, PaypalObjectDataset, PhoenixObjectDataset, PostgreSqlTableDataset, PrestoObjectDataset, QuickBooksObjectDataset, RelationalTableDataset, ResponsysObjectDataset, RestResourceDataset, SalesforceMarketingCloudObjectDataset, SalesforceObjectDataset, SalesforceServiceCloudObjectDataset, SapBwCubeDataset, SapCloudForCustomerResourceDataset, SapEccResourceDataset, SapHanaTableDataset, SapOpenHubTableDataset, SapTableResourceDataset, ServiceNowObjectDataset, ShopifyObjectDataset, SparkObjectDataset, SqlServerTableDataset, SquareObjectDataset, SybaseTableDataset, TeradataTableDataset, VerticaTableDataset, WebTableDataset, XeroObjectDataset, ZohoObjectDataset.
+    sub-classes are: AmazonMWSObjectDataset, AmazonRedshiftTableDataset, AvroDataset, AzureDataExplorerTableDataset, AzureMariaDBTableDataset, AzureMySqlTableDataset, AzurePostgreSqlTableDataset, AzureSearchIndexDataset, AzureSqlDWTableDataset, AzureSqlMITableDataset, AzureSqlTableDataset, AzureTableDataset, BinaryDataset, CassandraTableDataset, CommonDataServiceForAppsEntityDataset, ConcurObjectDataset, CosmosDbMongoDbApiCollectionDataset, CosmosDbSqlApiCollectionDataset, CouchbaseTableDataset, CustomDataset, Db2TableDataset, DelimitedTextDataset, DocumentDbCollectionDataset, DrillTableDataset, DynamicsAXResourceDataset, DynamicsCrmEntityDataset, DynamicsEntityDataset, EloquaObjectDataset, GoogleAdWordsObjectDataset, GoogleBigQueryObjectDataset, GreenplumTableDataset, HBaseObjectDataset, HiveObjectDataset, HubspotObjectDataset, ImpalaObjectDataset, InformixTableDataset, JiraObjectDataset, JsonDataset, MagentoObjectDataset, MariaDBTableDataset, MarketoObjectDataset, MicrosoftAccessTableDataset, MongoDbCollectionDataset, MongoDbV2CollectionDataset, MySqlTableDataset, NetezzaTableDataset, ODataResourceDataset, OdbcTableDataset, Office365Dataset, OracleServiceCloudObjectDataset, OracleTableDataset, OrcDataset, ParquetDataset, PaypalObjectDataset, PhoenixObjectDataset, PostgreSqlTableDataset, PrestoObjectDataset, QuickBooksObjectDataset, RelationalTableDataset, ResponsysObjectDataset, RestResourceDataset, SalesforceMarketingCloudObjectDataset, SalesforceObjectDataset, SalesforceServiceCloudObjectDataset, SapBwCubeDataset, SapCloudForCustomerResourceDataset, SapEccResourceDataset, SapHanaTableDataset, SapOpenHubTableDataset, SapTableResourceDataset, ServiceNowObjectDataset, ShopifyObjectDataset, SparkObjectDataset, SqlServerTableDataset, SquareObjectDataset, SybaseTableDataset, TeradataTableDataset, VerticaTableDataset, WebTableDataset, XeroObjectDataset, ZohoObjectDataset.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -485,7 +485,7 @@ class Dataset(msrest.serialization.Model):
     }
 
     _subtype_map = {
-        'type': {'AmazonMWSObject': 'AmazonMWSObjectDataset', 'AmazonRedshiftTable': 'AmazonRedshiftTableDataset', 'Avro': 'AvroDataset', 'AzureDataExplorerTable': 'AzureDataExplorerTableDataset', 'AzureMariaDBTable': 'AzureMariaDBTableDataset', 'AzureMySqlTable': 'AzureMySqlTableDataset', 'AzurePostgreSqlTable': 'AzurePostgreSqlTableDataset', 'AzureSearchIndex': 'AzureSearchIndexDataset', 'AzureSqlDWTable': 'AzureSqlDWTableDataset', 'AzureSqlMITable': 'AzureSqlMITableDataset', 'AzureSqlTable': 'AzureSqlTableDataset', 'AzureTable': 'AzureTableDataset', 'Binary': 'BinaryDataset', 'CassandraTable': 'CassandraTableDataset', 'CommonDataServiceForAppsEntity': 'CommonDataServiceForAppsEntityDataset', 'ConcurObject': 'ConcurObjectDataset', 'CosmosDbMongoDbApiCollection': 'CosmosDbMongoDbApiCollectionDataset', 'CosmosDbSqlApiCollection': 'CosmosDbSqlApiCollectionDataset', 'CouchbaseTable': 'CouchbaseTableDataset', 'Db2Table': 'Db2TableDataset', 'DelimitedText': 'DelimitedTextDataset', 'DocumentDbCollection': 'DocumentDbCollectionDataset', 'DrillTable': 'DrillTableDataset', 'DynamicsAXResource': 'DynamicsAXResourceDataset', 'DynamicsCrmEntity': 'DynamicsCrmEntityDataset', 'DynamicsEntity': 'DynamicsEntityDataset', 'EloquaObject': 'EloquaObjectDataset', 'GoogleAdWordsObject': 'GoogleAdWordsObjectDataset', 'GoogleBigQueryObject': 'GoogleBigQueryObjectDataset', 'GreenplumTable': 'GreenplumTableDataset', 'HBaseObject': 'HBaseObjectDataset', 'HiveObject': 'HiveObjectDataset', 'HubspotObject': 'HubspotObjectDataset', 'ImpalaObject': 'ImpalaObjectDataset', 'InformixTable': 'InformixTableDataset', 'JiraObject': 'JiraObjectDataset', 'Json': 'JsonDataset', 'MagentoObject': 'MagentoObjectDataset', 'MariaDBTable': 'MariaDBTableDataset', 'MarketoObject': 'MarketoObjectDataset', 'MicrosoftAccessTable': 'MicrosoftAccessTableDataset', 'MongoDbCollection': 'MongoDbCollectionDataset', 'MongoDbV2Collection': 'MongoDbV2CollectionDataset', 'MySqlTable': 'MySqlTableDataset', 'NetezzaTable': 'NetezzaTableDataset', 'ODataResource': 'ODataResourceDataset', 'OdbcTable': 'OdbcTableDataset', 'Office365Table': 'Office365Dataset', 'OracleServiceCloudObject': 'OracleServiceCloudObjectDataset', 'OracleTable': 'OracleTableDataset', 'Orc': 'OrcDataset', 'Parquet': 'ParquetDataset', 'PaypalObject': 'PaypalObjectDataset', 'PhoenixObject': 'PhoenixObjectDataset', 'PostgreSqlTable': 'PostgreSqlTableDataset', 'PrestoObject': 'PrestoObjectDataset', 'QuickBooksObject': 'QuickBooksObjectDataset', 'RelationalTable': 'RelationalTableDataset', 'ResponsysObject': 'ResponsysObjectDataset', 'RestResource': 'RestResourceDataset', 'SalesforceMarketingCloudObject': 'SalesforceMarketingCloudObjectDataset', 'SalesforceObject': 'SalesforceObjectDataset', 'SalesforceServiceCloudObject': 'SalesforceServiceCloudObjectDataset', 'SapBwCube': 'SapBwCubeDataset', 'SapCloudForCustomerResource': 'SapCloudForCustomerResourceDataset', 'SapEccResource': 'SapEccResourceDataset', 'SapHanaTable': 'SapHanaTableDataset', 'SapOpenHubTable': 'SapOpenHubTableDataset', 'SapTableResource': 'SapTableResourceDataset', 'ServiceNowObject': 'ServiceNowObjectDataset', 'ShopifyObject': 'ShopifyObjectDataset', 'SparkObject': 'SparkObjectDataset', 'SqlServerTable': 'SqlServerTableDataset', 'SquareObject': 'SquareObjectDataset', 'SybaseTable': 'SybaseTableDataset', 'TeradataTable': 'TeradataTableDataset', 'VerticaTable': 'VerticaTableDataset', 'WebTable': 'WebTableDataset', 'XeroObject': 'XeroObjectDataset', 'ZohoObject': 'ZohoObjectDataset'}
+        'type': {'AmazonMWSObject': 'AmazonMWSObjectDataset', 'AmazonRedshiftTable': 'AmazonRedshiftTableDataset', 'Avro': 'AvroDataset', 'AzureDataExplorerTable': 'AzureDataExplorerTableDataset', 'AzureMariaDBTable': 'AzureMariaDBTableDataset', 'AzureMySqlTable': 'AzureMySqlTableDataset', 'AzurePostgreSqlTable': 'AzurePostgreSqlTableDataset', 'AzureSearchIndex': 'AzureSearchIndexDataset', 'AzureSqlDWTable': 'AzureSqlDWTableDataset', 'AzureSqlMITable': 'AzureSqlMITableDataset', 'AzureSqlTable': 'AzureSqlTableDataset', 'AzureTable': 'AzureTableDataset', 'Binary': 'BinaryDataset', 'CassandraTable': 'CassandraTableDataset', 'CommonDataServiceForAppsEntity': 'CommonDataServiceForAppsEntityDataset', 'ConcurObject': 'ConcurObjectDataset', 'CosmosDbMongoDbApiCollection': 'CosmosDbMongoDbApiCollectionDataset', 'CosmosDbSqlApiCollection': 'CosmosDbSqlApiCollectionDataset', 'CouchbaseTable': 'CouchbaseTableDataset', 'CustomDataset': 'CustomDataset', 'Db2Table': 'Db2TableDataset', 'DelimitedText': 'DelimitedTextDataset', 'DocumentDbCollection': 'DocumentDbCollectionDataset', 'DrillTable': 'DrillTableDataset', 'DynamicsAXResource': 'DynamicsAXResourceDataset', 'DynamicsCrmEntity': 'DynamicsCrmEntityDataset', 'DynamicsEntity': 'DynamicsEntityDataset', 'EloquaObject': 'EloquaObjectDataset', 'GoogleAdWordsObject': 'GoogleAdWordsObjectDataset', 'GoogleBigQueryObject': 'GoogleBigQueryObjectDataset', 'GreenplumTable': 'GreenplumTableDataset', 'HBaseObject': 'HBaseObjectDataset', 'HiveObject': 'HiveObjectDataset', 'HubspotObject': 'HubspotObjectDataset', 'ImpalaObject': 'ImpalaObjectDataset', 'InformixTable': 'InformixTableDataset', 'JiraObject': 'JiraObjectDataset', 'Json': 'JsonDataset', 'MagentoObject': 'MagentoObjectDataset', 'MariaDBTable': 'MariaDBTableDataset', 'MarketoObject': 'MarketoObjectDataset', 'MicrosoftAccessTable': 'MicrosoftAccessTableDataset', 'MongoDbCollection': 'MongoDbCollectionDataset', 'MongoDbV2Collection': 'MongoDbV2CollectionDataset', 'MySqlTable': 'MySqlTableDataset', 'NetezzaTable': 'NetezzaTableDataset', 'ODataResource': 'ODataResourceDataset', 'OdbcTable': 'OdbcTableDataset', 'Office365Table': 'Office365Dataset', 'OracleServiceCloudObject': 'OracleServiceCloudObjectDataset', 'OracleTable': 'OracleTableDataset', 'Orc': 'OrcDataset', 'Parquet': 'ParquetDataset', 'PaypalObject': 'PaypalObjectDataset', 'PhoenixObject': 'PhoenixObjectDataset', 'PostgreSqlTable': 'PostgreSqlTableDataset', 'PrestoObject': 'PrestoObjectDataset', 'QuickBooksObject': 'QuickBooksObjectDataset', 'RelationalTable': 'RelationalTableDataset', 'ResponsysObject': 'ResponsysObjectDataset', 'RestResource': 'RestResourceDataset', 'SalesforceMarketingCloudObject': 'SalesforceMarketingCloudObjectDataset', 'SalesforceObject': 'SalesforceObjectDataset', 'SalesforceServiceCloudObject': 'SalesforceServiceCloudObjectDataset', 'SapBwCube': 'SapBwCubeDataset', 'SapCloudForCustomerResource': 'SapCloudForCustomerResourceDataset', 'SapEccResource': 'SapEccResourceDataset', 'SapHanaTable': 'SapHanaTableDataset', 'SapOpenHubTable': 'SapOpenHubTableDataset', 'SapTableResource': 'SapTableResourceDataset', 'ServiceNowObject': 'ServiceNowObjectDataset', 'ShopifyObject': 'ShopifyObjectDataset', 'SparkObject': 'SparkObjectDataset', 'SqlServerTable': 'SqlServerTableDataset', 'SquareObject': 'SquareObjectDataset', 'SybaseTable': 'SybaseTableDataset', 'TeradataTable': 'TeradataTableDataset', 'VerticaTable': 'VerticaTableDataset', 'WebTable': 'WebTableDataset', 'XeroObject': 'XeroObjectDataset', 'ZohoObject': 'ZohoObjectDataset'}
     }
 
     def __init__(
@@ -562,6 +562,161 @@ class AmazonMWSObjectDataset(Dataset):
         self.table_name = kwargs.get('table_name', None)
 
 
+class CopySource(msrest.serialization.Model):
+    """A copy activity source.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: AvroSource, AzureBlobFSSource, AzureDataExplorerSource, AzureDataLakeStoreSource, BinarySource, BlobSource, CommonDataServiceForAppsSource, CosmosDbMongoDbApiSource, CosmosDbSqlApiSource, DelimitedTextSource, DocumentDbCollectionSource, DynamicsCrmSource, DynamicsSource, FileSystemSource, HdfsSource, HttpSource, JsonSource, MicrosoftAccessSource, MongoDbSource, MongoDbV2Source, ODataSource, Office365Source, OracleSource, OrcSource, ParquetSource, RelationalSource, RestSource, SalesforceServiceCloudSource, TabularSource, WebSource.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+    }
+
+    _subtype_map = {
+        'type': {'AvroSource': 'AvroSource', 'AzureBlobFSSource': 'AzureBlobFSSource', 'AzureDataExplorerSource': 'AzureDataExplorerSource', 'AzureDataLakeStoreSource': 'AzureDataLakeStoreSource', 'BinarySource': 'BinarySource', 'BlobSource': 'BlobSource', 'CommonDataServiceForAppsSource': 'CommonDataServiceForAppsSource', 'CosmosDbMongoDbApiSource': 'CosmosDbMongoDbApiSource', 'CosmosDbSqlApiSource': 'CosmosDbSqlApiSource', 'DelimitedTextSource': 'DelimitedTextSource', 'DocumentDbCollectionSource': 'DocumentDbCollectionSource', 'DynamicsCrmSource': 'DynamicsCrmSource', 'DynamicsSource': 'DynamicsSource', 'FileSystemSource': 'FileSystemSource', 'HdfsSource': 'HdfsSource', 'HttpSource': 'HttpSource', 'JsonSource': 'JsonSource', 'MicrosoftAccessSource': 'MicrosoftAccessSource', 'MongoDbSource': 'MongoDbSource', 'MongoDbV2Source': 'MongoDbV2Source', 'ODataSource': 'ODataSource', 'Office365Source': 'Office365Source', 'OracleSource': 'OracleSource', 'OrcSource': 'OrcSource', 'ParquetSource': 'ParquetSource', 'RelationalSource': 'RelationalSource', 'RestSource': 'RestSource', 'SalesforceServiceCloudSource': 'SalesforceServiceCloudSource', 'TabularSource': 'TabularSource', 'WebSource': 'WebSource'}
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(CopySource, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.type = 'CopySource'  # type: str
+        self.source_retry_count = kwargs.get('source_retry_count', None)
+        self.source_retry_wait = kwargs.get('source_retry_wait', None)
+        self.max_concurrent_connections = kwargs.get('max_concurrent_connections', None)
+
+
+class TabularSource(CopySource):
+    """Copy activity sources of tabular type.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: AmazonMWSSource, AmazonRedshiftSource, AzureMariaDBSource, AzureMySqlSource, AzurePostgreSqlSource, AzureSqlSource, AzureTableSource, CassandraSource, ConcurSource, CouchbaseSource, Db2Source, DrillSource, DynamicsAXSource, EloquaSource, GoogleAdWordsSource, GoogleBigQuerySource, GreenplumSource, HBaseSource, HiveSource, HubspotSource, ImpalaSource, InformixSource, JiraSource, MagentoSource, MariaDBSource, MarketoSource, MySqlSource, NetezzaSource, OdbcSource, OracleServiceCloudSource, PaypalSource, PhoenixSource, PostgreSqlSource, PrestoSource, QuickBooksSource, ResponsysSource, SalesforceMarketingCloudSource, SalesforceSource, SapBwSource, SapCloudForCustomerSource, SapEccSource, SapHanaSource, SapOpenHubSource, SapTableSource, ServiceNowSource, ShopifySource, SparkSource, SqlDWSource, SqlMISource, SqlServerSource, SqlSource, SquareSource, SybaseSource, TeradataSource, VerticaSource, XeroSource, ZohoSource.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+    }
+
+    _subtype_map = {
+        'type': {'AmazonMWSSource': 'AmazonMWSSource', 'AmazonRedshiftSource': 'AmazonRedshiftSource', 'AzureMariaDBSource': 'AzureMariaDBSource', 'AzureMySqlSource': 'AzureMySqlSource', 'AzurePostgreSqlSource': 'AzurePostgreSqlSource', 'AzureSqlSource': 'AzureSqlSource', 'AzureTableSource': 'AzureTableSource', 'CassandraSource': 'CassandraSource', 'ConcurSource': 'ConcurSource', 'CouchbaseSource': 'CouchbaseSource', 'Db2Source': 'Db2Source', 'DrillSource': 'DrillSource', 'DynamicsAXSource': 'DynamicsAXSource', 'EloquaSource': 'EloquaSource', 'GoogleAdWordsSource': 'GoogleAdWordsSource', 'GoogleBigQuerySource': 'GoogleBigQuerySource', 'GreenplumSource': 'GreenplumSource', 'HBaseSource': 'HBaseSource', 'HiveSource': 'HiveSource', 'HubspotSource': 'HubspotSource', 'ImpalaSource': 'ImpalaSource', 'InformixSource': 'InformixSource', 'JiraSource': 'JiraSource', 'MagentoSource': 'MagentoSource', 'MariaDBSource': 'MariaDBSource', 'MarketoSource': 'MarketoSource', 'MySqlSource': 'MySqlSource', 'NetezzaSource': 'NetezzaSource', 'OdbcSource': 'OdbcSource', 'OracleServiceCloudSource': 'OracleServiceCloudSource', 'PaypalSource': 'PaypalSource', 'PhoenixSource': 'PhoenixSource', 'PostgreSqlSource': 'PostgreSqlSource', 'PrestoSource': 'PrestoSource', 'QuickBooksSource': 'QuickBooksSource', 'ResponsysSource': 'ResponsysSource', 'SalesforceMarketingCloudSource': 'SalesforceMarketingCloudSource', 'SalesforceSource': 'SalesforceSource', 'SapBwSource': 'SapBwSource', 'SapCloudForCustomerSource': 'SapCloudForCustomerSource', 'SapEccSource': 'SapEccSource', 'SapHanaSource': 'SapHanaSource', 'SapOpenHubSource': 'SapOpenHubSource', 'SapTableSource': 'SapTableSource', 'ServiceNowSource': 'ServiceNowSource', 'ShopifySource': 'ShopifySource', 'SparkSource': 'SparkSource', 'SqlDWSource': 'SqlDWSource', 'SqlMISource': 'SqlMISource', 'SqlServerSource': 'SqlServerSource', 'SqlSource': 'SqlSource', 'SquareSource': 'SquareSource', 'SybaseSource': 'SybaseSource', 'TeradataSource': 'TeradataSource', 'VerticaSource': 'VerticaSource', 'XeroSource': 'XeroSource', 'ZohoSource': 'ZohoSource'}
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(TabularSource, self).__init__(**kwargs)
+        self.type = 'TabularSource'  # type: str
+        self.query_timeout = kwargs.get('query_timeout', None)
+
+
+class AmazonMWSSource(TabularSource):
+    """A copy activity Amazon Marketplace Web Service source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
+    :param query: A query to retrieve data from source. Type: string (or Expression with resultType
+     string).
+    :type query: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'query': {'key': 'query', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AmazonMWSSource, self).__init__(**kwargs)
+        self.type = 'AmazonMWSSource'  # type: str
+        self.query = kwargs.get('query', None)
+
+
 class AmazonRedshiftLinkedService(LinkedService):
     """Linked service for Amazon Redshift.
 
@@ -633,6 +788,61 @@ class AmazonRedshiftLinkedService(LinkedService):
         self.database = kwargs['database']
         self.port = kwargs.get('port', None)
         self.encrypted_credential = kwargs.get('encrypted_credential', None)
+
+
+class AmazonRedshiftSource(TabularSource):
+    """A copy activity source for Amazon Redshift Source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
+    :param query: Database query. Type: string (or Expression with resultType string).
+    :type query: object
+    :param redshift_unload_settings: The Amazon S3 settings needed for the interim Amazon S3 when
+     copying from Amazon Redshift with unload. With this, data from Amazon Redshift source will be
+     unloaded into S3 first and then copied into the targeted sink from the interim S3.
+    :type redshift_unload_settings: ~azure.synapse.artifacts.models.RedshiftUnloadSettings
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'query': {'key': 'query', 'type': 'object'},
+        'redshift_unload_settings': {'key': 'redshiftUnloadSettings', 'type': 'RedshiftUnloadSettings'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AmazonRedshiftSource, self).__init__(**kwargs)
+        self.type = 'AmazonRedshiftSource'  # type: str
+        self.query = kwargs.get('query', None)
+        self.redshift_unload_settings = kwargs.get('redshift_unload_settings', None)
 
 
 class AmazonRedshiftTableDataset(Dataset):
@@ -767,6 +977,209 @@ class AmazonS3LinkedService(LinkedService):
         self.encrypted_credential = kwargs.get('encrypted_credential', None)
 
 
+class DatasetLocation(msrest.serialization.Model):
+    """Dataset location.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: AmazonS3Location, AzureBlobFSLocation, AzureBlobStorageLocation, AzureDataLakeStoreLocation, AzureFileStorageLocation, FileServerLocation, FtpServerLocation, GoogleCloudStorageLocation, HdfsLocation, HttpServerLocation, SftpLocation.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Type of dataset storage location.Constant filled by server.
+    :type type: str
+    :param folder_path: Specify the folder path of dataset. Type: string (or Expression with
+     resultType string).
+    :type folder_path: object
+    :param file_name: Specify the file name of dataset. Type: string (or Expression with resultType
+     string).
+    :type file_name: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'folder_path': {'key': 'folderPath', 'type': 'object'},
+        'file_name': {'key': 'fileName', 'type': 'object'},
+    }
+
+    _subtype_map = {
+        'type': {'AmazonS3Location': 'AmazonS3Location', 'AzureBlobFSLocation': 'AzureBlobFSLocation', 'AzureBlobStorageLocation': 'AzureBlobStorageLocation', 'AzureDataLakeStoreLocation': 'AzureDataLakeStoreLocation', 'AzureFileStorageLocation': 'AzureFileStorageLocation', 'FileServerLocation': 'FileServerLocation', 'FtpServerLocation': 'FtpServerLocation', 'GoogleCloudStorageLocation': 'GoogleCloudStorageLocation', 'HdfsLocation': 'HdfsLocation', 'HttpServerLocation': 'HttpServerLocation', 'SftpLocation': 'SftpLocation'}
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DatasetLocation, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.type = 'DatasetLocation'  # type: str
+        self.folder_path = kwargs.get('folder_path', None)
+        self.file_name = kwargs.get('file_name', None)
+
+
+class AmazonS3Location(DatasetLocation):
+    """The location of amazon S3 dataset.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Type of dataset storage location.Constant filled by server.
+    :type type: str
+    :param folder_path: Specify the folder path of dataset. Type: string (or Expression with
+     resultType string).
+    :type folder_path: object
+    :param file_name: Specify the file name of dataset. Type: string (or Expression with resultType
+     string).
+    :type file_name: object
+    :param bucket_name: Specify the bucketName of amazon S3. Type: string (or Expression with
+     resultType string).
+    :type bucket_name: object
+    :param version: Specify the version of amazon S3. Type: string (or Expression with resultType
+     string).
+    :type version: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'folder_path': {'key': 'folderPath', 'type': 'object'},
+        'file_name': {'key': 'fileName', 'type': 'object'},
+        'bucket_name': {'key': 'bucketName', 'type': 'object'},
+        'version': {'key': 'version', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AmazonS3Location, self).__init__(**kwargs)
+        self.type = 'AmazonS3Location'  # type: str
+        self.bucket_name = kwargs.get('bucket_name', None)
+        self.version = kwargs.get('version', None)
+
+
+class StoreReadSettings(msrest.serialization.Model):
+    """Connector read setting.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: AmazonS3ReadSettings, AzureBlobFSReadSettings, AzureBlobStorageReadSettings, AzureDataLakeStoreReadSettings, AzureFileStorageReadSettings, FileServerReadSettings, FtpReadSettings, GoogleCloudStorageReadSettings, HdfsReadSettings, HttpReadSettings, SftpReadSettings.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. The read setting type.Constant filled by server.
+    :type type: str
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+    }
+
+    _subtype_map = {
+        'type': {'AmazonS3ReadSettings': 'AmazonS3ReadSettings', 'AzureBlobFSReadSettings': 'AzureBlobFSReadSettings', 'AzureBlobStorageReadSettings': 'AzureBlobStorageReadSettings', 'AzureDataLakeStoreReadSettings': 'AzureDataLakeStoreReadSettings', 'AzureFileStorageReadSettings': 'AzureFileStorageReadSettings', 'FileServerReadSettings': 'FileServerReadSettings', 'FtpReadSettings': 'FtpReadSettings', 'GoogleCloudStorageReadSettings': 'GoogleCloudStorageReadSettings', 'HdfsReadSettings': 'HdfsReadSettings', 'HttpReadSettings': 'HttpReadSettings', 'SftpReadSettings': 'SftpReadSettings'}
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(StoreReadSettings, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.type = 'StoreReadSettings'  # type: str
+        self.max_concurrent_connections = kwargs.get('max_concurrent_connections', None)
+
+
+class AmazonS3ReadSettings(StoreReadSettings):
+    """Azure data lake store read settings.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. The read setting type.Constant filled by server.
+    :type type: str
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param recursive: If true, files under the folder path will be read recursively. Default is
+     true. Type: boolean (or Expression with resultType boolean).
+    :type recursive: object
+    :param wildcard_folder_path: AmazonS3 wildcardFolderPath. Type: string (or Expression with
+     resultType string).
+    :type wildcard_folder_path: object
+    :param wildcard_file_name: AmazonS3 wildcardFileName. Type: string (or Expression with
+     resultType string).
+    :type wildcard_file_name: object
+    :param prefix: The prefix filter for the S3 object name. Type: string (or Expression with
+     resultType string).
+    :type prefix: object
+    :param enable_partition_discovery: Indicates whether to enable partition discovery.
+    :type enable_partition_discovery: bool
+    :param modified_datetime_start: The start of file's modified datetime. Type: string (or
+     Expression with resultType string).
+    :type modified_datetime_start: object
+    :param modified_datetime_end: The end of file's modified datetime. Type: string (or Expression
+     with resultType string).
+    :type modified_datetime_end: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'recursive': {'key': 'recursive', 'type': 'object'},
+        'wildcard_folder_path': {'key': 'wildcardFolderPath', 'type': 'object'},
+        'wildcard_file_name': {'key': 'wildcardFileName', 'type': 'object'},
+        'prefix': {'key': 'prefix', 'type': 'object'},
+        'enable_partition_discovery': {'key': 'enablePartitionDiscovery', 'type': 'bool'},
+        'modified_datetime_start': {'key': 'modifiedDatetimeStart', 'type': 'object'},
+        'modified_datetime_end': {'key': 'modifiedDatetimeEnd', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AmazonS3ReadSettings, self).__init__(**kwargs)
+        self.type = 'AmazonS3ReadSettings'  # type: str
+        self.recursive = kwargs.get('recursive', None)
+        self.wildcard_folder_path = kwargs.get('wildcard_folder_path', None)
+        self.wildcard_file_name = kwargs.get('wildcard_file_name', None)
+        self.prefix = kwargs.get('prefix', None)
+        self.enable_partition_discovery = kwargs.get('enable_partition_discovery', None)
+        self.modified_datetime_start = kwargs.get('modified_datetime_start', None)
+        self.modified_datetime_end = kwargs.get('modified_datetime_end', None)
+
+
 class AppendVariableActivity(Activity):
     """Append value for a Variable of type Array.
 
@@ -815,6 +1228,57 @@ class AppendVariableActivity(Activity):
         self.type = 'AppendVariable'  # type: str
         self.variable_name = kwargs.get('variable_name', None)
         self.value = kwargs.get('value', None)
+
+
+class AutoPauseProperties(msrest.serialization.Model):
+    """Auto-pausing properties of a Big Data pool powered by Apache Spark.
+
+    :param delay_in_minutes: Number of minutes of idle time before the Big Data pool is
+     automatically paused.
+    :type delay_in_minutes: int
+    :param enabled: Whether auto-pausing is enabled for the Big Data pool.
+    :type enabled: bool
+    """
+
+    _attribute_map = {
+        'delay_in_minutes': {'key': 'delayInMinutes', 'type': 'int'},
+        'enabled': {'key': 'enabled', 'type': 'bool'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AutoPauseProperties, self).__init__(**kwargs)
+        self.delay_in_minutes = kwargs.get('delay_in_minutes', None)
+        self.enabled = kwargs.get('enabled', None)
+
+
+class AutoScaleProperties(msrest.serialization.Model):
+    """Auto-scaling properties of a Big Data pool powered by Apache Spark.
+
+    :param min_node_count: The minimum number of nodes the Big Data pool can support.
+    :type min_node_count: int
+    :param enabled: Whether automatic scaling is enabled for the Big Data pool.
+    :type enabled: bool
+    :param max_node_count: The maximum number of nodes the Big Data pool can support.
+    :type max_node_count: int
+    """
+
+    _attribute_map = {
+        'min_node_count': {'key': 'minNodeCount', 'type': 'int'},
+        'enabled': {'key': 'enabled', 'type': 'bool'},
+        'max_node_count': {'key': 'maxNodeCount', 'type': 'int'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AutoScaleProperties, self).__init__(**kwargs)
+        self.min_node_count = kwargs.get('min_node_count', None)
+        self.enabled = kwargs.get('enabled', None)
+        self.max_node_count = kwargs.get('max_node_count', None)
 
 
 class AvroDataset(Dataset):
@@ -883,6 +1347,324 @@ class AvroDataset(Dataset):
         self.location = kwargs.get('location', None)
         self.avro_compression_codec = kwargs.get('avro_compression_codec', None)
         self.avro_compression_level = kwargs.get('avro_compression_level', None)
+
+
+class DatasetStorageFormat(msrest.serialization.Model):
+    """The format definition of a storage.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: AvroFormat, JsonFormat, OrcFormat, ParquetFormat, TextFormat.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Type of dataset storage format.Constant filled by server.
+    :type type: str
+    :param serializer: Serializer. Type: string (or Expression with resultType string).
+    :type serializer: object
+    :param deserializer: Deserializer. Type: string (or Expression with resultType string).
+    :type deserializer: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'serializer': {'key': 'serializer', 'type': 'object'},
+        'deserializer': {'key': 'deserializer', 'type': 'object'},
+    }
+
+    _subtype_map = {
+        'type': {'AvroFormat': 'AvroFormat', 'JsonFormat': 'JsonFormat', 'OrcFormat': 'OrcFormat', 'ParquetFormat': 'ParquetFormat', 'TextFormat': 'TextFormat'}
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DatasetStorageFormat, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.type = 'DatasetStorageFormat'  # type: str
+        self.serializer = kwargs.get('serializer', None)
+        self.deserializer = kwargs.get('deserializer', None)
+
+
+class AvroFormat(DatasetStorageFormat):
+    """The data stored in Avro format.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Type of dataset storage format.Constant filled by server.
+    :type type: str
+    :param serializer: Serializer. Type: string (or Expression with resultType string).
+    :type serializer: object
+    :param deserializer: Deserializer. Type: string (or Expression with resultType string).
+    :type deserializer: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'serializer': {'key': 'serializer', 'type': 'object'},
+        'deserializer': {'key': 'deserializer', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AvroFormat, self).__init__(**kwargs)
+        self.type = 'AvroFormat'  # type: str
+
+
+class CopySink(msrest.serialization.Model):
+    """A copy activity sink.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: AvroSink, AzureBlobFSSink, AzureDataExplorerSink, AzureDataLakeStoreSink, AzureMySqlSink, AzurePostgreSqlSink, AzureQueueSink, AzureSearchIndexSink, AzureSqlSink, AzureTableSink, BinarySink, BlobSink, CommonDataServiceForAppsSink, CosmosDbMongoDbApiSink, CosmosDbSqlApiSink, DelimitedTextSink, DocumentDbCollectionSink, DynamicsCrmSink, DynamicsSink, FileSystemSink, InformixSink, JsonSink, MicrosoftAccessSink, OdbcSink, OracleSink, OrcSink, ParquetSink, SalesforceServiceCloudSink, SalesforceSink, SapCloudForCustomerSink, SqlDWSink, SqlMISink, SqlServerSink, SqlSink.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy sink type.Constant filled by server.
+    :type type: str
+    :param write_batch_size: Write batch size. Type: integer (or Expression with resultType
+     integer), minimum: 0.
+    :type write_batch_size: object
+    :param write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type write_batch_timeout: object
+    :param sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
+     integer).
+    :type sink_retry_count: object
+    :param sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type sink_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the sink data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'write_batch_size': {'key': 'writeBatchSize', 'type': 'object'},
+        'write_batch_timeout': {'key': 'writeBatchTimeout', 'type': 'object'},
+        'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
+        'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+    }
+
+    _subtype_map = {
+        'type': {'AvroSink': 'AvroSink', 'AzureBlobFSSink': 'AzureBlobFSSink', 'AzureDataExplorerSink': 'AzureDataExplorerSink', 'AzureDataLakeStoreSink': 'AzureDataLakeStoreSink', 'AzureMySqlSink': 'AzureMySqlSink', 'AzurePostgreSqlSink': 'AzurePostgreSqlSink', 'AzureQueueSink': 'AzureQueueSink', 'AzureSearchIndexSink': 'AzureSearchIndexSink', 'AzureSqlSink': 'AzureSqlSink', 'AzureTableSink': 'AzureTableSink', 'BinarySink': 'BinarySink', 'BlobSink': 'BlobSink', 'CommonDataServiceForAppsSink': 'CommonDataServiceForAppsSink', 'CosmosDbMongoDbApiSink': 'CosmosDbMongoDbApiSink', 'CosmosDbSqlApiSink': 'CosmosDbSqlApiSink', 'DelimitedTextSink': 'DelimitedTextSink', 'DocumentDbCollectionSink': 'DocumentDbCollectionSink', 'DynamicsCrmSink': 'DynamicsCrmSink', 'DynamicsSink': 'DynamicsSink', 'FileSystemSink': 'FileSystemSink', 'InformixSink': 'InformixSink', 'JsonSink': 'JsonSink', 'MicrosoftAccessSink': 'MicrosoftAccessSink', 'OdbcSink': 'OdbcSink', 'OracleSink': 'OracleSink', 'OrcSink': 'OrcSink', 'ParquetSink': 'ParquetSink', 'SalesforceServiceCloudSink': 'SalesforceServiceCloudSink', 'SalesforceSink': 'SalesforceSink', 'SapCloudForCustomerSink': 'SapCloudForCustomerSink', 'SqlDWSink': 'SqlDWSink', 'SqlMISink': 'SqlMISink', 'SqlServerSink': 'SqlServerSink', 'SqlSink': 'SqlSink'}
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(CopySink, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.type = 'CopySink'  # type: str
+        self.write_batch_size = kwargs.get('write_batch_size', None)
+        self.write_batch_timeout = kwargs.get('write_batch_timeout', None)
+        self.sink_retry_count = kwargs.get('sink_retry_count', None)
+        self.sink_retry_wait = kwargs.get('sink_retry_wait', None)
+        self.max_concurrent_connections = kwargs.get('max_concurrent_connections', None)
+
+
+class AvroSink(CopySink):
+    """A copy activity Avro sink.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy sink type.Constant filled by server.
+    :type type: str
+    :param write_batch_size: Write batch size. Type: integer (or Expression with resultType
+     integer), minimum: 0.
+    :type write_batch_size: object
+    :param write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type write_batch_timeout: object
+    :param sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
+     integer).
+    :type sink_retry_count: object
+    :param sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type sink_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the sink data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param store_settings: Avro store settings.
+    :type store_settings: ~azure.synapse.artifacts.models.StoreWriteSettings
+    :param format_settings: Avro format settings.
+    :type format_settings: ~azure.synapse.artifacts.models.AvroWriteSettings
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'write_batch_size': {'key': 'writeBatchSize', 'type': 'object'},
+        'write_batch_timeout': {'key': 'writeBatchTimeout', 'type': 'object'},
+        'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
+        'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'store_settings': {'key': 'storeSettings', 'type': 'StoreWriteSettings'},
+        'format_settings': {'key': 'formatSettings', 'type': 'AvroWriteSettings'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AvroSink, self).__init__(**kwargs)
+        self.type = 'AvroSink'  # type: str
+        self.store_settings = kwargs.get('store_settings', None)
+        self.format_settings = kwargs.get('format_settings', None)
+
+
+class AvroSource(CopySource):
+    """A copy activity Avro source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param store_settings: Avro store settings.
+    :type store_settings: ~azure.synapse.artifacts.models.StoreReadSettings
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'store_settings': {'key': 'storeSettings', 'type': 'StoreReadSettings'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AvroSource, self).__init__(**kwargs)
+        self.type = 'AvroSource'  # type: str
+        self.store_settings = kwargs.get('store_settings', None)
+
+
+class FormatWriteSettings(msrest.serialization.Model):
+    """Format write settings.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: AvroWriteSettings, DelimitedTextWriteSettings, JsonWriteSettings.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. The write setting type.Constant filled by server.
+    :type type: str
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'type': {'AvroWriteSettings': 'AvroWriteSettings', 'DelimitedTextWriteSettings': 'DelimitedTextWriteSettings', 'JsonWriteSettings': 'JsonWriteSettings'}
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(FormatWriteSettings, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.type = 'FormatWriteSettings'  # type: str
+
+
+class AvroWriteSettings(FormatWriteSettings):
+    """Avro write settings.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. The write setting type.Constant filled by server.
+    :type type: str
+    :param record_name: Top level record name in write result, which is required in AVRO spec.
+    :type record_name: str
+    :param record_namespace: Record namespace in the write result.
+    :type record_namespace: str
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'record_name': {'key': 'recordName', 'type': 'str'},
+        'record_namespace': {'key': 'recordNamespace', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AvroWriteSettings, self).__init__(**kwargs)
+        self.type = 'AvroWriteSettings'  # type: str
+        self.record_name = kwargs.get('record_name', None)
+        self.record_namespace = kwargs.get('record_namespace', None)
 
 
 class AzureBatchLinkedService(LinkedService):
@@ -1032,6 +1814,306 @@ class AzureBlobFSLinkedService(LinkedService):
         self.encrypted_credential = kwargs.get('encrypted_credential', None)
 
 
+class AzureBlobFSLocation(DatasetLocation):
+    """The location of azure blobFS dataset.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Type of dataset storage location.Constant filled by server.
+    :type type: str
+    :param folder_path: Specify the folder path of dataset. Type: string (or Expression with
+     resultType string).
+    :type folder_path: object
+    :param file_name: Specify the file name of dataset. Type: string (or Expression with resultType
+     string).
+    :type file_name: object
+    :param file_system: Specify the fileSystem of azure blobFS. Type: string (or Expression with
+     resultType string).
+    :type file_system: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'folder_path': {'key': 'folderPath', 'type': 'object'},
+        'file_name': {'key': 'fileName', 'type': 'object'},
+        'file_system': {'key': 'fileSystem', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AzureBlobFSLocation, self).__init__(**kwargs)
+        self.type = 'AzureBlobFSLocation'  # type: str
+        self.file_system = kwargs.get('file_system', None)
+
+
+class AzureBlobFSReadSettings(StoreReadSettings):
+    """Azure blobFS read settings.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. The read setting type.Constant filled by server.
+    :type type: str
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param recursive: If true, files under the folder path will be read recursively. Default is
+     true. Type: boolean (or Expression with resultType boolean).
+    :type recursive: object
+    :param wildcard_folder_path: Azure blobFS wildcardFolderPath. Type: string (or Expression with
+     resultType string).
+    :type wildcard_folder_path: object
+    :param wildcard_file_name: Azure blobFS wildcardFileName. Type: string (or Expression with
+     resultType string).
+    :type wildcard_file_name: object
+    :param enable_partition_discovery: Indicates whether to enable partition discovery.
+    :type enable_partition_discovery: bool
+    :param modified_datetime_start: The start of file's modified datetime. Type: string (or
+     Expression with resultType string).
+    :type modified_datetime_start: object
+    :param modified_datetime_end: The end of file's modified datetime. Type: string (or Expression
+     with resultType string).
+    :type modified_datetime_end: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'recursive': {'key': 'recursive', 'type': 'object'},
+        'wildcard_folder_path': {'key': 'wildcardFolderPath', 'type': 'object'},
+        'wildcard_file_name': {'key': 'wildcardFileName', 'type': 'object'},
+        'enable_partition_discovery': {'key': 'enablePartitionDiscovery', 'type': 'bool'},
+        'modified_datetime_start': {'key': 'modifiedDatetimeStart', 'type': 'object'},
+        'modified_datetime_end': {'key': 'modifiedDatetimeEnd', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AzureBlobFSReadSettings, self).__init__(**kwargs)
+        self.type = 'AzureBlobFSReadSettings'  # type: str
+        self.recursive = kwargs.get('recursive', None)
+        self.wildcard_folder_path = kwargs.get('wildcard_folder_path', None)
+        self.wildcard_file_name = kwargs.get('wildcard_file_name', None)
+        self.enable_partition_discovery = kwargs.get('enable_partition_discovery', None)
+        self.modified_datetime_start = kwargs.get('modified_datetime_start', None)
+        self.modified_datetime_end = kwargs.get('modified_datetime_end', None)
+
+
+class AzureBlobFSSink(CopySink):
+    """A copy activity Azure Data Lake Storage Gen2 sink.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy sink type.Constant filled by server.
+    :type type: str
+    :param write_batch_size: Write batch size. Type: integer (or Expression with resultType
+     integer), minimum: 0.
+    :type write_batch_size: object
+    :param write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type write_batch_timeout: object
+    :param sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
+     integer).
+    :type sink_retry_count: object
+    :param sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type sink_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the sink data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param copy_behavior: The type of copy behavior for copy sink.
+    :type copy_behavior: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'write_batch_size': {'key': 'writeBatchSize', 'type': 'object'},
+        'write_batch_timeout': {'key': 'writeBatchTimeout', 'type': 'object'},
+        'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
+        'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'copy_behavior': {'key': 'copyBehavior', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AzureBlobFSSink, self).__init__(**kwargs)
+        self.type = 'AzureBlobFSSink'  # type: str
+        self.copy_behavior = kwargs.get('copy_behavior', None)
+
+
+class AzureBlobFSSource(CopySource):
+    """A copy activity Azure BlobFS source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param treat_empty_as_null: Treat empty as null. Type: boolean (or Expression with resultType
+     boolean).
+    :type treat_empty_as_null: object
+    :param skip_header_line_count: Number of header lines to skip from each blob. Type: integer (or
+     Expression with resultType integer).
+    :type skip_header_line_count: object
+    :param recursive: If true, files under the folder path will be read recursively. Default is
+     true. Type: boolean (or Expression with resultType boolean).
+    :type recursive: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'treat_empty_as_null': {'key': 'treatEmptyAsNull', 'type': 'object'},
+        'skip_header_line_count': {'key': 'skipHeaderLineCount', 'type': 'object'},
+        'recursive': {'key': 'recursive', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AzureBlobFSSource, self).__init__(**kwargs)
+        self.type = 'AzureBlobFSSource'  # type: str
+        self.treat_empty_as_null = kwargs.get('treat_empty_as_null', None)
+        self.skip_header_line_count = kwargs.get('skip_header_line_count', None)
+        self.recursive = kwargs.get('recursive', None)
+
+
+class StoreWriteSettings(msrest.serialization.Model):
+    """Connector write settings.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: AzureBlobFSWriteSettings, AzureBlobStorageWriteSettings, AzureDataLakeStoreWriteSettings, FileServerWriteSettings, SftpWriteSettings.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. The write setting type.Constant filled by server.
+    :type type: str
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param copy_behavior: The type of copy behavior for copy sink.
+    :type copy_behavior: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'copy_behavior': {'key': 'copyBehavior', 'type': 'object'},
+    }
+
+    _subtype_map = {
+        'type': {'AzureBlobFSWriteSettings': 'AzureBlobFSWriteSettings', 'AzureBlobStorageWriteSettings': 'AzureBlobStorageWriteSettings', 'AzureDataLakeStoreWriteSettings': 'AzureDataLakeStoreWriteSettings', 'FileServerWriteSettings': 'FileServerWriteSettings', 'SftpWriteSettings': 'SftpWriteSettings'}
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(StoreWriteSettings, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.type = 'StoreWriteSettings'  # type: str
+        self.max_concurrent_connections = kwargs.get('max_concurrent_connections', None)
+        self.copy_behavior = kwargs.get('copy_behavior', None)
+
+
+class AzureBlobFSWriteSettings(StoreWriteSettings):
+    """Azure blobFS write settings.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. The write setting type.Constant filled by server.
+    :type type: str
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param copy_behavior: The type of copy behavior for copy sink.
+    :type copy_behavior: object
+    :param block_size_in_mb: Indicates the block size(MB) when writing data to blob. Type: integer
+     (or Expression with resultType integer).
+    :type block_size_in_mb: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'copy_behavior': {'key': 'copyBehavior', 'type': 'object'},
+        'block_size_in_mb': {'key': 'blockSizeInMB', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AzureBlobFSWriteSettings, self).__init__(**kwargs)
+        self.type = 'AzureBlobFSWriteSettings'  # type: str
+        self.block_size_in_mb = kwargs.get('block_size_in_mb', None)
+
+
 class AzureBlobStorageLinkedService(LinkedService):
     """The azure blob storage linked service.
 
@@ -1116,6 +2198,156 @@ class AzureBlobStorageLinkedService(LinkedService):
         self.service_principal_key = kwargs.get('service_principal_key', None)
         self.tenant = kwargs.get('tenant', None)
         self.encrypted_credential = kwargs.get('encrypted_credential', None)
+
+
+class AzureBlobStorageLocation(DatasetLocation):
+    """The location of azure blob dataset.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Type of dataset storage location.Constant filled by server.
+    :type type: str
+    :param folder_path: Specify the folder path of dataset. Type: string (or Expression with
+     resultType string).
+    :type folder_path: object
+    :param file_name: Specify the file name of dataset. Type: string (or Expression with resultType
+     string).
+    :type file_name: object
+    :param container: Specify the container of azure blob. Type: string (or Expression with
+     resultType string).
+    :type container: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'folder_path': {'key': 'folderPath', 'type': 'object'},
+        'file_name': {'key': 'fileName', 'type': 'object'},
+        'container': {'key': 'container', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AzureBlobStorageLocation, self).__init__(**kwargs)
+        self.type = 'AzureBlobStorageLocation'  # type: str
+        self.container = kwargs.get('container', None)
+
+
+class AzureBlobStorageReadSettings(StoreReadSettings):
+    """Azure blob read settings.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. The read setting type.Constant filled by server.
+    :type type: str
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param recursive: If true, files under the folder path will be read recursively. Default is
+     true. Type: boolean (or Expression with resultType boolean).
+    :type recursive: object
+    :param wildcard_folder_path: Azure blob wildcardFolderPath. Type: string (or Expression with
+     resultType string).
+    :type wildcard_folder_path: object
+    :param wildcard_file_name: Azure blob wildcardFileName. Type: string (or Expression with
+     resultType string).
+    :type wildcard_file_name: object
+    :param prefix: The prefix filter for the Azure Blob name. Type: string (or Expression with
+     resultType string).
+    :type prefix: object
+    :param enable_partition_discovery: Indicates whether to enable partition discovery.
+    :type enable_partition_discovery: bool
+    :param modified_datetime_start: The start of file's modified datetime. Type: string (or
+     Expression with resultType string).
+    :type modified_datetime_start: object
+    :param modified_datetime_end: The end of file's modified datetime. Type: string (or Expression
+     with resultType string).
+    :type modified_datetime_end: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'recursive': {'key': 'recursive', 'type': 'object'},
+        'wildcard_folder_path': {'key': 'wildcardFolderPath', 'type': 'object'},
+        'wildcard_file_name': {'key': 'wildcardFileName', 'type': 'object'},
+        'prefix': {'key': 'prefix', 'type': 'object'},
+        'enable_partition_discovery': {'key': 'enablePartitionDiscovery', 'type': 'bool'},
+        'modified_datetime_start': {'key': 'modifiedDatetimeStart', 'type': 'object'},
+        'modified_datetime_end': {'key': 'modifiedDatetimeEnd', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AzureBlobStorageReadSettings, self).__init__(**kwargs)
+        self.type = 'AzureBlobStorageReadSettings'  # type: str
+        self.recursive = kwargs.get('recursive', None)
+        self.wildcard_folder_path = kwargs.get('wildcard_folder_path', None)
+        self.wildcard_file_name = kwargs.get('wildcard_file_name', None)
+        self.prefix = kwargs.get('prefix', None)
+        self.enable_partition_discovery = kwargs.get('enable_partition_discovery', None)
+        self.modified_datetime_start = kwargs.get('modified_datetime_start', None)
+        self.modified_datetime_end = kwargs.get('modified_datetime_end', None)
+
+
+class AzureBlobStorageWriteSettings(StoreWriteSettings):
+    """Azure blob write settings.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. The write setting type.Constant filled by server.
+    :type type: str
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param copy_behavior: The type of copy behavior for copy sink.
+    :type copy_behavior: object
+    :param block_size_in_mb: Indicates the block size(MB) when writing data to blob. Type: integer
+     (or Expression with resultType integer).
+    :type block_size_in_mb: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'copy_behavior': {'key': 'copyBehavior', 'type': 'object'},
+        'block_size_in_mb': {'key': 'blockSizeInMB', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AzureBlobStorageWriteSettings, self).__init__(**kwargs)
+        self.type = 'AzureBlobStorageWriteSettings'  # type: str
+        self.block_size_in_mb = kwargs.get('block_size_in_mb', None)
 
 
 class AzureDatabricksLinkedService(LinkedService):
@@ -1430,6 +2662,127 @@ class AzureDataExplorerLinkedService(LinkedService):
         self.tenant = kwargs['tenant']
 
 
+class AzureDataExplorerSink(CopySink):
+    """A copy activity Azure Data Explorer sink.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy sink type.Constant filled by server.
+    :type type: str
+    :param write_batch_size: Write batch size. Type: integer (or Expression with resultType
+     integer), minimum: 0.
+    :type write_batch_size: object
+    :param write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type write_batch_timeout: object
+    :param sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
+     integer).
+    :type sink_retry_count: object
+    :param sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type sink_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the sink data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param ingestion_mapping_name: A name of a pre-created csv mapping that was defined on the
+     target Kusto table. Type: string.
+    :type ingestion_mapping_name: object
+    :param ingestion_mapping_as_json: An explicit column mapping description provided in a json
+     format. Type: string.
+    :type ingestion_mapping_as_json: object
+    :param flush_immediately: If set to true, any aggregation will be skipped. Default is false.
+     Type: boolean.
+    :type flush_immediately: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'write_batch_size': {'key': 'writeBatchSize', 'type': 'object'},
+        'write_batch_timeout': {'key': 'writeBatchTimeout', 'type': 'object'},
+        'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
+        'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'ingestion_mapping_name': {'key': 'ingestionMappingName', 'type': 'object'},
+        'ingestion_mapping_as_json': {'key': 'ingestionMappingAsJson', 'type': 'object'},
+        'flush_immediately': {'key': 'flushImmediately', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AzureDataExplorerSink, self).__init__(**kwargs)
+        self.type = 'AzureDataExplorerSink'  # type: str
+        self.ingestion_mapping_name = kwargs.get('ingestion_mapping_name', None)
+        self.ingestion_mapping_as_json = kwargs.get('ingestion_mapping_as_json', None)
+        self.flush_immediately = kwargs.get('flush_immediately', None)
+
+
+class AzureDataExplorerSource(CopySource):
+    """A copy activity Azure Data Explorer (Kusto) source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param query: Required. Database query. Should be a Kusto Query Language (KQL) query. Type:
+     string (or Expression with resultType string).
+    :type query: object
+    :param no_truncation: The name of the Boolean option that controls whether truncation is
+     applied to result-sets that go beyond a certain row-count limit.
+    :type no_truncation: object
+    :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9]))..
+    :type query_timeout: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+        'query': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'query': {'key': 'query', 'type': 'object'},
+        'no_truncation': {'key': 'noTruncation', 'type': 'object'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AzureDataExplorerSource, self).__init__(**kwargs)
+        self.type = 'AzureDataExplorerSource'  # type: str
+        self.query = kwargs['query']
+        self.no_truncation = kwargs.get('no_truncation', None)
+        self.query_timeout = kwargs.get('query_timeout', None)
+
+
 class AzureDataExplorerTableDataset(Dataset):
     """The Azure Data Explorer (Kusto) dataset.
 
@@ -1656,6 +3009,320 @@ class AzureDataLakeStoreLinkedService(LinkedService):
         self.encrypted_credential = kwargs.get('encrypted_credential', None)
 
 
+class AzureDataLakeStoreLocation(DatasetLocation):
+    """The location of azure data lake store dataset.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Type of dataset storage location.Constant filled by server.
+    :type type: str
+    :param folder_path: Specify the folder path of dataset. Type: string (or Expression with
+     resultType string).
+    :type folder_path: object
+    :param file_name: Specify the file name of dataset. Type: string (or Expression with resultType
+     string).
+    :type file_name: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'folder_path': {'key': 'folderPath', 'type': 'object'},
+        'file_name': {'key': 'fileName', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AzureDataLakeStoreLocation, self).__init__(**kwargs)
+        self.type = 'AzureDataLakeStoreLocation'  # type: str
+
+
+class AzureDataLakeStoreReadSettings(StoreReadSettings):
+    """Azure data lake store read settings.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. The read setting type.Constant filled by server.
+    :type type: str
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param recursive: If true, files under the folder path will be read recursively. Default is
+     true. Type: boolean (or Expression with resultType boolean).
+    :type recursive: object
+    :param wildcard_folder_path: ADLS wildcardFolderPath. Type: string (or Expression with
+     resultType string).
+    :type wildcard_folder_path: object
+    :param wildcard_file_name: ADLS wildcardFileName. Type: string (or Expression with resultType
+     string).
+    :type wildcard_file_name: object
+    :param enable_partition_discovery: Indicates whether to enable partition discovery.
+    :type enable_partition_discovery: bool
+    :param modified_datetime_start: The start of file's modified datetime. Type: string (or
+     Expression with resultType string).
+    :type modified_datetime_start: object
+    :param modified_datetime_end: The end of file's modified datetime. Type: string (or Expression
+     with resultType string).
+    :type modified_datetime_end: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'recursive': {'key': 'recursive', 'type': 'object'},
+        'wildcard_folder_path': {'key': 'wildcardFolderPath', 'type': 'object'},
+        'wildcard_file_name': {'key': 'wildcardFileName', 'type': 'object'},
+        'enable_partition_discovery': {'key': 'enablePartitionDiscovery', 'type': 'bool'},
+        'modified_datetime_start': {'key': 'modifiedDatetimeStart', 'type': 'object'},
+        'modified_datetime_end': {'key': 'modifiedDatetimeEnd', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AzureDataLakeStoreReadSettings, self).__init__(**kwargs)
+        self.type = 'AzureDataLakeStoreReadSettings'  # type: str
+        self.recursive = kwargs.get('recursive', None)
+        self.wildcard_folder_path = kwargs.get('wildcard_folder_path', None)
+        self.wildcard_file_name = kwargs.get('wildcard_file_name', None)
+        self.enable_partition_discovery = kwargs.get('enable_partition_discovery', None)
+        self.modified_datetime_start = kwargs.get('modified_datetime_start', None)
+        self.modified_datetime_end = kwargs.get('modified_datetime_end', None)
+
+
+class AzureDataLakeStoreSink(CopySink):
+    """A copy activity Azure Data Lake Store sink.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy sink type.Constant filled by server.
+    :type type: str
+    :param write_batch_size: Write batch size. Type: integer (or Expression with resultType
+     integer), minimum: 0.
+    :type write_batch_size: object
+    :param write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type write_batch_timeout: object
+    :param sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
+     integer).
+    :type sink_retry_count: object
+    :param sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type sink_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the sink data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param copy_behavior: The type of copy behavior for copy sink.
+    :type copy_behavior: object
+    :param enable_adls_single_file_parallel: Single File Parallel.
+    :type enable_adls_single_file_parallel: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'write_batch_size': {'key': 'writeBatchSize', 'type': 'object'},
+        'write_batch_timeout': {'key': 'writeBatchTimeout', 'type': 'object'},
+        'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
+        'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'copy_behavior': {'key': 'copyBehavior', 'type': 'object'},
+        'enable_adls_single_file_parallel': {'key': 'enableAdlsSingleFileParallel', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AzureDataLakeStoreSink, self).__init__(**kwargs)
+        self.type = 'AzureDataLakeStoreSink'  # type: str
+        self.copy_behavior = kwargs.get('copy_behavior', None)
+        self.enable_adls_single_file_parallel = kwargs.get('enable_adls_single_file_parallel', None)
+
+
+class AzureDataLakeStoreSource(CopySource):
+    """A copy activity Azure Data Lake source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param recursive: If true, files under the folder path will be read recursively. Default is
+     true. Type: boolean (or Expression with resultType boolean).
+    :type recursive: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'recursive': {'key': 'recursive', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AzureDataLakeStoreSource, self).__init__(**kwargs)
+        self.type = 'AzureDataLakeStoreSource'  # type: str
+        self.recursive = kwargs.get('recursive', None)
+
+
+class AzureDataLakeStoreWriteSettings(StoreWriteSettings):
+    """Azure data lake store write settings.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. The write setting type.Constant filled by server.
+    :type type: str
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param copy_behavior: The type of copy behavior for copy sink.
+    :type copy_behavior: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'copy_behavior': {'key': 'copyBehavior', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AzureDataLakeStoreWriteSettings, self).__init__(**kwargs)
+        self.type = 'AzureDataLakeStoreWriteSettings'  # type: str
+
+
+class Resource(msrest.serialization.Model):
+    """Resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
+     Microsoft.Storage/storageAccounts.
+    :vartype type: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(Resource, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+
+
+class AzureEntityResource(Resource):
+    """The resource model definition for a Azure Resource Manager resource with an etag.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
+     Microsoft.Storage/storageAccounts.
+    :vartype type: str
+    :ivar etag: Resource Etag.
+    :vartype etag: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'etag': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AzureEntityResource, self).__init__(**kwargs)
+        self.etag = None
+
+
 class AzureFileStorageLinkedService(LinkedService):
     """Azure File Storage linked service.
 
@@ -1716,6 +3383,105 @@ class AzureFileStorageLinkedService(LinkedService):
         self.user_id = kwargs.get('user_id', None)
         self.password = kwargs.get('password', None)
         self.encrypted_credential = kwargs.get('encrypted_credential', None)
+
+
+class AzureFileStorageLocation(DatasetLocation):
+    """The location of file server dataset.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Type of dataset storage location.Constant filled by server.
+    :type type: str
+    :param folder_path: Specify the folder path of dataset. Type: string (or Expression with
+     resultType string).
+    :type folder_path: object
+    :param file_name: Specify the file name of dataset. Type: string (or Expression with resultType
+     string).
+    :type file_name: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'folder_path': {'key': 'folderPath', 'type': 'object'},
+        'file_name': {'key': 'fileName', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AzureFileStorageLocation, self).__init__(**kwargs)
+        self.type = 'AzureFileStorageLocation'  # type: str
+
+
+class AzureFileStorageReadSettings(StoreReadSettings):
+    """Azure File Storage read settings.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. The read setting type.Constant filled by server.
+    :type type: str
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param recursive: If true, files under the folder path will be read recursively. Default is
+     true. Type: boolean (or Expression with resultType boolean).
+    :type recursive: object
+    :param wildcard_folder_path: Azure File Storage wildcardFolderPath. Type: string (or Expression
+     with resultType string).
+    :type wildcard_folder_path: object
+    :param wildcard_file_name: Azure File Storage wildcardFileName. Type: string (or Expression
+     with resultType string).
+    :type wildcard_file_name: object
+    :param enable_partition_discovery: Indicates whether to enable partition discovery.
+    :type enable_partition_discovery: bool
+    :param modified_datetime_start: The start of file's modified datetime. Type: string (or
+     Expression with resultType string).
+    :type modified_datetime_start: object
+    :param modified_datetime_end: The end of file's modified datetime. Type: string (or Expression
+     with resultType string).
+    :type modified_datetime_end: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'recursive': {'key': 'recursive', 'type': 'object'},
+        'wildcard_folder_path': {'key': 'wildcardFolderPath', 'type': 'object'},
+        'wildcard_file_name': {'key': 'wildcardFileName', 'type': 'object'},
+        'enable_partition_discovery': {'key': 'enablePartitionDiscovery', 'type': 'bool'},
+        'modified_datetime_start': {'key': 'modifiedDatetimeStart', 'type': 'object'},
+        'modified_datetime_end': {'key': 'modifiedDatetimeEnd', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AzureFileStorageReadSettings, self).__init__(**kwargs)
+        self.type = 'AzureFileStorageReadSettings'  # type: str
+        self.recursive = kwargs.get('recursive', None)
+        self.wildcard_folder_path = kwargs.get('wildcard_folder_path', None)
+        self.wildcard_file_name = kwargs.get('wildcard_file_name', None)
+        self.enable_partition_discovery = kwargs.get('enable_partition_discovery', None)
+        self.modified_datetime_start = kwargs.get('modified_datetime_start', None)
+        self.modified_datetime_end = kwargs.get('modified_datetime_end', None)
 
 
 class AzureFunctionActivity(ExecutionActivity):
@@ -2020,6 +3786,56 @@ class AzureMariaDBLinkedService(LinkedService):
         self.connection_string = kwargs.get('connection_string', None)
         self.pwd = kwargs.get('pwd', None)
         self.encrypted_credential = kwargs.get('encrypted_credential', None)
+
+
+class AzureMariaDBSource(TabularSource):
+    """A copy activity Azure MariaDB source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
+    :param query: A query to retrieve data from source. Type: string (or Expression with resultType
+     string).
+    :type query: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'query': {'key': 'query', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AzureMariaDBSource, self).__init__(**kwargs)
+        self.type = 'AzureMariaDBSource'  # type: str
+        self.query = kwargs.get('query', None)
 
 
 class AzureMariaDBTableDataset(Dataset):
@@ -2545,6 +4361,109 @@ class AzureMySqlLinkedService(LinkedService):
         self.encrypted_credential = kwargs.get('encrypted_credential', None)
 
 
+class AzureMySqlSink(CopySink):
+    """A copy activity Azure MySql sink.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy sink type.Constant filled by server.
+    :type type: str
+    :param write_batch_size: Write batch size. Type: integer (or Expression with resultType
+     integer), minimum: 0.
+    :type write_batch_size: object
+    :param write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type write_batch_timeout: object
+    :param sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
+     integer).
+    :type sink_retry_count: object
+    :param sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type sink_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the sink data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param pre_copy_script: A query to execute before starting the copy. Type: string (or
+     Expression with resultType string).
+    :type pre_copy_script: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'write_batch_size': {'key': 'writeBatchSize', 'type': 'object'},
+        'write_batch_timeout': {'key': 'writeBatchTimeout', 'type': 'object'},
+        'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
+        'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'pre_copy_script': {'key': 'preCopyScript', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AzureMySqlSink, self).__init__(**kwargs)
+        self.type = 'AzureMySqlSink'  # type: str
+        self.pre_copy_script = kwargs.get('pre_copy_script', None)
+
+
+class AzureMySqlSource(TabularSource):
+    """A copy activity Azure MySQL source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
+    :param query: Database query. Type: string (or Expression with resultType string).
+    :type query: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'query': {'key': 'query', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AzureMySqlSource, self).__init__(**kwargs)
+        self.type = 'AzureMySqlSource'  # type: str
+        self.query = kwargs.get('query', None)
+
+
 class AzureMySqlTableDataset(Dataset):
     """The Azure MySQL database dataset.
 
@@ -2665,6 +4584,110 @@ class AzurePostgreSqlLinkedService(LinkedService):
         self.encrypted_credential = kwargs.get('encrypted_credential', None)
 
 
+class AzurePostgreSqlSink(CopySink):
+    """A copy activity Azure PostgreSQL sink.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy sink type.Constant filled by server.
+    :type type: str
+    :param write_batch_size: Write batch size. Type: integer (or Expression with resultType
+     integer), minimum: 0.
+    :type write_batch_size: object
+    :param write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type write_batch_timeout: object
+    :param sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
+     integer).
+    :type sink_retry_count: object
+    :param sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type sink_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the sink data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param pre_copy_script: A query to execute before starting the copy. Type: string (or
+     Expression with resultType string).
+    :type pre_copy_script: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'write_batch_size': {'key': 'writeBatchSize', 'type': 'object'},
+        'write_batch_timeout': {'key': 'writeBatchTimeout', 'type': 'object'},
+        'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
+        'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'pre_copy_script': {'key': 'preCopyScript', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AzurePostgreSqlSink, self).__init__(**kwargs)
+        self.type = 'AzurePostgreSqlSink'  # type: str
+        self.pre_copy_script = kwargs.get('pre_copy_script', None)
+
+
+class AzurePostgreSqlSource(TabularSource):
+    """A copy activity Azure PostgreSQL source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
+    :param query: A query to retrieve data from source. Type: string (or Expression with resultType
+     string).
+    :type query: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'query': {'key': 'query', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AzurePostgreSqlSource, self).__init__(**kwargs)
+        self.type = 'AzurePostgreSqlSource'  # type: str
+        self.query = kwargs.get('query', None)
+
+
 class AzurePostgreSqlTableDataset(Dataset):
     """Azure PostgreSQL dataset.
 
@@ -2734,6 +4757,55 @@ class AzurePostgreSqlTableDataset(Dataset):
         self.schema_type_properties_schema = kwargs.get('schema_type_properties_schema', None)
 
 
+class AzureQueueSink(CopySink):
+    """A copy activity Azure Queue sink.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy sink type.Constant filled by server.
+    :type type: str
+    :param write_batch_size: Write batch size. Type: integer (or Expression with resultType
+     integer), minimum: 0.
+    :type write_batch_size: object
+    :param write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type write_batch_timeout: object
+    :param sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
+     integer).
+    :type sink_retry_count: object
+    :param sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type sink_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the sink data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'write_batch_size': {'key': 'writeBatchSize', 'type': 'object'},
+        'write_batch_timeout': {'key': 'writeBatchTimeout', 'type': 'object'},
+        'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
+        'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AzureQueueSink, self).__init__(**kwargs)
+        self.type = 'AzureQueueSink'  # type: str
+
+
 class AzureSearchIndexDataset(Dataset):
     """The Azure Search Index.
 
@@ -2792,6 +4864,60 @@ class AzureSearchIndexDataset(Dataset):
         super(AzureSearchIndexDataset, self).__init__(**kwargs)
         self.type = 'AzureSearchIndex'  # type: str
         self.index_name = kwargs['index_name']
+
+
+class AzureSearchIndexSink(CopySink):
+    """A copy activity Azure Search Index sink.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy sink type.Constant filled by server.
+    :type type: str
+    :param write_batch_size: Write batch size. Type: integer (or Expression with resultType
+     integer), minimum: 0.
+    :type write_batch_size: object
+    :param write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type write_batch_timeout: object
+    :param sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
+     integer).
+    :type sink_retry_count: object
+    :param sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type sink_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the sink data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param write_behavior: Specify the write behavior when upserting documents into Azure Search
+     Index. Possible values include: "Merge", "Upload".
+    :type write_behavior: str or ~azure.synapse.artifacts.models.AzureSearchIndexWriteBehaviorType
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'write_batch_size': {'key': 'writeBatchSize', 'type': 'object'},
+        'write_batch_timeout': {'key': 'writeBatchTimeout', 'type': 'object'},
+        'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
+        'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'write_behavior': {'key': 'writeBehavior', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AzureSearchIndexSink, self).__init__(**kwargs)
+        self.type = 'AzureSearchIndexSink'  # type: str
+        self.write_behavior = kwargs.get('write_behavior', None)
 
 
 class AzureSearchLinkedService(LinkedService):
@@ -3205,6 +5331,150 @@ class AzureSqlMITableDataset(Dataset):
         self.table = kwargs.get('table', None)
 
 
+class AzureSqlSink(CopySink):
+    """A copy activity Azure SQL sink.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy sink type.Constant filled by server.
+    :type type: str
+    :param write_batch_size: Write batch size. Type: integer (or Expression with resultType
+     integer), minimum: 0.
+    :type write_batch_size: object
+    :param write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type write_batch_timeout: object
+    :param sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
+     integer).
+    :type sink_retry_count: object
+    :param sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type sink_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the sink data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param sql_writer_stored_procedure_name: SQL writer stored procedure name. Type: string (or
+     Expression with resultType string).
+    :type sql_writer_stored_procedure_name: object
+    :param sql_writer_table_type: SQL writer table type. Type: string (or Expression with
+     resultType string).
+    :type sql_writer_table_type: object
+    :param pre_copy_script: SQL pre-copy script. Type: string (or Expression with resultType
+     string).
+    :type pre_copy_script: object
+    :param stored_procedure_parameters: SQL stored procedure parameters.
+    :type stored_procedure_parameters: dict[str,
+     ~azure.synapse.artifacts.models.StoredProcedureParameter]
+    :param stored_procedure_table_type_parameter_name: The stored procedure parameter name of the
+     table type. Type: string (or Expression with resultType string).
+    :type stored_procedure_table_type_parameter_name: object
+    :param table_option: The option to handle sink table, such as autoCreate. For now only
+     'autoCreate' value is supported. Type: string (or Expression with resultType string).
+    :type table_option: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'write_batch_size': {'key': 'writeBatchSize', 'type': 'object'},
+        'write_batch_timeout': {'key': 'writeBatchTimeout', 'type': 'object'},
+        'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
+        'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'sql_writer_stored_procedure_name': {'key': 'sqlWriterStoredProcedureName', 'type': 'object'},
+        'sql_writer_table_type': {'key': 'sqlWriterTableType', 'type': 'object'},
+        'pre_copy_script': {'key': 'preCopyScript', 'type': 'object'},
+        'stored_procedure_parameters': {'key': 'storedProcedureParameters', 'type': '{StoredProcedureParameter}'},
+        'stored_procedure_table_type_parameter_name': {'key': 'storedProcedureTableTypeParameterName', 'type': 'object'},
+        'table_option': {'key': 'tableOption', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AzureSqlSink, self).__init__(**kwargs)
+        self.type = 'AzureSqlSink'  # type: str
+        self.sql_writer_stored_procedure_name = kwargs.get('sql_writer_stored_procedure_name', None)
+        self.sql_writer_table_type = kwargs.get('sql_writer_table_type', None)
+        self.pre_copy_script = kwargs.get('pre_copy_script', None)
+        self.stored_procedure_parameters = kwargs.get('stored_procedure_parameters', None)
+        self.stored_procedure_table_type_parameter_name = kwargs.get('stored_procedure_table_type_parameter_name', None)
+        self.table_option = kwargs.get('table_option', None)
+
+
+class AzureSqlSource(TabularSource):
+    """A copy activity Azure SQL source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
+    :param sql_reader_query: SQL reader query. Type: string (or Expression with resultType string).
+    :type sql_reader_query: object
+    :param sql_reader_stored_procedure_name: Name of the stored procedure for a SQL Database
+     source. This cannot be used at the same time as SqlReaderQuery. Type: string (or Expression
+     with resultType string).
+    :type sql_reader_stored_procedure_name: object
+    :param stored_procedure_parameters: Value and type setting for stored procedure parameters.
+     Example: "{Parameter1: {value: "1", type: "int"}}".
+    :type stored_procedure_parameters: dict[str,
+     ~azure.synapse.artifacts.models.StoredProcedureParameter]
+    :param produce_additional_types: Which additional types to produce.
+    :type produce_additional_types: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'sql_reader_query': {'key': 'sqlReaderQuery', 'type': 'object'},
+        'sql_reader_stored_procedure_name': {'key': 'sqlReaderStoredProcedureName', 'type': 'object'},
+        'stored_procedure_parameters': {'key': 'storedProcedureParameters', 'type': '{StoredProcedureParameter}'},
+        'produce_additional_types': {'key': 'produceAdditionalTypes', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AzureSqlSource, self).__init__(**kwargs)
+        self.type = 'AzureSqlSource'  # type: str
+        self.sql_reader_query = kwargs.get('sql_reader_query', None)
+        self.sql_reader_stored_procedure_name = kwargs.get('sql_reader_stored_procedure_name', None)
+        self.stored_procedure_parameters = kwargs.get('stored_procedure_parameters', None)
+        self.produce_additional_types = kwargs.get('produce_additional_types', None)
+
+
 class AzureSqlTableDataset(Dataset):
     """The Azure SQL Server database dataset.
 
@@ -3399,6 +5669,130 @@ class AzureTableDataset(Dataset):
         self.table_name = kwargs['table_name']
 
 
+class AzureTableSink(CopySink):
+    """A copy activity Azure Table sink.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy sink type.Constant filled by server.
+    :type type: str
+    :param write_batch_size: Write batch size. Type: integer (or Expression with resultType
+     integer), minimum: 0.
+    :type write_batch_size: object
+    :param write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type write_batch_timeout: object
+    :param sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
+     integer).
+    :type sink_retry_count: object
+    :param sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type sink_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the sink data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param azure_table_default_partition_key_value: Azure Table default partition key value. Type:
+     string (or Expression with resultType string).
+    :type azure_table_default_partition_key_value: object
+    :param azure_table_partition_key_name: Azure Table partition key name. Type: string (or
+     Expression with resultType string).
+    :type azure_table_partition_key_name: object
+    :param azure_table_row_key_name: Azure Table row key name. Type: string (or Expression with
+     resultType string).
+    :type azure_table_row_key_name: object
+    :param azure_table_insert_type: Azure Table insert type. Type: string (or Expression with
+     resultType string).
+    :type azure_table_insert_type: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'write_batch_size': {'key': 'writeBatchSize', 'type': 'object'},
+        'write_batch_timeout': {'key': 'writeBatchTimeout', 'type': 'object'},
+        'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
+        'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'azure_table_default_partition_key_value': {'key': 'azureTableDefaultPartitionKeyValue', 'type': 'object'},
+        'azure_table_partition_key_name': {'key': 'azureTablePartitionKeyName', 'type': 'object'},
+        'azure_table_row_key_name': {'key': 'azureTableRowKeyName', 'type': 'object'},
+        'azure_table_insert_type': {'key': 'azureTableInsertType', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AzureTableSink, self).__init__(**kwargs)
+        self.type = 'AzureTableSink'  # type: str
+        self.azure_table_default_partition_key_value = kwargs.get('azure_table_default_partition_key_value', None)
+        self.azure_table_partition_key_name = kwargs.get('azure_table_partition_key_name', None)
+        self.azure_table_row_key_name = kwargs.get('azure_table_row_key_name', None)
+        self.azure_table_insert_type = kwargs.get('azure_table_insert_type', None)
+
+
+class AzureTableSource(TabularSource):
+    """A copy activity Azure Table source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
+    :param azure_table_source_query: Azure Table source query. Type: string (or Expression with
+     resultType string).
+    :type azure_table_source_query: object
+    :param azure_table_source_ignore_table_not_found: Azure Table source ignore table not found.
+     Type: boolean (or Expression with resultType boolean).
+    :type azure_table_source_ignore_table_not_found: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'azure_table_source_query': {'key': 'azureTableSourceQuery', 'type': 'object'},
+        'azure_table_source_ignore_table_not_found': {'key': 'azureTableSourceIgnoreTableNotFound', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(AzureTableSource, self).__init__(**kwargs)
+        self.type = 'AzureTableSource'  # type: str
+        self.azure_table_source_query = kwargs.get('azure_table_source_query', None)
+        self.azure_table_source_ignore_table_not_found = kwargs.get('azure_table_source_ignore_table_not_found', None)
+
+
 class AzureTableStorageLinkedService(LinkedService):
     """The azure table storage linked service.
 
@@ -3495,6 +5889,167 @@ class BigDataPoolReference(msrest.serialization.Model):
         self.reference_name = kwargs['reference_name']
 
 
+class TrackedResource(Resource):
+    """The resource model definition for a ARM tracked top level resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
+     Microsoft.Storage/storageAccounts.
+    :vartype type: str
+    :param tags: A set of tags. Resource tags.
+    :type tags: dict[str, str]
+    :param location: Required. The geo-location where the resource lives.
+    :type location: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'location': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'location': {'key': 'location', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(TrackedResource, self).__init__(**kwargs)
+        self.tags = kwargs.get('tags', None)
+        self.location = kwargs['location']
+
+
+class BigDataPoolResourceInfo(TrackedResource):
+    """A Big Data pool.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
+     Microsoft.Storage/storageAccounts.
+    :vartype type: str
+    :param tags: A set of tags. Resource tags.
+    :type tags: dict[str, str]
+    :param location: Required. The geo-location where the resource lives.
+    :type location: str
+    :param provisioning_state: The state of the Big Data pool.
+    :type provisioning_state: str
+    :param auto_scale: Auto-scaling properties.
+    :type auto_scale: ~azure.synapse.artifacts.models.AutoScaleProperties
+    :param creation_date: The time when the Big Data pool was created.
+    :type creation_date: ~datetime.datetime
+    :param auto_pause: Auto-pausing properties.
+    :type auto_pause: ~azure.synapse.artifacts.models.AutoPauseProperties
+    :param is_compute_isolation_enabled: Whether compute isolation is required or not.
+    :type is_compute_isolation_enabled: bool
+    :param spark_events_folder: The Spark events folder.
+    :type spark_events_folder: str
+    :param node_count: The number of nodes in the Big Data pool.
+    :type node_count: int
+    :param library_requirements: Library version requirements.
+    :type library_requirements: ~azure.synapse.artifacts.models.LibraryRequirements
+    :param spark_version: The Apache Spark version.
+    :type spark_version: str
+    :param default_spark_log_folder: The default folder where Spark logs will be written.
+    :type default_spark_log_folder: str
+    :param node_size: The level of compute power that each node in the Big Data pool has. Possible
+     values include: "None", "Small", "Medium", "Large", "XLarge", "XXLarge".
+    :type node_size: str or ~azure.synapse.artifacts.models.NodeSize
+    :param node_size_family: The kind of nodes that the Big Data pool provides. Possible values
+     include: "None", "MemoryOptimized".
+    :type node_size_family: str or ~azure.synapse.artifacts.models.NodeSizeFamily
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'location': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'location': {'key': 'location', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'auto_scale': {'key': 'properties.autoScale', 'type': 'AutoScaleProperties'},
+        'creation_date': {'key': 'properties.creationDate', 'type': 'iso-8601'},
+        'auto_pause': {'key': 'properties.autoPause', 'type': 'AutoPauseProperties'},
+        'is_compute_isolation_enabled': {'key': 'properties.isComputeIsolationEnabled', 'type': 'bool'},
+        'spark_events_folder': {'key': 'properties.sparkEventsFolder', 'type': 'str'},
+        'node_count': {'key': 'properties.nodeCount', 'type': 'int'},
+        'library_requirements': {'key': 'properties.libraryRequirements', 'type': 'LibraryRequirements'},
+        'spark_version': {'key': 'properties.sparkVersion', 'type': 'str'},
+        'default_spark_log_folder': {'key': 'properties.defaultSparkLogFolder', 'type': 'str'},
+        'node_size': {'key': 'properties.nodeSize', 'type': 'str'},
+        'node_size_family': {'key': 'properties.nodeSizeFamily', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(BigDataPoolResourceInfo, self).__init__(**kwargs)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.auto_scale = kwargs.get('auto_scale', None)
+        self.creation_date = kwargs.get('creation_date', None)
+        self.auto_pause = kwargs.get('auto_pause', None)
+        self.is_compute_isolation_enabled = kwargs.get('is_compute_isolation_enabled', None)
+        self.spark_events_folder = kwargs.get('spark_events_folder', None)
+        self.node_count = kwargs.get('node_count', None)
+        self.library_requirements = kwargs.get('library_requirements', None)
+        self.spark_version = kwargs.get('spark_version', None)
+        self.default_spark_log_folder = kwargs.get('default_spark_log_folder', None)
+        self.node_size = kwargs.get('node_size', None)
+        self.node_size_family = kwargs.get('node_size_family', None)
+
+
+class BigDataPoolResourceInfoListResult(msrest.serialization.Model):
+    """Collection of Big Data pool information.
+
+    :param next_link: Link to the next page of results.
+    :type next_link: str
+    :param value: List of Big Data pools.
+    :type value: list[~azure.synapse.artifacts.models.BigDataPoolResourceInfo]
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'value': {'key': 'value', 'type': '[BigDataPoolResourceInfo]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(BigDataPoolResourceInfoListResult, self).__init__(**kwargs)
+        self.next_link = kwargs.get('next_link', None)
+        self.value = kwargs.get('value', None)
+
+
 class BinaryDataset(Dataset):
     """Binary dataset.
 
@@ -3555,6 +6110,467 @@ class BinaryDataset(Dataset):
         self.type = 'Binary'  # type: str
         self.location = kwargs.get('location', None)
         self.compression = kwargs.get('compression', None)
+
+
+class BinarySink(CopySink):
+    """A copy activity Binary sink.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy sink type.Constant filled by server.
+    :type type: str
+    :param write_batch_size: Write batch size. Type: integer (or Expression with resultType
+     integer), minimum: 0.
+    :type write_batch_size: object
+    :param write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type write_batch_timeout: object
+    :param sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
+     integer).
+    :type sink_retry_count: object
+    :param sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type sink_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the sink data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param store_settings: Binary store settings.
+    :type store_settings: ~azure.synapse.artifacts.models.StoreWriteSettings
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'write_batch_size': {'key': 'writeBatchSize', 'type': 'object'},
+        'write_batch_timeout': {'key': 'writeBatchTimeout', 'type': 'object'},
+        'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
+        'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'store_settings': {'key': 'storeSettings', 'type': 'StoreWriteSettings'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(BinarySink, self).__init__(**kwargs)
+        self.type = 'BinarySink'  # type: str
+        self.store_settings = kwargs.get('store_settings', None)
+
+
+class BinarySource(CopySource):
+    """A copy activity Binary source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param store_settings: Binary store settings.
+    :type store_settings: ~azure.synapse.artifacts.models.StoreReadSettings
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'store_settings': {'key': 'storeSettings', 'type': 'StoreReadSettings'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(BinarySource, self).__init__(**kwargs)
+        self.type = 'BinarySource'  # type: str
+        self.store_settings = kwargs.get('store_settings', None)
+
+
+class Trigger(msrest.serialization.Model):
+    """Azure Synapse nested object which contains information about creating pipeline run.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: ChainingTrigger, MultiplePipelineTrigger, RerunTumblingWindowTrigger, TumblingWindowTrigger.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Trigger type.Constant filled by server.
+    :type type: str
+    :param description: Trigger description.
+    :type description: str
+    :ivar runtime_state: Indicates if trigger is running or not. Updated when Start/Stop APIs are
+     called on the Trigger. Possible values include: "Started", "Stopped", "Disabled".
+    :vartype runtime_state: str or ~azure.synapse.artifacts.models.TriggerRuntimeState
+    :param annotations: List of tags that can be used for describing the trigger.
+    :type annotations: list[object]
+    """
+
+    _validation = {
+        'type': {'required': True},
+        'runtime_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'runtime_state': {'key': 'runtimeState', 'type': 'str'},
+        'annotations': {'key': 'annotations', 'type': '[object]'},
+    }
+
+    _subtype_map = {
+        'type': {'ChainingTrigger': 'ChainingTrigger', 'MultiplePipelineTrigger': 'MultiplePipelineTrigger', 'RerunTumblingWindowTrigger': 'RerunTumblingWindowTrigger', 'TumblingWindowTrigger': 'TumblingWindowTrigger'}
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(Trigger, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.type = 'Trigger'  # type: str
+        self.description = kwargs.get('description', None)
+        self.runtime_state = None
+        self.annotations = kwargs.get('annotations', None)
+
+
+class MultiplePipelineTrigger(Trigger):
+    """Base class for all triggers that support one to many model for trigger to pipeline.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: BlobEventsTrigger, BlobTrigger, ScheduleTrigger.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Trigger type.Constant filled by server.
+    :type type: str
+    :param description: Trigger description.
+    :type description: str
+    :ivar runtime_state: Indicates if trigger is running or not. Updated when Start/Stop APIs are
+     called on the Trigger. Possible values include: "Started", "Stopped", "Disabled".
+    :vartype runtime_state: str or ~azure.synapse.artifacts.models.TriggerRuntimeState
+    :param annotations: List of tags that can be used for describing the trigger.
+    :type annotations: list[object]
+    :param pipelines: Pipelines that need to be started.
+    :type pipelines: list[~azure.synapse.artifacts.models.TriggerPipelineReference]
+    """
+
+    _validation = {
+        'type': {'required': True},
+        'runtime_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'runtime_state': {'key': 'runtimeState', 'type': 'str'},
+        'annotations': {'key': 'annotations', 'type': '[object]'},
+        'pipelines': {'key': 'pipelines', 'type': '[TriggerPipelineReference]'},
+    }
+
+    _subtype_map = {
+        'type': {'BlobEventsTrigger': 'BlobEventsTrigger', 'BlobTrigger': 'BlobTrigger', 'ScheduleTrigger': 'ScheduleTrigger'}
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(MultiplePipelineTrigger, self).__init__(**kwargs)
+        self.type = 'MultiplePipelineTrigger'  # type: str
+        self.pipelines = kwargs.get('pipelines', None)
+
+
+class BlobEventsTrigger(MultiplePipelineTrigger):
+    """Trigger that runs every time a Blob event occurs.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Trigger type.Constant filled by server.
+    :type type: str
+    :param description: Trigger description.
+    :type description: str
+    :ivar runtime_state: Indicates if trigger is running or not. Updated when Start/Stop APIs are
+     called on the Trigger. Possible values include: "Started", "Stopped", "Disabled".
+    :vartype runtime_state: str or ~azure.synapse.artifacts.models.TriggerRuntimeState
+    :param annotations: List of tags that can be used for describing the trigger.
+    :type annotations: list[object]
+    :param pipelines: Pipelines that need to be started.
+    :type pipelines: list[~azure.synapse.artifacts.models.TriggerPipelineReference]
+    :param blob_path_begins_with: The blob path must begin with the pattern provided for trigger to
+     fire. For example, '/records/blobs/december/' will only fire the trigger for blobs in the
+     december folder under the records container. At least one of these must be provided:
+     blobPathBeginsWith, blobPathEndsWith.
+    :type blob_path_begins_with: str
+    :param blob_path_ends_with: The blob path must end with the pattern provided for trigger to
+     fire. For example, 'december/boxes.csv' will only fire the trigger for blobs named boxes in a
+     december folder. At least one of these must be provided: blobPathBeginsWith, blobPathEndsWith.
+    :type blob_path_ends_with: str
+    :param ignore_empty_blobs: If set to true, blobs with zero bytes will be ignored.
+    :type ignore_empty_blobs: bool
+    :param events: Required. The type of events that cause this trigger to fire.
+    :type events: list[str or ~azure.synapse.artifacts.models.BlobEventTypes]
+    :param scope: Required. The ARM resource ID of the Storage Account.
+    :type scope: str
+    """
+
+    _validation = {
+        'type': {'required': True},
+        'runtime_state': {'readonly': True},
+        'events': {'required': True},
+        'scope': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'runtime_state': {'key': 'runtimeState', 'type': 'str'},
+        'annotations': {'key': 'annotations', 'type': '[object]'},
+        'pipelines': {'key': 'pipelines', 'type': '[TriggerPipelineReference]'},
+        'blob_path_begins_with': {'key': 'typeProperties.blobPathBeginsWith', 'type': 'str'},
+        'blob_path_ends_with': {'key': 'typeProperties.blobPathEndsWith', 'type': 'str'},
+        'ignore_empty_blobs': {'key': 'typeProperties.ignoreEmptyBlobs', 'type': 'bool'},
+        'events': {'key': 'typeProperties.events', 'type': '[str]'},
+        'scope': {'key': 'typeProperties.scope', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(BlobEventsTrigger, self).__init__(**kwargs)
+        self.type = 'BlobEventsTrigger'  # type: str
+        self.blob_path_begins_with = kwargs.get('blob_path_begins_with', None)
+        self.blob_path_ends_with = kwargs.get('blob_path_ends_with', None)
+        self.ignore_empty_blobs = kwargs.get('ignore_empty_blobs', None)
+        self.events = kwargs['events']
+        self.scope = kwargs['scope']
+
+
+class BlobSink(CopySink):
+    """A copy activity Azure Blob sink.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy sink type.Constant filled by server.
+    :type type: str
+    :param write_batch_size: Write batch size. Type: integer (or Expression with resultType
+     integer), minimum: 0.
+    :type write_batch_size: object
+    :param write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type write_batch_timeout: object
+    :param sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
+     integer).
+    :type sink_retry_count: object
+    :param sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type sink_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the sink data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param blob_writer_overwrite_files: Blob writer overwrite files. Type: boolean (or Expression
+     with resultType boolean).
+    :type blob_writer_overwrite_files: object
+    :param blob_writer_date_time_format: Blob writer date time format. Type: string (or Expression
+     with resultType string).
+    :type blob_writer_date_time_format: object
+    :param blob_writer_add_header: Blob writer add header. Type: boolean (or Expression with
+     resultType boolean).
+    :type blob_writer_add_header: object
+    :param copy_behavior: The type of copy behavior for copy sink.
+    :type copy_behavior: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'write_batch_size': {'key': 'writeBatchSize', 'type': 'object'},
+        'write_batch_timeout': {'key': 'writeBatchTimeout', 'type': 'object'},
+        'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
+        'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'blob_writer_overwrite_files': {'key': 'blobWriterOverwriteFiles', 'type': 'object'},
+        'blob_writer_date_time_format': {'key': 'blobWriterDateTimeFormat', 'type': 'object'},
+        'blob_writer_add_header': {'key': 'blobWriterAddHeader', 'type': 'object'},
+        'copy_behavior': {'key': 'copyBehavior', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(BlobSink, self).__init__(**kwargs)
+        self.type = 'BlobSink'  # type: str
+        self.blob_writer_overwrite_files = kwargs.get('blob_writer_overwrite_files', None)
+        self.blob_writer_date_time_format = kwargs.get('blob_writer_date_time_format', None)
+        self.blob_writer_add_header = kwargs.get('blob_writer_add_header', None)
+        self.copy_behavior = kwargs.get('copy_behavior', None)
+
+
+class BlobSource(CopySource):
+    """A copy activity Azure Blob source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param treat_empty_as_null: Treat empty as null. Type: boolean (or Expression with resultType
+     boolean).
+    :type treat_empty_as_null: object
+    :param skip_header_line_count: Number of header lines to skip from each blob. Type: integer (or
+     Expression with resultType integer).
+    :type skip_header_line_count: object
+    :param recursive: If true, files under the folder path will be read recursively. Default is
+     true. Type: boolean (or Expression with resultType boolean).
+    :type recursive: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'treat_empty_as_null': {'key': 'treatEmptyAsNull', 'type': 'object'},
+        'skip_header_line_count': {'key': 'skipHeaderLineCount', 'type': 'object'},
+        'recursive': {'key': 'recursive', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(BlobSource, self).__init__(**kwargs)
+        self.type = 'BlobSource'  # type: str
+        self.treat_empty_as_null = kwargs.get('treat_empty_as_null', None)
+        self.skip_header_line_count = kwargs.get('skip_header_line_count', None)
+        self.recursive = kwargs.get('recursive', None)
+
+
+class BlobTrigger(MultiplePipelineTrigger):
+    """Trigger that runs every time the selected Blob container changes.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Trigger type.Constant filled by server.
+    :type type: str
+    :param description: Trigger description.
+    :type description: str
+    :ivar runtime_state: Indicates if trigger is running or not. Updated when Start/Stop APIs are
+     called on the Trigger. Possible values include: "Started", "Stopped", "Disabled".
+    :vartype runtime_state: str or ~azure.synapse.artifacts.models.TriggerRuntimeState
+    :param annotations: List of tags that can be used for describing the trigger.
+    :type annotations: list[object]
+    :param pipelines: Pipelines that need to be started.
+    :type pipelines: list[~azure.synapse.artifacts.models.TriggerPipelineReference]
+    :param folder_path: Required. The path of the container/folder that will trigger the pipeline.
+    :type folder_path: str
+    :param max_concurrency: Required. The max number of parallel files to handle when it is
+     triggered.
+    :type max_concurrency: int
+    :param linked_service: Required. The Azure Storage linked service reference.
+    :type linked_service: ~azure.synapse.artifacts.models.LinkedServiceReference
+    """
+
+    _validation = {
+        'type': {'required': True},
+        'runtime_state': {'readonly': True},
+        'folder_path': {'required': True},
+        'max_concurrency': {'required': True},
+        'linked_service': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'runtime_state': {'key': 'runtimeState', 'type': 'str'},
+        'annotations': {'key': 'annotations', 'type': '[object]'},
+        'pipelines': {'key': 'pipelines', 'type': '[TriggerPipelineReference]'},
+        'folder_path': {'key': 'typeProperties.folderPath', 'type': 'str'},
+        'max_concurrency': {'key': 'typeProperties.maxConcurrency', 'type': 'int'},
+        'linked_service': {'key': 'typeProperties.linkedService', 'type': 'LinkedServiceReference'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(BlobTrigger, self).__init__(**kwargs)
+        self.type = 'BlobTrigger'  # type: str
+        self.folder_path = kwargs['folder_path']
+        self.max_concurrency = kwargs['max_concurrency']
+        self.linked_service = kwargs['linked_service']
 
 
 class CassandraLinkedService(LinkedService):
@@ -3629,6 +6645,66 @@ class CassandraLinkedService(LinkedService):
         self.encrypted_credential = kwargs.get('encrypted_credential', None)
 
 
+class CassandraSource(TabularSource):
+    """A copy activity source for a Cassandra database.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
+    :param query: Database query. Should be a SQL-92 query expression or Cassandra Query Language
+     (CQL) command. Type: string (or Expression with resultType string).
+    :type query: object
+    :param consistency_level: The consistency level specifies how many Cassandra servers must
+     respond to a read request before returning data to the client application. Cassandra checks the
+     specified number of Cassandra servers for data to satisfy the read request. Must be one of
+     cassandraSourceReadConsistencyLevels. The default value is 'ONE'. It is case-insensitive.
+     Possible values include: "ALL", "EACH_QUORUM", "QUORUM", "LOCAL_QUORUM", "ONE", "TWO", "THREE",
+     "LOCAL_ONE", "SERIAL", "LOCAL_SERIAL".
+    :type consistency_level: str or
+     ~azure.synapse.artifacts.models.CassandraSourceReadConsistencyLevels
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'query': {'key': 'query', 'type': 'object'},
+        'consistency_level': {'key': 'consistencyLevel', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(CassandraSource, self).__init__(**kwargs)
+        self.type = 'CassandraSource'  # type: str
+        self.query = kwargs.get('query', None)
+        self.consistency_level = kwargs.get('consistency_level', None)
+
+
 class CassandraTableDataset(Dataset):
     """The Cassandra database dataset.
 
@@ -3691,6 +6767,65 @@ class CassandraTableDataset(Dataset):
         self.type = 'CassandraTable'  # type: str
         self.table_name = kwargs.get('table_name', None)
         self.keyspace = kwargs.get('keyspace', None)
+
+
+class ChainingTrigger(Trigger):
+    """Trigger that allows the referenced pipeline to depend on other pipeline runs based on runDimension Name/Value pairs. Upstream pipelines should declare the same runDimension Name and their runs should have the values for those runDimensions. The referenced pipeline run would be triggered if the values for the runDimension match for all upstream pipeline runs.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Trigger type.Constant filled by server.
+    :type type: str
+    :param description: Trigger description.
+    :type description: str
+    :ivar runtime_state: Indicates if trigger is running or not. Updated when Start/Stop APIs are
+     called on the Trigger. Possible values include: "Started", "Stopped", "Disabled".
+    :vartype runtime_state: str or ~azure.synapse.artifacts.models.TriggerRuntimeState
+    :param annotations: List of tags that can be used for describing the trigger.
+    :type annotations: list[object]
+    :param pipeline: Required. Pipeline for which runs are created when all upstream pipelines
+     complete successfully.
+    :type pipeline: ~azure.synapse.artifacts.models.TriggerPipelineReference
+    :param depends_on: Required. Upstream Pipelines.
+    :type depends_on: list[~azure.synapse.artifacts.models.PipelineReference]
+    :param run_dimension: Required. Run Dimension property that needs to be emitted by upstream
+     pipelines.
+    :type run_dimension: str
+    """
+
+    _validation = {
+        'type': {'required': True},
+        'runtime_state': {'readonly': True},
+        'pipeline': {'required': True},
+        'depends_on': {'required': True},
+        'run_dimension': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'runtime_state': {'key': 'runtimeState', 'type': 'str'},
+        'annotations': {'key': 'annotations', 'type': '[object]'},
+        'pipeline': {'key': 'pipeline', 'type': 'TriggerPipelineReference'},
+        'depends_on': {'key': 'typeProperties.dependsOn', 'type': '[PipelineReference]'},
+        'run_dimension': {'key': 'typeProperties.runDimension', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ChainingTrigger, self).__init__(**kwargs)
+        self.type = 'ChainingTrigger'  # type: str
+        self.pipeline = kwargs['pipeline']
+        self.depends_on = kwargs['depends_on']
+        self.run_dimension = kwargs['run_dimension']
 
 
 class CloudError(msrest.serialization.Model):
@@ -3909,6 +7044,118 @@ class CommonDataServiceForAppsLinkedService(LinkedService):
         self.encrypted_credential = kwargs.get('encrypted_credential', None)
 
 
+class CommonDataServiceForAppsSink(CopySink):
+    """A copy activity Common Data Service for Apps sink.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy sink type.Constant filled by server.
+    :type type: str
+    :param write_batch_size: Write batch size. Type: integer (or Expression with resultType
+     integer), minimum: 0.
+    :type write_batch_size: object
+    :param write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type write_batch_timeout: object
+    :param sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
+     integer).
+    :type sink_retry_count: object
+    :param sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type sink_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the sink data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param write_behavior: Required. The write behavior for the operation. Possible values include:
+     "Upsert".
+    :type write_behavior: str or ~azure.synapse.artifacts.models.DynamicsSinkWriteBehavior
+    :param ignore_null_values: The flag indicating whether to ignore null values from input dataset
+     (except key fields) during write operation. Default is false. Type: boolean (or Expression with
+     resultType boolean).
+    :type ignore_null_values: object
+    :param alternate_key_name: The logical name of the alternate key which will be used when
+     upserting records. Type: string (or Expression with resultType string).
+    :type alternate_key_name: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+        'write_behavior': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'write_batch_size': {'key': 'writeBatchSize', 'type': 'object'},
+        'write_batch_timeout': {'key': 'writeBatchTimeout', 'type': 'object'},
+        'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
+        'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'write_behavior': {'key': 'writeBehavior', 'type': 'str'},
+        'ignore_null_values': {'key': 'ignoreNullValues', 'type': 'object'},
+        'alternate_key_name': {'key': 'alternateKeyName', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(CommonDataServiceForAppsSink, self).__init__(**kwargs)
+        self.type = 'CommonDataServiceForAppsSink'  # type: str
+        self.write_behavior = kwargs['write_behavior']
+        self.ignore_null_values = kwargs.get('ignore_null_values', None)
+        self.alternate_key_name = kwargs.get('alternate_key_name', None)
+
+
+class CommonDataServiceForAppsSource(CopySource):
+    """A copy activity Common Data Service for Apps source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param query: FetchXML is a proprietary query language that is used in Microsoft Common Data
+     Service for Apps (online & on-premises). Type: string (or Expression with resultType string).
+    :type query: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'query': {'key': 'query', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(CommonDataServiceForAppsSource, self).__init__(**kwargs)
+        self.type = 'CommonDataServiceForAppsSource'  # type: str
+        self.query = kwargs.get('query', None)
+
+
 class ConcurLinkedService(LinkedService):
     """Concur Service linked service.
 
@@ -4043,6 +7290,56 @@ class ConcurObjectDataset(Dataset):
         super(ConcurObjectDataset, self).__init__(**kwargs)
         self.type = 'ConcurObject'  # type: str
         self.table_name = kwargs.get('table_name', None)
+
+
+class ConcurSource(TabularSource):
+    """A copy activity Concur Service source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
+    :param query: A query to retrieve data from source. Type: string (or Expression with resultType
+     string).
+    :type query: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'query': {'key': 'query', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ConcurSource, self).__init__(**kwargs)
+        self.type = 'ConcurSource'  # type: str
+        self.query = kwargs.get('query', None)
 
 
 class ControlActivity(Activity):
@@ -4196,34 +7493,19 @@ class CopyActivity(ExecutionActivity):
         self.preserve = kwargs.get('preserve', None)
 
 
-class CopySink(msrest.serialization.Model):
-    """A copy activity sink.
+class CopyTranslator(msrest.serialization.Model):
+    """A copy activity translator.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: .
+    sub-classes are: TabularTranslator.
 
     All required parameters must be populated in order to send to Azure.
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
     :type additional_properties: dict[str, object]
-    :param type: Required. Copy sink type.Constant filled by server.
+    :param type: Required. Copy translator type.Constant filled by server.
     :type type: str
-    :param write_batch_size: Write batch size. Type: integer (or Expression with resultType
-     integer), minimum: 0.
-    :type write_batch_size: object
-    :param write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type write_batch_timeout: object
-    :param sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
-     integer).
-    :type sink_retry_count: object
-    :param sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
-     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type sink_retry_wait: object
-    :param max_concurrent_connections: The maximum concurrent connection count for the sink data
-     store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
     """
 
     _validation = {
@@ -4233,81 +7515,19 @@ class CopySink(msrest.serialization.Model):
     _attribute_map = {
         'additional_properties': {'key': '', 'type': '{object}'},
         'type': {'key': 'type', 'type': 'str'},
-        'write_batch_size': {'key': 'writeBatchSize', 'type': 'object'},
-        'write_batch_timeout': {'key': 'writeBatchTimeout', 'type': 'object'},
-        'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
-        'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
-        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
     }
 
     _subtype_map = {
-        'type': {}
+        'type': {'TabularTranslator': 'TabularTranslator'}
     }
 
     def __init__(
         self,
         **kwargs
     ):
-        super(CopySink, self).__init__(**kwargs)
+        super(CopyTranslator, self).__init__(**kwargs)
         self.additional_properties = kwargs.get('additional_properties', None)
-        self.type = 'CopySink'  # type: str
-        self.write_batch_size = kwargs.get('write_batch_size', None)
-        self.write_batch_timeout = kwargs.get('write_batch_timeout', None)
-        self.sink_retry_count = kwargs.get('sink_retry_count', None)
-        self.sink_retry_wait = kwargs.get('sink_retry_wait', None)
-        self.max_concurrent_connections = kwargs.get('max_concurrent_connections', None)
-
-
-class CopySource(msrest.serialization.Model):
-    """A copy activity source.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: .
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param additional_properties: Unmatched properties from the message are deserialized to this
-     collection.
-    :type additional_properties: dict[str, object]
-    :param type: Required. Copy source type.Constant filled by server.
-    :type type: str
-    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
-     integer).
-    :type source_retry_count: object
-    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
-     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type source_retry_wait: object
-    :param max_concurrent_connections: The maximum concurrent connection count for the source data
-     store. Type: integer (or Expression with resultType integer).
-    :type max_concurrent_connections: object
-    """
-
-    _validation = {
-        'type': {'required': True},
-    }
-
-    _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'type': {'key': 'type', 'type': 'str'},
-        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
-        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
-        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
-    }
-
-    _subtype_map = {
-        'type': {}
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(CopySource, self).__init__(**kwargs)
-        self.additional_properties = kwargs.get('additional_properties', None)
-        self.type = 'CopySource'  # type: str
-        self.source_retry_count = kwargs.get('source_retry_count', None)
-        self.source_retry_wait = kwargs.get('source_retry_wait', None)
-        self.max_concurrent_connections = kwargs.get('max_concurrent_connections', None)
+        self.type = 'CopyTranslator'  # type: str
 
 
 class CosmosDbLinkedService(LinkedService):
@@ -4490,6 +7710,124 @@ class CosmosDbMongoDbApiLinkedService(LinkedService):
         self.database = kwargs['database']
 
 
+class CosmosDbMongoDbApiSink(CopySink):
+    """A copy activity sink for a CosmosDB (MongoDB API) database.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy sink type.Constant filled by server.
+    :type type: str
+    :param write_batch_size: Write batch size. Type: integer (or Expression with resultType
+     integer), minimum: 0.
+    :type write_batch_size: object
+    :param write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type write_batch_timeout: object
+    :param sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
+     integer).
+    :type sink_retry_count: object
+    :param sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type sink_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the sink data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param write_behavior: Specifies whether the document with same key to be overwritten (upsert)
+     rather than throw exception (insert). The default value is "insert". Type: string (or
+     Expression with resultType string). Type: string (or Expression with resultType string).
+    :type write_behavior: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'write_batch_size': {'key': 'writeBatchSize', 'type': 'object'},
+        'write_batch_timeout': {'key': 'writeBatchTimeout', 'type': 'object'},
+        'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
+        'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'write_behavior': {'key': 'writeBehavior', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(CosmosDbMongoDbApiSink, self).__init__(**kwargs)
+        self.type = 'CosmosDbMongoDbApiSink'  # type: str
+        self.write_behavior = kwargs.get('write_behavior', None)
+
+
+class CosmosDbMongoDbApiSource(CopySource):
+    """A copy activity source for a CosmosDB (MongoDB API) database.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param filter: Specifies selection filter using query operators. To return all documents in a
+     collection, omit this parameter or pass an empty document ({}). Type: string (or Expression
+     with resultType string).
+    :type filter: object
+    :param cursor_methods: Cursor methods for Mongodb query.
+    :type cursor_methods: ~azure.synapse.artifacts.models.MongoDbCursorMethodsProperties
+    :param batch_size: Specifies the number of documents to return in each batch of the response
+     from MongoDB instance. In most cases, modifying the batch size will not affect the user or the
+     application. This property's main purpose is to avoid hit the limitation of response size.
+     Type: integer (or Expression with resultType integer).
+    :type batch_size: object
+    :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'filter': {'key': 'filter', 'type': 'object'},
+        'cursor_methods': {'key': 'cursorMethods', 'type': 'MongoDbCursorMethodsProperties'},
+        'batch_size': {'key': 'batchSize', 'type': 'object'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(CosmosDbMongoDbApiSource, self).__init__(**kwargs)
+        self.type = 'CosmosDbMongoDbApiSource'  # type: str
+        self.filter = kwargs.get('filter', None)
+        self.cursor_methods = kwargs.get('cursor_methods', None)
+        self.batch_size = kwargs.get('batch_size', None)
+        self.query_timeout = kwargs.get('query_timeout', None)
+
+
 class CosmosDbSqlApiCollectionDataset(Dataset):
     """Microsoft Azure CosmosDB (SQL API) Collection dataset.
 
@@ -4550,6 +7888,115 @@ class CosmosDbSqlApiCollectionDataset(Dataset):
         self.collection_name = kwargs['collection_name']
 
 
+class CosmosDbSqlApiSink(CopySink):
+    """A copy activity Azure CosmosDB (SQL API) Collection sink.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy sink type.Constant filled by server.
+    :type type: str
+    :param write_batch_size: Write batch size. Type: integer (or Expression with resultType
+     integer), minimum: 0.
+    :type write_batch_size: object
+    :param write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type write_batch_timeout: object
+    :param sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
+     integer).
+    :type sink_retry_count: object
+    :param sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type sink_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the sink data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param write_behavior: Describes how to write data to Azure Cosmos DB. Type: string (or
+     Expression with resultType string). Allowed values: insert and upsert.
+    :type write_behavior: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'write_batch_size': {'key': 'writeBatchSize', 'type': 'object'},
+        'write_batch_timeout': {'key': 'writeBatchTimeout', 'type': 'object'},
+        'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
+        'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'write_behavior': {'key': 'writeBehavior', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(CosmosDbSqlApiSink, self).__init__(**kwargs)
+        self.type = 'CosmosDbSqlApiSink'  # type: str
+        self.write_behavior = kwargs.get('write_behavior', None)
+
+
+class CosmosDbSqlApiSource(CopySource):
+    """A copy activity Azure CosmosDB (SQL API) Collection source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param query: SQL API query. Type: string (or Expression with resultType string).
+    :type query: object
+    :param page_size: Page size of the result. Type: integer (or Expression with resultType
+     integer).
+    :type page_size: object
+    :param preferred_regions: Preferred regions. Type: array of strings (or Expression with
+     resultType array of strings).
+    :type preferred_regions: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'query': {'key': 'query', 'type': 'object'},
+        'page_size': {'key': 'pageSize', 'type': 'object'},
+        'preferred_regions': {'key': 'preferredRegions', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(CosmosDbSqlApiSource, self).__init__(**kwargs)
+        self.type = 'CosmosDbSqlApiSource'  # type: str
+        self.query = kwargs.get('query', None)
+        self.page_size = kwargs.get('page_size', None)
+        self.preferred_regions = kwargs.get('preferred_regions', None)
+
+
 class CouchbaseLinkedService(LinkedService):
     """Couchbase server linked service.
 
@@ -4604,6 +8051,56 @@ class CouchbaseLinkedService(LinkedService):
         self.connection_string = kwargs.get('connection_string', None)
         self.cred_string = kwargs.get('cred_string', None)
         self.encrypted_credential = kwargs.get('encrypted_credential', None)
+
+
+class CouchbaseSource(TabularSource):
+    """A copy activity Couchbase server source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
+    :param query: A query to retrieve data from source. Type: string (or Expression with resultType
+     string).
+    :type query: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'query': {'key': 'query', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(CouchbaseSource, self).__init__(**kwargs)
+        self.type = 'CouchbaseSource'  # type: str
+        self.query = kwargs.get('query', None)
 
 
 class CouchbaseTableDataset(Dataset):
@@ -4848,6 +8345,64 @@ class CustomActivityReferenceObject(msrest.serialization.Model):
         self.datasets = kwargs.get('datasets', None)
 
 
+class CustomDataset(Dataset):
+    """The custom dataset.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Type of dataset.Constant filled by server.
+    :type type: str
+    :param description: Dataset description.
+    :type description: str
+    :param structure: Columns that define the structure of the dataset. Type: array (or Expression
+     with resultType array), itemType: DatasetDataElement.
+    :type structure: object
+    :param schema: Columns that define the physical type schema of the dataset. Type: array (or
+     Expression with resultType array), itemType: DatasetSchemaDataElement.
+    :type schema: object
+    :param linked_service_name: Required. Linked service reference.
+    :type linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
+    :param parameters: Parameters for dataset.
+    :type parameters: dict[str, ~azure.synapse.artifacts.models.ParameterSpecification]
+    :param annotations: List of tags that can be used for describing the Dataset.
+    :type annotations: list[object]
+    :param folder: The folder that this Dataset is in. If not specified, Dataset will appear at the
+     root level.
+    :type folder: ~azure.synapse.artifacts.models.DatasetFolder
+    :param type_properties: Custom dataset properties.
+    :type type_properties: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+        'linked_service_name': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'structure': {'key': 'structure', 'type': 'object'},
+        'schema': {'key': 'schema', 'type': 'object'},
+        'linked_service_name': {'key': 'linkedServiceName', 'type': 'LinkedServiceReference'},
+        'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
+        'annotations': {'key': 'annotations', 'type': '[object]'},
+        'folder': {'key': 'folder', 'type': 'DatasetFolder'},
+        'type_properties': {'key': 'typeProperties', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(CustomDataset, self).__init__(**kwargs)
+        self.type = 'CustomDataset'  # type: str
+        self.type_properties = kwargs.get('type_properties', None)
+
+
 class CustomDataSourceLinkedService(LinkedService):
     """Custom linked service.
 
@@ -4892,6 +8447,38 @@ class CustomDataSourceLinkedService(LinkedService):
         super(CustomDataSourceLinkedService, self).__init__(**kwargs)
         self.type = 'CustomDataSource'  # type: str
         self.type_properties = kwargs['type_properties']
+
+
+class CustomSetupBase(msrest.serialization.Model):
+    """The base definition of the custom setup.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: .
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. The type of custom setup.Constant filled by server.
+    :type type: str
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'type': {}
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(CustomSetupBase, self).__init__(**kwargs)
+        self.type = None  # type: Optional[str]
 
 
 class DatabricksNotebookActivity(ExecutionActivity):
@@ -5554,60 +9141,22 @@ class DataFlowReference(msrest.serialization.Model):
         self.dataset_parameters = kwargs.get('dataset_parameters', None)
 
 
-class SubResource(msrest.serialization.Model):
-    """Azure Synapse nested resource, which belongs to a workspace.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: The resource identifier.
-    :vartype id: str
-    :ivar name: The resource name.
-    :vartype name: str
-    :ivar type: The resource type.
-    :vartype type: str
-    :ivar etag: Etag identifies change in the resource.
-    :vartype etag: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(SubResource, self).__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.etag = None
-
-
-class DataFlowResource(SubResource):
+class DataFlowResource(AzureEntityResource):
     """Data flow resource type.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: The resource identifier.
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: The resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The resource type.
+    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
+     Microsoft.Storage/storageAccounts.
     :vartype type: str
-    :ivar etag: Etag identifies change in the resource.
+    :ivar etag: Resource Etag.
     :vartype etag: str
     :param properties: Required. Data flow properties.
     :type properties: ~azure.synapse.artifacts.models.DataFlow
@@ -5863,6 +9412,29 @@ class DataLakeAnalyticsUSQLActivity(ExecutionActivity):
         self.compilation_mode = kwargs.get('compilation_mode', None)
 
 
+class DataLakeStorageAccountDetails(msrest.serialization.Model):
+    """Details of the data lake storage account associated with the workspace.
+
+    :param account_url: Account URL.
+    :type account_url: str
+    :param filesystem: Filesystem name.
+    :type filesystem: str
+    """
+
+    _attribute_map = {
+        'account_url': {'key': 'accountUrl', 'type': 'str'},
+        'filesystem': {'key': 'filesystem', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DataLakeStorageAccountDetails, self).__init__(**kwargs)
+        self.account_url = kwargs.get('account_url', None)
+        self.filesystem = kwargs.get('filesystem', None)
+
+
 class DatasetCompression(msrest.serialization.Model):
     """The compression method used on a dataset.
 
@@ -5927,6 +9499,29 @@ class DatasetBZip2Compression(DatasetCompression):
     ):
         super(DatasetBZip2Compression, self).__init__(**kwargs)
         self.type = 'BZip2'  # type: str
+
+
+class DatasetDataElement(msrest.serialization.Model):
+    """Columns that define the structure of the dataset.
+
+    :param name: Name of the column. Type: string (or Expression with resultType string).
+    :type name: object
+    :param type: Type of the column. Type: string (or Expression with resultType string).
+    :type type: object
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'object'},
+        'type': {'key': 'type', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DatasetDataElement, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.type = kwargs.get('type', None)
 
 
 class DatasetDebugResource(SubResourceDebugResource):
@@ -6071,53 +9666,6 @@ class DatasetListResponse(msrest.serialization.Model):
         self.next_link = kwargs.get('next_link', None)
 
 
-class DatasetLocation(msrest.serialization.Model):
-    """Dataset location.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: .
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param additional_properties: Unmatched properties from the message are deserialized to this
-     collection.
-    :type additional_properties: dict[str, object]
-    :param type: Required. Type of dataset storage location.Constant filled by server.
-    :type type: str
-    :param folder_path: Specify the folder path of dataset. Type: string (or Expression with
-     resultType string).
-    :type folder_path: object
-    :param file_name: Specify the file name of dataset. Type: string (or Expression with resultType
-     string).
-    :type file_name: object
-    """
-
-    _validation = {
-        'type': {'required': True},
-    }
-
-    _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'type': {'key': 'type', 'type': 'str'},
-        'folder_path': {'key': 'folderPath', 'type': 'object'},
-        'file_name': {'key': 'fileName', 'type': 'object'},
-    }
-
-    _subtype_map = {
-        'type': {}
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(DatasetLocation, self).__init__(**kwargs)
-        self.additional_properties = kwargs.get('additional_properties', None)
-        self.type = 'DatasetLocation'  # type: str
-        self.folder_path = kwargs.get('folder_path', None)
-        self.file_name = kwargs.get('file_name', None)
-
-
 class DatasetReference(msrest.serialization.Model):
     """Dataset reference type.
 
@@ -6152,20 +9700,22 @@ class DatasetReference(msrest.serialization.Model):
         self.parameters = kwargs.get('parameters', None)
 
 
-class DatasetResource(SubResource):
+class DatasetResource(AzureEntityResource):
     """Dataset resource type.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: The resource identifier.
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: The resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The resource type.
+    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
+     Microsoft.Storage/storageAccounts.
     :vartype type: str
-    :ivar etag: Etag identifies change in the resource.
+    :ivar etag: Resource Etag.
     :vartype etag: str
     :param properties: Required. Dataset properties.
     :type properties: ~azure.synapse.artifacts.models.Dataset
@@ -6193,6 +9743,34 @@ class DatasetResource(SubResource):
     ):
         super(DatasetResource, self).__init__(**kwargs)
         self.properties = kwargs['properties']
+
+
+class DatasetSchemaDataElement(msrest.serialization.Model):
+    """Columns that define the physical type schema of the dataset.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param name: Name of the schema column. Type: string (or Expression with resultType string).
+    :type name: object
+    :param type: Type of the schema column. Type: string (or Expression with resultType string).
+    :type type: object
+    """
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'name': {'key': 'name', 'type': 'object'},
+        'type': {'key': 'type', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DatasetSchemaDataElement, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.name = kwargs.get('name', None)
+        self.type = kwargs.get('type', None)
 
 
 class DatasetZipDeflateCompression(DatasetCompression):
@@ -6309,6 +9887,55 @@ class Db2LinkedService(LinkedService):
         self.package_collection = kwargs.get('package_collection', None)
         self.certificate_common_name = kwargs.get('certificate_common_name', None)
         self.encrypted_credential = kwargs.get('encrypted_credential', None)
+
+
+class Db2Source(TabularSource):
+    """A copy activity source for Db2 databases.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
+    :param query: Database query. Type: string (or Expression with resultType string).
+    :type query: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'query': {'key': 'query', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(Db2Source, self).__init__(**kwargs)
+        self.type = 'Db2Source'  # type: str
+        self.query = kwargs.get('query', None)
 
 
 class Db2TableDataset(Dataset):
@@ -6579,6 +10206,293 @@ class DelimitedTextDataset(Dataset):
         self.null_value = kwargs.get('null_value', None)
 
 
+class FormatReadSettings(msrest.serialization.Model):
+    """Format read settings.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: DelimitedTextReadSettings.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. The read setting type.Constant filled by server.
+    :type type: str
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'type': {'DelimitedTextReadSettings': 'DelimitedTextReadSettings'}
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(FormatReadSettings, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.type = 'FormatReadSettings'  # type: str
+
+
+class DelimitedTextReadSettings(FormatReadSettings):
+    """Delimited text read settings.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. The read setting type.Constant filled by server.
+    :type type: str
+    :param skip_line_count: Indicates the number of non-empty rows to skip when reading data from
+     input files. Type: integer (or Expression with resultType integer).
+    :type skip_line_count: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'skip_line_count': {'key': 'skipLineCount', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DelimitedTextReadSettings, self).__init__(**kwargs)
+        self.type = 'DelimitedTextReadSettings'  # type: str
+        self.skip_line_count = kwargs.get('skip_line_count', None)
+
+
+class DelimitedTextSink(CopySink):
+    """A copy activity DelimitedText sink.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy sink type.Constant filled by server.
+    :type type: str
+    :param write_batch_size: Write batch size. Type: integer (or Expression with resultType
+     integer), minimum: 0.
+    :type write_batch_size: object
+    :param write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type write_batch_timeout: object
+    :param sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
+     integer).
+    :type sink_retry_count: object
+    :param sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type sink_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the sink data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param store_settings: DelimitedText store settings.
+    :type store_settings: ~azure.synapse.artifacts.models.StoreWriteSettings
+    :param format_settings: DelimitedText format settings.
+    :type format_settings: ~azure.synapse.artifacts.models.DelimitedTextWriteSettings
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'write_batch_size': {'key': 'writeBatchSize', 'type': 'object'},
+        'write_batch_timeout': {'key': 'writeBatchTimeout', 'type': 'object'},
+        'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
+        'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'store_settings': {'key': 'storeSettings', 'type': 'StoreWriteSettings'},
+        'format_settings': {'key': 'formatSettings', 'type': 'DelimitedTextWriteSettings'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DelimitedTextSink, self).__init__(**kwargs)
+        self.type = 'DelimitedTextSink'  # type: str
+        self.store_settings = kwargs.get('store_settings', None)
+        self.format_settings = kwargs.get('format_settings', None)
+
+
+class DelimitedTextSource(CopySource):
+    """A copy activity DelimitedText source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param store_settings: DelimitedText store settings.
+    :type store_settings: ~azure.synapse.artifacts.models.StoreReadSettings
+    :param format_settings: DelimitedText format settings.
+    :type format_settings: ~azure.synapse.artifacts.models.DelimitedTextReadSettings
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'store_settings': {'key': 'storeSettings', 'type': 'StoreReadSettings'},
+        'format_settings': {'key': 'formatSettings', 'type': 'DelimitedTextReadSettings'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DelimitedTextSource, self).__init__(**kwargs)
+        self.type = 'DelimitedTextSource'  # type: str
+        self.store_settings = kwargs.get('store_settings', None)
+        self.format_settings = kwargs.get('format_settings', None)
+
+
+class DelimitedTextWriteSettings(FormatWriteSettings):
+    """Delimited text write settings.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. The write setting type.Constant filled by server.
+    :type type: str
+    :param quote_all_text: Indicates whether string values should always be enclosed with quotes.
+     Type: boolean (or Expression with resultType boolean).
+    :type quote_all_text: object
+    :param file_extension: Required. The file extension used to create the files. Type: string (or
+     Expression with resultType string).
+    :type file_extension: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+        'file_extension': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'quote_all_text': {'key': 'quoteAllText', 'type': 'object'},
+        'file_extension': {'key': 'fileExtension', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DelimitedTextWriteSettings, self).__init__(**kwargs)
+        self.type = 'DelimitedTextWriteSettings'  # type: str
+        self.quote_all_text = kwargs.get('quote_all_text', None)
+        self.file_extension = kwargs['file_extension']
+
+
+class DependencyReference(msrest.serialization.Model):
+    """Referenced dependency.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: SelfDependencyTumblingWindowTriggerReference, TriggerDependencyReference.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. The type of dependency reference.Constant filled by server.
+    :type type: str
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'type': {'SelfDependencyTumblingWindowTriggerReference': 'SelfDependencyTumblingWindowTriggerReference', 'TriggerDependencyReference': 'TriggerDependencyReference'}
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DependencyReference, self).__init__(**kwargs)
+        self.type = None  # type: Optional[str]
+
+
+class DistcpSettings(msrest.serialization.Model):
+    """Distcp settings.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param resource_manager_endpoint: Required. Specifies the Yarn ResourceManager endpoint. Type:
+     string (or Expression with resultType string).
+    :type resource_manager_endpoint: object
+    :param temp_script_path: Required. Specifies an existing folder path which will be used to
+     store temp Distcp command script. The script file is generated by ADF and will be removed after
+     Copy job finished. Type: string (or Expression with resultType string).
+    :type temp_script_path: object
+    :param distcp_options: Specifies the Distcp options. Type: string (or Expression with
+     resultType string).
+    :type distcp_options: object
+    """
+
+    _validation = {
+        'resource_manager_endpoint': {'required': True},
+        'temp_script_path': {'required': True},
+    }
+
+    _attribute_map = {
+        'resource_manager_endpoint': {'key': 'resourceManagerEndpoint', 'type': 'object'},
+        'temp_script_path': {'key': 'tempScriptPath', 'type': 'object'},
+        'distcp_options': {'key': 'distcpOptions', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DistcpSettings, self).__init__(**kwargs)
+        self.resource_manager_endpoint = kwargs['resource_manager_endpoint']
+        self.temp_script_path = kwargs['temp_script_path']
+        self.distcp_options = kwargs.get('distcp_options', None)
+
+
 class DocumentDbCollectionDataset(Dataset):
     """Microsoft Azure Document Database Collection dataset.
 
@@ -6639,6 +10553,120 @@ class DocumentDbCollectionDataset(Dataset):
         self.collection_name = kwargs['collection_name']
 
 
+class DocumentDbCollectionSink(CopySink):
+    """A copy activity Document Database Collection sink.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy sink type.Constant filled by server.
+    :type type: str
+    :param write_batch_size: Write batch size. Type: integer (or Expression with resultType
+     integer), minimum: 0.
+    :type write_batch_size: object
+    :param write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type write_batch_timeout: object
+    :param sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
+     integer).
+    :type sink_retry_count: object
+    :param sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type sink_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the sink data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param nesting_separator: Nested properties separator. Default is . (dot). Type: string (or
+     Expression with resultType string).
+    :type nesting_separator: object
+    :param write_behavior: Describes how to write data to Azure Cosmos DB. Type: string (or
+     Expression with resultType string). Allowed values: insert and upsert.
+    :type write_behavior: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'write_batch_size': {'key': 'writeBatchSize', 'type': 'object'},
+        'write_batch_timeout': {'key': 'writeBatchTimeout', 'type': 'object'},
+        'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
+        'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'nesting_separator': {'key': 'nestingSeparator', 'type': 'object'},
+        'write_behavior': {'key': 'writeBehavior', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DocumentDbCollectionSink, self).__init__(**kwargs)
+        self.type = 'DocumentDbCollectionSink'  # type: str
+        self.nesting_separator = kwargs.get('nesting_separator', None)
+        self.write_behavior = kwargs.get('write_behavior', None)
+
+
+class DocumentDbCollectionSource(CopySource):
+    """A copy activity Document Database Collection source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param query: Documents query. Type: string (or Expression with resultType string).
+    :type query: object
+    :param nesting_separator: Nested properties separator. Type: string (or Expression with
+     resultType string).
+    :type nesting_separator: object
+    :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'query': {'key': 'query', 'type': 'object'},
+        'nesting_separator': {'key': 'nestingSeparator', 'type': 'object'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DocumentDbCollectionSource, self).__init__(**kwargs)
+        self.type = 'DocumentDbCollectionSource'  # type: str
+        self.query = kwargs.get('query', None)
+        self.nesting_separator = kwargs.get('nesting_separator', None)
+        self.query_timeout = kwargs.get('query_timeout', None)
+
+
 class DrillLinkedService(LinkedService):
     """Drill server linked service.
 
@@ -6693,6 +10721,56 @@ class DrillLinkedService(LinkedService):
         self.connection_string = kwargs.get('connection_string', None)
         self.pwd = kwargs.get('pwd', None)
         self.encrypted_credential = kwargs.get('encrypted_credential', None)
+
+
+class DrillSource(TabularSource):
+    """A copy activity Drill server source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
+    :param query: A query to retrieve data from source. Type: string (or Expression with resultType
+     string).
+    :type query: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'query': {'key': 'query', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DrillSource, self).__init__(**kwargs)
+        self.type = 'DrillSource'  # type: str
+        self.query = kwargs.get('query', None)
 
 
 class DrillTableDataset(Dataset):
@@ -6761,6 +10839,58 @@ class DrillTableDataset(Dataset):
         self.table_name = kwargs.get('table_name', None)
         self.table = kwargs.get('table', None)
         self.schema_type_properties_schema = kwargs.get('schema_type_properties_schema', None)
+
+
+class DWCopyCommandDefaultValue(msrest.serialization.Model):
+    """Default value.
+
+    :param column_name: Column name. Type: object (or Expression with resultType string).
+    :type column_name: object
+    :param default_value: The default value of the column. Type: object (or Expression with
+     resultType string).
+    :type default_value: object
+    """
+
+    _attribute_map = {
+        'column_name': {'key': 'columnName', 'type': 'object'},
+        'default_value': {'key': 'defaultValue', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DWCopyCommandDefaultValue, self).__init__(**kwargs)
+        self.column_name = kwargs.get('column_name', None)
+        self.default_value = kwargs.get('default_value', None)
+
+
+class DWCopyCommandSettings(msrest.serialization.Model):
+    """DW Copy Command settings.
+
+    :param default_values: Specifies the default values for each target column in SQL DW. The
+     default values in the property overwrite the DEFAULT constraint set in the DB, and identity
+     column cannot have a default value. Type: array of objects (or Expression with resultType array
+     of objects).
+    :type default_values: list[~azure.synapse.artifacts.models.DWCopyCommandDefaultValue]
+    :param additional_options: Additional options directly passed to SQL DW in Copy Command. Type:
+     key value pairs (value should be string type) (or Expression with resultType object). Example:
+     "additionalOptions": { "MAXERRORS": "1000", "DATEFORMAT": "'ymd'" }.
+    :type additional_options: dict[str, str]
+    """
+
+    _attribute_map = {
+        'default_values': {'key': 'defaultValues', 'type': '[DWCopyCommandDefaultValue]'},
+        'additional_options': {'key': 'additionalOptions', 'type': '{str}'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DWCopyCommandSettings, self).__init__(**kwargs)
+        self.default_values = kwargs.get('default_values', None)
+        self.additional_options = kwargs.get('additional_options', None)
 
 
 class DynamicsAXLinkedService(LinkedService):
@@ -6900,6 +11030,56 @@ class DynamicsAXResourceDataset(Dataset):
         super(DynamicsAXResourceDataset, self).__init__(**kwargs)
         self.type = 'DynamicsAXResource'  # type: str
         self.path = kwargs['path']
+
+
+class DynamicsAXSource(TabularSource):
+    """A copy activity Dynamics AX source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
+    :param query: A query to retrieve data from source. Type: string (or Expression with resultType
+     string).
+    :type query: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'query': {'key': 'query', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DynamicsAXSource, self).__init__(**kwargs)
+        self.type = 'DynamicsAXSource'  # type: str
+        self.query = kwargs.get('query', None)
 
 
 class DynamicsCrmEntityDataset(Dataset):
@@ -7078,6 +11258,118 @@ class DynamicsCrmLinkedService(LinkedService):
         self.encrypted_credential = kwargs.get('encrypted_credential', None)
 
 
+class DynamicsCrmSink(CopySink):
+    """A copy activity Dynamics CRM sink.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy sink type.Constant filled by server.
+    :type type: str
+    :param write_batch_size: Write batch size. Type: integer (or Expression with resultType
+     integer), minimum: 0.
+    :type write_batch_size: object
+    :param write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type write_batch_timeout: object
+    :param sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
+     integer).
+    :type sink_retry_count: object
+    :param sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type sink_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the sink data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param write_behavior: Required. The write behavior for the operation. Possible values include:
+     "Upsert".
+    :type write_behavior: str or ~azure.synapse.artifacts.models.DynamicsSinkWriteBehavior
+    :param ignore_null_values: The flag indicating whether to ignore null values from input dataset
+     (except key fields) during write operation. Default is false. Type: boolean (or Expression with
+     resultType boolean).
+    :type ignore_null_values: object
+    :param alternate_key_name: The logical name of the alternate key which will be used when
+     upserting records. Type: string (or Expression with resultType string).
+    :type alternate_key_name: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+        'write_behavior': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'write_batch_size': {'key': 'writeBatchSize', 'type': 'object'},
+        'write_batch_timeout': {'key': 'writeBatchTimeout', 'type': 'object'},
+        'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
+        'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'write_behavior': {'key': 'writeBehavior', 'type': 'str'},
+        'ignore_null_values': {'key': 'ignoreNullValues', 'type': 'object'},
+        'alternate_key_name': {'key': 'alternateKeyName', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DynamicsCrmSink, self).__init__(**kwargs)
+        self.type = 'DynamicsCrmSink'  # type: str
+        self.write_behavior = kwargs['write_behavior']
+        self.ignore_null_values = kwargs.get('ignore_null_values', None)
+        self.alternate_key_name = kwargs.get('alternate_key_name', None)
+
+
+class DynamicsCrmSource(CopySource):
+    """A copy activity Dynamics CRM source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param query: FetchXML is a proprietary query language that is used in Microsoft Dynamics CRM
+     (online & on-premises). Type: string (or Expression with resultType string).
+    :type query: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'query': {'key': 'query', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DynamicsCrmSource, self).__init__(**kwargs)
+        self.type = 'DynamicsCrmSource'  # type: str
+        self.query = kwargs.get('query', None)
+
+
 class DynamicsEntityDataset(Dataset):
     """The Dynamics entity dataset.
 
@@ -7251,6 +11543,118 @@ class DynamicsLinkedService(LinkedService):
         self.encrypted_credential = kwargs.get('encrypted_credential', None)
 
 
+class DynamicsSink(CopySink):
+    """A copy activity Dynamics sink.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy sink type.Constant filled by server.
+    :type type: str
+    :param write_batch_size: Write batch size. Type: integer (or Expression with resultType
+     integer), minimum: 0.
+    :type write_batch_size: object
+    :param write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type write_batch_timeout: object
+    :param sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
+     integer).
+    :type sink_retry_count: object
+    :param sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type sink_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the sink data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param write_behavior: Required. The write behavior for the operation. Possible values include:
+     "Upsert".
+    :type write_behavior: str or ~azure.synapse.artifacts.models.DynamicsSinkWriteBehavior
+    :param ignore_null_values: The flag indicating whether ignore null values from input dataset
+     (except key fields) during write operation. Default is false. Type: boolean (or Expression with
+     resultType boolean).
+    :type ignore_null_values: object
+    :param alternate_key_name: The logical name of the alternate key which will be used when
+     upserting records. Type: string (or Expression with resultType string).
+    :type alternate_key_name: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+        'write_behavior': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'write_batch_size': {'key': 'writeBatchSize', 'type': 'object'},
+        'write_batch_timeout': {'key': 'writeBatchTimeout', 'type': 'object'},
+        'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
+        'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'write_behavior': {'key': 'writeBehavior', 'type': 'str'},
+        'ignore_null_values': {'key': 'ignoreNullValues', 'type': 'object'},
+        'alternate_key_name': {'key': 'alternateKeyName', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DynamicsSink, self).__init__(**kwargs)
+        self.type = 'DynamicsSink'  # type: str
+        self.write_behavior = kwargs['write_behavior']
+        self.ignore_null_values = kwargs.get('ignore_null_values', None)
+        self.alternate_key_name = kwargs.get('alternate_key_name', None)
+
+
+class DynamicsSource(CopySource):
+    """A copy activity Dynamics source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param query: FetchXML is a proprietary query language that is used in Microsoft Dynamics
+     (online & on-premises). Type: string (or Expression with resultType string).
+    :type query: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'query': {'key': 'query', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DynamicsSource, self).__init__(**kwargs)
+        self.type = 'DynamicsSource'  # type: str
+        self.query = kwargs.get('query', None)
+
+
 class EloquaLinkedService(LinkedService):
     """Eloqua server linked service.
 
@@ -7385,6 +11789,174 @@ class EloquaObjectDataset(Dataset):
         super(EloquaObjectDataset, self).__init__(**kwargs)
         self.type = 'EloquaObject'  # type: str
         self.table_name = kwargs.get('table_name', None)
+
+
+class EloquaSource(TabularSource):
+    """A copy activity Eloqua server source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
+    :param query: A query to retrieve data from source. Type: string (or Expression with resultType
+     string).
+    :type query: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'query': {'key': 'query', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(EloquaSource, self).__init__(**kwargs)
+        self.type = 'EloquaSource'  # type: str
+        self.query = kwargs.get('query', None)
+
+
+class EntityReference(msrest.serialization.Model):
+    """The entity reference.
+
+    :param type: The type of this referenced entity. Possible values include:
+     "IntegrationRuntimeReference", "LinkedServiceReference".
+    :type type: str or ~azure.synapse.artifacts.models.IntegrationRuntimeEntityReferenceType
+    :param reference_name: The name of this referenced entity.
+    :type reference_name: str
+    """
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'reference_name': {'key': 'referenceName', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(EntityReference, self).__init__(**kwargs)
+        self.type = kwargs.get('type', None)
+        self.reference_name = kwargs.get('reference_name', None)
+
+
+class ErrorAdditionalInfo(msrest.serialization.Model):
+    """The resource management error additional info.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar type: The additional info type.
+    :vartype type: str
+    :ivar info: The additional info.
+    :vartype info: object
+    """
+
+    _validation = {
+        'type': {'readonly': True},
+        'info': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'info': {'key': 'info', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ErrorAdditionalInfo, self).__init__(**kwargs)
+        self.type = None
+        self.info = None
+
+
+class ErrorContract(msrest.serialization.Model):
+    """Contains details when the response code indicates an error.
+
+    :param error: The error details.
+    :type error: ~azure.synapse.artifacts.models.ErrorResponse
+    """
+
+    _attribute_map = {
+        'error': {'key': 'error', 'type': 'ErrorResponse'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ErrorContract, self).__init__(**kwargs)
+        self.error = kwargs.get('error', None)
+
+
+class ErrorResponse(msrest.serialization.Model):
+    """The resource management error response.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.synapse.artifacts.models.ErrorResponse]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.synapse.artifacts.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        'code': {'readonly': True},
+        'message': {'readonly': True},
+        'target': {'readonly': True},
+        'details': {'readonly': True},
+        'additional_info': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
+        'details': {'key': 'details', 'type': '[ErrorResponse]'},
+        'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ErrorResponse, self).__init__(**kwargs)
+        self.code = None
+        self.message = None
+        self.target = None
+        self.details = None
+        self.additional_info = None
 
 
 class EvaluateDataFlowExpressionRequest(msrest.serialization.Model):
@@ -7816,6 +12388,240 @@ class FileServerLinkedService(LinkedService):
         self.encrypted_credential = kwargs.get('encrypted_credential', None)
 
 
+class FileServerLocation(DatasetLocation):
+    """The location of file server dataset.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Type of dataset storage location.Constant filled by server.
+    :type type: str
+    :param folder_path: Specify the folder path of dataset. Type: string (or Expression with
+     resultType string).
+    :type folder_path: object
+    :param file_name: Specify the file name of dataset. Type: string (or Expression with resultType
+     string).
+    :type file_name: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'folder_path': {'key': 'folderPath', 'type': 'object'},
+        'file_name': {'key': 'fileName', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(FileServerLocation, self).__init__(**kwargs)
+        self.type = 'FileServerLocation'  # type: str
+
+
+class FileServerReadSettings(StoreReadSettings):
+    """File server read settings.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. The read setting type.Constant filled by server.
+    :type type: str
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param recursive: If true, files under the folder path will be read recursively. Default is
+     true. Type: boolean (or Expression with resultType boolean).
+    :type recursive: object
+    :param wildcard_folder_path: FileServer wildcardFolderPath. Type: string (or Expression with
+     resultType string).
+    :type wildcard_folder_path: object
+    :param wildcard_file_name: FileServer wildcardFileName. Type: string (or Expression with
+     resultType string).
+    :type wildcard_file_name: object
+    :param enable_partition_discovery: Indicates whether to enable partition discovery.
+    :type enable_partition_discovery: bool
+    :param modified_datetime_start: The start of file's modified datetime. Type: string (or
+     Expression with resultType string).
+    :type modified_datetime_start: object
+    :param modified_datetime_end: The end of file's modified datetime. Type: string (or Expression
+     with resultType string).
+    :type modified_datetime_end: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'recursive': {'key': 'recursive', 'type': 'object'},
+        'wildcard_folder_path': {'key': 'wildcardFolderPath', 'type': 'object'},
+        'wildcard_file_name': {'key': 'wildcardFileName', 'type': 'object'},
+        'enable_partition_discovery': {'key': 'enablePartitionDiscovery', 'type': 'bool'},
+        'modified_datetime_start': {'key': 'modifiedDatetimeStart', 'type': 'object'},
+        'modified_datetime_end': {'key': 'modifiedDatetimeEnd', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(FileServerReadSettings, self).__init__(**kwargs)
+        self.type = 'FileServerReadSettings'  # type: str
+        self.recursive = kwargs.get('recursive', None)
+        self.wildcard_folder_path = kwargs.get('wildcard_folder_path', None)
+        self.wildcard_file_name = kwargs.get('wildcard_file_name', None)
+        self.enable_partition_discovery = kwargs.get('enable_partition_discovery', None)
+        self.modified_datetime_start = kwargs.get('modified_datetime_start', None)
+        self.modified_datetime_end = kwargs.get('modified_datetime_end', None)
+
+
+class FileServerWriteSettings(StoreWriteSettings):
+    """File server write settings.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. The write setting type.Constant filled by server.
+    :type type: str
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param copy_behavior: The type of copy behavior for copy sink.
+    :type copy_behavior: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'copy_behavior': {'key': 'copyBehavior', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(FileServerWriteSettings, self).__init__(**kwargs)
+        self.type = 'FileServerWriteSettings'  # type: str
+
+
+class FileSystemSink(CopySink):
+    """A copy activity file system sink.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy sink type.Constant filled by server.
+    :type type: str
+    :param write_batch_size: Write batch size. Type: integer (or Expression with resultType
+     integer), minimum: 0.
+    :type write_batch_size: object
+    :param write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type write_batch_timeout: object
+    :param sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
+     integer).
+    :type sink_retry_count: object
+    :param sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type sink_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the sink data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param copy_behavior: The type of copy behavior for copy sink.
+    :type copy_behavior: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'write_batch_size': {'key': 'writeBatchSize', 'type': 'object'},
+        'write_batch_timeout': {'key': 'writeBatchTimeout', 'type': 'object'},
+        'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
+        'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'copy_behavior': {'key': 'copyBehavior', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(FileSystemSink, self).__init__(**kwargs)
+        self.type = 'FileSystemSink'  # type: str
+        self.copy_behavior = kwargs.get('copy_behavior', None)
+
+
+class FileSystemSource(CopySource):
+    """A copy activity file system source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param recursive: If true, files under the folder path will be read recursively. Default is
+     true. Type: boolean (or Expression with resultType boolean).
+    :type recursive: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'recursive': {'key': 'recursive', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(FileSystemSource, self).__init__(**kwargs)
+        self.type = 'FileSystemSource'  # type: str
+        self.recursive = kwargs.get('recursive', None)
+
+
 class FilterActivity(Activity):
     """Filter and return results from input array based on the conditions.
 
@@ -7930,6 +12736,58 @@ class ForEachActivity(Activity):
         self.activities = kwargs['activities']
 
 
+class FtpReadSettings(StoreReadSettings):
+    """Ftp read settings.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. The read setting type.Constant filled by server.
+    :type type: str
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param recursive: If true, files under the folder path will be read recursively. Default is
+     true. Type: boolean (or Expression with resultType boolean).
+    :type recursive: object
+    :param wildcard_folder_path: Ftp wildcardFolderPath. Type: string (or Expression with
+     resultType string).
+    :type wildcard_folder_path: object
+    :param wildcard_file_name: Ftp wildcardFileName. Type: string (or Expression with resultType
+     string).
+    :type wildcard_file_name: object
+    :param use_binary_transfer: Specify whether to use binary transfer mode for FTP stores.
+    :type use_binary_transfer: bool
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'recursive': {'key': 'recursive', 'type': 'object'},
+        'wildcard_folder_path': {'key': 'wildcardFolderPath', 'type': 'object'},
+        'wildcard_file_name': {'key': 'wildcardFileName', 'type': 'object'},
+        'use_binary_transfer': {'key': 'useBinaryTransfer', 'type': 'bool'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(FtpReadSettings, self).__init__(**kwargs)
+        self.type = 'FtpReadSettings'  # type: str
+        self.recursive = kwargs.get('recursive', None)
+        self.wildcard_folder_path = kwargs.get('wildcard_folder_path', None)
+        self.wildcard_file_name = kwargs.get('wildcard_file_name', None)
+        self.use_binary_transfer = kwargs.get('use_binary_transfer', None)
+
+
 class FtpServerLinkedService(LinkedService):
     """A FTP server Linked Service.
 
@@ -8011,6 +12869,43 @@ class FtpServerLinkedService(LinkedService):
         self.encrypted_credential = kwargs.get('encrypted_credential', None)
         self.enable_ssl = kwargs.get('enable_ssl', None)
         self.enable_server_certificate_validation = kwargs.get('enable_server_certificate_validation', None)
+
+
+class FtpServerLocation(DatasetLocation):
+    """The location of ftp server dataset.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Type of dataset storage location.Constant filled by server.
+    :type type: str
+    :param folder_path: Specify the folder path of dataset. Type: string (or Expression with
+     resultType string).
+    :type folder_path: object
+    :param file_name: Specify the file name of dataset. Type: string (or Expression with resultType
+     string).
+    :type file_name: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'folder_path': {'key': 'folderPath', 'type': 'object'},
+        'file_name': {'key': 'fileName', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(FtpServerLocation, self).__init__(**kwargs)
+        self.type = 'FtpServerLocation'  # type: str
 
 
 class GetMetadataActivity(ExecutionActivity):
@@ -8250,6 +13145,56 @@ class GoogleAdWordsObjectDataset(Dataset):
         self.table_name = kwargs.get('table_name', None)
 
 
+class GoogleAdWordsSource(TabularSource):
+    """A copy activity Google AdWords service source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
+    :param query: A query to retrieve data from source. Type: string (or Expression with resultType
+     string).
+    :type query: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'query': {'key': 'query', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(GoogleAdWordsSource, self).__init__(**kwargs)
+        self.type = 'GoogleAdWordsSource'  # type: str
+        self.query = kwargs.get('query', None)
+
+
 class GoogleBigQueryLinkedService(LinkedService):
     """Google BigQuery service linked service.
 
@@ -8425,6 +13370,56 @@ class GoogleBigQueryObjectDataset(Dataset):
         self.dataset = kwargs.get('dataset', None)
 
 
+class GoogleBigQuerySource(TabularSource):
+    """A copy activity Google BigQuery service source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
+    :param query: A query to retrieve data from source. Type: string (or Expression with resultType
+     string).
+    :type query: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'query': {'key': 'query', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(GoogleBigQuerySource, self).__init__(**kwargs)
+        self.type = 'GoogleBigQuerySource'  # type: str
+        self.query = kwargs.get('query', None)
+
+
 class GoogleCloudStorageLinkedService(LinkedService):
     """Linked service for Google Cloud Storage.
 
@@ -8489,6 +13484,120 @@ class GoogleCloudStorageLinkedService(LinkedService):
         self.encrypted_credential = kwargs.get('encrypted_credential', None)
 
 
+class GoogleCloudStorageLocation(DatasetLocation):
+    """The location of Google Cloud Storage dataset.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Type of dataset storage location.Constant filled by server.
+    :type type: str
+    :param folder_path: Specify the folder path of dataset. Type: string (or Expression with
+     resultType string).
+    :type folder_path: object
+    :param file_name: Specify the file name of dataset. Type: string (or Expression with resultType
+     string).
+    :type file_name: object
+    :param bucket_name: Specify the bucketName of Google Cloud Storage. Type: string (or Expression
+     with resultType string).
+    :type bucket_name: object
+    :param version: Specify the version of Google Cloud Storage. Type: string (or Expression with
+     resultType string).
+    :type version: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'folder_path': {'key': 'folderPath', 'type': 'object'},
+        'file_name': {'key': 'fileName', 'type': 'object'},
+        'bucket_name': {'key': 'bucketName', 'type': 'object'},
+        'version': {'key': 'version', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(GoogleCloudStorageLocation, self).__init__(**kwargs)
+        self.type = 'GoogleCloudStorageLocation'  # type: str
+        self.bucket_name = kwargs.get('bucket_name', None)
+        self.version = kwargs.get('version', None)
+
+
+class GoogleCloudStorageReadSettings(StoreReadSettings):
+    """Google Cloud Storage read settings.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. The read setting type.Constant filled by server.
+    :type type: str
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param recursive: If true, files under the folder path will be read recursively. Default is
+     true. Type: boolean (or Expression with resultType boolean).
+    :type recursive: object
+    :param wildcard_folder_path: Google Cloud Storage wildcardFolderPath. Type: string (or
+     Expression with resultType string).
+    :type wildcard_folder_path: object
+    :param wildcard_file_name: Google Cloud Storage wildcardFileName. Type: string (or Expression
+     with resultType string).
+    :type wildcard_file_name: object
+    :param prefix: The prefix filter for the Google Cloud Storage object name. Type: string (or
+     Expression with resultType string).
+    :type prefix: object
+    :param enable_partition_discovery: Indicates whether to enable partition discovery.
+    :type enable_partition_discovery: bool
+    :param modified_datetime_start: The start of file's modified datetime. Type: string (or
+     Expression with resultType string).
+    :type modified_datetime_start: object
+    :param modified_datetime_end: The end of file's modified datetime. Type: string (or Expression
+     with resultType string).
+    :type modified_datetime_end: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'recursive': {'key': 'recursive', 'type': 'object'},
+        'wildcard_folder_path': {'key': 'wildcardFolderPath', 'type': 'object'},
+        'wildcard_file_name': {'key': 'wildcardFileName', 'type': 'object'},
+        'prefix': {'key': 'prefix', 'type': 'object'},
+        'enable_partition_discovery': {'key': 'enablePartitionDiscovery', 'type': 'bool'},
+        'modified_datetime_start': {'key': 'modifiedDatetimeStart', 'type': 'object'},
+        'modified_datetime_end': {'key': 'modifiedDatetimeEnd', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(GoogleCloudStorageReadSettings, self).__init__(**kwargs)
+        self.type = 'GoogleCloudStorageReadSettings'  # type: str
+        self.recursive = kwargs.get('recursive', None)
+        self.wildcard_folder_path = kwargs.get('wildcard_folder_path', None)
+        self.wildcard_file_name = kwargs.get('wildcard_file_name', None)
+        self.prefix = kwargs.get('prefix', None)
+        self.enable_partition_discovery = kwargs.get('enable_partition_discovery', None)
+        self.modified_datetime_start = kwargs.get('modified_datetime_start', None)
+        self.modified_datetime_end = kwargs.get('modified_datetime_end', None)
+
+
 class GreenplumLinkedService(LinkedService):
     """Greenplum Database linked service.
 
@@ -8543,6 +13652,56 @@ class GreenplumLinkedService(LinkedService):
         self.connection_string = kwargs.get('connection_string', None)
         self.pwd = kwargs.get('pwd', None)
         self.encrypted_credential = kwargs.get('encrypted_credential', None)
+
+
+class GreenplumSource(TabularSource):
+    """A copy activity Greenplum Database source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
+    :param query: A query to retrieve data from source. Type: string (or Expression with resultType
+     string).
+    :type query: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'query': {'key': 'query', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(GreenplumSource, self).__init__(**kwargs)
+        self.type = 'GreenplumSource'  # type: str
+        self.query = kwargs.get('query', None)
 
 
 class GreenplumTableDataset(Dataset):
@@ -8768,6 +13927,56 @@ class HBaseObjectDataset(Dataset):
         self.table_name = kwargs.get('table_name', None)
 
 
+class HBaseSource(TabularSource):
+    """A copy activity HBase server source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
+    :param query: A query to retrieve data from source. Type: string (or Expression with resultType
+     string).
+    :type query: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'query': {'key': 'query', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(HBaseSource, self).__init__(**kwargs)
+        self.type = 'HBaseSource'  # type: str
+        self.query = kwargs.get('query', None)
+
+
 class HdfsLinkedService(LinkedService):
     """Hadoop Distributed File System (HDFS) linked service.
 
@@ -8833,6 +14042,159 @@ class HdfsLinkedService(LinkedService):
         self.encrypted_credential = kwargs.get('encrypted_credential', None)
         self.user_name = kwargs.get('user_name', None)
         self.password = kwargs.get('password', None)
+
+
+class HdfsLocation(DatasetLocation):
+    """The location of HDFS.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Type of dataset storage location.Constant filled by server.
+    :type type: str
+    :param folder_path: Specify the folder path of dataset. Type: string (or Expression with
+     resultType string).
+    :type folder_path: object
+    :param file_name: Specify the file name of dataset. Type: string (or Expression with resultType
+     string).
+    :type file_name: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'folder_path': {'key': 'folderPath', 'type': 'object'},
+        'file_name': {'key': 'fileName', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(HdfsLocation, self).__init__(**kwargs)
+        self.type = 'HdfsLocation'  # type: str
+
+
+class HdfsReadSettings(StoreReadSettings):
+    """HDFS read settings.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. The read setting type.Constant filled by server.
+    :type type: str
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param recursive: If true, files under the folder path will be read recursively. Default is
+     true. Type: boolean (or Expression with resultType boolean).
+    :type recursive: object
+    :param wildcard_folder_path: HDFS wildcardFolderPath. Type: string (or Expression with
+     resultType string).
+    :type wildcard_folder_path: object
+    :param wildcard_file_name: HDFS wildcardFileName. Type: string (or Expression with resultType
+     string).
+    :type wildcard_file_name: object
+    :param enable_partition_discovery: Indicates whether to enable partition discovery.
+    :type enable_partition_discovery: bool
+    :param modified_datetime_start: The start of file's modified datetime. Type: string (or
+     Expression with resultType string).
+    :type modified_datetime_start: object
+    :param modified_datetime_end: The end of file's modified datetime. Type: string (or Expression
+     with resultType string).
+    :type modified_datetime_end: object
+    :param distcp_settings: Specifies Distcp-related settings.
+    :type distcp_settings: ~azure.synapse.artifacts.models.DistcpSettings
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'recursive': {'key': 'recursive', 'type': 'object'},
+        'wildcard_folder_path': {'key': 'wildcardFolderPath', 'type': 'object'},
+        'wildcard_file_name': {'key': 'wildcardFileName', 'type': 'object'},
+        'enable_partition_discovery': {'key': 'enablePartitionDiscovery', 'type': 'bool'},
+        'modified_datetime_start': {'key': 'modifiedDatetimeStart', 'type': 'object'},
+        'modified_datetime_end': {'key': 'modifiedDatetimeEnd', 'type': 'object'},
+        'distcp_settings': {'key': 'distcpSettings', 'type': 'DistcpSettings'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(HdfsReadSettings, self).__init__(**kwargs)
+        self.type = 'HdfsReadSettings'  # type: str
+        self.recursive = kwargs.get('recursive', None)
+        self.wildcard_folder_path = kwargs.get('wildcard_folder_path', None)
+        self.wildcard_file_name = kwargs.get('wildcard_file_name', None)
+        self.enable_partition_discovery = kwargs.get('enable_partition_discovery', None)
+        self.modified_datetime_start = kwargs.get('modified_datetime_start', None)
+        self.modified_datetime_end = kwargs.get('modified_datetime_end', None)
+        self.distcp_settings = kwargs.get('distcp_settings', None)
+
+
+class HdfsSource(CopySource):
+    """A copy activity HDFS source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param recursive: If true, files under the folder path will be read recursively. Default is
+     true. Type: boolean (or Expression with resultType boolean).
+    :type recursive: object
+    :param distcp_settings: Specifies Distcp-related settings.
+    :type distcp_settings: ~azure.synapse.artifacts.models.DistcpSettings
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'recursive': {'key': 'recursive', 'type': 'object'},
+        'distcp_settings': {'key': 'distcpSettings', 'type': 'DistcpSettings'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(HdfsSource, self).__init__(**kwargs)
+        self.type = 'HdfsSource'  # type: str
+        self.recursive = kwargs.get('recursive', None)
+        self.distcp_settings = kwargs.get('distcp_settings', None)
 
 
 class HDInsightHiveActivity(ExecutionActivity):
@@ -9751,6 +15113,56 @@ class HiveObjectDataset(Dataset):
         self.schema_type_properties_schema = kwargs.get('schema_type_properties_schema', None)
 
 
+class HiveSource(TabularSource):
+    """A copy activity Hive Server source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
+    :param query: A query to retrieve data from source. Type: string (or Expression with resultType
+     string).
+    :type query: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'query': {'key': 'query', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(HiveSource, self).__init__(**kwargs)
+        self.type = 'HiveSource'  # type: str
+        self.query = kwargs.get('query', None)
+
+
 class HttpLinkedService(LinkedService):
     """Linked service for an HTTP source.
 
@@ -9836,6 +15248,149 @@ class HttpLinkedService(LinkedService):
         self.cert_thumbprint = kwargs.get('cert_thumbprint', None)
         self.encrypted_credential = kwargs.get('encrypted_credential', None)
         self.enable_server_certificate_validation = kwargs.get('enable_server_certificate_validation', None)
+
+
+class HttpReadSettings(StoreReadSettings):
+    """Sftp read settings.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. The read setting type.Constant filled by server.
+    :type type: str
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param request_method: The HTTP method used to call the RESTful API. The default is GET. Type:
+     string (or Expression with resultType string).
+    :type request_method: object
+    :param request_body: The HTTP request body to the RESTful API if requestMethod is POST. Type:
+     string (or Expression with resultType string).
+    :type request_body: object
+    :param additional_headers: The additional HTTP headers in the request to the RESTful API. Type:
+     string (or Expression with resultType string).
+    :type additional_headers: object
+    :param request_timeout: Specifies the timeout for a HTTP client to get HTTP response from HTTP
+     server.
+    :type request_timeout: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'request_method': {'key': 'requestMethod', 'type': 'object'},
+        'request_body': {'key': 'requestBody', 'type': 'object'},
+        'additional_headers': {'key': 'additionalHeaders', 'type': 'object'},
+        'request_timeout': {'key': 'requestTimeout', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(HttpReadSettings, self).__init__(**kwargs)
+        self.type = 'HttpReadSettings'  # type: str
+        self.request_method = kwargs.get('request_method', None)
+        self.request_body = kwargs.get('request_body', None)
+        self.additional_headers = kwargs.get('additional_headers', None)
+        self.request_timeout = kwargs.get('request_timeout', None)
+
+
+class HttpServerLocation(DatasetLocation):
+    """The location of http server.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Type of dataset storage location.Constant filled by server.
+    :type type: str
+    :param folder_path: Specify the folder path of dataset. Type: string (or Expression with
+     resultType string).
+    :type folder_path: object
+    :param file_name: Specify the file name of dataset. Type: string (or Expression with resultType
+     string).
+    :type file_name: object
+    :param relative_url: Specify the relativeUrl of http server. Type: string (or Expression with
+     resultType string).
+    :type relative_url: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'folder_path': {'key': 'folderPath', 'type': 'object'},
+        'file_name': {'key': 'fileName', 'type': 'object'},
+        'relative_url': {'key': 'relativeUrl', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(HttpServerLocation, self).__init__(**kwargs)
+        self.type = 'HttpServerLocation'  # type: str
+        self.relative_url = kwargs.get('relative_url', None)
+
+
+class HttpSource(CopySource):
+    """A copy activity source for an HTTP file.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param http_request_timeout: Specifies the timeout for a HTTP client to get HTTP response from
+     HTTP server. The default value is equivalent to System.Net.HttpWebRequest.Timeout. Type: string
+     (or Expression with resultType string), pattern:
+     ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type http_request_timeout: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'http_request_timeout': {'key': 'httpRequestTimeout', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(HttpSource, self).__init__(**kwargs)
+        self.type = 'HttpSource'  # type: str
+        self.http_request_timeout = kwargs.get('http_request_timeout', None)
 
 
 class HubspotLinkedService(LinkedService):
@@ -9976,6 +15531,56 @@ class HubspotObjectDataset(Dataset):
         super(HubspotObjectDataset, self).__init__(**kwargs)
         self.type = 'HubspotObject'  # type: str
         self.table_name = kwargs.get('table_name', None)
+
+
+class HubspotSource(TabularSource):
+    """A copy activity Hubspot Service source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
+    :param query: A query to retrieve data from source. Type: string (or Expression with resultType
+     string).
+    :type query: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'query': {'key': 'query', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(HubspotSource, self).__init__(**kwargs)
+        self.type = 'HubspotSource'  # type: str
+        self.query = kwargs.get('query', None)
 
 
 class IfConditionActivity(Activity):
@@ -10205,6 +15810,56 @@ class ImpalaObjectDataset(Dataset):
         self.schema_type_properties_schema = kwargs.get('schema_type_properties_schema', None)
 
 
+class ImpalaSource(TabularSource):
+    """A copy activity Impala server source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
+    :param query: A query to retrieve data from source. Type: string (or Expression with resultType
+     string).
+    :type query: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'query': {'key': 'query', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ImpalaSource, self).__init__(**kwargs)
+        self.type = 'ImpalaSource'  # type: str
+        self.query = kwargs.get('query', None)
+
+
 class InformixLinkedService(LinkedService):
     """Informix linked service.
 
@@ -10279,6 +15934,109 @@ class InformixLinkedService(LinkedService):
         self.encrypted_credential = kwargs.get('encrypted_credential', None)
 
 
+class InformixSink(CopySink):
+    """A copy activity Informix sink.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy sink type.Constant filled by server.
+    :type type: str
+    :param write_batch_size: Write batch size. Type: integer (or Expression with resultType
+     integer), minimum: 0.
+    :type write_batch_size: object
+    :param write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type write_batch_timeout: object
+    :param sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
+     integer).
+    :type sink_retry_count: object
+    :param sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type sink_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the sink data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param pre_copy_script: A query to execute before starting the copy. Type: string (or
+     Expression with resultType string).
+    :type pre_copy_script: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'write_batch_size': {'key': 'writeBatchSize', 'type': 'object'},
+        'write_batch_timeout': {'key': 'writeBatchTimeout', 'type': 'object'},
+        'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
+        'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'pre_copy_script': {'key': 'preCopyScript', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(InformixSink, self).__init__(**kwargs)
+        self.type = 'InformixSink'  # type: str
+        self.pre_copy_script = kwargs.get('pre_copy_script', None)
+
+
+class InformixSource(TabularSource):
+    """A copy activity source for Informix.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
+    :param query: Database query. Type: string (or Expression with resultType string).
+    :type query: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'query': {'key': 'query', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(InformixSource, self).__init__(**kwargs)
+        self.type = 'InformixSource'  # type: str
+        self.query = kwargs.get('query', None)
+
+
 class InformixTableDataset(Dataset):
     """The Informix table dataset.
 
@@ -10338,6 +16096,220 @@ class InformixTableDataset(Dataset):
         self.table_name = kwargs.get('table_name', None)
 
 
+class IntegrationRuntime(msrest.serialization.Model):
+    """Azure Synapse nested object which serves as a compute resource for activities.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: ManagedIntegrationRuntime, SelfHostedIntegrationRuntime.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Type of integration runtime.Constant filled by server.  Possible values
+     include: "Managed", "SelfHosted".
+    :type type: str or ~azure.synapse.artifacts.models.IntegrationRuntimeType
+    :param description: Integration runtime description.
+    :type description: str
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'type': {'Managed': 'ManagedIntegrationRuntime', 'SelfHosted': 'SelfHostedIntegrationRuntime'}
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(IntegrationRuntime, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.type = 'IntegrationRuntime'  # type: str
+        self.description = kwargs.get('description', None)
+
+
+class IntegrationRuntimeComputeProperties(msrest.serialization.Model):
+    """The compute resource properties for managed integration runtime.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param location: The location for managed integration runtime. The supported regions could be
+     found on https://docs.microsoft.com/en-us/azure/data-factory/data-factory-data-movement-
+     activities.
+    :type location: str
+    :param node_size: The node size requirement to managed integration runtime.
+    :type node_size: str
+    :param number_of_nodes: The required number of nodes for managed integration runtime.
+    :type number_of_nodes: int
+    :param max_parallel_executions_per_node: Maximum parallel executions count per node for managed
+     integration runtime.
+    :type max_parallel_executions_per_node: int
+    :param data_flow_properties: Data flow properties for managed integration runtime.
+    :type data_flow_properties:
+     ~azure.synapse.artifacts.models.IntegrationRuntimeDataFlowProperties
+    :param v_net_properties: VNet properties for managed integration runtime.
+    :type v_net_properties: ~azure.synapse.artifacts.models.IntegrationRuntimeVNetProperties
+    """
+
+    _validation = {
+        'number_of_nodes': {'minimum': 1},
+        'max_parallel_executions_per_node': {'minimum': 1},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'location': {'key': 'location', 'type': 'str'},
+        'node_size': {'key': 'nodeSize', 'type': 'str'},
+        'number_of_nodes': {'key': 'numberOfNodes', 'type': 'int'},
+        'max_parallel_executions_per_node': {'key': 'maxParallelExecutionsPerNode', 'type': 'int'},
+        'data_flow_properties': {'key': 'dataFlowProperties', 'type': 'IntegrationRuntimeDataFlowProperties'},
+        'v_net_properties': {'key': 'vNetProperties', 'type': 'IntegrationRuntimeVNetProperties'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(IntegrationRuntimeComputeProperties, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.location = kwargs.get('location', None)
+        self.node_size = kwargs.get('node_size', None)
+        self.number_of_nodes = kwargs.get('number_of_nodes', None)
+        self.max_parallel_executions_per_node = kwargs.get('max_parallel_executions_per_node', None)
+        self.data_flow_properties = kwargs.get('data_flow_properties', None)
+        self.v_net_properties = kwargs.get('v_net_properties', None)
+
+
+class IntegrationRuntimeCustomSetupScriptProperties(msrest.serialization.Model):
+    """Custom setup script properties for a managed dedicated integration runtime.
+
+    :param blob_container_uri: The URI of the Azure blob container that contains the custom setup
+     script.
+    :type blob_container_uri: str
+    :param sas_token: The SAS token of the Azure blob container.
+    :type sas_token: ~azure.synapse.artifacts.models.SecureString
+    """
+
+    _attribute_map = {
+        'blob_container_uri': {'key': 'blobContainerUri', 'type': 'str'},
+        'sas_token': {'key': 'sasToken', 'type': 'SecureString'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(IntegrationRuntimeCustomSetupScriptProperties, self).__init__(**kwargs)
+        self.blob_container_uri = kwargs.get('blob_container_uri', None)
+        self.sas_token = kwargs.get('sas_token', None)
+
+
+class IntegrationRuntimeDataFlowProperties(msrest.serialization.Model):
+    """Data flow properties for managed integration runtime.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param compute_type: Compute type of the cluster which will execute data flow job. Possible
+     values include: "General", "MemoryOptimized", "ComputeOptimized".
+    :type compute_type: str or ~azure.synapse.artifacts.models.DataFlowComputeType
+    :param core_count: Core count of the cluster which will execute data flow job. Supported values
+     are: 8, 16, 32, 48, 80, 144 and 272.
+    :type core_count: int
+    :param time_to_live: Time to live (in minutes) setting of the cluster which will execute data
+     flow job.
+    :type time_to_live: int
+    """
+
+    _validation = {
+        'time_to_live': {'minimum': 0},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'compute_type': {'key': 'computeType', 'type': 'str'},
+        'core_count': {'key': 'coreCount', 'type': 'int'},
+        'time_to_live': {'key': 'timeToLive', 'type': 'int'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(IntegrationRuntimeDataFlowProperties, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.compute_type = kwargs.get('compute_type', None)
+        self.core_count = kwargs.get('core_count', None)
+        self.time_to_live = kwargs.get('time_to_live', None)
+
+
+class IntegrationRuntimeDataProxyProperties(msrest.serialization.Model):
+    """Data proxy properties for a managed dedicated integration runtime.
+
+    :param connect_via: The self-hosted integration runtime reference.
+    :type connect_via: ~azure.synapse.artifacts.models.EntityReference
+    :param staging_linked_service: The staging linked service reference.
+    :type staging_linked_service: ~azure.synapse.artifacts.models.EntityReference
+    :param path: The path to contain the staged data in the Blob storage.
+    :type path: str
+    """
+
+    _attribute_map = {
+        'connect_via': {'key': 'connectVia', 'type': 'EntityReference'},
+        'staging_linked_service': {'key': 'stagingLinkedService', 'type': 'EntityReference'},
+        'path': {'key': 'path', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(IntegrationRuntimeDataProxyProperties, self).__init__(**kwargs)
+        self.connect_via = kwargs.get('connect_via', None)
+        self.staging_linked_service = kwargs.get('staging_linked_service', None)
+        self.path = kwargs.get('path', None)
+
+
+class IntegrationRuntimeListResponse(msrest.serialization.Model):
+    """A list of integration runtime resources.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param value: Required. List of integration runtimes.
+    :type value: list[~azure.synapse.artifacts.models.IntegrationRuntimeResource]
+    :param next_link: The link to the next page of results, if any remaining results exist.
+    :type next_link: str
+    """
+
+    _validation = {
+        'value': {'required': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[IntegrationRuntimeResource]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(IntegrationRuntimeListResponse, self).__init__(**kwargs)
+        self.value = kwargs['value']
+        self.next_link = kwargs.get('next_link', None)
+
+
 class IntegrationRuntimeReference(msrest.serialization.Model):
     """Integration runtime reference type.
 
@@ -10371,6 +16343,179 @@ class IntegrationRuntimeReference(msrest.serialization.Model):
         self.type = kwargs['type']
         self.reference_name = kwargs['reference_name']
         self.parameters = kwargs.get('parameters', None)
+
+
+class IntegrationRuntimeResource(AzureEntityResource):
+    """Integration runtime resource type.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
+     Microsoft.Storage/storageAccounts.
+    :vartype type: str
+    :ivar etag: Resource Etag.
+    :vartype etag: str
+    :param properties: Required. Integration runtime properties.
+    :type properties: ~azure.synapse.artifacts.models.IntegrationRuntime
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'etag': {'readonly': True},
+        'properties': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'IntegrationRuntime'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(IntegrationRuntimeResource, self).__init__(**kwargs)
+        self.properties = kwargs['properties']
+
+
+class IntegrationRuntimeSsisCatalogInfo(msrest.serialization.Model):
+    """Catalog information for managed dedicated integration runtime.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param catalog_server_endpoint: The catalog database server URL.
+    :type catalog_server_endpoint: str
+    :param catalog_admin_user_name: The administrator user name of catalog database.
+    :type catalog_admin_user_name: str
+    :param catalog_admin_password: The password of the administrator user account of the catalog
+     database.
+    :type catalog_admin_password: ~azure.synapse.artifacts.models.SecureString
+    :param catalog_pricing_tier: The pricing tier for the catalog database. The valid values could
+     be found in https://azure.microsoft.com/en-us/pricing/details/sql-database/. Possible values
+     include: "Basic", "Standard", "Premium", "PremiumRS".
+    :type catalog_pricing_tier: str or
+     ~azure.synapse.artifacts.models.IntegrationRuntimeSsisCatalogPricingTier
+    """
+
+    _validation = {
+        'catalog_admin_user_name': {'max_length': 128, 'min_length': 1},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'catalog_server_endpoint': {'key': 'catalogServerEndpoint', 'type': 'str'},
+        'catalog_admin_user_name': {'key': 'catalogAdminUserName', 'type': 'str'},
+        'catalog_admin_password': {'key': 'catalogAdminPassword', 'type': 'SecureString'},
+        'catalog_pricing_tier': {'key': 'catalogPricingTier', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(IntegrationRuntimeSsisCatalogInfo, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.catalog_server_endpoint = kwargs.get('catalog_server_endpoint', None)
+        self.catalog_admin_user_name = kwargs.get('catalog_admin_user_name', None)
+        self.catalog_admin_password = kwargs.get('catalog_admin_password', None)
+        self.catalog_pricing_tier = kwargs.get('catalog_pricing_tier', None)
+
+
+class IntegrationRuntimeSsisProperties(msrest.serialization.Model):
+    """SSIS properties for managed integration runtime.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param catalog_info: Catalog information for managed dedicated integration runtime.
+    :type catalog_info: ~azure.synapse.artifacts.models.IntegrationRuntimeSsisCatalogInfo
+    :param license_type: License type for bringing your own license scenario. Possible values
+     include: "BasePrice", "LicenseIncluded".
+    :type license_type: str or ~azure.synapse.artifacts.models.IntegrationRuntimeLicenseType
+    :param custom_setup_script_properties: Custom setup script properties for a managed dedicated
+     integration runtime.
+    :type custom_setup_script_properties:
+     ~azure.synapse.artifacts.models.IntegrationRuntimeCustomSetupScriptProperties
+    :param data_proxy_properties: Data proxy properties for a managed dedicated integration
+     runtime.
+    :type data_proxy_properties:
+     ~azure.synapse.artifacts.models.IntegrationRuntimeDataProxyProperties
+    :param edition: The edition for the SSIS Integration Runtime. Possible values include:
+     "Standard", "Enterprise".
+    :type edition: str or ~azure.synapse.artifacts.models.IntegrationRuntimeEdition
+    :param express_custom_setup_properties: Custom setup without script properties for a SSIS
+     integration runtime.
+    :type express_custom_setup_properties: list[~azure.synapse.artifacts.models.CustomSetupBase]
+    """
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'catalog_info': {'key': 'catalogInfo', 'type': 'IntegrationRuntimeSsisCatalogInfo'},
+        'license_type': {'key': 'licenseType', 'type': 'str'},
+        'custom_setup_script_properties': {'key': 'customSetupScriptProperties', 'type': 'IntegrationRuntimeCustomSetupScriptProperties'},
+        'data_proxy_properties': {'key': 'dataProxyProperties', 'type': 'IntegrationRuntimeDataProxyProperties'},
+        'edition': {'key': 'edition', 'type': 'str'},
+        'express_custom_setup_properties': {'key': 'expressCustomSetupProperties', 'type': '[CustomSetupBase]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(IntegrationRuntimeSsisProperties, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.catalog_info = kwargs.get('catalog_info', None)
+        self.license_type = kwargs.get('license_type', None)
+        self.custom_setup_script_properties = kwargs.get('custom_setup_script_properties', None)
+        self.data_proxy_properties = kwargs.get('data_proxy_properties', None)
+        self.edition = kwargs.get('edition', None)
+        self.express_custom_setup_properties = kwargs.get('express_custom_setup_properties', None)
+
+
+class IntegrationRuntimeVNetProperties(msrest.serialization.Model):
+    """VNet properties for managed integration runtime.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param v_net_id: The ID of the VNet that this integration runtime will join.
+    :type v_net_id: str
+    :param subnet: The name of the subnet this integration runtime will join.
+    :type subnet: str
+    :param public_i_ps: Resource IDs of the public IP addresses that this integration runtime will
+     use.
+    :type public_i_ps: list[str]
+    """
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'v_net_id': {'key': 'vNetId', 'type': 'str'},
+        'subnet': {'key': 'subnet', 'type': 'str'},
+        'public_i_ps': {'key': 'publicIPs', 'type': '[str]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(IntegrationRuntimeVNetProperties, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.v_net_id = kwargs.get('v_net_id', None)
+        self.subnet = kwargs.get('subnet', None)
+        self.public_i_ps = kwargs.get('public_i_ps', None)
 
 
 class JiraLinkedService(LinkedService):
@@ -10515,6 +16660,56 @@ class JiraObjectDataset(Dataset):
         self.table_name = kwargs.get('table_name', None)
 
 
+class JiraSource(TabularSource):
+    """A copy activity Jira Service source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
+    :param query: A query to retrieve data from source. Type: string (or Expression with resultType
+     string).
+    :type query: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'query': {'key': 'query', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(JiraSource, self).__init__(**kwargs)
+        self.type = 'JiraSource'  # type: str
+        self.query = kwargs.get('query', None)
+
+
 class JsonDataset(Dataset):
     """Json dataset.
 
@@ -10583,6 +16778,338 @@ class JsonDataset(Dataset):
         self.location = kwargs.get('location', None)
         self.encoding_name = kwargs.get('encoding_name', None)
         self.compression = kwargs.get('compression', None)
+
+
+class JsonFormat(DatasetStorageFormat):
+    """The data stored in JSON format.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Type of dataset storage format.Constant filled by server.
+    :type type: str
+    :param serializer: Serializer. Type: string (or Expression with resultType string).
+    :type serializer: object
+    :param deserializer: Deserializer. Type: string (or Expression with resultType string).
+    :type deserializer: object
+    :param file_pattern: File pattern of JSON. To be more specific, the way of separating a
+     collection of JSON objects. The default value is 'setOfObjects'. It is case-sensitive. Possible
+     values include: "setOfObjects", "arrayOfObjects".
+    :type file_pattern: str or ~azure.synapse.artifacts.models.JsonFormatFilePattern
+    :param nesting_separator: The character used to separate nesting levels. Default value is '.'
+     (dot). Type: string (or Expression with resultType string).
+    :type nesting_separator: object
+    :param encoding_name: The code page name of the preferred encoding. If not provided, the
+     default value is 'utf-8', unless the byte order mark (BOM) denotes another Unicode encoding.
+     The full list of supported values can be found in the 'Name' column of the table of encodings
+     in the following reference: https://go.microsoft.com/fwlink/?linkid=861078. Type: string (or
+     Expression with resultType string).
+    :type encoding_name: object
+    :param json_node_reference: The JSONPath of the JSON array element to be flattened. Example:
+     "$.ArrayPath". Type: string (or Expression with resultType string).
+    :type json_node_reference: object
+    :param json_path_definition: The JSONPath definition for each column mapping with a customized
+     column name to extract data from JSON file. For fields under root object, start with "$"; for
+     fields inside the array chosen by jsonNodeReference property, start from the array element.
+     Example: {"Column1": "$.Column1Path", "Column2": "Column2PathInArray"}. Type: object (or
+     Expression with resultType object).
+    :type json_path_definition: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'serializer': {'key': 'serializer', 'type': 'object'},
+        'deserializer': {'key': 'deserializer', 'type': 'object'},
+        'file_pattern': {'key': 'filePattern', 'type': 'str'},
+        'nesting_separator': {'key': 'nestingSeparator', 'type': 'object'},
+        'encoding_name': {'key': 'encodingName', 'type': 'object'},
+        'json_node_reference': {'key': 'jsonNodeReference', 'type': 'object'},
+        'json_path_definition': {'key': 'jsonPathDefinition', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(JsonFormat, self).__init__(**kwargs)
+        self.type = 'JsonFormat'  # type: str
+        self.file_pattern = kwargs.get('file_pattern', None)
+        self.nesting_separator = kwargs.get('nesting_separator', None)
+        self.encoding_name = kwargs.get('encoding_name', None)
+        self.json_node_reference = kwargs.get('json_node_reference', None)
+        self.json_path_definition = kwargs.get('json_path_definition', None)
+
+
+class JsonSink(CopySink):
+    """A copy activity Json sink.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy sink type.Constant filled by server.
+    :type type: str
+    :param write_batch_size: Write batch size. Type: integer (or Expression with resultType
+     integer), minimum: 0.
+    :type write_batch_size: object
+    :param write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type write_batch_timeout: object
+    :param sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
+     integer).
+    :type sink_retry_count: object
+    :param sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type sink_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the sink data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param store_settings: Json store settings.
+    :type store_settings: ~azure.synapse.artifacts.models.StoreWriteSettings
+    :param format_settings: Json format settings.
+    :type format_settings: ~azure.synapse.artifacts.models.JsonWriteSettings
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'write_batch_size': {'key': 'writeBatchSize', 'type': 'object'},
+        'write_batch_timeout': {'key': 'writeBatchTimeout', 'type': 'object'},
+        'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
+        'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'store_settings': {'key': 'storeSettings', 'type': 'StoreWriteSettings'},
+        'format_settings': {'key': 'formatSettings', 'type': 'JsonWriteSettings'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(JsonSink, self).__init__(**kwargs)
+        self.type = 'JsonSink'  # type: str
+        self.store_settings = kwargs.get('store_settings', None)
+        self.format_settings = kwargs.get('format_settings', None)
+
+
+class JsonSource(CopySource):
+    """A copy activity Json source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param store_settings: Json store settings.
+    :type store_settings: ~azure.synapse.artifacts.models.StoreReadSettings
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'store_settings': {'key': 'storeSettings', 'type': 'StoreReadSettings'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(JsonSource, self).__init__(**kwargs)
+        self.type = 'JsonSource'  # type: str
+        self.store_settings = kwargs.get('store_settings', None)
+
+
+class JsonWriteSettings(FormatWriteSettings):
+    """Json write settings.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. The write setting type.Constant filled by server.
+    :type type: str
+    :param file_pattern: File pattern of JSON. This setting controls the way a collection of JSON
+     objects will be treated. The default value is 'setOfObjects'. It is case-sensitive. Possible
+     values include: "setOfObjects", "arrayOfObjects".
+    :type file_pattern: str or ~azure.synapse.artifacts.models.JsonWriteFilePattern
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'file_pattern': {'key': 'filePattern', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(JsonWriteSettings, self).__init__(**kwargs)
+        self.type = 'JsonWriteSettings'  # type: str
+        self.file_pattern = kwargs.get('file_pattern', None)
+
+
+class LibraryRequirements(msrest.serialization.Model):
+    """Library requirements for a Big Data pool powered by Apache Spark.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar time: The last update time of the library requirements file.
+    :vartype time: ~datetime.datetime
+    :param content: The library requirements.
+    :type content: str
+    :param filename: The filename of the library requirements file.
+    :type filename: str
+    """
+
+    _validation = {
+        'time': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'time': {'key': 'time', 'type': 'iso-8601'},
+        'content': {'key': 'content', 'type': 'str'},
+        'filename': {'key': 'filename', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(LibraryRequirements, self).__init__(**kwargs)
+        self.time = None
+        self.content = kwargs.get('content', None)
+        self.filename = kwargs.get('filename', None)
+
+
+class LinkedIntegrationRuntimeType(msrest.serialization.Model):
+    """The base definition of a linked integration runtime.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: LinkedIntegrationRuntimeKeyAuthorization, LinkedIntegrationRuntimeRbacAuthorization.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param authorization_type: Required. The authorization type for integration runtime
+     sharing.Constant filled by server.
+    :type authorization_type: str
+    """
+
+    _validation = {
+        'authorization_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'authorization_type': {'key': 'authorizationType', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'authorization_type': {'Key': 'LinkedIntegrationRuntimeKeyAuthorization', 'RBAC': 'LinkedIntegrationRuntimeRbacAuthorization'}
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(LinkedIntegrationRuntimeType, self).__init__(**kwargs)
+        self.authorization_type = None  # type: Optional[str]
+
+
+class LinkedIntegrationRuntimeKeyAuthorization(LinkedIntegrationRuntimeType):
+    """The key authorization type integration runtime.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param authorization_type: Required. The authorization type for integration runtime
+     sharing.Constant filled by server.
+    :type authorization_type: str
+    :param key: Required. The key used for authorization.
+    :type key: ~azure.synapse.artifacts.models.SecureString
+    """
+
+    _validation = {
+        'authorization_type': {'required': True},
+        'key': {'required': True},
+    }
+
+    _attribute_map = {
+        'authorization_type': {'key': 'authorizationType', 'type': 'str'},
+        'key': {'key': 'key', 'type': 'SecureString'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(LinkedIntegrationRuntimeKeyAuthorization, self).__init__(**kwargs)
+        self.authorization_type = 'Key'  # type: str
+        self.key = kwargs['key']
+
+
+class LinkedIntegrationRuntimeRbacAuthorization(LinkedIntegrationRuntimeType):
+    """The role based access control (RBAC) authorization type integration runtime.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param authorization_type: Required. The authorization type for integration runtime
+     sharing.Constant filled by server.
+    :type authorization_type: str
+    :param resource_id: Required. The resource identifier of the integration runtime to be shared.
+    :type resource_id: str
+    """
+
+    _validation = {
+        'authorization_type': {'required': True},
+        'resource_id': {'required': True},
+    }
+
+    _attribute_map = {
+        'authorization_type': {'key': 'authorizationType', 'type': 'str'},
+        'resource_id': {'key': 'resourceId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(LinkedIntegrationRuntimeRbacAuthorization, self).__init__(**kwargs)
+        self.authorization_type = 'RBAC'  # type: str
+        self.resource_id = kwargs['resource_id']
 
 
 class LinkedServiceDebugResource(SubResourceDebugResource):
@@ -10677,20 +17204,22 @@ class LinkedServiceReference(msrest.serialization.Model):
         self.parameters = kwargs.get('parameters', None)
 
 
-class LinkedServiceResource(SubResource):
+class LinkedServiceResource(AzureEntityResource):
     """Linked service resource type.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: The resource identifier.
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: The resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The resource type.
+    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
+     Microsoft.Storage/storageAccounts.
     :vartype type: str
-    :ivar etag: Etag identifies change in the resource.
+    :ivar etag: Resource Etag.
     :vartype etag: str
     :param properties: Required. Properties of linked service.
     :type properties: ~azure.synapse.artifacts.models.LinkedService
@@ -10948,6 +17477,141 @@ class MagentoObjectDataset(Dataset):
         self.table_name = kwargs.get('table_name', None)
 
 
+class MagentoSource(TabularSource):
+    """A copy activity Magento server source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
+    :param query: A query to retrieve data from source. Type: string (or Expression with resultType
+     string).
+    :type query: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'query': {'key': 'query', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(MagentoSource, self).__init__(**kwargs)
+        self.type = 'MagentoSource'  # type: str
+        self.query = kwargs.get('query', None)
+
+
+class ManagedIdentity(msrest.serialization.Model):
+    """The workspace managed identity.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar principal_id: The principal ID of the workspace managed identity.
+    :vartype principal_id: str
+    :ivar tenant_id: The tenant ID of the workspace managed identity.
+    :vartype tenant_id: str
+    :param type: The type of managed identity for the workspace. Possible values include: "None",
+     "SystemAssigned".
+    :type type: str or ~azure.synapse.artifacts.models.ResourceIdentityType
+    """
+
+    _validation = {
+        'principal_id': {'readonly': True},
+        'tenant_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ManagedIdentity, self).__init__(**kwargs)
+        self.principal_id = None
+        self.tenant_id = None
+        self.type = kwargs.get('type', None)
+
+
+class ManagedIntegrationRuntime(IntegrationRuntime):
+    """Managed integration runtime, including managed elastic and managed dedicated integration runtimes.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Type of integration runtime.Constant filled by server.  Possible values
+     include: "Managed", "SelfHosted".
+    :type type: str or ~azure.synapse.artifacts.models.IntegrationRuntimeType
+    :param description: Integration runtime description.
+    :type description: str
+    :ivar state: Integration runtime state, only valid for managed dedicated integration runtime.
+     Possible values include: "Initial", "Stopped", "Started", "Starting", "Stopping",
+     "NeedRegistration", "Online", "Limited", "Offline", "AccessDenied".
+    :vartype state: str or ~azure.synapse.artifacts.models.IntegrationRuntimeState
+    :param compute_properties: The compute resource for managed integration runtime.
+    :type compute_properties: ~azure.synapse.artifacts.models.IntegrationRuntimeComputeProperties
+    :param ssis_properties: SSIS properties for managed integration runtime.
+    :type ssis_properties: ~azure.synapse.artifacts.models.IntegrationRuntimeSsisProperties
+    """
+
+    _validation = {
+        'type': {'required': True},
+        'state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'state': {'key': 'state', 'type': 'str'},
+        'compute_properties': {'key': 'typeProperties.computeProperties', 'type': 'IntegrationRuntimeComputeProperties'},
+        'ssis_properties': {'key': 'typeProperties.ssisProperties', 'type': 'IntegrationRuntimeSsisProperties'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ManagedIntegrationRuntime, self).__init__(**kwargs)
+        self.type = 'Managed'  # type: str
+        self.state = None
+        self.compute_properties = kwargs.get('compute_properties', None)
+        self.ssis_properties = kwargs.get('ssis_properties', None)
+
+
 class MappingDataFlow(DataFlow):
     """Mapping data flow.
 
@@ -11053,6 +17717,56 @@ class MariaDBLinkedService(LinkedService):
         self.connection_string = kwargs.get('connection_string', None)
         self.pwd = kwargs.get('pwd', None)
         self.encrypted_credential = kwargs.get('encrypted_credential', None)
+
+
+class MariaDBSource(TabularSource):
+    """A copy activity MariaDB server source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
+    :param query: A query to retrieve data from source. Type: string (or Expression with resultType
+     string).
+    :type query: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'query': {'key': 'query', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(MariaDBSource, self).__init__(**kwargs)
+        self.type = 'MariaDBSource'  # type: str
+        self.query = kwargs.get('query', None)
 
 
 class MariaDBTableDataset(Dataset):
@@ -11248,6 +17962,56 @@ class MarketoObjectDataset(Dataset):
         self.table_name = kwargs.get('table_name', None)
 
 
+class MarketoSource(TabularSource):
+    """A copy activity Marketo server source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
+    :param query: A query to retrieve data from source. Type: string (or Expression with resultType
+     string).
+    :type query: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'query': {'key': 'query', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(MarketoSource, self).__init__(**kwargs)
+        self.type = 'MarketoSource'  # type: str
+        self.query = kwargs.get('query', None)
+
+
 class MicrosoftAccessLinkedService(LinkedService):
     """Microsoft Access linked service.
 
@@ -11320,6 +18084,105 @@ class MicrosoftAccessLinkedService(LinkedService):
         self.user_name = kwargs.get('user_name', None)
         self.password = kwargs.get('password', None)
         self.encrypted_credential = kwargs.get('encrypted_credential', None)
+
+
+class MicrosoftAccessSink(CopySink):
+    """A copy activity Microsoft Access sink.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy sink type.Constant filled by server.
+    :type type: str
+    :param write_batch_size: Write batch size. Type: integer (or Expression with resultType
+     integer), minimum: 0.
+    :type write_batch_size: object
+    :param write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type write_batch_timeout: object
+    :param sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
+     integer).
+    :type sink_retry_count: object
+    :param sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type sink_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the sink data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param pre_copy_script: A query to execute before starting the copy. Type: string (or
+     Expression with resultType string).
+    :type pre_copy_script: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'write_batch_size': {'key': 'writeBatchSize', 'type': 'object'},
+        'write_batch_timeout': {'key': 'writeBatchTimeout', 'type': 'object'},
+        'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
+        'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'pre_copy_script': {'key': 'preCopyScript', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(MicrosoftAccessSink, self).__init__(**kwargs)
+        self.type = 'MicrosoftAccessSink'  # type: str
+        self.pre_copy_script = kwargs.get('pre_copy_script', None)
+
+
+class MicrosoftAccessSource(CopySource):
+    """A copy activity source for Microsoft Access.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param query: Database query. Type: string (or Expression with resultType string).
+    :type query: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'query': {'key': 'query', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(MicrosoftAccessSource, self).__init__(**kwargs)
+        self.type = 'MicrosoftAccessSource'  # type: str
+        self.query = kwargs.get('query', None)
 
 
 class MicrosoftAccessTableDataset(Dataset):
@@ -11441,6 +18304,49 @@ class MongoDbCollectionDataset(Dataset):
         self.collection_name = kwargs['collection_name']
 
 
+class MongoDbCursorMethodsProperties(msrest.serialization.Model):
+    """Cursor methods for Mongodb query.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param project: Specifies the fields to return in the documents that match the query filter. To
+     return all fields in the matching documents, omit this parameter. Type: string (or Expression
+     with resultType string).
+    :type project: object
+    :param sort: Specifies the order in which the query returns matching documents. Type: string
+     (or Expression with resultType string). Type: string (or Expression with resultType string).
+    :type sort: object
+    :param skip: Specifies the how many documents skipped and where MongoDB begins returning
+     results. This approach may be useful in implementing paginated results. Type: integer (or
+     Expression with resultType integer).
+    :type skip: object
+    :param limit: Specifies the maximum number of documents the server returns. limit() is
+     analogous to the LIMIT statement in a SQL database. Type: integer (or Expression with
+     resultType integer).
+    :type limit: object
+    """
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'project': {'key': 'project', 'type': 'object'},
+        'sort': {'key': 'sort', 'type': 'object'},
+        'skip': {'key': 'skip', 'type': 'object'},
+        'limit': {'key': 'limit', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(MongoDbCursorMethodsProperties, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.project = kwargs.get('project', None)
+        self.sort = kwargs.get('sort', None)
+        self.skip = kwargs.get('skip', None)
+        self.limit = kwargs.get('limit', None)
+
+
 class MongoDbLinkedService(LinkedService):
     """Linked service for MongoDb data source.
 
@@ -11532,6 +18438,52 @@ class MongoDbLinkedService(LinkedService):
         self.enable_ssl = kwargs.get('enable_ssl', None)
         self.allow_self_signed_server_cert = kwargs.get('allow_self_signed_server_cert', None)
         self.encrypted_credential = kwargs.get('encrypted_credential', None)
+
+
+class MongoDbSource(CopySource):
+    """A copy activity source for a MongoDB database.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param query: Database query. Should be a SQL-92 query expression. Type: string (or Expression
+     with resultType string).
+    :type query: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'query': {'key': 'query', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(MongoDbSource, self).__init__(**kwargs)
+        self.type = 'MongoDbSource'  # type: str
+        self.query = kwargs.get('query', None)
 
 
 class MongoDbV2CollectionDataset(Dataset):
@@ -11647,103 +18599,67 @@ class MongoDbV2LinkedService(LinkedService):
         self.database = kwargs['database']
 
 
-class Trigger(msrest.serialization.Model):
-    """Azure Synapse nested object which contains information about creating pipeline run.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: MultiplePipelineTrigger, RerunTumblingWindowTrigger.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
+class MongoDbV2Source(CopySource):
+    """A copy activity source for a MongoDB database.
 
     All required parameters must be populated in order to send to Azure.
 
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
     :type additional_properties: dict[str, object]
-    :param type: Required. Trigger type.Constant filled by server.
+    :param type: Required. Copy source type.Constant filled by server.
     :type type: str
-    :param description: Trigger description.
-    :type description: str
-    :ivar runtime_state: Indicates if trigger is running or not. Updated when Start/Stop APIs are
-     called on the Trigger. Possible values include: "Started", "Stopped", "Disabled".
-    :vartype runtime_state: str or ~azure.synapse.artifacts.models.TriggerRuntimeState
-    :param annotations: List of tags that can be used for describing the trigger.
-    :type annotations: list[object]
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param filter: Specifies selection filter using query operators. To return all documents in a
+     collection, omit this parameter or pass an empty document ({}). Type: string (or Expression
+     with resultType string).
+    :type filter: object
+    :param cursor_methods: Cursor methods for Mongodb query.
+    :type cursor_methods: ~azure.synapse.artifacts.models.MongoDbCursorMethodsProperties
+    :param batch_size: Specifies the number of documents to return in each batch of the response
+     from MongoDB instance. In most cases, modifying the batch size will not affect the user or the
+     application. This property's main purpose is to avoid hit the limitation of response size.
+     Type: integer (or Expression with resultType integer).
+    :type batch_size: object
+    :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     """
 
     _validation = {
         'type': {'required': True},
-        'runtime_state': {'readonly': True},
     }
 
     _attribute_map = {
         'additional_properties': {'key': '', 'type': '{object}'},
         'type': {'key': 'type', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'runtime_state': {'key': 'runtimeState', 'type': 'str'},
-        'annotations': {'key': 'annotations', 'type': '[object]'},
-    }
-
-    _subtype_map = {
-        'type': {'MultiplePipelineTrigger': 'MultiplePipelineTrigger', 'RerunTumblingWindowTrigger': 'RerunTumblingWindowTrigger'}
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'filter': {'key': 'filter', 'type': 'object'},
+        'cursor_methods': {'key': 'cursorMethods', 'type': 'MongoDbCursorMethodsProperties'},
+        'batch_size': {'key': 'batchSize', 'type': 'object'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
     }
 
     def __init__(
         self,
         **kwargs
     ):
-        super(Trigger, self).__init__(**kwargs)
-        self.additional_properties = kwargs.get('additional_properties', None)
-        self.type = 'Trigger'  # type: str
-        self.description = kwargs.get('description', None)
-        self.runtime_state = None
-        self.annotations = kwargs.get('annotations', None)
-
-
-class MultiplePipelineTrigger(Trigger):
-    """Base class for all triggers that support one to many model for trigger to pipeline.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param additional_properties: Unmatched properties from the message are deserialized to this
-     collection.
-    :type additional_properties: dict[str, object]
-    :param type: Required. Trigger type.Constant filled by server.
-    :type type: str
-    :param description: Trigger description.
-    :type description: str
-    :ivar runtime_state: Indicates if trigger is running or not. Updated when Start/Stop APIs are
-     called on the Trigger. Possible values include: "Started", "Stopped", "Disabled".
-    :vartype runtime_state: str or ~azure.synapse.artifacts.models.TriggerRuntimeState
-    :param annotations: List of tags that can be used for describing the trigger.
-    :type annotations: list[object]
-    :param pipelines: Pipelines that need to be started.
-    :type pipelines: list[~azure.synapse.artifacts.models.TriggerPipelineReference]
-    """
-
-    _validation = {
-        'type': {'required': True},
-        'runtime_state': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'type': {'key': 'type', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'runtime_state': {'key': 'runtimeState', 'type': 'str'},
-        'annotations': {'key': 'annotations', 'type': '[object]'},
-        'pipelines': {'key': 'pipelines', 'type': '[TriggerPipelineReference]'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(MultiplePipelineTrigger, self).__init__(**kwargs)
-        self.type = 'MultiplePipelineTrigger'  # type: str
-        self.pipelines = kwargs.get('pipelines', None)
+        super(MongoDbV2Source, self).__init__(**kwargs)
+        self.type = 'MongoDbV2Source'  # type: str
+        self.filter = kwargs.get('filter', None)
+        self.cursor_methods = kwargs.get('cursor_methods', None)
+        self.batch_size = kwargs.get('batch_size', None)
+        self.query_timeout = kwargs.get('query_timeout', None)
 
 
 class MySqlLinkedService(LinkedService):
@@ -11800,6 +18716,55 @@ class MySqlLinkedService(LinkedService):
         self.connection_string = kwargs['connection_string']
         self.password = kwargs.get('password', None)
         self.encrypted_credential = kwargs.get('encrypted_credential', None)
+
+
+class MySqlSource(TabularSource):
+    """A copy activity source for MySQL databases.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
+    :param query: Database query. Type: string (or Expression with resultType string).
+    :type query: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'query': {'key': 'query', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(MySqlSource, self).__init__(**kwargs)
+        self.type = 'MySqlSource'  # type: str
+        self.query = kwargs.get('query', None)
 
 
 class MySqlTableDataset(Dataset):
@@ -11914,6 +18879,97 @@ class NetezzaLinkedService(LinkedService):
         self.connection_string = kwargs.get('connection_string', None)
         self.pwd = kwargs.get('pwd', None)
         self.encrypted_credential = kwargs.get('encrypted_credential', None)
+
+
+class NetezzaPartitionSettings(msrest.serialization.Model):
+    """The settings that will be leveraged for Netezza source partitioning.
+
+    :param partition_column_name: The name of the column in integer type that will be used for
+     proceeding range partitioning. Type: string (or Expression with resultType string).
+    :type partition_column_name: object
+    :param partition_upper_bound: The maximum value of column specified in partitionColumnName that
+     will be used for proceeding range partitioning. Type: string (or Expression with resultType
+     string).
+    :type partition_upper_bound: object
+    :param partition_lower_bound: The minimum value of column specified in partitionColumnName that
+     will be used for proceeding range partitioning. Type: string (or Expression with resultType
+     string).
+    :type partition_lower_bound: object
+    """
+
+    _attribute_map = {
+        'partition_column_name': {'key': 'partitionColumnName', 'type': 'object'},
+        'partition_upper_bound': {'key': 'partitionUpperBound', 'type': 'object'},
+        'partition_lower_bound': {'key': 'partitionLowerBound', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(NetezzaPartitionSettings, self).__init__(**kwargs)
+        self.partition_column_name = kwargs.get('partition_column_name', None)
+        self.partition_upper_bound = kwargs.get('partition_upper_bound', None)
+        self.partition_lower_bound = kwargs.get('partition_lower_bound', None)
+
+
+class NetezzaSource(TabularSource):
+    """A copy activity Netezza source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
+    :param query: A query to retrieve data from source. Type: string (or Expression with resultType
+     string).
+    :type query: object
+    :param partition_option: The partition mechanism that will be used for Netezza read in
+     parallel. Possible values include: "None", "DataSlice", "DynamicRange".
+    :type partition_option: str or ~azure.synapse.artifacts.models.NetezzaPartitionOption
+    :param partition_settings: The settings that will be leveraged for Netezza source partitioning.
+    :type partition_settings: ~azure.synapse.artifacts.models.NetezzaPartitionSettings
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'query': {'key': 'query', 'type': 'object'},
+        'partition_option': {'key': 'partitionOption', 'type': 'str'},
+        'partition_settings': {'key': 'partitionSettings', 'type': 'NetezzaPartitionSettings'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(NetezzaSource, self).__init__(**kwargs)
+        self.type = 'NetezzaSource'  # type: str
+        self.query = kwargs.get('query', None)
+        self.partition_option = kwargs.get('partition_option', None)
+        self.partition_settings = kwargs.get('partition_settings', None)
 
 
 class NetezzaTableDataset(Dataset):
@@ -12265,20 +19321,22 @@ class NotebookMetadata(msrest.serialization.Model):
         self.language_info = kwargs.get('language_info', None)
 
 
-class NotebookResource(SubResource):
+class NotebookResource(AzureEntityResource):
     """Notebook resource type.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: The resource identifier.
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: The resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The resource type.
+    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
+     Microsoft.Storage/storageAccounts.
     :vartype type: str
-    :ivar etag: Etag identifies change in the resource.
+    :ivar etag: Resource Etag.
     :vartype etag: str
     :param properties: Required. Properties of Notebook.
     :type properties: ~azure.synapse.artifacts.models.Notebook
@@ -12517,6 +19575,52 @@ class ODataResourceDataset(Dataset):
         self.path = kwargs.get('path', None)
 
 
+class ODataSource(CopySource):
+    """A copy activity source for OData source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param query: OData query. For example, "$top=1". Type: string (or Expression with resultType
+     string).
+    :type query: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'query': {'key': 'query', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ODataSource, self).__init__(**kwargs)
+        self.type = 'ODataSource'  # type: str
+        self.query = kwargs.get('query', None)
+
+
 class OdbcLinkedService(LinkedService):
     """Open Database Connectivity (ODBC) linked service.
 
@@ -12588,6 +19692,109 @@ class OdbcLinkedService(LinkedService):
         self.user_name = kwargs.get('user_name', None)
         self.password = kwargs.get('password', None)
         self.encrypted_credential = kwargs.get('encrypted_credential', None)
+
+
+class OdbcSink(CopySink):
+    """A copy activity ODBC sink.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy sink type.Constant filled by server.
+    :type type: str
+    :param write_batch_size: Write batch size. Type: integer (or Expression with resultType
+     integer), minimum: 0.
+    :type write_batch_size: object
+    :param write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type write_batch_timeout: object
+    :param sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
+     integer).
+    :type sink_retry_count: object
+    :param sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type sink_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the sink data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param pre_copy_script: A query to execute before starting the copy. Type: string (or
+     Expression with resultType string).
+    :type pre_copy_script: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'write_batch_size': {'key': 'writeBatchSize', 'type': 'object'},
+        'write_batch_timeout': {'key': 'writeBatchTimeout', 'type': 'object'},
+        'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
+        'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'pre_copy_script': {'key': 'preCopyScript', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(OdbcSink, self).__init__(**kwargs)
+        self.type = 'OdbcSink'  # type: str
+        self.pre_copy_script = kwargs.get('pre_copy_script', None)
+
+
+class OdbcSource(TabularSource):
+    """A copy activity source for ODBC databases.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
+    :param query: Database query. Type: string (or Expression with resultType string).
+    :type query: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'query': {'key': 'query', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(OdbcSource, self).__init__(**kwargs)
+        self.type = 'OdbcSource'  # type: str
+        self.query = kwargs.get('query', None)
 
 
 class OdbcTableDataset(Dataset):
@@ -12783,6 +19990,78 @@ class Office365LinkedService(LinkedService):
         self.encrypted_credential = kwargs.get('encrypted_credential', None)
 
 
+class Office365Source(CopySource):
+    """A copy activity source for an Office 365 service.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param allowed_groups: The groups containing all the users. Type: array of strings (or
+     Expression with resultType array of strings).
+    :type allowed_groups: object
+    :param user_scope_filter_uri: The user scope uri. Type: string (or Expression with resultType
+     string).
+    :type user_scope_filter_uri: object
+    :param date_filter_column: The Column to apply the :code:`<paramref name="StartTime"/>` and
+     :code:`<paramref name="EndTime"/>`. Type: string (or Expression with resultType string).
+    :type date_filter_column: object
+    :param start_time: Start time of the requested range for this dataset. Type: string (or
+     Expression with resultType string).
+    :type start_time: object
+    :param end_time: End time of the requested range for this dataset. Type: string (or Expression
+     with resultType string).
+    :type end_time: object
+    :param output_columns: The columns to be read out from the Office 365 table. Type: array of
+     objects (or Expression with resultType array of objects). Example: [ { "name": "Id" }, {
+     "name": "CreatedDateTime" } ].
+    :type output_columns: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'allowed_groups': {'key': 'allowedGroups', 'type': 'object'},
+        'user_scope_filter_uri': {'key': 'userScopeFilterUri', 'type': 'object'},
+        'date_filter_column': {'key': 'dateFilterColumn', 'type': 'object'},
+        'start_time': {'key': 'startTime', 'type': 'object'},
+        'end_time': {'key': 'endTime', 'type': 'object'},
+        'output_columns': {'key': 'outputColumns', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(Office365Source, self).__init__(**kwargs)
+        self.type = 'Office365Source'  # type: str
+        self.allowed_groups = kwargs.get('allowed_groups', None)
+        self.user_scope_filter_uri = kwargs.get('user_scope_filter_uri', None)
+        self.date_filter_column = kwargs.get('date_filter_column', None)
+        self.start_time = kwargs.get('start_time', None)
+        self.end_time = kwargs.get('end_time', None)
+        self.output_columns = kwargs.get('output_columns', None)
+
+
 class OracleLinkedService(LinkedService):
     """Oracle database.
 
@@ -12838,6 +20117,42 @@ class OracleLinkedService(LinkedService):
         self.connection_string = kwargs['connection_string']
         self.password = kwargs.get('password', None)
         self.encrypted_credential = kwargs.get('encrypted_credential', None)
+
+
+class OraclePartitionSettings(msrest.serialization.Model):
+    """The settings that will be leveraged for Oracle source partitioning.
+
+    :param partition_names: Names of the physical partitions of Oracle table.
+    :type partition_names: object
+    :param partition_column_name: The name of the column in integer type that will be used for
+     proceeding range partitioning. Type: string (or Expression with resultType string).
+    :type partition_column_name: object
+    :param partition_upper_bound: The maximum value of column specified in partitionColumnName that
+     will be used for proceeding range partitioning. Type: string (or Expression with resultType
+     string).
+    :type partition_upper_bound: object
+    :param partition_lower_bound: The minimum value of column specified in partitionColumnName that
+     will be used for proceeding range partitioning. Type: string (or Expression with resultType
+     string).
+    :type partition_lower_bound: object
+    """
+
+    _attribute_map = {
+        'partition_names': {'key': 'partitionNames', 'type': 'object'},
+        'partition_column_name': {'key': 'partitionColumnName', 'type': 'object'},
+        'partition_upper_bound': {'key': 'partitionUpperBound', 'type': 'object'},
+        'partition_lower_bound': {'key': 'partitionLowerBound', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(OraclePartitionSettings, self).__init__(**kwargs)
+        self.partition_names = kwargs.get('partition_names', None)
+        self.partition_column_name = kwargs.get('partition_column_name', None)
+        self.partition_upper_bound = kwargs.get('partition_upper_bound', None)
+        self.partition_lower_bound = kwargs.get('partition_lower_bound', None)
 
 
 class OracleServiceCloudLinkedService(LinkedService):
@@ -12978,6 +20293,170 @@ class OracleServiceCloudObjectDataset(Dataset):
         self.table_name = kwargs.get('table_name', None)
 
 
+class OracleServiceCloudSource(TabularSource):
+    """A copy activity Oracle Service Cloud source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
+    :param query: A query to retrieve data from source. Type: string (or Expression with resultType
+     string).
+    :type query: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'query': {'key': 'query', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(OracleServiceCloudSource, self).__init__(**kwargs)
+        self.type = 'OracleServiceCloudSource'  # type: str
+        self.query = kwargs.get('query', None)
+
+
+class OracleSink(CopySink):
+    """A copy activity Oracle sink.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy sink type.Constant filled by server.
+    :type type: str
+    :param write_batch_size: Write batch size. Type: integer (or Expression with resultType
+     integer), minimum: 0.
+    :type write_batch_size: object
+    :param write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type write_batch_timeout: object
+    :param sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
+     integer).
+    :type sink_retry_count: object
+    :param sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type sink_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the sink data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param pre_copy_script: SQL pre-copy script. Type: string (or Expression with resultType
+     string).
+    :type pre_copy_script: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'write_batch_size': {'key': 'writeBatchSize', 'type': 'object'},
+        'write_batch_timeout': {'key': 'writeBatchTimeout', 'type': 'object'},
+        'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
+        'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'pre_copy_script': {'key': 'preCopyScript', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(OracleSink, self).__init__(**kwargs)
+        self.type = 'OracleSink'  # type: str
+        self.pre_copy_script = kwargs.get('pre_copy_script', None)
+
+
+class OracleSource(CopySource):
+    """A copy activity Oracle source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param oracle_reader_query: Oracle reader query. Type: string (or Expression with resultType
+     string).
+    :type oracle_reader_query: object
+    :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
+    :param partition_option: The partition mechanism that will be used for Oracle read in parallel.
+     Possible values include: "None", "PhysicalPartitionsOfTable", "DynamicRange".
+    :type partition_option: str or ~azure.synapse.artifacts.models.OraclePartitionOption
+    :param partition_settings: The settings that will be leveraged for Oracle source partitioning.
+    :type partition_settings: ~azure.synapse.artifacts.models.OraclePartitionSettings
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'oracle_reader_query': {'key': 'oracleReaderQuery', 'type': 'object'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'partition_option': {'key': 'partitionOption', 'type': 'str'},
+        'partition_settings': {'key': 'partitionSettings', 'type': 'OraclePartitionSettings'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(OracleSource, self).__init__(**kwargs)
+        self.type = 'OracleSource'  # type: str
+        self.oracle_reader_query = kwargs.get('oracle_reader_query', None)
+        self.query_timeout = kwargs.get('query_timeout', None)
+        self.partition_option = kwargs.get('partition_option', None)
+        self.partition_settings = kwargs.get('partition_settings', None)
+
+
 class OracleTableDataset(Dataset):
     """The on-premises Oracle database dataset.
 
@@ -13109,6 +20588,139 @@ class OrcDataset(Dataset):
         self.orc_compression_codec = kwargs.get('orc_compression_codec', None)
 
 
+class OrcFormat(DatasetStorageFormat):
+    """The data stored in Optimized Row Columnar (ORC) format.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Type of dataset storage format.Constant filled by server.
+    :type type: str
+    :param serializer: Serializer. Type: string (or Expression with resultType string).
+    :type serializer: object
+    :param deserializer: Deserializer. Type: string (or Expression with resultType string).
+    :type deserializer: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'serializer': {'key': 'serializer', 'type': 'object'},
+        'deserializer': {'key': 'deserializer', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(OrcFormat, self).__init__(**kwargs)
+        self.type = 'OrcFormat'  # type: str
+
+
+class OrcSink(CopySink):
+    """A copy activity ORC sink.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy sink type.Constant filled by server.
+    :type type: str
+    :param write_batch_size: Write batch size. Type: integer (or Expression with resultType
+     integer), minimum: 0.
+    :type write_batch_size: object
+    :param write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type write_batch_timeout: object
+    :param sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
+     integer).
+    :type sink_retry_count: object
+    :param sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type sink_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the sink data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param store_settings: ORC store settings.
+    :type store_settings: ~azure.synapse.artifacts.models.StoreWriteSettings
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'write_batch_size': {'key': 'writeBatchSize', 'type': 'object'},
+        'write_batch_timeout': {'key': 'writeBatchTimeout', 'type': 'object'},
+        'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
+        'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'store_settings': {'key': 'storeSettings', 'type': 'StoreWriteSettings'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(OrcSink, self).__init__(**kwargs)
+        self.type = 'OrcSink'  # type: str
+        self.store_settings = kwargs.get('store_settings', None)
+
+
+class OrcSource(CopySource):
+    """A copy activity ORC source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param store_settings: ORC store settings.
+    :type store_settings: ~azure.synapse.artifacts.models.StoreReadSettings
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'store_settings': {'key': 'storeSettings', 'type': 'StoreReadSettings'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(OrcSource, self).__init__(**kwargs)
+        self.type = 'OrcSource'  # type: str
+        self.store_settings = kwargs.get('store_settings', None)
+
+
 class ParameterSpecification(msrest.serialization.Model):
     """Definition of a single parameter for an entity.
 
@@ -13199,6 +20811,139 @@ class ParquetDataset(Dataset):
         self.type = 'Parquet'  # type: str
         self.location = kwargs.get('location', None)
         self.compression_codec = kwargs.get('compression_codec', None)
+
+
+class ParquetFormat(DatasetStorageFormat):
+    """The data stored in Parquet format.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Type of dataset storage format.Constant filled by server.
+    :type type: str
+    :param serializer: Serializer. Type: string (or Expression with resultType string).
+    :type serializer: object
+    :param deserializer: Deserializer. Type: string (or Expression with resultType string).
+    :type deserializer: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'serializer': {'key': 'serializer', 'type': 'object'},
+        'deserializer': {'key': 'deserializer', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ParquetFormat, self).__init__(**kwargs)
+        self.type = 'ParquetFormat'  # type: str
+
+
+class ParquetSink(CopySink):
+    """A copy activity Parquet sink.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy sink type.Constant filled by server.
+    :type type: str
+    :param write_batch_size: Write batch size. Type: integer (or Expression with resultType
+     integer), minimum: 0.
+    :type write_batch_size: object
+    :param write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type write_batch_timeout: object
+    :param sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
+     integer).
+    :type sink_retry_count: object
+    :param sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type sink_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the sink data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param store_settings: Parquet store settings.
+    :type store_settings: ~azure.synapse.artifacts.models.StoreWriteSettings
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'write_batch_size': {'key': 'writeBatchSize', 'type': 'object'},
+        'write_batch_timeout': {'key': 'writeBatchTimeout', 'type': 'object'},
+        'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
+        'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'store_settings': {'key': 'storeSettings', 'type': 'StoreWriteSettings'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ParquetSink, self).__init__(**kwargs)
+        self.type = 'ParquetSink'  # type: str
+        self.store_settings = kwargs.get('store_settings', None)
+
+
+class ParquetSource(CopySource):
+    """A copy activity Parquet source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param store_settings: Parquet store settings.
+    :type store_settings: ~azure.synapse.artifacts.models.StoreReadSettings
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'store_settings': {'key': 'storeSettings', 'type': 'StoreReadSettings'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ParquetSource, self).__init__(**kwargs)
+        self.type = 'ParquetSource'  # type: str
+        self.store_settings = kwargs.get('store_settings', None)
 
 
 class PaypalLinkedService(LinkedService):
@@ -13334,6 +21079,56 @@ class PaypalObjectDataset(Dataset):
         super(PaypalObjectDataset, self).__init__(**kwargs)
         self.type = 'PaypalObject'  # type: str
         self.table_name = kwargs.get('table_name', None)
+
+
+class PaypalSource(TabularSource):
+    """A copy activity Paypal Service source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
+    :param query: A query to retrieve data from source. Type: string (or Expression with resultType
+     string).
+    :type query: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'query': {'key': 'query', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(PaypalSource, self).__init__(**kwargs)
+        self.type = 'PaypalSource'  # type: str
+        self.query = kwargs.get('query', None)
 
 
 class PhoenixLinkedService(LinkedService):
@@ -13510,6 +21305,56 @@ class PhoenixObjectDataset(Dataset):
         self.schema_type_properties_schema = kwargs.get('schema_type_properties_schema', None)
 
 
+class PhoenixSource(TabularSource):
+    """A copy activity Phoenix server source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
+    :param query: A query to retrieve data from source. Type: string (or Expression with resultType
+     string).
+    :type query: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'query': {'key': 'query', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(PhoenixSource, self).__init__(**kwargs)
+        self.type = 'PhoenixSource'  # type: str
+        self.query = kwargs.get('query', None)
+
+
 class PipelineFolder(msrest.serialization.Model):
     """The folder that this Pipeline is in. If not specified, Pipeline will appear at the root level.
 
@@ -13592,18 +21437,20 @@ class PipelineReference(msrest.serialization.Model):
         self.name = kwargs.get('name', None)
 
 
-class PipelineResource(SubResource):
+class PipelineResource(AzureEntityResource):
     """Pipeline resource type.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: The resource identifier.
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: The resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The resource type.
+    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
+     Microsoft.Storage/storageAccounts.
     :vartype type: str
-    :ivar etag: Etag identifies change in the resource.
+    :ivar etag: Resource Etag.
     :vartype etag: str
     :param additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -13818,6 +21665,47 @@ class PipelineRunsQueryResponse(msrest.serialization.Model):
         self.continuation_token = kwargs.get('continuation_token', None)
 
 
+class PolybaseSettings(msrest.serialization.Model):
+    """PolyBase settings.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param reject_type: Reject type. Possible values include: "value", "percentage".
+    :type reject_type: str or ~azure.synapse.artifacts.models.PolybaseSettingsRejectType
+    :param reject_value: Specifies the value or the percentage of rows that can be rejected before
+     the query fails. Type: number (or Expression with resultType number), minimum: 0.
+    :type reject_value: object
+    :param reject_sample_value: Determines the number of rows to attempt to retrieve before the
+     PolyBase recalculates the percentage of rejected rows. Type: integer (or Expression with
+     resultType integer), minimum: 0.
+    :type reject_sample_value: object
+    :param use_type_default: Specifies how to handle missing values in delimited text files when
+     PolyBase retrieves data from the text file. Type: boolean (or Expression with resultType
+     boolean).
+    :type use_type_default: object
+    """
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'reject_type': {'key': 'rejectType', 'type': 'str'},
+        'reject_value': {'key': 'rejectValue', 'type': 'object'},
+        'reject_sample_value': {'key': 'rejectSampleValue', 'type': 'object'},
+        'use_type_default': {'key': 'useTypeDefault', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(PolybaseSettings, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.reject_type = kwargs.get('reject_type', None)
+        self.reject_value = kwargs.get('reject_value', None)
+        self.reject_sample_value = kwargs.get('reject_sample_value', None)
+        self.use_type_default = kwargs.get('use_type_default', None)
+
+
 class PostgreSqlLinkedService(LinkedService):
     """Linked service for PostgreSQL data source.
 
@@ -13872,6 +21760,55 @@ class PostgreSqlLinkedService(LinkedService):
         self.connection_string = kwargs['connection_string']
         self.password = kwargs.get('password', None)
         self.encrypted_credential = kwargs.get('encrypted_credential', None)
+
+
+class PostgreSqlSource(TabularSource):
+    """A copy activity source for PostgreSQL databases.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
+    :param query: Database query. Type: string (or Expression with resultType string).
+    :type query: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'query': {'key': 'query', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(PostgreSqlSource, self).__init__(**kwargs)
+        self.type = 'PostgreSqlSource'  # type: str
+        self.query = kwargs.get('query', None)
 
 
 class PostgreSqlTableDataset(Dataset):
@@ -14124,6 +22061,198 @@ class PrestoObjectDataset(Dataset):
         self.schema_type_properties_schema = kwargs.get('schema_type_properties_schema', None)
 
 
+class PrestoSource(TabularSource):
+    """A copy activity Presto server source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
+    :param query: A query to retrieve data from source. Type: string (or Expression with resultType
+     string).
+    :type query: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'query': {'key': 'query', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(PrestoSource, self).__init__(**kwargs)
+        self.type = 'PrestoSource'  # type: str
+        self.query = kwargs.get('query', None)
+
+
+class PrivateEndpoint(msrest.serialization.Model):
+    """Private endpoint details.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource id of the private endpoint.
+    :vartype id: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(PrivateEndpoint, self).__init__(**kwargs)
+        self.id = None
+
+
+class PrivateEndpointConnection(Resource):
+    """A private endpoint connection.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
+     Microsoft.Storage/storageAccounts.
+    :vartype type: str
+    :param private_endpoint: The private endpoint which the connection belongs to.
+    :type private_endpoint: ~azure.synapse.artifacts.models.PrivateEndpoint
+    :param private_link_service_connection_state: Connection state of the private endpoint
+     connection.
+    :type private_link_service_connection_state:
+     ~azure.synapse.artifacts.models.PrivateLinkServiceConnectionState
+    :ivar provisioning_state: Provisioning state of the private endpoint connection.
+    :vartype provisioning_state: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'private_endpoint': {'key': 'properties.privateEndpoint', 'type': 'PrivateEndpoint'},
+        'private_link_service_connection_state': {'key': 'properties.privateLinkServiceConnectionState', 'type': 'PrivateLinkServiceConnectionState'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(PrivateEndpointConnection, self).__init__(**kwargs)
+        self.private_endpoint = kwargs.get('private_endpoint', None)
+        self.private_link_service_connection_state = kwargs.get('private_link_service_connection_state', None)
+        self.provisioning_state = None
+
+
+class PrivateLinkServiceConnectionState(msrest.serialization.Model):
+    """Connection state details of the private endpoint.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :param status: The private link service connection status. Possible values include: "Approved",
+     "Pending", "Rejected", "Disconnected".
+    :type status: str or ~azure.synapse.artifacts.models.PrivateLinkServiceConnectionStateStatus
+    :param description: The private link service connection description.
+    :type description: str
+    :ivar actions_required: The actions required for private link service connection.
+    :vartype actions_required: str
+    """
+
+    _validation = {
+        'actions_required': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'actions_required': {'key': 'actionsRequired', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(PrivateLinkServiceConnectionState, self).__init__(**kwargs)
+        self.status = kwargs.get('status', None)
+        self.description = kwargs.get('description', None)
+        self.actions_required = None
+
+
+class ProxyResource(Resource):
+    """The resource model definition for a ARM proxy resource. It will have everything other than required location and tags.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
+     Microsoft.Storage/storageAccounts.
+    :vartype type: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ProxyResource, self).__init__(**kwargs)
+
+
 class QueryDataFlowDebugSessionsResponse(msrest.serialization.Model):
     """A list of active debug sessions.
 
@@ -14288,6 +22417,125 @@ class QuickBooksObjectDataset(Dataset):
         self.table_name = kwargs.get('table_name', None)
 
 
+class QuickBooksSource(TabularSource):
+    """A copy activity QuickBooks server source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
+    :param query: A query to retrieve data from source. Type: string (or Expression with resultType
+     string).
+    :type query: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'query': {'key': 'query', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(QuickBooksSource, self).__init__(**kwargs)
+        self.type = 'QuickBooksSource'  # type: str
+        self.query = kwargs.get('query', None)
+
+
+class RecurrenceSchedule(msrest.serialization.Model):
+    """The recurrence schedule.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param minutes: The minutes.
+    :type minutes: list[int]
+    :param hours: The hours.
+    :type hours: list[int]
+    :param week_days: The days of the week.
+    :type week_days: list[str or ~azure.synapse.artifacts.models.DayOfWeek]
+    :param month_days: The month days.
+    :type month_days: list[int]
+    :param monthly_occurrences: The monthly occurrences.
+    :type monthly_occurrences: list[~azure.synapse.artifacts.models.RecurrenceScheduleOccurrence]
+    """
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'minutes': {'key': 'minutes', 'type': '[int]'},
+        'hours': {'key': 'hours', 'type': '[int]'},
+        'week_days': {'key': 'weekDays', 'type': '[str]'},
+        'month_days': {'key': 'monthDays', 'type': '[int]'},
+        'monthly_occurrences': {'key': 'monthlyOccurrences', 'type': '[RecurrenceScheduleOccurrence]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(RecurrenceSchedule, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.minutes = kwargs.get('minutes', None)
+        self.hours = kwargs.get('hours', None)
+        self.week_days = kwargs.get('week_days', None)
+        self.month_days = kwargs.get('month_days', None)
+        self.monthly_occurrences = kwargs.get('monthly_occurrences', None)
+
+
+class RecurrenceScheduleOccurrence(msrest.serialization.Model):
+    """The recurrence schedule occurrence.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param day: The day of the week. Possible values include: "Sunday", "Monday", "Tuesday",
+     "Wednesday", "Thursday", "Friday", "Saturday".
+    :type day: str or ~azure.synapse.artifacts.models.DayOfWeek
+    :param occurrence: The occurrence.
+    :type occurrence: int
+    """
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'day': {'key': 'day', 'type': 'str'},
+        'occurrence': {'key': 'occurrence', 'type': 'int'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(RecurrenceScheduleOccurrence, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.day = kwargs.get('day', None)
+        self.occurrence = kwargs.get('occurrence', None)
+
+
 class RedirectIncompatibleRowSettings(msrest.serialization.Model):
     """Redirect incompatible row settings.
 
@@ -14324,6 +22572,84 @@ class RedirectIncompatibleRowSettings(msrest.serialization.Model):
         self.additional_properties = kwargs.get('additional_properties', None)
         self.linked_service_name = kwargs['linked_service_name']
         self.path = kwargs.get('path', None)
+
+
+class RedshiftUnloadSettings(msrest.serialization.Model):
+    """The Amazon S3 settings needed for the interim Amazon S3 when copying from Amazon Redshift with unload. With this, data from Amazon Redshift source will be unloaded into S3 first and then copied into the targeted sink from the interim S3.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param s3_linked_service_name: Required. The name of the Amazon S3 linked service which will be
+     used for the unload operation when copying from the Amazon Redshift source.
+    :type s3_linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
+    :param bucket_name: Required. The bucket of the interim Amazon S3 which will be used to store
+     the unloaded data from Amazon Redshift source. The bucket must be in the same region as the
+     Amazon Redshift source. Type: string (or Expression with resultType string).
+    :type bucket_name: object
+    """
+
+    _validation = {
+        's3_linked_service_name': {'required': True},
+        'bucket_name': {'required': True},
+    }
+
+    _attribute_map = {
+        's3_linked_service_name': {'key': 's3LinkedServiceName', 'type': 'LinkedServiceReference'},
+        'bucket_name': {'key': 'bucketName', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(RedshiftUnloadSettings, self).__init__(**kwargs)
+        self.s3_linked_service_name = kwargs['s3_linked_service_name']
+        self.bucket_name = kwargs['bucket_name']
+
+
+class RelationalSource(CopySource):
+    """A copy activity source for various relational databases.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param query: Database query. Type: string (or Expression with resultType string).
+    :type query: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'query': {'key': 'query', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(RelationalSource, self).__init__(**kwargs)
+        self.type = 'RelationalSource'  # type: str
+        self.query = kwargs.get('query', None)
 
 
 class RelationalTableDataset(Dataset):
@@ -14418,20 +22744,22 @@ class RerunTriggerListResponse(msrest.serialization.Model):
         self.next_link = None
 
 
-class RerunTriggerResource(SubResource):
+class RerunTriggerResource(AzureEntityResource):
     """RerunTrigger resource type.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: The resource identifier.
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: The resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The resource type.
+    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
+     Microsoft.Storage/storageAccounts.
     :vartype type: str
-    :ivar etag: Etag identifies change in the resource.
+    :ivar etag: Resource Etag.
     :vartype etag: str
     :param properties: Required. Properties of the rerun trigger.
     :type properties: ~azure.synapse.artifacts.models.RerunTumblingWindowTrigger
@@ -14561,54 +22889,6 @@ class RerunTumblingWindowTriggerActionParameters(msrest.serialization.Model):
         self.start_time = kwargs['start_time']
         self.end_time = kwargs['end_time']
         self.max_concurrency = kwargs['max_concurrency']
-
-
-class Resource(msrest.serialization.Model):
-    """Azure Synapse top-level resource.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: The resource identifier.
-    :vartype id: str
-    :ivar name: The resource name.
-    :vartype name: str
-    :ivar type: The resource type.
-    :vartype type: str
-    :param location: The resource location.
-    :type location: str
-    :param tags: A set of tags. The resource tags.
-    :type tags: dict[str, str]
-    :ivar e_tag: Etag identifies change in the resource.
-    :vartype e_tag: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'e_tag': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'e_tag': {'key': 'eTag', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(Resource, self).__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.location = kwargs.get('location', None)
-        self.tags = kwargs.get('tags', None)
-        self.e_tag = None
 
 
 class ResponsysLinkedService(LinkedService):
@@ -14747,6 +23027,56 @@ class ResponsysObjectDataset(Dataset):
         super(ResponsysObjectDataset, self).__init__(**kwargs)
         self.type = 'ResponsysObject'  # type: str
         self.table_name = kwargs.get('table_name', None)
+
+
+class ResponsysSource(TabularSource):
+    """A copy activity Responsys source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
+    :param query: A query to retrieve data from source. Type: string (or Expression with resultType
+     string).
+    :type query: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'query': {'key': 'query', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ResponsysSource, self).__init__(**kwargs)
+        self.type = 'ResponsysSource'  # type: str
+        self.query = kwargs.get('query', None)
 
 
 class RestResourceDataset(Dataset):
@@ -14918,6 +23248,106 @@ class RestServiceLinkedService(LinkedService):
         self.tenant = kwargs.get('tenant', None)
         self.aad_resource_id = kwargs.get('aad_resource_id', None)
         self.encrypted_credential = kwargs.get('encrypted_credential', None)
+
+
+class RestSource(CopySource):
+    """A copy activity Rest service source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param request_method: The HTTP method used to call the RESTful API. The default is GET. Type:
+     string (or Expression with resultType string).
+    :type request_method: object
+    :param request_body: The HTTP request body to the RESTful API if requestMethod is POST. Type:
+     string (or Expression with resultType string).
+    :type request_body: object
+    :param additional_headers: The additional HTTP headers in the request to the RESTful API. Type:
+     string (or Expression with resultType string).
+    :type additional_headers: object
+    :param pagination_rules: The pagination rules to compose next page requests. Type: string (or
+     Expression with resultType string).
+    :type pagination_rules: object
+    :param http_request_timeout: The timeout (TimeSpan) to get an HTTP response. It is the timeout
+     to get a response, not the timeout to read response data. Default value: 00:01:40. Type: string
+     (or Expression with resultType string), pattern:
+     ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type http_request_timeout: object
+    :param request_interval: The time to await before sending next page request.
+    :type request_interval: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'request_method': {'key': 'requestMethod', 'type': 'object'},
+        'request_body': {'key': 'requestBody', 'type': 'object'},
+        'additional_headers': {'key': 'additionalHeaders', 'type': 'object'},
+        'pagination_rules': {'key': 'paginationRules', 'type': 'object'},
+        'http_request_timeout': {'key': 'httpRequestTimeout', 'type': 'object'},
+        'request_interval': {'key': 'requestInterval', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(RestSource, self).__init__(**kwargs)
+        self.type = 'RestSource'  # type: str
+        self.request_method = kwargs.get('request_method', None)
+        self.request_body = kwargs.get('request_body', None)
+        self.additional_headers = kwargs.get('additional_headers', None)
+        self.pagination_rules = kwargs.get('pagination_rules', None)
+        self.http_request_timeout = kwargs.get('http_request_timeout', None)
+        self.request_interval = kwargs.get('request_interval', None)
+
+
+class RetryPolicy(msrest.serialization.Model):
+    """Execution policy for an activity.
+
+    :param count: Maximum ordinary retry attempts. Default is 0. Type: integer (or Expression with
+     resultType integer), minimum: 0.
+    :type count: object
+    :param interval_in_seconds: Interval between retries in seconds. Default is 30.
+    :type interval_in_seconds: int
+    """
+
+    _validation = {
+        'interval_in_seconds': {'maximum': 86400, 'minimum': 30},
+    }
+
+    _attribute_map = {
+        'count': {'key': 'count', 'type': 'object'},
+        'interval_in_seconds': {'key': 'intervalInSeconds', 'type': 'int'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(RetryPolicy, self).__init__(**kwargs)
+        self.count = kwargs.get('count', None)
+        self.interval_in_seconds = kwargs.get('interval_in_seconds', None)
 
 
 class RunFilterParameters(msrest.serialization.Model):
@@ -15241,6 +23671,56 @@ class SalesforceMarketingCloudObjectDataset(Dataset):
         self.table_name = kwargs.get('table_name', None)
 
 
+class SalesforceMarketingCloudSource(TabularSource):
+    """A copy activity Salesforce Marketing Cloud source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
+    :param query: A query to retrieve data from source. Type: string (or Expression with resultType
+     string).
+    :type query: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'query': {'key': 'query', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SalesforceMarketingCloudSource, self).__init__(**kwargs)
+        self.type = 'SalesforceMarketingCloudSource'  # type: str
+        self.query = kwargs.get('query', None)
+
+
 class SalesforceObjectDataset(Dataset):
     """The Salesforce object dataset.
 
@@ -15431,6 +23911,246 @@ class SalesforceServiceCloudObjectDataset(Dataset):
         self.object_api_name = kwargs.get('object_api_name', None)
 
 
+class SalesforceServiceCloudSink(CopySink):
+    """A copy activity Salesforce Service Cloud sink.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy sink type.Constant filled by server.
+    :type type: str
+    :param write_batch_size: Write batch size. Type: integer (or Expression with resultType
+     integer), minimum: 0.
+    :type write_batch_size: object
+    :param write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type write_batch_timeout: object
+    :param sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
+     integer).
+    :type sink_retry_count: object
+    :param sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type sink_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the sink data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param write_behavior: The write behavior for the operation. Default is Insert. Possible values
+     include: "Insert", "Upsert".
+    :type write_behavior: str or ~azure.synapse.artifacts.models.SalesforceSinkWriteBehavior
+    :param external_id_field_name: The name of the external ID field for upsert operation. Default
+     value is 'Id' column. Type: string (or Expression with resultType string).
+    :type external_id_field_name: object
+    :param ignore_null_values: The flag indicating whether or not to ignore null values from input
+     dataset (except key fields) during write operation. Default value is false. If set it to true,
+     it means ADF will leave the data in the destination object unchanged when doing upsert/update
+     operation and insert defined default value when doing insert operation, versus ADF will update
+     the data in the destination object to NULL when doing upsert/update operation and insert NULL
+     value when doing insert operation. Type: boolean (or Expression with resultType boolean).
+    :type ignore_null_values: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'write_batch_size': {'key': 'writeBatchSize', 'type': 'object'},
+        'write_batch_timeout': {'key': 'writeBatchTimeout', 'type': 'object'},
+        'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
+        'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'write_behavior': {'key': 'writeBehavior', 'type': 'str'},
+        'external_id_field_name': {'key': 'externalIdFieldName', 'type': 'object'},
+        'ignore_null_values': {'key': 'ignoreNullValues', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SalesforceServiceCloudSink, self).__init__(**kwargs)
+        self.type = 'SalesforceServiceCloudSink'  # type: str
+        self.write_behavior = kwargs.get('write_behavior', None)
+        self.external_id_field_name = kwargs.get('external_id_field_name', None)
+        self.ignore_null_values = kwargs.get('ignore_null_values', None)
+
+
+class SalesforceServiceCloudSource(CopySource):
+    """A copy activity Salesforce Service Cloud source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param query: Database query. Type: string (or Expression with resultType string).
+    :type query: object
+    :param read_behavior: The read behavior for the operation. Default is Query. Possible values
+     include: "Query", "QueryAll".
+    :type read_behavior: str or ~azure.synapse.artifacts.models.SalesforceSourceReadBehavior
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'query': {'key': 'query', 'type': 'object'},
+        'read_behavior': {'key': 'readBehavior', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SalesforceServiceCloudSource, self).__init__(**kwargs)
+        self.type = 'SalesforceServiceCloudSource'  # type: str
+        self.query = kwargs.get('query', None)
+        self.read_behavior = kwargs.get('read_behavior', None)
+
+
+class SalesforceSink(CopySink):
+    """A copy activity Salesforce sink.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy sink type.Constant filled by server.
+    :type type: str
+    :param write_batch_size: Write batch size. Type: integer (or Expression with resultType
+     integer), minimum: 0.
+    :type write_batch_size: object
+    :param write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type write_batch_timeout: object
+    :param sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
+     integer).
+    :type sink_retry_count: object
+    :param sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type sink_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the sink data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param write_behavior: The write behavior for the operation. Default is Insert. Possible values
+     include: "Insert", "Upsert".
+    :type write_behavior: str or ~azure.synapse.artifacts.models.SalesforceSinkWriteBehavior
+    :param external_id_field_name: The name of the external ID field for upsert operation. Default
+     value is 'Id' column. Type: string (or Expression with resultType string).
+    :type external_id_field_name: object
+    :param ignore_null_values: The flag indicating whether or not to ignore null values from input
+     dataset (except key fields) during write operation. Default value is false. If set it to true,
+     it means ADF will leave the data in the destination object unchanged when doing upsert/update
+     operation and insert defined default value when doing insert operation, versus ADF will update
+     the data in the destination object to NULL when doing upsert/update operation and insert NULL
+     value when doing insert operation. Type: boolean (or Expression with resultType boolean).
+    :type ignore_null_values: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'write_batch_size': {'key': 'writeBatchSize', 'type': 'object'},
+        'write_batch_timeout': {'key': 'writeBatchTimeout', 'type': 'object'},
+        'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
+        'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'write_behavior': {'key': 'writeBehavior', 'type': 'str'},
+        'external_id_field_name': {'key': 'externalIdFieldName', 'type': 'object'},
+        'ignore_null_values': {'key': 'ignoreNullValues', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SalesforceSink, self).__init__(**kwargs)
+        self.type = 'SalesforceSink'  # type: str
+        self.write_behavior = kwargs.get('write_behavior', None)
+        self.external_id_field_name = kwargs.get('external_id_field_name', None)
+        self.ignore_null_values = kwargs.get('ignore_null_values', None)
+
+
+class SalesforceSource(TabularSource):
+    """A copy activity Salesforce source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
+    :param query: Database query. Type: string (or Expression with resultType string).
+    :type query: object
+    :param read_behavior: The read behavior for the operation. Default is Query. Possible values
+     include: "Query", "QueryAll".
+    :type read_behavior: str or ~azure.synapse.artifacts.models.SalesforceSourceReadBehavior
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'query': {'key': 'query', 'type': 'object'},
+        'read_behavior': {'key': 'readBehavior', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SalesforceSource, self).__init__(**kwargs)
+        self.type = 'SalesforceSource'  # type: str
+        self.query = kwargs.get('query', None)
+        self.read_behavior = kwargs.get('read_behavior', None)
+
+
 class SapBwCubeDataset(Dataset):
     """The SAP BW cube dataset.
 
@@ -15559,6 +24279,55 @@ class SapBWLinkedService(LinkedService):
         self.encrypted_credential = kwargs.get('encrypted_credential', None)
 
 
+class SapBwSource(TabularSource):
+    """A copy activity source for SapBW server via MDX.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
+    :param query: MDX query. Type: string (or Expression with resultType string).
+    :type query: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'query': {'key': 'query', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SapBwSource, self).__init__(**kwargs)
+        self.type = 'SapBwSource'  # type: str
+        self.query = kwargs.get('query', None)
+
+
 class SapCloudForCustomerLinkedService(LinkedService):
     """Linked service for SAP Cloud for Customer.
 
@@ -15680,6 +24449,111 @@ class SapCloudForCustomerResourceDataset(Dataset):
         super(SapCloudForCustomerResourceDataset, self).__init__(**kwargs)
         self.type = 'SapCloudForCustomerResource'  # type: str
         self.path = kwargs['path']
+
+
+class SapCloudForCustomerSink(CopySink):
+    """A copy activity SAP Cloud for Customer sink.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy sink type.Constant filled by server.
+    :type type: str
+    :param write_batch_size: Write batch size. Type: integer (or Expression with resultType
+     integer), minimum: 0.
+    :type write_batch_size: object
+    :param write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type write_batch_timeout: object
+    :param sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
+     integer).
+    :type sink_retry_count: object
+    :param sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type sink_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the sink data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param write_behavior: The write behavior for the operation. Default is 'Insert'. Possible
+     values include: "Insert", "Update".
+    :type write_behavior: str or
+     ~azure.synapse.artifacts.models.SapCloudForCustomerSinkWriteBehavior
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'write_batch_size': {'key': 'writeBatchSize', 'type': 'object'},
+        'write_batch_timeout': {'key': 'writeBatchTimeout', 'type': 'object'},
+        'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
+        'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'write_behavior': {'key': 'writeBehavior', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SapCloudForCustomerSink, self).__init__(**kwargs)
+        self.type = 'SapCloudForCustomerSink'  # type: str
+        self.write_behavior = kwargs.get('write_behavior', None)
+
+
+class SapCloudForCustomerSource(TabularSource):
+    """A copy activity source for SAP Cloud for Customer source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
+    :param query: SAP Cloud for Customer OData query. For example, "$top=1". Type: string (or
+     Expression with resultType string).
+    :type query: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'query': {'key': 'query', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SapCloudForCustomerSource, self).__init__(**kwargs)
+        self.type = 'SapCloudForCustomerSource'  # type: str
+        self.query = kwargs.get('query', None)
 
 
 class SapEccLinkedService(LinkedService):
@@ -15805,6 +24679,56 @@ class SapEccResourceDataset(Dataset):
         self.path = kwargs['path']
 
 
+class SapEccSource(TabularSource):
+    """A copy activity source for SAP ECC source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
+    :param query: SAP ECC OData query. For example, "$top=1". Type: string (or Expression with
+     resultType string).
+    :type query: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'query': {'key': 'query', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SapEccSource, self).__init__(**kwargs)
+        self.type = 'SapEccSource'  # type: str
+        self.query = kwargs.get('query', None)
+
+
 class SapHanaLinkedService(LinkedService):
     """SAP HANA Linked Service.
 
@@ -15875,6 +24799,90 @@ class SapHanaLinkedService(LinkedService):
         self.user_name = kwargs.get('user_name', None)
         self.password = kwargs.get('password', None)
         self.encrypted_credential = kwargs.get('encrypted_credential', None)
+
+
+class SapHanaPartitionSettings(msrest.serialization.Model):
+    """The settings that will be leveraged for SAP HANA source partitioning.
+
+    :param partition_column_name: The name of the column that will be used for proceeding range
+     partitioning. Type: string (or Expression with resultType string).
+    :type partition_column_name: object
+    """
+
+    _attribute_map = {
+        'partition_column_name': {'key': 'partitionColumnName', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SapHanaPartitionSettings, self).__init__(**kwargs)
+        self.partition_column_name = kwargs.get('partition_column_name', None)
+
+
+class SapHanaSource(TabularSource):
+    """A copy activity source for SAP HANA source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
+    :param query: SAP HANA Sql query. Type: string (or Expression with resultType string).
+    :type query: object
+    :param packet_size: The packet size of data read from SAP HANA. Type: integer(or Expression
+     with resultType integer).
+    :type packet_size: object
+    :param partition_option: The partition mechanism that will be used for SAP HANA read in
+     parallel. Possible values include: "None", "PhysicalPartitionsOfTable", "SapHanaDynamicRange".
+    :type partition_option: str or ~azure.synapse.artifacts.models.SapHanaPartitionOption
+    :param partition_settings: The settings that will be leveraged for SAP HANA source
+     partitioning.
+    :type partition_settings: ~azure.synapse.artifacts.models.SapHanaPartitionSettings
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'query': {'key': 'query', 'type': 'object'},
+        'packet_size': {'key': 'packetSize', 'type': 'object'},
+        'partition_option': {'key': 'partitionOption', 'type': 'str'},
+        'partition_settings': {'key': 'partitionSettings', 'type': 'SapHanaPartitionSettings'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SapHanaSource, self).__init__(**kwargs)
+        self.type = 'SapHanaSource'  # type: str
+        self.query = kwargs.get('query', None)
+        self.packet_size = kwargs.get('packet_size', None)
+        self.partition_option = kwargs.get('partition_option', None)
+        self.partition_settings = kwargs.get('partition_settings', None)
 
 
 class SapHanaTableDataset(Dataset):
@@ -16020,6 +25028,62 @@ class SapOpenHubLinkedService(LinkedService):
         self.user_name = kwargs.get('user_name', None)
         self.password = kwargs.get('password', None)
         self.encrypted_credential = kwargs.get('encrypted_credential', None)
+
+
+class SapOpenHubSource(TabularSource):
+    """A copy activity source for SAP Business Warehouse Open Hub Destination source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
+    :param exclude_last_request: Whether to exclude the records of the last request. The default
+     value is true. Type: boolean (or Expression with resultType boolean).
+    :type exclude_last_request: object
+    :param base_request_id: The ID of request for delta loading. Once it is set, only data with
+     requestId larger than the value of this property will be retrieved. The default value is 0.
+     Type: integer (or Expression with resultType integer ).
+    :type base_request_id: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'exclude_last_request': {'key': 'excludeLastRequest', 'type': 'object'},
+        'base_request_id': {'key': 'baseRequestId', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SapOpenHubSource, self).__init__(**kwargs)
+        self.type = 'SapOpenHubSource'  # type: str
+        self.exclude_last_request = kwargs.get('exclude_last_request', None)
+        self.base_request_id = kwargs.get('base_request_id', None)
 
 
 class SapOpenHubTableDataset(Dataset):
@@ -16216,6 +25280,43 @@ class SapTableLinkedService(LinkedService):
         self.encrypted_credential = kwargs.get('encrypted_credential', None)
 
 
+class SapTablePartitionSettings(msrest.serialization.Model):
+    """The settings that will be leveraged for SAP table source partitioning.
+
+    :param partition_column_name: The name of the column that will be used for proceeding range
+     partitioning. Type: string (or Expression with resultType string).
+    :type partition_column_name: object
+    :param partition_upper_bound: The maximum value of column specified in partitionColumnName that
+     will be used for proceeding range partitioning. Type: string (or Expression with resultType
+     string).
+    :type partition_upper_bound: object
+    :param partition_lower_bound: The minimum value of column specified in partitionColumnName that
+     will be used for proceeding range partitioning. Type: string (or Expression with resultType
+     string).
+    :type partition_lower_bound: object
+    :param max_partitions_number: The maximum value of partitions the table will be split into.
+     Type: integer (or Expression with resultType string).
+    :type max_partitions_number: object
+    """
+
+    _attribute_map = {
+        'partition_column_name': {'key': 'partitionColumnName', 'type': 'object'},
+        'partition_upper_bound': {'key': 'partitionUpperBound', 'type': 'object'},
+        'partition_lower_bound': {'key': 'partitionLowerBound', 'type': 'object'},
+        'max_partitions_number': {'key': 'maxPartitionsNumber', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SapTablePartitionSettings, self).__init__(**kwargs)
+        self.partition_column_name = kwargs.get('partition_column_name', None)
+        self.partition_upper_bound = kwargs.get('partition_upper_bound', None)
+        self.partition_lower_bound = kwargs.get('partition_lower_bound', None)
+        self.max_partitions_number = kwargs.get('max_partitions_number', None)
+
+
 class SapTableResourceDataset(Dataset):
     """SAP Table Resource properties.
 
@@ -16274,6 +25375,187 @@ class SapTableResourceDataset(Dataset):
         super(SapTableResourceDataset, self).__init__(**kwargs)
         self.type = 'SapTableResource'  # type: str
         self.table_name = kwargs['table_name']
+
+
+class SapTableSource(TabularSource):
+    """A copy activity source for SAP Table source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
+    :param row_count: The number of rows to be retrieved. Type: integer(or Expression with
+     resultType integer).
+    :type row_count: object
+    :param row_skips: The number of rows that will be skipped. Type: integer (or Expression with
+     resultType integer).
+    :type row_skips: object
+    :param rfc_table_fields: The fields of the SAP table that will be retrieved. For example,
+     column0, column1. Type: string (or Expression with resultType string).
+    :type rfc_table_fields: object
+    :param rfc_table_options: The options for the filtering of the SAP Table. For example, COLUMN0
+     EQ SOME VALUE. Type: string (or Expression with resultType string).
+    :type rfc_table_options: object
+    :param batch_size: Specifies the maximum number of rows that will be retrieved at a time when
+     retrieving data from SAP Table. Type: integer (or Expression with resultType integer).
+    :type batch_size: object
+    :param custom_rfc_read_table_function_module: Specifies the custom RFC function module that
+     will be used to read data from SAP Table. Type: string (or Expression with resultType string).
+    :type custom_rfc_read_table_function_module: object
+    :param partition_option: The partition mechanism that will be used for SAP table read in
+     parallel. Possible values include: "None", "PartitionOnInt", "PartitionOnCalendarYear",
+     "PartitionOnCalendarMonth", "PartitionOnCalendarDate", "PartitionOnTime".
+    :type partition_option: str or ~azure.synapse.artifacts.models.SapTablePartitionOption
+    :param partition_settings: The settings that will be leveraged for SAP table source
+     partitioning.
+    :type partition_settings: ~azure.synapse.artifacts.models.SapTablePartitionSettings
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'row_count': {'key': 'rowCount', 'type': 'object'},
+        'row_skips': {'key': 'rowSkips', 'type': 'object'},
+        'rfc_table_fields': {'key': 'rfcTableFields', 'type': 'object'},
+        'rfc_table_options': {'key': 'rfcTableOptions', 'type': 'object'},
+        'batch_size': {'key': 'batchSize', 'type': 'object'},
+        'custom_rfc_read_table_function_module': {'key': 'customRfcReadTableFunctionModule', 'type': 'object'},
+        'partition_option': {'key': 'partitionOption', 'type': 'str'},
+        'partition_settings': {'key': 'partitionSettings', 'type': 'SapTablePartitionSettings'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SapTableSource, self).__init__(**kwargs)
+        self.type = 'SapTableSource'  # type: str
+        self.row_count = kwargs.get('row_count', None)
+        self.row_skips = kwargs.get('row_skips', None)
+        self.rfc_table_fields = kwargs.get('rfc_table_fields', None)
+        self.rfc_table_options = kwargs.get('rfc_table_options', None)
+        self.batch_size = kwargs.get('batch_size', None)
+        self.custom_rfc_read_table_function_module = kwargs.get('custom_rfc_read_table_function_module', None)
+        self.partition_option = kwargs.get('partition_option', None)
+        self.partition_settings = kwargs.get('partition_settings', None)
+
+
+class ScheduleTrigger(MultiplePipelineTrigger):
+    """Trigger that creates pipeline runs periodically, on schedule.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Trigger type.Constant filled by server.
+    :type type: str
+    :param description: Trigger description.
+    :type description: str
+    :ivar runtime_state: Indicates if trigger is running or not. Updated when Start/Stop APIs are
+     called on the Trigger. Possible values include: "Started", "Stopped", "Disabled".
+    :vartype runtime_state: str or ~azure.synapse.artifacts.models.TriggerRuntimeState
+    :param annotations: List of tags that can be used for describing the trigger.
+    :type annotations: list[object]
+    :param pipelines: Pipelines that need to be started.
+    :type pipelines: list[~azure.synapse.artifacts.models.TriggerPipelineReference]
+    :param recurrence: Required. Recurrence schedule configuration.
+    :type recurrence: ~azure.synapse.artifacts.models.ScheduleTriggerRecurrence
+    """
+
+    _validation = {
+        'type': {'required': True},
+        'runtime_state': {'readonly': True},
+        'recurrence': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'runtime_state': {'key': 'runtimeState', 'type': 'str'},
+        'annotations': {'key': 'annotations', 'type': '[object]'},
+        'pipelines': {'key': 'pipelines', 'type': '[TriggerPipelineReference]'},
+        'recurrence': {'key': 'typeProperties.recurrence', 'type': 'ScheduleTriggerRecurrence'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ScheduleTrigger, self).__init__(**kwargs)
+        self.type = 'ScheduleTrigger'  # type: str
+        self.recurrence = kwargs['recurrence']
+
+
+class ScheduleTriggerRecurrence(msrest.serialization.Model):
+    """The workflow trigger recurrence.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param frequency: The frequency. Possible values include: "NotSpecified", "Minute", "Hour",
+     "Day", "Week", "Month", "Year".
+    :type frequency: str or ~azure.synapse.artifacts.models.RecurrenceFrequency
+    :param interval: The interval.
+    :type interval: int
+    :param start_time: The start time.
+    :type start_time: ~datetime.datetime
+    :param end_time: The end time.
+    :type end_time: ~datetime.datetime
+    :param time_zone: The time zone.
+    :type time_zone: str
+    :param schedule: The recurrence schedule.
+    :type schedule: ~azure.synapse.artifacts.models.RecurrenceSchedule
+    """
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'frequency': {'key': 'frequency', 'type': 'str'},
+        'interval': {'key': 'interval', 'type': 'int'},
+        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
+        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
+        'time_zone': {'key': 'timeZone', 'type': 'str'},
+        'schedule': {'key': 'schedule', 'type': 'RecurrenceSchedule'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ScheduleTriggerRecurrence, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.frequency = kwargs.get('frequency', None)
+        self.interval = kwargs.get('interval', None)
+        self.start_time = kwargs.get('start_time', None)
+        self.end_time = kwargs.get('end_time', None)
+        self.time_zone = kwargs.get('time_zone', None)
+        self.schedule = kwargs.get('schedule', None)
 
 
 class ScriptAction(msrest.serialization.Model):
@@ -16344,6 +25626,80 @@ class SecureString(SecretBase):
         super(SecureString, self).__init__(**kwargs)
         self.type = 'SecureString'  # type: str
         self.value = kwargs['value']
+
+
+class SelfDependencyTumblingWindowTriggerReference(DependencyReference):
+    """Self referenced tumbling window trigger dependency.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. The type of dependency reference.Constant filled by server.
+    :type type: str
+    :param offset: Required. Timespan applied to the start time of a tumbling window when
+     evaluating dependency.
+    :type offset: str
+    :param size: The size of the window when evaluating the dependency. If undefined the frequency
+     of the tumbling window will be used.
+    :type size: str
+    """
+
+    _validation = {
+        'type': {'required': True},
+        'offset': {'required': True, 'max_length': 15, 'min_length': 8, 'pattern': r'((\d+)\.)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9]))'},
+        'size': {'max_length': 15, 'min_length': 8, 'pattern': r'((\d+)\.)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9]))'},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'offset': {'key': 'offset', 'type': 'str'},
+        'size': {'key': 'size', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SelfDependencyTumblingWindowTriggerReference, self).__init__(**kwargs)
+        self.type = 'SelfDependencyTumblingWindowTriggerReference'  # type: str
+        self.offset = kwargs['offset']
+        self.size = kwargs.get('size', None)
+
+
+class SelfHostedIntegrationRuntime(IntegrationRuntime):
+    """Self-hosted integration runtime.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Type of integration runtime.Constant filled by server.  Possible values
+     include: "Managed", "SelfHosted".
+    :type type: str or ~azure.synapse.artifacts.models.IntegrationRuntimeType
+    :param description: Integration runtime description.
+    :type description: str
+    :param linked_info: The base definition of a linked integration runtime.
+    :type linked_info: ~azure.synapse.artifacts.models.LinkedIntegrationRuntimeType
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'linked_info': {'key': 'typeProperties.linkedInfo', 'type': 'LinkedIntegrationRuntimeType'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SelfHostedIntegrationRuntime, self).__init__(**kwargs)
+        self.type = 'SelfHosted'  # type: str
+        self.linked_info = kwargs.get('linked_info', None)
 
 
 class ServiceNowLinkedService(LinkedService):
@@ -16497,6 +25853,56 @@ class ServiceNowObjectDataset(Dataset):
         self.table_name = kwargs.get('table_name', None)
 
 
+class ServiceNowSource(TabularSource):
+    """A copy activity ServiceNow server source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
+    :param query: A query to retrieve data from source. Type: string (or Expression with resultType
+     string).
+    :type query: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'query': {'key': 'query', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ServiceNowSource, self).__init__(**kwargs)
+        self.type = 'ServiceNowSource'  # type: str
+        self.query = kwargs.get('query', None)
+
+
 class SetVariableActivity(Activity):
     """Set value for a Variable.
 
@@ -16545,6 +25951,101 @@ class SetVariableActivity(Activity):
         self.type = 'SetVariable'  # type: str
         self.variable_name = kwargs.get('variable_name', None)
         self.value = kwargs.get('value', None)
+
+
+class SftpLocation(DatasetLocation):
+    """The location of SFTP dataset.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Type of dataset storage location.Constant filled by server.
+    :type type: str
+    :param folder_path: Specify the folder path of dataset. Type: string (or Expression with
+     resultType string).
+    :type folder_path: object
+    :param file_name: Specify the file name of dataset. Type: string (or Expression with resultType
+     string).
+    :type file_name: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'folder_path': {'key': 'folderPath', 'type': 'object'},
+        'file_name': {'key': 'fileName', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SftpLocation, self).__init__(**kwargs)
+        self.type = 'SftpLocation'  # type: str
+
+
+class SftpReadSettings(StoreReadSettings):
+    """Sftp read settings.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. The read setting type.Constant filled by server.
+    :type type: str
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param recursive: If true, files under the folder path will be read recursively. Default is
+     true. Type: boolean (or Expression with resultType boolean).
+    :type recursive: object
+    :param wildcard_folder_path: Sftp wildcardFolderPath. Type: string (or Expression with
+     resultType string).
+    :type wildcard_folder_path: object
+    :param wildcard_file_name: Sftp wildcardFileName. Type: string (or Expression with resultType
+     string).
+    :type wildcard_file_name: object
+    :param modified_datetime_start: The start of file's modified datetime. Type: string (or
+     Expression with resultType string).
+    :type modified_datetime_start: object
+    :param modified_datetime_end: The end of file's modified datetime. Type: string (or Expression
+     with resultType string).
+    :type modified_datetime_end: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'recursive': {'key': 'recursive', 'type': 'object'},
+        'wildcard_folder_path': {'key': 'wildcardFolderPath', 'type': 'object'},
+        'wildcard_file_name': {'key': 'wildcardFileName', 'type': 'object'},
+        'modified_datetime_start': {'key': 'modifiedDatetimeStart', 'type': 'object'},
+        'modified_datetime_end': {'key': 'modifiedDatetimeEnd', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SftpReadSettings, self).__init__(**kwargs)
+        self.type = 'SftpReadSettings'  # type: str
+        self.recursive = kwargs.get('recursive', None)
+        self.wildcard_folder_path = kwargs.get('wildcard_folder_path', None)
+        self.wildcard_file_name = kwargs.get('wildcard_file_name', None)
+        self.modified_datetime_start = kwargs.get('modified_datetime_start', None)
+        self.modified_datetime_end = kwargs.get('modified_datetime_end', None)
 
 
 class SftpServerLinkedService(LinkedService):
@@ -16646,6 +26147,47 @@ class SftpServerLinkedService(LinkedService):
         self.pass_phrase = kwargs.get('pass_phrase', None)
         self.skip_host_key_validation = kwargs.get('skip_host_key_validation', None)
         self.host_key_fingerprint = kwargs.get('host_key_fingerprint', None)
+
+
+class SftpWriteSettings(StoreWriteSettings):
+    """Sftp write settings.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. The write setting type.Constant filled by server.
+    :type type: str
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param copy_behavior: The type of copy behavior for copy sink.
+    :type copy_behavior: object
+    :param operation_timeout: Specifies the timeout for writing each chunk to SFTP server. Default
+     value: 01:00:00 (one hour). Type: string (or Expression with resultType string).
+    :type operation_timeout: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'copy_behavior': {'key': 'copyBehavior', 'type': 'object'},
+        'operation_timeout': {'key': 'operationTimeout', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SftpWriteSettings, self).__init__(**kwargs)
+        self.type = 'SftpWriteSettings'  # type: str
+        self.operation_timeout = kwargs.get('operation_timeout', None)
 
 
 class ShopifyLinkedService(LinkedService):
@@ -16777,6 +26319,84 @@ class ShopifyObjectDataset(Dataset):
         super(ShopifyObjectDataset, self).__init__(**kwargs)
         self.type = 'ShopifyObject'  # type: str
         self.table_name = kwargs.get('table_name', None)
+
+
+class ShopifySource(TabularSource):
+    """A copy activity Shopify Service source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
+    :param query: A query to retrieve data from source. Type: string (or Expression with resultType
+     string).
+    :type query: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'query': {'key': 'query', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ShopifySource, self).__init__(**kwargs)
+        self.type = 'ShopifySource'  # type: str
+        self.query = kwargs.get('query', None)
+
+
+class Sku(msrest.serialization.Model):
+    """SQL pool SKU.
+
+    :param tier: The service tier.
+    :type tier: str
+    :param name: The SKU name.
+    :type name: str
+    :param capacity: If the SKU supports scale out/in then the capacity integer should be included.
+     If scale out/in is not possible for the resource this may be omitted.
+    :type capacity: int
+    """
+
+    _attribute_map = {
+        'tier': {'key': 'tier', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'capacity': {'key': 'capacity', 'type': 'int'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(Sku, self).__init__(**kwargs)
+        self.tier = kwargs.get('tier', None)
+        self.name = kwargs.get('name', None)
+        self.capacity = kwargs.get('capacity', None)
 
 
 class SparkBatchJob(msrest.serialization.Model):
@@ -16971,20 +26591,22 @@ class SparkJobDefinition(msrest.serialization.Model):
         self.job_properties = kwargs['job_properties']
 
 
-class SparkJobDefinitionResource(SubResource):
+class SparkJobDefinitionResource(AzureEntityResource):
     """Spark job definition resource type.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: The resource identifier.
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: The resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The resource type.
+    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
+     Microsoft.Storage/storageAccounts.
     :vartype type: str
-    :ivar etag: Etag identifies change in the resource.
+    :ivar etag: Resource Etag.
     :vartype etag: str
     :param properties: Required. Properties of spark job definition.
     :type properties: ~azure.synapse.artifacts.models.SparkJobDefinition
@@ -17482,6 +27104,56 @@ class SparkServicePlugin(msrest.serialization.Model):
         self.current_state = kwargs.get('current_state', None)
 
 
+class SparkSource(TabularSource):
+    """A copy activity Spark Server source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
+    :param query: A query to retrieve data from source. Type: string (or Expression with resultType
+     string).
+    :type query: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'query': {'key': 'query', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SparkSource, self).__init__(**kwargs)
+        self.type = 'SparkSource'  # type: str
+        self.query = kwargs.get('query', None)
+
+
 class SqlConnection(msrest.serialization.Model):
     """The connection used to execute the SQL script.
 
@@ -17516,6 +27188,396 @@ class SqlConnection(msrest.serialization.Model):
         self.additional_properties = kwargs.get('additional_properties', None)
         self.type = kwargs['type']
         self.name = kwargs['name']
+
+
+class SqlDWSink(CopySink):
+    """A copy activity SQL Data Warehouse sink.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy sink type.Constant filled by server.
+    :type type: str
+    :param write_batch_size: Write batch size. Type: integer (or Expression with resultType
+     integer), minimum: 0.
+    :type write_batch_size: object
+    :param write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type write_batch_timeout: object
+    :param sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
+     integer).
+    :type sink_retry_count: object
+    :param sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type sink_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the sink data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param pre_copy_script: SQL pre-copy script. Type: string (or Expression with resultType
+     string).
+    :type pre_copy_script: object
+    :param allow_poly_base: Indicates to use PolyBase to copy data into SQL Data Warehouse when
+     applicable. Type: boolean (or Expression with resultType boolean).
+    :type allow_poly_base: object
+    :param poly_base_settings: Specifies PolyBase-related settings when allowPolyBase is true.
+    :type poly_base_settings: ~azure.synapse.artifacts.models.PolybaseSettings
+    :param allow_copy_command: Indicates to use Copy Command to copy data into SQL Data Warehouse.
+     Type: boolean (or Expression with resultType boolean).
+    :type allow_copy_command: object
+    :param copy_command_settings: Specifies Copy Command related settings when allowCopyCommand is
+     true.
+    :type copy_command_settings: ~azure.synapse.artifacts.models.DWCopyCommandSettings
+    :param table_option: The option to handle sink table, such as autoCreate. For now only
+     'autoCreate' value is supported. Type: string (or Expression with resultType string).
+    :type table_option: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'write_batch_size': {'key': 'writeBatchSize', 'type': 'object'},
+        'write_batch_timeout': {'key': 'writeBatchTimeout', 'type': 'object'},
+        'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
+        'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'pre_copy_script': {'key': 'preCopyScript', 'type': 'object'},
+        'allow_poly_base': {'key': 'allowPolyBase', 'type': 'object'},
+        'poly_base_settings': {'key': 'polyBaseSettings', 'type': 'PolybaseSettings'},
+        'allow_copy_command': {'key': 'allowCopyCommand', 'type': 'object'},
+        'copy_command_settings': {'key': 'copyCommandSettings', 'type': 'DWCopyCommandSettings'},
+        'table_option': {'key': 'tableOption', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SqlDWSink, self).__init__(**kwargs)
+        self.type = 'SqlDWSink'  # type: str
+        self.pre_copy_script = kwargs.get('pre_copy_script', None)
+        self.allow_poly_base = kwargs.get('allow_poly_base', None)
+        self.poly_base_settings = kwargs.get('poly_base_settings', None)
+        self.allow_copy_command = kwargs.get('allow_copy_command', None)
+        self.copy_command_settings = kwargs.get('copy_command_settings', None)
+        self.table_option = kwargs.get('table_option', None)
+
+
+class SqlDWSource(TabularSource):
+    """A copy activity SQL Data Warehouse source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
+    :param sql_reader_query: SQL Data Warehouse reader query. Type: string (or Expression with
+     resultType string).
+    :type sql_reader_query: object
+    :param sql_reader_stored_procedure_name: Name of the stored procedure for a SQL Data Warehouse
+     source. This cannot be used at the same time as SqlReaderQuery. Type: string (or Expression
+     with resultType string).
+    :type sql_reader_stored_procedure_name: object
+    :param stored_procedure_parameters: Value and type setting for stored procedure parameters.
+     Example: "{Parameter1: {value: "1", type: "int"}}". Type: object (or Expression with resultType
+     object), itemType: StoredProcedureParameter.
+    :type stored_procedure_parameters: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'sql_reader_query': {'key': 'sqlReaderQuery', 'type': 'object'},
+        'sql_reader_stored_procedure_name': {'key': 'sqlReaderStoredProcedureName', 'type': 'object'},
+        'stored_procedure_parameters': {'key': 'storedProcedureParameters', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SqlDWSource, self).__init__(**kwargs)
+        self.type = 'SqlDWSource'  # type: str
+        self.sql_reader_query = kwargs.get('sql_reader_query', None)
+        self.sql_reader_stored_procedure_name = kwargs.get('sql_reader_stored_procedure_name', None)
+        self.stored_procedure_parameters = kwargs.get('stored_procedure_parameters', None)
+
+
+class SqlMISink(CopySink):
+    """A copy activity Azure SQL Managed Instance sink.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy sink type.Constant filled by server.
+    :type type: str
+    :param write_batch_size: Write batch size. Type: integer (or Expression with resultType
+     integer), minimum: 0.
+    :type write_batch_size: object
+    :param write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type write_batch_timeout: object
+    :param sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
+     integer).
+    :type sink_retry_count: object
+    :param sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type sink_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the sink data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param sql_writer_stored_procedure_name: SQL writer stored procedure name. Type: string (or
+     Expression with resultType string).
+    :type sql_writer_stored_procedure_name: object
+    :param sql_writer_table_type: SQL writer table type. Type: string (or Expression with
+     resultType string).
+    :type sql_writer_table_type: object
+    :param pre_copy_script: SQL pre-copy script. Type: string (or Expression with resultType
+     string).
+    :type pre_copy_script: object
+    :param stored_procedure_parameters: SQL stored procedure parameters.
+    :type stored_procedure_parameters: dict[str,
+     ~azure.synapse.artifacts.models.StoredProcedureParameter]
+    :param stored_procedure_table_type_parameter_name: The stored procedure parameter name of the
+     table type. Type: string (or Expression with resultType string).
+    :type stored_procedure_table_type_parameter_name: object
+    :param table_option: The option to handle sink table, such as autoCreate. For now only
+     'autoCreate' value is supported. Type: string (or Expression with resultType string).
+    :type table_option: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'write_batch_size': {'key': 'writeBatchSize', 'type': 'object'},
+        'write_batch_timeout': {'key': 'writeBatchTimeout', 'type': 'object'},
+        'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
+        'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'sql_writer_stored_procedure_name': {'key': 'sqlWriterStoredProcedureName', 'type': 'object'},
+        'sql_writer_table_type': {'key': 'sqlWriterTableType', 'type': 'object'},
+        'pre_copy_script': {'key': 'preCopyScript', 'type': 'object'},
+        'stored_procedure_parameters': {'key': 'storedProcedureParameters', 'type': '{StoredProcedureParameter}'},
+        'stored_procedure_table_type_parameter_name': {'key': 'storedProcedureTableTypeParameterName', 'type': 'object'},
+        'table_option': {'key': 'tableOption', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SqlMISink, self).__init__(**kwargs)
+        self.type = 'SqlMISink'  # type: str
+        self.sql_writer_stored_procedure_name = kwargs.get('sql_writer_stored_procedure_name', None)
+        self.sql_writer_table_type = kwargs.get('sql_writer_table_type', None)
+        self.pre_copy_script = kwargs.get('pre_copy_script', None)
+        self.stored_procedure_parameters = kwargs.get('stored_procedure_parameters', None)
+        self.stored_procedure_table_type_parameter_name = kwargs.get('stored_procedure_table_type_parameter_name', None)
+        self.table_option = kwargs.get('table_option', None)
+
+
+class SqlMISource(TabularSource):
+    """A copy activity Azure SQL Managed Instance source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
+    :param sql_reader_query: SQL reader query. Type: string (or Expression with resultType string).
+    :type sql_reader_query: object
+    :param sql_reader_stored_procedure_name: Name of the stored procedure for a Azure SQL Managed
+     Instance source. This cannot be used at the same time as SqlReaderQuery. Type: string (or
+     Expression with resultType string).
+    :type sql_reader_stored_procedure_name: object
+    :param stored_procedure_parameters: Value and type setting for stored procedure parameters.
+     Example: "{Parameter1: {value: "1", type: "int"}}".
+    :type stored_procedure_parameters: dict[str,
+     ~azure.synapse.artifacts.models.StoredProcedureParameter]
+    :param produce_additional_types: Which additional types to produce.
+    :type produce_additional_types: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'sql_reader_query': {'key': 'sqlReaderQuery', 'type': 'object'},
+        'sql_reader_stored_procedure_name': {'key': 'sqlReaderStoredProcedureName', 'type': 'object'},
+        'stored_procedure_parameters': {'key': 'storedProcedureParameters', 'type': '{StoredProcedureParameter}'},
+        'produce_additional_types': {'key': 'produceAdditionalTypes', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SqlMISource, self).__init__(**kwargs)
+        self.type = 'SqlMISource'  # type: str
+        self.sql_reader_query = kwargs.get('sql_reader_query', None)
+        self.sql_reader_stored_procedure_name = kwargs.get('sql_reader_stored_procedure_name', None)
+        self.stored_procedure_parameters = kwargs.get('stored_procedure_parameters', None)
+        self.produce_additional_types = kwargs.get('produce_additional_types', None)
+
+
+class SqlPool(TrackedResource):
+    """A SQL Analytics pool.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
+     Microsoft.Storage/storageAccounts.
+    :vartype type: str
+    :param tags: A set of tags. Resource tags.
+    :type tags: dict[str, str]
+    :param location: Required. The geo-location where the resource lives.
+    :type location: str
+    :param sku: SQL pool SKU.
+    :type sku: ~azure.synapse.artifacts.models.Sku
+    :param max_size_bytes: Maximum size in bytes.
+    :type max_size_bytes: long
+    :param collation: Collation mode.
+    :type collation: str
+    :param source_database_id: Source database to create from.
+    :type source_database_id: str
+    :param recoverable_database_id: Backup database to restore from.
+    :type recoverable_database_id: str
+    :param provisioning_state: Resource state.
+    :type provisioning_state: str
+    :param status: Resource status.
+    :type status: str
+    :param restore_point_in_time: Snapshot time to restore.
+    :type restore_point_in_time: ~datetime.datetime
+    :param create_mode: What is this?.
+    :type create_mode: str
+    :param creation_date: Date the SQL pool was created.
+    :type creation_date: ~datetime.datetime
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'location': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'location': {'key': 'location', 'type': 'str'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
+        'max_size_bytes': {'key': 'properties.maxSizeBytes', 'type': 'long'},
+        'collation': {'key': 'properties.collation', 'type': 'str'},
+        'source_database_id': {'key': 'properties.sourceDatabaseId', 'type': 'str'},
+        'recoverable_database_id': {'key': 'properties.recoverableDatabaseId', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'status': {'key': 'properties.status', 'type': 'str'},
+        'restore_point_in_time': {'key': 'properties.restorePointInTime', 'type': 'iso-8601'},
+        'create_mode': {'key': 'properties.createMode', 'type': 'str'},
+        'creation_date': {'key': 'properties.creationDate', 'type': 'iso-8601'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SqlPool, self).__init__(**kwargs)
+        self.sku = kwargs.get('sku', None)
+        self.max_size_bytes = kwargs.get('max_size_bytes', None)
+        self.collation = kwargs.get('collation', None)
+        self.source_database_id = kwargs.get('source_database_id', None)
+        self.recoverable_database_id = kwargs.get('recoverable_database_id', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.status = kwargs.get('status', None)
+        self.restore_point_in_time = kwargs.get('restore_point_in_time', None)
+        self.create_mode = kwargs.get('create_mode', None)
+        self.creation_date = kwargs.get('creation_date', None)
+
+
+class SqlPoolInfoListResult(msrest.serialization.Model):
+    """List of SQL pools.
+
+    :param next_link: Link to the next page of results.
+    :type next_link: str
+    :param value: List of SQL pools.
+    :type value: list[~azure.synapse.artifacts.models.SqlPool]
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'value': {'key': 'value', 'type': '[SqlPool]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SqlPoolInfoListResult, self).__init__(**kwargs)
+        self.next_link = kwargs.get('next_link', None)
+        self.value = kwargs.get('value', None)
 
 
 class SqlPoolReference(msrest.serialization.Model):
@@ -17708,20 +27770,22 @@ class SqlScriptMetadata(msrest.serialization.Model):
         self.language = kwargs.get('language', None)
 
 
-class SqlScriptResource(SubResource):
+class SqlScriptResource(AzureEntityResource):
     """Sql Script resource type.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: The resource identifier.
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: The resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The resource type.
+    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
+     Microsoft.Storage/storageAccounts.
     :vartype type: str
-    :ivar etag: Etag identifies change in the resource.
+    :ivar etag: Resource Etag.
     :vartype etag: str
     :param properties: Required. Properties of sql script.
     :type properties: ~azure.synapse.artifacts.models.SqlScript
@@ -17840,6 +27904,150 @@ class SqlServerLinkedService(LinkedService):
         self.user_name = kwargs.get('user_name', None)
         self.password = kwargs.get('password', None)
         self.encrypted_credential = kwargs.get('encrypted_credential', None)
+
+
+class SqlServerSink(CopySink):
+    """A copy activity SQL server sink.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy sink type.Constant filled by server.
+    :type type: str
+    :param write_batch_size: Write batch size. Type: integer (or Expression with resultType
+     integer), minimum: 0.
+    :type write_batch_size: object
+    :param write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type write_batch_timeout: object
+    :param sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
+     integer).
+    :type sink_retry_count: object
+    :param sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type sink_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the sink data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param sql_writer_stored_procedure_name: SQL writer stored procedure name. Type: string (or
+     Expression with resultType string).
+    :type sql_writer_stored_procedure_name: object
+    :param sql_writer_table_type: SQL writer table type. Type: string (or Expression with
+     resultType string).
+    :type sql_writer_table_type: object
+    :param pre_copy_script: SQL pre-copy script. Type: string (or Expression with resultType
+     string).
+    :type pre_copy_script: object
+    :param stored_procedure_parameters: SQL stored procedure parameters.
+    :type stored_procedure_parameters: dict[str,
+     ~azure.synapse.artifacts.models.StoredProcedureParameter]
+    :param stored_procedure_table_type_parameter_name: The stored procedure parameter name of the
+     table type. Type: string (or Expression with resultType string).
+    :type stored_procedure_table_type_parameter_name: object
+    :param table_option: The option to handle sink table, such as autoCreate. For now only
+     'autoCreate' value is supported. Type: string (or Expression with resultType string).
+    :type table_option: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'write_batch_size': {'key': 'writeBatchSize', 'type': 'object'},
+        'write_batch_timeout': {'key': 'writeBatchTimeout', 'type': 'object'},
+        'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
+        'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'sql_writer_stored_procedure_name': {'key': 'sqlWriterStoredProcedureName', 'type': 'object'},
+        'sql_writer_table_type': {'key': 'sqlWriterTableType', 'type': 'object'},
+        'pre_copy_script': {'key': 'preCopyScript', 'type': 'object'},
+        'stored_procedure_parameters': {'key': 'storedProcedureParameters', 'type': '{StoredProcedureParameter}'},
+        'stored_procedure_table_type_parameter_name': {'key': 'storedProcedureTableTypeParameterName', 'type': 'object'},
+        'table_option': {'key': 'tableOption', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SqlServerSink, self).__init__(**kwargs)
+        self.type = 'SqlServerSink'  # type: str
+        self.sql_writer_stored_procedure_name = kwargs.get('sql_writer_stored_procedure_name', None)
+        self.sql_writer_table_type = kwargs.get('sql_writer_table_type', None)
+        self.pre_copy_script = kwargs.get('pre_copy_script', None)
+        self.stored_procedure_parameters = kwargs.get('stored_procedure_parameters', None)
+        self.stored_procedure_table_type_parameter_name = kwargs.get('stored_procedure_table_type_parameter_name', None)
+        self.table_option = kwargs.get('table_option', None)
+
+
+class SqlServerSource(TabularSource):
+    """A copy activity SQL server source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
+    :param sql_reader_query: SQL reader query. Type: string (or Expression with resultType string).
+    :type sql_reader_query: object
+    :param sql_reader_stored_procedure_name: Name of the stored procedure for a SQL Database
+     source. This cannot be used at the same time as SqlReaderQuery. Type: string (or Expression
+     with resultType string).
+    :type sql_reader_stored_procedure_name: object
+    :param stored_procedure_parameters: Value and type setting for stored procedure parameters.
+     Example: "{Parameter1: {value: "1", type: "int"}}".
+    :type stored_procedure_parameters: dict[str,
+     ~azure.synapse.artifacts.models.StoredProcedureParameter]
+    :param produce_additional_types: Which additional types to produce.
+    :type produce_additional_types: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'sql_reader_query': {'key': 'sqlReaderQuery', 'type': 'object'},
+        'sql_reader_stored_procedure_name': {'key': 'sqlReaderStoredProcedureName', 'type': 'object'},
+        'stored_procedure_parameters': {'key': 'storedProcedureParameters', 'type': '{StoredProcedureParameter}'},
+        'produce_additional_types': {'key': 'produceAdditionalTypes', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SqlServerSource, self).__init__(**kwargs)
+        self.type = 'SqlServerSource'  # type: str
+        self.sql_reader_query = kwargs.get('sql_reader_query', None)
+        self.sql_reader_stored_procedure_name = kwargs.get('sql_reader_stored_procedure_name', None)
+        self.stored_procedure_parameters = kwargs.get('stored_procedure_parameters', None)
+        self.produce_additional_types = kwargs.get('produce_additional_types', None)
 
 
 class SqlServerStoredProcedureActivity(ExecutionActivity):
@@ -17969,6 +28177,146 @@ class SqlServerTableDataset(Dataset):
         self.table_name = kwargs.get('table_name', None)
         self.schema_type_properties_schema = kwargs.get('schema_type_properties_schema', None)
         self.table = kwargs.get('table', None)
+
+
+class SqlSink(CopySink):
+    """A copy activity SQL sink.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy sink type.Constant filled by server.
+    :type type: str
+    :param write_batch_size: Write batch size. Type: integer (or Expression with resultType
+     integer), minimum: 0.
+    :type write_batch_size: object
+    :param write_batch_timeout: Write batch timeout. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type write_batch_timeout: object
+    :param sink_retry_count: Sink retry count. Type: integer (or Expression with resultType
+     integer).
+    :type sink_retry_count: object
+    :param sink_retry_wait: Sink retry wait. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type sink_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the sink data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param sql_writer_stored_procedure_name: SQL writer stored procedure name. Type: string (or
+     Expression with resultType string).
+    :type sql_writer_stored_procedure_name: object
+    :param sql_writer_table_type: SQL writer table type. Type: string (or Expression with
+     resultType string).
+    :type sql_writer_table_type: object
+    :param pre_copy_script: SQL pre-copy script. Type: string (or Expression with resultType
+     string).
+    :type pre_copy_script: object
+    :param stored_procedure_parameters: SQL stored procedure parameters.
+    :type stored_procedure_parameters: dict[str,
+     ~azure.synapse.artifacts.models.StoredProcedureParameter]
+    :param stored_procedure_table_type_parameter_name: The stored procedure parameter name of the
+     table type. Type: string (or Expression with resultType string).
+    :type stored_procedure_table_type_parameter_name: object
+    :param table_option: The option to handle sink table, such as autoCreate. For now only
+     'autoCreate' value is supported. Type: string (or Expression with resultType string).
+    :type table_option: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'write_batch_size': {'key': 'writeBatchSize', 'type': 'object'},
+        'write_batch_timeout': {'key': 'writeBatchTimeout', 'type': 'object'},
+        'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
+        'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'sql_writer_stored_procedure_name': {'key': 'sqlWriterStoredProcedureName', 'type': 'object'},
+        'sql_writer_table_type': {'key': 'sqlWriterTableType', 'type': 'object'},
+        'pre_copy_script': {'key': 'preCopyScript', 'type': 'object'},
+        'stored_procedure_parameters': {'key': 'storedProcedureParameters', 'type': '{StoredProcedureParameter}'},
+        'stored_procedure_table_type_parameter_name': {'key': 'storedProcedureTableTypeParameterName', 'type': 'object'},
+        'table_option': {'key': 'tableOption', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SqlSink, self).__init__(**kwargs)
+        self.type = 'SqlSink'  # type: str
+        self.sql_writer_stored_procedure_name = kwargs.get('sql_writer_stored_procedure_name', None)
+        self.sql_writer_table_type = kwargs.get('sql_writer_table_type', None)
+        self.pre_copy_script = kwargs.get('pre_copy_script', None)
+        self.stored_procedure_parameters = kwargs.get('stored_procedure_parameters', None)
+        self.stored_procedure_table_type_parameter_name = kwargs.get('stored_procedure_table_type_parameter_name', None)
+        self.table_option = kwargs.get('table_option', None)
+
+
+class SqlSource(TabularSource):
+    """A copy activity SQL source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
+    :param sql_reader_query: SQL reader query. Type: string (or Expression with resultType string).
+    :type sql_reader_query: object
+    :param sql_reader_stored_procedure_name: Name of the stored procedure for a SQL Database
+     source. This cannot be used at the same time as SqlReaderQuery. Type: string (or Expression
+     with resultType string).
+    :type sql_reader_stored_procedure_name: object
+    :param stored_procedure_parameters: Value and type setting for stored procedure parameters.
+     Example: "{Parameter1: {value: "1", type: "int"}}".
+    :type stored_procedure_parameters: dict[str,
+     ~azure.synapse.artifacts.models.StoredProcedureParameter]
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'sql_reader_query': {'key': 'sqlReaderQuery', 'type': 'object'},
+        'sql_reader_stored_procedure_name': {'key': 'sqlReaderStoredProcedureName', 'type': 'object'},
+        'stored_procedure_parameters': {'key': 'storedProcedureParameters', 'type': '{StoredProcedureParameter}'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SqlSource, self).__init__(**kwargs)
+        self.type = 'SqlSource'  # type: str
+        self.sql_reader_query = kwargs.get('sql_reader_query', None)
+        self.sql_reader_stored_procedure_name = kwargs.get('sql_reader_stored_procedure_name', None)
+        self.stored_procedure_parameters = kwargs.get('stored_procedure_parameters', None)
 
 
 class SquareLinkedService(LinkedService):
@@ -18110,6 +28458,56 @@ class SquareObjectDataset(Dataset):
         super(SquareObjectDataset, self).__init__(**kwargs)
         self.type = 'SquareObject'  # type: str
         self.table_name = kwargs.get('table_name', None)
+
+
+class SquareSource(TabularSource):
+    """A copy activity Square Service source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
+    :param query: A query to retrieve data from source. Type: string (or Expression with resultType
+     string).
+    :type query: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'query': {'key': 'query', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SquareSource, self).__init__(**kwargs)
+        self.type = 'SquareSource'  # type: str
+        self.query = kwargs.get('query', None)
 
 
 class SSISAccessCredential(msrest.serialization.Model):
@@ -18533,6 +28931,44 @@ class StoredProcedureParameter(msrest.serialization.Model):
         self.type = kwargs.get('type', None)
 
 
+class SubResource(AzureEntityResource):
+    """Azure Synapse nested resource, which belongs to a workspace.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
+     Microsoft.Storage/storageAccounts.
+    :vartype type: str
+    :ivar etag: Resource Etag.
+    :vartype etag: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'etag': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SubResource, self).__init__(**kwargs)
+
+
 class SwitchActivity(Activity):
     """This activity evaluates an expression and executes activities under the cases property that correspond to the expression evaluation expected in the equals property.
 
@@ -18690,6 +29126,55 @@ class SybaseLinkedService(LinkedService):
         self.username = kwargs.get('username', None)
         self.password = kwargs.get('password', None)
         self.encrypted_credential = kwargs.get('encrypted_credential', None)
+
+
+class SybaseSource(TabularSource):
+    """A copy activity source for Sybase databases.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
+    :param query: Database query. Type: string (or Expression with resultType string).
+    :type query: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'query': {'key': 'query', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SybaseSource, self).__init__(**kwargs)
+        self.type = 'SybaseSource'  # type: str
+        self.query = kwargs.get('query', None)
 
 
 class SybaseTableDataset(Dataset):
@@ -18910,6 +29395,66 @@ class SynapseSparkJobReference(msrest.serialization.Model):
         self.reference_name = kwargs['reference_name']
 
 
+class TabularTranslator(CopyTranslator):
+    """A copy activity tabular translator.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy translator type.Constant filled by server.
+    :type type: str
+    :param column_mappings: Column mappings. Example: "UserId: MyUserId, Group: MyGroup, Name:
+     MyName" Type: string (or Expression with resultType string). This property will be retired.
+     Please use mappings property.
+    :type column_mappings: object
+    :param schema_mapping: The schema mapping to map between tabular data and hierarchical data.
+     Example: {"Column1": "$.Column1", "Column2": "$.Column2.Property1", "Column3":
+     "$.Column2.Property2"}. Type: object (or Expression with resultType object). This property will
+     be retired. Please use mappings property.
+    :type schema_mapping: object
+    :param collection_reference: The JSON Path of the Nested Array that is going to do cross-apply.
+     Type: object (or Expression with resultType object).
+    :type collection_reference: object
+    :param map_complex_values_to_string: Whether to map complex (array and object) values to simple
+     strings in json format. Type: boolean (or Expression with resultType boolean).
+    :type map_complex_values_to_string: object
+    :param mappings: Column mappings with logical types. Tabular->tabular example:
+     [{"source":{"name":"CustomerName","type":"String"},"sink":{"name":"ClientName","type":"String"}},{"source":{"name":"CustomerAddress","type":"String"},"sink":{"name":"ClientAddress","type":"String"}}].
+     Hierarchical->tabular example:
+     [{"source":{"path":"$.CustomerName","type":"String"},"sink":{"name":"ClientName","type":"String"}},{"source":{"path":"$.CustomerAddress","type":"String"},"sink":{"name":"ClientAddress","type":"String"}}].
+     Type: object (or Expression with resultType object).
+    :type mappings: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'column_mappings': {'key': 'columnMappings', 'type': 'object'},
+        'schema_mapping': {'key': 'schemaMapping', 'type': 'object'},
+        'collection_reference': {'key': 'collectionReference', 'type': 'object'},
+        'map_complex_values_to_string': {'key': 'mapComplexValuesToString', 'type': 'object'},
+        'mappings': {'key': 'mappings', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(TabularTranslator, self).__init__(**kwargs)
+        self.type = 'TabularTranslator'  # type: str
+        self.column_mappings = kwargs.get('column_mappings', None)
+        self.schema_mapping = kwargs.get('schema_mapping', None)
+        self.collection_reference = kwargs.get('collection_reference', None)
+        self.map_complex_values_to_string = kwargs.get('map_complex_values_to_string', None)
+        self.mappings = kwargs.get('mappings', None)
+
+
 class TeradataLinkedService(LinkedService):
     """Linked service for Teradata data source.
 
@@ -18980,6 +29525,97 @@ class TeradataLinkedService(LinkedService):
         self.encrypted_credential = kwargs.get('encrypted_credential', None)
 
 
+class TeradataPartitionSettings(msrest.serialization.Model):
+    """The settings that will be leveraged for teradata source partitioning.
+
+    :param partition_column_name: The name of the column that will be used for proceeding range or
+     hash partitioning. Type: string (or Expression with resultType string).
+    :type partition_column_name: object
+    :param partition_upper_bound: The maximum value of column specified in partitionColumnName that
+     will be used for proceeding range partitioning. Type: string (or Expression with resultType
+     string).
+    :type partition_upper_bound: object
+    :param partition_lower_bound: The minimum value of column specified in partitionColumnName that
+     will be used for proceeding range partitioning. Type: string (or Expression with resultType
+     string).
+    :type partition_lower_bound: object
+    """
+
+    _attribute_map = {
+        'partition_column_name': {'key': 'partitionColumnName', 'type': 'object'},
+        'partition_upper_bound': {'key': 'partitionUpperBound', 'type': 'object'},
+        'partition_lower_bound': {'key': 'partitionLowerBound', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(TeradataPartitionSettings, self).__init__(**kwargs)
+        self.partition_column_name = kwargs.get('partition_column_name', None)
+        self.partition_upper_bound = kwargs.get('partition_upper_bound', None)
+        self.partition_lower_bound = kwargs.get('partition_lower_bound', None)
+
+
+class TeradataSource(TabularSource):
+    """A copy activity Teradata source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
+    :param query: Teradata query. Type: string (or Expression with resultType string).
+    :type query: object
+    :param partition_option: The partition mechanism that will be used for teradata read in
+     parallel. Possible values include: "None", "Hash", "DynamicRange".
+    :type partition_option: str or ~azure.synapse.artifacts.models.TeradataPartitionOption
+    :param partition_settings: The settings that will be leveraged for teradata source
+     partitioning.
+    :type partition_settings: ~azure.synapse.artifacts.models.TeradataPartitionSettings
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'query': {'key': 'query', 'type': 'object'},
+        'partition_option': {'key': 'partitionOption', 'type': 'str'},
+        'partition_settings': {'key': 'partitionSettings', 'type': 'TeradataPartitionSettings'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(TeradataSource, self).__init__(**kwargs)
+        self.type = 'TeradataSource'  # type: str
+        self.query = kwargs.get('query', None)
+        self.partition_option = kwargs.get('partition_option', None)
+        self.partition_settings = kwargs.get('partition_settings', None)
+
+
 class TeradataTableDataset(Dataset):
     """The Teradata database dataset.
 
@@ -19043,6 +29679,86 @@ class TeradataTableDataset(Dataset):
         self.table = kwargs.get('table', None)
 
 
+class TextFormat(DatasetStorageFormat):
+    """The data stored in text format.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Type of dataset storage format.Constant filled by server.
+    :type type: str
+    :param serializer: Serializer. Type: string (or Expression with resultType string).
+    :type serializer: object
+    :param deserializer: Deserializer. Type: string (or Expression with resultType string).
+    :type deserializer: object
+    :param column_delimiter: The column delimiter. Type: string (or Expression with resultType
+     string).
+    :type column_delimiter: object
+    :param row_delimiter: The row delimiter. Type: string (or Expression with resultType string).
+    :type row_delimiter: object
+    :param escape_char: The escape character. Type: string (or Expression with resultType string).
+    :type escape_char: object
+    :param quote_char: The quote character. Type: string (or Expression with resultType string).
+    :type quote_char: object
+    :param null_value: The null value string. Type: string (or Expression with resultType string).
+    :type null_value: object
+    :param encoding_name: The code page name of the preferred encoding. If miss, the default value
+     is ΓÇ£utf-8ΓÇ¥, unless BOM denotes another Unicode encoding. Refer to the ΓÇ£NameΓÇ¥ column of
+     the table in the following link to set supported values:
+     https://msdn.microsoft.com/library/system.text.encoding.aspx. Type: string (or Expression with
+     resultType string).
+    :type encoding_name: object
+    :param treat_empty_as_null: Treat empty column values in the text file as null. The default
+     value is true. Type: boolean (or Expression with resultType boolean).
+    :type treat_empty_as_null: object
+    :param skip_line_count: The number of lines/rows to be skipped when parsing text files. The
+     default value is 0. Type: integer (or Expression with resultType integer).
+    :type skip_line_count: object
+    :param first_row_as_header: When used as input, treat the first row of data as headers. When
+     used as output,write the headers into the output as the first row of data. The default value is
+     false. Type: boolean (or Expression with resultType boolean).
+    :type first_row_as_header: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'serializer': {'key': 'serializer', 'type': 'object'},
+        'deserializer': {'key': 'deserializer', 'type': 'object'},
+        'column_delimiter': {'key': 'columnDelimiter', 'type': 'object'},
+        'row_delimiter': {'key': 'rowDelimiter', 'type': 'object'},
+        'escape_char': {'key': 'escapeChar', 'type': 'object'},
+        'quote_char': {'key': 'quoteChar', 'type': 'object'},
+        'null_value': {'key': 'nullValue', 'type': 'object'},
+        'encoding_name': {'key': 'encodingName', 'type': 'object'},
+        'treat_empty_as_null': {'key': 'treatEmptyAsNull', 'type': 'object'},
+        'skip_line_count': {'key': 'skipLineCount', 'type': 'object'},
+        'first_row_as_header': {'key': 'firstRowAsHeader', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(TextFormat, self).__init__(**kwargs)
+        self.type = 'TextFormat'  # type: str
+        self.column_delimiter = kwargs.get('column_delimiter', None)
+        self.row_delimiter = kwargs.get('row_delimiter', None)
+        self.escape_char = kwargs.get('escape_char', None)
+        self.quote_char = kwargs.get('quote_char', None)
+        self.null_value = kwargs.get('null_value', None)
+        self.encoding_name = kwargs.get('encoding_name', None)
+        self.treat_empty_as_null = kwargs.get('treat_empty_as_null', None)
+        self.skip_line_count = kwargs.get('skip_line_count', None)
+        self.first_row_as_header = kwargs.get('first_row_as_header', None)
+
+
 class TriggerDependencyProvisioningStatus(msrest.serialization.Model):
     """Defines the response of a provision trigger dependency operation.
 
@@ -19071,6 +29787,43 @@ class TriggerDependencyProvisioningStatus(msrest.serialization.Model):
         super(TriggerDependencyProvisioningStatus, self).__init__(**kwargs)
         self.trigger_name = kwargs['trigger_name']
         self.provisioning_status = kwargs['provisioning_status']
+
+
+class TriggerDependencyReference(DependencyReference):
+    """Trigger referenced dependency.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: TumblingWindowTriggerDependencyReference.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. The type of dependency reference.Constant filled by server.
+    :type type: str
+    :param reference_trigger: Required. Referenced trigger.
+    :type reference_trigger: ~azure.synapse.artifacts.models.TriggerReference
+    """
+
+    _validation = {
+        'type': {'required': True},
+        'reference_trigger': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'reference_trigger': {'key': 'referenceTrigger', 'type': 'TriggerReference'},
+    }
+
+    _subtype_map = {
+        'type': {'TumblingWindowTriggerDependencyReference': 'TumblingWindowTriggerDependencyReference'}
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(TriggerDependencyReference, self).__init__(**kwargs)
+        self.type = 'TriggerDependencyReference'  # type: str
+        self.reference_trigger = kwargs['reference_trigger']
 
 
 class TriggerListResponse(msrest.serialization.Model):
@@ -19125,20 +29878,52 @@ class TriggerPipelineReference(msrest.serialization.Model):
         self.parameters = kwargs.get('parameters', None)
 
 
-class TriggerResource(SubResource):
+class TriggerReference(msrest.serialization.Model):
+    """Trigger reference type.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. Trigger reference type. Possible values include: "TriggerReference".
+    :type type: str or ~azure.synapse.artifacts.models.TriggerReferenceType
+    :param reference_name: Required. Reference trigger name.
+    :type reference_name: str
+    """
+
+    _validation = {
+        'type': {'required': True},
+        'reference_name': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'reference_name': {'key': 'referenceName', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(TriggerReference, self).__init__(**kwargs)
+        self.type = kwargs['type']
+        self.reference_name = kwargs['reference_name']
+
+
+class TriggerResource(AzureEntityResource):
     """Trigger resource type.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: The resource identifier.
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: The resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The resource type.
+    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
+     Microsoft.Storage/storageAccounts.
     :vartype type: str
-    :ivar etag: Etag identifies change in the resource.
+    :ivar etag: Resource Etag.
     :vartype etag: str
     :param properties: Required. Properties of the trigger.
     :type properties: ~azure.synapse.artifacts.models.Trigger
@@ -19293,6 +30078,139 @@ class TriggerSubscriptionOperationStatus(msrest.serialization.Model):
         super(TriggerSubscriptionOperationStatus, self).__init__(**kwargs)
         self.trigger_name = None
         self.status = None
+
+
+class TumblingWindowTrigger(Trigger):
+    """Trigger that schedules pipeline runs for all fixed time interval windows from a start time without gaps and also supports backfill scenarios (when start time is in the past).
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Trigger type.Constant filled by server.
+    :type type: str
+    :param description: Trigger description.
+    :type description: str
+    :ivar runtime_state: Indicates if trigger is running or not. Updated when Start/Stop APIs are
+     called on the Trigger. Possible values include: "Started", "Stopped", "Disabled".
+    :vartype runtime_state: str or ~azure.synapse.artifacts.models.TriggerRuntimeState
+    :param annotations: List of tags that can be used for describing the trigger.
+    :type annotations: list[object]
+    :param pipeline: Required. Pipeline for which runs are created when an event is fired for
+     trigger window that is ready.
+    :type pipeline: ~azure.synapse.artifacts.models.TriggerPipelineReference
+    :param frequency: Required. The frequency of the time windows. Possible values include:
+     "Minute", "Hour".
+    :type frequency: str or ~azure.synapse.artifacts.models.TumblingWindowFrequency
+    :param interval: Required. The interval of the time windows. The minimum interval allowed is 15
+     Minutes.
+    :type interval: int
+    :param start_time: Required. The start time for the time period for the trigger during which
+     events are fired for windows that are ready. Only UTC time is currently supported.
+    :type start_time: ~datetime.datetime
+    :param end_time: The end time for the time period for the trigger during which events are fired
+     for windows that are ready. Only UTC time is currently supported.
+    :type end_time: ~datetime.datetime
+    :param delay: Specifies how long the trigger waits past due time before triggering new run. It
+     doesn't alter window start and end time. The default is 0. Type: string (or Expression with
+     resultType string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type delay: object
+    :param max_concurrency: Required. The max number of parallel time windows (ready for execution)
+     for which a new run is triggered.
+    :type max_concurrency: int
+    :param retry_policy: Retry policy that will be applied for failed pipeline runs.
+    :type retry_policy: ~azure.synapse.artifacts.models.RetryPolicy
+    :param depends_on: Triggers that this trigger depends on. Only tumbling window triggers are
+     supported.
+    :type depends_on: list[~azure.synapse.artifacts.models.DependencyReference]
+    """
+
+    _validation = {
+        'type': {'required': True},
+        'runtime_state': {'readonly': True},
+        'pipeline': {'required': True},
+        'frequency': {'required': True},
+        'interval': {'required': True},
+        'start_time': {'required': True},
+        'max_concurrency': {'required': True, 'maximum': 50, 'minimum': 1},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'runtime_state': {'key': 'runtimeState', 'type': 'str'},
+        'annotations': {'key': 'annotations', 'type': '[object]'},
+        'pipeline': {'key': 'pipeline', 'type': 'TriggerPipelineReference'},
+        'frequency': {'key': 'typeProperties.frequency', 'type': 'str'},
+        'interval': {'key': 'typeProperties.interval', 'type': 'int'},
+        'start_time': {'key': 'typeProperties.startTime', 'type': 'iso-8601'},
+        'end_time': {'key': 'typeProperties.endTime', 'type': 'iso-8601'},
+        'delay': {'key': 'typeProperties.delay', 'type': 'object'},
+        'max_concurrency': {'key': 'typeProperties.maxConcurrency', 'type': 'int'},
+        'retry_policy': {'key': 'typeProperties.retryPolicy', 'type': 'RetryPolicy'},
+        'depends_on': {'key': 'typeProperties.dependsOn', 'type': '[DependencyReference]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(TumblingWindowTrigger, self).__init__(**kwargs)
+        self.type = 'TumblingWindowTrigger'  # type: str
+        self.pipeline = kwargs['pipeline']
+        self.frequency = kwargs['frequency']
+        self.interval = kwargs['interval']
+        self.start_time = kwargs['start_time']
+        self.end_time = kwargs.get('end_time', None)
+        self.delay = kwargs.get('delay', None)
+        self.max_concurrency = kwargs['max_concurrency']
+        self.retry_policy = kwargs.get('retry_policy', None)
+        self.depends_on = kwargs.get('depends_on', None)
+
+
+class TumblingWindowTriggerDependencyReference(TriggerDependencyReference):
+    """Referenced tumbling window trigger dependency.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. The type of dependency reference.Constant filled by server.
+    :type type: str
+    :param reference_trigger: Required. Referenced trigger.
+    :type reference_trigger: ~azure.synapse.artifacts.models.TriggerReference
+    :param offset: Timespan applied to the start time of a tumbling window when evaluating
+     dependency.
+    :type offset: str
+    :param size: The size of the window when evaluating the dependency. If undefined the frequency
+     of the tumbling window will be used.
+    :type size: str
+    """
+
+    _validation = {
+        'type': {'required': True},
+        'reference_trigger': {'required': True},
+        'offset': {'max_length': 15, 'min_length': 8, 'pattern': r'((\d+)\.)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9]))'},
+        'size': {'max_length': 15, 'min_length': 8, 'pattern': r'((\d+)\.)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9]))'},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'reference_trigger': {'key': 'referenceTrigger', 'type': 'TriggerReference'},
+        'offset': {'key': 'offset', 'type': 'str'},
+        'size': {'key': 'size', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(TumblingWindowTriggerDependencyReference, self).__init__(**kwargs)
+        self.type = 'TumblingWindowTriggerDependencyReference'  # type: str
+        self.offset = kwargs.get('offset', None)
+        self.size = kwargs.get('size', None)
 
 
 class UntilActivity(Activity):
@@ -19543,6 +30461,56 @@ class VerticaLinkedService(LinkedService):
         self.encrypted_credential = kwargs.get('encrypted_credential', None)
 
 
+class VerticaSource(TabularSource):
+    """A copy activity Vertica source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
+    :param query: A query to retrieve data from source. Type: string (or Expression with resultType
+     string).
+    :type query: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'query': {'key': 'query', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(VerticaSource, self).__init__(**kwargs)
+        self.type = 'VerticaSource'  # type: str
+        self.query = kwargs.get('query', None)
+
+
 class VerticaTableDataset(Dataset):
     """Vertica dataset.
 
@@ -19610,6 +30578,25 @@ class VerticaTableDataset(Dataset):
         self.table_name = kwargs.get('table_name', None)
         self.table = kwargs.get('table', None)
         self.schema_type_properties_schema = kwargs.get('schema_type_properties_schema', None)
+
+
+class VirtualNetworkProfile(msrest.serialization.Model):
+    """Virtual Network Profile.
+
+    :param compute_subnet_id: Subnet ID used for computes in workspace.
+    :type compute_subnet_id: str
+    """
+
+    _attribute_map = {
+        'compute_subnet_id': {'key': 'computeSubnetId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(VirtualNetworkProfile, self).__init__(**kwargs)
+        self.compute_subnet_id = kwargs.get('compute_subnet_id', None)
 
 
 class WaitActivity(Activity):
@@ -20072,6 +31059,47 @@ class WebLinkedService(LinkedService):
         self.type_properties = kwargs['type_properties']
 
 
+class WebSource(CopySource):
+    """A copy activity source for web page table.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(WebSource, self).__init__(**kwargs)
+        self.type = 'WebSource'  # type: str
+
+
 class WebTableDataset(Dataset):
     """The dataset points to a HTML table in the web page.
 
@@ -20137,64 +31165,80 @@ class WebTableDataset(Dataset):
         self.path = kwargs.get('path', None)
 
 
-class Workspace(Resource):
-    """Workspace resource type.
+class Workspace(TrackedResource):
+    """A workspace.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: The resource identifier.
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: The resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The resource type.
+    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
+     Microsoft.Storage/storageAccounts.
     :vartype type: str
-    :param location: The resource location.
-    :type location: str
-    :param tags: A set of tags. The resource tags.
+    :param tags: A set of tags. Resource tags.
     :type tags: dict[str, str]
-    :ivar e_tag: Etag identifies change in the resource.
-    :vartype e_tag: str
-    :param additional_properties: Unmatched properties from the message are deserialized to this
-     collection.
-    :type additional_properties: dict[str, object]
-    :param identity: Managed service identity of the workspace.
-    :type identity: ~azure.synapse.artifacts.models.WorkspaceIdentity
-    :ivar provisioning_state: Workspace provisioning state, example Succeeded.
+    :param location: Required. The geo-location where the resource lives.
+    :type location: str
+    :param identity: Identity of the workspace.
+    :type identity: ~azure.synapse.artifacts.models.ManagedIdentity
+    :param default_data_lake_storage: Workspace default data lake storage account details.
+    :type default_data_lake_storage: ~azure.synapse.artifacts.models.DataLakeStorageAccountDetails
+    :param sql_administrator_login_password: SQL administrator login password.
+    :type sql_administrator_login_password: str
+    :param managed_resource_group_name: Workspace managed resource group. The resource group name
+     uniquely identifies the resource group within the user subscriptionId. The resource group name
+     must be no longer than 90 characters long, and must be alphanumeric characters
+     (Char.IsLetterOrDigit()) and '-', '_', '(', ')' and'.'. Note that the name cannot end with '.'.
+    :type managed_resource_group_name: str
+    :ivar provisioning_state: Resource provisioning state.
     :vartype provisioning_state: str
-    :ivar create_time: Time the workspace was created in ISO8601 format.
-    :vartype create_time: ~datetime.datetime
-    :ivar version: Version of the workspace.
-    :vartype version: str
-    :param default_storage: Linked service reference.
-    :type default_storage: ~azure.synapse.artifacts.models.LinkedServiceReference
-    :param default_sql_server: Linked service reference.
-    :type default_sql_server: ~azure.synapse.artifacts.models.LinkedServiceReference
+    :param sql_administrator_login: Login for workspace SQL active directory administrator.
+    :type sql_administrator_login: str
+    :param virtual_network_profile: Virtual Network profile.
+    :type virtual_network_profile: ~azure.synapse.artifacts.models.VirtualNetworkProfile
+    :param connectivity_endpoints: Connectivity endpoints.
+    :type connectivity_endpoints: dict[str, str]
+    :param managed_virtual_network: Setting this to 'default' will ensure that all compute for this
+     workspace is in a virtual network managed on behalf of the user.
+    :type managed_virtual_network: str
+    :param private_endpoint_connections: Private endpoint connections to the workspace.
+    :type private_endpoint_connections:
+     list[~azure.synapse.artifacts.models.PrivateEndpointConnection]
+    :ivar extra_properties: Workspace level configs and feature flags.
+    :vartype extra_properties: dict[str, object]
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'e_tag': {'readonly': True},
+        'location': {'required': True},
         'provisioning_state': {'readonly': True},
-        'create_time': {'readonly': True},
-        'version': {'readonly': True},
+        'extra_properties': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'e_tag': {'key': 'eTag', 'type': 'str'},
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'identity': {'key': 'identity', 'type': 'WorkspaceIdentity'},
+        'location': {'key': 'location', 'type': 'str'},
+        'identity': {'key': 'identity', 'type': 'ManagedIdentity'},
+        'default_data_lake_storage': {'key': 'properties.defaultDataLakeStorage', 'type': 'DataLakeStorageAccountDetails'},
+        'sql_administrator_login_password': {'key': 'properties.sqlAdministratorLoginPassword', 'type': 'str'},
+        'managed_resource_group_name': {'key': 'properties.managedResourceGroupName', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'create_time': {'key': 'properties.createTime', 'type': 'iso-8601'},
-        'version': {'key': 'properties.version', 'type': 'str'},
-        'default_storage': {'key': 'properties.defaultStorage', 'type': 'LinkedServiceReference'},
-        'default_sql_server': {'key': 'properties.defaultSqlServer', 'type': 'LinkedServiceReference'},
+        'sql_administrator_login': {'key': 'properties.sqlAdministratorLogin', 'type': 'str'},
+        'virtual_network_profile': {'key': 'properties.virtualNetworkProfile', 'type': 'VirtualNetworkProfile'},
+        'connectivity_endpoints': {'key': 'properties.connectivityEndpoints', 'type': '{str}'},
+        'managed_virtual_network': {'key': 'properties.managedVirtualNetwork', 'type': 'str'},
+        'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
+        'extra_properties': {'key': 'properties.extraProperties', 'type': '{object}'},
     }
 
     def __init__(
@@ -20202,13 +31246,17 @@ class Workspace(Resource):
         **kwargs
     ):
         super(Workspace, self).__init__(**kwargs)
-        self.additional_properties = kwargs.get('additional_properties', None)
         self.identity = kwargs.get('identity', None)
+        self.default_data_lake_storage = kwargs.get('default_data_lake_storage', None)
+        self.sql_administrator_login_password = kwargs.get('sql_administrator_login_password', None)
+        self.managed_resource_group_name = kwargs.get('managed_resource_group_name', None)
         self.provisioning_state = None
-        self.create_time = None
-        self.version = None
-        self.default_storage = kwargs.get('default_storage', None)
-        self.default_sql_server = kwargs.get('default_sql_server', None)
+        self.sql_administrator_login = kwargs.get('sql_administrator_login', None)
+        self.virtual_network_profile = kwargs.get('virtual_network_profile', None)
+        self.connectivity_endpoints = kwargs.get('connectivity_endpoints', None)
+        self.managed_virtual_network = kwargs.get('managed_virtual_network', None)
+        self.private_endpoint_connections = kwargs.get('private_endpoint_connections', None)
+        self.extra_properties = None
 
 
 class WorkspaceIdentity(msrest.serialization.Model):
@@ -20409,6 +31457,56 @@ class XeroObjectDataset(Dataset):
         self.table_name = kwargs.get('table_name', None)
 
 
+class XeroSource(TabularSource):
+    """A copy activity Xero Service source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
+    :param query: A query to retrieve data from source. Type: string (or Expression with resultType
+     string).
+    :type query: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'query': {'key': 'query', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(XeroSource, self).__init__(**kwargs)
+        self.type = 'XeroSource'  # type: str
+        self.query = kwargs.get('query', None)
+
+
 class ZohoLinkedService(LinkedService):
     """Zoho server linked service.
 
@@ -20537,3 +31635,53 @@ class ZohoObjectDataset(Dataset):
         super(ZohoObjectDataset, self).__init__(**kwargs)
         self.type = 'ZohoObject'  # type: str
         self.table_name = kwargs.get('table_name', None)
+
+
+class ZohoSource(TabularSource):
+    """A copy activity Zoho server source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param type: Required. Copy source type.Constant filled by server.
+    :type type: str
+    :param source_retry_count: Source retry count. Type: integer (or Expression with resultType
+     integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression with resultType
+     string), pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count for the source data
+     store. Type: integer (or Expression with resultType integer).
+    :type max_concurrent_connections: object
+    :param query_timeout: Query timeout. Type: string (or Expression with resultType string),
+     pattern: ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
+    :param query: A query to retrieve data from source. Type: string (or Expression with resultType
+     string).
+    :type query: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'query': {'key': 'query', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ZohoSource, self).__init__(**kwargs)
+        self.type = 'ZohoSource'  # type: str
+        self.query = kwargs.get('query', None)

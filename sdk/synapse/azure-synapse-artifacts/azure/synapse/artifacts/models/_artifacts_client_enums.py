@@ -46,11 +46,41 @@ class AzureFunctionActivityMethod(with_metaclass(_CaseInsensitiveEnumMeta, str, 
     HEAD = "HEAD"
     TRACE = "TRACE"
 
+class AzureSearchIndexWriteBehaviorType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Specify the write behavior when upserting documents into Azure Search Index.
+    """
+
+    MERGE = "Merge"
+    UPLOAD = "Upload"
+
 class BigDataPoolReferenceType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Big data pool reference type.
     """
 
     BIG_DATA_POOL_REFERENCE = "BigDataPoolReference"
+
+class BlobEventTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    MICROSOFT_STORAGE_BLOB_CREATED = "Microsoft.Storage.BlobCreated"
+    MICROSOFT_STORAGE_BLOB_DELETED = "Microsoft.Storage.BlobDeleted"
+
+class CassandraSourceReadConsistencyLevels(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The consistency level specifies how many Cassandra servers must respond to a read request
+    before returning data to the client application. Cassandra checks the specified number of
+    Cassandra servers for data to satisfy the read request. Must be one of
+    cassandraSourceReadConsistencyLevels. The default value is 'ONE'. It is case-insensitive.
+    """
+
+    ALL = "ALL"
+    EACH_QUORUM = "EACH_QUORUM"
+    QUORUM = "QUORUM"
+    LOCAL_QUORUM = "LOCAL_QUORUM"
+    ONE = "ONE"
+    TWO = "TWO"
+    THREE = "THREE"
+    LOCAL_ONE = "LOCAL_ONE"
+    SERIAL = "SERIAL"
+    LOCAL_SERIAL = "LOCAL_SERIAL"
 
 class CellOutputType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Execution, display, or stream outputs.
@@ -60,6 +90,14 @@ class CellOutputType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     DISPLAY_DATA = "display_data"
     STREAM = "stream"
     ERROR = "error"
+
+class CopyBehaviorType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """All available types of copy behavior.
+    """
+
+    PRESERVE_HIERARCHY = "PreserveHierarchy"
+    FLATTEN_HIERARCHY = "FlattenHierarchy"
+    MERGE_FILES = "MergeFiles"
 
 class DataFlowComputeType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Compute type of the cluster which will execute data flow job.
@@ -87,6 +125,16 @@ class DatasetReferenceType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """
 
     DATASET_REFERENCE = "DatasetReference"
+
+class DayOfWeek(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    SUNDAY = "Sunday"
+    MONDAY = "Monday"
+    TUESDAY = "Tuesday"
+    WEDNESDAY = "Wednesday"
+    THURSDAY = "Thursday"
+    FRIDAY = "Friday"
+    SATURDAY = "Saturday"
 
 class Db2AuthenticationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """AuthenticationType to be used for connection.
@@ -137,6 +185,12 @@ class DynamicsServicePrincipalCredentialType(with_metaclass(_CaseInsensitiveEnum
 
     SERVICE_PRINCIPAL_KEY = "ServicePrincipalKey"
     SERVICE_PRINCIPAL_CERT = "ServicePrincipalCert"
+
+class DynamicsSinkWriteBehavior(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The write behavior for the operation.
+    """
+
+    UPSERT = "Upsert"
 
 class EventSubscriptionStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Event Subscription Status.
@@ -243,11 +297,79 @@ class ImpalaAuthenticationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enu
     SASL_USERNAME = "SASLUsername"
     USERNAME_AND_PASSWORD = "UsernameAndPassword"
 
+class IntegrationRuntimeEdition(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The edition for the SSIS Integration Runtime
+    """
+
+    STANDARD = "Standard"
+    ENTERPRISE = "Enterprise"
+
+class IntegrationRuntimeEntityReferenceType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of this referenced entity.
+    """
+
+    INTEGRATION_RUNTIME_REFERENCE = "IntegrationRuntimeReference"
+    LINKED_SERVICE_REFERENCE = "LinkedServiceReference"
+
+class IntegrationRuntimeLicenseType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """License type for bringing your own license scenario.
+    """
+
+    BASE_PRICE = "BasePrice"
+    LICENSE_INCLUDED = "LicenseIncluded"
+
 class IntegrationRuntimeReferenceType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Type of integration runtime.
     """
 
     INTEGRATION_RUNTIME_REFERENCE = "IntegrationRuntimeReference"
+
+class IntegrationRuntimeSsisCatalogPricingTier(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The pricing tier for the catalog database. The valid values could be found in
+    https://azure.microsoft.com/en-us/pricing/details/sql-database/
+    """
+
+    BASIC = "Basic"
+    STANDARD = "Standard"
+    PREMIUM = "Premium"
+    PREMIUM_RS = "PremiumRS"
+
+class IntegrationRuntimeState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The state of integration runtime.
+    """
+
+    INITIAL = "Initial"
+    STOPPED = "Stopped"
+    STARTED = "Started"
+    STARTING = "Starting"
+    STOPPING = "Stopping"
+    NEED_REGISTRATION = "NeedRegistration"
+    ONLINE = "Online"
+    LIMITED = "Limited"
+    OFFLINE = "Offline"
+    ACCESS_DENIED = "AccessDenied"
+
+class IntegrationRuntimeType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of integration runtime.
+    """
+
+    MANAGED = "Managed"
+    SELF_HOSTED = "SelfHosted"
+
+class JsonFormatFilePattern(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """JSON format file pattern. A property of JsonFormat.
+    """
+
+    SET_OF_OBJECTS = "setOfObjects"
+    ARRAY_OF_OBJECTS = "arrayOfObjects"
+
+class JsonWriteFilePattern(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """File pattern of JSON. This setting controls the way a collection of JSON objects will be
+    treated. The default value is 'setOfObjects'. It is case-sensitive.
+    """
+
+    SET_OF_OBJECTS = "setOfObjects"
+    ARRAY_OF_OBJECTS = "arrayOfObjects"
 
 class MongoDbAuthenticationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The authentication type to be used to connect to the MongoDB database.
@@ -255,6 +377,32 @@ class MongoDbAuthenticationType(with_metaclass(_CaseInsensitiveEnumMeta, str, En
 
     BASIC = "Basic"
     ANONYMOUS = "Anonymous"
+
+class NetezzaPartitionOption(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The partition mechanism that will be used for Netezza read in parallel.
+    """
+
+    NONE = "None"
+    DATA_SLICE = "DataSlice"
+    DYNAMIC_RANGE = "DynamicRange"
+
+class NodeSize(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The level of compute power that each node in the Big Data pool has.
+    """
+
+    NONE = "None"
+    SMALL = "Small"
+    MEDIUM = "Medium"
+    LARGE = "Large"
+    X_LARGE = "XLarge"
+    XX_LARGE = "XXLarge"
+
+class NodeSizeFamily(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The kind of nodes that the Big Data pool provides.
+    """
+
+    NONE = "None"
+    MEMORY_OPTIMIZED = "MemoryOptimized"
 
 class NotebookReferenceType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Synapse notebook reference type.
@@ -278,6 +426,14 @@ class ODataAuthenticationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum
     WINDOWS = "Windows"
     AAD_SERVICE_PRINCIPAL = "AadServicePrincipal"
     MANAGED_SERVICE_IDENTITY = "ManagedServiceIdentity"
+
+class OraclePartitionOption(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The partition mechanism that will be used for Oracle read in parallel.
+    """
+
+    NONE = "None"
+    PHYSICAL_PARTITIONS_OF_TABLE = "PhysicalPartitionsOfTable"
+    DYNAMIC_RANGE = "DynamicRange"
 
 class OrcCompressionCodec(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
@@ -328,12 +484,47 @@ class PluginCurrentState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     CLEANUP = "Cleanup"
     ENDED = "Ended"
 
+class PolybaseSettingsRejectType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Indicates whether the RejectValue property is specified as a literal value or a percentage.
+    """
+
+    VALUE = "value"
+    PERCENTAGE = "percentage"
+
 class PrestoAuthenticationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The authentication mechanism used to connect to the Presto server.
     """
 
     ANONYMOUS = "Anonymous"
     LDAP = "LDAP"
+
+class PrivateLinkServiceConnectionStateStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The private link service connection status.
+    """
+
+    APPROVED = "Approved"
+    PENDING = "Pending"
+    REJECTED = "Rejected"
+    DISCONNECTED = "Disconnected"
+
+class RecurrenceFrequency(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Enumerates possible frequency option for the schedule trigger.
+    """
+
+    NOT_SPECIFIED = "NotSpecified"
+    MINUTE = "Minute"
+    HOUR = "Hour"
+    DAY = "Day"
+    WEEK = "Week"
+    MONTH = "Month"
+    YEAR = "Year"
+
+class ResourceIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of managed identity for the workspace
+    """
+
+    NONE = "None"
+    SYSTEM_ASSIGNED = "SystemAssigned"
 
 class RestServiceAuthenticationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Type of authentication used to connect to the REST service.
@@ -397,12 +588,52 @@ class RunQueryOrderByField(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     TRIGGER_NAME = "TriggerName"
     TRIGGER_RUN_TIMESTAMP = "TriggerRunTimestamp"
 
+class SalesforceSinkWriteBehavior(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The write behavior for the operation. Default is Insert.
+    """
+
+    INSERT = "Insert"
+    UPSERT = "Upsert"
+
+class SalesforceSourceReadBehavior(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The read behavior for the operation. Default is Query.
+    """
+
+    QUERY = "Query"
+    QUERY_ALL = "QueryAll"
+
+class SapCloudForCustomerSinkWriteBehavior(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The write behavior for the operation. Default is 'Insert'.
+    """
+
+    INSERT = "Insert"
+    UPDATE = "Update"
+
 class SapHanaAuthenticationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The authentication type to be used to connect to the SAP HANA server.
     """
 
     BASIC = "Basic"
     WINDOWS = "Windows"
+
+class SapHanaPartitionOption(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The partition mechanism that will be used for SAP HANA read in parallel.
+    """
+
+    NONE = "None"
+    PHYSICAL_PARTITIONS_OF_TABLE = "PhysicalPartitionsOfTable"
+    SAP_HANA_DYNAMIC_RANGE = "SapHanaDynamicRange"
+
+class SapTablePartitionOption(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The partition mechanism that will be used for SAP table read in parallel.
+    """
+
+    NONE = "None"
+    PARTITION_ON_INT = "PartitionOnInt"
+    PARTITION_ON_CALENDAR_YEAR = "PartitionOnCalendarYear"
+    PARTITION_ON_CALENDAR_MONTH = "PartitionOnCalendarMonth"
+    PARTITION_ON_CALENDAR_DATE = "PartitionOnCalendarDate"
+    PARTITION_ON_TIME = "PartitionOnTime"
 
 class SchedulerCurrentState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
@@ -537,6 +768,20 @@ class TeradataAuthenticationType(with_metaclass(_CaseInsensitiveEnumMeta, str, E
     BASIC = "Basic"
     WINDOWS = "Windows"
 
+class TeradataPartitionOption(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The partition mechanism that will be used for teradata read in parallel.
+    """
+
+    NONE = "None"
+    HASH = "Hash"
+    DYNAMIC_RANGE = "DynamicRange"
+
+class TriggerReferenceType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Trigger reference type.
+    """
+
+    TRIGGER_REFERENCE = "TriggerReference"
+
 class TriggerRunStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Trigger run status.
     """
@@ -552,6 +797,13 @@ class TriggerRuntimeState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     STARTED = "Started"
     STOPPED = "Stopped"
     DISABLED = "Disabled"
+
+class TumblingWindowFrequency(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Enumerates possible frequency option for the tumbling window trigger.
+    """
+
+    MINUTE = "Minute"
+    HOUR = "Hour"
 
 class Type(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Linked service reference type.

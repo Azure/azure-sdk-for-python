@@ -17,6 +17,10 @@ from ._data_flow_debug_session_operations import DataFlowDebugSessionOperations
 from ._sql_script_operations import SqlScriptOperations
 from ._spark_job_definition_operations import SparkJobDefinitionOperations
 from ._notebook_operations import NotebookOperations
+from ._workspace_operations import WorkspaceOperations
+from ._sql_pools_operations import SqlPoolsOperations
+from ._big_data_pools_operations import BigDataPoolsOperations
+from ._integration_runtimes_operations import IntegrationRuntimesOperations
 
 __all__ = [
     'LinkedServiceOperations',
@@ -30,4 +34,8 @@ __all__ = [
     'SqlScriptOperations',
     'SparkJobDefinitionOperations',
     'NotebookOperations',
+    'WorkspaceOperations',
+    'SqlPoolsOperations',
+    'BigDataPoolsOperations',
+    'IntegrationRuntimesOperations',
 ]
