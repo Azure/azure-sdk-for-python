@@ -485,7 +485,6 @@ class StorageTableTest(TableTestCase):
             self._delete_table(table=table, ts=tsc)
 
 
-    @pytest.mark.skip("msrest fails deserialization: https://github.com/Azure/msrest-for-python/issues/192")
     @pytest.mark.flaky(reruns=1, reruns_delay=10)
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
     @CachedCosmosAccountPreparer(name_prefix='cosmostables')
@@ -501,19 +500,16 @@ class StorageTableTest(TableTestCase):
         else:
             culture = 'es_ES.utf8'
 
-        try:
-            locale.setlocale(locale.LC_ALL, culture)
-            e = None
+        locale.setlocale(locale.LC_ALL, culture)
+        e = None
+        table = ts.create_table(table_name)
 
-            # Act
-            table.create_table()
-            try:
-                resp = ts.query_tables()
-            except:
-                e = sys.exc_info()[0]
+        resp = ts.list_tables()
 
-            # Assert
-            self.assertIsNone(e)
-        finally:
-            ts.delete_table(table.table_name)
-            locale.setlocale(locale.LC_ALL, init_locale[0] or 'en_US')
+        e = sys.exc_info()[0]
+
+        # Assert
+        self.assertIsNone(e)
+
+        ts.delete_table(table_name)
+        locale.setlocale(locale.LC_ALL, init_locale[0] or 'en_US')
