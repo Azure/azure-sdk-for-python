@@ -1,5 +1,29 @@
 # Release History
 
+## 1.0.0 (2020-09-16)
+
+**Features**
+
+  - Model SBNamespace has a new parameter zone_redundant
+  - Model SBNamespace has a new parameter encryption
+  - Model SBNamespaceUpdateParameters has a new parameter zone_redundant
+  - Model SBNamespaceUpdateParameters has a new parameter identity
+  - Model SBNamespaceUpdateParameters has a new parameter encryption
+  - Added operation NamespacesOperations.create_or_update_virtual_network_rule
+  - Added operation NamespacesOperations.create_or_update_ip_filter_rule
+  - Added operation NamespacesOperations.list_virtual_network_rules
+  - Added operation NamespacesOperations.delete_ip_filter_rule
+  - Added operation NamespacesOperations.list_ip_filter_rules
+  - Added operation NamespacesOperations.get_ip_filter_rule
+  - Added operation NamespacesOperations.get_virtual_network_rule
+  - Added operation NamespacesOperations.delete_virtual_network_rule
+  - Added operation group PrivateLinkResourcesOperations
+  - Added operation group PrivateEndpointConnectionsOperations
+
+**Breaking changes**
+
+  - Model ErrorResponse has a new signature
+
 ## 0.6.0 (2019-04-09)
 
 **Features**

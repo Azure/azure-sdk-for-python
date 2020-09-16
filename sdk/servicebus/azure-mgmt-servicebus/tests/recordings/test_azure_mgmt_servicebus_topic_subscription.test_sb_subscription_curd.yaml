@@ -1,7 +1,7 @@
 interactions:
 - request:
-    body: !!python/unicode '{"sku": {"name": "Standard"}, "location": "westus", "tags":
-      {"tag1": "value1", "tag2": "value2"}}'
+    body: '{"location": "westus", "tags": {"tag1": "value1", "tag2": "value2"}, "sku":
+      {"name": "Standard"}}'
     headers:
       Accept:
       - application/json
@@ -14,25 +14,25 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/2.7.13 (Windows-10-10.0.18362) msrest/0.6.11 msrest_azure/0.6.3 azure-mgmt-servicebus/0.6.0
-        Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-servicebus/1.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasesubscription?api-version=2017-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasesubscription?api-version=2018-01-01-preview
   response:
     body:
-      string: !!python/unicode '{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasesubscription","name":"testingpythontestcasesubscription","type":"Microsoft.ServiceBus/Namespaces","location":"West
-        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"provisioningState":"Created","metricId":"00000000-0000-0000-0000-000000000000:testingpythontestcasesubscription","createdAt":"2020-03-24T07:17:48.813Z","updatedAt":"2020-03-24T07:17:48.813Z","serviceBusEndpoint":"https://testingpythontestcasesubscription.servicebus.windows.net:443/","status":"Activating"}}'
+      string: '{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasesubscription","name":"testingpythontestcasesubscription","type":"Microsoft.ServiceBus/Namespaces","location":"West
+        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"zoneRedundant":false,"provisioningState":"Created","metricId":"00000000-0000-0000-0000-000000000000:testingpythontestcasesubscription","createdAt":"2020-09-16T02:41:38.977Z","updatedAt":"2020-09-16T02:41:38.977Z","serviceBusEndpoint":"https://testingpythontestcasesubscription.servicebus.windows.net:443/","status":"Activating"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '739'
+      - '761'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 24 Mar 2020 07:17:49 GMT
+      - Wed, 16 Sep 2020 02:41:40 GMT
       expires:
       - '-1'
       pragma:
@@ -65,23 +65,23 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/2.7.13 (Windows-10-10.0.18362) msrest/0.6.11 msrest_azure/0.6.3 azure-mgmt-servicebus/0.6.0
-        Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-servicebus/1.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasesubscription?api-version=2017-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasesubscription?api-version=2018-01-01-preview
   response:
     body:
-      string: !!python/unicode '{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasesubscription","name":"testingpythontestcasesubscription","type":"Microsoft.ServiceBus/Namespaces","location":"West
-        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"provisioningState":"Created","metricId":"00000000-0000-0000-0000-000000000000:testingpythontestcasesubscription","createdAt":"2020-03-24T07:17:48.813Z","updatedAt":"2020-03-24T07:17:48.813Z","serviceBusEndpoint":"https://testingpythontestcasesubscription.servicebus.windows.net:443/","status":"Activating"}}'
+      string: '{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasesubscription","name":"testingpythontestcasesubscription","type":"Microsoft.ServiceBus/Namespaces","location":"West
+        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"zoneRedundant":false,"provisioningState":"Created","metricId":"00000000-0000-0000-0000-000000000000:testingpythontestcasesubscription","createdAt":"2020-09-16T02:41:38.977Z","updatedAt":"2020-09-16T02:41:38.977Z","serviceBusEndpoint":"https://testingpythontestcasesubscription.servicebus.windows.net:443/","status":"Activating"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '739'
+      - '761'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 24 Mar 2020 07:18:19 GMT
+      - Wed, 16 Sep 2020 02:42:11 GMT
       expires:
       - '-1'
       pragma:
@@ -112,23 +112,23 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/2.7.13 (Windows-10-10.0.18362) msrest/0.6.11 msrest_azure/0.6.3 azure-mgmt-servicebus/0.6.0
-        Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-servicebus/1.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasesubscription?api-version=2017-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasesubscription?api-version=2018-01-01-preview
   response:
     body:
-      string: !!python/unicode '{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasesubscription","name":"testingpythontestcasesubscription","type":"Microsoft.ServiceBus/Namespaces","location":"West
-        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:testingpythontestcasesubscription","createdAt":"2020-03-24T07:17:48.813Z","updatedAt":"2020-03-24T07:18:32.173Z","serviceBusEndpoint":"https://testingpythontestcasesubscription.servicebus.windows.net:443/","status":"Active"}}'
+      string: '{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasesubscription","name":"testingpythontestcasesubscription","type":"Microsoft.ServiceBus/Namespaces","location":"West
+        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"zoneRedundant":false,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:testingpythontestcasesubscription","createdAt":"2020-09-16T02:41:38.977Z","updatedAt":"2020-09-16T02:42:22.32Z","serviceBusEndpoint":"https://testingpythontestcasesubscription.servicebus.windows.net:443/","status":"Active"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '737'
+      - '758'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 24 Mar 2020 07:18:50 GMT
+      - Wed, 16 Sep 2020 02:42:42 GMT
       expires:
       - '-1'
       pragma:
@@ -159,25 +159,25 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/2.7.13 (Windows-10-10.0.18362) msrest/0.6.11 msrest_azure/0.6.3 azure-mgmt-servicebus/0.6.0
-        Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-servicebus/1.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasesubscription?api-version=2017-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasesubscription?api-version=2018-01-01-preview
   response:
     body:
-      string: !!python/unicode '{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasesubscription","name":"testingpythontestcasesubscription","type":"Microsoft.ServiceBus/Namespaces","location":"West
-        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:testingpythontestcasesubscription","createdAt":"2020-03-24T07:17:48.813Z","updatedAt":"2020-03-24T07:18:32.173Z","serviceBusEndpoint":"https://testingpythontestcasesubscription.servicebus.windows.net:443/","status":"Active"}}'
+      string: '{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasesubscription","name":"testingpythontestcasesubscription","type":"Microsoft.ServiceBus/Namespaces","location":"West
+        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"zoneRedundant":false,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:testingpythontestcasesubscription","createdAt":"2020-09-16T02:41:38.977Z","updatedAt":"2020-09-16T02:42:22.32Z","serviceBusEndpoint":"https://testingpythontestcasesubscription.servicebus.windows.net:443/","status":"Active"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '737'
+      - '758'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 24 Mar 2020 07:18:50 GMT
+      - Wed, 16 Sep 2020 02:42:42 GMT
       expires:
       - '-1'
       pragma:
@@ -199,7 +199,7 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: !!python/unicode '{}'
+    body: '{}'
     headers:
       Accept:
       - application/json
@@ -212,129 +212,25 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/2.7.13 (Windows-10-10.0.18362) msrest/0.6.11 msrest_azure/0.6.3 azure-mgmt-servicebus/0.6.0
-        Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-servicebus/1.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasesubscription/topics/testingpythonsdktopic?api-version=2017-04-01
   response:
     body:
-      string: !!python/unicode '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasesubscription/topics/testingpythonsdktopic","name":"testingpythonsdktopic","type":"Microsoft.ServiceBus/Namespaces/Topics","location":"West
-        US","properties":{"defaultMessageTimeToLive":"P10675199DT2H48M5.4775807S","maxSizeInMegabytes":5120,"requiresDuplicateDetection":false,"duplicateDetectionHistoryTimeWindow":"PT10M","enableBatchedOperations":true,"sizeInBytes":0,"status":"Active","supportOrdering":true,"autoDeleteOnIdle":"P10675199DT2H48M5.4775807S","enablePartitioning":false,"enableExpress":false,"createdAt":"2020-03-24T07:18:53.007Z","updatedAt":"2020-03-24T07:18:53.05Z","accessedAt":"0001-01-01T00:00:00","subscriptionCount":0,"countDetails":{"activeMessageCount":0,"deadLetterMessageCount":0,"scheduledMessageCount":0,"transferMessageCount":0,"transferDeadLetterMessageCount":0}}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasesubscription/topics/testingpythonsdktopic","name":"testingpythonsdktopic","type":"Microsoft.ServiceBus/Namespaces/Topics","location":"West
+        US","properties":{"defaultMessageTimeToLive":"P10675199DT2H48M5.4775807S","maxSizeInMegabytes":5120,"requiresDuplicateDetection":false,"duplicateDetectionHistoryTimeWindow":"PT10M","enableBatchedOperations":true,"sizeInBytes":0,"status":"Active","supportOrdering":true,"autoDeleteOnIdle":"P10675199DT2H48M5.4775807S","enablePartitioning":false,"enableExpress":false,"createdAt":"2020-09-16T02:42:44.8Z","updatedAt":"2020-09-16T02:42:44.97Z","accessedAt":"0001-01-01T00:00:00","subscriptionCount":0,"countDetails":{"activeMessageCount":0,"deadLetterMessageCount":0,"scheduledMessageCount":0,"transferMessageCount":0,"transferDeadLetterMessageCount":0}}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '1006'
+      - '1004'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 24 Mar 2020 07:18:52 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Service-Bus-Resource-Provider/CH3
-      - Microsoft-HTTPAPI/2.0
-      server-sb:
-      - Service-Bus-Resource-Provider/CH3
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-      x-ms-ratelimit-remaining-subscription-writes:
-      - '1199'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/2.7.13 (Windows-10-10.0.18362) msrest/0.6.11 msrest_azure/0.6.3 azure-mgmt-servicebus/0.6.0
-        Azure-SDK-For-Python
-      accept-language:
-      - en-US
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasesubscription/topics/testingpythonsdktopic?api-version=2017-04-01
-  response:
-    body:
-      string: !!python/unicode '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasesubscription/topics/testingpythonsdktopic","name":"testingpythonsdktopic","type":"Microsoft.ServiceBus/Namespaces/Topics","location":"West
-        US","properties":{"defaultMessageTimeToLive":"P10675199DT2H48M5.4775807S","maxSizeInMegabytes":5120,"requiresDuplicateDetection":false,"duplicateDetectionHistoryTimeWindow":"PT10M","enableBatchedOperations":true,"sizeInBytes":0,"status":"Active","supportOrdering":true,"autoDeleteOnIdle":"P10675199DT2H48M5.4775807S","enablePartitioning":false,"enableExpress":false,"createdAt":"2020-03-24T07:18:53.007Z","updatedAt":"2020-03-24T07:18:53.05Z","accessedAt":"0001-01-01T00:00:00Z","subscriptionCount":0,"countDetails":{"activeMessageCount":0,"deadLetterMessageCount":0,"scheduledMessageCount":0,"transferMessageCount":0,"transferDeadLetterMessageCount":0}}}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '1007'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Tue, 24 Mar 2020 07:18:54 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Service-Bus-Resource-Provider/CH3
-      - Microsoft-HTTPAPI/2.0
-      server-sb:
-      - Service-Bus-Resource-Provider/CH3
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: !!python/unicode '{}'
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '2'
-      Content-Type:
-      - application/json; charset=utf-8
-      User-Agent:
-      - python/2.7.13 (Windows-10-10.0.18362) msrest/0.6.11 msrest_azure/0.6.3 azure-mgmt-servicebus/0.6.0
-        Azure-SDK-For-Python
-      accept-language:
-      - en-US
-    method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasesubscription/topics/testingpythonsdktopic/subscriptions/testingpythonsdksubscription?api-version=2017-04-01
-  response:
-    body:
-      string: !!python/unicode '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasesubscription/topics/testingpythonsdktopic/subscriptions/testingpythonsdksubscription","name":"testingpythonsdksubscription","type":"Microsoft.ServiceBus/Namespaces/Topics/Subscriptions","location":"West
-        US","properties":{"lockDuration":"PT1M","requiresSession":false,"defaultMessageTimeToLive":"P10675199DT2H48M5.4775807S","deadLetteringOnMessageExpiration":false,"deadLetteringOnFilterEvaluationExceptions":true,"messageCount":0,"maxDeliveryCount":10,"status":"Active","enableBatchedOperations":true,"createdAt":"2020-03-24T07:18:56.6424919Z","updatedAt":"2020-03-24T07:18:56.6424919Z","accessedAt":"0001-01-01T00:00:00","countDetails":{"activeMessageCount":0,"deadLetterMessageCount":0,"scheduledMessageCount":0,"transferMessageCount":0,"transferDeadLetterMessageCount":0},"autoDeleteOnIdle":"P10675199DT2H48M5.4775807S"}}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '1037'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Tue, 24 Mar 2020 07:18:56 GMT
+      - Wed, 16 Sep 2020 02:42:44 GMT
       expires:
       - '-1'
       pragma:
@@ -367,25 +263,129 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/2.7.13 (Windows-10-10.0.18362) msrest/0.6.11 msrest_azure/0.6.3 azure-mgmt-servicebus/0.6.0
-        Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-servicebus/1.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasesubscription/topics/testingpythonsdktopic?api-version=2017-04-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasesubscription/topics/testingpythonsdktopic","name":"testingpythonsdktopic","type":"Microsoft.ServiceBus/Namespaces/Topics","location":"West
+        US","properties":{"defaultMessageTimeToLive":"P10675199DT2H48M5.4775807S","maxSizeInMegabytes":5120,"requiresDuplicateDetection":false,"duplicateDetectionHistoryTimeWindow":"PT10M","enableBatchedOperations":true,"sizeInBytes":0,"status":"Active","supportOrdering":true,"autoDeleteOnIdle":"P10675199DT2H48M5.4775807S","enablePartitioning":false,"enableExpress":false,"createdAt":"2020-09-16T02:42:44.8Z","updatedAt":"2020-09-16T02:42:44.97Z","accessedAt":"0001-01-01T00:00:00Z","subscriptionCount":0,"countDetails":{"activeMessageCount":0,"deadLetterMessageCount":0,"scheduledMessageCount":0,"transferMessageCount":0,"transferDeadLetterMessageCount":0}}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1005'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 16 Sep 2020 02:42:45 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Service-Bus-Resource-Provider/CH3
+      - Microsoft-HTTPAPI/2.0
+      server-sb:
+      - Service-Bus-Resource-Provider/CH3
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '2'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-servicebus/1.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasesubscription/topics/testingpythonsdktopic/subscriptions/testingpythonsdksubscription?api-version=2017-04-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasesubscription/topics/testingpythonsdktopic/subscriptions/testingpythonsdksubscription","name":"testingpythonsdksubscription","type":"Microsoft.ServiceBus/Namespaces/Topics/Subscriptions","location":"West
+        US","properties":{"lockDuration":"PT1M","requiresSession":false,"defaultMessageTimeToLive":"P10675199DT2H48M5.4775807S","deadLetteringOnMessageExpiration":false,"deadLetteringOnFilterEvaluationExceptions":true,"messageCount":0,"maxDeliveryCount":10,"status":"Active","enableBatchedOperations":true,"createdAt":"2020-09-16T02:42:47.8728486Z","updatedAt":"2020-09-16T02:42:47.8728486Z","accessedAt":"0001-01-01T00:00:00","countDetails":{"activeMessageCount":0,"deadLetterMessageCount":0,"scheduledMessageCount":0,"transferMessageCount":0,"transferDeadLetterMessageCount":0},"autoDeleteOnIdle":"P10675199DT2H48M5.4775807S"}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1037'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 16 Sep 2020 02:42:47 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Service-Bus-Resource-Provider/CH3
+      - Microsoft-HTTPAPI/2.0
+      server-sb:
+      - Service-Bus-Resource-Provider/CH3
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1197'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-servicebus/1.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasesubscription/topics/testingpythonsdktopic/subscriptions/testingpythonsdksubscription?api-version=2017-04-01
   response:
     body:
-      string: !!python/unicode '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasesubscription/topics/testingpythonsdktopic/subscriptions/testingpythonsdksubscription","name":"testingpythonsdksubscription","type":"Microsoft.ServiceBus/Namespaces/Topics/Subscriptions","location":"West
-        US","properties":{"lockDuration":"PT1M","requiresSession":false,"defaultMessageTimeToLive":"P10675199DT2H48M5.4775807S","deadLetteringOnMessageExpiration":false,"deadLetteringOnFilterEvaluationExceptions":true,"messageCount":0,"maxDeliveryCount":10,"status":"Active","enableBatchedOperations":true,"createdAt":"2020-03-24T07:18:56.6420748Z","updatedAt":"2020-03-24T07:18:56.6420748Z","accessedAt":"2020-03-24T07:18:56.643Z","countDetails":{"activeMessageCount":0,"deadLetterMessageCount":0,"scheduledMessageCount":0,"transferMessageCount":0,"transferDeadLetterMessageCount":0},"autoDeleteOnIdle":"P10675199DT2H48M5.4775807S"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasesubscription/topics/testingpythonsdktopic/subscriptions/testingpythonsdksubscription","name":"testingpythonsdksubscription","type":"Microsoft.ServiceBus/Namespaces/Topics/Subscriptions","location":"West
+        US","properties":{"lockDuration":"PT1M","requiresSession":false,"defaultMessageTimeToLive":"P10675199DT2H48M5.4775807S","deadLetteringOnMessageExpiration":false,"deadLetteringOnFilterEvaluationExceptions":true,"messageCount":0,"maxDeliveryCount":10,"status":"Active","enableBatchedOperations":true,"createdAt":"2020-09-16T02:42:47.8684614Z","updatedAt":"2020-09-16T02:42:47.8684614Z","accessedAt":"2020-09-16T02:42:47.87Z","countDetails":{"activeMessageCount":0,"deadLetterMessageCount":0,"scheduledMessageCount":0,"transferMessageCount":0,"transferDeadLetterMessageCount":0},"autoDeleteOnIdle":"P10675199DT2H48M5.4775807S"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '1042'
+      - '1041'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 24 Mar 2020 07:18:57 GMT
+      - Wed, 16 Sep 2020 02:42:47 GMT
       expires:
       - '-1'
       pragma:
@@ -416,25 +416,25 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/2.7.13 (Windows-10-10.0.18362) msrest/0.6.11 msrest_azure/0.6.3 azure-mgmt-servicebus/0.6.0
-        Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-servicebus/1.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasesubscription/topics/testingpythonsdktopic/subscriptions?api-version=2017-04-01
   response:
     body:
-      string: !!python/unicode '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasesubscription/topics/testingpythonsdktopic/subscriptions/testingpythonsdksubscription","name":"testingpythonsdksubscription","type":"Microsoft.ServiceBus/Namespaces/Topics/Subscriptions","location":"West
-        US","properties":{"lockDuration":"PT1M","requiresSession":false,"defaultMessageTimeToLive":"P10675199DT2H48M5.4775807S","deadLetteringOnMessageExpiration":false,"deadLetteringOnFilterEvaluationExceptions":true,"messageCount":0,"maxDeliveryCount":10,"status":"Active","enableBatchedOperations":true,"createdAt":"2020-03-24T07:18:56.6420748Z","updatedAt":"2020-03-24T07:18:56.6420748Z","accessedAt":"2020-03-24T07:18:56.643Z","countDetails":{"activeMessageCount":0,"deadLetterMessageCount":0,"scheduledMessageCount":0,"transferMessageCount":0,"transferDeadLetterMessageCount":0},"autoDeleteOnIdle":"P10675199DT2H48M5.4775807S"}}]}'
+      string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasesubscription/topics/testingpythonsdktopic/subscriptions/testingpythonsdksubscription","name":"testingpythonsdksubscription","type":"Microsoft.ServiceBus/Namespaces/Topics/Subscriptions","location":"West
+        US","properties":{"lockDuration":"PT1M","requiresSession":false,"defaultMessageTimeToLive":"P10675199DT2H48M5.4775807S","deadLetteringOnMessageExpiration":false,"deadLetteringOnFilterEvaluationExceptions":true,"messageCount":0,"maxDeliveryCount":10,"status":"Active","enableBatchedOperations":true,"createdAt":"2020-09-16T02:42:47.8684614Z","updatedAt":"2020-09-16T02:42:47.8684614Z","accessedAt":"2020-09-16T02:42:47.87Z","countDetails":{"activeMessageCount":0,"deadLetterMessageCount":0,"scheduledMessageCount":0,"transferMessageCount":0,"transferDeadLetterMessageCount":0},"autoDeleteOnIdle":"P10675199DT2H48M5.4775807S"}}]}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '1054'
+      - '1053'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 24 Mar 2020 07:18:58 GMT
+      - Wed, 16 Sep 2020 02:42:48 GMT
       expires:
       - '-1'
       pragma:
@@ -458,7 +458,7 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: !!python/unicode '{"properties": {"enableBatchedOperations": true, "deadLetteringOnMessageExpiration":
+    body: '{"properties": {"deadLetteringOnMessageExpiration": true, "enableBatchedOperations":
       true}}'
     headers:
       Accept:
@@ -472,16 +472,16 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/2.7.13 (Windows-10-10.0.18362) msrest/0.6.11 msrest_azure/0.6.3 azure-mgmt-servicebus/0.6.0
-        Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-servicebus/1.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasesubscription/topics/testingpythonsdktopic/subscriptions/testingpythonsdksubscription?api-version=2017-04-01
   response:
     body:
-      string: !!python/unicode '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasesubscription/topics/testingpythonsdktopic/subscriptions/testingpythonsdksubscription","name":"testingpythonsdksubscription","type":"Microsoft.ServiceBus/Namespaces/Topics/Subscriptions","location":"West
-        US","properties":{"lockDuration":"PT1M","requiresSession":false,"defaultMessageTimeToLive":"P10675199DT2H48M5.4775807S","deadLetteringOnMessageExpiration":true,"deadLetteringOnFilterEvaluationExceptions":true,"messageCount":0,"maxDeliveryCount":10,"status":"Active","enableBatchedOperations":true,"createdAt":"2020-03-24T07:18:59.7670081Z","updatedAt":"2020-03-24T07:18:59.7670081Z","accessedAt":"0001-01-01T00:00:00","countDetails":{"activeMessageCount":0,"deadLetterMessageCount":0,"scheduledMessageCount":0,"transferMessageCount":0,"transferDeadLetterMessageCount":0},"autoDeleteOnIdle":"P10675199DT2H48M5.4775807S"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasesubscription/topics/testingpythonsdktopic/subscriptions/testingpythonsdksubscription","name":"testingpythonsdksubscription","type":"Microsoft.ServiceBus/Namespaces/Topics/Subscriptions","location":"West
+        US","properties":{"lockDuration":"PT1M","requiresSession":false,"defaultMessageTimeToLive":"P10675199DT2H48M5.4775807S","deadLetteringOnMessageExpiration":true,"deadLetteringOnFilterEvaluationExceptions":true,"messageCount":0,"maxDeliveryCount":10,"status":"Active","enableBatchedOperations":true,"createdAt":"2020-09-16T02:42:49.8731493Z","updatedAt":"2020-09-16T02:42:49.8731493Z","accessedAt":"0001-01-01T00:00:00","countDetails":{"activeMessageCount":0,"deadLetterMessageCount":0,"scheduledMessageCount":0,"transferMessageCount":0,"transferDeadLetterMessageCount":0},"autoDeleteOnIdle":"P10675199DT2H48M5.4775807S"}}'
     headers:
       cache-control:
       - no-cache
@@ -490,7 +490,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 24 Mar 2020 07:18:59 GMT
+      - Wed, 16 Sep 2020 02:42:49 GMT
       expires:
       - '-1'
       pragma:
@@ -509,7 +509,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1199'
+      - '1196'
     status:
       code: 200
       message: OK
@@ -525,22 +525,22 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/2.7.13 (Windows-10-10.0.18362) msrest/0.6.11 msrest_azure/0.6.3 azure-mgmt-servicebus/0.6.0
-        Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-servicebus/1.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasesubscription/topics/testingpythonsdktopic/subscriptions/testingpythonsdksubscription?api-version=2017-04-01
   response:
     body:
-      string: !!python/unicode 
+      string: ''
     headers:
       cache-control:
       - no-cache
       content-length:
       - '0'
       date:
-      - Tue, 24 Mar 2020 07:18:59 GMT
+      - Wed, 16 Sep 2020 02:42:49 GMT
       expires:
       - '-1'
       pragma:
@@ -555,7 +555,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14999'
+      - '14998'
     status:
       code: 200
       message: OK
@@ -571,22 +571,22 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/2.7.13 (Windows-10-10.0.18362) msrest/0.6.11 msrest_azure/0.6.3 azure-mgmt-servicebus/0.6.0
-        Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-servicebus/1.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasesubscription/topics/testingpythonsdktopic?api-version=2017-04-01
   response:
     body:
-      string: !!python/unicode 
+      string: ''
     headers:
       cache-control:
       - no-cache
       content-length:
       - '0'
       date:
-      - Tue, 24 Mar 2020 07:19:01 GMT
+      - Wed, 16 Sep 2020 02:42:50 GMT
       expires:
       - '-1'
       pragma:
@@ -601,7 +601,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14999'
+      - '14997'
     status:
       code: 200
       message: OK
@@ -617,26 +617,26 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/2.7.13 (Windows-10-10.0.18362) msrest/0.6.11 msrest_azure/0.6.3 azure-mgmt-servicebus/0.6.0
-        Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-servicebus/1.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasesubscription?api-version=2017-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasesubscription?api-version=2018-01-01-preview
   response:
     body:
-      string: !!python/unicode 
+      string: ''
     headers:
       cache-control:
       - no-cache
       content-length:
       - '0'
       date:
-      - Tue, 24 Mar 2020 07:19:02 GMT
+      - Wed, 16 Sep 2020 02:42:52 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasesubscription/operationresults/testingpythontestcasesubscription?api-version=2017-04-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasesubscription/operationresults/testingpythontestcasesubscription?api-version=2018-01-01-preview
       pragma:
       - no-cache
       server:
@@ -649,7 +649,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14999'
+      - '14996'
     status:
       code: 202
       message: Accepted
@@ -663,20 +663,20 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/2.7.13 (Windows-10-10.0.18362) msrest/0.6.11 msrest_azure/0.6.3 azure-mgmt-servicebus/0.6.0
-        Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-servicebus/1.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasesubscription/operationresults/testingpythontestcasesubscription?api-version=2017-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ServiceBus/namespaces/testingpythontestcasesubscription/operationresults/testingpythontestcasesubscription?api-version=2018-01-01-preview
   response:
     body:
-      string: !!python/unicode 
+      string: ''
     headers:
       cache-control:
       - no-cache
       content-length:
       - '0'
       date:
-      - Tue, 24 Mar 2020 07:19:32 GMT
+      - Wed, 16 Sep 2020 02:43:24 GMT
       expires:
       - '-1'
       pragma:
