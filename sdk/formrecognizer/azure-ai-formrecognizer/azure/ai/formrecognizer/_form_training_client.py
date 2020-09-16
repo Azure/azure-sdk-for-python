@@ -370,7 +370,7 @@ class FormTrainingClient(object):
         )
 
     @distributed_trace
-    def begin_create_composite_model(
+    def begin_create_composed_model(
         self,
         model_ids,
         **kwargs

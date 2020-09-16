@@ -925,23 +925,23 @@ class FormRecognizerError(object):
 class ModelProperties(object):
     """Optional model properties.
 
-    :ivar bool is_composite_model: Is this model composed? (default: false).
+    :ivar bool is_composed_model: Is this model composed? (default: false).
     """
 
     def __init__(
         self,
         **kwargs
     ):
-        self.is_composite_model = kwargs.get('is_composite_model', False)
+        self.is_composed_model = kwargs.get('is_composed_model', False)
 
     @classmethod
     def _from_generated(cls, model_info):
         return cls(
-            is_composite_model=model_info.attributes.is_composed
+            is_composed_model=model_info.attributes.is_composed
         )
 
     def __repr__(self):
-        return "ModelProperties(is_composite_model={})".format(self.is_composite_model)
+        return "ModelProperties(is_composed_model={})".format(self.is_composed_model)
 
 
 class CustomFormModelInfo(object):

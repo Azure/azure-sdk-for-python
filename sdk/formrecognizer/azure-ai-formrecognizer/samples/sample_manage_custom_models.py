@@ -62,7 +62,7 @@ class ManageCustomModelsSample(object):
         print("\nModel ID: {}".format(custom_model.model_id))
         print("Status: {}".format(custom_model.status))
         print("Model display name: {}".format(custom_model.display_name))
-        print("Is this a composite model?: {}".format(custom_model.properties.is_composite_model))
+        print("Is this a composite model?: {}".format(custom_model.properties.is_composed_model))
         print("Training started on: {}".format(custom_model.training_started_on))
         print("Training completed on: {}".format(custom_model.training_completed_on))
         # [END get_custom_model]

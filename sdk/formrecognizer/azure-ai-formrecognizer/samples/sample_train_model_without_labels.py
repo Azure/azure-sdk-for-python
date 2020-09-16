@@ -53,7 +53,7 @@ class TrainModelWithoutLabelsSample(object):
         print("Model ID: {}".format(model.model_id))
         print("Status: {}".format(model.status))
         print("Model display name: {}".format(model.display_name))
-        print("Is this a composite model?: {}".format(model.properties.is_composite_model))
+        print("Is this a composite model?: {}".format(model.properties.is_composed_model))
         print("Training started on: {}".format(model.training_started_on))
         print("Training completed on: {}".format(model.training_completed_on))
 

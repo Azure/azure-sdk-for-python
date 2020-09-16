@@ -387,7 +387,7 @@ class FormTrainingClient(object):
         )
 
     @distributed_trace_async
-    async def begin_create_composite_model(
+    async def begin_create_composed_model(
         self,
         model_ids: List[str],
         **kwargs

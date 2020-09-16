@@ -7,14 +7,14 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_create_composite_model.py
+FILE: sample_create_composed_model.py
 
 DESCRIPTION:
     This sample demonstrates how to create a composite model using existing custom models that
     were trained with labels.
 
 USAGE:
-    python sample_create_composite_model.py
+    python sample_create_composed_model.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Cognitive Services resource.
@@ -26,7 +26,7 @@ import os
 
 class CompositeModelSample(object):
 
-    def create_composite_model(self):
+    def create_composed_model(self):
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer import FormTrainingClient
 
@@ -36,15 +36,15 @@ class CompositeModelSample(object):
         form_training_client = FormTrainingClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
         models_trained_with_labels = ["6f4f1583-8f73-4be8-9337-ccc105f1fdff", "4408815d-b870-4b15-86b0-fb1ea69f9853"]
-        poller = form_training_client.begin_create_composite_model(
-            models_trained_with_labels, display_name="my_composite_model"
+        poller = form_training_client.begin_create_composed_model(
+            models_trained_with_labels, display_name="my_composed_model"
         )
         model = poller.result()
 
         # Custom model information
         print("Model ID: {}".format(model.model_id))
         print("Model display name: {}".format(model.display_name))
-        print("Is this a composite model?: {}".format(model.properties.is_composite_model))
+        print("Is this a composite model?: {}".format(model.properties.is_composed_model))
         print("Status: {}".format(model.status))
         print("Training started on: {}".format(model.training_started_on))
         print("Training completed on: {}".format(model.training_completed_on))
