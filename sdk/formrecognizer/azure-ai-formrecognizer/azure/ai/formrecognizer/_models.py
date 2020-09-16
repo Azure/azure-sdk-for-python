@@ -233,8 +233,7 @@ class FormField(object):
         analyzed from a custom model that was trained with labels.
     :ivar value:
         The value for the recognized field. Its semantic data type is described by `value_type`.
-    :vartype value: str, int, float, :class:`~datetime.date`, :class:`~datetime.time`,
-        dict[str, :class:`~azure.ai.formrecognizer.FormField`], or list[:class:`~azure.ai.formrecognizer.FormField`]
+    :vartype value: str, int, float, datetime.date, datetime.time, dict[str, FormField], or list[FormField]
     :ivar float confidence:
         Measures the degree of certainty of the recognition result. Value is between [0.0, 1.0].
     """
