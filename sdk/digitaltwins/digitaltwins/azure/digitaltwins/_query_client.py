@@ -16,7 +16,7 @@ class QueryClient(object):
     :**kwargs Used to configure the service client.
     :type **kwargs: any
     """
-    def __init__(self, endpoint: str, credential: object, **kwargs: any):
+    def __init__(self, endpoint, credential, **kwargs: any):
         # type: (str, AzureKeyCredential, **Any) -> None
 
         self.endpoint = endpoint #type: str
@@ -35,8 +35,8 @@ class QueryClient(object):
         :type query_specification: ~azure.digitaltwins.models.QuerySpecification
         :**kwargs The operation options
         :type **kwargs: any
-        :returns: QueryResult, or the result of cls(response)
-        :rtype: object
+        :returns: The QueryResult object
+        :rtype: ~azure.digitaltwins.models.QueryResult
         :raises :class: `~azure.core.exceptions.HttpResponseError`
         """
         return self._client.query.query_twins(query_specification, **kwargs)

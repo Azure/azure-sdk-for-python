@@ -18,7 +18,7 @@ class DigitalTwinsClient(object):
     :**kwargs Used to configure the service client.
     :type **kwargs: any
     """
-    def __init__(self, endpoint: str, credential: object, **kwargs: any):
+    def __init__(self, endpoint, credential, **kwargs: any):
         # type: (str, AzureKeyCredential, **Any) -> None
 
         self.endpoint = endpoint #type: str
@@ -37,30 +37,30 @@ class DigitalTwinsClient(object):
         :type digital_twin_id: str
         :**kwargs The operation options
         :type **kwargs: any
-        :returns: The application/json digital twin and the http response
+        :returns: The twin object
         :rtype: object
         :raises :class: `~azure.core.exceptions.HttpResponseError`
         """
         return self._client.digital_twins.get_by_id(digital_twin_id, **kwargs)
 
-    def upsert_digital_twin(self, digital_twin_id, digital_twin_json, **kwargs):
-        # type: (str, str, **Any) -> object
+    def upsert_digital_twin(self, digital_twin_id, digital_twin, **kwargs):
+        # type: (str, object, **Any) -> object
         """Create or update a digital twin
 
         :param digital_twin_id: The Id of the digital twin
         :type digital_twin_id: str
-        :param digital_twin_json: The application/json digital twin to create
-        :type digital_twin_json: str
+        :param digital_twin: The twin object to create or update
+        :type digital_twin: object
         :kwargs The operation options
         :type any
-        :returns: The http response
+        :returns: The created or updated twin object
         :rtype: object
         :raises :class: `~azure.core.exceptions.HttpResponseError`
         """
-        return self._client.digital_twins.add(digital_twin_id, digital_twin_json, **kwargs)
+        return self._client.digital_twins.add(digital_twin_id, digital_twin, **kwargs)
 
     def update_digital_twin(self, digital_twin_id, twin_patch, etag=None, **kwargs):
-        # type: (str, str, str, **Any) -> object
+        # type: (str, object, str, **Any) -> object
         """Update a digital twin using a json patch
 
         :param digital_twin_id: The Id of the digital twin
@@ -74,8 +74,8 @@ class DigitalTwinsClient(object):
         :type str
         :kwargs The operation options
         :type any
-        :returns: The http response
-        :rtype: object
+        :returns: None
+        :rtype: None
         :raises :class: `~azure.core.exceptions.HttpResponseError`
         """
         return self._client.digital_twins.update(digital_twin_id, twin_patch, if_match=etag, **kwargs)
@@ -91,8 +91,8 @@ class DigitalTwinsClient(object):
         :type str
         :kwargs The operation options
         :type any
-        :returns: The http response
-        :rtype: object
+        :returns: None
+        :rtype: None
         :raises :class: `~azure.core.exceptions.HttpResponseError`
         """
         return self._client.digital_twins.delete(digital_twin_id, if_match=etag, **kwargs)
@@ -107,8 +107,7 @@ class DigitalTwinsClient(object):
         :type str
         :kwargs The operation options
         :type any
-        :returns: Json string representation of the component corresponding to the provided
-        componentPath and the HTTP response
+        :returns: The component object
         :rtype: object
         :raises :class: `~azure.core.exceptions.HttpResponseError`
         """
@@ -122,23 +121,22 @@ class DigitalTwinsClient(object):
         etag=None,
         **kwargs
     ):
-        # type: (str, str, str,  str, **Any) -> object
+        # type: (str, str, List[object],  str, **Any) -> object
         """Update properties of a component on a digital twin using a JSON patch
 
         :param digital_twin_id: The Id of the digital twin
         :type digital_twin_id: str
         :param component_path: The component being updated
         :type str
-        :param component_patch: The application/json-patch+json operations
-        to be performed on the specified digital twin's component
-        :type str
+        :param component_patch: An update specification described by JSON Patch
+        :type List[object]
         :param etag: Only perform the operation if the entity's etag matches one of
         the etags provided or * is provided
         :type str
         :kwargs The operation options
         :type any
-        :returns: The http response
-        :rtype: object
+        :returns: None
+        :rtype: None
         :raises :class: `~azure.core.exceptions.HttpResponseError`
         """
         return self._client.digital_twins.update_component(
@@ -159,27 +157,26 @@ class DigitalTwinsClient(object):
         :type str
         :kwargs The operation options
         :type any
-        :returns: The relationship application/json belonging to the
-        specified digital twin and the http response
+        :returns: The relationship object
         :rtype: object
         :raises :class: `~azure.core.exceptions.HttpResponseError`
         """
         return self._client.digital_twins.get_relationship_by_id(digital_twin_id, relationship_id, **kwargs)
 
     def upsert_relationship(self, digital_twin_id, relationship_id, relationship=None, **kwargs):
-        # type: (str, str, str, **Any) -> object
+        # type: (str, str, object, **Any) -> object
         """Create or update a relationship on a digital twin
 
         :param digital_twin_id: The Id of the digital twin
         :type digital_twin_id: str
         :param relationship_id: The Id of the relationship to retrieve
         :type str
-        :param relationship: The application/json relationship to be created
-        :type str
+        :param relationship: The relationship object
+        :type object
         :kwargs The operation options
         :type any
-        :returns: The created application/json relationship and the http response
-        :rtype: object
+        :returns: None
+        :rtype: None
         :raises :class: `~azure.core.exceptions.HttpResponseError`
         """
         return self._client.digital_twins.add_relationship(
@@ -190,23 +187,22 @@ class DigitalTwinsClient(object):
         )
 
     def update_relationship(self, digital_twin_id, relationship_id, relationship_patch=None, etag=None, **kwargs):
-        # type: (str, str, str, str, **Any) -> object
+        # type: (str, str, List[object], str, **Any) -> object
         """Updates the properties of a relationship on a digital twin using a JSON patch
 
         :param digital_twin_id: The Id of the digital twin
         :type digital_twin_id: str
         :param relationship_id: The Id of the relationship to retrieve
         :type str
-        :param relationship_patch: The application/json-patch+json operations to be
-        performed on the specified digital twin's relationship
-        :type str
+        :param relationship_patch: JSON Patch description of the update to the relationship properties
+        :type List[object]
         :param etag: Only perform the operation if the entity's etag matches one of
         the etags provided or * is provided
         :type str
         :kwargs The operation options
         :type any
-        :returns: The created application/json relationship and the http response
-        :rtype: object
+        :returns: None
+        :rtype: None
         :raises :class: `~azure.core.exceptions.HttpResponseError`
         """
         return self._client.digital_twins.update_relationship(
@@ -229,8 +225,8 @@ class DigitalTwinsClient(object):
         :type etag: str
         :kwargs The operation options
         :type kwargs: any
-        :returns: The http response
-        :rtype: object
+        :returns: None
+        :rtype: None
         :raises :class: `~azure.core.exceptions.HttpResponseError`
         """
         return self._client.digital_twins.delete_relationship(
@@ -247,13 +243,13 @@ class DigitalTwinsClient(object):
         :type digital_twin_id: str
         :param relationship_id: The Id of the relationship to get (if None all the relationship will be retrieved)
         :type relationship_id: str
-        :return: An iterator like instance of either RelationshipCollection or the result of cls(response)
+        :return: An iterator like instance of either RelationshipCollection
         :rtype: ~azure.core.paging.ItemPaged[~azure.digitaltwins.models.RelationshipCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         return self._client.digital_twins.list_relationships(
             digital_twin_id, 
-            relationship_name=relationship_id, 
+            relationship_name=relationship_id,
             **kwargs
         )
 
@@ -262,7 +258,7 @@ class DigitalTwinsClient(object):
         """Retrieve all incoming relationships for a digital twin
         :param digital_twin_id: The Id of the digital twin
         :type digital_twin_id: str
-        :return: An iterator like instance of either RelationshipCollection or the result of cls(response)
+        :return: An iterator like instance of either RelationshipCollection
         :rtype: ~azure.core.paging.ItemPaged[~azure.digitaltwins.models.IncomingRelationshipCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -272,13 +268,13 @@ class DigitalTwinsClient(object):
         )
 
     def publish_telemetry(self, digital_twin_id, payload, message_id=None, **kwargs):
-        # type: (str, str, str, **Any) -> None
+        # type: (str, object, str, **Any) -> None
         """Publish telemetry from a digital twin, which is then consumed by
         one or many destination endpoints (subscribers) defined under
         :param digital_twin_id: The Id of the digital twin
         :type digital_twin_id: str
-        :param payload: The application/json telemetry payload to be sent
-        :type payload: str
+        :param payload: The telemetry payload to be sent
+        :type payload: object
         :param message_id: The message Id
         :type message_id: str
         :return: None
@@ -287,8 +283,7 @@ class DigitalTwinsClient(object):
         """
         if not message_id:
             message_id = uuid.UUID
-        if not timestamp:
-            timestamp = datetime.now
+        timestamp = datetime.now
         return self._client.digital_twins.send_telemetry(
             digital_twin_id,
             message_id,
@@ -297,16 +292,16 @@ class DigitalTwinsClient(object):
             **kwargs
         )
 
-    def publish_component_telemetry(self, digital_twin_id, component_path, payload, message_id, **kwargs):
-        # type: (str, str, str, str, **Any) -> None
+    def publish_component_telemetry(self, digital_twin_id, component_path, payload, message_id=None, **kwargs):
+        # type: (str, str, object, str, **Any) -> None
         """Publish telemetry from a digital twin's component, which is then consumed by
         one or many destination endpoints (subscribers) defined under
         :param digital_twin_id: The Id of the digital twin
         :type digital_twin_id: str
         :param component_path: The name of the DTDL component
         :type component_path: str
-        :param payload: The application/json telemetry payload to be sent
-        :type payload: str
+        :param payload: The telemetry payload to be sent
+        :type payload: object
         :param message_id: The message Id
         :type message_id: str
         :return: None
@@ -315,8 +310,7 @@ class DigitalTwinsClient(object):
         """
         if not message_id:
             message_id = uuid.UUID
-        if not timestamp:
-            timestamp = datetime.now
+        timestamp = datetime.now
            
         return self._client.digital_twins.send_component_telemetry(
             digital_twin_id,

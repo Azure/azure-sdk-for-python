@@ -13,7 +13,7 @@ from setuptools import find_packages, setup
 
 # Change the PACKAGE_NAME only to change folder and different name
 PACKAGE_NAME = "azure-digitaltwins"
-PACKAGE_PPRINT_NAME = "DigitalTwins"
+PACKAGE_PPRINT_NAME = "Azure-DigitalTwins"
 
 # a-b-c => a/b/c
 PACKAGE_FOLDER_PATH = PACKAGE_NAME.replace("-", "/")

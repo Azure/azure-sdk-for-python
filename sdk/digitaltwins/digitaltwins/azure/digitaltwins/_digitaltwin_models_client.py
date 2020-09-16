@@ -6,7 +6,7 @@
 
 from ._generated import AzureDigitalTwinsAPI
 
-class DigitalTwinModelClient(object):
+class DigitalTwinModelsClient(object):
     """Creates an instance of AzureDigitalTwinsAPI.
 
     :param endpoint: The URL endpoint of an Azure search service
@@ -38,14 +38,14 @@ class DigitalTwinModelClient(object):
         :type include_model_definition: bool
         :**kwargs The operation options
         :type **kwargs: any
-        :returns: The application/json model and the http response
-        :rtype: object
+        :returns: The ModelDate object
+        :rtype: ~azure.digitaltwins.models.ModelData
         :raises :class: `~azure.core.exceptions.HttpResponseError`
         """
         return self._client.digital_twin_models.get_by_id(model_id, include_model_definition, **kwargs)
 
     def list_models(self, dependencies_for, include_model_definition=False, max_item_count=-1, **kwargs):
-        # type: (str, bool, **Any) -> Iterable["models.PagedModelDataCollection"]
+        # type: (str, bool, int, **Any) -> Iterable["models.PagedModelDataCollection"]
         """Get the list of models
 
         :param dependencies_for: The model Ids to have dependencies retrieved.
@@ -59,8 +59,8 @@ class DigitalTwinModelClient(object):
         :type max_item_count: int
         :**kwargs The operation options
         :type **kwargs: any
-        :returns: The application/json model and the http response
-        :rtype: object
+        :returns: An iterator like instance of either PagedModelDataCollection
+        :rtype: ~azure.core.paging.ItemPaged[~azure.digitaltwins.models.PagedModelDataCollection]
         :raises :class: `~azure.core.exceptions.HttpResponseError`
         """
         if max_item_count != -1:
@@ -69,8 +69,7 @@ class DigitalTwinModelClient(object):
         return self._client.digital_twin_models.list(
             dependencies_for=dependencies_for,
             include_model_definition=include_model_definition,
-            digital_twin_models_list_options=digital_twin_models_list_options,
-            **kwargs
+            digital_twin_models_list_options=digital_twin_models_list_options, **kwargs
         )
 
     def create_models(self, models=None, **kwargs):
@@ -78,16 +77,13 @@ class DigitalTwinModelClient(object):
         """Create one or more models. When any error occurs, no models are uploaded.
 
         :param models: The set of models to create. Each string corresponds to exactly one model.
-        :type models: str
+        :type models: List[object]
         :type **kwargs: any
-        :returns: The created application/json models and the http response
-        :rtype: object
+        :returns: The list of ModelData
+        :rtype: List[~azure.digitaltwins.models.ModelData]
         :raises :class: `~azure.core.exceptions.HttpResponseError`
         """
-        return self._client.digital_twin_models.add(
-            models,
-            **kwargs
-        )
+        return self._client.digital_twin_models.add(models, **kwargs)
 
     def decommission_model(self, model_id, model_patch, **kwargs):
         # type: (str, List[object], **Any) -> List["models.ModelData"]
@@ -97,17 +93,13 @@ class DigitalTwinModelClient(object):
         :type model_id: str
         :param update_model: An update specification described by JSON Patch. Only the decommissioned
         property can be replaced.
-        :type update_model: list[object]
+        :type update_model: List[object]
         :type **kwargs: any
         :returns: None
-        :rtype: object
+        :rtype: None
         :raises :class: `~azure.core.exceptions.HttpResponseError`
         """
-        return self._client.digital_twin_models.update(
-            model_id,
-            model_patch,
-            **kwargs
-        )
+        return self._client.digital_twin_models.update(model_id, model_patch, **kwargs)
 
     def delete_model(self, model_id, **kwargs):
         # type: (str, **Any) -> None
@@ -118,7 +110,7 @@ class DigitalTwinModelClient(object):
         :**kwargs The operation options
         :type **kwargs: any
         :returns: None
-        :rtype: object
+        :rtype: None
         :raises :class: `~azure.core.exceptions.HttpResponseError`
         """
         return self._client.digital_twin_models.delete(model_id, **kwargs)

@@ -7,4 +7,5 @@
 # --------------------------------------------------------------------------
 
 from ._digitaltwins_client import DigitalTwinsClient
-__all__ = ['DigitalTwinsClient']
+from ._digitaltwin_models_client import DigitalTwinModelsClient
+__all__ = ['DigitalTwinsClient', 'DigitalTwinModelsClient']

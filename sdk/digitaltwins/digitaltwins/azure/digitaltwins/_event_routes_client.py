@@ -35,7 +35,7 @@ class EventRoutesClient(object):
         :type event_route_id: str
         :**kwargs The operation options
         :type **kwargs: any
-        :returns: The EventRoute and the http response
+        :returns: The EventRoute object
         :rtype: object
         :raises :class: `~azure.core.exceptions.HttpResponseError`
         """
@@ -50,8 +50,8 @@ class EventRoutesClient(object):
         :type max_item_count: str
         :**kwargs The operation options
         :type **kwargs: any
-        :returns: An iterator like instance of either EventRouteCollection or the result of cls(response)
-        :rtype: object
+        :returns: An iterator like instance of the EventRouteCollection
+        :rtype: ~azure.core.paging.ItemPaged[~azure.digitaltwins.models.EventRouteCollection]
         :raises :class: `~azure.core.exceptions.HttpResponseError`
         """
         if max_item_count != -1:
@@ -70,8 +70,8 @@ class EventRoutesClient(object):
         :type event_route: ~azure.digitaltwins.models.EventRoute
         :kwargs The operation options
         :type any
-        :returns: The http response
-        :rtype: object
+        :returns: None
+        :rtype: None
         :raises :class: `~azure.core.exceptions.HttpResponseError`
         """
         return self._client.event_routes.add(event_route_id, event_route, **kwargs)
@@ -84,8 +84,8 @@ class EventRoutesClient(object):
         :type event_route_id: str
         :kwargs The operation options
         :type any
-        :returns: The http response
-        :rtype: object
+        :returns: None
+        :rtype: None
         :raises :class: `~azure.core.exceptions.HttpResponseError`
         """
         return self._client.event_routes.delete(event_route_id, **kwargs)
