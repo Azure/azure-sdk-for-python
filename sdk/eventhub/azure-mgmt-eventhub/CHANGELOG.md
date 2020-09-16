@@ -1,5 +1,12 @@
 # Release History
 
+## 4.2.0 (2020-09-15)
+
+**Features**
+
+  - Added operation group PrivateEndpointConnectionsOperations
+  - Added operation group PrivateLinkResourcesOperations
+
 ## 4.1.0 (2020-09-04)
 
 **Features**
