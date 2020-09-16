@@ -1,5 +1,25 @@
 # Release History
 
+## 3.0.0rc15(2020-9-16)
+**Features**
+
+  - Model FileTaskRunRequest has a new parameter log_template
+  - Model Run has a new parameter log_artifact
+  - Model EncodedTaskRunRequest has a new parameter log_template
+  - Model ImportPipeline has a new parameter location
+  - Model TaskRunRequest has a new parameter log_template
+  - Model Task has a new parameter log_template
+  - Model Task has a new parameter is_system_task
+  - Model RunRequest has a new parameter log_template
+  - Model ExportPipeline has a new parameter location
+  - Model TaskUpdateParameters has a new parameter log_template
+  - Model TaskRunUpdateParameters has a new parameter location
+  - Model DockerBuildRequest has a new parameter log_template
+
+**Breaking changes**
+
+  - Model TaskRun no longer has parameter tags
+  
 ## 3.0.0rc14(2020-06-15)
 
 **Features**
