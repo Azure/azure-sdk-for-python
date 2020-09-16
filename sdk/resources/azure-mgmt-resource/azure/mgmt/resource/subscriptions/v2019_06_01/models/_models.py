@@ -6,7 +6,78 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from azure.core.exceptions import HttpResponseError
 import msrest.serialization
+
+
+class CheckResourceNameResult(msrest.serialization.Model):
+    """Resource Name valid if not a reserved word, does not contain a reserved word and does not start with a reserved word.
+
+    :param name: Name of Resource.
+    :type name: str
+    :param type: Type of Resource.
+    :type type: str
+    :param status: Is the resource name Allowed or Reserved. Possible values include: "Allowed",
+     "Reserved".
+    :type status: str or ~azure.mgmt.resource.subscriptions.v2019_06_01.models.ResourceNameStatus
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(CheckResourceNameResult, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.type = kwargs.get('type', None)
+        self.status = kwargs.get('status', None)
+
+
+class ErrorDefinition(msrest.serialization.Model):
+    """Error description and code explaining why resource name is invalid.
+
+    :param message: Description of the error.
+    :type message: str
+    :param code: Code of the error.
+    :type code: str
+    """
+
+    _attribute_map = {
+        'message': {'key': 'message', 'type': 'str'},
+        'code': {'key': 'code', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ErrorDefinition, self).__init__(**kwargs)
+        self.message = kwargs.get('message', None)
+        self.code = kwargs.get('code', None)
+
+
+class ErrorResponse(msrest.serialization.Model):
+    """Error response.
+
+    :param error: The error details.
+    :type error: ~azure.mgmt.resource.subscriptions.v2019_06_01.models.ErrorDefinition
+    """
+
+    _attribute_map = {
+        'error': {'key': 'error', 'type': 'ErrorDefinition'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ErrorResponse, self).__init__(**kwargs)
+        self.error = kwargs.get('error', None)
 
 
 class Location(msrest.serialization.Model):
@@ -179,6 +250,36 @@ class OperationListResult(msrest.serialization.Model):
         super(OperationListResult, self).__init__(**kwargs)
         self.value = kwargs.get('value', None)
         self.next_link = kwargs.get('next_link', None)
+
+
+class ResourceName(msrest.serialization.Model):
+    """Name and Type of the Resource.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. Name of the resource.
+    :type name: str
+    :param type: Required. The type of the resource.
+    :type type: str
+    """
+
+    _validation = {
+        'name': {'required': True},
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ResourceName, self).__init__(**kwargs)
+        self.name = kwargs['name']
+        self.type = kwargs['type']
 
 
 class Subscription(msrest.serialization.Model):

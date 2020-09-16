@@ -7,6 +7,9 @@
 # --------------------------------------------------------------------------
 
 try:
+    from ._models_py3 import CheckResourceNameResult
+    from ._models_py3 import ErrorDefinition
+    from ._models_py3 import ErrorResponse
     from ._models_py3 import Location
     from ._models_py3 import LocationListResult
     from ._models_py3 import LocationMetadata
@@ -15,12 +18,16 @@ try:
     from ._models_py3 import OperationDisplay
     from ._models_py3 import OperationListResult
     from ._models_py3 import PairedRegion
+    from ._models_py3 import ResourceName
     from ._models_py3 import Subscription
     from ._models_py3 import SubscriptionListResult
     from ._models_py3 import SubscriptionPolicies
     from ._models_py3 import TenantIdDescription
     from ._models_py3 import TenantListResult
 except (SyntaxError, ImportError):
+    from ._models import CheckResourceNameResult  # type: ignore
+    from ._models import ErrorDefinition  # type: ignore
+    from ._models import ErrorResponse  # type: ignore
     from ._models import Location  # type: ignore
     from ._models import LocationListResult  # type: ignore
     from ._models import LocationMetadata  # type: ignore
@@ -29,6 +36,7 @@ except (SyntaxError, ImportError):
     from ._models import OperationDisplay  # type: ignore
     from ._models import OperationListResult  # type: ignore
     from ._models import PairedRegion  # type: ignore
+    from ._models import ResourceName  # type: ignore
     from ._models import Subscription  # type: ignore
     from ._models import SubscriptionListResult  # type: ignore
     from ._models import SubscriptionPolicies  # type: ignore
@@ -38,12 +46,16 @@ except (SyntaxError, ImportError):
 from ._subscription_client_enums import (
     RegionCategory,
     RegionType,
+    ResourceNameStatus,
     SpendingLimit,
     SubscriptionState,
     TenantCategory,
 )
 
 __all__ = [
+    'CheckResourceNameResult',
+    'ErrorDefinition',
+    'ErrorResponse',
     'Location',
     'LocationListResult',
     'LocationMetadata',
@@ -52,6 +64,7 @@ __all__ = [
     'OperationDisplay',
     'OperationListResult',
     'PairedRegion',
+    'ResourceName',
     'Subscription',
     'SubscriptionListResult',
     'SubscriptionPolicies',
@@ -59,6 +72,7 @@ __all__ = [
     'TenantListResult',
     'RegionCategory',
     'RegionType',
+    'ResourceNameStatus',
     'SpendingLimit',
     'SubscriptionState',
     'TenantCategory',
