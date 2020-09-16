@@ -35,6 +35,7 @@ from .._table_client_base import TableClientBase
 from ._base_client_async import AsyncStorageAccountHostsMixin
 from ._models import TableEntityPropertiesPaged
 from ._policies_async import ExponentialRetry
+from ._table_batch_async import TableBatchOperations
 
 
 class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
@@ -574,3 +575,108 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
                 table_entity_properties=entity,
                 **kwargs
             )
+
+    @distributed_trace_async
+    def create_batch(
+        self, **kwargs: Dict[str, Any]
+    ) -> TableBatchOperations:
+        """Update/Merge or Insert entity into table.
+
+        .. admonition:: Example:
+            # TODO:
+
+            .. literalinclude:: ../samples/.py
+                :start-after: [START abcd]
+                :end-before: [END abcd]
+                :language: python
+                :dedent: 8
+                :caption: abcd
+        return: Table batch operation for inserting new operations
+        rtype: ~azure.data.tables.TableBatchOperations
+        :raises: None
+        """
+        return TableBatchOperations(
+            self._client,
+            self._client._serialize,
+            self._client._deserialize,
+            self._client._config,
+            self.table_name,
+            self,
+            **kwargs
+        )
+
+    @distributed_trace_async
+    def commit_batch(
+        self,
+        batch: TableBatchOperations,
+        kwargs: Dict[Any, str]
+    ) -> None:
+        """Commit a TableBatchOperations to send requests to the server
+
+        .. admonition:: Example:
+            # TODO:
+
+            .. literalinclude:: ../samples/.py
+                :start-after: [START abcd]
+                :end-before: [END abcd]
+                :language: python
+                :dedent: 8
+                :caption: abcd
+        return: Table batch operation for inserting new operations
+        rtype: ~azure.data.tables.TableBatchOperations
+        :raises: None
+        """
+        return self._batch_send(*batch._requests, **kwargs) # pylint:disable=protected-access
+
+    def _batch_send(
+        self, *reqs: List[HttpRequest]
+        **kwargs: Dict[str, Any]
+    ) -> List[HttpResponse]:
+        """Given a series of request, do a Storage batch call.
+        """
+        # Pop it here, so requests doesn't feel bad about additional kwarg
+        raise_on_any_failure = kwargs.pop("raise_on_any_failure", True)
+        policies = [StorageHeadersPolicy()]
+
+        changeset = HttpRequest('POST', None)
+        changeset.set_multipart_mixed(
+            *reqs,
+            policies=policies,
+            boundary="changeset_{}".format(uuid4())
+        )
+        request = self._client._client.post(  # pylint: disable=protected-access
+            url='https://{}/$batch'.format(self._primary_hostname),
+            headers={
+                'x-ms-version': self.api_version,
+                'DataServiceVersion': '3.0',
+                'MaxDataServiceVersion': '3.0;NetFx',
+            }
+        )
+        request.set_multipart_mixed(
+            changeset,
+            policies=policies,
+            enforce_https=False,
+            boundary="batch_{}".format(uuid4())
+        )
+
+        pipeline_response = await self._pipeline.run(
+            request, **kwargs
+        )
+        response = pipeline_response.http_response
+
+        try:
+            if response.status_code not in [202]:
+                raise HttpResponseError(response=response)
+            parts = response.parts()
+            if raise_on_any_failure:
+                parts = list(response.parts())
+                if any(p for p in parts if not 200 <= p.status_code < 300):
+                    error = PartialBatchErrorException(
+                        message="There is a partial failure in the batch operation.",
+                        response=response, parts=parts
+                    )
+                    raise error
+                return iter(parts)
+            return parts
+        except HttpResponseError as error:
+            _process_table_error(error)
