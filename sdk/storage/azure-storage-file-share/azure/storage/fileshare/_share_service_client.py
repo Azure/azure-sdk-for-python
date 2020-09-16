@@ -170,7 +170,7 @@ class ShareServiceClient(StorageAccountHostsMixin):
             self, hour_metrics=None,  # type: Optional[Metrics]
             minute_metrics=None,  # type: Optional[Metrics]
             cors=None,  # type: Optional[List[CorsRule]]
-            protocol_settings=None,  # type: Optional[ProtocolProperties],
+            protocol=None,  # type: Optional[ProtocolProperties],
             **kwargs
         ):
         # type: (...) -> None
@@ -193,7 +193,7 @@ class ShareServiceClient(StorageAccountHostsMixin):
         :type cors: list(:class:`~azure.storage.fileshare.CorsRule`)
         :param protocol_settings:
             Sets protocol settings
-        :type protocol_settings: ~azure.storage.fileshare.ProtocolProperties
+        :type protocol: ~azure.storage.fileshare.ProtocolProperties
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
@@ -212,7 +212,7 @@ class ShareServiceClient(StorageAccountHostsMixin):
             hour_metrics=hour_metrics,
             minute_metrics=minute_metrics,
             cors=cors,
-            protocol_settings=protocol_settings
+            protocol_settings=protocol
         )
         try:
             self._client.service.set_properties(props, timeout=timeout, **kwargs)
