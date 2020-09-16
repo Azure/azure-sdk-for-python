@@ -255,8 +255,6 @@ class StorageTableTest(TableTestCase):
         for i in range(0, 4):
             self._create_table(ts, prefix + str(i), table_names)
 
-        # table_names.sort()
-
         # Act
         generator1 = ts.list_tables(results_per_page=2).by_page()
         next(generator1)
@@ -328,13 +326,11 @@ class StorageTableTest(TableTestCase):
         try:
             # Act
             acl = table.get_table_access_policy()
-            # acl = table.get_table_access_policy()
 
             # Assert
             self.assertIsNotNone(acl)
             self.assertEqual(len(acl), 0)
         finally:
-            # self._delete_table(table)
             ts.delete_table(table.table_name)
 
     @GlobalStorageAccountPreparer()
@@ -355,7 +351,6 @@ class StorageTableTest(TableTestCase):
             self.assertIsNotNone(acl)
             self.assertEqual(len(acl), 0)
         finally:
-            # self._delete_table(table)
             ts.delete_table(table.table_name)
 
     @GlobalStorageAccountPreparer()
@@ -379,7 +374,6 @@ class StorageTableTest(TableTestCase):
             self.assertIsNone(acl['empty'].expiry)
             self.assertIsNone(acl['empty'].start)
         finally:
-            # self._delete_table(table)
             ts.delete_table(table.table_name)
 
     @GlobalStorageAccountPreparer()
@@ -479,7 +473,7 @@ class StorageTableTest(TableTestCase):
     def test_locale(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         ts = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
-        table = (self._get_table_reference())
+        table = self._get_table_reference()
         init_locale = locale.getlocale()
         if os.name == "nt":
             culture = "Spanish_Spain"
