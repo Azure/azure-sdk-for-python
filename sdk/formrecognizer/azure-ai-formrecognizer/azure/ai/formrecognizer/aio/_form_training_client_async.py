@@ -387,21 +387,21 @@ class FormTrainingClient(object):
         )
 
     @distributed_trace_async
-    async def begin_compose_custom_models(
+    async def begin_create_composite_model(
         self,
         model_ids: List[str],
-        display_name: Optional[str] = None,
         **kwargs
     ) -> AsyncLROPoller[CustomFormModel]:
         """Begin Compose Model
 
         :param list[str] model_ids:
-        :param str display_name:
+        :keyword str display_name:
         """
         def _compose_callback(raw_response, _, headers):  # pylint: disable=unused-argument
             model = self._client._deserialize(Model, raw_response)
             return CustomFormModel._from_generated_composed(model)
 
+        display_name = kwargs.pop("display_name", None)
         polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
         continuation_token = kwargs.pop("continuation_token", None)
 

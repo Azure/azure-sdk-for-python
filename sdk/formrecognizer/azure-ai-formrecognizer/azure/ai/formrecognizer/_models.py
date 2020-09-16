@@ -164,9 +164,9 @@ class FormElement(object):
     :ivar int page_number:
         The 1-based number of the page in which this content is present.
     :ivar str kind:
-        The kind of form element. Possible kinds are "word" or "line" which
-        correspond to a :class:`~azure.ai.formrecognizer.FormWord` or
-        :class:`~azure.ai.formrecognizer.FormLine`, respectively.
+        The kind of form element. Possible kinds are "word", "line", or "selection_mark" which
+        correspond to a :class:`~azure.ai.formrecognizer.FormWord` :class:`~azure.ai.formrecognizer.FormLine`,
+        or :class:`~azure.ai.formrecognizer.SelectionMark`, respectively.
     """
     def __init__(self, **kwargs):
         self.bounding_box = kwargs.get("bounding_box", None)
@@ -298,8 +298,7 @@ class FieldData(object):
         When `include_field_elements` is set to true, a list of
         elements constituting this field or value is returned. The list
         constitutes of elements such as lines and words.
-    :vartype field_elements: list[Union[~azure.ai.formrecognizer.FormElement, ~azure.ai.formrecognizer.FormWord,
-        ~azure.ai.formrecognizer.FormLine,  ~azure.ai.formrecognizer.SelectionMark]]
+    :vartype field_elements: list[Union[~azure.ai.formrecognizer.FormElement, ~azure.ai.formrecognizer.FormWord, ~azure.ai.formrecognizer.FormLine,  ~azure.ai.formrecognizer.SelectionMark]]
     """
 
     def __init__(self, **kwargs):
@@ -505,13 +504,14 @@ class SelectionMark(FormElement):
     :type state: str or ~azure.ai.formrecognizer.SelectionMarkState
     :ivar int page_number:
         The 1-based number of the page in which this content is present.
+    :ivar str kind: For SelectionMark, this is "selection_mark".
     """
 
     def __init__(
         self,
         **kwargs
     ):
-        super(SelectionMark, self).__init__(**kwargs)
+        super(SelectionMark, self).__init__(kind="selection_mark", **kwargs)
         self.confidence = kwargs['confidence']
         self.state = kwargs['state']
 
@@ -588,8 +588,7 @@ class FormTableCell(object):  # pylint:disable=too-many-instance-attributes
         elements constituting this cell is returned. The list
         constitutes of elements such as lines and words.
         For calls to begin_recognize_content(), this list is always populated.
-    :vartype field_elements: list[Union[~azure.ai.formrecognizer.FormElement, ~azure.ai.formrecognizer.FormWord,
-        ~azure.ai.formrecognizer.FormLine, ~azure.ai.formrecognizer.SelectionMark]]
+    :vartype field_elements: list[Union[~azure.ai.formrecognizer.FormElement, ~azure.ai.formrecognizer.FormWord, ~azure.ai.formrecognizer.FormLine, ~azure.ai.formrecognizer.SelectionMark]]
     """
 
     def __init__(self, **kwargs):
@@ -660,8 +659,8 @@ class CustomFormModel(object):
     :ivar list[~azure.ai.formrecognizer.TrainingDocumentInfo] training_documents:
          Metadata about each of the documents used to train the model.
     :ivar str display_name: Optional user defined model name (max length: 1024).
-    :ivar attributes: Optional model attributes.
-    :vartype attributes: ~azure.ai.formrecognizer.ModelAttributes
+    :ivar properties: Optional model properties.
+    :vartype properties: ~azure.ai.formrecognizer.ModelProperties
     """
 
     def __init__(self, **kwargs):
@@ -673,7 +672,7 @@ class CustomFormModel(object):
         self.errors = kwargs.get("errors", None)
         self.training_documents = kwargs.get("training_documents", None)
         self.display_name = kwargs.get("display_name", None)
-        self.attributes = kwargs.get("attributes", None)
+        self.properties = kwargs.get("properties", None)
 
     @classmethod
     def _from_generated(cls, model):
@@ -688,7 +687,7 @@ class CustomFormModel(object):
             if model.train_result else None,
             training_documents=TrainingDocumentInfo._from_generated(model.train_result)
             if model.train_result else None,
-            attributes=ModelAttributes._from_generated(model.model_info),
+            properties=ModelProperties._from_generated(model.model_info),
             display_name=model.model_info.model_name
         )
 
@@ -702,13 +701,13 @@ class CustomFormModel(object):
             submodels=CustomFormSubmodel._from_generated_composed(model),
             errors=FormRecognizerError._from_generated_composed(model, model.model_info.model_id),
             training_documents=TrainingDocumentInfo._from_generated_composed(model),
-            attributes=ModelAttributes._from_generated(model.model_info),
+            properties=ModelProperties._from_generated(model.model_info),
             display_name=model.model_info.model_name
         )
 
     def __repr__(self):
         return "CustomFormModel(model_id={}, status={}, training_started_on={}, training_completed_on={}, " \
-               "submodels={}, errors={}, training_documents={}, display_name={}, attributes={})" \
+               "submodels={}, errors={}, training_documents={}, display_name={}, properties={})" \
                 .format(
                     self.model_id,
                     self.status,
@@ -718,7 +717,7 @@ class CustomFormModel(object):
                     repr(self.errors),
                     repr(self.training_documents),
                     self.display_name,
-                    repr(self.attributes)
+                    repr(self.properties)
                 )[:1024]
 
 
@@ -924,26 +923,26 @@ class FormRecognizerError(object):
         return "FormRecognizerError(code={}, message={})".format(self.code, self.message)[:1024]
 
 
-class ModelAttributes(object):
-    """Optional model attributes.
+class ModelProperties(object):
+    """Optional model properties.
 
-    :ivar bool is_composed: Is this model composed? (default: false).
+    :ivar bool is_composite_model: Is this model composed? (default: false).
     """
 
     def __init__(
         self,
         **kwargs
     ):
-        self.is_composed = kwargs.get('is_composed', False)
+        self.is_composite_model = kwargs.get('is_composite_model', False)
 
     @classmethod
     def _from_generated(cls, model_info):
         return cls(
-            is_composed=model_info.attributes.is_composed
+            is_composite_model=model_info.attributes.is_composed
         )
 
     def __repr__(self):
-        return "ModelAttributes(is_composed={})".format(self.is_composed)
+        return "ModelProperties(is_composite_model={})".format(self.is_composite_model)
 
 
 class CustomFormModelInfo(object):
@@ -959,8 +958,8 @@ class CustomFormModelInfo(object):
         Date and time (UTC) when model training completed.
     :ivar display_name: Optional user defined model name (max length: 1024).
     :vartype display_name: str
-    :ivar attributes: Optional model attributes.
-    :vartype attributes: ~azure.ai.formrecognizer.ModelAttributes
+    :ivar properties: Optional model properties.
+    :vartype properties: ~azure.ai.formrecognizer.ModelProperties
     """
 
     def __init__(self, **kwargs):
@@ -969,7 +968,7 @@ class CustomFormModelInfo(object):
         self.training_started_on = kwargs.get("training_started_on", None)
         self.training_completed_on = kwargs.get("training_completed_on", None)
         self.display_name = kwargs.get("display_name", None)
-        self.attributes = kwargs.get("attributes", None)
+        self.properties = kwargs.get("properties", None)
 
     @classmethod
     def _from_generated(cls, model, model_id=None):
@@ -980,19 +979,19 @@ class CustomFormModelInfo(object):
             status=model.status,
             training_started_on=model.created_date_time,
             training_completed_on=model.last_updated_date_time,
-            attributes=ModelAttributes._from_generated(model),
+            properties=ModelProperties._from_generated(model),
             display_name=model.model_name
         )
 
     def __repr__(self):
         return "CustomFormModelInfo(model_id={}, status={}, training_started_on={}, training_completed_on={}, " \
-               "attributes={}, display_name={})" \
+               "properties={}, display_name={})" \
                 .format(
                     self.model_id,
                     self.status,
                     self.training_started_on,
                     self.training_completed_on,
-                    repr(self.attributes),
+                    repr(self.properties),
                     self.display_name
                 )[:1024]
 

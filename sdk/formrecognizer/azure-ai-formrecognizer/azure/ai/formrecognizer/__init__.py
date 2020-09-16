@@ -32,7 +32,7 @@ from ._models import (
     CustomFormSubmodel,
     CustomFormModelField,
     FieldValueType,
-    ModelAttributes,
+    ModelProperties,
     SelectionMark,
     SelectionMarkState,
 )
@@ -66,7 +66,7 @@ __all__ = [
     'CustomFormSubmodel',
     'CustomFormModelField',
     'FieldValueType',
-    'ModelAttributes',
+    'ModelProperties',
     'SelectionMark',
     'SelectionMarkState',
 ]
