@@ -6,26 +6,6 @@
 
   - Model ConfigurationStoreUpdateParameters has a new parameter public_network_access
 
-**Breaking changes**
-
-  - Operation Operations.list has a new signature
-  - Operation ConfigurationStoresOperations.list_keys has a new signature
-  - Operation ConfigurationStoresOperations.list_by_resource_group has a new signature
-  - Operation ConfigurationStoresOperations.list has a new signature
-  - Operation ConfigurationStoresOperations.get has a new signature
-  - Model ConfigurationStore no longer has parameter private_endpoint_connections
-  - Model ConfigurationStore no longer has parameter public_network_access
-  - Model ConfigurationStore no longer has parameter encryption
-  - Model ConfigurationStoreUpdateParameters no longer has parameter encryption
-  - Operation ConfigurationStoresOperations.list_key_value has a new signature
-  - Operation ConfigurationStoresOperations.regenerate_key has a new signature
-  - Operation Operations.check_name_availability has a new signature
-  - Removed operation ConfigurationStoresOperations.begin_update
-  - Removed operation ConfigurationStoresOperations.begin_delete
-  - Removed operation ConfigurationStoresOperations.begin_create
-  - Removed operation group PrivateLinkResourcesOperations
-  - Removed operation group PrivateEndpointConnectionsOperations
-
 ## 1.0.0b1 (2020-06-17)
 
 This is beta preview version.
