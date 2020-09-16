@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: '{"TableName": "uttablef0c20dcc"}'
+    body: '{"TableName": "uttable4c11103b"}'
     headers:
       Accept:
       - application/json;odata=minimalmetadata
@@ -26,7 +26,7 @@ interactions:
     uri: https://storagename.table.core.windows.net/Tables
   response:
     body:
-      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#Tables/@Element","TableName":"uttablef0c20dcc"}'
+      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#Tables/@Element","TableName":"uttable4c11103b"}'
     headers:
       cache-control:
       - no-cache
@@ -35,7 +35,7 @@ interactions:
       date:
       - Wed, 16 Sep 2020 16:08:58 GMT
       location:
-      - https://storagename.table.core.windows.net/Tables('uttablef0c20dcc')
+      - https://storagename.table.core.windows.net/Tables('uttable4c11103b')
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -48,20 +48,18 @@ interactions:
       code: 201
       message: Created
 - request:
-    body: "--batch_96b59ac4-e2a7-4182-9897-5fa0fd98d0b9\r\nContent-Type: multipart/mixed;
-      boundary=changeset_fcb5de78-9ede-453d-a1ed-ab2ac980140c\r\n\r\n--changeset_fcb5de78-9ede-453d-a1ed-ab2ac980140c\r\nContent-Type:
-      application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID: 0\r\n\r\nPOST
-      https://pyacrstoragefgittz6gih4e.table.core.windows.net/uttablef0c20dcc HTTP/1.1\r\nx-ms-version:
-      2019-02-02\r\nDataServiceVersion: 3.0\r\nContent-Type: application/json;odata=nometadata\r\nAccept:
-      application/json;odata=minimalmetadata\r\nContent-Length: 481\r\nx-ms-date:
+    body: "--batch_fb01b52c-fdb6-454e-9ffe-51ce1d4abe42\r\nContent-Type: multipart/mixed;
+      boundary=changeset_6592dbe9-6de2-4688-b402-534f463aacca\r\n\r\n--changeset_6592dbe9-6de2-4688-b402-534f463aacca\r\nContent-Type:
+      application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID: 0\r\n\r\nPATCH
+      https://pyacrstoragefgittz6gih4e.table.core.windows.net/uttable4c11103b(PartitionKey='001',RowKey='batch_insert_merge')
+      HTTP/1.1\r\nx-ms-version: 2019-02-02\r\nDataServiceVersion: 3.0\r\nContent-Type:
+      application/json\r\nAccept: application/json\r\nContent-Length: 299\r\nx-ms-date:
       Wed, 16 Sep 2020 16:09:01 GMT\r\nDate: Wed, 16 Sep 2020 16:09:01 GMT\r\nx-ms-client-request-id:
-      ef61af5e-f836-11ea-b36f-58961df361d1\r\n\r\n{\"PartitionKey\": \"001\", \"PartitionKey@odata.type\":
-      \"Edm.String\", \"PartitionKey@odata.type@odata.type\": \"Edm.String\", \"RowKey\":
-      \"batch_insert\", \"RowKey@odata.type\": \"Edm.String\", \"RowKey@odata.type@odata.type\":
-      \"Edm.String\", \"test\": true, \"test2\": \"value\", \"test2@odata.type\":
-      \"Edm.String\", \"test2@odata.type@odata.type\": \"Edm.String\", \"test3\":
-      3, \"test4\": 1234567890, \"test5\": \"2020-09-16T16:09:01Z\", \"test5@odata.type\":
-      \"Edm.DateTime\", \"test5@odata.type@odata.type\": \"Edm.String\"}\r\n--changeset_fcb5de78-9ede-453d-a1ed-ab2ac980140c--\r\n\r\n--batch_96b59ac4-e2a7-4182-9897-5fa0fd98d0b9--\r\n"
+      ef913af6-f836-11ea-be64-58961df361d1\r\n\r\n{\"PartitionKey\": \"001\", \"PartitionKey@odata.type\":
+      \"Edm.String\", \"RowKey\": \"batch_insert_merge\", \"RowKey@odata.type\": \"Edm.String\",
+      \"test\": true, \"test2\": \"value\", \"test2@odata.type\": \"Edm.String\",
+      \"test3\": 3, \"test4\": 1234567890, \"test5\": \"2020-09-16T16:09:01Z\", \"test5@odata.type\":
+      \"Edm.DateTime\"}\r\n--changeset_6592dbe9-6de2-4688-b402-534f463aacca--\r\n\r\n--batch_fb01b52c-fdb6-454e-9ffe-51ce1d4abe42--\r\n"
     headers:
       Accept:
       - '*/*'
@@ -70,9 +68,9 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '1254'
+      - '1082'
       Content-Type:
-      - multipart/mixed; boundary=batch_96b59ac4-e2a7-4182-9897-5fa0fd98d0b9
+      - multipart/mixed; boundary=batch_fb01b52c-fdb6-454e-9ffe-51ce1d4abe42
       DataServiceVersion:
       - '3.0'
       Date:
@@ -89,17 +87,16 @@ interactions:
     uri: https://storagename.table.core.windows.net/$batch
   response:
     body:
-      string: "--batchresponse_30d21432-990f-4ffa-ad10-dff0399a4360\r\nContent-Type:
-        multipart/mixed; boundary=changesetresponse_b23dc6db-9e2d-4ce8-aa70-497494550272\r\n\r\n--changesetresponse_b23dc6db-9e2d-4ce8-aa70-497494550272\r\nContent-Type:
-        application/http\r\nContent-Transfer-Encoding: binary\r\n\r\nHTTP/1.1 201
-        Created\r\nDataServiceVersion: 3.0;\r\nContent-Type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8\r\nX-Content-Type-Options:
-        nosniff\r\nCache-Control: no-cache\r\nLocation: https://pyacrstoragefgittz6gih4e.table.core.windows.net/uttablef0c20dcc(PartitionKey='001',RowKey='batch_insert')\r\nETag:
-        W/\"datetime'2020-09-16T16%3A08%3A58.8281899Z'\"\r\n\r\n{\"odata.metadata\":\"https://pyacrstoragefgittz6gih4e.table.core.windows.net/$metadata#uttablef0c20dcc/@Element\",\"odata.etag\":\"W/\\\"datetime'2020-09-16T16%3A08%3A58.8281899Z'\\\"\",\"PartitionKey\":\"001\",\"RowKey\":\"batch_insert\",\"Timestamp\":\"2020-09-16T16:08:58.8281899Z\",\"test\":true,\"test2\":\"value\",\"test3\":3,\"test4\":1234567890,\"test5@odata.type\":\"Edm.DateTime\",\"test5\":\"2020-09-16T16:09:01Z\"}\r\n--changesetresponse_b23dc6db-9e2d-4ce8-aa70-497494550272--\r\n--batchresponse_30d21432-990f-4ffa-ad10-dff0399a4360--\r\n"
+      string: "--batchresponse_4eb16fb2-f823-4eb9-a160-b77c6ca00997\r\nContent-Type:
+        multipart/mixed; boundary=changesetresponse_5a304b02-231a-4ce6-9432-7fa2f47e4ce0\r\n\r\n--changesetresponse_5a304b02-231a-4ce6-9432-7fa2f47e4ce0\r\nContent-Type:
+        application/http\r\nContent-Transfer-Encoding: binary\r\n\r\nHTTP/1.1 204
+        No Content\r\nX-Content-Type-Options: nosniff\r\nCache-Control: no-cache\r\nDataServiceVersion:
+        1.0;\r\nETag: W/\"datetime'2020-09-16T16%3A08%3A59.1437478Z'\"\r\n\r\n\r\n--changesetresponse_5a304b02-231a-4ce6-9432-7fa2f47e4ce0--\r\n--batchresponse_4eb16fb2-f823-4eb9-a160-b77c6ca00997--\r\n"
     headers:
       cache-control:
       - no-cache
       content-type:
-      - multipart/mixed; boundary=batchresponse_30d21432-990f-4ffa-ad10-dff0399a4360
+      - multipart/mixed; boundary=batchresponse_4eb16fb2-f823-4eb9-a160-b77c6ca00997
       date:
       - Wed, 16 Sep 2020 16:08:58 GMT
       server:
@@ -133,10 +130,10 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://storagename.table.core.windows.net/uttablef0c20dcc(PartitionKey='001',RowKey='batch_insert')
+    uri: https://storagename.table.core.windows.net/uttable4c11103b(PartitionKey='001',RowKey='batch_insert_merge')
   response:
     body:
-      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#uttablef0c20dcc/@Element","odata.etag":"W/\"datetime''2020-09-16T16%3A08%3A58.8281899Z''\"","PartitionKey":"001","RowKey":"batch_insert","Timestamp":"2020-09-16T16:08:58.8281899Z","test":true,"test2":"value","test3":3,"test4":1234567890,"test5@odata.type":"Edm.DateTime","test5":"2020-09-16T16:09:01Z"}'
+      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#uttable4c11103b/@Element","odata.etag":"W/\"datetime''2020-09-16T16%3A08%3A59.1437478Z''\"","PartitionKey":"001","RowKey":"batch_insert_merge","Timestamp":"2020-09-16T16:08:59.1437478Z","test":true,"test2":"value","test3":3,"test4":1234567890,"test5@odata.type":"Edm.DateTime","test5":"2020-09-16T16:09:01Z"}'
     headers:
       cache-control:
       - no-cache
@@ -145,7 +142,7 @@ interactions:
       date:
       - Wed, 16 Sep 2020 16:08:58 GMT
       etag:
-      - W/"datetime'2020-09-16T16%3A08%3A58.8281899Z'"
+      - W/"datetime'2020-09-16T16%3A08%3A59.1437478Z'"
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -169,15 +166,15 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Wed, 16 Sep 2020 16:09:01 GMT
+      - Wed, 16 Sep 2020 16:09:02 GMT
       User-Agent:
       - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 16 Sep 2020 16:09:01 GMT
+      - Wed, 16 Sep 2020 16:09:02 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
-    uri: https://storagename.table.core.windows.net/Tables('uttablef0c20dcc')
+    uri: https://storagename.table.core.windows.net/Tables('uttable4c11103b')
   response:
     body:
       string: ''

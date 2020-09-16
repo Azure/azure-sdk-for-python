@@ -561,23 +561,23 @@ class TableBatchOperations(object):
         row_key = entity['RowKey']
         entity = _add_entity_properties(entity)
 
-        # if mode is UpdateMode.MERGE:
-        #     self._client.table.merge_entity(
-        #         table=self.table_name,
-        #         partition_key=partition_key,
-        #         row_key=row_key,
-        #         table_entity_properties=entity,
-        #         cls=kwargs.pop('cls', _return_headers_and_deserialized),
-        #         **kwargs
-        #     )
-        # elif mode is UpdateMode.REPLACE:
-        #     self._client.table.update_entity(
-        #         table=self.table_name,
-        #         partition_key=partition_key,
-        #         row_key=row_key,
-        #         table_entity_properties=entity,
-        #         cls=kwargs.pop('cls', _return_headers_and_deserialized),
-        #         **kwargs)
+        if mode is UpdateMode.MERGE:
+            self._batch_merge_entity(
+                table=self.table_name,
+                partition_key=partition_key,
+                row_key=row_key,
+                table_entity_properties=entity,
+                cls=kwargs.pop('cls', _return_headers_and_deserialized),
+                **kwargs
+            )
+        elif mode is UpdateMode.REPLACE:
+            self._batch_update_entity(
+                table=self.table_name,
+                partition_key=partition_key,
+                row_key=row_key,
+                table_entity_properties=entity,
+                cls=kwargs.pop('cls', _return_headers_and_deserialized),
+                **kwargs)
 
 
     def query_entities(

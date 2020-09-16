@@ -356,7 +356,7 @@ class StorageTableBatchTest(TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("upsert is not yet implemented")
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @GlobalStorageAccountPreparer()
     def test_batch_insert_replace(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -373,20 +373,19 @@ class StorageTableBatchTest(TableTestCase):
             entity.test5 = datetime.utcnow()
 
             batch = self.table.create_batch()
-            batch.upsert_item(entity)
+            batch.upsert_entity(entity)
             resp = self.table.commit_batch(batch)
 
             # Assert
             self.assertIsNotNone(resp)
             entity = self.table.get_entity('001', 'batch_insert_replace')
             self.assertIsNotNone(entity)
-            self.assertEqual('value', entity.test2)
-            self.assertEqual(1234567890, entity.test4)
-            self.assertEqual(list(resp)[0].headers['Etag'], headers['etag'])
+            self.assertEqual('value', entity.test2.value)
+            self.assertEqual(1234567890, entity.test4.value)
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("upsert is not yet implemented")
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @GlobalStorageAccountPreparer()
     def test_batch_insert_merge(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -403,16 +402,15 @@ class StorageTableBatchTest(TableTestCase):
             entity.test5 = datetime.utcnow()
 
             batch = self.table.create_batch()
-            batch.upsert_item(entity, mode=UpdateMode.MERGE)
+            batch.upsert_entity(entity, mode=UpdateMode.MERGE)
             resp = self.table.commit_batch(batch)
 
             # Assert
             self.assertIsNotNone(resp)
             entity = self.table.get_entity('001', 'batch_insert_merge')
             self.assertIsNotNone(entity)
-            self.assertEqual('value', entity.test2)
-            self.assertEqual(1234567890, entity.test4)
-            self.assertEqual(list(resp)[0].headers['Etag'], headers['etag'])
+            self.assertEqual('value', entity.test2.value)
+            self.assertEqual(1234567890, entity.test4.value)
         finally:
             self._tear_down()
 
@@ -507,18 +505,17 @@ class StorageTableBatchTest(TableTestCase):
             entity.RowKey = 'batch_all_operations_together-3'
             entity.test3 = 100
             batch.update_entity(entity, mode=UpdateMode.MERGE)
-            # TODO: upsert is not yet implemented
-            # entity.RowKey = 'batch_all_operations_together-4'
-            # entity.test3 = 10
-            # batch.upsert_item(entity)
-            # entity.RowKey = 'batch_all_operations_together-5'
-            # batch.upsert_item(entity, mode=UpdateMode.MERGE)
+            entity.RowKey = 'batch_all_operations_together-4'
+            entity.test3 = 10
+            batch.upsert_entity(entity)
+            entity.RowKey = 'batch_all_operations_together-5'
+            batch.upsert_entity(entity, mode=UpdateMode.MERGE)
             resp = self.table.commit_batch(batch)
 
             # Assert
             self.assertIsNotNone(resp)
             entities = list(self.table.query_entities("PartitionKey eq '003'"))
-            self.assertEqual(4, len(entities))
+            self.assertEqual(5, len(entities))
         finally:
             self._tear_down()
 
@@ -556,16 +553,15 @@ class StorageTableBatchTest(TableTestCase):
                 entity.RowKey = 'batch_all_operations_together-3'
                 entity.test3 = 100
                 batch.update_entity(entity, mode=UpdateMode.MERGE)
-                # TODO: upsert is not yet implemented
-                # entity.RowKey = 'batch_all_operations_together-4'
-                # entity.test3 = 10
-                # batch.upsert_item(entity)
-                # entity.RowKey = 'batch_all_operations_together-5'
-                # batch.upsert_item(entity, mode=UpdateMode.MERGE)
+                entity.RowKey = 'batch_all_operations_together-4'
+                entity.test3 = 10
+                batch.upsert_entity(entity)
+                entity.RowKey = 'batch_all_operations_together-5'
+                batch.upsert_entity(entity, mode=UpdateMode.MERGE)
 
             # Assert
             entities = list(self.table.query_entities("PartitionKey eq '003'"))
-            self.assertEqual(4, len(entities))
+            self.assertEqual(5, len(entities))
         finally:
             self._tear_down()
 
@@ -611,12 +607,11 @@ class StorageTableBatchTest(TableTestCase):
             entity.RowKey = 'batch_all_operations_together-3'
             entity.test3 = 100
             batch.update_entity(entity, mode=UpdateMode.MERGE)
-            # TODO: upsert not yet implemented
-            # entity.RowKey = 'batch_all_operations_together-4'
-            # entity.test3 = 10
-            # batch.upsert_item(entity)
-            # entity.RowKey = 'batch_all_operations_together-5'
-            # batch.upsert_item(entity, mode=UpdateMode.MERGE)
+            entity.RowKey = 'batch_all_operations_together-4'
+            entity.test3 = 10
+            batch.upsert_entity(entity)
+            entity.RowKey = 'batch_all_operations_together-5'
+            batch.upsert_entity(entity, mode=UpdateMode.MERGE)
 
             self.table.commit_batch(batch)
             resp = table2.commit_batch(batch)
