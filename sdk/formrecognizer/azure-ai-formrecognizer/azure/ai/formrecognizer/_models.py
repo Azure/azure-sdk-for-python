@@ -31,8 +31,8 @@ def resolve_element(element, read_result):
         return FormWord._from_generated(element, page=page)
     if element_type == "line":
         return FormLine._from_generated(element, page=page)
-    # FIXME: add selection mark type once understand format returned in json pointer
-
+    if element_type == "selectionMark":
+        return SelectionMark._from_generated(element, page=page)
     raise ValueError("Failed to parse element reference.")
 
 
@@ -62,7 +62,7 @@ def get_field_value(field, value, read_result):  # pylint: disable=too-many-retu
             for key, value in value.value_object.items()
         }
     if value.type == "selectionMark":
-        return value.value_selection_mark
+        return value.text
 
     return None
 
@@ -164,7 +164,7 @@ class FormElement(object):
     :ivar int page_number:
         The 1-based number of the page in which this content is present.
     :ivar str kind:
-        The kind of form element. Possible kinds are "word", "line", or "selection_mark" which
+        The kind of form element. Possible kinds are "word", "line", or "selectionMark" which
         correspond to a :class:`~azure.ai.formrecognizer.FormWord` :class:`~azure.ai.formrecognizer.FormLine`,
         or :class:`~azure.ai.formrecognizer.SelectionMark`, respectively.
     """
@@ -503,24 +503,24 @@ class SelectionMark(FormElement):
     :type state: str or ~azure.ai.formrecognizer.SelectionMarkState
     :ivar int page_number:
         The 1-based number of the page in which this content is present.
-    :ivar str kind: For SelectionMark, this is "selection_mark".
+    :ivar str kind: For SelectionMark, this is "selectionMark".
     """
 
     def __init__(
         self,
         **kwargs
     ):
-        super(SelectionMark, self).__init__(kind="selection_mark", **kwargs)
+        super(SelectionMark, self).__init__(kind="selectionMark", **kwargs)
         self.confidence = kwargs['confidence']
         self.state = kwargs['state']
 
     @classmethod
-    def _from_generated(cls, mark, page_number):
+    def _from_generated(cls, mark, page):
         return cls(
             confidence=mark.confidence,
             state=mark.state,
-            bounding_box=get_bounding_box(mark.bounding_box),
-            page_number=page_number
+            bounding_box=get_bounding_box(mark),
+            page_number=page
         )
 
     def __repr__(self):

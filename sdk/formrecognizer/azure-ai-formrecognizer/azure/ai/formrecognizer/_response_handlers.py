@@ -72,7 +72,7 @@ def prepare_content_result(response):
             unit=page.unit,
             lines=[FormLine._from_generated(line, page=page.page) for line in page.lines] if page.lines else None,
             tables=prepare_tables(page_result[idx], read_result),
-            selection_marks=[SelectionMark._from_generated(mark, page) for mark in page.selection_marks]
+            selection_marks=[SelectionMark._from_generated(mark, page.page) for mark in page.selection_marks]
         )
         pages.append(form_page)
     return pages
