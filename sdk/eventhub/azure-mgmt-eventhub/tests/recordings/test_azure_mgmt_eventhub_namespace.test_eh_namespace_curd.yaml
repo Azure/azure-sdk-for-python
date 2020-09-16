@@ -15,7 +15,7 @@ interactions:
       - application/json; charset=utf-8
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-eventhub/4.1.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-eventhub/4.2.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
@@ -23,7 +23,7 @@ interactions:
   response:
     body:
       string: '{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_namespace_test_eh_namespace_curdac24175a/providers/Microsoft.EventHub/namespaces/pythontestcasenamespace","name":"pythontestcasenamespace","type":"Microsoft.EventHub/Namespaces","location":"West
-        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"kafkaEnabled":true,"provisioningState":"Created","metricId":"00000000-0000-0000-0000-000000000000:pythontestcasenamespace","createdAt":"2020-09-07T06:14:54.51Z","updatedAt":"2020-09-07T06:14:54.51Z","serviceBusEndpoint":"https://pythontestcasenamespace.servicebus.windows.net:443/","status":"Activating"}}'
+        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"kafkaEnabled":true,"provisioningState":"Created","metricId":"00000000-0000-0000-0000-000000000000:pythontestcasenamespace","createdAt":"2020-09-16T01:49:32.03Z","updatedAt":"2020-09-16T01:49:32.03Z","serviceBusEndpoint":"https://pythontestcasenamespace.servicebus.windows.net:443/","status":"Activating"}}'
     headers:
       cache-control:
       - no-cache
@@ -32,7 +32,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 07 Sep 2020 06:14:56 GMT
+      - Wed, 16 Sep 2020 01:49:33 GMT
       expires:
       - '-1'
       pragma:
@@ -51,7 +51,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-resource-requests:
-      - '49'
+      - '48'
     status:
       code: 200
       message: OK
@@ -66,13 +66,13 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-eventhub/4.1.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-eventhub/4.2.0 Azure-SDK-For-Python
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_namespace_test_eh_namespace_curdac24175a/providers/Microsoft.EventHub/namespaces/pythontestcasenamespace?api-version=2017-04-01
   response:
     body:
       string: '{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_namespace_test_eh_namespace_curdac24175a/providers/Microsoft.EventHub/namespaces/pythontestcasenamespace","name":"pythontestcasenamespace","type":"Microsoft.EventHub/Namespaces","location":"West
-        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"kafkaEnabled":true,"provisioningState":"Created","metricId":"00000000-0000-0000-0000-000000000000:pythontestcasenamespace","createdAt":"2020-09-07T06:14:54.51Z","updatedAt":"2020-09-07T06:14:54.51Z","serviceBusEndpoint":"https://pythontestcasenamespace.servicebus.windows.net:443/","status":"Activating"}}'
+        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"kafkaEnabled":true,"provisioningState":"Created","metricId":"00000000-0000-0000-0000-000000000000:pythontestcasenamespace","createdAt":"2020-09-16T01:49:32.03Z","updatedAt":"2020-09-16T01:49:32.03Z","serviceBusEndpoint":"https://pythontestcasenamespace.servicebus.windows.net:443/","status":"Activating"}}'
     headers:
       cache-control:
       - no-cache
@@ -81,7 +81,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 07 Sep 2020 06:15:26 GMT
+      - Wed, 16 Sep 2020 01:50:04 GMT
       expires:
       - '-1'
       pragma:
@@ -113,31 +113,31 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-eventhub/4.1.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-eventhub/4.2.0 Azure-SDK-For-Python
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_namespace_test_eh_namespace_curdac24175a/providers/Microsoft.EventHub/namespaces/pythontestcasenamespace?api-version=2017-04-01
   response:
     body:
       string: '{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_namespace_test_eh_namespace_curdac24175a/providers/Microsoft.EventHub/namespaces/pythontestcasenamespace","name":"pythontestcasenamespace","type":"Microsoft.EventHub/Namespaces","location":"West
-        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"kafkaEnabled":true,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:pythontestcasenamespace","createdAt":"2020-09-07T06:14:54.51Z","updatedAt":"2020-09-07T06:15:38.59Z","serviceBusEndpoint":"https://pythontestcasenamespace.servicebus.windows.net:443/","status":"Active"}}'
+        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"kafkaEnabled":true,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:pythontestcasenamespace","createdAt":"2020-09-16T01:49:32.03Z","updatedAt":"2020-09-16T01:50:16.623Z","serviceBusEndpoint":"https://pythontestcasenamespace.servicebus.windows.net:443/","status":"Active"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '770'
+      - '771'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 07 Sep 2020 06:15:56 GMT
+      - Wed, 16 Sep 2020 01:50:34 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       server:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       - Microsoft-HTTPAPI/2.0
       server-sb:
-      - Service-Bus-Resource-Provider/CH3
+      - Service-Bus-Resource-Provider/SN1
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -160,7 +160,7 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-eventhub/4.1.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-eventhub/4.2.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
@@ -168,16 +168,16 @@ interactions:
   response:
     body:
       string: '{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_namespace_test_eh_namespace_curdac24175a/providers/Microsoft.EventHub/namespaces/pythontestcasenamespace","name":"pythontestcasenamespace","type":"Microsoft.EventHub/Namespaces","location":"West
-        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"kafkaEnabled":true,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:pythontestcasenamespace","createdAt":"2020-09-07T06:14:54.51Z","updatedAt":"2020-09-07T06:15:38.59Z","serviceBusEndpoint":"https://pythontestcasenamespace.servicebus.windows.net:443/","status":"Active"}}'
+        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"kafkaEnabled":true,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:pythontestcasenamespace","createdAt":"2020-09-16T01:49:32.03Z","updatedAt":"2020-09-16T01:50:16.623Z","serviceBusEndpoint":"https://pythontestcasenamespace.servicebus.windows.net:443/","status":"Active"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '770'
+      - '771'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 07 Sep 2020 06:15:57 GMT
+      - Wed, 16 Sep 2020 01:50:34 GMT
       expires:
       - '-1'
       pragma:
@@ -209,7 +209,7 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-eventhub/4.1.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-eventhub/4.2.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
@@ -217,16 +217,16 @@ interactions:
   response:
     body:
       string: '{"value":[{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_namespace_test_eh_namespace_curdac24175a/providers/Microsoft.EventHub/namespaces/pythontestcasenamespace","name":"pythontestcasenamespace","type":"Microsoft.EventHub/Namespaces","location":"West
-        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"kafkaEnabled":true,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:pythontestcasenamespace","createdAt":"2020-09-07T06:14:54.51Z","updatedAt":"2020-09-07T06:15:38.59Z","serviceBusEndpoint":"https://pythontestcasenamespace.servicebus.windows.net:443/","status":"Active"}}]}'
+        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"kafkaEnabled":true,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:pythontestcasenamespace","createdAt":"2020-09-16T01:49:32.03Z","updatedAt":"2020-09-16T01:50:16.623Z","serviceBusEndpoint":"https://pythontestcasenamespace.servicebus.windows.net:443/","status":"Active"}}]}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '782'
+      - '783'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 07 Sep 2020 06:15:57 GMT
+      - Wed, 16 Sep 2020 01:50:34 GMT
       expires:
       - '-1'
       pragma:
@@ -258,27 +258,26 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-eventhub/4.1.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-eventhub/4.2.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.EventHub/namespaces?api-version=2017-04-01
   response:
     body:
-      string: '{"value":[{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/clitestgmgo2m3ptjhxyjmnds6wy63cj4sknfhqjdkhyadp3gbhlwueog4poabiol5mzvtfum2r/providers/Microsoft.EventHub/namespaces/codegenlivetest","name":"codegenlivetest","type":"Microsoft.EventHub/Namespaces","location":"West
-        US","tags":{},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"kafkaEnabled":true,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:codegenlivetest","createdAt":"2020-09-07T06:00:39.973Z","updatedAt":"2020-09-07T06:01:24.68Z","serviceBusEndpoint":"https://codegenlivetest.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_namespace_test_eh_namespace_curdac24175a/providers/Microsoft.EventHub/namespaces/pythontestcasenamespace","name":"pythontestcasenamespace","type":"Microsoft.EventHub/Namespaces","location":"West
-        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"kafkaEnabled":true,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:pythontestcasenamespace","createdAt":"2020-09-07T06:14:54.51Z","updatedAt":"2020-09-07T06:15:38.59Z","serviceBusEndpoint":"https://pythontestcasenamespace.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/7vx5onejribdkm3bpke5mddlz57worfeu7edc4sdd5xec2dng2m4hhit6yy7d5u6asotq6vmh6a/providers/Microsoft.EventHub/namespaces/myNamespacexxyyzzykk","name":"myNamespacexxyyzzykk","type":"Microsoft.EventHub/Namespaces","location":"East
+      string: '{"value":[{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_namespace_test_eh_namespace_curdac24175a/providers/Microsoft.EventHub/namespaces/pythontestcasenamespace","name":"pythontestcasenamespace","type":"Microsoft.EventHub/Namespaces","location":"West
+        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"kafkaEnabled":true,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:pythontestcasenamespace","createdAt":"2020-09-16T01:49:32.03Z","updatedAt":"2020-09-16T01:50:16.623Z","serviceBusEndpoint":"https://pythontestcasenamespace.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/7vx5onejribdkm3bpke5mddlz57worfeu7edc4sdd5xec2dng2m4hhit6yy7d5u6asotq6vmh6a/providers/Microsoft.EventHub/namespaces/myNamespacexxyyzzykk","name":"myNamespacexxyyzzykk","type":"Microsoft.EventHub/Namespaces","location":"East
         US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"kafkaEnabled":true,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:mynamespacexxyyzzykk","createdAt":"2020-08-18T05:04:57.527Z","updatedAt":"2020-08-18T05:11:09.503Z","serviceBusEndpoint":"https://myNamespacexxyyzzykk.servicebus.windows.net:443/","status":"Active","alternateName":"postmigrationxxxy"}},{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_servicebus_namespace_test_migration_configsa9a51771/providers/Microsoft.EventHub/namespaces/myNamespacexxyyzzy","name":"myNamespacexxyyzzy","type":"Microsoft.EventHub/Namespaces","location":"East
         US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"kafkaEnabled":true,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:mynamespacexxyyzzy","createdAt":"2020-08-17T08:07:13.307Z","updatedAt":"2020-08-17T08:27:01.143Z","serviceBusEndpoint":"https://myNamespacexxyyzzy.servicebus.windows.net:443/","status":"Active","alternateName":"postmigrationxxy"}}]}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '3096'
+      - '2378'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 07 Sep 2020 06:15:58 GMT
+      - Wed, 16 Sep 2020 01:50:35 GMT
       expires:
       - '-1'
       pragma:
@@ -310,7 +309,7 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-eventhub/4.1.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-eventhub/4.2.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
@@ -327,7 +326,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 07 Sep 2020 06:16:05 GMT
+      - Wed, 16 Sep 2020 01:50:36 GMT
       expires:
       - '-1'
       pragma:
@@ -363,7 +362,7 @@ interactions:
       - application/json; charset=utf-8
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-eventhub/4.1.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-eventhub/4.2.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
@@ -380,7 +379,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 07 Sep 2020 06:16:11 GMT
+      - Wed, 16 Sep 2020 01:50:44 GMT
       expires:
       - '-1'
       pragma:
@@ -399,7 +398,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1199'
+      - '1194'
     status:
       code: 200
       message: OK
@@ -414,7 +413,7 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-eventhub/4.1.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-eventhub/4.2.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
@@ -431,7 +430,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 07 Sep 2020 06:16:12 GMT
+      - Wed, 16 Sep 2020 01:50:44 GMT
       expires:
       - '-1'
       pragma:
@@ -467,7 +466,7 @@ interactions:
       - application/json; charset=utf-8
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-eventhub/4.1.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-eventhub/4.2.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
@@ -484,7 +483,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 07 Sep 2020 06:16:19 GMT
+      - Wed, 16 Sep 2020 01:50:51 GMT
       expires:
       - '-1'
       pragma:
@@ -503,7 +502,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1198'
+      - '1193'
     status:
       code: 200
       message: OK
@@ -518,7 +517,7 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-eventhub/4.1.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-eventhub/4.2.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
@@ -536,7 +535,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 07 Sep 2020 06:16:20 GMT
+      - Wed, 16 Sep 2020 01:50:52 GMT
       expires:
       - '-1'
       pragma:
@@ -570,14 +569,14 @@ interactions:
       - '0'
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-eventhub/4.1.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-eventhub/4.2.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_namespace_test_eh_namespace_curdac24175a/providers/Microsoft.EventHub/namespaces/pythontestcasenamespace/authorizationRules/testingauthrulepy/listKeys?api-version=2017-04-01
   response:
     body:
-      string: '{"primaryConnectionString":"Endpoint=sb://pythontestcasenamespace.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=8XFpoUmE8BV0sQ0I81dN/E4kC/MDY9GaJsQWy7Gs67c=","secondaryConnectionString":"Endpoint=sb://pythontestcasenamespace.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=U41kECbBHQn5p5zxprt/YiDqhb240+vuaL/8/zRp5PM=","primaryKey":"8XFpoUmE8BV0sQ0I81dN/E4kC/MDY9GaJsQWy7Gs67c=","secondaryKey":"U41kECbBHQn5p5zxprt/YiDqhb240+vuaL/8/zRp5PM=","keyName":"testingauthrulepy"}'
+      string: '{"primaryConnectionString":"Endpoint=sb://pythontestcasenamespace.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=sCjp0e65LKRKp86JTLfFqEnAQ/n6Y1Bi8HGsSwQIzsQ=","secondaryConnectionString":"Endpoint=sb://pythontestcasenamespace.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=i0tdyzURcqb9ntHUU0vlesS1sl0Iw1dTjtzNnTidK7Y=","primaryKey":"sCjp0e65LKRKp86JTLfFqEnAQ/n6Y1Bi8HGsSwQIzsQ=","secondaryKey":"i0tdyzURcqb9ntHUU0vlesS1sl0Iw1dTjtzNnTidK7Y=","keyName":"testingauthrulepy"}'
     headers:
       cache-control:
       - no-cache
@@ -586,7 +585,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 07 Sep 2020 06:16:21 GMT
+      - Wed, 16 Sep 2020 01:50:53 GMT
       expires:
       - '-1'
       pragma:
@@ -624,14 +623,14 @@ interactions:
       - application/json; charset=utf-8
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-eventhub/4.1.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-eventhub/4.2.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_namespace_test_eh_namespace_curdac24175a/providers/Microsoft.EventHub/namespaces/pythontestcasenamespace/authorizationRules/testingauthrulepy/regenerateKeys?api-version=2017-04-01
   response:
     body:
-      string: '{"primaryConnectionString":"Endpoint=sb://pythontestcasenamespace.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=WwoEC6i8eWt4ZC3G7ASE7wtehtXYHDwIRJJ1WIASllQ=","secondaryConnectionString":"Endpoint=sb://pythontestcasenamespace.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=U41kECbBHQn5p5zxprt/YiDqhb240+vuaL/8/zRp5PM=","primaryKey":"WwoEC6i8eWt4ZC3G7ASE7wtehtXYHDwIRJJ1WIASllQ=","secondaryKey":"U41kECbBHQn5p5zxprt/YiDqhb240+vuaL/8/zRp5PM=","keyName":"testingauthrulepy"}'
+      string: '{"primaryConnectionString":"Endpoint=sb://pythontestcasenamespace.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=RyZaD4oo4H1Nel5WuzTxC7X4kS9x0upJdNEhzQrHDy8=","secondaryConnectionString":"Endpoint=sb://pythontestcasenamespace.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=i0tdyzURcqb9ntHUU0vlesS1sl0Iw1dTjtzNnTidK7Y=","primaryKey":"RyZaD4oo4H1Nel5WuzTxC7X4kS9x0upJdNEhzQrHDy8=","secondaryKey":"i0tdyzURcqb9ntHUU0vlesS1sl0Iw1dTjtzNnTidK7Y=","keyName":"testingauthrulepy"}'
     headers:
       cache-control:
       - no-cache
@@ -640,7 +639,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 07 Sep 2020 06:16:27 GMT
+      - Wed, 16 Sep 2020 01:50:59 GMT
       expires:
       - '-1'
       pragma:
@@ -678,14 +677,14 @@ interactions:
       - application/json; charset=utf-8
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-eventhub/4.1.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-eventhub/4.2.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_namespace_test_eh_namespace_curdac24175a/providers/Microsoft.EventHub/namespaces/pythontestcasenamespace/authorizationRules/testingauthrulepy/regenerateKeys?api-version=2017-04-01
   response:
     body:
-      string: '{"primaryConnectionString":"Endpoint=sb://pythontestcasenamespace.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=WwoEC6i8eWt4ZC3G7ASE7wtehtXYHDwIRJJ1WIASllQ=","secondaryConnectionString":"Endpoint=sb://pythontestcasenamespace.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=WOK92esNnTJe5eulKpCsEqypWf3IZGnVGi5MjpyGdQk=","primaryKey":"WwoEC6i8eWt4ZC3G7ASE7wtehtXYHDwIRJJ1WIASllQ=","secondaryKey":"WOK92esNnTJe5eulKpCsEqypWf3IZGnVGi5MjpyGdQk=","keyName":"testingauthrulepy"}'
+      string: '{"primaryConnectionString":"Endpoint=sb://pythontestcasenamespace.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=RyZaD4oo4H1Nel5WuzTxC7X4kS9x0upJdNEhzQrHDy8=","secondaryConnectionString":"Endpoint=sb://pythontestcasenamespace.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=UqkyOC1xLRNimnPTl8xVFOsrFTQnsV9VatlVci3JZvE=","primaryKey":"RyZaD4oo4H1Nel5WuzTxC7X4kS9x0upJdNEhzQrHDy8=","secondaryKey":"UqkyOC1xLRNimnPTl8xVFOsrFTQnsV9VatlVci3JZvE=","keyName":"testingauthrulepy"}'
     headers:
       cache-control:
       - no-cache
@@ -694,7 +693,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 07 Sep 2020 06:16:34 GMT
+      - Wed, 16 Sep 2020 01:51:06 GMT
       expires:
       - '-1'
       pragma:
@@ -730,7 +729,7 @@ interactions:
       - '0'
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-eventhub/4.1.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-eventhub/4.2.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: DELETE
@@ -744,7 +743,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 07 Sep 2020 06:16:40 GMT
+      - Wed, 16 Sep 2020 01:51:12 GMT
       expires:
       - '-1'
       pragma:
@@ -759,7 +758,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14999'
+      - '14995'
     status:
       code: 200
       message: OK
@@ -774,7 +773,7 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-eventhub/4.1.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-eventhub/4.2.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
@@ -791,16 +790,16 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 07 Sep 2020 06:16:41 GMT
+      - Wed, 16 Sep 2020 01:51:13 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       server:
-      - Service-Bus-Resource-Provider/SN1
+      - Service-Bus-Resource-Provider/CH3
       - Microsoft-HTTPAPI/2.0
       server-sb:
-      - Service-Bus-Resource-Provider/SN1
+      - Service-Bus-Resource-Provider/CH3
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -825,7 +824,7 @@ interactions:
       - '0'
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-eventhub/4.1.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-eventhub/4.2.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: DELETE
@@ -839,7 +838,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 07 Sep 2020 06:16:42 GMT
+      - Wed, 16 Sep 2020 01:51:15 GMT
       expires:
       - '-1'
       location:
@@ -847,16 +846,16 @@ interactions:
       pragma:
       - no-cache
       server:
-      - Service-Bus-Resource-Provider/SN1
+      - Service-Bus-Resource-Provider/CH3
       - Microsoft-HTTPAPI/2.0
       server-sb:
-      - Service-Bus-Resource-Provider/SN1
+      - Service-Bus-Resource-Provider/CH3
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14998'
+      - '14994'
     status:
       code: 202
       message: Accepted
@@ -871,7 +870,7 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-eventhub/4.1.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-eventhub/4.2.0 Azure-SDK-For-Python
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_eventhub_namespace_test_eh_namespace_curdac24175a/providers/Microsoft.EventHub/namespaces/pythontestcasenamespace/operationresults/pythontestcasenamespace?api-version=2017-04-01
   response:
@@ -883,16 +882,16 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 07 Sep 2020 06:17:13 GMT
+      - Wed, 16 Sep 2020 01:51:45 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       server:
-      - Service-Bus-Resource-Provider/SN1
+      - Service-Bus-Resource-Provider/CH3
       - Microsoft-HTTPAPI/2.0
       server-sb:
-      - Service-Bus-Resource-Provider/SN1
+      - Service-Bus-Resource-Provider/CH3
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       x-content-type-options:

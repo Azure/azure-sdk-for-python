@@ -77,6 +77,19 @@ class AuthorizationRulePaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(AuthorizationRulePaged, self).__init__(*args, **kwargs)
+class PrivateEndpointConnectionPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`PrivateEndpointConnection <azure.mgmt.eventhub.v2018_01_01_preview.models.PrivateEndpointConnection>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[PrivateEndpointConnection]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(PrivateEndpointConnectionPaged, self).__init__(*args, **kwargs)
 class ArmDisasterRecoveryPaged(Paged):
     """
     A paging container for iterating over a list of :class:`ArmDisasterRecovery <azure.mgmt.eventhub.v2018_01_01_preview.models.ArmDisasterRecovery>` object
