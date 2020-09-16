@@ -33,7 +33,7 @@ class EventGridPublisherClientConfiguration(Configuration):
         super(EventGridPublisherClientConfiguration, self).__init__(**kwargs)
 
         self.api_version = "2018-01-01"
-        kwargs.setdefault('sdk_moniker', 'eventgridpublisherclient/{}'.format(VERSION))
+        kwargs.setdefault('sdk_moniker', 'eventgrid/{}'.format(VERSION))
         self._configure(**kwargs)
 
     def _configure(

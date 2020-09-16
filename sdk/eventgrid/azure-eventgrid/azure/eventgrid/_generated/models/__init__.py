@@ -33,6 +33,8 @@ try:
     from ._models_py3 import DeviceTwinMetadata
     from ._models_py3 import DeviceTwinProperties
     from ._models_py3 import EventGridEvent
+    from ._models_py3 import EventGridReceivedEvent
+    from ._models_py3 import EventGridStorageBlobCreatedEventData
     from ._models_py3 import EventHubCaptureFileCreatedEventData
     from ._models_py3 import IotHubDeviceConnectedEventData
     from ._models_py3 import IotHubDeviceCreatedEventData
@@ -156,6 +158,8 @@ except (SyntaxError, ImportError):
     from ._models import DeviceTwinMetadata  # type: ignore
     from ._models import DeviceTwinProperties  # type: ignore
     from ._models import EventGridEvent  # type: ignore
+    from ._models import EventGridReceivedEvent  # type: ignore
+    from ._models import EventGridStorageBlobCreatedEventData  # type: ignore
     from ._models import EventHubCaptureFileCreatedEventData  # type: ignore
     from ._models import IotHubDeviceConnectedEventData  # type: ignore
     from ._models import IotHubDeviceCreatedEventData  # type: ignore
@@ -291,6 +295,8 @@ __all__ = [
     'DeviceTwinMetadata',
     'DeviceTwinProperties',
     'EventGridEvent',
+    'EventGridReceivedEvent',
+    'EventGridStorageBlobCreatedEventData',
     'EventHubCaptureFileCreatedEventData',
     'IotHubDeviceConnectedEventData',
     'IotHubDeviceCreatedEventData',
