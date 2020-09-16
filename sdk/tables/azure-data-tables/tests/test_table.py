@@ -299,7 +299,6 @@ class StorageTableTest(TableTestCase):
 
         # Assert
 
-    @pytest.mark.skip("table names must be alphanumeric, why test this?")
     @GlobalStorageAccountPreparer()
     def test_unicode_create_table_unicode_name(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -310,9 +309,11 @@ class StorageTableTest(TableTestCase):
         table_name = u'啊齄丂狛狜'
 
         # Act
-        with self.assertRaises(HttpResponseError):
-            # not supported - table name must be alphanumeric, lowercase
+        with self.assertRaises(ValueError) as excinfo:
             ts.create_table(table_name)
+
+            assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.""" in str(
+                excinfo)
 
         # Assert
 

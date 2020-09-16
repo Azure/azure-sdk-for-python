@@ -302,15 +302,16 @@ class TableTestAsync(AsyncTableTestCase):
         # Arrange
         url = self.account_url(storage_account, "table")
         if 'cosmos' in url:
-            pytest.skip("Cosmos URLs support unicode table names")
+            pytest.skip("Cosmos URLs do notsupport unicode table names")
         ts = TableServiceClient(url, storage_account_key)
         table_name = u'啊齄丂狛狜'
 
-        with pytest.raises(ValueError) as excinfo:
-            await ts.create_table(table_name=table_name)
+        # Act
+        with self.assertRaises(ValueError) as excinfo:
+            await ts.create_table(table_name)
 
-        assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.""" in str(
-            excinfo)
+            assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.""" in str(
+                excinfo)
 
         # Assert
 
