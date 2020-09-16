@@ -139,7 +139,7 @@ class QuotaByCounterKeysOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.apimanagement.models.ErrorResponseException>`
         """
-        parameters = models.QuotaCounterValueContractProperties(calls_count=calls_count, kb_transferred=kb_transferred)
+        parameters = models.QuotaCounterValueUpdateContract(calls_count=calls_count, kb_transferred=kb_transferred)
 
         # Construct URL
         url = self.update.metadata['url']
@@ -166,7 +166,7 @@ class QuotaByCounterKeysOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'QuotaCounterValueContractProperties')
+        body_content = self._serialize.body(parameters, 'QuotaCounterValueUpdateContract')
 
         # Construct and send request
         request = self._client.patch(url, query_parameters, header_parameters, body_content)

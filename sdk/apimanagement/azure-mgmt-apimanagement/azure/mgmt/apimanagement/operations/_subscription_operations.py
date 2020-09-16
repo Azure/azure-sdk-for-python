@@ -265,7 +265,7 @@ class SubscriptionOperations(object):
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/subscriptions/{sid}'}
 
     def create_or_update(
-            self, resource_group_name, service_name, sid, parameters, notify=None, if_match=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, service_name, sid, parameters, notify=None, if_match=None, app_type="portal", custom_headers=None, raw=False, **operation_config):
         """Creates or updates the subscription of specified user to the specified
         product.
 
@@ -287,6 +287,10 @@ class SubscriptionOperations(object):
         :param if_match: ETag of the Entity. Not required when creating an
          entity, but required when updating an entity.
         :type if_match: str
+        :param app_type: Determines the type of application which send the
+         create user request. Default is legacy publisher portal. Possible
+         values include: 'portal', 'developerPortal'
+        :type app_type: str or ~azure.mgmt.apimanagement.models.AppType
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -313,6 +317,8 @@ class SubscriptionOperations(object):
         if notify is not None:
             query_parameters['notify'] = self._serialize.query("notify", notify, 'bool')
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        if app_type is not None:
+            query_parameters['appType'] = self._serialize.query("app_type", app_type, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -359,7 +365,7 @@ class SubscriptionOperations(object):
     create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/subscriptions/{sid}'}
 
     def update(
-            self, resource_group_name, service_name, sid, parameters, if_match, notify=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, service_name, sid, parameters, if_match, notify=None, app_type="portal", custom_headers=None, raw=False, **operation_config):
         """Updates the details of a subscription specified by its identifier.
 
         :param resource_group_name: The name of the resource group.
@@ -381,6 +387,10 @@ class SubscriptionOperations(object):
          subscription
          - If true, send email notification of change of state of subscription
         :type notify: bool
+        :param app_type: Determines the type of application which send the
+         create user request. Default is legacy publisher portal. Possible
+         values include: 'portal', 'developerPortal'
+        :type app_type: str or ~azure.mgmt.apimanagement.models.AppType
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -406,6 +416,8 @@ class SubscriptionOperations(object):
         if notify is not None:
             query_parameters['notify'] = self._serialize.query("notify", notify, 'bool')
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        if app_type is not None:
+            query_parameters['appType'] = self._serialize.query("app_type", app_type, 'str')
 
         # Construct headers
         header_parameters = {}

@@ -268,7 +268,7 @@ class UserOperations(object):
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/users/{userId}'}
 
     def create_or_update(
-            self, resource_group_name, service_name, user_id, parameters, if_match=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, service_name, user_id, parameters, notify=None, if_match=None, custom_headers=None, raw=False, **operation_config):
         """Creates or Updates a user.
 
         :param resource_group_name: The name of the resource group.
@@ -281,6 +281,8 @@ class UserOperations(object):
         :param parameters: Create or update parameters.
         :type parameters:
          ~azure.mgmt.apimanagement.models.UserCreateParameters
+        :param notify: Send an Email notification to the User.
+        :type notify: bool
         :param if_match: ETag of the Entity. Not required when creating an
          entity, but required when updating an entity.
         :type if_match: str
@@ -307,6 +309,8 @@ class UserOperations(object):
 
         # Construct parameters
         query_parameters = {}
+        if notify is not None:
+            query_parameters['notify'] = self._serialize.query("notify", notify, 'bool')
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
@@ -422,7 +426,7 @@ class UserOperations(object):
     update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/users/{userId}'}
 
     def delete(
-            self, resource_group_name, service_name, user_id, if_match, delete_subscriptions=None, notify=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, service_name, user_id, if_match, delete_subscriptions=None, notify=None, app_type="portal", custom_headers=None, raw=False, **operation_config):
         """Deletes specific user.
 
         :param resource_group_name: The name of the resource group.
@@ -441,6 +445,10 @@ class UserOperations(object):
         :type delete_subscriptions: bool
         :param notify: Send an Account Closed Email notification to the User.
         :type notify: bool
+        :param app_type: Determines the type of application which send the
+         create user request. Default is legacy publisher portal. Possible
+         values include: 'portal', 'developerPortal'
+        :type app_type: str or ~azure.mgmt.apimanagement.models.AppType
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -468,6 +476,8 @@ class UserOperations(object):
         if notify is not None:
             query_parameters['notify'] = self._serialize.query("notify", notify, 'bool')
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        if app_type is not None:
+            query_parameters['appType'] = self._serialize.query("app_type", app_type, 'str')
 
         # Construct headers
         header_parameters = {}

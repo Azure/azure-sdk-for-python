@@ -65,6 +65,8 @@ try:
     from ._models_py3 import CertificateInformation
     from ._models_py3 import ClientSecretContract
     from ._models_py3 import ConnectivityStatusContract
+    from ._models_py3 import ContentItemContract
+    from ._models_py3 import ContentTypeContract
     from ._models_py3 import DeployConfigurationParameters
     from ._models_py3 import DiagnosticContract
     from ._models_py3 import EmailTemplateContract
@@ -135,6 +137,7 @@ try:
     from ._models_py3 import QuotaCounterContract
     from ._models_py3 import QuotaCounterValueContract
     from ._models_py3 import QuotaCounterValueContractProperties
+    from ._models_py3 import QuotaCounterValueUpdateContract
     from ._models_py3 import RecipientEmailCollection
     from ._models_py3 import RecipientEmailContract
     from ._models_py3 import RecipientsContractProperties
@@ -236,6 +239,8 @@ except (SyntaxError, ImportError):
     from ._models import CertificateInformation
     from ._models import ClientSecretContract
     from ._models import ConnectivityStatusContract
+    from ._models import ContentItemContract
+    from ._models import ContentTypeContract
     from ._models import DeployConfigurationParameters
     from ._models import DiagnosticContract
     from ._models import EmailTemplateContract
@@ -306,6 +311,7 @@ except (SyntaxError, ImportError):
     from ._models import QuotaCounterContract
     from ._models import QuotaCounterValueContract
     from ._models import QuotaCounterValueContractProperties
+    from ._models import QuotaCounterValueUpdateContract
     from ._models import RecipientEmailCollection
     from ._models import RecipientEmailContract
     from ._models import RecipientsContractProperties
@@ -360,6 +366,8 @@ from ._paged_models import AuthorizationServerContractPaged
 from ._paged_models import BackendContractPaged
 from ._paged_models import CacheContractPaged
 from ._paged_models import CertificateContractPaged
+from ._paged_models import ContentItemContractPaged
+from ._paged_models import ContentTypeContractPaged
 from ._paged_models import DiagnosticContractPaged
 from ._paged_models import EmailTemplateContractPaged
 from ._paged_models import GatewayContractPaged
@@ -487,6 +495,8 @@ __all__ = [
     'CertificateInformation',
     'ClientSecretContract',
     'ConnectivityStatusContract',
+    'ContentItemContract',
+    'ContentTypeContract',
     'DeployConfigurationParameters',
     'DiagnosticContract',
     'EmailTemplateContract',
@@ -557,6 +567,7 @@ __all__ = [
     'QuotaCounterContract',
     'QuotaCounterValueContract',
     'QuotaCounterValueContractProperties',
+    'QuotaCounterValueUpdateContract',
     'RecipientEmailCollection',
     'RecipientEmailContract',
     'RecipientsContractProperties',
@@ -620,6 +631,8 @@ __all__ = [
     'BackendContractPaged',
     'CacheContractPaged',
     'CertificateContractPaged',
+    'ContentTypeContractPaged',
+    'ContentItemContractPaged',
     'OperationPaged',
     'ResourceSkuResultPaged',
     'ApiManagementServiceResourcePaged',

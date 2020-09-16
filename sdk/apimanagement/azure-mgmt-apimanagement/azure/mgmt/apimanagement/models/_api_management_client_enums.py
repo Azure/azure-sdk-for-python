@@ -210,6 +210,7 @@ class KeyType(str, Enum):
 
 class AppType(str, Enum):
 
+    portal = "portal"  #: User create request was sent by legacy developer portal.
     developer_portal = "developerPortal"  #: User create request was sent by new developer portal.
 
 
