@@ -30,11 +30,11 @@ interactions:
       content-type:
       - text/plain; charset=utf-8
       date:
-      - Wed, 27 May 2020 03:50:24 GMT
+      - Wed, 16 Sep 2020 03:22:54 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/locations/eastus/asyncoperations/709d914c-9804-4c85-8d4e-c5a067215eaa?monitor=true&api-version=2019-04-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/locations/eastus/asyncoperations/e60f99d2-b390-401c-bb67-9a086cbef957?monitor=true&api-version=2019-04-01
       pragma:
       - no-cache
       server:
@@ -44,7 +44,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1196'
+      - '1198'
     status:
       code: 202
       message: Accepted
@@ -61,101 +61,19 @@ interactions:
       - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
         msrest_azure/0.6.2 azure-mgmt-storage/5.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/locations/eastus/asyncoperations/709d914c-9804-4c85-8d4e-c5a067215eaa?monitor=true&api-version=2019-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/locations/eastus/asyncoperations/e60f99d2-b390-401c-bb67-9a086cbef957?monitor=true&api-version=2019-04-01
   response:
     body:
-      string: ''
+      string: '{"sku":{"name":"Standard_LRS","tier":"Standard"},"kind":"Storage","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/storageaccountx430e1025","name":"storageaccountx430e1025","type":"Microsoft.Storage/storageAccounts","location":"eastus","tags":{},"properties":{"networkAcls":{"bypass":"AzureServices","virtualNetworkRules":[],"ipRules":[],"defaultAction":"Allow"},"supportsHttpsTrafficOnly":true,"encryption":{"services":{"file":{"enabled":true,"lastEnabledTime":"2020-09-16T03:22:55.1085297Z"},"blob":{"enabled":true,"lastEnabledTime":"2020-09-16T03:22:55.1085297Z"}},"keySource":"Microsoft.Storage"},"provisioningState":"Succeeded","creationTime":"2020-09-16T03:22:55.0147927Z","primaryEndpoints":{"blob":"https://storageaccountx430e1025.blob.core.windows.net/","queue":"https://storageaccountx430e1025.queue.core.windows.net/","table":"https://storageaccountx430e1025.table.core.windows.net/","file":"https://storageaccountx430e1025.file.core.windows.net/"},"primaryLocation":"eastus","statusOfPrimary":"available"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '0'
-      content-type:
-      - text/plain; charset=utf-8
-      date:
-      - Wed, 27 May 2020 03:50:42 GMT
-      expires:
-      - '-1'
-      location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/locations/eastus/asyncoperations/709d914c-9804-4c85-8d4e-c5a067215eaa?monitor=true&api-version=2019-04-01
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-Azure-Storage-Resource-Provider/1.0,Microsoft-HTTPAPI/2.0 Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 202
-      message: Accepted
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-storage/5.0.0 Azure-SDK-For-Python
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/locations/eastus/asyncoperations/709d914c-9804-4c85-8d4e-c5a067215eaa?monitor=true&api-version=2019-04-01
-  response:
-    body:
-      string: ''
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '0'
-      content-type:
-      - text/plain; charset=utf-8
-      date:
-      - Wed, 27 May 2020 03:50:45 GMT
-      expires:
-      - '-1'
-      location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/locations/eastus/asyncoperations/709d914c-9804-4c85-8d4e-c5a067215eaa?monitor=true&api-version=2019-04-01
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-Azure-Storage-Resource-Provider/1.0,Microsoft-HTTPAPI/2.0 Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 202
-      message: Accepted
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-storage/5.0.0 Azure-SDK-For-Python
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/locations/eastus/asyncoperations/709d914c-9804-4c85-8d4e-c5a067215eaa?monitor=true&api-version=2019-04-01
-  response:
-    body:
-      string: '{"sku":{"name":"Standard_LRS","tier":"Standard"},"kind":"Storage","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/storageaccountx430e1025","name":"storageaccountx430e1025","type":"Microsoft.Storage/storageAccounts","location":"eastus","tags":{},"properties":{"networkAcls":{"bypass":"AzureServices","virtualNetworkRules":[],"ipRules":[],"defaultAction":"Allow"},"supportsHttpsTrafficOnly":true,"encryption":{"services":{"file":{"enabled":true,"lastEnabledTime":"2020-05-27T03:50:24.7550293Z"},"blob":{"enabled":true,"lastEnabledTime":"2020-05-27T03:50:24.7550293Z"}},"keySource":"Microsoft.Storage"},"provisioningState":"Succeeded","creationTime":"2020-05-27T03:50:24.6613212Z","primaryEndpoints":{"blob":"https://storageaccountx430e1025.blob.core.windows.net/","queue":"https://storageaccountx430e1025.queue.core.windows.net/","table":"https://storageaccountx430e1025.table.core.windows.net/","file":"https://storageaccountx430e1025.file.core.windows.net/"},"primaryLocation":"eastus","statusOfPrimary":"available"}}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '1134'
+      - '1162'
       content-type:
       - application/json
       date:
-      - Wed, 27 May 2020 03:50:49 GMT
+      - Wed, 16 Sep 2020 03:23:12 GMT
       expires:
       - '-1'
       pragma:
@@ -174,9 +92,9 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: 'b''{"location": "", "properties": {"storageAccountId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/storageaccountx430e1025",
+    body: 'b''b\''{"location": "", "properties": {"storageAccountId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/storageaccountx430e1025",
       "locations": ["global"], "categories": ["Write", "Delete", "Action"], "retentionPolicy":
-      {"enabled": true, "days": 3}}}'''
+      {"enabled": true, "days": 3}}}\'''''
     headers:
       Accept:
       - application/json
@@ -185,11 +103,11 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '357'
+      - '385'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/microsoft.insights/logprofiles/logprofilex430e1025?api-version=2016-03-01
   response:
@@ -199,11 +117,11 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '567'
+      - '595'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 27 May 2020 03:50:54 GMT
+      - Wed, 16 Sep 2020 03:23:16 GMT
       expires:
       - '-1'
       pragma:
@@ -219,7 +137,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1197'
+      - '1199'
     status:
       code: 200
       message: OK
@@ -233,7 +151,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/microsoft.insights/logprofiles/logprofilex430e1025?api-version=2016-03-01
   response:
@@ -243,11 +161,11 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '569'
+      - '597'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 27 May 2020 03:51:26 GMT
+      - Wed, 16 Sep 2020 03:23:46 GMT
       expires:
       - '-1'
       pragma:
@@ -277,7 +195,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/microsoft.insights/logprofiles/logprofilex430e1025?api-version=2016-03-01
   response:
@@ -289,7 +207,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 27 May 2020 03:51:27 GMT
+      - Wed, 16 Sep 2020 03:23:47 GMT
       expires:
       - '-1'
       pragma:
@@ -301,7 +219,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14997'
+      - '14999'
     status:
       code: 200
       message: OK
