@@ -1,5 +1,13 @@
 # Release History
 
+## 8.0.0 (2020-09-16)
+
+**Features**
+
+  - Model NetworkRuleSet has a new parameter trusted_service_access_enabled
+  - Added operation group PrivateEndpointConnectionsOperations
+  - Added operation group PrivateLinkResourcesOperations
+
 ## 8.0.0b1 (2020-06-17)
 
 This is beta preview version.
