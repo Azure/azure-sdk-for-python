@@ -34,6 +34,7 @@ try:
     from ._models_py3 import OperationEntity
     from ._models_py3 import PrivateEndpoint
     from ._models_py3 import PrivateEndpointConnection
+    from ._models_py3 import PrivateEndpointConnectionListResult
     from ._models_py3 import PrivateEndpointConnectionProperties
     from ._models_py3 import PrivateLinkResource
     from ._models_py3 import PrivateLinkResourceListResult
@@ -78,6 +79,7 @@ except (SyntaxError, ImportError):
     from ._models import OperationEntity
     from ._models import PrivateEndpoint
     from ._models import PrivateEndpointConnection
+    from ._models import PrivateEndpointConnectionListResult
     from ._models import PrivateEndpointConnectionProperties
     from ._models import PrivateLinkResource
     from ._models import PrivateLinkResourceListResult
@@ -140,6 +142,7 @@ __all__ = [
     'OperationEntity',
     'PrivateEndpoint',
     'PrivateEndpointConnection',
+    'PrivateEndpointConnectionListResult',
     'PrivateEndpointConnectionProperties',
     'PrivateLinkResource',
     'PrivateLinkResourceListResult',
