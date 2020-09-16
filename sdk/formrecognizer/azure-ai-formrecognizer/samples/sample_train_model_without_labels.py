@@ -52,12 +52,15 @@ class TrainModelWithoutLabelsSample(object):
         # Custom model information
         print("Model ID: {}".format(model.model_id))
         print("Status: {}".format(model.status))
+        print("Model display name: {}".format(model.display_name))
+        print("Is this a composite model?: {}".format(model.properties.is_composite_model))
         print("Training started on: {}".format(model.training_started_on))
         print("Training completed on: {}".format(model.training_completed_on))
 
         print("Recognized fields:")
         # Looping through the submodels, which contains the fields they were trained on
         for submodel in model.submodels:
+            print("The submodel has model ID: {}".format(submodel.model_id))
             print("...The submodel has form type '{}'".format(submodel.form_type))
             for name, field in submodel.fields.items():
                 print("...The model found field '{}' to have label '{}'".format(

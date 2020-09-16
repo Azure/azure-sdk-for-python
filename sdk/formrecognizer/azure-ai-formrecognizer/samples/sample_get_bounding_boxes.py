@@ -100,6 +100,11 @@ class GetBoundingBoxesSample(object):
                                         format_bounding_box(word.bounding_box),
                                         word.confidence
                                     ))
+                            elif element.kind == "selectionMark":
+                                print("Selection mark is '{}' and within bounding box '{}'".format(
+                                    element.state,
+                                    format_bounding_box(element.bounding_box)
+                                ))
 
                 print("---------------------------------------------------")
             print("-----------------------------------")
