@@ -395,7 +395,7 @@ class StorageTableClientTest(TableTestCase):
 
         def callback(response):
             self.assertTrue('User-Agent' in response.http_request.headers)
-            self.assertEqual(
+            self.assertIn(
                 response.http_request.headers['User-Agent'],
                 "azsdk-python-data-tables/{} Python/{} ({})".format(
                     VERSION,
