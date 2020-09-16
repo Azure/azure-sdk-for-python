@@ -706,7 +706,8 @@ class TableBatchOperations(object):
 
     def __enter__(self):
         # type: (...) -> TableBatchOperations
-        self._client.__enter__() # TODO: borrowing from search
+        # self._client.__enter__()
+        # self.__enter__()
         return self
 
 

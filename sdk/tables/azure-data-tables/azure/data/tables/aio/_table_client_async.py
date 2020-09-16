@@ -7,7 +7,10 @@ import functools
 from typing import (
     Union,
     Any,
+    Dict,
+    List,
 )
+from uuid import uuid4
 
 try:
     from urllib.parse import urlparse, unquote
@@ -17,6 +20,7 @@ except ImportError:
 
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
+from azure.core.pipeline.transport import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
@@ -24,18 +28,19 @@ from .._base_client import parse_connection_str
 from .._entity import TableEntity
 from .._generated.aio import AzureTable
 from .._generated.models import SignedIdentifier, TableProperties, QueryOptions
-from .._models import AccessPolicy
+from .._models import AccessPolicy, PartialBatchErrorException
+from .._policies import StorageHeadersPolicy
 from .._serialize import serialize_iso
 from .._deserialize import _return_headers_and_deserialized
 from .._error import _process_table_error
 from .._models import UpdateMode
 from .._deserialize import _convert_to_entity, _trim_service_metadata
 from .._serialize import _add_entity_properties, _get_match_headers
+from .._table_batch import TableBatchOperations
 from .._table_client_base import TableClientBase
 from ._base_client_async import AsyncStorageAccountHostsMixin
 from ._models import TableEntityPropertiesPaged
 from ._policies_async import ExponentialRetry
-from ._table_batch_async import TableBatchOperations
 
 
 class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
@@ -576,7 +581,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
                 **kwargs
             )
 
-    @distributed_trace_async
+    @distributed_trace
     def create_batch(
         self, **kwargs: Dict[str, Any]
     ) -> TableBatchOperations:
@@ -606,10 +611,10 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         )
 
     @distributed_trace_async
-    def commit_batch(
+    async def commit_batch(
         self,
         batch: TableBatchOperations,
-        kwargs: Dict[Any, str]
+        **kwargs: Dict[Any, str]
     ) -> None:
         """Commit a TableBatchOperations to send requests to the server
 
@@ -626,12 +631,12 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         rtype: ~azure.data.tables.TableBatchOperations
         :raises: None
         """
-        return self._batch_send(*batch._requests, **kwargs) # pylint:disable=protected-access
+        return await self._batch_send(*batch._requests, **kwargs) # pylint:disable=protected-access
 
-    def _batch_send(
-        self, *reqs: List[HttpRequest]
+    async def _batch_send(
+        self, *reqs: List[HttpRequest],
         **kwargs: Dict[str, Any]
-    ) -> List[HttpResponse]:
+    ): # -> List[HttpResponse]:
         """Given a series of request, do a Storage batch call.
         """
         # Pop it here, so requests doesn't feel bad about additional kwarg
@@ -659,7 +664,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
             boundary="batch_{}".format(uuid4())
         )
 
-        pipeline_response = await self._pipeline.run(
+        pipeline_response = await self._client.table._client._pipeline.run(
             request, **kwargs
         )
         response = pipeline_response.http_response
@@ -669,14 +674,16 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
                 raise HttpResponseError(response=response)
             parts = response.parts()
             if raise_on_any_failure:
-                parts = list(response.parts())
-                if any(p for p in parts if not 200 <= p.status_code < 300):
-                    error = PartialBatchErrorException(
-                        message="There is a partial failure in the batch operation.",
-                        response=response, parts=parts
-                    )
-                    raise error
-                return iter(parts)
+                parts = response.parts()
+                erroneous_parts = []
+                async for p in parts:
+                    if not 200 <= p.status_code < 300:
+                        error = PartialBatchErrorException(
+                            message="There is a partial failure in the batch operation.",
+                            response=response, parts=parts
+                        )
+                        raise error
+                return parts
             return parts
         except HttpResponseError as error:
             _process_table_error(error)

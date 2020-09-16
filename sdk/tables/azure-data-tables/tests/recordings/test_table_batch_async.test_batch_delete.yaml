@@ -1,0 +1,193 @@
+interactions:
+- request:
+    body: '{"TableName": "uttable4cf41027"}'
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Content-Length:
+      - '32'
+      Content-Type:
+      - application/json;odata=nometadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Wed, 16 Sep 2020 18:39:20 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 16 Sep 2020 18:39:20 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: POST
+    uri: https://storagename.table.core.windows.net/Tables
+  response:
+    body:
+      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#Tables/@Element","TableName":"uttable4cf41027"}'
+    headers:
+      cache-control: no-cache
+      content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
+      date: Wed, 16 Sep 2020 18:39:20 GMT
+      location: https://storagename.table.core.windows.net/Tables('uttable4cf41027')
+      server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-ms-version: '2019-02-02'
+    status:
+      code: 201
+      message: Created
+    url: https://pyacrstorage3c26v2dj7rsh.table.core.windows.net/Tables
+- request:
+    body: '{"PartitionKey": "001", "PartitionKey@odata.type": "Edm.String", "RowKey":
+      "batch_delete", "RowKey@odata.type": "Edm.String", "test": true, "test2": "value",
+      "test2@odata.type": "Edm.String", "test3": 3, "test4": 1234567890, "test5":
+      "2020-09-16T18:39:20Z", "test5@odata.type": "Edm.DateTime"}'
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Content-Length:
+      - '293'
+      Content-Type:
+      - application/json;odata=nometadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Wed, 16 Sep 2020 18:39:20 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 16 Sep 2020 18:39:20 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: POST
+    uri: https://storagename.table.core.windows.net/uttable4cf41027
+  response:
+    body:
+      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#uttable4cf41027/@Element","odata.etag":"W/\"datetime''2020-09-16T18%3A39%3A20.7547287Z''\"","PartitionKey":"001","RowKey":"batch_delete","Timestamp":"2020-09-16T18:39:20.7547287Z","test":true,"test2":"value","test3":3,"test4":1234567890,"test5@odata.type":"Edm.DateTime","test5":"2020-09-16T18:39:20Z"}'
+    headers:
+      cache-control: no-cache
+      content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
+      date: Wed, 16 Sep 2020 18:39:20 GMT
+      etag: W/"datetime'2020-09-16T18%3A39%3A20.7547287Z'"
+      location: https://storagename.table.core.windows.net/uttable4cf41027(PartitionKey='001',RowKey='batch_delete')
+      server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-ms-version: '2019-02-02'
+    status:
+      code: 201
+      message: Created
+    url: https://pyacrstorage3c26v2dj7rsh.table.core.windows.net/uttable4cf41027
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Wed, 16 Sep 2020 18:39:20 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 16 Sep 2020 18:39:20 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://storagename.table.core.windows.net/uttable4cf41027(PartitionKey='001',RowKey='batch_delete')
+  response:
+    body:
+      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#uttable4cf41027/@Element","odata.etag":"W/\"datetime''2020-09-16T18%3A39%3A20.7547287Z''\"","PartitionKey":"001","RowKey":"batch_delete","Timestamp":"2020-09-16T18:39:20.7547287Z","test":true,"test2":"value","test3":3,"test4":1234567890,"test5@odata.type":"Edm.DateTime","test5":"2020-09-16T18:39:20Z"}'
+    headers:
+      cache-control: no-cache
+      content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
+      date: Wed, 16 Sep 2020 18:39:20 GMT
+      etag: W/"datetime'2020-09-16T18%3A39%3A20.7547287Z'"
+      server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-ms-version: '2019-02-02'
+    status:
+      code: 200
+      message: OK
+    url: https://pyacrstorage3c26v2dj7rsh.table.core.windows.net/uttable4cf41027(PartitionKey='001',RowKey='batch_delete')
+- request:
+    body: "--batch_a0d3f3ab-a85d-43d7-ba5d-df5e09ac082c\r\nContent-Type: multipart/mixed;
+      boundary=changeset_e15a63ae-acad-4270-b11c-d3e03e5ea9d1\r\n\r\n--changeset_e15a63ae-acad-4270-b11c-d3e03e5ea9d1\r\nContent-Type:
+      application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID: 0\r\n\r\nDELETE
+      https://pyacrstorage3c26v2dj7rsh.table.core.windows.net/uttable4cf41027(PartitionKey='001',RowKey='batch_delete')
+      HTTP/1.1\r\nx-ms-version: 2019-02-02\r\nDataServiceVersion: 3.0\r\nIf-Match:
+      *\r\nAccept: application/json;odata=minimalmetadata\r\nx-ms-date: Wed, 16 Sep
+      2020 18:39:20 GMT\r\nDate: Wed, 16 Sep 2020 18:39:20 GMT\r\nx-ms-client-request-id:
+      ef37c277-f84b-11ea-9c6d-58961df361d1\r\n\r\n\r\n--changeset_e15a63ae-acad-4270-b11c-d3e03e5ea9d1--\r\n\r\n--batch_a0d3f3ab-a85d-43d7-ba5d-df5e09ac082c--\r\n"
+    headers:
+      Content-Length:
+      - '760'
+      Content-Type:
+      - multipart/mixed; boundary=batch_a0d3f3ab-a85d-43d7-ba5d-df5e09ac082c
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Wed, 16 Sep 2020 18:39:20 GMT
+      MaxDataServiceVersion:
+      - 3.0;NetFx
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 16 Sep 2020 18:39:20 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: POST
+    uri: https://storagename.table.core.windows.net/$batch
+  response:
+    body:
+      string: "--batchresponse_f8decb61-6378-45d1-a480-a1d10a854143\r\nContent-Type:
+        multipart/mixed; boundary=changesetresponse_be09c1f4-684c-4762-a68e-270713d509f3\r\n\r\n--changesetresponse_be09c1f4-684c-4762-a68e-270713d509f3\r\nContent-Type:
+        application/http\r\nContent-Transfer-Encoding: binary\r\n\r\nHTTP/1.1 204
+        No Content\r\nX-Content-Type-Options: nosniff\r\nCache-Control: no-cache\r\nDataServiceVersion:
+        1.0;\r\n\r\n\r\n--changesetresponse_be09c1f4-684c-4762-a68e-270713d509f3--\r\n--batchresponse_f8decb61-6378-45d1-a480-a1d10a854143--\r\n"
+    headers:
+      cache-control: no-cache
+      content-type: multipart/mixed; boundary=batchresponse_f8decb61-6378-45d1-a480-a1d10a854143
+      date: Wed, 16 Sep 2020 18:39:20 GMT
+      server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-ms-version: '2019-02-02'
+    status:
+      code: 202
+      message: Accepted
+    url: https://pyacrstorage3c26v2dj7rsh.table.core.windows.net/$batch
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Wed, 16 Sep 2020 18:39:20 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 16 Sep 2020 18:39:20 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://storagename.table.core.windows.net/uttable4cf41027(PartitionKey='001',RowKey='batch_delete')
+  response:
+    body:
+      string: '{"odata.error":{"code":"ResourceNotFound","message":{"lang":"en-US","value":"The
+        specified resource does not exist.\nRequestId:e2d55fb1-1002-0067-5a58-8cdc0f000000\nTime:2020-09-16T18:39:20.8497949Z"}}}'
+    headers:
+      cache-control: no-cache
+      content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
+      date: Wed, 16 Sep 2020 18:39:20 GMT
+      server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-ms-version: '2019-02-02'
+    status:
+      code: 404
+      message: Not Found
+    url: https://pyacrstorage3c26v2dj7rsh.table.core.windows.net/uttable4cf41027(PartitionKey='001',RowKey='batch_delete')
+version: 1
