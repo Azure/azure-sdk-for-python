@@ -69,8 +69,6 @@ class CosmosAccountPreparer(AzureMgmtPreparer):
         if self.is_live:
             capabilities = Capability(name='EnableTable')
             params = CreateUpdateOptions(throughput=10000)
-            table_params = TableCreateUpdateParameters(options=options)
-            
             db_params = DatabaseAccountCreateUpdateParameters(
                 capabilities=[capabilities],
                 locations=[{'location_name': self.location}],

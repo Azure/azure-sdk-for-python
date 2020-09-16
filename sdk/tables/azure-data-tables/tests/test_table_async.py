@@ -420,7 +420,7 @@ class TableTestAsync(AsyncTableTestCase):
         finally:
             await self._delete_table(table=table, ts=tsc)
 
-    @pytest.mark.skip("msrest fails deserialization: https://github.com/Azure/msrest-for-python/issues/192")
+    # @pytest.mark.skip("msrest fails deserialization: https://github.com/Azure/msrest-for-python/issues/192")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     async def test_locale(self, resource_group, location, storage_account, storage_account_key):
@@ -435,19 +435,18 @@ class TableTestAsync(AsyncTableTestCase):
         else:
             culture = 'es_ES.utf8'
 
-        try:
-            locale.setlocale(locale.LC_ALL, culture)
-            e = None
+        locale.setlocale(locale.LC_ALL, culture)
+        e = None
 
-            # Act
-            await table.create_table()
-            try:
-                resp = ts.list_tables()
-            except:
-                e = sys.exc_info()[0]
+        # Act
+        await ts.create_table(table)
 
-            # Assert
-            self.assertIsNone(e)
-        finally:
-            await ts.delete_table(table.table_name)
-            locale.setlocale(locale.LC_ALL, init_locale[0] or 'en_US')
+        resp = ts.list_tables()
+
+        e = sys.exc_info()[0]
+
+        # Assert
+        self.assertIsNone(e)
+
+        await ts.delete_table(table)
+        locale.setlocale(locale.LC_ALL, init_locale[0] or 'en_US')
