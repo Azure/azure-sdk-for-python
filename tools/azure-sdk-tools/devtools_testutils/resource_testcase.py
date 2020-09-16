@@ -98,5 +98,5 @@ class ResourceGroupPreparer(AzureMgmtPreparer):
             except CloudError:
                 pass
 
-RandomNameResourceGroupPreparer = partial(ResourceGroupPreparer, random_name_enabled=True)
-CachedResourceGroupPreparer = partial(ResourceGroupPreparer, use_cache=True, random_name_enabled=True)
+RandomNameResourceGroupPreparer = functools.partial(ResourceGroupPreparer, random_name_enabled=True)
+CachedResourceGroupPreparer = functools.partial(ResourceGroupPreparer, use_cache=True, random_name_enabled=True)

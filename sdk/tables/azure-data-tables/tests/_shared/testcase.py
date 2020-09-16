@@ -112,11 +112,12 @@ class GlobalStorageAccountPreparer(AzureMgmtPreparer):
 
 
 class GlobalCosmosAccountPreparer(AzureMgmtPreparer):
-    def __init__(self):
+    def __init__(self, use_cache=False):
         super(GlobalCosmosAccountPreparer, self).__init__(
             name_prefix='',
             random_name_length=42
         )
+        self.use_cache = use_cache
 
     def create_resource(self, name, **kwargs):
         cosmos_account = TableTestCase._COSMOS_ACCOUNT
@@ -128,7 +129,7 @@ class GlobalCosmosAccountPreparer(AzureMgmtPreparer):
         else:
             name = "cosmosname"
             cosmos_account.name = name
-            cosmos_account.primary_endpoints.table = 'https://{}.{}.{}.azure.com'.format(name, 'table','cosmos')
+            cosmos_account.primary_endpoints.table = 'https://{}.table.cosmos.azure.com:443/'.format(name)
 
         return {
             'location': 'westus',
@@ -459,7 +460,6 @@ def storage_account():
 
             else:
                 storage_name, storage_kwargs = storage_preparer._prepare_create_resource(test_case, **rg_kwargs)
-                print(f"STORAGE KWARGS: {storage_kwargs}\n")
                 storage_account = storage_kwargs['storage_account']
                 storage_key = storage_kwargs['storage_account_key']
                 storage_connection_string = storage_kwargs['storage_account_cs']
@@ -470,19 +470,62 @@ def storage_account():
                     for part in cosmos_connection_string.split(';')
                 ])
 
-            cosmos_account = None
-            if existing_cosmos_name:
-                cosmos_name = existing_cosmos_name
-                # cosmos_account = CosmosDBManagementClient()
-                # cosmos_account_name =
             if got_cosmos_info_from_env:
+
+                if cosmos_connection_string:
+                    cosmos_connection_string_parts = dict([
+                        part.split('=', 1)
+                        for part in storage_connection_string.split(";")
+                    ])
+
                 cosmos_account = None
-                cosmos_key = None
-                cosmos_connection_string = None
+                if existing_cosmos_name:
+                    cosmos_name = existing_cosmos_name
+                    # cosmos_account = CosmosDBManagementClient()
+                    cosmos_account.name = cosmos_name
+                    cosmos_account.id = cosmos_name
+                    cosmos_acount.primary_endpoints = Endpoints()
+                    cosmos_account.primary_endpoints.table = "https://{}.table.cosmos.azure.com".format(cosmos_name)
+                    cosmos_key = existing_cosmos_key
+
+                if not cosmos_connection_string:
+                    # I have received a cosmos name from env
+                    cosmos_connection_string=";".join([
+                        "DefaultEndpointsProtocol=https",
+                        "AccountName={}".format(cosmos_name),
+                        "AccountKey={}".format(cosmos_key),
+                        "TableEndpoint={}".format(cosmos_account.primary_endpoints.table),
+                    ])
+
+                if not cosmos_account:
+                    cosmos_name = cosmos_connection_string_parts["AccountName"]
+                    # TODO: This CosmosAccount probably needs to be built
+                    # cosmos_account = CosmosAccount(
+                    #     location=location
+                    # )
+
+                    def build_service_endpoint(service):
+                        try:
+                            suffix = cosmos_connection_string_parts["EndpointSuffix"]
+                        except KeyError:
+                            suffix = "cosmos.azure.com"
+                        return "{}://{}.{}.{}".format(
+                            cosmos_connection_string_parts.get("DefaultEndpointsProtocol", "https"),
+                            cosmos_connection_string_parts["AccountName"],
+                            service,
+                            suffix
+                        )
+
+                    cosmos_account.name = cosmos_name
+                    cosmos_account.id = cosmos_name
+                    cosmos_account.primary_endpoints=Endpoints()
+                    cosmos_account.primary_endpoints.table = cosmos_connection_string_parts.get("TableEndpoint", build_service_endpoint("table"))
+                    cosmos_account.secondary_endpoints=Endpoints()
+                    cosmos_account.secondary_endpoints.table = cosmos_connection_string_parts.get("TableSecondaryEndpoint", build_service_endpoint("table"))
+                    cosmos_key = cosmos_connection_string_parts["AccountKey"]
 
             else:
                 cosmos_name, cosmos_kwargs = cosmos_preparer._prepare_create_resource(test_case, **rg_kwargs)
-                print(f"KWARGS: {cosmos_kwargs}")
                 cosmos_account = cosmos_kwargs['cosmos_account']
                 cosmos_key = cosmos_kwargs['cosmos_account_key']
                 cosmos_connection_string = cosmos_kwargs['cosmos_account_cs']
@@ -498,6 +541,10 @@ def storage_account():
             if not got_storage_info_from_env:
                 storage_preparer.remove_resource(
                     storage_name,
+                    resource_group=rg
+                )
+                cosmos_preparer.remove_resource(
+                    cosmos_name,
                     resource_group=rg
                 )
     finally:

@@ -84,7 +84,9 @@ class Timezone(datetime.tzinfo):  # pylint: disable : W0223
 
 
 def _from_entity_datetime(value):
-    # # TODO: Fix this
+    # Cosmos returns this with a decimal point that throws an error on deserialization
+    if value[-9:] == '.0000000Z':
+        value = value[:-9] + 'Z'
     return datetime.datetime.strptime(value, '%Y-%m-%dT%H:%M:%SZ'). \
         replace(tzinfo=Timezone())
 

@@ -1,0 +1,47 @@
+interactions:
+- request:
+    body: '{"TableName": "uttable3c8f15ab"}'
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '32'
+      Content-Type:
+      - application/json;odata=nometadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Tue, 15 Sep 2020 21:22:11 GMT
+      User-Agent:
+      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Tue, 15 Sep 2020 21:22:11 GMT
+      x-ms-version:
+      - '2019-07-07'
+    method: POST
+    uri: https://cosmostablescosmosname.table.cosmos.azure.com/Tables
+  response:
+    body:
+      string: "{\"odata.error\":{\"code\":\"429\",\"message\":{\"lang\":\"en-us\",\"value\":\"Message:
+        {\\\"Errors\\\":[\\\"Request rate is large. More Request Units may be needed,
+        so no changes were made. Please retry this request later. Learn more: http://aka.ms/cosmosdb-error-429\\\"]}\\r\\nActivityId:
+        b51a5ddd-a66c-4d95-93c0-fe8145fe6f80, Request URI: /apps/a838b6b5-36e0-43c6-8479-9b6c837000ca/services/c0a76cf5-e18c-4e98-9414-34e9f8f86c80/partitions/0ed197cf-049b-4086-b8ef-7c3e46eaaa66/replicas/132446766355763384p,
+        RequestStats: , SDK: Microsoft.Azure.Documents.Common/2.11.0, documentdb-dotnet-sdk/2.11.0
+        Host/64-bit MicrosoftWindowsNT/6.2.9200.0\\nRequestID:84bd396d-f799-11ea-a821-58961df361d1\\n\"}}}\r\n"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      date:
+      - Tue, 15 Sep 2020 21:22:11 GMT
+      server:
+      - Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+    status:
+      code: 429
+      message: Too Many Requests
+version: 1

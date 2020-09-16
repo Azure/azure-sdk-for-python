@@ -14,18 +14,10 @@ from msrest.exceptions import ValidationError  # TODO This should be an azure-co
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from azure.core.exceptions import HttpResponseError
 
-# from azure.data.tabless import (
-#     TableServiceClient,
-#     TableClient,
-#     TableAnalyticsLogging,
-#     Metrics,
-#     CorsRule,
-#     RetentionPolicy,
-# )
-
 from azure.data.tables import TableServiceClient
 
-from _shared.testcase import GlobalCosmosAccountPreparer, TableTestCase
+from _shared.testcase import TableTestCase
+from devtools_testutils import CachedResourceGroupPreparer, CachedCosmosAccountPreparer
 
 # ------------------------------------------------------------------------------
 
@@ -107,7 +99,9 @@ class TableServicePropertiesTest(TableTestCase):
         self.assertEqual(ret1.days, ret2.days)
 
     # --Test cases per service ---------------------------------------
-    @GlobalCosmosAccountPreparer()
+    @pytest.mark.skip("Cosmos Tables does not yet support service properties")
+    @CachedResourceGroupPreparer(name_prefix='cosmostables')
+    @CachedCosmosAccountPreparer(name_prefix='cosmostables')
     def test_table_service_properties(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         url = self.account_url(storage_account, "cosmos")
@@ -131,7 +125,9 @@ class TableServicePropertiesTest(TableTestCase):
 
 
     # --Test cases per feature ---------------------------------------
-    @GlobalCosmosAccountPreparer()
+    @pytest.mark.skip("Cosmos Tables does not yet support service properties")
+    @CachedResourceGroupPreparer(name_prefix='cosmostables')
+    @CachedCosmosAccountPreparer(name_prefix='cosmostables')
     def test_set_logging(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         url = self.account_url(storage_account, "cosmos")
@@ -149,7 +145,9 @@ class TableServicePropertiesTest(TableTestCase):
         received_props = tsc.get_service_properties()
         self._assert_logging_equal(received_props['analytics_logging'], logging)
 
-    @GlobalCosmosAccountPreparer()
+    @pytest.mark.skip("Cosmos Tables does not yet support service properties")
+    @CachedResourceGroupPreparer(name_prefix='cosmostables')
+    @CachedCosmosAccountPreparer(name_prefix='cosmostables')
     def test_set_hour_metrics(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         url = self.account_url(storage_account, "cosmos")
@@ -167,7 +165,9 @@ class TableServicePropertiesTest(TableTestCase):
         received_props = tsc.get_service_properties()
         self._assert_metrics_equal(received_props['hour_metrics'], hour_metrics)
 
-    @GlobalCosmosAccountPreparer()
+    @pytest.mark.skip("Cosmos Tables does not yet support service properties")
+    @CachedResourceGroupPreparer(name_prefix='cosmostables')
+    @CachedCosmosAccountPreparer(name_prefix='cosmostables')
     def test_set_minute_metrics(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         url = self.account_url(storage_account, "cosmos")
@@ -186,7 +186,9 @@ class TableServicePropertiesTest(TableTestCase):
         received_props = tsc.get_service_properties()
         self._assert_metrics_equal(received_props['minute_metrics'], minute_metrics)
 
-    @GlobalCosmosAccountPreparer()
+    @pytest.mark.skip("Cosmos Tables does not yet support service properties")
+    @CachedResourceGroupPreparer(name_prefix='cosmostables')
+    @CachedCosmosAccountPreparer(name_prefix='cosmostables')
     def test_set_cors(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         url = self.account_url(storage_account, "cosmos")
@@ -219,14 +221,18 @@ class TableServicePropertiesTest(TableTestCase):
         self._assert_cors_equal(received_props['cors'], cors)
 
     # --Test cases for errors ---------------------------------------
-    @GlobalCosmosAccountPreparer()
+    @pytest.mark.skip("Cosmos Tables does not yet support service properties")
+    @CachedResourceGroupPreparer(name_prefix='cosmostables')
+    @CachedCosmosAccountPreparer(name_prefix='cosmostables')
     def test_retention_no_days(self, resource_group, location, storage_account, storage_account_key):
         # Assert
         self.assertRaises(ValueError,
                           RetentionPolicy,
                           True, None)
 
-    @GlobalCosmosAccountPreparer()
+    @pytest.mark.skip("Cosmos Tables does not yet support service properties")
+    @CachedResourceGroupPreparer(name_prefix='cosmostables')
+    @CachedCosmosAccountPreparer(name_prefix='cosmostables')
     def test_too_many_cors_rules(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         tsc = TableServiceClient(self.account_url(storage_account, "cosmos"), storage_account_key)
@@ -238,7 +244,9 @@ class TableServicePropertiesTest(TableTestCase):
         self.assertRaises(HttpResponseError,
                           tsc.set_service_properties, None, None, None, cors)
 
-    @GlobalCosmosAccountPreparer()
+    @pytest.mark.skip("Cosmos Tables does not yet support service properties")
+    @CachedResourceGroupPreparer(name_prefix='cosmostables')
+    @CachedCosmosAccountPreparer(name_prefix='cosmostables')
     def test_retention_too_long(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         tsc = TableServiceClient(self.account_url(storage_account, "cosmos"), storage_account_key)

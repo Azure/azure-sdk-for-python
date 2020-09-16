@@ -6,10 +6,9 @@
 import unittest
 import pytest
 
-# from azure.data.tabless import TableServiceClient
 from azure.data.tables import TableServiceClient
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
-from _shared.testcase import GlobalResourceGroupPreparer, TableTestCase, GlobalCosmosAccountPreparer
+from _shared.testcase import TableTestCase
+from devtools_testutils import CachedResourceGroupPreparer, CachedCosmosAccountPreparer
 
 SERVICE_UNAVAILABLE_RESP_BODY = '<?xml version="1.0" encoding="utf-8"?><StorageServiceStats><GeoReplication><Status' \
                                 '>unavailable</Status><LastSyncTime></LastSyncTime></GeoReplication' \
@@ -44,14 +43,12 @@ class TableServiceStatsTest(TableTestCase):
     @staticmethod
     def override_response_body_with_live_status(response):
         response.http_response.text = lambda _: SERVICE_LIVE_RESP_BODY
-        #  response.http_response.text = lambda _: SERVICE_LIVE_RESP_BODY
 
     # --Test cases per service ---------------------------------------
 
-    # @pytest.mark.skip("pending")
-    #@GlobalCosmosAccountPreparer()
-    @GlobalResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', sku='Standard_RAGRS', random_name_enabled=True)
+
+    @CachedResourceGroupPreparer(name_prefix='cosmostables')
+    @CachedCosmosAccountPreparer(name_prefix='cosmostables')
     def test_table_service_stats_f(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         tsc = TableServiceClient(self.account_url(storage_account, "cosmos"), storage_account_key)
@@ -61,9 +58,8 @@ class TableServiceStatsTest(TableTestCase):
         # Assert
         self._assert_stats_default(stats)
 
-    # @pytest.mark.skip("pending")
-    @GlobalResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', sku='Standard_RAGRS', random_name_enabled=True)
+    @CachedResourceGroupPreparer(name_prefix='cosmostables')
+    @CachedCosmosAccountPreparer(name_prefix='cosmostables')
     def test_table_service_stats_when_unavailable(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         tsc = TableServiceClient(self.account_url(storage_account, "cosmos"), storage_account_key)

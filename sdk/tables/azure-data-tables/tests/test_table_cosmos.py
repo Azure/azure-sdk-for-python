@@ -46,6 +46,8 @@ from azure.core.exceptions import (
     ResourceExistsError
 )
 
+from devtools_testutils import CachedResourceGroupPreparer, CachedCosmosAccountPreparer
+
 # ------------------------------------------------------------------------------
 from azure.data.tables._table_shared_access_signature import generate_account_sas
 
@@ -90,12 +92,14 @@ class StorageTableTest(TableTestCase):
         except ResourceNotFoundError:
             pass
 
+
     # --Test cases for tables --------------------------------------------------
     @pytest.mark.skip("pending")
-    @GlobalCosmosAccountPreparer()
-    def test_create_properties(self, resource_group, location, storage_account, storage_account_key):
+    @CachedResourceGroupPreparer(name_prefix='cosmostables')
+    @CachedCosmosAccountPreparer(name_prefix='cosmostables')
+    def test_create_properties(self, resource_group, location, cosmos_account, cosmos_account_key):
         # # Arrange
-        ts = TableServiceClient(self.account_url(storage_account, "cosmos"), storage_account_key)
+        ts = TableServiceClient(self.account_url(cosmos_account, "cosmos"), cosmos_account_key)
         table_name = self._get_table_reference()
         # Act
         created = ts.create_table(table_name)
@@ -115,11 +119,11 @@ class StorageTableTest(TableTestCase):
         ts.delete_table(table_name)
 
 
-    @GlobalCosmosAccountPreparer()
-    def test_create_table(self, resource_group, location, storage_account, storage_account_key):
+    @CachedResourceGroupPreparer(name_prefix='cosmostables')
+    @CachedCosmosAccountPreparer(name_prefix='cosmostables')
+    def test_create_table(self, resource_group, location, cosmos_account, cosmos_account_key):
         # # Arrange
-        print(storage_account)
-        ts = TableServiceClient(self.account_url(storage_account, "cosmos"), storage_account_key)
+        ts = TableServiceClient(self.account_url(cosmos_account, "cosmos"), cosmos_account_key)
 
         table_name = self._get_table_reference()
 
@@ -131,11 +135,11 @@ class StorageTableTest(TableTestCase):
         ts.delete_table(table_name)
 
 
-    @GlobalCosmosAccountPreparer()
-    def test_create_table_fail_on_exist(self, resource_group, location, storage_account, storage_account_key):
+    @CachedResourceGroupPreparer(name_prefix='cosmostables')
+    @CachedCosmosAccountPreparer(name_prefix='cosmostables')
+    def test_create_table_fail_on_exist(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
-        print(storage_account)
-        ts = TableServiceClient(self.account_url(storage_account, "cosmos"), storage_account_key)
+        ts = TableServiceClient(self.account_url(cosmos_account, "cosmos"), cosmos_account_key)
         table_name = self._get_table_reference()
 
         # Act
@@ -147,10 +151,12 @@ class StorageTableTest(TableTestCase):
         self.assertTrue(created)
         ts.delete_table(table_name)
 
-    @GlobalCosmosAccountPreparer()
-    def test_create_table_invalid_name(self, resource_group, location, storage_account, storage_account_key):
+
+    @CachedResourceGroupPreparer(name_prefix='cosmostables')
+    @CachedCosmosAccountPreparer(name_prefix='cosmostables')
+    def test_create_table_invalid_name(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
-        ts = TableServiceClient(self.account_url(storage_account, "cosmos"), storage_account_key)
+        ts = TableServiceClient(self.account_url(cosmos_account, "cosmos"), cosmos_account_key)
         invalid_table_name = "my_table"
 
         with pytest.raises(ValueError) as excinfo:
@@ -159,10 +165,12 @@ class StorageTableTest(TableTestCase):
         assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.""" in str(
             excinfo)
 
-    @GlobalCosmosAccountPreparer()
-    def test_delete_table_invalid_name(self, resource_group, location, storage_account, storage_account_key):
+
+    @CachedResourceGroupPreparer(name_prefix='cosmostables')
+    @CachedCosmosAccountPreparer(name_prefix='cosmostables')
+    def test_delete_table_invalid_name(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
-        ts = TableServiceClient(self.account_url(storage_account, "cosmos"), storage_account_key)
+        ts = TableServiceClient(self.account_url(cosmos_account, "cosmos"), cosmos_account_key)
         invalid_table_name = "my_table"
 
         with pytest.raises(ValueError) as excinfo:
@@ -172,10 +180,11 @@ class StorageTableTest(TableTestCase):
             excinfo)
 
 
-    @GlobalCosmosAccountPreparer()
-    def test_query_tables(self, resource_group, location, storage_account, storage_account_key):
+    @CachedResourceGroupPreparer(name_prefix='cosmostables')
+    @CachedCosmosAccountPreparer(name_prefix='cosmostables')
+    def test_query_tables(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
-        ts = TableServiceClient(self.account_url(storage_account, "cosmos"), storage_account_key)
+        ts = TableServiceClient(self.account_url(cosmos_account, "cosmos"), cosmos_account_key)
         table = self._create_table(ts)
 
         # Act
@@ -188,10 +197,11 @@ class StorageTableTest(TableTestCase):
         ts.delete_table(table.table_name)
 
 
-    @GlobalCosmosAccountPreparer()
-    def test_query_tables_with_filter(self, resource_group, location, storage_account, storage_account_key):
+    @CachedResourceGroupPreparer(name_prefix='cosmostables')
+    @CachedCosmosAccountPreparer(name_prefix='cosmostables')
+    def test_query_tables_with_filter(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
-        ts = TableServiceClient(self.account_url(storage_account, "cosmos"), storage_account_key)
+        ts = TableServiceClient(self.account_url(cosmos_account, "cosmos"), cosmos_account_key)
         table = self._create_table(ts)
 
         # Act
@@ -204,11 +214,12 @@ class StorageTableTest(TableTestCase):
         ts.delete_table(table.table_name)
 
 
-    @GlobalCosmosAccountPreparer()
-    def test_query_tables_with_num_results(self, resource_group, location, storage_account, storage_account_key):
+    @CachedResourceGroupPreparer(name_prefix='cosmostables')
+    @CachedCosmosAccountPreparer(name_prefix='cosmostables')
+    def test_query_tables_with_num_results(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         prefix = 'listtable'
-        ts = TableServiceClient(self.account_url(storage_account, "cosmos"), storage_account_key)
+        ts = TableServiceClient(self.account_url(cosmos_account, "cosmos"), cosmos_account_key)
         table_list = []
         for i in range(0, 4):
             self._create_table(ts, prefix + str(i), table_list)
@@ -228,10 +239,11 @@ class StorageTableTest(TableTestCase):
         self.assertGreaterEqual(len(big_page), 4)
 
 
-    @GlobalCosmosAccountPreparer()
-    def test_query_tables_with_marker(self, resource_group, location, storage_account, storage_account_key):
+    @CachedResourceGroupPreparer(name_prefix='cosmostables')
+    @CachedCosmosAccountPreparer(name_prefix='cosmostables')
+    def test_query_tables_with_marker(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
-        ts = TableServiceClient(self.account_url(storage_account, "cosmos"), storage_account_key)
+        ts = TableServiceClient(self.account_url(cosmos_account, "cosmos"), cosmos_account_key)
         prefix = 'listtable'
         table_names = []
         for i in range(0, 4):
@@ -255,27 +267,27 @@ class StorageTableTest(TableTestCase):
         self.assertNotEqual(tables1, tables2)
 
 
-    @GlobalCosmosAccountPreparer()
-    def test_delete_table_with_existing_table(self, resource_group, location, storage_account, storage_account_key):
+    @CachedResourceGroupPreparer(name_prefix='cosmostables')
+    @CachedCosmosAccountPreparer(name_prefix='cosmostables')
+    def test_delete_table_with_existing_table(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
-        ts = TableServiceClient(self.account_url(storage_account, "cosmos"), storage_account_key)
+        ts = TableServiceClient(self.account_url(cosmos_account, "cosmos"), cosmos_account_key)
         table = self._create_table(ts)
 
         # Act
-        # deleted = table.delete_table()
         deleted = ts.delete_table(table_name=table.table_name)
 
         # Assert
-        self.assertIsNone(deleted)
-        # existing = list(ts.query_tables("TableName eq '{}'".format(table.table_name)))
-        # self.assertEqual(existing, [])
+        existing = list(ts.query_tables("TableName eq '{}'".format(table.table_name)))
+        self.assertEqual(len(existing), 0)
 
 
-    @GlobalCosmosAccountPreparer()
-    def test_delete_table_with_non_existing_table_fail_not_exist(self, resource_group, location, storage_account,
-                                                                 storage_account_key):
+    @CachedResourceGroupPreparer(name_prefix='cosmostables')
+    @CachedCosmosAccountPreparer(name_prefix='cosmostables')
+    def test_delete_table_with_non_existing_table_fail_not_exist(self, resource_group, location, cosmos_account,
+                                                                 cosmos_account_key):
         # Arrange
-        ts = TableServiceClient(self.account_url(storage_account, "cosmos"), storage_account_key)
+        ts = TableServiceClient(self.account_url(cosmos_account, "cosmos"), cosmos_account_key)
         table_name = self._get_table_reference()
 
         # Act
@@ -284,14 +296,16 @@ class StorageTableTest(TableTestCase):
 
         # Assert
 
+
     @pytest.mark.skip("pending")
-    @GlobalCosmosAccountPreparer()
-    def test_unicode_create_table_unicode_name(self, resource_group, location, storage_account, storage_account_key):
+    @CachedResourceGroupPreparer(name_prefix='cosmostables')
+    @CachedCosmosAccountPreparer(name_prefix='cosmostables')
+    def test_unicode_create_table_unicode_name(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
-        url = self.account_url(storage_account, "cosmos")
+        url = self.account_url(cosmos_account, "cosmos")
         if 'cosmos' in url:
             pytest.skip("Cosmos URLs support unicode table names")
-        ts = TableServiceClient(url, storage_account_key)
+        ts = TableServiceClient(url, cosmos_account_key)
         table_name = u'啊齄丂狛狜'
 
         # Act
@@ -299,13 +313,14 @@ class StorageTableTest(TableTestCase):
             ts.create_table(table_name)
 
 
-    @GlobalCosmosAccountPreparer()
-    def test_get_table_acl(self, resource_group, location, storage_account, storage_account_key):
+    @CachedResourceGroupPreparer(name_prefix='cosmostables')
+    @CachedCosmosAccountPreparer(name_prefix='cosmostables')
+    def test_get_table_acl(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
-        url = self.account_url(storage_account, "cosmos")
+        url = self.account_url(cosmos_account, "cosmos")
         if 'cosmos' in url:
             pytest.skip("Cosmos endpoint does not support this")
-        ts = TableServiceClient(self.account_url(storage_account, "cosmos"), storage_account_key)
+        ts = TableServiceClient(self.account_url(cosmos_account, "cosmos"), cosmos_account_key)
         table = self._create_table(ts)
         try:
             # Act
@@ -317,15 +332,17 @@ class StorageTableTest(TableTestCase):
         finally:
             ts.delete_table(table.table_name)
 
+
     @pytest.mark.skip("pending")
-    @GlobalCosmosAccountPreparer()
-    def test_set_table_acl_with_empty_signed_identifiers(self, resource_group, location, storage_account,
-                                                         storage_account_key):
+    @CachedResourceGroupPreparer(name_prefix='cosmostables')
+    @CachedCosmosAccountPreparer(name_prefix='cosmostables')
+    def test_set_table_acl_with_empty_signed_identifiers(self, resource_group, location, cosmos_account,
+                                                         cosmos_account_key):
         # Arrange
-        url = self.account_url(storage_account, "cosmos")
+        url = self.account_url(cosmos_account, "cosmos")
         if 'cosmos' in url:
             pytest.skip("Cosmos endpoint does not support this")
-        ts = TableServiceClient(url, storage_account_key)
+        ts = TableServiceClient(url, cosmos_account_key)
         table = self._create_table(ts)
         try:
             # Act
@@ -338,15 +355,17 @@ class StorageTableTest(TableTestCase):
         finally:
             ts.delete_table(table.table_name)
 
+
     @pytest.mark.skip("pending")
-    @GlobalCosmosAccountPreparer()
-    def test_set_table_acl_with_empty_signed_identifier(self, resource_group, location, storage_account,
-                                                        storage_account_key):
+    @CachedResourceGroupPreparer(name_prefix='cosmostables')
+    @CachedCosmosAccountPreparer(name_prefix='cosmostables')
+    def test_set_table_acl_with_empty_signed_identifier(self, resource_group, location, cosmos_account,
+                                                        cosmos_account_key):
         # Arrange
-        url = self.account_url(storage_account, "cosmos")
+        url = self.account_url(cosmos_account, "cosmos")
         if 'cosmos' in url:
             pytest.skip("Cosmos endpoint does not support this")
-        ts = TableServiceClient(url, storage_account_key)
+        ts = TableServiceClient(url, cosmos_account_key)
         table = self._create_table(ts)
         try:
             # Act
@@ -362,15 +381,17 @@ class StorageTableTest(TableTestCase):
         finally:
             ts.delete_table(table.table_name)
 
+
     @pytest.mark.skip("pending")
-    @GlobalCosmosAccountPreparer()
-    def test_set_table_acl_with_signed_identifiers(self, resource_group, location, storage_account,
-                                                   storage_account_key):
+    @CachedResourceGroupPreparer(name_prefix='cosmostables')
+    @CachedCosmosAccountPreparer(name_prefix='cosmostables')
+    def test_set_table_acl_with_signed_identifiers(self, resource_group, location, cosmos_account,
+                                                   cosmos_account_key):
         # Arrange
-        url = self.account_url(storage_account, "cosmos")
+        url = self.account_url(cosmos_account, "cosmos")
         if 'cosmos' in url:
             pytest.skip("Cosmos endpoint does not support this")
-        ts = TableServiceClient(url, storage_account_key)
+        ts = TableServiceClient(url, cosmos_account_key)
         table = self._create_table(ts)
         client = ts.get_table_client(table_name=table.table_name)
 
@@ -389,13 +410,15 @@ class StorageTableTest(TableTestCase):
         finally:
             ts.delete_table(table.table_name)
 
-    @GlobalCosmosAccountPreparer()
-    def test_set_table_acl_too_many_ids(self, resource_group, location, storage_account, storage_account_key):
+
+    @CachedResourceGroupPreparer(name_prefix='cosmostables')
+    @CachedCosmosAccountPreparer(name_prefix='cosmostables')
+    def test_set_table_acl_too_many_ids(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
-        url = self.account_url(storage_account, "cosmos")
+        url = self.account_url(cosmos_account, "cosmos")
         if 'cosmos' in url:
             pytest.skip("Cosmos endpoint does not support this")
-        ts = TableServiceClient(url, storage_account_key)
+        ts = TableServiceClient(url, cosmos_account_key)
         table = self._create_table(ts)
         try:
             # Act
@@ -409,16 +432,18 @@ class StorageTableTest(TableTestCase):
         finally:
             ts.delete_table(table.table_name)
 
+
     @pytest.mark.live_test_only
-    @GlobalCosmosAccountPreparer()
-    def test_account_sas(self, resource_group, location, storage_account, storage_account_key):
+    @CachedResourceGroupPreparer(name_prefix='cosmostables')
+    @CachedCosmosAccountPreparer(name_prefix='cosmostables')
+    def test_account_sas(self, resource_group, location, cosmos_account, cosmos_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
 
         # Arrange
-        url = self.account_url(storage_account, "cosmos")
+        url = self.account_url(cosmos_account, "cosmos")
         if 'cosmos' in url:
             pytest.skip("Cosmos Tables does not yet support sas")
-        tsc = TableServiceClient(url, storage_account_key)
+        tsc = TableServiceClient(url, cosmos_account_key)
         table = self._create_table(tsc)
         try:
             entity = {
@@ -432,8 +457,8 @@ class StorageTableTest(TableTestCase):
             table.upsert_entity(mode=UpdateMode.MERGE, entity=entity)
 
             token = generate_account_sas(
-                storage_account.name,
-                storage_account_key,
+                cosmos_account.name,
+                cosmos_account_key,
                 resource_types=ResourceTypes(object=True),
                 permission=AccountSasPermissions(read=True),
                 expiry=datetime.utcnow() + timedelta(hours=1),
@@ -442,7 +467,7 @@ class StorageTableTest(TableTestCase):
 
             # Act
             service = TableServiceClient(
-                self.account_url(storage_account, "cosmos"),
+                self.account_url(cosmos_account, "cosmos"),
                 credential=token,
             )
             sas_table = service.get_table_client(table.table_name)
@@ -455,11 +480,13 @@ class StorageTableTest(TableTestCase):
         finally:
             self._delete_table(table=table, ts=tsc)
 
+
     @pytest.mark.skip("msrest fails deserialization: https://github.com/Azure/msrest-for-python/issues/192")
-    @GlobalCosmosAccountPreparer()
-    def test_locale(self, resource_group, location, storage_account, storage_account_key):
+    @CachedResourceGroupPreparer(name_prefix='cosmostables')
+    @CachedCosmosAccountPreparer(name_prefix='cosmostables')
+    def test_locale(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
-        ts = TableServiceClient(self.account_url(storage_account, "cosmos"), storage_account_key)
+        ts = TableServiceClient(self.account_url(cosmos_account, "cosmos"), cosmos_account_key)
         table = (self._get_table_reference())
         init_locale = locale.getlocale()
         if os.name == "nt":

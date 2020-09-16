@@ -5,9 +5,15 @@
 # --------------------------------------------------------------------------
 from collections import namedtuple
 import os
+import functools
 
 from azure.mgmt.cosmosdb import CosmosDBManagementClient
 from azure.mgmt.storage.models import StorageAccount, Endpoints
+from azure.mgmt.cosmosdb.models import (
+    DatabaseAccountCreateUpdateParameters,
+    Capability,
+    CreateUpdateOptions
+)
 
 from azure_devtools.scenario_tests.preparers import (
     AbstractPreparer,
@@ -19,7 +25,7 @@ from . import AzureMgmtPreparer, ResourceGroupPreparer, FakeResource
 from .resource_testcase import RESOURCE_GROUP_PARAM
 
 
-FakeStorageAccount = FakeResource
+FakeCosmosAccount = FakeResource
 
 # Cosmos Account Preparer and its shorthand decorator
 
@@ -35,7 +41,8 @@ class CosmosAccountPreparer(AzureMgmtPreparer):
         disable_recording=True,
         playback_fake_resource=None,
         client_kwargs=None,
-        random_name_enabled=False
+        random_name_enabled=False,
+        use_cache=False
     ):
         super(CosmosAccountPreparer, self).__init__(
             name_prefix,
@@ -50,61 +57,76 @@ class CosmosAccountPreparer(AzureMgmtPreparer):
         self.kind = kind
         self.resource_group_parameter_name = resource_group_parameter_name
         self.parameter_name = parameter_name
-        self.storage_key = ''
+        self.cosmos_key = ''
+        self.cosmos_account_name = ''
+        self.primary_endpoint = ''
         self.resource_moniker = self.name_prefix
+        self.set_cache(use_cache, sku, location)
         if random_name_enabled:
             self.resource_moniker += "cosmosname"
 
     def create_resource(self, name, **kwargs):
         if self.is_live:
+            capabilities = Capability(name='EnableTable')
+            params = CreateUpdateOptions(throughput=10000)
+            table_params = TableCreateUpdateParameters(options=options)
+            
+            db_params = DatabaseAccountCreateUpdateParameters(
+                capabilities=[capabilities],
+                locations=[{'location_name': self.location}],
+                location=self.location,
+            )
+
             self.client = self.create_mgmt_client(CosmosDBManagementClient)
             group = self._get_resource_group(**kwargs)
             cosmos_async_operation = self.client.database_accounts.create_or_update(
                 group.name,
                 name,
-                {
-                    'sku': {'name': self.sku},
-                    'locations': [{
-                        self.location,
-                    }],
-                }
+                db_params
             )
             self.resource = cosmos_async_operation.result()
-            storage_keys = {
-                v.key_name: v.value
-                for v in self.client.storage_accounts.list_keys(group.name, name).keys
-            }
-            self.storage_key = storage_keys['key1']
+
+            cosmos_keys = self.client.database_accounts.list_keys(
+                group.name,
+                name
+            )
+            self.cosmos_key = cosmos_keys.primary_master_key
+            self.cosmos_account_name = name
 
             self.test_class_instance.scrubber.register_name_pair(
                 name,
                 self.resource_moniker
             )
+            self.primary_endpoint = 'https://{}.table.cosmos.azure.com:443/'.format(name)
         else:
-            self.resource = (
+            self.resource = CosmosDBManagementClient(
                 location=self.location,
             )
             self.resource.name = name
             self.resource.id = name
+            self.primary_endpoint = 'https://{}.table.cosmos.azure.com:443/'.format(name)
         return {
             self.parameter_name: self.resource,
-            '{}_key'.format(self.parameter_name): self.storage_key,
+            '{}_key'.format(self.parameter_name): self.cosmos_key,
             '{}_cs'.format(self.parameter_name): ";".join([
                 "DefaultEndpointsProtocol=https",
-                "AccountName={}".format(name),
-                "AccountKey={}".format(self.storage_key),
+                "AccountName={}".format(self.cosmos_account_name),
+                "AccountKey={}".format(self.cosmos_key),
+                "TableEndpoint={}".format(self.primary_endpoint)
             ])
         }
 
     def remove_resource(self, name, **kwargs):
         if self.is_live:
             group = self._get_resource_group(**kwargs)
-            self.client.storage_accounts.delete(group.name, name, polling=False)
+            self.client.database_accounts.delete(group.name, name, polling=False)
 
     def _get_resource_group(self, **kwargs):
         try:
             return kwargs.get(self.resource_group_parameter_name)
         except KeyError:
-            template = 'To create a storage account a resource group is required. Please add ' \
-                       'decorator @{} in front of this storage account preparer.'
+            template = 'To create a cosmos instance a resource group is required. Please add ' \
+                       'decorator @{} in front of this cosmos account preparer.'
             raise AzureTestError(template.format(ResourceGroupPreparer.__name__))
+
+CachedCosmosAccountPreparer = functools.partial(CosmosAccountPreparer, use_cache=True, random_name_enabled=True)
