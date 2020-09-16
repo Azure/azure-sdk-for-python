@@ -239,7 +239,6 @@ class TableTestAsync(AsyncTableTestCase):
         self.assertEqual(len(small_page), 2)
         self.assertGreaterEqual(len(big_page), 4)
 
-    # TODO: TablePropertiesPaged is not an iterator, should inherit from AsyncPageIterator
     @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     async def test_list_tables_with_marker(self, resource_group, location, storage_account, storage_account_key):
@@ -253,12 +252,12 @@ class TableTestAsync(AsyncTableTestCase):
         # Act
         generator1 = ts.list_tables(results_per_page=2).by_page()
         tables1 = []
-        for el in generator1: #.__anext__():
+        for el in generator1:
             tables1.append(el)
         generator2 = ts.list_tables(results_per_page=2).by_page(
             continuation_token=generator1.continuation_token)
         tables2 = []
-        for el in generator2:# .__anext__():
+        for el in generator2:
             tables2.append(el)
 
         # Assert

@@ -221,7 +221,7 @@ print(role_assignment.role_definition_id)
 Back up your entire collection of keys. The backing store for full key backups is a blob storage container using Shared Access Signature authentication.
 
 For more details on creating a SAS token using the `BlobServiceClient`, see the sample [here](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/storage/azure-storage-blob/samples/blob_samples_authentication.py#L105).
-Alternatively, it is possible to [generate a SAS token in Storage Explorer](https://docs.microsoft.com/en-us/azure/vs-azure-tools-storage-manage-with-storage-explorer?tabs=windows#generate-a-shared-access-signature-in-storage-explorer)
+Alternatively, it is possible to [generate a SAS token in Storage Explorer](https://docs.microsoft.com/azure/vs-azure-tools-storage-manage-with-storage-explorer?tabs=windows#generate-a-shared-access-signature-in-storage-explorer)
 
 ```python
 from azure.identity import DefaultAzureCredential
@@ -251,7 +251,7 @@ Restore your entire collection of keys from a backup. The data source for a full
 You will also need the `azure_storage_blob_container_uri` from the [above snippet](#perform-a-full-key-backup).
 
 For more details on creating a SAS token using the `BlobServiceClient`, see the sample [here](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/storage/azure-storage-blob/samples/blob_samples_authentication.py#L105).
-Alternatively, it is possible to [generate a SAS token in Storage Explorer](https://docs.microsoft.com/en-us/azure/vs-azure-tools-storage-manage-with-storage-explorer?tabs=windows#generate-a-shared-access-signature-in-storage-explorer)
+Alternatively, it is possible to [generate a SAS token in Storage Explorer](https://docs.microsoft.com/azure/vs-azure-tools-storage-manage-with-storage-explorer?tabs=windows#generate-a-shared-access-signature-in-storage-explorer)
 
 ```python
 from azure.identity import DefaultAzureCredential

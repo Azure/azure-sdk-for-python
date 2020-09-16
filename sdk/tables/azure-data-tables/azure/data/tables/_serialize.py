@@ -7,6 +7,7 @@
 from uuid import UUID
 from datetime import datetime
 from math import isnan
+from enum import Enum
 import sys
 import uuid
 import isodate
@@ -116,6 +117,7 @@ def _to_entity_guid(value):
 
 
 def _to_entity_int32(value):
+    # TODO: What the heck? below
     if sys.version_info < (3,):
         value = int(value)
     else:
@@ -159,7 +161,8 @@ _PYTHON_TO_ENTITY_CONVERSIONS = {
     bool: _to_entity_bool,
     datetime: _to_entity_datetime,
     float: _to_entity_float,
-    UUID: _to_entity_guid
+    UUID: _to_entity_guid,
+    Enum: _to_entity_str
 }
 try:
     _PYTHON_TO_ENTITY_CONVERSIONS.update({
@@ -213,7 +216,13 @@ def _add_entity_properties(source):
     for name, value in source.items():
         mtype = ''
 
-        if isinstance(value, EntityProperty):
+        if isinstance(value, Enum):
+            try:
+                conv = _PYTHON_TO_ENTITY_CONVERSIONS.get(unicode)
+            except NameError:
+                conv = _PYTHON_TO_ENTITY_CONVERSIONS.get(str)
+            mtype, value = conv(value)
+        elif isinstance(value, EntityProperty):
             conv = _EDM_TO_ENTITY_CONVERSIONS.get(value.type)
             if conv is None:
                 raise TypeError(

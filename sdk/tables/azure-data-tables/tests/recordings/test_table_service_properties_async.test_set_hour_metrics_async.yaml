@@ -11,11 +11,11 @@ interactions:
       Content-Type:
       - application/xml
       Date:
-      - Fri, 04 Sep 2020 23:57:24 GMT
+      - Wed, 16 Sep 2020 21:55:11 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 04 Sep 2020 23:57:24 GMT
+      - Wed, 16 Sep 2020 21:55:11 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -24,25 +24,25 @@ interactions:
     body:
       string: ''
     headers:
-      date: Fri, 04 Sep 2020 23:57:24 GMT
+      date: Wed, 16 Sep 2020 21:55:11 GMT
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-ms-version: '2019-02-02'
     status:
       code: 202
       message: Accepted
-    url: https://pyacrstorageok324lpz7akw.table.core.windows.net/?restype=service&comp=properties
+    url: https://pyacrstoragewrla36mtikyp.table.core.windows.net/?restype=service&comp=properties
 - request:
     body: null
     headers:
       Accept:
       - application/xml
       Date:
-      - Fri, 04 Sep 2020 23:57:55 GMT
+      - Wed, 16 Sep 2020 21:55:41 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 04 Sep 2020 23:57:55 GMT
+      - Wed, 16 Sep 2020 21:55:41 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
@@ -53,7 +53,7 @@ interactions:
         /><ExposedHeaders /><MaxAgeInSeconds>0</MaxAgeInSeconds></CorsRule><CorsRule><AllowedMethods>GET,PUT</AllowedMethods><AllowedOrigins>www.xyz.com,www.ab.com,www.bc.com</AllowedOrigins><AllowedHeaders>x-ms-meta-xyz,x-ms-meta-foo,x-ms-meta-data*,x-ms-meta-target*</AllowedHeaders><ExposedHeaders>x-ms-meta-abc,x-ms-meta-bcd,x-ms-meta-data*,x-ms-meta-source*</ExposedHeaders><MaxAgeInSeconds>500</MaxAgeInSeconds></CorsRule></Cors></StorageServiceProperties>"
     headers:
       content-type: application/xml
-      date: Fri, 04 Sep 2020 23:57:55 GMT
+      date: Wed, 16 Sep 2020 21:55:41 GMT
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       vary: Origin
@@ -61,5 +61,5 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://pyacrstorageok324lpz7akw.table.core.windows.net/?restype=service&comp=properties
+    url: https://pyacrstoragewrla36mtikyp.table.core.windows.net/?restype=service&comp=properties
 version: 1

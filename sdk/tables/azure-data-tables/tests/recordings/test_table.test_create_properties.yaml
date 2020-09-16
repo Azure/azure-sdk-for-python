@@ -15,11 +15,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 10 Sep 2020 18:42:48 GMT
+      - Wed, 16 Sep 2020 21:51:17 GMT
       User-Agent:
       - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 10 Sep 2020 18:42:48 GMT
+      - Wed, 16 Sep 2020 21:51:17 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
@@ -33,7 +33,7 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Thu, 10 Sep 2020 18:42:46 GMT
+      - Wed, 16 Sep 2020 21:51:16 GMT
       location:
       - https://storagename.table.core.windows.net/Tables('pytablesynce4f40d95')
       server:
@@ -57,11 +57,11 @@ interactions:
       Connection:
       - keep-alive
       Date:
-      - Thu, 10 Sep 2020 18:42:48 GMT
+      - Wed, 16 Sep 2020 21:51:17 GMT
       User-Agent:
       - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 10 Sep 2020 18:42:48 GMT
+      - Wed, 16 Sep 2020 21:51:17 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
@@ -74,7 +74,7 @@ interactions:
       content-type:
       - application/xml
       date:
-      - Thu, 10 Sep 2020 18:42:46 GMT
+      - Wed, 16 Sep 2020 21:51:16 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -100,11 +100,11 @@ interactions:
       Content-Type:
       - application/xml
       Date:
-      - Thu, 10 Sep 2020 18:42:48 GMT
+      - Wed, 16 Sep 2020 21:51:17 GMT
       User-Agent:
       - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 10 Sep 2020 18:42:48 GMT
+      - Wed, 16 Sep 2020 21:51:17 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -114,7 +114,7 @@ interactions:
       string: ''
     headers:
       date:
-      - Thu, 10 Sep 2020 18:42:46 GMT
+      - Wed, 16 Sep 2020 21:51:16 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -134,11 +134,11 @@ interactions:
       Connection:
       - keep-alive
       Date:
-      - Thu, 10 Sep 2020 18:42:48 GMT
+      - Wed, 16 Sep 2020 21:51:17 GMT
       User-Agent:
       - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 10 Sep 2020 18:42:48 GMT
+      - Wed, 16 Sep 2020 21:51:17 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
@@ -151,7 +151,7 @@ interactions:
       content-type:
       - application/xml
       date:
-      - Thu, 10 Sep 2020 18:42:46 GMT
+      - Wed, 16 Sep 2020 21:51:16 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -177,11 +177,11 @@ interactions:
       Content-Type:
       - application/xml
       Date:
-      - Thu, 10 Sep 2020 18:42:49 GMT
+      - Wed, 16 Sep 2020 21:51:17 GMT
       User-Agent:
       - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 10 Sep 2020 18:42:49 GMT
+      - Wed, 16 Sep 2020 21:51:17 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -191,7 +191,7 @@ interactions:
       string: ''
     headers:
       date:
-      - Thu, 10 Sep 2020 18:42:46 GMT
+      - Wed, 16 Sep 2020 21:51:16 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -211,11 +211,11 @@ interactions:
       Connection:
       - keep-alive
       Date:
-      - Thu, 10 Sep 2020 18:42:49 GMT
+      - Wed, 16 Sep 2020 21:51:17 GMT
       User-Agent:
       - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 10 Sep 2020 18:42:49 GMT
+      - Wed, 16 Sep 2020 21:51:17 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
@@ -228,7 +228,7 @@ interactions:
       content-type:
       - application/xml
       date:
-      - Thu, 10 Sep 2020 18:42:46 GMT
+      - Wed, 16 Sep 2020 21:51:17 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -250,11 +250,11 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Thu, 10 Sep 2020 18:42:49 GMT
+      - Wed, 16 Sep 2020 21:51:17 GMT
       User-Agent:
       - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 10 Sep 2020 18:42:49 GMT
+      - Wed, 16 Sep 2020 21:51:17 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
@@ -268,7 +268,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 10 Sep 2020 18:42:46 GMT
+      - Wed, 16 Sep 2020 21:51:17 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options:
