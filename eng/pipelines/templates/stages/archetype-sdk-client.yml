@@ -44,7 +44,7 @@ stages:
         DevFeedName: ${{parameters.DevFeedName}}
 
   # The Prerelease and Release stages are conditioned on whether we are building a pull request and the branch.
-  - ${{if and(ne(variables['Build.Reason'], 'PullRequest'), eq(variables['System.TeamProject'], 'internal'))}}:
+  - ${{if and(or(ne(variables['Build.Reason'], 'PullRequest'), eq(variables['TestPipeline'], 'true')), eq(variables['System.TeamProject'], 'internal'))}}:
     - template: archetype-python-release.yml
       parameters:
         DependsOn: Build
