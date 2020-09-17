@@ -19,7 +19,7 @@ class SearchIndexDocumentBatchingClientBase(HeadersMixin):
     _ODATA_ACCEPT = "application/json;odata.metadata=none"  # type: str
     _DEFAULT_AUTO_FLUSH_INTERVAL = 60
     _DEFAULT_BATCH_SIZE = 1000
-    _MAX_RETRY_COUNT = 10
+    _MAX_RETRY_COUNT = 3
 
     def __init__(self, endpoint, index_name, credential, **kwargs):
         # type: (str, str, AzureKeyCredential, **Any) -> None
