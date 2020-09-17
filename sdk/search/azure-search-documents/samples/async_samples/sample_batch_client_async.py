@@ -42,8 +42,7 @@ async def sample_batching_client():
     async with SearchIndexDocumentBatchingClient(
             service_endpoint,
             index_name,
-            AzureKeyCredential(key),
-            batch_size=100) as batch_client:
+            AzureKeyCredential(key)) as batch_client:
         # add upload actions
         await batch_client.add_upload_actions(documents=[DOCUMENT])
         # add merge actions

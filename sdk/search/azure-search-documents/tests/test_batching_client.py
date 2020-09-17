@@ -18,8 +18,8 @@ CREDENTIAL = AzureKeyCredential(key="test_api_key")
 class TestSearchBatchingClient(object):
     def test_search_index_document_batching_client_kwargs(self):
         with SearchIndexDocumentBatchingClient("endpoint", "index name", CREDENTIAL, window=100) as client:
-            assert client.batch_size == 1000
-            assert client._max_retry_count == 10
+            assert client.batch_size == 100
+            assert client._max_retry_count == 3
             assert client._auto_flush_interval == 60
             assert client._auto_flush
 
