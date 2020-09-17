@@ -2600,8 +2600,6 @@ class ManagementPolicyFilter(msrest.serialization.Model):
 class ManagementPolicyRule(msrest.serialization.Model):
     """An object that wraps the Lifecycle rule. Each rule is uniquely defined by name.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     All required parameters must be populated in order to send to Azure.
 
     :param enabled: Rule is enabled if set to true.
@@ -2609,15 +2607,15 @@ class ManagementPolicyRule(msrest.serialization.Model):
     :param name: Required. A rule name can contain any combination of alpha numeric characters.
      Rule name is case-sensitive. It must be unique within a policy.
     :type name: str
-    :ivar type: Required. The valid value is Lifecycle. Default value: "Lifecycle".
-    :vartype type: str
+    :param type: Required. The valid value is Lifecycle. Possible values include: "Lifecycle".
+    :type type: str or ~azure.mgmt.storage.v2019_06_01.models.RuleType
     :param definition: Required. An object that defines the Lifecycle rule.
     :type definition: ~azure.mgmt.storage.v2019_06_01.models.ManagementPolicyDefinition
     """
 
     _validation = {
         'name': {'required': True},
-        'type': {'required': True, 'constant': True},
+        'type': {'required': True},
         'definition': {'required': True},
     }
 
@@ -2628,12 +2626,11 @@ class ManagementPolicyRule(msrest.serialization.Model):
         'definition': {'key': 'definition', 'type': 'ManagementPolicyDefinition'},
     }
 
-    type = "Lifecycle"
-
     def __init__(
         self,
         *,
         name: str,
+        type: Union[str, "RuleType"],
         definition: "ManagementPolicyDefinition",
         enabled: Optional[bool] = None,
         **kwargs
@@ -2641,6 +2638,7 @@ class ManagementPolicyRule(msrest.serialization.Model):
         super(ManagementPolicyRule, self).__init__(**kwargs)
         self.enabled = enabled
         self.name = name
+        self.type = type
         self.definition = definition
 
 
@@ -3305,20 +3303,24 @@ class RestorePolicyProperties(msrest.serialization.Model):
     :param days: how long this blob can be restored. It should be great than zero and less than
      DeleteRetentionPolicy.days.
     :type days: int
-    :ivar last_enabled_time: Returns the date and time the restore policy was last enabled.
+    :ivar last_enabled_time: Deprecated in favor of minRestoreTime property.
     :vartype last_enabled_time: ~datetime.datetime
+    :ivar min_restore_time: Returns the minimum date and time that the restore can be started.
+    :vartype min_restore_time: ~datetime.datetime
     """
 
     _validation = {
         'enabled': {'required': True},
         'days': {'maximum': 365, 'minimum': 1},
         'last_enabled_time': {'readonly': True},
+        'min_restore_time': {'readonly': True},
     }
 
     _attribute_map = {
         'enabled': {'key': 'enabled', 'type': 'bool'},
         'days': {'key': 'days', 'type': 'int'},
         'last_enabled_time': {'key': 'lastEnabledTime', 'type': 'iso-8601'},
+        'min_restore_time': {'key': 'minRestoreTime', 'type': 'iso-8601'},
     }
 
     def __init__(
@@ -3332,6 +3334,7 @@ class RestorePolicyProperties(msrest.serialization.Model):
         self.enabled = enabled
         self.days = days
         self.last_enabled_time = None
+        self.min_restore_time = None
 
 
 class Restriction(msrest.serialization.Model):
