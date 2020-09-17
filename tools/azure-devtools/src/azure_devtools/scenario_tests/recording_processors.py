@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
+import six
 
 from .utilities import is_text_payload, is_json_payload
 
@@ -177,7 +178,7 @@ class GeneralNameReplacer(RecordingProcessor):
             request.uri = request.uri.replace(old, new)
 
             if is_text_payload(request) and request.body:
-                body = str(request.body)
+                body = six.ensure_str(request.body)
                 if old in body:
                     request.body = body.replace(old, new)
 
