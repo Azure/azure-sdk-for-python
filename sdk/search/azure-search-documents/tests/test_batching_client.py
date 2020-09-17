@@ -17,42 +17,38 @@ CREDENTIAL = AzureKeyCredential(key="test_api_key")
 
 class TestSearchBatchingClient(object):
     def test_search_index_document_batching_client_kwargs(self):
-        client = SearchIndexDocumentBatchingClient("endpoint", "index name", CREDENTIAL, window=100)
-
-        assert client.batch_size == 1000
-        assert client._window == 100
-        assert client._auto_flush
-        client.close()
-
+        with SearchIndexDocumentBatchingClient("endpoint", "index name", CREDENTIAL, window=100) as client:
+            assert client.batch_size == 1000
+            assert client._max_retry_count == 10
+            assert client._auto_flush_interval == 60
+            assert client._auto_flush
 
     def test_batch_queue(self):
-        client = SearchIndexDocumentBatchingClient("endpoint", "index name", CREDENTIAL, auto_flush=False)
-
-        assert client._index_documents_batch
-        client.add_upload_actions(["upload1"])
-        client.add_delete_actions(["delete1", "delete2"])
-        client.add_merge_actions(["merge1", "merge2", "merge3"])
-        client.add_merge_or_upload_actions(["merge_or_upload1"])
-        assert len(client.actions) == 7
-        actions = client._index_documents_batch.dequeue_actions()
-        assert len(client.actions) == 0
-        client._index_documents_batch.enqueue_actions(actions)
-        assert len(client.actions) == 7
-        actions = client._index_documents_batch.dequeue_actions()
-        assert len(client.actions) == 0
-        for action in actions:
-            client._index_documents_batch.enqueue_action(action)
-        assert len(client.actions) == 7
+        with SearchIndexDocumentBatchingClient("endpoint", "index name", CREDENTIAL, auto_flush=False) as client:
+            assert client._index_documents_batch
+            client.add_upload_actions(["upload1"])
+            client.add_delete_actions(["delete1", "delete2"])
+            client.add_merge_actions(["merge1", "merge2", "merge3"])
+            client.add_merge_or_upload_actions(["merge_or_upload1"])
+            assert len(client.actions) == 7
+            actions = client._index_documents_batch.dequeue_actions()
+            assert len(client.actions) == 0
+            client._index_documents_batch.enqueue_actions(actions)
+            assert len(client.actions) == 7
+            actions = client._index_documents_batch.dequeue_actions()
+            assert len(client.actions) == 0
+            for action in actions:
+                client._index_documents_batch.enqueue_action(action)
+            assert len(client.actions) == 7
 
 
     @mock.patch(
         "azure.search.documents._internal._search_index_document_batching_client.SearchIndexDocumentBatchingClient._process_if_needed"
     )
     def test_process_if_needed(self, mock_process_if_needed):
-        client = SearchIndexDocumentBatchingClient("endpoint", "index name", CREDENTIAL, window=1000, auto_flush=False)
-
-        client.add_upload_actions(["upload1"])
-        client.add_delete_actions(["delete1", "delete2"])
+        with SearchIndexDocumentBatchingClient("endpoint", "index name", CREDENTIAL) as client:
+            client.add_upload_actions(["upload1"])
+            client.add_delete_actions(["delete1", "delete2"])
         assert mock_process_if_needed.called
 
 

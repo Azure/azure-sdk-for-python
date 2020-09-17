@@ -43,7 +43,6 @@ async def sample_batching_client():
             service_endpoint,
             index_name,
             AzureKeyCredential(key),
-            window=100,
             batch_size=100) as batch_client:
         # add upload actions
         await batch_client.add_upload_actions(documents=[DOCUMENT])

@@ -2,6 +2,15 @@
 
 ## 11.1.0b3 (Unreleased)
 
+**Breaking Changes**
+
+- Stopped supporting `window` kwargs for `SearchIndexDocumentBatchingClient`
+- Splitted kwarg `hook` into `new_callback`, `progress_callback`, `error_callback`, `remove_callback` for `SearchIndexDocumentBatchingClient`
+
+**Features**
+
+- Added `auto_flush_interval` support for `SearchIndexDocumentBatchingClient`
+- Added `max_retry_count` support for `SearchIndexDocumentBatchingClient`
 
 ## 11.1.0b2 (2020-09-08)
 
