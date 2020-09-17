@@ -94,6 +94,7 @@ from ._key_vault_management_client_enums import (
     CertificatePermissions,
     CreateMode,
     KeyPermissions,
+    ManagedHsmSkuFamily,
     ManagedHsmSkuName,
     NetworkRuleAction,
     NetworkRuleBypassOptions,
@@ -102,6 +103,7 @@ from ._key_vault_management_client_enums import (
     ProvisioningState,
     Reason,
     SecretPermissions,
+    SkuFamily,
     SkuName,
     StoragePermissions,
 )
@@ -151,6 +153,7 @@ __all__ = [
     'CertificatePermissions',
     'CreateMode',
     'KeyPermissions',
+    'ManagedHsmSkuFamily',
     'ManagedHsmSkuName',
     'NetworkRuleAction',
     'NetworkRuleBypassOptions',
@@ -159,6 +162,7 @@ __all__ = [
     'ProvisioningState',
     'Reason',
     'SecretPermissions',
+    'SkuFamily',
     'SkuName',
     'StoragePermissions',
 ]

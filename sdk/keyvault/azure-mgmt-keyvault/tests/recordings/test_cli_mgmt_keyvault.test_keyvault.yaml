@@ -22,7 +22,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-keyvault/7.0.0b3 Python/3.8.1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-mgmt-keyvault/7.0.0b3 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.KeyVault/vaults/myValtZikfikxz?api-version=2019-09-01
   response:
@@ -36,7 +36,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 09 Sep 2020 03:22:31 GMT
+      - Tue, 15 Sep 2020 06:46:49 GMT
       expires:
       - '-1'
       pragma:
@@ -54,9 +54,9 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-keyvault-service-version:
-      - 1.1.31.0
+      - 1.1.55.0
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1197'
+      - '1199'
       x-powered-by:
       - ASP.NET
     status:
@@ -72,7 +72,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-keyvault/7.0.0b3 Python/3.8.1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-mgmt-keyvault/7.0.0b3 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.KeyVault/vaults/myValtZikfikxz?api-version=2019-09-01
   response:
@@ -86,7 +86,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 09 Sep 2020 03:23:02 GMT
+      - Tue, 15 Sep 2020 06:47:20 GMT
       expires:
       - '-1'
       pragma:
@@ -104,7 +104,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-keyvault-service-version:
-      - 1.1.31.0
+      - 1.1.55.0
       x-powered-by:
       - ASP.NET
     status:
@@ -126,7 +126,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-keyvault/7.0.0b3 Python/3.8.1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-mgmt-keyvault/7.0.0b3 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.KeyVault/vaults/myValtZikfikxz/accessPolicies/add?api-version=2019-09-01
   response:
@@ -140,7 +140,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 09 Sep 2020 03:23:03 GMT
+      - Tue, 15 Sep 2020 06:47:21 GMT
       expires:
       - '-1'
       pragma:
@@ -158,9 +158,9 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-keyvault-service-version:
-      - 1.1.31.0
+      - 1.1.55.0
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1196'
+      - '1198'
       x-powered-by:
       - ASP.NET
     status:
@@ -176,7 +176,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-keyvault/7.0.0b3 Python/3.8.1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-mgmt-keyvault/7.0.0b3 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.KeyVault/vaults/myValtZikfikxz?api-version=2019-09-01
   response:
@@ -190,7 +190,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 09 Sep 2020 03:23:04 GMT
+      - Tue, 15 Sep 2020 06:47:21 GMT
       expires:
       - '-1'
       pragma:
@@ -208,7 +208,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-keyvault-service-version:
-      - 1.1.31.0
+      - 1.1.55.0
       x-powered-by:
       - ASP.NET
     status:
@@ -228,7 +228,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-keyvault/7.0.0b3 Python/3.8.1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-mgmt-keyvault/7.0.0b3 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PATCH
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.KeyVault/vaults/myValtZikfikxz?api-version=2019-09-01
   response:
@@ -242,7 +242,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 09 Sep 2020 03:23:06 GMT
+      - Tue, 15 Sep 2020 06:47:24 GMT
       expires:
       - '-1'
       pragma:
@@ -260,9 +260,9 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-keyvault-service-version:
-      - 1.1.31.0
+      - 1.1.55.0
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1195'
+      - '1197'
       x-powered-by:
       - ASP.NET
     status:
@@ -282,7 +282,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-keyvault/7.0.0b3 Python/3.8.1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-mgmt-keyvault/7.0.0b3 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/checkNameAvailability?api-version=2019-09-01
   response:
@@ -297,7 +297,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 09 Sep 2020 03:23:07 GMT
+      - Tue, 15 Sep 2020 06:47:24 GMT
       expires:
       - '-1'
       pragma:
@@ -315,7 +315,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-keyvault-service-version:
-      - 1.1.31.0
+      - 1.1.55.0
       x-powered-by:
       - ASP.NET
     status:
@@ -333,7 +333,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-azure-mgmt-keyvault/7.0.0b3 Python/3.8.1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-mgmt-keyvault/7.0.0b3 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.KeyVault/vaults/myValtZikfikxz?api-version=2019-09-01
   response:
@@ -345,7 +345,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 09 Sep 2020 03:23:12 GMT
+      - Tue, 15 Sep 2020 06:47:30 GMT
       expires:
       - '-1'
       pragma:
@@ -359,9 +359,9 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-keyvault-service-version:
-      - 1.1.31.0
+      - 1.1.55.0
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14998'
+      - '14999'
       x-powered-by:
       - ASP.NET
     status:
@@ -377,12 +377,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-keyvault/7.0.0b3 Python/3.8.1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-mgmt-keyvault/7.0.0b3 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/eastus/deletedVaults/myValtZikfikxz?api-version=2019-09-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/eastus/deletedVaults/myValtZikfikxz","name":"myValtZikfikxz","type":"Microsoft.KeyVault/deletedVaults","properties":{"vaultId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.KeyVault/vaults/myValtZikfikxz","location":"eastus","tags":{},"deletionDate":"2020-09-09T03:23:08Z","scheduledPurgeDate":"2020-12-08T03:23:08Z"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/eastus/deletedVaults/myValtZikfikxz","name":"myValtZikfikxz","type":"Microsoft.KeyVault/deletedVaults","properties":{"vaultId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.KeyVault/vaults/myValtZikfikxz","location":"eastus","tags":{},"deletionDate":"2020-09-15T06:47:25Z","scheduledPurgeDate":"2020-12-14T06:47:25Z"}}'
     headers:
       cache-control:
       - no-cache
@@ -391,7 +391,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 09 Sep 2020 03:23:14 GMT
+      - Tue, 15 Sep 2020 06:47:30 GMT
       expires:
       - '-1'
       pragma:
@@ -409,7 +409,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-keyvault-service-version:
-      - 1.1.31.0
+      - 1.1.55.0
       x-powered-by:
       - ASP.NET
     status:
@@ -427,7 +427,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-azure-mgmt-keyvault/7.0.0b3 Python/3.8.1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-mgmt-keyvault/7.0.0b3 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/eastus/deletedVaults/myValtZikfikxz/purge?api-version=2019-09-01
   response:
@@ -439,11 +439,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 09 Sep 2020 03:23:14 GMT
+      - Tue, 15 Sep 2020 06:47:31 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/eastus/operationResults/VVR8MDYzNzM1MjE4NTk2NTYzOTI4OHxCQ0Q0NkIwQTNGOEM0RTk5QTc1NTg3MjUxMkREOTg3OA?api-version=2019-09-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/eastus/operationResults/VVR8MDYzNzM1NzQ5MjUyNDU4Njg2OXxFNkQ4Qzk5OTUyQjk0OTVFQTlCMDE2NzE0OENEOEY0OA?api-version=2019-09-01
       pragma:
       - no-cache
       server:
@@ -455,9 +455,9 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-keyvault-service-version:
-      - 1.1.31.0
+      - 1.1.55.0
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1198'
+      - '1199'
       x-powered-by:
       - ASP.NET
     status:
@@ -473,12 +473,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-keyvault/7.0.0b3 Python/3.8.1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-mgmt-keyvault/7.0.0b3 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/eastus/operationResults/VVR8MDYzNzM1MjE4NTk2NTYzOTI4OHxCQ0Q0NkIwQTNGOEM0RTk5QTc1NTg3MjUxMkREOTg3OA?api-version=2019-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/eastus/operationResults/VVR8MDYzNzM1NzQ5MjUyNDU4Njg2OXxFNkQ4Qzk5OTUyQjk0OTVFQTlCMDE2NzE0OENEOEY0OA?api-version=2019-09-01
   response:
     body:
-      string: '{"createdDateTime":"2020-09-09 03:23:15Z","status":"NotStarted"}'
+      string: '{"createdDateTime":"2020-09-15 06:47:31Z","status":"NotStarted"}'
     headers:
       cache-control:
       - no-cache
@@ -487,11 +487,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 09 Sep 2020 03:23:20 GMT
+      - Tue, 15 Sep 2020 06:47:36 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/eastus/operationResults/VVR8MDYzNzM1MjE4NTk2NTYzOTI4OHxCQ0Q0NkIwQTNGOEM0RTk5QTc1NTg3MjUxMkREOTg3OA?api-version=2019-09-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/eastus/operationResults/VVR8MDYzNzM1NzQ5MjUyNDU4Njg2OXxFNkQ4Qzk5OTUyQjk0OTVFQTlCMDE2NzE0OENEOEY0OA?api-version=2019-09-01
       pragma:
       - no-cache
       server:
@@ -503,7 +503,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-keyvault-service-version:
-      - 1.1.31.0
+      - 1.1.55.0
       x-powered-by:
       - ASP.NET
     status:
@@ -519,105 +519,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-keyvault/7.0.0b3 Python/3.8.1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-mgmt-keyvault/7.0.0b3 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/eastus/operationResults/VVR8MDYzNzM1MjE4NTk2NTYzOTI4OHxCQ0Q0NkIwQTNGOEM0RTk5QTc1NTg3MjUxMkREOTg3OA?api-version=2019-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/eastus/operationResults/VVR8MDYzNzM1NzQ5MjUyNDU4Njg2OXxFNkQ4Qzk5OTUyQjk0OTVFQTlCMDE2NzE0OENEOEY0OA?api-version=2019-09-01
   response:
     body:
-      string: '{"createdDateTime":"2020-09-09 03:23:15Z","status":"NotStarted"}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '64'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Wed, 09 Sep 2020 03:23:25 GMT
-      expires:
-      - '-1'
-      location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/eastus/operationResults/VVR8MDYzNzM1MjE4NTk2NTYzOTI4OHxCQ0Q0NkIwQTNGOEM0RTk5QTc1NTg3MjUxMkREOTg3OA?api-version=2019-09-01
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-IIS/10.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      x-aspnet-version:
-      - 4.0.30319
-      x-content-type-options:
-      - nosniff
-      x-ms-keyvault-service-version:
-      - 1.1.31.0
-      x-powered-by:
-      - ASP.NET
-    status:
-      code: 202
-      message: Accepted
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-azure-mgmt-keyvault/7.0.0b3 Python/3.8.1 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/eastus/operationResults/VVR8MDYzNzM1MjE4NTk2NTYzOTI4OHxCQ0Q0NkIwQTNGOEM0RTk5QTc1NTg3MjUxMkREOTg3OA?api-version=2019-09-01
-  response:
-    body:
-      string: '{"createdDateTime":"2020-09-09 03:23:15Z","status":"NotStarted"}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '64'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Wed, 09 Sep 2020 03:23:31 GMT
-      expires:
-      - '-1'
-      location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/eastus/operationResults/VVR8MDYzNzM1MjE4NTk2NTYzOTI4OHxCQ0Q0NkIwQTNGOEM0RTk5QTc1NTg3MjUxMkREOTg3OA?api-version=2019-09-01
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-IIS/10.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      x-aspnet-version:
-      - 4.0.30319
-      x-content-type-options:
-      - nosniff
-      x-ms-keyvault-service-version:
-      - 1.1.31.0
-      x-powered-by:
-      - ASP.NET
-    status:
-      code: 202
-      message: Accepted
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-azure-mgmt-keyvault/7.0.0b3 Python/3.8.1 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/eastus/operationResults/VVR8MDYzNzM1MjE4NTk2NTYzOTI4OHxCQ0Q0NkIwQTNGOEM0RTk5QTc1NTg3MjUxMkREOTg3OA?api-version=2019-09-01
-  response:
-    body:
-      string: '{"createdDateTime":"2020-09-09 03:23:15Z","lastActionDateTime":"2020-09-09
-        03:23:34Z","status":"Succeeded"}'
+      string: '{"createdDateTime":"2020-09-15 06:47:31Z","lastActionDateTime":"2020-09-15
+        06:47:40Z","status":"Succeeded"}'
     headers:
       cache-control:
       - no-cache
@@ -626,7 +534,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 09 Sep 2020 03:23:36 GMT
+      - Tue, 15 Sep 2020 06:47:42 GMT
       expires:
       - '-1'
       pragma:
@@ -644,7 +552,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-keyvault-service-version:
-      - 1.1.31.0
+      - 1.1.55.0
       x-powered-by:
       - ASP.NET
     status:
