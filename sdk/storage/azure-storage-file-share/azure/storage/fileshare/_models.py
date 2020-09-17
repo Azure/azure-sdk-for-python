@@ -159,14 +159,16 @@ class ProtocolSettings(GeneratedProtocolSettings):
     """Protocol Settings class used by the set and get service properties methods in the share service.
 
     Contains protocol properties of the share service such as the SMB setting of the share service.
+
+    :param SmbSettings smb_settings: Required. Sets SMB settings.
     """
-    def __init__(self, smb):
-        self.smb = smb
+    def __init__(self, smb_settings):
+        self.smb_settings = smb_settings
 
     @classmethod
     def _from_generated(cls, generated):
         return cls(
-            smb=generated.smb_settings)
+            smb_settings=generated.smb_settings)
 
 
 class AccessPolicy(GenAccessPolicy):

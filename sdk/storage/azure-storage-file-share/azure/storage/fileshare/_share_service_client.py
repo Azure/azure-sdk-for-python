@@ -35,7 +35,7 @@ if TYPE_CHECKING:
         ShareProperties,
         Metrics,
         CorsRule,
-        ProtocolProperties
+        ProtocolSettings
     )
 
 
@@ -170,7 +170,7 @@ class ShareServiceClient(StorageAccountHostsMixin):
             self, hour_metrics=None,  # type: Optional[Metrics]
             minute_metrics=None,  # type: Optional[Metrics]
             cors=None,  # type: Optional[List[CorsRule]]
-            protocol=None,  # type: Optional[ProtocolProperties],
+            protocol=None,  # type: Optional[ProtocolSettings],
             **kwargs
         ):
         # type: (...) -> None
@@ -193,7 +193,7 @@ class ShareServiceClient(StorageAccountHostsMixin):
         :type cors: list(:class:`~azure.storage.fileshare.CorsRule`)
         :param protocol_settings:
             Sets protocol settings
-        :type protocol: ~azure.storage.fileshare.ProtocolProperties
+        :type protocol: ~azure.storage.fileshare.ProtocolSettings
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
@@ -215,7 +215,7 @@ class ShareServiceClient(StorageAccountHostsMixin):
             protocol_settings=protocol
         )
         try:
-            self._client.service.set_properties(props, timeout=timeout, **kwargs)
+            self._client.service.set_properties(storage_service_properties=props, timeout=timeout, **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
 
