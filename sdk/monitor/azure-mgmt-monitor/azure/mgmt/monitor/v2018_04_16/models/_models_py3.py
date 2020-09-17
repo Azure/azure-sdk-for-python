@@ -44,7 +44,7 @@ class Action(msrest.serialization.Model):
         **kwargs
     ):
         super(Action, self).__init__(**kwargs)
-        self.odata_type: Optional[str] = None
+        self.odata_type = None  # type: Optional[str]
 
 
 class AlertingAction(Action):
@@ -90,7 +90,7 @@ class AlertingAction(Action):
         **kwargs
     ):
         super(AlertingAction, self).__init__(**kwargs)
-        self.odata_type: str = 'Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.Microsoft.AppInsights.Nexus.DataContracts.Resources.ScheduledQueryRules.AlertingAction'
+        self.odata_type = 'Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.Microsoft.AppInsights.Nexus.DataContracts.Resources.ScheduledQueryRules.AlertingAction'  # type: str
         self.severity = severity
         self.azns_action = azns_action
         self.throttling_in_min = throttling_in_min
@@ -164,21 +164,19 @@ class Criteria(msrest.serialization.Model):
 class Dimension(msrest.serialization.Model):
     """Specifies the criteria for converting log to metric.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     All required parameters must be populated in order to send to Azure.
 
     :param name: Required. Name of the dimension.
     :type name: str
-    :ivar operator: Required. Operator for dimension values. Default value: "Include".
-    :vartype operator: str
+    :param operator: Required. Operator for dimension values. Possible values include: "Include".
+    :type operator: str or ~$(python-base-namespace).v2018_04_16.models.Operator
     :param values: Required. List of dimension values.
     :type values: list[str]
     """
 
     _validation = {
         'name': {'required': True},
-        'operator': {'required': True, 'constant': True},
+        'operator': {'required': True},
         'values': {'required': True},
     }
 
@@ -188,17 +186,17 @@ class Dimension(msrest.serialization.Model):
         'values': {'key': 'values', 'type': '[str]'},
     }
 
-    operator = "Include"
-
     def __init__(
         self,
         *,
         name: str,
+        operator: Union[str, "Operator"],
         values: List[str],
         **kwargs
     ):
         super(Dimension, self).__init__(**kwargs)
         self.name = name
+        self.operator = operator
         self.values = values
 
 
@@ -479,7 +477,7 @@ class LogToMetricAction(Action):
         **kwargs
     ):
         super(LogToMetricAction, self).__init__(**kwargs)
-        self.odata_type: str = 'Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.Microsoft.AppInsights.Nexus.DataContracts.Resources.ScheduledQueryRules.LogToMetricAction'
+        self.odata_type = 'Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.Microsoft.AppInsights.Nexus.DataContracts.Resources.ScheduledQueryRules.LogToMetricAction'  # type: str
         self.criteria = criteria
 
 
@@ -521,8 +519,6 @@ class Schedule(msrest.serialization.Model):
 class Source(msrest.serialization.Model):
     """Specifies the log search query.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     All required parameters must be populated in order to send to Azure.
 
     :param query: Log search query. Required for action type - AlertingAction.
@@ -531,13 +527,12 @@ class Source(msrest.serialization.Model):
     :type authorized_resources: list[str]
     :param data_source_id: Required. The resource uri over which log search query is to be run.
     :type data_source_id: str
-    :ivar query_type: Set value to 'ResultCount' . Default value: "ResultCount".
-    :vartype query_type: str
+    :param query_type: Set value to 'ResultCount' . Possible values include: "ResultCount".
+    :type query_type: str or ~$(python-base-namespace).v2018_04_16.models.QueryType
     """
 
     _validation = {
         'data_source_id': {'required': True},
-        'query_type': {'constant': True},
     }
 
     _attribute_map = {
@@ -547,20 +542,20 @@ class Source(msrest.serialization.Model):
         'query_type': {'key': 'queryType', 'type': 'str'},
     }
 
-    query_type = "ResultCount"
-
     def __init__(
         self,
         *,
         data_source_id: str,
         query: Optional[str] = None,
         authorized_resources: Optional[List[str]] = None,
+        query_type: Optional[Union[str, "QueryType"]] = None,
         **kwargs
     ):
         super(Source, self).__init__(**kwargs)
         self.query = query
         self.authorized_resources = authorized_resources
         self.data_source_id = data_source_id
+        self.query_type = query_type
 
 
 class TriggerCondition(msrest.serialization.Model):

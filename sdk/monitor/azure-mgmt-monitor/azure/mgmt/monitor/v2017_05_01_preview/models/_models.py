@@ -616,6 +616,160 @@ class RetentionPolicy(msrest.serialization.Model):
         self.days = kwargs['days']
 
 
+class SubscriptionProxyOnlyResource(msrest.serialization.Model):
+    """A proxy only azure resource object.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Azure resource Id.
+    :vartype id: str
+    :ivar name: Azure resource name.
+    :vartype name: str
+    :ivar type: Azure resource type.
+    :vartype type: str
+    :param location: Location of the resource.
+    :type location: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SubscriptionProxyOnlyResource, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.location = kwargs.get('location', None)
+
+
+class SubscriptionDiagnosticSettingsResource(SubscriptionProxyOnlyResource):
+    """The subscription diagnostic setting resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Azure resource Id.
+    :vartype id: str
+    :ivar name: Azure resource name.
+    :vartype name: str
+    :ivar type: Azure resource type.
+    :vartype type: str
+    :param location: Location of the resource.
+    :type location: str
+    :param storage_account_id: The resource ID of the storage account to which you would like to
+     send Diagnostic Logs.
+    :type storage_account_id: str
+    :param service_bus_rule_id: The service bus rule Id of the diagnostic setting. This is here to
+     maintain backwards compatibility.
+    :type service_bus_rule_id: str
+    :param event_hub_authorization_rule_id: The resource Id for the event hub authorization rule.
+    :type event_hub_authorization_rule_id: str
+    :param event_hub_name: The name of the event hub. If none is specified, the default event hub
+     will be selected.
+    :type event_hub_name: str
+    :param logs: The list of logs settings.
+    :type logs: list[~$(python-base-namespace).v2017_05_01_preview.models.SubscriptionLogSettings]
+    :param workspace_id: The full ARM resource ID of the Log Analytics workspace to which you would
+     like to send Diagnostic Logs. Example:
+     /subscriptions/4b9e8510-67ab-4e9a-95a9-e2f1e570ea9c/resourceGroups/insights-
+     integration/providers/Microsoft.OperationalInsights/workspaces/viruela2.
+    :type workspace_id: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'storage_account_id': {'key': 'properties.storageAccountId', 'type': 'str'},
+        'service_bus_rule_id': {'key': 'properties.serviceBusRuleId', 'type': 'str'},
+        'event_hub_authorization_rule_id': {'key': 'properties.eventHubAuthorizationRuleId', 'type': 'str'},
+        'event_hub_name': {'key': 'properties.eventHubName', 'type': 'str'},
+        'logs': {'key': 'properties.logs', 'type': '[SubscriptionLogSettings]'},
+        'workspace_id': {'key': 'properties.workspaceId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SubscriptionDiagnosticSettingsResource, self).__init__(**kwargs)
+        self.storage_account_id = kwargs.get('storage_account_id', None)
+        self.service_bus_rule_id = kwargs.get('service_bus_rule_id', None)
+        self.event_hub_authorization_rule_id = kwargs.get('event_hub_authorization_rule_id', None)
+        self.event_hub_name = kwargs.get('event_hub_name', None)
+        self.logs = kwargs.get('logs', None)
+        self.workspace_id = kwargs.get('workspace_id', None)
+
+
+class SubscriptionDiagnosticSettingsResourceCollection(msrest.serialization.Model):
+    """Represents a collection of subscription diagnostic settings resources.
+
+    :param value: The collection of subscription diagnostic settings resources.
+    :type value: list[~$(python-base-
+     namespace).v2017_05_01_preview.models.SubscriptionDiagnosticSettingsResource]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[SubscriptionDiagnosticSettingsResource]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SubscriptionDiagnosticSettingsResourceCollection, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+
+
+class SubscriptionLogSettings(msrest.serialization.Model):
+    """Part of Subscription diagnostic setting. Specifies the settings for a particular log.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param category: Name of a Subscription Diagnostic Log category for a resource type this
+     setting is applied to.
+    :type category: str
+    :param enabled: Required. a value indicating whether this log is enabled.
+    :type enabled: bool
+    """
+
+    _validation = {
+        'enabled': {'required': True},
+    }
+
+    _attribute_map = {
+        'category': {'key': 'category', 'type': 'str'},
+        'enabled': {'key': 'enabled', 'type': 'bool'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SubscriptionLogSettings, self).__init__(**kwargs)
+        self.category = kwargs.get('category', None)
+        self.enabled = kwargs['enabled']
+
+
 class TimeSeriesElement(msrest.serialization.Model):
     """A time series result type. The discriminator value is always TimeSeries in this case.
 

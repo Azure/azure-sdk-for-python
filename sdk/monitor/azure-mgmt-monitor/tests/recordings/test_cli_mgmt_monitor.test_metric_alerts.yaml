@@ -23,10 +23,10 @@ interactions:
   response:
     body:
       string: "{\r\n  \"name\": \"networkxx\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/networkxx\"\
-        ,\r\n  \"etag\": \"W/\\\"e51c1544-1c41-41f4-8256-327bfde999b6\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"c8ff383c-3f95-4bc7-b5d9-458332db7a4f\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/virtualNetworks\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n \
-        \   \"resourceGuid\": \"06e100c2-3270-4565-92c5-9898b1bbf87f\",\r\n    \"\
+        \   \"resourceGuid\": \"d2c35ae1-0bfc-49b1-b026-f7148752aac7\",\r\n    \"\
         addressSpace\": {\r\n      \"addressPrefixes\": [\r\n        \"10.0.0.0/16\"\
         \r\n      ]\r\n    },\r\n    \"subnets\": [],\r\n    \"virtualNetworkPeerings\"\
         : [],\r\n    \"enableDdosProtection\": false,\r\n    \"enableVmProtection\"\
@@ -35,15 +35,15 @@ interactions:
       azure-asyncnotification:
       - Enabled
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/ee31e68a-1db2-452c-aa8e-9cda55e2307a?api-version=2019-09-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/fa6ad004-dd99-4b06-8089-c6d58d8e7fca?api-version=2019-09-01
       cache-control:
       - no-cache
       content-length:
-      - '678'
+      - '705'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 27 May 2020 05:09:32 GMT
+      - Wed, 16 Sep 2020 03:24:10 GMT
       expires:
       - '-1'
       pragma:
@@ -56,7 +56,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 040789e7-d322-4777-8aed-8460e9ccc8b8
+      - 2dcb5c94-41f9-4051-99ff-276dfa59bd36
       x-ms-ratelimit-remaining-subscription-writes:
       - '1199'
     status:
@@ -75,7 +75,7 @@ interactions:
       - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
         msrest_azure/0.6.2 azure-mgmt-network/7.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/ee31e68a-1db2-452c-aa8e-9cda55e2307a?api-version=2019-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/fa6ad004-dd99-4b06-8089-c6d58d8e7fca?api-version=2019-09-01
   response:
     body:
       string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
@@ -87,7 +87,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 27 May 2020 05:09:38 GMT
+      - Wed, 16 Sep 2020 03:24:16 GMT
       expires:
       - '-1'
       pragma:
@@ -104,7 +104,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - dda408d4-601f-4cfa-97ed-6e1839017803
+      - 0b1542a2-d22d-4f05-a406-3a9c7252ff9f
     status:
       code: 200
       message: OK
@@ -125,10 +125,10 @@ interactions:
   response:
     body:
       string: "{\r\n  \"name\": \"networkxx\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/networkxx\"\
-        ,\r\n  \"etag\": \"W/\\\"663d6a09-9c96-4661-81b9-db50538ca5ed\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"115625bd-a3ae-4895-a523-a66ca0d618d7\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/virtualNetworks\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n\
-        \    \"resourceGuid\": \"06e100c2-3270-4565-92c5-9898b1bbf87f\",\r\n    \"\
+        \    \"resourceGuid\": \"d2c35ae1-0bfc-49b1-b026-f7148752aac7\",\r\n    \"\
         addressSpace\": {\r\n      \"addressPrefixes\": [\r\n        \"10.0.0.0/16\"\
         \r\n      ]\r\n    },\r\n    \"subnets\": [],\r\n    \"virtualNetworkPeerings\"\
         : [],\r\n    \"enableDdosProtection\": false,\r\n    \"enableVmProtection\"\
@@ -137,13 +137,13 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '679'
+      - '706'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 27 May 2020 05:09:38 GMT
+      - Wed, 16 Sep 2020 03:24:16 GMT
       etag:
-      - W/"663d6a09-9c96-4661-81b9-db50538ca5ed"
+      - W/"115625bd-a3ae-4895-a523-a66ca0d618d7"
       expires:
       - '-1'
       pragma:
@@ -160,7 +160,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 351683e3-3194-409f-b7ff-8cab5f6f0215
+      - d843fe92-06e0-430a-850c-a48822befa5f
     status:
       code: 200
       message: OK
@@ -187,22 +187,22 @@ interactions:
   response:
     body:
       string: "{\r\n  \"name\": \"subnetx\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/networkxx/subnets/subnetx\"\
-        ,\r\n  \"etag\": \"W/\\\"948010da-8504-4a6f-8835-71404b180f9a\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"b62d5877-784c-4917-9ea2-87b8cf908884\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n    \"\
         addressPrefix\": \"10.0.0.0/24\",\r\n    \"delegations\": [],\r\n    \"privateEndpointNetworkPolicies\"\
         : \"Enabled\",\r\n    \"privateLinkServiceNetworkPolicies\": \"Enabled\"\r\
         \n  },\r\n  \"type\": \"Microsoft.Network/virtualNetworks/subnets\"\r\n}"
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/4d6a7b9d-65cf-435b-b0f6-634baa584af9?api-version=2019-09-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/be8c9bc9-186d-414f-af83-07c8525463f4?api-version=2019-09-01
       cache-control:
       - no-cache
       content-length:
-      - '562'
+      - '589'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 27 May 2020 05:09:38 GMT
+      - Wed, 16 Sep 2020 03:24:17 GMT
       expires:
       - '-1'
       pragma:
@@ -215,7 +215,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 965470c8-b085-4ada-8755-932f54fe8b66
+      - 2fe2422e-944a-449a-9344-e1780bd2cc95
       x-ms-ratelimit-remaining-subscription-writes:
       - '1198'
     status:
@@ -234,7 +234,7 @@ interactions:
       - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
         msrest_azure/0.6.2 azure-mgmt-network/7.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/4d6a7b9d-65cf-435b-b0f6-634baa584af9?api-version=2019-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/be8c9bc9-186d-414f-af83-07c8525463f4?api-version=2019-09-01
   response:
     body:
       string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
@@ -246,7 +246,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 27 May 2020 05:09:44 GMT
+      - Wed, 16 Sep 2020 03:24:22 GMT
       expires:
       - '-1'
       pragma:
@@ -263,7 +263,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - e916377e-c40b-4b40-84c4-a57d27a077cb
+      - e2fe370e-1a4c-43d9-b1fd-98ac76785cb4
     status:
       code: 200
       message: OK
@@ -284,7 +284,7 @@ interactions:
   response:
     body:
       string: "{\r\n  \"name\": \"subnetx\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/networkxx/subnets/subnetx\"\
-        ,\r\n  \"etag\": \"W/\\\"47f34bbb-c7b1-4411-8fa1-c41ac930e5f2\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"5d9fad09-91aa-47ee-90a6-8a0d7d475967\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"\
         addressPrefix\": \"10.0.0.0/24\",\r\n    \"delegations\": [],\r\n    \"privateEndpointNetworkPolicies\"\
         : \"Enabled\",\r\n    \"privateLinkServiceNetworkPolicies\": \"Enabled\"\r\
@@ -293,13 +293,13 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '563'
+      - '590'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 27 May 2020 05:09:44 GMT
+      - Wed, 16 Sep 2020 03:24:23 GMT
       etag:
-      - W/"47f34bbb-c7b1-4411-8fa1-c41ac930e5f2"
+      - W/"5d9fad09-91aa-47ee-90a6-8a0d7d475967"
       expires:
       - '-1'
       pragma:
@@ -316,14 +316,14 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 5d0d33da-61b6-4699-8188-7e72930a45f8
+      - b699a9ef-f80c-4ed1-9004-d858698aa386
     status:
       code: 200
       message: OK
 - request:
-    body: 'b''{"location": "eastus", "properties": {"ipConfigurations": [{"properties":
+    body: 'b''b\''{"location": "eastus", "properties": {"ipConfigurations": [{"properties":
       {"subnet": {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/networkxx/subnets/subnetx"}},
-      "name": "MyIpConfig"}]}}'''
+      "name": "MyIpConfig"}]}}\'''''
     headers:
       Accept:
       - application/json
@@ -332,7 +332,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '307'
+      - '334'
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
@@ -345,12 +345,12 @@ interactions:
   response:
     body:
       string: "{\r\n  \"name\": \"interfacexx\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkInterfaces/interfacexx\"\
-        ,\r\n  \"etag\": \"W/\\\"7f888b1b-0bc5-48eb-ac05-c50985cafe51\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"74e4251a-1c2e-4cb4-852b-e22d6bc29b51\\\"\",\r\n \
         \ \"location\": \"eastus\",\r\n  \"properties\": {\r\n    \"provisioningState\"\
-        : \"Succeeded\",\r\n    \"resourceGuid\": \"e6bc2ffc-e27d-49db-b956-ff2907e33890\"\
+        : \"Succeeded\",\r\n    \"resourceGuid\": \"85c192a0-55e4-4f1e-ac93-5e0f869d3042\"\
         ,\r\n    \"ipConfigurations\": [\r\n      {\r\n        \"name\": \"MyIpConfig\"\
         ,\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkInterfaces/interfacexx/ipConfigurations/MyIpConfig\"\
-        ,\r\n        \"etag\": \"W/\\\"7f888b1b-0bc5-48eb-ac05-c50985cafe51\\\"\"\
+        ,\r\n        \"etag\": \"W/\\\"74e4251a-1c2e-4cb4-852b-e22d6bc29b51\\\"\"\
         ,\r\n        \"type\": \"Microsoft.Network/networkInterfaces/ipConfigurations\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
         ,\r\n          \"privateIPAddress\": \"10.0.0.4\",\r\n          \"privateIPAllocationMethod\"\
@@ -358,7 +358,7 @@ interactions:
         \r\n          },\r\n          \"primary\": true,\r\n          \"privateIPAddressVersion\"\
         : \"IPv4\"\r\n        }\r\n      }\r\n    ],\r\n    \"dnsSettings\": {\r\n\
         \      \"dnsServers\": [],\r\n      \"appliedDnsServers\": [],\r\n      \"\
-        internalDomainNameSuffix\": \"yiaocbtqgjsulewftcmldo5yph.bx.internal.cloudapp.net\"\
+        internalDomainNameSuffix\": \"2fnmhux2boyutmbg42kiouvkyh.bx.internal.cloudapp.net\"\
         \r\n    },\r\n    \"enableAcceleratedNetworking\": false,\r\n    \"enableIPForwarding\"\
         : false,\r\n    \"hostedWorkloads\": [],\r\n    \"tapConfigurations\": []\r\
         \n  },\r\n  \"type\": \"Microsoft.Network/networkInterfaces\"\r\n}"
@@ -366,15 +366,15 @@ interactions:
       azure-asyncnotification:
       - Enabled
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/c252b0c9-92c7-4f4d-8800-027688462ce9?api-version=2019-09-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/0f332d83-0e98-4662-b2bd-41f69b6b6619?api-version=2019-09-01
       cache-control:
       - no-cache
       content-length:
-      - '1714'
+      - '1795'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 27 May 2020 05:09:49 GMT
+      - Wed, 16 Sep 2020 03:24:28 GMT
       expires:
       - '-1'
       pragma:
@@ -387,7 +387,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - d7d287f6-7333-426d-b605-4d48688c8abc
+      - d046b277-6e12-44c5-87e7-e02b48a6bf50
       x-ms-ratelimit-remaining-subscription-writes:
       - '1197'
     status:
@@ -406,7 +406,7 @@ interactions:
       - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
         msrest_azure/0.6.2 azure-mgmt-network/7.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/c252b0c9-92c7-4f4d-8800-027688462ce9?api-version=2019-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/0f332d83-0e98-4662-b2bd-41f69b6b6619?api-version=2019-09-01
   response:
     body:
       string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
@@ -418,7 +418,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 27 May 2020 05:10:21 GMT
+      - Wed, 16 Sep 2020 03:24:59 GMT
       expires:
       - '-1'
       pragma:
@@ -435,7 +435,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - d73e9c1e-4e4d-484e-8ece-da7f89eaa32c
+      - e30d4874-db84-4309-a098-aeea11cbecdf
     status:
       code: 200
       message: OK
@@ -456,12 +456,12 @@ interactions:
   response:
     body:
       string: "{\r\n  \"name\": \"interfacexx\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkInterfaces/interfacexx\"\
-        ,\r\n  \"etag\": \"W/\\\"7f888b1b-0bc5-48eb-ac05-c50985cafe51\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"74e4251a-1c2e-4cb4-852b-e22d6bc29b51\\\"\",\r\n \
         \ \"location\": \"eastus\",\r\n  \"properties\": {\r\n    \"provisioningState\"\
-        : \"Succeeded\",\r\n    \"resourceGuid\": \"e6bc2ffc-e27d-49db-b956-ff2907e33890\"\
+        : \"Succeeded\",\r\n    \"resourceGuid\": \"85c192a0-55e4-4f1e-ac93-5e0f869d3042\"\
         ,\r\n    \"ipConfigurations\": [\r\n      {\r\n        \"name\": \"MyIpConfig\"\
         ,\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkInterfaces/interfacexx/ipConfigurations/MyIpConfig\"\
-        ,\r\n        \"etag\": \"W/\\\"7f888b1b-0bc5-48eb-ac05-c50985cafe51\\\"\"\
+        ,\r\n        \"etag\": \"W/\\\"74e4251a-1c2e-4cb4-852b-e22d6bc29b51\\\"\"\
         ,\r\n        \"type\": \"Microsoft.Network/networkInterfaces/ipConfigurations\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
         ,\r\n          \"privateIPAddress\": \"10.0.0.4\",\r\n          \"privateIPAllocationMethod\"\
@@ -469,7 +469,7 @@ interactions:
         \r\n          },\r\n          \"primary\": true,\r\n          \"privateIPAddressVersion\"\
         : \"IPv4\"\r\n        }\r\n      }\r\n    ],\r\n    \"dnsSettings\": {\r\n\
         \      \"dnsServers\": [],\r\n      \"appliedDnsServers\": [],\r\n      \"\
-        internalDomainNameSuffix\": \"yiaocbtqgjsulewftcmldo5yph.bx.internal.cloudapp.net\"\
+        internalDomainNameSuffix\": \"2fnmhux2boyutmbg42kiouvkyh.bx.internal.cloudapp.net\"\
         \r\n    },\r\n    \"enableAcceleratedNetworking\": false,\r\n    \"enableIPForwarding\"\
         : false,\r\n    \"hostedWorkloads\": [],\r\n    \"tapConfigurations\": []\r\
         \n  },\r\n  \"type\": \"Microsoft.Network/networkInterfaces\"\r\n}"
@@ -477,13 +477,13 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '1714'
+      - '1795'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 27 May 2020 05:10:21 GMT
+      - Wed, 16 Sep 2020 03:25:00 GMT
       etag:
-      - W/"7f888b1b-0bc5-48eb-ac05-c50985cafe51"
+      - W/"74e4251a-1c2e-4cb4-852b-e22d6bc29b51"
       expires:
       - '-1'
       pragma:
@@ -500,12 +500,12 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - ec20de50-58ba-4e99-b75b-3500c29ab00f
+      - add0089e-ea1a-41cd-8d7b-4cc8568e451f
     status:
       code: 200
       message: OK
 - request:
-    body: 'b''{"location": "eastus", "properties": {"hardwareProfile": {"vmSize":
+    body: 'b''b\''{"location": "eastus", "properties": {"hardwareProfile": {"vmSize":
       "Standard_D2_v2"}, "storageProfile": {"imageReference": {"publisher": "MicrosoftWindowsServer",
       "offer": "WindowsServer", "sku": "2016-Datacenter", "version": "latest"}, "osDisk":
       {"name": "myVMosdisk", "caching": "ReadWrite", "createOption": "FromImage",
@@ -514,7 +514,7 @@ interactions:
       "Empty", "diskSizeGB": 1023}]}, "osProfile": {"computerName": "myVM", "adminUsername":
       "testuser", "adminPassword": "Aa1!zyx_", "windowsConfiguration": {"enableAutomaticUpdates":
       true}}, "networkProfile": {"networkInterfaces": [{"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkInterfaces/interfacexx",
-      "properties": {"primary": true}}]}}}'''
+      "properties": {"primary": true}}]}}}\'''''
     headers:
       Accept:
       - application/json
@@ -523,7 +523,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '926'
+      - '953'
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
@@ -537,12 +537,12 @@ interactions:
     body:
       string: "{\r\n  \"name\": \"vm_name\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/vm_name\"\
         ,\r\n  \"type\": \"Microsoft.Compute/virtualMachines\",\r\n  \"location\"\
-        : \"eastus\",\r\n  \"properties\": {\r\n    \"vmId\": \"6970ba6d-543d-4448-9f7c-87378e42b9fc\"\
+        : \"eastus\",\r\n  \"properties\": {\r\n    \"vmId\": \"3f145f13-f7ad-43e0-a499-37a258b865a7\"\
         ,\r\n    \"hardwareProfile\": {\r\n      \"vmSize\": \"Standard_D2_v2\"\r\n\
         \    },\r\n    \"storageProfile\": {\r\n      \"imageReference\": {\r\n  \
         \      \"publisher\": \"MicrosoftWindowsServer\",\r\n        \"offer\": \"\
         WindowsServer\",\r\n        \"sku\": \"2016-Datacenter\",\r\n        \"version\"\
-        : \"latest\",\r\n        \"exactVersion\": \"14393.3686.2005061700\"\r\n \
+        : \"latest\",\r\n        \"exactVersion\": \"14393.3930.2009041537\"\r\n \
         \     },\r\n      \"osDisk\": {\r\n        \"osType\": \"Windows\",\r\n  \
         \      \"name\": \"myVMosdisk\",\r\n        \"createOption\": \"FromImage\"\
         ,\r\n        \"caching\": \"ReadWrite\",\r\n        \"managedDisk\": {\r\n\
@@ -568,15 +568,15 @@ interactions:
       azure-asyncnotification:
       - Enabled
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/operations/9973da41-f0cb-47cd-8f69-eb05152184c3?api-version=2019-07-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/operations/81f9ee6f-1e7f-4970-9565-33f9978ca670?api-version=2019-07-01
       cache-control:
       - no-cache
       content-length:
-      - '2144'
+      - '2198'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 27 May 2020 05:10:31 GMT
+      - Wed, 16 Sep 2020 03:25:09 GMT
       expires:
       - '-1'
       pragma:
@@ -589,7 +589,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-resource:
-      - Microsoft.Compute/PutVM3Min;239,Microsoft.Compute/PutVM30Min;1198
+      - Microsoft.Compute/PutVM3Min;239,Microsoft.Compute/PutVM30Min;1199
       x-ms-ratelimit-remaining-subscription-writes:
       - '1199'
     status:
@@ -608,11 +608,11 @@ interactions:
       - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
         msrest_azure/0.6.2 azure-mgmt-compute/10.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/operations/9973da41-f0cb-47cd-8f69-eb05152184c3?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/operations/81f9ee6f-1e7f-4970-9565-33f9978ca670?api-version=2019-07-01
   response:
     body:
-      string: "{\r\n  \"startTime\": \"2020-05-27T05:10:29.6634035+00:00\",\r\n  \"\
-        status\": \"InProgress\",\r\n  \"name\": \"9973da41-f0cb-47cd-8f69-eb05152184c3\"\
+      string: "{\r\n  \"startTime\": \"2020-09-16T03:25:08.9656355+00:00\",\r\n  \"\
+        status\": \"InProgress\",\r\n  \"name\": \"81f9ee6f-1e7f-4970-9565-33f9978ca670\"\
         \r\n}"
     headers:
       cache-control:
@@ -622,7 +622,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 27 May 2020 05:10:41 GMT
+      - Wed, 16 Sep 2020 03:25:22 GMT
       expires:
       - '-1'
       pragma:
@@ -639,7 +639,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-resource:
-      - Microsoft.Compute/GetOperation3Min;14999,Microsoft.Compute/GetOperation30Min;29983
+      - Microsoft.Compute/GetOperation3Min;14996,Microsoft.Compute/GetOperation30Min;29993
     status:
       code: 200
       message: OK
@@ -656,11 +656,11 @@ interactions:
       - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
         msrest_azure/0.6.2 azure-mgmt-compute/10.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/operations/9973da41-f0cb-47cd-8f69-eb05152184c3?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/operations/81f9ee6f-1e7f-4970-9565-33f9978ca670?api-version=2019-07-01
   response:
     body:
-      string: "{\r\n  \"startTime\": \"2020-05-27T05:10:29.6634035+00:00\",\r\n  \"\
-        status\": \"InProgress\",\r\n  \"name\": \"9973da41-f0cb-47cd-8f69-eb05152184c3\"\
+      string: "{\r\n  \"startTime\": \"2020-09-16T03:25:08.9656355+00:00\",\r\n  \"\
+        status\": \"InProgress\",\r\n  \"name\": \"81f9ee6f-1e7f-4970-9565-33f9978ca670\"\
         \r\n}"
     headers:
       cache-control:
@@ -670,7 +670,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 27 May 2020 05:11:32 GMT
+      - Wed, 16 Sep 2020 03:26:12 GMT
       expires:
       - '-1'
       pragma:
@@ -687,7 +687,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-resource:
-      - Microsoft.Compute/GetOperation3Min;14998,Microsoft.Compute/GetOperation30Min;29982
+      - Microsoft.Compute/GetOperation3Min;14996,Microsoft.Compute/GetOperation30Min;29991
     status:
       code: 200
       message: OK
@@ -704,12 +704,12 @@ interactions:
       - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
         msrest_azure/0.6.2 azure-mgmt-compute/10.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/operations/9973da41-f0cb-47cd-8f69-eb05152184c3?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/operations/81f9ee6f-1e7f-4970-9565-33f9978ca670?api-version=2019-07-01
   response:
     body:
-      string: "{\r\n  \"startTime\": \"2020-05-27T05:10:29.6634035+00:00\",\r\n  \"\
-        endTime\": \"2020-05-27T05:11:56.2102129+00:00\",\r\n  \"status\": \"Succeeded\"\
-        ,\r\n  \"name\": \"9973da41-f0cb-47cd-8f69-eb05152184c3\"\r\n}"
+      string: "{\r\n  \"startTime\": \"2020-09-16T03:25:08.9656355+00:00\",\r\n  \"\
+        endTime\": \"2020-09-16T03:26:25.0440116+00:00\",\r\n  \"status\": \"Succeeded\"\
+        ,\r\n  \"name\": \"81f9ee6f-1e7f-4970-9565-33f9978ca670\"\r\n}"
     headers:
       cache-control:
       - no-cache
@@ -718,7 +718,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 27 May 2020 05:12:02 GMT
+      - Wed, 16 Sep 2020 03:26:42 GMT
       expires:
       - '-1'
       pragma:
@@ -735,7 +735,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-resource:
-      - Microsoft.Compute/GetOperation3Min;14996,Microsoft.Compute/GetOperation30Min;29980
+      - Microsoft.Compute/GetOperation3Min;14994,Microsoft.Compute/GetOperation30Min;29989
     status:
       code: 200
       message: OK
@@ -757,28 +757,28 @@ interactions:
     body:
       string: "{\r\n  \"name\": \"vm_name\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/vm_name\"\
         ,\r\n  \"type\": \"Microsoft.Compute/virtualMachines\",\r\n  \"location\"\
-        : \"eastus\",\r\n  \"properties\": {\r\n    \"vmId\": \"6970ba6d-543d-4448-9f7c-87378e42b9fc\"\
+        : \"eastus\",\r\n  \"properties\": {\r\n    \"vmId\": \"3f145f13-f7ad-43e0-a499-37a258b865a7\"\
         ,\r\n    \"hardwareProfile\": {\r\n      \"vmSize\": \"Standard_D2_v2\"\r\n\
         \    },\r\n    \"storageProfile\": {\r\n      \"imageReference\": {\r\n  \
         \      \"publisher\": \"MicrosoftWindowsServer\",\r\n        \"offer\": \"\
         WindowsServer\",\r\n        \"sku\": \"2016-Datacenter\",\r\n        \"version\"\
-        : \"latest\",\r\n        \"exactVersion\": \"14393.3686.2005061700\"\r\n \
+        : \"latest\",\r\n        \"exactVersion\": \"14393.3930.2009041537\"\r\n \
         \     },\r\n      \"osDisk\": {\r\n        \"osType\": \"Windows\",\r\n  \
         \      \"name\": \"myVMosdisk\",\r\n        \"createOption\": \"FromImage\"\
         ,\r\n        \"caching\": \"ReadWrite\",\r\n        \"managedDisk\": {\r\n\
         \          \"storageAccountType\": \"Standard_LRS\",\r\n          \"id\":\
-        \ \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/disks/myVMosdisk\"\
+        \ \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/T3YSTF6ZWQW5NJU6RGJD6JDB43ZG4R5DPXWT423BKGVAFUJ5BHL4FFN2F67NJYLISNRT3LFORAE/providers/Microsoft.Compute/disks/myVMosdisk\"\
         \r\n        },\r\n        \"diskSizeGB\": 127\r\n      },\r\n      \"dataDisks\"\
-        : [\r\n        {\r\n          \"lun\": 0,\r\n          \"name\": \"vm_name_disk2_e41807eba91a48e3b56df4551adf767f\"\
+        : [\r\n        {\r\n          \"lun\": 0,\r\n          \"name\": \"vm_name_disk2_7453cbbaab4a4fcf88f83430dcb7d429\"\
         ,\r\n          \"createOption\": \"Empty\",\r\n          \"caching\": \"None\"\
         ,\r\n          \"managedDisk\": {\r\n            \"storageAccountType\": \"\
-        Standard_LRS\",\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/disks/vm_name_disk2_e41807eba91a48e3b56df4551adf767f\"\
+        Standard_LRS\",\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/T3YSTF6ZWQW5NJU6RGJD6JDB43ZG4R5DPXWT423BKGVAFUJ5BHL4FFN2F67NJYLISNRT3LFORAE/providers/Microsoft.Compute/disks/vm_name_disk2_7453cbbaab4a4fcf88f83430dcb7d429\"\
         \r\n          },\r\n          \"diskSizeGB\": 1023,\r\n          \"toBeDetached\"\
         : false\r\n        },\r\n        {\r\n          \"lun\": 1,\r\n          \"\
-        name\": \"vm_name_disk3_530d798b661242f1a348217eebcd0263\",\r\n          \"\
+        name\": \"vm_name_disk3_dd107b82c8bd4708839b16a71e3e52a3\",\r\n          \"\
         createOption\": \"Empty\",\r\n          \"caching\": \"None\",\r\n       \
         \   \"managedDisk\": {\r\n            \"storageAccountType\": \"Standard_LRS\"\
-        ,\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/disks/vm_name_disk3_530d798b661242f1a348217eebcd0263\"\
+        ,\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/T3YSTF6ZWQW5NJU6RGJD6JDB43ZG4R5DPXWT423BKGVAFUJ5BHL4FFN2F67NJYLISNRT3LFORAE/providers/Microsoft.Compute/disks/vm_name_disk3_dd107b82c8bd4708839b16a71e3e52a3\"\
         \r\n          },\r\n          \"diskSizeGB\": 1023,\r\n          \"toBeDetached\"\
         : false\r\n        }\r\n      ]\r\n    },\r\n    \"osProfile\": {\r\n    \
         \  \"computerName\": \"myVM\",\r\n      \"adminUsername\": \"testuser\",\r\
@@ -793,11 +793,11 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '2902'
+      - '3037'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 27 May 2020 05:12:02 GMT
+      - Wed, 16 Sep 2020 03:26:42 GMT
       expires:
       - '-1'
       pragma:
@@ -814,7 +814,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-resource:
-      - Microsoft.Compute/LowCostGet3Min;3998,Microsoft.Compute/LowCostGet30Min;31984
+      - Microsoft.Compute/LowCostGet3Min;3997,Microsoft.Compute/LowCostGet30Min;31997
     status:
       code: 200
       message: OK
@@ -828,7 +828,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/providers/microsoft.insights/operations?api-version=2015-04-01
   response:
@@ -1334,24 +1334,187 @@ interactions:
         Azure Monitor","resource":"Scheduled query rule","operation":"Scheduled query
         rule delete","description":"Deleting a scheduled query rule"},"properties":{}},{"name":"Microsoft.Insights/Logs/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
         Azure Monitor","resource":"Logs","operation":"Read Logs","description":"Reading
-        data from all your logs"},"properties":{}},{"name":"Microsoft.Insights/Logs/ADAssessmentRecommendation/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        data from all your logs"},"properties":{}},{"name":"Microsoft.Insights/Logs/AADDomainServicesAccountLogon/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"AADDomainServicesAccountLogon","operation":"Read
+        AADDomainServicesAccountLogon data","description":"Read data from the AADDomainServicesAccountLogon
+        table"},"properties":{}},{"name":"Microsoft.Insights/Logs/AADDomainServicesAccountManagement/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"AADDomainServicesAccountManagement","operation":"Read
+        AADDomainServicesAccountManagement data","description":"Read data from the
+        AADDomainServicesAccountManagement table"},"properties":{}},{"name":"Microsoft.Insights/Logs/AADDomainServicesDirectoryServiceAccess/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"AADDomainServicesDirectoryServiceAccess","operation":"Read
+        AADDomainServicesDirectoryServiceAccess data","description":"Read data from
+        the AADDomainServicesDirectoryServiceAccess table"},"properties":{}},{"name":"Microsoft.Insights/Logs/AADDomainServicesLogonLogoff/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"AADDomainServicesLogonLogoff","operation":"Read
+        AADDomainServicesLogonLogoff data","description":"Read data from the AADDomainServicesLogonLogoff
+        table"},"properties":{}},{"name":"Microsoft.Insights/Logs/AADDomainServicesPolicyChange/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"AADDomainServicesPolicyChange","operation":"Read
+        AADDomainServicesPolicyChange data","description":"Read data from the AADDomainServicesPolicyChange
+        table"},"properties":{}},{"name":"Microsoft.Insights/Logs/AADDomainServicesPrivilegeUse/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"AADDomainServicesPrivilegeUse","operation":"Read
+        AADDomainServicesPrivilegeUse data","description":"Read data from the AADDomainServicesPrivilegeUse
+        table"},"properties":{}},{"name":"Microsoft.Insights/Logs/AADDomainServicesSystemSecurity/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"AADDomainServicesSystemSecurity","operation":"Read
+        AADDomainServicesSystemSecurity data","description":"Read data from the AADDomainServicesSystemSecurity
+        table"},"properties":{}},{"name":"Microsoft.Insights/Logs/AADManagedIdentitySignInLogs/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"AADManagedIdentitySignInLogs","operation":"Read
+        AADManagedIdentitySignInLogs data","description":"Read data from the AADManagedIdentitySignInLogs
+        table"},"properties":{}},{"name":"Microsoft.Insights/Logs/AADNonInteractiveUserSignInLogs/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"AADNonInteractiveUserSignInLogs","operation":"Read
+        AADNonInteractiveUserSignInLogs data","description":"Read data from the AADNonInteractiveUserSignInLogs
+        table"},"properties":{}},{"name":"Microsoft.Insights/Logs/AADServicePrincipalSignInLogs/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"AADServicePrincipalSignInLogs","operation":"Read
+        AADServicePrincipalSignInLogs data","description":"Read data from the AADServicePrincipalSignInLogs
+        table"},"properties":{}},{"name":"Microsoft.Insights/Logs/ADAssessmentRecommendation/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
         Azure Monitor","resource":"ADAssessmentRecommendation","operation":"Read ADAssessmentRecommendation
-        data","description":"Read data from the ADAssessmentRecommendation table"},"properties":{}},{"name":"Microsoft.Insights/Logs/ADReplicationResult/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        data","description":"Read data from the ADAssessmentRecommendation table"},"properties":{}},{"name":"Microsoft.Insights/Logs/AddonAzureBackupAlerts/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"AddonAzureBackupAlerts","operation":"Read AddonAzureBackupAlerts
+        data","description":"Read data from the AddonAzureBackupAlerts table"},"properties":{}},{"name":"Microsoft.Insights/Logs/AddonAzureBackupJobs/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"AddonAzureBackupJobs","operation":"Read AddonAzureBackupJobs
+        data","description":"Read data from the AddonAzureBackupJobs table"},"properties":{}},{"name":"Microsoft.Insights/Logs/AddonAzureBackupPolicy/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"AddonAzureBackupPolicy","operation":"Read AddonAzureBackupPolicy
+        data","description":"Read data from the AddonAzureBackupPolicy table"},"properties":{}},{"name":"Microsoft.Insights/Logs/AddonAzureBackupProtectedInstance/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"AddonAzureBackupProtectedInstance","operation":"Read
+        AddonAzureBackupProtectedInstance data","description":"Read data from the
+        AddonAzureBackupProtectedInstance table"},"properties":{}},{"name":"Microsoft.Insights/Logs/AddonAzureBackupStorage/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"AddonAzureBackupStorage","operation":"Read AddonAzureBackupStorage
+        data","description":"Read data from the AddonAzureBackupStorage table"},"properties":{}},{"name":"Microsoft.Insights/Logs/ADFActivityRun/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"ADFActivityRun","operation":"Read ADFActivityRun
+        data","description":"Read data from the ADFActivityRun table"},"properties":{}},{"name":"Microsoft.Insights/Logs/ADFPipelineRun/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"ADFPipelineRun","operation":"Read ADFPipelineRun
+        data","description":"Read data from the ADFPipelineRun table"},"properties":{}},{"name":"Microsoft.Insights/Logs/ADFSSISIntegrationRuntimeLogs/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"ADFSSISIntegrationRuntimeLogs","operation":"Read
+        ADFSSISIntegrationRuntimeLogs data","description":"Read data from the ADFSSISIntegrationRuntimeLogs
+        table"},"properties":{}},{"name":"Microsoft.Insights/Logs/ADFSSISPackageEventMessageContext/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"ADFSSISPackageEventMessageContext","operation":"Read
+        ADFSSISPackageEventMessageContext data","description":"Read data from the
+        ADFSSISPackageEventMessageContext table"},"properties":{}},{"name":"Microsoft.Insights/Logs/ADFSSISPackageEventMessages/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"ADFSSISPackageEventMessages","operation":"Read
+        ADFSSISPackageEventMessages data","description":"Read data from the ADFSSISPackageEventMessages
+        table"},"properties":{}},{"name":"Microsoft.Insights/Logs/ADFSSISPackageExecutableStatistics/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"ADFSSISPackageExecutableStatistics","operation":"Read
+        ADFSSISPackageExecutableStatistics data","description":"Read data from the
+        ADFSSISPackageExecutableStatistics table"},"properties":{}},{"name":"Microsoft.Insights/Logs/ADFSSISPackageExecutionComponentPhases/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"ADFSSISPackageExecutionComponentPhases","operation":"Read
+        ADFSSISPackageExecutionComponentPhases data","description":"Read data from
+        the ADFSSISPackageExecutionComponentPhases table"},"properties":{}},{"name":"Microsoft.Insights/Logs/ADFSSISPackageExecutionDataStatistics/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"ADFSSISPackageExecutionDataStatistics","operation":"Read
+        ADFSSISPackageExecutionDataStatistics data","description":"Read data from
+        the ADFSSISPackageExecutionDataStatistics table"},"properties":{}},{"name":"Microsoft.Insights/Logs/ADFTriggerRun/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"ADFTriggerRun","operation":"Read ADFTriggerRun
+        data","description":"Read data from the ADFTriggerRun table"},"properties":{}},{"name":"Microsoft.Insights/Logs/ADReplicationResult/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
         Azure Monitor","resource":"ADReplicationResult","operation":"Read ADReplicationResult
         data","description":"Read data from the ADReplicationResult table"},"properties":{}},{"name":"Microsoft.Insights/Logs/ADSecurityAssessmentRecommendation/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
         Azure Monitor","resource":"ADSecurityAssessmentRecommendation","operation":"Read
         ADSecurityAssessmentRecommendation data","description":"Read data from the
-        ADSecurityAssessmentRecommendation table"},"properties":{}},{"name":"Microsoft.Insights/Logs/Alert/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        ADSecurityAssessmentRecommendation table"},"properties":{}},{"name":"Microsoft.Insights/Logs/ADTDigitalTwinsOperation/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"ADTDigitalTwinsOperation","operation":"Read ADTDigitalTwinsOperation
+        data","description":"Read data from the ADTDigitalTwinsOperation table"},"properties":{}},{"name":"Microsoft.Insights/Logs/ADTEventRoutesOperation/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"ADTEventRoutesOperation","operation":"Read ADTEventRoutesOperation
+        data","description":"Read data from the ADTEventRoutesOperation table"},"properties":{}},{"name":"Microsoft.Insights/Logs/ADTModelsOperation/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"ADTModelsOperation","operation":"Read ADTModelsOperation
+        data","description":"Read data from the ADTModelsOperation table"},"properties":{}},{"name":"Microsoft.Insights/Logs/ADTQueryOperation/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"ADTQueryOperation","operation":"Read ADTQueryOperation
+        data","description":"Read data from the ADTQueryOperation table"},"properties":{}},{"name":"Microsoft.Insights/Logs/AegDeliveryFailureLogs/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"AegDeliveryFailureLogs","operation":"Read AegDeliveryFailureLogs
+        data","description":"Read data from the AegDeliveryFailureLogs table"},"properties":{}},{"name":"Microsoft.Insights/Logs/AegPublishFailureLogs/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"AegPublishFailureLogs","operation":"Read AegPublishFailureLogs
+        data","description":"Read data from the AegPublishFailureLogs table"},"properties":{}},{"name":"Microsoft.Insights/Logs/Alert/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
         Azure Monitor","resource":"Alert","operation":"Read Alert data","description":"Read
         data from the Alert table"},"properties":{}},{"name":"Microsoft.Insights/Logs/AlertHistory/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
         Azure Monitor","resource":"AlertHistory","operation":"Read AlertHistory data","description":"Read
-        data from the AlertHistory table"},"properties":{}},{"name":"Microsoft.Insights/Logs/ApplicationInsights/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        data from the AlertHistory table"},"properties":{}},{"name":"Microsoft.Insights/Logs/AmlComputeClusterEvent/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"AmlComputeClusterEvent","operation":"Read AmlComputeClusterEvent
+        data","description":"Read data from the AmlComputeClusterEvent table"},"properties":{}},{"name":"Microsoft.Insights/Logs/AmlComputeClusterNodeEvent/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"AmlComputeClusterNodeEvent","operation":"Read AmlComputeClusterNodeEvent
+        data","description":"Read data from the AmlComputeClusterNodeEvent table"},"properties":{}},{"name":"Microsoft.Insights/Logs/AmlComputeCpuGpuUtilization/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"AmlComputeCpuGpuUtilization","operation":"Read
+        AmlComputeCpuGpuUtilization data","description":"Read data from the AmlComputeCpuGpuUtilization
+        table"},"properties":{}},{"name":"Microsoft.Insights/Logs/AmlComputeJobEvent/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"AmlComputeJobEvent","operation":"Read AmlComputeJobEvent
+        data","description":"Read data from the AmlComputeJobEvent table"},"properties":{}},{"name":"Microsoft.Insights/Logs/AmlRunStatusChangedEvent/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"AmlRunStatusChangedEvent","operation":"Read AmlRunStatusChangedEvent
+        data","description":"Read data from the AmlRunStatusChangedEvent table"},"properties":{}},{"name":"Microsoft.Insights/Logs/ApiManagementGatewayLogs/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"ApiManagementGatewayLogs","operation":"Read ApiManagementGatewayLogs
+        data","description":"Read data from the ApiManagementGatewayLogs table"},"properties":{}},{"name":"Microsoft.Insights/Logs/AppAvailabilityResults/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"AppAvailabilityResults","operation":"Read AppAvailabilityResults
+        data","description":"Read data from the AppAvailabilityResults table"},"properties":{}},{"name":"Microsoft.Insights/Logs/AppBrowserTimings/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"AppBrowserTimings","operation":"Read AppBrowserTimings
+        data","description":"Read data from the AppBrowserTimings table"},"properties":{}},{"name":"Microsoft.Insights/Logs/AppCenterError/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"AppCenterError","operation":"Read AppCenterError
+        data","description":"Read data from the AppCenterError table"},"properties":{}},{"name":"Microsoft.Insights/Logs/AppDependencies/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"AppDependencies","operation":"Read AppDependencies
+        data","description":"Read data from the AppDependencies table"},"properties":{}},{"name":"Microsoft.Insights/Logs/AppEvents/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"AppEvents","operation":"Read AppEvents data","description":"Read
+        data from the AppEvents table"},"properties":{}},{"name":"Microsoft.Insights/Logs/AppExceptions/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"AppExceptions","operation":"Read AppExceptions
+        data","description":"Read data from the AppExceptions table"},"properties":{}},{"name":"Microsoft.Insights/Logs/ApplicationInsights/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
         Azure Monitor","resource":"ApplicationInsights","operation":"Read ApplicationInsights
-        data","description":"Read data from the ApplicationInsights table"},"properties":{}},{"name":"Microsoft.Insights/Logs/AzureActivity/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        data","description":"Read data from the ApplicationInsights table"},"properties":{}},{"name":"Microsoft.Insights/Logs/AppMetrics/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"AppMetrics","operation":"Read AppMetrics data","description":"Read
+        data from the AppMetrics table"},"properties":{}},{"name":"Microsoft.Insights/Logs/AppPageViews/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"AppPageViews","operation":"Read AppPageViews data","description":"Read
+        data from the AppPageViews table"},"properties":{}},{"name":"Microsoft.Insights/Logs/AppPerformanceCounters/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"AppPerformanceCounters","operation":"Read AppPerformanceCounters
+        data","description":"Read data from the AppPerformanceCounters table"},"properties":{}},{"name":"Microsoft.Insights/Logs/AppPlatformLogsforSpring/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"AppPlatformLogsforSpring","operation":"Read AppPlatformLogsforSpring
+        data","description":"Read data from the AppPlatformLogsforSpring table"},"properties":{}},{"name":"Microsoft.Insights/Logs/AppPlatformSystemLogs/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"AppPlatformSystemLogs","operation":"Read AppPlatformSystemLogs
+        data","description":"Read data from the AppPlatformSystemLogs table"},"properties":{}},{"name":"Microsoft.Insights/Logs/AppRequests/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"AppRequests","operation":"Read AppRequests data","description":"Read
+        data from the AppRequests table"},"properties":{}},{"name":"Microsoft.Insights/Logs/AppServiceAntivirusScanLogs/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"AppServiceAntivirusScanLogs","operation":"Read
+        AppServiceAntivirusScanLogs data","description":"Read data from the AppServiceAntivirusScanLogs
+        table"},"properties":{}},{"name":"Microsoft.Insights/Logs/AppServiceAppLogs/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"AppServiceAppLogs","operation":"Read AppServiceAppLogs
+        data","description":"Read data from the AppServiceAppLogs table"},"properties":{}},{"name":"Microsoft.Insights/Logs/AppServiceAuditLogs/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"AppServiceAuditLogs","operation":"Read AppServiceAuditLogs
+        data","description":"Read data from the AppServiceAuditLogs table"},"properties":{}},{"name":"Microsoft.Insights/Logs/AppServiceConsoleLogs/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"AppServiceConsoleLogs","operation":"Read AppServiceConsoleLogs
+        data","description":"Read data from the AppServiceConsoleLogs table"},"properties":{}},{"name":"Microsoft.Insights/Logs/AppServiceEnvironmentPlatformLogs/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"AppServiceEnvironmentPlatformLogs","operation":"Read
+        AppServiceEnvironmentPlatformLogs data","description":"Read data from the
+        AppServiceEnvironmentPlatformLogs table"},"properties":{}},{"name":"Microsoft.Insights/Logs/AppServiceFileAuditLogs/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"AppServiceFileAuditLogs","operation":"Read AppServiceFileAuditLogs
+        data","description":"Read data from the AppServiceFileAuditLogs table"},"properties":{}},{"name":"Microsoft.Insights/Logs/AppServiceHTTPLogs/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"AppServiceHTTPLogs","operation":"Read AppServiceHTTPLogs
+        data","description":"Read data from the AppServiceHTTPLogs table"},"properties":{}},{"name":"Microsoft.Insights/Logs/AppServicePlatformLogs/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"AppServicePlatformLogs","operation":"Read AppServicePlatformLogs
+        data","description":"Read data from the AppServicePlatformLogs table"},"properties":{}},{"name":"Microsoft.Insights/Logs/AppSystemEvents/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"AppSystemEvents","operation":"Read AppSystemEvents
+        data","description":"Read data from the AppSystemEvents table"},"properties":{}},{"name":"Microsoft.Insights/Logs/AppTraces/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"AppTraces","operation":"Read AppTraces data","description":"Read
+        data from the AppTraces table"},"properties":{}},{"name":"Microsoft.Insights/Logs/AuditLogs/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"AuditLogs","operation":"Read AuditLogs data","description":"Read
+        data from the AuditLogs table"},"properties":{}},{"name":"Microsoft.Insights/Logs/AutoscaleEvaluationsLog/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"AutoscaleEvaluationsLog","operation":"Read AutoscaleEvaluationsLog
+        data","description":"Read data from the AutoscaleEvaluationsLog table"},"properties":{}},{"name":"Microsoft.Insights/Logs/AutoscaleScaleActionsLog/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"AutoscaleScaleActionsLog","operation":"Read AutoscaleScaleActionsLog
+        data","description":"Read data from the AutoscaleScaleActionsLog table"},"properties":{}},{"name":"Microsoft.Insights/Logs/AWSCloudTrail/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"AWSCloudTrail","operation":"Read AWSCloudTrail
+        data","description":"Read data from the AWSCloudTrail table"},"properties":{}},{"name":"Microsoft.Insights/Logs/AzureActivity/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
         Azure Monitor","resource":"AzureActivity","operation":"Read AzureActivity
-        data","description":"Read data from the AzureActivity table"},"properties":{}},{"name":"Microsoft.Insights/Logs/AzureMetrics/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        data","description":"Read data from the AzureActivity table"},"properties":{}},{"name":"Microsoft.Insights/Logs/AzureAssessmentRecommendation/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"AzureAssessmentRecommendation","operation":"Read
+        AzureAssessmentRecommendation data","description":"Read data from the AzureAssessmentRecommendation
+        table"},"properties":{}},{"name":"Microsoft.Insights/Logs/AzureDevOpsAuditing/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"AzureDevOpsAuditing","operation":"Read AzureDevOpsAuditing
+        data","description":"Read data from the AzureDevOpsAuditing table"},"properties":{}},{"name":"Microsoft.Insights/Logs/AzureDiagnostics/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"AzureDiagnostics","operation":"Read AzureDiagnostics
+        data","description":"Read data from the AzureDiagnostics table"},"properties":{}},{"name":"Microsoft.Insights/Logs/AzureMetrics/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
         Azure Monitor","resource":"AzureMetrics","operation":"Read AzureMetrics data","description":"Read
-        data from the AzureMetrics table"},"properties":{}},{"name":"Microsoft.Insights/Logs/BoundPort/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        data from the AzureMetrics table"},"properties":{}},{"name":"Microsoft.Insights/Logs/BaiClusterEvent/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"BaiClusterEvent","operation":"Read BaiClusterEvent
+        data","description":"Read data from the BaiClusterEvent table"},"properties":{}},{"name":"Microsoft.Insights/Logs/BaiClusterNodeEvent/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"BaiClusterNodeEvent","operation":"Read BaiClusterNodeEvent
+        data","description":"Read data from the BaiClusterNodeEvent table"},"properties":{}},{"name":"Microsoft.Insights/Logs/BaiJobEvent/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"BaiJobEvent","operation":"Read BaiJobEvent data","description":"Read
+        data from the BaiJobEvent table"},"properties":{}},{"name":"Microsoft.Insights/Logs/BehaviorAnalytics/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"BehaviorAnalytics","operation":"Read BehaviorAnalytics
+        data","description":"Read data from the BehaviorAnalytics table"},"properties":{}},{"name":"Microsoft.Insights/Logs/BlockchainApplicationLog/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"BlockchainApplicationLog","operation":"Read BlockchainApplicationLog
+        data","description":"Read data from the BlockchainApplicationLog table"},"properties":{}},{"name":"Microsoft.Insights/Logs/BlockchainProxyLog/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"BlockchainProxyLog","operation":"Read BlockchainProxyLog
+        data","description":"Read data from the BlockchainProxyLog table"},"properties":{}},{"name":"Microsoft.Insights/Logs/BoundPort/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
         Azure Monitor","resource":"BoundPort","operation":"Read BoundPort data","description":"Read
         data from the BoundPort table"},"properties":{}},{"name":"Microsoft.Insights/Logs/CommonSecurityLog/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
         Azure Monitor","resource":"CommonSecurityLog","operation":"Read CommonSecurityLog
@@ -1367,11 +1530,43 @@ interactions:
         Azure Monitor","resource":"ContainerInventory","operation":"Read ContainerInventory
         data","description":"Read data from the ContainerInventory table"},"properties":{}},{"name":"Microsoft.Insights/Logs/ContainerLog/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
         Azure Monitor","resource":"ContainerLog","operation":"Read ContainerLog data","description":"Read
-        data from the ContainerLog table"},"properties":{}},{"name":"Microsoft.Insights/Logs/ContainerServiceLog/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        data from the ContainerLog table"},"properties":{}},{"name":"Microsoft.Insights/Logs/ContainerNodeInventory/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"ContainerNodeInventory","operation":"Read ContainerNodeInventory
+        data","description":"Read data from the ContainerNodeInventory table"},"properties":{}},{"name":"Microsoft.Insights/Logs/ContainerRegistryLoginEvents/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"ContainerRegistryLoginEvents","operation":"Read
+        ContainerRegistryLoginEvents data","description":"Read data from the ContainerRegistryLoginEvents
+        table"},"properties":{}},{"name":"Microsoft.Insights/Logs/ContainerRegistryRepositoryEvents/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"ContainerRegistryRepositoryEvents","operation":"Read
+        ContainerRegistryRepositoryEvents data","description":"Read data from the
+        ContainerRegistryRepositoryEvents table"},"properties":{}},{"name":"Microsoft.Insights/Logs/ContainerServiceLog/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
         Azure Monitor","resource":"ContainerServiceLog","operation":"Read ContainerServiceLog
         data","description":"Read data from the ContainerServiceLog table"},"properties":{}},{"name":"Microsoft.Insights/Logs/Tables.Custom/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
         Azure Monitor","resource":"CustomLogs","operation":"Read Custom Logs","description":"Reading
-        data from any custom log"},"properties":{}},{"name":"Microsoft.Insights/Logs/DeviceAppCrash/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        data from any custom log"},"properties":{}},{"name":"Microsoft.Insights/Logs/CoreAzureBackup/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"CoreAzureBackup","operation":"Read CoreAzureBackup
+        data","description":"Read data from the CoreAzureBackup table"},"properties":{}},{"name":"Microsoft.Insights/Logs/DatabricksAccounts/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"DatabricksAccounts","operation":"Read DatabricksAccounts
+        data","description":"Read data from the DatabricksAccounts table"},"properties":{}},{"name":"Microsoft.Insights/Logs/DatabricksClusters/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"DatabricksClusters","operation":"Read DatabricksClusters
+        data","description":"Read data from the DatabricksClusters table"},"properties":{}},{"name":"Microsoft.Insights/Logs/DatabricksDBFS/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"DatabricksDBFS","operation":"Read DatabricksDBFS
+        data","description":"Read data from the DatabricksDBFS table"},"properties":{}},{"name":"Microsoft.Insights/Logs/DatabricksInstancePools/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"DatabricksInstancePools","operation":"Read DatabricksInstancePools
+        data","description":"Read data from the DatabricksInstancePools table"},"properties":{}},{"name":"Microsoft.Insights/Logs/DatabricksJobs/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"DatabricksJobs","operation":"Read DatabricksJobs
+        data","description":"Read data from the DatabricksJobs table"},"properties":{}},{"name":"Microsoft.Insights/Logs/DatabricksNotebook/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"DatabricksNotebook","operation":"Read DatabricksNotebook
+        data","description":"Read data from the DatabricksNotebook table"},"properties":{}},{"name":"Microsoft.Insights/Logs/DatabricksSecrets/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"DatabricksSecrets","operation":"Read DatabricksSecrets
+        data","description":"Read data from the DatabricksSecrets table"},"properties":{}},{"name":"Microsoft.Insights/Logs/DatabricksSQLPermissions/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"DatabricksSQLPermissions","operation":"Read DatabricksSQLPermissions
+        data","description":"Read data from the DatabricksSQLPermissions table"},"properties":{}},{"name":"Microsoft.Insights/Logs/DatabricksSSH/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"DatabricksSSH","operation":"Read DatabricksSSH
+        data","description":"Read data from the DatabricksSSH table"},"properties":{}},{"name":"Microsoft.Insights/Logs/DatabricksTables/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"DatabricksTables","operation":"Read DatabricksTables
+        data","description":"Read data from the DatabricksTables table"},"properties":{}},{"name":"Microsoft.Insights/Logs/DatabricksWorkspace/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"DatabricksWorkspace","operation":"Read DatabricksWorkspace
+        data","description":"Read data from the DatabricksWorkspace table"},"properties":{}},{"name":"Microsoft.Insights/Logs/DeviceAppCrash/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
         Azure Monitor","resource":"DeviceAppCrash","operation":"Read DeviceAppCrash
         data","description":"Read data from the DeviceAppCrash table"},"properties":{}},{"name":"Microsoft.Insights/Logs/DeviceAppLaunch/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
         Azure Monitor","resource":"DeviceAppLaunch","operation":"Read DeviceAppLaunch
@@ -1399,7 +1594,9 @@ interactions:
         Azure Monitor","resource":"DHAppFailure","operation":"Read DHAppFailure data","description":"Read
         data from the DHAppFailure table"},"properties":{}},{"name":"Microsoft.Insights/Logs/DHAppReliability/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
         Azure Monitor","resource":"DHAppReliability","operation":"Read DHAppReliability
-        data","description":"Read data from the DHAppReliability table"},"properties":{}},{"name":"Microsoft.Insights/Logs/DHDriverReliability/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        data","description":"Read data from the DHAppReliability table"},"properties":{}},{"name":"Microsoft.Insights/Logs/DHCPActivity/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"DHCPActivity","operation":"Read DHCPActivity data","description":"Read
+        data from the DHCPActivity table"},"properties":{}},{"name":"Microsoft.Insights/Logs/DHDriverReliability/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
         Azure Monitor","resource":"DHDriverReliability","operation":"Read DHDriverReliability
         data","description":"Read data from the DHDriverReliability table"},"properties":{}},{"name":"Microsoft.Insights/Logs/DHLogonFailures/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
         Azure Monitor","resource":"DHLogonFailures","operation":"Read DHLogonFailures
@@ -1415,7 +1612,9 @@ interactions:
         Azure Monitor","resource":"DnsEvents","operation":"Read DnsEvents data","description":"Read
         data from the DnsEvents table"},"properties":{}},{"name":"Microsoft.Insights/Logs/DnsInventory/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
         Azure Monitor","resource":"DnsInventory","operation":"Read DnsInventory data","description":"Read
-        data from the DnsInventory table"},"properties":{}},{"name":"Microsoft.Insights/Logs/ETWEvent/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        data from the DnsInventory table"},"properties":{}},{"name":"Microsoft.Insights/Logs/Dynamics365Activity/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"Dynamics365Activity","operation":"Read Dynamics365Activity
+        data","description":"Read data from the Dynamics365Activity table"},"properties":{}},{"name":"Microsoft.Insights/Logs/ETWEvent/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
         Azure Monitor","resource":"ETWEvent","operation":"Read ETWEvent data","description":"Read
         data from the ETWEvent table"},"properties":{}},{"name":"Microsoft.Insights/Logs/Event/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
         Azure Monitor","resource":"Event","operation":"Read Event data","description":"Read
@@ -1425,18 +1624,42 @@ interactions:
         table"},"properties":{}},{"name":"Microsoft.Insights/Logs/ExchangeOnlineAssessmentRecommendation/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
         Azure Monitor","resource":"ExchangeOnlineAssessmentRecommendation","operation":"Read
         ExchangeOnlineAssessmentRecommendation data","description":"Read data from
-        the ExchangeOnlineAssessmentRecommendation table"},"properties":{}},{"name":"Microsoft.Insights/Logs/Heartbeat/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        the ExchangeOnlineAssessmentRecommendation table"},"properties":{}},{"name":"Microsoft.Insights/Logs/FailedIngestion/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"FailedIngestion","operation":"Read FailedIngestion
+        data","description":"Read data from the FailedIngestion table"},"properties":{}},{"name":"Microsoft.Insights/Logs/FunctionAppLogs/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"FunctionAppLogs","operation":"Read FunctionAppLogs
+        data","description":"Read data from the FunctionAppLogs table"},"properties":{}},{"name":"Microsoft.Insights/Logs/Heartbeat/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
         Azure Monitor","resource":"Heartbeat","operation":"Read Heartbeat data","description":"Read
-        data from the Heartbeat table"},"properties":{}},{"name":"Microsoft.Insights/Logs/IISAssessmentRecommendation/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        data from the Heartbeat table"},"properties":{}},{"name":"Microsoft.Insights/Logs/HuntingBookmark/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"HuntingBookmark","operation":"Read HuntingBookmark
+        data","description":"Read data from the HuntingBookmark table"},"properties":{}},{"name":"Microsoft.Insights/Logs/IISAssessmentRecommendation/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
         Azure Monitor","resource":"IISAssessmentRecommendation","operation":"Read
         IISAssessmentRecommendation data","description":"Read data from the IISAssessmentRecommendation
         table"},"properties":{}},{"name":"Microsoft.Insights/Logs/InboundConnection/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
         Azure Monitor","resource":"InboundConnection","operation":"Read InboundConnection
-        data","description":"Read data from the InboundConnection table"},"properties":{}},{"name":"Microsoft.Insights/Logs/KubeNodeInventory/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        data","description":"Read data from the InboundConnection table"},"properties":{}},{"name":"Microsoft.Insights/Logs/InsightsMetrics/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"InsightsMetrics","operation":"Read InsightsMetrics
+        data","description":"Read data from the InsightsMetrics table"},"properties":{}},{"name":"Microsoft.Insights/Logs/IntuneAuditLogs/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"IntuneAuditLogs","operation":"Read IntuneAuditLogs
+        data","description":"Read data from the IntuneAuditLogs table"},"properties":{}},{"name":"Microsoft.Insights/Logs/IntuneDeviceComplianceOrg/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"IntuneDeviceComplianceOrg","operation":"Read IntuneDeviceComplianceOrg
+        data","description":"Read data from the IntuneDeviceComplianceOrg table"},"properties":{}},{"name":"Microsoft.Insights/Logs/IntuneOperationalLogs/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"IntuneOperationalLogs","operation":"Read IntuneOperationalLogs
+        data","description":"Read data from the IntuneOperationalLogs table"},"properties":{}},{"name":"Microsoft.Insights/Logs/IoTHubDistributedTracing/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"IoTHubDistributedTracing","operation":"Read IoTHubDistributedTracing
+        data","description":"Read data from the IoTHubDistributedTracing table"},"properties":{}},{"name":"Microsoft.Insights/Logs/KubeEvents/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"KubeEvents","operation":"Read KubeEvents data","description":"Read
+        data from the KubeEvents table"},"properties":{}},{"name":"Microsoft.Insights/Logs/KubeHealth/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"KubeHealth","operation":"Read KubeHealth data","description":"Read
+        data from the KubeHealth table"},"properties":{}},{"name":"Microsoft.Insights/Logs/KubeMonAgentEvents/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"KubeMonAgentEvents","operation":"Read KubeMonAgentEvents
+        data","description":"Read data from the KubeMonAgentEvents table"},"properties":{}},{"name":"Microsoft.Insights/Logs/KubeNodeInventory/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
         Azure Monitor","resource":"KubeNodeInventory","operation":"Read KubeNodeInventory
         data","description":"Read data from the KubeNodeInventory table"},"properties":{}},{"name":"Microsoft.Insights/Logs/KubePodInventory/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
         Azure Monitor","resource":"KubePodInventory","operation":"Read KubePodInventory
-        data","description":"Read data from the KubePodInventory table"},"properties":{}},{"name":"Microsoft.Insights/Logs/LinuxAuditLog/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        data","description":"Read data from the KubePodInventory table"},"properties":{}},{"name":"Microsoft.Insights/Logs/KubeServices/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"KubeServices","operation":"Read KubeServices data","description":"Read
+        data from the KubeServices table"},"properties":{}},{"name":"Microsoft.Insights/Logs/LinuxAuditLog/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
         Azure Monitor","resource":"LinuxAuditLog","operation":"Read LinuxAuditLog
         data","description":"Read data from the LinuxAuditLog table"},"properties":{}},{"name":"Microsoft.Insights/Logs/MAApplication/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
         Azure Monitor","resource":"MAApplication","operation":"Read MAApplication
@@ -1458,7 +1681,11 @@ interactions:
         Azure Monitor","resource":"MADeploymentPlan","operation":"Read MADeploymentPlan
         data","description":"Read data from the MADeploymentPlan table"},"properties":{}},{"name":"Microsoft.Insights/Logs/MADevice/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
         Azure Monitor","resource":"MADevice","operation":"Read MADevice data","description":"Read
-        data from the MADevice table"},"properties":{}},{"name":"Microsoft.Insights/Logs/MADevicePnPHealth/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        data from the MADevice table"},"properties":{}},{"name":"Microsoft.Insights/Logs/MADeviceNotEnrolled/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"MADeviceNotEnrolled","operation":"Read MADeviceNotEnrolled
+        data","description":"Read data from the MADeviceNotEnrolled table"},"properties":{}},{"name":"Microsoft.Insights/Logs/MADeviceNRT/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"MADeviceNRT","operation":"Read MADeviceNRT data","description":"Read
+        data from the MADeviceNRT table"},"properties":{}},{"name":"Microsoft.Insights/Logs/MADevicePnPHealth/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
         Azure Monitor","resource":"MADevicePnPHealth","operation":"Read MADevicePnPHealth
         data","description":"Read data from the MADevicePnPHealth table"},"properties":{}},{"name":"Microsoft.Insights/Logs/MADevicePnPHealthAlternativeVersions/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
         Azure Monitor","resource":"MADevicePnPHealthAlternativeVersions","operation":"Read
@@ -1473,9 +1700,14 @@ interactions:
         Azure Monitor","resource":"MADriverReadiness","operation":"Read MADriverReadiness
         data","description":"Read data from the MADriverReadiness table"},"properties":{}},{"name":"Microsoft.Insights/Logs/MAOfficeAddin/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
         Azure Monitor","resource":"MAOfficeAddin","operation":"Read MAOfficeAddin
-        data","description":"Read data from the MAOfficeAddin table"},"properties":{}},{"name":"Microsoft.Insights/Logs/MAOfficeAddinHealth/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        data","description":"Read data from the MAOfficeAddin table"},"properties":{}},{"name":"Microsoft.Insights/Logs/MAOfficeAddinEntityHealth/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"MAOfficeAddinEntityHealth","operation":"Read MAOfficeAddinEntityHealth
+        data","description":"Read data from the MAOfficeAddinEntityHealth table"},"properties":{}},{"name":"Microsoft.Insights/Logs/MAOfficeAddinHealth/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
         Azure Monitor","resource":"MAOfficeAddinHealth","operation":"Read MAOfficeAddinHealth
-        data","description":"Read data from the MAOfficeAddinHealth table"},"properties":{}},{"name":"Microsoft.Insights/Logs/MAOfficeAddinHealthIssues/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        data","description":"Read data from the MAOfficeAddinHealth table"},"properties":{}},{"name":"Microsoft.Insights/Logs/MAOfficeAddinHealthEventNRT/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"MAOfficeAddinHealthEventNRT","operation":"Read
+        MAOfficeAddinHealthEventNRT data","description":"Read data from the MAOfficeAddinHealthEventNRT
+        table"},"properties":{}},{"name":"Microsoft.Insights/Logs/MAOfficeAddinHealthIssues/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
         Azure Monitor","resource":"MAOfficeAddinHealthIssues","operation":"Read MAOfficeAddinHealthIssues
         data","description":"Read data from the MAOfficeAddinHealthIssues table"},"properties":{}},{"name":"Microsoft.Insights/Logs/MAOfficeAddinInstance/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
         Azure Monitor","resource":"MAOfficeAddinInstance","operation":"Read MAOfficeAddinInstance
@@ -1486,13 +1718,19 @@ interactions:
         Azure Monitor","resource":"MAOfficeAddinReadiness","operation":"Read MAOfficeAddinReadiness
         data","description":"Read data from the MAOfficeAddinReadiness table"},"properties":{}},{"name":"Microsoft.Insights/Logs/MAOfficeApp/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
         Azure Monitor","resource":"MAOfficeApp","operation":"Read MAOfficeApp data","description":"Read
-        data from the MAOfficeApp table"},"properties":{}},{"name":"Microsoft.Insights/Logs/MAOfficeAppHealth/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        data from the MAOfficeApp table"},"properties":{}},{"name":"Microsoft.Insights/Logs/MAOfficeAppCrashesNRT/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"MAOfficeAppCrashesNRT","operation":"Read MAOfficeAppCrashesNRT
+        data","description":"Read data from the MAOfficeAppCrashesNRT table"},"properties":{}},{"name":"Microsoft.Insights/Logs/MAOfficeAppHealth/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
         Azure Monitor","resource":"MAOfficeAppHealth","operation":"Read MAOfficeAppHealth
         data","description":"Read data from the MAOfficeAppHealth table"},"properties":{}},{"name":"Microsoft.Insights/Logs/MAOfficeAppInstance/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
         Azure Monitor","resource":"MAOfficeAppInstance","operation":"Read MAOfficeAppInstance
-        data","description":"Read data from the MAOfficeAppInstance table"},"properties":{}},{"name":"Microsoft.Insights/Logs/MAOfficeAppReadiness/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        data","description":"Read data from the MAOfficeAppInstance table"},"properties":{}},{"name":"Microsoft.Insights/Logs/MAOfficeAppInstanceHealth/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"MAOfficeAppInstanceHealth","operation":"Read MAOfficeAppInstanceHealth
+        data","description":"Read data from the MAOfficeAppInstanceHealth table"},"properties":{}},{"name":"Microsoft.Insights/Logs/MAOfficeAppReadiness/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
         Azure Monitor","resource":"MAOfficeAppReadiness","operation":"Read MAOfficeAppReadiness
-        data","description":"Read data from the MAOfficeAppReadiness table"},"properties":{}},{"name":"Microsoft.Insights/Logs/MAOfficeBuildInfo/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        data","description":"Read data from the MAOfficeAppReadiness table"},"properties":{}},{"name":"Microsoft.Insights/Logs/MAOfficeAppSessionsNRT/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"MAOfficeAppSessionsNRT","operation":"Read MAOfficeAppSessionsNRT
+        data","description":"Read data from the MAOfficeAppSessionsNRT table"},"properties":{}},{"name":"Microsoft.Insights/Logs/MAOfficeBuildInfo/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
         Azure Monitor","resource":"MAOfficeBuildInfo","operation":"Read MAOfficeBuildInfo
         data","description":"Read data from the MAOfficeBuildInfo table"},"properties":{}},{"name":"Microsoft.Insights/Logs/MAOfficeCurrencyAssessment/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
         Azure Monitor","resource":"MAOfficeCurrencyAssessment","operation":"Read MAOfficeCurrencyAssessment
@@ -1501,7 +1739,14 @@ interactions:
         MAOfficeCurrencyAssessmentDailyCounts data","description":"Read data from
         the MAOfficeCurrencyAssessmentDailyCounts table"},"properties":{}},{"name":"Microsoft.Insights/Logs/MAOfficeDeploymentStatus/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
         Azure Monitor","resource":"MAOfficeDeploymentStatus","operation":"Read MAOfficeDeploymentStatus
-        data","description":"Read data from the MAOfficeDeploymentStatus table"},"properties":{}},{"name":"Microsoft.Insights/Logs/MAOfficeMacroHealth/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        data","description":"Read data from the MAOfficeDeploymentStatus table"},"properties":{}},{"name":"Microsoft.Insights/Logs/MAOfficeDeploymentStatusNRT/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"MAOfficeDeploymentStatusNRT","operation":"Read
+        MAOfficeDeploymentStatusNRT data","description":"Read data from the MAOfficeDeploymentStatusNRT
+        table"},"properties":{}},{"name":"Microsoft.Insights/Logs/MAOfficeMacroErrorNRT/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"MAOfficeMacroErrorNRT","operation":"Read MAOfficeMacroErrorNRT
+        data","description":"Read data from the MAOfficeMacroErrorNRT table"},"properties":{}},{"name":"Microsoft.Insights/Logs/MAOfficeMacroGlobalHealth/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"MAOfficeMacroGlobalHealth","operation":"Read MAOfficeMacroGlobalHealth
+        data","description":"Read data from the MAOfficeMacroGlobalHealth table"},"properties":{}},{"name":"Microsoft.Insights/Logs/MAOfficeMacroHealth/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
         Azure Monitor","resource":"MAOfficeMacroHealth","operation":"Read MAOfficeMacroHealth
         data","description":"Read data from the MAOfficeMacroHealth table"},"properties":{}},{"name":"Microsoft.Insights/Logs/MAOfficeMacroHealthIssues/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
         Azure Monitor","resource":"MAOfficeMacroHealthIssues","operation":"Read MAOfficeMacroHealthIssues
@@ -1529,9 +1774,34 @@ interactions:
         MAWindowsCurrencyAssessmentDailyCounts data","description":"Read data from
         the MAWindowsCurrencyAssessmentDailyCounts table"},"properties":{}},{"name":"Microsoft.Insights/Logs/MAWindowsDeploymentStatus/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
         Azure Monitor","resource":"MAWindowsDeploymentStatus","operation":"Read MAWindowsDeploymentStatus
-        data","description":"Read data from the MAWindowsDeploymentStatus table"},"properties":{}},{"name":"Microsoft.Insights/Logs/MAWindowsSysReqInstanceReadiness/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        data","description":"Read data from the MAWindowsDeploymentStatus table"},"properties":{}},{"name":"Microsoft.Insights/Logs/MAWindowsDeploymentStatusNRT/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"MAWindowsDeploymentStatusNRT","operation":"Read
+        MAWindowsDeploymentStatusNRT data","description":"Read data from the MAWindowsDeploymentStatusNRT
+        table"},"properties":{}},{"name":"Microsoft.Insights/Logs/MAWindowsSysReqInstanceReadiness/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
         Azure Monitor","resource":"MAWindowsSysReqInstanceReadiness","operation":"Read
         MAWindowsSysReqInstanceReadiness data","description":"Read data from the MAWindowsSysReqInstanceReadiness
+        table"},"properties":{}},{"name":"Microsoft.Insights/Logs/McasShadowItReporting/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"McasShadowItReporting","operation":"Read McasShadowItReporting
+        data","description":"Read data from the McasShadowItReporting table"},"properties":{}},{"name":"Microsoft.Insights/Logs/MicrosoftAzureBastionAuditLogs/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"MicrosoftAzureBastionAuditLogs","operation":"Read
+        MicrosoftAzureBastionAuditLogs data","description":"Read data from the MicrosoftAzureBastionAuditLogs
+        table"},"properties":{}},{"name":"Microsoft.Insights/Logs/MicrosoftDataShareReceivedSnapshotLog/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"MicrosoftDataShareReceivedSnapshotLog","operation":"Read
+        MicrosoftDataShareReceivedSnapshotLog data","description":"Read data from
+        the MicrosoftDataShareReceivedSnapshotLog table"},"properties":{}},{"name":"Microsoft.Insights/Logs/MicrosoftDataShareSentSnapshotLog/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"MicrosoftDataShareSentSnapshotLog","operation":"Read
+        MicrosoftDataShareSentSnapshotLog data","description":"Read data from the
+        MicrosoftDataShareSentSnapshotLog table"},"properties":{}},{"name":"Microsoft.Insights/Logs/MicrosoftDataShareShareLog/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"MicrosoftDataShareShareLog","operation":"Read MicrosoftDataShareShareLog
+        data","description":"Read data from the MicrosoftDataShareShareLog table"},"properties":{}},{"name":"Microsoft.Insights/Logs/MicrosoftDynamicsTelemetryPerformanceLogs/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"MicrosoftDynamicsTelemetryPerformanceLogs","operation":"Read
+        MicrosoftDynamicsTelemetryPerformanceLogs data","description":"Read data from
+        the MicrosoftDynamicsTelemetryPerformanceLogs table"},"properties":{}},{"name":"Microsoft.Insights/Logs/MicrosoftDynamicsTelemetrySystemMetricsLogs/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"MicrosoftDynamicsTelemetrySystemMetricsLogs","operation":"Read
+        MicrosoftDynamicsTelemetrySystemMetricsLogs data","description":"Read data
+        from the MicrosoftDynamicsTelemetrySystemMetricsLogs table"},"properties":{}},{"name":"Microsoft.Insights/Logs/MicrosoftHealthcareApisAuditLogs/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"MicrosoftHealthcareApisAuditLogs","operation":"Read
+        MicrosoftHealthcareApisAuditLogs data","description":"Read data from the MicrosoftHealthcareApisAuditLogs
         table"},"properties":{}},{"name":"Microsoft.Insights/Logs/NetworkMonitoring/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
         Azure Monitor","resource":"NetworkMonitoring","operation":"Read NetworkMonitoring
         data","description":"Read data from the NetworkMonitoring table"},"properties":{}},{"name":"Microsoft.Insights/Logs/OfficeActivity/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
@@ -1564,7 +1834,16 @@ interactions:
         Azure Monitor","resource":"SecurityDetection","operation":"Read SecurityDetection
         data","description":"Read data from the SecurityDetection table"},"properties":{}},{"name":"Microsoft.Insights/Logs/SecurityEvent/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
         Azure Monitor","resource":"SecurityEvent","operation":"Read SecurityEvent
-        data","description":"Read data from the SecurityEvent table"},"properties":{}},{"name":"Microsoft.Insights/Logs/ServiceFabricOperationalEvent/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        data","description":"Read data from the SecurityEvent table"},"properties":{}},{"name":"Microsoft.Insights/Logs/SecurityIncident/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"SecurityIncident","operation":"Read SecurityIncident
+        data","description":"Read data from the SecurityIncident table"},"properties":{}},{"name":"Microsoft.Insights/Logs/SecurityIoTRawEvent/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"SecurityIoTRawEvent","operation":"Read SecurityIoTRawEvent
+        data","description":"Read data from the SecurityIoTRawEvent table"},"properties":{}},{"name":"Microsoft.Insights/Logs/SecurityNestedRecommendation/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"SecurityNestedRecommendation","operation":"Read
+        SecurityNestedRecommendation data","description":"Read data from the SecurityNestedRecommendation
+        table"},"properties":{}},{"name":"Microsoft.Insights/Logs/SecurityRecommendation/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"SecurityRecommendation","operation":"Read SecurityRecommendation
+        data","description":"Read data from the SecurityRecommendation table"},"properties":{}},{"name":"Microsoft.Insights/Logs/ServiceFabricOperationalEvent/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
         Azure Monitor","resource":"ServiceFabricOperationalEvent","operation":"Read
         ServiceFabricOperationalEvent data","description":"Read data from the ServiceFabricOperationalEvent
         table"},"properties":{}},{"name":"Microsoft.Insights/Logs/ServiceFabricReliableActorEvent/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
@@ -1582,18 +1861,43 @@ interactions:
         SfBOnlineAssessmentRecommendation table"},"properties":{}},{"name":"Microsoft.Insights/Logs/SharePointOnlineAssessmentRecommendation/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
         Azure Monitor","resource":"SharePointOnlineAssessmentRecommendation","operation":"Read
         SharePointOnlineAssessmentRecommendation data","description":"Read data from
-        the SharePointOnlineAssessmentRecommendation table"},"properties":{}},{"name":"Microsoft.Insights/Logs/SPAssessmentRecommendation/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        the SharePointOnlineAssessmentRecommendation table"},"properties":{}},{"name":"Microsoft.Insights/Logs/SignalRServiceDiagnosticLogs/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"SignalRServiceDiagnosticLogs","operation":"Read
+        SignalRServiceDiagnosticLogs data","description":"Read data from the SignalRServiceDiagnosticLogs
+        table"},"properties":{}},{"name":"Microsoft.Insights/Logs/SigninLogs/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"SigninLogs","operation":"Read SigninLogs data","description":"Read
+        data from the SigninLogs table"},"properties":{}},{"name":"Microsoft.Insights/Logs/SPAssessmentRecommendation/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
         Azure Monitor","resource":"SPAssessmentRecommendation","operation":"Read SPAssessmentRecommendation
         data","description":"Read data from the SPAssessmentRecommendation table"},"properties":{}},{"name":"Microsoft.Insights/Logs/SQLAssessmentRecommendation/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
         Azure Monitor","resource":"SQLAssessmentRecommendation","operation":"Read
         SQLAssessmentRecommendation data","description":"Read data from the SQLAssessmentRecommendation
-        table"},"properties":{}},{"name":"Microsoft.Insights/Logs/SQLQueryPerformance/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        table"},"properties":{}},{"name":"Microsoft.Insights/Logs/SqlDataClassification/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"SqlDataClassification","operation":"Read SqlDataClassification
+        data","description":"Read data from the SqlDataClassification table"},"properties":{}},{"name":"Microsoft.Insights/Logs/SQLQueryPerformance/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
         Azure Monitor","resource":"SQLQueryPerformance","operation":"Read SQLQueryPerformance
-        data","description":"Read data from the SQLQueryPerformance table"},"properties":{}},{"name":"Microsoft.Insights/Logs/Syslog/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        data","description":"Read data from the SQLQueryPerformance table"},"properties":{}},{"name":"Microsoft.Insights/Logs/SqlVulnerabilityAssessmentResult/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"SqlVulnerabilityAssessmentResult","operation":"Read
+        SqlVulnerabilityAssessmentResult data","description":"Read data from the SqlVulnerabilityAssessmentResult
+        table"},"properties":{}},{"name":"Microsoft.Insights/Logs/StorageBlobLogs/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"StorageBlobLogs","operation":"Read StorageBlobLogs
+        data","description":"Read data from the StorageBlobLogs table"},"properties":{}},{"name":"Microsoft.Insights/Logs/StorageFileLogs/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"StorageFileLogs","operation":"Read StorageFileLogs
+        data","description":"Read data from the StorageFileLogs table"},"properties":{}},{"name":"Microsoft.Insights/Logs/StorageQueueLogs/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"StorageQueueLogs","operation":"Read StorageQueueLogs
+        data","description":"Read data from the StorageQueueLogs table"},"properties":{}},{"name":"Microsoft.Insights/Logs/StorageTableLogs/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"StorageTableLogs","operation":"Read StorageTableLogs
+        data","description":"Read data from the StorageTableLogs table"},"properties":{}},{"name":"Microsoft.Insights/Logs/SucceededIngestion/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"SucceededIngestion","operation":"Read SucceededIngestion
+        data","description":"Read data from the SucceededIngestion table"},"properties":{}},{"name":"Microsoft.Insights/Logs/Syslog/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
         Azure Monitor","resource":"Syslog","operation":"Read Syslog data","description":"Read
         data from the Syslog table"},"properties":{}},{"name":"Microsoft.Insights/Logs/SysmonEvent/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
         Azure Monitor","resource":"SysmonEvent","operation":"Read SysmonEvent data","description":"Read
-        data from the SysmonEvent table"},"properties":{}},{"name":"Microsoft.Insights/Logs/UAApp/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        data from the SysmonEvent table"},"properties":{}},{"name":"Microsoft.Insights/Logs/ThreatIntelligenceIndicator/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"ThreatIntelligenceIndicator","operation":"Read
+        ThreatIntelligenceIndicator data","description":"Read data from the ThreatIntelligenceIndicator
+        table"},"properties":{}},{"name":"Microsoft.Insights/Logs/TSIIngress/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"TSIIngress","operation":"Read TSIIngress data","description":"Read
+        data from the TSIIngress table"},"properties":{}},{"name":"Microsoft.Insights/Logs/UAApp/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
         Azure Monitor","resource":"UAApp","operation":"Read UAApp data","description":"Read
         data from the UAApp table"},"properties":{}},{"name":"Microsoft.Insights/Logs/UAComputer/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
         Azure Monitor","resource":"UAComputer","operation":"Read UAComputer data","description":"Read
@@ -1625,7 +1929,19 @@ interactions:
         Azure Monitor","resource":"UpdateSummary","operation":"Read UpdateSummary
         data","description":"Read data from the UpdateSummary table"},"properties":{}},{"name":"Microsoft.Insights/Logs/Usage/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
         Azure Monitor","resource":"Usage","operation":"Read Usage data","description":"Read
-        data from the Usage table"},"properties":{}},{"name":"Microsoft.Insights/Logs/W3CIISLog/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        data from the Usage table"},"properties":{}},{"name":"Microsoft.Insights/Logs/UserAccessAnalytics/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"UserAccessAnalytics","operation":"Read UserAccessAnalytics
+        data","description":"Read data from the UserAccessAnalytics table"},"properties":{}},{"name":"Microsoft.Insights/Logs/UserPeerAnalytics/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"UserPeerAnalytics","operation":"Read UserPeerAnalytics
+        data","description":"Read data from the UserPeerAnalytics table"},"properties":{}},{"name":"Microsoft.Insights/Logs/VMBoundPort/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"VMBoundPort","operation":"Read VMBoundPort data","description":"Read
+        data from the VMBoundPort table"},"properties":{}},{"name":"Microsoft.Insights/Logs/VMComputer/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"VMComputer","operation":"Read VMComputer data","description":"Read
+        data from the VMComputer table"},"properties":{}},{"name":"Microsoft.Insights/Logs/VMConnection/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"VMConnection","operation":"Read VMConnection data","description":"Read
+        data from the VMConnection table"},"properties":{}},{"name":"Microsoft.Insights/Logs/VMProcess/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"VMProcess","operation":"Read VMProcess data","description":"Read
+        data from the VMProcess table"},"properties":{}},{"name":"Microsoft.Insights/Logs/W3CIISLog/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
         Azure Monitor","resource":"W3CIISLog","operation":"Read W3CIISLog data","description":"Read
         data from the W3CIISLog table"},"properties":{}},{"name":"Microsoft.Insights/Logs/WaaSDeploymentStatus/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
         Azure Monitor","resource":"WaaSDeploymentStatus","operation":"Read WaaSDeploymentStatus
@@ -1640,18 +1956,34 @@ interactions:
         data from the WDAVThreat table"},"properties":{}},{"name":"Microsoft.Insights/Logs/WindowsClientAssessmentRecommendation/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
         Azure Monitor","resource":"WindowsClientAssessmentRecommendation","operation":"Read
         WindowsClientAssessmentRecommendation data","description":"Read data from
-        the WindowsClientAssessmentRecommendation table"},"properties":{}},{"name":"Microsoft.Insights/Logs/WindowsFirewall/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        the WindowsClientAssessmentRecommendation table"},"properties":{}},{"name":"Microsoft.Insights/Logs/WindowsEvent/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"WindowsEvent","operation":"Read WindowsEvent data","description":"Read
+        data from the WindowsEvent table"},"properties":{}},{"name":"Microsoft.Insights/Logs/WindowsFirewall/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
         Azure Monitor","resource":"WindowsFirewall","operation":"Read WindowsFirewall
         data","description":"Read data from the WindowsFirewall table"},"properties":{}},{"name":"Microsoft.Insights/Logs/WindowsServerAssessmentRecommendation/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
         Azure Monitor","resource":"WindowsServerAssessmentRecommendation","operation":"Read
         WindowsServerAssessmentRecommendation data","description":"Read data from
         the WindowsServerAssessmentRecommendation table"},"properties":{}},{"name":"Microsoft.Insights/Logs/WireData/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
         Azure Monitor","resource":"WireData","operation":"Read WireData data","description":"Read
-        data from the WireData table"},"properties":{}},{"name":"Microsoft.Insights/Logs/WUDOAggregatedStatus/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        data from the WireData table"},"properties":{}},{"name":"Microsoft.Insights/Logs/WorkloadMonitoringPerf/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"WorkloadMonitoringPerf","operation":"Read WorkloadMonitoringPerf
+        data","description":"Read data from the WorkloadMonitoringPerf table"},"properties":{}},{"name":"Microsoft.Insights/Logs/WUDOAggregatedStatus/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
         Azure Monitor","resource":"WUDOAggregatedStatus","operation":"Read WUDOAggregatedStatus
         data","description":"Read data from the WUDOAggregatedStatus table"},"properties":{}},{"name":"Microsoft.Insights/Logs/WUDOStatus/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
         Azure Monitor","resource":"WUDOStatus","operation":"Read WUDOStatus data","description":"Read
-        data from the WUDOStatus table"},"properties":{}},{"name":"Microsoft.Insights/Baseline/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        data from the WUDOStatus table"},"properties":{}},{"name":"Microsoft.Insights/Logs/WVDCheckpoints/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"WVDCheckpoints","operation":"Read WVDCheckpoints
+        data","description":"Read data from the WVDCheckpoints table"},"properties":{}},{"name":"Microsoft.Insights/Logs/WVDConnections/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"WVDConnections","operation":"Read WVDConnections
+        data","description":"Read data from the WVDConnections table"},"properties":{}},{"name":"Microsoft.Insights/Logs/WVDErrors/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"WVDErrors","operation":"Read WVDErrors data","description":"Read
+        data from the WVDErrors table"},"properties":{}},{"name":"Microsoft.Insights/Logs/WVDFeeds/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"WVDFeeds","operation":"Read WVDFeeds data","description":"Read
+        data from the WVDFeeds table"},"properties":{}},{"name":"Microsoft.Insights/Logs/WVDHostRegistrations/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"WVDHostRegistrations","operation":"Read WVDHostRegistrations
+        data","description":"Read data from the WVDHostRegistrations table"},"properties":{}},{"name":"Microsoft.Insights/Logs/WVDManagement/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
+        Azure Monitor","resource":"WVDManagement","operation":"Read WVDManagement
+        data","description":"Read data from the WVDManagement table"},"properties":{}},{"name":"Microsoft.Insights/Baseline/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
         Azure Monitor","resource":"Metric Baseline","operation":"Read metric baseline","description":"Read
         a metric baseline (preview)"},"properties":{}},{"name":"Microsoft.Insights/CalculateBaseline/Read","isDataAction":false,"display":{"publisher":"Microsoft","provider":"Microsoft
         Azure Monitor","resource":"Metric Baseline","operation":"Calculate baseline","description":"Calculate
@@ -1724,11 +2056,11 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '122810'
+      - '169458'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 27 May 2020 05:12:04 GMT
+      - Wed, 16 Sep 2020 03:26:45 GMT
       expires:
       - '-1'
       pragma:
@@ -1747,8 +2079,8 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: 'b''{"location": "global", "properties": {"description": "This is the description
-      of the rule1", "severity": 3, "enabled": true, "scopes": ["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/vm_name"],
+    body: 'b''b\''{"location": "global", "properties": {"description": "This is the
+      description of the rule1", "severity": 3, "enabled": true, "scopes": ["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/vm_name"],
       "evaluationFrequency": "PT1M", "windowSize": "PT15M", "targetResourceType":
       "Microsoft.Compute/virtualMachines", "targetResourceRegion": "southcentralus",
       "criteria": {"odata.type": "Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria",
@@ -1757,7 +2089,7 @@ interactions:
       "timeAggregation": "Average", "dimensions": [], "operator": "GreaterOrLessThan",
       "alertSensitivity": "Medium", "failingPeriods": {"numberOfEvaluationPeriods":
       4.0, "minFailingPeriodsToAlert": 4.0}}]}, "autoMitigate": false, "actions":
-      []}}'''
+      []}}\'''''
     headers:
       Accept:
       - application/json
@@ -1766,11 +2098,11 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '963'
+      - '990'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Insights/metricAlerts/metricnamexx?api-version=2018-03-01
   response:
@@ -1801,11 +2133,11 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '1620'
+      - '1674'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 27 May 2020 05:12:30 GMT
+      - Wed, 16 Sep 2020 03:27:06 GMT
       expires:
       - '-1'
       pragma:
@@ -1823,7 +2155,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-resource-requests:
-      - '298'
+      - '299'
       x-powered-by:
       - ASP.NET
     status:
@@ -1839,7 +2171,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Insights/metricAlerts/metricnamexx?api-version=2018-03-01
   response:
@@ -1870,11 +2202,11 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '1620'
+      - '1674'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 27 May 2020 05:13:00 GMT
+      - Wed, 16 Sep 2020 03:27:36 GMT
       expires:
       - '-1'
       pragma:
@@ -1906,7 +2238,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Insights/metricAlerts/metricnamexx/status?api-version=2018-03-01
   response:
@@ -1914,66 +2246,7 @@ interactions:
       string: "{\r\n  \"value\": [\r\n    {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Insights/metricAlerts/metricnamexx/status/Y3VycmVudFN0YXR1cw==\"\
         ,\r\n      \"name\": \"Y3VycmVudFN0YXR1cw==\",\r\n      \"type\": \"Microsoft.Insights/metricAlerts/status\"\
         ,\r\n      \"properties\": {\r\n        \"dimensions\": {},\r\n        \"\
-        status\": \"Healthy\",\r\n        \"timestamp\": \"2020-05-27T05:13:06.5686612Z\"\
-        \r\n      }\r\n    },\r\n    {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Insights/metricAlerts/metricnamexx/status/bWljcm9zb2Z0LnJlc291cmNlSWQ9L3N1YnNjcmlwdGlvbnMvOTJmOTVkOGYtM2M2Ny00MTI0LTkxYzctOGNmMDdjZGJmMjQxL3Jlc291cmNlR3JvdXBzL3Rlc3RfY2xpX21nbXRfbW9uaXRvcl90ZXN0X21ldHJpY19hbGVydHM1MzVmMTA4ZS9wcm92aWRlcnMvTWljcm9zb2Z0LkNvbXB1dGUvdmlydHVhbE1hY2hpbmVzL3ZtX25hbWVfX19taWNyb3NvZnQucmVzb3VyY2VUeXBlPU1pY3Jvc29mdC5Db21wdXRlL3ZpcnR1YWxNYWNoaW5lcw==\"\
-        ,\r\n      \"name\": \"bWljcm9zb2Z0LnJlc291cmNlSWQ9L3N1YnNjcmlwdGlvbnMvOTJmOTVkOGYtM2M2Ny00MTI0LTkxYzctOGNmMDdjZGJmMjQxL3Jlc291cmNlR3JvdXBzL3Rlc3RfY2xpX21nbXRfbW9uaXRvcl90ZXN0X21ldHJpY19hbGVydHM1MzVmMTA4ZS9wcm92aWRlcnMvTWljcm9zb2Z0LkNvbXB1dGUvdmlydHVhbE1hY2hpbmVzL3ZtX25hbWVfX19taWNyb3NvZnQucmVzb3VyY2VUeXBlPU1pY3Jvc29mdC5Db21wdXRlL3ZpcnR1YWxNYWNoaW5lcw==\"\
-        ,\r\n      \"type\": \"Microsoft.Insights/metricAlerts/status\",\r\n     \
-        \ \"properties\": {\r\n        \"dimensions\": {\r\n          \"microsoft.resourceId\"\
-        : \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/vm_name\"\
-        ,\r\n          \"microsoft.resourceType\": \"Microsoft.Compute/virtualMachines\"\
-        \r\n        },\r\n        \"status\": \"Healthy\",\r\n        \"timestamp\"\
-        : \"2020-05-27T05:13:06.5686612Z\"\r\n      }\r\n    }\r\n  ]\r\n}"
-    headers:
-      api-supported-versions:
-      - 1.0, 2.0, 2017-09-01-preview, 2018-03-01
-      cache-control:
-      - no-cache
-      content-length:
-      - '1871'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Wed, 27 May 2020 05:13:06 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-IIS/10.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-aspnet-version:
-      - 4.0.30319
-      x-content-type-options:
-      - nosniff
-      x-powered-by:
-      - ASP.NET
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Insights/metricAlerts/metricnamexx/status/Y3VycmVudFN0YXR1cw%3D%3D?api-version=2018-03-01
-  response:
-    body:
-      string: "{\r\n  \"value\": [\r\n    {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Insights/metricAlerts/metricnamexx\"\
-        ,\r\n      \"name\": \"Y3VycmVudFN0YXR1cw==\",\r\n      \"type\": \"Microsoft.Insights/metricAlerts/status\"\
-        ,\r\n      \"properties\": {\r\n        \"dimensions\": {},\r\n        \"\
-        status\": \"Healthy\",\r\n        \"timestamp\": \"2020-05-27T05:13:08.9145178Z\"\
+        status\": \"Unknown\",\r\n        \"timestamp\": \"2020-09-16T03:27:39.1123665Z\"\
         \r\n      }\r\n    }\r\n  ]\r\n}"
     headers:
       api-supported-versions:
@@ -1981,11 +2254,11 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '462'
+      - '517'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 27 May 2020 05:13:08 GMT
+      - Wed, 16 Sep 2020 03:27:38 GMT
       expires:
       - '-1'
       pragma:
@@ -2017,7 +2290,59 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Insights/metricAlerts/metricnamexx/status/Y3VycmVudFN0YXR1cw%3D%3D?api-version=2018-03-01
+  response:
+    body:
+      string: "{\r\n  \"value\": [\r\n    {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Insights/metricAlerts/metricnamexx\"\
+        ,\r\n      \"name\": \"Y3VycmVudFN0YXR1cw==\",\r\n      \"type\": \"Microsoft.Insights/metricAlerts/status\"\
+        ,\r\n      \"properties\": {\r\n        \"dimensions\": {},\r\n        \"\
+        status\": \"Healthy\",\r\n        \"timestamp\": \"2020-09-16T03:27:41.803534Z\"\
+        \r\n      }\r\n    }\r\n  ]\r\n}"
+    headers:
+      api-supported-versions:
+      - 1.0, 2.0, 2017-09-01-preview, 2018-03-01
+      cache-control:
+      - no-cache
+      content-length:
+      - '488'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 16 Sep 2020 03:27:41 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-IIS/10.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-aspnet-version:
+      - 4.0.30319
+      x-content-type-options:
+      - nosniff
+      x-powered-by:
+      - ASP.NET
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-eventhub/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/vm_name/providers/Microsoft.Insights/vmInsightsOnboardingStatuses/default?api-version=2018-11-27-preview
   response:
@@ -2027,17 +2352,17 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '579'
+      - '633'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 27 May 2020 05:13:08 GMT
+      - Wed, 16 Sep 2020 03:27:41 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       server:
-      - ServiceMap-API-AAPRODSEA/1.1.1220.241
+      - ServiceMap-API-AAPRODSEA/1.1.1348.311
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
       - max-age=31536000; includeSubDomains
@@ -2048,7 +2373,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-elapsed:
-      - '30'
+      - '5'
     status:
       code: 200
       message: OK
@@ -2062,24 +2387,24 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/vm_name/providers/microsoft.insights/metrics?api-version=2018-01-01
   response:
     body:
-      string: '{"cost":0,"timespan":"2020-05-27T04:13:09Z/2020-05-27T05:13:09Z","interval":"PT1M","value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/vm_name/providers/Microsoft.Insights/metrics/Percentage
+      string: '{"cost":0,"timespan":"2020-09-16T02:27:42Z/2020-09-16T03:27:42Z","interval":"PT1M","value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/vm_name/providers/Microsoft.Insights/metrics/Percentage
         CPU","type":"Microsoft.Insights/metrics","name":{"value":"Percentage CPU","localizedValue":"Percentage
         CPU"},"displayDescription":"The percentage of allocated compute units that
-        are currently in use by the Virtual Machine(s)","unit":"Percent","timeseries":[{"metadatavalues":[],"data":[{"timeStamp":"2020-05-27T04:13:00Z"},{"timeStamp":"2020-05-27T04:14:00Z"},{"timeStamp":"2020-05-27T04:15:00Z"},{"timeStamp":"2020-05-27T04:16:00Z"},{"timeStamp":"2020-05-27T04:17:00Z"},{"timeStamp":"2020-05-27T04:18:00Z"},{"timeStamp":"2020-05-27T04:19:00Z"},{"timeStamp":"2020-05-27T04:20:00Z"},{"timeStamp":"2020-05-27T04:21:00Z"},{"timeStamp":"2020-05-27T04:22:00Z"},{"timeStamp":"2020-05-27T04:23:00Z"},{"timeStamp":"2020-05-27T04:24:00Z"},{"timeStamp":"2020-05-27T04:25:00Z"},{"timeStamp":"2020-05-27T04:26:00Z"},{"timeStamp":"2020-05-27T04:27:00Z"},{"timeStamp":"2020-05-27T04:28:00Z"},{"timeStamp":"2020-05-27T04:29:00Z"},{"timeStamp":"2020-05-27T04:30:00Z"},{"timeStamp":"2020-05-27T04:31:00Z"},{"timeStamp":"2020-05-27T04:32:00Z"},{"timeStamp":"2020-05-27T04:33:00Z"},{"timeStamp":"2020-05-27T04:34:00Z"},{"timeStamp":"2020-05-27T04:35:00Z"},{"timeStamp":"2020-05-27T04:36:00Z"},{"timeStamp":"2020-05-27T04:37:00Z"},{"timeStamp":"2020-05-27T04:38:00Z"},{"timeStamp":"2020-05-27T04:39:00Z"},{"timeStamp":"2020-05-27T04:40:00Z"},{"timeStamp":"2020-05-27T04:41:00Z"},{"timeStamp":"2020-05-27T04:42:00Z"},{"timeStamp":"2020-05-27T04:43:00Z"},{"timeStamp":"2020-05-27T04:44:00Z"},{"timeStamp":"2020-05-27T04:45:00Z"},{"timeStamp":"2020-05-27T04:46:00Z"},{"timeStamp":"2020-05-27T04:47:00Z"},{"timeStamp":"2020-05-27T04:48:00Z"},{"timeStamp":"2020-05-27T04:49:00Z"},{"timeStamp":"2020-05-27T04:50:00Z"},{"timeStamp":"2020-05-27T04:51:00Z"},{"timeStamp":"2020-05-27T04:52:00Z"},{"timeStamp":"2020-05-27T04:53:00Z"},{"timeStamp":"2020-05-27T04:54:00Z"},{"timeStamp":"2020-05-27T04:55:00Z"},{"timeStamp":"2020-05-27T04:56:00Z"},{"timeStamp":"2020-05-27T04:57:00Z"},{"timeStamp":"2020-05-27T04:58:00Z"},{"timeStamp":"2020-05-27T04:59:00Z"},{"timeStamp":"2020-05-27T05:00:00Z"},{"timeStamp":"2020-05-27T05:01:00Z"},{"timeStamp":"2020-05-27T05:02:00Z"},{"timeStamp":"2020-05-27T05:03:00Z"},{"timeStamp":"2020-05-27T05:04:00Z"},{"timeStamp":"2020-05-27T05:05:00Z"},{"timeStamp":"2020-05-27T05:06:00Z"},{"timeStamp":"2020-05-27T05:07:00Z"},{"timeStamp":"2020-05-27T05:08:00Z"},{"timeStamp":"2020-05-27T05:09:00Z"},{"timeStamp":"2020-05-27T05:10:00Z"},{"timeStamp":"2020-05-27T05:11:00Z"},{"timeStamp":"2020-05-27T05:12:00Z"}]}],"errorCode":"Success"}],"namespace":"Microsoft.Compute/virtualMachines","resourceregion":"eastus"}'
+        are currently in use by the Virtual Machine(s)","unit":"Percent","timeseries":[{"metadatavalues":[],"data":[{"timeStamp":"2020-09-16T02:27:00Z"},{"timeStamp":"2020-09-16T02:28:00Z"},{"timeStamp":"2020-09-16T02:29:00Z"},{"timeStamp":"2020-09-16T02:30:00Z"},{"timeStamp":"2020-09-16T02:31:00Z"},{"timeStamp":"2020-09-16T02:32:00Z"},{"timeStamp":"2020-09-16T02:33:00Z"},{"timeStamp":"2020-09-16T02:34:00Z"},{"timeStamp":"2020-09-16T02:35:00Z"},{"timeStamp":"2020-09-16T02:36:00Z"},{"timeStamp":"2020-09-16T02:37:00Z"},{"timeStamp":"2020-09-16T02:38:00Z"},{"timeStamp":"2020-09-16T02:39:00Z"},{"timeStamp":"2020-09-16T02:40:00Z"},{"timeStamp":"2020-09-16T02:41:00Z"},{"timeStamp":"2020-09-16T02:42:00Z"},{"timeStamp":"2020-09-16T02:43:00Z"},{"timeStamp":"2020-09-16T02:44:00Z"},{"timeStamp":"2020-09-16T02:45:00Z"},{"timeStamp":"2020-09-16T02:46:00Z"},{"timeStamp":"2020-09-16T02:47:00Z"},{"timeStamp":"2020-09-16T02:48:00Z"},{"timeStamp":"2020-09-16T02:49:00Z"},{"timeStamp":"2020-09-16T02:50:00Z"},{"timeStamp":"2020-09-16T02:51:00Z"},{"timeStamp":"2020-09-16T02:52:00Z"},{"timeStamp":"2020-09-16T02:53:00Z"},{"timeStamp":"2020-09-16T02:54:00Z"},{"timeStamp":"2020-09-16T02:55:00Z"},{"timeStamp":"2020-09-16T02:56:00Z"},{"timeStamp":"2020-09-16T02:57:00Z"},{"timeStamp":"2020-09-16T02:58:00Z"},{"timeStamp":"2020-09-16T02:59:00Z"},{"timeStamp":"2020-09-16T03:00:00Z"},{"timeStamp":"2020-09-16T03:01:00Z"},{"timeStamp":"2020-09-16T03:02:00Z"},{"timeStamp":"2020-09-16T03:03:00Z"},{"timeStamp":"2020-09-16T03:04:00Z"},{"timeStamp":"2020-09-16T03:05:00Z"},{"timeStamp":"2020-09-16T03:06:00Z"},{"timeStamp":"2020-09-16T03:07:00Z"},{"timeStamp":"2020-09-16T03:08:00Z"},{"timeStamp":"2020-09-16T03:09:00Z"},{"timeStamp":"2020-09-16T03:10:00Z"},{"timeStamp":"2020-09-16T03:11:00Z"},{"timeStamp":"2020-09-16T03:12:00Z"},{"timeStamp":"2020-09-16T03:13:00Z"},{"timeStamp":"2020-09-16T03:14:00Z"},{"timeStamp":"2020-09-16T03:15:00Z"},{"timeStamp":"2020-09-16T03:16:00Z"},{"timeStamp":"2020-09-16T03:17:00Z"},{"timeStamp":"2020-09-16T03:18:00Z"},{"timeStamp":"2020-09-16T03:19:00Z"},{"timeStamp":"2020-09-16T03:20:00Z"},{"timeStamp":"2020-09-16T03:21:00Z"},{"timeStamp":"2020-09-16T03:22:00Z"},{"timeStamp":"2020-09-16T03:23:00Z"},{"timeStamp":"2020-09-16T03:24:00Z"},{"timeStamp":"2020-09-16T03:25:00Z"},{"timeStamp":"2020-09-16T03:26:00Z"}]}],"errorCode":"Success"}],"namespace":"Microsoft.Compute/virtualMachines","resourceregion":"eastus"}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '2922'
+      - '2949'
       content-type:
       - application/json
       date:
-      - Wed, 27 May 2020 05:13:09 GMT
+      - Wed, 16 Sep 2020 03:27:41 GMT
       server:
       - Microsoft-IIS/10.0
       strict-transport-security:
@@ -2109,7 +2434,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Insights/metricAlerts/metricnamexx?api-version=2018-03-01
   response:
@@ -2123,7 +2448,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 27 May 2020 05:13:34 GMT
+      - Wed, 16 Sep 2020 03:27:47 GMT
       expires:
       - '-1'
       pragma:
@@ -2137,7 +2462,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14998'
+      - '14999'
       x-powered-by:
       - ASP.NET
     status:
