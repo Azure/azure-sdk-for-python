@@ -2,6 +2,8 @@
 
 ## 7.0.0 (2020-09-15)
 
+- Release as a stable version
+
 ## 7.0.0b3 (2020-09-09)
 
 **Features**
