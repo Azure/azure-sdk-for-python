@@ -28,7 +28,7 @@ try:
     import azure
 
     try:
-        ver = azure.__version__
+        ver = azure.__version__ 
         raise Exception(
             'This package is incompatible with azure=={}. '.format(ver) +
             'Uninstall it with "pip uninstall azure".'
@@ -88,7 +88,7 @@ setup(
         'azure.storage.blob.changefeed',
     ],
     install_requires=[
-        "azure-storage-blob>=12.5.0,<2.0.0",
+    "azure-storage-blob>=12.5.0,<13.0.0",
     ],
     extras_require={
         ":python_version<'3.0'": ['futures', 'azure-storage-nspkg<4.0.0,>=3.0.0'],
