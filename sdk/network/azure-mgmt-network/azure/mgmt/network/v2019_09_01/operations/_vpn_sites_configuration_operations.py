@@ -8,7 +8,7 @@
 from typing import TYPE_CHECKING
 import warnings
 
-from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.core.polling import LROPoller, NoPolling, PollingMethod
@@ -55,10 +55,13 @@ class VpnSitesConfigurationOperations(object):
     ):
         # type: (...) -> None
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-09-01"
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
 
         # Construct URL
         url = self._download_initial.metadata['url']  # type: ignore
@@ -76,13 +79,12 @@ class VpnSitesConfigurationOperations(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(request, 'GetVpnSitesConfigurationRequest')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -102,13 +104,13 @@ class VpnSitesConfigurationOperations(object):
         request,  # type: "models.GetVpnSitesConfigurationRequest"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller[None]
         """Gives the sas-url to download the configurations for vpn-sites in a resource group.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
         :param virtual_wan_name: The name of the VirtualWAN for which configuration of all vpn-sites is
-     needed.
+         needed.
         :type virtual_wan_name: str
         :param request: Parameters supplied to download vpn-sites configuration.
         :type request: ~azure.mgmt.network.v2019_09_01.models.GetVpnSitesConfigurationRequest
