@@ -534,8 +534,8 @@ class CapacityPool(Model):
         'size': {'required': True, 'maximum': 549755813888000, 'minimum': 4398046511104},
         'service_level': {'required': True},
         'provisioning_state': {'readonly': True},
-        'total_throughput_mibps': {'readonly': True, 'multiple': 0.001},
-        'utilized_throughput_mibps': {'readonly': True, 'multiple': 0.001},
+        'total_throughput_mibps': {'readonly': True},
+        'utilized_throughput_mibps': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1240,7 +1240,7 @@ class ReplicationObject(Model):
      'dst'
     :type endpoint_type: str or ~azure.mgmt.netapp.models.EndpointType
     :param replication_schedule: Required. Schedule. Possible values include:
-     '_10minutely', 'hourly', 'daily', 'weekly', 'monthly'
+     '_10minutely', 'hourly', 'daily'
     :type replication_schedule: str or
      ~azure.mgmt.netapp.models.ReplicationSchedule
     :param remote_volume_resource_id: Required. The resource ID of the remote
@@ -1435,16 +1435,20 @@ class SnapshotPolicy(Model):
     :vartype type: str
     :param tags: Resource tags
     :type tags: dict[str, str]
+    :ivar name1: Snapshot policy name
+    :vartype name1: str
     :param hourly_schedule: hourlySchedule. Schedule for hourly snapshots
-    :type hourly_schedule: object
+    :type hourly_schedule: ~azure.mgmt.netapp.models.HourlySchedule
     :param daily_schedule: dailySchedule. Schedule for daily snapshots
-    :type daily_schedule: object
+    :type daily_schedule: ~azure.mgmt.netapp.models.DailySchedule
     :param weekly_schedule: weeklySchedule. Schedule for weekly snapshots
-    :type weekly_schedule: object
+    :type weekly_schedule: ~azure.mgmt.netapp.models.WeeklySchedule
     :param monthly_schedule: monthlySchedule. Schedule for monthly snapshots
-    :type monthly_schedule: object
+    :type monthly_schedule: ~azure.mgmt.netapp.models.MonthlySchedule
     :param enabled: The property to decide policy is enabled or not
     :type enabled: bool
+    :ivar provisioning_state: Azure lifecycle management
+    :vartype provisioning_state: str
     """
 
     _validation = {
@@ -1452,6 +1456,8 @@ class SnapshotPolicy(Model):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'name1': {'readonly': True},
+        'provisioning_state': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1460,11 +1466,13 @@ class SnapshotPolicy(Model):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'hourly_schedule': {'key': 'properties.hourlySchedule', 'type': 'object'},
-        'daily_schedule': {'key': 'properties.dailySchedule', 'type': 'object'},
-        'weekly_schedule': {'key': 'properties.weeklySchedule', 'type': 'object'},
-        'monthly_schedule': {'key': 'properties.monthlySchedule', 'type': 'object'},
+        'name1': {'key': 'properties.name', 'type': 'str'},
+        'hourly_schedule': {'key': 'properties.hourlySchedule', 'type': 'HourlySchedule'},
+        'daily_schedule': {'key': 'properties.dailySchedule', 'type': 'DailySchedule'},
+        'weekly_schedule': {'key': 'properties.weeklySchedule', 'type': 'WeeklySchedule'},
+        'monthly_schedule': {'key': 'properties.monthlySchedule', 'type': 'MonthlySchedule'},
         'enabled': {'key': 'properties.enabled', 'type': 'bool'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
     def __init__(self, *, location: str, tags=None, hourly_schedule=None, daily_schedule=None, weekly_schedule=None, monthly_schedule=None, enabled: bool=None, **kwargs) -> None:
@@ -1474,11 +1482,13 @@ class SnapshotPolicy(Model):
         self.name = None
         self.type = None
         self.tags = tags
+        self.name1 = None
         self.hourly_schedule = hourly_schedule
         self.daily_schedule = daily_schedule
         self.weekly_schedule = weekly_schedule
         self.monthly_schedule = monthly_schedule
         self.enabled = enabled
+        self.provisioning_state = None
 
 
 class SnapshotPolicyDetails(Model):
@@ -1497,22 +1507,28 @@ class SnapshotPolicyDetails(Model):
     :vartype type: str
     :param tags: Resource tags
     :type tags: dict[str, str]
+    :ivar name1: Snapshot policy name
+    :vartype name1: str
     :param hourly_schedule: hourlySchedule. Schedule for hourly snapshots
-    :type hourly_schedule: object
+    :type hourly_schedule: ~azure.mgmt.netapp.models.HourlySchedule
     :param daily_schedule: dailySchedule. Schedule for daily snapshots
-    :type daily_schedule: object
+    :type daily_schedule: ~azure.mgmt.netapp.models.DailySchedule
     :param weekly_schedule: weeklySchedule. Schedule for weekly snapshots
-    :type weekly_schedule: object
+    :type weekly_schedule: ~azure.mgmt.netapp.models.WeeklySchedule
     :param monthly_schedule: monthlySchedule. Schedule for monthly snapshots
-    :type monthly_schedule: object
+    :type monthly_schedule: ~azure.mgmt.netapp.models.MonthlySchedule
     :param enabled: The property to decide policy is enabled or not
     :type enabled: bool
+    :ivar provisioning_state: Azure lifecycle management
+    :vartype provisioning_state: str
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'name1': {'readonly': True},
+        'provisioning_state': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1521,11 +1537,13 @@ class SnapshotPolicyDetails(Model):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'hourly_schedule': {'key': 'properties.hourlySchedule', 'type': 'object'},
-        'daily_schedule': {'key': 'properties.dailySchedule', 'type': 'object'},
-        'weekly_schedule': {'key': 'properties.weeklySchedule', 'type': 'object'},
-        'monthly_schedule': {'key': 'properties.monthlySchedule', 'type': 'object'},
+        'name1': {'key': 'properties.name', 'type': 'str'},
+        'hourly_schedule': {'key': 'properties.hourlySchedule', 'type': 'HourlySchedule'},
+        'daily_schedule': {'key': 'properties.dailySchedule', 'type': 'DailySchedule'},
+        'weekly_schedule': {'key': 'properties.weeklySchedule', 'type': 'WeeklySchedule'},
+        'monthly_schedule': {'key': 'properties.monthlySchedule', 'type': 'MonthlySchedule'},
         'enabled': {'key': 'properties.enabled', 'type': 'bool'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
     def __init__(self, *, location: str=None, tags=None, hourly_schedule=None, daily_schedule=None, weekly_schedule=None, monthly_schedule=None, enabled: bool=None, **kwargs) -> None:
@@ -1535,11 +1553,13 @@ class SnapshotPolicyDetails(Model):
         self.name = None
         self.type = None
         self.tags = tags
+        self.name1 = None
         self.hourly_schedule = hourly_schedule
         self.daily_schedule = daily_schedule
         self.weekly_schedule = weekly_schedule
         self.monthly_schedule = monthly_schedule
         self.enabled = enabled
+        self.provisioning_state = None
 
 
 class SnapshotPolicyPatch(Model):
@@ -1558,22 +1578,28 @@ class SnapshotPolicyPatch(Model):
     :vartype type: str
     :param tags: Resource tags
     :type tags: dict[str, str]
+    :ivar name1: Snapshot policy name
+    :vartype name1: str
     :param hourly_schedule: hourlySchedule. Schedule for hourly snapshots
-    :type hourly_schedule: object
+    :type hourly_schedule: ~azure.mgmt.netapp.models.HourlySchedule
     :param daily_schedule: dailySchedule. Schedule for daily snapshots
-    :type daily_schedule: object
+    :type daily_schedule: ~azure.mgmt.netapp.models.DailySchedule
     :param weekly_schedule: weeklySchedule. Schedule for weekly snapshots
-    :type weekly_schedule: object
+    :type weekly_schedule: ~azure.mgmt.netapp.models.WeeklySchedule
     :param monthly_schedule: monthlySchedule. Schedule for monthly snapshots
-    :type monthly_schedule: object
+    :type monthly_schedule: ~azure.mgmt.netapp.models.MonthlySchedule
     :param enabled: The property to decide policy is enabled or not
     :type enabled: bool
+    :ivar provisioning_state: Azure lifecycle management
+    :vartype provisioning_state: str
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'name1': {'readonly': True},
+        'provisioning_state': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1582,11 +1608,13 @@ class SnapshotPolicyPatch(Model):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'hourly_schedule': {'key': 'properties.hourlySchedule', 'type': 'object'},
-        'daily_schedule': {'key': 'properties.dailySchedule', 'type': 'object'},
-        'weekly_schedule': {'key': 'properties.weeklySchedule', 'type': 'object'},
-        'monthly_schedule': {'key': 'properties.monthlySchedule', 'type': 'object'},
+        'name1': {'key': 'properties.name', 'type': 'str'},
+        'hourly_schedule': {'key': 'properties.hourlySchedule', 'type': 'HourlySchedule'},
+        'daily_schedule': {'key': 'properties.dailySchedule', 'type': 'DailySchedule'},
+        'weekly_schedule': {'key': 'properties.weeklySchedule', 'type': 'WeeklySchedule'},
+        'monthly_schedule': {'key': 'properties.monthlySchedule', 'type': 'MonthlySchedule'},
         'enabled': {'key': 'properties.enabled', 'type': 'bool'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
     def __init__(self, *, location: str=None, tags=None, hourly_schedule=None, daily_schedule=None, weekly_schedule=None, monthly_schedule=None, enabled: bool=None, **kwargs) -> None:
@@ -1596,11 +1624,13 @@ class SnapshotPolicyPatch(Model):
         self.name = None
         self.type = None
         self.tags = tags
+        self.name1 = None
         self.hourly_schedule = hourly_schedule
         self.daily_schedule = daily_schedule
         self.weekly_schedule = weekly_schedule
         self.monthly_schedule = monthly_schedule
         self.enabled = enabled
+        self.provisioning_state = None
 
 
 class SnapshotPolicyVolumeList(Model):
