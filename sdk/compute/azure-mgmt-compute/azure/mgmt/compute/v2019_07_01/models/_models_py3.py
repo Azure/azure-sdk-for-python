@@ -1418,28 +1418,23 @@ class DiagnosticsProfile(msrest.serialization.Model):
 class DiffDiskSettings(msrest.serialization.Model):
     """Describes the parameters of ephemeral disk settings that can be specified for operating system disk. :code:`<br>`:code:`<br>` NOTE: The ephemeral disk settings can only be specified for managed disk.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar option: Specifies the ephemeral disk settings for operating system disk. Default value:
-     "Local".
-    :vartype option: str
+    :param option: Specifies the ephemeral disk settings for operating system disk. Possible values
+     include: "Local".
+    :type option: str or ~azure.mgmt.compute.v2019_07_01.models.DiffDiskOptions
     """
-
-    _validation = {
-        'option': {'constant': True},
-    }
 
     _attribute_map = {
         'option': {'key': 'option', 'type': 'str'},
     }
 
-    option = "Local"
-
     def __init__(
         self,
+        *,
+        option: Optional[Union[str, "DiffDiskOptions"]] = None,
         **kwargs
     ):
         super(DiffDiskSettings, self).__init__(**kwargs)
+        self.option = option
 
 
 class Disallowed(msrest.serialization.Model):
@@ -2002,9 +1997,9 @@ class EncryptionSetIdentity(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar type: The type of Managed Identity used by the DiskEncryptionSet. Only SystemAssigned is
-     supported. Default value: "SystemAssigned".
-    :vartype type: str
+    :param type: The type of Managed Identity used by the DiskEncryptionSet. Only SystemAssigned is
+     supported. Possible values include: "SystemAssigned".
+    :type type: str or ~azure.mgmt.compute.v2019_07_01.models.DiskEncryptionSetIdentityType
     :ivar principal_id: The object id of the Managed Identity Resource. This will be sent to the RP
      from ARM via the x-ms-identity-principal-id header in the PUT request if the resource has a
      systemAssigned(implicit) identity.
@@ -2016,7 +2011,6 @@ class EncryptionSetIdentity(msrest.serialization.Model):
     """
 
     _validation = {
-        'type': {'constant': True},
         'principal_id': {'readonly': True},
         'tenant_id': {'readonly': True},
     }
@@ -2027,13 +2021,14 @@ class EncryptionSetIdentity(msrest.serialization.Model):
         'tenant_id': {'key': 'tenantId', 'type': 'str'},
     }
 
-    type = "SystemAssigned"
-
     def __init__(
         self,
+        *,
+        type: Optional[Union[str, "DiskEncryptionSetIdentityType"]] = None,
         **kwargs
     ):
         super(EncryptionSetIdentity, self).__init__(**kwargs)
+        self.type = type
         self.principal_id = None
         self.tenant_id = None
 

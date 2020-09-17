@@ -1403,28 +1403,23 @@ class DiagnosticsProfile(msrest.serialization.Model):
 class DiffDiskSettings(msrest.serialization.Model):
     """Describes the parameters of ephemeral disk settings that can be specified for operating system disk. :code:`<br>`:code:`<br>` NOTE: The ephemeral disk settings can only be specified for managed disk.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar option: Specifies the ephemeral disk settings for operating system disk. Default value:
-     "Local".
-    :vartype option: str
+    :param option: Specifies the ephemeral disk settings for operating system disk. Possible values
+     include: "Local".
+    :type option: str or ~azure.mgmt.compute.v2019_03_01.models.DiffDiskOptions
     """
-
-    _validation = {
-        'option': {'constant': True},
-    }
 
     _attribute_map = {
         'option': {'key': 'option', 'type': 'str'},
     }
 
-    option = "Local"
-
     def __init__(
         self,
+        *,
+        option: Optional[Union[str, "DiffDiskOptions"]] = None,
         **kwargs
     ):
         super(DiffDiskSettings, self).__init__(**kwargs)
+        self.option = option
 
 
 class Disallowed(msrest.serialization.Model):
