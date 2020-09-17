@@ -97,12 +97,14 @@ class CosmosAccountPreparer(AzureMgmtPreparer):
             )
             self.primary_endpoint = 'https://{}.table.cosmos.azure.com:443/'.format(name)
         else:
-            self.resource = CosmosDBManagementClient(
-                location=self.location,
+            self.resource = StorageAccount(
+                location=self.location
             )
             self.resource.name = name
             self.resource.id = name
             self.primary_endpoint = 'https://{}.table.cosmos.azure.com:443/'.format(name)
+            self.cosmos_key = 'ZmFrZV9hY29jdW50X2tleQ=='
+            self.cosmos_account_name = name
         return {
             self.parameter_name: self.resource,
             '{}_key'.format(self.parameter_name): self.cosmos_key,

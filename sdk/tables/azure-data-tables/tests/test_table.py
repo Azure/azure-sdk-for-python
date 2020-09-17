@@ -338,7 +338,7 @@ class StorageTableTest(TableTestCase):
             # self._delete_table(table)
             ts.delete_table(table.table_name)
 
-    # @pytest.mark.skip("pending")
+    @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_set_table_acl_with_empty_signed_identifiers(self, resource_group, location, storage_account,
@@ -387,7 +387,7 @@ class StorageTableTest(TableTestCase):
             # self._delete_table(table)
             ts.delete_table(table.table_name)
 
-    # @pytest.mark.skip("pending")
+    @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_set_table_acl_with_signed_identifiers(self, resource_group, location, storage_account,

@@ -18,7 +18,7 @@ from azure.core.exceptions import (
     ResourceExistsError)
 from azure.data.tables import EdmType, TableEntity, EntityProperty
 
-from _shared.testcase import TableTestCase, LogCaptured
+from _shared.testcase import TableTestCase, LogCaptured, RERUNS_DELAY
 
 from devtools_testutils import CachedResourceGroupPreparer, CachedCosmosAccountPreparer
 

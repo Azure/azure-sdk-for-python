@@ -25,13 +25,11 @@ from azure.core.exceptions import HttpResponseError
 SERVICES = {
     TableServiceClient: 'table',
     TableClient: 'table',
-    TableServiceClient: 'cosmos',
-    TableClient: 'cosmos',
 }
 
-_CONNECTION_ENDPOINTS = {'table': 'TableEndpoint', 'cosmos': 'TableEndpoint'}
+_CONNECTION_ENDPOINTS = {'table': 'TableEndpoint'}
 
-_CONNECTION_ENDPOINTS_SECONDARY = {'table': 'TableSecondaryEndpoint', 'cosmos': 'TableSecondaryEndpoint'}
+_CONNECTION_ENDPOINTS_SECONDARY = {'table': 'TableSecondaryEndpoint'}
 
 class StorageTableClientTest(TableTestCase):
     def setUp(self):

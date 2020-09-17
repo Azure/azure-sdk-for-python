@@ -56,6 +56,8 @@ import pytest
 
 LOGGING_FORMAT = '%(asctime)s %(name)-20s %(levelname)-5s %(message)s'
 
+RERUNS_DELAY = 0
+
 class FakeTokenCredential(object):
     """Protocol for classes able to provide OAuth tokens.
     :param str scopes: Lets you specify the type of access needed.
@@ -412,7 +414,6 @@ def storage_account():
                 storage_account = None
                 if existing_storage_name:
                     storage_name = existing_storage_name
-                    # TODO: there isn't one of these for cosmos from what I can find
                     storage_account = StorageAccount(
                         location=location,
                     )
@@ -481,7 +482,6 @@ def storage_account():
                 cosmos_account = None
                 if existing_cosmos_name:
                     cosmos_name = existing_cosmos_name
-                    # cosmos_account = CosmosDBManagementClient()
                     cosmos_account.name = cosmos_name
                     cosmos_account.id = cosmos_name
                     cosmos_acount.primary_endpoints = Endpoints()
@@ -499,10 +499,6 @@ def storage_account():
 
                 if not cosmos_account:
                     cosmos_name = cosmos_connection_string_parts["AccountName"]
-                    # TODO: This CosmosAccount probably needs to be built
-                    # cosmos_account = CosmosAccount(
-                    #     location=location
-                    # )
 
                     def build_service_endpoint(service):
                         try:
