@@ -6,5 +6,5 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._management_link_client_async import ManagementLinkClient
+from ._management_link_client import ManagementLinkClient
 __all__ = ['ManagementLinkClient']

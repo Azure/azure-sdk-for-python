@@ -14,6 +14,8 @@ import unittest
 
 import azure.mgmt.resource
 # import azure.mgmt.managementgroups
+import azure.mgmt.resource.resources.v2019_10_01
+from azure.core.exceptions import HttpResponseError
 from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer
 
 class MgmtResourceLinksTest(AzureMgmtTestCase):
@@ -30,7 +32,8 @@ class MgmtResourceLinksTest(AzureMgmtTestCase):
 
         if self.is_live:
             # special client
-            self.mgmtgroup_client = azure.mgmt.managementgroups.ManagementGroupsAPI(
+            from azure.mgmt.managementgroups import ManagementGroupsAPI
+            self.mgmtgroup_client = ManagementGroupsAPI(
                 credentials=self.settings.get_credentials()
             )
 
@@ -119,10 +122,14 @@ class MgmtResourceLinksTest(AzureMgmtTestCase):
             "managedResourceGroupId": "/subscriptions/" + self.settings.SUBSCRIPTION_ID + "/resourceGroups/myManagedRG" + group_name,
             "kind": "ServiceCatalog"
         }
-        self.mgmt_client.applications.update_by_id(
-            application_id,
-            BODY
-        )
+        try:
+            self.mgmt_client.applications.update_by_id(
+                application_id,
+                BODY
+            )
+        except HttpResponseError as e:
+            if not str(e).startswith("Operation returned an invalid status 'Accepted'"):
+                raise e
 
         # Delete application by id
         result = self.mgmt_client.applications.begin_delete_by_id(
@@ -213,11 +220,15 @@ class MgmtResourceLinksTest(AzureMgmtTestCase):
             "managedResourceGroupId": "/subscriptions/" + self.settings.SUBSCRIPTION_ID + "/resourceGroups/myManagedRG" + group_name,
             "kind": "ServiceCatalog"
         }
-        self.mgmt_client.applications.update(
-            resource_group.name,
-            application_name,
-            BODY
-        )
+        try:
+            self.mgmt_client.applications.update(
+                resource_group.name,
+                application_name,
+                BODY
+            )
+        except HttpResponseError as e:
+            if not str(e).startswith("Operation returned an invalid status 'Accepted'"):
+                raise e
 
         # List application by resorce group
         self.mgmt_client.applications.list_by_resource_group(
