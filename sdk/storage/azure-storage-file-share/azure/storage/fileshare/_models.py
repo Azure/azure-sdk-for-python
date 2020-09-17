@@ -138,11 +138,19 @@ class CorsRule(GeneratedCorsRule):
 
 
 class SmbSettings(GeneratedSmbSettings):
+    """ Settings for the SMB protocol.
+
+    :param SmbMultichannel multichannel: Required. Sets the multichannel settings.
+    """
     def __init__(self, multichannel):
         self.multichannel = multichannel
 
 
 class SmbMultichannel(GeneratedSmbMultichannel):
+    """ Settings for Multichannel.
+
+    :param bool enabled: Required. If SMB Multichannel is enabled.
+    """
     def __init__(self, enabled):
         self.enabled = enabled
 
