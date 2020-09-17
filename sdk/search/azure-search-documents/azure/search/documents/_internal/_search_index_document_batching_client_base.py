@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=too-few-public-methods, too-many-instance-attributes
 from typing import List, TYPE_CHECKING
 
 from .._api_versions import validate_api_version

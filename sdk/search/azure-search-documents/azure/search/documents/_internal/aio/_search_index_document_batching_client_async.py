@@ -90,7 +90,7 @@ class SearchIndexDocumentBatchingClient(SearchIndexDocumentBatchingClientBase, H
         return self._index_documents_batch.actions
 
     @distributed_trace_async
-    async def close(self):
+    async def close(self, **kwargs):  # pylint: disable=unused-argument
         # type: () -> None
         """Close the :class:`~azure.search.documents.aio.SearchClient` session."""
         await self._cleanup(flush=True)
@@ -185,7 +185,7 @@ class SearchIndexDocumentBatchingClient(SearchIndexDocumentBatchingClientBase, H
             self._timer = Timer(self._auto_flush_interval, self._process)
 
     @distributed_trace_async
-    async def add_upload_actions(self, documents):
+    async def add_upload_actions(self, documents, **kwargs):  # pylint: disable=unused-argument
         # type: (List[dict]) -> None
         """Queue upload documents actions.
         :param documents: A list of documents to upload.
@@ -196,7 +196,7 @@ class SearchIndexDocumentBatchingClient(SearchIndexDocumentBatchingClientBase, H
         await self._process_if_needed()
 
     @distributed_trace_async
-    async def add_delete_actions(self, documents):
+    async def add_delete_actions(self, documents, **kwargs):  # pylint: disable=unused-argument
         # type: (List[dict]) -> None
         """Queue delete documents actions
         :param documents: A list of documents to delete.
@@ -207,7 +207,7 @@ class SearchIndexDocumentBatchingClient(SearchIndexDocumentBatchingClientBase, H
         await self._process_if_needed()
 
     @distributed_trace_async
-    async def add_merge_actions(self, documents):
+    async def add_merge_actions(self, documents, **kwargs):  # pylint: disable=unused-argument
         # type: (List[dict]) -> None
         """Queue merge documents actions
         :param documents: A list of documents to merge.
@@ -218,7 +218,7 @@ class SearchIndexDocumentBatchingClient(SearchIndexDocumentBatchingClientBase, H
         await self._process_if_needed()
 
     @distributed_trace_async
-    async def add_merge_or_upload_actions(self, documents):
+    async def add_merge_or_upload_actions(self, documents, **kwargs):  # pylint: disable=unused-argument
         # type: (List[dict]) -> None
         """Queue merge documents or upload documents actions
         :param documents: A list of documents to merge or upload.

@@ -90,7 +90,7 @@ class SearchIndexDocumentBatchingClient(SearchIndexDocumentBatchingClientBase, H
         return self._index_documents_batch.actions
 
     @distributed_trace
-    def close(self):
+    def close(self, **kwargs):  # pylint: disable=unused-argument
         # type: () -> None
         """Close the :class:`~azure.search.documents.SearchClient` session."""
         self._cleanup(flush=True)
@@ -185,7 +185,7 @@ class SearchIndexDocumentBatchingClient(SearchIndexDocumentBatchingClientBase, H
             self._timer.start()
 
     @distributed_trace
-    def add_upload_actions(self, documents):
+    def add_upload_actions(self, documents, **kwargs):  # pylint: disable=unused-argument
         # type: (List[dict]) -> None
         """Queue upload documents actions.
 
@@ -197,7 +197,7 @@ class SearchIndexDocumentBatchingClient(SearchIndexDocumentBatchingClientBase, H
         self._process_if_needed()
 
     @distributed_trace
-    def add_delete_actions(self, documents):
+    def add_delete_actions(self, documents, **kwargs):  # pylint: disable=unused-argument
         # type: (List[dict]) -> None
         """Queue delete documents actions
 
@@ -209,7 +209,7 @@ class SearchIndexDocumentBatchingClient(SearchIndexDocumentBatchingClientBase, H
         self._process_if_needed()
 
     @distributed_trace
-    def add_merge_actions(self, documents):
+    def add_merge_actions(self, documents, **kwargs):  # pylint: disable=unused-argument
         # type: (List[dict]) -> None
         """Queue merge documents actions
 
@@ -221,7 +221,7 @@ class SearchIndexDocumentBatchingClient(SearchIndexDocumentBatchingClientBase, H
         self._process_if_needed()
 
     @distributed_trace
-    def add_merge_or_upload_actions(self, documents):
+    def add_merge_or_upload_actions(self, documents, **kwargs):  # pylint: disable=unused-argument
         # type: (List[dict]) -> None
         """Queue merge documents or upload documents actions
 
