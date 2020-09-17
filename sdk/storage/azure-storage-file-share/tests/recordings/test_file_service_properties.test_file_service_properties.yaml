@@ -18,7 +18,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 17 Sep 2020 14:40:29 GMT
+      - Thu, 17 Sep 2020 17:19:36 GMT
       x-ms-version:
       - '2020-02-10'
     method: PUT
@@ -28,7 +28,7 @@ interactions:
       string: ''
     headers:
       date:
-      - Thu, 17 Sep 2020 14:40:29 GMT
+      - Thu, 17 Sep 2020 17:19:36 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -50,7 +50,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 17 Sep 2020 14:40:30 GMT
+      - Thu, 17 Sep 2020 17:19:37 GMT
       x-ms-version:
       - '2020-02-10'
     method: GET
@@ -63,11 +63,13 @@ interactions:
       content-type:
       - application/xml
       date:
-      - Thu, 17 Sep 2020 14:40:29 GMT
+      - Thu, 17 Sep 2020 17:19:36 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
       - chunked
+      vary:
+      - Origin
       x-ms-version:
       - '2020-02-10'
     status:
@@ -92,7 +94,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 17 Sep 2020 14:40:30 GMT
+      - Thu, 17 Sep 2020 17:19:37 GMT
       x-ms-version:
       - '2020-02-10'
     method: PUT
@@ -102,7 +104,7 @@ interactions:
       string: ''
     headers:
       date:
-      - Thu, 17 Sep 2020 14:40:29 GMT
+      - Thu, 17 Sep 2020 17:19:36 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -124,7 +126,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 17 Sep 2020 14:40:31 GMT
+      - Thu, 17 Sep 2020 17:19:37 GMT
       x-ms-version:
       - '2020-02-10'
     method: GET
@@ -137,11 +139,13 @@ interactions:
       content-type:
       - application/xml
       date:
-      - Thu, 17 Sep 2020 14:40:29 GMT
+      - Thu, 17 Sep 2020 17:19:36 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
       - chunked
+      vary:
+      - Origin
       x-ms-version:
       - '2020-02-10'
     status:

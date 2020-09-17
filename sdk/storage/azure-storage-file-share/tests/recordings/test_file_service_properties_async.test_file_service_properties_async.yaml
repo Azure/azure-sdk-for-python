@@ -12,7 +12,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 17 Sep 2020 14:40:44 GMT
+      - Thu, 17 Sep 2020 17:18:19 GMT
       x-ms-version:
       - '2020-02-10'
     method: PUT
@@ -21,7 +21,7 @@ interactions:
     body:
       string: ''
     headers:
-      date: Thu, 17 Sep 2020 14:40:43 GMT
+      date: Thu, 17 Sep 2020 17:18:18 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-ms-version: '2020-02-10'
@@ -37,7 +37,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 17 Sep 2020 14:40:45 GMT
+      - Thu, 17 Sep 2020 17:18:20 GMT
       x-ms-version:
       - '2020-02-10'
     method: GET
@@ -48,7 +48,7 @@ interactions:
         /><ProtocolSettings><SMB><Multichannel><Enabled>false</Enabled></Multichannel></SMB></ProtocolSettings></StorageServiceProperties>"
     headers:
       content-type: application/xml
-      date: Thu, 17 Sep 2020 14:40:43 GMT
+      date: Thu, 17 Sep 2020 17:18:18 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-ms-version: '2020-02-10'
@@ -69,7 +69,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 17 Sep 2020 14:40:45 GMT
+      - Thu, 17 Sep 2020 17:18:20 GMT
       x-ms-version:
       - '2020-02-10'
     method: PUT
@@ -78,7 +78,7 @@ interactions:
     body:
       string: ''
     headers:
-      date: Thu, 17 Sep 2020 14:40:43 GMT
+      date: Thu, 17 Sep 2020 17:18:18 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-ms-version: '2020-02-10'
@@ -94,7 +94,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 17 Sep 2020 14:40:45 GMT
+      - Thu, 17 Sep 2020 17:18:20 GMT
       x-ms-version:
       - '2020-02-10'
     method: GET
@@ -105,7 +105,7 @@ interactions:
         /><ProtocolSettings><SMB><Multichannel><Enabled>true</Enabled></Multichannel></SMB></ProtocolSettings></StorageServiceProperties>"
     headers:
       content-type: application/xml
-      date: Thu, 17 Sep 2020 14:40:43 GMT
+      date: Thu, 17 Sep 2020 17:18:18 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-ms-version: '2020-02-10'
