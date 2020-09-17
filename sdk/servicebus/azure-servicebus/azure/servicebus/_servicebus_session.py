@@ -4,7 +4,7 @@
 # --------------------------------------------------------------------------------------------
 import logging
 import datetime
-from typing import TYPE_CHECKING, Union, Optional
+from typing import TYPE_CHECKING, Union, Optional, Any
 import six
 
 from ._common.utils import utc_from_timestamp, utc_now
@@ -90,12 +90,15 @@ class ServiceBusSession(BaseSession):
             :caption: Get session from a receiver
     """
 
-    def get_state(self):
-        # type: () -> str
+    def get_state(self, **kwargs):
+        # type: (Any) -> str
+        # pylint: disable=protected-access
         """Get the session state.
 
         Returns None if no state has been set.
 
+        :keyword float timeout: The operation timeout in seconds. If not specified, the timeout value in the client
+         setting would be used which by default is 60s.
         :rtype: str
 
         .. admonition:: Example:
@@ -108,22 +111,27 @@ class ServiceBusSession(BaseSession):
                 :caption: Get the session state
         """
         self._check_live()
-        response = self._receiver._mgmt_request_response_with_retry(  # pylint: disable=protected-access
+        timeout = kwargs.pop("timeout", None) or self._receiver._config.timeout
+        response = self._receiver._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_GET_SESSION_STATE_OPERATION,
             {MGMT_REQUEST_SESSION_ID: self._id},
-            mgmt_handlers.default
+            mgmt_handlers.default,
+            timeout=timeout
         )
         session_state = response.get(MGMT_RESPONSE_SESSION_STATE)
         if isinstance(session_state, six.binary_type):
             session_state = session_state.decode(self._encoding)
         return session_state
 
-    def set_state(self, state):
-        # type: (Union[str, bytes, bytearray]) -> None
+    def set_state(self, state, **kwargs):
+        # type: (Union[str, bytes, bytearray], Any) -> None
+        # pylint: disable=protected-access
         """Set the session state.
 
         :param state: The state value.
         :type state: Union[str, bytes, bytearray]
+        :keyword float timeout: The operation timeout in seconds. If not specified, the timeout value in the client
+         setting would be used which by default is 60s.
 
         .. admonition:: Example:
 
@@ -135,15 +143,18 @@ class ServiceBusSession(BaseSession):
                 :caption: Set the session state
         """
         self._check_live()
+        timeout = kwargs.pop("timeout", None) or self._receiver._config.timeout
         state = state.encode(self._encoding) if isinstance(state, six.text_type) else state
-        return self._receiver._mgmt_request_response_with_retry(  # pylint: disable=protected-access
+        return self._receiver._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_SET_SESSION_STATE_OPERATION,
             {MGMT_REQUEST_SESSION_ID: self._id, MGMT_REQUEST_SESSION_STATE: bytearray(state)},
-            mgmt_handlers.default
+            mgmt_handlers.default,
+            timeout=timeout
         )
 
-    def renew_lock(self):
-        # type: () -> datetime.datetime
+    def renew_lock(self, **kwargs):
+        # type: (Any) -> datetime.datetime
+        # pylint: disable=protected-access
         """Renew the session lock.
 
         This operation must be performed periodically in order to retain a lock on the
@@ -154,6 +165,8 @@ class ServiceBusSession(BaseSession):
         This operation can also be performed as a threaded background task by registering the session
         with an `azure.servicebus.AutoLockRenew` instance.
 
+        :keyword float timeout: The operation timeout in seconds. If not specified, the timeout value in the client
+         setting would be used which by default is 60s.
         :returns: The utc datetime the lock is set to expire at.
         :rtype: datetime.datetime
 
@@ -167,10 +180,12 @@ class ServiceBusSession(BaseSession):
                 :caption: Renew the session lock before it expires
         """
         self._check_live()
-        expiry = self._receiver._mgmt_request_response_with_retry(  # pylint: disable=protected-access
+        timeout = kwargs.pop("timeout", None) or self._receiver._config.timeout
+        expiry = self._receiver._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_RENEW_SESSION_LOCK_OPERATION,
             {MGMT_REQUEST_SESSION_ID: self._id},
-            mgmt_handlers.default
+            mgmt_handlers.default,
+            timeout=timeout
         )
         expiry_timestamp = expiry[MGMT_RESPONSE_RECEIVER_EXPIRATION]/1000.0
         self._locked_until_utc = utc_from_timestamp(expiry_timestamp) # type: datetime.datetime

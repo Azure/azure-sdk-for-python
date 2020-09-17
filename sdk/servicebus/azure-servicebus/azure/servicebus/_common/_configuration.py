@@ -13,6 +13,7 @@ class Configuration(object):  # pylint:disable=too-many-instance-attributes
         self.retry_total = kwargs.get("retry_total", 3)  # type: int
         self.retry_backoff_factor = kwargs.get("retry_backoff_factor", 0.8)  # type: float
         self.retry_backoff_max = kwargs.get("retry_backoff_max", 120)  # type: int
+        self.timeout = kwargs.get("timeout", 60)  # type: float
         self.logging_enable = kwargs.get("logging_enable", False)  # type: bool
         self.http_proxy = kwargs.get("http_proxy")  # type: Optional[Dict[str, Any]]
         self.transport_type = (

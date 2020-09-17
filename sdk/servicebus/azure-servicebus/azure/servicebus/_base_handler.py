@@ -233,14 +233,14 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         self,
         retried_times,
         last_exception,
-        timeout=None,
+        abs_timeout=None,
         entity_name=None
     ):
         # type: (int, Exception, Optional[float], str) -> None
         entity_name = entity_name or self._container_id
         backoff = self._config.retry_backoff_factor * 2 ** retried_times
         if backoff <= self._config.retry_backoff_max and (
-            timeout is None or backoff <= timeout
+            abs_timeout is None or (backoff + time.time()) <= abs_timeout
         ):  # pylint:disable=no-else-return
             time.sleep(backoff)
             _LOGGER.info(
@@ -263,10 +263,13 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         retried_times = 0
         max_retries = self._config.retry_total
 
+        abs_timeout = (time.time() + timeout) if (require_timeout and timeout) else None
+
         while retried_times <= max_retries:
             try:
-                if require_timeout:
-                    kwargs["timeout"] = timeout
+                if require_timeout and abs_timeout:
+                    remaining_timeout = abs_timeout - time.time()
+                    kwargs["timeout"] = remaining_timeout
                 return operation(**kwargs)
             except StopIteration:
                 raise
@@ -285,13 +288,22 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
                 self._backoff(
                     retried_times=retried_times,
                     last_exception=last_exception,
-                    timeout=timeout
+                    abs_timeout=abs_timeout
                 )
 
-    def _mgmt_request_response(self, mgmt_operation, message, callback, keep_alive_associated_link=True, **kwargs):
-        # type: (str, uamqp.Message, Callable, bool, Any) -> uamqp.Message
+    def _mgmt_request_response(
+        self,
+        mgmt_operation,
+        message,
+        callback,
+        keep_alive_associated_link=True,
+        timeout=5,
+        **kwargs
+    ):
+        # type: (bytes, uamqp.Message, Callable, bool, float, Any) -> uamqp.Message
         self._open()
         application_properties = {}
+
         # Some mgmt calls do not support an associated link name (such as list_sessions).  Most do, so on by default.
         if keep_alive_associated_link:
             try:
@@ -314,19 +326,29 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
                 mgmt_operation,
                 op_type=MGMT_REQUEST_OP_TYPE_ENTITY_MGMT,
                 node=self._mgmt_target.encode(self._config.encoding),
-                timeout=5000,
+                timeout=timeout * 1000,
                 callback=callback
             )
         except Exception as exp:  # pylint: disable=broad-except
             raise ServiceBusError("Management request failed: {}".format(exp), exp)
 
-    def _mgmt_request_response_with_retry(self, mgmt_operation, message, callback, **kwargs):
-        # type: (bytes, Dict[str, Any], Callable, Any) -> Any
+    def _mgmt_request_response_with_retry(
+        self,
+        mgmt_operation,
+        message,
+        callback,
+        timeout=None,
+        **kwargs
+    ):
+        # type: (bytes, Dict[str, Any], Callable, float, Any) -> Any
+        timeout = timeout or self._config.timeout
         return self._do_retryable_operation(
             self._mgmt_request_response,
             mgmt_operation=mgmt_operation,
             message=message,
             callback=callback,
+            timeout=timeout,
+            require_timeout=True,
             **kwargs
         )
 
