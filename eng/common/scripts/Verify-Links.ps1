@@ -74,7 +74,7 @@ function LogError
   }
 }
 
-function ResolveUri ([System.Uri]$referralUri, [string]$link)
+function ResolveUri ([System.Uri]$referralUri, [string]$link, [bool]$flag)
 {
   # If the link is mailto, skip it.
   if ($link.StartsWith("mailto:")) {
@@ -85,7 +85,7 @@ function ResolveUri ([System.Uri]$referralUri, [string]$link)
   $linkUri = [System.Uri]$link;
   # Our link guidelines do not allow relative links so only resolve them when we are not
   # validating links against our link guidelines (i.e. !$checkLinkGuideance)
-  if ($checkLinkGuidance -and !$linkUri.IsAbsoluteUri) {
+  if (!$flag -and !$linkUri.IsAbsoluteUri) {
     return $linkUri
   }
 
@@ -99,8 +99,7 @@ function ResolveUri ([System.Uri]$referralUri, [string]$link)
       $linkUri = new-object System.Uri($referralUri, $link);
     }
   }
-
-  $linkUri = [System.Uri]$linkUri.GetComponents([System.UriComponents]::HttpRequestUrl, [System.UriFormat]::SafeUnescaped)
+  # $linkUri = [System.Uri]$linkUri.GetComponents([System.UriComponents]::HttpRequestUrl, [System.UriFormat]::UriEscaped)
   Write-Verbose "ResolvedUri $link to $linkUri"
 
   # If the link is not a web request, like mailto, skip it.
@@ -134,86 +133,133 @@ function ParseLinks([string]$baseUri, [string]$htmlContent)
   return $links
 }
 
-function CheckLink ([System.Uri]$linkUri)
+function CheckLink ([System.Uri]$linkUri, [System.Uri]$pageLink)
 {
   if(!$linkUri.ToString().Trim()) {
+    $replacedOne = ResolveUri $pageLink $linkUri.ToString() $true
+    $replacedOne = $replacedOne -replace "file:///C:/sdk/azure-sdk-for-python", "https://github.com/Azure/azure-sdk-for-python/blob/master"
+
+    ReplaceWithOriginDoc $pageLink.AbsolutePath "" $replacedOne.ToString()
     LogWarning "Found Empty link. Please use absolute link instead. Check here for more infomation: https://aka.ms/azsdk/guideline/links"
     return $false
   }
-  if ($checkedLinks.ContainsKey($linkUri)) { 
-    if (!$checkedLinks[$linkUri]) {
-      LogWarning "broken link $linkUri"
-    }
-    return $checkedLinks[$linkUri] 
-  }
+  # if ($checkedLinks.ContainsKey($linkUri)) { 
+  #   if (!$checkedLinks[$linkUri]) {
+  #     LogWarning "broken link $linkUri"
+  #   }
+  #   return $checkedLinks[$linkUri] 
+  # }
 
+  # $linkValid = $true
+  # Write-Verbose "Checking link $linkUri..."  
+
+  # if ($linkUri.IsFile) {
+  #   if (!(Test-Path $linkUri.LocalPath)) {
+  #     LogWarning "Link to file does not exist $($linkUri.LocalPath)"
+  #     $linkValid = $false
+  #   }
+  # }
+  # else {
+  #   try {
+  #     $headRequestSucceeded = $true
+  #     try {
+  #       # Attempt HEAD request first
+  #       $response = Invoke-WebRequest -Uri $linkUri -Method HEAD
+  #     }
+  #     catch {
+  #       $headRequestSucceeded = $false
+  #     }
+  #     if (!$headRequestSucceeded) {
+  #       # Attempt a GET request if the HEAD request failed.
+  #       $response = Invoke-WebRequest -Uri $linkUri -Method GET
+  #     }
+  #     $statusCode = $response.StatusCode
+  #     if ($statusCode -ne 200) {
+  #       Write-Host "[$statusCode] while requesting $linkUri"
+  #     }
+  #   }
+  #   catch {
+  #     $statusCode = $_.Exception.Response.StatusCode.value__
+
+  #     if(!$statusCode) {
+  #       # Try to pull the error code from any inner SocketException we might hit
+  #       $statusCode = $_.Exception.InnerException.ErrorCode
+  #     }
+
+  #     if ($statusCode -in $errorStatusCodes) {
+  #       LogWarning "[$statusCode] broken link $linkUri"
+  #       $linkValid = $false
+  #     }
+  #     else {
+  #       if ($null -ne $statusCode) {
+  #         Write-Host "[$statusCode] while requesting $linkUri"
+  #       }
+  #       else {
+  #         Write-Host "Exception while requesting $linkUri"
+  #         Write-Host $_.Exception.ToString()
+  #       }
+  #     }
+  #   }
+  # }
   $linkValid = $true
-  Write-Verbose "Checking link $linkUri..."  
-
-  if ($linkUri.IsFile) {
-    if (!(Test-Path $linkUri.LocalPath)) {
-      LogWarning "Link to file does not exist $($linkUri.LocalPath)"
-      $linkValid = $false
-    }
-  }
-  else {
-    try {
-      $headRequestSucceeded = $true
-      try {
-        # Attempt HEAD request first
-        $response = Invoke-WebRequest -Uri $linkUri -Method HEAD
-      }
-      catch {
-        $headRequestSucceeded = $false
-      }
-      if (!$headRequestSucceeded) {
-        # Attempt a GET request if the HEAD request failed.
-        $response = Invoke-WebRequest -Uri $linkUri -Method GET
-      }
-      $statusCode = $response.StatusCode
-      if ($statusCode -ne 200) {
-        Write-Host "[$statusCode] while requesting $linkUri"
-      }
-    }
-    catch {
-      $statusCode = $_.Exception.Response.StatusCode.value__
-
-      if(!$statusCode) {
-        # Try to pull the error code from any inner SocketException we might hit
-        $statusCode = $_.Exception.InnerException.ErrorCode
-      }
-
-      if ($statusCode -in $errorStatusCodes) {
-        LogWarning "[$statusCode] broken link $linkUri"
-        $linkValid = $false
-      }
-      else {
-        if ($null -ne $statusCode) {
-          Write-Host "[$statusCode] while requesting $linkUri"
-        }
-        else {
-          Write-Host "Exception while requesting $linkUri"
-          Write-Host $_.Exception.ToString()
-        }
-      }
-    }
-  }
-  
   if ($checkLinkGuidance) {
+    $replacedOne = ""
     # Check if the url is relative links, suppress the archor link validation.
     if (!$linkUri.IsAbsoluteUri -and !$linkUri.ToString().StartsWith("#")) {
-      LogWarning "DO NOT use relative link $linkUri. Please use absolute link instead. Check here for more infomation: https://aka.ms/azsdk/guideline/links"
+      $replacedOne = ResolveUri $pageLink $linkUri.ToString() $true
+      $replacedOne = $replacedOne -replace "file:///C:/sdk/azure-sdk-for-python", "https://github.com/Azure/azure-sdk-for-python/blob/master"
+      LogWarning "DO NOT use relative link $linkUri. Suggest Link: $replacedOne."
       $linkValid = $false
     }
-     # Check if link uri includes locale info.
-    if ($linkUri -match $locale) {
-      LogWarning "DO NOT include locale $locale information in links: $linkUri. Check here for more information: https://aka.ms/azsdk/guideline/links"
-      $linkValid = $false
+    #  # Check if link uri includes locale info.
+    # if ($linkUri -match $locale) {
+    #   $fileContent = Get-Content -Path $pageLink.AbsolutePath
+    #   $updatedFileContent = $fileContent -replace $locale, "/"
+    #   if ($updatedFileContent -ne $fileContent) {
+    #     Set-Content -Path $pageLink.AbsolutePath -Value $updatedFileContent
+    #   }
+      
+    #   LogWarning "DO NOT include locale $locale information in links: $linkUri. Suggest Link: $replacedOne."
+    #   $linkValid = $false
+    # }
+    if (!$linkValid) {
+      ReplaceWithOriginDoc $pageLink.AbsolutePath $linkUri.ToString() $replacedOne.ToString()
     }
   }
 
   $checkedLinks[$linkUri] = $linkValid
   return $linkValid
+}
+
+function ReplaceWithOriginDoc([string]$pageLink, [string]$pattern, [string]$replacemenet) {
+  $linkPattern = $pattern + "((\s)*\)|$)"
+  if ($pattern -eq ".") {
+    $linkPattern = "\.((\s)*\))"
+    $pattern = ".)"
+    $replacemenet = $replacemenet + ")"
+  }
+  elseif($pattern -eq "./") {
+    $linkPattern = "\./(\s)*\)|$"
+    $pattern = "./"
+    $replacemenet = $replacemenet
+  }
+  elseif(!$pattern) {
+    Write-Error "Suggest link. $replacemenet"
+    exit(1)
+    # $linkPattern = "\(\)"
+    # $pattern = "()"
+    # $replacemenet = "(" + $replacemenet + ")"
+  }
+  $updatedFileContent = @()
+  foreach ($line in (Get-Content -Path $pageLink)) {
+    if ($line -match $linkPattern) {
+      $updatedFileContent += $line.Replace($pattern, $replacemenet)
+    } else {
+      $updatedFileContent += $line
+    }
+  }
+  
+  Set-Content -Path $pageLink -Value $updatedFileContent
 }
 
 function ReplaceGithubLink([string]$originLink) {
@@ -292,6 +338,13 @@ foreach ($url in $urls) {
 while ($pageUrisToCheck.Count -ne 0)
 {
   $pageUri = $pageUrisToCheck.Dequeue();
+  $fileContent = Get-Content -Path $pageUri.AbsolutePath
+  if ($fileContent -match $locale) {
+    $updatedFileContent = $fileContent -replace $locale, "/"
+    if ($updatedFileContent -ne $fileContent) {
+      Set-Content -Path $pageUri.AbsolutePath -Value $updatedFileContent
+    }
+  }
   if ($checkedPages.ContainsKey($pageUri)) { continue }
   $checkedPages[$pageUri] = $true;
 
@@ -300,7 +353,7 @@ while ($pageUrisToCheck.Count -ne 0)
   $badLinksPerPage = @();
   foreach ($linkUri in $linkUris) {
     $replacedLink = ReplaceGithubLink $linkUri
-    $isLinkValid = CheckLink $replacedLink
+    $isLinkValid = CheckLink $replacedLink $pageUri
     if (!$isLinkValid -and !$badLinksPerPage.Contains($linkUri)) {
       if (!$linkUri.ToString().Trim()) {
         $linkUri = $emptyLinkMessage
