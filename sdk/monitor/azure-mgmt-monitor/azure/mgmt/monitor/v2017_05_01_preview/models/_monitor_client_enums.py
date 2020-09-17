@@ -6,41 +6,59 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum
+from enum import Enum, EnumMeta
+from six import with_metaclass
 
-class AggregationType(str, Enum):
+class _CaseInsensitiveEnumMeta(EnumMeta):
+    def __getitem__(self, name):
+        return super().__getitem__(name.upper())
+
+    def __getattr__(cls, name):
+        """Return the enum member matching `name`
+        We use __getattr__ instead of descriptors or inserting into the enum
+        class' __dict__ in order to support `name` and `value` being both
+        properties for enum members (which live in the class' __dict__) and
+        enum members themselves.
+        """
+        try:
+            return cls._member_map_[name.upper()]
+        except KeyError:
+            raise AttributeError(name)
+
+
+class AggregationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """the primary aggregation type value defining how to use the values for display.
     """
 
-    none = "None"
-    average = "Average"
-    count = "Count"
-    minimum = "Minimum"
-    maximum = "Maximum"
-    total = "Total"
+    NONE = "None"
+    AVERAGE = "Average"
+    COUNT = "Count"
+    MINIMUM = "Minimum"
+    MAXIMUM = "Maximum"
+    TOTAL = "Total"
 
-class CategoryType(str, Enum):
+class CategoryType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The type of the diagnostic settings category.
     """
 
-    metrics = "Metrics"
-    logs = "Logs"
+    METRICS = "Metrics"
+    LOGS = "Logs"
 
-class ResultType(str, Enum):
+class ResultType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
-    data = "Data"
-    metadata = "Metadata"
+    DATA = "Data"
+    METADATA = "Metadata"
 
-class Unit(str, Enum):
+class Unit(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """the unit of the metric.
     """
 
-    count = "Count"
-    bytes = "Bytes"
-    seconds = "Seconds"
-    count_per_second = "CountPerSecond"
-    bytes_per_second = "BytesPerSecond"
-    percent = "Percent"
-    milli_seconds = "MilliSeconds"
-    byte_seconds = "ByteSeconds"
-    unspecified = "Unspecified"
+    COUNT = "Count"
+    BYTES = "Bytes"
+    SECONDS = "Seconds"
+    COUNT_PER_SECOND = "CountPerSecond"
+    BYTES_PER_SECOND = "BytesPerSecond"
+    PERCENT = "Percent"
+    MILLI_SECONDS = "MilliSeconds"
+    BYTE_SECONDS = "ByteSeconds"
+    UNSPECIFIED = "Unspecified"

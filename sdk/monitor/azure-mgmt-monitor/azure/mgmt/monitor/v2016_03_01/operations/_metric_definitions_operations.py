@@ -8,7 +8,7 @@
 from typing import TYPE_CHECKING
 import warnings
 
-from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
@@ -57,11 +57,11 @@ class MetricDefinitionsOperations(object):
         :param resource_uri: The identifier of the resource.
         :type resource_uri: str
         :param filter: Reduces the set of data collected by retrieving particular metric definitions
-     from all the definitions available for the resource.:code:`<br>`For example, to get just the
-     definition for the 'CPU percentage' counter: $filter=name.value eq '\Processor(_Total)\%
-     Processor Time'.:code:`<br>`Multiple metrics can be retrieved by joining together *'name eq
-     :code:`<value>`'* clauses separated by *or* logical operators.:code:`<br>`\ **NOTE**\ : No
-     other syntax is allowed.
+         from all the definitions available for the resource.:code:`<br>`For example, to get just the
+         definition for the 'CPU percentage' counter: $filter=name.value eq '\Processor(_Total)\%
+         Processor Time'.:code:`<br>`Multiple metrics can be retrieved by joining together *'name eq
+         :code:`<value>`'* clauses separated by *or* logical operators.:code:`<br>`\ **NOTE**\ : No
+         other syntax is allowed.
         :type filter: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either MetricDefinitionCollection or the result of cls(response)
@@ -69,11 +69,18 @@ class MetricDefinitionsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.MetricDefinitionCollection"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2016-03-01"
+        accept = "application/json"
 
         def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']  # type: ignore
@@ -87,15 +94,11 @@ class MetricDefinitionsOperations(object):
                 if filter is not None:
                     query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
 
+                request = self._client.get(url, query_parameters, header_parameters)
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
+                request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         def extract_data(pipeline_response):
