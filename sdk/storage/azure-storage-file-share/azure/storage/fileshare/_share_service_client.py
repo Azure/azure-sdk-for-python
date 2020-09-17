@@ -170,7 +170,7 @@ class ShareServiceClient(StorageAccountHostsMixin):
             self, hour_metrics=None,  # type: Optional[Metrics]
             minute_metrics=None,  # type: Optional[Metrics]
             cors=None,  # type: Optional[List[CorsRule]]
-            protocol=None,  # type: Optional[ProtocolSettings],
+            protocol_settings=None,  # type: Optional[ProtocolSettings],
             **kwargs
         ):
         # type: (...) -> None
@@ -212,7 +212,7 @@ class ShareServiceClient(StorageAccountHostsMixin):
             hour_metrics=hour_metrics,
             minute_metrics=minute_metrics,
             cors=cors,
-            protocol_settings=protocol
+            protocol_settings=protocol_settings
         )
         try:
             self._client.service.set_properties(storage_service_properties=props, timeout=timeout, **kwargs)

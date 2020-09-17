@@ -82,7 +82,7 @@ class FileServicePropertiesTest(StorageTestCase):
         protocol_properties2 = ProtocolSettings(SmbSettings(SmbMultichannel(enabled=True)))
         # Act
         resp = self.fsc.set_service_properties(
-            hour_metrics=Metrics(), minute_metrics=Metrics(), cors=list(), protocol=protocol_properties1)
+            hour_metrics=Metrics(), minute_metrics=Metrics(), cors=list(), protocol_settings=protocol_properties1)
         # Assert
         self.assertIsNone(resp)
         props = self.fsc.get_service_properties()
@@ -93,7 +93,7 @@ class FileServicePropertiesTest(StorageTestCase):
 
         # Act
         self.fsc.set_service_properties(
-            hour_metrics=Metrics(), minute_metrics=Metrics(), cors=list(), protocol=protocol_properties2)
+            hour_metrics=Metrics(), minute_metrics=Metrics(), cors=list(), protocol_settings=protocol_properties2)
         props = self.fsc.get_service_properties()
         self.assertEqual(props['protocol_settings'].smb_settings.multichannel.enabled, True)
 

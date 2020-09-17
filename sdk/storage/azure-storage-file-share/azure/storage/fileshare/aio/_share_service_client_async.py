@@ -34,7 +34,7 @@ if TYPE_CHECKING:
         ShareProperties,
         Metrics,
         CorsRule,
-        ProtocolProperties,
+        ProtocolSettings,
     )
 
 
@@ -125,7 +125,7 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, ShareServiceClientBase):
             self, hour_metrics=None,  # type: Optional[Metrics]
             minute_metrics=None,  # type: Optional[Metrics]
             cors=None,  # type: Optional[List[CorsRule]]
-            protocol_settings=None,  # type: Optional[ProtocolProperties],
+            protocol_settings=None,  # type: Optional[ProtocolSettings],
             **kwargs
         ):
         # type: (...) -> None
