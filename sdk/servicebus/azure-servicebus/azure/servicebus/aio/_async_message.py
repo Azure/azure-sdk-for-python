@@ -129,7 +129,7 @@ class ReceivedMessage(sync_message.ReceivedMessageBase):
         await self._settle_message(MESSAGE_DEFER)
         self._settled = True
 
-    async def renew_lock(self) -> datetime.datetime:
+    async def renew_lock(self, timeout=None) -> datetime.datetime:
         # pylint: disable=protected-access
         """Renew the message lock.
 
@@ -140,6 +140,7 @@ class ReceivedMessage(sync_message.ReceivedMessageBase):
         background task by registering the message with an `azure.servicebus.aio.AutoLockRenew` instance.
         This operation is only available for non-sessionful messages.
 
+        :param float timeout: The total operation timeout in seconds including all the retries.
         :returns: The utc datetime the lock is set to expire at.
         :rtype: datetime.datetime
         :raises: TypeError if the message is sessionful.
@@ -157,7 +158,7 @@ class ReceivedMessage(sync_message.ReceivedMessageBase):
         if not token:
             raise ValueError("Unable to renew lock - no lock token found.")
 
-        expiry = await self._receiver._renew_locks(token) # type: ignore
+        expiry = await self._receiver._renew_locks(token, timeout=timeout) # type: ignore
         self._expiry = utc_from_timestamp(expiry[MGMT_RESPONSE_MESSAGE_EXPIRATION][0]/1000.0) # type: datetime.datetime
 
         return self._expiry

@@ -4,7 +4,7 @@
 # --------------------------------------------------------------------------------------------
 import logging
 import asyncio
-from typing import Any, TYPE_CHECKING, Union, List
+from typing import Any, TYPE_CHECKING, Union, List, Optional
 
 import uamqp
 from uamqp import SendClientAsync, types
@@ -134,14 +134,15 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         self._set_msg_timeout(timeout, last_exception)
         await self._handler.send_message_async(message.message)
 
-    async def schedule_messages(self, messages, schedule_time_utc):
-        # type: (Union[Message, List[Message]], datetime.datetime) -> List[int]
+    async def schedule_messages(self, messages, schedule_time_utc, timeout=None):
+        # type: (Union[Message, List[Message]], datetime.datetime, Optional[float]) -> List[int]
         """Send Message or multiple Messages to be enqueued at a specific time by the service.
         Returns a list of the sequence numbers of the enqueued messages.
         :param messages: The message or list of messages to schedule.
         :type messages: ~azure.servicebus.Message or list[~azure.servicebus.Message]
         :param schedule_time_utc: The utc date and time to enqueue the messages.
         :type schedule_time_utc: ~datetime.datetime
+        :param float timeout: The total operation timeout in seconds including all the retries.
         :rtype: list[int]
 
         .. admonition:: Example:
@@ -162,16 +163,18 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         return await self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_SCHEDULE_MESSAGE_OPERATION,
             request_body,
-            mgmt_handlers.schedule_op
+            mgmt_handlers.schedule_op,
+            timeout=timeout
         )
 
-    async def cancel_scheduled_messages(self, sequence_numbers):
-        # type: (Union[int, List[int]]) -> None
+    async def cancel_scheduled_messages(self, sequence_numbers, timeout=None):
+        # type: (Union[int, List[int]], Optional[float]) -> None
         """
         Cancel one or more messages that have previously been scheduled and are still pending.
 
         :param sequence_numbers: The sequence numbers of the scheduled messages.
         :type sequence_numbers: int or list[int]
+        :param float timeout: The total operation timeout in seconds including all the retries.
         :rtype: None
         :raises: ~azure.servicebus.exceptions.ServiceBusError if messages cancellation failed due to message already
          cancelled or enqueued.
@@ -194,7 +197,8 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         return await self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_CANCEL_SCHEDULED_MESSAGE_OPERATION,
             request_body,
-            mgmt_handlers.default
+            mgmt_handlers.default,
+            timeout=timeout
         )
 
     @classmethod
@@ -237,8 +241,8 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         )
         return cls(**constructor_args)
 
-    async def send_messages(self, message):
-        # type: (Union[Message, BatchMessage, List[Message]]) -> None
+    async def send_messages(self, message, timeout=None):
+        # type: (Union[Message, BatchMessage, List[Message]], Optional[float]) -> None
         """Sends message and blocks until acknowledgement is received or operation times out.
 
         If a list of messages was provided, attempts to send them as a single batch, throwing a
@@ -246,6 +250,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
 
         :param message: The ServiceBus message to be sent.
         :type message: ~azure.servicebus.Message or ~azure.servicebus.BatchMessage or list[~azure.servicebus.Message]
+        :param float timeout: The total operation timeout in seconds including all the retries.
         :rtype: None
         :raises:
                 :class: ~azure.servicebus.exceptions.OperationTimeoutError if sending times out.
@@ -281,6 +286,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         await self._do_retryable_operation(
             self._send,
             message=message,
+            timeout=timeout,
             require_timeout=True,
             require_last_exception=True
         )

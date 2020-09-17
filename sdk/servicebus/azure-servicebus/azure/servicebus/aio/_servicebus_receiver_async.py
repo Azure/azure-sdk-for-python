@@ -14,6 +14,7 @@ from uamqp import ReceiveClientAsync, types, Message
 from uamqp.constants import SenderSettleMode
 
 from ._base_handler_async import BaseHandler
+from .._common.message import PeekedMessage
 from ._async_message import ReceivedMessage
 from .._common.receiver_mixins import ReceiverMixin
 from .._common.constants import (
@@ -208,12 +209,10 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             await self.close()
             raise
 
-
     async def close(self):
         # type: () -> None
         await super(ServiceBusReceiver, self).close()
         self._message_iter = None
-
 
     async def _receive(self, max_message_count=None, timeout=None):
         # type: (Optional[int], Optional[float]) -> List[ReceivedMessage]
@@ -274,12 +273,14 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             mgmt_handlers.default
         )
 
-    async def _renew_locks(self, *lock_tokens):
+    async def _renew_locks(self, *lock_tokens, timeout=None):
+        # type: (str, Optional[float]) -> Any
         message = {MGMT_REQUEST_LOCK_TOKENS: types.AMQPArray(lock_tokens)}
         return await self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_RENEWLOCK_OPERATION,
             message,
-            mgmt_handlers.lock_renew_op
+            mgmt_handlers.lock_renew_op,
+            timeout=timeout
         )
 
     def get_streaming_message_iter(self, max_wait_time: float = None) -> AsyncIterator[ReceivedMessage]:
@@ -409,8 +410,8 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             require_timeout=True
         )
 
-    async def receive_deferred_messages(self, sequence_numbers):
-        # type: (Union[int, List[int]]) -> List[ReceivedMessage]
+    async def receive_deferred_messages(self, sequence_numbers, timeout=None):
+        # type: (Union[int, List[int]], Optional[float]) -> List[ReceivedMessage]
         """Receive messages that have previously been deferred.
 
         When receiving deferred messages from a partitioned entity, all of the supplied
@@ -418,6 +419,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
 
         :param Union[int, list[int]] sequence_numbers: A list of the sequence numbers of messages that have been
          deferred.
+        :param float timeout: The total operation timeout in seconds including all the retries.
         :rtype: list[~azure.servicebus.aio.ReceivedMessage]
 
         .. admonition:: Example:
@@ -454,11 +456,13 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         messages = await self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_RECEIVE_BY_SEQUENCE_NUMBER,
             message,
-            handler
+            handler,
+            timeout=timeout
         )
         return messages
 
-    async def peek_messages(self, max_message_count=1, sequence_number=0):
+    async def peek_messages(self, max_message_count=1, sequence_number=0, timeout=None):
+        # type: (int, int, Optional[float]) -> List[PeekedMessage]
         """Browse messages currently pending in the queue.
 
         Peeked messages are not removed from queue, nor are they locked. They cannot be completed,
@@ -467,6 +471,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         :param int max_message_count: The maximum number of messages to try and peek. The default
          value is 1.
         :param int sequence_number: A message sequence number from which to start browsing messages.
+        :param float timeout: The total operation timeout in seconds including all the retries.
         :rtype: list[~azure.servicebus.PeekedMessage]
 
         .. admonition:: Example:
@@ -498,5 +503,6 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         return await self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_PEEK_OPERATION,
             message,
-            mgmt_handlers.peek_op
+            mgmt_handlers.peek_op,
+            timeout=timeout
         )

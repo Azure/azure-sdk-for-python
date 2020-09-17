@@ -2,6 +2,14 @@
 
 ## 7.0.0b7 (Unreleased)
 
+**New Features**
+
+* Added support for timeout on operations:
+  - `ServiceBusSender`: `send_messages`, `schedule_messages` and `cancel_scheduled_messages`
+  - `ServiceBusReceiver`: `receive_deferred_messages` and `peek_messages`
+  - `ServiceBusSession`: `get_state`, `set_state` and `renew_lock`
+  - `ReceivedMessage`: `renew_lock`
+
 
 ## 7.0.0b6 (2020-09-10)
 

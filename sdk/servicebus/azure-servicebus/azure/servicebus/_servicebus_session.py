@@ -97,8 +97,7 @@ class ServiceBusSession(BaseSession):
 
         Returns None if no state has been set.
 
-        :keyword float timeout: The operation timeout in seconds. If not specified, the timeout value in the client
-         setting would be used which by default is 60s.
+        :keyword float timeout: The total operation timeout in seconds including all the retries.
         :rtype: str
 
         .. admonition:: Example:
@@ -111,7 +110,7 @@ class ServiceBusSession(BaseSession):
                 :caption: Get the session state
         """
         self._check_live()
-        timeout = kwargs.pop("timeout", None) or self._receiver._config.timeout
+        timeout = kwargs.pop("timeout", None)
         response = self._receiver._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_GET_SESSION_STATE_OPERATION,
             {MGMT_REQUEST_SESSION_ID: self._id},
@@ -130,8 +129,7 @@ class ServiceBusSession(BaseSession):
 
         :param state: The state value.
         :type state: Union[str, bytes, bytearray]
-        :keyword float timeout: The operation timeout in seconds. If not specified, the timeout value in the client
-         setting would be used which by default is 60s.
+        :keyword float timeout: The total operation timeout in seconds including all the retries.
 
         .. admonition:: Example:
 
@@ -143,7 +141,7 @@ class ServiceBusSession(BaseSession):
                 :caption: Set the session state
         """
         self._check_live()
-        timeout = kwargs.pop("timeout", None) or self._receiver._config.timeout
+        timeout = kwargs.pop("timeout", None)
         state = state.encode(self._encoding) if isinstance(state, six.text_type) else state
         return self._receiver._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_SET_SESSION_STATE_OPERATION,
@@ -165,8 +163,7 @@ class ServiceBusSession(BaseSession):
         This operation can also be performed as a threaded background task by registering the session
         with an `azure.servicebus.AutoLockRenew` instance.
 
-        :keyword float timeout: The operation timeout in seconds. If not specified, the timeout value in the client
-         setting would be used which by default is 60s.
+        :keyword float timeout: The total operation timeout in seconds including all the retries.
         :returns: The utc datetime the lock is set to expire at.
         :rtype: datetime.datetime
 
@@ -180,7 +177,7 @@ class ServiceBusSession(BaseSession):
                 :caption: Renew the session lock before it expires
         """
         self._check_live()
-        timeout = kwargs.pop("timeout", None) or self._receiver._config.timeout
+        timeout = kwargs.pop("timeout", None)
         expiry = self._receiver._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_RENEW_SESSION_LOCK_OPERATION,
             {MGMT_REQUEST_SESSION_ID: self._id},

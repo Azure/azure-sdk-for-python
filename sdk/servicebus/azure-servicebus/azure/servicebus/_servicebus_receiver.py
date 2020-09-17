@@ -272,7 +272,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         )
 
     def _renew_locks(self, *lock_tokens, timeout=None):
-        # type: (str, Any) -> Any
+        # type: (str, Optional[float]) -> Any
         message = {MGMT_REQUEST_LOCK_TOKENS: types.AMQPArray(lock_tokens)}
         return self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_RENEWLOCK_OPERATION,
@@ -426,8 +426,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
 
         :param Union[int,List[int]] sequence_numbers: A list of the sequence numbers of messages that have been
          deferred.
-        :keyword float timeout: The operation timeout in seconds. If not specified, the timeout value in the client
-         setting would be used which by default is 60s.
+        :keyword float timeout: The total operation timeout in seconds including all the retries.
         :rtype: List[~azure.servicebus.ReceivedMessage]
 
         .. admonition:: Example:
@@ -441,7 +440,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
 
         """
         self._check_live()
-        timeout = kwargs.pop("timeout", None) or self._config.timeout
+        timeout = kwargs.pop("timeout", None)
         if isinstance(sequence_numbers, six.integer_types):
             sequence_numbers = [sequence_numbers]
         if not sequence_numbers:
@@ -477,8 +476,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         :param int max_message_count: The maximum number of messages to try and peek. The default
          value is 1.
         :param int sequence_number: A message sequence number from which to start browsing messages.
-        :keyword float timeout: The operation timeout in seconds. If not specified, the timeout value in the client
-         setting would be used which by default is 60s.
+        :keyword float timeout: The total operation timeout in seconds including all the retries.
 
         :rtype: List[~azure.servicebus.PeekedMessage]
 
@@ -493,7 +491,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
 
         """
         self._check_live()
-        timeout = kwargs.pop("timeout", None) or self._config.timeout
+        timeout = kwargs.pop("timeout", None)
         if not sequence_number:
             sequence_number = self._last_received_sequenced_number or 1
         if int(max_message_count) < 1:

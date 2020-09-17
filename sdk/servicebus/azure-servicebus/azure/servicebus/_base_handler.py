@@ -233,14 +233,14 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         self,
         retried_times,
         last_exception,
-        abs_timeout=None,
+        abs_timeout_time=None,
         entity_name=None
     ):
         # type: (int, Exception, Optional[float], str) -> None
         entity_name = entity_name or self._container_id
         backoff = self._config.retry_backoff_factor * 2 ** retried_times
         if backoff <= self._config.retry_backoff_max and (
-            abs_timeout is None or (backoff + time.time()) <= abs_timeout
+            abs_timeout_time is None or (backoff + time.time()) <= abs_timeout_time
         ):  # pylint:disable=no-else-return
             time.sleep(backoff)
             _LOGGER.info(
@@ -263,12 +263,12 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         retried_times = 0
         max_retries = self._config.retry_total
 
-        abs_timeout = (time.time() + timeout) if (require_timeout and timeout) else None
+        abs_timeout_time = (time.time() + timeout) if (require_timeout and timeout) else None
 
         while retried_times <= max_retries:
             try:
-                if require_timeout and abs_timeout:
-                    remaining_timeout = abs_timeout - time.time()
+                if require_timeout and abs_timeout_time:
+                    remaining_timeout = abs_timeout_time - time.time()
                     kwargs["timeout"] = remaining_timeout
                 return operation(**kwargs)
             except StopIteration:
@@ -288,7 +288,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
                 self._backoff(
                     retried_times=retried_times,
                     last_exception=last_exception,
-                    abs_timeout=abs_timeout
+                    abs_timeout_time=abs_timeout_time
                 )
 
     def _mgmt_request_response(
@@ -337,7 +337,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         mgmt_operation,
         message,
         callback,
-        timeout=None,
+        timeout=5,
         **kwargs
     ):
         # type: (bytes, Dict[str, Any], Callable, float, Any) -> Any

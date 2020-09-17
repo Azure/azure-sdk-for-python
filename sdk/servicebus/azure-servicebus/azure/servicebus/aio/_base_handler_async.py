@@ -5,7 +5,8 @@
 import logging
 import asyncio
 import uuid
-from typing import TYPE_CHECKING, Any
+import time
+from typing import TYPE_CHECKING, Any, Callable, Optional
 
 import uamqp
 from uamqp.message import MessageProperties
@@ -124,13 +125,13 @@ class BaseHandler:
             self,
             retried_times,
             last_exception,
-            timeout=None,
+            abs_timeout_time=None,
             entity_name=None
     ):
         entity_name = entity_name or self._container_id
         backoff = self._config.retry_backoff_factor * 2 ** retried_times
         if backoff <= self._config.retry_backoff_max and (
-                timeout is None or backoff <= timeout
+                abs_timeout_time is None or (backoff + time.time()) <= abs_timeout_time
         ):
             await asyncio.sleep(backoff)
             _LOGGER.info(
@@ -147,30 +148,34 @@ class BaseHandler:
             raise last_exception
 
     async def _do_retryable_operation(self, operation, timeout=None, **kwargs):
+        # type: (Callable, Optional[float], Any) -> Any
         require_last_exception = kwargs.pop("require_last_exception", False)
         require_timeout = kwargs.pop("require_timeout", False)
         retried_times = 0
         last_exception = None
         max_retries = self._config.retry_total
 
+        abs_timeout_time = (time.time() + timeout) if (require_timeout and timeout) else None
+
         while retried_times <= max_retries:
             try:
-                if require_last_exception:
-                    kwargs["last_exception"] = last_exception
                 if require_timeout:
-                    kwargs["timeout"] = timeout
+                    remaining_timeout = abs_timeout_time - time.time()
+                    kwargs["timeout"] = remaining_timeout
                 return await operation(**kwargs)
             except StopAsyncIteration:
                 raise
             except Exception as exception:  # pylint: disable=broad-except
                 last_exception = await self._handle_exception(exception)
+                if require_last_exception:
+                    kwargs["last_exception"] = last_exception
                 retried_times += 1
                 if retried_times > max_retries:
                     break
                 await self._backoff(
                     retried_times=retried_times,
                     last_exception=last_exception,
-                    timeout=timeout
+                    abs_timeout_time=abs_timeout_time
                 )
 
         _LOGGER.info(
@@ -211,12 +216,14 @@ class BaseHandler:
         except Exception as exp:  # pylint: disable=broad-except
             raise ServiceBusError("Management request failed: {}".format(exp), exp)
 
-    async def _mgmt_request_response_with_retry(self, mgmt_operation, message, callback, **kwargs):
+    async def _mgmt_request_response_with_retry(self, mgmt_operation, message, callback, timeout=5, **kwargs):
         return await self._do_retryable_operation(
             self._mgmt_request_response,
             mgmt_operation=mgmt_operation,
             message=message,
             callback=callback,
+            timeout=timeout,
+            require_timeout=True,
             **kwargs
         )
 

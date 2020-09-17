@@ -1059,8 +1059,7 @@ class ReceivedMessage(ReceivedMessageBase):
         Lock renewal can be performed as a background task by registering the message with an
         `azure.servicebus.AutoLockRenew` instance.
 
-        :keyword float timeout: The operation timeout in seconds. If not specified, the timeout value in the client
-         setting would be used which by default is 60s.
+        :keyword float timeout: The total operation timeout in seconds including all the retries.
         :returns: The utc datetime the lock is set to expire at.
         :rtype: datetime.datetime
         :raises: TypeError if the message is sessionful.
@@ -1077,7 +1076,7 @@ class ReceivedMessage(ReceivedMessageBase):
         if not token:
             raise ValueError("Unable to renew lock - no lock token found.")
 
-        timeout = kwargs.pop("timeout", None) or self._receiver._config.timeout
+        timeout = kwargs.pop("timeout", None)
         expiry = self._receiver._renew_locks(token, timeout=timeout)  # type: ignore
         self._expiry = utc_from_timestamp(expiry[MGMT_RESPONSE_MESSAGE_EXPIRATION][0]/1000.0)  # type: datetime.datetime
 
