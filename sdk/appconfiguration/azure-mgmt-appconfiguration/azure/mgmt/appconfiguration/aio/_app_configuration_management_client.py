@@ -15,11 +15,11 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
-from ._configuration_async import AppConfigurationManagementClientConfiguration
-from .operations_async import ConfigurationStoresOperations
-from .operations_async import Operations
-from .operations_async import PrivateEndpointConnectionsOperations
-from .operations_async import PrivateLinkResourcesOperations
+from ._configuration import AppConfigurationManagementClientConfiguration
+from .operations import ConfigurationStoresOperations
+from .operations import Operations
+from .operations import PrivateEndpointConnectionsOperations
+from .operations import PrivateLinkResourcesOperations
 from .. import models
 
 
@@ -27,13 +27,13 @@ class AppConfigurationManagementClient(object):
     """AppConfigurationManagementClient.
 
     :ivar configuration_stores: ConfigurationStoresOperations operations
-    :vartype configuration_stores: app_configuration_management_client.aio.operations_async.ConfigurationStoresOperations
+    :vartype configuration_stores: app_configuration_management_client.aio.operations.ConfigurationStoresOperations
     :ivar operations: Operations operations
-    :vartype operations: app_configuration_management_client.aio.operations_async.Operations
+    :vartype operations: app_configuration_management_client.aio.operations.Operations
     :ivar private_endpoint_connections: PrivateEndpointConnectionsOperations operations
-    :vartype private_endpoint_connections: app_configuration_management_client.aio.operations_async.PrivateEndpointConnectionsOperations
+    :vartype private_endpoint_connections: app_configuration_management_client.aio.operations.PrivateEndpointConnectionsOperations
     :ivar private_link_resources: PrivateLinkResourcesOperations operations
-    :vartype private_link_resources: app_configuration_management_client.aio.operations_async.PrivateLinkResourcesOperations
+    :vartype private_link_resources: app_configuration_management_client.aio.operations.PrivateLinkResourcesOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The Microsoft Azure subscription ID.
@@ -56,6 +56,7 @@ class AppConfigurationManagementClient(object):
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
+        self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
 
         self.configuration_stores = ConfigurationStoresOperations(
