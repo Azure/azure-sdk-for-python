@@ -1,5 +1,11 @@
 # Release History
 
+## 1.0.0 (2020-09-15)
+
+**Features**
+
+  - Model ConfigurationStoreUpdateParameters has a new parameter public_network_access
+
 ## 1.0.0b1 (2020-06-17)
 
 This is beta preview version.
