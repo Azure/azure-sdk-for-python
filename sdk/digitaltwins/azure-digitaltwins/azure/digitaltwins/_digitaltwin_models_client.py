@@ -63,9 +63,9 @@ class DigitalTwinModelsClient(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.digitaltwins.models.PagedModelDataCollection]
         :raises :class: `~azure.core.exceptions.HttpResponseError`
         """
+        digital_twin_models_list_options = {'max_item_count': -1}
         if max_item_count != -1:
-            digital_twin_models_list_options = {}
-            digital_twin_models_list_options.max_item_count = max_item_count
+            digital_twin_models_list_options= {'max_item_count': max_item_count}
         return self._client.digital_twin_models.list(
             dependencies_for=dependencies_for,
             include_model_definition=include_model_definition,

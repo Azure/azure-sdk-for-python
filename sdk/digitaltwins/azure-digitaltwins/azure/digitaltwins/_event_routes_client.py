@@ -54,9 +54,9 @@ class EventRoutesClient(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.digitaltwins.models.EventRouteCollection]
         :raises :class: `~azure.core.exceptions.HttpResponseError`
         """
+        digital_twin_models_list_options = {'max_item_count': -1}
         if max_item_count != -1:
-            digital_twin_models_list_options = {}
-            digital_twin_models_list_options.max_item_count = max_item_count
+            digital_twin_models_list_options= {'max_item_count': max_item_count}
 
         return self._client.event_routes.list(digital_twin_models_list_options, **kwargs)
 

@@ -56,7 +56,7 @@ setup(
     license="MIT License",
     author="Microsoft Corporation",
     author_email="azuredigitaltwins@microsoft.com",
-    url="https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/digitaltwins/digitaltwins",
+    url="https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/digitaltwins/azure-digitaltwins",
     classifiers=[
         "Development Status :: 4 - Beta",
         "Programming Language :: Python",
