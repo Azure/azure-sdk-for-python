@@ -47,6 +47,7 @@ class QueryTest(unittest.TestCase):
         iter_list = list(query_iterable)
         self.assertEqual(iter_list[0]['id'], 'myId')
 
+
     def test_query_change_feed(self):
         created_collection = self.config.create_multi_partition_collection_with_custom_pk_if_not_exist(self.client)
         # The test targets partition #3
