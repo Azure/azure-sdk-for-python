@@ -49,7 +49,7 @@ class TaskRunsOperations(object):
         :type resource_group_name: str
         :param registry_name: The name of the container registry.
         :type registry_name: str
-        :param task_run_name: The run request name.
+        :param task_run_name: The name of the task run.
         :type task_run_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -69,7 +69,7 @@ class TaskRunsOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
             'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
-            'taskRunName': self._serialize.url("task_run_name", task_run_name, 'str')
+            'taskRunName': self._serialize.url("task_run_name", task_run_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9-]*$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -114,7 +114,7 @@ class TaskRunsOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
             'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
-            'taskRunName': self._serialize.url("task_run_name", task_run_name, 'str')
+            'taskRunName': self._serialize.url("task_run_name", task_run_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9-]*$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -166,7 +166,7 @@ class TaskRunsOperations(object):
         :type resource_group_name: str
         :param registry_name: The name of the container registry.
         :type registry_name: str
-        :param task_run_name: The name of task run.
+        :param task_run_name: The name of the task run.
         :type task_run_name: str
         :param task_run: The parameters of a run that needs to scheduled.
         :type task_run:
@@ -222,7 +222,7 @@ class TaskRunsOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
             'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
-            'taskRunName': self._serialize.url("task_run_name", task_run_name, 'str')
+            'taskRunName': self._serialize.url("task_run_name", task_run_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9-]*$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -259,7 +259,7 @@ class TaskRunsOperations(object):
         :type resource_group_name: str
         :param registry_name: The name of the container registry.
         :type registry_name: str
-        :param task_run_name: The task run name.
+        :param task_run_name: The name of the task run.
         :type task_run_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
@@ -305,7 +305,7 @@ class TaskRunsOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
             'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
-            'taskRunName': self._serialize.url("task_run_name", task_run_name, 'str')
+            'taskRunName': self._serialize.url("task_run_name", task_run_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9-]*$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -356,7 +356,7 @@ class TaskRunsOperations(object):
         :type resource_group_name: str
         :param registry_name: The name of the container registry.
         :type registry_name: str
-        :param task_run_name: The task run name.
+        :param task_run_name: The name of the task run.
         :type task_run_name: str
         :param update_parameters: The parameters for updating a task run.
         :type update_parameters:
@@ -413,7 +413,7 @@ class TaskRunsOperations(object):
         :type resource_group_name: str
         :param registry_name: The name of the container registry.
         :type registry_name: str
-        :param task_run_name: The run request name.
+        :param task_run_name: The name of the task run.
         :type task_run_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -433,7 +433,7 @@ class TaskRunsOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
             'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
-            'taskRunName': self._serialize.url("task_run_name", task_run_name, 'str')
+            'taskRunName': self._serialize.url("task_run_name", task_run_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9-]*$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 

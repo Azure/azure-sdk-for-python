@@ -14,15 +14,15 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.6.3
-        azure-mgmt-containerregistry/3.0.0rc13 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-containerregistry/3.0.0rc15 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2018_02_01_preview_test_replication12ea1863/providers/Microsoft.ContainerRegistry/registries/pyacr12ea1863?api-version=2017-10-01
   response:
     body:
-      string: '{"sku":{"name":"Premium","tier":"Premium"},"type":"Microsoft.ContainerRegistry/registries","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2018_02_01_preview_test_replication12ea1863/providers/Microsoft.ContainerRegistry/registries/pyacr12ea1863","name":"pyacr12ea1863","location":"eastus","tags":{},"properties":{"loginServer":"pyacr12ea1863.azurecr.io","creationDate":"2020-05-15T13:03:22.3983566Z","provisioningState":"Succeeded","adminUserEnabled":false,"networkRuleSet":{"defaultAction":"Allow","virtualNetworkRules":[],"ipRules":[]}}}'
+      string: '{"sku":{"name":"Premium","tier":"Premium"},"type":"Microsoft.ContainerRegistry/registries","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2018_02_01_preview_test_replication12ea1863/providers/Microsoft.ContainerRegistry/registries/pyacr12ea1863","name":"pyacr12ea1863","location":"eastus","tags":{},"properties":{"loginServer":"pyacr12ea1863.azurecr.io","creationDate":"2020-09-17T06:19:06.6927861Z","provisioningState":"Succeeded","adminUserEnabled":false,"networkRuleSet":{"defaultAction":"Allow","virtualNetworkRules":[],"ipRules":[]}}}'
     headers:
       cache-control:
       - no-cache
@@ -31,7 +31,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 15 May 2020 13:03:24 GMT
+      - Thu, 17 Sep 2020 06:19:10 GMT
       expires:
       - '-1'
       pragma:
@@ -47,7 +47,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1199'
+      - '1195'
     status:
       code: 200
       message: OK
@@ -65,18 +65,18 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.6.3
-        azure-mgmt-containerregistry/3.0.0rc13 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-containerregistry/3.0.0rc15 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2018_02_01_preview_test_replication12ea1863/providers/Microsoft.ContainerRegistry/registries/pyacr12ea1863/replications/southcentralus?api-version=2017-10-01
   response:
     body:
-      string: '{"type":"Microsoft.ContainerRegistry/registries/replications","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2018_02_01_preview_test_replication12ea1863/providers/Microsoft.ContainerRegistry/registries/pyacr12ea1863/replications/southcentralus","name":"southcentralus","location":"southcentralus","tags":{},"properties":{"provisioningState":"Creating","status":{"timestamp":"2020-05-15T13:03:28.7248364Z"}}}'
+      string: '{"type":"Microsoft.ContainerRegistry/registries/replications","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2018_02_01_preview_test_replication12ea1863/providers/Microsoft.ContainerRegistry/registries/pyacr12ea1863/replications/southcentralus","name":"southcentralus","location":"southcentralus","tags":{},"properties":{"provisioningState":"Creating","status":{"timestamp":"2020-09-17T06:19:16.8110459Z"}}}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2018_02_01_preview_test_replication12ea1863/providers/Microsoft.ContainerRegistry/registries/pyacr12ea1863/replications/southcentralus/operationStatuses/replications-76273632-96ac-11ea-a286-70bc107fb78d?api-version=2017-10-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2018_02_01_preview_test_replication12ea1863/providers/Microsoft.ContainerRegistry/registries/pyacr12ea1863/replications/southcentralus/operationStatuses/replications-b3af7fe4-f8ad-11ea-b58e-0242ac110003?api-version=2017-10-01
       cache-control:
       - no-cache
       content-length:
@@ -84,7 +84,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 15 May 2020 13:03:30 GMT
+      - Thu, 17 Sep 2020 06:19:18 GMT
       expires:
       - '-1'
       pragma:
@@ -96,7 +96,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1198'
+      - '1194'
     status:
       code: 201
       message: Created
@@ -110,16 +110,16 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.6.3
-        azure-mgmt-containerregistry/3.0.0rc13 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-containerregistry/3.0.0rc15 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2018_02_01_preview_test_replication12ea1863/providers/Microsoft.ContainerRegistry/registries/pyacr12ea1863/replications/southcentralus/operationStatuses/replications-76273632-96ac-11ea-a286-70bc107fb78d?api-version=2017-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2018_02_01_preview_test_replication12ea1863/providers/Microsoft.ContainerRegistry/registries/pyacr12ea1863/replications/southcentralus/operationStatuses/replications-b3af7fe4-f8ad-11ea-b58e-0242ac110003?api-version=2017-10-01
   response:
     body:
       string: '{"status":"Succeeded"}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2018_02_01_preview_test_replication12ea1863/providers/Microsoft.ContainerRegistry/registries/pyacr12ea1863/replications/southcentralus/operationStatuses/replications-76273632-96ac-11ea-a286-70bc107fb78d?api-version=2017-10-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2018_02_01_preview_test_replication12ea1863/providers/Microsoft.ContainerRegistry/registries/pyacr12ea1863/replications/southcentralus/operationStatuses/replications-b3af7fe4-f8ad-11ea-b58e-0242ac110003?api-version=2017-10-01
       cache-control:
       - no-cache
       content-length:
@@ -127,7 +127,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 15 May 2020 13:03:41 GMT
+      - Thu, 17 Sep 2020 06:19:29 GMT
       expires:
       - '-1'
       pragma:
@@ -155,13 +155,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.6.3
-        azure-mgmt-containerregistry/3.0.0rc13 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-containerregistry/3.0.0rc15 Azure-SDK-For-Python
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2018_02_01_preview_test_replication12ea1863/providers/Microsoft.ContainerRegistry/registries/pyacr12ea1863/replications/southcentralus?api-version=2017-10-01
   response:
     body:
-      string: '{"type":"Microsoft.ContainerRegistry/registries/replications","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2018_02_01_preview_test_replication12ea1863/providers/Microsoft.ContainerRegistry/registries/pyacr12ea1863/replications/southcentralus","name":"southcentralus","location":"southcentralus","tags":{},"properties":{"provisioningState":"Succeeded","status":{"displayStatus":"Ready","timestamp":"2020-05-15T13:03:42.0831154Z"}}}'
+      string: '{"type":"Microsoft.ContainerRegistry/registries/replications","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2018_02_01_preview_test_replication12ea1863/providers/Microsoft.ContainerRegistry/registries/pyacr12ea1863/replications/southcentralus","name":"southcentralus","location":"southcentralus","tags":{},"properties":{"provisioningState":"Succeeded","status":{"displayStatus":"Ready","timestamp":"2020-09-17T06:19:28.1749215Z"}}}'
     headers:
       cache-control:
       - no-cache
@@ -170,7 +170,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 15 May 2020 13:03:41 GMT
+      - Thu, 17 Sep 2020 06:19:29 GMT
       expires:
       - '-1'
       pragma:
@@ -198,15 +198,15 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.6.3
-        azure-mgmt-containerregistry/3.0.0rc13 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-containerregistry/3.0.0rc15 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2018_02_01_preview_test_replication12ea1863/providers/Microsoft.ContainerRegistry/registries/pyacr12ea1863/replications?api-version=2017-10-01
   response:
     body:
-      string: '{"value":[{"type":"Microsoft.ContainerRegistry/registries/replications","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2018_02_01_preview_test_replication12ea1863/providers/Microsoft.ContainerRegistry/registries/pyacr12ea1863/replications/southcentralus","name":"southcentralus","location":"southcentralus","tags":{},"properties":{"provisioningState":"Succeeded","status":{"displayStatus":"Ready","timestamp":"2020-05-15T13:03:42.0831154Z"}}},{"type":"Microsoft.ContainerRegistry/registries/replications","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2018_02_01_preview_test_replication12ea1863/providers/Microsoft.ContainerRegistry/registries/pyacr12ea1863/replications/eastus","name":"eastus","location":"eastus","tags":{},"properties":{"provisioningState":"Succeeded","status":{"displayStatus":"Ready","timestamp":"2020-05-15T13:03:32.6211908Z"}}}]}'
+      string: '{"value":[{"type":"Microsoft.ContainerRegistry/registries/replications","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2018_02_01_preview_test_replication12ea1863/providers/Microsoft.ContainerRegistry/registries/pyacr12ea1863/replications/southcentralus","name":"southcentralus","location":"southcentralus","tags":{},"properties":{"provisioningState":"Succeeded","status":{"displayStatus":"Ready","timestamp":"2020-09-17T06:19:28.1749215Z"}}},{"type":"Microsoft.ContainerRegistry/registries/replications","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2018_02_01_preview_test_replication12ea1863/providers/Microsoft.ContainerRegistry/registries/pyacr12ea1863/replications/eastus","name":"eastus","location":"eastus","tags":{},"properties":{"provisioningState":"Succeeded","status":{"displayStatus":"Ready","timestamp":"2020-09-17T06:19:20.7500212Z"}}}]}'
     headers:
       cache-control:
       - no-cache
@@ -215,7 +215,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 15 May 2020 13:03:42 GMT
+      - Thu, 17 Sep 2020 06:19:30 GMT
       expires:
       - '-1'
       pragma:
@@ -247,15 +247,15 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.6.3
-        azure-mgmt-containerregistry/3.0.0rc13 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-containerregistry/3.0.0rc15 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PATCH
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2018_02_01_preview_test_replication12ea1863/providers/Microsoft.ContainerRegistry/registries/pyacr12ea1863/replications/southcentralus?api-version=2017-10-01
   response:
     body:
-      string: '{"type":"Microsoft.ContainerRegistry/registries/replications","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2018_02_01_preview_test_replication12ea1863/providers/Microsoft.ContainerRegistry/registries/pyacr12ea1863/replications/southcentralus","name":"southcentralus","location":"southcentralus","tags":{"key":"value"},"properties":{"provisioningState":"Succeeded","status":{"displayStatus":"Ready","timestamp":"2020-05-15T13:03:42.0831154Z"}}}'
+      string: '{"type":"Microsoft.ContainerRegistry/registries/replications","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2018_02_01_preview_test_replication12ea1863/providers/Microsoft.ContainerRegistry/registries/pyacr12ea1863/replications/southcentralus","name":"southcentralus","location":"southcentralus","tags":{"key":"value"},"properties":{"provisioningState":"Succeeded","status":{"displayStatus":"Ready","timestamp":"2020-09-17T06:19:28.1749215Z"}}}'
     headers:
       cache-control:
       - no-cache
@@ -264,7 +264,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 15 May 2020 13:03:44 GMT
+      - Thu, 17 Sep 2020 06:19:32 GMT
       expires:
       - '-1'
       pragma:
@@ -280,7 +280,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1197'
+      - '1193'
     status:
       code: 200
       message: OK
@@ -294,15 +294,15 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.6.3
-        azure-mgmt-containerregistry/3.0.0rc13 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-containerregistry/3.0.0rc15 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2018_02_01_preview_test_replication12ea1863/providers/Microsoft.ContainerRegistry/registries/pyacr12ea1863/replications/southcentralus?api-version=2017-10-01
   response:
     body:
-      string: '{"type":"Microsoft.ContainerRegistry/registries/replications","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2018_02_01_preview_test_replication12ea1863/providers/Microsoft.ContainerRegistry/registries/pyacr12ea1863/replications/southcentralus","name":"southcentralus","location":"southcentralus","tags":{"key":"value"},"properties":{"provisioningState":"Succeeded","status":{"displayStatus":"Ready","timestamp":"2020-05-15T13:03:42.0831154Z"}}}'
+      string: '{"type":"Microsoft.ContainerRegistry/registries/replications","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2018_02_01_preview_test_replication12ea1863/providers/Microsoft.ContainerRegistry/registries/pyacr12ea1863/replications/southcentralus","name":"southcentralus","location":"southcentralus","tags":{"key":"value"},"properties":{"provisioningState":"Succeeded","status":{"displayStatus":"Ready","timestamp":"2020-09-17T06:19:28.1749215Z"}}}'
     headers:
       cache-control:
       - no-cache
@@ -311,7 +311,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 15 May 2020 13:03:44 GMT
+      - Thu, 17 Sep 2020 06:19:33 GMT
       expires:
       - '-1'
       pragma:
@@ -341,8 +341,8 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.6.3
-        azure-mgmt-containerregistry/3.0.0rc13 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-containerregistry/3.0.0rc15 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: DELETE
@@ -358,11 +358,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 15 May 2020 13:03:45 GMT
+      - Thu, 17 Sep 2020 06:19:34 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerRegistry/locations/southcentralus/operationResults/replications-8235ea15-96ac-11ea-a5ba-70bc107fb78d?api-version=2017-10-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerRegistry/locations/southcentralus/operationResults/replications-c110e6f0-f8ad-11ea-b58e-0242ac110003?api-version=2017-10-01
       pragma:
       - no-cache
       server:
@@ -372,7 +372,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14999'
+      - '14996'
     status:
       code: 202
       message: Accepted
@@ -386,256 +386,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.6.3
-        azure-mgmt-containerregistry/3.0.0rc13 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-containerregistry/3.0.0rc15 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerRegistry/locations/southcentralus/operationResults/replications-8235ea15-96ac-11ea-a5ba-70bc107fb78d?api-version=2017-10-01
-  response:
-    body:
-      string: 'null'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '4'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Fri, 15 May 2020 13:03:56 GMT
-      expires:
-      - '-1'
-      location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerRegistry/locations/southcentralus/operationResults/replications-8235ea15-96ac-11ea-a5ba-70bc107fb78d?api-version=2017-10-01
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 202
-      message: Accepted
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.6.3
-        azure-mgmt-containerregistry/3.0.0rc13 Azure-SDK-For-Python
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerRegistry/locations/southcentralus/operationResults/replications-8235ea15-96ac-11ea-a5ba-70bc107fb78d?api-version=2017-10-01
-  response:
-    body:
-      string: 'null'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '4'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Fri, 15 May 2020 13:04:06 GMT
-      expires:
-      - '-1'
-      location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerRegistry/locations/southcentralus/operationResults/replications-8235ea15-96ac-11ea-a5ba-70bc107fb78d?api-version=2017-10-01
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 202
-      message: Accepted
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.6.3
-        azure-mgmt-containerregistry/3.0.0rc13 Azure-SDK-For-Python
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerRegistry/locations/southcentralus/operationResults/replications-8235ea15-96ac-11ea-a5ba-70bc107fb78d?api-version=2017-10-01
-  response:
-    body:
-      string: 'null'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '4'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Fri, 15 May 2020 13:04:17 GMT
-      expires:
-      - '-1'
-      location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerRegistry/locations/southcentralus/operationResults/replications-8235ea15-96ac-11ea-a5ba-70bc107fb78d?api-version=2017-10-01
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 202
-      message: Accepted
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.6.3
-        azure-mgmt-containerregistry/3.0.0rc13 Azure-SDK-For-Python
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerRegistry/locations/southcentralus/operationResults/replications-8235ea15-96ac-11ea-a5ba-70bc107fb78d?api-version=2017-10-01
-  response:
-    body:
-      string: 'null'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '4'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Fri, 15 May 2020 13:04:28 GMT
-      expires:
-      - '-1'
-      location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerRegistry/locations/southcentralus/operationResults/replications-8235ea15-96ac-11ea-a5ba-70bc107fb78d?api-version=2017-10-01
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 202
-      message: Accepted
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.6.3
-        azure-mgmt-containerregistry/3.0.0rc13 Azure-SDK-For-Python
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerRegistry/locations/southcentralus/operationResults/replications-8235ea15-96ac-11ea-a5ba-70bc107fb78d?api-version=2017-10-01
-  response:
-    body:
-      string: 'null'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '4'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Fri, 15 May 2020 13:04:38 GMT
-      expires:
-      - '-1'
-      location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerRegistry/locations/southcentralus/operationResults/replications-8235ea15-96ac-11ea-a5ba-70bc107fb78d?api-version=2017-10-01
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 202
-      message: Accepted
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.6.3
-        azure-mgmt-containerregistry/3.0.0rc13 Azure-SDK-For-Python
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerRegistry/locations/southcentralus/operationResults/replications-8235ea15-96ac-11ea-a5ba-70bc107fb78d?api-version=2017-10-01
-  response:
-    body:
-      string: 'null'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '4'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Fri, 15 May 2020 13:04:49 GMT
-      expires:
-      - '-1'
-      location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerRegistry/locations/southcentralus/operationResults/replications-8235ea15-96ac-11ea-a5ba-70bc107fb78d?api-version=2017-10-01
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 202
-      message: Accepted
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.6.3
-        azure-mgmt-containerregistry/3.0.0rc13 Azure-SDK-For-Python
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerRegistry/locations/southcentralus/operationResults/replications-8235ea15-96ac-11ea-a5ba-70bc107fb78d?api-version=2017-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerRegistry/locations/southcentralus/operationResults/replications-c110e6f0-f8ad-11ea-b58e-0242ac110003?api-version=2017-10-01
   response:
     body:
       string: ''
@@ -645,7 +399,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 15 May 2020 13:04:59 GMT
+      - Thu, 17 Sep 2020 06:19:46 GMT
       expires:
       - '-1'
       pragma:
@@ -671,15 +425,15 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.6.3
-        azure-mgmt-containerregistry/3.0.0rc13 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-containerregistry/3.0.0rc15 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2018_02_01_preview_test_replication12ea1863/providers/Microsoft.ContainerRegistry/registries/pyacr12ea1863?api-version=2017-10-01
   response:
     body:
-      string: '{"sku":{"name":"Premium","tier":"Premium"},"type":"Microsoft.ContainerRegistry/registries","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2018_02_01_preview_test_replication12ea1863/providers/Microsoft.ContainerRegistry/registries/pyacr12ea1863","name":"pyacr12ea1863","location":"eastus","tags":{},"properties":{"loginServer":"pyacr12ea1863.azurecr.io","creationDate":"2020-05-15T13:03:22.3983566Z","provisioningState":"Deleting","adminUserEnabled":false,"networkRuleSet":{"defaultAction":"Allow","virtualNetworkRules":[],"ipRules":[]}}}'
+      string: '{"sku":{"name":"Premium","tier":"Premium"},"type":"Microsoft.ContainerRegistry/registries","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2018_02_01_preview_test_replication12ea1863/providers/Microsoft.ContainerRegistry/registries/pyacr12ea1863","name":"pyacr12ea1863","location":"eastus","tags":{},"properties":{"loginServer":"pyacr12ea1863.azurecr.io","creationDate":"2020-09-17T06:19:06.6927861Z","provisioningState":"Deleting","adminUserEnabled":false,"networkRuleSet":{"defaultAction":"Allow","virtualNetworkRules":[],"ipRules":[]}}}'
     headers:
       cache-control:
       - no-cache
@@ -688,11 +442,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 15 May 2020 13:05:11 GMT
+      - Thu, 17 Sep 2020 06:19:57 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerRegistry/locations/eastus/operationResults/registries-af118be8-96ac-11ea-a3d3-70bc107fb78d?api-version=2017-10-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerRegistry/locations/eastus/operationResults/registries-c8dbee16-f8ad-11ea-b58e-0242ac110003?api-version=2017-10-01
       pragma:
       - no-cache
       server:
@@ -702,7 +456,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14998'
+      - '14995'
     status:
       code: 202
       message: Accepted
@@ -716,10 +470,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.6.3
-        azure-mgmt-containerregistry/3.0.0rc13 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-containerregistry/3.0.0rc15 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerRegistry/locations/eastus/operationResults/registries-af118be8-96ac-11ea-a3d3-70bc107fb78d?api-version=2017-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerRegistry/locations/eastus/operationResults/registries-c8dbee16-f8ad-11ea-b58e-0242ac110003?api-version=2017-10-01
   response:
     body:
       string: ''
@@ -729,7 +483,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 15 May 2020 13:05:23 GMT
+      - Thu, 17 Sep 2020 06:20:12 GMT
       expires:
       - '-1'
       pragma:
