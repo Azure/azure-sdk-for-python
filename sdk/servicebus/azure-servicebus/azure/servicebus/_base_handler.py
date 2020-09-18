@@ -297,10 +297,10 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         message,
         callback,
         keep_alive_associated_link=True,
-        timeout=5,
+        timeout=None,
         **kwargs
     ):
-        # type: (bytes, uamqp.Message, Callable, bool, float, Any) -> uamqp.Message
+        # type: (bytes, uamqp.Message, Callable, bool, Optional[float], Any) -> uamqp.Message
         self._open()
         application_properties = {}
 
@@ -332,8 +332,8 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         except Exception as exp:  # pylint: disable=broad-except
             raise ServiceBusError("Management request failed: {}".format(exp), exp)
 
-    def _mgmt_request_response_with_retry(self, mgmt_operation, message, callback, timeout=5, **kwargs):
-        # type: (bytes, Dict[str, Any], Callable, float, Any) -> Any
+    def _mgmt_request_response_with_retry(self, mgmt_operation, message, callback, timeout=None, **kwargs):
+        # type: (bytes, Dict[str, Any], Callable, Optional[float], Any) -> Any
         return self._do_retryable_operation(
             self._mgmt_request_response,
             mgmt_operation=mgmt_operation,

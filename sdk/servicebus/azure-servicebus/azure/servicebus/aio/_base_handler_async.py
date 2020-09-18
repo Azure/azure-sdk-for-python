@@ -6,7 +6,7 @@ import logging
 import asyncio
 import uuid
 import time
-from typing import TYPE_CHECKING, Any, Callable, Optional
+from typing import TYPE_CHECKING, Any, Callable, Optional, Dict
 
 import uamqp
 from uamqp.message import MessageProperties
@@ -159,7 +159,7 @@ class BaseHandler:
 
         while retried_times <= max_retries:
             try:
-                if require_timeout:
+                if require_timeout and abs_timeout_time:
                     remaining_timeout = abs_timeout_time - time.time()
                     kwargs["timeout"] = remaining_timeout
                 return await operation(**kwargs)
@@ -171,23 +171,28 @@ class BaseHandler:
                     kwargs["last_exception"] = last_exception
                 retried_times += 1
                 if retried_times > max_retries:
-                    break
+                    _LOGGER.info(
+                        "%r operation has exhausted retry. Last exception: %r.",
+                        self._container_id,
+                        last_exception,
+                    )
+                    raise last_exception
                 await self._backoff(
                     retried_times=retried_times,
                     last_exception=last_exception,
                     abs_timeout_time=abs_timeout_time
                 )
 
-        _LOGGER.info(
-            "%r operation has exhausted retry. Last exception: %r.",
-            self._container_id,
-            last_exception,
-        )
-        raise last_exception
-
     async def _mgmt_request_response(
-            self, mgmt_operation, message, callback, keep_alive_associated_link=True, **kwargs
+        self,
+        mgmt_operation,
+        message,
+        callback,
+        keep_alive_associated_link=True,
+        timeout=None,
+        **kwargs
     ):
+        # type: (bytes, uamqp.Message, Callable, bool, Optional[float], Any) -> uamqp.Message
         await self._open()
 
         application_properties = {}
@@ -211,12 +216,13 @@ class BaseHandler:
                 mgmt_operation,
                 op_type=MGMT_REQUEST_OP_TYPE_ENTITY_MGMT,
                 node=self._mgmt_target.encode(self._config.encoding),
-                timeout=5000,
+                timeout=timeout,
                 callback=callback)
         except Exception as exp:  # pylint: disable=broad-except
             raise ServiceBusError("Management request failed: {}".format(exp), exp)
 
-    async def _mgmt_request_response_with_retry(self, mgmt_operation, message, callback, timeout=5, **kwargs):
+    async def _mgmt_request_response_with_retry(self, mgmt_operation, message, callback, timeout=None, **kwargs):
+        # type: (bytes, Dict[str, Any], Callable, Optional[float], Any) -> Any
         return await self._do_retryable_operation(
             self._mgmt_request_response,
             mgmt_operation=mgmt_operation,
