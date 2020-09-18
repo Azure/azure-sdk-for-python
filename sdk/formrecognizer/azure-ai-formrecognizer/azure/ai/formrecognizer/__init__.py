@@ -33,7 +33,7 @@ from ._models import (
     CustomFormModelField,
     FieldValueType,
     ModelProperties,
-    SelectionMark,
+    FormSelectionMark,
     SelectionMarkState,
 )
 from ._api_versions import FormRecognizerApiVersion
@@ -67,7 +67,7 @@ __all__ = [
     'CustomFormModelField',
     'FieldValueType',
     'ModelProperties',
-    'SelectionMark',
+    'FormSelectionMark',
     'SelectionMarkState',
 ]
 

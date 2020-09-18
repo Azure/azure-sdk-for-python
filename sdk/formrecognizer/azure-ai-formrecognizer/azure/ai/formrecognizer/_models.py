@@ -32,7 +32,7 @@ def resolve_element(element, read_result):
     if element_type == "line":
         return FormLine._from_generated(element, page=page)
     if element_type == "selectionMark":
-        return SelectionMark._from_generated(element, page=page)
+        return FormSelectionMark._from_generated(element, page=page)
     raise ValueError("Failed to parse element reference.")
 
 
@@ -166,7 +166,7 @@ class FormElement(object):
     :ivar str kind:
         The kind of form element. Possible kinds are "word", "line", or "selectionMark" which
         correspond to a :class:`~azure.ai.formrecognizer.FormWord` :class:`~azure.ai.formrecognizer.FormLine`,
-        or :class:`~azure.ai.formrecognizer.SelectionMark`, respectively.
+        or :class:`~azure.ai.formrecognizer.FormSelectionMark`, respectively.
     """
     def __init__(self, **kwargs):
         self.bounding_box = kwargs.get("bounding_box", None)
@@ -297,7 +297,7 @@ class FieldData(object):
         When `include_field_elements` is set to true, a list of
         elements constituting this field or value is returned. The list
         constitutes of elements such as lines and words.
-    :vartype field_elements: list[Union[~azure.ai.formrecognizer.FormElement, ~azure.ai.formrecognizer.FormWord, ~azure.ai.formrecognizer.FormLine,  ~azure.ai.formrecognizer.SelectionMark]]
+    :vartype field_elements: list[Union[~azure.ai.formrecognizer.FormElement, ~azure.ai.formrecognizer.FormWord, ~azure.ai.formrecognizer.FormLine,  ~azure.ai.formrecognizer.FormSelectionMark]]
     """
 
     def __init__(self, **kwargs):
@@ -365,7 +365,7 @@ class FormPage(object):
         the detected text, it may change across images and OCR version updates. Thus, business
         logic should be built upon the actual line location instead of order.
     :ivar selection_marks: List of selection marks extracted from the page.
-    :vartype selection_marks: list[~azure.ai.formrecognizer.SelectionMark]
+    :vartype selection_marks: list[~azure.ai.formrecognizer.FormSelectionMark]
     """
 
     def __init__(self, **kwargs):
@@ -488,10 +488,10 @@ class FormWord(FormElement):
             )[:1024]
 
 
-class SelectionMark(FormElement):
+class FormSelectionMark(FormElement):
     """Information about the extracted selection mark.
 
-    :ivar str text: The text content - not returned for SelectionMark.
+    :ivar str text: The text content - not returned for FormSelectionMark.
     :ivar list[~azure.ai.formrecognizer.Point] bounding_box:
         A list of 4 points representing the quadrilateral bounding box
         that outlines the text. The points are listed in clockwise
@@ -503,14 +503,14 @@ class SelectionMark(FormElement):
     :type state: str or ~azure.ai.formrecognizer.SelectionMarkState
     :ivar int page_number:
         The 1-based number of the page in which this content is present.
-    :ivar str kind: For SelectionMark, this is "selectionMark".
+    :ivar str kind: For FormSelectionMark, this is "selectionMark".
     """
 
     def __init__(
         self,
         **kwargs
     ):
-        super(SelectionMark, self).__init__(kind="selectionMark", **kwargs)
+        super(FormSelectionMark, self).__init__(kind="selectionMark", **kwargs)
         self.confidence = kwargs['confidence']
         self.state = kwargs['state']
 
@@ -524,7 +524,7 @@ class SelectionMark(FormElement):
         )
 
     def __repr__(self):
-        return "SelectionMark(text={}, bounding_box={}, confidence={}, page_number={}, state={})" \
+        return "FormSelectionMark(text={}, bounding_box={}, confidence={}, page_number={}, state={})" \
             .format(
                 self.text,
                 self.bounding_box,
@@ -587,7 +587,7 @@ class FormTableCell(object):  # pylint:disable=too-many-instance-attributes
         elements constituting this cell is returned. The list
         constitutes of elements such as lines and words.
         For calls to begin_recognize_content(), this list is always populated.
-    :vartype field_elements: list[Union[~azure.ai.formrecognizer.FormElement, ~azure.ai.formrecognizer.FormWord, ~azure.ai.formrecognizer.FormLine, ~azure.ai.formrecognizer.SelectionMark]]
+    :vartype field_elements: list[Union[~azure.ai.formrecognizer.FormElement, ~azure.ai.formrecognizer.FormWord, ~azure.ai.formrecognizer.FormLine, ~azure.ai.formrecognizer.FormSelectionMark]]
     """
 
     def __init__(self, **kwargs):
