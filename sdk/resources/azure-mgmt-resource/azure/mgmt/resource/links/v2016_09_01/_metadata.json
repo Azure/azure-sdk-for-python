@@ -4,7 +4,11 @@
     "client": {
         "name": "ManagementLinkClient",
         "filename": "_management_link_client",
-        "description": "Azure resources can be linked together to form logical relationships. You can establish links between resources belonging to different resource groups. However, all the linked resources must belong to the same subscription. Each resource can be linked to 50 other resources. If any of the linked resources are deleted or moved, the link owner must clean up the remaining link."
+        "description": "Azure resources can be linked together to form logical relationships. You can establish links between resources belonging to different resource groups. However, all the linked resources must belong to the same subscription. Each resource can be linked to 50 other resources. If any of the linked resources are deleted or moved, the link owner must clean up the remaining link.",
+        "base_url": "\u0027https://management.azure.com\u0027",
+        "custom_base_url": null,
+        "azure_arm": true,
+        "has_lro_operations": false
     },
     "global_parameters": {
         "sync_method": {
@@ -41,7 +45,10 @@
     },
     "config": {
         "credential": true,
-        "credential_scopes": ["https://management.azure.com/.default"]
+        "credential_scopes": ["https://management.azure.com/.default"],
+        "credential_default_policy_type": "BearerTokenCredentialPolicy",
+        "credential_default_policy_type_has_async_version": true,
+        "credential_key_header_name": null
     },
     "operation_groups": {
         "operations": "Operations",
