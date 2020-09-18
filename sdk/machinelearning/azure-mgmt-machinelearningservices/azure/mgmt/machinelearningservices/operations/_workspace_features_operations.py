@@ -11,13 +11,12 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 
 from .. import models
 
 
-class UsagesOperations(object):
-    """UsagesOperations operations.
+class WorkspaceFeaturesOperations(object):
+    """WorkspaceFeaturesOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -40,21 +39,24 @@ class UsagesOperations(object):
         self.config = config
 
     def list(
-            self, location, custom_headers=None, raw=False, **operation_config):
-        """Gets the current usage information as well as limits for AML resources
-        for given subscription and location.
+            self, resource_group_name, workspace_name, custom_headers=None, raw=False, **operation_config):
+        """Lists all enabled features for a workspace.
 
-        :param location: The location for which resource usage is queried.
-        :type location: str
+        :param resource_group_name: Name of the resource group in which
+         workspace is located.
+        :type resource_group_name: str
+        :param workspace_name: Name of Azure Machine Learning workspace.
+        :type workspace_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of Usage
+        :return: An iterator like instance of AmlUserFeature
         :rtype:
-         ~azure.mgmt.machinelearningservices.models.UsagePaged[~azure.mgmt.machinelearningservices.models.Usage]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+         ~azure.mgmt.machinelearningservices.models.AmlUserFeaturePaged[~azure.mgmt.machinelearningservices.models.AmlUserFeature]
+        :raises:
+         :class:`MachineLearningServiceErrorException<azure.mgmt.machinelearningservices.models.MachineLearningServiceErrorException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -62,7 +64,8 @@ class UsagesOperations(object):
                 url = self.list.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-                    'location': self._serialize.url("location", location, 'str', pattern=r'^[-\w\._]+$')
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -94,9 +97,7 @@ class UsagesOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.MachineLearningServiceErrorException(self._deserialize, response)
 
             return response
 
@@ -104,7 +105,7 @@ class UsagesOperations(object):
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.UsagePaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.AmlUserFeaturePaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.MachineLearningServices/locations/{location}/usages'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/features'}
