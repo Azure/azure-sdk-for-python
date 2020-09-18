@@ -395,12 +395,11 @@ class StorageTableClientTest(TableTestCase):
 
         def callback(response):
             self.assertTrue('User-Agent' in response.http_request.headers)
-            self.assertIn(
-                response.http_request.headers['User-Agent'],
-                "azsdk-python-data-tables/{} Python/{} ({})".format(
-                    VERSION,
-                    platform.python_version(),
-                    platform.platform()))
+            self.assertIn("azsdk-python-data-tables/{} Python/{} ({})".format(
+                VERSION,
+                platform.python_version(),
+                platform.platform()),
+                response.http_request.headers['User-Agent'])
 
         tables = list(service.list_tables(raw_response_hook=callback))
         self.assertIsInstance(tables, list)
