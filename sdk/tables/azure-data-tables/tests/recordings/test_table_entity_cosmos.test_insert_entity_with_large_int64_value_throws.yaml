@@ -15,11 +15,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Tue, 15 Sep 2020 21:22:00 GMT
+      - Thu, 17 Sep 2020 22:32:58 GMT
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 15 Sep 2020 21:22:00 GMT
+      - Thu, 17 Sep 2020 22:32:58 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
@@ -31,9 +31,9 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata
       date:
-      - Tue, 15 Sep 2020 21:22:00 GMT
+      - Thu, 17 Sep 2020 22:32:58 GMT
       etag:
-      - W/"datetime'2020-09-15T21%3A22%3A00.4513799Z'"
+      - W/"datetime'2020-09-17T22%3A32%3A59.1756295Z'"
       location:
       - https://cosmostablescosmosname.table.cosmos.azure.com/Tables('uttable5dfd1e10')
       server:
@@ -55,11 +55,11 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Tue, 15 Sep 2020 21:22:00 GMT
+      - Thu, 17 Sep 2020 22:32:59 GMT
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 15 Sep 2020 21:22:00 GMT
+      - Thu, 17 Sep 2020 22:32:59 GMT
       x-ms-version:
       - '2019-07-07'
     method: DELETE
@@ -71,10 +71,46 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 15 Sep 2020 21:22:00 GMT
+      - Thu, 17 Sep 2020 22:32:59 GMT
       server:
       - Microsoft-HTTPAPI/2.0
     status:
       code: 204
       message: No Content
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Thu, 17 Sep 2020 22:32:59 GMT
+      User-Agent:
+      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Thu, 17 Sep 2020 22:32:59 GMT
+      x-ms-version:
+      - '2019-07-07'
+    method: GET
+    uri: https://cosmostablescosmosname.table.cosmos.azure.com/Tables
+  response:
+    body:
+      string: '{"value":[],"odata.metadata":"https://cosmostablescosmosname.table.cosmos.azure.com/$metadata#Tables"}'
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      date:
+      - Thu, 17 Sep 2020 22:32:59 GMT
+      server:
+      - Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: Ok
 version: 1

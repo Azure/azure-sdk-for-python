@@ -1,0 +1,28 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Date:
+      - Thu, 17 Sep 2020 22:49:23 GMT
+      User-Agent:
+      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Thu, 17 Sep 2020 22:49:23 GMT
+      x-ms-version:
+      - '2019-07-07'
+    method: DELETE
+    uri: https://cosmostablescosmosname.table.cosmos.azure.com/Tables('pytableasync330320ec')
+  response:
+    body:
+      string: "{\"odata.error\":{\"code\":\"ResourceNotFound\",\"message\":{\"lang\":\"en-us\",\"value\":\"The
+        specified resource does not exist.\\nRequestID:07a5b317-f938-11ea-a44f-58961df361d1\\n\"}}}\r\n"
+    headers:
+      content-type: application/json;odata=fullmetadata
+      date: Thu, 17 Sep 2020 22:49:23 GMT
+      server: Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+    status:
+      code: 404
+      message: Not Found
+    url: https://cosmostableswmnfqcvpsy56.table.cosmos.azure.com/Tables('pytableasync330320ec')
+version: 1

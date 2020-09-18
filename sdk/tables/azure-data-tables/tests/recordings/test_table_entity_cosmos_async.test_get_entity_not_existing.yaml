@@ -1,0 +1,91 @@
+interactions:
+- request:
+    body: '{"TableName": "uttabledfb11897"}'
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Content-Length:
+      - '32'
+      Content-Type:
+      - application/json;odata=nometadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Thu, 17 Sep 2020 22:39:14 GMT
+      User-Agent:
+      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Thu, 17 Sep 2020 22:39:14 GMT
+      x-ms-version:
+      - '2019-07-07'
+    method: POST
+    uri: https://cosmostestcosmosname.table.cosmos.azure.com/Tables
+  response:
+    body:
+      string: '{"TableName":"uttabledfb11897","odata.metadata":"https://cosmostestcosmosname.table.cosmos.azure.com/$metadata#Tables/@Element"}'
+    headers:
+      content-type: application/json;odata=minimalmetadata
+      date: Thu, 17 Sep 2020 22:39:15 GMT
+      etag: W/"datetime'2020-09-17T22%3A39%3A15.2524295Z'"
+      location: https://cosmostestcosmosname.table.cosmos.azure.com/Tables('uttabledfb11897')
+      server: Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+    status:
+      code: 201
+      message: Ok
+    url: https://cosmostableswmnfqcvpsy56.table.cosmos.azure.com/Tables
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Thu, 17 Sep 2020 22:39:15 GMT
+      User-Agent:
+      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Thu, 17 Sep 2020 22:39:15 GMT
+      x-ms-version:
+      - '2019-07-07'
+    method: GET
+    uri: https://cosmostestcosmosname.table.cosmos.azure.com/uttabledfb11897(PartitionKey='pkdfb11897',RowKey='rkdfb11897')
+  response:
+    body:
+      string: "{\"odata.error\":{\"code\":\"ResourceNotFound\",\"message\":{\"lang\":\"en-us\",\"value\":\"The
+        specified resource does not exist.\\nRequestID:9d7dc663-f936-11ea-b377-58961df361d1\\n\"}}}\r\n"
+    headers:
+      content-type: application/json;odata=minimalmetadata
+      date: Thu, 17 Sep 2020 22:39:15 GMT
+      server: Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+    status:
+      code: 404
+      message: Not Found
+    url: https://cosmostableswmnfqcvpsy56.table.cosmos.azure.com/uttabledfb11897(PartitionKey='pkdfb11897',RowKey='rkdfb11897')
+- request:
+    body: null
+    headers:
+      Date:
+      - Thu, 17 Sep 2020 22:39:15 GMT
+      User-Agent:
+      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Thu, 17 Sep 2020 22:39:15 GMT
+      x-ms-version:
+      - '2019-07-07'
+    method: DELETE
+    uri: https://cosmostestcosmosname.table.cosmos.azure.com/Tables('uttabledfb11897')
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Thu, 17 Sep 2020 22:39:16 GMT
+      server: Microsoft-HTTPAPI/2.0
+    status:
+      code: 204
+      message: No Content
+    url: https://cosmostableswmnfqcvpsy56.table.cosmos.azure.com/Tables('uttabledfb11897')
+version: 1

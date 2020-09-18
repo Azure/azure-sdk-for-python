@@ -15,33 +15,182 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Tue, 15 Sep 2020 21:22:11 GMT
+      - Thu, 17 Sep 2020 22:35:47 GMT
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 15 Sep 2020 21:22:11 GMT
+      - Thu, 17 Sep 2020 22:35:47 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
     uri: https://cosmostablescosmosname.table.cosmos.azure.com/Tables
   response:
     body:
-      string: "{\"odata.error\":{\"code\":\"429\",\"message\":{\"lang\":\"en-us\",\"value\":\"Message:
-        {\\\"Errors\\\":[\\\"Request rate is large. More Request Units may be needed,
-        so no changes were made. Please retry this request later. Learn more: http://aka.ms/cosmosdb-error-429\\\"]}\\r\\nActivityId:
-        c0936865-7e1d-42fb-ae38-9e715348e060, Request URI: /apps/a838b6b5-36e0-43c6-8479-9b6c837000ca/services/c0a76cf5-e18c-4e98-9414-34e9f8f86c80/partitions/0ed197cf-049b-4086-b8ef-7c3e46eaaa66/replicas/132446766355763384p,
-        RequestStats: , SDK: Microsoft.Azure.Documents.Common/2.11.0, documentdb-dotnet-sdk/2.11.0
-        Host/64-bit MicrosoftWindowsNT/6.2.9200.0\\nRequestID:84679977-f799-11ea-830a-58961df361d1\\n\"}}}\r\n"
+      string: '{"TableName":"uttablefe63147d","odata.metadata":"https://cosmostablescosmosname.table.cosmos.azure.com/$metadata#Tables/@Element"}'
     headers:
       content-type:
       - application/json;odata=minimalmetadata
       date:
-      - Tue, 15 Sep 2020 21:22:10 GMT
+      - Thu, 17 Sep 2020 22:35:47 GMT
+      etag:
+      - W/"datetime'2020-09-17T22%3A35%3A47.7025799Z'"
+      location:
+      - https://cosmostablescosmosname.table.cosmos.azure.com/Tables('uttablefe63147d')
       server:
       - Microsoft-HTTPAPI/2.0
       transfer-encoding:
       - chunked
     status:
-      code: 429
-      message: Too Many Requests
+      code: 201
+      message: Ok
+- request:
+    body: '{"TableName": "querytablefe63147d"}'
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '35'
+      Content-Type:
+      - application/json;odata=nometadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Thu, 17 Sep 2020 22:35:47 GMT
+      User-Agent:
+      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Thu, 17 Sep 2020 22:35:47 GMT
+      x-ms-version:
+      - '2019-07-07'
+    method: POST
+    uri: https://cosmostablescosmosname.table.cosmos.azure.com/Tables
+  response:
+    body:
+      string: '{"TableName":"querytablefe63147d","odata.metadata":"https://cosmostablescosmosname.table.cosmos.azure.com/$metadata#Tables/@Element"}'
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      date:
+      - Thu, 17 Sep 2020 22:35:48 GMT
+      etag:
+      - W/"datetime'2020-09-17T22%3A35%3A48.1641991Z'"
+      location:
+      - https://cosmostablescosmosname.table.cosmos.azure.com/Tables('querytablefe63147d')
+      server:
+      - Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+    status:
+      code: 201
+      message: Ok
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Thu, 17 Sep 2020 22:35:48 GMT
+      User-Agent:
+      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Thu, 17 Sep 2020 22:35:48 GMT
+      x-ms-version:
+      - '2019-07-07'
+    method: GET
+    uri: https://cosmostablescosmosname.table.cosmos.azure.com/querytablefe63147d()
+  response:
+    body:
+      string: '{"value":[],"odata.metadata":"https://cosmostablescosmosname.table.cosmos.azure.com/$metadata#querytablefe63147d"}'
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      date:
+      - Thu, 17 Sep 2020 22:35:48 GMT
+      server:
+      - Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: Ok
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Date:
+      - Thu, 17 Sep 2020 22:35:48 GMT
+      User-Agent:
+      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Thu, 17 Sep 2020 22:35:48 GMT
+      x-ms-version:
+      - '2019-07-07'
+    method: DELETE
+    uri: https://cosmostablescosmosname.table.cosmos.azure.com/Tables('uttablefe63147d')
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Thu, 17 Sep 2020 22:35:48 GMT
+      server:
+      - Microsoft-HTTPAPI/2.0
+    status:
+      code: 204
+      message: No Content
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Thu, 17 Sep 2020 22:35:48 GMT
+      User-Agent:
+      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Thu, 17 Sep 2020 22:35:48 GMT
+      x-ms-version:
+      - '2019-07-07'
+    method: GET
+    uri: https://cosmostablescosmosname.table.cosmos.azure.com/Tables
+  response:
+    body:
+      string: '{"value":[{"TableName":"querytable9c05125e"},{"TableName":"querytable5436162b"},{"TableName":"querytablefe63147d"},{"TableName":"querytable981b173a"},{"TableName":"querytablec80b1810"},{"TableName":"querytable2da719db"}],"odata.metadata":"https://cosmostablescosmosname.table.cosmos.azure.com/$metadata#Tables"}'
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      date:
+      - Thu, 17 Sep 2020 22:35:48 GMT
+      server:
+      - Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: Ok
 version: 1

@@ -15,11 +15,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Tue, 15 Sep 2020 21:04:53 GMT
+      - Thu, 17 Sep 2020 22:47:14 GMT
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 15 Sep 2020 21:04:53 GMT
+      - Thu, 17 Sep 2020 22:47:14 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
@@ -31,9 +31,9 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata
       date:
-      - Tue, 15 Sep 2020 21:04:55 GMT
+      - Thu, 17 Sep 2020 22:47:15 GMT
       etag:
-      - W/"datetime'2020-09-15T21%3A04%3A56.0724999Z'"
+      - W/"datetime'2020-09-17T22%3A47%3A14.9432839Z'"
       location:
       - https://cosmostablescosmosname.table.cosmos.azure.com/Tables('pytablesyncd2361378')
       server:
@@ -55,11 +55,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Tue, 15 Sep 2020 21:04:56 GMT
+      - Thu, 17 Sep 2020 22:47:15 GMT
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 15 Sep 2020 21:04:56 GMT
+      - Thu, 17 Sep 2020 22:47:15 GMT
       x-ms-version:
       - '2019-07-07'
     method: GET
@@ -71,7 +71,7 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata
       date:
-      - Tue, 15 Sep 2020 21:04:55 GMT
+      - Thu, 17 Sep 2020 22:47:15 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -91,11 +91,11 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Tue, 15 Sep 2020 21:04:56 GMT
+      - Thu, 17 Sep 2020 22:47:15 GMT
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 15 Sep 2020 21:04:56 GMT
+      - Thu, 17 Sep 2020 22:47:15 GMT
       x-ms-version:
       - '2019-07-07'
     method: DELETE
@@ -107,7 +107,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 15 Sep 2020 21:04:55 GMT
+      - Thu, 17 Sep 2020 22:47:15 GMT
       server:
       - Microsoft-HTTPAPI/2.0
     status:

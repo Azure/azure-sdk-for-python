@@ -15,11 +15,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Tue, 15 Sep 2020 21:04:52 GMT
+      - Thu, 17 Sep 2020 22:47:13 GMT
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 15 Sep 2020 21:04:52 GMT
+      - Thu, 17 Sep 2020 22:47:13 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
@@ -31,9 +31,9 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata
       date:
-      - Tue, 15 Sep 2020 21:04:53 GMT
+      - Thu, 17 Sep 2020 22:47:14 GMT
       etag:
-      - W/"datetime'2020-09-15T21%3A04%3A53.2381703Z'"
+      - W/"datetime'2020-09-17T22%3A47%3A13.9768327Z'"
       location:
       - https://cosmostablescosmosname.table.cosmos.azure.com/Tables('pytablesync4450e78')
       server:
@@ -55,23 +55,23 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Tue, 15 Sep 2020 21:04:53 GMT
+      - Thu, 17 Sep 2020 22:47:14 GMT
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 15 Sep 2020 21:04:53 GMT
+      - Thu, 17 Sep 2020 22:47:14 GMT
       x-ms-version:
       - '2019-07-07'
     method: GET
     uri: https://cosmostablescosmosname.table.cosmos.azure.com/Tables
   response:
     body:
-      string: '{"value":[{"TableName":"pytablesync4450e78"}],"odata.metadata":"https://cosmostablescosmosname.table.cosmos.azure.com/$metadata#Tables"}'
+      string: '{"value":[{"TableName":"querytable9c05125e"},{"TableName":"querytable5436162b"},{"TableName":"pytablesync4450e78"},{"TableName":"querytablefe63147d"},{"TableName":"querytable981b173a"},{"TableName":"querytablec80b1810"},{"TableName":"querytable2da719db"}],"odata.metadata":"https://cosmostablescosmosname.table.cosmos.azure.com/$metadata#Tables"}'
     headers:
       content-type:
       - application/json;odata=minimalmetadata
       date:
-      - Tue, 15 Sep 2020 21:04:53 GMT
+      - Thu, 17 Sep 2020 22:47:14 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -91,11 +91,11 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Tue, 15 Sep 2020 21:04:53 GMT
+      - Thu, 17 Sep 2020 22:47:14 GMT
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 15 Sep 2020 21:04:53 GMT
+      - Thu, 17 Sep 2020 22:47:14 GMT
       x-ms-version:
       - '2019-07-07'
     method: DELETE
@@ -107,7 +107,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 15 Sep 2020 21:04:53 GMT
+      - Thu, 17 Sep 2020 22:47:14 GMT
       server:
       - Microsoft-HTTPAPI/2.0
     status:

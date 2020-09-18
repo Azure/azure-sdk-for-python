@@ -15,27 +15,27 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Wed, 19 Aug 2020 21:18:26 GMT
+      - Thu, 17 Sep 2020 18:52:30 GMT
       User-Agent:
-      - azsdk-python-storage-table/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 19 Aug 2020 21:18:26 GMT
+      - Thu, 17 Sep 2020 18:52:30 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
-    uri: https://storagename.table.core.windows.net/Tables
+    uri: https://tablesteststorname.table.core.windows.net/Tables
   response:
     body:
-      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#Tables/@Element","TableName":"uttablee10d18a6"}'
+      string: '{"odata.metadata":"https://tablesteststorname.table.core.windows.net/$metadata#Tables/@Element","TableName":"uttablee10d18a6"}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Wed, 19 Aug 2020 21:18:26 GMT
+      - Thu, 17 Sep 2020 18:52:30 GMT
       location:
-      - https://storagename.table.core.windows.net/Tables('uttablee10d18a6')
+      - https://tablesteststorname.table.core.windows.net/Tables('uttablee10d18a6')
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -64,26 +64,26 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Wed, 19 Aug 2020 21:18:26 GMT
+      - Thu, 17 Sep 2020 18:52:30 GMT
       User-Agent:
-      - azsdk-python-storage-table/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 19 Aug 2020 21:18:26 GMT
+      - Thu, 17 Sep 2020 18:52:30 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
-    uri: https://storagename.table.core.windows.net/uttablee10d18a6
+    uri: https://tablesteststorname.table.core.windows.net/uttablee10d18a6
   response:
     body:
       string: '{"odata.error":{"code":"PropertyNameTooLong","message":{"lang":"en-US","value":"The
-        property name exceeds the maximum allowed length (255).\nRequestId:bfe2be72-7002-0127-6a6e-76ed7f000000\nTime:2020-08-19T21:18:26.8095726Z"}}}'
+        property name exceeds the maximum allowed length (255).\nRequestId:41a09f49-5002-0091-4423-8d3c7a000000\nTime:2020-09-17T18:52:30.6938845Z"}}}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Wed, 19 Aug 2020 21:18:26 GMT
+      - Thu, 17 Sep 2020 18:52:30 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -107,15 +107,15 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Wed, 19 Aug 2020 21:18:26 GMT
+      - Thu, 17 Sep 2020 18:52:30 GMT
       User-Agent:
-      - azsdk-python-storage-table/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 19 Aug 2020 21:18:26 GMT
+      - Thu, 17 Sep 2020 18:52:30 GMT
       x-ms-version:
       - '2019-07-07'
     method: DELETE
-    uri: https://storagename.table.core.windows.net/Tables('uttablee10d18a6')
+    uri: https://tablesteststorname.table.core.windows.net/Tables('uttablee10d18a6')
   response:
     body:
       string: ''
@@ -125,7 +125,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 19 Aug 2020 21:18:26 GMT
+      - Thu, 17 Sep 2020 18:52:30 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options:

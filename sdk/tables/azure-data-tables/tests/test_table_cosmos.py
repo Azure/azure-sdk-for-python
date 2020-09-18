@@ -294,7 +294,6 @@ class StorageTableTest(TableTestCase):
 
         # Assert
 
-
     @pytest.mark.skip("pending")
     @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
@@ -331,7 +330,6 @@ class StorageTableTest(TableTestCase):
         finally:
             ts.delete_table(table.table_name)
 
-
     @pytest.mark.skip("pending")
     @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
@@ -354,7 +352,6 @@ class StorageTableTest(TableTestCase):
             self.assertEqual(len(acl), 0)
         finally:
             ts.delete_table(table.table_name)
-
 
     @pytest.mark.skip("pending")
     @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
@@ -381,7 +378,6 @@ class StorageTableTest(TableTestCase):
             self.assertIsNone(acl['empty'].start)
         finally:
             ts.delete_table(table.table_name)
-
 
     @pytest.mark.skip("pending")
     @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
@@ -482,7 +478,6 @@ class StorageTableTest(TableTestCase):
             self.assertEqual(entities[1].text, 'hello')
         finally:
             self._delete_table(table=table, ts=tsc)
-
 
     @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
