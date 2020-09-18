@@ -1859,7 +1859,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             servicebus_namespace_connection_string, logging_enable=False) as sb_client:
             with pytest.raises(TypeError):
                 with sb_client.get_queue_receiver(servicebus_queue.name, 
-                                                  mode=2) as receiver:
+                                                  receive_mode=2) as receiver:
                 
                     raise Exception("Should not get here, should fail fast.")
 
