@@ -27,7 +27,6 @@ from hashlib import sha256
 import hmac
 
 import six
-import six.moves.urllib.parse as url_parse
 
 from . import http_constants
 
@@ -119,7 +118,7 @@ def __GetAuthorizationTokenUsingResourceTokens(resource_tokens, path, resource_i
         # For database account access(through GetDatabaseAccount API), path and
         # resource_id_or_fullname are '', so in this case we return the first token to be
         # used for creating the auth header as the service will accept any token in this case
-        path = url_parse.unquote(path)
+        path = six.moves.urllib.parse.unquote(path)
         if not path and not resource_id_or_fullname:
             return next(six.itervalues(resource_tokens))
 
