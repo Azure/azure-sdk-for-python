@@ -15,55 +15,40 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
-from ._configuration_async import SparkClientConfiguration
-from .operations_async import SparkBatchOperations
-from .operations_async import SparkSessionOperations
+from ._configuration import AccessControlClientConfiguration
+from .operations import AccessControlClientOperationsMixin
 from .. import models
 
 
-class SparkClient(object):
-    """SparkClient.
+class AccessControlClient(AccessControlClientOperationsMixin):
+    """AccessControlClient.
 
-    :ivar spark_batch: SparkBatchOperations operations
-    :vartype spark_batch: azure.synapse.spark.aio.operations_async.SparkBatchOperations
-    :ivar spark_session: SparkSessionOperations operations
-    :vartype spark_session: azure.synapse.spark.aio.operations_async.SparkSessionOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param endpoint: The workspace development endpoint, for example https://myworkspace.dev.azuresynapse.net.
     :type endpoint: str
-    :param spark_pool_name: Name of the spark pool.
-    :type spark_pool_name: str
-    :param livy_api_version: Valid api-version for the request.
-    :type livy_api_version: str
-    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
     def __init__(
         self,
         credential: "AsyncTokenCredential",
         endpoint: str,
-        spark_pool_name: str,
-        livy_api_version: str = "2019-11-01-preview",
         **kwargs: Any
     ) -> None:
-        base_url = '{endpoint}/livyApi/versions/{livyApiVersion}/sparkPools/{sparkPoolName}'
-        self._config = SparkClientConfiguration(credential, endpoint, spark_pool_name, livy_api_version, **kwargs)
+        base_url = '{endpoint}'
+        self._config = AccessControlClientConfiguration(credential, endpoint, **kwargs)
         self._client = AsyncPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
+        self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
 
-        self.spark_batch = SparkBatchOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.spark_session = SparkSessionOperations(
-            self._client, self._config, self._serialize, self._deserialize)
 
     async def close(self) -> None:
         await self._client.close()
 
-    async def __aenter__(self) -> "SparkClient":
+    async def __aenter__(self) -> "AccessControlClient":
         await self._client.__aenter__()
         return self
 

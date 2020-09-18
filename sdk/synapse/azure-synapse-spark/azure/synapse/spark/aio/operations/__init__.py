@@ -6,8 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._access_control_client_operations_async import AccessControlClientOperationsMixin
+from ._spark_batch_operations import SparkBatchOperations
+from ._spark_session_operations import SparkSessionOperations
 
 __all__ = [
-    'AccessControlClientOperationsMixin',
+    'SparkBatchOperations',
+    'SparkSessionOperations',
 ]

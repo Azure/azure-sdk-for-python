@@ -6,5 +6,5 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._spark_client_async import SparkClient
+from ._spark_client import SparkClient
 __all__ = ['SparkClient']
