@@ -5,9 +5,10 @@
 # --------------------------------------------------------------------------
 import unittest
 import pytest
+from time import sleep
 
 from azure.data.tables import TableServiceClient
-from _shared.testcase import TableTestCase, RERUNS_DELAY
+from _shared.testcase import TableTestCase, RERUNS_DELAY, SLEEP_DELAY
 from devtools_testutils import CachedResourceGroupPreparer, CachedCosmosAccountPreparer
 
 SERVICE_UNAVAILABLE_RESP_BODY = '<?xml version="1.0" encoding="utf-8"?><StorageServiceStats><GeoReplication><Status' \
@@ -46,7 +47,6 @@ class TableServiceStatsTest(TableTestCase):
 
     # --Test cases per service ---------------------------------------
     @pytest.mark.skip("invalid json")
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
     @CachedCosmosAccountPreparer(name_prefix='cosmostables')
     def test_table_service_stats_f(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -58,8 +58,10 @@ class TableServiceStatsTest(TableTestCase):
         # Assert
         self._assert_stats_default(stats)
 
+        if self.is_live:
+            sleep(SLEEP_DELAY)
+
     @pytest.mark.skip("invalid json")
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
     @CachedCosmosAccountPreparer(name_prefix='cosmostables')
     def test_table_service_stats_when_unavailable(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -73,6 +75,8 @@ class TableServiceStatsTest(TableTestCase):
         # Assert
         self._assert_stats_unavailable(stats)
 
+        if self.is_live:
+            sleep(SLEEP_DELAY)
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':

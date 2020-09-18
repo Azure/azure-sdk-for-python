@@ -6,8 +6,8 @@
 # license information.
 # --------------------------------------------------------------------------
 import unittest
-import time
 import pytest
+from time import sleep
 
 from msrest.exceptions import ValidationError  # TODO This should be an azure-core error.
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
@@ -16,7 +16,7 @@ from azure.core.exceptions import HttpResponseError
 from azure.data.tables._models import TableAnalyticsLogging, Metrics, RetentionPolicy, CorsRule
 from azure.data.tables.aio import TableServiceClient
 
-from _shared.testcase import TableTestCase, RERUNS_DELAY
+from _shared.testcase import TableTestCase, RERUNS_DELAY, SLEEP_DELAY
 from devtools_testutils import CachedResourceGroupPreparer, CachedCosmosAccountPreparer
 # ------------------------------------------------------------------------------
 
@@ -97,7 +97,6 @@ class TableServicePropertiesTest(TableTestCase):
         self.assertEqual(ret1.days, ret2.days)
 
     # --Test cases per service ---------------------------------------
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix="cosmos_tables")
     @CachedCosmosAccountPreparer(name_prefix="cosmostables")
     async def test_table_service_properties_async(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -115,13 +114,11 @@ class TableServicePropertiesTest(TableTestCase):
 
         # Assert
         self.assertIsNone(resp)
-        if self.is_live:
-            time.sleep(30)
         self._assert_properties_default(await tsc.get_service_properties())
-
+        if self.is_live:
+            sleep(SLEEP_DELAY)
 
     # --Test cases per feature ---------------------------------------
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix="cosmos_tables")
     @CachedCosmosAccountPreparer(name_prefix="cosmostables")
     async def test_set_logging_async(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -136,13 +133,11 @@ class TableServicePropertiesTest(TableTestCase):
         await tsc.set_service_properties(analytics_logging=logging)
 
         # Assert
-        if self.is_live:
-            time.sleep(30)
         received_props = await tsc.get_service_properties()
         self._assert_logging_equal(received_props['analytics_logging'], logging)
+        if self.is_live:
+            sleep(SLEEP_DELAY)
 
-
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix="cosmos_tables")
     @CachedCosmosAccountPreparer(name_prefix="cosmostables")
     async def test_set_hour_metrics_async(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -157,13 +152,11 @@ class TableServicePropertiesTest(TableTestCase):
         await tsc.set_service_properties(hour_metrics=hour_metrics)
 
         # Assert
-        if self.is_live:
-            time.sleep(30)
         received_props = await tsc.get_service_properties()
         self._assert_metrics_equal(received_props['hour_metrics'], hour_metrics)
+        if self.is_live:
+            sleep(SLEEP_DELAY)
 
-
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix="cosmos_tables")
     @CachedCosmosAccountPreparer(name_prefix="cosmostables")
     async def test_set_minute_metrics_async(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -179,13 +172,11 @@ class TableServicePropertiesTest(TableTestCase):
         await tsc.set_service_properties(minute_metrics=minute_metrics)
 
         # Assert
-        if self.is_live:
-            time.sleep(30)
         received_props = await tsc.get_service_properties()
         self._assert_metrics_equal(received_props['minute_metrics'], minute_metrics)
+        if self.is_live:
+            sleep(SLEEP_DELAY)
 
-
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix="cosmos_tables")
     @CachedCosmosAccountPreparer(name_prefix="cosmostables")
     async def test_set_cors_async(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -214,14 +205,12 @@ class TableServicePropertiesTest(TableTestCase):
         await tsc.set_service_properties(cors=cors)
 
         # Assert
-        if self.is_live:
-            time.sleep(30)
         received_props = await tsc.get_service_properties()
         self._assert_cors_equal(received_props['cors'], cors)
-
+        if self.is_live:
+            sleep(SLEEP_DELAY)
 
     # --Test cases for errors ---------------------------------------
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix="cosmos_tables")
     @CachedCosmosAccountPreparer(name_prefix="cosmostables")
     async def test_retention_no_days_async(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -229,10 +218,10 @@ class TableServicePropertiesTest(TableTestCase):
         self.assertRaises(ValueError,
                           RetentionPolicy,
                           True, None)
-
+        if self.is_live:
+            sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("pending")
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix="cosmos_tables")
     @CachedCosmosAccountPreparer(name_prefix="cosmostables")
     async def test_too_many_cors_rules_async(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -245,10 +234,11 @@ class TableServicePropertiesTest(TableTestCase):
         # Assert
         self.assertRaises(HttpResponseError,
                           tsc.set_service_properties, None, None, None, cors)
+        if self.is_live:
+            sleep(SLEEP_DELAY)
 
 
     @pytest.mark.skip("pending")
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix="cosmos_tables")
     @CachedCosmosAccountPreparer(name_prefix="cosmostables")
     async def test_retention_too_long_async(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -262,6 +252,8 @@ class TableServicePropertiesTest(TableTestCase):
         self.assertRaises(HttpResponseError,
                           tsc.set_service_properties,
                           None, None, minute_metrics)
+        if self.is_live:
+            sleep(SLEEP_DELAY)
 
 
 # ------------------------------------------------------------------------------

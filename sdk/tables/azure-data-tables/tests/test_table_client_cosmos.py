@@ -6,6 +6,7 @@
 import unittest
 import pytest
 import platform
+from time import sleep
 
 from azure.data.tables import TableServiceClient, TableClient
 from azure.data.tables._version import VERSION
@@ -14,7 +15,8 @@ from _shared.testcase import (
     GlobalStorageAccountPreparer,
     GlobalCosmosAccountPreparer,
     TableTestCase,
-    RERUNS_DELAY
+    RERUNS_DELAY,
+    SLEEP_DELAY
 )
 from azure.core.exceptions import HttpResponseError
 
@@ -47,7 +49,6 @@ class StorageTableClientTest(TableTestCase):
             ('{}.{}'.format(account_name, 'table.cosmos.azure.com') in service.url))
 
     # --Direct Parameters Test Cases --------------------------------------------
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
     @CachedCosmosAccountPreparer(name_prefix='cosmostables')
     def test_create_service_with_key(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -62,7 +63,9 @@ class StorageTableClientTest(TableTestCase):
             self.validate_standard_account_endpoints(service, cosmos_account.name, cosmos_account_key)
             self.assertEqual(service.scheme, 'https')
 
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
+        if self.is_live:
+            sleep(SLEEP_DELAY)
+
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
     @CachedCosmosAccountPreparer(name_prefix='cosmostables')
     def test_create_service_with_connection_string(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -75,8 +78,9 @@ class StorageTableClientTest(TableTestCase):
             # Assert
             self.validate_standard_account_endpoints(service, cosmos_account.name, cosmos_account_key)
             self.assertEqual(service.scheme, 'https')
+        if self.is_live:
+            sleep(SLEEP_DELAY)
 
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
     @CachedCosmosAccountPreparer(name_prefix='cosmostables')
     def test_create_service_with_sas(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -96,8 +100,9 @@ class StorageTableClientTest(TableTestCase):
             self.assertTrue(service.url.startswith('https://' + cosmos_account.name + suffix))
             self.assertTrue(service.url.endswith(self.sas_token))
             self.assertIsNone(service.credential)
+        if self.is_live:
+            sleep(SLEEP_DELAY)
 
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
     @CachedCosmosAccountPreparer(name_prefix='cosmostables')
     def test_create_service_with_token(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -116,8 +121,9 @@ class StorageTableClientTest(TableTestCase):
             self.assertEqual(service.credential, self.token_credential)
             self.assertFalse(hasattr(service.credential, 'account_key'))
             self.assertTrue(hasattr(service.credential, 'get_token'))
+        if self.is_live:
+            sleep(SLEEP_DELAY)
 
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
     @CachedCosmosAccountPreparer(name_prefix='cosmostables')
     def test_create_service_with_token_and_http(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -126,8 +132,9 @@ class StorageTableClientTest(TableTestCase):
             with self.assertRaises(ValueError):
                 url = self.account_url(cosmos_account, "cosmos").replace('https', 'http')
                 service_type(url, credential=self.token_credential, table_name='foo')
+        if self.is_live:
+            sleep(SLEEP_DELAY)
 
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
     @CachedCosmosAccountPreparer(name_prefix='cosmostables')
     def test_create_service_china(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -148,8 +155,9 @@ class StorageTableClientTest(TableTestCase):
             self.assertEqual(service.credential.account_key, cosmos_account_key)
             self.assertTrue(service._primary_endpoint.startswith(
                 'https://{}.{}.core.chinacloudapi.cn'.format(cosmos_account.name, "cosmos")))
+        if self.is_live:
+            sleep(SLEEP_DELAY)
 
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
     @CachedCosmosAccountPreparer(name_prefix='cosmostables')
     def test_create_service_protocol(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -164,8 +172,9 @@ class StorageTableClientTest(TableTestCase):
             # Assert
             self.validate_standard_account_endpoints(service, cosmos_account.name, cosmos_account_key)
             self.assertEqual(service.scheme, 'http')
+        if self.is_live:
+            sleep(SLEEP_DELAY)
 
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
     @CachedCosmosAccountPreparer(name_prefix='cosmostables')
     def test_create_service_empty_key(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -179,8 +188,9 @@ class StorageTableClientTest(TableTestCase):
 
             self.assertEqual(
                 str(e.exception), "You need to provide either a SAS token or an account shared key to authenticate.")
+        if self.is_live:
+            sleep(SLEEP_DELAY)
 
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
     @CachedCosmosAccountPreparer(name_prefix='cosmostables')
     def test_create_service_with_socket_timeout(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -198,9 +208,10 @@ class StorageTableClientTest(TableTestCase):
             self.validate_standard_account_endpoints(service, cosmos_account.name, cosmos_account_key)
             assert service._client._client._pipeline._transport.connection_config.timeout == 22
             assert default_service._client._client._pipeline._transport.connection_config.timeout in [20, (20, 2000)]
+        if self.is_live:
+            sleep(SLEEP_DELAY)
 
     # --Connection String Test Cases --------------------------------------------
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
     @CachedCosmosAccountPreparer(name_prefix='cosmostables')
     def test_create_service_with_connection_string_key(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -214,9 +225,10 @@ class StorageTableClientTest(TableTestCase):
             # Assert
             self.validate_standard_account_endpoints(service, cosmos_account.name, cosmos_account_key)
             self.assertEqual(service.scheme, 'https')
+        if self.is_live:
+            sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("Cosmos differential")
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
     @CachedCosmosAccountPreparer(name_prefix='cosmostables')
     def test_create_service_with_connection_string_sas(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -233,8 +245,9 @@ class StorageTableClientTest(TableTestCase):
             self.assertTrue(service.url.startswith('https://' + cosmos_account.name + '.table.core.windows.net'))
             self.assertTrue(service.url.endswith(self.sas_token))
             self.assertIsNone(service.credential)
+        if self.is_live:
+            sleep(SLEEP_DELAY)
 
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
     @CachedCosmosAccountPreparer(name_prefix='cosmostables')
     def test_create_service_with_connection_string_cosmos(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -254,10 +267,11 @@ class StorageTableClientTest(TableTestCase):
             self.assertEqual(service.credential.account_key, cosmos_account_key)
             self.assertTrue(service._primary_endpoint.startswith('https://' + cosmos_account.name + '.table.cosmos.azure.com'))
             self.assertEqual(service.scheme, 'https')
+        if self.is_live:
+            sleep(SLEEP_DELAY)
 
 
     @pytest.mark.skip("pending")
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
     @CachedCosmosAccountPreparer(name_prefix='cosmostables')
     def test_create_service_with_connection_string_endpoint_protocol(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -278,8 +292,9 @@ class StorageTableClientTest(TableTestCase):
                 service._primary_endpoint.startswith(
                     'http://{}.{}.core.chinacloudapi.cn'.format(cosmos_account.name, "cosmos")))
             self.assertEqual(service.scheme, 'http')
+        if self.is_live:
+            sleep(SLEEP_DELAY)
 
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
     @CachedCosmosAccountPreparer(name_prefix='cosmostables')
     def test_create_service_with_connection_string_emulated(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -290,8 +305,9 @@ class StorageTableClientTest(TableTestCase):
             # Act
             with self.assertRaises(ValueError):
                 service = service_type[0].from_connection_string(conn_string, table_name="foo")
+        if self.is_live:
+            sleep(SLEEP_DELAY)
 
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
     @CachedCosmosAccountPreparer(name_prefix='cosmostables')
     def test_create_service_with_connection_string_custom_domain(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -309,8 +325,9 @@ class StorageTableClientTest(TableTestCase):
             self.assertEqual(service.credential.account_name, cosmos_account.name)
             self.assertEqual(service.credential.account_key, cosmos_account_key)
             self.assertTrue(service._primary_endpoint.startswith('https://www.mydomain.com'))
+        if self.is_live:
+            sleep(SLEEP_DELAY)
 
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
     @CachedCosmosAccountPreparer(name_prefix='cosmostables')
     def test_create_service_with_conn_str_custom_domain_trailing_slash(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -328,8 +345,9 @@ class StorageTableClientTest(TableTestCase):
             self.assertEqual(service.credential.account_name, cosmos_account.name)
             self.assertEqual(service.credential.account_key, cosmos_account_key)
             self.assertTrue(service._primary_endpoint.startswith('https://www.mydomain.com'))
+        if self.is_live:
+            sleep(SLEEP_DELAY)
 
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
     @CachedCosmosAccountPreparer(name_prefix='cosmostables')
     def test_create_service_with_conn_str_custom_domain_sec_override(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -348,8 +366,9 @@ class StorageTableClientTest(TableTestCase):
             self.assertEqual(service.credential.account_name, cosmos_account.name)
             self.assertEqual(service.credential.account_key, cosmos_account_key)
             self.assertTrue(service._primary_endpoint.startswith('https://www.mydomain.com'))
+        if self.is_live:
+            sleep(SLEEP_DELAY)
 
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
     @CachedCosmosAccountPreparer(name_prefix='cosmostables')
     def test_create_service_with_conn_str_fails_if_sec_without_primary(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -364,8 +383,9 @@ class StorageTableClientTest(TableTestCase):
             # Fails if primary excluded
             with self.assertRaises(ValueError):
                 service = service_type[0].from_connection_string(conn_string, table_name="foo")
+        if self.is_live:
+            sleep(SLEEP_DELAY)
 
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
     @CachedCosmosAccountPreparer(name_prefix='cosmostables')
     def test_create_service_with_conn_str_succeeds_if_sec_with_primary(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -386,8 +406,9 @@ class StorageTableClientTest(TableTestCase):
             self.assertEqual(service.credential.account_name, cosmos_account.name)
             self.assertEqual(service.credential.account_key, cosmos_account_key)
             self.assertTrue(service._primary_endpoint.startswith('https://www.mydomain.com'))
+        if self.is_live:
+            sleep(SLEEP_DELAY)
 
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
     @CachedCosmosAccountPreparer(name_prefix='cosmostables')
     def test_create_service_with_custom_account_endpoint_path(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -426,8 +447,10 @@ class StorageTableClientTest(TableTestCase):
         self.assertEqual(service._primary_hostname, 'local-machine:11002/custom/account/path')
         self.assertTrue(service.url.startswith('http://local-machine:11002/custom/account/path'))
 
+        if self.is_live:
+            sleep(SLEEP_DELAY)
+
     @pytest.mark.skip("pending")
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
     @CachedCosmosAccountPreparer(name_prefix='cosmostables')
     def test_user_agent_default(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -445,8 +468,10 @@ class StorageTableClientTest(TableTestCase):
         tables = list(service.list_tables(raw_response_hook=callback))
         self.assertIsInstance(tables, list)
 
+        if self.is_live:
+            sleep(SLEEP_DELAY)
+
     @pytest.mark.skip("pending")
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
     @CachedCosmosAccountPreparer(name_prefix='cosmostables')
     def test_user_agent_custom(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -480,8 +505,10 @@ class StorageTableClientTest(TableTestCase):
         tables = list(service.list_tables(raw_response_hook=callback, user_agent="TestApp/v2.0"))
         self.assertIsInstance(tables, list)
 
+        if self.is_live:
+            sleep(SLEEP_DELAY)
+
     @pytest.mark.skip("pending")
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
     @CachedCosmosAccountPreparer(name_prefix='cosmostables')
     def test_user_agent_append(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -501,7 +528,9 @@ class StorageTableClientTest(TableTestCase):
         tables = list(service.list_tables(raw_response_hook=callback, headers=custom_headers))
         self.assertIsInstance(tables, list)
 
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
+        if self.is_live:
+            sleep(SLEEP_DELAY)
+
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
     @CachedCosmosAccountPreparer(name_prefix='cosmostables')
     def test_create_table_client_with_complete_table_url(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -514,7 +543,6 @@ class StorageTableClientTest(TableTestCase):
         self.assertEqual(service.table_name, 'bar')
 
     @pytest.mark.skip("Cosmos differential")
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
     @CachedCosmosAccountPreparer(name_prefix='cosmostables')
     def test_create_table_client_with_complete_url(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -527,7 +555,9 @@ class StorageTableClientTest(TableTestCase):
         self.assertEqual(service.table_name, 'bar')
         self.assertEqual(service.account_name, cosmos_account.name)
 
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
+        if self.is_live:
+            sleep(SLEEP_DELAY)
+
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
     @CachedCosmosAccountPreparer(name_prefix='cosmostables')
     def test_create_table_client_with_invalid_name(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -541,7 +571,9 @@ class StorageTableClientTest(TableTestCase):
 
         assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.""" in str(excinfo)
 
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
+        if self.is_live:
+            sleep(SLEEP_DELAY)
+
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
     @CachedCosmosAccountPreparer(name_prefix='cosmostables')
     def test_error_with_malformed_conn_str(self):
@@ -560,7 +592,9 @@ class StorageTableClientTest(TableTestCase):
                     self.assertEqual(
                         str(e.exception), "Connection string missing required connection details.")
 
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
+        if self.is_live:
+            sleep(SLEEP_DELAY)
+
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
     @CachedCosmosAccountPreparer(name_prefix='cosmostables')
     def test_closing_pipeline_client(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -575,7 +609,9 @@ class StorageTableClientTest(TableTestCase):
                 assert hasattr(service, 'close')
                 service.close()
 
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
+        if self.is_live:
+            sleep(SLEEP_DELAY)
+
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
     @CachedCosmosAccountPreparer(name_prefix='cosmostables')
     def test_closing_pipeline_client_simple(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -585,6 +621,9 @@ class StorageTableClientTest(TableTestCase):
             service = client(
                 self.account_url(cosmos_account, "cosmos"), credential=cosmos_account_key, table_name='table')
             service.close()
+
+        if self.is_live:
+            sleep(SLEEP_DELAY)
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':

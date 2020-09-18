@@ -11,11 +11,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 17 Sep 2020 22:38:03 GMT
+      - Fri, 18 Sep 2020 20:35:26 GMT
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 17 Sep 2020 22:38:03 GMT
+      - Fri, 18 Sep 2020 20:35:26 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
@@ -25,15 +25,15 @@ interactions:
       string: '{"TableName":"uttable5cd1cf1","odata.metadata":"https://cosmostestcosmosname.table.cosmos.azure.com/$metadata#Tables/@Element"}'
     headers:
       content-type: application/json;odata=minimalmetadata
-      date: Thu, 17 Sep 2020 22:38:03 GMT
-      etag: W/"datetime'2020-09-17T22%3A38%3A03.5557383Z'"
+      date: Fri, 18 Sep 2020 20:35:26 GMT
+      etag: W/"datetime'2020-09-18T20%3A35%3A27.0082567Z'"
       location: https://cosmostestcosmosname.table.cosmos.azure.com/Tables('uttable5cd1cf1')
       server: Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
     status:
       code: 201
       message: Ok
-    url: https://cosmostableswmnfqcvpsy56.table.cosmos.azure.com/Tables
+    url: https://cosmostables7jyy4tyvaxat.table.cosmos.azure.com/Tables
 - request:
     body: '{"PartitionKey": "pk5cd1cf1", "RowKey": "rk5cd1cf1", "age": "39", "age@odata.type":
       "Edm.Int64", "sex": "male", "married": true, "deceased": false, "ratio": 3.1,
@@ -52,42 +52,42 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 17 Sep 2020 22:38:03 GMT
+      - Fri, 18 Sep 2020 20:35:27 GMT
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 17 Sep 2020 22:38:03 GMT
+      - Fri, 18 Sep 2020 20:35:27 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
     uri: https://cosmostestcosmosname.table.cosmos.azure.com/uttable5cd1cf1
   response:
     body:
-      string: '{"odata.metadata":"https://cosmostestcosmosname.table.cosmos.azure.com/uttable5cd1cf1/$metadata#uttable5cd1cf1/@Element","odata.etag":"W/\"datetime''2020-09-17T22%3A38%3A03.9882759Z''\"","PartitionKey":"pk5cd1cf1","RowKey":"rk5cd1cf1","age@odata.type":"Edm.Int64","age":"39","sex":"male","married":true,"deceased":false,"ratio":3.1,"evenratio":3.0,"large@odata.type":"Edm.Int64","large":"933311100","Birthday@odata.type":"Edm.DateTime","Birthday":"1973-10-04T00:00:00.0000000Z","birthday@odata.type":"Edm.DateTime","birthday":"1970-10-04T00:00:00.0000000Z","binary@odata.type":"Edm.Binary","binary":"YmluYXJ5","other":20,"clsid@odata.type":"Edm.Guid","clsid":"c9da6455-213d-42c9-9a79-3e9149a57833","Timestamp":"2020-09-17T22:38:03.9882759Z"}'
+      string: '{"odata.metadata":"https://cosmostestcosmosname.table.cosmos.azure.com/uttable5cd1cf1/$metadata#uttable5cd1cf1/@Element","odata.etag":"W/\"datetime''2020-09-18T20%3A35%3A27.4987527Z''\"","PartitionKey":"pk5cd1cf1","RowKey":"rk5cd1cf1","age@odata.type":"Edm.Int64","age":"39","sex":"male","married":true,"deceased":false,"ratio":3.1,"evenratio":3.0,"large@odata.type":"Edm.Int64","large":"933311100","Birthday@odata.type":"Edm.DateTime","Birthday":"1973-10-04T00:00:00.0000000Z","birthday@odata.type":"Edm.DateTime","birthday":"1970-10-04T00:00:00.0000000Z","binary@odata.type":"Edm.Binary","binary":"YmluYXJ5","other":20,"clsid@odata.type":"Edm.Guid","clsid":"c9da6455-213d-42c9-9a79-3e9149a57833","Timestamp":"2020-09-18T20:35:27.4987527Z"}'
     headers:
       content-type: application/json;odata=minimalmetadata
-      date: Thu, 17 Sep 2020 22:38:03 GMT
-      etag: W/"datetime'2020-09-17T22%3A38%3A03.9882759Z'"
+      date: Fri, 18 Sep 2020 20:35:26 GMT
+      etag: W/"datetime'2020-09-18T20%3A35%3A27.4987527Z'"
       location: https://cosmostestcosmosname.table.cosmos.azure.com/uttable5cd1cf1(PartitionKey='pk5cd1cf1',RowKey='rk5cd1cf1')
       server: Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
     status:
       code: 201
       message: Created
-    url: https://cosmostableswmnfqcvpsy56.table.cosmos.azure.com/uttable5cd1cf1
+    url: https://cosmostables7jyy4tyvaxat.table.cosmos.azure.com/uttable5cd1cf1
 - request:
     body: null
     headers:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 17 Sep 2020 22:38:03 GMT
+      - Fri, 18 Sep 2020 20:35:27 GMT
       If-Match:
       - W/"datetime'2012-06-15T22%3A51%3A44.9662825Z'"
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 17 Sep 2020 22:38:03 GMT
+      - Fri, 18 Sep 2020 20:35:27 GMT
       x-ms-version:
       - '2019-07-07'
     method: DELETE
@@ -95,25 +95,25 @@ interactions:
   response:
     body:
       string: "{\"odata.error\":{\"code\":\"UpdateConditionNotSatisfied\",\"message\":{\"lang\":\"en-us\",\"value\":\"The
-        update condition specified in the request was not satisfied.\\nRequestID:72d030eb-f936-11ea-96a8-58961df361d1\\n\"}}}\r\n"
+        update condition specified in the request was not satisfied.\\nRequestID:7c6570eb-f9ee-11ea-8888-58961df361d1\\n\"}}}\r\n"
     headers:
       content-type: application/json;odata=fullmetadata
-      date: Thu, 17 Sep 2020 22:38:03 GMT
+      date: Fri, 18 Sep 2020 20:35:26 GMT
       server: Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
     status:
       code: 412
       message: Precondition Failed
-    url: https://cosmostableswmnfqcvpsy56.table.cosmos.azure.com/uttable5cd1cf1(PartitionKey='pk5cd1cf1',RowKey='rk5cd1cf1')
+    url: https://cosmostables7jyy4tyvaxat.table.cosmos.azure.com/uttable5cd1cf1(PartitionKey='pk5cd1cf1',RowKey='rk5cd1cf1')
 - request:
     body: null
     headers:
       Date:
-      - Thu, 17 Sep 2020 22:38:03 GMT
+      - Fri, 18 Sep 2020 20:35:27 GMT
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 17 Sep 2020 22:38:03 GMT
+      - Fri, 18 Sep 2020 20:35:27 GMT
       x-ms-version:
       - '2019-07-07'
     method: DELETE
@@ -123,10 +123,10 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Thu, 17 Sep 2020 22:38:03 GMT
+      date: Fri, 18 Sep 2020 20:35:27 GMT
       server: Microsoft-HTTPAPI/2.0
     status:
       code: 204
       message: No Content
-    url: https://cosmostableswmnfqcvpsy56.table.cosmos.azure.com/Tables('uttable5cd1cf1')
+    url: https://cosmostables7jyy4tyvaxat.table.cosmos.azure.com/Tables('uttable5cd1cf1')
 version: 1

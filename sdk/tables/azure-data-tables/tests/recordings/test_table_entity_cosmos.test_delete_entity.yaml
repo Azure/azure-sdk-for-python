@@ -15,11 +15,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 17 Sep 2020 22:32:29 GMT
+      - Fri, 18 Sep 2020 20:24:09 GMT
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 17 Sep 2020 22:32:29 GMT
+      - Fri, 18 Sep 2020 20:24:09 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
@@ -31,9 +31,9 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata
       date:
-      - Thu, 17 Sep 2020 22:32:30 GMT
+      - Fri, 18 Sep 2020 20:24:10 GMT
       etag:
-      - W/"datetime'2020-09-17T22%3A32%3A30.9116935Z'"
+      - W/"datetime'2020-09-18T20%3A24%3A11.1137799Z'"
       location:
       - https://cosmostablescosmosname.table.cosmos.azure.com/Tables('uttable87c311d3')
       server:
@@ -65,25 +65,25 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 17 Sep 2020 22:32:31 GMT
+      - Fri, 18 Sep 2020 20:24:11 GMT
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 17 Sep 2020 22:32:31 GMT
+      - Fri, 18 Sep 2020 20:24:11 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
     uri: https://cosmostablescosmosname.table.cosmos.azure.com/uttable87c311d3
   response:
     body:
-      string: '{"odata.metadata":"https://cosmostablescosmosname.table.cosmos.azure.com/uttable87c311d3/$metadata#uttable87c311d3/@Element","odata.etag":"W/\"datetime''2020-09-17T22%3A32%3A31.3234439Z''\"","PartitionKey":"pk87c311d3","RowKey":"rk87c311d3","age@odata.type":"Edm.Int64","age":"39","sex":"male","married":true,"deceased":false,"ratio":3.1,"evenratio":3.0,"large@odata.type":"Edm.Int64","large":"933311100","Birthday@odata.type":"Edm.DateTime","Birthday":"1973-10-04T00:00:00.0000000Z","birthday@odata.type":"Edm.DateTime","birthday":"1970-10-04T00:00:00.0000000Z","binary@odata.type":"Edm.Binary","binary":"YmluYXJ5","other":20,"clsid@odata.type":"Edm.Guid","clsid":"c9da6455-213d-42c9-9a79-3e9149a57833","Timestamp":"2020-09-17T22:32:31.3234439Z"}'
+      string: '{"odata.metadata":"https://cosmostablescosmosname.table.cosmos.azure.com/uttable87c311d3/$metadata#uttable87c311d3/@Element","odata.etag":"W/\"datetime''2020-09-18T20%3A24%3A11.5315719Z''\"","PartitionKey":"pk87c311d3","RowKey":"rk87c311d3","age@odata.type":"Edm.Int64","age":"39","sex":"male","married":true,"deceased":false,"ratio":3.1,"evenratio":3.0,"large@odata.type":"Edm.Int64","large":"933311100","Birthday@odata.type":"Edm.DateTime","Birthday":"1973-10-04T00:00:00.0000000Z","birthday@odata.type":"Edm.DateTime","birthday":"1970-10-04T00:00:00.0000000Z","binary@odata.type":"Edm.Binary","binary":"YmluYXJ5","other":20,"clsid@odata.type":"Edm.Guid","clsid":"c9da6455-213d-42c9-9a79-3e9149a57833","Timestamp":"2020-09-18T20:24:11.5315719Z"}'
     headers:
       content-type:
       - application/json;odata=minimalmetadata
       date:
-      - Thu, 17 Sep 2020 22:32:30 GMT
+      - Fri, 18 Sep 2020 20:24:10 GMT
       etag:
-      - W/"datetime'2020-09-17T22%3A32%3A31.3234439Z'"
+      - W/"datetime'2020-09-18T20%3A24%3A11.5315719Z'"
       location:
       - https://cosmostablescosmosname.table.cosmos.azure.com/uttable87c311d3(PartitionKey='pk87c311d3',RowKey='rk87c311d3')
       server:
@@ -107,13 +107,13 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 17 Sep 2020 22:32:31 GMT
+      - Fri, 18 Sep 2020 20:24:11 GMT
       If-Match:
       - '*'
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 17 Sep 2020 22:32:31 GMT
+      - Fri, 18 Sep 2020 20:24:11 GMT
       x-ms-version:
       - '2019-07-07'
     method: DELETE
@@ -125,7 +125,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 17 Sep 2020 22:32:30 GMT
+      - Fri, 18 Sep 2020 20:24:10 GMT
       server:
       - Microsoft-HTTPAPI/2.0
     status:
@@ -143,11 +143,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 17 Sep 2020 22:32:31 GMT
+      - Fri, 18 Sep 2020 20:24:11 GMT
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 17 Sep 2020 22:32:31 GMT
+      - Fri, 18 Sep 2020 20:24:11 GMT
       x-ms-version:
       - '2019-07-07'
     method: GET
@@ -155,12 +155,12 @@ interactions:
   response:
     body:
       string: "{\"odata.error\":{\"code\":\"ResourceNotFound\",\"message\":{\"lang\":\"en-us\",\"value\":\"The
-        specified resource does not exist.\\nRequestID:ac8dac60-f935-11ea-90b9-58961df361d1\\n\"}}}\r\n"
+        specified resource does not exist.\\nRequestID:e984642a-f9ec-11ea-99f4-58961df361d1\\n\"}}}\r\n"
     headers:
       content-type:
       - application/json;odata=minimalmetadata
       date:
-      - Thu, 17 Sep 2020 22:32:30 GMT
+      - Fri, 18 Sep 2020 20:24:10 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -180,11 +180,11 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Thu, 17 Sep 2020 22:32:31 GMT
+      - Fri, 18 Sep 2020 20:24:11 GMT
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 17 Sep 2020 22:32:31 GMT
+      - Fri, 18 Sep 2020 20:24:11 GMT
       x-ms-version:
       - '2019-07-07'
     method: DELETE
@@ -196,7 +196,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 17 Sep 2020 22:32:30 GMT
+      - Fri, 18 Sep 2020 20:24:11 GMT
       server:
       - Microsoft-HTTPAPI/2.0
     status:
@@ -214,11 +214,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 17 Sep 2020 22:32:31 GMT
+      - Fri, 18 Sep 2020 20:24:11 GMT
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 17 Sep 2020 22:32:31 GMT
+      - Fri, 18 Sep 2020 20:24:11 GMT
       x-ms-version:
       - '2019-07-07'
     method: GET
@@ -230,7 +230,7 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata
       date:
-      - Thu, 17 Sep 2020 22:32:30 GMT
+      - Fri, 18 Sep 2020 20:24:11 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       transfer-encoding:

@@ -15,11 +15,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 17 Sep 2020 22:32:31 GMT
+      - Fri, 18 Sep 2020 20:24:26 GMT
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 17 Sep 2020 22:32:31 GMT
+      - Fri, 18 Sep 2020 20:24:26 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
@@ -31,9 +31,9 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata
       date:
-      - Thu, 17 Sep 2020 22:32:32 GMT
+      - Fri, 18 Sep 2020 20:24:27 GMT
       etag:
-      - W/"datetime'2020-09-17T22%3A32%3A32.5551111Z'"
+      - W/"datetime'2020-09-18T20%3A24%3A27.9107591Z'"
       location:
       - https://cosmostablescosmosname.table.cosmos.azure.com/Tables('uttable959b174d')
       server:
@@ -57,13 +57,13 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 17 Sep 2020 22:32:32 GMT
+      - Fri, 18 Sep 2020 20:24:28 GMT
       If-Match:
       - '*'
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 17 Sep 2020 22:32:32 GMT
+      - Fri, 18 Sep 2020 20:24:28 GMT
       x-ms-version:
       - '2019-07-07'
     method: DELETE
@@ -71,12 +71,12 @@ interactions:
   response:
     body:
       string: "{\"odata.error\":{\"code\":\"ResourceNotFound\",\"message\":{\"lang\":\"en-us\",\"value\":\"The
-        specified resource does not exist.\\nRequestID:ad75da4b-f935-11ea-b779-58961df361d1\\n\"}}}\r\n"
+        specified resource does not exist.\\nRequestID:f37e9685-f9ec-11ea-853f-58961df361d1\\n\"}}}\r\n"
     headers:
       content-type:
       - application/json;odata=fullmetadata
       date:
-      - Thu, 17 Sep 2020 22:32:32 GMT
+      - Fri, 18 Sep 2020 20:24:27 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -96,11 +96,11 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Thu, 17 Sep 2020 22:32:32 GMT
+      - Fri, 18 Sep 2020 20:24:28 GMT
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 17 Sep 2020 22:32:32 GMT
+      - Fri, 18 Sep 2020 20:24:28 GMT
       x-ms-version:
       - '2019-07-07'
     method: DELETE
@@ -112,7 +112,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 17 Sep 2020 22:32:32 GMT
+      - Fri, 18 Sep 2020 20:24:28 GMT
       server:
       - Microsoft-HTTPAPI/2.0
     status:
@@ -130,11 +130,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 17 Sep 2020 22:32:33 GMT
+      - Fri, 18 Sep 2020 20:24:28 GMT
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 17 Sep 2020 22:32:33 GMT
+      - Fri, 18 Sep 2020 20:24:28 GMT
       x-ms-version:
       - '2019-07-07'
     method: GET
@@ -146,7 +146,7 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata
       date:
-      - Thu, 17 Sep 2020 22:32:32 GMT
+      - Fri, 18 Sep 2020 20:24:28 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       transfer-encoding:

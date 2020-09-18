@@ -2,12 +2,13 @@ import locale
 import os
 import sys
 from datetime import datetime, timedelta
+from time import sleep
 
 import pytest
 from devtools_testutils import CachedResourceGroupPreparer, CachedCosmosAccountPreparer
 from azure.core.exceptions import ResourceNotFoundError, ResourceExistsError, HttpResponseError
 from _shared.asynctestcase import AsyncTableTestCase
-from _shared.testcase import RERUNS_DELAY
+from _shared.testcase import RERUNS_DELAY, SLEEP_DELAY
 from azure.data.tables import AccessPolicy, TableSasPermissions, ResourceTypes, AccountSasPermissions
 from azure.data.tables.aio import TableServiceClient
 from azure.data.tables._generated.models import QueryOptions
@@ -44,7 +45,6 @@ class TableTestAsync(AsyncTableTestCase):
 
     # --Test cases for tables --------------------------------------------------
 
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix="cosmostables")
     @CachedCosmosAccountPreparer(name_prefix="cosmostables")
     async def test_create_table(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -60,7 +60,9 @@ class TableTestAsync(AsyncTableTestCase):
 
         await ts.delete_table(table_name=table_name)
 
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
+        if self.is_live:
+            sleep(SLEEP_DELAY)
+
     @CachedResourceGroupPreparer(name_prefix="cosmostables")
     @CachedCosmosAccountPreparer(name_prefix="cosmostables")
     async def test_create_table_fail_on_exist(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -77,7 +79,9 @@ class TableTestAsync(AsyncTableTestCase):
         self.assertTrue(created)
         await ts.delete_table(table_name=table_name)
 
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
+        if self.is_live:
+            sleep(SLEEP_DELAY)
+
     @CachedResourceGroupPreparer(name_prefix="cosmostables")
     @CachedCosmosAccountPreparer(name_prefix="cosmostables")
     async def test_create_table_invalid_name(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -91,7 +95,9 @@ class TableTestAsync(AsyncTableTestCase):
         assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.""" in str(
             excinfo)
 
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
+        if self.is_live:
+            sleep(SLEEP_DELAY)
+
     @CachedResourceGroupPreparer(name_prefix="cosmostables")
     @CachedCosmosAccountPreparer(name_prefix="cosmostables")
     async def test_delete_table_invalid_name(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -105,7 +111,9 @@ class TableTestAsync(AsyncTableTestCase):
         assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.""" in str(
             excinfo)
 
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
+        if self.is_live:
+            sleep(SLEEP_DELAY)
+
     @CachedResourceGroupPreparer(name_prefix="cosmostables")
     @CachedCosmosAccountPreparer(name_prefix="cosmostables")
     async def test_list_tables(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -123,7 +131,9 @@ class TableTestAsync(AsyncTableTestCase):
         self.assertGreaterEqual(len(tables), 1)
         self.assertIsNotNone(tables[0])
 
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
+        if self.is_live:
+            sleep(SLEEP_DELAY)
+
     @CachedResourceGroupPreparer(name_prefix="cosmostables")
     @CachedCosmosAccountPreparer(name_prefix="cosmostables")
     async def test_query_tables_with_filter(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -142,8 +152,10 @@ class TableTestAsync(AsyncTableTestCase):
         self.assertEqual(len(tables), 1)
         await ts.delete_table(table.table_name)
 
+        if self.is_live:
+            sleep(SLEEP_DELAY)
+
     @pytest.mark.skip("small page and large page issues")
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix="cosmostables")
     @CachedCosmosAccountPreparer(name_prefix="cosmostables")
     async def test_list_tables_with_num_results(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -166,8 +178,10 @@ class TableTestAsync(AsyncTableTestCase):
         self.assertEqual(len(small_page), 2)
         self.assertGreaterEqual(len(big_page), 4)
 
+        if self.is_live:
+            sleep(SLEEP_DELAY)
+
     @pytest.mark.skip("pending")
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix="cosmostables")
     @CachedCosmosAccountPreparer(name_prefix="cosmostables")
     async def test_list_tables_with_marker(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -196,7 +210,9 @@ class TableTestAsync(AsyncTableTestCase):
         self.assertEqual(len(tables2), 2)
         self.assertNotEqual(tables1, tables2)
 
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
+        if self.is_live:
+            sleep(SLEEP_DELAY)
+
     @CachedResourceGroupPreparer(name_prefix="cosmostables")
     @CachedCosmosAccountPreparer(name_prefix="cosmostables")
     async def test_delete_table_with_existing_table(self, resource_group, location, cosmos_account,
@@ -211,10 +227,10 @@ class TableTestAsync(AsyncTableTestCase):
 
         # Assert
         self.assertIsNone(deleted)
-        # existing = list(ts.query_tables("TableName eq '{}'".format(table.table_name)))
-        # self.assertEqual(existing, [])
 
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
+        if self.is_live:
+            sleep(SLEEP_DELAY)
+
     @CachedResourceGroupPreparer(name_prefix="cosmostables")
     @CachedCosmosAccountPreparer(name_prefix="cosmostables")
     async def test_delete_table_with_non_existing_table_fail_not_exist(self, resource_group, location, cosmos_account,
@@ -227,9 +243,9 @@ class TableTestAsync(AsyncTableTestCase):
         with self.assertRaises(ResourceNotFoundError):
             await ts.delete_table(table_name)
 
-        # Assert
+        if self.is_live:
+            sleep(SLEEP_DELAY)
 
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix="cosmostables")
     @CachedCosmosAccountPreparer(name_prefix="cosmostables")
     async def test_unicode_create_table_unicode_name(self, resource_group, location, cosmos_account,
@@ -250,9 +266,9 @@ class TableTestAsync(AsyncTableTestCase):
         assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.""" in str(
             excinfo)
 
-        # Assert
+        if self.is_live:
+            sleep(SLEEP_DELAY)
 
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix="cosmostables")
     @CachedCosmosAccountPreparer(name_prefix="cosmostables")
     async def test_get_table_acl(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -265,17 +281,17 @@ class TableTestAsync(AsyncTableTestCase):
         try:
             # Act
             acl = await table.get_table_access_policy()
-            # acl = table.get_table_access_policy()
 
             # Assert
             self.assertIsNotNone(acl)
             self.assertEqual(len(acl), 0)
         finally:
-            # self._delete_table(table)
             await ts.delete_table(table.table_name)
 
+        if self.is_live:
+            sleep(SLEEP_DELAY)
+
     @pytest.mark.skip("pending")
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix="cosmostables")
     @CachedCosmosAccountPreparer(name_prefix="cosmostables")
     async def test_set_table_acl_with_empty_signed_identifiers(self, resource_group, location, cosmos_account,
@@ -295,11 +311,12 @@ class TableTestAsync(AsyncTableTestCase):
             self.assertIsNotNone(acl)
             self.assertEqual(len(acl), 0)
         finally:
-            # self._delete_table(table)
             await ts.delete_table(table.table_name)
 
+        if self.is_live:
+            sleep(SLEEP_DELAY)
+
     @pytest.mark.skip("pending")
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix="cosmostables")
     @CachedCosmosAccountPreparer(name_prefix="cosmostables")
     async def test_set_table_acl_with_empty_signed_identifier(self, resource_group, location, cosmos_account,
@@ -322,11 +339,12 @@ class TableTestAsync(AsyncTableTestCase):
             self.assertIsNone(acl['empty'].expiry)
             self.assertIsNone(acl['empty'].start)
         finally:
-            # self._delete_table(table)
             await ts.delete_table(table.table_name)
 
+        if self.is_live:
+            sleep(SLEEP_DELAY)
+
     @pytest.mark.skip("pending")
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix="cosmostables")
     @CachedCosmosAccountPreparer(name_prefix="cosmostables")
     async def test_set_table_acl_with_signed_identifiers(self, resource_group, location, cosmos_account,
@@ -355,7 +373,9 @@ class TableTestAsync(AsyncTableTestCase):
         finally:
             await ts.delete_table(table.table_name)
 
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
+        if self.is_live:
+            sleep(SLEEP_DELAY)
+
     @CachedResourceGroupPreparer(name_prefix="cosmostables")
     @CachedCosmosAccountPreparer(name_prefix="cosmostables")
     async def test_set_table_acl_too_many_ids(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -377,9 +397,11 @@ class TableTestAsync(AsyncTableTestCase):
         finally:
             await ts.delete_table(table.table_name)
 
+        if self.is_live:
+            sleep(SLEEP_DELAY)
+
     @pytest.mark.skip("pending")
     @pytest.mark.live_test_only
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix="cosmostables")
     @CachedCosmosAccountPreparer(name_prefix="cosmostables")
     async def test_account_sas(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -427,7 +449,9 @@ class TableTestAsync(AsyncTableTestCase):
         finally:
             await self._delete_table(table=table, ts=tsc)
 
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
+        if self.is_live:
+            sleep(SLEEP_DELAY)
+
     @CachedResourceGroupPreparer(name_prefix="cosmostables")
     @CachedCosmosAccountPreparer(name_prefix="cosmostables")
     async def test_locale(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -457,3 +481,6 @@ class TableTestAsync(AsyncTableTestCase):
 
         await ts.delete_table(table)
         locale.setlocale(locale.LC_ALL, init_locale[0] or 'en_US')
+
+        if self.is_live:
+            sleep(SLEEP_DELAY)

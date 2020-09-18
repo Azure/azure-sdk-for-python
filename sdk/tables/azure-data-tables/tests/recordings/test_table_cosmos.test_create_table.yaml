@@ -15,11 +15,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 17 Sep 2020 22:46:08 GMT
+      - Fri, 18 Sep 2020 19:50:50 GMT
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 17 Sep 2020 22:46:08 GMT
+      - Fri, 18 Sep 2020 19:50:50 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
@@ -31,9 +31,9 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata
       date:
-      - Thu, 17 Sep 2020 22:46:09 GMT
+      - Fri, 18 Sep 2020 19:50:52 GMT
       etag:
-      - W/"datetime'2020-09-17T22%3A46%3A08.9629703Z'"
+      - W/"datetime'2020-09-18T19%3A50%3A52.2852359Z'"
       location:
       - https://cosmostablescosmosname.table.cosmos.azure.com/Tables('pytablesync2a40e43')
       server:
@@ -55,11 +55,11 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Thu, 17 Sep 2020 22:46:09 GMT
+      - Fri, 18 Sep 2020 19:50:52 GMT
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 17 Sep 2020 22:46:09 GMT
+      - Fri, 18 Sep 2020 19:50:52 GMT
       x-ms-version:
       - '2019-07-07'
     method: DELETE
@@ -71,7 +71,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 17 Sep 2020 22:46:09 GMT
+      - Fri, 18 Sep 2020 19:50:52 GMT
       server:
       - Microsoft-HTTPAPI/2.0
     status:

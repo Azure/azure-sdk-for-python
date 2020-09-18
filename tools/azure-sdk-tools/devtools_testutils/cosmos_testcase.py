@@ -32,7 +32,7 @@ FakeCosmosAccount = FakeResource
 class CosmosAccountPreparer(AzureMgmtPreparer):
     def __init__(
         self,
-        name_prefix='',
+        name_prefix='cosmostables',
         sku='Standard_LRS',
         location='westus',
         kind='StorageV2',

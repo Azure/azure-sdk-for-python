@@ -13,6 +13,7 @@ import pytest
 import uuid
 from base64 import b64encode
 from datetime import datetime, timedelta
+from time import sleep
 
 from azure.data.tables import generate_table_sas
 from azure.data.tables._generated.models import QueryOptions
@@ -29,7 +30,7 @@ from azure.core.exceptions import (
 from azure.data.tables._entity import TableEntity, EntityProperty, EdmType
 from azure.data.tables import TableSasPermissions, AccessPolicy, UpdateMode
 from devtools_testutils import CachedResourceGroupPreparer, CachedCosmosAccountPreparer
-from _shared.testcase import TableTestCase, LogCaptured, RERUNS_DELAY
+from _shared.testcase import TableTestCase, LogCaptured, RERUNS_DELAY, SLEEP_DELAY
 
 # ------------------------------------------------------------------------------
 
@@ -286,7 +287,6 @@ class StorageTableEntityTest(TableTestCase):
 
     # --Test cases for entities ------------------------------------------
     @pytest.mark.skip("Merge operation fails from Tables SDK")
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix="cosmostest")
     @CachedCosmosAccountPreparer(name_prefix="cosmostest")
     async def test_insert_entity_dictionary(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -303,8 +303,9 @@ class StorageTableEntityTest(TableTestCase):
             self.assertIsNotNone(resp)
         finally:
             await self._tear_down()
+            if self.is_live:
+                sleep(SLEEP_DELAY)
 
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix="cosmostest")
     @CachedCosmosAccountPreparer(name_prefix="cosmostest")
     async def test_insert_entity_with_hook(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -322,8 +323,9 @@ class StorageTableEntityTest(TableTestCase):
             self._assert_default_entity(resp)
         finally:
             await self._tear_down()
+            if self.is_live:
+                sleep(SLEEP_DELAY)
 
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix="cosmostest")
     @CachedCosmosAccountPreparer(name_prefix="cosmostest")
     async def test_insert_entity_with_no_metadata(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -344,8 +346,9 @@ class StorageTableEntityTest(TableTestCase):
             self._assert_default_entity_json_no_metadata(resp)
         finally:
             await self._tear_down()
+            if self.is_live:
+                sleep(SLEEP_DELAY)
 
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix="cosmostest")
     @CachedCosmosAccountPreparer(name_prefix="cosmostest")
     async def test_insert_entity_with_full_metadata(self, resource_group, location, cosmos_account,
@@ -366,8 +369,9 @@ class StorageTableEntityTest(TableTestCase):
             self._assert_default_entity_json_full_metadata(resp)
         finally:
             await self._tear_down()
+            if self.is_live:
+                sleep(SLEEP_DELAY)
 
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix="cosmostest")
     @CachedCosmosAccountPreparer(name_prefix="cosmostest")
     async def test_insert_entity_conflict(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -384,6 +388,8 @@ class StorageTableEntityTest(TableTestCase):
             # Assert
         finally:
             await self._tear_down()
+            if self.is_live:
+                sleep(SLEEP_DELAY)
 
     @CachedResourceGroupPreparer(name_prefix="cosmostest")
     @CachedCosmosAccountPreparer(name_prefix="cosmostest")
@@ -405,8 +411,9 @@ class StorageTableEntityTest(TableTestCase):
                 await self.table.create_entity(entity=dict32)
         finally:
             await self._tear_down()
+            if self.is_live:
+                sleep(SLEEP_DELAY)
 
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix="cosmostest")
     @CachedCosmosAccountPreparer(name_prefix="cosmostest")
     async def test_insert_entity_with_large_int64_value_throws(self, resource_group, location, cosmos_account,
@@ -427,8 +434,9 @@ class StorageTableEntityTest(TableTestCase):
                 await self.table.create_entity(entity=dict64)
         finally:
             await self._tear_down()
+            if self.is_live:
+                sleep(SLEEP_DELAY)
 
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix="cosmostest")
     @CachedCosmosAccountPreparer(name_prefix="cosmostest")
     async def test_insert_entity_missing_pk(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -444,8 +452,9 @@ class StorageTableEntityTest(TableTestCase):
             # Assert
         finally:
             await self._tear_down()
+            if self.is_live:
+                sleep(SLEEP_DELAY)
 
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix="cosmostest")
     @CachedCosmosAccountPreparer(name_prefix="cosmostest")
     async def test_insert_entity_empty_string_pk(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -465,8 +474,9 @@ class StorageTableEntityTest(TableTestCase):
             #  self.assertIsNone(resp)
         finally:
             await self._tear_down()
+            if self.is_live:
+                sleep(SLEEP_DELAY)
 
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix="cosmostest")
     @CachedCosmosAccountPreparer(name_prefix="cosmostest")
     async def test_insert_entity_missing_rk(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -482,8 +492,9 @@ class StorageTableEntityTest(TableTestCase):
             # Assert
         finally:
             await self._tear_down()
+            if self.is_live:
+                sleep(SLEEP_DELAY)
 
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix="cosmostest")
     @CachedCosmosAccountPreparer(name_prefix="cosmostest")
     async def test_insert_entity_empty_string_rk(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -503,8 +514,9 @@ class StorageTableEntityTest(TableTestCase):
             #  self.assertIsNone(resp)
         finally:
             await self._tear_down()
+            if self.is_live:
+                sleep(SLEEP_DELAY)
 
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @pytest.mark.skip("Cosmos Tables does not yet support sas")
     @CachedResourceGroupPreparer(name_prefix="cosmostest")
     @CachedCosmosAccountPreparer(name_prefix="cosmostest")
@@ -526,9 +538,10 @@ class StorageTableEntityTest(TableTestCase):
             # Assert
         finally:
             await self._tear_down()
+            if self.is_live:
+                sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("pending")
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix="cosmostest")
     @CachedCosmosAccountPreparer(name_prefix="cosmostest")
     async def test_insert_entity_property_name_too_long(self, resource_group, location, cosmos_account,
@@ -548,8 +561,9 @@ class StorageTableEntityTest(TableTestCase):
             # Assert
         finally:
             await self._tear_down()
+            if self.is_live:
+                sleep(SLEEP_DELAY)
 
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix="cosmostest")
     @CachedCosmosAccountPreparer(name_prefix="cosmostest")
     async def test_get_entity(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -568,8 +582,9 @@ class StorageTableEntityTest(TableTestCase):
             self._assert_default_entity(resp)
         finally:
             await self._tear_down()
+            if self.is_live:
+                sleep(SLEEP_DELAY)
 
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix="cosmostest")
     @CachedCosmosAccountPreparer(name_prefix="cosmostest")
     async def test_get_entity_with_hook(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -592,8 +607,9 @@ class StorageTableEntityTest(TableTestCase):
             self._assert_default_entity(resp)
         finally:
             await self._tear_down()
+            if self.is_live:
+                sleep(SLEEP_DELAY)
 
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix="cosmostest")
     @CachedCosmosAccountPreparer(name_prefix="cosmostest")
     async def test_get_entity_if_match(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -618,8 +634,9 @@ class StorageTableEntityTest(TableTestCase):
             # Assert
         finally:
             await self._tear_down()
+            if self.is_live:
+                sleep(SLEEP_DELAY)
 
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix="cosmostest")
     @CachedCosmosAccountPreparer(name_prefix="cosmostest")
     async def test_get_entity_full_metadata(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -640,8 +657,9 @@ class StorageTableEntityTest(TableTestCase):
             self._assert_default_entity_json_full_metadata(resp)
         finally:
             await self._tear_down()
+            if self.is_live:
+                sleep(SLEEP_DELAY)
 
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix="cosmostest")
     @CachedCosmosAccountPreparer(name_prefix="cosmostest")
     async def test_get_entity_no_metadata(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -662,8 +680,9 @@ class StorageTableEntityTest(TableTestCase):
             self._assert_default_entity_json_no_metadata(resp)
         finally:
             await self._tear_down()
+            if self.is_live:
+                sleep(SLEEP_DELAY)
 
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix="cosmostest")
     @CachedCosmosAccountPreparer(name_prefix="cosmostest")
     async def test_get_entity_not_existing(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -680,8 +699,9 @@ class StorageTableEntityTest(TableTestCase):
             # Assert
         finally:
             await self._tear_down()
+            if self.is_live:
+                sleep(SLEEP_DELAY)
 
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix="cosmostest")
     @CachedCosmosAccountPreparer(name_prefix="cosmostest")
     async def test_get_entity_with_special_doubles(self, resource_group, location, cosmos_account,
@@ -707,8 +727,9 @@ class StorageTableEntityTest(TableTestCase):
             self.assertTrue(isnan(resp.nan))
         finally:
             await self._tear_down()
+            if self.is_live:
+                sleep(SLEEP_DELAY)
 
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix="cosmostest")
     @CachedCosmosAccountPreparer(name_prefix="cosmostest")
     async def test_update_entity(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -732,8 +753,9 @@ class StorageTableEntityTest(TableTestCase):
             self._assert_updated_entity(received_entity)
         finally:
             await self._tear_down()
+            if self.is_live:
+                sleep(SLEEP_DELAY)
 
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix="cosmostest")
     @CachedCosmosAccountPreparer(name_prefix="cosmostest")
     async def test_update_entity_not_existing(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -750,8 +772,9 @@ class StorageTableEntityTest(TableTestCase):
             # Assert
         finally:
             await self._tear_down()
+            if self.is_live:
+                sleep(SLEEP_DELAY)
 
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix="cosmostest")
     @CachedCosmosAccountPreparer(name_prefix="cosmostest")
     async def test_update_entity_with_if_matches(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -775,8 +798,9 @@ class StorageTableEntityTest(TableTestCase):
             self._assert_updated_entity(received_entity)
         finally:
             await self._tear_down()
+            if self.is_live:
+                sleep(SLEEP_DELAY)
 
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix="cosmostest")
     @CachedCosmosAccountPreparer(name_prefix="cosmostest")
     async def test_update_entity_with_if_doesnt_match(self, resource_group, location, cosmos_account,
@@ -798,9 +822,10 @@ class StorageTableEntityTest(TableTestCase):
             # Assert
         finally:
             await self._tear_down()
+            if self.is_live:
+                sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("Merge operation fails from Tables SDK")
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix="cosmostest")
     @CachedCosmosAccountPreparer(name_prefix="cosmostest")
     async def test_insert_or_merge_entity_with_existing_entity(self, resource_group, location, cosmos_account,
@@ -821,9 +846,10 @@ class StorageTableEntityTest(TableTestCase):
             self._assert_merged_entity(received_entity)
         finally:
             await self._tear_down()
+            if self.is_live:
+                sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("Merge operation fails from Tables SDK")
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix="cosmostest")
     @CachedCosmosAccountPreparer(name_prefix="cosmostest")
     async def test_insert_or_merge_entity_with_non_existing_entity(self, resource_group, location, cosmos_account,
@@ -844,9 +870,10 @@ class StorageTableEntityTest(TableTestCase):
             self._assert_updated_entity(received_entity)
         finally:
             await self._tear_down()
+            if self.is_live:
+                sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("Merge operation fails from Tables SDK")
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix="cosmostest")
     @CachedCosmosAccountPreparer(name_prefix="cosmostest")
     async def test_insert_or_replace_entity_with_existing_entity(self, resource_group, location, cosmos_account,
@@ -867,9 +894,10 @@ class StorageTableEntityTest(TableTestCase):
             self._assert_updated_entity(received_entity)
         finally:
             await self._tear_down()
+            if self.is_live:
+                sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("Merge operation fails from Tables SDK")
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix="cosmostest")
     @CachedCosmosAccountPreparer(name_prefix="cosmostest")
     async def test_insert_or_replace_entity_with_non_existing_entity(self, resource_group, location, cosmos_account,
@@ -890,9 +918,10 @@ class StorageTableEntityTest(TableTestCase):
             self._assert_updated_entity(received_entity)
         finally:
             await self._tear_down()
+            if self.is_live:
+                sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("Merge operation fails from Tables SDK")
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix="cosmostest")
     @CachedCosmosAccountPreparer(name_prefix="cosmostest")
     async def test_merge_entity(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -912,9 +941,10 @@ class StorageTableEntityTest(TableTestCase):
             self._assert_merged_entity(received_entity)
         finally:
             await self._tear_down()
+            if self.is_live:
+                sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("Merge operation fails from Tables SDK")
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix="cosmostest")
     @CachedCosmosAccountPreparer(name_prefix="cosmostest")
     async def test_merge_entity_not_existing(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -931,9 +961,10 @@ class StorageTableEntityTest(TableTestCase):
             # Assert
         finally:
             await self._tear_down()
+            if self.is_live:
+                sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("Merge operation fails from Tables SDK")
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix="cosmostest")
     @CachedCosmosAccountPreparer(name_prefix="cosmostest")
     async def test_merge_entity_with_if_matches(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -955,9 +986,10 @@ class StorageTableEntityTest(TableTestCase):
             self._assert_merged_entity(received_entity)
         finally:
             await self._tear_down()
+            if self.is_live:
+                sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("Merge operation fails from Tables SDK")
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix="cosmostest")
     @CachedCosmosAccountPreparer(name_prefix="cosmostest")
     async def test_merge_entity_with_if_doesnt_match(self, resource_group, location, cosmos_account,
@@ -978,8 +1010,9 @@ class StorageTableEntityTest(TableTestCase):
             # Assert
         finally:
             await self._tear_down()
+            if self.is_live:
+                sleep(SLEEP_DELAY)
 
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix="cosmostest")
     @CachedCosmosAccountPreparer(name_prefix="cosmostest")
     async def test_delete_entity(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -997,8 +1030,9 @@ class StorageTableEntityTest(TableTestCase):
                 await self.table.get_entity(entity.PartitionKey, entity.RowKey)
         finally:
             await self._tear_down()
+            if self.is_live:
+                sleep(SLEEP_DELAY)
 
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix="cosmostest")
     @CachedCosmosAccountPreparer(name_prefix="cosmostest")
     async def test_delete_entity_not_existing(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -1014,8 +1048,9 @@ class StorageTableEntityTest(TableTestCase):
             # Assert
         finally:
             await self._tear_down()
+            if self.is_live:
+                sleep(SLEEP_DELAY)
 
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix="cosmostest")
     @CachedCosmosAccountPreparer(name_prefix="cosmostest")
     async def test_delete_entity_with_if_matches(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -1034,8 +1069,9 @@ class StorageTableEntityTest(TableTestCase):
                 await self.table.get_entity(entity.PartitionKey, entity.RowKey)
         finally:
             await self._tear_down()
+            if self.is_live:
+                sleep(SLEEP_DELAY)
 
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix="cosmostest")
     @CachedCosmosAccountPreparer(name_prefix="cosmostest")
     async def test_delete_entity_with_if_doesnt_match(self, resource_group, location, cosmos_account,
@@ -1055,8 +1091,9 @@ class StorageTableEntityTest(TableTestCase):
             # Assert
         finally:
             await self._tear_down()
+            if self.is_live:
+                sleep(SLEEP_DELAY)
 
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix="cosmostest")
     @CachedCosmosAccountPreparer(name_prefix="cosmostest")
     async def test_unicode_property_value(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -1084,8 +1121,9 @@ class StorageTableEntityTest(TableTestCase):
             self.assertEqual(entities[1].Description, u'ꀕ')
         finally:
             await self._tear_down()
+            if self.is_live:
+                sleep(SLEEP_DELAY)
 
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix="cosmostest")
     @CachedCosmosAccountPreparer(name_prefix="cosmostest")
     async def test_unicode_property_name(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -1112,9 +1150,10 @@ class StorageTableEntityTest(TableTestCase):
             self.assertEqual(entities[1][u'啊齄丂狛狜'], u'hello')
         finally:
             await self._tear_down()
+            if self.is_live:
+                sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("pending")
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix="cosmostest")
     @CachedCosmosAccountPreparer(name_prefix="cosmostest")
     async def test_operations_on_entity_with_partition_key_having_single_quote(self, resource_group, location,
@@ -1157,8 +1196,9 @@ class StorageTableEntityTest(TableTestCase):
             self.assertIsNone(resp)
         finally:
             await self._tear_down()
+            if self.is_live:
+                sleep(SLEEP_DELAY)
 
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix="cosmostest")
     @CachedCosmosAccountPreparer(name_prefix="cosmostest")
     async def test_empty_and_spaces_property_value(self, resource_group, location, cosmos_account,
@@ -1198,8 +1238,9 @@ class StorageTableEntityTest(TableTestCase):
             self.assertEqual(resp.SpacesBeforeAndAfterUnicode, u'   Text   ')
         finally:
             await self._tear_down()
+            if self.is_live:
+                sleep(SLEEP_DELAY)
 
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix="cosmostest")
     @CachedCosmosAccountPreparer(name_prefix="cosmostest")
     async def test_none_property_value(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -1218,8 +1259,9 @@ class StorageTableEntityTest(TableTestCase):
             self.assertFalse(hasattr(resp, 'NoneValue'))
         finally:
             await self._tear_down()
+            if self.is_live:
+                sleep(SLEEP_DELAY)
 
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix="cosmostest")
     @CachedCosmosAccountPreparer(name_prefix="cosmostest")
     async def test_binary_property_value(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -1239,9 +1281,10 @@ class StorageTableEntityTest(TableTestCase):
             self.assertEqual(resp.binary.value, binary_data)
         finally:
             await self._tear_down()
+            if self.is_live:
+                sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("Merge operation fails from Tables SDK")
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix="cosmostest")
     @CachedCosmosAccountPreparer(name_prefix="cosmostest")
     async def test_timezone(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -1264,8 +1307,9 @@ class StorageTableEntityTest(TableTestCase):
         # self.assertEqual(resp.date.astimezone(local_tz), local_date)
         finally:
             await self._tear_down()
+            if self.is_live:
+                sleep(SLEEP_DELAY)
 
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix="cosmostest")
     @CachedCosmosAccountPreparer(name_prefix="cosmostest")
     async def test_query_entities(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -1285,8 +1329,9 @@ class StorageTableEntityTest(TableTestCase):
                 self._assert_default_entity(entity)
         finally:
             await self._tear_down()
+            if self.is_live:
+                sleep(SLEEP_DELAY)
 
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix="cosmostest")
     @CachedCosmosAccountPreparer(name_prefix="cosmostest")
     async def test_query_zero_entities(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -1304,8 +1349,9 @@ class StorageTableEntityTest(TableTestCase):
             self.assertEqual(len(entities), 0)
         finally:
             await self._tear_down()
+            if self.is_live:
+                sleep(SLEEP_DELAY)
 
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix="cosmostest")
     @CachedCosmosAccountPreparer(name_prefix="cosmostest")
     async def test_query_entities_full_metadata(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -1325,8 +1371,9 @@ class StorageTableEntityTest(TableTestCase):
                 self._assert_default_entity_json_full_metadata(entity)
         finally:
             await self._tear_down()
+            if self.is_live:
+                sleep(SLEEP_DELAY)
 
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix="cosmostest")
     @CachedCosmosAccountPreparer(name_prefix="cosmostest")
     async def test_query_entities_no_metadata(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -1346,9 +1393,10 @@ class StorageTableEntityTest(TableTestCase):
                 self._assert_default_entity_json_no_metadata(entity)
         finally:
             await self._tear_down()
+            if self.is_live:
+                sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("Batch not implemented")
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix="cosmostest")
     @CachedCosmosAccountPreparer(name_prefix="cosmostest")
     def test_query_entities_large(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -1382,7 +1430,6 @@ class StorageTableEntityTest(TableTestCase):
         # if it runs slowly, it will return fewer results and make the test fail
         self.assertEqual(len(entities), total_entities_count)
 
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix="cosmostest")
     @CachedCosmosAccountPreparer(name_prefix="cosmostest")
     async def test_query_entities_with_filter(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -1403,10 +1450,10 @@ class StorageTableEntityTest(TableTestCase):
             self._assert_default_entity(entities[0])
         finally:
             await self._tear_down()
-
+            if self.is_live:
+                sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("returns ' sex' instead of deserializing into just 'sex'")
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix="cosmostest")
     @CachedCosmosAccountPreparer(name_prefix="cosmostest")
     async def test_query_entities_with_select(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -1429,8 +1476,9 @@ class StorageTableEntityTest(TableTestCase):
             self.assertFalse(hasattr(entities[0], "deceased"))
         finally:
             await self._tear_down()
+            if self.is_live:
+                sleep(SLEEP_DELAY)
 
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix="cosmostest")
     @CachedCosmosAccountPreparer(name_prefix="cosmostest")
     async def test_query_entities_with_top(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -1448,8 +1496,9 @@ class StorageTableEntityTest(TableTestCase):
             self.assertEqual(len(entities), 2)
         finally:
             await self._tear_down()
+            if self.is_live:
+                sleep(SLEEP_DELAY)
 
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix="cosmostest")
     @CachedCosmosAccountPreparer(name_prefix="cosmostest")
     async def test_query_entities_with_top_and_next(self, resource_group, location, cosmos_account,
@@ -1486,10 +1535,11 @@ class StorageTableEntityTest(TableTestCase):
             self._assert_default_entity(entities3[0])
         finally:
             await self._tear_down()
+            if self.is_live:
+                sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("Cosmos Tables does not yet support sas")
     @pytest.mark.live_test_only
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix="cosmostest")
     @CachedCosmosAccountPreparer(name_prefix="cosmostest")
     async def test_sas_query(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -1527,11 +1577,12 @@ class StorageTableEntityTest(TableTestCase):
             self._assert_default_entity(entities[0])
         finally:
             await self._tear_down()
+            if self.is_live:
+                sleep(SLEEP_DELAY)
 
 
     @pytest.mark.skip("Cosmos Tables does not yet support sas")
     @pytest.mark.live_test_only
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix="cosmostest")
     @CachedCosmosAccountPreparer(name_prefix="cosmostest")
     async def test_sas_add(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -1567,6 +1618,8 @@ class StorageTableEntityTest(TableTestCase):
             self._assert_default_entity(resp)
         finally:
             await self._tear_down()
+            if self.is_live:
+                sleep(SLEEP_DELAY)
 
 
     @pytest.mark.skip("Cosmos Tables does not yet support sas")
@@ -1605,11 +1658,12 @@ class StorageTableEntityTest(TableTestCase):
             self._assert_default_entity(resp)
         finally:
             await self._tear_down()
+            if self.is_live:
+                sleep(SLEEP_DELAY)
 
 
     @pytest.mark.skip("Cosmos Tables does not yet support sas")
     @pytest.mark.live_test_only
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix="cosmostest")
     @CachedCosmosAccountPreparer(name_prefix="cosmostest")
     async def test_sas_add_outside_range(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -1643,11 +1697,12 @@ class StorageTableEntityTest(TableTestCase):
             # Assert
         finally:
             await self._tear_down()
+            if self.is_live:
+                sleep(SLEEP_DELAY)
 
 
     @pytest.mark.skip("Cosmos Tables does not yet support sas")
     @pytest.mark.live_test_only
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix="cosmostest")
     @CachedCosmosAccountPreparer(name_prefix="cosmostest")
     async def test_sas_update(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -1682,11 +1737,12 @@ class StorageTableEntityTest(TableTestCase):
             self._assert_updated_entity(received_entity)
         finally:
             await self._tear_down()
+            if self.is_live:
+                sleep(SLEEP_DELAY)
 
 
     @pytest.mark.skip("Cosmos Tables does not yet support sas")
     @pytest.mark.live_test_only
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix="cosmostest")
     @CachedCosmosAccountPreparer(name_prefix="cosmostest")
     async def test_sas_delete(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -1719,11 +1775,12 @@ class StorageTableEntityTest(TableTestCase):
                 await self.table.get_entity(entity.PartitionKey, entity.RowKey)
         finally:
             await self._tear_down()
+            if self.is_live:
+                sleep(SLEEP_DELAY)
 
 
     @pytest.mark.skip("Cosmos Tables does not yet support sas")
     @pytest.mark.live_test_only
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix="cosmostest")
     @CachedCosmosAccountPreparer(name_prefix="cosmostest")
     async def test_sas_upper_case_table_name(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -1762,11 +1819,12 @@ class StorageTableEntityTest(TableTestCase):
             self._assert_default_entity(entities[0])
         finally:
             await self._tear_down()
+            if self.is_live:
+                sleep(SLEEP_DELAY)
 
 
     @pytest.mark.skip("pending")
     @pytest.mark.live_test_only
-    @pytest.mark.flaky(reruns=1, reruns_delay=RERUNS_DELAY)
     @CachedResourceGroupPreparer(name_prefix="cosmostest")
     @CachedCosmosAccountPreparer(name_prefix="cosmostest")
     async def test_sas_signed_identifier(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -1810,6 +1868,8 @@ class StorageTableEntityTest(TableTestCase):
             self._assert_default_entity(entities[0])
         finally:
             await self._tear_down()
+            if self.is_live:
+                sleep(SLEEP_DELAY)
 
 
 # ------------------------------------------------------------------------------
