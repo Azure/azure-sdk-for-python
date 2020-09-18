@@ -9,7 +9,9 @@ from azure.digitaltwins import DigitalTwinsClient
 
 # Simple example of how to:
 # - create a DigitalTwins Service Client using the DigitalTwinsClient constructor
-
+#
+# Preconditions:
+# - Environment variables have to be set
 try:
     # DefaultAzureCredential supports different authentication mechanisms and determines
     # the appropriate credential type based of the environment it is executing in.

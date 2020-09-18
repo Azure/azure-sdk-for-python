@@ -5,11 +5,11 @@
 import os
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
-from azure.digitaltwins import DigitalTwinsClient
+from azure.digitaltwins import EventRoutesClient
 
 # Simple example of how to:
 # - create a DigitalTwins Service Client using the DigitalTwinsClient constructor
-# - get digital twin
+# - get eventRoute
 #
 # Preconditions:
 # - Environment variables have to be set
@@ -27,12 +27,13 @@ try:
     # - AZURE_CLIENT_ID: The application (client) ID registered in the AAD tenant
     # - AZURE_CLIENT_SECRET: The client secret for the registered application
     credential = DefaultAzureCredential()
-    service_client = DigitalTwinsClient(url, credential)
+    event_routes_service_client = EventRoutesClient(url, credential)
 
-    digital_twint_id = "BuildingTwin" # from the samples: BuildingTwin, FloorTwin, HVACTwin, RoomTwin
-    digital_twin = service_client.get_digital_twin(digital_twint_id)
-
-    print(digital_twin)
+    # Get event route
+    event_route_id = "<EVENT_ROUTE_ID>"
+    event_route = event_routes_service_client.get_event_route(event_route_id)
+    print('EventRoute:')
+    print(event_route)
 
 except HttpResponseError as e:
     print("\nThis sample has caught an error. {0}".format(e.message))

@@ -5,11 +5,11 @@
 import os
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
-from azure.digitaltwins import DigitalTwinsClient
+from azure.digitaltwins import QueryClient
 
 # Simple example of how to:
 # - create a DigitalTwins Service Client using the DigitalTwinsClient constructor
-# - get digital twin
+# - query digital twins
 #
 # Preconditions:
 # - Environment variables have to be set
@@ -27,12 +27,13 @@ try:
     # - AZURE_CLIENT_ID: The application (client) ID registered in the AAD tenant
     # - AZURE_CLIENT_SECRET: The client secret for the registered application
     credential = DefaultAzureCredential()
-    service_client = DigitalTwinsClient(url, credential)
+    query_client = QueryClient(url, credential)
 
-    digital_twint_id = "BuildingTwin" # from the samples: BuildingTwin, FloorTwin, HVACTwin, RoomTwin
-    digital_twin = service_client.get_digital_twin(digital_twint_id)
+    # Query digital twins
+    query = "SELECT * FROM digitaltwins"
+    query_result = query_client.query_twins(query)
 
-    print(digital_twin)
+    print(query_result)
 
 except HttpResponseError as e:
     print("\nThis sample has caught an error. {0}".format(e.message))

@@ -9,7 +9,7 @@ from azure.digitaltwins import DigitalTwinsClient
 
 # Simple example of how to:
 # - create a DigitalTwins Service Client using the DigitalTwinsClient constructor
-# - get digital twin
+# - get relationship
 #
 # Preconditions:
 # - Environment variables have to be set
@@ -27,12 +27,16 @@ try:
     # - AZURE_CLIENT_ID: The application (client) ID registered in the AAD tenant
     # - AZURE_CLIENT_SECRET: The client secret for the registered application
     credential = DefaultAzureCredential()
-    service_client = DigitalTwinsClient(url, credential)
+    digital_twins_service_client = DigitalTwinsClient(url, credential)
 
-    digital_twint_id = "BuildingTwin" # from the samples: BuildingTwin, FloorTwin, HVACTwin, RoomTwin
-    digital_twin = service_client.get_digital_twin(digital_twint_id)
-
-    print(digital_twin)
+    # Get incoming relationship
+    # from the samples: BuildingTwin, FloorTwin, HVACTwin, RoomTwin
+    digital_twin_id = "<DIGITAL_TWIN_ID>"
+    # from the samples: BuildingHasFloor, BuildingIsEquippedWithHVAC, HVACCoolsFloor, FloorContainsRoom
+    relationship_id = "<RELATIONSHIP_ID>"
+    relationship = digital_twins_service_client.get_relationship(digital_twin_id, relationship_id)
+    print('Relationship:')
+    print(relationship)
 
 except HttpResponseError as e:
     print("\nThis sample has caught an error. {0}".format(e.message))

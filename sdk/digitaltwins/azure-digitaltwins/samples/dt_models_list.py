@@ -5,11 +5,11 @@
 import os
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
-from azure.digitaltwins import DigitalTwinsClient
+from azure.digitaltwins import DigitalTwinModelsClient
 
 # Simple example of how to:
 # - create a DigitalTwins Service Client using the DigitalTwinsClient constructor
-# - get digital twin
+# - list all models using the paginated API
 #
 # Preconditions:
 # - Environment variables have to be set
@@ -27,12 +27,14 @@ try:
     # - AZURE_CLIENT_ID: The application (client) ID registered in the AAD tenant
     # - AZURE_CLIENT_SECRET: The client secret for the registered application
     credential = DefaultAzureCredential()
-    service_client = DigitalTwinsClient(url, credential)
+    digital_twin_models_service_client = DigitalTwinModelsClient(url, credential)
 
-    digital_twint_id = "BuildingTwin" # from the samples: BuildingTwin, FloorTwin, HVACTwin, RoomTwin
-    digital_twin = service_client.get_digital_twin(digital_twint_id)
-
-    print(digital_twin)
+    # List models
+    # from the samples: dtmi:samples:Room1, dtmi:samples:Wifi1, dtmi:samples:Floor1, dtmi:samples:Building1
+    dependecies_for = ["<MODEL_ID>"]
+    models = digital_twin_models_service_client.list_models(dependecies_for)
+    for model in models:
+        print(model + '\n')
 
 except HttpResponseError as e:
     print("\nThis sample has caught an error. {0}".format(e.message))

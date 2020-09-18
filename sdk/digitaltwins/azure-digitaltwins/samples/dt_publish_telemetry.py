@@ -9,7 +9,7 @@ from azure.digitaltwins import DigitalTwinsClient
 
 # Simple example of how to:
 # - create a DigitalTwins Service Client using the DigitalTwinsClient constructor
-# - get digital twin
+# - publish telemetry message
 #
 # Preconditions:
 # - Environment variables have to be set
@@ -27,12 +27,15 @@ try:
     # - AZURE_CLIENT_ID: The application (client) ID registered in the AAD tenant
     # - AZURE_CLIENT_SECRET: The client secret for the registered application
     credential = DefaultAzureCredential()
-    service_client = DigitalTwinsClient(url, credential)
+    digital_twins_service_client = DigitalTwinsClient(url, credential)
 
-    digital_twint_id = "BuildingTwin" # from the samples: BuildingTwin, FloorTwin, HVACTwin, RoomTwin
-    digital_twin = service_client.get_digital_twin(digital_twint_id)
-
-    print(digital_twin)
+    # Publish telemetry message
+    digita_twin_id = "<DIGITAL TWIN ID>"
+    telemetry_payload = '{"Telemetry1": 5}'
+    digital_twins_service_client.publish_telemetry(
+        digita_twin_id,
+        telemetry_payload
+    )
 
 except HttpResponseError as e:
     print("\nThis sample has caught an error. {0}".format(e.message))
