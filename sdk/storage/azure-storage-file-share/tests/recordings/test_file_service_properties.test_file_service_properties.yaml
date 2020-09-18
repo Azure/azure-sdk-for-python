@@ -18,7 +18,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 17 Sep 2020 17:19:36 GMT
+      - Fri, 18 Sep 2020 01:45:18 GMT
       x-ms-version:
       - '2020-02-10'
     method: PUT
@@ -28,7 +28,7 @@ interactions:
       string: ''
     headers:
       date:
-      - Thu, 17 Sep 2020 17:19:36 GMT
+      - Fri, 18 Sep 2020 01:45:17 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -50,7 +50,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 17 Sep 2020 17:19:37 GMT
+      - Fri, 18 Sep 2020 01:45:19 GMT
       x-ms-version:
       - '2020-02-10'
     method: GET
@@ -63,7 +63,7 @@ interactions:
       content-type:
       - application/xml
       date:
-      - Thu, 17 Sep 2020 17:19:36 GMT
+      - Fri, 18 Sep 2020 01:45:18 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -94,7 +94,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 17 Sep 2020 17:19:37 GMT
+      - Fri, 18 Sep 2020 01:45:19 GMT
       x-ms-version:
       - '2020-02-10'
     method: PUT
@@ -104,7 +104,7 @@ interactions:
       string: ''
     headers:
       date:
-      - Thu, 17 Sep 2020 17:19:36 GMT
+      - Fri, 18 Sep 2020 01:45:18 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -126,7 +126,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 17 Sep 2020 17:19:37 GMT
+      - Fri, 18 Sep 2020 01:45:19 GMT
       x-ms-version:
       - '2020-02-10'
     method: GET
@@ -139,7 +139,7 @@ interactions:
       content-type:
       - application/xml
       date:
-      - Thu, 17 Sep 2020 17:19:36 GMT
+      - Fri, 18 Sep 2020 01:45:18 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:

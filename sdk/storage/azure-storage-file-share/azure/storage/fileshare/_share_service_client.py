@@ -35,7 +35,7 @@ if TYPE_CHECKING:
         ShareProperties,
         Metrics,
         CorsRule,
-        ProtocolSettings
+        ShareProtocolSettings
     )
 
 
@@ -170,7 +170,7 @@ class ShareServiceClient(StorageAccountHostsMixin):
             self, hour_metrics=None,  # type: Optional[Metrics]
             minute_metrics=None,  # type: Optional[Metrics]
             cors=None,  # type: Optional[List[CorsRule]]
-            protocol_settings=None,  # type: Optional[ProtocolSettings],
+            protocol=None,  # type: Optional[ShareProtocolSettings],
             **kwargs
         ):
         # type: (...) -> None
@@ -191,9 +191,9 @@ class ShareServiceClient(StorageAccountHostsMixin):
             list. If an empty list is specified, all CORS rules will be deleted,
             and CORS will be disabled for the service.
         :type cors: list(:class:`~azure.storage.fileshare.CorsRule`)
-        :param protocol_settings:
+        :param protocol:
             Sets protocol settings
-        :type protocol: ~azure.storage.fileshare.ProtocolSettings
+        :type protocol: ~azure.storage.fileshare.ShareProtocolSettings
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
@@ -212,7 +212,7 @@ class ShareServiceClient(StorageAccountHostsMixin):
             hour_metrics=hour_metrics,
             minute_metrics=minute_metrics,
             cors=cors,
-            protocol_settings=protocol_settings
+            protocol=protocol
         )
         try:
             self._client.service.set_properties(storage_service_properties=props, timeout=timeout, **kwargs)

@@ -14,9 +14,9 @@ from azure.storage.fileshare import (
     Metrics,
     CorsRule,
     RetentionPolicy,
-    SmbSettings,
+    ShareSmbSettings,
     SmbMultichannel,
-    ProtocolSettings,
+    ShareProtocolSettings,
 )
 
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
@@ -78,24 +78,24 @@ class FileServicePropertiesTest(StorageTestCase):
     def test_file_service_properties(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
 
-        protocol_properties1 = ProtocolSettings(SmbSettings(SmbMultichannel(enabled=False)))
-        protocol_properties2 = ProtocolSettings(SmbSettings(SmbMultichannel(enabled=True)))
+        protocol_properties1 = ShareProtocolSettings(ShareSmbSettings(SmbMultichannel(enabled=False)))
+        protocol_properties2 = ShareProtocolSettings(ShareSmbSettings(SmbMultichannel(enabled=True)))
         # Act
         resp = self.fsc.set_service_properties(
-            hour_metrics=Metrics(), minute_metrics=Metrics(), cors=list(), protocol_settings=protocol_properties1)
+            hour_metrics=Metrics(), minute_metrics=Metrics(), cors=list(), protocol=protocol_properties1)
         # Assert
         self.assertIsNone(resp)
         props = self.fsc.get_service_properties()
         self._assert_metrics_equal(props['hour_metrics'], Metrics())
         self._assert_metrics_equal(props['minute_metrics'], Metrics())
         self._assert_cors_equal(props['cors'], list())
-        self.assertEqual(props['protocol_settings'].smb_settings.multichannel.enabled, False)
+        self.assertEqual(props['protocol'].smb.multichannel.enabled, False)
 
         # Act
         self.fsc.set_service_properties(
-            hour_metrics=Metrics(), minute_metrics=Metrics(), cors=list(), protocol_settings=protocol_properties2)
+            hour_metrics=Metrics(), minute_metrics=Metrics(), cors=list(), protocol=protocol_properties2)
         props = self.fsc.get_service_properties()
-        self.assertEqual(props['protocol_settings'].smb_settings.multichannel.enabled, True)
+        self.assertEqual(props['protocol'].smb.multichannel.enabled, True)
 
     # --Test cases per feature ---------------------------------------
     @GlobalStorageAccountPreparer()
