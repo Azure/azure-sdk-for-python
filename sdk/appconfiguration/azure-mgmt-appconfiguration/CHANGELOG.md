@@ -1,5 +1,11 @@
 # Release History
 
+## 1.0.1 (2020-09-18)
+
+**Bug fix**
+
+  - Require azure-mgmt-core>=1.2.0 in setup.py
+  
 ## 1.0.0 (2020-09-15)
 
 **Features**
