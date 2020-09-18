@@ -332,16 +332,8 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         except Exception as exp:  # pylint: disable=broad-except
             raise ServiceBusError("Management request failed: {}".format(exp), exp)
 
-    def _mgmt_request_response_with_retry(
-        self,
-        mgmt_operation,
-        message,
-        callback,
-        timeout=5,
-        **kwargs
-    ):
+    def _mgmt_request_response_with_retry(self, mgmt_operation, message, callback, timeout=5, **kwargs):
         # type: (bytes, Dict[str, Any], Callable, float, Any) -> Any
-        timeout = timeout or self._config.timeout
         return self._do_retryable_operation(
             self._mgmt_request_response,
             mgmt_operation=mgmt_operation,
