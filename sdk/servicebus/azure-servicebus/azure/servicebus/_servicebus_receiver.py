@@ -271,8 +271,9 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             mgmt_handlers.default
         )
 
-    def _renew_locks(self, *lock_tokens, timeout=None):
-        # type: (str, Optional[float]) -> Any
+    def _renew_locks(self, *lock_tokens, **kwargs):
+        # type: (str, Any) -> Any
+        timeout = kwargs.pop("timeout", None)
         message = {MGMT_REQUEST_LOCK_TOKENS: types.AMQPArray(lock_tokens)}
         return self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_RENEWLOCK_OPERATION,
