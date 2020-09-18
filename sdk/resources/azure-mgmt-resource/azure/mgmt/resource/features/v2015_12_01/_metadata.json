@@ -4,7 +4,11 @@
     "client": {
         "name": "FeatureClient",
         "filename": "_feature_client",
-        "description": "Azure Feature Exposure Control (AFEC) provides a mechanism for the resource providers to control feature exposure to users. Resource providers typically use this mechanism to provide public/private preview for new features prior to making them generally available. Users need to explicitly register for AFEC features to get access to such functionality."
+        "description": "Azure Feature Exposure Control (AFEC) provides a mechanism for the resource providers to control feature exposure to users. Resource providers typically use this mechanism to provide public/private preview for new features prior to making them generally available. Users need to explicitly register for AFEC features to get access to such functionality.",
+        "base_url": "\u0027https://management.azure.com\u0027",
+        "custom_base_url": null,
+        "azure_arm": true,
+        "has_lro_operations": false
     },
     "global_parameters": {
         "sync_method": {
@@ -41,7 +45,10 @@
     },
     "config": {
         "credential": true,
-        "credential_scopes": ["https://management.azure.com/.default"]
+        "credential_scopes": ["https://management.azure.com/.default"],
+        "credential_default_policy_type": "BearerTokenCredentialPolicy",
+        "credential_default_policy_type_has_async_version": true,
+        "credential_key_header_name": null
     },
     "operation_groups": {
         "features": "FeaturesOperations"
@@ -49,18 +56,17 @@
     "operation_mixins": {
         "list_operations" : {
             "sync": {
-                "operation_name": "list_operations",
-                "signature": "def list_operations(\n    self,\n    **kwargs  # type: Any\n):\n"
+                "signature": "def list_operations(\n    self,\n    **kwargs  # type: Any\n):\n",
+                "doc": "\"\"\"Lists all of the available Microsoft.Features REST API operations.\n\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: An iterator like instance of either OperationListResult or the result of cls(response)\n:rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.resource.features.v2015_12_01.models.OperationListResult]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
             },
             "async": {
-                "operation_name": "list_operations",
+                "coroutine": false,
                 "signature": "def list_operations(\n    self,\n    **kwargs\n) -\u003e AsyncItemPaged[\"models.OperationListResult\"]:\n",
-                "coroutine": false
+                "doc": "\"\"\"Lists all of the available Microsoft.Features REST API operations.\n\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: An iterator like instance of either OperationListResult or the result of cls(response)\n:rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.features.v2015_12_01.models.OperationListResult]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
             },
-            "doc": "    \"\"\"Lists all of the available Microsoft.Features REST API operations.\n\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: OperationListResult, or the result of cls(response)\n:rtype: ~azure.mgmt.resource.features.v2015_12_01.models.OperationListResult\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\"",
             "call": ""
         }
     },
-    "sync_imports": "from typing import TYPE_CHECKING\nimport warnings\n\nfrom azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error\nfrom azure.core.paging import ItemPaged\nfrom azure.core.pipeline import PipelineResponse\nfrom azure.core.pipeline.transport import HttpRequest, HttpResponse\nfrom azure.mgmt.core.exceptions import ARMErrorFormat\n\nif TYPE_CHECKING:\n    # pylint: disable=unused-import,ungrouped-imports\n    from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar",
-    "async_imports": "from typing import Any, AsyncIterable, Callable, Dict, Generic, Optional, TypeVar\nimport warnings\n\nfrom azure.core.async_paging import AsyncItemPaged, AsyncList\nfrom azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error\nfrom azure.core.pipeline import PipelineResponse\nfrom azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest\nfrom azure.mgmt.core.exceptions import ARMErrorFormat"
+    "sync_imports": "{\"regular\": {\"azurecore\": {\"azure.core.exceptions\": [\"ClientAuthenticationError\", \"HttpResponseError\", \"ResourceExistsError\", \"ResourceNotFoundError\", \"map_error\"], \"azure.mgmt.core.exceptions\": [\"ARMErrorFormat\"], \"azure.core.pipeline\": [\"PipelineResponse\"], \"azure.core.pipeline.transport\": [\"HttpRequest\", \"HttpResponse\"], \"azure.core.paging\": [\"ItemPaged\"]}, \"stdlib\": {\"warnings\": [null]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Callable\", \"Dict\", \"Generic\", \"Iterable\", \"Optional\", \"TypeVar\"]}}}",
+    "async_imports": "{\"regular\": {\"azurecore\": {\"azure.core.exceptions\": [\"ClientAuthenticationError\", \"HttpResponseError\", \"ResourceExistsError\", \"ResourceNotFoundError\", \"map_error\"], \"azure.mgmt.core.exceptions\": [\"ARMErrorFormat\"], \"azure.core.pipeline\": [\"PipelineResponse\"], \"azure.core.pipeline.transport\": [\"AsyncHttpResponse\", \"HttpRequest\"], \"azure.core.async_paging\": [\"AsyncItemPaged\", \"AsyncList\"]}, \"stdlib\": {\"warnings\": [null]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"AsyncIterable\", \"Callable\", \"Dict\", \"Generic\", \"Optional\", \"TypeVar\"]}}}"
 }
