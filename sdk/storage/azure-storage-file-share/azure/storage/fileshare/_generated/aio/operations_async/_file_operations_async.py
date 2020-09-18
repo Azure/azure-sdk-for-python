@@ -44,7 +44,7 @@ class FileOperations:
         file with no content.
 
         :param file_content_length: Specifies the maximum size for the file,
-         up to 1 TB.
+         up to 4 TB.
         :type file_content_length: long
         :param file_attributes: If specified, the provided file attributes
          shall be set. Default value: ‘Archive’ for file and ‘Directory’ for
