@@ -531,21 +531,21 @@ class CRUDTests(unittest.TestCase):
     def test_partitioned_collection_permissions(self):
         created_db = self.databaseForTest
 
-        collection_id = 'test_partitioned_collection_permissions all collection'
+        collection_id = 'test_partitioned_collection_permissions all collection' + str(uuid.uuid4())
 
         all_collection = created_db.create_container(
             id=collection_id,
             partition_key=PartitionKey(path='/key', kind=documents.PartitionKind.Hash)
         )
 
-        collection_id = 'test_partitioned_collection_permissions read collection'
+        collection_id = 'test_partitioned_collection_permissions read collection' + str(uuid.uuid4())
 
         read_collection = created_db.create_container(
             id=collection_id,
             partition_key=PartitionKey(path='/key', kind=documents.PartitionKind.Hash)
         )
 
-        user = created_db.create_user(body={'id': 'user'})
+        user = created_db.create_user(body={'id': 'user' + str(uuid.uuid4())})
 
         permission_definition = {
             'id': 'all permission',
@@ -1315,7 +1315,7 @@ class CRUDTests(unittest.TestCase):
             )
 
             # create user
-            user = db.create_user(body={'id': 'user'})
+            user = db.create_user(body={'id': 'user' + str(uuid.uuid4())})
 
             # create permission for collection
             permission = {
