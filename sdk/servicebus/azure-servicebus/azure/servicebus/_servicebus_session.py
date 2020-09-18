@@ -117,7 +117,7 @@ class ServiceBusSession(BaseSession):
             mgmt_handlers.default,
             timeout=timeout
         )
-        session_state = response.get(MGMT_RESPONSE_SESSION_STATE)
+        session_state = response.get(MGMT_RESPONSE_SESSION_STATE)  # type: ignore
         if isinstance(session_state, six.binary_type):
             session_state = session_state.decode(self._encoding)
         return session_state
@@ -143,7 +143,7 @@ class ServiceBusSession(BaseSession):
         self._check_live()
         timeout = kwargs.pop("timeout", None)
         state = state.encode(self._encoding) if isinstance(state, six.text_type) else state
-        return self._receiver._mgmt_request_response_with_retry(
+        return self._receiver._mgmt_request_response_with_retry(  # type: ignore
             REQUEST_RESPONSE_SET_SESSION_STATE_OPERATION,
             {MGMT_REQUEST_SESSION_ID: self._id, MGMT_REQUEST_SESSION_STATE: bytearray(state)},
             mgmt_handlers.default,
@@ -184,7 +184,7 @@ class ServiceBusSession(BaseSession):
             mgmt_handlers.default,
             timeout=timeout
         )
-        expiry_timestamp = expiry[MGMT_RESPONSE_RECEIVER_EXPIRATION]/1000.0
-        self._locked_until_utc = utc_from_timestamp(expiry_timestamp) # type: datetime.datetime
+        expiry_timestamp = expiry[MGMT_RESPONSE_RECEIVER_EXPIRATION]/1000.0  # type: ignore
+        self._locked_until_utc = utc_from_timestamp(expiry_timestamp)  # type: datetime.datetime
 
         return self._locked_until_utc

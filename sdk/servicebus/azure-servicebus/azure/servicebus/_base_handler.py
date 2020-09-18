@@ -326,7 +326,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
                 mgmt_operation,
                 op_type=MGMT_REQUEST_OP_TYPE_ENTITY_MGMT,
                 node=self._mgmt_target.encode(self._config.encoding),
-                timeout=timeout * 1000,
+                timeout=timeout * 1000 if timeout else None,
                 callback=callback
             )
         except Exception as exp:  # pylint: disable=broad-except
