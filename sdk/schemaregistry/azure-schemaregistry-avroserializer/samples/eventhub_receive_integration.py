@@ -12,28 +12,15 @@ Examples to show receiving events from EventHub with SchemaRegistryAvroSerialize
 # pylint: disable=C0111
 import os
 from azure.eventhub import EventHubConsumerClient
-from azure.identity import ClientSecretCredential
-from azure.schemaregistry.serializer.avro_serializer import SchemaRegistryAvroSerializer
+from azure.identity import DefaultAzureCredential
+from azure.schemaregistry import SchemaRegistryClient
+from azure.schemaregistry.serializer.avroserializer import SchemaRegistryAvroSerializer
 
 EVENTHUB_CONNECTION_STR = os.environ['EVENT_HUB_CONN_STR']
 EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
 
-SCHEMA_REGISTRY_TENANT_ID = os.environ['SCHEMA_REGISTRY_AZURE_TENANT_ID']
-SCHEMA_REGISTRY_CLIENT_ID = os.environ['SCHEMA_REGISTRY_AZURE_CLIENT_ID']
-SCHEMA_REGISTRY_CLIENT_SECRET = os.environ['SCHEMA_REGISTRY_AZURE_CLIENT_SECRET']
 SCHEMA_REGISTRY_ENDPOINT = os.environ['SCHEMA_REGISTRY_ENDPOINT']
 SCHEMA_GROUP = os.environ['SCHEMA_REGISTRY_GROUP']
-
-SCHEMA_STRING = """
-{"namespace": "example.avro",
- "type": "record",
- "name": "User",
- "fields": [
-     {"name": "name", "type": "string"},
-     {"name": "favorite_number",  "type": ["int", "null"]},
-     {"name": "favorite_color", "type": ["string", "null"]}
- ]
-}"""
 
 
 def on_event(partition_context, event):
@@ -57,18 +44,12 @@ eventhub_consumer = EventHubConsumerClient.from_connection_string(
 )
 
 
-# create the credential object which is used for Schema Registry Service Authentication
-schema_registry_token_credential = ClientSecretCredential(
-    tenant_id=SCHEMA_REGISTRY_TENANT_ID,
-    client_id=SCHEMA_REGISTRY_CLIENT_ID,
-    client_secret=SCHEMA_REGISTRY_CLIENT_SECRET
-)
-
-
 # create a SchemaRegistryAvroSerializer instance
 avro_serializer = SchemaRegistryAvroSerializer(
-    endpoint=SCHEMA_REGISTRY_ENDPOINT,
-    credential=schema_registry_token_credential,
+    schema_registry=SchemaRegistryClient(
+        endpoint=SCHEMA_REGISTRY_ENDPOINT,
+        credential=DefaultAzureCredential()
+    ),
     schema_group=SCHEMA_GROUP
 )
 
