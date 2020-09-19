@@ -8,7 +8,7 @@
 from typing import TYPE_CHECKING
 import warnings
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
@@ -56,13 +56,10 @@ class SnapshotsOperations(object):
     ):
         # type: (...) -> "models.Snapshot"
         cls = kwargs.pop('cls', None)  # type: ClsType["models.Snapshot"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2016-04-30-preview"
         content_type = kwargs.pop("content_type", "application/json")
-        accept = "application/json"
 
         # Construct URL
         url = self._create_or_update_initial.metadata['url']  # type: ignore
@@ -80,12 +77,13 @@ class SnapshotsOperations(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+        header_parameters['Accept'] = 'application/json'
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(snapshot, 'Snapshot')
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
+
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -118,7 +116,7 @@ class SnapshotsOperations(object):
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param snapshot_name: The name of the snapshot within the given subscription and resource
-         group.
+     group.
         :type snapshot_name: str
         :param snapshot: Snapshot object supplied in the body of the Put disk operation.
         :type snapshot: ~azure.mgmt.compute.v2016_04_30_preview.models.Snapshot
@@ -181,13 +179,10 @@ class SnapshotsOperations(object):
     ):
         # type: (...) -> "models.Snapshot"
         cls = kwargs.pop('cls', None)  # type: ClsType["models.Snapshot"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2016-04-30-preview"
         content_type = kwargs.pop("content_type", "application/json")
-        accept = "application/json"
 
         # Construct URL
         url = self._update_initial.metadata['url']  # type: ignore
@@ -205,12 +200,13 @@ class SnapshotsOperations(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+        header_parameters['Accept'] = 'application/json'
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(snapshot, 'SnapshotUpdate')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
+
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -243,7 +239,7 @@ class SnapshotsOperations(object):
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param snapshot_name: The name of the snapshot within the given subscription and resource
-         group.
+     group.
         :type snapshot_name: str
         :param snapshot: Snapshot object supplied in the body of the Patch snapshot operation.
         :type snapshot: ~azure.mgmt.compute.v2016_04_30_preview.models.SnapshotUpdate
@@ -317,12 +313,9 @@ class SnapshotsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.Snapshot"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2016-04-30-preview"
-        accept = "application/json"
 
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
@@ -339,7 +332,7 @@ class SnapshotsOperations(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+        header_parameters['Accept'] = 'application/json'
 
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -365,12 +358,9 @@ class SnapshotsOperations(object):
     ):
         # type: (...) -> Optional["models.OperationStatusResponse"]
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.OperationStatusResponse"]]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2016-04-30-preview"
-        accept = "application/json"
 
         # Construct URL
         url = self._delete_initial.metadata['url']  # type: ignore
@@ -387,7 +377,7 @@ class SnapshotsOperations(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+        header_parameters['Accept'] = 'application/json'
 
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -419,7 +409,7 @@ class SnapshotsOperations(object):
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param snapshot_name: The name of the snapshot within the given subscription and resource
-         group.
+     group.
         :type snapshot_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
@@ -486,17 +476,14 @@ class SnapshotsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SnapshotList"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2016-04-30-preview"
-        accept = "application/json"
 
         def prepare_request(next_link=None):
             # Construct headers
             header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+            header_parameters['Accept'] = 'application/json'
 
             if not next_link:
                 # Construct URL
@@ -554,17 +541,14 @@ class SnapshotsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SnapshotList"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2016-04-30-preview"
-        accept = "application/json"
 
         def prepare_request(next_link=None):
             # Construct headers
             header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+            header_parameters['Accept'] = 'application/json'
 
             if not next_link:
                 # Construct URL
@@ -617,13 +601,10 @@ class SnapshotsOperations(object):
     ):
         # type: (...) -> Optional["models.AccessUri"]
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.AccessUri"]]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2016-04-30-preview"
         content_type = kwargs.pop("content_type", "application/json")
-        accept = "application/json"
 
         # Construct URL
         url = self._grant_access_initial.metadata['url']  # type: ignore
@@ -641,12 +622,13 @@ class SnapshotsOperations(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+        header_parameters['Accept'] = 'application/json'
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(grant_access_data, 'GrantAccessData')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
+
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -677,10 +659,10 @@ class SnapshotsOperations(object):
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param snapshot_name: The name of the snapshot within the given subscription and resource
-         group.
+     group.
         :type snapshot_name: str
         :param grant_access_data: Access data object supplied in the body of the get snapshot access
-         operation.
+     operation.
         :type grant_access_data: ~azure.mgmt.compute.v2016_04_30_preview.models.GrantAccessData
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
@@ -740,12 +722,9 @@ class SnapshotsOperations(object):
     ):
         # type: (...) -> Optional["models.OperationStatusResponse"]
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.OperationStatusResponse"]]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2016-04-30-preview"
-        accept = "application/json"
 
         # Construct URL
         url = self._revoke_access_initial.metadata['url']  # type: ignore
@@ -762,7 +741,7 @@ class SnapshotsOperations(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+        header_parameters['Accept'] = 'application/json'
 
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -794,7 +773,7 @@ class SnapshotsOperations(object):
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param snapshot_name: The name of the snapshot within the given subscription and resource
-         group.
+     group.
         :type snapshot_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.

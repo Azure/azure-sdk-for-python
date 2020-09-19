@@ -8,7 +8,7 @@
 from typing import TYPE_CHECKING
 import warnings
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
@@ -56,13 +56,10 @@ class DisksOperations(object):
     ):
         # type: (...) -> "models.Disk"
         cls = kwargs.pop('cls', None)  # type: ClsType["models.Disk"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2020-06-30"
         content_type = kwargs.pop("content_type", "application/json")
-        accept = "application/json"
 
         # Construct URL
         url = self._create_or_update_initial.metadata['url']  # type: ignore
@@ -80,12 +77,13 @@ class DisksOperations(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+        header_parameters['Accept'] = 'application/json'
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(disk, 'Disk')
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
+
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -118,8 +116,8 @@ class DisksOperations(object):
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param disk_name: The name of the managed disk that is being created. The name can't be changed
-         after the disk is created. Supported characters for the name are a-z, A-Z, 0-9 and _. The
-         maximum name length is 80 characters.
+     after the disk is created. Supported characters for the name are a-z, A-Z, 0-9 and _. The
+     maximum name length is 80 characters.
         :type disk_name: str
         :param disk: Disk object supplied in the body of the Put disk operation.
         :type disk: ~azure.mgmt.compute.v2020_06_30.models.Disk
@@ -182,13 +180,10 @@ class DisksOperations(object):
     ):
         # type: (...) -> "models.Disk"
         cls = kwargs.pop('cls', None)  # type: ClsType["models.Disk"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2020-06-30"
         content_type = kwargs.pop("content_type", "application/json")
-        accept = "application/json"
 
         # Construct URL
         url = self._update_initial.metadata['url']  # type: ignore
@@ -206,12 +201,13 @@ class DisksOperations(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+        header_parameters['Accept'] = 'application/json'
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(disk, 'DiskUpdate')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
+
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -244,8 +240,8 @@ class DisksOperations(object):
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param disk_name: The name of the managed disk that is being created. The name can't be changed
-         after the disk is created. Supported characters for the name are a-z, A-Z, 0-9 and _. The
-         maximum name length is 80 characters.
+     after the disk is created. Supported characters for the name are a-z, A-Z, 0-9 and _. The
+     maximum name length is 80 characters.
         :type disk_name: str
         :param disk: Disk object supplied in the body of the Patch disk operation.
         :type disk: ~azure.mgmt.compute.v2020_06_30.models.DiskUpdate
@@ -320,12 +316,9 @@ class DisksOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.Disk"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2020-06-30"
-        accept = "application/json"
 
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
@@ -342,7 +335,7 @@ class DisksOperations(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+        header_parameters['Accept'] = 'application/json'
 
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -368,9 +361,7 @@ class DisksOperations(object):
     ):
         # type: (...) -> None
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2020-06-30"
 
@@ -415,8 +406,8 @@ class DisksOperations(object):
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param disk_name: The name of the managed disk that is being created. The name can't be changed
-         after the disk is created. Supported characters for the name are a-z, A-Z, 0-9 and _. The
-         maximum name length is 80 characters.
+     after the disk is created. Supported characters for the name are a-z, A-Z, 0-9 and _. The
+     maximum name length is 80 characters.
         :type disk_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
@@ -480,17 +471,14 @@ class DisksOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.DiskList"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2020-06-30"
-        accept = "application/json"
 
         def prepare_request(next_link=None):
             # Construct headers
             header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+            header_parameters['Accept'] = 'application/json'
 
             if not next_link:
                 # Construct URL
@@ -548,17 +536,14 @@ class DisksOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.DiskList"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2020-06-30"
-        accept = "application/json"
 
         def prepare_request(next_link=None):
             # Construct headers
             header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+            header_parameters['Accept'] = 'application/json'
 
             if not next_link:
                 # Construct URL
@@ -611,13 +596,10 @@ class DisksOperations(object):
     ):
         # type: (...) -> Optional["models.AccessUri"]
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.AccessUri"]]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2020-06-30"
         content_type = kwargs.pop("content_type", "application/json")
-        accept = "application/json"
 
         # Construct URL
         url = self._grant_access_initial.metadata['url']  # type: ignore
@@ -635,12 +617,13 @@ class DisksOperations(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+        header_parameters['Accept'] = 'application/json'
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(grant_access_data, 'GrantAccessData')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
+
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -671,11 +654,11 @@ class DisksOperations(object):
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param disk_name: The name of the managed disk that is being created. The name can't be changed
-         after the disk is created. Supported characters for the name are a-z, A-Z, 0-9 and _. The
-         maximum name length is 80 characters.
+     after the disk is created. Supported characters for the name are a-z, A-Z, 0-9 and _. The
+     maximum name length is 80 characters.
         :type disk_name: str
         :param grant_access_data: Access data object supplied in the body of the get disk access
-         operation.
+     operation.
         :type grant_access_data: ~azure.mgmt.compute.v2020_06_30.models.GrantAccessData
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
@@ -735,9 +718,7 @@ class DisksOperations(object):
     ):
         # type: (...) -> None
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2020-06-30"
 
@@ -782,8 +763,8 @@ class DisksOperations(object):
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param disk_name: The name of the managed disk that is being created. The name can't be changed
-         after the disk is created. Supported characters for the name are a-z, A-Z, 0-9 and _. The
-         maximum name length is 80 characters.
+     after the disk is created. Supported characters for the name are a-z, A-Z, 0-9 and _. The
+     maximum name length is 80 characters.
         :type disk_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.

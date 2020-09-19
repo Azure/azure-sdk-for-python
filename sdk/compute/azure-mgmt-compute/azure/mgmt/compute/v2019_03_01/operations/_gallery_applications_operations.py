@@ -8,7 +8,7 @@
 from typing import TYPE_CHECKING
 import warnings
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
@@ -57,13 +57,10 @@ class GalleryApplicationsOperations(object):
     ):
         # type: (...) -> "models.GalleryApplication"
         cls = kwargs.pop('cls', None)  # type: ClsType["models.GalleryApplication"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-03-01"
         content_type = kwargs.pop("content_type", "application/json")
-        accept = "application/json"
 
         # Construct URL
         url = self._create_or_update_initial.metadata['url']  # type: ignore
@@ -82,12 +79,13 @@ class GalleryApplicationsOperations(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+        header_parameters['Accept'] = 'application/json'
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(gallery_application, 'GalleryApplication')
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
+
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -124,14 +122,14 @@ class GalleryApplicationsOperations(object):
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param gallery_name: The name of the Shared Application Gallery in which the Application
-         Definition is to be created.
+     Definition is to be created.
         :type gallery_name: str
         :param gallery_application_name: The name of the gallery Application Definition to be created
-         or updated. The allowed characters are alphabets and numbers with dots, dashes, and periods
-         allowed in the middle. The maximum length is 80 characters.
+     or updated. The allowed characters are alphabets and numbers with dots, dashes, and periods
+     allowed in the middle. The maximum length is 80 characters.
         :type gallery_application_name: str
         :param gallery_application: Parameters supplied to the create or update gallery Application
-         operation.
+     operation.
         :type gallery_application: ~azure.mgmt.compute.v2019_03_01.models.GalleryApplication
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
@@ -208,12 +206,9 @@ class GalleryApplicationsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.GalleryApplication"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-03-01"
-        accept = "application/json"
 
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
@@ -231,7 +226,7 @@ class GalleryApplicationsOperations(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+        header_parameters['Accept'] = 'application/json'
 
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -258,12 +253,9 @@ class GalleryApplicationsOperations(object):
     ):
         # type: (...) -> None
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-03-01"
-        accept = "application/json"
 
         # Construct URL
         url = self._delete_initial.metadata['url']  # type: ignore
@@ -281,7 +273,6 @@ class GalleryApplicationsOperations(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -309,7 +300,7 @@ class GalleryApplicationsOperations(object):
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param gallery_name: The name of the Shared Application Gallery in which the Application
-         Definition is to be deleted.
+     Definition is to be deleted.
         :type gallery_name: str
         :param gallery_application_name: The name of the gallery Application Definition to be deleted.
         :type gallery_application_name: str
@@ -372,7 +363,7 @@ class GalleryApplicationsOperations(object):
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param gallery_name: The name of the Shared Application Gallery from which Application
-         Definitions are to be listed.
+     Definitions are to be listed.
         :type gallery_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either GalleryApplicationList or the result of cls(response)
@@ -380,17 +371,14 @@ class GalleryApplicationsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.GalleryApplicationList"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-03-01"
-        accept = "application/json"
 
         def prepare_request(next_link=None):
             # Construct headers
             header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+            header_parameters['Accept'] = 'application/json'
 
             if not next_link:
                 # Construct URL

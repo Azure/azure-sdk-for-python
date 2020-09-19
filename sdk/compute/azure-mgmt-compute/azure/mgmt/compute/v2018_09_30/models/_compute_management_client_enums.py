@@ -6,82 +6,64 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
-from six import with_metaclass
+from enum import Enum
 
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
+class AccessLevel(str, Enum):
 
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+    none = "None"
+    read = "Read"
+    write = "Write"
 
-
-class AccessLevel(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-
-    NONE = "None"
-    READ = "Read"
-    WRITE = "Write"
-
-class DiskCreateOption(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class DiskCreateOption(str, Enum):
     """This enumerates the possible sources of a disk's creation.
     """
 
-    EMPTY = "Empty"
-    ATTACH = "Attach"
-    FROM_IMAGE = "FromImage"
-    IMPORT_ENUM = "Import"
-    COPY = "Copy"
-    RESTORE = "Restore"
-    UPLOAD = "Upload"
+    empty = "Empty"
+    attach = "Attach"
+    from_image = "FromImage"
+    import_enum = "Import"
+    copy = "Copy"
+    restore = "Restore"
+    upload = "Upload"
 
-class DiskState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class DiskState(str, Enum):
     """The state of the disk.
     """
 
-    UNATTACHED = "Unattached"
-    ATTACHED = "Attached"
-    RESERVED = "Reserved"
-    ACTIVE_SAS = "ActiveSAS"
-    READY_TO_UPLOAD = "ReadyToUpload"
-    ACTIVE_UPLOAD = "ActiveUpload"
+    unattached = "Unattached"
+    attached = "Attached"
+    reserved = "Reserved"
+    active_sas = "ActiveSAS"
+    ready_to_upload = "ReadyToUpload"
+    active_upload = "ActiveUpload"
 
-class DiskStorageAccountTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class DiskStorageAccountTypes(str, Enum):
     """The sku name.
     """
 
-    STANDARD_LRS = "Standard_LRS"
-    PREMIUM_LRS = "Premium_LRS"
-    STANDARD_SSD_LRS = "StandardSSD_LRS"
-    ULTRA_SSD_LRS = "UltraSSD_LRS"
+    standard_lrs = "Standard_LRS"
+    premium_lrs = "Premium_LRS"
+    standard_ssd_lrs = "StandardSSD_LRS"
+    ultra_ssd_lrs = "UltraSSD_LRS"
 
-class HyperVGeneration(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class HyperVGeneration(str, Enum):
     """The hypervisor generation of the Virtual Machine. Applicable to OS disks only.
     """
 
-    V1 = "V1"
-    V2 = "V2"
+    v1 = "V1"
+    v2 = "V2"
 
-class OperatingSystemTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class OperatingSystemTypes(str, Enum):
     """The Operating System type.
     """
 
-    WINDOWS = "Windows"
-    LINUX = "Linux"
+    windows = "Windows"
+    linux = "Linux"
 
-class SnapshotStorageAccountTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SnapshotStorageAccountTypes(str, Enum):
     """The sku name.
     """
 
-    STANDARD_LRS = "Standard_LRS"
-    PREMIUM_LRS = "Premium_LRS"
-    STANDARD_ZRS = "Standard_ZRS"
+    standard_lrs = "Standard_LRS"
+    premium_lrs = "Premium_LRS"
+    standard_zrs = "Standard_ZRS"

@@ -8,7 +8,7 @@
 from typing import TYPE_CHECKING
 import warnings
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
@@ -56,12 +56,9 @@ class VirtualMachineScaleSetVMsOperations(object):
     ):
         # type: (...) -> Optional["models.OperationStatusResponse"]
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.OperationStatusResponse"]]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2015-06-15"
-        accept = "application/json"
 
         # Construct URL
         url = self._reimage_initial.metadata['url']  # type: ignore
@@ -79,7 +76,7 @@ class VirtualMachineScaleSetVMsOperations(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+        header_parameters['Accept'] = 'application/json'
 
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -174,12 +171,9 @@ class VirtualMachineScaleSetVMsOperations(object):
     ):
         # type: (...) -> Optional["models.OperationStatusResponse"]
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.OperationStatusResponse"]]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2015-06-15"
-        accept = "application/json"
 
         # Construct URL
         url = self._deallocate_initial.metadata['url']  # type: ignore
@@ -197,7 +191,7 @@ class VirtualMachineScaleSetVMsOperations(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+        header_parameters['Accept'] = 'application/json'
 
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -226,8 +220,8 @@ class VirtualMachineScaleSetVMsOperations(object):
     ):
         # type: (...) -> LROPoller["models.OperationStatusResponse"]
         """Deallocates a specific virtual machine in a VM scale set. Shuts down the virtual machine and
-        releases the compute resources it uses. You are not billed for the compute resources of this
-        virtual machine once it is deallocated.
+    releases the compute resources it uses. You are not billed for the compute resources of this
+    virtual machine once it is deallocated.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -294,12 +288,9 @@ class VirtualMachineScaleSetVMsOperations(object):
     ):
         # type: (...) -> Optional["models.OperationStatusResponse"]
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.OperationStatusResponse"]]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2015-06-15"
-        accept = "application/json"
 
         # Construct URL
         url = self._delete_initial.metadata['url']  # type: ignore
@@ -317,7 +308,7 @@ class VirtualMachineScaleSetVMsOperations(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+        header_parameters['Accept'] = 'application/json'
 
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -425,12 +416,9 @@ class VirtualMachineScaleSetVMsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.VirtualMachineScaleSetVM"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2015-06-15"
-        accept = "application/json"
 
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
@@ -448,7 +436,7 @@ class VirtualMachineScaleSetVMsOperations(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+        header_parameters['Accept'] = 'application/json'
 
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -488,12 +476,9 @@ class VirtualMachineScaleSetVMsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.VirtualMachineScaleSetVMInstanceView"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2015-06-15"
-        accept = "application/json"
 
         # Construct URL
         url = self.get_instance_view.metadata['url']  # type: ignore
@@ -511,7 +496,7 @@ class VirtualMachineScaleSetVMsOperations(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+        header_parameters['Accept'] = 'application/json'
 
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -546,13 +531,13 @@ class VirtualMachineScaleSetVMsOperations(object):
         :param virtual_machine_scale_set_name: The name of the VM scale set.
         :type virtual_machine_scale_set_name: str
         :param filter: The filter to apply to the operation. Allowed values are
-         'startswith(instanceView/statuses/code, 'PowerState') eq true', 'properties/latestModelApplied
-         eq true', 'properties/latestModelApplied eq false'.
+     'startswith(instanceView/statuses/code, 'PowerState') eq true', 'properties/latestModelApplied
+     eq true', 'properties/latestModelApplied eq false'.
         :type filter: str
         :param select: The list parameters. Allowed values are 'instanceView', 'instanceView/statuses'.
         :type select: str
         :param expand: The expand expression to apply to the operation. Allowed values are
-         'instanceView'.
+     'instanceView'.
         :type expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either VirtualMachineScaleSetVMListResult or the result of cls(response)
@@ -560,17 +545,14 @@ class VirtualMachineScaleSetVMsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.VirtualMachineScaleSetVMListResult"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2015-06-15"
-        accept = "application/json"
 
         def prepare_request(next_link=None):
             # Construct headers
             header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+            header_parameters['Accept'] = 'application/json'
 
             if not next_link:
                 # Construct URL
@@ -631,12 +613,9 @@ class VirtualMachineScaleSetVMsOperations(object):
     ):
         # type: (...) -> Optional["models.OperationStatusResponse"]
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.OperationStatusResponse"]]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2015-06-15"
-        accept = "application/json"
 
         # Construct URL
         url = self._power_off_initial.metadata['url']  # type: ignore
@@ -654,7 +633,7 @@ class VirtualMachineScaleSetVMsOperations(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+        header_parameters['Accept'] = 'application/json'
 
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -683,8 +662,8 @@ class VirtualMachineScaleSetVMsOperations(object):
     ):
         # type: (...) -> LROPoller["models.OperationStatusResponse"]
         """Power off (stop) a virtual machine in a VM scale set. Note that resources are still attached
-        and you are getting charged for the resources. Instead, use deallocate to release resources and
-        avoid charges.
+    and you are getting charged for the resources. Instead, use deallocate to release resources and
+    avoid charges.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -751,12 +730,9 @@ class VirtualMachineScaleSetVMsOperations(object):
     ):
         # type: (...) -> Optional["models.OperationStatusResponse"]
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.OperationStatusResponse"]]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2015-06-15"
-        accept = "application/json"
 
         # Construct URL
         url = self._restart_initial.metadata['url']  # type: ignore
@@ -774,7 +750,7 @@ class VirtualMachineScaleSetVMsOperations(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+        header_parameters['Accept'] = 'application/json'
 
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -869,12 +845,9 @@ class VirtualMachineScaleSetVMsOperations(object):
     ):
         # type: (...) -> Optional["models.OperationStatusResponse"]
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.OperationStatusResponse"]]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2015-06-15"
-        accept = "application/json"
 
         # Construct URL
         url = self._start_initial.metadata['url']  # type: ignore
@@ -892,7 +865,7 @@ class VirtualMachineScaleSetVMsOperations(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+        header_parameters['Accept'] = 'application/json'
 
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)

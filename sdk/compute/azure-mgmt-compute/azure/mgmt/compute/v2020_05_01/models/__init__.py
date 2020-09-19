@@ -82,7 +82,6 @@ except (SyntaxError, ImportError):
 from ._compute_management_client_enums import (
     AccessLevel,
     DiskCreateOption,
-    DiskEncryptionSetIdentityType,
     DiskState,
     DiskStorageAccountTypes,
     EncryptionType,
@@ -132,7 +131,6 @@ __all__ = [
     'SourceVault',
     'AccessLevel',
     'DiskCreateOption',
-    'DiskEncryptionSetIdentityType',
     'DiskState',
     'DiskStorageAccountTypes',
     'EncryptionType',

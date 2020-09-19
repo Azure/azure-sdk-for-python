@@ -8,7 +8,7 @@
 from typing import TYPE_CHECKING
 import warnings
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.core.polling import LROPoller, NoPolling, PollingMethod
@@ -54,13 +54,10 @@ class LogAnalyticsOperations(object):
     ):
         # type: (...) -> Optional["models.LogAnalyticsOperationResult"]
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.LogAnalyticsOperationResult"]]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2018-10-01"
         content_type = kwargs.pop("content_type", "application/json")
-        accept = "application/json"
 
         # Construct URL
         url = self._export_request_rate_by_interval_initial.metadata['url']  # type: ignore
@@ -77,12 +74,13 @@ class LogAnalyticsOperations(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+        header_parameters['Accept'] = 'application/json'
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'RequestRateByIntervalInput')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
+
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -108,7 +106,7 @@ class LogAnalyticsOperations(object):
     ):
         # type: (...) -> LROPoller["models.LogAnalyticsOperationResult"]
         """Export logs that show Api requests made by this subscription in the given time window to show
-        throttling activities.
+    throttling activities.
 
         :param location: The location upon which virtual-machine-sizes is queried.
         :type location: str
@@ -171,13 +169,10 @@ class LogAnalyticsOperations(object):
     ):
         # type: (...) -> Optional["models.LogAnalyticsOperationResult"]
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.LogAnalyticsOperationResult"]]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2018-10-01"
         content_type = kwargs.pop("content_type", "application/json")
-        accept = "application/json"
 
         # Construct URL
         url = self._export_throttled_requests_initial.metadata['url']  # type: ignore
@@ -194,12 +189,13 @@ class LogAnalyticsOperations(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+        header_parameters['Accept'] = 'application/json'
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'LogAnalyticsInputBase')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
+
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -225,7 +221,7 @@ class LogAnalyticsOperations(object):
     ):
         # type: (...) -> LROPoller["models.LogAnalyticsOperationResult"]
         """Export logs that show total throttled Api requests for this subscription in the given time
-        window.
+    window.
 
         :param location: The location upon which virtual-machine-sizes is queried.
         :type location: str

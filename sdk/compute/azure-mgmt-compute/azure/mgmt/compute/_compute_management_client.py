@@ -95,6 +95,8 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
         self._config = ComputeManagementClientConfiguration(credential, subscription_id, **kwargs)
         self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
         super(ComputeManagementClient, self).__init__(
+            credential,
+            self._config,
             api_version=api_version,
             profile=profile
         )
@@ -180,7 +182,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2020-06-30':
             from .v2020_06_30 import models
             return models
-        raise ValueError("API version {} is not available".format(api_version))
+        raise NotImplementedError("APIVersion {} is not available".format(api_version))
 
     @property
     def availability_sets(self):
@@ -225,7 +227,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2020-06-01':
             from .v2020_06_01.operations import AvailabilitySetsOperations as OperationClass
         else:
-            raise ValueError("API version {} does not have operation group 'availability_sets'".format(api_version))
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -247,7 +249,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2020-06-01':
             from .v2020_06_01.operations import DedicatedHostGroupsOperations as OperationClass
         else:
-            raise ValueError("API version {} does not have operation group 'dedicated_host_groups'".format(api_version))
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -269,7 +271,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2020-06-01':
             from .v2020_06_01.operations import DedicatedHostsOperations as OperationClass
         else:
-            raise ValueError("API version {} does not have operation group 'dedicated_hosts'".format(api_version))
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -285,7 +287,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2020-06-30':
             from .v2020_06_30.operations import DiskAccessesOperations as OperationClass
         else:
-            raise ValueError("API version {} does not have operation group 'disk_accesses'".format(api_version))
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -307,7 +309,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2020-06-30':
             from .v2020_06_30.operations import DiskEncryptionSetsOperations as OperationClass
         else:
-            raise ValueError("API version {} does not have operation group 'disk_encryption_sets'".format(api_version))
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -347,7 +349,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2020-06-30':
             from .v2020_06_30.operations import DisksOperations as OperationClass
         else:
-            raise ValueError("API version {} does not have operation group 'disks'".format(api_version))
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -369,7 +371,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2019-12-01':
             from .v2019_12_01.operations import GalleriesOperations as OperationClass
         else:
-            raise ValueError("API version {} does not have operation group 'galleries'".format(api_version))
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -388,7 +390,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2019-12-01':
             from .v2019_12_01.operations import GalleryApplicationVersionsOperations as OperationClass
         else:
-            raise ValueError("API version {} does not have operation group 'gallery_application_versions'".format(api_version))
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -407,7 +409,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2019-12-01':
             from .v2019_12_01.operations import GalleryApplicationsOperations as OperationClass
         else:
-            raise ValueError("API version {} does not have operation group 'gallery_applications'".format(api_version))
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -429,7 +431,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2019-12-01':
             from .v2019_12_01.operations import GalleryImageVersionsOperations as OperationClass
         else:
-            raise ValueError("API version {} does not have operation group 'gallery_image_versions'".format(api_version))
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -451,7 +453,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2019-12-01':
             from .v2019_12_01.operations import GalleryImagesOperations as OperationClass
         else:
-            raise ValueError("API version {} does not have operation group 'gallery_images'".format(api_version))
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -491,7 +493,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2020-06-01':
             from .v2020_06_01.operations import ImagesOperations as OperationClass
         else:
-            raise ValueError("API version {} does not have operation group 'images'".format(api_version))
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -525,7 +527,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2020-06-01':
             from .v2020_06_01.operations import LogAnalyticsOperations as OperationClass
         else:
-            raise ValueError("API version {} does not have operation group 'log_analytics'".format(api_version))
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -559,7 +561,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2020-06-01':
             from .v2020_06_01.operations import Operations as OperationClass
         else:
-            raise ValueError("API version {} does not have operation group 'operations'".format(api_version))
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -590,7 +592,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2020-06-01':
             from .v2020_06_01.operations import ProximityPlacementGroupsOperations as OperationClass
         else:
-            raise ValueError("API version {} does not have operation group 'proximity_placement_groups'".format(api_version))
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -609,7 +611,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2019-04-01':
             from .v2019_04_01.operations import ResourceSkusOperations as OperationClass
         else:
-            raise ValueError("API version {} does not have operation group 'resource_skus'".format(api_version))
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -649,7 +651,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2020-06-30':
             from .v2020_06_30.operations import SnapshotsOperations as OperationClass
         else:
-            raise ValueError("API version {} does not have operation group 'snapshots'".format(api_version))
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -665,7 +667,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2020-06-01':
             from .v2020_06_01.operations import SshPublicKeysOperations as OperationClass
         else:
-            raise ValueError("API version {} does not have operation group 'ssh_public_keys'".format(api_version))
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -711,7 +713,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2020-06-01':
             from .v2020_06_01.operations import UsageOperations as OperationClass
         else:
-            raise ValueError("API version {} does not have operation group 'usage'".format(api_version))
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -757,7 +759,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2020-06-01':
             from .v2020_06_01.operations import VirtualMachineExtensionImagesOperations as OperationClass
         else:
-            raise ValueError("API version {} does not have operation group 'virtual_machine_extension_images'".format(api_version))
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -803,7 +805,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2020-06-01':
             from .v2020_06_01.operations import VirtualMachineExtensionsOperations as OperationClass
         else:
-            raise ValueError("API version {} does not have operation group 'virtual_machine_extensions'".format(api_version))
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -849,7 +851,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2020-06-01':
             from .v2020_06_01.operations import VirtualMachineImagesOperations as OperationClass
         else:
-            raise ValueError("API version {} does not have operation group 'virtual_machine_images'".format(api_version))
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -886,7 +888,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2020-06-01':
             from .v2020_06_01.operations import VirtualMachineRunCommandsOperations as OperationClass
         else:
-            raise ValueError("API version {} does not have operation group 'virtual_machine_run_commands'".format(api_version))
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -923,7 +925,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2020-06-01':
             from .v2020_06_01.operations import VirtualMachineScaleSetExtensionsOperations as OperationClass
         else:
-            raise ValueError("API version {} does not have operation group 'virtual_machine_scale_set_extensions'".format(api_version))
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -960,7 +962,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2020-06-01':
             from .v2020_06_01.operations import VirtualMachineScaleSetRollingUpgradesOperations as OperationClass
         else:
-            raise ValueError("API version {} does not have operation group 'virtual_machine_scale_set_rolling_upgrades'".format(api_version))
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -979,7 +981,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2020-06-01':
             from .v2020_06_01.operations import VirtualMachineScaleSetVMExtensionsOperations as OperationClass
         else:
-            raise ValueError("API version {} does not have operation group 'virtual_machine_scale_set_vm_extensions'".format(api_version))
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -1025,7 +1027,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2020-06-01':
             from .v2020_06_01.operations import VirtualMachineScaleSetVMsOperations as OperationClass
         else:
-            raise ValueError("API version {} does not have operation group 'virtual_machine_scale_set_vms'".format(api_version))
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -1071,7 +1073,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2020-06-01':
             from .v2020_06_01.operations import VirtualMachineScaleSetsOperations as OperationClass
         else:
-            raise ValueError("API version {} does not have operation group 'virtual_machine_scale_sets'".format(api_version))
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -1117,7 +1119,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2020-06-01':
             from .v2020_06_01.operations import VirtualMachineSizesOperations as OperationClass
         else:
-            raise ValueError("API version {} does not have operation group 'virtual_machine_sizes'".format(api_version))
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -1163,7 +1165,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2020-06-01':
             from .v2020_06_01.operations import VirtualMachinesOperations as OperationClass
         else:
-            raise ValueError("API version {} does not have operation group 'virtual_machines'".format(api_version))
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     def close(self):

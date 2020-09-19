@@ -1272,9 +1272,11 @@ class DiagnosticsProfile(msrest.serialization.Model):
 class DiffDiskSettings(msrest.serialization.Model):
     """Describes the parameters of ephemeral disk settings that can be specified for operating system disk. :code:`<br>`:code:`<br>` NOTE: The ephemeral disk settings can only be specified for managed disk.
 
-    :param option: Specifies the ephemeral disk settings for operating system disk. Possible values
-     include: "Local".
-    :type option: str or ~azure.mgmt.compute.v2019_12_01.models.DiffDiskOptions
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar option: Specifies the ephemeral disk settings for operating system disk. Default value:
+     "Local".
+    :vartype option: str
     :param placement: Specifies the ephemeral disk placement for operating system
      disk.:code:`<br>`:code:`<br>` Possible values are: :code:`<br>`:code:`<br>` **CacheDisk**
      :code:`<br>`:code:`<br>` **ResourceDisk** :code:`<br>`:code:`<br>` Default: **CacheDisk** if
@@ -1286,17 +1288,22 @@ class DiffDiskSettings(msrest.serialization.Model):
     :type placement: str or ~azure.mgmt.compute.v2019_12_01.models.DiffDiskPlacement
     """
 
+    _validation = {
+        'option': {'constant': True},
+    }
+
     _attribute_map = {
         'option': {'key': 'option', 'type': 'str'},
         'placement': {'key': 'placement', 'type': 'str'},
     }
+
+    option = "Local"
 
     def __init__(
         self,
         **kwargs
     ):
         super(DiffDiskSettings, self).__init__(**kwargs)
-        self.option = kwargs.get('option', None)
         self.placement = kwargs.get('placement', None)
 
 
