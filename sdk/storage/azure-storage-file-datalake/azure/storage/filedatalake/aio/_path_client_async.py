@@ -283,7 +283,7 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
             group identifier, and permissions in the format
             "[scope:][type]:[id]:[permissions]".
         :type acl: str
-        :keyword func(~azure.storage.filedatalake.AccessControlChanges) progress_callback:
+        :keyword func(~azure.storage.filedatalake.AccessControlChanges) progress_hook:
             Callback where the caller can track progress of the operation
             as well as collect paths that failed to change Access Control.
         :keyword str continuation:
@@ -312,10 +312,10 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
         if not acl:
             raise ValueError("The Access Control List must be set for this operation")
 
-        progress_callback = kwargs.pop('progress_callback', None)
+        progress_hook = kwargs.pop('progress_hook', None)
         max_batches = kwargs.pop('max_batches', None)
         options = self._set_access_control_recursive_options(mode='set', acl=acl, **kwargs)
-        return await self._set_access_control_internal(options=options, progress_callback=progress_callback,
+        return await self._set_access_control_internal(options=options, progress_hook=progress_hook,
                                                        max_batches=max_batches)
 
     async def update_access_control_recursive(self, acl, **kwargs):
@@ -330,7 +330,7 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
             group identifier, and permissions in the format
             "[scope:][type]:[id]:[permissions]".
         :type acl: str
-        :keyword func(~azure.storage.filedatalake.AccessControlChanges) progress_callback:
+        :keyword func(~azure.storage.filedatalake.AccessControlChanges) progress_hook:
             Callback where the caller can track progress of the operation
             as well as collect paths that failed to change Access Control.
         :keyword str continuation:
@@ -360,10 +360,10 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
         if not acl:
             raise ValueError("The Access Control List must be set for this operation")
 
-        progress_callback = kwargs.pop('progress_callback', None)
+        progress_hook = kwargs.pop('progress_hook', None)
         max_batches = kwargs.pop('max_batches', None)
         options = self._set_access_control_recursive_options(mode='modify', acl=acl, **kwargs)
-        return await self._set_access_control_internal(options=options, progress_callback=progress_callback,
+        return await self._set_access_control_internal(options=options, progress_hook=progress_hook,
                                                        max_batches=max_batches)
 
     async def remove_access_control_recursive(self,
@@ -379,7 +379,7 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
             access control entry (ACE) consists of a scope, a type, and a user or
             group identifier in the format "[scope:][type]:[id]".
         :type acl: str
-        :keyword func(~azure.storage.filedatalake.AccessControlChanges) progress_callback:
+        :keyword func(~azure.storage.filedatalake.AccessControlChanges) progress_hook:
             Callback where the caller can track progress of the operation
             as well as collect paths that failed to change Access Control.
         :keyword str continuation:
@@ -408,13 +408,13 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
         if not acl:
             raise ValueError("The Access Control List must be set for this operation")
 
-        progress_callback = kwargs.pop('progress_callback', None)
+        progress_hook = kwargs.pop('progress_hook', None)
         max_batches = kwargs.pop('max_batches', None)
         options = self._set_access_control_recursive_options(mode='remove', acl=acl, **kwargs)
-        return await self._set_access_control_internal(options=options, progress_callback=progress_callback,
+        return await self._set_access_control_internal(options=options, progress_hook=progress_hook,
                                                        max_batches=max_batches)
 
-    async def _set_access_control_internal(self, options, progress_callback, max_batches=None):
+    async def _set_access_control_internal(self, options, progress_hook, max_batches=None):
         try:
             continue_on_failure = options.get('force_flag')
             total_directories_successful = 0
@@ -437,8 +437,8 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
                 if current_continuation_token is not None:
                     last_continuation_token = current_continuation_token
 
-                if progress_callback is not None:
-                    await progress_callback(AccessControlChanges(
+                if progress_hook is not None:
+                    await progress_hook(AccessControlChanges(
                         batch_counters=AccessControlChangeCounters(
                             directories_successful=resp.directories_successful,
                             files_successful=resp.files_successful,

@@ -431,7 +431,7 @@ class DirectoryTest(StorageTestCase):
 
             last_response.counters = resp.aggregate_counters
 
-        summary = await directory_client.set_access_control_recursive(acl=acl, progress_callback=progress_callback,
+        summary = await directory_client.set_access_control_recursive(acl=acl, progress_hook=progress_callback,
                                                                       batch_size=2)
 
         # Assert
@@ -483,7 +483,7 @@ class DirectoryTest(StorageTestCase):
             running_tally.failure_count += resp.batch_counters.failure_count
             failed_entries.append(resp.batch_failures)
 
-        summary = await directory_client.set_access_control_recursive(acl=acl, progress_callback=progress_callback,
+        summary = await directory_client.set_access_control_recursive(acl=acl, progress_hook=progress_callback,
                                                                       batch_size=2)
 
         # Assert
@@ -606,7 +606,7 @@ class DirectoryTest(StorageTestCase):
 
             last_response.counters = resp.aggregate_counters
 
-        summary = await directory_client.update_access_control_recursive(acl=acl, progress_callback=progress_callback,
+        summary = await directory_client.update_access_control_recursive(acl=acl, progress_hook=progress_callback,
                                                                          batch_size=2)
 
         # Assert
@@ -654,7 +654,7 @@ class DirectoryTest(StorageTestCase):
             running_tally.failure_count += resp.batch_counters.failure_count
             failed_entries.append(resp.batch_failures)
 
-        summary = await directory_client.update_access_control_recursive(acl=acl, progress_callback=progress_callback,
+        summary = await directory_client.update_access_control_recursive(acl=acl, progress_hook=progress_callback,
                                                                          batch_size=2)
 
         # Assert
@@ -698,7 +698,7 @@ class DirectoryTest(StorageTestCase):
             if resp.batch_failures:
                 failed_entries.extend(resp.batch_failures)
 
-        summary = await directory_client.update_access_control_recursive(acl=acl, progress_callback=progress_callback,
+        summary = await directory_client.update_access_control_recursive(acl=acl, progress_hook=progress_callback,
                                                                          batch_size=2, continue_on_failure=True)
 
         # Assert
@@ -775,7 +775,7 @@ class DirectoryTest(StorageTestCase):
             last_response.counters = resp.aggregate_counters
 
         summary = await directory_client.remove_access_control_recursive(acl=REMOVE_ACL,
-                                                                         progress_callback=progress_callback,
+                                                                         progress_hook=progress_callback,
                                                                          batch_size=2)
 
         # Assert
@@ -820,7 +820,7 @@ class DirectoryTest(StorageTestCase):
             failed_entries.append(resp.batch_failures)
 
         summary = await directory_client.remove_access_control_recursive(acl=REMOVE_ACL,
-                                                                         progress_callback=progress_callback,
+                                                                         progress_hook=progress_callback,
                                                                          batch_size=2)
 
         # Assert
