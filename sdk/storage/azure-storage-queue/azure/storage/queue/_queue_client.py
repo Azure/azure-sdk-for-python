@@ -500,8 +500,8 @@ class QueueClient(StorageAccountHostsMixin):
             messages to retrieve from the queue, up to a maximum of 32. If
             fewer are visible, the visible messages are returned. By default,
             a single message is retrieved from the queue with this operation.
-            When retrieving these pages it is important to pass the output to `by_page()`.
-            These pages and their content can be iterated through using `next()`.
+            `by_page()` can be used to provide a page iterator on the AsyncItemPaged if messages_per_page is set.
+            `next()` can be used to get the next page.
             .. admonition:: Example:
 
                 .. literalinclude:: ../samples/queue_samples_message.py
