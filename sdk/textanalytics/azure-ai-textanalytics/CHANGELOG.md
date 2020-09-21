@@ -1,6 +1,6 @@
 # Release History
 
-## 5.1.0b1 (Unreleased)
+## 5.1.0b1 (2020-09-17)
 
 **New features**
 - We are now targeting the service's v3.1-preview API as the default. If you would like to still use version v3.0 of the service,

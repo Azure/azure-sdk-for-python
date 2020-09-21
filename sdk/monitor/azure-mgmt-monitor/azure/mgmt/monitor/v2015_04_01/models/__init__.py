@@ -29,6 +29,7 @@ try:
     from ._models_py3 import ScaleAction
     from ._models_py3 import ScaleCapacity
     from ._models_py3 import ScaleRule
+    from ._models_py3 import ScaleRuleMetricDimension
     from ._models_py3 import SenderAuthorization
     from ._models_py3 import TimeWindow
     from ._models_py3 import WebhookNotification
@@ -55,6 +56,7 @@ except (SyntaxError, ImportError):
     from ._models import ScaleAction  # type: ignore
     from ._models import ScaleCapacity  # type: ignore
     from ._models import ScaleRule  # type: ignore
+    from ._models import ScaleRuleMetricDimension  # type: ignore
     from ._models import SenderAuthorization  # type: ignore
     from ._models import TimeWindow  # type: ignore
     from ._models import WebhookNotification  # type: ignore
@@ -65,6 +67,7 @@ from ._monitor_client_enums import (
     MetricStatisticType,
     RecurrenceFrequency,
     ScaleDirection,
+    ScaleRuleMetricDimensionOperationType,
     ScaleType,
     TimeAggregationType,
 )
@@ -92,6 +95,7 @@ __all__ = [
     'ScaleAction',
     'ScaleCapacity',
     'ScaleRule',
+    'ScaleRuleMetricDimension',
     'SenderAuthorization',
     'TimeWindow',
     'WebhookNotification',
@@ -100,6 +104,7 @@ __all__ = [
     'MetricStatisticType',
     'RecurrenceFrequency',
     'ScaleDirection',
+    'ScaleRuleMetricDimensionOperationType',
     'ScaleType',
     'TimeAggregationType',
 ]

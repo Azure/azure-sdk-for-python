@@ -101,7 +101,8 @@
 /common/smoketest/                                                   @lmazuel @chlowell @annatisch @rakshith91 @shurd @southpolesteve
 
 # Management Plane
-/**/*mgmt*/     @zikalino
+/**/*mgmt*/     @msyyc @jsntcy @changlong-liu
+
 
 ###########
 # Eng Sys

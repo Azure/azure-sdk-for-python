@@ -62,6 +62,7 @@ from ._key_vault_management_client_enums import (
     KeyPermissions,
     Reason,
     SecretPermissions,
+    SkuFamily,
     SkuName,
     StoragePermissions,
 )
@@ -96,6 +97,7 @@ __all__ = [
     'KeyPermissions',
     'Reason',
     'SecretPermissions',
+    'SkuFamily',
     'SkuName',
     'StoragePermissions',
 ]

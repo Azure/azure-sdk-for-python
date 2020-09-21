@@ -69,8 +69,6 @@ class KeyVaultManagementClient(MultiApiClientMixin, _SDKClient):
         self._config = KeyVaultManagementClientConfiguration(credential, subscription_id, **kwargs)
         self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
         super(KeyVaultManagementClient, self).__init__(
-            credential,
-            self._config,
             api_version=api_version,
             profile=profile
         )
@@ -100,7 +98,7 @@ class KeyVaultManagementClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2020-04-01-preview':
             from .v2020_04_01_preview import models
             return models
-        raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        raise ValueError("API version {} is not available".format(api_version))
 
     @property
     def managed_hsms(self):
@@ -112,7 +110,7 @@ class KeyVaultManagementClient(MultiApiClientMixin, _SDKClient):
         if api_version == '2020-04-01-preview':
             from .v2020_04_01_preview.operations import ManagedHsmsOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+            raise ValueError("API version {} does not have operation group 'managed_hsms'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -134,7 +132,7 @@ class KeyVaultManagementClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2020-04-01-preview':
             from .v2020_04_01_preview.operations import Operations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+            raise ValueError("API version {} does not have operation group 'operations'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -153,7 +151,7 @@ class KeyVaultManagementClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2020-04-01-preview':
             from .v2020_04_01_preview.operations import PrivateEndpointConnectionsOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+            raise ValueError("API version {} does not have operation group 'private_endpoint_connections'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -172,7 +170,7 @@ class KeyVaultManagementClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2020-04-01-preview':
             from .v2020_04_01_preview.operations import PrivateLinkResourcesOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+            raise ValueError("API version {} does not have operation group 'private_link_resources'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -194,7 +192,7 @@ class KeyVaultManagementClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2020-04-01-preview':
             from .v2020_04_01_preview.operations import VaultsOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+            raise ValueError("API version {} does not have operation group 'vaults'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     def close(self):

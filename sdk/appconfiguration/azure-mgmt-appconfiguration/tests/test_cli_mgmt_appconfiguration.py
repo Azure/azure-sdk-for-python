@@ -10,10 +10,10 @@
 # TEST SCENARIO COVERAGE
 # ----------------------
 # Methods Total   : 17
-# Methods Covered : 16
+# Methods Covered : 17
 # Examples Total  : 19
 # Examples Tested : 19
-# Coverage %      : 94.11764705882352
+# Coverage %      : 100
 # ----------------------
 
 # covered ops:

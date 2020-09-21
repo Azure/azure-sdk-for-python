@@ -43,7 +43,6 @@ class ManagementLockClient(MultiApiClientMixin, _SDKClient):
     :param str base_url: Service URL
     :param profile: A profile definition, from KnownProfiles to dict.
     :type profile: azure.profiles.KnownProfiles
-    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
     DEFAULT_API_VERSION = '2016-09-01'
@@ -69,8 +68,6 @@ class ManagementLockClient(MultiApiClientMixin, _SDKClient):
         self._config = ManagementLockClientConfiguration(credential, subscription_id, **kwargs)
         self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
         super(ManagementLockClient, self).__init__(
-            credential,
-            self._config,
             api_version=api_version,
             profile=profile
         )
@@ -92,7 +89,7 @@ class ManagementLockClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2016-09-01':
             from .v2016_09_01 import models
             return models
-        raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        raise ValueError("API version {} is not available".format(api_version))
 
     @property
     def authorization_operations(self):
@@ -104,7 +101,7 @@ class ManagementLockClient(MultiApiClientMixin, _SDKClient):
         if api_version == '2016-09-01':
             from .v2016_09_01.operations import AuthorizationOperationsOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+            raise ValueError("API version {} does not have operation group 'authorization_operations'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -120,7 +117,7 @@ class ManagementLockClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2016-09-01':
             from .v2016_09_01.operations import ManagementLocksOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+            raise ValueError("API version {} does not have operation group 'management_locks'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     def close(self):

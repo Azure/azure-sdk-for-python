@@ -6,40 +6,58 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum
+from enum import Enum, EnumMeta
+from six import with_metaclass
 
-class EnforcementMode(str, Enum):
+class _CaseInsensitiveEnumMeta(EnumMeta):
+    def __getitem__(self, name):
+        return super().__getitem__(name.upper())
+
+    def __getattr__(cls, name):
+        """Return the enum member matching `name`
+        We use __getattr__ instead of descriptors or inserting into the enum
+        class' __dict__ in order to support `name` and `value` being both
+        properties for enum members (which live in the class' __dict__) and
+        enum members themselves.
+        """
+        try:
+            return cls._member_map_[name.upper()]
+        except KeyError:
+            raise AttributeError(name)
+
+
+class EnforcementMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The policy assignment enforcement mode. Possible values are Default and DoNotEnforce.
     """
 
-    default = "Default"  #: The policy effect is enforced during resource creation or update.
-    do_not_enforce = "DoNotEnforce"  #: The policy effect is not enforced during resource creation or update.
+    DEFAULT = "Default"  #: The policy effect is enforced during resource creation or update.
+    DO_NOT_ENFORCE = "DoNotEnforce"  #: The policy effect is not enforced during resource creation or update.
 
-class ParameterType(str, Enum):
+class ParameterType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The data type of the parameter.
     """
 
-    string = "String"
-    array = "Array"
-    object = "Object"
-    boolean = "Boolean"
-    integer = "Integer"
-    float = "Float"
-    date_time = "DateTime"
+    STRING = "String"
+    ARRAY = "Array"
+    OBJECT = "Object"
+    BOOLEAN = "Boolean"
+    INTEGER = "Integer"
+    FLOAT = "Float"
+    DATE_TIME = "DateTime"
 
-class PolicyType(str, Enum):
+class PolicyType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The type of policy definition. Possible values are NotSpecified, BuiltIn, Custom, and Static.
     """
 
-    not_specified = "NotSpecified"
-    built_in = "BuiltIn"
-    custom = "Custom"
-    static = "Static"
+    NOT_SPECIFIED = "NotSpecified"
+    BUILT_IN = "BuiltIn"
+    CUSTOM = "Custom"
+    STATIC = "Static"
 
-class ResourceIdentityType(str, Enum):
+class ResourceIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The identity type. This is the only required field when adding a system assigned identity to a
     resource.
     """
 
-    system_assigned = "SystemAssigned"  #: Indicates that a system assigned identity is associated with the resource.
-    none = "None"  #: Indicates that no identity is associated with the resource or that the existing identity should be removed.
+    SYSTEM_ASSIGNED = "SystemAssigned"  #: Indicates that a system assigned identity is associated with the resource.
+    NONE = "None"  #: Indicates that no identity is associated with the resource or that the existing identity should be removed.

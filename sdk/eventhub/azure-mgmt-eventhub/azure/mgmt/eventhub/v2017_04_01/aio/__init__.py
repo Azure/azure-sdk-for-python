@@ -6,5 +6,5 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._event_hub_management_client_async import EventHubManagementClient
+from ._event_hub_management_client import EventHubManagementClient
 __all__ = ['EventHubManagementClient']
