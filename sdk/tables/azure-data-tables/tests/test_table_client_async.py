@@ -415,7 +415,7 @@ class StorageTableClientTest(TableTestCase):
         def callback(response):
             self.assertTrue('User-Agent' in response.http_request.headers)
             self.assertIn(
-                "TestApp/v1.0 azsdk-python-storage-tables/{} Python/{} ({})".format(
+                "TestApp/v1.0 azsdk-python-data-tables/{} Python/{} ({})".format(
                     VERSION,
                     platform.python_version(),
                     platform.platform()),
@@ -428,7 +428,7 @@ class StorageTableClientTest(TableTestCase):
         def callback(response):
             self.assertTrue('User-Agent' in response.http_request.headers)
             self.assertIn(
-                "TestApp/v2.0 TestApp/v1.0 azsdk-python-storage-tables/{} Python/{} ({})".format(
+                "TestApp/v2.0 TestApp/v1.0 azsdk-python-data-tables/{} Python/{} ({})".format(
                     VERSION,
                     platform.python_version(),
                     platform.platform()),
@@ -446,7 +446,7 @@ class StorageTableClientTest(TableTestCase):
             self.assertTrue('User-Agent' in response.http_request.headers)
             self.assertEqual(
                 response.http_request.headers['User-Agent'],
-                "azsdk-python-storage-tables/{} Python/{} ({}) customer_user_agent".format(
+                "azsdk-python-data-tables/{} Python/{} ({}) customer_user_agent".format(
                     VERSION,
                     platform.python_version(),
                     platform.platform())

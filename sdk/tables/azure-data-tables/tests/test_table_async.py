@@ -239,7 +239,7 @@ class TableTestAsync(AsyncTableTestCase):
         self.assertEqual(len(small_page), 2)
         self.assertGreaterEqual(len(big_page), 4)
 
-    @pytest.mark.skip("pending")
+    # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     async def test_list_tables_with_marker(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -251,18 +251,21 @@ class TableTestAsync(AsyncTableTestCase):
 
         # Act
         generator1 = ts.list_tables(results_per_page=2).by_page()
-        tables1 = []
-        for el in generator1:
-            tables1.append(el)
+        await generator1.__anext__()
+
         generator2 = ts.list_tables(results_per_page=2).by_page(
             continuation_token=generator1.continuation_token)
-        tables2 = []
-        for el in generator2:
-            tables2.append(el)
+        await generator2.__anext__()
+
+        tables1 = generator1._current_page
+        tables2 = generator2._current_page
+
+        table1_len = len([t async for t in tables1])
+        table2_len = len([t async for t in tables2])
 
         # Assert
-        self.assertEqual(len(tables1), 2)
-        self.assertEqual(len(tables2), 2)
+        self.assertEqual(table1_len, 2)
+        self.assertEqual(table2_len, 2)
         self.assertNotEqual(tables1, tables2)
 
     @GlobalStorageAccountPreparer()
@@ -273,14 +276,13 @@ class TableTestAsync(AsyncTableTestCase):
         table = await self._create_table(ts)
 
         # Act
-        # deleted = table.delete_table()
-        deleted = await ts.delete_table(table_name=table.table_name)
+        await ts.delete_table(table_name=table.table_name)
 
-        # Assert
-        self.assertIsNone(deleted)
-        # TODO: the AsyncPageIterator is not an iterable and this check fails
-        # existing = ts.query_tables("TableName eq '{}'".format(table.table_name))
-        # self.assertEqual(existing, [])
+        existing = ts.query_tables("TableName eq '{}'".format(table.table_name))
+        tables = []
+        async for e in existing:
+            tables.append(e)
+        self.assertEqual(tables, [])
 
     @GlobalStorageAccountPreparer()
     async def test_delete_table_with_non_existing_table_fail_not_exist(self, resource_group, location, storage_account,
@@ -292,8 +294,6 @@ class TableTestAsync(AsyncTableTestCase):
         # Act
         with self.assertRaises(ResourceNotFoundError):
             await ts.delete_table(table_name)
-
-        # Assert
 
     @GlobalStorageAccountPreparer()
     async def test_unicode_create_table_unicode_name(self, resource_group, location, storage_account,
@@ -312,8 +312,6 @@ class TableTestAsync(AsyncTableTestCase):
             assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.""" in str(
                 excinfo)
 
-        # Assert
-
     @GlobalStorageAccountPreparer()
     async def test_get_table_acl(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -325,13 +323,11 @@ class TableTestAsync(AsyncTableTestCase):
         try:
             # Act
             acl = await table.get_table_access_policy()
-            # acl = table.get_table_access_policy()
 
             # Assert
             self.assertIsNotNone(acl)
             self.assertEqual(len(acl), 0)
         finally:
-            # self._delete_table(table)
             await ts.delete_table(table.table_name)
 
     @GlobalStorageAccountPreparer()

@@ -313,8 +313,6 @@ class StorageTableTest(TableTestCase):
             assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.""" in str(
                 excinfo)
 
-        # Assert
-
     @GlobalStorageAccountPreparer()
     def test_get_table_acl(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
