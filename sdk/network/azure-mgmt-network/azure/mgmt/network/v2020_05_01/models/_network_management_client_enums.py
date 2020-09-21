@@ -911,3 +911,96 @@ class VpnAuthenticationType(str, Enum):
     certificate = "Certificate"
     radius = "Radius"
     aad = "AAD"
+
+
+class WebApplicationFirewallEnabledState(str, Enum):
+
+    disabled = "Disabled"
+    enabled = "Enabled"
+
+
+class WebApplicationFirewallMode(str, Enum):
+
+    prevention = "Prevention"
+    detection = "Detection"
+
+
+class WebApplicationFirewallRuleType(str, Enum):
+
+    match_rule = "MatchRule"
+    invalid = "Invalid"
+
+
+class WebApplicationFirewallMatchVariable(str, Enum):
+
+    remote_addr = "RemoteAddr"
+    request_method = "RequestMethod"
+    query_string = "QueryString"
+    post_args = "PostArgs"
+    request_uri = "RequestUri"
+    request_headers = "RequestHeaders"
+    request_body = "RequestBody"
+    request_cookies = "RequestCookies"
+
+
+class WebApplicationFirewallOperator(str, Enum):
+
+    ip_match = "IPMatch"
+    equal = "Equal"
+    contains = "Contains"
+    less_than = "LessThan"
+    greater_than = "GreaterThan"
+    less_than_or_equal = "LessThanOrEqual"
+    greater_than_or_equal = "GreaterThanOrEqual"
+    begins_with = "BeginsWith"
+    ends_with = "EndsWith"
+    regex = "Regex"
+    geo_match = "GeoMatch"
+
+
+class WebApplicationFirewallTransform(str, Enum):
+
+    lowercase = "Lowercase"
+    trim = "Trim"
+    url_decode = "UrlDecode"
+    url_encode = "UrlEncode"
+    remove_nulls = "RemoveNulls"
+    html_entity_decode = "HtmlEntityDecode"
+
+
+class WebApplicationFirewallAction(str, Enum):
+
+    allow = "Allow"
+    block = "Block"
+    log = "Log"
+
+
+class WebApplicationFirewallPolicyResourceState(str, Enum):
+
+    creating = "Creating"
+    enabling = "Enabling"
+    enabled = "Enabled"
+    disabling = "Disabling"
+    disabled = "Disabled"
+    deleting = "Deleting"
+
+
+class OwaspCrsExclusionEntryMatchVariable(str, Enum):
+
+    request_header_names = "RequestHeaderNames"
+    request_cookie_names = "RequestCookieNames"
+    request_arg_names = "RequestArgNames"
+
+
+class OwaspCrsExclusionEntrySelectorMatchOperator(str, Enum):
+
+    equals = "Equals"
+    contains = "Contains"
+    starts_with = "StartsWith"
+    ends_with = "EndsWith"
+    equals_any = "EqualsAny"
+
+
+class ManagedRuleEnabledState(str, Enum):
+
+    disabled = "Disabled"

@@ -10275,6 +10275,125 @@ class LogSpecification(Model):
         self.blob_duration = kwargs.get('blob_duration', None)
 
 
+class ManagedRuleGroupOverride(Model):
+    """Defines a managed rule group override setting.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param rule_group_name: Required. The managed rule group to override.
+    :type rule_group_name: str
+    :param rules: List of rules that will be disabled. If none specified, all
+     rules in the group will be disabled.
+    :type rules:
+     list[~azure.mgmt.network.v2020_05_01.models.ManagedRuleOverride]
+    """
+
+    _validation = {
+        'rule_group_name': {'required': True},
+    }
+
+    _attribute_map = {
+        'rule_group_name': {'key': 'ruleGroupName', 'type': 'str'},
+        'rules': {'key': 'rules', 'type': '[ManagedRuleOverride]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ManagedRuleGroupOverride, self).__init__(**kwargs)
+        self.rule_group_name = kwargs.get('rule_group_name', None)
+        self.rules = kwargs.get('rules', None)
+
+
+class ManagedRuleOverride(Model):
+    """Defines a managed rule group override setting.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param rule_id: Required. Identifier for the managed rule.
+    :type rule_id: str
+    :param state: The state of the managed rule. Defaults to Disabled if not
+     specified. Possible values include: 'Disabled'
+    :type state: str or
+     ~azure.mgmt.network.v2020_05_01.models.ManagedRuleEnabledState
+    """
+
+    _validation = {
+        'rule_id': {'required': True},
+    }
+
+    _attribute_map = {
+        'rule_id': {'key': 'ruleId', 'type': 'str'},
+        'state': {'key': 'state', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ManagedRuleOverride, self).__init__(**kwargs)
+        self.rule_id = kwargs.get('rule_id', None)
+        self.state = kwargs.get('state', None)
+
+
+class ManagedRulesDefinition(Model):
+    """Allow to exclude some variable satisfy the condition for the WAF check.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param exclusions: The Exclusions that are applied on the policy.
+    :type exclusions:
+     list[~azure.mgmt.network.v2020_05_01.models.OwaspCrsExclusionEntry]
+    :param managed_rule_sets: Required. The managed rule sets that are
+     associated with the policy.
+    :type managed_rule_sets:
+     list[~azure.mgmt.network.v2020_05_01.models.ManagedRuleSet]
+    """
+
+    _validation = {
+        'managed_rule_sets': {'required': True},
+    }
+
+    _attribute_map = {
+        'exclusions': {'key': 'exclusions', 'type': '[OwaspCrsExclusionEntry]'},
+        'managed_rule_sets': {'key': 'managedRuleSets', 'type': '[ManagedRuleSet]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ManagedRulesDefinition, self).__init__(**kwargs)
+        self.exclusions = kwargs.get('exclusions', None)
+        self.managed_rule_sets = kwargs.get('managed_rule_sets', None)
+
+
+class ManagedRuleSet(Model):
+    """Defines a managed rule set.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param rule_set_type: Required. Defines the rule set type to use.
+    :type rule_set_type: str
+    :param rule_set_version: Required. Defines the version of the rule set to
+     use.
+    :type rule_set_version: str
+    :param rule_group_overrides: Defines the rule group overrides to apply to
+     the rule set.
+    :type rule_group_overrides:
+     list[~azure.mgmt.network.v2020_05_01.models.ManagedRuleGroupOverride]
+    """
+
+    _validation = {
+        'rule_set_type': {'required': True},
+        'rule_set_version': {'required': True},
+    }
+
+    _attribute_map = {
+        'rule_set_type': {'key': 'ruleSetType', 'type': 'str'},
+        'rule_set_version': {'key': 'ruleSetVersion', 'type': 'str'},
+        'rule_group_overrides': {'key': 'ruleGroupOverrides', 'type': '[ManagedRuleGroupOverride]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ManagedRuleSet, self).__init__(**kwargs)
+        self.rule_set_type = kwargs.get('rule_set_type', None)
+        self.rule_set_version = kwargs.get('rule_set_version', None)
+        self.rule_group_overrides = kwargs.get('rule_group_overrides', None)
+
+
 class ManagedServiceIdentity(Model):
     """Identity for the resource.
 
@@ -10350,6 +10469,52 @@ class ManagedServiceIdentityUserAssignedIdentitiesValue(Model):
         self.client_id = None
 
 
+class MatchCondition(Model):
+    """Define match conditions.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param match_variables: Required. List of match variables.
+    :type match_variables:
+     list[~azure.mgmt.network.v2020_05_01.models.MatchVariable]
+    :param operator: Required. The operator to be matched. Possible values
+     include: 'IPMatch', 'Equal', 'Contains', 'LessThan', 'GreaterThan',
+     'LessThanOrEqual', 'GreaterThanOrEqual', 'BeginsWith', 'EndsWith',
+     'Regex', 'GeoMatch'
+    :type operator: str or
+     ~azure.mgmt.network.v2020_05_01.models.WebApplicationFirewallOperator
+    :param negation_conditon: Whether this is negate condition or not.
+    :type negation_conditon: bool
+    :param match_values: Required. Match value.
+    :type match_values: list[str]
+    :param transforms: List of transforms.
+    :type transforms: list[str or
+     ~azure.mgmt.network.v2020_05_01.models.WebApplicationFirewallTransform]
+    """
+
+    _validation = {
+        'match_variables': {'required': True},
+        'operator': {'required': True},
+        'match_values': {'required': True},
+    }
+
+    _attribute_map = {
+        'match_variables': {'key': 'matchVariables', 'type': '[MatchVariable]'},
+        'operator': {'key': 'operator', 'type': 'str'},
+        'negation_conditon': {'key': 'negationConditon', 'type': 'bool'},
+        'match_values': {'key': 'matchValues', 'type': '[str]'},
+        'transforms': {'key': 'transforms', 'type': '[str]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(MatchCondition, self).__init__(**kwargs)
+        self.match_variables = kwargs.get('match_variables', None)
+        self.operator = kwargs.get('operator', None)
+        self.negation_conditon = kwargs.get('negation_conditon', None)
+        self.match_values = kwargs.get('match_values', None)
+        self.transforms = kwargs.get('transforms', None)
+
+
 class MatchedRule(Model):
     """Matched rule.
 
@@ -10369,6 +10534,35 @@ class MatchedRule(Model):
         super(MatchedRule, self).__init__(**kwargs)
         self.rule_name = kwargs.get('rule_name', None)
         self.action = kwargs.get('action', None)
+
+
+class MatchVariable(Model):
+    """Define match variables.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param variable_name: Required. Match Variable. Possible values include:
+     'RemoteAddr', 'RequestMethod', 'QueryString', 'PostArgs', 'RequestUri',
+     'RequestHeaders', 'RequestBody', 'RequestCookies'
+    :type variable_name: str or
+     ~azure.mgmt.network.v2020_05_01.models.WebApplicationFirewallMatchVariable
+    :param selector: The selector of match variable.
+    :type selector: str
+    """
+
+    _validation = {
+        'variable_name': {'required': True},
+    }
+
+    _attribute_map = {
+        'variable_name': {'key': 'variableName', 'type': 'str'},
+        'selector': {'key': 'selector', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(MatchVariable, self).__init__(**kwargs)
+        self.variable_name = kwargs.get('variable_name', None)
+        self.selector = kwargs.get('selector', None)
 
 
 class MetricSpecification(Model):
@@ -11952,6 +12146,47 @@ class OutboundRule(SubResource):
         self.type = None
 
 
+class OwaspCrsExclusionEntry(Model):
+    """Allow to exclude some variable satisfy the condition for the WAF check.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param match_variable: Required. The variable to be excluded. Possible
+     values include: 'RequestHeaderNames', 'RequestCookieNames',
+     'RequestArgNames'
+    :type match_variable: str or
+     ~azure.mgmt.network.v2020_05_01.models.OwaspCrsExclusionEntryMatchVariable
+    :param selector_match_operator: Required. When matchVariable is a
+     collection, operate on the selector to specify which elements in the
+     collection this exclusion applies to. Possible values include: 'Equals',
+     'Contains', 'StartsWith', 'EndsWith', 'EqualsAny'
+    :type selector_match_operator: str or
+     ~azure.mgmt.network.v2020_05_01.models.OwaspCrsExclusionEntrySelectorMatchOperator
+    :param selector: Required. When matchVariable is a collection, operator
+     used to specify which elements in the collection this exclusion applies
+     to.
+    :type selector: str
+    """
+
+    _validation = {
+        'match_variable': {'required': True},
+        'selector_match_operator': {'required': True},
+        'selector': {'required': True},
+    }
+
+    _attribute_map = {
+        'match_variable': {'key': 'matchVariable', 'type': 'str'},
+        'selector_match_operator': {'key': 'selectorMatchOperator', 'type': 'str'},
+        'selector': {'key': 'selector', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(OwaspCrsExclusionEntry, self).__init__(**kwargs)
+        self.match_variable = kwargs.get('match_variable', None)
+        self.selector_match_operator = kwargs.get('selector_match_operator', None)
+        self.selector = kwargs.get('selector', None)
+
+
 class P2SConnectionConfiguration(SubResource):
     """P2SConnectionConfiguration Resource.
 
@@ -12662,6 +12897,48 @@ class PeerExpressRouteCircuitConnection(SubResource):
         self.name = kwargs.get('name', None)
         self.etag = None
         self.type = None
+
+
+class PolicySettings(Model):
+    """Defines contents of a web application firewall global configuration.
+
+    :param state: The state of the policy. Possible values include:
+     'Disabled', 'Enabled'
+    :type state: str or
+     ~azure.mgmt.network.v2020_05_01.models.WebApplicationFirewallEnabledState
+    :param mode: The mode of the policy. Possible values include:
+     'Prevention', 'Detection'
+    :type mode: str or
+     ~azure.mgmt.network.v2020_05_01.models.WebApplicationFirewallMode
+    :param request_body_check: Whether to allow WAF to check request Body.
+    :type request_body_check: bool
+    :param max_request_body_size_in_kb: Maximum request body size in Kb for
+     WAF.
+    :type max_request_body_size_in_kb: int
+    :param file_upload_limit_in_mb: Maximum file upload size in Mb for WAF.
+    :type file_upload_limit_in_mb: int
+    """
+
+    _validation = {
+        'max_request_body_size_in_kb': {'maximum': 128, 'minimum': 8},
+        'file_upload_limit_in_mb': {'minimum': 0},
+    }
+
+    _attribute_map = {
+        'state': {'key': 'state', 'type': 'str'},
+        'mode': {'key': 'mode', 'type': 'str'},
+        'request_body_check': {'key': 'requestBodyCheck', 'type': 'bool'},
+        'max_request_body_size_in_kb': {'key': 'maxRequestBodySizeInKb', 'type': 'int'},
+        'file_upload_limit_in_mb': {'key': 'fileUploadLimitInMb', 'type': 'int'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PolicySettings, self).__init__(**kwargs)
+        self.state = kwargs.get('state', None)
+        self.mode = kwargs.get('mode', None)
+        self.request_body_check = kwargs.get('request_body_check', None)
+        self.max_request_body_size_in_kb = kwargs.get('max_request_body_size_in_kb', None)
+        self.file_upload_limit_in_mb = kwargs.get('file_upload_limit_in_mb', None)
 
 
 class PrepareNetworkPoliciesRequest(Model):
@@ -18507,3 +18784,157 @@ class VpnSiteLinkConnection(SubResource):
         self.name = kwargs.get('name', None)
         self.etag = None
         self.type = None
+
+
+class WebApplicationFirewallCustomRule(Model):
+    """Defines contents of a web application rule.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: The name of the resource that is unique within a policy. This
+     name can be used to access the resource.
+    :type name: str
+    :ivar etag: A unique read-only string that changes whenever the resource
+     is updated.
+    :vartype etag: str
+    :param priority: Required. Priority of the rule. Rules with a lower value
+     will be evaluated before rules with a higher value.
+    :type priority: int
+    :param rule_type: Required. The rule type. Possible values include:
+     'MatchRule', 'Invalid'
+    :type rule_type: str or
+     ~azure.mgmt.network.v2020_05_01.models.WebApplicationFirewallRuleType
+    :param match_conditions: Required. List of match conditions.
+    :type match_conditions:
+     list[~azure.mgmt.network.v2020_05_01.models.MatchCondition]
+    :param action: Required. Type of Actions. Possible values include:
+     'Allow', 'Block', 'Log'
+    :type action: str or
+     ~azure.mgmt.network.v2020_05_01.models.WebApplicationFirewallAction
+    """
+
+    _validation = {
+        'name': {'max_length': 128},
+        'etag': {'readonly': True},
+        'priority': {'required': True},
+        'rule_type': {'required': True},
+        'match_conditions': {'required': True},
+        'action': {'required': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
+        'priority': {'key': 'priority', 'type': 'int'},
+        'rule_type': {'key': 'ruleType', 'type': 'str'},
+        'match_conditions': {'key': 'matchConditions', 'type': '[MatchCondition]'},
+        'action': {'key': 'action', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(WebApplicationFirewallCustomRule, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.etag = None
+        self.priority = kwargs.get('priority', None)
+        self.rule_type = kwargs.get('rule_type', None)
+        self.match_conditions = kwargs.get('match_conditions', None)
+        self.action = kwargs.get('action', None)
+
+
+class WebApplicationFirewallPolicy(Resource):
+    """Defines web application firewall policy.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: Resource ID.
+    :type id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param location: Resource location.
+    :type location: str
+    :param tags: Resource tags.
+    :type tags: dict[str, str]
+    :param policy_settings: The PolicySettings for policy.
+    :type policy_settings:
+     ~azure.mgmt.network.v2020_05_01.models.PolicySettings
+    :param custom_rules: The custom rules inside the policy.
+    :type custom_rules:
+     list[~azure.mgmt.network.v2020_05_01.models.WebApplicationFirewallCustomRule]
+    :ivar application_gateways: A collection of references to application
+     gateways.
+    :vartype application_gateways:
+     list[~azure.mgmt.network.v2020_05_01.models.ApplicationGateway]
+    :ivar provisioning_state: The provisioning state of the web application
+     firewall policy resource. Possible values include: 'Succeeded',
+     'Updating', 'Deleting', 'Failed'
+    :vartype provisioning_state: str or
+     ~azure.mgmt.network.v2020_05_01.models.ProvisioningState
+    :ivar resource_state: Resource status of the policy. Resource status of
+     the policy. Possible values include: 'Creating', 'Enabling', 'Enabled',
+     'Disabling', 'Disabled', 'Deleting'
+    :vartype resource_state: str or
+     ~azure.mgmt.network.v2020_05_01.models.WebApplicationFirewallPolicyResourceState
+    :param managed_rules: Required. Describes the managedRules structure.
+    :type managed_rules:
+     ~azure.mgmt.network.v2020_05_01.models.ManagedRulesDefinition
+    :ivar http_listeners: A collection of references to application gateway
+     http listeners.
+    :vartype http_listeners:
+     list[~azure.mgmt.network.v2020_05_01.models.SubResource]
+    :ivar path_based_rules: A collection of references to application gateway
+     path rules.
+    :vartype path_based_rules:
+     list[~azure.mgmt.network.v2020_05_01.models.SubResource]
+    :ivar etag: A unique read-only string that changes whenever the resource
+     is updated.
+    :vartype etag: str
+    """
+
+    _validation = {
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'application_gateways': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+        'resource_state': {'readonly': True},
+        'managed_rules': {'required': True},
+        'http_listeners': {'readonly': True},
+        'path_based_rules': {'readonly': True},
+        'etag': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'policy_settings': {'key': 'properties.policySettings', 'type': 'PolicySettings'},
+        'custom_rules': {'key': 'properties.customRules', 'type': '[WebApplicationFirewallCustomRule]'},
+        'application_gateways': {'key': 'properties.applicationGateways', 'type': '[ApplicationGateway]'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'resource_state': {'key': 'properties.resourceState', 'type': 'str'},
+        'managed_rules': {'key': 'properties.managedRules', 'type': 'ManagedRulesDefinition'},
+        'http_listeners': {'key': 'properties.httpListeners', 'type': '[SubResource]'},
+        'path_based_rules': {'key': 'properties.pathBasedRules', 'type': '[SubResource]'},
+        'etag': {'key': 'etag', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(WebApplicationFirewallPolicy, self).__init__(**kwargs)
+        self.policy_settings = kwargs.get('policy_settings', None)
+        self.custom_rules = kwargs.get('custom_rules', None)
+        self.application_gateways = None
+        self.provisioning_state = None
+        self.resource_state = None
+        self.managed_rules = kwargs.get('managed_rules', None)
+        self.http_listeners = None
+        self.path_based_rules = None
+        self.etag = None
