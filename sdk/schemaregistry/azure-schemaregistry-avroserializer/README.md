@@ -81,6 +81,9 @@ The following sections provide several code snippets covering some of the most c
 
 ### Serialization
 
+Use `SchemaRegistryAvroSerializer.serialize` method to serialize dict data with the given avro schema.
+The method would automatically register the schema to the Schema Registry Service and keep the schema cached for future serialization usage.
+
 ```python
 import os
 from azure.schemaregistry import SchemaRegistryClient
@@ -112,6 +115,9 @@ with serializer:
 
 ### Deserialization
 
+Use `SchemaRegistryAvroSerializer.deserialize` method to deserialize raw bytes into dict data.
+The method would automatically retrieve the schema from the Schema Registry Service and keep the schema cached for future deserialization usage.
+
 ```python
 import os
 from azure.schemaregistry import SchemaRegistryClient
@@ -131,6 +137,9 @@ with serializer:
 ```
 
 ### Event Hubs Sending Integration
+
+Integration with Event Hubs to send serialized avro dict data as the body of EventData.
+
 ```python
 import os
 from azure.eventhub import EventHubProducerClient, EventData
@@ -172,6 +181,9 @@ with eventhub_producer, avro_serializer:
 ```
 
 ### Event Hubs Receiving Integration
+
+Integration with Event Hubs to receive `EventData` and deserialized raw bytes into avro dict data.
+
 ```python
 import os
 from azure.eventhub import EventHubConsumerClient
