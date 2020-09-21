@@ -7,6 +7,7 @@ azure-cognitiveservices-language-nspkg
 azure-cognitiveservices-search-nspkg
 azure-cognitiveservices-vision-nspkg
 azure-common~=1.1
+azure-communication-nspkg
 azure-core<2.0.0,>=1.2.2
 azure-cosmosdb-table~=1.0
 azure-datalake-store~=0.0.18
@@ -29,6 +30,7 @@ azure-mgmt-cdn~=3.0
 azure-mgmt-cognitiveservices~=3.0
 azure-mgmt-commerce~=1.0
 azure-mgmt-compute~=4.0
+azure-mgmt-communication~=0.1.0
 azure-mgmt-consumption~=2.0
 azure-mgmt-containerinstance~=1.0
 azure-mgmt-containerregistry~=2.1
@@ -164,3 +166,6 @@ opentelemetry-api==0.10b0
 #override azure-data-tables msrest>=0.6.10
 #override azure-ai-anomalydetector azure-core>=1.6.0,<2.0.0
 #override azure-eventgrid msrest>=0.6.19
+#override azure-communication-chat msrest>=0.6.0
+#override azure-communication-sms msrest>=0.6.0
+#override azure-communication-administration msrest>=0.6.0

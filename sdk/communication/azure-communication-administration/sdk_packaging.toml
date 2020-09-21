@@ -1,0 +1,6 @@
+[packaging]
+package_name = "azure-communication-administration"
+package_pprint_name = "Communication Service"
+package_doc_id = ""
+is_stable = false
+is_arm = false
