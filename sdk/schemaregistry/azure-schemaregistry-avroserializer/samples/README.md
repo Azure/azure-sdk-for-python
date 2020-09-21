@@ -17,6 +17,10 @@ Several Schema Registry Avro Serializer Python SDK samples are available to you 
 * [avro_serializer.py][avro_serializer_sample] - Examples for common Schema Registry Avro Serializer tasks:
     * Serialize data according to the given schema
     * Deserialize data
+* [eventhub_send_integration.py][eventhub_send_integration_sample] - Examples for integration with EventHub in sending tasks:
+    * Serialize data with the given schema and send `EventData` to Event Hubs.
+* [eventhub_receive_integration.py][eventhub_receive_integration_sample] - Examples for integration with EventHub in receiving tasks:
+    * Receive `EventData` from Event Hubs and deserialize the received bytes.
 
 ## Prerequisites
 - Python 2.7, 3.5 or later.
@@ -47,4 +51,6 @@ what you can do with the Azure Schema Registry Avro Serializer library.
 
 <!-- LINKS -->
 [avro_serializer_sample]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/schemaregistry/azure-schemaregistry-avroserializer/samples/avro_serializer.py
+[eventhub_send_integration_sample]:  https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/schemaregistry/azure-schemaregistry-avroserializer/samples/eventhub_send_integration.py
+[eventhub_receive_integration_sample]:  https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/schemaregistry/azure-schemaregistry-avroserializer/samples/eventhub_receive_integration.py
 [api_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-schemaregistry-avroserializer/latest/index.html
