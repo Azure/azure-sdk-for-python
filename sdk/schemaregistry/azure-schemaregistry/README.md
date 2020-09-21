@@ -177,17 +177,16 @@ schema_registry_client.get_schema(schema_id, logging_enable=True)
 
 ## Next steps
 
-### Serializer
-
-**Azure Schema Registry Avro Serializer**
-
-We provide [azure-schemaregistry-avroserializer][schemaregistry_avroserializer_pypi] library as serializer
-implementation to serialize/deserialize avro data integrated with `azure-schemaregistry` for automatic schema registration and retrieval.
-Please refer to the [repository][schemaregistry_avroserializer_repo] for further information.
-
 ### More sample code
 
 Please take a look at the [samples][sr_samples] directory for detailed examples of how to use this library to register and retrieve schema to/from Schema Registry.
+
+### Event Hubs and Avro Serializer
+
+We provide [azure-schemaregistry-avroserializer][schemaregistry_avroserializer_pypi] library as serializer
+implementation to serialize/deserialize avro data integrated with `azure-schemaregistry` for automatic schema registration and retrieval.
+It integrates nicely with the [EventHubs SDK][eventhubs_repo].
+For more information and sample codes, please refer to the [Azure Schema Registry Avro Serializer SDK][schemaregistry_avroserializer_repo].
 
 ## Contributing
 
@@ -217,3 +216,4 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 [schemaregistry_service]: https://aka.ms/schemaregistry
 [schemaregistry_avroserializer_repo]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/schemaregistry/azure-schemaregistry-avroserializer
 [schemaregistry_avroserializer_pypi]: https://pypi.org/project/azure-schemaregistry-avroserializer/
+[eventhubs_repo]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub

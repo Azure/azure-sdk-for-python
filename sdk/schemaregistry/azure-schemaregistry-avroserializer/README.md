@@ -138,7 +138,7 @@ with serializer:
 
 ### Event Hubs Sending Integration
 
-Integration with Event Hubs to send serialized avro dict data as the body of EventData.
+Integration with [Event Hubs][eventhubs_repo] to send serialized avro dict data as the body of EventData.
 
 ```python
 import os
@@ -182,7 +182,7 @@ with eventhub_producer, avro_serializer:
 
 ### Event Hubs Receiving Integration
 
-Integration with Event Hubs to receive `EventData` and deserialized raw bytes into avro dict data.
+Integration with [Event Hubs][eventhubs_repo] to receive `EventData` and deserialized raw bytes into avro dict data.
 
 ```python
 import os
@@ -288,3 +288,4 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 [change_log]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/schemaregistry/azure-schemaregistry-avroserializer/CHANGELOG.md
 [schemaregistry_client]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/schemaregistry/azure-schemaregistry
 [schemaregistry_service]: https://aka.ms/schemaregistry
+[eventhubs_repo]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub

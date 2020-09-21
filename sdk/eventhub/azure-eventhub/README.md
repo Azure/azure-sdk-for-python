@@ -414,7 +414,7 @@ Please take a look at the [samples](https://github.com/Azure/azure-sdk-for-pytho
 
 Reference documentation is available [here](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/latest/azure.eventhub.html).
 
-### Schema Registry and Serializer
+### Schema Registry and Avro Serializer
 
 The EventHubs SDK integrates nicely with the [Schema Registry][schemaregistry_service] service and [Avro][avro].
 For more information, please refer to [Schema Registry SDK][schemaregistry_repo] and [Schema Registry Avro Serializer SDK][schemaregistry_avroserializer_repo].
