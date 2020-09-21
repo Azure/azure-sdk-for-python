@@ -30,7 +30,7 @@ _LOGGER = logging.getLogger(__name__)
 class BaseSession(object):
     def __init__(self, session_id, receiver, encoding="UTF-8"):
         # type: (str, Union[ServiceBusSessionReceiver, ServiceBusSessionReceiverAsync], str) -> None
-        self._id = session_id
+        self._session_id = session_id
         self._receiver = receiver
         self._encoding = encoding
         self._session_start = None
@@ -58,7 +58,7 @@ class BaseSession(object):
 
         :rtype: str
         """
-        return self._id
+        return self._session_id
 
     @property
     def locked_until_utc(self):
@@ -110,7 +110,7 @@ class ServiceBusSession(BaseSession):
         self._check_live()
         response = self._receiver._mgmt_request_response_with_retry(  # pylint: disable=protected-access
             REQUEST_RESPONSE_GET_SESSION_STATE_OPERATION,
-            {MGMT_REQUEST_SESSION_ID: self._id},
+            {MGMT_REQUEST_SESSION_ID: self._session_id},
             mgmt_handlers.default
         )
         session_state = response.get(MGMT_RESPONSE_SESSION_STATE)
@@ -138,7 +138,7 @@ class ServiceBusSession(BaseSession):
         state = state.encode(self._encoding) if isinstance(state, six.text_type) else state
         return self._receiver._mgmt_request_response_with_retry(  # pylint: disable=protected-access
             REQUEST_RESPONSE_SET_SESSION_STATE_OPERATION,
-            {MGMT_REQUEST_SESSION_ID: self._id, MGMT_REQUEST_SESSION_STATE: bytearray(state)},
+            {MGMT_REQUEST_SESSION_ID: self._session_id, MGMT_REQUEST_SESSION_STATE: bytearray(state)},
             mgmt_handlers.default
         )
 
@@ -169,7 +169,7 @@ class ServiceBusSession(BaseSession):
         self._check_live()
         expiry = self._receiver._mgmt_request_response_with_retry(  # pylint: disable=protected-access
             REQUEST_RESPONSE_RENEW_SESSION_LOCK_OPERATION,
-            {MGMT_REQUEST_SESSION_ID: self._id},
+            {MGMT_REQUEST_SESSION_ID: self._session_id},
             mgmt_handlers.default
         )
         expiry_timestamp = expiry[MGMT_RESPONSE_RECEIVER_EXPIRATION]/1000.0
