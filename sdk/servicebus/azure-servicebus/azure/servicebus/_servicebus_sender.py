@@ -48,7 +48,9 @@ class SenderMixin(object):
         self.entity_name = self._entity_name
 
     def _set_msg_timeout(self, timeout=None, last_exception=None):
+        # pylint: disable=protected-access
         if not timeout:
+            self._handler._msg_timeout = 0
             return
         timeout_time = time.time() + timeout
         remaining_time = timeout_time - time.time()
@@ -59,7 +61,7 @@ class SenderMixin(object):
                 error = OperationTimeoutError("Send operation timed out")
             _LOGGER.info("%r send operation timed out. (%r)", self._name, error)
             raise error
-        self._handler._msg_timeout = remaining_time * 1000  # type: ignore  # pylint: disable=protected-access
+        self._handler._msg_timeout = remaining_time * 1000  # type: ignore
 
     @classmethod
     def _build_schedule_request(cls, schedule_time_utc, *messages):

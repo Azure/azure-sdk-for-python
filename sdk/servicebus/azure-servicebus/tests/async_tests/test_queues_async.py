@@ -52,7 +52,8 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
             async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 for i in range(10):
                     message = Message("Handler message no. {}".format(i))
-                    await sender.send_messages(message)
+                    await sender.send_messages(message, timeout=5)
+                    assert int(sender._handler._msg_timeout) == 5 * 1000
 
             with pytest.raises(ServiceBusConnectionError):
                 await (sb_client.get_queue_session_receiver(servicebus_queue.name, session_id="test", max_wait_time=5))._open_with_retry()
@@ -65,7 +66,6 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     await message.complete()
 
             assert count == 10
-
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -81,6 +81,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     message = Message("Handler message no. {}".format(i))
                     messages.append(message)
                 await sender.send_messages(messages)
+                assert sender._handler._msg_timeout == 0
 
             async with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5) as receiver:
                 count = 0
@@ -90,7 +91,6 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     await message.complete()
 
                 assert count == 10
-
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -132,7 +132,6 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     _logger.debug(message._lock_expired)
                     await message.complete()
                     await asyncio.sleep(40)
-
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -327,7 +326,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
 
                 assert count == 10
 
-                deferred = await receiver.receive_deferred_messages(deferred_messages)
+                deferred = await receiver.receive_deferred_messages(deferred_messages, timeout=5)
                 assert len(deferred) == 10
                 for message in deferred:
                     assert isinstance(message, ReceivedMessage)
@@ -360,7 +359,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
             assert count == 10
 
             async with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5) as session:
-                deferred = await session.receive_deferred_messages(deferred_messages)
+                deferred = await session.receive_deferred_messages(deferred_messages, timeout=0)
                 assert len(deferred) == 10
                 for message in deferred:
                     assert isinstance(message, ReceivedMessage)
@@ -395,7 +394,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
             assert count == 10
 
             async with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5) as session:
-                deferred = await session.receive_deferred_messages(deferred_messages)
+                deferred = await session.receive_deferred_messages(deferred_messages, timeout=None)
                 assert len(deferred) == 10
                 for message in deferred:
                     assert isinstance(message, ReceivedMessage)
@@ -628,7 +627,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                         message = Message("Test message no. {}".format(i))
                         await sender.send_messages(message)
 
-                messages = await receiver.peek_messages(5)
+                messages = await receiver.peek_messages(5, timeout=5)
                 assert len(messages) > 0
                 assert all(isinstance(m, PeekedMessage) for m in messages)
                 for message in messages:
@@ -646,7 +645,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
             servicebus_namespace_connection_string, logging_enable=False) as sb_client:
 
             async with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5, receive_mode=ReceiveMode.PeekLock, prefetch_count=10) as receiver:
-                messages = await receiver.peek_messages(10)
+                messages = await receiver.peek_messages(10, timeout=0)
                 assert len(messages) == 0
 
     @pytest.mark.liveTest
@@ -883,9 +882,9 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 messages = await receiver.receive_messages(max_wait_time=10)
                 assert len(messages) == 1
                 time.sleep(15)
-                await messages[0].renew_lock()
+                await messages[0].renew_lock(timeout=5)
                 time.sleep(15)
-                await messages[0].renew_lock()
+                await messages[0].renew_lock(timeout=0)
                 time.sleep(15)
                 assert not messages[0]._lock_expired
                 await messages[0].complete()
@@ -1019,7 +1018,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     received_messages.append(message)
                     await message.complete()
 
-                tokens = await sender.schedule_messages(received_messages, scheduled_enqueue_time)
+                tokens = await sender.schedule_messages(received_messages, scheduled_enqueue_time, timeout=5)
                 assert len(tokens) == 2
 
                 messages = await receiver.receive_messages(max_wait_time=120)
@@ -1053,10 +1052,10 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                     message_a = Message("Test scheduled message")
                     message_b = Message("Test scheduled message")
-                    tokens = await sender.schedule_messages([message_a, message_b], enqueue_time)
+                    tokens = await sender.schedule_messages([message_a, message_b], enqueue_time, timeout=0)
                     assert len(tokens) == 2
 
-                    await sender.cancel_scheduled_messages(tokens)
+                    await sender.cancel_scheduled_messages(tokens, timeout=None)
 
                 messages = await receiver.receive_messages(max_wait_time=120)
                 assert len(messages) == 0
