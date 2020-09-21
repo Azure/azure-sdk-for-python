@@ -1,5 +1,25 @@
 # Release History
 
+## 2.0.0 (2020-09-08)
+
+**Features**
+
+  - Model Machine has a new parameter ad_fqdn
+  - Model Machine has a new parameter os_sku
+  - Model Machine has a new parameter domain_name
+  - Model Machine has a new parameter dns_fqdn
+  - Model Machine has a new parameter vm_uuid
+  - Model MachineProperties has a new parameter ad_fqdn
+  - Model MachineProperties has a new parameter os_sku
+  - Model MachineProperties has a new parameter domain_name
+  - Model MachineProperties has a new parameter dns_fqdn
+  - Model MachineProperties has a new parameter vm_uuid
+
+**Breaking changes**
+
+  - Model ErrorResponse has a new signature
+  - Model MachineExtensionInstanceViewStatus has a new signature
+
 ## 1.0.0 (2020-08-19)
 
 **Features**

@@ -9,24 +9,25 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.2 (Windows-10-10.0.19041-SP0) msrest/0.6.17 msrest_azure/0.6.3
-        azure-mgmt-hybridcompute/1.0.0 Azure-SDK-For-Python
+      - python/3.8.1 (Windows-10-10.0.19041-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-hybridcompute/2.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-sdk-test/providers/Microsoft.HybridCompute/machines/DESKTOP-ROKPM1C?api-version=2019-12-12
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-sdk-test/providers/Microsoft.HybridCompute/machines/test?api-version=2020-08-02
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-sdk-test/providers/Microsoft.HybridCompute/machines/DESKTOP-ROKPM1C","name":"DESKTOP-ROKPM1C","location":"eastus","tags":{},"identity":{"type":"SystemAssigned","principalId":"227a4f84-2165-4b0e-8ba2-fb0a6cafe490","tenantId":"54826b22-38d6-4fb2-bad9-b7b93a3e9c5a"},"type":"Microsoft.HybridCompute/machines","properties":{"provisioningState":"Succeeded","agentVersion":"0.11.20231.004","status":"Connected","lastStatusChange":"2020-08-20T02:21:11.4010538Z","errorDetails":[],"displayName":"DESKTOP-ROKPM1C","machineFqdn":"DESKTOP-ROKPM1C","osName":"windows","osVersion":"10.0.19041.450","osProfile":{"computerName":"DESKTOP-ROKPM1C"},"vmId":"9975d745-2d1a-43a4-9213-1093eb2f6010","clientPublicKey":"MIIBCgKCAQEA6RLyl0b1vf0Ry3F35ZhHtxHjwLXOlevDIXFPkIqynXFWUKjCfVYaY7Pq08BpjQo6mI7cjs3oGQKbnWO2GidnEsmbXoXttLjnSfBVwkiQPhtAKRF2e4RleKrWy0ugzlBZed3iHrXHGxcmjG6mAU79iK25ohbFkgkuyMAA6L79Ac7uZfDmsNmbp95nD/cS2z1jIsQYj9ya/gh+Glsrl9aS+PeAqkHYmqoPP4xHnAwO4rcW+MHbuooKHrkalvNqdupv/DaEaZdATHPQogOvxVp+yqcMV6U8kVoEPZEI+n7X69uDqP4wv4DqJM7DqtDZRB5czK+OVMS3JPL/hxvbcSTm9QIDAQAB"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-sdk-test/providers/Microsoft.HybridCompute/machines/test","name":"test","location":"eastus","tags":{},"identity":{"type":"SystemAssigned","principalId":"09d07c35-afa2-4d8d-89ad-4117dfc1c839","tenantId":"00000000-0000-0000-0000-000000000000"},"type":"Microsoft.HybridCompute/machines","properties":{"provisioningState":"Succeeded","agentVersion":"0.11.20231.010","status":"Connected","lastStatusChange":"2020-09-17T04:52:58.8052039Z","errorDetails":[],"displayName":"test","machineFqdn":"test","osName":"linux","osVersion":"5.4.0-1025-azure","osProfile":{"computerName":"test"},"vmId":"c5ddf1df-5982-413c-9f2f-a2e7a732317e","vmUuid":"21cb97f4-f5ad-af4c-83e7-5041df1af906","clientPublicKey":"MIIBCgKCAQEA00nTOxSZhJDJbdtLapEqP0C9rpSTSKAZa2k4dPWqITY+WD7YW717X1IWjAJHXw3ECpPT18j7yVXsig8+K2bzbi2B9IP3ui5cOV2hacK4owaottTGoT09+4sG45PpR0wFlVdjqAXFBiyOdS83KwOHz9CKPdBdxMTAN9WgLzxkbOpSBC2BIPQ4WXfSzYB7QMGTIyCnDtfPALOs4wVnhOHKlw5Zitui6CJczebSBmlrBNXFm8Q2K4Oql+UzJNOr2fiOAeEGsLP3m4quJnmri8hz9vVIiDBAuTWN0FZNnmKPgkRRPY4Gf1qc6JdsQP234uy7x20++bVOkRdO/XR1+8AVfwIDAQAB","osSku":"Ubuntu
+        18.04.5 LTS","domainName":"n/a","adFqdn":"n/a","dnsFqdn":"test.dittldlvgd4erenh4jmeqz55ib.bx.internal.cloudapp.net"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '1140'
+      - '1265'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 20 Aug 2020 02:44:39 GMT
+      - Thu, 17 Sep 2020 04:53:41 GMT
       expires:
       - '-1'
       pragma:

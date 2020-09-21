@@ -11,7 +11,6 @@
 
 try:
     from ._models_py3 import AzureEntityResource
-    from ._models_py3 import ErrorAdditionalInfo
     from ._models_py3 import ErrorDetail
     from ._models_py3 import ErrorResponse, ErrorResponseException
     from ._models_py3 import Identity
@@ -27,26 +26,17 @@ try:
     from ._models_py3 import MachineIdentity
     from ._models_py3 import MachineProperties
     from ._models_py3 import MachinePropertiesOsProfile
-    from ._models_py3 import MachineReconnect
-    from ._models_py3 import MachineReconnectProperties
     from ._models_py3 import MachineUpdate
     from ._models_py3 import MachineUpdateProperties
     from ._models_py3 import OperationValue
     from ._models_py3 import OperationValueDisplayModel
     from ._models_py3 import OSProfile
-    from ._models_py3 import Plan
     from ._models_py3 import ProxyResource
     from ._models_py3 import Resource
-    from ._models_py3 import ResourceModelWithAllowedPropertySet
-    from ._models_py3 import ResourceModelWithAllowedPropertySetIdentity
-    from ._models_py3 import ResourceModelWithAllowedPropertySetPlan
-    from ._models_py3 import ResourceModelWithAllowedPropertySetSku
-    from ._models_py3 import Sku
     from ._models_py3 import TrackedResource
     from ._models_py3 import UpdateResource
 except (SyntaxError, ImportError):
     from ._models import AzureEntityResource
-    from ._models import ErrorAdditionalInfo
     from ._models import ErrorDetail
     from ._models import ErrorResponse, ErrorResponseException
     from ._models import Identity
@@ -62,21 +52,13 @@ except (SyntaxError, ImportError):
     from ._models import MachineIdentity
     from ._models import MachineProperties
     from ._models import MachinePropertiesOsProfile
-    from ._models import MachineReconnect
-    from ._models import MachineReconnectProperties
     from ._models import MachineUpdate
     from ._models import MachineUpdateProperties
     from ._models import OperationValue
     from ._models import OperationValueDisplayModel
     from ._models import OSProfile
-    from ._models import Plan
     from ._models import ProxyResource
     from ._models import Resource
-    from ._models import ResourceModelWithAllowedPropertySet
-    from ._models import ResourceModelWithAllowedPropertySetIdentity
-    from ._models import ResourceModelWithAllowedPropertySetPlan
-    from ._models import ResourceModelWithAllowedPropertySetSku
-    from ._models import Sku
     from ._models import TrackedResource
     from ._models import UpdateResource
 from ._paged_models import MachineExtensionPaged
@@ -85,14 +67,11 @@ from ._paged_models import OperationValuePaged
 from ._hybrid_compute_management_client_enums import (
     StatusTypes,
     StatusLevelTypes,
-    SkuTier,
-    ResourceIdentityType,
     InstanceViewTypes,
 )
 
 __all__ = [
     'AzureEntityResource',
-    'ErrorAdditionalInfo',
     'ErrorDetail',
     'ErrorResponse', 'ErrorResponseException',
     'Identity',
@@ -108,21 +87,13 @@ __all__ = [
     'MachineIdentity',
     'MachineProperties',
     'MachinePropertiesOsProfile',
-    'MachineReconnect',
-    'MachineReconnectProperties',
     'MachineUpdate',
     'MachineUpdateProperties',
     'OperationValue',
     'OperationValueDisplayModel',
     'OSProfile',
-    'Plan',
     'ProxyResource',
     'Resource',
-    'ResourceModelWithAllowedPropertySet',
-    'ResourceModelWithAllowedPropertySetIdentity',
-    'ResourceModelWithAllowedPropertySetPlan',
-    'ResourceModelWithAllowedPropertySetSku',
-    'Sku',
     'TrackedResource',
     'UpdateResource',
     'MachinePaged',
@@ -130,7 +101,5 @@ __all__ = [
     'OperationValuePaged',
     'StatusTypes',
     'StatusLevelTypes',
-    'SkuTier',
-    'ResourceIdentityType',
     'InstanceViewTypes',
 ]

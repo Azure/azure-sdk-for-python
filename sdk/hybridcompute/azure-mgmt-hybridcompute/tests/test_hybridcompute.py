@@ -7,6 +7,15 @@ from devtools_testutils import AzureMgmtTestCase
 from azure.mgmt.hybridcompute import HybridComputeManagementClient
 from azure.mgmt.hybridcompute.models import ErrorResponseException
 
+import sys
+import logging
+logger = logging.getLogger('msrest')
+logger.setLevel(logging.DEBUG)
+handler = logging.StreamHandler(stream=sys.stdout)
+logger.addHandler(handler)
+formatter = logging.Formatter(
+    '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+handler.setFormatter(formatter)
 
 class HybridComputeTests(AzureMgmtTestCase):
     def setUp(self):
@@ -15,7 +24,7 @@ class HybridComputeTests(AzureMgmtTestCase):
 
     def test_get(self):
         resource_group_name = 'azure-sdk-test'
-        machine_name = 'DESKTOP-ROKPM1C'
+        machine_name = 'test'
         machine = self.client.machines.get(
             resource_group_name,
             machine_name
@@ -34,7 +43,7 @@ class HybridComputeTests(AzureMgmtTestCase):
 
     def test_delete(self):
         resource_group_name = 'azure-sdk-test'
-        machine_name = 'DESKTOP-ROKPM1C'
+        machine_name = 'test'
 
         machine = self.client.machines.get(
             resource_group_name,
