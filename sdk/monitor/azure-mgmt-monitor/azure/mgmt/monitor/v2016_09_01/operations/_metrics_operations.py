@@ -8,7 +8,7 @@
 from typing import TYPE_CHECKING
 import warnings
 
-from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
@@ -57,23 +57,23 @@ class MetricsOperations(object):
         :param resource_uri: The identifier of the resource.
         :type resource_uri: str
         :param filter: Reduces the set of data collected.:code:`<br>`The filter is optional. If present
-     it must contain a list of metric names to retrieve of the form: *(name.value eq 'metricName'
-     [or name.value eq 'metricName' or ...])*. Optionally, the filter can contain conditions for the
-     following attributes *aggregationType*\ , *startTime*\ , *endTime*\ , and *timeGrain* of the
-     form *attributeName operator value*. Where operator is one of *ne*\ , *eq*\ , *gt*\ ,
-     *lt*.:code:`<br>`Several conditions can be combined with parentheses and logical operators,
-     e.g: *and*\ , *or*.:code:`<br>`Some example filter expressions are::code:`<br>`-
-     $filter=(name.value eq 'RunsSucceeded') and aggregationType eq 'Total' and startTime eq
-     2016-02-20 and endTime eq 2016-02-21 and timeGrain eq duration'PT1M',:code:`<br>`-
-     $filter=(name.value eq 'RunsSucceeded') and (aggregationType eq 'Total' or aggregationType eq
-     'Average') and startTime eq 2016-02-20 and endTime eq 2016-02-21 and timeGrain eq
-     duration'PT1H',:code:`<br>`- $filter=(name.value eq 'ActionsCompleted' or name.value eq
-     'RunsSucceeded') and (aggregationType eq 'Total' or aggregationType eq 'Average') and startTime
-     eq 2016-02-20 and endTime eq 2016-02-21 and timeGrain eq
-     duration'PT1M'.:code:`<br>`:code:`<br>`\ **NOTE**\ : When a metrics query comes in with
-     multiple metrics, but with no aggregation types defined, the service will pick the Primary
-     aggregation type of the first metrics to be used as the default aggregation type for all the
-     metrics.
+         it must contain a list of metric names to retrieve of the form: *(name.value eq 'metricName'
+         [or name.value eq 'metricName' or ...])*. Optionally, the filter can contain conditions for the
+         following attributes *aggregationType*\ , *startTime*\ , *endTime*\ , and *timeGrain* of the
+         form *attributeName operator value*. Where operator is one of *ne*\ , *eq*\ , *gt*\ ,
+         *lt*.:code:`<br>`Several conditions can be combined with parentheses and logical operators,
+         e.g: *and*\ , *or*.:code:`<br>`Some example filter expressions are::code:`<br>`-
+         $filter=(name.value eq 'RunsSucceeded') and aggregationType eq 'Total' and startTime eq
+         2016-02-20 and endTime eq 2016-02-21 and timeGrain eq duration'PT1M',:code:`<br>`-
+         $filter=(name.value eq 'RunsSucceeded') and (aggregationType eq 'Total' or aggregationType eq
+         'Average') and startTime eq 2016-02-20 and endTime eq 2016-02-21 and timeGrain eq
+         duration'PT1H',:code:`<br>`- $filter=(name.value eq 'ActionsCompleted' or name.value eq
+         'RunsSucceeded') and (aggregationType eq 'Total' or aggregationType eq 'Average') and startTime
+         eq 2016-02-20 and endTime eq 2016-02-21 and timeGrain eq
+         duration'PT1M'.:code:`<br>`:code:`<br>`\ **NOTE**\ : When a metrics query comes in with
+         multiple metrics, but with no aggregation types defined, the service will pick the Primary
+         aggregation type of the first metrics to be used as the default aggregation type for all the
+         metrics.
         :type filter: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either MetricCollection or the result of cls(response)
@@ -81,11 +81,18 @@ class MetricsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.MetricCollection"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2016-09-01"
+        accept = "application/json"
 
         def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']  # type: ignore
@@ -99,15 +106,11 @@ class MetricsOperations(object):
                     query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
+                request = self._client.get(url, query_parameters, header_parameters)
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
+                request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         def extract_data(pipeline_response):

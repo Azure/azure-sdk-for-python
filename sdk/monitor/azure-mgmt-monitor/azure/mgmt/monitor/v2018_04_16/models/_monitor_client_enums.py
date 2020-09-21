@@ -6,46 +6,76 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum
+from enum import Enum, EnumMeta
+from six import with_metaclass
 
-class AlertSeverity(str, Enum):
+class _CaseInsensitiveEnumMeta(EnumMeta):
+    def __getitem__(self, name):
+        return super().__getitem__(name.upper())
+
+    def __getattr__(cls, name):
+        """Return the enum member matching `name`
+        We use __getattr__ instead of descriptors or inserting into the enum
+        class' __dict__ in order to support `name` and `value` being both
+        properties for enum members (which live in the class' __dict__) and
+        enum members themselves.
+        """
+        try:
+            return cls._member_map_[name.upper()]
+        except KeyError:
+            raise AttributeError(name)
+
+
+class AlertSeverity(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Severity Level of Alert
     """
 
-    zero = "0"
-    one = "1"
-    two = "2"
-    three = "3"
-    four = "4"
+    ZERO = "0"
+    ONE = "1"
+    TWO = "2"
+    THREE = "3"
+    FOUR = "4"
 
-class ConditionalOperator(str, Enum):
+class ConditionalOperator(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Result Condition Evaluation criteria. Supported Values - 'GreaterThan' or 'LessThan' or
     'Equal'.
     """
 
-    greater_than = "GreaterThan"
-    less_than = "LessThan"
-    equal = "Equal"
+    GREATER_THAN = "GreaterThan"
+    LESS_THAN = "LessThan"
+    EQUAL = "Equal"
 
-class Enabled(str, Enum):
+class Enabled(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The flag which indicates whether the Log Search rule is enabled. Value should be true or false
     """
 
-    true = "true"
-    false = "false"
+    TRUE = "true"
+    FALSE = "false"
 
-class MetricTriggerType(str, Enum):
+class MetricTriggerType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Metric Trigger Evaluation Type
     """
 
-    consecutive = "Consecutive"
-    total = "Total"
+    CONSECUTIVE = "Consecutive"
+    TOTAL = "Total"
 
-class ProvisioningState(str, Enum):
+class Operator(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Operator for dimension values
+    """
+
+    INCLUDE = "Include"
+
+class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Provisioning state of the scheduled query rule
     """
 
-    succeeded = "Succeeded"
-    deploying = "Deploying"
-    canceled = "Canceled"
-    failed = "Failed"
+    SUCCEEDED = "Succeeded"
+    DEPLOYING = "Deploying"
+    CANCELED = "Canceled"
+    FAILED = "Failed"
+
+class QueryType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Set value to 'ResultAccount'
+    """
+
+    RESULT_COUNT = "ResultCount"

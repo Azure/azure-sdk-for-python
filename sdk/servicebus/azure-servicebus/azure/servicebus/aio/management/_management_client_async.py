@@ -53,7 +53,7 @@ class ServiceBusAdministrationClient:  #pylint:disable=too-many-public-methods
 
     def __init__(
             self, fully_qualified_namespace: str,
-            credential: Union["AsyncTokenCredential"],
+            credential: "AsyncTokenCredential",
             **kwargs) -> None:
 
         self.fully_qualified_namespace = fully_qualified_namespace

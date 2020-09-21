@@ -32,6 +32,7 @@ class MgmtResourcePolicyTest(AzureMgmtTestCase):
                 credentials=self.settings.get_credentials()
             )
 
+    @unittest.skip("(InvalidAuthenticationToken) The access token is invalid.")
     @RandomNameResourceGroupPreparer()
     def test_policy_definition_at_management_group(self, resource_group, location):
         policy_name = self.get_resource_name('pypolicy')

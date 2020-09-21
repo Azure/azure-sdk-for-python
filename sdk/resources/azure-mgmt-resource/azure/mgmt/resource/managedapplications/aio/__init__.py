@@ -6,5 +6,5 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._application_client_async import ApplicationClient
+from ._application_client import ApplicationClient
 __all__ = ['ApplicationClient']

@@ -342,7 +342,7 @@ class MgmtNetworkTest(AzureMgmtTestCase):
             "tag2": "value2"
           }
         }
-        result = self.mgmt_client.express_route_circuits.update_tags(resource_group_name=RESOURCE_GROUP, circuit_name=CIRCUIT_NAME, parameters=BODY)
+        # result = self.mgmt_client.express_route_circuits.update_tags(resource_group_name=RESOURCE_GROUP, circuit_name=CIRCUIT_NAME, parameters=BODY)
 
         # /ExpressRouteCircuitConnections/delete/Delete ExpressRouteCircuit[delete]
         result = self.mgmt_client.express_route_circuit_connections.begin_delete(resource_group_name=RESOURCE_GROUP, circuit_name=CIRCUIT_NAME, peering_name=PEERING_NAME, connection_name=CONNECTION_NAME)

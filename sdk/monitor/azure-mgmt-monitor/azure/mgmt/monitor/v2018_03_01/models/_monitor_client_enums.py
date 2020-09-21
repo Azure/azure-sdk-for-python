@@ -6,66 +6,84 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum
+from enum import Enum, EnumMeta
+from six import with_metaclass
 
-class AggregationType(str, Enum):
+class _CaseInsensitiveEnumMeta(EnumMeta):
+    def __getitem__(self, name):
+        return super().__getitem__(name.upper())
+
+    def __getattr__(cls, name):
+        """Return the enum member matching `name`
+        We use __getattr__ instead of descriptors or inserting into the enum
+        class' __dict__ in order to support `name` and `value` being both
+        properties for enum members (which live in the class' __dict__) and
+        enum members themselves.
+        """
+        try:
+            return cls._member_map_[name.upper()]
+        except KeyError:
+            raise AttributeError(name)
+
+
+class AggregationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """the criteria time aggregation types.
     """
 
-    average = "Average"
-    count = "Count"
-    minimum = "Minimum"
-    maximum = "Maximum"
-    total = "Total"
+    AVERAGE = "Average"
+    COUNT = "Count"
+    MINIMUM = "Minimum"
+    MAXIMUM = "Maximum"
+    TOTAL = "Total"
 
-class CriterionType(str, Enum):
+class CriterionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies the type of threshold criteria
     """
 
-    static_threshold_criterion = "StaticThresholdCriterion"
-    dynamic_threshold_criterion = "DynamicThresholdCriterion"
+    STATIC_THRESHOLD_CRITERION = "StaticThresholdCriterion"
+    DYNAMIC_THRESHOLD_CRITERION = "DynamicThresholdCriterion"
 
-class DynamicThresholdOperator(str, Enum):
+class DynamicThresholdOperator(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The operator used to compare the metric value against the threshold.
     """
 
-    greater_than = "GreaterThan"
-    less_than = "LessThan"
-    greater_or_less_than = "GreaterOrLessThan"
+    GREATER_THAN = "GreaterThan"
+    LESS_THAN = "LessThan"
+    GREATER_OR_LESS_THAN = "GreaterOrLessThan"
 
-class DynamicThresholdSensitivity(str, Enum):
+class DynamicThresholdSensitivity(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The extent of deviation required to trigger an alert. This will affect how tight the threshold
     is to the metric series pattern.
     """
 
-    low = "Low"
-    medium = "Medium"
-    high = "High"
+    LOW = "Low"
+    MEDIUM = "Medium"
+    HIGH = "High"
 
-class Odatatype(str, Enum):
+class Odatatype(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """specifies the type of the alert criteria.
     """
 
-    microsoft_azure_monitor_single_resource_multiple_metric_criteria = "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria"
-    microsoft_azure_monitor_multiple_resource_multiple_metric_criteria = "Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria"
-    microsoft_azure_monitor_webtest_location_availability_criteria = "Microsoft.Azure.Monitor.WebtestLocationAvailabilityCriteria"
+    MICROSOFT_AZURE_MONITOR_SINGLE_RESOURCE_MULTIPLE_METRIC_CRITERIA = "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria"
+    MICROSOFT_AZURE_MONITOR_MULTIPLE_RESOURCE_MULTIPLE_METRIC_CRITERIA = "Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria"
+    MICROSOFT_AZURE_MONITOR_WEBTEST_LOCATION_AVAILABILITY_CRITERIA = "Microsoft.Azure.Monitor.WebtestLocationAvailabilityCriteria"
 
-class Operator(str, Enum):
+class Operator(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """the criteria operator.
     """
 
-    equals = "Equals"
-    not_equals = "NotEquals"
-    greater_than = "GreaterThan"
-    greater_than_or_equal = "GreaterThanOrEqual"
-    less_than = "LessThan"
-    less_than_or_equal = "LessThanOrEqual"
+    EQUALS = "Equals"
+    NOT_EQUALS = "NotEquals"
+    GREATER_THAN = "GreaterThan"
+    GREATER_THAN_OR_EQUAL = "GreaterThanOrEqual"
+    LESS_THAN = "LessThan"
+    LESS_THAN_OR_EQUAL = "LessThanOrEqual"
 
-class ReceiverStatus(str, Enum):
+class ReceiverStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Indicates the status of the receiver. Receivers that are not Enabled will not receive any
     communications.
     """
 
-    not_specified = "NotSpecified"
-    enabled = "Enabled"
-    disabled = "Disabled"
+    NOT_SPECIFIED = "NotSpecified"
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"

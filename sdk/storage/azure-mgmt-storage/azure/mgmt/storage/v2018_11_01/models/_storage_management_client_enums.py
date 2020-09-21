@@ -6,52 +6,70 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum
+from enum import Enum, EnumMeta
+from six import with_metaclass
 
-class AccessTier(str, Enum):
+class _CaseInsensitiveEnumMeta(EnumMeta):
+    def __getitem__(self, name):
+        return super().__getitem__(name.upper())
+
+    def __getattr__(cls, name):
+        """Return the enum member matching `name`
+        We use __getattr__ instead of descriptors or inserting into the enum
+        class' __dict__ in order to support `name` and `value` being both
+        properties for enum members (which live in the class' __dict__) and
+        enum members themselves.
+        """
+        try:
+            return cls._member_map_[name.upper()]
+        except KeyError:
+            raise AttributeError(name)
+
+
+class AccessTier(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Required for storage accounts where kind = BlobStorage. The access tier used for billing.
     """
 
-    hot = "Hot"
-    cool = "Cool"
+    HOT = "Hot"
+    COOL = "Cool"
 
-class AccountStatus(str, Enum):
+class AccountStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Gets the status indicating whether the primary location of the storage account is available or
     unavailable.
     """
 
-    available = "available"
-    unavailable = "unavailable"
+    AVAILABLE = "available"
+    UNAVAILABLE = "unavailable"
 
-class Bypass(str, Enum):
+class Bypass(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies whether traffic is bypassed for Logging/Metrics/AzureServices. Possible values are
     any combination of Logging|Metrics|AzureServices (For example, "Logging, Metrics"), or None to
     bypass none of those traffics.
     """
 
-    none = "None"
-    logging = "Logging"
-    metrics = "Metrics"
-    azure_services = "AzureServices"
+    NONE = "None"
+    LOGGING = "Logging"
+    METRICS = "Metrics"
+    AZURE_SERVICES = "AzureServices"
 
-class CorsRuleAllowedMethodsItem(str, Enum):
+class CorsRuleAllowedMethodsItem(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
-    delete = "DELETE"
-    get = "GET"
-    head = "HEAD"
-    merge = "MERGE"
-    post = "POST"
-    options = "OPTIONS"
-    put = "PUT"
+    DELETE = "DELETE"
+    GET = "GET"
+    HEAD = "HEAD"
+    MERGE = "MERGE"
+    POST = "POST"
+    OPTIONS = "OPTIONS"
+    PUT = "PUT"
 
-class DefaultAction(str, Enum):
+class DefaultAction(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies the default action of allow or deny when no other rules match.
     """
 
-    allow = "Allow"
-    deny = "Deny"
+    ALLOW = "Allow"
+    DENY = "Deny"
 
-class GeoReplicationStatus(str, Enum):
+class GeoReplicationStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The status of the secondary location. Possible values are: - Live: Indicates that the secondary
     location is active and operational. - Bootstrap: Indicates initial synchronization from the
     primary location to the secondary location is in progress.This typically occurs when
@@ -59,207 +77,217 @@ class GeoReplicationStatus(str, Enum):
     temporarily unavailable.
     """
 
-    live = "Live"
-    bootstrap = "Bootstrap"
-    unavailable = "Unavailable"
+    LIVE = "Live"
+    BOOTSTRAP = "Bootstrap"
+    UNAVAILABLE = "Unavailable"
 
-class HttpProtocol(str, Enum):
+class HttpProtocol(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The protocol permitted for a request made with the account SAS.
     """
 
-    https_http = "https,http"
-    https = "https"
+    HTTPS_HTTP = "https,http"
+    HTTPS = "https"
 
-class ImmutabilityPolicyState(str, Enum):
+class ImmutabilityPolicyState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The ImmutabilityPolicy state of a blob container, possible values include: Locked and Unlocked.
     """
 
-    locked = "Locked"
-    unlocked = "Unlocked"
+    LOCKED = "Locked"
+    UNLOCKED = "Unlocked"
 
-class ImmutabilityPolicyUpdateType(str, Enum):
+class ImmutabilityPolicyUpdateType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The ImmutabilityPolicy update type of a blob container, possible values include: put, lock and
     extend.
     """
 
-    put = "put"
-    lock = "lock"
-    extend = "extend"
+    PUT = "put"
+    LOCK = "lock"
+    EXTEND = "extend"
 
-class KeyPermission(str, Enum):
+class KeyPermission(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Permissions for the key -- read-only or full permissions.
     """
 
-    read = "Read"
-    full = "Full"
+    READ = "Read"
+    FULL = "Full"
 
-class KeySource(str, Enum):
+class KeySource(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The encryption keySource (provider). Possible values (case-insensitive):  Microsoft.Storage,
     Microsoft.Keyvault
     """
 
-    microsoft_storage = "Microsoft.Storage"
-    microsoft_keyvault = "Microsoft.Keyvault"
+    MICROSOFT_STORAGE = "Microsoft.Storage"
+    MICROSOFT_KEYVAULT = "Microsoft.Keyvault"
 
-class Kind(str, Enum):
+class Kind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Indicates the type of storage account.
     """
 
-    storage = "Storage"
-    storage_v2 = "StorageV2"
-    blob_storage = "BlobStorage"
-    file_storage = "FileStorage"
-    block_blob_storage = "BlockBlobStorage"
+    STORAGE = "Storage"
+    STORAGE_V2 = "StorageV2"
+    BLOB_STORAGE = "BlobStorage"
+    FILE_STORAGE = "FileStorage"
+    BLOCK_BLOB_STORAGE = "BlockBlobStorage"
 
-class LeaseContainerRequestAction(str, Enum):
+class LeaseContainerRequestAction(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies the lease action. Can be one of the available actions.
     """
 
-    acquire = "Acquire"
-    renew = "Renew"
-    change = "Change"
-    release = "Release"
-    break_enum = "Break"
+    ACQUIRE = "Acquire"
+    RENEW = "Renew"
+    CHANGE = "Change"
+    RELEASE = "Release"
+    BREAK_ENUM = "Break"
 
-class LeaseDuration(str, Enum):
+class LeaseDuration(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies whether the lease on a container is of infinite or fixed duration, only when the
     container is leased.
     """
 
-    infinite = "Infinite"
-    fixed = "Fixed"
+    INFINITE = "Infinite"
+    FIXED = "Fixed"
 
-class LeaseState(str, Enum):
+class LeaseState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Lease state of the container.
     """
 
-    available = "Available"
-    leased = "Leased"
-    expired = "Expired"
-    breaking = "Breaking"
-    broken = "Broken"
+    AVAILABLE = "Available"
+    LEASED = "Leased"
+    EXPIRED = "Expired"
+    BREAKING = "Breaking"
+    BROKEN = "Broken"
 
-class LeaseStatus(str, Enum):
+class LeaseStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The lease status of the container.
     """
 
-    locked = "Locked"
-    unlocked = "Unlocked"
+    LOCKED = "Locked"
+    UNLOCKED = "Unlocked"
 
-class Permissions(str, Enum):
+class ManagementPolicyName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    DEFAULT = "default"
+
+class Permissions(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The signed permissions for the account SAS. Possible values include: Read (r), Write (w),
     Delete (d), List (l), Add (a), Create (c), Update (u) and Process (p).
     """
 
-    r = "r"
-    d = "d"
-    w = "w"
-    l = "l"
-    a = "a"
-    c = "c"
-    u = "u"
-    p = "p"
+    R = "r"
+    D = "d"
+    W = "w"
+    L = "l"
+    A = "a"
+    C = "c"
+    U = "u"
+    P = "p"
 
-class ProvisioningState(str, Enum):
+class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Gets the status of the storage account at the time the operation was called.
     """
 
-    creating = "Creating"
-    resolving_dns = "ResolvingDNS"
-    succeeded = "Succeeded"
+    CREATING = "Creating"
+    RESOLVING_DNS = "ResolvingDNS"
+    SUCCEEDED = "Succeeded"
 
-class PublicAccess(str, Enum):
+class PublicAccess(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies whether data in the container may be accessed publicly and the level of access.
     """
 
-    container = "Container"
-    blob = "Blob"
-    none = "None"
+    CONTAINER = "Container"
+    BLOB = "Blob"
+    NONE = "None"
 
-class Reason(str, Enum):
+class Reason(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Gets the reason that a storage account name could not be used. The Reason element is only
     returned if NameAvailable is false.
     """
 
-    account_name_invalid = "AccountNameInvalid"
-    already_exists = "AlreadyExists"
+    ACCOUNT_NAME_INVALID = "AccountNameInvalid"
+    ALREADY_EXISTS = "AlreadyExists"
 
-class ReasonCode(str, Enum):
+class ReasonCode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The reason for the restriction. As of now this can be "QuotaId" or
     "NotAvailableForSubscription". Quota Id is set when the SKU has requiredQuotas parameter as the
     subscription does not belong to that quota. The "NotAvailableForSubscription" is related to
     capacity at DC.
     """
 
-    quota_id = "QuotaId"
-    not_available_for_subscription = "NotAvailableForSubscription"
+    QUOTA_ID = "QuotaId"
+    NOT_AVAILABLE_FOR_SUBSCRIPTION = "NotAvailableForSubscription"
 
-class Services(str, Enum):
+class RuleType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The valid value is Lifecycle
+    """
+
+    LIFECYCLE = "Lifecycle"
+
+class Services(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The signed services accessible with the account SAS. Possible values include: Blob (b), Queue
     (q), Table (t), File (f).
     """
 
-    b = "b"
-    q = "q"
-    t = "t"
-    f = "f"
+    B = "b"
+    Q = "q"
+    T = "t"
+    F = "f"
 
-class SignedResource(str, Enum):
+class SignedResource(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The signed services accessible with the service SAS. Possible values include: Blob (b),
     Container (c), File (f), Share (s).
     """
 
-    b = "b"
-    c = "c"
-    f = "f"
-    s = "s"
+    B = "b"
+    C = "c"
+    F = "f"
+    S = "s"
 
-class SignedResourceTypes(str, Enum):
+class SignedResourceTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The signed resource types that are accessible with the account SAS. Service (s): Access to
     service-level APIs; Container (c): Access to container-level APIs; Object (o): Access to
     object-level APIs for blobs, queue messages, table entities, and files.
     """
 
-    s = "s"
-    c = "c"
-    o = "o"
+    S = "s"
+    C = "c"
+    O = "o"
 
-class SkuName(str, Enum):
+class SkuName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Gets or sets the SKU name. Required for account creation; optional for update. Note that in
     older versions, SKU name was called accountType.
     """
 
-    standard_lrs = "Standard_LRS"
-    standard_grs = "Standard_GRS"
-    standard_ragrs = "Standard_RAGRS"
-    standard_zrs = "Standard_ZRS"
-    premium_lrs = "Premium_LRS"
-    premium_zrs = "Premium_ZRS"
+    STANDARD_LRS = "Standard_LRS"
+    STANDARD_GRS = "Standard_GRS"
+    STANDARD_RAGRS = "Standard_RAGRS"
+    STANDARD_ZRS = "Standard_ZRS"
+    PREMIUM_LRS = "Premium_LRS"
+    PREMIUM_ZRS = "Premium_ZRS"
 
-class SkuTier(str, Enum):
+class SkuTier(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Gets the SKU tier. This is based on the SKU name.
     """
 
-    standard = "Standard"
-    premium = "Premium"
+    STANDARD = "Standard"
+    PREMIUM = "Premium"
 
-class State(str, Enum):
+class State(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Gets the state of virtual network rule.
     """
 
-    provisioning = "provisioning"
-    deprovisioning = "deprovisioning"
-    succeeded = "succeeded"
-    failed = "failed"
-    network_source_deleted = "networkSourceDeleted"
+    PROVISIONING = "provisioning"
+    DEPROVISIONING = "deprovisioning"
+    SUCCEEDED = "succeeded"
+    FAILED = "failed"
+    NETWORK_SOURCE_DELETED = "networkSourceDeleted"
 
-class UsageUnit(str, Enum):
+class UsageUnit(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Gets the unit of measurement.
     """
 
-    count = "Count"
-    bytes = "Bytes"
-    seconds = "Seconds"
-    percent = "Percent"
-    counts_per_second = "CountsPerSecond"
-    bytes_per_second = "BytesPerSecond"
+    COUNT = "Count"
+    BYTES = "Bytes"
+    SECONDS = "Seconds"
+    PERCENT = "Percent"
+    COUNTS_PER_SECOND = "CountsPerSecond"
+    BYTES_PER_SECOND = "BytesPerSecond"

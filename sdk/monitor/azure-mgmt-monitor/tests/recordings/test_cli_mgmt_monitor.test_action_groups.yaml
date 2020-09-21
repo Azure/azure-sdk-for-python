@@ -16,7 +16,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/microsoft.insights/actionGroups/actiongroup534a109d?api-version=2019-06-01
   response:
@@ -28,11 +28,11 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '805'
+      - '832'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 May 2020 16:35:03 GMT
+      - Wed, 16 Sep 2020 03:19:07 GMT
       expires:
       - '-1'
       pragma:
@@ -58,7 +58,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/microsoft.insights/actionGroups/actiongroup534a109d?api-version=2019-06-01
   response:
@@ -70,11 +70,11 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '805'
+      - '832'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 May 2020 16:35:03 GMT
+      - Wed, 16 Sep 2020 03:19:08 GMT
       expires:
       - '-1'
       pragma:
@@ -96,7 +96,7 @@ interactions:
     body: '{"receiverName": "John Doe''s mobile"}'
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -106,7 +106,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/microsoft.insights/actionGroups/actiongroup534a109d/subscribe?api-version=2019-06-01
   response:
@@ -120,7 +120,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 May 2020 16:35:05 GMT
+      - Wed, 16 Sep 2020 03:19:08 GMT
       expires:
       - '-1'
       pragma:
@@ -151,7 +151,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PATCH
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/microsoft.insights/actionGroups/actiongroup534a109d?api-version=2019-06-01
   response:
@@ -163,11 +163,11 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '834'
+      - '861'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 May 2020 16:35:07 GMT
+      - Wed, 16 Sep 2020 03:19:10 GMT
       expires:
       - '-1'
       pragma:
@@ -191,7 +191,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -199,7 +199,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/microsoft.insights/actionGroups/actiongroup534a109d?api-version=2019-06-01
   response:
@@ -211,7 +211,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 19 May 2020 16:35:09 GMT
+      - Wed, 16 Sep 2020 03:19:14 GMT
       expires:
       - '-1'
       pragma:
