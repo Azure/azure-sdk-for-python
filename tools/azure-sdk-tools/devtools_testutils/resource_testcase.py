@@ -7,6 +7,7 @@ from collections import namedtuple
 import functools
 import os
 import datetime
+import time
 from functools import partial
 
 from azure_devtools.scenario_tests import AzureTestError, ReservedResourceNameError
@@ -97,6 +98,10 @@ class ResourceGroupPreparer(AzureMgmtPreparer):
                     self.client.resource_groups.delete(name, polling=False)
             except CloudError:
                 pass
+
+    def sleep(self, duration=15):
+        if self.is_live:
+            time.sleep(duration)
 
 RandomNameResourceGroupPreparer = functools.partial(ResourceGroupPreparer, random_name_enabled=True)
 CachedResourceGroupPreparer = functools.partial(ResourceGroupPreparer, use_cache=True, random_name_enabled=True)

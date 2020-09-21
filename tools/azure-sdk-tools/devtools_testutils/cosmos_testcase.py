@@ -3,8 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from collections import namedtuple
-import os
 import functools
 
 from azure.mgmt.cosmosdb import CosmosDBManagementClient
@@ -15,10 +13,6 @@ from azure.mgmt.cosmosdb.models import (
     CreateUpdateOptions
 )
 
-from azure_devtools.scenario_tests.preparers import (
-    AbstractPreparer,
-    SingleValueReplacer,
-)
 from azure_devtools.scenario_tests.exceptions import AzureTestError
 
 from . import AzureMgmtPreparer, ResourceGroupPreparer, FakeResource
@@ -68,7 +62,6 @@ class CosmosAccountPreparer(AzureMgmtPreparer):
     def create_resource(self, name, **kwargs):
         if self.is_live:
             capabilities = Capability(name='EnableTable')
-            params = CreateUpdateOptions(throughput=10000)
             db_params = DatabaseAccountCreateUpdateParameters(
                 capabilities=[capabilities],
                 locations=[{'location_name': self.location}],
@@ -129,4 +122,4 @@ class CosmosAccountPreparer(AzureMgmtPreparer):
                        'decorator @{} in front of this cosmos account preparer.'
             raise AzureTestError(template.format(ResourceGroupPreparer.__name__))
 
-CachedCosmosAccountPreparer = functools.partial(CosmosAccountPreparer, use_cache=True, random_name_enabled=True)
+CachedCosmosAccountPreparer = functools.partial(CosmosAccountPreparer, use_cache=True)

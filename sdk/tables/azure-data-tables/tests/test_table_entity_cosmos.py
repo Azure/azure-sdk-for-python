@@ -281,8 +281,7 @@ class StorageTableEntityTest(TableTestCase):
             self.assertIsNotNone(entity1.metadata())
         finally:
             self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
+            self.sleep(SLEEP_DELAY)
 
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
     @CachedCosmosAccountPreparer(name_prefix='cosmostables')
@@ -300,8 +299,7 @@ class StorageTableEntityTest(TableTestCase):
             self.assertIsNotNone(resp)
         finally:
             self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
+            self.sleep(SLEEP_DELAY)
 
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
     @CachedCosmosAccountPreparer(name_prefix='cosmostables')
@@ -319,8 +317,7 @@ class StorageTableEntityTest(TableTestCase):
             self.assertIsNotNone(resp)
         finally:
             self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
+            self.sleep(SLEEP_DELAY)
 
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
     @CachedCosmosAccountPreparer(name_prefix='cosmostables')
@@ -339,8 +336,7 @@ class StorageTableEntityTest(TableTestCase):
 
         finally:
             self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
+            self.sleep(SLEEP_DELAY)
 
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
     @CachedCosmosAccountPreparer(name_prefix='cosmostables')
@@ -361,8 +357,7 @@ class StorageTableEntityTest(TableTestCase):
             self._assert_default_entity_json_no_metadata(resp)
         finally:
             self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
+            self.sleep(SLEEP_DELAY)
 
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
     @CachedCosmosAccountPreparer(name_prefix='cosmostables')
@@ -385,8 +380,7 @@ class StorageTableEntityTest(TableTestCase):
 
         finally:
             self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
+            self.sleep(SLEEP_DELAY)
 
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
     @CachedCosmosAccountPreparer(name_prefix='cosmostables')
@@ -405,8 +399,7 @@ class StorageTableEntityTest(TableTestCase):
 
         finally:
             self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
+            self.sleep(SLEEP_DELAY)
 
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
     @CachedCosmosAccountPreparer(name_prefix='cosmostables')
@@ -428,8 +421,7 @@ class StorageTableEntityTest(TableTestCase):
                 self.table.create_entity(entity=dict32)
         finally:
             self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
+            self.sleep(SLEEP_DELAY)
 
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
     @CachedCosmosAccountPreparer(name_prefix='cosmostables')
@@ -452,8 +444,7 @@ class StorageTableEntityTest(TableTestCase):
 
         finally:
             self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
+            self.sleep(SLEEP_DELAY)
 
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
     @CachedCosmosAccountPreparer(name_prefix='cosmostables')
@@ -470,8 +461,7 @@ class StorageTableEntityTest(TableTestCase):
             # Assert
         finally:
             self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
+            self.sleep(SLEEP_DELAY)
 
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
     @CachedCosmosAccountPreparer(name_prefix='cosmostables')
@@ -492,8 +482,7 @@ class StorageTableEntityTest(TableTestCase):
             #  self.assertIsNone(resp)
         finally:
             self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
+            self.sleep(SLEEP_DELAY)
 
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
     @CachedCosmosAccountPreparer(name_prefix='cosmostables')
@@ -510,8 +499,7 @@ class StorageTableEntityTest(TableTestCase):
             # Assert
         finally:
             self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
+            self.sleep(SLEEP_DELAY)
 
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
     @CachedCosmosAccountPreparer(name_prefix='cosmostables')
@@ -532,8 +520,7 @@ class StorageTableEntityTest(TableTestCase):
             #  self.assertIsNone(resp)
         finally:
             self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
+            self.sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
@@ -555,8 +542,7 @@ class StorageTableEntityTest(TableTestCase):
             # Assert
         finally:
             self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
+            self.sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
@@ -577,8 +563,7 @@ class StorageTableEntityTest(TableTestCase):
             # Assert
         finally:
             self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
+            self.sleep(SLEEP_DELAY)
 
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
     @CachedCosmosAccountPreparer(name_prefix='cosmostables')
@@ -598,8 +583,7 @@ class StorageTableEntityTest(TableTestCase):
             self._assert_default_entity(resp)
         finally:
             self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
+            self.sleep(SLEEP_DELAY)
 
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
     @CachedCosmosAccountPreparer(name_prefix='cosmostables')
@@ -623,8 +607,7 @@ class StorageTableEntityTest(TableTestCase):
             self._assert_default_entity(resp)
         finally:
             self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
+            self.sleep(SLEEP_DELAY)
 
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
     @CachedCosmosAccountPreparer(name_prefix='cosmostables')
@@ -650,8 +633,7 @@ class StorageTableEntityTest(TableTestCase):
             # Assert
         finally:
             self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
+            self.sleep(SLEEP_DELAY)
 
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
     @CachedCosmosAccountPreparer(name_prefix='cosmostables')
@@ -673,8 +655,7 @@ class StorageTableEntityTest(TableTestCase):
             self._assert_default_entity_json_full_metadata(resp)
         finally:
             self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
+            self.sleep(SLEEP_DELAY)
 
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
     @CachedCosmosAccountPreparer(name_prefix='cosmostables')
@@ -696,8 +677,7 @@ class StorageTableEntityTest(TableTestCase):
             self._assert_default_entity_json_no_metadata(resp)
         finally:
             self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
+            self.sleep(SLEEP_DELAY)
 
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
     @CachedCosmosAccountPreparer(name_prefix='cosmostables')
@@ -715,8 +695,7 @@ class StorageTableEntityTest(TableTestCase):
             # Assert
         finally:
             self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
+            self.sleep(SLEEP_DELAY)
 
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
     @CachedCosmosAccountPreparer(name_prefix='cosmostables')
@@ -742,8 +721,7 @@ class StorageTableEntityTest(TableTestCase):
             self.assertTrue(isnan(resp.nan))
         finally:
             self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
+            self.sleep(SLEEP_DELAY)
 
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
     @CachedCosmosAccountPreparer(name_prefix='cosmostables')
@@ -767,8 +745,7 @@ class StorageTableEntityTest(TableTestCase):
             self._assert_updated_entity(received_entity)
         finally:
             self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
+            self.sleep(SLEEP_DELAY)
 
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
     @CachedCosmosAccountPreparer(name_prefix='cosmostables')
@@ -786,8 +763,7 @@ class StorageTableEntityTest(TableTestCase):
             # Assert
         finally:
             self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
+            self.sleep(SLEEP_DELAY)
 
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
     @CachedCosmosAccountPreparer(name_prefix='cosmostables')
@@ -810,8 +786,7 @@ class StorageTableEntityTest(TableTestCase):
             self._assert_updated_entity(received_entity)
         finally:
             self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
+            self.sleep(SLEEP_DELAY)
 
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
     @CachedCosmosAccountPreparer(name_prefix='cosmostables')
@@ -833,8 +808,7 @@ class StorageTableEntityTest(TableTestCase):
             # Assert
         finally:
             self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
+            self.sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("Merge operation fails from Tables SDK")
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
@@ -856,8 +830,7 @@ class StorageTableEntityTest(TableTestCase):
             self._assert_merged_entity(received_entity)
         finally:
             self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
+            self.sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("Merge operation fails from Tables SDK")
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
@@ -880,8 +853,7 @@ class StorageTableEntityTest(TableTestCase):
             self._assert_updated_entity(received_entity)
         finally:
             self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
+            self.sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("Merge operation fails from Tables SDK")
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
@@ -903,8 +875,7 @@ class StorageTableEntityTest(TableTestCase):
             self._assert_updated_entity(received_entity)
         finally:
             self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
+            self.sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("Merge operation fails from Tables SDK")
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
@@ -927,8 +898,7 @@ class StorageTableEntityTest(TableTestCase):
             self._assert_updated_entity(received_entity)
         finally:
             self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
+            self.sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("Merge operation fails from Tables SDK")
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
@@ -949,8 +919,7 @@ class StorageTableEntityTest(TableTestCase):
             self._assert_merged_entity(received_entity)
         finally:
             self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
+            self.sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("Merge operation fails from Tables SDK")
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
@@ -969,8 +938,7 @@ class StorageTableEntityTest(TableTestCase):
             # Assert
         finally:
             self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
+            self.sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("Merge operation fails from Tables SDK")
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
@@ -995,8 +963,7 @@ class StorageTableEntityTest(TableTestCase):
             self._assert_merged_entity(received_entity)
         finally:
             self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
+            self.sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("Merge operation fails from Tables SDK")
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
@@ -1018,8 +985,7 @@ class StorageTableEntityTest(TableTestCase):
             # Assert
         finally:
             self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
+            self.sleep(SLEEP_DELAY)
 
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
     @CachedCosmosAccountPreparer(name_prefix='cosmostables')
@@ -1038,8 +1004,7 @@ class StorageTableEntityTest(TableTestCase):
                 self.table.get_entity(entity.PartitionKey, entity.RowKey)
         finally:
             self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
+            self.sleep(SLEEP_DELAY)
 
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
     @CachedCosmosAccountPreparer(name_prefix='cosmostables')
@@ -1056,8 +1021,7 @@ class StorageTableEntityTest(TableTestCase):
             # Assert
         finally:
             self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
+            self.sleep(SLEEP_DELAY)
 
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
     @CachedCosmosAccountPreparer(name_prefix='cosmostables')
@@ -1077,8 +1041,7 @@ class StorageTableEntityTest(TableTestCase):
                 self.table.get_entity(entity.PartitionKey, entity.RowKey)
         finally:
             self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
+            self.sleep(SLEEP_DELAY)
 
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
     @CachedCosmosAccountPreparer(name_prefix='cosmostables')
@@ -1098,8 +1061,7 @@ class StorageTableEntityTest(TableTestCase):
             # Assert
         finally:
             self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
+            self.sleep(SLEEP_DELAY)
 
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
     @CachedCosmosAccountPreparer(name_prefix='cosmostables')
@@ -1126,8 +1088,7 @@ class StorageTableEntityTest(TableTestCase):
             self.assertEqual(entities[1].Description, u'ꀕ')
         finally:
             self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
+            self.sleep(SLEEP_DELAY)
 
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
     @CachedCosmosAccountPreparer(name_prefix='cosmostables')
@@ -1153,8 +1114,7 @@ class StorageTableEntityTest(TableTestCase):
             self.assertEqual(entities[1][u'啊齄丂狛狜'], u'hello')
         finally:
             self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
+            self.sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("Returns Bad Request")
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
@@ -1196,8 +1156,7 @@ class StorageTableEntityTest(TableTestCase):
             self.assertIsNone(resp)
         finally:
             self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
+            self.sleep(SLEEP_DELAY)
 
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
     @CachedCosmosAccountPreparer(name_prefix='cosmostables')
@@ -1237,8 +1196,7 @@ class StorageTableEntityTest(TableTestCase):
             self.assertEqual(resp.SpacesBeforeAndAfterUnicode, u'   Text   ')
         finally:
             self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
+            self.sleep(SLEEP_DELAY)
 
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
     @CachedCosmosAccountPreparer(name_prefix='cosmostables')
@@ -1258,8 +1216,7 @@ class StorageTableEntityTest(TableTestCase):
             self.assertFalse(hasattr(resp, 'NoneValue'))
         finally:
             self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
+            self.sleep(SLEEP_DELAY)
 
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
     @CachedCosmosAccountPreparer(name_prefix='cosmostables')
@@ -1280,8 +1237,7 @@ class StorageTableEntityTest(TableTestCase):
             self.assertEqual(resp.binary.value, binary_data)
         finally:
             self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
+            self.sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
@@ -1306,8 +1262,7 @@ class StorageTableEntityTest(TableTestCase):
             self.assertEqual(resp.date.astimezone(local_tz), local_date)
         finally:
             self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
+            self.sleep(SLEEP_DELAY)
 
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
     @CachedCosmosAccountPreparer(name_prefix='cosmostables')
@@ -1326,8 +1281,7 @@ class StorageTableEntityTest(TableTestCase):
                 self._assert_default_entity(entity)
         finally:
             self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
+            self.sleep(SLEEP_DELAY)
 
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
     @CachedCosmosAccountPreparer(name_prefix='cosmostables')
@@ -1344,8 +1298,7 @@ class StorageTableEntityTest(TableTestCase):
             self.assertEqual(len(entities), 0)
         finally:
             self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
+            self.sleep(SLEEP_DELAY)
 
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
     @CachedCosmosAccountPreparer(name_prefix='cosmostables')
@@ -1364,8 +1317,7 @@ class StorageTableEntityTest(TableTestCase):
                 self._assert_default_entity_json_full_metadata(entity)
         finally:
             self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
+            self.sleep(SLEEP_DELAY)
 
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
     @CachedCosmosAccountPreparer(name_prefix='cosmostables')
@@ -1384,8 +1336,7 @@ class StorageTableEntityTest(TableTestCase):
                 self._assert_default_entity_json_no_metadata(entity)
         finally:
             self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
+            self.sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("Batch not implemented")
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
@@ -1439,8 +1390,7 @@ class StorageTableEntityTest(TableTestCase):
             self._assert_default_entity(entities[0])
         finally:
             self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
+            self.sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("returns ' sex' instead of deserializing into just 'sex'")
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
@@ -1465,8 +1415,7 @@ class StorageTableEntityTest(TableTestCase):
                 self.assertFalse(hasattr(entity, "deceased"))
         finally:
             self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
+            self.sleep(SLEEP_DELAY)
 
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
     @CachedCosmosAccountPreparer(name_prefix='cosmostables')
@@ -1483,8 +1432,7 @@ class StorageTableEntityTest(TableTestCase):
             self.assertEqual(len(entities), 2)
         finally:
             self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
+            self.sleep(SLEEP_DELAY)
 
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
     @CachedCosmosAccountPreparer(name_prefix='cosmostables')
@@ -1519,8 +1467,7 @@ class StorageTableEntityTest(TableTestCase):
             self._assert_default_entity(entities3[0])
         finally:
             self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
+            self.sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("Cosmos Tables does not yet support sas")
     @pytest.mark.live_test_only
@@ -1559,8 +1506,7 @@ class StorageTableEntityTest(TableTestCase):
             self._assert_default_entity(entities[0])
         finally:
             self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
+            self.sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("Cosmos Tables does not yet support sas")
     @pytest.mark.live_test_only
@@ -1599,8 +1545,7 @@ class StorageTableEntityTest(TableTestCase):
             self._assert_default_entity(resp)
         finally:
             self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
+            self.sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("Cosmos Tables does not yet support sas")
     @pytest.mark.live_test_only
@@ -1638,8 +1583,7 @@ class StorageTableEntityTest(TableTestCase):
             self._assert_default_entity(resp)
         finally:
             self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
+            self.sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("Cosmos Tables does not yet support sas")
     @pytest.mark.live_test_only
@@ -1676,8 +1620,7 @@ class StorageTableEntityTest(TableTestCase):
             # Assert
         finally:
             self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
+            self.sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("Cosmos Tables does not yet support sas")
     @pytest.mark.live_test_only
@@ -1714,8 +1657,7 @@ class StorageTableEntityTest(TableTestCase):
             self._assert_updated_entity(received_entity)
         finally:
             self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
+            self.sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("Cosmos Tables does not yet support sas")
     @pytest.mark.live_test_only
@@ -1751,8 +1693,7 @@ class StorageTableEntityTest(TableTestCase):
                 self.table.get_entity(entity.PartitionKey, entity.RowKey)
         finally:
             self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
+            self.sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("Cosmos Tables does not yet support sas")
     @pytest.mark.live_test_only
@@ -1792,8 +1733,7 @@ class StorageTableEntityTest(TableTestCase):
             self._assert_default_entity(entities[0])
         finally:
             self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
+            self.sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("Cosmos Tables does not yet support sas")
     @pytest.mark.live_test_only
@@ -1838,8 +1778,7 @@ class StorageTableEntityTest(TableTestCase):
             self._assert_default_entity(entities[0])
         finally:
             self._tear_down()
-            if self.is_live:
-                sleep(SLEEP_DELAY)
+            self.sleep(SLEEP_DELAY)
 
 
 # ------------------------------------------------------------------------------
