@@ -695,6 +695,24 @@ class StorageTableBatchTest(TableTestCase):
         finally:
             self._tear_down()
 
+    @pytest.mark.skip("This does not throw an error, but it should")
+    @GlobalStorageAccountPreparer()
+    def test_batch_different_partition_keys(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        self._set_up(storage_account, storage_account_key)
+        try:
+            entity = self._create_random_entity_dict('001', 'batch_negative_1')
+            entity2 = self._create_random_entity_dict('002', 'batch_negative_1')
+
+            batch = self.table.create_batch()
+            batch.create_entity(entity)
+            batch.create_entity(entity2)
+            self.table.commit_batch(batch)
+
+            # Assert
+        finally:
+            self._tear_down()
+
 #------------------------------------------------------------------------------
 if __name__ == '__main__':
     unittest.main()
