@@ -114,7 +114,7 @@ class IntegrationRuntimesOperations(object):
     list_by_factory.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/integrationRuntimes'}
 
     def create_or_update(
-            self, resource_group_name, factory_name, integration_runtime_name, properties, if_match=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, factory_name, integration_runtime_name, integration_runtime, if_match=None, custom_headers=None, raw=False, **operation_config):
         """Creates or updates an integration runtime.
 
         :param resource_group_name: The resource group name.
@@ -123,8 +123,9 @@ class IntegrationRuntimesOperations(object):
         :type factory_name: str
         :param integration_runtime_name: The integration runtime name.
         :type integration_runtime_name: str
-        :param properties: Integration runtime properties.
-        :type properties: ~azure.mgmt.datafactory.models.IntegrationRuntime
+        :param integration_runtime: Integration runtime resource definition.
+        :type integration_runtime:
+         ~azure.mgmt.datafactory.models.IntegrationRuntimeResource
         :param if_match: ETag of the integration runtime entity. Should only
          be specified for update, for which it should match existing entity or
          can be * for unconditional update.
@@ -139,8 +140,6 @@ class IntegrationRuntimesOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        integration_runtime = models.IntegrationRuntimeResource(properties=properties)
-
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
@@ -262,7 +261,7 @@ class IntegrationRuntimesOperations(object):
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/integrationRuntimes/{integrationRuntimeName}'}
 
     def update(
-            self, resource_group_name, factory_name, integration_runtime_name, auto_update=None, update_delay_offset=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, factory_name, integration_runtime_name, update_integration_runtime_request, custom_headers=None, raw=False, **operation_config):
         """Updates an integration runtime.
 
         :param resource_group_name: The resource group name.
@@ -271,16 +270,10 @@ class IntegrationRuntimesOperations(object):
         :type factory_name: str
         :param integration_runtime_name: The integration runtime name.
         :type integration_runtime_name: str
-        :param auto_update: Enables or disables the auto-update feature of the
-         self-hosted integration runtime. See
-         https://go.microsoft.com/fwlink/?linkid=854189. Possible values
-         include: 'On', 'Off'
-        :type auto_update: str or
-         ~azure.mgmt.datafactory.models.IntegrationRuntimeAutoUpdate
-        :param update_delay_offset: The time offset (in hours) in the day,
-         e.g., PT03H is 3 hours. The integration runtime auto update will
-         happen on that time.
-        :type update_delay_offset: str
+        :param update_integration_runtime_request: The parameters for updating
+         an integration runtime.
+        :type update_integration_runtime_request:
+         ~azure.mgmt.datafactory.models.UpdateIntegrationRuntimeRequest
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -291,8 +284,6 @@ class IntegrationRuntimesOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        update_integration_runtime_request = models.UpdateIntegrationRuntimeRequest(auto_update=auto_update, update_delay_offset=update_delay_offset)
-
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
@@ -531,7 +522,7 @@ class IntegrationRuntimesOperations(object):
     get_connection_info.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/integrationRuntimes/{integrationRuntimeName}/getConnectionInfo'}
 
     def regenerate_auth_key(
-            self, resource_group_name, factory_name, integration_runtime_name, key_name=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, factory_name, integration_runtime_name, regenerate_key_parameters, custom_headers=None, raw=False, **operation_config):
         """Regenerates the authentication key for an integration runtime.
 
         :param resource_group_name: The resource group name.
@@ -540,10 +531,10 @@ class IntegrationRuntimesOperations(object):
         :type factory_name: str
         :param integration_runtime_name: The integration runtime name.
         :type integration_runtime_name: str
-        :param key_name: The name of the authentication key to regenerate.
-         Possible values include: 'authKey1', 'authKey2'
-        :type key_name: str or
-         ~azure.mgmt.datafactory.models.IntegrationRuntimeAuthKeyName
+        :param regenerate_key_parameters: The parameters for regenerating
+         integration runtime authentication key.
+        :type regenerate_key_parameters:
+         ~azure.mgmt.datafactory.models.IntegrationRuntimeRegenerateKeyParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -554,8 +545,6 @@ class IntegrationRuntimesOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        regenerate_key_parameters = models.IntegrationRuntimeRegenerateKeyParameters(key_name=key_name)
-
         # Construct URL
         url = self.regenerate_auth_key.metadata['url']
         path_format_arguments = {
@@ -1035,7 +1024,7 @@ class IntegrationRuntimesOperations(object):
     upgrade.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/integrationRuntimes/{integrationRuntimeName}/upgrade'}
 
     def remove_links(
-            self, resource_group_name, factory_name, integration_runtime_name, linked_factory_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, factory_name, integration_runtime_name, linked_integration_runtime_request, custom_headers=None, raw=False, **operation_config):
         """Remove all linked integration runtimes under specific data factory in a
         self-hosted integration runtime.
 
@@ -1045,9 +1034,10 @@ class IntegrationRuntimesOperations(object):
         :type factory_name: str
         :param integration_runtime_name: The integration runtime name.
         :type integration_runtime_name: str
-        :param linked_factory_name: The data factory name for linked
-         integration runtime.
-        :type linked_factory_name: str
+        :param linked_integration_runtime_request: The data factory name for
+         the linked integration runtime.
+        :type linked_integration_runtime_request:
+         ~azure.mgmt.datafactory.models.LinkedIntegrationRuntimeRequest
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -1057,8 +1047,6 @@ class IntegrationRuntimesOperations(object):
         :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        linked_integration_runtime_request = models.LinkedIntegrationRuntimeRequest(linked_factory_name=linked_factory_name)
-
         # Construct URL
         url = self.remove_links.metadata['url']
         path_format_arguments = {

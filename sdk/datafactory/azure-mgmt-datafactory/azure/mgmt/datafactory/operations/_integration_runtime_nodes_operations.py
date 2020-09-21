@@ -168,7 +168,7 @@ class IntegrationRuntimeNodesOperations(object):
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/integrationRuntimes/{integrationRuntimeName}/nodes/{nodeName}'}
 
     def update(
-            self, resource_group_name, factory_name, integration_runtime_name, node_name, concurrent_jobs_limit=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, factory_name, integration_runtime_name, node_name, update_integration_runtime_node_request, custom_headers=None, raw=False, **operation_config):
         """Updates a self-hosted integration runtime node.
 
         :param resource_group_name: The resource group name.
@@ -179,10 +179,10 @@ class IntegrationRuntimeNodesOperations(object):
         :type integration_runtime_name: str
         :param node_name: The integration runtime node name.
         :type node_name: str
-        :param concurrent_jobs_limit: The number of concurrent jobs permitted
-         to run on the integration runtime node. Values between 1 and
-         maxConcurrentJobs(inclusive) are allowed.
-        :type concurrent_jobs_limit: int
+        :param update_integration_runtime_node_request: The parameters for
+         updating an integration runtime node.
+        :type update_integration_runtime_node_request:
+         ~azure.mgmt.datafactory.models.UpdateIntegrationRuntimeNodeRequest
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -195,8 +195,6 @@ class IntegrationRuntimeNodesOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        update_integration_runtime_node_request = models.UpdateIntegrationRuntimeNodeRequest(concurrent_jobs_limit=concurrent_jobs_limit)
-
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {

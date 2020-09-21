@@ -112,7 +112,7 @@ class DatasetsOperations(object):
     list_by_factory.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/datasets'}
 
     def create_or_update(
-            self, resource_group_name, factory_name, dataset_name, properties, if_match=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, factory_name, dataset_name, dataset, if_match=None, custom_headers=None, raw=False, **operation_config):
         """Creates or updates a dataset.
 
         :param resource_group_name: The resource group name.
@@ -121,8 +121,8 @@ class DatasetsOperations(object):
         :type factory_name: str
         :param dataset_name: The dataset name.
         :type dataset_name: str
-        :param properties: Dataset properties.
-        :type properties: ~azure.mgmt.datafactory.models.Dataset
+        :param dataset: Dataset resource definition.
+        :type dataset: ~azure.mgmt.datafactory.models.DatasetResource
         :param if_match: ETag of the dataset entity.  Should only be specified
          for update, for which it should match existing entity or can be * for
          unconditional update.
@@ -137,8 +137,6 @@ class DatasetsOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        dataset = models.DatasetResource(properties=properties)
-
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {

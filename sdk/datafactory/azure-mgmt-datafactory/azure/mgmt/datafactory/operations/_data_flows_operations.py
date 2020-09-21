@@ -40,7 +40,7 @@ class DataFlowsOperations(object):
         self.config = config
 
     def create_or_update(
-            self, resource_group_name, factory_name, data_flow_name, properties, if_match=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, factory_name, data_flow_name, data_flow, if_match=None, custom_headers=None, raw=False, **operation_config):
         """Creates or updates a data flow.
 
         :param resource_group_name: The resource group name.
@@ -49,8 +49,8 @@ class DataFlowsOperations(object):
         :type factory_name: str
         :param data_flow_name: The data flow name.
         :type data_flow_name: str
-        :param properties: Data flow properties.
-        :type properties: ~azure.mgmt.datafactory.models.DataFlow
+        :param data_flow: Data flow resource definition.
+        :type data_flow: ~azure.mgmt.datafactory.models.DataFlowResource
         :param if_match: ETag of the data flow entity. Should only be
          specified for update, for which it should match existing entity or can
          be * for unconditional update.
@@ -65,8 +65,6 @@ class DataFlowsOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        data_flow = models.DataFlowResource(properties=properties)
-
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {

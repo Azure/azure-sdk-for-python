@@ -48,6 +48,12 @@ try:
     from ._models_py3 import AzureBlobStorageLocation
     from ._models_py3 import AzureBlobStorageReadSettings
     from ._models_py3 import AzureBlobStorageWriteSettings
+    from ._models_py3 import AzureDatabricksDeltaLakeDataset
+    from ._models_py3 import AzureDatabricksDeltaLakeExportCommand
+    from ._models_py3 import AzureDatabricksDeltaLakeImportCommand
+    from ._models_py3 import AzureDatabricksDeltaLakeLinkedService
+    from ._models_py3 import AzureDatabricksDeltaLakeSink
+    from ._models_py3 import AzureDatabricksDeltaLakeSource
     from ._models_py3 import AzureDatabricksLinkedService
     from ._models_py3 import AzureDataExplorerCommandActivity
     from ._models_py3 import AzureDataExplorerLinkedService
@@ -181,6 +187,8 @@ try:
     from ._models_py3 import DatasetReference
     from ._models_py3 import DatasetResource
     from ._models_py3 import DatasetStorageFormat
+    from ._models_py3 import DatasetTarCompression
+    from ._models_py3 import DatasetTarGZipCompression
     from ._models_py3 import DatasetZipDeflateCompression
     from ._models_py3 import Db2LinkedService
     from ._models_py3 import Db2Source
@@ -411,12 +419,14 @@ try:
     from ._models_py3 import OrcFormat
     from ._models_py3 import OrcSink
     from ._models_py3 import OrcSource
+    from ._models_py3 import OrcWriteSettings
     from ._models_py3 import PackageStore
     from ._models_py3 import ParameterSpecification
     from ._models_py3 import ParquetDataset
     from ._models_py3 import ParquetFormat
     from ._models_py3 import ParquetSink
     from ._models_py3 import ParquetSource
+    from ._models_py3 import ParquetWriteSettings
     from ._models_py3 import PaypalLinkedService
     from ._models_py3 import PaypalObjectDataset
     from ._models_py3 import PaypalSource
@@ -567,6 +577,8 @@ try:
     from ._models_py3 import SybaseSource
     from ._models_py3 import SybaseTableDataset
     from ._models_py3 import TabularSource
+    from ._models_py3 import TarGZipReadSettings
+    from ._models_py3 import TarReadSettings
     from ._models_py3 import TeradataLinkedService
     from ._models_py3 import TeradataPartitionSettings
     from ._models_py3 import TeradataSource
@@ -655,6 +667,12 @@ except (SyntaxError, ImportError):
     from ._models import AzureBlobStorageLocation
     from ._models import AzureBlobStorageReadSettings
     from ._models import AzureBlobStorageWriteSettings
+    from ._models import AzureDatabricksDeltaLakeDataset
+    from ._models import AzureDatabricksDeltaLakeExportCommand
+    from ._models import AzureDatabricksDeltaLakeImportCommand
+    from ._models import AzureDatabricksDeltaLakeLinkedService
+    from ._models import AzureDatabricksDeltaLakeSink
+    from ._models import AzureDatabricksDeltaLakeSource
     from ._models import AzureDatabricksLinkedService
     from ._models import AzureDataExplorerCommandActivity
     from ._models import AzureDataExplorerLinkedService
@@ -788,6 +806,8 @@ except (SyntaxError, ImportError):
     from ._models import DatasetReference
     from ._models import DatasetResource
     from ._models import DatasetStorageFormat
+    from ._models import DatasetTarCompression
+    from ._models import DatasetTarGZipCompression
     from ._models import DatasetZipDeflateCompression
     from ._models import Db2LinkedService
     from ._models import Db2Source
@@ -1018,12 +1038,14 @@ except (SyntaxError, ImportError):
     from ._models import OrcFormat
     from ._models import OrcSink
     from ._models import OrcSource
+    from ._models import OrcWriteSettings
     from ._models import PackageStore
     from ._models import ParameterSpecification
     from ._models import ParquetDataset
     from ._models import ParquetFormat
     from ._models import ParquetSink
     from ._models import ParquetSource
+    from ._models import ParquetWriteSettings
     from ._models import PaypalLinkedService
     from ._models import PaypalObjectDataset
     from ._models import PaypalSource
@@ -1174,6 +1196,8 @@ except (SyntaxError, ImportError):
     from ._models import SybaseSource
     from ._models import SybaseTableDataset
     from ._models import TabularSource
+    from ._models import TarGZipReadSettings
+    from ._models import TarReadSettings
     from ._models import TeradataLinkedService
     from ._models import TeradataPartitionSettings
     from ._models import TeradataSource
@@ -1354,6 +1378,12 @@ __all__ = [
     'AzureBlobStorageLocation',
     'AzureBlobStorageReadSettings',
     'AzureBlobStorageWriteSettings',
+    'AzureDatabricksDeltaLakeDataset',
+    'AzureDatabricksDeltaLakeExportCommand',
+    'AzureDatabricksDeltaLakeImportCommand',
+    'AzureDatabricksDeltaLakeLinkedService',
+    'AzureDatabricksDeltaLakeSink',
+    'AzureDatabricksDeltaLakeSource',
     'AzureDatabricksLinkedService',
     'AzureDataExplorerCommandActivity',
     'AzureDataExplorerLinkedService',
@@ -1487,6 +1517,8 @@ __all__ = [
     'DatasetReference',
     'DatasetResource',
     'DatasetStorageFormat',
+    'DatasetTarCompression',
+    'DatasetTarGZipCompression',
     'DatasetZipDeflateCompression',
     'Db2LinkedService',
     'Db2Source',
@@ -1717,12 +1749,14 @@ __all__ = [
     'OrcFormat',
     'OrcSink',
     'OrcSource',
+    'OrcWriteSettings',
     'PackageStore',
     'ParameterSpecification',
     'ParquetDataset',
     'ParquetFormat',
     'ParquetSink',
     'ParquetSource',
+    'ParquetWriteSettings',
     'PaypalLinkedService',
     'PaypalObjectDataset',
     'PaypalSource',
@@ -1873,6 +1907,8 @@ __all__ = [
     'SybaseSource',
     'SybaseTableDataset',
     'TabularSource',
+    'TarGZipReadSettings',
+    'TarReadSettings',
     'TeradataLinkedService',
     'TeradataPartitionSettings',
     'TeradataSource',

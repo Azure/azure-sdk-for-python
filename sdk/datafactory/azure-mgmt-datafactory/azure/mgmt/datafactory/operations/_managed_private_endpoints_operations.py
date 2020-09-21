@@ -115,7 +115,7 @@ class ManagedPrivateEndpointsOperations(object):
     list_by_factory.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/managedVirtualNetworks/{managedVirtualNetworkName}/managedPrivateEndpoints'}
 
     def create_or_update(
-            self, resource_group_name, factory_name, managed_virtual_network_name, managed_private_endpoint_name, properties, if_match=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, factory_name, managed_virtual_network_name, managed_private_endpoint_name, managed_private_endpoint, if_match=None, custom_headers=None, raw=False, **operation_config):
         """Creates or updates a managed private endpoint.
 
         :param resource_group_name: The resource group name.
@@ -126,9 +126,10 @@ class ManagedPrivateEndpointsOperations(object):
         :type managed_virtual_network_name: str
         :param managed_private_endpoint_name: Managed private endpoint name
         :type managed_private_endpoint_name: str
-        :param properties: Managed private endpoint properties.
-        :type properties:
-         ~azure.mgmt.datafactory.models.ManagedPrivateEndpoint
+        :param managed_private_endpoint: Managed private endpoint resource
+         definition.
+        :type managed_private_endpoint:
+         ~azure.mgmt.datafactory.models.ManagedPrivateEndpointResource
         :param if_match: ETag of the managed private endpoint entity. Should
          only be specified for update, for which it should match existing
          entity or can be * for unconditional update.
@@ -144,8 +145,6 @@ class ManagedPrivateEndpointsOperations(object):
          or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        managed_private_endpoint = models.ManagedPrivateEndpointResource(properties=properties)
-
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {

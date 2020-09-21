@@ -106,16 +106,14 @@ class FactoriesOperations(object):
     list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.DataFactory/factories'}
 
     def configure_factory_repo(
-            self, location_id, factory_resource_id=None, repo_configuration=None, custom_headers=None, raw=False, **operation_config):
+            self, location_id, factory_repo_update, custom_headers=None, raw=False, **operation_config):
         """Updates a factory's repo information.
 
         :param location_id: The location identifier.
         :type location_id: str
-        :param factory_resource_id: The factory resource id.
-        :type factory_resource_id: str
-        :param repo_configuration: Git repo information of the factory.
-        :type repo_configuration:
-         ~azure.mgmt.datafactory.models.FactoryRepoConfiguration
+        :param factory_repo_update: Update factory repo request definition.
+        :type factory_repo_update:
+         ~azure.mgmt.datafactory.models.FactoryRepoUpdate
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -126,8 +124,6 @@ class FactoriesOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        factory_repo_update = models.FactoryRepoUpdate(factory_resource_id=factory_resource_id, repo_configuration=repo_configuration)
-
         # Construct URL
         url = self.configure_factory_repo.metadata['url']
         path_format_arguments = {
@@ -317,17 +313,17 @@ class FactoriesOperations(object):
     create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}'}
 
     def update(
-            self, resource_group_name, factory_name, tags=None, identity=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, factory_name, factory_update_parameters, custom_headers=None, raw=False, **operation_config):
         """Updates a factory.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
         :param factory_name: The factory name.
         :type factory_name: str
-        :param tags: The resource tags.
-        :type tags: dict[str, str]
-        :param identity: Managed service identity of the factory.
-        :type identity: ~azure.mgmt.datafactory.models.FactoryIdentity
+        :param factory_update_parameters: The parameters for updating a
+         factory.
+        :type factory_update_parameters:
+         ~azure.mgmt.datafactory.models.FactoryUpdateParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -338,8 +334,6 @@ class FactoriesOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        factory_update_parameters = models.FactoryUpdateParameters(tags=tags, identity=identity)
-
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {

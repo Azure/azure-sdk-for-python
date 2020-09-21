@@ -114,19 +114,16 @@ class TriggersOperations(object):
     list_by_factory.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/triggers'}
 
     def query_by_factory(
-            self, resource_group_name, factory_name, continuation_token=None, parent_trigger_name=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, factory_name, filter_parameters, custom_headers=None, raw=False, **operation_config):
         """Query triggers.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
         :param factory_name: The factory name.
         :type factory_name: str
-        :param continuation_token: The continuation token for getting the next
-         page of results. Null for first page.
-        :type continuation_token: str
-        :param parent_trigger_name: The name of the parent
-         TumblingWindowTrigger to get the child rerun triggers
-        :type parent_trigger_name: str
+        :param filter_parameters: Parameters to filter the triggers.
+        :type filter_parameters:
+         ~azure.mgmt.datafactory.models.TriggerFilterParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -137,8 +134,6 @@ class TriggersOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        filter_parameters = models.TriggerFilterParameters(continuation_token=continuation_token, parent_trigger_name=parent_trigger_name)
-
         # Construct URL
         url = self.query_by_factory.metadata['url']
         path_format_arguments = {
@@ -187,7 +182,7 @@ class TriggersOperations(object):
     query_by_factory.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/querytriggers'}
 
     def create_or_update(
-            self, resource_group_name, factory_name, trigger_name, properties, if_match=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, factory_name, trigger_name, trigger, if_match=None, custom_headers=None, raw=False, **operation_config):
         """Creates or updates a trigger.
 
         :param resource_group_name: The resource group name.
@@ -196,8 +191,8 @@ class TriggersOperations(object):
         :type factory_name: str
         :param trigger_name: The trigger name.
         :type trigger_name: str
-        :param properties: Properties of the trigger.
-        :type properties: ~azure.mgmt.datafactory.models.Trigger
+        :param trigger: Trigger resource definition.
+        :type trigger: ~azure.mgmt.datafactory.models.TriggerResource
         :param if_match: ETag of the trigger entity.  Should only be specified
          for update, for which it should match existing entity or can be * for
          unconditional update.
@@ -212,8 +207,6 @@ class TriggersOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        trigger = models.TriggerResource(properties=properties)
-
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {

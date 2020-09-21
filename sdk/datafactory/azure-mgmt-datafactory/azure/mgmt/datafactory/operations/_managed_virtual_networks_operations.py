@@ -112,7 +112,7 @@ class ManagedVirtualNetworksOperations(object):
     list_by_factory.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/managedVirtualNetworks'}
 
     def create_or_update(
-            self, resource_group_name, factory_name, managed_virtual_network_name, properties, if_match=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, factory_name, managed_virtual_network_name, managed_virtual_network, if_match=None, custom_headers=None, raw=False, **operation_config):
         """Creates or updates a managed Virtual Network.
 
         :param resource_group_name: The resource group name.
@@ -121,8 +121,10 @@ class ManagedVirtualNetworksOperations(object):
         :type factory_name: str
         :param managed_virtual_network_name: Managed virtual network name
         :type managed_virtual_network_name: str
-        :param properties: Managed Virtual Network properties.
-        :type properties: ~azure.mgmt.datafactory.models.ManagedVirtualNetwork
+        :param managed_virtual_network: Managed Virtual Network resource
+         definition.
+        :type managed_virtual_network:
+         ~azure.mgmt.datafactory.models.ManagedVirtualNetworkResource
         :param if_match: ETag of the managed Virtual Network entity. Should
          only be specified for update, for which it should match existing
          entity or can be * for unconditional update.
@@ -138,8 +140,6 @@ class ManagedVirtualNetworksOperations(object):
          or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        managed_virtual_network = models.ManagedVirtualNetworkResource(properties=properties)
-
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {

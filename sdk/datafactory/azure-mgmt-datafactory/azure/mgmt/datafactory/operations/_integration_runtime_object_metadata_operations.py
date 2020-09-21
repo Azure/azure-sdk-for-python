@@ -140,7 +140,7 @@ class IntegrationRuntimeObjectMetadataOperations(object):
     refresh.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/integrationRuntimes/{integrationRuntimeName}/refreshObjectMetadata'}
 
     def get(
-            self, resource_group_name, factory_name, integration_runtime_name, metadata_path=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, factory_name, integration_runtime_name, get_metadata_request=None, custom_headers=None, raw=False, **operation_config):
         """Get a SSIS integration runtime object metadata by specified path. The
         return is pageable metadata list.
 
@@ -150,8 +150,10 @@ class IntegrationRuntimeObjectMetadataOperations(object):
         :type factory_name: str
         :param integration_runtime_name: The integration runtime name.
         :type integration_runtime_name: str
-        :param metadata_path: Metadata path.
-        :type metadata_path: str
+        :param get_metadata_request: The parameters for getting a SSIS object
+         metadata.
+        :type get_metadata_request:
+         ~azure.mgmt.datafactory.models.GetSsisObjectMetadataRequest
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -163,10 +165,6 @@ class IntegrationRuntimeObjectMetadataOperations(object):
          or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        get_metadata_request = None
-        if metadata_path is not None:
-            get_metadata_request = models.GetSsisObjectMetadataRequest(metadata_path=metadata_path)
-
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
