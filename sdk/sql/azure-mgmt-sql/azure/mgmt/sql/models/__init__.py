@@ -153,9 +153,11 @@ try:
     from ._models_py3 import ServerConnectionPolicy
     from ._models_py3 import ServerDnsAlias
     from ._models_py3 import ServerDnsAliasAcquisition
+    from ._models_py3 import ServerInfo
     from ._models_py3 import ServerKey
     from ._models_py3 import ServerPrivateEndpointConnection
     from ._models_py3 import ServerSecurityAlertPolicy
+    from ._models_py3 import ServerTrustGroup
     from ._models_py3 import ServerUpdate
     from ._models_py3 import ServerUsage
     from ._models_py3 import ServerVersionCapability
@@ -340,9 +342,11 @@ except (SyntaxError, ImportError):
     from ._models import ServerConnectionPolicy
     from ._models import ServerDnsAlias
     from ._models import ServerDnsAliasAcquisition
+    from ._models import ServerInfo
     from ._models import ServerKey
     from ._models import ServerPrivateEndpointConnection
     from ._models import ServerSecurityAlertPolicy
+    from ._models import ServerTrustGroup
     from ._models import ServerUpdate
     from ._models import ServerUsage
     from ._models import ServerVersionCapability
@@ -445,6 +449,7 @@ from ._paged_models import ServerDnsAliasPaged
 from ._paged_models import ServerKeyPaged
 from ._paged_models import ServerPaged
 from ._paged_models import ServerSecurityAlertPolicyPaged
+from ._paged_models import ServerTrustGroupPaged
 from ._paged_models import ServerUsagePaged
 from ._paged_models import ServerVulnerabilityAssessmentPaged
 from ._paged_models import ServiceObjectivePaged
@@ -704,9 +709,11 @@ __all__ = [
     'ServerConnectionPolicy',
     'ServerDnsAlias',
     'ServerDnsAliasAcquisition',
+    'ServerInfo',
     'ServerKey',
     'ServerPrivateEndpointConnection',
     'ServerSecurityAlertPolicy',
+    'ServerTrustGroup',
     'ServerUpdate',
     'ServerUsage',
     'ServerVersionCapability',
@@ -828,6 +835,7 @@ __all__ = [
     'ManagedDatabasePaged',
     'ServerAzureADOnlyAuthenticationPaged',
     'ManagedInstanceAzureADOnlyAuthenticationPaged',
+    'ServerTrustGroupPaged',
     'ServerConnectionType',
     'SecurityAlertPolicyState',
     'SecurityAlertPolicyEmailAccountAdmins',
