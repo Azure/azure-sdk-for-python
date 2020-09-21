@@ -260,8 +260,14 @@ class TableTestAsync(AsyncTableTestCase):
         tables1 = generator1._current_page
         tables2 = generator2._current_page
 
-        table1_len = len([t async for t in tables1])
-        table2_len = len([t async for t in tables2])
+        tables1_len = 0
+        async for _ in tables1:
+            tables1_len += 1
+        tables2_len = 0
+        async for _ in tables2:
+            tables2_len += 1
+        # table1_len = len([t async for t in tables1])
+        # table2_len = len([t async for t in tables2])
 
         # Assert
         self.assertEqual(table1_len, 2)
