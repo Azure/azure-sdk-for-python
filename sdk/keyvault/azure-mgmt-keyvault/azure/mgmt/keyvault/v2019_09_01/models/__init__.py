@@ -86,6 +86,7 @@ from ._key_vault_management_client_enums import (
     PrivateEndpointServiceConnectionStatus,
     Reason,
     SecretPermissions,
+    SkuFamily,
     SkuName,
     StoragePermissions,
 )
@@ -134,6 +135,7 @@ __all__ = [
     'PrivateEndpointServiceConnectionStatus',
     'Reason',
     'SecretPermissions',
+    'SkuFamily',
     'SkuName',
     'StoragePermissions',
 ]

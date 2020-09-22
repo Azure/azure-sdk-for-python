@@ -6,5 +6,5 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._management_lock_client_async import ManagementLockClient
+from ._management_lock_client import ManagementLockClient
 __all__ = ['ManagementLockClient']

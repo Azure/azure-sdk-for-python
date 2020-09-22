@@ -6,5 +6,5 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._compute_management_client_async import ComputeManagementClient
+from ._compute_management_client import ComputeManagementClient
 __all__ = ['ComputeManagementClient']

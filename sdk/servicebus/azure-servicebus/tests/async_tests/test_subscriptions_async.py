@@ -12,7 +12,8 @@ import time
 from datetime import datetime, timedelta
 
 from azure.servicebus import Message, ReceiveMode
-from azure.servicebus.aio import ServiceBusClient, ServiceBusSharedKeyCredential
+from azure.servicebus.aio import ServiceBusClient
+from azure.servicebus.aio._base_handler_async import ServiceBusSharedKeyCredential
 from azure.servicebus.exceptions import ServiceBusError
 from azure.servicebus._common.constants import SubQueue
 

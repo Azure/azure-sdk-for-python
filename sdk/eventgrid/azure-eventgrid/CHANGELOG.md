@@ -1,5 +1,8 @@
 # Release History
 
+## 2.0.0b2 (Unreleased)
+
+
 ## 2.0.0b1 (2020-09-08)
 
   **Features**

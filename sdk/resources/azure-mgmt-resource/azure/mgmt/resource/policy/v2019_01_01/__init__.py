@@ -10,7 +10,7 @@ from ._policy_client import PolicyClient
 __all__ = ['PolicyClient']
 
 try:
-    from ._patch import patch_sdk
+    from ._patch import patch_sdk  # type: ignore
     patch_sdk()
 except ImportError:
     pass

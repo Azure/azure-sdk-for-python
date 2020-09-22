@@ -6,50 +6,74 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum
+from enum import Enum, EnumMeta
+from six import with_metaclass
 
-class ActionsRequired(str, Enum):
+class _CaseInsensitiveEnumMeta(EnumMeta):
+    def __getitem__(self, name):
+        return super().__getitem__(name.upper())
+
+    def __getattr__(cls, name):
+        """Return the enum member matching `name`
+        We use __getattr__ instead of descriptors or inserting into the enum
+        class' __dict__ in order to support `name` and `value` being both
+        properties for enum members (which live in the class' __dict__) and
+        enum members themselves.
+        """
+        try:
+            return cls._member_map_[name.upper()]
+        except KeyError:
+            raise AttributeError(name)
+
+
+class ActionsRequired(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Any action that is required beyond basic workflow (approve/ reject/ disconnect)
     """
 
-    none = "None"
-    recreate = "Recreate"
+    NONE = "None"
+    RECREATE = "Recreate"
 
-class ConnectionStatus(str, Enum):
+class ConfigurationResourceType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The resource type to check for name availability.
+    """
+
+    MICROSOFT_APP_CONFIGURATION_CONFIGURATION_STORES = "Microsoft.AppConfiguration/configurationStores"
+
+class ConnectionStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The private link service connection status.
     """
 
-    pending = "Pending"
-    approved = "Approved"
-    rejected = "Rejected"
-    disconnected = "Disconnected"
+    PENDING = "Pending"
+    APPROVED = "Approved"
+    REJECTED = "Rejected"
+    DISCONNECTED = "Disconnected"
 
-class IdentityType(str, Enum):
+class IdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The type of managed identity used. The type 'SystemAssigned, UserAssigned' includes both an
     implicitly created identity and a set of user-assigned identities. The type 'None' will remove
     any identities.
     """
 
-    none = "None"
-    system_assigned = "SystemAssigned"
-    user_assigned = "UserAssigned"
-    system_assigned_user_assigned = "SystemAssigned, UserAssigned"
+    NONE = "None"
+    SYSTEM_ASSIGNED = "SystemAssigned"
+    USER_ASSIGNED = "UserAssigned"
+    SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned, UserAssigned"
 
-class ProvisioningState(str, Enum):
+class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The provisioning state of the configuration store.
     """
 
-    creating = "Creating"
-    updating = "Updating"
-    deleting = "Deleting"
-    succeeded = "Succeeded"
-    failed = "Failed"
-    canceled = "Canceled"
+    CREATING = "Creating"
+    UPDATING = "Updating"
+    DELETING = "Deleting"
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
+    CANCELED = "Canceled"
 
-class PublicNetworkAccess(str, Enum):
+class PublicNetworkAccess(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Control permission for data plane traffic coming from public networks while private endpoint is
     enabled.
     """
 
-    enabled = "Enabled"
-    disabled = "Disabled"
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"

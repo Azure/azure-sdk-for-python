@@ -54,14 +54,14 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../samples/sample_authentication_async.py
+        .. literalinclude:: ../samples/async_samples/sample_authentication_async.py
             :start-after: [START auth_from_shared_key]
             :end-before: [END auth_from_shared_key]
             :language: python
             :dedent: 8
             :caption: Creating the tableServiceClient with an account url and credential.
 
-        .. literalinclude:: ../samples/sample_authentication_async.py
+        .. literalinclude:: ../samples/async_samples/sample_authentication_async.py
             :start-after: [START auth_by_sas]
             :end-before: [END auth_by_sas]
             :language: python
@@ -101,12 +101,12 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
 
         .. admonition:: Example:
 
-        .. literalinclude:: ../samples/sample_authentication_async.py
-            :start-after: [START auth_from_connection_string]
-            :end-before: [END auth_from_connection_string]
-            :language: python
-            :dedent: 8
-            :caption: Creating the tableServiceClient from a connection string.
+            .. literalinclude:: ../samples/async_samples/sample_authentication_async.py
+                :start-after: [START auth_from_connection_string]
+                :end-before: [END auth_from_connection_string]
+                :language: python
+                :dedent: 8
+                :caption: Creating the tableServiceClient from a connection string
 
         """
         account_url, credential = parse_connection_str(
@@ -204,7 +204,7 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_create_delete_table_async.py
+            .. literalinclude:: ../samples/async_samples/sample_create_delete_table_async.py
                 :start-after: [START create_table]
                 :end-before: [END create_table]
                 :language: python
@@ -234,7 +234,7 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_create_delete_table_async.py
+            .. literalinclude:: ../samples/async_samples/sample_create_delete_table_async.py
                 :start-after: [START create_if_not_exists]
                 :end-before: [END create_if_not_exists]
                 :language: python
@@ -264,7 +264,7 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_create_delete_table_async.py
+            .. literalinclude:: ../samples/async_samples/sample_create_delete_table_async.py
                 :start-after: [START delete_table]
                 :end-before: [END delete_table]
                 :language: python
@@ -290,7 +290,7 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_query_tables_async.py
+            .. literalinclude:: ../samples/async_samples/sample_query_tables_async.py
                 :start-after: [START tsc_list_tables]
                 :end-before: [END tsc_list_tables]
                 :language: python
@@ -330,7 +330,7 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_query_tables_async.py
+            .. literalinclude:: ../samples/async_samples/sample_query_tables_async.py
                 :start-after: [START tsc_query_tables]
                 :end-before: [END tsc_query_tables]
                 :language: python

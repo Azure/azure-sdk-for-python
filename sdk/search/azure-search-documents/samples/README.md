@@ -16,7 +16,7 @@ and require Python version 3.5 or later.
 
 Authenticate the client with a Azure Cognitive Search [API Key Credential](https://docs.microsoft.com/azure/search/search-security-api-keys):
 
-[sample_authentication.py](sample_authentication.py) ([async version](async_samples/sample_authentication_async.py))
+[https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/search/azure-search-documents/samples/sample_authentication.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/search/azure-search-documents/samples/sample_authentication.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/search/azure-search-documents/samples/async_samples/sample_authentication_async.py))
 
 Then for common search index operations:
 

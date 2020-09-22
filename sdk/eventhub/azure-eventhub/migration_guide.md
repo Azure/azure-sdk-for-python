@@ -30,9 +30,9 @@ The code samples in this migration guide use async APIs.
 
 | In v1 | Equivalent in v5 | Sample |
 |---|---|---|
-| `EventHubClientAsync()`    | `EventHubProducerClient()` or `EventHubConsumerClient()` | [using credential](./samples/async_samples/client_identity_authentication_async.py ) |
-| `EventHubClientAsync.from_connection_string()` | `EventHubProducerClient.from_connection_string` or `EventHubConsumerClient.from_connection_string` |[client creation](./samples/async_samples/client_creation_async.py) |
-| `EventProcessorHost()`| `EventHubConsumerClient(..., checkpoint_store)`| [receive events using checkpoint store](./samples/async_samples/recv_with_checkpoint_store_async.py) |
+| `EventHubClientAsync()`    | `EventHubProducerClient()` or `EventHubConsumerClient()` | [using credential](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventhub/azure-eventhub/samples/async_samples/client_identity_authentication_async.py) |
+| `EventHubClientAsync.from_connection_string()` | `EventHubProducerClient.from_connection_string` or `EventHubConsumerClient.from_connection_string` |[client creation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventhub/azure-eventhub/samples/async_samples/client_creation_async.py) |
+| `EventProcessorHost()`| `EventHubConsumerClient(..., checkpoint_store)`| [receive events using checkpoint store](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventhub/azure-eventhub/samples/async_samples/recv_with_checkpoint_store_async.py) |
 
 In V5, the SDK provides `BlobCheckpointStore` in extension packages azure-eventhub-checkpointstoreblob (for sync) and azure-eventhub-checkpointstoreblob-aio (for async).
 You can define your own `CheckpointStore` class to persist checkpoint data.
@@ -41,14 +41,14 @@ You can define your own `CheckpointStore` class to persist checkpoint data.
 
 | In v1 | Equivalent in v5 | Sample |
 |---|---|---|
-| `EventHubClientAsync.add_async_receiver()` and `AsyncReceiver.receive()`| `EventHubConsumerClient.receive()`| [receive events](./samples/async_samples/recv_async.py) |
+| `EventHubClientAsync.add_async_receiver()` and `AsyncReceiver.receive()`| `EventHubConsumerClient.receive()`| [receive events](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventhub/azure-eventhub/samples/async_samples/recv_async.py) |
 
 ### Sending events
 The process of building event batches is more transparent with `send_batch` of V5.
 
 | In v1 | Equivalent in v5 | Sample |
 |---|---|---|
-| `EventHubClientAsync.add_async_sender()` and `AsyncSender.send()`| `EventHubProducerClient.send_batch()`| [send events](./samples/async_samples/send_async.py) |
+| `EventHubClientAsync.add_async_sender()` and `AsyncSender.send()`| `EventHubProducerClient.send_batch()`| [send events](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventhub/azure-eventhub/samples/async_samples/send_async.py) |
 
 ## Migration samples
 

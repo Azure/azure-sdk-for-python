@@ -1857,11 +1857,12 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
         
         with ServiceBusClient.from_connection_string(
             servicebus_namespace_connection_string, logging_enable=False) as sb_client:
-#            with pytest.raises(StopIteration):
-            with sb_client.get_queue_receiver(servicebus_queue.name, 
-                                              max_wait_time="oij") as receiver:
-            
-                assert receiver
+            with pytest.raises(TypeError):
+                with sb_client.get_queue_receiver(servicebus_queue.name, 
+                                                  receive_mode=2) as receiver:
+                
+                    raise Exception("Should not get here, should fail fast.")
+
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
