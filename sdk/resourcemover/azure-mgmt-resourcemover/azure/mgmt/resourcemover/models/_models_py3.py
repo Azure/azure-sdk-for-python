@@ -106,7 +106,7 @@ class ResourceSettings(msrest.serialization.Model):
         **kwargs
     ):
         super(ResourceSettings, self).__init__(**kwargs)
-        self.resource_type: Optional[str] = None
+        self.resource_type = None  # type: Optional[str]
         self.target_resource_name = target_resource_name
 
 
@@ -149,7 +149,7 @@ class AvailabilitySetResourceSettings(ResourceSettings):
         **kwargs
     ):
         super(AvailabilitySetResourceSettings, self).__init__(target_resource_name=target_resource_name, **kwargs)
-        self.resource_type: str = 'Microsoft.Compute/availabilitySets'
+        self.resource_type = 'Microsoft.Compute/availabilitySets'  # type: str
         self.fault_domain = fault_domain
         self.update_domain = update_domain
 
@@ -404,14 +404,14 @@ class JobStatus(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar job_name: Defines the job name. Default value: "InitialSync".
-    :vartype job_name: str
+    :ivar job_name: Defines the job name. Possible values include: "InitialSync".
+    :vartype job_name: str or ~resource_mover_service_api.models.JobName
     :ivar job_progress: Gets or sets the monitoring job percentage.
     :vartype job_progress: str
     """
 
     _validation = {
-        'job_name': {'readonly': True, 'constant': True},
+        'job_name': {'readonly': True},
         'job_progress': {'readonly': True},
     }
 
@@ -419,8 +419,6 @@ class JobStatus(msrest.serialization.Model):
         'job_name': {'key': 'jobName', 'type': 'str'},
         'job_progress': {'key': 'jobProgress', 'type': 'str'},
     }
-
-    job_name = "InitialSync"
 
     def __init__(
         self,
@@ -639,7 +637,7 @@ class LoadBalancerResourceSettings(ResourceSettings):
         **kwargs
     ):
         super(LoadBalancerResourceSettings, self).__init__(target_resource_name=target_resource_name, **kwargs)
-        self.resource_type: str = 'Microsoft.Network/loadBalancers'
+        self.resource_type = 'Microsoft.Network/loadBalancers'  # type: str
         self.sku = sku
         self.frontend_ip_configurations = frontend_ip_configurations
         self.backend_address_pools = backend_address_pools
@@ -1279,7 +1277,7 @@ class MoveResourcePropertiesSourceResourceSettings(ResourceSettings):
         **kwargs
     ):
         super(MoveResourcePropertiesSourceResourceSettings, self).__init__(target_resource_name=target_resource_name, **kwargs)
-        self.resource_type: str = 'MoveResourceProperties-sourceResourceSettings'
+        self.resource_type = 'MoveResourceProperties-sourceResourceSettings'  # type: str
 
 
 class NetworkInterfaceResourceSettings(ResourceSettings):
@@ -1321,7 +1319,7 @@ class NetworkInterfaceResourceSettings(ResourceSettings):
         **kwargs
     ):
         super(NetworkInterfaceResourceSettings, self).__init__(target_resource_name=target_resource_name, **kwargs)
-        self.resource_type: str = 'Microsoft.Network/networkInterfaces'
+        self.resource_type = 'Microsoft.Network/networkInterfaces'  # type: str
         self.ip_configurations = ip_configurations
         self.enable_accelerated_networking = enable_accelerated_networking
 
@@ -1359,7 +1357,7 @@ class NetworkSecurityGroupResourceSettings(ResourceSettings):
         **kwargs
     ):
         super(NetworkSecurityGroupResourceSettings, self).__init__(target_resource_name=target_resource_name, **kwargs)
-        self.resource_type: str = 'Microsoft.Network/networkSecurityGroups'
+        self.resource_type = 'Microsoft.Network/networkSecurityGroups'  # type: str
         self.security_rules = security_rules
 
 
@@ -1800,7 +1798,7 @@ class PublicIPAddressResourceSettings(ResourceSettings):
         **kwargs
     ):
         super(PublicIPAddressResourceSettings, self).__init__(target_resource_name=target_resource_name, **kwargs)
-        self.resource_type: str = 'Microsoft.Network/publicIPAddresses'
+        self.resource_type = 'Microsoft.Network/publicIPAddresses'  # type: str
         self.domain_name_label = domain_name_label
         self.f_qdn = f_qdn
         self.public_ip_allocation_method = public_ip_allocation_method
@@ -1837,7 +1835,7 @@ class ResourceGroupResourceSettings(ResourceSettings):
         **kwargs
     ):
         super(ResourceGroupResourceSettings, self).__init__(target_resource_name=target_resource_name, **kwargs)
-        self.resource_type: str = 'resourceGroups'
+        self.resource_type = 'resourceGroups'  # type: str
 
 
 class ResourceMoveRequest(msrest.serialization.Model):
@@ -1914,7 +1912,7 @@ class SqlDatabaseResourceSettings(ResourceSettings):
         **kwargs
     ):
         super(SqlDatabaseResourceSettings, self).__init__(target_resource_name=target_resource_name, **kwargs)
-        self.resource_type: str = 'Microsoft.Sql/servers/databases'
+        self.resource_type = 'Microsoft.Sql/servers/databases'  # type: str
         self.zone_redundant = zone_redundant
 
 
@@ -1952,7 +1950,7 @@ class SqlElasticPoolResourceSettings(ResourceSettings):
         **kwargs
     ):
         super(SqlElasticPoolResourceSettings, self).__init__(target_resource_name=target_resource_name, **kwargs)
-        self.resource_type: str = 'Microsoft.Sql/servers/elasticPools'
+        self.resource_type = 'Microsoft.Sql/servers/elasticPools'  # type: str
         self.zone_redundant = zone_redundant
 
 
@@ -1985,7 +1983,7 @@ class SqlServerResourceSettings(ResourceSettings):
         **kwargs
     ):
         super(SqlServerResourceSettings, self).__init__(target_resource_name=target_resource_name, **kwargs)
-        self.resource_type: str = 'Microsoft.Sql/servers'
+        self.resource_type = 'Microsoft.Sql/servers'  # type: str
 
 
 class SubnetReference(ProxyResourceReference):
@@ -2167,7 +2165,7 @@ class VirtualMachineResourceSettings(ResourceSettings):
         **kwargs
     ):
         super(VirtualMachineResourceSettings, self).__init__(target_resource_name=target_resource_name, **kwargs)
-        self.resource_type: str = 'Microsoft.Compute/virtualMachines'
+        self.resource_type = 'Microsoft.Compute/virtualMachines'  # type: str
         self.target_availability_zone = target_availability_zone
         self.target_vm_size = target_vm_size
         self.target_availability_set_id = target_availability_set_id
@@ -2221,7 +2219,7 @@ class VirtualNetworkResourceSettings(ResourceSettings):
         **kwargs
     ):
         super(VirtualNetworkResourceSettings, self).__init__(target_resource_name=target_resource_name, **kwargs)
-        self.resource_type: str = 'Microsoft.Network/virtualNetworks'
+        self.resource_type = 'Microsoft.Network/virtualNetworks'  # type: str
         self.enable_ddos_protection = enable_ddos_protection
         self.address_space = address_space
         self.dns_servers = dns_servers

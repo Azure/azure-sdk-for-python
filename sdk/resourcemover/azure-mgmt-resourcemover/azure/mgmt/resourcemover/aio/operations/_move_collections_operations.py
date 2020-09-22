@@ -9,7 +9,7 @@ from typing import Any, AsyncIterable, Callable, Dict, Generic, Optional, TypeVa
 import warnings
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
-from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
@@ -64,10 +64,13 @@ class MoveCollectionsOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.MoveCollection"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-10-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
 
         # Construct URL
         url = self.create.metadata['url']  # type: ignore
@@ -85,7 +88,7 @@ class MoveCollectionsOperations:
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         if body is not None:
@@ -94,7 +97,6 @@ class MoveCollectionsOperations:
             body_content = None
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -135,10 +137,13 @@ class MoveCollectionsOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.MoveCollection"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-10-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
 
         # Construct URL
         url = self.update.metadata['url']  # type: ignore
@@ -156,7 +161,7 @@ class MoveCollectionsOperations:
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         if body is not None:
@@ -165,7 +170,6 @@ class MoveCollectionsOperations:
             body_content = None
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -188,9 +192,12 @@ class MoveCollectionsOperations:
         **kwargs
     ) -> Optional["models.OperationStatus"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.OperationStatus"]]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-10-01-preview"
+        accept = "application/json"
 
         # Construct URL
         url = self._delete_initial.metadata['url']  # type: ignore
@@ -207,7 +214,7 @@ class MoveCollectionsOperations:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -306,9 +313,12 @@ class MoveCollectionsOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.MoveCollection"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-10-01-preview"
+        accept = "application/json"
 
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
@@ -325,7 +335,7 @@ class MoveCollectionsOperations:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -351,10 +361,13 @@ class MoveCollectionsOperations:
         **kwargs
     ) -> Optional["models.OperationStatus"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.OperationStatus"]]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-10-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
 
         # Construct URL
         url = self._prepare_initial.metadata['url']  # type: ignore
@@ -372,7 +385,7 @@ class MoveCollectionsOperations:
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         if body is not None:
@@ -381,7 +394,6 @@ class MoveCollectionsOperations:
             body_content = None
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -407,10 +419,10 @@ class MoveCollectionsOperations:
         **kwargs
     ) -> AsyncLROPoller["models.OperationStatus"]:
         """Initiates prepare for the set of resources included in the request body. The prepare operation
-    is on the moveResources that are in the moveState 'PreparePending' or 'PrepareFailed', on a
-    successful completion the moveResource moveState do a transition to MovePending. To aid the
-    user to prerequisite the operation the client can call operation with validateOnly property set
-    to true.
+        is on the moveResources that are in the moveState 'PreparePending' or 'PrepareFailed', on a
+        successful completion the moveResource moveState do a transition to MovePending. To aid the
+        user to prerequisite the operation the client can call operation with validateOnly property set
+        to true.
 
         :param resource_group_name: The Resource Group Name.
         :type resource_group_name: str
@@ -476,10 +488,13 @@ class MoveCollectionsOperations:
         **kwargs
     ) -> Optional["models.OperationStatus"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.OperationStatus"]]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-10-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
 
         # Construct URL
         url = self._initiate_move_initial.metadata['url']  # type: ignore
@@ -497,7 +512,7 @@ class MoveCollectionsOperations:
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         if body is not None:
@@ -506,7 +521,6 @@ class MoveCollectionsOperations:
             body_content = None
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -532,10 +546,10 @@ class MoveCollectionsOperations:
         **kwargs
     ) -> AsyncLROPoller["models.OperationStatus"]:
         """Moves the set of resources included in the request body. The move operation is triggered after
-    the moveResources are in the moveState 'MovePending' or 'MoveFailed', on a successful
-    completion the moveResource moveState do a transition to CommitPending. To aid the user to
-    prerequisite the operation the client can call operation with validateOnly property set to
-    true.
+        the moveResources are in the moveState 'MovePending' or 'MoveFailed', on a successful
+        completion the moveResource moveState do a transition to CommitPending. To aid the user to
+        prerequisite the operation the client can call operation with validateOnly property set to
+        true.
 
         :param resource_group_name: The Resource Group Name.
         :type resource_group_name: str
@@ -601,10 +615,13 @@ class MoveCollectionsOperations:
         **kwargs
     ) -> Optional["models.OperationStatus"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.OperationStatus"]]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-10-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
 
         # Construct URL
         url = self._commit_initial.metadata['url']  # type: ignore
@@ -622,7 +639,7 @@ class MoveCollectionsOperations:
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         if body is not None:
@@ -631,7 +648,6 @@ class MoveCollectionsOperations:
             body_content = None
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -657,10 +673,10 @@ class MoveCollectionsOperations:
         **kwargs
     ) -> AsyncLROPoller["models.OperationStatus"]:
         """Commits the set of resources included in the request body. The commit operation is triggered on
-    the moveResources in the moveState 'CommitPending' or 'CommitFailed', on a successful
-    completion the moveResource moveState do a transition to Committed. To aid the user to
-    prerequisite the operation the client can call operation with validateOnly property set to
-    true.
+        the moveResources in the moveState 'CommitPending' or 'CommitFailed', on a successful
+        completion the moveResource moveState do a transition to Committed. To aid the user to
+        prerequisite the operation the client can call operation with validateOnly property set to
+        true.
 
         :param resource_group_name: The Resource Group Name.
         :type resource_group_name: str
@@ -726,10 +742,13 @@ class MoveCollectionsOperations:
         **kwargs
     ) -> Optional["models.OperationStatus"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.OperationStatus"]]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-10-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
 
         # Construct URL
         url = self._discard_initial.metadata['url']  # type: ignore
@@ -747,7 +766,7 @@ class MoveCollectionsOperations:
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         if body is not None:
@@ -756,7 +775,6 @@ class MoveCollectionsOperations:
             body_content = None
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -782,10 +800,10 @@ class MoveCollectionsOperations:
         **kwargs
     ) -> AsyncLROPoller["models.OperationStatus"]:
         """Discards the set of resources included in the request body. The discard operation is triggered
-    on the moveResources in the moveState 'CommitPending' or 'DiscardFailed', on a successful
-    completion the moveResource moveState do a transition to MovePending. To aid the user to
-    prerequisite the operation the client can call operation with validateOnly property set to
-    true.
+        on the moveResources in the moveState 'CommitPending' or 'DiscardFailed', on a successful
+        completion the moveResource moveState do a transition to MovePending. To aid the user to
+        prerequisite the operation the client can call operation with validateOnly property set to
+        true.
 
         :param resource_group_name: The Resource Group Name.
         :type resource_group_name: str
@@ -850,9 +868,12 @@ class MoveCollectionsOperations:
         **kwargs
     ) -> Optional["models.OperationStatus"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.OperationStatus"]]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-10-01-preview"
+        accept = "application/json"
 
         # Construct URL
         url = self._resolve_dependencies_initial.metadata['url']  # type: ignore
@@ -869,7 +890,7 @@ class MoveCollectionsOperations:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -964,14 +985,17 @@ class MoveCollectionsOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.MoveCollectionResultList"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-10-01-preview"
+        accept = "application/json"
 
         def prepare_request(next_link=None):
             # Construct headers
             header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
+            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
             if not next_link:
                 # Construct URL
@@ -1032,14 +1056,17 @@ class MoveCollectionsOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.MoveCollectionResultList"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-10-01-preview"
+        accept = "application/json"
 
         def prepare_request(next_link=None):
             # Construct headers
             header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
+            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
             if not next_link:
                 # Construct URL

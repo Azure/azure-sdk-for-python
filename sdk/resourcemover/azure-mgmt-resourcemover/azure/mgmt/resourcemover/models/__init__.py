@@ -127,6 +127,7 @@ except (SyntaxError, ImportError):
 
 from ._resource_mover_service_api_enums import (
     DependencyType,
+    JobName,
     MoveResourceInputType,
     MoveState,
     ProvisioningState,
@@ -196,6 +197,7 @@ __all__ = [
     'VirtualMachineResourceSettings',
     'VirtualNetworkResourceSettings',
     'DependencyType',
+    'JobName',
     'MoveResourceInputType',
     'MoveState',
     'ProvisioningState',
