@@ -5,7 +5,7 @@
 ### Configuration
 
 ```yaml
-title: EventGridPublisherClient
+title: EventGridClient
 description: EventGrid Python Publisher Client
 generated-metadata: false
 license-header: MICROSOFT_MIT_NO_VERSION
@@ -28,6 +28,7 @@ input-file:
     - https://github.com/Azure/azure-rest-api-specs/blob/master/specification/eventgrid/data-plane/Microsoft.ServiceBus/stable/2018-01-01/ServiceBus.json
     - https://github.com/Azure/azure-rest-api-specs/blob/master/specification/eventgrid/data-plane/Microsoft.SignalRService/stable/2018-01-01/SignalRService.json
     - https://github.com/Azure/azure-rest-api-specs/blob/master/specification/eventgrid/data-plane/Microsoft.Web/stable/2018-01-01/Web.json
+    - https://github.com/Azure/azure-rest-api-specs/blob/master/specification/eventgrid/data-plane/Microsoft.Communication/stable/2018-01-01/AzureCommunicationServices.json
 
 python: true
 v3: true
