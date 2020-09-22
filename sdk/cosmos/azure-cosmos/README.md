@@ -91,7 +91,7 @@ As of August 2020 the features below are not yet supported.
 * Language Native async i/o
 * Continuation token for cross partitions queries
 
-## Bult processing limitations workaround
+## Bulk processing limitation workaround
 
 If you want to use Python SDK to perform bulk inserts to Cosmos DB, the best alternative is to use [stored procedures](https://docs.microsoft.com/azure/cosmos-db/how-to-write-stored-procedures-triggers-udfs) to write multiple items with the same partition key.
 
