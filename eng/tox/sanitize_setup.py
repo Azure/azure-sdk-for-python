@@ -14,13 +14,14 @@ import logging
 import glob
 from packaging.specifiers import SpecifierSet
 from pkg_resources import Requirement
-from pypi_tools.pypi import PyPIClient
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
 setup_parser_path = os.path.abspath(os.path.join(root_dir, "eng", "versioning"))
+pypi_tools_path = os.path.join(root_dir, "tools", "azure-sdk-tools", "pypi_tools")
 
-sys.path.append(setup_parser_path)
+sys.path += [setup_parser_path, pypi_tools_path]
 from setup_parser import get_install_requires, parse_setup
+from pypi import PyPIClient
 
 DEV_BUILD_IDENTIFIER = ".dev"
 
