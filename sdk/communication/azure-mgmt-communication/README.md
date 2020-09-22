@@ -73,3 +73,6 @@ def __delete_communication_service(mgmt_client, resourceGroupName, resourceName)
 
 If you encounter any bugs or have suggestions, please file an issue in the
 [Issues](https://github.com/Azure/azure-sdk-for-python/issues) section of the project.
+
+
+![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fazure-mgmt-communication%2FREADME.png)
