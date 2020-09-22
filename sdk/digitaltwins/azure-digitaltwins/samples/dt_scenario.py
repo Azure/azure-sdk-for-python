@@ -7,7 +7,7 @@ import json
 import uuid
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
-from azure.digitaltwins import DigitalTwinsClient, DigitalTwinModelsClient, EventRoutesClient
+from azure.digitaltwins import DigitalTwinsClient
 
 # <summary>
 # This sample creates all the models in \DTDL\Models folder in the ADT service instance
@@ -65,9 +65,7 @@ try:
     # - AZURE_CLIENT_ID: The application (client) ID registered in the AAD tenant
     # - AZURE_CLIENT_SECRET: The client secret for the registered application
     credential = DefaultAzureCredential()
-    twins_service_client = DigitalTwinsClient(url, credential)
-    model_service_client = DigitalTwinModelsClient(url, credential)
-    event_route_service_client = EventRoutesClient(url, credential)
+    service_client = DigitalTwinsClient(url, credential)
 
     # Create models from the sample dtdls
     with open(r"dtdl\models\building.json") as f:
@@ -89,7 +87,7 @@ try:
         dtdl_model_hvac,
         dtdl_model_room
     )
-    models = model_service_client.create_models(new_model_list)
+    models = service_client.create_models(new_model_list)
     print('Created Models:')
     print(models)
 
@@ -97,28 +95,28 @@ try:
     building_twin_id = 'BuildingTwin-' + uuid.UUID
     with open(r"dtdl\digital_twins\buildingTwin.json") as f:
         dtdl_digital_twins_building = json.load(f)
-    created_building_twin = twins_service_client.upsert_digital_twin(building_twin_id, dtdl_digital_twins_building)
+    created_building_twin = service_client.upsert_digital_twin(building_twin_id, dtdl_digital_twins_building)
     print('BuildingTwin:')
     print(created_building_twin)
 
     floor_twin_id = 'FloorTwin-' + uuid.UUID
     with open(r"dtdl\digital_twins\floorTwin.json") as f:
         dtdl_digital_twins_floor = json.load(f)
-    created_floor_twin = twins_service_client.upsert_digital_twin(floor_twin_id, dtdl_digital_twins_floor)
+    created_floor_twin = service_client.upsert_digital_twin(floor_twin_id, dtdl_digital_twins_floor)
     print('FloorTwin:')
     print(created_floor_twin)
 
     hvac_twin_id = 'HVACTwin-' + uuid.UUID
     with open(r"dtdl\digital_twins\hvacTwin.json") as f:
         dtdl_digital_twins_hvac = json.load(f)
-    created_hvac_twin = twins_service_client.upsert_digital_twin(hvac_twin_id, dtdl_digital_twins_hvac)
+    created_hvac_twin = service_client.upsert_digital_twin(hvac_twin_id, dtdl_digital_twins_hvac)
     print('HVACTwin:')
     print(created_hvac_twin)
 
     room_twin_id = 'RoomTwin-' + uuid.UUID
     with open(r"dtdl\digital_twins\hvacTwin.json") as f:
         dtdl_digital_twins_room = json.load(f)
-    created_room_twin = twins_service_client.upsert_digital_twin(room_twin_id, dtdl_digital_twins_room)
+    created_room_twin = service_client.upsert_digital_twin(room_twin_id, dtdl_digital_twins_room)
     print('RoomTwin:')
     print(created_room_twin)
 
@@ -126,7 +124,7 @@ try:
     with open(r"dtdl\relationships\hospitalRelationships.json") as f:
         dtdl_relationships = json.load(f)
     for relationship in dtdl_relationships:
-        twins_service_client.upsert_relationship(
+        service_client.upsert_relationship(
             relationship["$sourceId"],
             relationship["$relationshipId"],
             relationship
@@ -135,40 +133,40 @@ try:
     # Create event route
     event_route_id = 'eventRoute-' + uuid.UUID
     event_filter = "$eventType = 'DigitalTwinTelemetryMessages' or $eventType = 'DigitalTwinLifecycleNotification'"
-    event_route_service_client.upsert_event_route(
+    service_client.upsert_event_route(
         event_route_id,
         event_hub_endpoint_name,
         **{"filter": event_filter}
     )
 
     # Get event route
-    created_event_route = event_route_service_client.get_event_route(event_route_id)
+    created_event_route = service_client.get_event_route(event_route_id)
     print('Created Event Route:')
     print(created_event_route)
 
     # Clean up
-    event_route_service_client.delete_event_route(event_route_id)
+    service_client.delete_event_route(event_route_id)
 
     for relationship in dtdl_relationships:
-        twins_service_client.delete_relationship(
+        service_client.delete_relationship(
         relationship["$sourceId"],
         relationship["$relationshipId"]
     )
 
-    twins_service_client.delete_digital_twin(building_twin_id)
-    twins_service_client.delete_digital_twin(floor_twin_id)
-    twins_service_client.delete_digital_twin(hvac_twin_id)
-    twins_service_client.delete_digital_twin(room_twin_id)
+    service_client.delete_digital_twin(building_twin_id)
+    service_client.delete_digital_twin(floor_twin_id)
+    service_client.delete_digital_twin(hvac_twin_id)
+    service_client.delete_digital_twin(room_twin_id)
 
-    model_service_client.decommission_model(building_twin_id, "")
-    model_service_client.decommission_model(floor_twin_id, "")
-    model_service_client.decommission_model(hvac_twin_id, "")
-    model_service_client.decommission_model(room_twin_id, "")
+    service_client.decommission_model(building_twin_id, "")
+    service_client.decommission_model(floor_twin_id, "")
+    service_client.decommission_model(hvac_twin_id, "")
+    service_client.decommission_model(room_twin_id, "")
 
-    model_service_client.delete_model(building_twin_id)
-    model_service_client.delete_model(floor_twin_id)
-    model_service_client.delete_model(hvac_twin_id)
-    model_service_client.delete_model(room_twin_id)
+    service_client.delete_model(building_twin_id)
+    service_client.delete_model(floor_twin_id)
+    service_client.delete_model(hvac_twin_id)
+    service_client.delete_model(room_twin_id)
 
 except HttpResponseError as e:
     print("\nThis sample has caught an error. {0}".format(e.message))

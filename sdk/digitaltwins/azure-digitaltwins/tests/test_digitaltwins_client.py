@@ -684,3 +684,399 @@ class TestDigitalTinwsClient(object):
             dt_timestamp=mock.ANY,
             **fake_kwargs
         )
+
+    @mock.patch(
+        'azure.digitaltwins._generated.operations._digital_twin_models_operations.DigitalTwinModelsOperations.get_by_id'
+    )
+    def test_get_model(self, get_by_id):
+        fake_endpoint = 'endpoint'
+        fake_credential = 'credential'
+        fake_model_id = 'model_id'
+        digital_twin_models_client = DigitalTwinsClient(fake_endpoint, fake_credential)
+
+        digital_twin_models_client.get_model(fake_model_id)
+        get_by_id.assert_called_with(
+            fake_model_id,
+            False
+        )
+
+    @mock.patch(
+        'azure.digitaltwins._generated.operations._digital_twin_models_operations.DigitalTwinModelsOperations.get_by_id'
+    )
+    def test_get_model_with_model_definition(self, get_by_id):
+        fake_endpoint = 'endpoint'
+        fake_credential = 'credential'
+        fake_model_id = 'model_id'
+        fake_model_definition = True
+        digital_twin_models_client = DigitalTwinsClient(fake_endpoint, fake_credential)
+
+        digital_twin_models_client.get_model(fake_model_id, fake_model_definition)
+        get_by_id.assert_called_with(
+            fake_model_id,
+            fake_model_definition
+        )
+
+    @mock.patch(
+        'azure.digitaltwins._generated.operations._digital_twin_models_operations.DigitalTwinModelsOperations.get_by_id'
+    )
+    def test_get_model_with_model_kwargs(self, get_by_id):
+        fake_endpoint = 'endpoint'
+        fake_credential = 'credential'
+        fake_model_id = 'model_id'
+        fake_model_definition = True
+        fake_kwargs = {'par1_key':'par1_val', 'par2_key':2}
+        digital_twin_models_client = DigitalTwinsClient(fake_endpoint, fake_credential)
+
+        digital_twin_models_client.get_model(fake_model_id, fake_model_definition, **fake_kwargs)
+        get_by_id.assert_called_with(
+            fake_model_id,
+            fake_model_definition,
+            **fake_kwargs
+        )
+
+    @mock.patch(
+        'azure.digitaltwins._generated.operations._digital_twin_models_operations.DigitalTwinModelsOperations.list'
+    )
+    def test_list_models(self, list):
+        fake_endpoint = 'endpoint'
+        fake_credential = 'credential'
+        fake_dependencies_for = 'dependencies_for'
+        digital_twin_models_client = DigitalTwinsClient(fake_endpoint, fake_credential)
+
+        digital_twin_models_client.list_models(fake_dependencies_for)
+        list.assert_called_with(
+            dependencies_for=fake_dependencies_for,
+            include_model_definition=False,
+            digital_twin_models_list_options={'max_item_count': -1}
+        )
+
+    @mock.patch(
+        'azure.digitaltwins._generated.operations._digital_twin_models_operations.DigitalTwinModelsOperations.list'
+    )
+    def test_list_models_with_model_definition(self, list):
+        fake_endpoint = 'endpoint'
+        fake_credential = 'credential'
+        fake_dependencies_for = 'dependencies_for'
+        fake_model_definition = True
+        digital_twin_models_client = DigitalTwinsClient(fake_endpoint, fake_credential)
+
+        digital_twin_models_client.list_models(fake_dependencies_for, fake_model_definition)
+        list.assert_called_with(
+            dependencies_for=fake_dependencies_for,
+            include_model_definition=fake_model_definition,
+            digital_twin_models_list_options={'max_item_count': -1}
+        )
+
+    @mock.patch(
+        'azure.digitaltwins._generated.operations._digital_twin_models_operations.DigitalTwinModelsOperations.list'
+    )
+    def test_list_models_with_model_max_item_count(self, list):
+        fake_endpoint = 'endpoint'
+        fake_credential = 'credential'
+        fake_dependencies_for = 'dependencies_for'
+        fake_model_definition = True
+        fake_max_item_count = 42
+        digital_twin_models_client = DigitalTwinsClient(fake_endpoint, fake_credential)
+
+        digital_twin_models_client.list_models(fake_dependencies_for, fake_model_definition, fake_max_item_count)
+        list.assert_called_with(
+            dependencies_for=fake_dependencies_for,
+            include_model_definition=fake_model_definition,
+            digital_twin_models_list_options={'max_item_count': 42}
+        )
+
+    @mock.patch(
+        'azure.digitaltwins._generated.operations._digital_twin_models_operations.DigitalTwinModelsOperations.list'
+    )
+    def test_list_models_with_model_kwargs(self, list):
+        fake_endpoint = 'endpoint'
+        fake_credential = 'credential'
+        fake_dependencies_for = 'dependencies_for'
+        fake_model_definition = True
+        fake_max_item_count = 42
+        fake_kwargs = {'par1_key':'par1_val', 'par2_key':2}
+        digital_twin_models_client = DigitalTwinsClient(fake_endpoint, fake_credential)
+
+        digital_twin_models_client.list_models(fake_dependencies_for, fake_model_definition, fake_max_item_count, **fake_kwargs)
+        list.assert_called_with(
+            dependencies_for=fake_dependencies_for,
+            include_model_definition=fake_model_definition,
+            digital_twin_models_list_options={'max_item_count': 42},
+            **fake_kwargs
+        )
+ 
+    @mock.patch(
+        'azure.digitaltwins._generated.operations._digital_twin_models_operations.DigitalTwinModelsOperations.add'
+    )
+    def test_create_models(self, add):
+        fake_endpoint = 'endpoint'
+        fake_credential = 'credential'
+        digital_twin_models_client = DigitalTwinsClient(fake_endpoint, fake_credential)
+
+        digital_twin_models_client.create_models()
+        add.assert_called_with(
+            None
+        )
+ 
+    @mock.patch(
+        'azure.digitaltwins._generated.operations._digital_twin_models_operations.DigitalTwinModelsOperations.add'
+    )
+    def test_create_models_with_models(self, add):
+        fake_endpoint = 'endpoint'
+        fake_credential = 'credential'
+        fake_models = 'models'
+        digital_twin_models_client = DigitalTwinsClient(fake_endpoint, fake_credential)
+
+        digital_twin_models_client.create_models(fake_models)
+        add.assert_called_with(
+            fake_models
+        )
+ 
+    @mock.patch(
+        'azure.digitaltwins._generated.operations._digital_twin_models_operations.DigitalTwinModelsOperations.add'
+    )
+    def test_create_models_with_kwargs(self, add):
+        fake_endpoint = 'endpoint'
+        fake_credential = 'credential'
+        fake_models = 'models'
+        fake_kwargs = {'par1_key':'par1_val', 'par2_key':2}
+        digital_twin_models_client = DigitalTwinsClient(fake_endpoint, fake_credential)
+
+        digital_twin_models_client.create_models(fake_models, **fake_kwargs)
+        add.assert_called_with(
+            fake_models,
+            **fake_kwargs
+        )
+
+    @mock.patch(
+        'azure.digitaltwins._generated.operations._digital_twin_models_operations.DigitalTwinModelsOperations.update'
+    )
+    def test_decommission_model(self, update):
+        fake_endpoint = 'endpoint'
+        fake_credential = 'credential'
+        fake_model_id = 'model_id'
+        fake_model_patch = 'model_patch'
+        digital_twin_models_client = DigitalTwinsClient(fake_endpoint, fake_credential)
+
+        digital_twin_models_client.decommission_model(fake_model_id, fake_model_patch)
+        update.assert_called_with(
+            fake_model_id,
+            fake_model_patch
+        )
+
+    @mock.patch(
+        'azure.digitaltwins._generated.operations._digital_twin_models_operations.DigitalTwinModelsOperations.update'
+    )
+    def test_decommission_model_with_kwargs(self, update):
+        fake_endpoint = 'endpoint'
+        fake_credential = 'credential'
+        fake_model_id = 'model_id'
+        fake_model_patch = 'model_patch'
+        fake_kwargs = {'par1_key':'par1_val', 'par2_key':2}
+        digital_twin_models_client = DigitalTwinsClient(fake_endpoint, fake_credential)
+
+        digital_twin_models_client.decommission_model(fake_model_id, fake_model_patch, **fake_kwargs)
+        update.assert_called_with(
+            fake_model_id,
+            fake_model_patch,
+            **fake_kwargs
+        )
+
+    @mock.patch(
+        'azure.digitaltwins._generated.operations._digital_twin_models_operations.DigitalTwinModelsOperations.delete'
+    )
+    def test_delete_model(self, delete):
+        fake_endpoint = 'endpoint'
+        fake_credential = 'credential'
+        fake_model_id = 'model_id'
+        fake_model_patch = 'model_patch'
+        digital_twin_models_client = DigitalTwinsClient(fake_endpoint, fake_credential)
+
+        digital_twin_models_client.delete_model(fake_model_id)
+        delete.assert_called_with(
+            fake_model_id
+        )
+
+    @mock.patch(
+        'azure.digitaltwins._generated.operations._digital_twin_models_operations.DigitalTwinModelsOperations.delete'
+    )
+    def test_delete_model_with_kwargs(self, delete):
+        fake_endpoint = 'endpoint'
+        fake_credential = 'credential'
+        fake_model_id = 'model_id'
+        fake_model_patch = 'model_patch'
+        fake_kwargs = {'par1_key':'par1_val', 'par2_key':2}
+        digital_twin_models_client = DigitalTwinsClient(fake_endpoint, fake_credential)
+
+        digital_twin_models_client.delete_model(fake_model_id, **fake_kwargs)
+        delete.assert_called_with(
+            fake_model_id,
+            **fake_kwargs
+        )
+
+    @mock.patch(
+        'azure.digitaltwins._generated.operations._event_routes_operations.EventRoutesOperations.get_by_id'
+    )
+    def test_get_event_route(self, get_by_id):
+        fake_endpoint = 'endpoint'
+        fake_credential = 'credential'
+        fake_event_route_id = 'event_route_id'
+        digital_twin_client = DigitalTwinsClient(fake_endpoint, fake_credential)
+
+        digital_twin_client.get_event_route(fake_event_route_id)
+        get_by_id.assert_called_with(
+            fake_event_route_id
+        )
+
+    @mock.patch(
+        'azure.digitaltwins._generated.operations._event_routes_operations.EventRoutesOperations.get_by_id'
+    )
+    def test_get_event_rout_with_kwargs(self, get_by_id):
+        fake_endpoint = 'endpoint'
+        fake_credential = 'credential'
+        fake_event_route_id = 'event_route_id'
+        fake_kwargs = {'par1_key':'par1_val', 'par2_key':2}
+        digital_twin_client = DigitalTwinsClient(fake_endpoint, fake_credential)
+
+        digital_twin_client.get_event_route(fake_event_route_id, **fake_kwargs)
+        get_by_id.assert_called_with(
+            fake_event_route_id,
+            **fake_kwargs
+        )
+
+    @mock.patch(
+        'azure.digitaltwins._generated.operations._event_routes_operations.EventRoutesOperations.list'
+    )
+    def test_list_event_routes(self, list):
+        fake_endpoint = 'endpoint'
+        fake_credential = 'credential'
+        digital_twin_client = DigitalTwinsClient(fake_endpoint, fake_credential)
+
+        digital_twin_client.list_event_routes()
+        list.assert_called_with(
+            {'max_item_count': -1}
+        )
+
+    @mock.patch(
+        'azure.digitaltwins._generated.operations._event_routes_operations.EventRoutesOperations.list'
+    )
+    def test_list_event_routes_with_max_item_count(self, list):
+        fake_endpoint = 'endpoint'
+        fake_credential = 'credential'
+        fake_max_item_count = 42
+        digital_twin_client = DigitalTwinsClient(fake_endpoint, fake_credential)
+
+        digital_twin_client.list_event_routes(fake_max_item_count)
+        list.assert_called_with(
+            {'max_item_count': fake_max_item_count}
+        )
+
+    @mock.patch(
+        'azure.digitaltwins._generated.operations._event_routes_operations.EventRoutesOperations.list'
+    )
+    def test_list_event_routes_with_kwargs(self, list):
+        fake_endpoint = 'endpoint'
+        fake_credential = 'credential'
+        fake_max_item_count = 42
+        fake_kwargs = {'par1_key':'par1_val', 'par2_key':2}
+        digital_twin_client = DigitalTwinsClient(fake_endpoint, fake_credential)
+
+        digital_twin_client.list_event_routes(fake_max_item_count, **fake_kwargs)
+        list.assert_called_with(
+            {'max_item_count': fake_max_item_count},
+            **fake_kwargs
+        )
+
+    @mock.patch(
+        'azure.digitaltwins._generated.operations._event_routes_operations.EventRoutesOperations.add'
+    )
+    def test_upsert_event_route(self, add):
+        fake_endpoint = 'endpoint'
+        fake_credential = 'credential'
+        fake_event_route_id = 'event_route_id'
+        fake_event_route = 'event_route'
+        digital_twin_client = DigitalTwinsClient(fake_endpoint, fake_credential)
+
+        digital_twin_client.upsert_event_route(fake_event_route_id, fake_event_route)
+        add.assert_called_with(
+            fake_event_route_id,
+            fake_event_route
+        )
+
+    @mock.patch(
+        'azure.digitaltwins._generated.operations._event_routes_operations.EventRoutesOperations.add'
+    )
+    def test_upsert_event_route_with_kwargs(self, add):
+        fake_endpoint = 'endpoint'
+        fake_credential = 'credential'
+        fake_event_route_id = 'event_route_id'
+        fake_event_route = 'event_route'
+        fake_kwargs = {'par1_key':'par1_val', 'par2_key':2}
+        digital_twin_client = DigitalTwinsClient(fake_endpoint, fake_credential)
+
+        digital_twin_client.upsert_event_route(fake_event_route_id, fake_event_route, **fake_kwargs)
+        add.assert_called_with(
+            fake_event_route_id,
+            fake_event_route,
+            **fake_kwargs
+        )
+
+    @mock.patch(
+        'azure.digitaltwins._generated.operations._event_routes_operations.EventRoutesOperations.delete'
+    )
+    def test_list_event_routes(self, delete):
+        fake_endpoint = 'endpoint'
+        fake_credential = 'credential'
+        fake_event_route_id = 'event_route_id'
+        digital_twin_client = DigitalTwinsClient(fake_endpoint, fake_credential)
+
+        digital_twin_client.delete_event_route(fake_event_route_id)
+        delete.assert_called_with(
+            fake_event_route_id
+        )
+
+    @mock.patch(
+        'azure.digitaltwins._generated.operations._event_routes_operations.EventRoutesOperations.delete'
+    )
+    def test_list_event_routes_with_kwargs(self, delete):
+        fake_endpoint = 'endpoint'
+        fake_credential = 'credential'
+        fake_event_route_id = 'event_route_id'
+        fake_kwargs = {'par1_key':'par1_val', 'par2_key':2}
+        digital_twin_client = DigitalTwinsClient(fake_endpoint, fake_credential)
+
+        digital_twin_client.delete_event_route(fake_event_route_id, **fake_kwargs)
+        delete.assert_called_with(
+            fake_event_route_id,
+            **fake_kwargs
+        )
+
+    @mock.patch(
+        'azure.digitaltwins._generated.operations._query_operations.QueryOperations.query_twins'
+    )
+    def test_query_twins(self, query_twins):
+        fake_endpoint = 'endpoint'
+        fake_credential = 'credential'
+        fake_query_specification = 'query_specification'
+        digital_twin_client = DigitalTwinsClient(fake_endpoint, fake_credential)
+
+        digital_twin_client.query_twins(fake_query_specification)
+        query_twins.assert_called_with(
+            fake_query_specification
+        )
+
+    @mock.patch(
+        'azure.digitaltwins._generated.operations._query_operations.QueryOperations.query_twins'
+    )
+    def test_query_twins_with_kwargs(self, query_twins):
+        fake_endpoint = 'endpoint'
+        fake_credential = 'credential'
+        fake_query_specification = 'query_specification'
+        fake_kwargs = {'par1_key':'par1_val', 'par2_key':2}
+        digital_twin_client = DigitalTwinsClient(fake_endpoint, fake_credential)
+
+        digital_twin_client.query_twins(fake_query_specification, **fake_kwargs)
+        query_twins.assert_called_with(
+            fake_query_specification,
+            **fake_kwargs
+        )

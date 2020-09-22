@@ -5,7 +5,7 @@
 import os
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
-from azure.digitaltwins import QueryClient
+from azure.digitaltwins import DigitalTwinsClient
 
 # Simple example of how to:
 # - create a DigitalTwins Service Client using the DigitalTwinsClient constructor
@@ -27,11 +27,11 @@ try:
     # - AZURE_CLIENT_ID: The application (client) ID registered in the AAD tenant
     # - AZURE_CLIENT_SECRET: The client secret for the registered application
     credential = DefaultAzureCredential()
-    query_client = QueryClient(url, credential)
+    service_client = DigitalTwinsClient(url, credential)
 
     # Query digital twins
     query = "SELECT * FROM digitaltwins"
-    query_result = query_client.query_twins(query)
+    query_result = service_client.query_twins(query)
 
     print(query_result)
 

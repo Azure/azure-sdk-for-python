@@ -320,3 +320,168 @@ class DigitalTwinsClient(object):
             dt_timestamp=timestamp,
             **kwargs
         )
+
+    def get_model(self, model_id, include_model_definition=False, **kwargs):
+        # type: (str, bool, **Any) -> "models.ModelData"
+        """Get a model, including the model metadata and the model definition
+
+        :param model_id: The Id of the model
+        :type model_id: str
+        :param include_model_definition: When true the model definition
+        will be returned as part of the result
+        :type include_model_definition: bool
+        :**kwargs The operation options
+        :type **kwargs: any
+        :returns: The ModelDate object
+        :rtype: ~azure.digitaltwins.models.ModelData
+        :raises :class: `~azure.core.exceptions.HttpResponseError`
+        """
+        return self._client.digital_twin_models.get_by_id(model_id, include_model_definition, **kwargs)
+
+    def list_models(self, dependencies_for, include_model_definition=False, max_item_count=-1, **kwargs):
+        # type: (str, bool, int, **Any) -> Iterable["models.PagedModelDataCollection"]
+        """Get the list of models
+
+        :param dependencies_for: The model Ids to have dependencies retrieved.
+        If omitted, all models are retrieved
+        :type dependencies_for: str
+        :param include_model_definition: When true the model definition
+        will be returned as part of the result
+        :type include_model_definition: bool
+        :param max_item_count: The maximum number of items to retrieve per request.
+        The server may choose to return less than the requested max.
+        :type max_item_count: int
+        :**kwargs The operation options
+        :type **kwargs: any
+        :returns: An iterator like instance of either PagedModelDataCollection
+        :rtype: ~azure.core.paging.ItemPaged[~azure.digitaltwins.models.PagedModelDataCollection]
+        :raises :class: `~azure.core.exceptions.HttpResponseError`
+        """
+        digital_twin_models_list_options = {'max_item_count': -1}
+        if max_item_count != -1:
+            digital_twin_models_list_options= {'max_item_count': max_item_count}
+        return self._client.digital_twin_models.list(
+            dependencies_for=dependencies_for,
+            include_model_definition=include_model_definition,
+            digital_twin_models_list_options=digital_twin_models_list_options, **kwargs
+        )
+
+    def create_models(self, models=None, **kwargs):
+        # type: (List[object], **Any) -> List["models.ModelData"]
+        """Create one or more models. When any error occurs, no models are uploaded.
+
+        :param models: The set of models to create. Each string corresponds to exactly one model.
+        :type models: List[object]
+        :type **kwargs: any
+        :returns: The list of ModelData
+        :rtype: List[~azure.digitaltwins.models.ModelData]
+        :raises :class: `~azure.core.exceptions.HttpResponseError`
+        """
+        return self._client.digital_twin_models.add(models, **kwargs)
+
+    def decommission_model(self, model_id, model_patch, **kwargs):
+        # type: (str, List[object], **Any) -> List["models.ModelData"]
+        """Updates the metadata for a model
+
+        :param model_id: The id for the model. The id is globally unique and case sensitive.
+        :type model_id: str
+        :param update_model: An update specification described by JSON Patch. Only the decommissioned
+        property can be replaced.
+        :type update_model: List[object]
+        :type **kwargs: any
+        :returns: None
+        :rtype: None
+        :raises :class: `~azure.core.exceptions.HttpResponseError`
+        """
+        return self._client.digital_twin_models.update(model_id, model_patch, **kwargs)
+
+    def delete_model(self, model_id, **kwargs):
+        # type: (str, **Any) -> None
+        """Decommission a model using a json patch
+
+        :param model_id: The Id of the model to decommission
+        :type model_id: str
+        :**kwargs The operation options
+        :type **kwargs: any
+        :returns: None
+        :rtype: None
+        :raises :class: `~azure.core.exceptions.HttpResponseError`
+        """
+        return self._client.digital_twin_models.delete(model_id, **kwargs)
+
+    def get_event_route(self, event_route_id, **kwargs):
+        # type: (str, **Any) -> "models.EventRoute"
+        """Get an event route
+
+        :param event_route_id: The Id of the event route
+        :type event_route_id: str
+        :**kwargs The operation options
+        :type **kwargs: any
+        :returns: The EventRoute object
+        :rtype: object
+        :raises :class: `~azure.core.exceptions.HttpResponseError`
+        """
+        return self._client.event_routes.get_by_id(event_route_id, **kwargs)
+
+    def list_event_routes(self, max_item_count=-1, **kwargs):
+        # type: (int, **Any) -> "models.EventRoute"
+        """Retrieves all event routes
+
+        :param max_item_count: The maximum number of items to retrieve per request.
+        The server may choose to return less than the requested max.
+        :type max_item_count: str
+        :**kwargs The operation options
+        :type **kwargs: any
+        :returns: An iterator like instance of the EventRouteCollection
+        :rtype: ~azure.core.paging.ItemPaged[~azure.digitaltwins.models.EventRouteCollection]
+        :raises :class: `~azure.core.exceptions.HttpResponseError`
+        """
+        digital_twin_models_list_options = {'max_item_count': -1}
+        if max_item_count != -1:
+            digital_twin_models_list_options= {'max_item_count': max_item_count}
+
+        return self._client.event_routes.list(digital_twin_models_list_options, **kwargs)
+
+    def upsert_event_route(self, event_route_id, event_route, **kwargs):
+        # type: (str, "models.EventRoute", **Any) -> object
+        """Create or update an event route
+
+        :param event_route_id: The Id of the event route to create or update
+        :type event_route_id: str
+        :param event_route: The event route data.
+        :type event_route: ~azure.digitaltwins.models.EventRoute
+        :kwargs The operation options
+        :type any
+        :returns: None
+        :rtype: None
+        :raises :class: `~azure.core.exceptions.HttpResponseError`
+        """
+        return self._client.event_routes.add(event_route_id, event_route, **kwargs)
+
+    def delete_event_route(self, event_route_id, **kwargs):
+        # type: (str, **Any) -> object
+        """Delete an event route
+
+        :param event_route_id: The Id of the event route to delete
+        :type event_route_id: str
+        :kwargs The operation options
+        :type any
+        :returns: None
+        :rtype: None
+        :raises :class: `~azure.core.exceptions.HttpResponseError`
+        """
+        return self._client.event_routes.delete(event_route_id, **kwargs)
+
+    def query_twins(self, query_specification, **kwargs):
+        # type: ("models.QuerySpecification", **Any) -> "models.QueryResult"
+        """Query for digital twins
+
+        :param query_specification: The query specification to execute.
+        :type query_specification: ~azure.digitaltwins.models.QuerySpecification
+        :**kwargs The operation options
+        :type **kwargs: any
+        :returns: The QueryResult object
+        :rtype: ~azure.digitaltwins.models.QueryResult
+        :raises :class: `~azure.core.exceptions.HttpResponseError`
+        """
+        return self._client.query.query_twins(query_specification, **kwargs)

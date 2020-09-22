@@ -5,7 +5,7 @@
 import os
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
-from azure.digitaltwins import EventRoutesClient
+from azure.digitaltwins import DigitalTwinsClient
 
 # Simple example of how to:
 # - create a DigitalTwins Service Client using the DigitalTwinsClient constructor
@@ -27,11 +27,11 @@ try:
     # - AZURE_CLIENT_ID: The application (client) ID registered in the AAD tenant
     # - AZURE_CLIENT_SECRET: The client secret for the registered application
     credential = DefaultAzureCredential()
-    event_routes_service_client = EventRoutesClient(url, credential)
+    service_client = DigitalTwinsClient(url, credential)
 
     # Get event route
     event_route_id = "<EVENT_ROUTE_ID>"
-    event_route = event_routes_service_client.get_event_route(event_route_id)
+    event_route = service_client.get_event_route(event_route_id)
     print('EventRoute:')
     print(event_route)
 

@@ -7,11 +7,8 @@
 # --------------------------------------------------------------------------
 
 from ._digitaltwins_client import DigitalTwinsClient
-from ._digitaltwin_models_client import DigitalTwinModelsClient
-from ._event_routes_client import EventRoutesClient
-from ._query_client import QueryClient
 
-__all__ = ['DigitalTwinsClient', 'DigitalTwinModelsClient', 'EventRoutesClient', 'QueryClient']
+__all__ = ['DigitalTwinsClient']
 
 from ._version import VERSION
 

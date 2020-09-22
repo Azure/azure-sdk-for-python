@@ -5,7 +5,7 @@
 import os
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
-from azure.digitaltwins import DigitalTwinModelsClient
+from azure.digitaltwins import DigitalTwinsClient
 
 # Simple example of how to:
 # - create a DigitalTwins Service Client using the DigitalTwinsClient constructor
@@ -27,12 +27,12 @@ try:
     # - AZURE_CLIENT_ID: The application (client) ID registered in the AAD tenant
     # - AZURE_CLIENT_SECRET: The client secret for the registered application
     credential = DefaultAzureCredential()
-    digital_twin_models_service_client = DigitalTwinModelsClient(url, credential)
+    service_client = DigitalTwinsClient(url, credential)
 
     # List models
     # from the samples: dtmi:samples:Room1, dtmi:samples:Wifi1, dtmi:samples:Floor1, dtmi:samples:Building1
     dependecies_for = ["<MODEL_ID>"]
-    models = digital_twin_models_service_client.list_models(dependecies_for)
+    models = service_client.list_models(dependecies_for)
     for model in models:
         print(model + '\n')
 

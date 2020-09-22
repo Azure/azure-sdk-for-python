@@ -7,7 +7,7 @@ import json
 import uuid
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
-from azure.digitaltwins import DigitalTwinsClient, DigitalTwinModelsClient
+from azure.digitaltwins import DigitalTwinsClient
 
 # Scenario example of how to:
 # - create a DigitalTwins Service Client using the DigitalTwinsClient constructor
@@ -35,15 +35,14 @@ try:
     # - AZURE_CLIENT_ID: The application (client) ID registered in the AAD tenant
     # - AZURE_CLIENT_SECRET: The client secret for the registered application
     credential = DefaultAzureCredential()
-    twins_service_client = DigitalTwinsClient(url, credential)
-    model_service_client = DigitalTwinModelsClient(url, credential)
+    service_client = DigitalTwinsClient(url, credential)
 
     # Create model first from sample dtdl
     with open(r"dtdl\models\building.json") as f:
         dtdl_model_building = json.load(f)
     new_model_list = []
     new_model_list.append(dtdl_model_building)
-    model = model_service_client.create_models(new_model_list)
+    model = service_client.create_models(new_model_list)
     print('Created Model:')
     print(model)
 
@@ -52,12 +51,12 @@ try:
     with open(r"dtdl\digital_twins_\buildingTwin.json") as f:
         dtdl_digital_twins_building_twin = json.load(f)
 
-    created_twin = twins_service_client.upsert_digital_twin(digital_twin_id, dtdl_digital_twins_building_twin)
+    created_twin = service_client.upsert_digital_twin(digital_twin_id, dtdl_digital_twins_building_twin)
     print('Created Digital Twin:')
     print(created_twin)
 
     # Get digital twin
-    get_twin = twins_service_client.get_digital_twin(digital_twin_id)
+    get_twin = service_client.get_digital_twin(digital_twin_id)
     print('Get Digital Twin:')
     print(get_twin)
 
@@ -65,12 +64,12 @@ try:
     twin_patch = {
         "AverageTemperature": 42
     }
-    updated_twin = twins_service_client.update_digital_twin(digital_twin_id, twin_patch)
+    updated_twin = service_client.update_digital_twin(digital_twin_id, twin_patch)
     print('Updated Digital Twin:')
     print(updated_twin)
 
     # Delete digital twin
-    twins_service_client.delete_digital_twin(digital_twin_id)
+    service_client.delete_digital_twin(digital_twin_id)
 
 except HttpResponseError as e:
     print("\nThis sample has caught an error. {0}".format(e.message))

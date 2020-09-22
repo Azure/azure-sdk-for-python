@@ -6,7 +6,7 @@ import os
 import uuid
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
-from azure.digitaltwins import DigitalTwinModelsClient
+from azure.digitaltwins import DigitalTwinsClient
 
 # Scenario example of how to:
 # - create a DigitalTwins Service Client using the DigitalTwinsClient constructor
@@ -81,35 +81,35 @@ try:
     # - AZURE_CLIENT_ID: The application (client) ID registered in the AAD tenant
     # - AZURE_CLIENT_SECRET: The client secret for the registered application
     credential = DefaultAzureCredential()
-    model_service_client = DigitalTwinModelsClient(url, credential)
+    service_client = DigitalTwinsClient(url, credential)
 
     # Create models
     new_models = [temporary_component, temporary_model]
-    models = model_service_client.create_models(new_models)
+    models = service_client.create_models(new_models)
     print('Created Models:')
     print(models)
 
     # Get created models
-    get_component_model = model_service_client.get_model(component_id)
+    get_component_model = service_client.get_model(component_id)
     print('Get Component Models:')
     print(get_component_model)
 
-    get_model = model_service_client.get_model(model_id)
+    get_model = service_client.get_model(model_id)
     print('Get Model:')
     print(get_model)
 
     # List all models
-    listed_models = model_service_client.list_models(model_id)
+    listed_models = service_client.list_models(model_id)
     for model in listed_models:
         print(model + '\n')
 
     # Decomission models
-    model_service_client.decommission_model(model_id, "")
-    model_service_client.decommission_model(component_id, "")
+    service_client.decommission_model(model_id, "")
+    service_client.decommission_model(component_id, "")
 
     # Delete models
-    model_service_client.delete_model(model_id)
-    model_service_client.delete_model(component_id)
+    service_client.delete_model(model_id)
+    service_client.delete_model(component_id)
 
 except HttpResponseError as e:
     print("\nThis sample has caught an error. {0}".format(e.message))

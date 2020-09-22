@@ -6,7 +6,7 @@ import os
 import uuid
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
-from azure.digitaltwins import DigitalTwinsClient, DigitalTwinModelsClient
+from azure.digitaltwins import DigitalTwinsClient
 
 # Scenario example of how to:
 # - create a DigitalTwins Service Client using the DigitalTwinsClient constructor
@@ -85,17 +85,16 @@ try:
     # - AZURE_CLIENT_ID: The application (client) ID registered in the AAD tenant
     # - AZURE_CLIENT_SECRET: The client secret for the registered application
     credential = DefaultAzureCredential()
-    twins_service_client = DigitalTwinsClient(url, credential)
-    model_service_client = DigitalTwinModelsClient(url, credential)
+    service_client = DigitalTwinsClient(url, credential)
 
     # Create models
     new_models = [temporary_component, temporary_model]
-    models = model_service_client.create_models(new_models)
+    models = service_client.create_models(new_models)
     print('Created Models:')
     print(models)
 
     # Create digital twin
-    created_twin = twins_service_client.upsert_digital_twin(digital_twin_id, temporary_twin)
+    created_twin = service_client.upsert_digital_twin(digital_twin_id, temporary_twin)
     print('Created Digital Twin:')
     print(created_twin)
 
@@ -106,21 +105,21 @@ try:
         "ComponentProp1": "value2"
         }
     }
-    twins_service_client.update_component(digital_twin_id, component_path, options)
+    service_client.update_component(digital_twin_id, component_path, options)
 
     # Get component
-    get_component = await twins_service_client.get_component(digital_twin_id, component_path)
+    get_component = await service_client.get_component(digital_twin_id, component_path)
     print('Get Component:')
     print(get_component)
 
     # Delete digital twin
-    twins_service_client.delete_digital_twin(digital_twin_id)
+    service_client.delete_digital_twin(digital_twin_id)
 
     # Decomission model
-    model_service_client.decommission_model(model_id, "")
+    service_client.decommission_model(model_id, "")
 
     # Delete model
-    model_service_client.delete_model(model_id)
+    service_client.delete_model(model_id)
 
 except HttpResponseError as e:
     print("\nThis sample has caught an error. {0}".format(e.message))

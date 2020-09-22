@@ -25,9 +25,9 @@ try:
     # - AZURE_CLIENT_ID: The application (client) ID registered in the AAD tenant
     # - AZURE_CLIENT_SECRET: The client secret for the registered application
     credential = DefaultAzureCredential()
-    serviceClient = DigitalTwinsClient(url, credential)
+    service_client = DigitalTwinsClient(url, credential)
 
-    print(serviceClient)
+    print(service_client)
 
 except HttpResponseError as e:
     print("\nThis sample has caught an error. {0}".format(e.message))

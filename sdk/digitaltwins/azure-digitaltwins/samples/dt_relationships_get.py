@@ -27,14 +27,14 @@ try:
     # - AZURE_CLIENT_ID: The application (client) ID registered in the AAD tenant
     # - AZURE_CLIENT_SECRET: The client secret for the registered application
     credential = DefaultAzureCredential()
-    digital_twins_service_client = DigitalTwinsClient(url, credential)
+    service_client = DigitalTwinsClient(url, credential)
 
     # Get incoming relationship
     # from the samples: BuildingTwin, FloorTwin, HVACTwin, RoomTwin
     digital_twin_id = "<DIGITAL_TWIN_ID>"
     # from the samples: BuildingHasFloor, BuildingIsEquippedWithHVAC, HVACCoolsFloor, FloorContainsRoom
     relationship_id = "<RELATIONSHIP_ID>"
-    relationship = digital_twins_service_client.get_relationship(digital_twin_id, relationship_id)
+    relationship = service_client.get_relationship(digital_twin_id, relationship_id)
     print('Relationship:')
     print(relationship)
 
