@@ -6,7 +6,8 @@ from ._generated import models
 
 _event_mappings = {
     "Microsoft.Communication.ChatMemberAddedToThreadWithUser": models.ACSChatMemberAddedToThreadWithUserEventData,
-    "Microsoft.Communication.ChatMemberRemovedFromThreadWithUser": models.ACSChatMemberRemovedFromThreadWithUserEventData,
+    "Microsoft.Communication.ChatMemberRemovedFromThreadWithUser":
+    models.ACSChatMemberRemovedFromThreadWithUserEventData,
     "Microsoft.Communication.ChatMessageDeleted": models.ACSChatMessageDeletedEventData,
     "Microsoft.Communication.ChatMessageEdited": models.ACSChatMessageEditedEventData,
     "Microsoft.Communication.ChatMessageReceived": models.ACSChatMessageReceivedEventData,
