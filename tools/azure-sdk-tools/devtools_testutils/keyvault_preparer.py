@@ -15,6 +15,7 @@ from azure.mgmt.keyvault.models import (
     StoragePermissions,
     Permissions,
     Sku,
+    SkuFamily,
     SkuName,
     AccessPolicyEntry,
     VaultProperties,
@@ -87,7 +88,7 @@ class KeyVaultPreparer(AzureMgmtPreparer):
             ]
             properties = VaultProperties(
                 tenant_id=self.test_class_instance.get_settings_value("TENANT_ID"),
-                sku=Sku(name=self.sku),
+                sku=Sku(name=self.sku, family=SkuFamily.A),
                 access_policies=access_policies,
                 vault_uri=None,
                 enabled_for_deployment=self.enabled_for_deployment,
