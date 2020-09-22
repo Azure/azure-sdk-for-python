@@ -1,6 +1,0 @@
-[packaging]
-auto_update = false
-package_name = "azure-mgmt-communication"
-package_pprint_name = "Communication Management"
-package_doc_id = "communication"
-is_stable = false
