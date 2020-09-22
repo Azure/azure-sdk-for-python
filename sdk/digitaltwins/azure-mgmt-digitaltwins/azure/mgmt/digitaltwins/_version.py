@@ -9,28 +9,5 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum
+VERSION = "0.1.0"
 
-
-class ProvisioningState(str, Enum):
-
-    provisioning = "Provisioning"
-    deleting = "Deleting"
-    succeeded = "Succeeded"
-    failed = "Failed"
-    canceled = "Canceled"
-
-
-class Reason(str, Enum):
-
-    invalid = "Invalid"
-    already_exists = "AlreadyExists"
-
-
-class EndpointProvisioningState(str, Enum):
-
-    provisioning = "Provisioning"
-    deleting = "Deleting"
-    succeeded = "Succeeded"
-    failed = "Failed"
-    canceled = "Canceled"

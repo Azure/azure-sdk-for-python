@@ -1,0 +1,355 @@
+interactions:
+- request:
+    body: '{"location": "westus2"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '23'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-mgmt-digitaltwins/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_digitaltwins_test_digitaltwins98f9123e/providers/Microsoft.DigitalTwins/digitalTwinsInstances/myResourcexxx?api-version=2020-03-01-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_digitaltwins_test_digitaltwins98f9123e/providers/Microsoft.DigitalTwins/digitalTwinsInstances/myResourcexxx","name":"myResourcexxx","type":"Microsoft.DigitalTwins/digitalTwinsInstances","properties":{"provisioningState":"Provisioning","createdTime":"2020-09-22T06:43:54.571639Z","lastUpdatedTime":"2020-09-22T06:43:54.571639Z","hostName":null},"location":"westus2","sku":{"name":"S1"},"tags":null}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '485'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 22 Sep 2020 06:43:55 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_digitaltwins_test_digitaltwins98f9123e/providers/Microsoft.DigitalTwins/digitalTwinsInstances/myResourcexxx/operationResults/Create?api-version=2020-03-01-preview
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1197'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-digitaltwins/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_digitaltwins_test_digitaltwins98f9123e/providers/Microsoft.DigitalTwins/digitalTwinsInstances/myResourcexxx/operationResults/Create?api-version=2020-03-01-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_digitaltwins_test_digitaltwins98f9123e/providers/Microsoft.DigitalTwins/digitalTwinsInstances/myResourcexxx","name":"myResourcexxx","type":"Microsoft.DigitalTwins/digitalTwinsInstances","properties":{"provisioningState":"Succeeded","createdTime":"2020-09-22T06:43:54.571639Z","lastUpdatedTime":"2020-09-22T06:44:03.1338911Z","hostName":"myResourcexxx.api.wus2.digitaltwins.azure.net"},"location":"westus2","sku":{"name":"S1"},"tags":null}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '526'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 22 Sep 2020 06:44:06 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-digitaltwins/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_digitaltwins_test_digitaltwins98f9123e/providers/Microsoft.DigitalTwins/digitalTwinsInstances/myResourcexxx?api-version=2020-03-01-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_digitaltwins_test_digitaltwins98f9123e/providers/Microsoft.DigitalTwins/digitalTwinsInstances/myResourcexxx","name":"myResourcexxx","type":"Microsoft.DigitalTwins/digitalTwinsInstances","properties":{"provisioningState":"Succeeded","createdTime":"2020-09-22T06:43:54.571639Z","lastUpdatedTime":"2020-09-22T06:44:03.1338911Z","hostName":"myResourcexxx.api.wus2.digitaltwins.azure.net"},"location":"westus2","sku":{"name":"S1"},"tags":null}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '526'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 22 Sep 2020 06:44:06 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"tags": {"purpose": "dev"}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '28'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-mgmt-digitaltwins/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: PATCH
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_digitaltwins_test_digitaltwins98f9123e/providers/Microsoft.DigitalTwins/digitalTwinsInstances/myResourcexxx?api-version=2020-03-01-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_digitaltwins_test_digitaltwins98f9123e/providers/Microsoft.DigitalTwins/digitalTwinsInstances/myResourcexxx","name":"myResourcexxx","type":"Microsoft.DigitalTwins/digitalTwinsInstances","properties":{"provisioningState":"Succeeded","createdTime":"2020-09-22T06:43:54.571639Z","lastUpdatedTime":"2020-09-22T06:44:08.0489515Z","hostName":"myResourcexxx.api.wus2.digitaltwins.azure.net"},"location":"westus2","sku":{"name":"S1"},"tags":{"purpose":"dev"}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '539'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 22 Sep 2020 06:44:08 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1196'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"name": "myadtinstance", "type": "Microsoft.DigitalTwins/digitalTwinsInstances"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '81'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-mgmt-digitaltwins/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DigitalTwins/locations/westus2/checkNameAvailability?api-version=2020-03-01-preview
+  response:
+    body:
+      string: '{"nameAvailable":true,"reason":"NameIsAvailable","message":"''myadtinstance''
+        is available."}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '91'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 22 Sep 2020 06:44:09 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-azure-mgmt-digitaltwins/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_digitaltwins_test_digitaltwins98f9123e/providers/Microsoft.DigitalTwins/digitalTwinsInstances/myResourcexxx?api-version=2020-03-01-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_digitaltwins_test_digitaltwins98f9123e/providers/Microsoft.DigitalTwins/digitalTwinsInstances/myResourcexxx","name":"myResourcexxx","type":"Microsoft.DigitalTwins/digitalTwinsInstances","properties":{"provisioningState":"Deleting","createdTime":"0001-01-01T00:00:00","lastUpdatedTime":"0001-01-01T00:00:00","hostName":null},"location":null,"tags":null}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '440'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 22 Sep 2020 06:44:09 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_digitaltwins_test_digitaltwins98f9123e/providers/Microsoft.DigitalTwins/digitalTwinsInstances/myResourcexxx/operationResults/Delete?api-version=2020-03-01-preview
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-deletes:
+      - '14998'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-digitaltwins/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_digitaltwins_test_digitaltwins98f9123e/providers/Microsoft.DigitalTwins/digitalTwinsInstances/myResourcexxx/operationResults/Delete?api-version=2020-03-01-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_digitaltwins_test_digitaltwins98f9123e/providers/Microsoft.DigitalTwins/digitalTwinsInstances/myResourcexxx","name":"myResourcexxx","type":"Microsoft.DigitalTwins/digitalTwinsInstances","properties":{"provisioningState":"Deleting","createdTime":"2020-09-22T06:43:54.571639Z","lastUpdatedTime":"2020-09-22T06:44:10.5555984Z","hostName":"myResourcexxx.api.wus2.digitaltwins.azure.net"},"location":"westus2","sku":{"name":"S1"},"tags":{"purpose":"dev"}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '538'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 22 Sep 2020 06:44:20 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_digitaltwins_test_digitaltwins98f9123e/providers/Microsoft.DigitalTwins/digitalTwinsInstances/myResourcexxx/operationResults/Delete?api-version=2020-03-01-preview
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-digitaltwins/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_digitaltwins_test_digitaltwins98f9123e/providers/Microsoft.DigitalTwins/digitalTwinsInstances/myResourcexxx/operationResults/Delete?api-version=2020-03-01-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_digitaltwins_test_digitaltwins98f9123e/providers/Microsoft.DigitalTwins/digitalTwinsInstances/myResourcexxx","name":"myResourcexxx","type":"Microsoft.DigitalTwins/digitalTwinsInstances","properties":{"provisioningState":"Deleted","createdTime":"0001-01-01T00:00:00","lastUpdatedTime":"0001-01-01T00:00:00","hostName":null},"location":null,"tags":null}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '439'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 22 Sep 2020 06:44:31 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+version: 1
