@@ -10,6 +10,8 @@
   - `ServiceBusSession`: `get_state`, `set_state` and `renew_lock`
   - `ReceivedMessage`: `renew_lock`
 
+**Breaking Changes**
+* Passing any type other than `ReceiveMode` as parameter `receive_mode` now throws a `TypeError` instead of `AttributeError`.
 
 ## 7.0.0b6 (2020-09-10)
 
