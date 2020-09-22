@@ -996,7 +996,7 @@ class DedicatedHost(Resource):
         'type': {'readonly': True},
         'location': {'required': True},
         'sku': {'required': True},
-        'platform_fault_domain': {'maximum': 2, 'minimum': 0},
+        'platform_fault_domain': {'minimum': 0},
         'host_id': {'readonly': True},
         'virtual_machines': {'readonly': True},
         'provisioning_time': {'readonly': True},
@@ -1134,7 +1134,7 @@ class DedicatedHostGroup(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
-        'platform_fault_domain_count': {'maximum': 3, 'minimum': 1},
+        'platform_fault_domain_count': {'minimum': 1},
         'hosts': {'readonly': True},
         'instance_view': {'readonly': True},
     }
@@ -1251,7 +1251,7 @@ class DedicatedHostGroupUpdate(UpdateResource):
     """
 
     _validation = {
-        'platform_fault_domain_count': {'maximum': 3, 'minimum': 1},
+        'platform_fault_domain_count': {'minimum': 1},
         'hosts': {'readonly': True},
         'instance_view': {'readonly': True},
     }
@@ -1423,7 +1423,7 @@ class DedicatedHostUpdate(UpdateResource):
     """
 
     _validation = {
-        'platform_fault_domain': {'maximum': 2, 'minimum': 0},
+        'platform_fault_domain': {'minimum': 0},
         'host_id': {'readonly': True},
         'virtual_machines': {'readonly': True},
         'provisioning_time': {'readonly': True},
