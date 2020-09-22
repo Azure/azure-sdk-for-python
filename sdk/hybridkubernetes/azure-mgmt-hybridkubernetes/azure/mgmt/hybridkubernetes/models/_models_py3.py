@@ -13,6 +13,55 @@ from msrest.serialization import Model
 from msrest.exceptions import HttpOperationError
 
 
+class AuthenticationDetails(Model):
+    """AuthenticationDetails.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar authentication_method: Required. The mode of client authentication.
+     Default value: "Token" .
+    :vartype authentication_method: str
+    :param value: Required.
+    :type value:
+     ~azure.mgmt.hybridkubernetes.models.AuthenticationDetailsValue
+    """
+
+    _validation = {
+        'authentication_method': {'required': True, 'constant': True},
+        'value': {'required': True},
+    }
+
+    _attribute_map = {
+        'authentication_method': {'key': 'authenticationMethod', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'AuthenticationDetailsValue'},
+    }
+
+    authentication_method = "Token"
+
+    def __init__(self, *, value, **kwargs) -> None:
+        super(AuthenticationDetails, self).__init__(**kwargs)
+        self.value = value
+
+
+class AuthenticationDetailsValue(Model):
+    """AuthenticationDetailsValue.
+
+    :param token: Authentication token.
+    :type token: str
+    """
+
+    _attribute_map = {
+        'token': {'key': 'token', 'type': 'str'},
+    }
+
+    def __init__(self, *, token: str=None, **kwargs) -> None:
+        super(AuthenticationDetailsValue, self).__init__(**kwargs)
+        self.token = token
+
+
 class Resource(Model):
     """Resource.
 
