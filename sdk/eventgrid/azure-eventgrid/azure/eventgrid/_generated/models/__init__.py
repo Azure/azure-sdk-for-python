@@ -285,7 +285,7 @@ except (SyntaxError, ImportError):
     from ._models import WebSlotSwapWithPreviewCancelledEventData  # type: ignore
     from ._models import WebSlotSwapWithPreviewStartedEventData  # type: ignore
 
-from ._event_grid_client_enums import (
+from ._event_grid_publisher_client_enums import (
     AppAction,
     AppServicePlanAction,
     AsyncStatus,

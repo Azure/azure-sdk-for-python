@@ -6,8 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._event_grid_client_operations_async import EventGridClientOperationsMixin
+from ._event_grid_publisher_client_operations_async import EventGridPublisherClientOperationsMixin
 
 __all__ = [
-    'EventGridClientOperationsMixin',
+    'EventGridPublisherClientOperationsMixin',
 ]

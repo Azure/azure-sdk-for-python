@@ -5,7 +5,7 @@
 ### Configuration
 
 ```yaml
-title: EventGridClient
+title: EventGridPublisherClient
 description: EventGrid Python Publisher Client
 generated-metadata: false
 license-header: MICROSOFT_MIT_NO_VERSION

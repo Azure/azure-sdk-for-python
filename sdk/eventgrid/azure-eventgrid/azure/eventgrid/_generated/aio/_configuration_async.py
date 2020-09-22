@@ -13,8 +13,8 @@ from azure.core.pipeline import policies
 
 VERSION = "unknown"
 
-class EventGridClientConfiguration(Configuration):
-    """Configuration for EventGridClient.
+class EventGridPublisherClientConfiguration(Configuration):
+    """Configuration for EventGridPublisherClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
@@ -25,10 +25,10 @@ class EventGridClientConfiguration(Configuration):
         self,
         **kwargs: Any
     ) -> None:
-        super(EventGridClientConfiguration, self).__init__(**kwargs)
+        super(EventGridPublisherClientConfiguration, self).__init__(**kwargs)
 
         self.api_version = "2018-01-01"
-        kwargs.setdefault('sdk_moniker', 'eventgridclient/{}'.format(VERSION))
+        kwargs.setdefault('sdk_moniker', 'eventgridpublisherclient/{}'.format(VERSION))
         self._configure(**kwargs)
 
     def _configure(
