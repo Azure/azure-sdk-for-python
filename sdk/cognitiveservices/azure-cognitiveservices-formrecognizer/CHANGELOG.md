@@ -1,5 +1,8 @@
 # Release History
 
+## 0.1.2 (Unreleased)
+
+
 ## 0.1.1 (2020-09-22)
 
 - Package is deprecated. This version has endpoints that are no longer active. To use the more recent version of the Azure Form Recognizer service,
