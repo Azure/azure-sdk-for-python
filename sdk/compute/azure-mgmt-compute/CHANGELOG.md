@@ -1,5 +1,11 @@
 # Release History
 
+## 13.1.1 (2020-09-22)
+
+**Bugfixes**
+
+  - Remove maximum condition in platform_fault_domain and platform_fault_domain_count
+  
 ## 13.1.0 (2020-09-08)
 
 **Features**
