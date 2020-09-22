@@ -289,7 +289,6 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             request, **kwargs
         )
         response = pipeline_response.http_response
-
         try:
             if response.status_code not in [202]:
                 raise HttpResponseError(response=response)
@@ -302,7 +301,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
                         response=response, parts=parts
                     )
                     raise error
-                return iter(parts)
+                # return iter(parts)
             return parts
         except HttpResponseError as error:
             _process_table_error(error)

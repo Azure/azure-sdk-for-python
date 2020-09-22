@@ -623,7 +623,7 @@ class StorageTableBatchTest(TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("This does not throw an error, but it should")
+    # @pytest.mark.skip("This does not throw an error, but it should")
     @GlobalStorageAccountPreparer()
     def test_batch_same_row_operations_fail(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -640,14 +640,14 @@ class StorageTableBatchTest(TableTestCase):
             batch.update_entity(entity)
             entity = self._create_random_entity_dict(
                 '001', 'batch_negative_1')
-
+            batch.update_entity(entity, mode=UpdateMode.MERGE)
             # Assert
             with self.assertRaises(HttpResponseError):
-                batch.update_entity(entity, mode=UpdateMode.MERGE)
+                self.table.commit_batch(batch)
+
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("This does not throw an error, but it should")
     @GlobalStorageAccountPreparer()
     def test_batch_different_partition_operations_fail(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -668,12 +668,11 @@ class StorageTableBatchTest(TableTestCase):
             batch.create_entity(entity)
 
             # Assert
-            with self.assertRaises(ValueError):
-                batch.create_entity(entity)
+            with self.assertRaises(HttpResponseError):
+                self.table.commit_batch(batch)
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("This does not throw an error, but it should")
     @GlobalStorageAccountPreparer()
     def test_batch_too_many_ops(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -683,19 +682,19 @@ class StorageTableBatchTest(TableTestCase):
             self.table.create_entity(entity)
 
             # Act
-            with self.assertRaises(ValueError):
+            with self.assertRaises(HttpResponseError):
                 batch = self.table.create_batch()
                 for i in range(0, 101):
                     entity = TableEntity()
                     entity.PartitionKey = 'large'
                     entity.RowKey = 'item{0}'.format(i)
                     batch.create_entity(entity)
+                self.table.commit_batch(batch)
 
             # Assert
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("This does not throw an error, but it should")
     @GlobalStorageAccountPreparer()
     def test_batch_different_partition_keys(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -706,8 +705,8 @@ class StorageTableBatchTest(TableTestCase):
 
             batch = self.table.create_batch()
             batch.create_entity(entity)
-            batch.create_entity(entity2)
-            self.table.commit_batch(batch)
+            with self.assertRaises(PartialBatchErrorException):
+                batch.create_entity(entity2)
 
             # Assert
         finally:

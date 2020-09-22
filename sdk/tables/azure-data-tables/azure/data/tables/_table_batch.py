@@ -116,7 +116,7 @@ class TableBatchOperations(object):
         entity, # type: Union[Dict, TableEntity]
         timeout=None, # type: Optional[int]
         request_id_parameter=None, # type: Optional[str]
-        response_preference=None, # type: Optional[Union[str, "models.ResponseFormat"]]
+        response_preference="return-no-content", # type: Optional[Union[str, "models.ResponseFormat"]]
         query_options=None, # type: Optional["models.QueryOptions"]
         **kwargs # type: Any
     ):
