@@ -53,7 +53,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 for i in range(10):
                     message = Message("Handler message no. {}".format(i))
                     await sender.send_messages(message, timeout=5)
-                    assert int(sender._handler._msg_timeout) == 5 * 1000
+                    assert 4990 <= sender._handler._msg_timeout <= 5000  # initial retry logic consumes cycles, usually just 1ms
 
             with pytest.raises(ServiceBusConnectionError):
                 await (sb_client.get_queue_session_receiver(servicebus_queue.name, session_id="test", max_wait_time=5))._open_with_retry()

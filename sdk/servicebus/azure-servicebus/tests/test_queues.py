@@ -62,7 +62,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
         with sb_client.get_queue_sender(servicebus_queue.name) as sender:
             for i in range(5):
                 sender.send_messages(Message("Message {}".format(i)), timeout=5)
-                assert int(sender._handler._msg_timeout) == 5 * 1000
+                assert 4990 <= sender._handler._msg_timeout <= 5000  # initial retry logic consumes some cycles, usually just 1ms
 
         with sb_client.get_queue_receiver(servicebus_queue.name, 
                                           receive_mode=ReceiveMode.ReceiveAndDelete, 
