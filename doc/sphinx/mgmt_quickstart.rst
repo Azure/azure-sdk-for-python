@@ -1,21 +1,21 @@
-Quickstart Tutorial - Resource Management (Preview Libraries)
+Quickstart Tutorial - Resource Management
 ===============================================================
 
-We are excited to announce that a new set of management libraries are now in Public Preview.
+We are excited to announce that a new set of management libraries are now generally available.
 Those packages share a number of new features such as Azure Identity support,
 HTTP pipeline, error-handling.,etc, and they also follow the new Azure SDK guidelines which
 create easy-to-use APIs that are idiomatic, compatible, and dependable.
 
-You can find the details of those new libraries `here <https://azure.github.io/azure-sdk/releases/latest/#python>`__
+You can find the details of those new libraries `here <https://azure.github.io/azure-sdk/releases/latest/mgmt/python.html>`__
 
 In this basic quickstart guide, we will walk you through how to
-authenticate to Azure using the preview libraries and start interacting with
+authenticate to Azure using the new libraries and start interacting with
 Azure resources. There are several possible approaches to
 authentication. This document illustrates the most common scenario
 
 Migration Guide
 ---------------
-If you are an existing user of the older version of Azure management library for Python and you are looking for a migration guide to the new beta version of the SDK, please refer to `this migration guide here <https://github.com/Azure/azure-sdk-for-python/blob/master/doc/sphinx/python_mgmt_migration_guide.rst>`__
+If you are an existing user of the older version of Azure management library for Python and you are looking for a migration guide to the new version of the SDK, please refer to `this migration guide here <https://github.com/Azure/azure-sdk-for-python/blob/master/doc/sphinx/python_mgmt_migration_guide.rst>`__
 
 Prerequisites
 -------------
@@ -253,11 +253,11 @@ Note that asyncio in Windows is underpowered and please take caution when using 
     
 Code Samples
 -------------------------
-For more code samples that demonstrate how to use our SDK to interact with Azure services, please visit `here <https://docs.microsoft.com/samples/browse/?languages=python&term=Getting%20started%20-%20Managing>`__
+For more code samples that demonstrate how to use our SDK to interact with Azure services, please visit `here <https://docs.microsoft.com/samples/browse/?languages=python&term=Getting%20started%20-%20Managing>`__. You can also view the Github repo that contains the code samples `here <https://github.com/Azure-Samples/azure-samples-python-management>`__
 
 Need help?
 ----------
-- File an issue via `Github Issues <https://github.com/Azure/azure-sdk-for-python/issues>`__ and make sure you add the "Preview" label to the issue
+- File an issue via `Github Issues <https://github.com/Azure/azure-sdk-for-python/issues>`__
 - Check `previous questions <https://stackoverflow.com/questions/tagged/azure+python>`__ or ask new ones on StackOverflow using azure and python tags.
 
 Contributing
