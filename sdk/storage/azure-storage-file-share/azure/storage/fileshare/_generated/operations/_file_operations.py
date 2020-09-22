@@ -1245,8 +1245,8 @@ class FileOperations(object):
          ~azure.storage.fileshare.models.LeaseAccessConditions
         :param callable cls: A custom type or function that will be passed the
          direct response
-        :return: list or the result of cls(response)
-        :rtype: list[~azure.storage.fileshare.models.Range]
+        :return: ShareFileRangeList or the result of cls(response)
+        :rtype: ~azure.storage.fileshare.models.ShareFileRangeList
         :raises:
          :class:`StorageErrorException<azure.storage.fileshare.models.StorageErrorException>`
         """
@@ -1295,7 +1295,7 @@ class FileOperations(object):
         header_dict = {}
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('[Range]', response)
+            deserialized = self._deserialize('ShareFileRangeList', response)
             header_dict = {
                 'Last-Modified': self._deserialize('rfc-1123', response.headers.get('Last-Modified')),
                 'ETag': self._deserialize('str', response.headers.get('ETag')),

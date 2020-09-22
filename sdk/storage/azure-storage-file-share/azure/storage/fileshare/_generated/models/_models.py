@@ -39,6 +39,36 @@ class AccessPolicy(Model):
         self.permission = kwargs.get('permission', None)
 
 
+class ClearRange(Model):
+    """ClearRange.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param start: Required.
+    :type start: long
+    :param end: Required.
+    :type end: long
+    """
+
+    _validation = {
+        'start': {'required': True},
+        'end': {'required': True},
+    }
+
+    _attribute_map = {
+        'start': {'key': 'Start', 'type': 'long', 'xml': {'name': 'Start'}},
+        'end': {'key': 'End', 'type': 'long', 'xml': {'name': 'End'}},
+    }
+    _xml_map = {
+        'name': 'ClearRange'
+    }
+
+    def __init__(self, **kwargs):
+        super(ClearRange, self).__init__(**kwargs)
+        self.start = kwargs.get('start', None)
+        self.end = kwargs.get('end', None)
+
+
 class CopyFileSmbInfo(Model):
     """Additional parameters for start_copy operation.
 
@@ -273,6 +303,36 @@ class FileProperty(Model):
     def __init__(self, **kwargs):
         super(FileProperty, self).__init__(**kwargs)
         self.content_length = kwargs.get('content_length', None)
+
+
+class FileRange(Model):
+    """An Azure Storage file range.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param start: Required. Start of the range.
+    :type start: long
+    :param end: Required. End of the range.
+    :type end: long
+    """
+
+    _validation = {
+        'start': {'required': True},
+        'end': {'required': True},
+    }
+
+    _attribute_map = {
+        'start': {'key': 'Start', 'type': 'long', 'xml': {'name': 'Start'}},
+        'end': {'key': 'End', 'type': 'long', 'xml': {'name': 'End'}},
+    }
+    _xml_map = {
+        'name': 'Range'
+    }
+
+    def __init__(self, **kwargs):
+        super(FileRange, self).__init__(**kwargs)
+        self.start = kwargs.get('start', None)
+        self.end = kwargs.get('end', None)
 
 
 class FilesAndDirectoriesListSegment(Model):
@@ -564,36 +624,6 @@ class Metrics(Model):
         self.retention_policy = kwargs.get('retention_policy', None)
 
 
-class Range(Model):
-    """An Azure Storage file range.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param start: Required. Start of the range.
-    :type start: long
-    :param end: Required. End of the range.
-    :type end: long
-    """
-
-    _validation = {
-        'start': {'required': True},
-        'end': {'required': True},
-    }
-
-    _attribute_map = {
-        'start': {'key': 'Start', 'type': 'long', 'xml': {'name': 'Start'}},
-        'end': {'key': 'End', 'type': 'long', 'xml': {'name': 'End'}},
-    }
-    _xml_map = {
-        'name': 'Range'
-    }
-
-    def __init__(self, **kwargs):
-        super(Range, self).__init__(**kwargs)
-        self.start = kwargs.get('start', None)
-        self.end = kwargs.get('end', None)
-
-
 class RetentionPolicy(Model):
     """The retention policy.
 
@@ -625,6 +655,28 @@ class RetentionPolicy(Model):
         super(RetentionPolicy, self).__init__(**kwargs)
         self.enabled = kwargs.get('enabled', None)
         self.days = kwargs.get('days', None)
+
+
+class ShareFileRangeList(Model):
+    """The list of file ranges.
+
+    :param ranges:
+    :type ranges: list[~azure.storage.fileshare.models.FileRange]
+    :param clear_ranges:
+    :type clear_ranges: list[~azure.storage.fileshare.models.ClearRange]
+    """
+
+    _attribute_map = {
+        'ranges': {'key': 'Ranges', 'type': '[FileRange]', 'xml': {'name': 'Ranges', 'itemsName': 'Range'}},
+        'clear_ranges': {'key': 'ClearRanges', 'type': '[ClearRange]', 'xml': {'name': 'ClearRanges', 'itemsName': 'ClearRange'}},
+    }
+    _xml_map = {
+    }
+
+    def __init__(self, **kwargs):
+        super(ShareFileRangeList, self).__init__(**kwargs)
+        self.ranges = kwargs.get('ranges', None)
+        self.clear_ranges = kwargs.get('clear_ranges', None)
 
 
 class ShareItem(Model):

@@ -11,12 +11,14 @@
 
 try:
     from ._models_py3 import AccessPolicy
+    from ._models_py3 import ClearRange
     from ._models_py3 import CopyFileSmbInfo
     from ._models_py3 import CorsRule
     from ._models_py3 import DirectoryItem
     from ._models_py3 import FileHTTPHeaders
     from ._models_py3 import FileItem
     from ._models_py3 import FileProperty
+    from ._models_py3 import FileRange
     from ._models_py3 import FilesAndDirectoriesListSegment
     from ._models_py3 import HandleItem
     from ._models_py3 import LeaseAccessConditions
@@ -24,8 +26,8 @@ try:
     from ._models_py3 import ListHandlesResponse
     from ._models_py3 import ListSharesResponse
     from ._models_py3 import Metrics
-    from ._models_py3 import Range
     from ._models_py3 import RetentionPolicy
+    from ._models_py3 import ShareFileRangeList
     from ._models_py3 import ShareItem
     from ._models_py3 import SharePermission
     from ._models_py3 import ShareProperties
@@ -39,12 +41,14 @@ try:
     from ._models_py3 import StorageServiceProperties
 except (SyntaxError, ImportError):
     from ._models import AccessPolicy
+    from ._models import ClearRange
     from ._models import CopyFileSmbInfo
     from ._models import CorsRule
     from ._models import DirectoryItem
     from ._models import FileHTTPHeaders
     from ._models import FileItem
     from ._models import FileProperty
+    from ._models import FileRange
     from ._models import FilesAndDirectoriesListSegment
     from ._models import HandleItem
     from ._models import LeaseAccessConditions
@@ -52,8 +56,8 @@ except (SyntaxError, ImportError):
     from ._models import ListHandlesResponse
     from ._models import ListSharesResponse
     from ._models import Metrics
-    from ._models import Range
     from ._models import RetentionPolicy
+    from ._models import ShareFileRangeList
     from ._models import ShareItem
     from ._models import SharePermission
     from ._models import ShareProperties
@@ -79,12 +83,14 @@ from ._azure_file_storage_enums import (
 
 __all__ = [
     'AccessPolicy',
+    'ClearRange',
     'CopyFileSmbInfo',
     'CorsRule',
     'DirectoryItem',
     'FileHTTPHeaders',
     'FileItem',
     'FileProperty',
+    'FileRange',
     'FilesAndDirectoriesListSegment',
     'HandleItem',
     'LeaseAccessConditions',
@@ -92,8 +98,8 @@ __all__ = [
     'ListHandlesResponse',
     'ListSharesResponse',
     'Metrics',
-    'Range',
     'RetentionPolicy',
+    'ShareFileRangeList',
     'ShareItem',
     'SharePermission',
     'ShareProperties',
