@@ -266,12 +266,10 @@ class TableTestAsync(AsyncTableTestCase):
         tables2_len = 0
         async for _ in tables2:
             tables2_len += 1
-        # table1_len = len([t async for t in tables1])
-        # table2_len = len([t async for t in tables2])
 
         # Assert
-        self.assertEqual(table1_len, 2)
-        self.assertEqual(table2_len, 2)
+        self.assertEqual(tables1_len, 2)
+        self.assertEqual(tables2_len, 2)
         self.assertNotEqual(tables1, tables2)
 
     @GlobalStorageAccountPreparer()
