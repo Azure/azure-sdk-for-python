@@ -1,7 +1,7 @@
 ## NOTE: This package has been deprecated
 
-Endpoints are no longer active. To use the Azure Form Recognizer service, please install the azure-ai-formrecognizer package found here:
-https://pypi.org/project/azure-ai-formrecognizer/
+This version has endpoints that are no longer active. To use the more recent version of the Azure Form Recognizer service,
+please install the azure-ai-formrecognizer package found here: https://pypi.org/project/azure-ai-formrecognizer/
 
 ## Microsoft Azure SDK for Python
 
