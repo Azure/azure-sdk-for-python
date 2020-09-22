@@ -495,13 +495,13 @@ class StorageTableClientTest(TableTestCase):
         self.assertEqual(service.scheme, 'https')
         self.assertEqual(service.table_name, 'bar')
 
-    @pytest.mark.skip("Issues with determining account name")
+    # @pytest.mark.skip("Issues with determining account name")
     @CachedResourceGroupPreparer(name_prefix="cosmostables")
     @CachedCosmosAccountPreparer(name_prefix="cosmostables")
     async def test_create_table_client_with_complete_url_async(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
-        table_url = "https://{}.table.core.windows.net:443/foo".format(cosmos_account.name)
-        service = TableClient(account_url=table_url, table_name='bar', credential=cosmos_account_key)
+        table_url = "https://{}.table.cosmos.azure.com:443/foo".format(cosmos_account.name)
+        service = TableClient(table_url, table_name='bar', credential=cosmos_account_key)
 
             # Assert
         self.assertEqual(service.scheme, 'https')
@@ -512,7 +512,7 @@ class StorageTableClientTest(TableTestCase):
     @CachedCosmosAccountPreparer(name_prefix="cosmostables")
     async def test_create_table_client_with_invalid_name_async(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
-        table_url = "https://{}.table.core.windows.net:443/foo".format(cosmos_account.name)
+        table_url = "https://{}.table.cosmos.azure.com:443/foo".format(cosmos_account.name)
         invalid_table_name = "my_table"
 
         # Assert
