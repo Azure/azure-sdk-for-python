@@ -31,6 +31,9 @@
 /sdk/batch/                                                          @bgklein @xingwu1
 /sdk/cognitiveservices/azure-cognitiveservices-vision-customvision/  @areddish
 
+# PRLabel: %Communication
+/sdk/communication/                                                          @RezaJooyandeh @turalf
+
 # PRLabel: %KeyVault
 /sdk/keyvault/                                                       @schaabs @chlowell @iscai-msft
 
