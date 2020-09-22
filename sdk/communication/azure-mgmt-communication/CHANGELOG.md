@@ -1,5 +1,9 @@
 # Release History
 
-## 0.1.0 (1970-01-01)
+## 1.0.0b2 (2020-09-22)
+
+* Updates for track 2
+
+## 1.0.0b1 (2020-09-22)
 
 * Initial Release
