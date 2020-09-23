@@ -43,6 +43,7 @@ class FileSystemProperties(object):
     dictionary interface, for example: ``file_system_props["last_modified"]``.
     Additionally, the file system name is available as ``file_system_props["name"]``.
     """
+
     def __init__(self):
         self.name = None
         self.last_modified = None
@@ -125,6 +126,7 @@ class DirectoryProperties(DictMixin):
         before being permanently deleted by the service.
     :var ~azure.storage.filedatalake.ContentSettings content_settings:
     """
+
     def __init__(self, **kwargs):
         self.name = kwargs.get('name')
         self.etag = kwargs.get('ETag')
@@ -155,6 +157,7 @@ class FileProperties(DictMixin):
         before being permanently deleted by the service.
     :var ~azure.storage.filedatalake.ContentSettings content_settings:
     """
+
     def __init__(self, **kwargs):
         self.name = kwargs.get('name')
         self.etag = kwargs.get('ETag')
@@ -187,6 +190,7 @@ class PathProperties(object):
         conditionally.
     :ivar content_length: the size of file if the path is a file.
     """
+
     def __init__(self, **kwargs):
         super(PathProperties, self).__init__(
             **kwargs
@@ -224,10 +228,6 @@ class LeaseProperties(BlobLeaseProperties):
     :ivar str duration:
         When a file is leased, specifies whether the lease is of infinite or fixed duration.
     """
-    def __init__(self, **kwargs):
-        super(LeaseProperties, self).__init__(
-            **kwargs
-        )
 
 
 class ContentSettings(BlobContentSettings):
@@ -276,6 +276,7 @@ class ContentSettings(BlobContentSettings):
         header is stored so that the client can check for message content
         integrity.
     """
+
     def __init__(
             self, **kwargs):
         super(ContentSettings, self).__init__(
@@ -305,6 +306,7 @@ class FileSystemSasPermissions(ContainerSasPermissions):
     :param bool list:
         List paths in the file system.
     """
+
     def __init__(self, read=False, write=False, delete=False, list=False  # pylint: disable=redefined-builtin
                  ):
         super(FileSystemSasPermissions, self).__init__(
@@ -325,6 +327,7 @@ class DirectorySasPermissions(BlobSasPermissions):
     :param bool delete:
         Delete the directory.
     """
+
     def __init__(self, read=False, create=False, write=False,
                  delete=False):
         super(DirectorySasPermissions, self).__init__(
@@ -347,6 +350,7 @@ class FileSasPermissions(BlobSasPermissions):
     :param bool delete:
         Delete the file.
     """
+
     def __init__(self, read=False, create=False, write=False,
                  delete=False):
         super(FileSasPermissions, self).__init__(
@@ -398,6 +402,7 @@ class AccessPolicy(BlobAccessPolicy):
         be UTC.
     :paramtype start: ~datetime.datetime or str
     """
+
     def __init__(self, permission=None, expiry=None, **kwargs):
         super(AccessPolicy, self).__init__(
             permission=permission, expiry=expiry, start=kwargs.pop('start', None)
@@ -417,6 +422,7 @@ class ResourceTypes(BlobResourceTypes):
         Access to object-level APIs for
         files(e.g. Create File, etc.)
     """
+
     def __init__(self, service=False, file_system=False, object=False  # pylint: disable=redefined-builtin
                  ):
         super(ResourceTypes, self).__init__(service=service, container=file_system, object=object)
@@ -445,6 +451,7 @@ class UserDelegationKey(BlobUserDelegationKey):
     :ivar str value:
         The user delegation key.
     """
+
     @classmethod
     def _from_generated(cls, generated):
         delegation_key = cls()
@@ -537,8 +544,84 @@ class DataLakeFileQueryError(object):
     :ivar int position:
         The blob offset at which the error occurred.
     """
+
     def __init__(self, error=None, is_fatal=False, description=None, position=None):
         self.error = error
         self.is_fatal = is_fatal
         self.description = description
         self.position = position
+
+
+class AccessControlChangeCounters(object):
+    """
+    AccessControlChangeCounters contains counts of operations that change Access Control Lists recursively.
+
+    :ivar int directories_successful:
+        Number of directories where Access Control List has been updated successfully.
+    :ivar int files_successful:
+        Number of files where Access Control List has been updated successfully.
+    :ivar int failure_count:
+        Number of paths where Access Control List update has failed.
+    """
+
+    def __init__(self, directories_successful, files_successful, failure_count):
+        self.directories_successful = directories_successful
+        self.files_successful = files_successful
+        self.failure_count = failure_count
+
+
+class AccessControlChangeResult(object):
+    """
+    AccessControlChangeResult contains result of operations that change Access Control Lists recursively.
+
+    :ivar ~azure.storage.filedatalake.AccessControlChangeCounters counters:
+        Contains counts of paths changed from start of the operation.
+    :ivar str continuation:
+        Optional continuation token.
+        Value is present when operation is split into multiple batches and can be used to resume progress.
+    """
+
+    def __init__(self, counters, continuation):
+        self.counters = counters
+        self.continuation = continuation
+
+
+class AccessControlChangeFailure(object):
+    """
+    Represents an entry that failed to update Access Control List.
+
+    :ivar str name:
+        Name of the entry.
+    :ivar bool is_directory:
+        Indicates whether the entry is a directory.
+    :ivar str error_message:
+        Indicates the reason why the entry failed to update.
+    """
+
+    def __init__(self, name, is_directory, error_message):
+        self.name = name
+        self.is_directory = is_directory
+        self.error_message = error_message
+
+
+class AccessControlChanges(object):
+    """
+    AccessControlChanges contains batch and cumulative counts of operations
+    that change Access Control Lists recursively.
+    Additionally it exposes path entries that failed to update while these operations progress.
+
+    :ivar ~azure.storage.filedatalake.AccessControlChangeCounters batch_counters:
+        Contains counts of paths changed within single batch.
+    :ivar ~azure.storage.filedatalake.AccessControlChangeCounters aggregate_counters:
+        Contains counts of paths changed from start of the operation.
+    :ivar list(~azure.storage.filedatalake.AccessControlChangeFailure) batch_failures:
+        List of path entries that failed to update Access Control List within single batch.
+    :ivar str continuation:
+        An opaque continuation token that may be used to resume the operations in case of failures.
+    """
+
+    def __init__(self, batch_counters, aggregate_counters, batch_failures, continuation):
+        self.batch_counters = batch_counters
+        self.aggregate_counters = aggregate_counters
+        self.batch_failures = batch_failures
+        self.continuation = continuation

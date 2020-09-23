@@ -29,7 +29,11 @@ from ._models import (
     AccessPolicy,
     DelimitedTextDialect,
     DelimitedJsonDialect,
-    DataLakeFileQueryError
+    DataLakeFileQueryError,
+    AccessControlChangeResult,
+    AccessControlChangeCounters,
+    AccessControlChangeFailure,
+    AccessControlChanges,
 )
 from ._list_paths_helper import PathPropertiesPaged
 from ._shared_access_signature import generate_account_sas, generate_file_system_sas, generate_directory_sas, \
@@ -62,6 +66,10 @@ __all__ = [
     'PathProperties',
     'LeaseProperties',
     'ContentSettings',
+    'AccessControlChangeResult',
+    'AccessControlChangeCounters',
+    'AccessControlChangeFailure',
+    'AccessControlChanges',
     'AccountSasPermissions',
     'FileSystemSasPermissions',
     'DirectorySasPermissions',

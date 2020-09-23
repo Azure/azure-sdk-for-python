@@ -9,6 +9,10 @@
 ## 12.1.0 (2020-08-12)
 - Added `query_file` API to enable users to select/project on DataLake file data by providing simple query expressions.
 
+## XX.XX.XX
+**New Feature**
+- Added support for recursively set/update/remove Access Control on a path and sub-paths.
+
 ## 12.1.0b1 (2020-07-07)
 **New Feature**
 - Block size is increased to 4GB at maximum, max single put size is increased to 5GB.
