@@ -502,6 +502,11 @@ class BlobProperties(DictMixin):
 
         .. versionadded:: 12.4.0
 
+    :ivar ~datetime.datetime last_accessed_on:
+        Indicates when the last Read/Write operation was performed on a Blob.
+
+        .. versionadded:: 12.6.0
+
     :ivar int tag_count:
         Tags count on this blob.
 
@@ -548,6 +553,7 @@ class BlobProperties(DictMixin):
         self.request_server_encrypted = kwargs.get('x-ms-server-encrypted')
         self.object_replication_source_properties = kwargs.get('object_replication_source_properties')
         self.object_replication_destination_policy = kwargs.get('x-ms-or-policy-id')
+        self.last_accessed_on = kwargs.get('x-ms-last-access-time')
         self.tag_count = kwargs.get('x-ms-tag-count')
         self.tags = None
 
@@ -927,7 +933,7 @@ class ContainerSasPermissions(object):
         p_tag = 't' in permission
         parsed = cls(read=p_read, write=p_write, delete=p_delete, list=p_list,
                      delete_previous_version=p_delete_previous_version, tag=p_tag)
-        parsed._str = permission # pylint: disable = protected-access
+
         return parsed
 
 
@@ -996,7 +1002,7 @@ class BlobSasPermissions(object):
 
         parsed = cls(read=p_read, add=p_add, create=p_create, write=p_write, delete=p_delete,
                      delete_previous_version=p_delete_previous_version, tag=p_tag)
-        parsed._str = permission # pylint: disable = protected-access
+
         return parsed
 
 

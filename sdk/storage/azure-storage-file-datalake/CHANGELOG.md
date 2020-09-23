@@ -1,4 +1,8 @@
 # Release History
+## 12.1.2 (2020-09-10)
+**Fixes**
+- Fixed renaming with SAS string (#12057).
+
 ## 12.1.1 (2020-08-13)
 - Patch release to update the minimum dependency requirement.
 

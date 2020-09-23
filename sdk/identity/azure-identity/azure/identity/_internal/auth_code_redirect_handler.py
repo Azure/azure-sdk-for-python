@@ -2,23 +2,18 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-try:
-    from typing import TYPE_CHECKING
-except ImportError:
-    TYPE_CHECKING = False
+from typing import TYPE_CHECKING
 
-if TYPE_CHECKING:
-    from typing import Any, Mapping, Optional
+from six.moves.urllib_parse import parse_qs, urlparse
 
 try:
     from http.server import HTTPServer, BaseHTTPRequestHandler
 except ImportError:
     from BaseHTTPServer import HTTPServer, BaseHTTPRequestHandler  # type: ignore
 
-try:
-    from urllib.parse import parse_qs
-except ImportError:
-    from urlparse import parse_qs  # type: ignore
+if TYPE_CHECKING:
+    # pylint:disable=ungrouped-imports
+    from typing import Any, Mapping
 
 
 class AuthCodeRedirectHandler(BaseHTTPRequestHandler):
@@ -46,13 +41,14 @@ class AuthCodeRedirectHandler(BaseHTTPRequestHandler):
 
 
 class AuthCodeRedirectServer(HTTPServer):
-    """HTTP server that listens on localhost for the redirect request following an authorization code authentication"""
+    """HTTP server that listens for the redirect request following an authorization code authentication"""
 
     query_params = {}  # type: Mapping[str, Any]
 
-    def __init__(self, port, timeout):
-        # type: (int, int) -> None
-        HTTPServer.__init__(self, ("localhost", port), AuthCodeRedirectHandler)
+    def __init__(self, uri, timeout):
+        # type: (str, int) -> None
+        parsed = urlparse(uri)
+        HTTPServer.__init__(self, (parsed.hostname, parsed.port), AuthCodeRedirectHandler)
         self.timeout = timeout
 
     def wait_for_redirect(self):

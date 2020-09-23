@@ -342,6 +342,9 @@ class MultiMetricCriteria(msrest.serialization.Model):
     :type time_aggregation: str or ~$(python-base-namespace).v2018_03_01.models.AggregationType
     :param dimensions: List of dimension conditions.
     :type dimensions: list[~$(python-base-namespace).v2018_03_01.models.MetricDimension]
+    :param skip_metric_validation: Allows creating an alert rule on a custom metric that isn't yet
+     emitted, by causing the metric validation to be skipped.
+    :type skip_metric_validation: bool
     """
 
     _validation = {
@@ -359,6 +362,7 @@ class MultiMetricCriteria(msrest.serialization.Model):
         'metric_namespace': {'key': 'metricNamespace', 'type': 'str'},
         'time_aggregation': {'key': 'timeAggregation', 'type': 'str'},
         'dimensions': {'key': 'dimensions', 'type': '[MetricDimension]'},
+        'skip_metric_validation': {'key': 'skipMetricValidation', 'type': 'bool'},
     }
 
     _subtype_map = {
@@ -371,12 +375,13 @@ class MultiMetricCriteria(msrest.serialization.Model):
     ):
         super(MultiMetricCriteria, self).__init__(**kwargs)
         self.additional_properties = kwargs.get('additional_properties', None)
-        self.criterion_type = 'MultiMetricCriteria'
+        self.criterion_type = 'MultiMetricCriteria'  # type: str
         self.name = kwargs['name']
         self.metric_name = kwargs['metric_name']
         self.metric_namespace = kwargs.get('metric_namespace', None)
         self.time_aggregation = kwargs['time_aggregation']
         self.dimensions = kwargs.get('dimensions', None)
+        self.skip_metric_validation = kwargs.get('skip_metric_validation', None)
 
 
 class DynamicMetricCriteria(MultiMetricCriteria):
@@ -401,6 +406,9 @@ class DynamicMetricCriteria(MultiMetricCriteria):
     :type time_aggregation: str or ~$(python-base-namespace).v2018_03_01.models.AggregationType
     :param dimensions: List of dimension conditions.
     :type dimensions: list[~$(python-base-namespace).v2018_03_01.models.MetricDimension]
+    :param skip_metric_validation: Allows creating an alert rule on a custom metric that isn't yet
+     emitted, by causing the metric validation to be skipped.
+    :type skip_metric_validation: bool
     :param operator: Required. The operator used to compare the metric value against the threshold.
      Possible values include: "GreaterThan", "LessThan", "GreaterOrLessThan".
     :type operator: str or ~$(python-base-namespace).v2018_03_01.models.DynamicThresholdOperator
@@ -436,6 +444,7 @@ class DynamicMetricCriteria(MultiMetricCriteria):
         'metric_namespace': {'key': 'metricNamespace', 'type': 'str'},
         'time_aggregation': {'key': 'timeAggregation', 'type': 'str'},
         'dimensions': {'key': 'dimensions', 'type': '[MetricDimension]'},
+        'skip_metric_validation': {'key': 'skipMetricValidation', 'type': 'bool'},
         'operator': {'key': 'operator', 'type': 'str'},
         'alert_sensitivity': {'key': 'alertSensitivity', 'type': 'str'},
         'failing_periods': {'key': 'failingPeriods', 'type': 'DynamicThresholdFailingPeriods'},
@@ -447,7 +456,7 @@ class DynamicMetricCriteria(MultiMetricCriteria):
         **kwargs
     ):
         super(DynamicMetricCriteria, self).__init__(**kwargs)
-        self.criterion_type = 'DynamicThresholdCriterion'
+        self.criterion_type = 'DynamicThresholdCriterion'  # type: str
         self.operator = kwargs['operator']
         self.alert_sensitivity = kwargs['alert_sensitivity']
         self.failing_periods = kwargs['failing_periods']
@@ -720,7 +729,7 @@ class MetricAlertCriteria(msrest.serialization.Model):
     ):
         super(MetricAlertCriteria, self).__init__(**kwargs)
         self.additional_properties = kwargs.get('additional_properties', None)
-        self.odata_type = 'MetricAlertCriteria'
+        self.odata_type = 'MetricAlertCriteria'  # type: str
 
 
 class MetricAlertMultipleResourceMultipleMetricCriteria(MetricAlertCriteria):
@@ -756,7 +765,7 @@ class MetricAlertMultipleResourceMultipleMetricCriteria(MetricAlertCriteria):
         **kwargs
     ):
         super(MetricAlertMultipleResourceMultipleMetricCriteria, self).__init__(**kwargs)
-        self.odata_type = 'Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria'
+        self.odata_type = 'Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria'  # type: str
         self.all_of = kwargs.get('all_of', None)
 
 
@@ -995,7 +1004,7 @@ class MetricAlertSingleResourceMultipleMetricCriteria(MetricAlertCriteria):
         **kwargs
     ):
         super(MetricAlertSingleResourceMultipleMetricCriteria, self).__init__(**kwargs)
-        self.odata_type = 'Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria'
+        self.odata_type = 'Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria'  # type: str
         self.all_of = kwargs.get('all_of', None)
 
 
@@ -1098,6 +1107,9 @@ class MetricCriteria(MultiMetricCriteria):
     :type time_aggregation: str or ~$(python-base-namespace).v2018_03_01.models.AggregationType
     :param dimensions: List of dimension conditions.
     :type dimensions: list[~$(python-base-namespace).v2018_03_01.models.MetricDimension]
+    :param skip_metric_validation: Allows creating an alert rule on a custom metric that isn't yet
+     emitted, by causing the metric validation to be skipped.
+    :type skip_metric_validation: bool
     :param operator: Required. the criteria operator. Possible values include: "Equals",
      "NotEquals", "GreaterThan", "GreaterThanOrEqual", "LessThan", "LessThanOrEqual".
     :type operator: str or ~$(python-base-namespace).v2018_03_01.models.Operator
@@ -1122,6 +1134,7 @@ class MetricCriteria(MultiMetricCriteria):
         'metric_namespace': {'key': 'metricNamespace', 'type': 'str'},
         'time_aggregation': {'key': 'timeAggregation', 'type': 'str'},
         'dimensions': {'key': 'dimensions', 'type': '[MetricDimension]'},
+        'skip_metric_validation': {'key': 'skipMetricValidation', 'type': 'bool'},
         'operator': {'key': 'operator', 'type': 'str'},
         'threshold': {'key': 'threshold', 'type': 'float'},
     }
@@ -1131,7 +1144,7 @@ class MetricCriteria(MultiMetricCriteria):
         **kwargs
     ):
         super(MetricCriteria, self).__init__(**kwargs)
-        self.criterion_type = 'StaticThresholdCriterion'
+        self.criterion_type = 'StaticThresholdCriterion'  # type: str
         self.operator = kwargs['operator']
         self.threshold = kwargs['threshold']
 
@@ -1324,7 +1337,7 @@ class WebtestLocationAvailabilityCriteria(MetricAlertCriteria):
         **kwargs
     ):
         super(WebtestLocationAvailabilityCriteria, self).__init__(**kwargs)
-        self.odata_type = 'Microsoft.Azure.Monitor.WebtestLocationAvailabilityCriteria'
+        self.odata_type = 'Microsoft.Azure.Monitor.WebtestLocationAvailabilityCriteria'  # type: str
         self.web_test_id = kwargs['web_test_id']
         self.component_id = kwargs['component_id']
         self.failed_location_count = kwargs['failed_location_count']

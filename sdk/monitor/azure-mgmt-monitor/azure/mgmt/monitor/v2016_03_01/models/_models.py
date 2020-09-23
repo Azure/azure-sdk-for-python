@@ -348,7 +348,7 @@ class RuleCondition(msrest.serialization.Model):
         **kwargs
     ):
         super(RuleCondition, self).__init__(**kwargs)
-        self.odata_type = None
+        self.odata_type = None  # type: Optional[str]
         self.data_source = kwargs.get('data_source', None)
 
 
@@ -391,7 +391,7 @@ class LocationThresholdRuleCondition(RuleCondition):
         **kwargs
     ):
         super(LocationThresholdRuleCondition, self).__init__(**kwargs)
-        self.odata_type = 'Microsoft.Azure.Management.Insights.Models.LocationThresholdRuleCondition'
+        self.odata_type = 'Microsoft.Azure.Management.Insights.Models.LocationThresholdRuleCondition'  # type: str
         self.window_size = kwargs.get('window_size', None)
         self.failed_location_count = kwargs['failed_location_count']
 
@@ -599,7 +599,7 @@ class ManagementEventRuleCondition(RuleCondition):
         **kwargs
     ):
         super(ManagementEventRuleCondition, self).__init__(**kwargs)
-        self.odata_type = 'Microsoft.Azure.Management.Insights.Models.ManagementEventRuleCondition'
+        self.odata_type = 'Microsoft.Azure.Management.Insights.Models.ManagementEventRuleCondition'  # type: str
         self.aggregation = kwargs.get('aggregation', None)
 
 
@@ -759,7 +759,7 @@ class RuleAction(msrest.serialization.Model):
         **kwargs
     ):
         super(RuleAction, self).__init__(**kwargs)
-        self.odata_type = None
+        self.odata_type = None  # type: Optional[str]
 
 
 class RuleDataSource(msrest.serialization.Model):
@@ -796,7 +796,7 @@ class RuleDataSource(msrest.serialization.Model):
         **kwargs
     ):
         super(RuleDataSource, self).__init__(**kwargs)
-        self.odata_type = None
+        self.odata_type = None  # type: Optional[str]
         self.resource_uri = kwargs.get('resource_uri', None)
 
 
@@ -831,7 +831,7 @@ class RuleEmailAction(RuleAction):
         **kwargs
     ):
         super(RuleEmailAction, self).__init__(**kwargs)
-        self.odata_type = 'Microsoft.Azure.Management.Insights.Models.RuleEmailAction'
+        self.odata_type = 'Microsoft.Azure.Management.Insights.Models.RuleEmailAction'  # type: str
         self.send_to_service_owners = kwargs.get('send_to_service_owners', None)
         self.custom_emails = kwargs.get('custom_emails', None)
 
@@ -911,7 +911,7 @@ class RuleManagementEventDataSource(RuleDataSource):
         **kwargs
     ):
         super(RuleManagementEventDataSource, self).__init__(**kwargs)
-        self.odata_type = 'Microsoft.Azure.Management.Insights.Models.RuleManagementEventDataSource'
+        self.odata_type = 'Microsoft.Azure.Management.Insights.Models.RuleManagementEventDataSource'  # type: str
         self.event_name = kwargs.get('event_name', None)
         self.event_source = kwargs.get('event_source', None)
         self.level = kwargs.get('level', None)
@@ -953,7 +953,7 @@ class RuleMetricDataSource(RuleDataSource):
         **kwargs
     ):
         super(RuleMetricDataSource, self).__init__(**kwargs)
-        self.odata_type = 'Microsoft.Azure.Management.Insights.Models.RuleMetricDataSource'
+        self.odata_type = 'Microsoft.Azure.Management.Insights.Models.RuleMetricDataSource'  # type: str
         self.metric_name = kwargs.get('metric_name', None)
 
 
@@ -988,7 +988,7 @@ class RuleWebhookAction(RuleAction):
         **kwargs
     ):
         super(RuleWebhookAction, self).__init__(**kwargs)
-        self.odata_type = 'Microsoft.Azure.Management.Insights.Models.RuleWebhookAction'
+        self.odata_type = 'Microsoft.Azure.Management.Insights.Models.RuleWebhookAction'  # type: str
         self.service_uri = kwargs.get('service_uri', None)
         self.properties = kwargs.get('properties', None)
 
@@ -1042,7 +1042,7 @@ class ThresholdRuleCondition(RuleCondition):
         **kwargs
     ):
         super(ThresholdRuleCondition, self).__init__(**kwargs)
-        self.odata_type = 'Microsoft.Azure.Management.Insights.Models.ThresholdRuleCondition'
+        self.odata_type = 'Microsoft.Azure.Management.Insights.Models.ThresholdRuleCondition'  # type: str
         self.operator = kwargs['operator']
         self.threshold = kwargs['threshold']
         self.window_size = kwargs.get('window_size', None)

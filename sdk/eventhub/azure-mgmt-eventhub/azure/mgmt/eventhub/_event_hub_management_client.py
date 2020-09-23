@@ -69,8 +69,6 @@ class EventHubManagementClient(MultiApiClientMixin, _SDKClient):
         self._config = EventHubManagementClientConfiguration(credential, subscription_id, **kwargs)
         self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
         super(EventHubManagementClient, self).__init__(
-            credential,
-            self._config,
             api_version=api_version,
             profile=profile
         )
@@ -96,7 +94,7 @@ class EventHubManagementClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2018-01-01-preview':
             from .v2018_01_01_preview import models
             return models
-        raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        raise ValueError("API version {} is not available".format(api_version))
 
     @property
     def clusters(self):
@@ -108,7 +106,7 @@ class EventHubManagementClient(MultiApiClientMixin, _SDKClient):
         if api_version == '2018-01-01-preview':
             from .v2018_01_01_preview.operations import ClustersOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+            raise ValueError("API version {} does not have operation group 'clusters'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -121,7 +119,7 @@ class EventHubManagementClient(MultiApiClientMixin, _SDKClient):
         if api_version == '2018-01-01-preview':
             from .v2018_01_01_preview.operations import ConfigurationOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+            raise ValueError("API version {} does not have operation group 'configuration'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -140,7 +138,7 @@ class EventHubManagementClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2018-01-01-preview':
             from .v2018_01_01_preview.operations import ConsumerGroupsOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+            raise ValueError("API version {} does not have operation group 'consumer_groups'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -156,7 +154,7 @@ class EventHubManagementClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2018-01-01-preview':
             from .v2018_01_01_preview.operations import DisasterRecoveryConfigsOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+            raise ValueError("API version {} does not have operation group 'disaster_recovery_configs'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -175,7 +173,7 @@ class EventHubManagementClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2018-01-01-preview':
             from .v2018_01_01_preview.operations import EventHubsOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+            raise ValueError("API version {} does not have operation group 'event_hubs'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -194,7 +192,7 @@ class EventHubManagementClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2018-01-01-preview':
             from .v2018_01_01_preview.operations import NamespacesOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+            raise ValueError("API version {} does not have operation group 'namespaces'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -213,7 +211,33 @@ class EventHubManagementClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2018-01-01-preview':
             from .v2018_01_01_preview.operations import Operations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+            raise ValueError("API version {} does not have operation group 'operations'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def private_endpoint_connections(self):
+        """Instance depends on the API version:
+
+           * 2018-01-01-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.eventhub.v2018_01_01_preview.operations.PrivateEndpointConnectionsOperations>`
+        """
+        api_version = self._get_api_version('private_endpoint_connections')
+        if api_version == '2018-01-01-preview':
+            from .v2018_01_01_preview.operations import PrivateEndpointConnectionsOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'private_endpoint_connections'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def private_link_resources(self):
+        """Instance depends on the API version:
+
+           * 2018-01-01-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.eventhub.v2018_01_01_preview.operations.PrivateLinkResourcesOperations>`
+        """
+        api_version = self._get_api_version('private_link_resources')
+        if api_version == '2018-01-01-preview':
+            from .v2018_01_01_preview.operations import PrivateLinkResourcesOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'private_link_resources'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -229,7 +253,7 @@ class EventHubManagementClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2018-01-01-preview':
             from .v2018_01_01_preview.operations import RegionsOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+            raise ValueError("API version {} does not have operation group 'regions'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     def close(self):

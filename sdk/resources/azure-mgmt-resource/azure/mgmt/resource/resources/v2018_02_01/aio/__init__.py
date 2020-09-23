@@ -6,5 +6,5 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._resource_management_client_async import ResourceManagementClient
+from ._resource_management_client import ResourceManagementClient
 __all__ = ['ResourceManagementClient']

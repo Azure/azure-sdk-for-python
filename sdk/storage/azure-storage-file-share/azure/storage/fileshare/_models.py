@@ -14,6 +14,9 @@ from ._generated.models import StorageErrorException
 from ._generated.models import Metrics as GeneratedMetrics
 from ._generated.models import RetentionPolicy as GeneratedRetentionPolicy
 from ._generated.models import CorsRule as GeneratedCorsRule
+from ._generated.models import ShareProtocolSettings as GeneratedShareProtocolSettings
+from ._generated.models import ShareSmbSettings as GeneratedShareSmbSettings
+from ._generated.models import SmbMultichannel as GeneratedSmbMultichannel
 from ._generated.models import AccessPolicy as GenAccessPolicy
 from ._generated.models import DirectoryItem
 
@@ -132,6 +135,40 @@ class CorsRule(GeneratedCorsRule):
             exposed_headers=[generated.exposed_headers],
             max_age_in_seconds=generated.max_age_in_seconds,
         )
+
+
+class ShareSmbSettings(GeneratedShareSmbSettings):
+    """ Settings for the SMB protocol.
+
+    :param SmbMultichannel multichannel: Required. Sets the multichannel settings.
+    """
+    def __init__(self, multichannel):
+        self.multichannel = multichannel
+
+
+class SmbMultichannel(GeneratedSmbMultichannel):
+    """ Settings for Multichannel.
+
+    :param bool enabled: Required. If SMB Multichannel is enabled.
+    """
+    def __init__(self, enabled):
+        self.enabled = enabled
+
+
+class ShareProtocolSettings(GeneratedShareProtocolSettings):
+    """Protocol Settings class used by the set and get service properties methods in the share service.
+
+    Contains protocol properties of the share service such as the SMB setting of the share service.
+
+    :param SmbSettings smb: Required. Sets SMB settings.
+    """
+    def __init__(self, smb):
+        self.smb = smb
+
+    @classmethod
+    def _from_generated(cls, generated):
+        return cls(
+            smb=generated.smb)
 
 
 class AccessPolicy(GenAccessPolicy):
@@ -773,7 +810,7 @@ class FileSasPermissions(object):
         p_delete = 'd' in permission
 
         parsed = cls(p_read, p_create, p_write, p_delete)
-        parsed._str = permission # pylint: disable = protected-access
+
         return parsed
 
 
@@ -830,7 +867,7 @@ class ShareSasPermissions(object):
         p_list = 'l' in permission
 
         parsed = cls(p_read, p_write, p_delete, p_list)
-        parsed._str = permission # pylint: disable = protected-access
+
         return parsed
 
 class NTFSAttributes(object):
@@ -922,4 +959,5 @@ def service_properties_deserialize(generated):
         'hour_metrics': Metrics._from_generated(generated.hour_metrics),  # pylint: disable=protected-access
         'minute_metrics': Metrics._from_generated(generated.minute_metrics),  # pylint: disable=protected-access
         'cors': [CorsRule._from_generated(cors) for cors in generated.cors],  # pylint: disable=protected-access
+        'protocol': ShareProtocolSettings._from_generated(generated.protocol), # pylint: disable=protected-access
     }

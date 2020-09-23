@@ -556,18 +556,16 @@ class ClusterQuotaConfigurationProperties(msrest.serialization.Model):
 class ClusterSku(msrest.serialization.Model):
     """SKU parameters particular to a cluster instance.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. Name of this SKU. Default value: "Dedicated".
-    :vartype name: str
+    :param name: Required. Name of this SKU. Possible values include: "Dedicated".
+    :type name: str or ~azure.mgmt.eventhub.v2018_01_01_preview.models.ClusterSkuName
     :param capacity: The quantity of Event Hubs Cluster Capacity Units contained in this cluster.
     :type capacity: int
     """
 
     _validation = {
-        'name': {'required': True, 'constant': True},
+        'name': {'required': True},
         'capacity': {'maximum': 32, 'minimum': 1},
     }
 
@@ -576,14 +574,38 @@ class ClusterSku(msrest.serialization.Model):
         'capacity': {'key': 'capacity', 'type': 'int'},
     }
 
-    name = "Dedicated"
-
     def __init__(
         self,
         **kwargs
     ):
         super(ClusterSku, self).__init__(**kwargs)
+        self.name = kwargs['name']
         self.capacity = kwargs.get('capacity', None)
+
+
+class ConnectionState(msrest.serialization.Model):
+    """ConnectionState information.
+
+    :param status: Status of the connection. Possible values include: "Pending", "Approved",
+     "Rejected", "Disconnected".
+    :type status: str or
+     ~azure.mgmt.eventhub.v2018_01_01_preview.models.PrivateLinkConnectionStatus
+    :param description: Description of the connection state.
+    :type description: str
+    """
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ConnectionState, self).__init__(**kwargs)
+        self.status = kwargs.get('status', None)
+        self.description = kwargs.get('description', None)
 
 
 class ConsumerGroup(Resource):
@@ -1244,6 +1266,9 @@ class NetworkRuleSet(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
+    :param trusted_service_access_enabled: Value that indicates whether Trusted Service Access is
+     Enabled or not.
+    :type trusted_service_access_enabled: bool
     :param default_action: Default Action for Network Rule Set. Possible values include: "Allow",
      "Deny".
     :type default_action: str or ~azure.mgmt.eventhub.v2018_01_01_preview.models.DefaultAction
@@ -1264,6 +1289,7 @@ class NetworkRuleSet(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'trusted_service_access_enabled': {'key': 'properties.trustedServiceAccessEnabled', 'type': 'bool'},
         'default_action': {'key': 'properties.defaultAction', 'type': 'str'},
         'virtual_network_rules': {'key': 'properties.virtualNetworkRules', 'type': '[NWRuleSetVirtualNetworkRules]'},
         'ip_rules': {'key': 'properties.ipRules', 'type': '[NWRuleSetIpRules]'},
@@ -1274,6 +1300,7 @@ class NetworkRuleSet(Resource):
         **kwargs
     ):
         super(NetworkRuleSet, self).__init__(**kwargs)
+        self.trusted_service_access_enabled = kwargs.get('trusted_service_access_enabled', None)
         self.default_action = kwargs.get('default_action', None)
         self.virtual_network_rules = kwargs.get('virtual_network_rules', None)
         self.ip_rules = kwargs.get('ip_rules', None)
@@ -1282,24 +1309,16 @@ class NetworkRuleSet(Resource):
 class NWRuleSetIpRules(msrest.serialization.Model):
     """The response from the List namespace operation.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     :param ip_mask: IP Mask.
     :type ip_mask: str
-    :ivar action: The IP Filter Action. Default value: "Allow".
-    :vartype action: str
+    :param action: The IP Filter Action. Possible values include: "Allow".
+    :type action: str or ~azure.mgmt.eventhub.v2018_01_01_preview.models.NetworkRuleIPAction
     """
-
-    _validation = {
-        'action': {'constant': True},
-    }
 
     _attribute_map = {
         'ip_mask': {'key': 'ipMask', 'type': 'str'},
         'action': {'key': 'action', 'type': 'str'},
     }
-
-    action = "Allow"
 
     def __init__(
         self,
@@ -1307,6 +1326,7 @@ class NWRuleSetIpRules(msrest.serialization.Model):
     ):
         super(NWRuleSetIpRules, self).__init__(**kwargs)
         self.ip_mask = kwargs.get('ip_mask', None)
+        self.action = kwargs.get('action', None)
 
 
 class NWRuleSetVirtualNetworkRules(msrest.serialization.Model):
@@ -1426,6 +1446,157 @@ class OperationListResult(msrest.serialization.Model):
         super(OperationListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
+
+
+class PrivateEndpoint(msrest.serialization.Model):
+    """PrivateEndpoint information.
+
+    :param id: The ARM identifier for Private Endpoint.
+    :type id: str
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(PrivateEndpoint, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+
+
+class PrivateEndpointConnection(Resource):
+    """Properties of the PrivateEndpointConnection.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param private_endpoint: The Private Endpoint resource for this Connection.
+    :type private_endpoint: ~azure.mgmt.eventhub.v2018_01_01_preview.models.PrivateEndpoint
+    :param private_link_service_connection_state: Details about the state of the connection.
+    :type private_link_service_connection_state:
+     ~azure.mgmt.eventhub.v2018_01_01_preview.models.ConnectionState
+    :param provisioning_state: Provisioning state of the Private Endpoint Connection. Possible
+     values include: "Creating", "Updating", "Deleting", "Succeeded", "Canceled", "Failed".
+    :type provisioning_state: str or
+     ~azure.mgmt.eventhub.v2018_01_01_preview.models.EndPointProvisioningState
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'private_endpoint': {'key': 'properties.privateEndpoint', 'type': 'PrivateEndpoint'},
+        'private_link_service_connection_state': {'key': 'properties.privateLinkServiceConnectionState', 'type': 'ConnectionState'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(PrivateEndpointConnection, self).__init__(**kwargs)
+        self.private_endpoint = kwargs.get('private_endpoint', None)
+        self.private_link_service_connection_state = kwargs.get('private_link_service_connection_state', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+
+
+class PrivateEndpointConnectionListResult(msrest.serialization.Model):
+    """Result of the list of all private endpoint connections operation.
+
+    :param value: A collection of private endpoint connection resources.
+    :type value: list[~azure.mgmt.eventhub.v2018_01_01_preview.models.PrivateEndpointConnection]
+    :param next_link: A link for the next page of private endpoint connection resources.
+    :type next_link: str
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[PrivateEndpointConnection]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(PrivateEndpointConnectionListResult, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+        self.next_link = kwargs.get('next_link', None)
+
+
+class PrivateLinkResource(msrest.serialization.Model):
+    """Information of the private link resource.
+
+    :param id: Fully qualified identifier of the resource.
+    :type id: str
+    :param name: Name of the resource.
+    :type name: str
+    :param type: Type of the resource.
+    :type type: str
+    :param group_id: The private link resource group id.
+    :type group_id: str
+    :param required_members: The private link resource required member names.
+    :type required_members: list[str]
+    :param required_zone_names: The private link resource Private link DNS zone name.
+    :type required_zone_names: list[str]
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'group_id': {'key': 'properties.groupId', 'type': 'str'},
+        'required_members': {'key': 'properties.requiredMembers', 'type': '[str]'},
+        'required_zone_names': {'key': 'properties.requiredZoneNames', 'type': '[str]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(PrivateLinkResource, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.name = kwargs.get('name', None)
+        self.type = kwargs.get('type', None)
+        self.group_id = kwargs.get('group_id', None)
+        self.required_members = kwargs.get('required_members', None)
+        self.required_zone_names = kwargs.get('required_zone_names', None)
+
+
+class PrivateLinkResourcesListResult(msrest.serialization.Model):
+    """Result of the List private link resources operation.
+
+    :param value: A collection of private link resources.
+    :type value: list[~azure.mgmt.eventhub.v2018_01_01_preview.models.PrivateLinkResource]
+    :param next_link: A link for the next page of private link resources.
+    :type next_link: str
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[PrivateLinkResource]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(PrivateLinkResourcesListResult, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+        self.next_link = kwargs.get('next_link', None)
 
 
 class RegenerateAccessKeyParameters(msrest.serialization.Model):

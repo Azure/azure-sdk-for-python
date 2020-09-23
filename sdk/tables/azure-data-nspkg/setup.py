@@ -8,13 +8,6 @@
 import sys
 from setuptools import setup
 
-PACKAGES = []
-# Do an empty package on Python 3 and not python_requires, since not everybody is ready
-# https://github.com/Azure/azure-sdk-for-python/issues/3447
-# https://github.com/Azure/azure-sdk-for-python/issues/3481
-if sys.version_info[0] < 3:
-    PACKAGES = ['azure.data']
-
 setup(
     name='azure-data-nspkg',
     version='1.0.0',
@@ -38,7 +31,7 @@ setup(
         "License :: OSI Approved :: MIT License",
     ],
     zip_safe=False,
-    packages=PACKAGES,
+    packages=['azure.data'],
     install_requires=[
         'azure-nspkg>=3.0.0',
     ]

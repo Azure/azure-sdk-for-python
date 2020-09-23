@@ -1,5 +1,22 @@
 # Release History
 
+## 15.0.0 (2020-09-17)
+
+**Features**
+
+  - Model ProviderResourceType has a new parameter default_api_version
+  - Model ProviderResourceType has a new parameter api_profiles
+  - Model AzureResourceBase has a new parameter system_data
+  - Model AliasPath has a new parameter metadata
+  - Model TemplateLink has a new parameter id
+  - Model TemplateLink has a new parameter relative_path
+  - Model Alias has a new parameter default_metadata
+  - Added operation DeploymentsOperations.begin_what_if_at_management_group_scope
+  - Added operation DeploymentsOperations.begin_what_if_at_tenant_scope
+  - Added operation group TemplateSpecsOperations
+  - Added operation group TemplateSpecVersionsOperations
+  - Added operation group SubscriptionClientOperationsMixin
+
 ## 15.0.0b1 (2020-06-17)
 
 This is beta preview version.

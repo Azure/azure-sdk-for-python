@@ -6,5 +6,5 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._text_analytics_client_async import TextAnalyticsClient
+from ._text_analytics_client import TextAnalyticsClient
 __all__ = ['TextAnalyticsClient']

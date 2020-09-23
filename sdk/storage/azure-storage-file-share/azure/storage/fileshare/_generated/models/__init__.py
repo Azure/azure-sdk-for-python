@@ -24,16 +24,16 @@ try:
     from ._models_py3 import ListHandlesResponse
     from ._models_py3 import ListSharesResponse
     from ._models_py3 import Metrics
-    from ._models_py3 import ProtocolSettings
     from ._models_py3 import Range
     from ._models_py3 import RetentionPolicy
     from ._models_py3 import ShareItem
     from ._models_py3 import SharePermission
     from ._models_py3 import ShareProperties
+    from ._models_py3 import ShareProtocolSettings
+    from ._models_py3 import ShareSmbSettings
     from ._models_py3 import ShareStats
     from ._models_py3 import SignedIdentifier
     from ._models_py3 import SmbMultichannel
-    from ._models_py3 import SmbSettings
     from ._models_py3 import SourceModifiedAccessConditions
     from ._models_py3 import StorageError, StorageErrorException
     from ._models_py3 import StorageServiceProperties
@@ -52,16 +52,16 @@ except (SyntaxError, ImportError):
     from ._models import ListHandlesResponse
     from ._models import ListSharesResponse
     from ._models import Metrics
-    from ._models import ProtocolSettings
     from ._models import Range
     from ._models import RetentionPolicy
     from ._models import ShareItem
     from ._models import SharePermission
     from ._models import ShareProperties
+    from ._models import ShareProtocolSettings
+    from ._models import ShareSmbSettings
     from ._models import ShareStats
     from ._models import SignedIdentifier
     from ._models import SmbMultichannel
-    from ._models import SmbSettings
     from ._models import SourceModifiedAccessConditions
     from ._models import StorageError, StorageErrorException
     from ._models import StorageServiceProperties
@@ -92,16 +92,16 @@ __all__ = [
     'ListHandlesResponse',
     'ListSharesResponse',
     'Metrics',
-    'ProtocolSettings',
     'Range',
     'RetentionPolicy',
     'ShareItem',
     'SharePermission',
     'ShareProperties',
+    'ShareProtocolSettings',
+    'ShareSmbSettings',
     'ShareStats',
     'SignedIdentifier',
     'SmbMultichannel',
-    'SmbSettings',
     'SourceModifiedAccessConditions',
     'StorageError', 'StorageErrorException',
     'StorageServiceProperties',

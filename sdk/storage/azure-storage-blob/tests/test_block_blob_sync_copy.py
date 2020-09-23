@@ -31,8 +31,12 @@ SOURCE_BLOB_SIZE = 8 * 1024
 class StorageBlockBlobTest(StorageTestCase):
 
     def _setup(self, storage_account, key):
+        account_url = self.account_url(storage_account, "blob")
+        if not isinstance(account_url, str):
+            account_url = account_url.encode('utf-8')
+            key = key.encode('utf-8')
         self.bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"),
+            account_url,
             credential=key,
             connection_data_block_size=4 * 1024,
             max_single_put_size=32 * 1024,

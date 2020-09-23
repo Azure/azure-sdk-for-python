@@ -29,6 +29,10 @@ from .operations import DataFlowDebugSessionOperations
 from .operations import SqlScriptOperations
 from .operations import SparkJobDefinitionOperations
 from .operations import NotebookOperations
+from .operations import WorkspaceOperations
+from .operations import SqlPoolsOperations
+from .operations import BigDataPoolsOperations
+from .operations import IntegrationRuntimesOperations
 from . import models
 
 
@@ -57,6 +61,14 @@ class ArtifactsClient(object):
     :vartype spark_job_definition: azure.synapse.artifacts.operations.SparkJobDefinitionOperations
     :ivar notebook: NotebookOperations operations
     :vartype notebook: azure.synapse.artifacts.operations.NotebookOperations
+    :ivar workspace: WorkspaceOperations operations
+    :vartype workspace: azure.synapse.artifacts.operations.WorkspaceOperations
+    :ivar sql_pools: SqlPoolsOperations operations
+    :vartype sql_pools: azure.synapse.artifacts.operations.SqlPoolsOperations
+    :ivar big_data_pools: BigDataPoolsOperations operations
+    :vartype big_data_pools: azure.synapse.artifacts.operations.BigDataPoolsOperations
+    :ivar integration_runtimes: IntegrationRuntimesOperations operations
+    :vartype integration_runtimes: azure.synapse.artifacts.operations.IntegrationRuntimesOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
     :param endpoint: The workspace development endpoint, for example https://myworkspace.dev.azuresynapse.net.
@@ -77,6 +89,7 @@ class ArtifactsClient(object):
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
+        self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
 
         self.linked_service = LinkedServiceOperations(
@@ -100,6 +113,14 @@ class ArtifactsClient(object):
         self.spark_job_definition = SparkJobDefinitionOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.notebook = NotebookOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.workspace = WorkspaceOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.sql_pools = SqlPoolsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.big_data_pools = BigDataPoolsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.integration_runtimes = IntegrationRuntimesOperations(
             self._client, self._config, self._serialize, self._deserialize)
 
     def close(self):
