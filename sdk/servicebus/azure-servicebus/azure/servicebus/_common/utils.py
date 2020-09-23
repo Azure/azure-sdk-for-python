@@ -179,7 +179,7 @@ def generate_dead_letter_entity_name(
     return entity_name
 
 
-def copy_messages_to_sendable_if_needed(messages):
+def transform_messages_to_sendable_if_needed(messages):
     """
     This method is to convert single/multiple received messages to sendable messages to enable message resending.
     """

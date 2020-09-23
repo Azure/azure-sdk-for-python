@@ -12,7 +12,7 @@ import time
 from typing import TYPE_CHECKING
 
 import msal
-from six.moves.urllib_parse import urlparse
+import six
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 
@@ -57,16 +57,27 @@ def _build_auth_record(response):
             # MSAL uses the subject claim as home_account_id when the STS doesn't provide client_info
             home_account_id = id_token["sub"]
 
+        # "iss" is the URL of the issuing tenant e.g. https://authority/tenant
+        issuer = six.moves.urllib_parse.urlparse(id_token["iss"])
+
+        # tenant which issued the token, not necessarily user's home tenant
+        tenant_id = id_token.get("tid") or issuer.path.strip("/")
+
+        # AAD returns "preferred_username", ADFS returns "upn"
+        username = id_token.get("preferred_username") or id_token["upn"]
+
         return AuthenticationRecord(
-            authority=urlparse(id_token["iss"]).netloc,  # "iss" is the URL of the issuing tenant
+            authority=issuer.netloc,
             client_id=id_token["aud"],
             home_account_id=home_account_id,
-            tenant_id=id_token["tid"],  # tenant which issued the token, not necessarily user's home tenant
-            username=id_token["preferred_username"],
+            tenant_id=tenant_id,
+            username=username,
         )
-    except (KeyError, ValueError):
-        # surprising: msal.ClientApplication always requests an id token, whose shape shouldn't change
-        return None
+    except (KeyError, ValueError) as ex:
+        auth_error = ClientAuthenticationError(
+            message="Failed to build AuthenticationRecord from unexpected identity token"
+        )
+        six.raise_from(auth_error, ex)
 
 
 class InteractiveCredential(MsalCredential):

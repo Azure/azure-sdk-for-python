@@ -86,7 +86,7 @@ class ServiceBusSessionReceiver(ServiceBusReceiver, SessionReceiverMixin):
         fully_qualified_namespace: str,
         credential: "TokenCredential",
         **kwargs: Any
-    ):
+    ) -> None:
         super(ServiceBusSessionReceiver, self).__init__(fully_qualified_namespace, credential, **kwargs)
         self._populate_session_attributes(**kwargs)
         self._session = ServiceBusSession(self._session_id, self, self._config.encoding)
@@ -99,7 +99,7 @@ class ServiceBusSessionReceiver(ServiceBusReceiver, SessionReceiverMixin):
     ) -> "ServiceBusSessionReceiver":
         """Create a ServiceBusSessionReceiver from a connection string.
 
-        :param conn_str: The connection string of a Service Bus.
+        :param str conn_str: The connection string of a Service Bus.
         :keyword str queue_name: The path of specific Service Bus Queue the client connects to.
         :keyword str topic_name: The path of specific Service Bus Topic which contains the Subscription
          the client connects to.
@@ -136,6 +136,9 @@ class ServiceBusSessionReceiver(ServiceBusReceiver, SessionReceiverMixin):
          In the case of prefetch being 0, `ServiceBusReceiver.receive` would try to cache `max_batch_size` (if provided)
          within its request to the service.
         :rtype: ~azure.servicebus.aio.ServiceBusSessionReceiver
+
+        :raises ~azure.servicebus.ServiceBusAuthenticationError: Indicates an issue in token/identity validity.
+        :raises ~azure.servicebus.ServiceBusAuthorizationError: Indicates an access/rights related failure.
 
         .. admonition:: Example:
 

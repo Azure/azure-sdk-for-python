@@ -1,13 +1,16 @@
-# coding=utf-8
+# coding=utf-8  pylint: disable=too-many-lines
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
 import re
-from ._generated.v3_0.models._models import (
+from enum import Enum
+from ._generated.models import (
     LanguageInput,
-    MultiLanguageInput
+    MultiLanguageInput,
 )
+
+from ._generated.v3_0 import models as _v3_0_models
 
 def _get_indices(relation):
     return [int(s) for s in re.findall(r"\d+", relation)]
@@ -61,6 +64,10 @@ class DictMixin(object):
         if key in self.__dict__:
             return self.__dict__[key]
         return default
+
+class PiiEntityDomainType(str, Enum):
+    """The different domains of PII entities that users can filter by"""
+    PROTECTED_HEALTH_INFORMATION = "PHI"  # See https://aka.ms/tanerpii for more information.
 
 
 class DetectedLanguage(DictMixin):
@@ -139,6 +146,8 @@ class RecognizePiiEntitiesResult(DictMixin):
     :ivar entities: Recognized PII entities in the document.
     :vartype entities:
         list[~azure.ai.textanalytics.PiiEntity]
+    :ivar str redacted_text: Returns the text of the input document with all of the PII information
+        redacted out. Only returned for API versions v3.1-preview.2 and up.
     :ivar warnings: Warnings encountered while processing document. Results will still be returned
         if there are warnings, but they may not be fully accurate.
     :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
@@ -148,18 +157,28 @@ class RecognizePiiEntitiesResult(DictMixin):
         ~azure.ai.textanalytics.TextDocumentStatistics
     :ivar bool is_error: Boolean check for error item when iterating over list of
         results. Always False for an instance of a RecognizePiiEntitiesResult.
+    .. versionadded:: v3.1-preview.2
+        The *redacted_text* parameter.
     """
 
     def __init__(self, **kwargs):
         self.id = kwargs.get("id", None)
         self.entities = kwargs.get("entities", None)
+        self.redacted_text = kwargs.get("redacted_text", None)
         self.warnings = kwargs.get("warnings", [])
         self.statistics = kwargs.get("statistics", None)
         self.is_error = False
 
     def __repr__(self):
-        return "RecognizePiiEntitiesResult(id={}, entities={}, warnings={}, statistics={}, is_error={})" \
-            .format(self.id, repr(self.entities), repr(self.warnings), repr(self.statistics), self.is_error)[:1024]
+        return "RecognizePiiEntitiesResult(id={}, entities={}, redacted_text={}, warnings={}, " \
+            "statistics={}, is_error={})" .format(
+                self.id,
+                repr(self.entities),
+                self.redacted_text,
+                repr(self.warnings),
+                repr(self.statistics),
+                self.is_error
+            )[:1024]
 
 
 class DetectLanguageResult(DictMixin):
@@ -207,10 +226,14 @@ class CategorizedEntity(DictMixin):
     :ivar subcategory: Entity subcategory, such as Age/Year/TimeRange etc
     :vartype subcategory: str
     :ivar int offset: The entity text offset from the start of the document.
-    :ivar int length: The length of the entity text.
+        Returned in unicode code points. Only returned for API versions v3.1-preview.1 and up.
+    :ivar int length: The length of the entity text. Returned
+        in unicode code points. Only returned for API versions v3.1-preview.1 and up.
     :ivar confidence_score: Confidence score between 0 and 1 of the extracted
         entity.
     :vartype confidence_score: float
+    .. versionadded:: v3.1-preview.1
+        The *offset* and *length* properties.
     """
 
     def __init__(self, **kwargs):
@@ -223,12 +246,19 @@ class CategorizedEntity(DictMixin):
 
     @classmethod
     def _from_generated(cls, entity):
+        offset = entity.offset
+        length = entity.length
+        if isinstance(entity, _v3_0_models.Entity):
+            # we do not return offset and length for v3.0 since
+            # the correct encoding was not introduced for v3.0
+            offset = None
+            length = None
         return cls(
             text=entity.text,
             category=entity.category,
             subcategory=entity.subcategory,
-            offset=entity.offset,
-            length=entity.length,
+            offset=offset,
+            length=length,
             confidence_score=entity.confidence_score,
         )
 
@@ -253,7 +283,9 @@ class PiiEntity(DictMixin):
     :ivar str subcategory: Entity subcategory, such as Credit Card/EU
         Phone number/ABA Routing Numbers, etc.
     :ivar int offset: The PII entity text offset from the start of the document.
-    :ivar int length: The length of the PII entity text.
+        Returned in unicode code points.
+    :ivar int length: The length of the PII entity text. Returned
+        in unicode code points.
     :ivar float confidence_score: Confidence score between 0 and 1 of the extracted
         entity.
     """
@@ -598,6 +630,11 @@ class LinkedEntity(DictMixin):
     :ivar data_source: Data source used to extract entity linking,
         such as Wiki/Bing etc.
     :vartype data_source: str
+    :ivar str bing_entity_search_api_id: Bing unique identifier of the recognized entity. Use in conjunction
+        with the Bing Entity Search SDK to fetch additional relevant information. Only
+        available for API version v3.1-preview.2 and up.
+    .. versionadded:: v3.1-preview.2
+        The *bing_entity_search_api_id* property.
     """
 
     def __init__(self, **kwargs):
@@ -607,9 +644,11 @@ class LinkedEntity(DictMixin):
         self.data_source_entity_id = kwargs.get("data_source_entity_id", None)
         self.url = kwargs.get("url", None)
         self.data_source = kwargs.get("data_source", None)
+        self.bing_entity_search_api_id = kwargs.get("bing_entity_search_api_id", None)
 
     @classmethod
     def _from_generated(cls, entity):
+        bing_entity_search_api_id = entity.bing_id if hasattr(entity, "bing_id") else None
         return cls(
             name=entity.name,
             matches=[LinkedEntityMatch._from_generated(e) for e in entity.matches],  # pylint: disable=protected-access
@@ -617,12 +656,20 @@ class LinkedEntity(DictMixin):
             data_source_entity_id=entity.id,
             url=entity.url,
             data_source=entity.data_source,
+            bing_entity_search_api_id=bing_entity_search_api_id,
         )
 
     def __repr__(self):
         return "LinkedEntity(name={}, matches={}, language={}, data_source_entity_id={}, url={}, " \
-               "data_source={})".format(self.name, repr(self.matches), self.language, self.data_source_entity_id,
-                                        self.url, self.data_source)[:1024]
+            "data_source={}, bing_entity_search_api_id={})".format(
+                self.name,
+                repr(self.matches),
+                self.language,
+                self.data_source_entity_id,
+                self.url,
+                self.data_source,
+                self.bing_entity_search_api_id,
+        )[:1024]
 
 
 class LinkedEntityMatch(DictMixin):
@@ -636,8 +683,12 @@ class LinkedEntityMatch(DictMixin):
     :vartype confidence_score: float
     :ivar text: Entity text as appears in the request.
     :ivar int offset: The linked entity match text offset from the start of the document.
-    :ivar int length: The length of the linked entity match text.
+        Returned in unicode code points. Only returned for API versions v3.1-preview.1 and up.
+    :ivar int length: The length of the linked entity match text. Returned
+        in unicode code points. Only returned for API versions v3.1-preview.1 and up.
     :vartype text: str
+    .. versionadded:: v3.1-preview.1
+        The *offset* and *length* properties.
     """
 
     def __init__(self, **kwargs):
@@ -648,11 +699,18 @@ class LinkedEntityMatch(DictMixin):
 
     @classmethod
     def _from_generated(cls, match):
+        offset = match.offset
+        length = match.length
+        if isinstance(match, _v3_0_models.Match):
+            # we do not return offset and length for v3.0 since
+            # the correct encoding was not introduced for v3.0
+            offset = None
+            length = None
         return cls(
             confidence_score=match.confidence_score,
             text=match.text,
-            offset=match.offset,
-            length=match.length
+            offset=offset,
+            length=length
         )
 
     def __repr__(self):
@@ -738,14 +796,19 @@ class SentenceSentiment(DictMixin):
         and 1 for the sentence for all labels.
     :vartype confidence_scores:
         ~azure.ai.textanalytics.SentimentConfidenceScores
-    :ivar int offset: The sentence offset from the start of the document.
-    :ivar int length: The length of the sentence.
+    :ivar int offset: The sentence offset from the start of the document. Returned
+        in unicode code points. Only returned for API versions v3.1-preview.1 and up.
+    :ivar int length: The length of the sentence. Returned
+        in unicode code points. Only returned for API versions v3.1-preview.1 and up.
     :ivar mined_opinions: The list of opinions mined from this sentence.
         For example in "The food is good, but the service is bad", we would
         mind these two opinions "food is good", "service is bad". Only returned
-        if `show_opinion_mining` is set to True in the call to `analyze_sentiment`.
+        if `show_opinion_mining` is set to True in the call to `analyze_sentiment` and
+        api version is v3.1-preview.1 and up.
     :vartype mined_opinions:
         list[~azure.ai.textanalytics.MinedOpinion]
+    .. versionadded:: v3.1-preview.1
+        The *offset*, *length*, and *mined_opinions* properties.
     """
 
     def __init__(self, **kwargs):
@@ -758,6 +821,13 @@ class SentenceSentiment(DictMixin):
 
     @classmethod
     def _from_generated(cls, sentence, results):
+        offset = sentence.offset
+        length = sentence.length
+        if isinstance(sentence, _v3_0_models.SentenceSentiment):
+            # we do not return offset and length for v3.0 since
+            # the correct encoding was not introduced for v3.0
+            offset = None
+            length = None
         if hasattr(sentence, "aspects"):
             mined_opinions = (
                 [MinedOpinion._from_generated(aspect, results) for aspect in sentence.aspects]  # pylint: disable=protected-access
@@ -769,8 +839,8 @@ class SentenceSentiment(DictMixin):
             text=sentence.text,
             sentiment=sentence.sentiment,
             confidence_scores=SentimentConfidenceScores._from_generated(sentence.confidence_scores),  # pylint: disable=protected-access
-            offset=sentence.offset,
-            length=sentence.length,
+            offset=offset,
+            length=length,
             mined_opinions=mined_opinions
         )
 
@@ -847,8 +917,10 @@ class AspectSentiment(DictMixin):
         for 'neutral' will always be 0
     :vartype confidence_scores:
         ~azure.ai.textanalytics.SentimentConfidenceScores
-    :ivar int offset: The aspect offset from the start of the document.
-    :ivar int length: The length of the aspect.
+    :ivar int offset: The aspect offset from the start of the document. Returned
+        in unicode code points.
+    :ivar int length: The length of the aspect. Returned
+        in unicode code points.
     """
 
     def __init__(self, **kwargs):
@@ -892,8 +964,10 @@ class OpinionSentiment(DictMixin):
         for 'neutral' will always be 0
     :vartype confidence_scores:
         ~azure.ai.textanalytics.SentimentConfidenceScores
-    :ivar int offset: The opinion offset from the start of the document.
-    :ivar int length: The length of the opinion.
+    :ivar int offset: The opinion offset from the start of the document. Returned
+        in unicode code points.
+    :ivar int length: The length of the opinion. Returned
+        in unicode code points.
     :ivar bool is_negated: Whether the opinion is negated. For example, in
         "The food is not good", the opinion "good" is negated.
     """

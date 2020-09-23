@@ -39,6 +39,36 @@ class AccessPolicy(Model):
         self.permission = permission
 
 
+class ClearRange(Model):
+    """ClearRange.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param start: Required.
+    :type start: long
+    :param end: Required.
+    :type end: long
+    """
+
+    _validation = {
+        'start': {'required': True},
+        'end': {'required': True},
+    }
+
+    _attribute_map = {
+        'start': {'key': 'Start', 'type': 'long', 'xml': {'name': 'Start'}},
+        'end': {'key': 'End', 'type': 'long', 'xml': {'name': 'End'}},
+    }
+    _xml_map = {
+        'name': 'ClearRange'
+    }
+
+    def __init__(self, *, start: int, end: int, **kwargs) -> None:
+        super(ClearRange, self).__init__(**kwargs)
+        self.start = start
+        self.end = end
+
+
 class CopyFileSmbInfo(Model):
     """Additional parameters for start_copy operation.
 
@@ -273,6 +303,36 @@ class FileProperty(Model):
     def __init__(self, *, content_length: int, **kwargs) -> None:
         super(FileProperty, self).__init__(**kwargs)
         self.content_length = content_length
+
+
+class FileRange(Model):
+    """An Azure Storage file range.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param start: Required. Start of the range.
+    :type start: long
+    :param end: Required. End of the range.
+    :type end: long
+    """
+
+    _validation = {
+        'start': {'required': True},
+        'end': {'required': True},
+    }
+
+    _attribute_map = {
+        'start': {'key': 'Start', 'type': 'long', 'xml': {'name': 'Start'}},
+        'end': {'key': 'End', 'type': 'long', 'xml': {'name': 'End'}},
+    }
+    _xml_map = {
+        'name': 'Range'
+    }
+
+    def __init__(self, *, start: int, end: int, **kwargs) -> None:
+        super(FileRange, self).__init__(**kwargs)
+        self.start = start
+        self.end = end
 
 
 class FilesAndDirectoriesListSegment(Model):
@@ -564,54 +624,6 @@ class Metrics(Model):
         self.retention_policy = retention_policy
 
 
-class ProtocolSettings(Model):
-    """Protocol settings.
-
-    :param smb_settings: Settings for SMB protocol.
-    :type smb_settings: ~azure.storage.fileshare.models.SmbSettings
-    """
-
-    _attribute_map = {
-        'smb_settings': {'key': 'SmbSettings', 'type': 'SmbSettings', 'xml': {'name': 'SMB'}},
-    }
-    _xml_map = {
-    }
-
-    def __init__(self, *, smb_settings=None, **kwargs) -> None:
-        super(ProtocolSettings, self).__init__(**kwargs)
-        self.smb_settings = smb_settings
-
-
-class Range(Model):
-    """An Azure Storage file range.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param start: Required. Start of the range.
-    :type start: long
-    :param end: Required. End of the range.
-    :type end: long
-    """
-
-    _validation = {
-        'start': {'required': True},
-        'end': {'required': True},
-    }
-
-    _attribute_map = {
-        'start': {'key': 'Start', 'type': 'long', 'xml': {'name': 'Start'}},
-        'end': {'key': 'End', 'type': 'long', 'xml': {'name': 'End'}},
-    }
-    _xml_map = {
-        'name': 'Range'
-    }
-
-    def __init__(self, *, start: int, end: int, **kwargs) -> None:
-        super(Range, self).__init__(**kwargs)
-        self.start = start
-        self.end = end
-
-
 class RetentionPolicy(Model):
     """The retention policy.
 
@@ -643,6 +655,28 @@ class RetentionPolicy(Model):
         super(RetentionPolicy, self).__init__(**kwargs)
         self.enabled = enabled
         self.days = days
+
+
+class ShareFileRangeList(Model):
+    """The list of file ranges.
+
+    :param ranges:
+    :type ranges: list[~azure.storage.fileshare.models.FileRange]
+    :param clear_ranges:
+    :type clear_ranges: list[~azure.storage.fileshare.models.ClearRange]
+    """
+
+    _attribute_map = {
+        'ranges': {'key': 'Ranges', 'type': '[FileRange]', 'xml': {'name': 'Ranges', 'itemsName': 'Range'}},
+        'clear_ranges': {'key': 'ClearRanges', 'type': '[ClearRange]', 'xml': {'name': 'ClearRanges', 'itemsName': 'ClearRange'}},
+    }
+    _xml_map = {
+    }
+
+    def __init__(self, *, ranges=None, clear_ranges=None, **kwargs) -> None:
+        super(ShareFileRangeList, self).__init__(**kwargs)
+        self.ranges = ranges
+        self.clear_ranges = clear_ranges
 
 
 class ShareItem(Model):
@@ -788,6 +822,42 @@ class ShareProperties(Model):
         self.lease_duration = lease_duration
 
 
+class ShareProtocolSettings(Model):
+    """Protocol settings.
+
+    :param smb: Settings for SMB protocol.
+    :type smb: ~azure.storage.fileshare.models.ShareSmbSettings
+    """
+
+    _attribute_map = {
+        'smb': {'key': 'Smb', 'type': 'ShareSmbSettings', 'xml': {'name': 'SMB'}},
+    }
+    _xml_map = {
+    }
+
+    def __init__(self, *, smb=None, **kwargs) -> None:
+        super(ShareProtocolSettings, self).__init__(**kwargs)
+        self.smb = smb
+
+
+class ShareSmbSettings(Model):
+    """Settings for SMB protocol.
+
+    :param multichannel: Settings for SMB Multichannel.
+    :type multichannel: ~azure.storage.fileshare.models.SmbMultichannel
+    """
+
+    _attribute_map = {
+        'multichannel': {'key': 'Multichannel', 'type': 'SmbMultichannel', 'xml': {'name': 'Multichannel'}},
+    }
+    _xml_map = {
+    }
+
+    def __init__(self, *, multichannel=None, **kwargs) -> None:
+        super(ShareSmbSettings, self).__init__(**kwargs)
+        self.multichannel = multichannel
+
+
 class ShareStats(Model):
     """Stats for the share.
 
@@ -861,24 +931,6 @@ class SmbMultichannel(Model):
         self.enabled = enabled
 
 
-class SmbSettings(Model):
-    """Settings for SMB protocol.
-
-    :param multichannel: Settings for SMB Multichannel.
-    :type multichannel: ~azure.storage.fileshare.models.SmbMultichannel
-    """
-
-    _attribute_map = {
-        'multichannel': {'key': 'Multichannel', 'type': 'SmbMultichannel', 'xml': {'name': 'Multichannel'}},
-    }
-    _xml_map = {
-    }
-
-    def __init__(self, *, multichannel=None, **kwargs) -> None:
-        super(SmbSettings, self).__init__(**kwargs)
-        self.multichannel = multichannel
-
-
 class SourceModifiedAccessConditions(Model):
     """Additional parameters for upload_range_from_url operation.
 
@@ -948,22 +1000,22 @@ class StorageServiceProperties(Model):
     :type minute_metrics: ~azure.storage.fileshare.models.Metrics
     :param cors: The set of CORS rules.
     :type cors: list[~azure.storage.fileshare.models.CorsRule]
-    :param protocol_settings: Protocol settings
-    :type protocol_settings: ~azure.storage.fileshare.models.ProtocolSettings
+    :param protocol: Protocol settings
+    :type protocol: ~azure.storage.fileshare.models.ShareProtocolSettings
     """
 
     _attribute_map = {
         'hour_metrics': {'key': 'HourMetrics', 'type': 'Metrics', 'xml': {'name': 'HourMetrics'}},
         'minute_metrics': {'key': 'MinuteMetrics', 'type': 'Metrics', 'xml': {'name': 'MinuteMetrics'}},
         'cors': {'key': 'Cors', 'type': '[CorsRule]', 'xml': {'name': 'Cors', 'itemsName': 'CorsRule', 'wrapped': True}},
-        'protocol_settings': {'key': 'ProtocolSettings', 'type': 'ProtocolSettings', 'xml': {'name': 'ProtocolSettings'}},
+        'protocol': {'key': 'Protocol', 'type': 'ShareProtocolSettings', 'xml': {'name': 'ProtocolSettings'}},
     }
     _xml_map = {
     }
 
-    def __init__(self, *, hour_metrics=None, minute_metrics=None, cors=None, protocol_settings=None, **kwargs) -> None:
+    def __init__(self, *, hour_metrics=None, minute_metrics=None, cors=None, protocol=None, **kwargs) -> None:
         super(StorageServiceProperties, self).__init__(**kwargs)
         self.hour_metrics = hour_metrics
         self.minute_metrics = minute_metrics
         self.cors = cors
-        self.protocol_settings = protocol_settings
+        self.protocol = protocol

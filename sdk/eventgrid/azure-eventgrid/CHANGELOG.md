@@ -1,8 +1,12 @@
 # Release History
 
-## 2.0.0b1 (Unreleased)
+## 2.0.0b1 (2020-09-08)
 
-  - Placeholder - NEEDS TO BE CHANGED
+  **Features**
+  - Version (2.0.0b1) is the first preview of our efforts to create a user-friendly and Pythonic client library for Azure EventGrid.
+  For more information about this, and preview releases of other Azure SDK libraries, please visit https://azure.github.io/azure-sdk/releases/latest/python.html.
+  - Implements the `EventGridPublisherClient` for the publish flow for EventGrid Events, CloudEvents and CustomEvents.
+  - Implements the `EventGridConsumer` for the consume flow of the events.
 
 ## 1.3.0 (2019-05-20)
 

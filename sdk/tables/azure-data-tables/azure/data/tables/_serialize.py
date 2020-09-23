@@ -133,6 +133,15 @@ def _to_entity_int64(value):
     return EdmType.INT64, str(value)
 
 
+def _to_entity_int(value):
+    ivalue = int(value)
+    if ivalue.bit_length() <= 32:
+        return _to_entity_int32(value)
+    if ivalue.bit_length() <= 64:
+        return _to_entity_int64(value)
+    raise TypeError(_ERROR_VALUE_TOO_LARGE.format(str(value), EdmType.INT64))
+
+
 def _to_entity_str(value):
     return None, value
 
@@ -144,7 +153,7 @@ def _to_entity_none(value):  # pylint:disable=W0613
 # Conversion from Python type to a function which returns a tuple of the
 # type string and content string.
 _PYTHON_TO_ENTITY_CONVERSIONS = {
-    int: _to_entity_int64,
+    int: _to_entity_int32,
     bool: _to_entity_bool,
     datetime: _to_entity_datetime,
     float: _to_entity_float,

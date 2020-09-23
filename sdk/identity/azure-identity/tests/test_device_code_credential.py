@@ -93,7 +93,9 @@ def test_disable_automatic_authentication():
 
     empty_cache = TokenCache()  # empty cache makes silent auth impossible
     transport = Mock(send=Mock(side_effect=Exception("no request should be sent")))
-    credential = DeviceCodeCredential("client-id", disable_automatic_authentication=True, transport=transport, _cache=empty_cache)
+    credential = DeviceCodeCredential(
+        "client-id", disable_automatic_authentication=True, transport=transport, _cache=empty_cache
+    )
 
     with pytest.raises(AuthenticationRequiredError):
         credential.get_token("scope")
@@ -102,6 +104,7 @@ def test_disable_automatic_authentication():
 def test_policies_configurable():
     policy = Mock(spec_set=SansIOHTTPPolicy, on_request=Mock())
 
+    client_id = "client-id"
     transport = validating_transport(
         requests=[Request()] * 3,
         responses=[
@@ -115,12 +118,16 @@ def test_policies_configurable():
                     "expires_in": 42,
                 }
             ),
-            mock_response(json_payload=dict(build_aad_response(access_token="**"), scope="scope")),
+            mock_response(
+                json_payload=dict(
+                    build_aad_response(access_token="**", id_token=build_id_token(aud=client_id)), scope="scope"
+                )
+            ),
         ],
     )
 
     credential = DeviceCodeCredential(
-        client_id="client-id", prompt_callback=Mock(), policies=[policy], transport=transport, _cache=TokenCache()
+        client_id=client_id, prompt_callback=Mock(), policies=[policy], transport=transport, _cache=TokenCache()
     )
 
     credential.get_token("scope")
@@ -129,6 +136,7 @@ def test_policies_configurable():
 
 
 def test_user_agent():
+    client_id = "client-id"
     transport = validating_transport(
         requests=[Request()] * 2 + [Request(required_headers={"User-Agent": USER_AGENT})],
         responses=[
@@ -141,18 +149,23 @@ def test_user_agent():
                     "expires_in": 42,
                 }
             ),
-            mock_response(json_payload=dict(build_aad_response(access_token="**"), scope="scope")),
+            mock_response(
+                json_payload=dict(
+                    build_aad_response(access_token="**", id_token=build_id_token(aud=client_id)), scope="scope"
+                )
+            ),
         ],
     )
 
     credential = DeviceCodeCredential(
-        client_id="client-id", prompt_callback=Mock(), transport=transport, _cache=TokenCache()
+        client_id=client_id, prompt_callback=Mock(), transport=transport, _cache=TokenCache()
     )
 
     credential.get_token("scope")
 
 
 def test_device_code_credential():
+    client_id = "client-id"
     expected_token = "access-token"
     user_code = "user-code"
     verification_uri = "verification-uri"
@@ -172,20 +185,26 @@ def test_device_code_credential():
                 }
             ),
             mock_response(
-                json_payload={
-                    "access_token": expected_token,
-                    "expires_in": expires_in,
-                    "scope": "scope",
-                    "token_type": "Bearer",
-                    "refresh_token": "_",
-                }
+                json_payload=dict(
+                    build_aad_response(
+                        access_token=expected_token,
+                        expires_in=expires_in,
+                        refresh_token="_",
+                        id_token=build_id_token(aud=client_id),
+                    ),
+                    scope="scope",
+                ),
             ),
         ],
     )
 
     callback = Mock()
     credential = DeviceCodeCredential(
-        client_id="_", prompt_callback=callback, transport=transport, instance_discovery=False, _cache=TokenCache()
+        client_id=client_id,
+        prompt_callback=callback,
+        transport=transport,
+        instance_discovery=False,
+        _cache=TokenCache(),
     )
 
     now = datetime.datetime.utcnow()

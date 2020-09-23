@@ -11,11 +11,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Wed, 19 Aug 2020 21:19:10 GMT
+      - Thu, 20 Aug 2020 20:17:22 GMT
       User-Agent:
-      - azsdk-python-storage-table/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 19 Aug 2020 21:19:10 GMT
+      - Thu, 20 Aug 2020 20:17:22 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
@@ -26,7 +26,7 @@ interactions:
     headers:
       cache-control: no-cache
       content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
-      date: Wed, 19 Aug 2020 21:19:10 GMT
+      date: Thu, 20 Aug 2020 20:17:22 GMT
       location: https://storagename.table.core.windows.net/Tables('uttable2c5919f0')
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
@@ -35,7 +35,7 @@ interactions:
     status:
       code: 201
       message: Created
-    url: https://pyacrstorageuwjvfxhidgpv.table.core.windows.net/Tables
+    url: https://pyacrstoragewdjxux7eodqw.table.core.windows.net/Tables
 - request:
     body: '{"PartitionKey": "pk2c5919f0", "RowKey": "rk2c5919f0", "key0": "value0",
       "key1": "value1", "key2": "value2", "key3": "value3", "key4": "value4", "key5":
@@ -117,11 +117,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Wed, 19 Aug 2020 21:19:10 GMT
+      - Thu, 20 Aug 2020 20:17:23 GMT
       User-Agent:
-      - azsdk-python-storage-table/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 19 Aug 2020 21:19:10 GMT
+      - Thu, 20 Aug 2020 20:17:23 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
@@ -130,11 +130,11 @@ interactions:
     body:
       string: '{"odata.error":{"code":"TooManyProperties","message":{"lang":"en-US","value":"The
         entity contains more properties than allowed. Each entity can include up to
-        252 properties to store data. Each entity also has 3 system properties.\nRequestId:3f0b6e40-8002-005b-7b6e-76361f000000\nTime:2020-08-19T21:19:10.8216364Z"}}}'
+        252 properties to store data. Each entity also has 3 system properties.\nRequestId:b8e24bf9-4002-00cb-2d2e-777638000000\nTime:2020-08-20T20:17:23.4163800Z"}}}'
     headers:
       cache-control: no-cache
       content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
-      date: Wed, 19 Aug 2020 21:19:10 GMT
+      date: Thu, 20 Aug 2020 20:17:22 GMT
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-content-type-options: nosniff
@@ -142,16 +142,16 @@ interactions:
     status:
       code: 400
       message: Bad Request
-    url: https://pyacrstorageuwjvfxhidgpv.table.core.windows.net/uttable2c5919f0
+    url: https://pyacrstoragewdjxux7eodqw.table.core.windows.net/uttable2c5919f0
 - request:
     body: null
     headers:
       Date:
-      - Wed, 19 Aug 2020 21:19:10 GMT
+      - Thu, 20 Aug 2020 20:17:23 GMT
       User-Agent:
-      - azsdk-python-storage-table/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 19 Aug 2020 21:19:10 GMT
+      - Thu, 20 Aug 2020 20:17:23 GMT
       x-ms-version:
       - '2019-07-07'
     method: DELETE
@@ -162,12 +162,12 @@ interactions:
     headers:
       cache-control: no-cache
       content-length: '0'
-      date: Wed, 19 Aug 2020 21:19:10 GMT
+      date: Thu, 20 Aug 2020 20:17:22 GMT
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options: nosniff
       x-ms-version: '2019-07-07'
     status:
       code: 204
       message: No Content
-    url: https://pyacrstorageuwjvfxhidgpv.table.core.windows.net/Tables('uttable2c5919f0')
+    url: https://pyacrstoragewdjxux7eodqw.table.core.windows.net/Tables('uttable2c5919f0')
 version: 1

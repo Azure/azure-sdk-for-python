@@ -334,7 +334,6 @@ class ShareOperations(object):
             response_headers = {
                 'ETag': self._deserialize('str', response.headers.get('ETag')),
                 'Last-Modified': self._deserialize('rfc-1123', response.headers.get('Last-Modified')),
-                'x-ms-lease-time': self._deserialize('int', response.headers.get('x-ms-lease-time')),
                 'x-ms-lease-id': self._deserialize('str', response.headers.get('x-ms-lease-id')),
                 'x-ms-client-request-id': self._deserialize('str', response.headers.get('x-ms-client-request-id')),
                 'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
@@ -411,7 +410,6 @@ class ShareOperations(object):
             response_headers = {
                 'ETag': self._deserialize('str', response.headers.get('ETag')),
                 'Last-Modified': self._deserialize('rfc-1123', response.headers.get('Last-Modified')),
-                'x-ms-lease-time': self._deserialize('int', response.headers.get('x-ms-lease-time')),
                 'x-ms-client-request-id': self._deserialize('str', response.headers.get('x-ms-client-request-id')),
                 'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
                 'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
@@ -494,7 +492,6 @@ class ShareOperations(object):
             response_headers = {
                 'ETag': self._deserialize('str', response.headers.get('ETag')),
                 'Last-Modified': self._deserialize('rfc-1123', response.headers.get('Last-Modified')),
-                'x-ms-lease-time': self._deserialize('int', response.headers.get('x-ms-lease-time')),
                 'x-ms-lease-id': self._deserialize('str', response.headers.get('x-ms-lease-id')),
                 'x-ms-client-request-id': self._deserialize('str', response.headers.get('x-ms-client-request-id')),
                 'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
@@ -571,7 +568,6 @@ class ShareOperations(object):
             response_headers = {
                 'ETag': self._deserialize('str', response.headers.get('ETag')),
                 'Last-Modified': self._deserialize('rfc-1123', response.headers.get('Last-Modified')),
-                'x-ms-lease-time': self._deserialize('int', response.headers.get('x-ms-lease-time')),
                 'x-ms-lease-id': self._deserialize('str', response.headers.get('x-ms-lease-id')),
                 'x-ms-client-request-id': self._deserialize('str', response.headers.get('x-ms-client-request-id')),
                 'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
