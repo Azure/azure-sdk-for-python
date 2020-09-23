@@ -4,6 +4,12 @@
 # license information.
 # --------------------------------------------------------------------------
 from io import BytesIO
+
+try:
+    from urllib.parse import quote, unquote
+except ImportError:
+    from urllib2 import quote, unquote # type: ignore
+
 import six
 
 from ._quick_query_helper import DataLakeFileQueryReader
@@ -631,21 +637,35 @@ class DataLakeFileClient(PathClient):
         """
         new_name = new_name.strip('/')
         new_file_system = new_name.split('/')[0]
-        path = new_name[len(new_file_system):]
+        new_path_and_token = new_name[len(new_file_system):].split('?')
+        new_path = new_path_and_token[0]
+        try:
+            new_file_sas = new_path_and_token[1] or self._query_str.strip('?')
+        except IndexError:
+            if not self._raw_credential and new_file_system != self.file_system_name:
+                raise ValueError("please provide the sas token for the new file")
+            if not self._raw_credential and new_file_system == self.file_system_name:
+                new_file_sas = self._query_str.strip('?')
 
-        new_directory_client = DataLakeFileClient(
-            self.url, new_file_system, file_path=path, credential=self._raw_credential,
+        new_file_client = DataLakeFileClient(
+            "{}://{}".format(self.scheme, self.primary_hostname), new_file_system, file_path=new_path,
+            credential=self._raw_credential or new_file_sas,
             _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
             _location_mode=self._location_mode, require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,
-            key_resolver_function=self.key_resolver_function)
-        new_directory_client._rename_path('/'+self.file_system_name+'/'+self.path_name,  # pylint: disable=protected-access
-                                          **kwargs)
-        return new_directory_client
+            key_resolver_function=self.key_resolver_function
+        )
+        new_file_client._rename_path(  # pylint: disable=protected-access
+            '/{}/{}{}'.format(quote(unquote(self.file_system_name)),
+                              quote(unquote(self.path_name)),
+                              self._query_str),
+            **kwargs)
+        return new_file_client
 
     def query_file(self, query_expression, **kwargs):
         # type: (str, **Any) -> DataLakeFileQueryReader
-        """Enables users to select/project on datalake file data by providing simple query expressions.
+        """
+        Enables users to select/project on datalake file data by providing simple query expressions.
         This operations returns a DataLakeFileQueryReader, users need to use readall() or readinto() to get query data.
 
         :param str query_expression:

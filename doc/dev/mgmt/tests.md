@@ -11,7 +11,7 @@
     -   [Running tests in live mode](#running-tests-in-live-mode)
 - [Using the Azure Python SDK test framework](#using-the-azure-python-sdk-test-framework)
 
-IMPORTANT NOTE: All the commands in this page assumes you have loaded the [dev_setup](../dev_setup.md) in your currently loaded virtual environment.
+IMPORTANT NOTE: All the commands in this page assumes you have loaded the [dev_setup](https://github.com/Azure/azure-sdk-for-python/blob/master/doc/dev/dev_setup.md) in your currently loaded virtual environment.
 
 # Overview
 

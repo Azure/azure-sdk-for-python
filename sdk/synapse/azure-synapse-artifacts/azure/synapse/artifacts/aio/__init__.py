@@ -6,5 +6,5 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._artifacts_client_async import ArtifactsClient
+from ._artifacts_client import ArtifactsClient
 __all__ = ['ArtifactsClient']

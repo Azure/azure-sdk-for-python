@@ -24,6 +24,10 @@ try:
     from ._models_py3 import ProxyOnlyResource
     from ._models_py3 import Response
     from ._models_py3 import RetentionPolicy
+    from ._models_py3 import SubscriptionDiagnosticSettingsResource
+    from ._models_py3 import SubscriptionDiagnosticSettingsResourceCollection
+    from ._models_py3 import SubscriptionLogSettings
+    from ._models_py3 import SubscriptionProxyOnlyResource
     from ._models_py3 import TimeSeriesElement
 except (SyntaxError, ImportError):
     from ._models import DiagnosticSettingsCategoryResource  # type: ignore
@@ -43,6 +47,10 @@ except (SyntaxError, ImportError):
     from ._models import ProxyOnlyResource  # type: ignore
     from ._models import Response  # type: ignore
     from ._models import RetentionPolicy  # type: ignore
+    from ._models import SubscriptionDiagnosticSettingsResource  # type: ignore
+    from ._models import SubscriptionDiagnosticSettingsResourceCollection  # type: ignore
+    from ._models import SubscriptionLogSettings  # type: ignore
+    from ._models import SubscriptionProxyOnlyResource  # type: ignore
     from ._models import TimeSeriesElement  # type: ignore
 
 from ._monitor_client_enums import (
@@ -70,6 +78,10 @@ __all__ = [
     'ProxyOnlyResource',
     'Response',
     'RetentionPolicy',
+    'SubscriptionDiagnosticSettingsResource',
+    'SubscriptionDiagnosticSettingsResourceCollection',
+    'SubscriptionLogSettings',
+    'SubscriptionProxyOnlyResource',
     'TimeSeriesElement',
     'AggregationType',
     'CategoryType',

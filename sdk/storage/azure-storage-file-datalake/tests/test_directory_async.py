@@ -16,7 +16,8 @@ from multidict import CIMultiDict, CIMultiDictProxy
 
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, \
     ResourceModifiedError
-from azure.storage.filedatalake import ContentSettings, DirectorySasPermissions
+from azure.storage.filedatalake import ContentSettings, DirectorySasPermissions, generate_file_system_sas, \
+    FileSystemSasPermissions
 from azure.storage.filedatalake import generate_directory_sas
 from azure.storage.filedatalake.aio import DataLakeServiceClient, DataLakeDirectoryClient
 
@@ -553,6 +554,63 @@ class DirectoryTest(StorageTestCase):
     def test_rename_directory_to_non_empty_directory_async(self):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_rename_directory_to_non_empty_directory())
+
+    async def _test_rename_dir_with_file_system_sas(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
+
+        token = generate_file_system_sas(
+            self.dsc.account_name,
+            self.file_system_name,
+            self.dsc.credential.account_key,
+            FileSystemSasPermissions(write=True, read=True, delete=True),
+            datetime.utcnow() + timedelta(hours=1),
+        )
+
+        # read the created file which is under root directory
+        dir_client = DataLakeDirectoryClient(self.dsc.url, self.file_system_name, "olddir", credential=token)
+        await dir_client.create_directory()
+        new_client = await dir_client.rename_directory(dir_client.file_system_name+'/'+'newdir'+'?')
+
+        properties = await new_client.get_directory_properties()
+        self.assertEqual(properties.name, "newdir")
+
+    def test_rename_dir_with_file_system_sas_async(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_rename_dir_with_file_system_sas())
+
+    async def _test_rename_dir_with_file_sas(self):
+        # TODO: service bug??
+        pytest.skip("service bug?")
+        token = generate_directory_sas(self.dsc.account_name,
+                                       self.file_system_name,
+                                       "olddir",
+                                       self.settings.STORAGE_DATA_LAKE_ACCOUNT_KEY,
+                                       permission=DirectorySasPermissions(read=True, create=True, write=True,
+                                                                          delete=True),
+                                       expiry=datetime.utcnow() + timedelta(hours=1),
+                                       )
+
+        new_token = generate_directory_sas(self.dsc.account_name,
+                                           self.file_system_name,
+                                           "newdir",
+                                           self.settings.STORAGE_DATA_LAKE_ACCOUNT_KEY,
+                                           permission=DirectorySasPermissions(read=True, create=True, write=True,
+                                                                              delete=True),
+                                           expiry=datetime.utcnow() + timedelta(hours=1),
+                                           )
+
+        # read the created file which is under root directory
+        dir_client = DataLakeDirectoryClient(self.dsc.url, self.file_system_name, "olddir", credential=token)
+        await dir_client.create_directory()
+        new_client = await dir_client.rename_directory(dir_client.file_system_name+'/'+'newdir'+'?'+new_token)
+
+        properties = await new_client.get_directory_properties()
+        self.assertEqual(properties.name, "newdir")
+
+    def test_rename_dir_with_file_sas_async(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_rename_dir_with_file_sas())
 
     async def _test_get_properties(self):
         # Arrange

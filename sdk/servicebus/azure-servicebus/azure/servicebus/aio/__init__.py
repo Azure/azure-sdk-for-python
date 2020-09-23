@@ -4,7 +4,6 @@
 # license information.
 # -------------------------------------------------------------------------
 from ._async_message import ReceivedMessage
-from ._base_handler_async import ServiceBusSharedKeyCredential
 from ._servicebus_sender_async import ServiceBusSender
 from ._servicebus_receiver_async import ServiceBusReceiver
 from ._servicebus_session_receiver_async import ServiceBusSessionReceiver
@@ -19,6 +18,5 @@ __all__ = [
     'ServiceBusReceiver',
     'ServiceBusSessionReceiver',
     'ServiceBusSession',
-    'ServiceBusSharedKeyCredential',
     'AutoLockRenew'
 ]

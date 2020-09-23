@@ -22,7 +22,8 @@
 import unittest
 
 import azure.mgmt.network
-from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer
+from azure.core.exceptions import ResourceExistsError
+from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer, RandomNameResourceGroupPreparer
 
 AZURE_LOCATION = 'eastus'
 
@@ -78,7 +79,7 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         result = self.mgmt_client.virtual_hubs.begin_create_or_update(group_name, virtual_hub_name, BODY)
         return result.result()
     
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_network(self, resource_group):
 
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
@@ -589,18 +590,22 @@ class MgmtNetworkTest(AzureMgmtTestCase):
           },
           "location": "West US",
           "zones": [],
-          "properties": {
-            "sku": {
-              "name": "AZFW_Hub",
-              "tier": "Standard"
-            },
-            "threat_intel_mode": "Alert",
-            "virtual_hub": {
-              "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/virtualHubs/" + VIRTUAL_HUB_NAME + ""
-            },
-            "firewall_policy": {
-              "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/firewallPolicies/" + FIREWALL_POLICY_NAME + ""
+          "sku": {
+            "name": "AZFW_Hub",
+            "tier": "Standard"
+          },
+          # "threat_intel_mode": "Off",
+          "virtual_hub": {
+            "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/virtualHubs/" + VIRTUAL_HUB_NAME + ""
+          },
+          "hub_ip_addresses": {
+            "public_i_ps": {
+              "addresses": [],
+              "count": 1
             }
+          },
+          "firewall_policy": {
+            "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/firewallPolicies/" + FIREWALL_POLICY_NAME + ""
           }
         }
         result = self.mgmt_client.azure_firewalls.begin_create_or_update(resource_group.name, AZURE_FIREWALL_NAME, BODY)
@@ -961,8 +966,13 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         result = result.result()
 
         # Delete Azure Firewall[delete]
-        result = self.mgmt_client.azure_firewalls.begin_delete(resource_group.name, AZURE_FIREWALL_NAME)
-        result = result.result()
+        try:
+            result = self.mgmt_client.azure_firewalls.begin_delete(resource_group.name, AZURE_FIREWALL_NAME)
+            result = result.result()
+        except ResourceExistsError as e:
+            if not str(e).startswith("(AnotherOperationInProgress)"):
+                raise e
+          
 
 
 #------------------------------------------------------------------------------
