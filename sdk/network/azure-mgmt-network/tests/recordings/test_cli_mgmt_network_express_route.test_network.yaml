@@ -16,16 +16,16 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/16.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit?api-version=2020-06-01
   response:
     body:
       string: "{\r\n  \"name\": \"myCircuit\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit\"\
-        ,\r\n  \"etag\": \"W/\\\"6689ad03-b2e5-48be-8e10-c851c872ca5d\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"e22cd102-7343-4a11-8550-a011f71bd789\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/expressRouteCircuits\",\r\n  \"location\"\
         : \"eastus\",\r\n  \"properties\": {\r\n    \"provisioningState\": \"Updating\"\
-        ,\r\n    \"resourceGuid\": \"4c266c27-3db5-45dc-ba36-d7abe84bc920\",\r\n \
+        ,\r\n    \"resourceGuid\": \"07c406ee-aed8-43c6-bd24-6be6bb6d0cc8\",\r\n \
         \   \"peerings\": [],\r\n    \"authorizations\": [],\r\n    \"serviceProviderProperties\"\
         : {\r\n      \"serviceProviderName\": \"Equinix\",\r\n      \"peeringLocation\"\
         : \"Silicon Valley\",\r\n      \"bandwidthInMbps\": 200\r\n    },\r\n    \"\
@@ -39,15 +39,15 @@ interactions:
       azure-asyncnotification:
       - Enabled
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/74ceceb3-1a32-4489-a43a-1d3fefd61040?api-version=2020-04-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/a30dee65-1892-413d-ac7c-b10e0b1450ef?api-version=2020-06-01
       cache-control:
       - no-cache
       content-length:
-      - '1063'
+      - '1082'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 16:21:24 GMT
+      - Wed, 16 Sep 2020 07:37:05 GMT
       expires:
       - '-1'
       pragma:
@@ -60,9 +60,9 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 9a187ca8-80ae-4599-8eb0-8e7ae2c23486
+      - 55a86337-cfd8-4caa-90fd-af139abc7f5b
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1198'
+      - '1195'
     status:
       code: 201
       message: Created
@@ -76,9 +76,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/16.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/74ceceb3-1a32-4489-a43a-1d3fefd61040?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/a30dee65-1892-413d-ac7c-b10e0b1450ef?api-version=2020-06-01
   response:
     body:
       string: "{\r\n  \"status\": \"InProgress\"\r\n}"
@@ -90,7 +90,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 16:21:34 GMT
+      - Wed, 16 Sep 2020 07:37:16 GMT
       expires:
       - '-1'
       pragma:
@@ -107,7 +107,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 7345d80e-9ada-4f04-985e-3d9fadd3f4b0
+      - 6001ce8f-aeff-4570-8277-164dd7d13e3e
     status:
       code: 200
       message: OK
@@ -121,9 +121,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/16.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/74ceceb3-1a32-4489-a43a-1d3fefd61040?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/a30dee65-1892-413d-ac7c-b10e0b1450ef?api-version=2020-06-01
   response:
     body:
       string: "{\r\n  \"status\": \"InProgress\"\r\n}"
@@ -135,7 +135,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 16:21:44 GMT
+      - Wed, 16 Sep 2020 07:37:26 GMT
       expires:
       - '-1'
       pragma:
@@ -152,7 +152,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - cdebe7c0-e4ad-4b03-af58-5b77695bb640
+      - 94ef9af1-9a57-4c50-a51d-8f6ba32f403d
     status:
       code: 200
       message: OK
@@ -166,9 +166,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/16.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/74ceceb3-1a32-4489-a43a-1d3fefd61040?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/a30dee65-1892-413d-ac7c-b10e0b1450ef?api-version=2020-06-01
   response:
     body:
       string: "{\r\n  \"status\": \"InProgress\"\r\n}"
@@ -180,7 +180,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 16:21:55 GMT
+      - Wed, 16 Sep 2020 07:37:46 GMT
       expires:
       - '-1'
       pragma:
@@ -197,7 +197,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - fc8ce841-7b5d-484b-a24d-ba5513d5c81d
+      - d667af80-2497-4622-aaf2-de27043475f0
     status:
       code: 200
       message: OK
@@ -211,9 +211,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/16.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/74ceceb3-1a32-4489-a43a-1d3fefd61040?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/a30dee65-1892-413d-ac7c-b10e0b1450ef?api-version=2020-06-01
   response:
     body:
       string: "{\r\n  \"status\": \"InProgress\"\r\n}"
@@ -225,7 +225,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 16:22:05 GMT
+      - Wed, 16 Sep 2020 07:38:07 GMT
       expires:
       - '-1'
       pragma:
@@ -242,7 +242,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 9521dbbf-e8a6-4e28-b653-7d2f35c9a66c
+      - 51f8d916-72f6-4a54-8ad0-c3ce6e551bda
     status:
       code: 200
       message: OK
@@ -256,99 +256,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/16.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/74ceceb3-1a32-4489-a43a-1d3fefd61040?api-version=2020-04-01
-  response:
-    body:
-      string: "{\r\n  \"status\": \"InProgress\"\r\n}"
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '30'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Mon, 18 May 2020 16:22:14 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-      x-ms-arm-service-request-id:
-      - 6c8e6f22-ae51-4d92-9587-6456a807465d
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/74ceceb3-1a32-4489-a43a-1d3fefd61040?api-version=2020-04-01
-  response:
-    body:
-      string: "{\r\n  \"status\": \"InProgress\"\r\n}"
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '30'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Mon, 18 May 2020 16:22:24 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-      x-ms-arm-service-request-id:
-      - 7102fa69-f0af-49ef-8fed-1274daf5a964
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/74ceceb3-1a32-4489-a43a-1d3fefd61040?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/a30dee65-1892-413d-ac7c-b10e0b1450ef?api-version=2020-06-01
   response:
     body:
       string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
@@ -360,7 +270,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 16:22:35 GMT
+      - Wed, 16 Sep 2020 07:38:47 GMT
       expires:
       - '-1'
       pragma:
@@ -377,7 +287,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 88c2e199-9a8b-4234-a9e9-7d85b04a6f32
+      - 98c173c0-0df0-400a-9abd-2443930cbc90
     status:
       code: 200
       message: OK
@@ -391,35 +301,35 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/16.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit?api-version=2020-06-01
   response:
     body:
       string: "{\r\n  \"name\": \"myCircuit\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit\"\
-        ,\r\n  \"etag\": \"W/\\\"8c67efbd-bf9b-49a6-b8c2-619d506a4161\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"20ecc8a7-1257-4239-8898-3874caf1346a\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/expressRouteCircuits\",\r\n  \"location\"\
         : \"eastus\",\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\"\
-        ,\r\n    \"resourceGuid\": \"4c266c27-3db5-45dc-ba36-d7abe84bc920\",\r\n \
+        ,\r\n    \"resourceGuid\": \"07c406ee-aed8-43c6-bd24-6be6bb6d0cc8\",\r\n \
         \   \"peerings\": [],\r\n    \"authorizations\": [],\r\n    \"serviceProviderProperties\"\
         : {\r\n      \"serviceProviderName\": \"Equinix\",\r\n      \"peeringLocation\"\
         : \"Silicon Valley\",\r\n      \"bandwidthInMbps\": 200\r\n    },\r\n    \"\
         circuitProvisioningState\": \"Enabled\",\r\n    \"allowClassicOperations\"\
-        : false,\r\n    \"gatewayManagerEtag\": \"\",\r\n    \"serviceKey\": \"f14e3667-99f1-4004-8b1a-02c46f276bb1\"\
+        : false,\r\n    \"gatewayManagerEtag\": \"\",\r\n    \"serviceKey\": \"ce1a6f08-f80f-47f9-bc0b-f65d0c338dbe\"\
         ,\r\n    \"serviceProviderProvisioningState\": \"NotProvisioned\",\r\n   \
         \ \"allowGlobalReach\": false,\r\n    \"globalReachEnabled\": false,\r\n \
-        \   \"stag\": 34\r\n  },\r\n  \"sku\": {\r\n    \"name\": \"Standard_MeteredData\"\
+        \   \"stag\": 204\r\n  },\r\n  \"sku\": {\r\n    \"name\": \"Standard_MeteredData\"\
         ,\r\n    \"tier\": \"Standard\",\r\n    \"family\": \"MeteredData\"\r\n  }\r\
         \n}"
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '1111'
+      - '1131'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 16:22:35 GMT
+      - Wed, 16 Sep 2020 07:38:48 GMT
       expires:
       - '-1'
       pragma:
@@ -436,7 +346,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 80cc5b95-2387-446a-84d6-5d5958b4038b
+      - ff5faffb-0214-45ce-8b2d-08c3deb98b72
     status:
       code: 200
       message: OK
@@ -457,16 +367,16 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/16.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit2?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit2?api-version=2020-06-01
   response:
     body:
       string: "{\r\n  \"name\": \"myCircuit2\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit2\"\
-        ,\r\n  \"etag\": \"W/\\\"7b63a393-c819-4eff-858d-5dd598012a19\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"211911e4-0e34-4f2b-91ae-30b014e0493b\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/expressRouteCircuits\",\r\n  \"location\"\
         : \"eastus\",\r\n  \"properties\": {\r\n    \"provisioningState\": \"Updating\"\
-        ,\r\n    \"resourceGuid\": \"49bc8463-f675-4a05-85dd-b2253f4b0e94\",\r\n \
+        ,\r\n    \"resourceGuid\": \"d400ae26-eb6b-4c4d-b71c-91cb178e5dd5\",\r\n \
         \   \"peerings\": [],\r\n    \"authorizations\": [],\r\n    \"serviceProviderProperties\"\
         : {\r\n      \"serviceProviderName\": \"Equinix\",\r\n      \"peeringLocation\"\
         : \"Silicon Valley\",\r\n      \"bandwidthInMbps\": 200\r\n    },\r\n    \"\
@@ -480,15 +390,15 @@ interactions:
       azure-asyncnotification:
       - Enabled
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/4ec9bc1c-792a-493b-9a17-3f42b30c42d4?api-version=2020-04-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/ef66dc9d-d5f5-4307-80d7-f2c7e51ee6ef?api-version=2020-06-01
       cache-control:
       - no-cache
       content-length:
-      - '1065'
+      - '1084'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 16:22:39 GMT
+      - Wed, 16 Sep 2020 07:38:55 GMT
       expires:
       - '-1'
       pragma:
@@ -501,9 +411,9 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 24727ceb-7f7c-4896-8bf0-71aa392e517b
+      - e010bf21-235c-411a-bf9f-80e04530331f
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1197'
+      - '1194'
     status:
       code: 201
       message: Created
@@ -517,9 +427,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/16.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/4ec9bc1c-792a-493b-9a17-3f42b30c42d4?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/ef66dc9d-d5f5-4307-80d7-f2c7e51ee6ef?api-version=2020-06-01
   response:
     body:
       string: "{\r\n  \"status\": \"InProgress\"\r\n}"
@@ -531,7 +441,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 16:22:49 GMT
+      - Wed, 16 Sep 2020 07:39:05 GMT
       expires:
       - '-1'
       pragma:
@@ -548,7 +458,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - a1ea3f8c-383e-4d24-95a7-277c96890561
+      - c6665087-b318-4bc2-bdb8-ea56c55d962d
     status:
       code: 200
       message: OK
@@ -562,9 +472,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/16.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/4ec9bc1c-792a-493b-9a17-3f42b30c42d4?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/ef66dc9d-d5f5-4307-80d7-f2c7e51ee6ef?api-version=2020-06-01
   response:
     body:
       string: "{\r\n  \"status\": \"InProgress\"\r\n}"
@@ -576,7 +486,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 16:22:59 GMT
+      - Wed, 16 Sep 2020 07:39:15 GMT
       expires:
       - '-1'
       pragma:
@@ -593,7 +503,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - f5e04727-d790-485f-949a-27da8a530acb
+      - f5a95119-3a85-4a37-90a5-81eaab9a80a9
     status:
       code: 200
       message: OK
@@ -607,9 +517,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/16.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/4ec9bc1c-792a-493b-9a17-3f42b30c42d4?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/ef66dc9d-d5f5-4307-80d7-f2c7e51ee6ef?api-version=2020-06-01
   response:
     body:
       string: "{\r\n  \"status\": \"InProgress\"\r\n}"
@@ -621,7 +531,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 16:23:10 GMT
+      - Wed, 16 Sep 2020 07:39:36 GMT
       expires:
       - '-1'
       pragma:
@@ -638,7 +548,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 80d027d8-3aa2-4a27-b85d-282e90f5f400
+      - 51d9eebb-3a9e-4590-b5cb-e711247cb97c
     status:
       code: 200
       message: OK
@@ -652,9 +562,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/16.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/4ec9bc1c-792a-493b-9a17-3f42b30c42d4?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/ef66dc9d-d5f5-4307-80d7-f2c7e51ee6ef?api-version=2020-06-01
   response:
     body:
       string: "{\r\n  \"status\": \"InProgress\"\r\n}"
@@ -666,7 +576,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 16:23:21 GMT
+      - Wed, 16 Sep 2020 07:39:56 GMT
       expires:
       - '-1'
       pragma:
@@ -683,7 +593,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 2dc0213d-3403-4aee-a813-b1e16c3b6cdf
+      - 5522c897-e443-43b8-8ab2-554b0f711e54
     status:
       code: 200
       message: OK
@@ -697,99 +607,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/16.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/4ec9bc1c-792a-493b-9a17-3f42b30c42d4?api-version=2020-04-01
-  response:
-    body:
-      string: "{\r\n  \"status\": \"InProgress\"\r\n}"
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '30'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Mon, 18 May 2020 16:23:30 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-      x-ms-arm-service-request-id:
-      - 2c58d984-26ca-4442-b0e9-ae4cd3691a44
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/4ec9bc1c-792a-493b-9a17-3f42b30c42d4?api-version=2020-04-01
-  response:
-    body:
-      string: "{\r\n  \"status\": \"InProgress\"\r\n}"
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '30'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Mon, 18 May 2020 16:23:40 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-      x-ms-arm-service-request-id:
-      - 5feb52e2-06eb-45b1-b5b3-db2d49bc063d
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/4ec9bc1c-792a-493b-9a17-3f42b30c42d4?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/ef66dc9d-d5f5-4307-80d7-f2c7e51ee6ef?api-version=2020-06-01
   response:
     body:
       string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
@@ -801,7 +621,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 16:23:50 GMT
+      - Wed, 16 Sep 2020 07:40:37 GMT
       expires:
       - '-1'
       pragma:
@@ -818,7 +638,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 3d5852e5-eee2-4b82-bcc4-b32cd2aec594
+      - e50b68ff-f820-4ccc-8fc3-94c2242f199e
     status:
       code: 200
       message: OK
@@ -832,35 +652,35 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/16.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit2?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit2?api-version=2020-06-01
   response:
     body:
       string: "{\r\n  \"name\": \"myCircuit2\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit2\"\
-        ,\r\n  \"etag\": \"W/\\\"03bfd633-aeb8-4399-bc6c-68cbed49b7b6\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"0ad3f775-5672-4068-9a37-a879dbdaf064\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/expressRouteCircuits\",\r\n  \"location\"\
         : \"eastus\",\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\"\
-        ,\r\n    \"resourceGuid\": \"49bc8463-f675-4a05-85dd-b2253f4b0e94\",\r\n \
+        ,\r\n    \"resourceGuid\": \"d400ae26-eb6b-4c4d-b71c-91cb178e5dd5\",\r\n \
         \   \"peerings\": [],\r\n    \"authorizations\": [],\r\n    \"serviceProviderProperties\"\
         : {\r\n      \"serviceProviderName\": \"Equinix\",\r\n      \"peeringLocation\"\
         : \"Silicon Valley\",\r\n      \"bandwidthInMbps\": 200\r\n    },\r\n    \"\
         circuitProvisioningState\": \"Enabled\",\r\n    \"allowClassicOperations\"\
-        : false,\r\n    \"gatewayManagerEtag\": \"\",\r\n    \"serviceKey\": \"e98747ce-092e-4aa7-bc48-400e80c63396\"\
+        : false,\r\n    \"gatewayManagerEtag\": \"\",\r\n    \"serviceKey\": \"be083c43-e91e-4a24-a65a-d74bebee467e\"\
         ,\r\n    \"serviceProviderProvisioningState\": \"NotProvisioned\",\r\n   \
         \ \"allowGlobalReach\": false,\r\n    \"globalReachEnabled\": false,\r\n \
-        \   \"stag\": 68\r\n  },\r\n  \"sku\": {\r\n    \"name\": \"Standard_MeteredData\"\
+        \   \"stag\": 219\r\n  },\r\n  \"sku\": {\r\n    \"name\": \"Standard_MeteredData\"\
         ,\r\n    \"tier\": \"Standard\",\r\n    \"family\": \"MeteredData\"\r\n  }\r\
         \n}"
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '1113'
+      - '1133'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 16:23:52 GMT
+      - Wed, 16 Sep 2020 07:40:38 GMT
       expires:
       - '-1'
       pragma:
@@ -877,7 +697,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - c788f06a-614d-4df3-8181-e315847ae5bd
+      - 53c3a790-c604-4f9d-adfe-62f73a9ccf17
     status:
       code: 200
       message: OK
@@ -896,13 +716,13 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/16.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit/peerings/AzurePrivatePeering?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit/peerings/AzurePrivatePeering?api-version=2020-06-01
   response:
     body:
       string: "{\r\n  \"name\": \"AzurePrivatePeering\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit/peerings/AzurePrivatePeering\"\
-        ,\r\n  \"etag\": \"W/\\\"88ade756-c5d1-4a15-8e7e-2a88b8953e00\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"190731eb-c050-476e-9253-ea87480de7ed\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n    \"\
         peeringType\": \"AzurePrivatePeering\",\r\n    \"azureASN\": 0,\r\n    \"\
         peerASN\": 10001,\r\n    \"primaryPeerAddressPrefix\": \"102.0.0.0/30\",\r\
@@ -912,15 +732,15 @@ interactions:
         type\": \"Microsoft.Network/expressRouteCircuits/peerings\"\r\n}"
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/f573ef5e-7da7-4b14-9bd6-a55fa42b944a?api-version=2020-04-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/dbdde56f-5a8f-4a99-bd0a-78cec341e5dc?api-version=2020-06-01
       cache-control:
       - no-cache
       content-length:
-      - '754'
+      - '773'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 16:23:53 GMT
+      - Wed, 16 Sep 2020 07:40:39 GMT
       expires:
       - '-1'
       pragma:
@@ -933,9 +753,9 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 3e13e6cc-45e6-429b-a366-74fd25a3815e
+      - 42d4ac87-bcda-4baf-bd38-b44dba84e635
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1196'
+      - '1194'
     status:
       code: 201
       message: Created
@@ -949,9 +769,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/16.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/f573ef5e-7da7-4b14-9bd6-a55fa42b944a?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/dbdde56f-5a8f-4a99-bd0a-78cec341e5dc?api-version=2020-06-01
   response:
     body:
       string: "{\r\n  \"status\": \"InProgress\"\r\n}"
@@ -963,7 +783,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 16:24:03 GMT
+      - Wed, 16 Sep 2020 07:40:49 GMT
       expires:
       - '-1'
       pragma:
@@ -980,7 +800,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 05e16843-1996-4f14-bcd8-3e15429f56ce
+      - 87528aff-32b3-4b79-bb74-6fa495d5c46e
     status:
       code: 200
       message: OK
@@ -994,9 +814,54 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/16.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/f573ef5e-7da7-4b14-9bd6-a55fa42b944a?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/dbdde56f-5a8f-4a99-bd0a-78cec341e5dc?api-version=2020-06-01
+  response:
+    body:
+      string: "{\r\n  \"status\": \"InProgress\"\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '30'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 16 Sep 2020 07:41:00 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-arm-service-request-id:
+      - a37ac65a-e6fb-40db-90ae-c2e43610cb6b
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-network/16.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/dbdde56f-5a8f-4a99-bd0a-78cec341e5dc?api-version=2020-06-01
   response:
     body:
       string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
@@ -1008,7 +873,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 16:24:12 GMT
+      - Wed, 16 Sep 2020 07:41:20 GMT
       expires:
       - '-1'
       pragma:
@@ -1025,7 +890,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - a9afc220-7529-4d7d-a3b7-712c78b6dadc
+      - 8fbc4081-867f-4c8d-a95e-fac4629af151
     status:
       code: 200
       message: OK
@@ -1039,32 +904,31 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/16.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit/peerings/AzurePrivatePeering?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit/peerings/AzurePrivatePeering?api-version=2020-06-01
   response:
     body:
       string: "{\r\n  \"name\": \"AzurePrivatePeering\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit/peerings/AzurePrivatePeering\"\
-        ,\r\n  \"etag\": \"W/\\\"b2845537-ead9-455d-9dbc-b4e7582420c1\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"19731944-ee37-47b9-bfdb-400866018cc2\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"\
         peeringType\": \"AzurePrivatePeering\",\r\n    \"azureASN\": 12076,\r\n  \
         \  \"peerASN\": 10001,\r\n    \"primaryPeerAddressPrefix\": \"102.0.0.0/30\"\
         ,\r\n    \"secondaryPeerAddressPrefix\": \"103.0.0.0/30\",\r\n    \"primaryAzurePort\"\
-        : \"EQIX-SJC-09XGMR-CIS-1-PRI-09272019-A\",\r\n    \"secondaryAzurePort\"\
-        : \"EQIX-SJC-09XGMR-CIS-2-SEC-09272019-A\",\r\n    \"state\": \"Enabled\"\
-        ,\r\n    \"vlanId\": 101,\r\n    \"gatewayManagerEtag\": \"\",\r\n    \"lastModifiedBy\"\
-        : \"Customer\",\r\n    \"connections\": [],\r\n    \"peeredConnections\":\
-        \ []\r\n  },\r\n  \"type\": \"Microsoft.Network/expressRouteCircuits/peerings\"\
+        : \"EQIX-SJC-06GMR-CIS-1-PRI-A\",\r\n    \"secondaryAzurePort\": \"EQIX-SJC-06GMR-CIS-2-SEC-A\"\
+        ,\r\n    \"state\": \"Enabled\",\r\n    \"vlanId\": 101,\r\n    \"gatewayManagerEtag\"\
+        : \"\",\r\n    \"lastModifiedBy\": \"Customer\",\r\n    \"connections\": [],\r\
+        \n    \"peeredConnections\": []\r\n  },\r\n  \"type\": \"Microsoft.Network/expressRouteCircuits/peerings\"\
         \r\n}"
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '930'
+      - '929'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 16:24:13 GMT
+      - Wed, 16 Sep 2020 07:41:20 GMT
       expires:
       - '-1'
       pragma:
@@ -1081,7 +945,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - a31e245d-9bcc-4d7d-b89d-c7c56ed2ac64
+      - 2b17dcf5-dadc-44a4-ab60-13b0b94705f6
     status:
       code: 200
       message: OK
@@ -1100,13 +964,13 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/16.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit2/peerings/AzurePrivatePeering?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit2/peerings/AzurePrivatePeering?api-version=2020-06-01
   response:
     body:
       string: "{\r\n  \"name\": \"AzurePrivatePeering\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit2/peerings/AzurePrivatePeering\"\
-        ,\r\n  \"etag\": \"W/\\\"fd769c33-9dfc-4bb2-a6c9-1444f1d2f2b7\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"60dedcf7-5b51-4077-b2e1-57b5b26d3e83\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n    \"\
         peeringType\": \"AzurePrivatePeering\",\r\n    \"azureASN\": 0,\r\n    \"\
         peerASN\": 10002,\r\n    \"primaryPeerAddressPrefix\": \"104.0.0.0/30\",\r\
@@ -1116,15 +980,15 @@ interactions:
         type\": \"Microsoft.Network/expressRouteCircuits/peerings\"\r\n}"
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/1bbbb1d1-9f8c-415f-ac86-fe5e547356b5?api-version=2020-04-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/af6f7096-5d87-4cc7-a350-6605ca90f6b6?api-version=2020-06-01
       cache-control:
       - no-cache
       content-length:
-      - '755'
+      - '774'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 16:24:15 GMT
+      - Wed, 16 Sep 2020 07:41:22 GMT
       expires:
       - '-1'
       pragma:
@@ -1137,9 +1001,9 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - cd41116a-eebe-4946-9edd-6a93aba81085
+      - 176e4a4e-3873-4252-bf5f-ad1c0052f0e1
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1195'
+      - '1193'
     status:
       code: 201
       message: Created
@@ -1153,9 +1017,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/16.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/1bbbb1d1-9f8c-415f-ac86-fe5e547356b5?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/af6f7096-5d87-4cc7-a350-6605ca90f6b6?api-version=2020-06-01
   response:
     body:
       string: "{\r\n  \"status\": \"InProgress\"\r\n}"
@@ -1167,7 +1031,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 16:24:25 GMT
+      - Wed, 16 Sep 2020 07:41:32 GMT
       expires:
       - '-1'
       pragma:
@@ -1184,7 +1048,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - d1c60f43-0a40-4d1f-8cdb-ad0365078579
+      - 72d35727-e768-4fc8-a09d-2bac4beccdbe
     status:
       code: 200
       message: OK
@@ -1198,9 +1062,54 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/16.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/1bbbb1d1-9f8c-415f-ac86-fe5e547356b5?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/af6f7096-5d87-4cc7-a350-6605ca90f6b6?api-version=2020-06-01
+  response:
+    body:
+      string: "{\r\n  \"status\": \"InProgress\"\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '30'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 16 Sep 2020 07:41:42 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-arm-service-request-id:
+      - 420ce444-3ca5-4a0e-801f-197d7f25c74c
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-network/16.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/af6f7096-5d87-4cc7-a350-6605ca90f6b6?api-version=2020-06-01
   response:
     body:
       string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
@@ -1212,7 +1121,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 16:24:35 GMT
+      - Wed, 16 Sep 2020 07:42:02 GMT
       expires:
       - '-1'
       pragma:
@@ -1229,7 +1138,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - d69a545f-f59e-4569-9faa-c9c7f594a6ad
+      - 191f850d-ba9d-44f5-8cf1-63d7414fdb68
     status:
       code: 200
       message: OK
@@ -1243,32 +1152,31 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/16.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit2/peerings/AzurePrivatePeering?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit2/peerings/AzurePrivatePeering?api-version=2020-06-01
   response:
     body:
       string: "{\r\n  \"name\": \"AzurePrivatePeering\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit2/peerings/AzurePrivatePeering\"\
-        ,\r\n  \"etag\": \"W/\\\"6ca5b120-d524-4770-a3b9-1b47227a145f\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"8a9dbd6d-b1dd-4533-9cc7-478336c5b055\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"\
         peeringType\": \"AzurePrivatePeering\",\r\n    \"azureASN\": 12076,\r\n  \
         \  \"peerASN\": 10002,\r\n    \"primaryPeerAddressPrefix\": \"104.0.0.0/30\"\
         ,\r\n    \"secondaryPeerAddressPrefix\": \"105.0.0.0/30\",\r\n    \"primaryAzurePort\"\
-        : \"EQIX-SJC-09XGMR-CIS-1-PRI-09272019-A\",\r\n    \"secondaryAzurePort\"\
-        : \"EQIX-SJC-09XGMR-CIS-2-SEC-09272019-A\",\r\n    \"state\": \"Enabled\"\
-        ,\r\n    \"vlanId\": 102,\r\n    \"gatewayManagerEtag\": \"\",\r\n    \"lastModifiedBy\"\
-        : \"Customer\",\r\n    \"connections\": [],\r\n    \"peeredConnections\":\
-        \ []\r\n  },\r\n  \"type\": \"Microsoft.Network/expressRouteCircuits/peerings\"\
+        : \"EQIX-SJC-06GMR-CIS-1-PRI-A\",\r\n    \"secondaryAzurePort\": \"EQIX-SJC-06GMR-CIS-2-SEC-A\"\
+        ,\r\n    \"state\": \"Enabled\",\r\n    \"vlanId\": 102,\r\n    \"gatewayManagerEtag\"\
+        : \"\",\r\n    \"lastModifiedBy\": \"Customer\",\r\n    \"connections\": [],\r\
+        \n    \"peeredConnections\": []\r\n  },\r\n  \"type\": \"Microsoft.Network/expressRouteCircuits/peerings\"\
         \r\n}"
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '931'
+      - '930'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 16:24:35 GMT
+      - Wed, 16 Sep 2020 07:42:03 GMT
       expires:
       - '-1'
       pragma:
@@ -1285,7 +1193,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 567ec947-96a0-4fca-9e27-7d99a8217c3f
+      - 0899de4b-4cdc-49a0-b631-368a6c85ce06
     status:
       code: 200
       message: OK
@@ -1303,28 +1211,28 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/16.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit/authorizations/myAuthorization?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit/authorizations/myAuthorization?api-version=2020-06-01
   response:
     body:
       string: "{\r\n  \"name\": \"myAuthorization\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit/authorizations/myAuthorization\"\
-        ,\r\n  \"etag\": \"W/\\\"34fc6b64-0dd7-4d05-a352-842948a358ca\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"b67955c6-2cc0-42bd-82d8-9917489ede61\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n    \"\
-        authorizationKey\": \"19a0a8db-28d3-4d61-9b85-af1c9bfdc90f\",\r\n    \"authorizationUseStatus\"\
+        authorizationKey\": \"8690ced6-2674-49c4-be89-657e1af7d00a\",\r\n    \"authorizationUseStatus\"\
         : \"Available\"\r\n  },\r\n  \"type\": \"Microsoft.Network/expressRouteCircuits/authorizations\"\
         \r\n}"
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/9f99c87e-ebf2-4080-a9de-01abe010a6db?api-version=2020-04-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/48e792d9-2011-42ff-b602-05eae492635c?api-version=2020-06-01
       cache-control:
       - no-cache
       content-length:
-      - '555'
+      - '574'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 16:24:36 GMT
+      - Wed, 16 Sep 2020 07:42:04 GMT
       expires:
       - '-1'
       pragma:
@@ -1337,9 +1245,9 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 419085ce-f616-44b1-9adf-29b3d2bf4684
+      - 77fd4b25-b57c-4f9e-bf42-0c6dfc17f8d8
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1194'
+      - '1192'
     status:
       code: 201
       message: Created
@@ -1353,9 +1261,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/16.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/9f99c87e-ebf2-4080-a9de-01abe010a6db?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/48e792d9-2011-42ff-b602-05eae492635c?api-version=2020-06-01
   response:
     body:
       string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
@@ -1367,7 +1275,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 16:24:47 GMT
+      - Wed, 16 Sep 2020 07:42:15 GMT
       expires:
       - '-1'
       pragma:
@@ -1384,7 +1292,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 45ff2e29-52d2-471a-81c3-4257f1640d03
+      - 049ad192-bf4d-4b40-9f35-f339b7072eec
     status:
       code: 200
       message: OK
@@ -1398,26 +1306,26 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/16.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit/authorizations/myAuthorization?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit/authorizations/myAuthorization?api-version=2020-06-01
   response:
     body:
       string: "{\r\n  \"name\": \"myAuthorization\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit/authorizations/myAuthorization\"\
-        ,\r\n  \"etag\": \"W/\\\"d0efc24b-6655-46c3-ac62-97cbcad54551\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"0b051bd5-6ba9-46cb-b3ef-312eeb3c50ff\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"\
-        authorizationKey\": \"19a0a8db-28d3-4d61-9b85-af1c9bfdc90f\",\r\n    \"authorizationUseStatus\"\
+        authorizationKey\": \"8690ced6-2674-49c4-be89-657e1af7d00a\",\r\n    \"authorizationUseStatus\"\
         : \"Available\"\r\n  },\r\n  \"type\": \"Microsoft.Network/expressRouteCircuits/authorizations\"\
         \r\n}"
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '556'
+      - '575'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 16:24:47 GMT
+      - Wed, 16 Sep 2020 07:42:15 GMT
       expires:
       - '-1'
       pragma:
@@ -1434,14 +1342,14 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 2bd63739-b9f7-4292-897f-0566dccae11e
+      - 0939c5fb-1dbd-4abe-8098-0202c9a9e0bd
     status:
       code: 200
       message: OK
 - request:
-    body: 'b''{"properties": {"expressRouteCircuitPeering": {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit/peerings/AzurePrivatePeering"},
+    body: 'b''b\''{"properties": {"expressRouteCircuitPeering": {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit/peerings/AzurePrivatePeering"},
       "peerExpressRouteCircuitPeering": {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit2/peerings/AzurePrivatePeering"},
-      "addressPrefix": "104.0.0.0/29"}}'''
+      "addressPrefix": "104.0.0.0/29"}}\'''''
     headers:
       Accept:
       - application/json
@@ -1450,17 +1358,17 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '560'
+      - '598'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/16.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit/peerings/AzurePrivatePeering/connections/myConnection?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit/peerings/AzurePrivatePeering/connections/myConnection?api-version=2020-06-01
   response:
     body:
       string: "{\r\n  \"name\": \"myConnection\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit/peerings/AzurePrivatePeering/connections/myConnection\"\
-        ,\r\n  \"etag\": \"W/\\\"c27d6100-6bcc-40a2-81fc-4a4b27a5a003\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"f60e2d4a-08f2-410d-b046-9f4b96d78240\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n    \"\
         expressRouteCircuitPeering\": {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit/peerings/AzurePrivatePeering\"\
         \r\n    },\r\n    \"peerExpressRouteCircuitPeering\": {\r\n      \"id\": \"\
@@ -1470,15 +1378,15 @@ interactions:
         \r\n}"
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/f95d5c26-40a6-46ec-a3c8-53e76d30e287?api-version=2020-04-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/ee0dabf6-f1c7-48c7-84fc-5e5c8509d50c?api-version=2020-06-01
       cache-control:
       - no-cache
       content-length:
-      - '1107'
+      - '1164'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 16:24:48 GMT
+      - Wed, 16 Sep 2020 07:42:17 GMT
       expires:
       - '-1'
       pragma:
@@ -1491,9 +1399,9 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 8b36688a-31c2-4672-8b98-228633d38716
+      - 32e4958b-65b5-4e99-9642-ecbb2d54177f
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1193'
+      - '1191'
     status:
       code: 201
       message: Created
@@ -1507,150 +1415,15 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/16.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/f95d5c26-40a6-46ec-a3c8-53e76d30e287?api-version=2020-04-01
-  response:
-    body:
-      string: "{\r\n  \"status\": \"InProgress\"\r\n}"
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '30'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Mon, 18 May 2020 16:24:59 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-      x-ms-arm-service-request-id:
-      - c8547d84-590b-46ac-9a70-d9327714f6d5
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/f95d5c26-40a6-46ec-a3c8-53e76d30e287?api-version=2020-04-01
-  response:
-    body:
-      string: "{\r\n  \"status\": \"InProgress\"\r\n}"
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '30'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Mon, 18 May 2020 16:25:09 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-      x-ms-arm-service-request-id:
-      - 152a6411-e513-4c4b-af6f-a2b5c92733bc
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/f95d5c26-40a6-46ec-a3c8-53e76d30e287?api-version=2020-04-01
-  response:
-    body:
-      string: "{\r\n  \"status\": \"InProgress\"\r\n}"
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '30'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Mon, 18 May 2020 16:25:18 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-      x-ms-arm-service-request-id:
-      - 9a470257-9a30-4c7b-ad66-2da4f7deb4f1
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/f95d5c26-40a6-46ec-a3c8-53e76d30e287?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/ee0dabf6-f1c7-48c7-84fc-5e5c8509d50c?api-version=2020-06-01
   response:
     body:
       string: "{\r\n  \"status\": \"Failed\",\r\n  \"error\": {\r\n    \"code\": \"\
         InitiatingCircuitNotProvisioned\",\r\n    \"message\": \"Put Global Reach\
         \ Connection Initiating Circuit Subscription = 00000000-0000-0000-0000-000000000000,\
-        \ ServiceKey = f14e3667-99f1-4004-8b1a-02c46f276bb1 is Not Provisioned. Current\
+        \ ServiceKey = ce1a6f08-f80f-47f9-bc0b-f65d0c338dbe is Not Provisioned. Current\
         \ Status NotProvisioned\",\r\n    \"details\": []\r\n  }\r\n}"
     headers:
       cache-control:
@@ -1660,7 +1433,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 16:25:29 GMT
+      - Wed, 16 Sep 2020 07:42:27 GMT
       expires:
       - '-1'
       pragma:
@@ -1677,7 +1450,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - c7e65a5a-c88b-4c7d-b757-37a641568d8b
+      - 5749f4c0-ed16-4cfe-ba10-580d92a78329
     status:
       code: 200
       message: OK
@@ -1691,9 +1464,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/16.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit2/peerings/AzurePrivatePeering/peerConnections/myConnection?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit2/peerings/AzurePrivatePeering/peerConnections/myConnection?api-version=2020-06-01
   response:
     body:
       string: "{\r\n  \"error\": {\r\n    \"code\": \"NotFound\",\r\n    \"message\"\
@@ -1703,11 +1476,11 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '348'
+      - '367'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 16:25:29 GMT
+      - Wed, 16 Sep 2020 07:42:27 GMT
       expires:
       - '-1'
       pragma:
@@ -1720,7 +1493,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - a4fb2df1-3987-4afc-bec6-578e2305ae70
+      - 95c39685-a260-41f9-85f0-9a6cba4ccd2a
     status:
       code: 404
       message: Not Found
@@ -1734,13 +1507,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/16.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit/peerings/AzurePrivatePeering/connections/myConnection?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit/peerings/AzurePrivatePeering/connections/myConnection?api-version=2020-06-01
   response:
     body:
       string: "{\r\n  \"name\": \"myConnection\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit/peerings/AzurePrivatePeering/connections/myConnection\"\
-        ,\r\n  \"etag\": \"W/\\\"092799be-e671-4f60-b82a-69b6ed9eec99\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"21834f24-0474-48b1-b13b-996633041cf6\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Failed\",\r\n    \"expressRouteCircuitPeering\"\
         : {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit/peerings/AzurePrivatePeering\"\
         \r\n    },\r\n    \"peerExpressRouteCircuitPeering\": {\r\n      \"id\": \"\
@@ -1752,13 +1525,13 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '1102'
+      - '1159'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 16:25:29 GMT
+      - Wed, 16 Sep 2020 07:42:28 GMT
       etag:
-      - W/"092799be-e671-4f60-b82a-69b6ed9eec99"
+      - W/"21834f24-0474-48b1-b13b-996633041cf6"
       expires:
       - '-1'
       pragma:
@@ -1775,7 +1548,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 97598421-6681-4f8c-90ca-ecd6a3f7e5c6
+      - 2f91d22a-9534-4dc1-9b04-7dc990c1ae64
     status:
       code: 200
       message: OK
@@ -1789,26 +1562,26 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/16.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit/authorizations/myAuthorization?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit/authorizations/myAuthorization?api-version=2020-06-01
   response:
     body:
       string: "{\r\n  \"name\": \"myAuthorization\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit/authorizations/myAuthorization\"\
-        ,\r\n  \"etag\": \"W/\\\"092799be-e671-4f60-b82a-69b6ed9eec99\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"21834f24-0474-48b1-b13b-996633041cf6\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Failed\",\r\n    \"authorizationKey\"\
-        : \"19a0a8db-28d3-4d61-9b85-af1c9bfdc90f\",\r\n    \"authorizationUseStatus\"\
+        : \"8690ced6-2674-49c4-be89-657e1af7d00a\",\r\n    \"authorizationUseStatus\"\
         : \"Available\"\r\n  },\r\n  \"type\": \"Microsoft.Network/expressRouteCircuits/authorizations\"\
         \r\n}"
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '553'
+      - '572'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 16:25:29 GMT
+      - Wed, 16 Sep 2020 07:42:28 GMT
       expires:
       - '-1'
       pragma:
@@ -1825,7 +1598,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 7c1fa90a-64eb-4882-94b0-f66cfdd902a8
+      - 05b29690-2774-4a5f-903a-6e700f9c1c44
     status:
       code: 200
       message: OK
@@ -1839,9 +1612,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/16.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit/peerings/AzurePrivatePeering/stats?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit/peerings/AzurePrivatePeering/stats?api-version=2020-06-01
   response:
     body:
       string: "{\r\n  \"primaryBytesIn\": 0,\r\n  \"primaryBytesOut\": 0,\r\n  \"\
@@ -1854,7 +1627,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 16:25:30 GMT
+      - Wed, 16 Sep 2020 07:42:29 GMT
       expires:
       - '-1'
       pragma:
@@ -1871,7 +1644,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 7c42155c-935d-4736-bc3b-cd727ca1f01b
+      - 3afb4364-98fa-4427-a34c-18085c358d36
     status:
       code: 200
       message: OK
@@ -1885,23 +1658,22 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/16.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit/peerings/AzurePrivatePeering?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit/peerings/AzurePrivatePeering?api-version=2020-06-01
   response:
     body:
       string: "{\r\n  \"name\": \"AzurePrivatePeering\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit/peerings/AzurePrivatePeering\"\
-        ,\r\n  \"etag\": \"W/\\\"092799be-e671-4f60-b82a-69b6ed9eec99\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"21834f24-0474-48b1-b13b-996633041cf6\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Failed\",\r\n    \"peeringType\"\
         : \"AzurePrivatePeering\",\r\n    \"azureASN\": 12076,\r\n    \"peerASN\"\
         : 10001,\r\n    \"primaryPeerAddressPrefix\": \"102.0.0.0/30\",\r\n    \"\
         secondaryPeerAddressPrefix\": \"103.0.0.0/30\",\r\n    \"primaryAzurePort\"\
-        : \"EQIX-SJC-09XGMR-CIS-1-PRI-09272019-A\",\r\n    \"secondaryAzurePort\"\
-        : \"EQIX-SJC-09XGMR-CIS-2-SEC-09272019-A\",\r\n    \"state\": \"Enabled\"\
-        ,\r\n    \"vlanId\": 101,\r\n    \"gatewayManagerEtag\": \"\",\r\n    \"lastModifiedBy\"\
-        : \"Customer\",\r\n    \"connections\": [\r\n      {\r\n        \"name\":\
-        \ \"myConnection\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit/peerings/AzurePrivatePeering/connections/myConnection\"\
-        ,\r\n        \"etag\": \"W/\\\"092799be-e671-4f60-b82a-69b6ed9eec99\\\"\"\
+        : \"EQIX-SJC-06GMR-CIS-1-PRI-A\",\r\n    \"secondaryAzurePort\": \"EQIX-SJC-06GMR-CIS-2-SEC-A\"\
+        ,\r\n    \"state\": \"Enabled\",\r\n    \"vlanId\": 101,\r\n    \"gatewayManagerEtag\"\
+        : \"\",\r\n    \"lastModifiedBy\": \"Customer\",\r\n    \"connections\": [\r\
+        \n      {\r\n        \"name\": \"myConnection\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit/peerings/AzurePrivatePeering/connections/myConnection\"\
+        ,\r\n        \"etag\": \"W/\\\"21834f24-0474-48b1-b13b-996633041cf6\\\"\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Failed\"\
         ,\r\n          \"expressRouteCircuitPeering\": {\r\n            \"id\": \"\
         /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit/peerings/AzurePrivatePeering\"\
@@ -1916,11 +1688,11 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '2139'
+      - '2195'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 16:25:30 GMT
+      - Wed, 16 Sep 2020 07:42:29 GMT
       expires:
       - '-1'
       pragma:
@@ -1937,7 +1709,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - a0b5249e-a311-4df0-9ce3-daf2491765c3
+      - 99619fc1-24da-484b-880b-2cf1697960e2
     status:
       code: 200
       message: OK
@@ -1951,9 +1723,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/16.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit/stats?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit/stats?api-version=2020-06-01
   response:
     body:
       string: "{\r\n  \"primaryBytesIn\": 0,\r\n  \"primaryBytesOut\": 0,\r\n  \"\
@@ -1966,7 +1738,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 16:25:31 GMT
+      - Wed, 16 Sep 2020 07:42:30 GMT
       expires:
       - '-1'
       pragma:
@@ -1983,7 +1755,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 42eb30ee-496b-441e-9189-7d3601f1906f
+      - 9355bbbd-0646-43e2-8955-a4487e656da8
     status:
       code: 200
       message: OK
@@ -1997,19 +1769,19 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/16.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit?api-version=2020-06-01
   response:
     body:
       string: "{\r\n  \"name\": \"myCircuit\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit\"\
-        ,\r\n  \"etag\": \"W/\\\"092799be-e671-4f60-b82a-69b6ed9eec99\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"21834f24-0474-48b1-b13b-996633041cf6\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/expressRouteCircuits\",\r\n  \"location\"\
         : \"eastus\",\r\n  \"properties\": {\r\n    \"provisioningState\": \"Failed\"\
-        ,\r\n    \"resourceGuid\": \"4c266c27-3db5-45dc-ba36-d7abe84bc920\",\r\n \
+        ,\r\n    \"resourceGuid\": \"07c406ee-aed8-43c6-bd24-6be6bb6d0cc8\",\r\n \
         \   \"peerings\": [\r\n      {\r\n        \"name\": \"AzurePrivatePeering\"\
         ,\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit/peerings/AzurePrivatePeering\"\
-        ,\r\n        \"etag\": \"W/\\\"092799be-e671-4f60-b82a-69b6ed9eec99\\\"\"\
+        ,\r\n        \"etag\": \"W/\\\"21834f24-0474-48b1-b13b-996633041cf6\\\"\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Failed\"\
         ,\r\n          \"peeringType\": \"AzurePrivatePeering\",\r\n          \"azureASN\"\
         : 12076,\r\n          \"peerASN\": 10001,\r\n          \"primaryPeerAddressPrefix\"\
@@ -2019,7 +1791,7 @@ interactions:
         \n          \"gatewayManagerEtag\": \"\",\r\n          \"lastModifiedBy\"\
         : \"Customer\",\r\n          \"connections\": [\r\n            {\r\n     \
         \         \"name\": \"myConnection\",\r\n              \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit/peerings/AzurePrivatePeering/connections/myConnection\"\
-        ,\r\n              \"etag\": \"W/\\\"092799be-e671-4f60-b82a-69b6ed9eec99\\\
+        ,\r\n              \"etag\": \"W/\\\"21834f24-0474-48b1-b13b-996633041cf6\\\
         \"\",\r\n              \"properties\": {\r\n                \"provisioningState\"\
         : \"Failed\",\r\n                \"expressRouteCircuitPeering\": {\r\n   \
         \               \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit/peerings/AzurePrivatePeering\"\
@@ -2032,30 +1804,30 @@ interactions:
         \n        },\r\n        \"type\": \"Microsoft.Network/expressRouteCircuits/peerings\"\
         \r\n      }\r\n    ],\r\n    \"authorizations\": [\r\n      {\r\n        \"\
         name\": \"myAuthorization\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit/authorizations/myAuthorization\"\
-        ,\r\n        \"etag\": \"W/\\\"092799be-e671-4f60-b82a-69b6ed9eec99\\\"\"\
+        ,\r\n        \"etag\": \"W/\\\"21834f24-0474-48b1-b13b-996633041cf6\\\"\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Failed\"\
-        ,\r\n          \"authorizationKey\": \"19a0a8db-28d3-4d61-9b85-af1c9bfdc90f\"\
+        ,\r\n          \"authorizationKey\": \"8690ced6-2674-49c4-be89-657e1af7d00a\"\
         ,\r\n          \"authorizationUseStatus\": \"Available\"\r\n        },\r\n\
         \        \"type\": \"Microsoft.Network/expressRouteCircuits/authorizations\"\
         \r\n      }\r\n    ],\r\n    \"serviceProviderProperties\": {\r\n      \"\
         serviceProviderName\": \"Equinix\",\r\n      \"peeringLocation\": \"Silicon\
         \ Valley\",\r\n      \"bandwidthInMbps\": 200\r\n    },\r\n    \"circuitProvisioningState\"\
         : \"Enabled\",\r\n    \"allowClassicOperations\": false,\r\n    \"gatewayManagerEtag\"\
-        : \"\",\r\n    \"serviceKey\": \"f14e3667-99f1-4004-8b1a-02c46f276bb1\",\r\
+        : \"\",\r\n    \"serviceKey\": \"ce1a6f08-f80f-47f9-bc0b-f65d0c338dbe\",\r\
         \n    \"serviceProviderProvisioningState\": \"NotProvisioned\",\r\n    \"\
         allowGlobalReach\": false,\r\n    \"globalReachEnabled\": false,\r\n    \"\
-        stag\": 34\r\n  },\r\n  \"sku\": {\r\n    \"name\": \"Standard_MeteredData\"\
+        stag\": 204\r\n  },\r\n  \"sku\": {\r\n    \"name\": \"Standard_MeteredData\"\
         ,\r\n    \"tier\": \"Standard\",\r\n    \"family\": \"MeteredData\"\r\n  }\r\
         \n}"
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '4050'
+      - '4165'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 16:25:31 GMT
+      - Wed, 16 Sep 2020 07:42:31 GMT
       expires:
       - '-1'
       pragma:
@@ -2072,12 +1844,12 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 1f07c3d3-f289-46c8-8ec7-e4abd2edcd65
+      - f329349f-2f1e-4b72-9b5a-914bbfa7ee62
     status:
       code: 200
       message: OK
 - request:
-    body: '{"tags": {"tag1": "value1", "tag2": "value2"}}'
+    body: null
     headers:
       Accept:
       - application/json
@@ -2086,126 +1858,27 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '46'
-      Content-Type:
-      - application/json
-      User-Agent:
-      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: PATCH
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit?api-version=2020-04-01
-  response:
-    body:
-      string: "{\r\n  \"name\": \"myCircuit\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit\"\
-        ,\r\n  \"etag\": \"W/\\\"4eb8b362-ec75-4890-8b2a-2428cd21ee5d\\\"\",\r\n \
-        \ \"type\": \"Microsoft.Network/expressRouteCircuits\",\r\n  \"location\"\
-        : \"eastus\",\r\n  \"tags\": {\r\n    \"tag1\": \"value1\",\r\n    \"tag2\"\
-        : \"value2\"\r\n  },\r\n  \"properties\": {\r\n    \"provisioningState\":\
-        \ \"Failed\",\r\n    \"resourceGuid\": \"4c266c27-3db5-45dc-ba36-d7abe84bc920\"\
-        ,\r\n    \"peerings\": [\r\n      {\r\n        \"name\": \"AzurePrivatePeering\"\
-        ,\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit/peerings/AzurePrivatePeering\"\
-        ,\r\n        \"etag\": \"W/\\\"4eb8b362-ec75-4890-8b2a-2428cd21ee5d\\\"\"\
-        ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Failed\"\
-        ,\r\n          \"peeringType\": \"AzurePrivatePeering\",\r\n          \"azureASN\"\
-        : 12076,\r\n          \"peerASN\": 10001,\r\n          \"primaryPeerAddressPrefix\"\
-        : \"102.0.0.0/30\",\r\n          \"secondaryPeerAddressPrefix\": \"103.0.0.0/30\"\
-        ,\r\n          \"primaryAzurePort\": \"EQIX-SJC-09XGMR-CIS-1-PRI-09272019-A\"\
-        ,\r\n          \"secondaryAzurePort\": \"EQIX-SJC-09XGMR-CIS-2-SEC-09272019-A\"\
-        ,\r\n          \"state\": \"Enabled\",\r\n          \"vlanId\": 101,\r\n \
-        \         \"gatewayManagerEtag\": \"\",\r\n          \"lastModifiedBy\": \"\
-        Customer\",\r\n          \"connections\": [\r\n            {\r\n         \
-        \     \"name\": \"myConnection\",\r\n              \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit/peerings/AzurePrivatePeering/connections/myConnection\"\
-        ,\r\n              \"etag\": \"W/\\\"4eb8b362-ec75-4890-8b2a-2428cd21ee5d\\\
-        \"\",\r\n              \"properties\": {\r\n                \"provisioningState\"\
-        : \"Failed\",\r\n                \"expressRouteCircuitPeering\": {\r\n   \
-        \               \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit/peerings/AzurePrivatePeering\"\
-        \r\n                },\r\n                \"peerExpressRouteCircuitPeering\"\
-        : {\r\n                  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit2/peerings/AzurePrivatePeering\"\
-        \r\n                },\r\n                \"addressPrefix\": \"104.0.0.0/29\"\
-        ,\r\n                \"circuitConnectionStatus\": \"Connected\"\r\n      \
-        \        },\r\n              \"type\": \"Microsoft.Network/expressRouteCircuits/peerings/connections\"\
-        \r\n            }\r\n          ],\r\n          \"peeredConnections\": []\r\
-        \n        },\r\n        \"type\": \"Microsoft.Network/expressRouteCircuits/peerings\"\
-        \r\n      }\r\n    ],\r\n    \"authorizations\": [\r\n      {\r\n        \"\
-        name\": \"myAuthorization\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit/authorizations/myAuthorization\"\
-        ,\r\n        \"etag\": \"W/\\\"4eb8b362-ec75-4890-8b2a-2428cd21ee5d\\\"\"\
-        ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Failed\"\
-        ,\r\n          \"authorizationKey\": \"3082022706092A864886F70D010703A082021830820214020100318201C0308201BC0201003081A330818B310B3009060355040613025553311330110603550408130A57617368696E67746F6E3110300E060355040713075265646D6F6E64311E301C060355040A13154D6963726F736F667420436F72706F726174696F6E31153013060355040B130C4D6963726F736F6674204954311E301C060355040313154D6963726F736F667420495420544C53204341203102137B0004AD79124D516A9DF2A2D600000004AD79300D06092A864886F70D010101050004820100590EC3B7114079366785B05B09A4C1A28D0F4C7F853176CC420852D8866CF5E3616D8BA44B1F098AB62ECB2EDB56343C2EC69DC0CC5C7E9A91F4EBD4ED8CFA0D6A2AEDEE5E4DF386A83284438F93B2E69DBE2FA641A5A8EC4F2C4455F55B88D26D11D44D0386E6109A2DE115EA17EF06EA8915448A6D9BE506E99873FBA806B990F2CA214CB7026A9690A9676AE08BDF5A53583FF12F7A5994FAA8A862652582CA593A9B1EC2DBD261A2B3453C979CBAD092D2CEA23C240AC566BFFD94FFF3A4CB53F19D2812333759E0F6A53E9D1758D99D2E61DA68388144AC7290E8A811659D62BA167CD172571EB04739CE53563FA7897F52C2C6DBA8C33662DD72FFEF62304B06092A864886F70D010701301406082A864886F70D030704087E9AD9DD343F8A238028AAF946244DA39086611BED58BBBF166931510B855FD267AA6069ACCFA0AD75F2E366E7824879ACC2\"\
-        ,\r\n          \"authorizationUseStatus\": \"Available\"\r\n        },\r\n\
-        \        \"type\": \"Microsoft.Network/expressRouteCircuits/authorizations\"\
-        \r\n      }\r\n    ],\r\n    \"serviceProviderProperties\": {\r\n      \"\
-        serviceProviderName\": \"Equinix\",\r\n      \"peeringLocation\": \"Silicon\
-        \ Valley\",\r\n      \"bandwidthInMbps\": 200\r\n    },\r\n    \"circuitProvisioningState\"\
-        : \"Enabled\",\r\n    \"allowClassicOperations\": false,\r\n    \"gatewayManagerEtag\"\
-        : \"\",\r\n    \"serviceKey\": \"f14e3667-99f1-4004-8b1a-02c46f276bb1\",\r\
-        \n    \"serviceProviderProvisioningState\": \"NotProvisioned\",\r\n    \"\
-        allowGlobalReach\": false,\r\n    \"globalReachEnabled\": false,\r\n    \"\
-        stag\": 34\r\n  },\r\n  \"sku\": {\r\n    \"name\": \"Standard_MeteredData\"\
-        ,\r\n    \"tier\": \"Standard\",\r\n    \"family\": \"MeteredData\"\r\n  }\r\
-        \n}"
-    headers:
-      azure-asyncnotification:
-      - Enabled
-      cache-control:
-      - no-cache
-      content-length:
-      - '5260'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Mon, 18 May 2020 16:25:34 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-      x-ms-arm-service-request-id:
-      - feb5cd38-e9f2-4bfc-9dea-633ea7b2bd69
-      x-ms-ratelimit-remaining-subscription-writes:
-      - '1192'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/16.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit/peerings/AzurePrivatePeering/connections/myConnection?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit/peerings/AzurePrivatePeering/connections/myConnection?api-version=2020-06-01
   response:
     body:
       string: ''
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/a1eb3082-2298-4b3a-b1d0-acbf42e91029?api-version=2020-04-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/124390e2-75eb-49c6-8e02-b52aadec4d16?api-version=2020-06-01
       cache-control:
       - no-cache
       content-length:
       - '0'
       date:
-      - Mon, 18 May 2020 16:25:35 GMT
+      - Wed, 16 Sep 2020 07:45:32 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operationResults/a1eb3082-2298-4b3a-b1d0-acbf42e91029?api-version=2020-04-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operationResults/124390e2-75eb-49c6-8e02-b52aadec4d16?api-version=2020-06-01
       pragma:
       - no-cache
       server:
@@ -2216,330 +1889,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - e54f387b-010e-4395-8a26-d9340a1e4e1d
-      x-ms-ratelimit-remaining-subscription-deletes:
-      - '14998'
-    status:
-      code: 202
-      message: Accepted
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/a1eb3082-2298-4b3a-b1d0-acbf42e91029?api-version=2020-04-01
-  response:
-    body:
-      string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '29'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Mon, 18 May 2020 16:25:45 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-      x-ms-arm-service-request-id:
-      - c50cd0c7-6878-47a5-bbe1-a59644461932
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit/authorizations/myAuthorization?api-version=2020-04-01
-  response:
-    body:
-      string: ''
-    headers:
-      azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/9b5abf41-ae7f-4e2d-ba02-0dbf1c10108c?api-version=2020-04-01
-      cache-control:
-      - no-cache
-      content-length:
-      - '0'
-      date:
-      - Mon, 18 May 2020 16:25:46 GMT
-      expires:
-      - '-1'
-      location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operationResults/9b5abf41-ae7f-4e2d-ba02-0dbf1c10108c?api-version=2020-04-01
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      x-content-type-options:
-      - nosniff
-      x-ms-arm-service-request-id:
-      - 08af1ea7-e472-40a3-848b-7ac98f6d2ef3
-      x-ms-ratelimit-remaining-subscription-deletes:
-      - '14997'
-    status:
-      code: 202
-      message: Accepted
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/9b5abf41-ae7f-4e2d-ba02-0dbf1c10108c?api-version=2020-04-01
-  response:
-    body:
-      string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '29'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Mon, 18 May 2020 16:25:56 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-      x-ms-arm-service-request-id:
-      - 6a1f44ab-93fa-477d-8a4a-357718003300
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit/peerings/AzurePrivatePeering?api-version=2020-04-01
-  response:
-    body:
-      string: ''
-    headers:
-      azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/0a64221a-4dab-4b4a-bfac-a84bb2ee17e6?api-version=2020-04-01
-      cache-control:
-      - no-cache
-      content-length:
-      - '0'
-      date:
-      - Mon, 18 May 2020 16:25:57 GMT
-      expires:
-      - '-1'
-      location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operationResults/0a64221a-4dab-4b4a-bfac-a84bb2ee17e6?api-version=2020-04-01
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      x-content-type-options:
-      - nosniff
-      x-ms-arm-service-request-id:
-      - c41425d7-8b49-4a4d-9aa8-a6898e1da0e5
-      x-ms-ratelimit-remaining-subscription-deletes:
-      - '14996'
-    status:
-      code: 202
-      message: Accepted
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/0a64221a-4dab-4b4a-bfac-a84bb2ee17e6?api-version=2020-04-01
-  response:
-    body:
-      string: "{\r\n  \"status\": \"InProgress\"\r\n}"
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '30'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Mon, 18 May 2020 16:26:07 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-      x-ms-arm-service-request-id:
-      - fb9f3392-929c-4d34-8483-1c82276d9b5b
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/0a64221a-4dab-4b4a-bfac-a84bb2ee17e6?api-version=2020-04-01
-  response:
-    body:
-      string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '29'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Mon, 18 May 2020 16:26:17 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-      x-ms-arm-service-request-id:
-      - 35f44868-27ef-4770-9603-ac98a8a65892
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit?api-version=2020-04-01
-  response:
-    body:
-      string: ''
-    headers:
-      azure-asyncnotification:
-      - Enabled
-      azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/258f1ffc-d851-414d-b656-95a2cbb53b1a?api-version=2020-04-01
-      cache-control:
-      - no-cache
-      content-length:
-      - '0'
-      date:
-      - Mon, 18 May 2020 16:26:18 GMT
-      expires:
-      - '-1'
-      location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operationResults/258f1ffc-d851-414d-b656-95a2cbb53b1a?api-version=2020-04-01
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      x-content-type-options:
-      - nosniff
-      x-ms-arm-service-request-id:
-      - 175beec0-803f-40c0-9a17-322be166189e
+      - dc62cc98-89f5-4fc0-98cf-31bdbd25595d
       x-ms-ratelimit-remaining-subscription-deletes:
       - '14995'
     status:
@@ -2555,9 +1905,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-network/16.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/258f1ffc-d851-414d-b656-95a2cbb53b1a?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/124390e2-75eb-49c6-8e02-b52aadec4d16?api-version=2020-06-01
   response:
     body:
       string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
@@ -2569,7 +1919,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 16:26:28 GMT
+      - Wed, 16 Sep 2020 07:45:43 GMT
       expires:
       - '-1'
       pragma:
@@ -2586,7 +1936,330 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - cd4a7a38-5e80-4ad3-ab44-4a84401bca78
+      - 76273b48-f411-49cf-ad5e-e20f4a2f16f3
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-azure-mgmt-network/16.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit/authorizations/myAuthorization?api-version=2020-06-01
+  response:
+    body:
+      string: ''
+    headers:
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/346e7032-fd71-48d9-bee6-ff460204a245?api-version=2020-06-01
+      cache-control:
+      - no-cache
+      content-length:
+      - '0'
+      date:
+      - Wed, 16 Sep 2020 07:45:44 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operationResults/346e7032-fd71-48d9-bee6-ff460204a245?api-version=2020-06-01
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-arm-service-request-id:
+      - f211aea6-75be-4ffb-a871-d0fe9292c976
+      x-ms-ratelimit-remaining-subscription-deletes:
+      - '14994'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-network/16.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/346e7032-fd71-48d9-bee6-ff460204a245?api-version=2020-06-01
+  response:
+    body:
+      string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '29'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 16 Sep 2020 07:45:55 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-arm-service-request-id:
+      - 9887f7d1-3fbf-47ef-8d72-6f2900ef3653
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-azure-mgmt-network/16.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit/peerings/AzurePrivatePeering?api-version=2020-06-01
+  response:
+    body:
+      string: ''
+    headers:
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/a6a750bf-2a91-493c-b57d-6c56ad08017c?api-version=2020-06-01
+      cache-control:
+      - no-cache
+      content-length:
+      - '0'
+      date:
+      - Wed, 16 Sep 2020 07:45:56 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operationResults/a6a750bf-2a91-493c-b57d-6c56ad08017c?api-version=2020-06-01
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-arm-service-request-id:
+      - 641c00bf-b6e6-4fc1-b2f6-4b5e2da6d067
+      x-ms-ratelimit-remaining-subscription-deletes:
+      - '14993'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-network/16.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/a6a750bf-2a91-493c-b57d-6c56ad08017c?api-version=2020-06-01
+  response:
+    body:
+      string: "{\r\n  \"status\": \"InProgress\"\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '30'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 16 Sep 2020 07:46:06 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-arm-service-request-id:
+      - 2fae3e73-8af7-41e8-a59c-00fadeaa4350
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-network/16.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/a6a750bf-2a91-493c-b57d-6c56ad08017c?api-version=2020-06-01
+  response:
+    body:
+      string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '29'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 16 Sep 2020 07:46:16 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-arm-service-request-id:
+      - e2ea0513-3d35-454c-9f15-5d122b62e817
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-azure-mgmt-network/16.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/expressRouteCircuits/myCircuit?api-version=2020-06-01
+  response:
+    body:
+      string: ''
+    headers:
+      azure-asyncnotification:
+      - Enabled
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/098eb5de-ce04-475c-b748-8e8d64de9a49?api-version=2020-06-01
+      cache-control:
+      - no-cache
+      content-length:
+      - '0'
+      date:
+      - Wed, 16 Sep 2020 07:46:17 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operationResults/098eb5de-ce04-475c-b748-8e8d64de9a49?api-version=2020-06-01
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-arm-service-request-id:
+      - 2ad9546d-6ea1-41f0-8229-9bd790022665
+      x-ms-ratelimit-remaining-subscription-deletes:
+      - '14992'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-network/16.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/098eb5de-ce04-475c-b748-8e8d64de9a49?api-version=2020-06-01
+  response:
+    body:
+      string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '29'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 16 Sep 2020 07:46:27 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-arm-service-request-id:
+      - 865e1836-01e0-4c68-a5d0-dc3f032efb63
     status:
       code: 200
       message: OK

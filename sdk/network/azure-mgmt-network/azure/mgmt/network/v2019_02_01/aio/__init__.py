@@ -6,5 +6,5 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._network_management_client_async import NetworkManagementClient
+from ._network_management_client import NetworkManagementClient
 __all__ = ['NetworkManagementClient']

@@ -4,7 +4,10 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=invalid-overridden-method
-
+try:
+    from urllib.parse import quote, unquote
+except ImportError:
+    from urllib2 import quote, unquote # type: ignore
 from ._data_lake_file_client_async import DataLakeFileClient
 from .._data_lake_directory_client import DataLakeDirectoryClient as DataLakeDirectoryClientBase
 from .._models import DirectoryProperties
@@ -270,16 +273,28 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
         """
         new_name = new_name.strip('/')
         new_file_system = new_name.split('/')[0]
-        path = new_name[len(new_file_system):]
+        new_path_and_token = new_name[len(new_file_system):].split('?')
+        new_path = new_path_and_token[0]
+        try:
+            new_dir_sas = new_path_and_token[1] or self._query_str.strip('?')
+        except IndexError:
+            if not self._raw_credential and new_file_system != self.file_system_name:
+                raise ValueError("please provide the sas token for the new directory")
+            if not self._raw_credential and new_file_system == self.file_system_name:
+                new_dir_sas = self._query_str.strip('?')
 
         new_directory_client = DataLakeDirectoryClient(
-            self.url, new_file_system, directory_name=path, credential=self._raw_credential,
+            "{}://{}".format(self.scheme, self.primary_hostname), new_file_system, directory_name=new_path,
+            credential=self._raw_credential or new_dir_sas,
             _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
             _location_mode=self._location_mode, require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,
             key_resolver_function=self.key_resolver_function)
-        await new_directory_client._rename_path('/' + self.file_system_name + '/' + self.path_name,  # pylint: disable=protected-access
-                                                **kwargs)
+        await new_directory_client._rename_path(  # pylint: disable=protected-access
+            '/{}/{}{}'.format(quote(unquote(self.file_system_name)),
+                              quote(unquote(self.path_name)),
+                              self._query_str),
+            **kwargs)
         return new_directory_client
 
     async def create_sub_directory(self, sub_directory,  # type: Union[DirectoryProperties, str]

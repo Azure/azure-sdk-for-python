@@ -1,16 +1,22 @@
-import sys
+# --------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# --------------------------------------------------------------------------
+"""
+FILE: consume_cloud_events_from_eventhub.py
+DESCRIPTION:
+    These samples demonstrate receiving events from an Event Hub.
+USAGE:
+    python consume_cloud_events_from_eventhub.py
+    Set the environment variables with your own values before running the sample:
+    1) EVENT_HUB_CONN_STR: The connection string to the Event hub account
+    3) EVENTHUB_NAME: The name of the eventhub account
+"""
 import os
-
-PACKAGE_PARENT = '..'
-SCRIPT_DIR = os.path.dirname(os.path.realpath(os.path.join(os.getcwd(), os.path.expanduser(__file__))))
-sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
 
 from azure.eventgrid import EventGridConsumer, CloudEvent, EventGridEvent
 from azure.eventhub import EventHubConsumerClient
-
-"""
-An example to show receiving events from an Event Hub.
-"""
 
 CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
 EVENTHUB_NAME = os.environ["EVENTHUB_NAME"]
@@ -19,7 +25,7 @@ EVENTHUB_NAME = os.environ["EVENTHUB_NAME"]
 def on_event(partition_context, event):
 
     dict_event = event.body_as_json()[0]
-    deserialized_event = eg_consumer.deserialize_event(dict_event)
+    deserialized_event = eg_consumer.decode_eventgrid_event(dict_event)
     if deserialized_event.model.__class__ == CloudEvent:
         dict_event = deserialized_event.to_json()
         print("event.type: {}\n".format(dict_event["type"]))

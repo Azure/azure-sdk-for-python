@@ -564,24 +564,6 @@ class Metrics(Model):
         self.retention_policy = kwargs.get('retention_policy', None)
 
 
-class ProtocolSettings(Model):
-    """Protocol settings.
-
-    :param smb_settings: Settings for SMB protocol.
-    :type smb_settings: ~azure.storage.fileshare.models.SmbSettings
-    """
-
-    _attribute_map = {
-        'smb_settings': {'key': 'SmbSettings', 'type': 'SmbSettings', 'xml': {'name': 'SMB'}},
-    }
-    _xml_map = {
-    }
-
-    def __init__(self, **kwargs):
-        super(ProtocolSettings, self).__init__(**kwargs)
-        self.smb_settings = kwargs.get('smb_settings', None)
-
-
 class Range(Model):
     """An Azure Storage file range.
 
@@ -788,6 +770,42 @@ class ShareProperties(Model):
         self.lease_duration = kwargs.get('lease_duration', None)
 
 
+class ShareProtocolSettings(Model):
+    """Protocol settings.
+
+    :param smb: Settings for SMB protocol.
+    :type smb: ~azure.storage.fileshare.models.ShareSmbSettings
+    """
+
+    _attribute_map = {
+        'smb': {'key': 'Smb', 'type': 'ShareSmbSettings', 'xml': {'name': 'SMB'}},
+    }
+    _xml_map = {
+    }
+
+    def __init__(self, **kwargs):
+        super(ShareProtocolSettings, self).__init__(**kwargs)
+        self.smb = kwargs.get('smb', None)
+
+
+class ShareSmbSettings(Model):
+    """Settings for SMB protocol.
+
+    :param multichannel: Settings for SMB Multichannel.
+    :type multichannel: ~azure.storage.fileshare.models.SmbMultichannel
+    """
+
+    _attribute_map = {
+        'multichannel': {'key': 'Multichannel', 'type': 'SmbMultichannel', 'xml': {'name': 'Multichannel'}},
+    }
+    _xml_map = {
+    }
+
+    def __init__(self, **kwargs):
+        super(ShareSmbSettings, self).__init__(**kwargs)
+        self.multichannel = kwargs.get('multichannel', None)
+
+
 class ShareStats(Model):
     """Stats for the share.
 
@@ -861,24 +879,6 @@ class SmbMultichannel(Model):
         self.enabled = kwargs.get('enabled', None)
 
 
-class SmbSettings(Model):
-    """Settings for SMB protocol.
-
-    :param multichannel: Settings for SMB Multichannel.
-    :type multichannel: ~azure.storage.fileshare.models.SmbMultichannel
-    """
-
-    _attribute_map = {
-        'multichannel': {'key': 'Multichannel', 'type': 'SmbMultichannel', 'xml': {'name': 'Multichannel'}},
-    }
-    _xml_map = {
-    }
-
-    def __init__(self, **kwargs):
-        super(SmbSettings, self).__init__(**kwargs)
-        self.multichannel = kwargs.get('multichannel', None)
-
-
 class SourceModifiedAccessConditions(Model):
     """Additional parameters for upload_range_from_url operation.
 
@@ -948,15 +948,15 @@ class StorageServiceProperties(Model):
     :type minute_metrics: ~azure.storage.fileshare.models.Metrics
     :param cors: The set of CORS rules.
     :type cors: list[~azure.storage.fileshare.models.CorsRule]
-    :param protocol_settings: Protocol settings
-    :type protocol_settings: ~azure.storage.fileshare.models.ProtocolSettings
+    :param protocol: Protocol settings
+    :type protocol: ~azure.storage.fileshare.models.ShareProtocolSettings
     """
 
     _attribute_map = {
         'hour_metrics': {'key': 'HourMetrics', 'type': 'Metrics', 'xml': {'name': 'HourMetrics'}},
         'minute_metrics': {'key': 'MinuteMetrics', 'type': 'Metrics', 'xml': {'name': 'MinuteMetrics'}},
         'cors': {'key': 'Cors', 'type': '[CorsRule]', 'xml': {'name': 'Cors', 'itemsName': 'CorsRule', 'wrapped': True}},
-        'protocol_settings': {'key': 'ProtocolSettings', 'type': 'ProtocolSettings', 'xml': {'name': 'ProtocolSettings'}},
+        'protocol': {'key': 'Protocol', 'type': 'ShareProtocolSettings', 'xml': {'name': 'ProtocolSettings'}},
     }
     _xml_map = {
     }
@@ -966,4 +966,4 @@ class StorageServiceProperties(Model):
         self.hour_metrics = kwargs.get('hour_metrics', None)
         self.minute_metrics = kwargs.get('minute_metrics', None)
         self.cors = kwargs.get('cors', None)
-        self.protocol_settings = kwargs.get('protocol_settings', None)
+        self.protocol = kwargs.get('protocol', None)

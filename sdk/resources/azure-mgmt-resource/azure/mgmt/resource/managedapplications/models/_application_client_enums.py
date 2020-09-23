@@ -6,35 +6,53 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum
+from enum import Enum, EnumMeta
+from six import with_metaclass
 
-class ApplicationArtifactType(str, Enum):
+class _CaseInsensitiveEnumMeta(EnumMeta):
+    def __getitem__(self, name):
+        return super().__getitem__(name.upper())
+
+    def __getattr__(cls, name):
+        """Return the enum member matching `name`
+        We use __getattr__ instead of descriptors or inserting into the enum
+        class' __dict__ in order to support `name` and `value` being both
+        properties for enum members (which live in the class' __dict__) and
+        enum members themselves.
+        """
+        try:
+            return cls._member_map_[name.upper()]
+        except KeyError:
+            raise AttributeError(name)
+
+
+class ApplicationArtifactType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The managed application artifact type.
     """
 
-    template = "Template"
-    custom = "Custom"
+    TEMPLATE = "Template"
+    CUSTOM = "Custom"
 
-class ApplicationLockLevel(str, Enum):
+class ApplicationLockLevel(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The managed application lock level.
     """
 
-    can_not_delete = "CanNotDelete"
-    read_only = "ReadOnly"
-    none = "None"
+    CAN_NOT_DELETE = "CanNotDelete"
+    READ_ONLY = "ReadOnly"
+    NONE = "None"
 
-class ProvisioningState(str, Enum):
+class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Provisioning status of the managed application.
     """
 
-    accepted = "Accepted"
-    running = "Running"
-    ready = "Ready"
-    creating = "Creating"
-    created = "Created"
-    deleting = "Deleting"
-    deleted = "Deleted"
-    canceled = "Canceled"
-    failed = "Failed"
-    succeeded = "Succeeded"
-    updating = "Updating"
+    ACCEPTED = "Accepted"
+    RUNNING = "Running"
+    READY = "Ready"
+    CREATING = "Creating"
+    CREATED = "Created"
+    DELETING = "Deleting"
+    DELETED = "Deleted"
+    CANCELED = "Canceled"
+    FAILED = "Failed"
+    SUCCEEDED = "Succeeded"
+    UPDATING = "Updating"

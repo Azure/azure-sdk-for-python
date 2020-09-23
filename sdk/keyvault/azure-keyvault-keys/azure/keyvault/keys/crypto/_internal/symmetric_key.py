@@ -55,6 +55,26 @@ class SymmetricKey(Key):
 
         self._key = key_bytes
 
+        supported_encryption_algorithms = []
+        supported_key_wrap_algorithms = []
+        key_size = len(self._key)
+        if key_size >= key_size_128:
+            supported_encryption_algorithms.append(Aes128Cbc.name())
+            supported_key_wrap_algorithms.append(AesKw128.name())
+        if key_size >= key_size_192:
+            supported_encryption_algorithms.append(Aes192Cbc.name())
+            supported_key_wrap_algorithms.append(AesKw192.name())
+        if key_size >= key_size_256:
+            supported_encryption_algorithms.append(Aes256Cbc.name())
+            supported_encryption_algorithms.append(Aes128CbcHmacSha256.name())
+            supported_key_wrap_algorithms.append(AesKw256.name())
+        if key_size >= key_size_384:
+            supported_encryption_algorithms.append(Aes192CbcHmacSha384.name())
+        if key_size >= key_size_512:
+            supported_encryption_algorithms.append(Aes256CbcHmacSha512.name())
+        self._supported_encryption_algorithms = frozenset(supported_encryption_algorithms)
+        self._supported_key_wrap_algorithms = frozenset(supported_key_wrap_algorithms)
+
     def is_private_key(self):
         return True
 
@@ -73,39 +93,6 @@ class SymmetricKey(Key):
     @property
     def default_key_wrap_algorithm(self):
         return _default_kw_alg_by_size[len(self._key)]
-
-    @property
-    def supported_encryption_algorithms(self):
-        supported = []
-        key_size = len(self._key)
-
-        if key_size >= key_size_128:
-            supported.append(Aes128Cbc.name())
-        if key_size >= key_size_192:
-            supported.append(Aes192Cbc.name())
-        if key_size >= key_size_256:
-            supported.append(Aes256Cbc.name())
-            supported.append(Aes128CbcHmacSha256.name())
-        if key_size >= key_size_384:
-            supported.append(Aes192CbcHmacSha384.name())
-        if key_size >= key_size_512:
-            supported.append(Aes256CbcHmacSha512.name())
-
-        return supported
-
-    @property
-    def supported_key_wrap_algorithms(self):
-        supported = []
-        key_size = len(self._key)
-
-        if key_size >= key_size_128:
-            supported.append(AesKw128.name())
-        if key_size >= key_size_192:
-            supported.append(AesKw192.name())
-        if key_size >= key_size_256:
-            supported.append(AesKw256.name())
-
-        return supported
 
     def encrypt(self, plain_text, iv, **kwargs):  # pylint:disable=arguments-differ
         algorithm = self._get_algorithm("encrypt", **kwargs)
@@ -128,7 +115,7 @@ class SymmetricKey(Key):
         return decryptor.transform(encrypted_key)
 
     def sign(self, digest, **kwargs):
-        raise NotImplementedError()
+        raise NotImplementedError("Local signing isn't supported with symmetric keys")
 
     def verify(self, digest, signature, **kwargs):
-        raise NotImplementedError()
+        raise NotImplementedError("Local signature verification isn't supported with symmetric keys")

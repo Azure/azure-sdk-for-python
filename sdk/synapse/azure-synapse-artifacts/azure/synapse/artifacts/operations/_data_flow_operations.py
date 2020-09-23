@@ -8,16 +8,18 @@
 from typing import TYPE_CHECKING
 import warnings
 
-from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
+from azure.core.polling import LROPoller, NoPolling, PollingMethod
+from azure.core.polling.base_polling import LROBasePolling
 
 from .. import models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar
+    from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar, Union
 
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -44,38 +46,27 @@ class DataFlowOperations(object):
         self._deserialize = deserializer
         self._config = config
 
-    def create_or_update_data_flow(
+    def _create_or_update_data_flow_initial(
         self,
         data_flow_name,  # type: str
         properties,  # type: "models.DataFlow"
         if_match=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.DataFlowResource"
-        """Creates or updates a data flow.
-
-        :param data_flow_name: The data flow name.
-        :type data_flow_name: str
-        :param properties: Data flow properties.
-        :type properties: ~azure.synapse.artifacts.models.DataFlow
-        :param if_match: ETag of the data flow entity. Should only be specified for update, for which
-         it should match existing entity or can be * for unconditional update.
-        :type if_match: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: DataFlowResource, or the result of cls(response)
-        :rtype: ~azure.synapse.artifacts.models.DataFlowResource
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DataFlowResource"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        # type: (...) -> Optional["models.DataFlowResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.DataFlowResource"]]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
 
         _data_flow = models.DataFlowResource(properties=properties)
         api_version = "2019-06-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
 
         # Construct URL
-        url = self.create_or_update_data_flow.metadata['url']  # type: ignore
+        url = self._create_or_update_data_flow_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
             'dataFlowName': self._serialize.url("data_flow_name", data_flow_name, 'str', max_length=260, min_length=1, pattern=r'^[A-Za-z0-9_][^<>*#.%&:\\+?/]*$'),
@@ -91,28 +82,96 @@ class DataFlowOperations(object):
         if if_match is not None:
             header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(_data_flow, 'DataFlowResource')
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize(models.CloudError, response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('DataFlowResource', pipeline_response)
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('DataFlowResource', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    create_or_update_data_flow.metadata = {'url': '/dataflows/{dataFlowName}'}  # type: ignore
+    _create_or_update_data_flow_initial.metadata = {'url': '/dataflows/{dataFlowName}'}  # type: ignore
+
+    def begin_create_or_update_data_flow(
+        self,
+        data_flow_name,  # type: str
+        properties,  # type: "models.DataFlow"
+        if_match=None,  # type: Optional[str]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> LROPoller["models.DataFlowResource"]
+        """Creates or updates a data flow.
+
+        :param data_flow_name: The data flow name.
+        :type data_flow_name: str
+        :param properties: Data flow properties.
+        :type properties: ~azure.synapse.artifacts.models.DataFlow
+        :param if_match: ETag of the data flow entity. Should only be specified for update, for which
+         it should match existing entity or can be * for unconditional update.
+        :type if_match: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+        :return: An instance of LROPoller that returns either DataFlowResource or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[~azure.synapse.artifacts.models.DataFlowResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        polling = kwargs.pop('polling', False)  # type: Union[bool, PollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.DataFlowResource"]
+        lro_delay = kwargs.pop(
+            'polling_interval',
+            self._config.polling_interval
+        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._create_or_update_data_flow_initial(
+                data_flow_name=data_flow_name,
+                properties=properties,
+                if_match=if_match,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
+
+        kwargs.pop('error_map', None)
+        kwargs.pop('content_type', None)
+
+        def get_long_running_output(pipeline_response):
+            deserialized = self._deserialize('DataFlowResource', pipeline_response)
+
+            if cls:
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
+
+        if polling is True: polling_method = LROBasePolling(lro_delay,  **kwargs)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_create_or_update_data_flow.metadata = {'url': '/dataflows/{dataFlowName}'}  # type: ignore
 
     def get_data_flow(
         self,
@@ -134,9 +193,12 @@ class DataFlowOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.DataFlowResource"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-06-01-preview"
+        accept = "application/json"
 
         # Construct URL
         url = self.get_data_flow.metadata['url']  # type: ignore
@@ -154,7 +216,7 @@ class DataFlowOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         if if_none_match is not None:
             header_parameters['If-None-Match'] = self._serialize.header("if_none_match", if_none_match, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -173,28 +235,22 @@ class DataFlowOperations(object):
         return deserialized
     get_data_flow.metadata = {'url': '/dataflows/{dataFlowName}'}  # type: ignore
 
-    def delete_data_flow(
+    def _delete_data_flow_initial(
         self,
         data_flow_name,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        """Deletes a data flow.
-
-        :param data_flow_name: The data flow name.
-        :type data_flow_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
-        :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-06-01-preview"
+        accept = "application/json"
 
         # Construct URL
-        url = self.delete_data_flow.metadata['url']  # type: ignore
+        url = self._delete_data_flow_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
             'dataFlowName': self._serialize.url("data_flow_name", data_flow_name, 'str', max_length=260, min_length=1, pattern=r'^[A-Za-z0-9_][^<>*#.%&:\\+?/]*$'),
@@ -207,12 +263,13 @@ class DataFlowOperations(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 204]:
+        if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize(models.CloudError, response)
             raise HttpResponseError(response=response, model=error)
@@ -220,7 +277,62 @@ class DataFlowOperations(object):
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete_data_flow.metadata = {'url': '/dataflows/{dataFlowName}'}  # type: ignore
+    _delete_data_flow_initial.metadata = {'url': '/dataflows/{dataFlowName}'}  # type: ignore
+
+    def begin_delete_data_flow(
+        self,
+        data_flow_name,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> LROPoller[None]
+        """Deletes a data flow.
+
+        :param data_flow_name: The data flow name.
+        :type data_flow_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+        :return: An instance of LROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        polling = kwargs.pop('polling', False)  # type: Union[bool, PollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        lro_delay = kwargs.pop(
+            'polling_interval',
+            self._config.polling_interval
+        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._delete_data_flow_initial(
+                data_flow_name=data_flow_name,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
+
+        kwargs.pop('error_map', None)
+        kwargs.pop('content_type', None)
+
+        def get_long_running_output(pipeline_response):
+            if cls:
+                return cls(pipeline_response, None, {})
+
+        if polling is True: polling_method = LROBasePolling(lro_delay,  **kwargs)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_delete_data_flow.metadata = {'url': '/dataflows/{dataFlowName}'}  # type: ignore
 
     def get_data_flows_by_workspace(
         self,
@@ -235,14 +347,17 @@ class DataFlowOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.DataFlowListResponse"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-06-01-preview"
+        accept = "application/json"
 
         def prepare_request(next_link=None):
             # Construct headers
             header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
+            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
             if not next_link:
                 # Construct URL

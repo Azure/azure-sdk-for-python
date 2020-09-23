@@ -1,0 +1,26 @@
+parameters:
+  DevFeedName: 'public/azure-sdk-for-python'
+
+steps:
+  - pwsh: |
+      # For safety default to publishing to the private feed.
+      # Publish to https://dev.azure.com/azure-sdk/internal/_packaging?_a=feed&feed=azure-sdk-for-python-pr
+      $devopsFeedName = 'internal/azure-sdk-for-python-pr'
+      if ('$(Build.Repository.Name)' -eq 'Azure/azure-sdk-for-python') {
+        # Publish to https://dev.azure.com/azure-sdk/public/_packaging?_a=feed&feed=azure-sdk-for-python
+        $devopsFeedName = '${{ parameters.DevFeedName }}'
+      }
+      echo "##vso[task.setvariable variable=DevFeedName]$devopsFeedName"
+      echo "Using DevopsFeed = $devopsFeedName"
+    displayName: Setup DevOpsFeedName
+
+  - task: TwineAuthenticate@0
+    displayName: 'Twine Authenticate to feed'
+    inputs:
+      artifactFeeds: $(DevFeedName)
+
+  - task: PipAuthenticate@1
+    displayName: 'Pip Authenticate to feed'
+    inputs:
+      artifactFeeds: $(DevFeedName)
+      onlyAddExtraIndex: true
