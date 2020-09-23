@@ -11,7 +11,6 @@ trigger:
   paths:
     include:
     - sdk/anomalydetector/
-    - sdk/core/
 
 pr:
   branches:
@@ -24,7 +23,6 @@ pr:
   paths:
     include:
     - sdk/anomalydetector/
-    - sdk/core/
 
 extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml

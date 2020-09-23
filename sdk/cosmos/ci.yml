@@ -9,7 +9,6 @@ trigger:
   paths:
     include:
     - sdk/cosmos/
-    - sdk/core/
 
 pr:
   branches:
@@ -22,7 +21,6 @@ pr:
   paths:
     include:
     - sdk/cosmos/
-    - sdk/core/
 
 extends:
   template: ../../eng/pipelines/templates/stages/cosmos-sdk-client.yml
