@@ -9,12 +9,10 @@ import pytest
 import sys
 import locale
 import os
-from azure.data.tables import TableServiceClient, TableItem
 from datetime import (
     datetime,
     timedelta,
 )
-
 
 from azure.data.tables import (
     ResourceTypes,
@@ -25,24 +23,26 @@ from azure.data.tables import (
     UpdateMode,
     AccessPolicy,
     TableAnalyticsLogging,
-    Metrics
+    Metrics,
+    TableServiceClient,
+    TableItem
 )
+from azure.data.tables._authentication import SharedKeyCredentialPolicy
+from azure.data.tables._table_shared_access_signature import generate_account_sas
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.policies import (
     HeadersPolicy,
     ContentDecodePolicy,
 )
-
-from _shared.testcase import TableTestCase, GlobalStorageAccountPreparer
-from azure.data.tables._authentication import SharedKeyCredentialPolicy
 from azure.core.pipeline.transport import RequestsTransport
 from azure.core.exceptions import (
     HttpResponseError,
     ResourceNotFoundError,
     ResourceExistsError)
 
+from _shared.testcase import TableTestCase, GlobalStorageAccountPreparer
+
 # ------------------------------------------------------------------------------
-from azure.data.tables._table_shared_access_signature import generate_account_sas
 
 TEST_TABLE_PREFIX = 'pytablesync'
 
@@ -86,7 +86,6 @@ class StorageTableTest(TableTestCase):
             pass
 
     # --Test cases for tables --------------------------------------------------
-    @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_create_properties(self, resource_group, location, storage_account, storage_account_key):
         # # Arrange
@@ -109,7 +108,6 @@ class StorageTableTest(TableTestCase):
         ps = ts.get_service_properties()
         ts.delete_table(table_name)
 
-    # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_create_table(self, resource_group, location, storage_account, storage_account_key):
         # # Arrange
@@ -124,7 +122,6 @@ class StorageTableTest(TableTestCase):
         assert created.table_name == table_name
         ts.delete_table(table_name)
 
-    # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_create_table_fail_on_exist(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -210,7 +207,6 @@ class StorageTableTest(TableTestCase):
         self.assertIsNotNone(tables[0])
         ts.delete_table(t.table_name)
 
-    # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_query_tables_with_filter(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -229,7 +225,6 @@ class StorageTableTest(TableTestCase):
         self.assertEqual(len(tables), 1)
         ts.delete_table(t.table_name)
 
-    # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_query_tables_with_num_results(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -251,17 +246,14 @@ class StorageTableTest(TableTestCase):
         self.assertEqual(len(small_page), 3)
         self.assertGreaterEqual(len(big_page), 4)
 
-    # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
-    def test_query_tables_with_marker(self, resource_group, location, storage_account, storage_account_key):
+    def test_list_tables_with_marker(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         ts = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
         prefix = 'listtable'
         table_names = []
         for i in range(0, 4):
             self._create_table(ts, prefix + str(i), table_names)
-
-        # table_names.sort()
 
         # Act
         generator1 = ts.list_tables(results_per_page=2).by_page()
@@ -278,7 +270,6 @@ class StorageTableTest(TableTestCase):
         self.assertEqual(len(tables2), 2)
         self.assertNotEqual(tables1, tables2)
 
-    # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_delete_table_with_existing_table(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -293,7 +284,6 @@ class StorageTableTest(TableTestCase):
         self.assertIsNone(deleted)
         self.assertEqual(len(existing), 0)
 
-    # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_delete_table_with_non_existing_table_fail_not_exist(self, resource_group, location, storage_account,
                                                                  storage_account_key):
@@ -307,24 +297,22 @@ class StorageTableTest(TableTestCase):
 
         # Assert
 
-    @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_unicode_create_table_unicode_name(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         url = self.account_url(storage_account, "table")
         if 'cosmos' in url:
-            pytest.skip("Cosmos URLs support unicode table names")
+            pytest.skip("Cosmos URLs do notsupport unicode table names")
         ts = TableServiceClient(url, storage_account_key)
         table_name = u'啊齄丂狛狜'
 
         # Act
-        with self.assertRaises(HttpResponseError):
-            # not supported - table name must be alphanumeric, lowercase
+        with self.assertRaises(ValueError) as excinfo:
             ts.create_table(table_name)
 
-        # Assert
+            assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.""" in str(
+                excinfo)
 
-    # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_get_table_acl(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -336,16 +324,13 @@ class StorageTableTest(TableTestCase):
         try:
             # Act
             acl = table.get_table_access_policy()
-            # acl = table.get_table_access_policy()
 
             # Assert
             self.assertIsNotNone(acl)
             self.assertEqual(len(acl), 0)
         finally:
-            # self._delete_table(table)
             ts.delete_table(table.table_name)
 
-    # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_set_table_acl_with_empty_signed_identifiers(self, resource_group, location, storage_account,
                                                          storage_account_key):
@@ -364,10 +349,8 @@ class StorageTableTest(TableTestCase):
             self.assertIsNotNone(acl)
             self.assertEqual(len(acl), 0)
         finally:
-            # self._delete_table(table)
             ts.delete_table(table.table_name)
 
-    @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_set_table_acl_with_empty_signed_identifier(self, resource_group, location, storage_account,
                                                         storage_account_key):
@@ -389,10 +372,8 @@ class StorageTableTest(TableTestCase):
             self.assertIsNone(acl['empty'].expiry)
             self.assertIsNone(acl['empty'].start)
         finally:
-            # self._delete_table(table)
             ts.delete_table(table.table_name)
 
-    # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_set_table_acl_with_signed_identifiers(self, resource_group, location, storage_account,
                                                    storage_account_key):
@@ -417,10 +398,8 @@ class StorageTableTest(TableTestCase):
             self.assertEqual(len(acl), 1)
             self.assertTrue('testid' in acl)
         finally:
-            # self._delete_table(table)
             ts.delete_table(table.table_name)
 
-    # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_set_table_acl_too_many_ids(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -441,7 +420,6 @@ class StorageTableTest(TableTestCase):
         finally:
             ts.delete_table(table.table_name)
 
-    # @pytest.mark.skip("pending")
     @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     def test_account_sas(self, resource_group, location, storage_account, storage_account_key):
@@ -493,7 +471,7 @@ class StorageTableTest(TableTestCase):
     def test_locale(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         ts = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
-        table = (self._get_table_reference())
+        table = self._get_table_reference()
         init_locale = locale.getlocale()
         if os.name == "nt":
             culture = "Spanish_Spain"
