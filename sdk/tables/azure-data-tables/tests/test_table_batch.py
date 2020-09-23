@@ -24,7 +24,7 @@ from azure.data.tables import EdmType, TableEntity, EntityProperty, UpdateMode
 
 from _shared.testcase import GlobalStorageAccountPreparer, TableTestCase, LogCaptured
 
-from azure.data.tables._models import PartialBatchErrorException
+from azure.data.tables._models import BatchErrorException
 from azure.data.tables import (
     TableServiceClient,
     TableEntity,
@@ -346,7 +346,7 @@ class StorageTableBatchTest(TableTestCase):
                 match_condition=MatchConditions.IfNotModified
             )
 
-            # TODO: This should be a PartialBatchErrorException
+            # TODO: This should be a BatchErrorException
             with self.assertRaises(HttpResponseError):
                 self.table.send_batch(batch)
 
@@ -705,7 +705,7 @@ class StorageTableBatchTest(TableTestCase):
 
             batch = self.table.create_batch()
             batch.create_entity(entity)
-            with self.assertRaises(PartialBatchErrorException):
+            with self.assertRaises(BatchErrorException):
                 batch.create_entity(entity2)
 
             # Assert

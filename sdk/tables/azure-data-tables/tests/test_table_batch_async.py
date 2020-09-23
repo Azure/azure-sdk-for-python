@@ -21,7 +21,7 @@ from azure.core.exceptions import (
     HttpResponseError
 )
 from azure.data.tables.aio import TableServiceClient
-from azure.data.tables._models import PartialBatchErrorException
+from azure.data.tables._models import BatchErrorException
 from azure.data.tables import (
     TableEntity,
     UpdateMode,
@@ -348,7 +348,7 @@ class StorageTableBatchTest(TableTestCase):
                 match_condition=MatchConditions.IfNotModified
             )
 
-            # TODO: This should be a PartialBatchErrorException
+            # TODO: This should be a BatchErrorException
             with self.assertRaises(HttpResponseError):
                 await self.table.send_batch(batch)
 
