@@ -595,7 +595,7 @@ class TableClient(TableClientBase):
             **kwargs
         )
 
-    def commit_batch(
+    def send_batch(
         self,
         batch, # type: TableBatchOperations
         **kwargs # type: Any

@@ -611,7 +611,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         )
 
     @distributed_trace_async
-    async def commit_batch(
+    async def send_batch(
         self,
         batch: TableBatchOperations,
         **kwargs: Dict[Any, str]

@@ -180,7 +180,7 @@ class StorageTableBatchTest(TableTestCase):
 
             batch = self.table.create_batch()
             batch.create_entity(entity)
-            resp = self.table.commit_batch(batch)
+            resp = self.table.send_batch(batch)
 
             # Assert
             self.assertIsNotNone(resp)
@@ -216,7 +216,7 @@ class StorageTableBatchTest(TableTestCase):
 
             batch = self.table.create_batch()
             batch.update_entity(entity, mode=UpdateMode.MERGE)
-            self.table.commit_batch(batch)
+            self.table.send_batch(batch)
 
             # Assert
             self.assertIsNotNone(resp)
@@ -250,7 +250,7 @@ class StorageTableBatchTest(TableTestCase):
 
             batch = self.table.create_batch()
             batch.update_entity(entity)
-            resp = self.table.commit_batch(batch)
+            resp = self.table.send_batch(batch)
 
             # Assert
             self.assertIsNotNone(resp)
@@ -287,7 +287,7 @@ class StorageTableBatchTest(TableTestCase):
 
             batch = self.table.create_batch()
             batch.update_entity(entity, mode=UpdateMode.MERGE)
-            resp = self.table.commit_batch(batch)
+            resp = self.table.send_batch(batch)
 
             # Assert
             self.assertIsNotNone(resp)
@@ -318,7 +318,7 @@ class StorageTableBatchTest(TableTestCase):
                 match_condition=MatchConditions.IfNotModified,
                 mode=UpdateMode.REPLACE
             )
-            resp = self.table.commit_batch(batch)
+            resp = self.table.send_batch(batch)
 
             # Assert
             self.assertIsNotNone(resp)
@@ -348,7 +348,7 @@ class StorageTableBatchTest(TableTestCase):
 
             # TODO: This should be a PartialBatchErrorException
             with self.assertRaises(HttpResponseError):
-                self.table.commit_batch(batch)
+                self.table.send_batch(batch)
 
             # Assert
             received_entity = self.table.get_entity(entity['PartitionKey'], entity['RowKey'])
@@ -374,7 +374,7 @@ class StorageTableBatchTest(TableTestCase):
 
             batch = self.table.create_batch()
             batch.upsert_entity(entity)
-            resp = self.table.commit_batch(batch)
+            resp = self.table.send_batch(batch)
 
             # Assert
             self.assertIsNotNone(resp)
@@ -403,7 +403,7 @@ class StorageTableBatchTest(TableTestCase):
 
             batch = self.table.create_batch()
             batch.upsert_entity(entity, mode=UpdateMode.MERGE)
-            resp = self.table.commit_batch(batch)
+            resp = self.table.send_batch(batch)
 
             # Assert
             self.assertIsNotNone(resp)
@@ -436,7 +436,7 @@ class StorageTableBatchTest(TableTestCase):
 
             batch = self.table.create_batch()
             batch.delete_entity(partition_key=entity.PartitionKey, row_key=entity.RowKey)
-            self.table.commit_batch(batch)
+            self.table.send_batch(batch)
 
             with self.assertRaises(ResourceNotFoundError):
                 entity = self.table.get_entity(partition_key=entity.PartitionKey, row_key=entity.RowKey)
@@ -461,7 +461,7 @@ class StorageTableBatchTest(TableTestCase):
             for i in range(100):
                 entity.RowKey = str(i)
                 batch.create_entity(entity)
-            self.table.commit_batch(batch)
+            self.table.send_batch(batch)
 
             entities = list(self.table.query_entities("PartitionKey eq 'batch_inserts'"))
 
@@ -510,7 +510,7 @@ class StorageTableBatchTest(TableTestCase):
             batch.upsert_entity(entity)
             entity.RowKey = 'batch_all_operations_together-5'
             batch.upsert_entity(entity, mode=UpdateMode.MERGE)
-            resp = self.table.commit_batch(batch)
+            resp = self.table.send_batch(batch)
 
             # Assert
             self.assertIsNotNone(resp)
@@ -593,8 +593,8 @@ class StorageTableBatchTest(TableTestCase):
             entity.RowKey = 'batch_all_operations_together-4'
             batch.create_entity(entity)
 
-            self.table.commit_batch(batch)
-            table2.commit_batch(batch)
+            self.table.send_batch(batch)
+            table2.send_batch(batch)
 
             batch = TableBatchClient()
             entity.RowKey = 'batch_all_operations_together'
@@ -613,8 +613,8 @@ class StorageTableBatchTest(TableTestCase):
             entity.RowKey = 'batch_all_operations_together-5'
             batch.upsert_entity(entity, mode=UpdateMode.MERGE)
 
-            self.table.commit_batch(batch)
-            resp = table2.commit_batch(batch)
+            self.table.send_batch(batch)
+            resp = table2.send_batch(batch)
 
             # Assert
             self.assertEqual(6, len(list(resp)))
@@ -643,7 +643,7 @@ class StorageTableBatchTest(TableTestCase):
             batch.update_entity(entity, mode=UpdateMode.MERGE)
             # Assert
             with self.assertRaises(HttpResponseError):
-                self.table.commit_batch(batch)
+                self.table.send_batch(batch)
 
         finally:
             self._tear_down()
@@ -669,7 +669,7 @@ class StorageTableBatchTest(TableTestCase):
 
             # Assert
             with self.assertRaises(HttpResponseError):
-                self.table.commit_batch(batch)
+                self.table.send_batch(batch)
         finally:
             self._tear_down()
 
@@ -689,7 +689,7 @@ class StorageTableBatchTest(TableTestCase):
                     entity.PartitionKey = 'large'
                     entity.RowKey = 'item{0}'.format(i)
                     batch.create_entity(entity)
-                self.table.commit_batch(batch)
+                self.table.send_batch(batch)
 
             # Assert
         finally:
