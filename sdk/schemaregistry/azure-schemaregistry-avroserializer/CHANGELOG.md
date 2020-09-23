@@ -2,6 +2,9 @@
 
 ## 1.0.0b2 (Unreleased)
 
+**Notes**
+
+`azure.schemaregistry.serializer` is now a namespace package.
 
 ## 1.0.0b1 (2020-09-09)
 
