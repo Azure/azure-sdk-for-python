@@ -13,29 +13,6 @@ from msrest.serialization import Model
 from msrest.exceptions import HttpOperationError
 
 
-class DigitalTwinsSkuInfo(Model):
-    """Information about the SKU of the DigitalTwinsInstance.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar name: Required. The name of the SKU. Default value: "F1" .
-    :vartype name: str
-    """
-
-    _validation = {
-        'name': {'required': True, 'constant': True},
-    }
-
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-    }
-
-    name = "F1"
-
-
 class CheckNameRequest(Model):
     """The result returned from a database check name availability request.
 
@@ -356,6 +333,29 @@ class DigitalTwinsPatchDescription(Model):
     def __init__(self, **kwargs):
         super(DigitalTwinsPatchDescription, self).__init__(**kwargs)
         self.tags = kwargs.get('tags', None)
+
+
+class DigitalTwinsSkuInfo(Model):
+    """Information about the SKU of the DigitalTwinsInstance.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar name: Required. The name of the SKU. Default value: "F1" .
+    :vartype name: str
+    """
+
+    _validation = {
+        'name': {'required': True, 'constant': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+    }
+
+    name = "F1"
 
 
 class ErrorDefinition(Model):
