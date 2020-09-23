@@ -10,7 +10,7 @@ autorest --v3 --python
 ```
 ### Settings
 ``` yaml
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/arerlend.sr.init/specification/schemaregistry/data-plane/Microsoft.EventHub/preview/2018-01-01-preview/schemaregistry.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/arerlend.sr.init/specification/schemaregistry/data-plane/Microsoft.EventHub/preview/2020-09-01-preview/schemaregistry.json
 output-folder: ../azure/schemaregistry/_generated
 namespace: azure.schemaregistry._generated
 no-namespace-folders: true
@@ -19,5 +19,5 @@ clear-output-folder: true
 python: true
 add-credential: true
 credential-scopes: "https://eventhubs.azure.net/.default"
-package-version: "1.0.0b1"
+package-version: "1.0.0b2"
 ```

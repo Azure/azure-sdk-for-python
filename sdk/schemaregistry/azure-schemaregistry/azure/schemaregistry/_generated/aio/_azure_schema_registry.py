@@ -21,7 +21,7 @@ from .. import models
 
 
 class AzureSchemaRegistry(object):
-    """Azure Schema Registry is as a central schema repository for enterprise-level data infrastructure, complete with support for versioning and management.
+    """Azure Schema Registry is as a central schema repository, complete with support for versioning, management, compatibility checking, and RBAC.
 
     :ivar schema: SchemaOperations operations
     :vartype schema: azure.schemaregistry._generated.aio.operations.SchemaOperations
@@ -43,6 +43,7 @@ class AzureSchemaRegistry(object):
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
+        self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
 
         self.schema = SchemaOperations(

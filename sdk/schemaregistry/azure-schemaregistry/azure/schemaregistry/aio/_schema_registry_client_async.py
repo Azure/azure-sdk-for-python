@@ -114,7 +114,7 @@ class SchemaRegistryClient(object):
             group_name=schema_group,
             schema_name=schema_name,
             schema_content=schema_content,
-            x_schema_type=serialization_type,
+            serialization_type=serialization_type,
             cls=_parse_response_schema_id,
             **kwargs
         )
@@ -185,7 +185,7 @@ class SchemaRegistryClient(object):
             group_name=schema_group,
             schema_name=schema_name,
             schema_content=schema_content,
-            x_schema_type=serialization_type,
+            serialization_type=serialization_type,
             cls=_parse_response_schema_id,
             **kwargs
         )

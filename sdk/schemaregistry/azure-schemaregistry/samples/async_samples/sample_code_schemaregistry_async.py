@@ -33,24 +33,24 @@ from azure.identity.aio import ClientSecretCredential, DefaultAzureCredential
 
 def create_client():
     # [START create_sr_client_async]
-    SCHEMA_REGISTRY_ENDPOINT = os.environ['SCHEMA_REGISTRY_ENDPOINT']
+    schema_registry_endpoint = os.environ['SCHEMA_REGISTRY_ENDPOINT']
     token_credential = DefaultAzureCredential()
-    schema_registry_client = SchemaRegistryClient(endpoint=SCHEMA_REGISTRY_ENDPOINT, credential=token_credential)
+    schema_registry_client = SchemaRegistryClient(endpoint=schema_registry_endpoint, credential=token_credential)
     # [END create_sr_client_async]
-    TENANT_ID = os.environ['SCHEMA_REGISTRY_AZURE_TENANT_ID']
-    CLIENT_ID = os.environ['SCHEMA_REGISTRY_AZURE_CLIENT_ID']
-    CLIENT_SECRET = os.environ['SCHEMA_REGISTRY_AZURE_CLIENT_SECRET']
-    token_credential = ClientSecretCredential(TENANT_ID, CLIENT_ID, CLIENT_SECRET)
-    schema_registry_client = SchemaRegistryClient(endpoint=SCHEMA_REGISTRY_ENDPOINT, credential=token_credential)
+    tenant_id = os.environ['SCHEMA_REGISTRY_AZURE_TENANT_ID']
+    client_id = os.environ['SCHEMA_REGISTRY_AZURE_CLIENT_ID']
+    client_secret = os.environ['SCHEMA_REGISTRY_AZURE_CLIENT_SECRET']
+    token_credential = ClientSecretCredential(tenant_id, client_id, client_secret)
+    schema_registry_client = SchemaRegistryClient(endpoint=schema_registry_endpoint, credential=token_credential)
     return schema_registry_client, token_credential
 
 
 async def register_scehma(schema_registry_client):
     # [START register_schema_async]
-    SCHEMA_GROUP = os.environ['SCHEMA_REGISTRY_GROUP']
-    SCHEMA_NAME = 'your-schema-name'
-    SERIALIZATION_TYPE = SerializationType.AVRO
-    SCHEMA_CONTENT = """
+    schema_group = os.environ['SCHEMA_REGISTRY_GROUP']
+    schema_name = 'your-schema-name'
+    serialization_type = SerializationType.AVRO
+    schema_content = """
     {"namespace": "example.avro",
      "type": "record",
      "name": "User",
@@ -60,7 +60,7 @@ async def register_scehma(schema_registry_client):
          {"name": "favorite_color", "type": ["string", "null"]}
      ]
     }"""
-    schema_properties = await schema_registry_client.register_schema(SCHEMA_GROUP, SCHEMA_NAME, SERIALIZATION_TYPE, SCHEMA_CONTENT)
+    schema_properties = await schema_registry_client.register_schema(schema_group, schema_name, serialization_type, schema_content)
     schem_id = schema_properties.schema_id
     # [END register_schema_async]
     return schem_id
