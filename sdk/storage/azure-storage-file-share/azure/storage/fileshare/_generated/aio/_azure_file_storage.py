@@ -6,34 +6,30 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING
+from typing import Any
 
-from azure.core import PipelineClient
+from azure.core import AsyncPipelineClient
 from msrest import Deserializer, Serializer
-
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any
 
 from ._configuration import AzureFileStorageConfiguration
 from .operations import ServiceOperations
 from .operations import ShareOperations
 from .operations import DirectoryOperations
 from .operations import FileOperations
-from . import models
+from .. import models
 
 
 class AzureFileStorage(object):
     """AzureFileStorage.
 
     :ivar service: ServiceOperations operations
-    :vartype service: azure.storage.fileshare.operations.ServiceOperations
+    :vartype service: azure.storage.fileshare.aio.operations.ServiceOperations
     :ivar share: ShareOperations operations
-    :vartype share: azure.storage.fileshare.operations.ShareOperations
+    :vartype share: azure.storage.fileshare.aio.operations.ShareOperations
     :ivar directory: DirectoryOperations operations
-    :vartype directory: azure.storage.fileshare.operations.DirectoryOperations
+    :vartype directory: azure.storage.fileshare.aio.operations.DirectoryOperations
     :ivar file: FileOperations operations
-    :vartype file: azure.storage.fileshare.operations.FileOperations
+    :vartype file: azure.storage.fileshare.aio.operations.FileOperations
     :param version: Specifies the version of the operation to use for this request.
     :type version: str
     :param url: The URL of the service account, share, directory or file that is the target of the desired operation.
@@ -42,14 +38,13 @@ class AzureFileStorage(object):
 
     def __init__(
         self,
-        version,  # type: str
-        url,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        version: str,
+        url: str,
+        **kwargs: Any
+    ) -> None:
         base_url = '{url}'
         self._config = AzureFileStorageConfiguration(version, url, **kwargs)
-        self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client = AsyncPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -65,15 +60,12 @@ class AzureFileStorage(object):
         self.file = FileOperations(
             self._client, self._config, self._serialize, self._deserialize)
 
-    def close(self):
-        # type: () -> None
-        self._client.close()
+    async def close(self) -> None:
+        await self._client.close()
 
-    def __enter__(self):
-        # type: () -> AzureFileStorage
-        self._client.__enter__()
+    async def __aenter__(self) -> "AzureFileStorage":
+        await self._client.__aenter__()
         return self
 
-    def __exit__(self, *exc_details):
-        # type: (Any) -> None
-        self._client.__exit__(*exc_details)
+    async def __aexit__(self, *exc_details) -> None:
+        await self._client.__aexit__(*exc_details)
