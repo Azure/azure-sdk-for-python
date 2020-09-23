@@ -463,10 +463,9 @@ class StorageTableClientTest(TableTestCase):
         tables = list(service.list_tables(raw_response_hook=callback, user_agent="TestApp/v2.0"))
         self.assertIsInstance(tables, list)
 
-    @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="cosmostables")
     @CachedCosmosAccountPreparer(name_prefix="cosmostables")
-    async def test_user_agent_append_async(self, resource_group, location, cosmos_account, cosmos_account_key):
+    async def test_user_agent_append(self, resource_group, location, cosmos_account, cosmos_account_key):
         # TODO: fix this one
         service = TableServiceClient(self.account_url(cosmos_account, "cosmos"), credential=cosmos_account_key)
 
@@ -474,15 +473,14 @@ class StorageTableClientTest(TableTestCase):
             self.assertTrue('User-Agent' in response.http_request.headers)
             self.assertEqual(
                 response.http_request.headers['User-Agent'],
-                "azsdk-python-storage-table/{} Python/{} ({}) customer_user_agent".format(
+                "azsdk-python-storage-tables/{} Python/{} ({}) customer_user_agent".format(
                     VERSION,
                     platform.python_version(),
                     platform.platform())
             )
 
         custom_headers = {'User-Agent': 'customer_user_agent'}
-        tables = list(service.list_tables(raw_response_hook=callback, headers=custom_headers))
-        self.assertIsInstance(tables, list)
+        tables = service.list_tables(raw_response_hook=callback, headers=custom_headers)
 
     @CachedResourceGroupPreparer(name_prefix="cosmostables")
     @CachedCosmosAccountPreparer(name_prefix="cosmostables")
@@ -494,8 +492,8 @@ class StorageTableClientTest(TableTestCase):
         # Assert
         self.assertEqual(service.scheme, 'https')
         self.assertEqual(service.table_name, 'bar')
+        self.assertEqual(service.account_name, cosmos_account.name)
 
-    # @pytest.mark.skip("Issues with determining account name")
     @CachedResourceGroupPreparer(name_prefix="cosmostables")
     @CachedCosmosAccountPreparer(name_prefix="cosmostables")
     async def test_create_table_client_with_complete_url_async(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -503,26 +501,22 @@ class StorageTableClientTest(TableTestCase):
         table_url = "https://{}.table.cosmos.azure.com:443/foo".format(cosmos_account.name)
         service = TableClient(table_url, table_name='bar', credential=cosmos_account_key)
 
-            # Assert
+        # Assert
         self.assertEqual(service.scheme, 'https')
         self.assertEqual(service.table_name, 'bar')
         self.assertEqual(service.account_name, cosmos_account.name)
 
-    @CachedResourceGroupPreparer(name_prefix="cosmostables")
-    @CachedCosmosAccountPreparer(name_prefix="cosmostables")
-    async def test_create_table_client_with_invalid_name_async(self, resource_group, location, cosmos_account, cosmos_account_key):
+    async def test_create_table_client_with_invalid_name_async(self):
         # Arrange
-        table_url = "https://{}.table.cosmos.azure.com:443/foo".format(cosmos_account.name)
+        table_url = "https://{}.table.cosmos.azure.com:443/foo".format("cosmos_account_name")
         invalid_table_name = "my_table"
 
         # Assert
-        with pytest.raises(ValueError) as excinfo:
-            service = TableClient(account_url=table_url, table_name=invalid_table_name, credential=cosmos_account_key)
+        with self.assertRaises(ValueError) as excinfo:
+            service = TableClient(account_url=table_url, table_name=invalid_table_name, credential="cosmos_account_key")
 
         assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.""" in str(excinfo)
 
-    @CachedResourceGroupPreparer(name_prefix="cosmostables")
-    @CachedCosmosAccountPreparer(name_prefix="cosmostables")
     async def test_error_with_malformed_conn_str_async(self):
         # Arrange
 
