@@ -39,8 +39,10 @@ These sample programs show common scenarios for the Text Analytics client's offe
 1. Install the Azure Text Analytics client library for Python with [pip][pip]:
 
 ```bash
-pip install azure-ai-textanalytics
+pip install azure-ai-textanalytics --pre
 ```
+For more information about how the versioning story of the SDK corresponds to the versioning story of the service's API, see [here][versioning_story_readme].
+
 * If authenticating with Azure Active Directory, make sure you have [azure-identity][azure_identity_pip] installed:
   ```bash
   pip install azure-identity
@@ -65,6 +67,7 @@ what you can do with the Azure Text Analytics client library.
 |[sample_analyze_sentiment_with_opinion_mining.py][sample_analyze_sentiment_with_opinion_mining] and [sample_analyze_sentiment_with_opinion_mining_async.py][sample_analyze_sentiment_with_opinion_mining_async]|Analyze sentiment in documents with granular analysis into individual opinions present in a sentence. Only available with API version v3.1-preview and up.|
 |[sample_get_detailed_diagnostics_information.py][get_detailed_diagnostics_information] and [sample_get_detailed_diagnostics_information_async.py][get_detailed_diagnostics_information_async]|Get the request batch statistics, model version, and raw response in JSON format through a callback|
 
+[versioning_story_readme]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/textanalytics/azure-ai-textanalytics#install-the-package
 [azure_identity]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity
 [sample_authentication]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/textanalytics/azure-ai-textanalytics/samples/sample_authentication.py
 [sample_authentication_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_authentication_async.py

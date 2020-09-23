@@ -44,7 +44,9 @@ from ._monitor_client_enums import (
     ConditionalOperator,
     Enabled,
     MetricTriggerType,
+    Operator,
     ProvisioningState,
+    QueryType,
 )
 
 __all__ = [
@@ -67,5 +69,7 @@ __all__ = [
     'ConditionalOperator',
     'Enabled',
     'MetricTriggerType',
+    'Operator',
     'ProvisioningState',
+    'QueryType',
 ]

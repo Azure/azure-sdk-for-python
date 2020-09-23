@@ -124,8 +124,7 @@ known_content_issues:
   - ['sdk/eventhub/azure-eventhub/samples/README.md', 'nspkg and common']
   - ['sdk/tables/azure-data-nspkg/README.md', 'nspkg and common']
   - ['sdk/cosmos/README.md', 'nspkg and common']
-
-
+  - ['sdk/communication/azure-communication-nspkg/README.md', 'nspkg and common']
 # HISTORY.rst
   - ['sdk/core/azure/HISTORY.rst','#4554']
 

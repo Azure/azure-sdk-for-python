@@ -9,6 +9,611 @@
 import msrest.serialization
 
 
+class ACSChatEventBaseProperties(msrest.serialization.Model):
+    """Schema of common properties of all chat events.
+
+    :param recipient_id: The MRI of the target user.
+    :type recipient_id: str
+    :param transaction_id: The transaction id will be used as co-relation vector.
+    :type transaction_id: str
+    :param thread_id: The chat thread id.
+    :type thread_id: str
+    """
+
+    _attribute_map = {
+        'recipient_id': {'key': 'recipientId', 'type': 'str'},
+        'transaction_id': {'key': 'transactionId', 'type': 'str'},
+        'thread_id': {'key': 'threadId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ACSChatEventBaseProperties, self).__init__(**kwargs)
+        self.recipient_id = kwargs.get('recipient_id', None)
+        self.transaction_id = kwargs.get('transaction_id', None)
+        self.thread_id = kwargs.get('thread_id', None)
+
+
+class ACSChatThreadEventBaseProperties(ACSChatEventBaseProperties):
+    """Schema of common properties of all chat thread events.
+
+    :param recipient_id: The MRI of the target user.
+    :type recipient_id: str
+    :param transaction_id: The transaction id will be used as co-relation vector.
+    :type transaction_id: str
+    :param thread_id: The chat thread id.
+    :type thread_id: str
+    :param create_time: The original creation time of the thread.
+    :type create_time: ~datetime.datetime
+    :param version: The version of the thread.
+    :type version: int
+    """
+
+    _attribute_map = {
+        'recipient_id': {'key': 'recipientId', 'type': 'str'},
+        'transaction_id': {'key': 'transactionId', 'type': 'str'},
+        'thread_id': {'key': 'threadId', 'type': 'str'},
+        'create_time': {'key': 'createTime', 'type': 'iso-8601'},
+        'version': {'key': 'version', 'type': 'int'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ACSChatThreadEventBaseProperties, self).__init__(**kwargs)
+        self.create_time = kwargs.get('create_time', None)
+        self.version = kwargs.get('version', None)
+
+
+class ACSChatMemberAddedToThreadWithUserEventData(ACSChatThreadEventBaseProperties):
+    """Schema of the Data property of an EventGridEvent for an Microsoft.Communication.ChatMemberAddedToThreadWithUser event.
+
+    :param recipient_id: The MRI of the target user.
+    :type recipient_id: str
+    :param transaction_id: The transaction id will be used as co-relation vector.
+    :type transaction_id: str
+    :param thread_id: The chat thread id.
+    :type thread_id: str
+    :param create_time: The original creation time of the thread.
+    :type create_time: ~datetime.datetime
+    :param version: The version of the thread.
+    :type version: int
+    :param time: The time at which the user was added to the thread.
+    :type time: ~datetime.datetime
+    :param added_by: The MRI of the user who added the user.
+    :type added_by: str
+    :param member_added: The details of the user who was added.
+    :type member_added: ~event_grid_publisher_client.models.ACSChatThreadMemberProperties
+    """
+
+    _attribute_map = {
+        'recipient_id': {'key': 'recipientId', 'type': 'str'},
+        'transaction_id': {'key': 'transactionId', 'type': 'str'},
+        'thread_id': {'key': 'threadId', 'type': 'str'},
+        'create_time': {'key': 'createTime', 'type': 'iso-8601'},
+        'version': {'key': 'version', 'type': 'int'},
+        'time': {'key': 'time', 'type': 'iso-8601'},
+        'added_by': {'key': 'addedBy', 'type': 'str'},
+        'member_added': {'key': 'memberAdded', 'type': 'ACSChatThreadMemberProperties'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ACSChatMemberAddedToThreadWithUserEventData, self).__init__(**kwargs)
+        self.time = kwargs.get('time', None)
+        self.added_by = kwargs.get('added_by', None)
+        self.member_added = kwargs.get('member_added', None)
+
+
+class ACSChatMemberRemovedFromThreadWithUserEventData(ACSChatThreadEventBaseProperties):
+    """Schema of the Data property of an EventGridEvent for an Microsoft.Communication.ChatMemberRemovedFromThreadWithUser event.
+
+    :param recipient_id: The MRI of the target user.
+    :type recipient_id: str
+    :param transaction_id: The transaction id will be used as co-relation vector.
+    :type transaction_id: str
+    :param thread_id: The chat thread id.
+    :type thread_id: str
+    :param create_time: The original creation time of the thread.
+    :type create_time: ~datetime.datetime
+    :param version: The version of the thread.
+    :type version: int
+    :param time: The time at which the user was removed to the thread.
+    :type time: ~datetime.datetime
+    :param removed_by: The MRI of the user who removed the user.
+    :type removed_by: str
+    :param member_removed: The details of the user who was removed.
+    :type member_removed: ~event_grid_publisher_client.models.ACSChatThreadMemberProperties
+    """
+
+    _attribute_map = {
+        'recipient_id': {'key': 'recipientId', 'type': 'str'},
+        'transaction_id': {'key': 'transactionId', 'type': 'str'},
+        'thread_id': {'key': 'threadId', 'type': 'str'},
+        'create_time': {'key': 'createTime', 'type': 'iso-8601'},
+        'version': {'key': 'version', 'type': 'int'},
+        'time': {'key': 'time', 'type': 'iso-8601'},
+        'removed_by': {'key': 'removedBy', 'type': 'str'},
+        'member_removed': {'key': 'memberRemoved', 'type': 'ACSChatThreadMemberProperties'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ACSChatMemberRemovedFromThreadWithUserEventData, self).__init__(**kwargs)
+        self.time = kwargs.get('time', None)
+        self.removed_by = kwargs.get('removed_by', None)
+        self.member_removed = kwargs.get('member_removed', None)
+
+
+class ACSChatMessageEventBaseProperties(ACSChatEventBaseProperties):
+    """Schema of common properties of all chat message events.
+
+    :param recipient_id: The MRI of the target user.
+    :type recipient_id: str
+    :param transaction_id: The transaction id will be used as co-relation vector.
+    :type transaction_id: str
+    :param thread_id: The chat thread id.
+    :type thread_id: str
+    :param message_id: The chat message id.
+    :type message_id: str
+    :param sender_id: The MRI of the sender.
+    :type sender_id: str
+    :param sender_display_name: The display name of the sender.
+    :type sender_display_name: str
+    :param compose_time: The original compose time of the message.
+    :type compose_time: ~datetime.datetime
+    :param type: The type of the message.
+    :type type: str
+    :param version: The version of the message.
+    :type version: int
+    """
+
+    _attribute_map = {
+        'recipient_id': {'key': 'recipientId', 'type': 'str'},
+        'transaction_id': {'key': 'transactionId', 'type': 'str'},
+        'thread_id': {'key': 'threadId', 'type': 'str'},
+        'message_id': {'key': 'messageId', 'type': 'str'},
+        'sender_id': {'key': 'senderId', 'type': 'str'},
+        'sender_display_name': {'key': 'senderDisplayName', 'type': 'str'},
+        'compose_time': {'key': 'composeTime', 'type': 'iso-8601'},
+        'type': {'key': 'type', 'type': 'str'},
+        'version': {'key': 'version', 'type': 'int'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ACSChatMessageEventBaseProperties, self).__init__(**kwargs)
+        self.message_id = kwargs.get('message_id', None)
+        self.sender_id = kwargs.get('sender_id', None)
+        self.sender_display_name = kwargs.get('sender_display_name', None)
+        self.compose_time = kwargs.get('compose_time', None)
+        self.type = kwargs.get('type', None)
+        self.version = kwargs.get('version', None)
+
+
+class ACSChatMessageDeletedEventData(ACSChatMessageEventBaseProperties):
+    """Schema of the Data property of an EventGridEvent for an Microsoft.Communication.ChatMessageDeleted event.
+
+    :param recipient_id: The MRI of the target user.
+    :type recipient_id: str
+    :param transaction_id: The transaction id will be used as co-relation vector.
+    :type transaction_id: str
+    :param thread_id: The chat thread id.
+    :type thread_id: str
+    :param message_id: The chat message id.
+    :type message_id: str
+    :param sender_id: The MRI of the sender.
+    :type sender_id: str
+    :param sender_display_name: The display name of the sender.
+    :type sender_display_name: str
+    :param compose_time: The original compose time of the message.
+    :type compose_time: ~datetime.datetime
+    :param type: The type of the message.
+    :type type: str
+    :param version: The version of the message.
+    :type version: int
+    :param delete_time: The time at which the message was deleted.
+    :type delete_time: ~datetime.datetime
+    """
+
+    _attribute_map = {
+        'recipient_id': {'key': 'recipientId', 'type': 'str'},
+        'transaction_id': {'key': 'transactionId', 'type': 'str'},
+        'thread_id': {'key': 'threadId', 'type': 'str'},
+        'message_id': {'key': 'messageId', 'type': 'str'},
+        'sender_id': {'key': 'senderId', 'type': 'str'},
+        'sender_display_name': {'key': 'senderDisplayName', 'type': 'str'},
+        'compose_time': {'key': 'composeTime', 'type': 'iso-8601'},
+        'type': {'key': 'type', 'type': 'str'},
+        'version': {'key': 'version', 'type': 'int'},
+        'delete_time': {'key': 'deleteTime', 'type': 'iso-8601'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ACSChatMessageDeletedEventData, self).__init__(**kwargs)
+        self.delete_time = kwargs.get('delete_time', None)
+
+
+class ACSChatMessageEditedEventData(ACSChatMessageEventBaseProperties):
+    """Schema of the Data property of an EventGridEvent for an Microsoft.Communication.ChatMessageEdited event.
+
+    :param recipient_id: The MRI of the target user.
+    :type recipient_id: str
+    :param transaction_id: The transaction id will be used as co-relation vector.
+    :type transaction_id: str
+    :param thread_id: The chat thread id.
+    :type thread_id: str
+    :param message_id: The chat message id.
+    :type message_id: str
+    :param sender_id: The MRI of the sender.
+    :type sender_id: str
+    :param sender_display_name: The display name of the sender.
+    :type sender_display_name: str
+    :param compose_time: The original compose time of the message.
+    :type compose_time: ~datetime.datetime
+    :param type: The type of the message.
+    :type type: str
+    :param version: The version of the message.
+    :type version: int
+    :param message_body: The body of the chat message.
+    :type message_body: str
+    :param edit_time: The time at which the message was edited.
+    :type edit_time: ~datetime.datetime
+    """
+
+    _attribute_map = {
+        'recipient_id': {'key': 'recipientId', 'type': 'str'},
+        'transaction_id': {'key': 'transactionId', 'type': 'str'},
+        'thread_id': {'key': 'threadId', 'type': 'str'},
+        'message_id': {'key': 'messageId', 'type': 'str'},
+        'sender_id': {'key': 'senderId', 'type': 'str'},
+        'sender_display_name': {'key': 'senderDisplayName', 'type': 'str'},
+        'compose_time': {'key': 'composeTime', 'type': 'iso-8601'},
+        'type': {'key': 'type', 'type': 'str'},
+        'version': {'key': 'version', 'type': 'int'},
+        'message_body': {'key': 'messageBody', 'type': 'str'},
+        'edit_time': {'key': 'editTime', 'type': 'iso-8601'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ACSChatMessageEditedEventData, self).__init__(**kwargs)
+        self.message_body = kwargs.get('message_body', None)
+        self.edit_time = kwargs.get('edit_time', None)
+
+
+class ACSChatMessageReceivedEventData(ACSChatMessageEventBaseProperties):
+    """Schema of the Data property of an EventGridEvent for an Microsoft.Communication.ChatMessageReceived event.
+
+    :param recipient_id: The MRI of the target user.
+    :type recipient_id: str
+    :param transaction_id: The transaction id will be used as co-relation vector.
+    :type transaction_id: str
+    :param thread_id: The chat thread id.
+    :type thread_id: str
+    :param message_id: The chat message id.
+    :type message_id: str
+    :param sender_id: The MRI of the sender.
+    :type sender_id: str
+    :param sender_display_name: The display name of the sender.
+    :type sender_display_name: str
+    :param compose_time: The original compose time of the message.
+    :type compose_time: ~datetime.datetime
+    :param type: The type of the message.
+    :type type: str
+    :param version: The version of the message.
+    :type version: int
+    :param message_body: The body of the chat message.
+    :type message_body: str
+    """
+
+    _attribute_map = {
+        'recipient_id': {'key': 'recipientId', 'type': 'str'},
+        'transaction_id': {'key': 'transactionId', 'type': 'str'},
+        'thread_id': {'key': 'threadId', 'type': 'str'},
+        'message_id': {'key': 'messageId', 'type': 'str'},
+        'sender_id': {'key': 'senderId', 'type': 'str'},
+        'sender_display_name': {'key': 'senderDisplayName', 'type': 'str'},
+        'compose_time': {'key': 'composeTime', 'type': 'iso-8601'},
+        'type': {'key': 'type', 'type': 'str'},
+        'version': {'key': 'version', 'type': 'int'},
+        'message_body': {'key': 'messageBody', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ACSChatMessageReceivedEventData, self).__init__(**kwargs)
+        self.message_body = kwargs.get('message_body', None)
+
+
+class ACSChatThreadCreatedWithUserEventData(ACSChatThreadEventBaseProperties):
+    """Schema of the Data property of an EventGridEvent for an Microsoft.Communication.ChatThreadCreatedWithUser event.
+
+    :param recipient_id: The MRI of the target user.
+    :type recipient_id: str
+    :param transaction_id: The transaction id will be used as co-relation vector.
+    :type transaction_id: str
+    :param thread_id: The chat thread id.
+    :type thread_id: str
+    :param create_time: The original creation time of the thread.
+    :type create_time: ~datetime.datetime
+    :param version: The version of the thread.
+    :type version: int
+    :param created_by: The MRI of the creator of the thread.
+    :type created_by: str
+    :param properties: The thread properties.
+    :type properties: dict[str, object]
+    :param members: The list of properties of users who are part of the thread.
+    :type members: list[~event_grid_publisher_client.models.ACSChatThreadMemberProperties]
+    """
+
+    _attribute_map = {
+        'recipient_id': {'key': 'recipientId', 'type': 'str'},
+        'transaction_id': {'key': 'transactionId', 'type': 'str'},
+        'thread_id': {'key': 'threadId', 'type': 'str'},
+        'create_time': {'key': 'createTime', 'type': 'iso-8601'},
+        'version': {'key': 'version', 'type': 'int'},
+        'created_by': {'key': 'createdBy', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': '{object}'},
+        'members': {'key': 'members', 'type': '[ACSChatThreadMemberProperties]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ACSChatThreadCreatedWithUserEventData, self).__init__(**kwargs)
+        self.created_by = kwargs.get('created_by', None)
+        self.properties = kwargs.get('properties', None)
+        self.members = kwargs.get('members', None)
+
+
+class ACSChatThreadMemberProperties(msrest.serialization.Model):
+    """Schema of the chat thread member.
+
+    :param display_name: The name of the user.
+    :type display_name: str
+    :param member_id: The MRI of the user.
+    :type member_id: str
+    """
+
+    _attribute_map = {
+        'display_name': {'key': 'displayName', 'type': 'str'},
+        'member_id': {'key': 'memberId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ACSChatThreadMemberProperties, self).__init__(**kwargs)
+        self.display_name = kwargs.get('display_name', None)
+        self.member_id = kwargs.get('member_id', None)
+
+
+class ACSChatThreadPropertiesUpdatedPerUserEventData(ACSChatThreadEventBaseProperties):
+    """Schema of the Data property of an EventGridEvent for an Microsoft.Communication.ChatThreadPropertiesUpdatedPerUser event.
+
+    :param recipient_id: The MRI of the target user.
+    :type recipient_id: str
+    :param transaction_id: The transaction id will be used as co-relation vector.
+    :type transaction_id: str
+    :param thread_id: The chat thread id.
+    :type thread_id: str
+    :param create_time: The original creation time of the thread.
+    :type create_time: ~datetime.datetime
+    :param version: The version of the thread.
+    :type version: int
+    :param edited_by: The MRI of the user who updated the thread properties.
+    :type edited_by: str
+    :param edit_time: The time at which the properties of the thread were updated.
+    :type edit_time: ~datetime.datetime
+    :param properties: The updated thread properties.
+    :type properties: dict[str, object]
+    """
+
+    _attribute_map = {
+        'recipient_id': {'key': 'recipientId', 'type': 'str'},
+        'transaction_id': {'key': 'transactionId', 'type': 'str'},
+        'thread_id': {'key': 'threadId', 'type': 'str'},
+        'create_time': {'key': 'createTime', 'type': 'iso-8601'},
+        'version': {'key': 'version', 'type': 'int'},
+        'edited_by': {'key': 'editedBy', 'type': 'str'},
+        'edit_time': {'key': 'editTime', 'type': 'iso-8601'},
+        'properties': {'key': 'properties', 'type': '{object}'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ACSChatThreadPropertiesUpdatedPerUserEventData, self).__init__(**kwargs)
+        self.edited_by = kwargs.get('edited_by', None)
+        self.edit_time = kwargs.get('edit_time', None)
+        self.properties = kwargs.get('properties', None)
+
+
+class ACSChatThreadWithUserDeletedEventData(ACSChatThreadEventBaseProperties):
+    """Schema of the Data property of an EventGridEvent for an Microsoft.Communication.ChatThreadWithUserDeleted event.
+
+    :param recipient_id: The MRI of the target user.
+    :type recipient_id: str
+    :param transaction_id: The transaction id will be used as co-relation vector.
+    :type transaction_id: str
+    :param thread_id: The chat thread id.
+    :type thread_id: str
+    :param create_time: The original creation time of the thread.
+    :type create_time: ~datetime.datetime
+    :param version: The version of the thread.
+    :type version: int
+    :param deleted_by: The MRI of the user who deleted the thread.
+    :type deleted_by: str
+    :param delete_time: The deletion time of the thread.
+    :type delete_time: ~datetime.datetime
+    """
+
+    _attribute_map = {
+        'recipient_id': {'key': 'recipientId', 'type': 'str'},
+        'transaction_id': {'key': 'transactionId', 'type': 'str'},
+        'thread_id': {'key': 'threadId', 'type': 'str'},
+        'create_time': {'key': 'createTime', 'type': 'iso-8601'},
+        'version': {'key': 'version', 'type': 'int'},
+        'deleted_by': {'key': 'deletedBy', 'type': 'str'},
+        'delete_time': {'key': 'deleteTime', 'type': 'iso-8601'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ACSChatThreadWithUserDeletedEventData, self).__init__(**kwargs)
+        self.deleted_by = kwargs.get('deleted_by', None)
+        self.delete_time = kwargs.get('delete_time', None)
+
+
+class ACSSMSDeliveryAttemptProperties(msrest.serialization.Model):
+    """Schema for details of a delivery attempt.
+
+    :param timestamp: TimeStamp when delivery was attempted.
+    :type timestamp: ~datetime.datetime
+    :param segments_succeeded: Number of segments that were successfully delivered.
+    :type segments_succeeded: int
+    :param segments_failed: Number of segments whose delivery failed.
+    :type segments_failed: int
+    """
+
+    _attribute_map = {
+        'timestamp': {'key': 'timestamp', 'type': 'iso-8601'},
+        'segments_succeeded': {'key': 'segmentsSucceeded', 'type': 'int'},
+        'segments_failed': {'key': 'segmentsFailed', 'type': 'int'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ACSSMSDeliveryAttemptProperties, self).__init__(**kwargs)
+        self.timestamp = kwargs.get('timestamp', None)
+        self.segments_succeeded = kwargs.get('segments_succeeded', None)
+        self.segments_failed = kwargs.get('segments_failed', None)
+
+
+class ACSSMSEventBaseProperties(msrest.serialization.Model):
+    """Schema of common properties of all SMS events.
+
+    :param message_id: The identity of the SMS message.
+    :type message_id: str
+    :param from_property: The identity of SMS message sender.
+    :type from_property: str
+    :param to: The identity of SMS message receiver.
+    :type to: str
+    """
+
+    _attribute_map = {
+        'message_id': {'key': 'messageId', 'type': 'str'},
+        'from_property': {'key': 'from', 'type': 'str'},
+        'to': {'key': 'to', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ACSSMSEventBaseProperties, self).__init__(**kwargs)
+        self.message_id = kwargs.get('message_id', None)
+        self.from_property = kwargs.get('from_property', None)
+        self.to = kwargs.get('to', None)
+
+
+class ACSSMSDeliveryReportReceivedEventData(ACSSMSEventBaseProperties):
+    """Schema of the Data property of an EventGridEvent for an Microsoft.Communication.SMSDeliveryReportReceived event.
+
+    :param message_id: The identity of the SMS message.
+    :type message_id: str
+    :param from_property: The identity of SMS message sender.
+    :type from_property: str
+    :param to: The identity of SMS message receiver.
+    :type to: str
+    :param delivery_status: Status of Delivery.
+    :type delivery_status: str
+    :param delivery_status_details: Details about Delivery Status.
+    :type delivery_status_details: str
+    :param delivery_attempts: List of details of delivery attempts made.
+    :type delivery_attempts:
+     list[~event_grid_publisher_client.models.ACSSMSDeliveryAttemptProperties]
+    :param received_timestamp: The time at which the SMS delivery report was received.
+    :type received_timestamp: ~datetime.datetime
+    """
+
+    _attribute_map = {
+        'message_id': {'key': 'messageId', 'type': 'str'},
+        'from_property': {'key': 'from', 'type': 'str'},
+        'to': {'key': 'to', 'type': 'str'},
+        'delivery_status': {'key': 'deliveryStatus', 'type': 'str'},
+        'delivery_status_details': {'key': 'deliveryStatusDetails', 'type': 'str'},
+        'delivery_attempts': {'key': 'deliveryAttempts', 'type': '[ACSSMSDeliveryAttemptProperties]'},
+        'received_timestamp': {'key': 'receivedTimestamp', 'type': 'iso-8601'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ACSSMSDeliveryReportReceivedEventData, self).__init__(**kwargs)
+        self.delivery_status = kwargs.get('delivery_status', None)
+        self.delivery_status_details = kwargs.get('delivery_status_details', None)
+        self.delivery_attempts = kwargs.get('delivery_attempts', None)
+        self.received_timestamp = kwargs.get('received_timestamp', None)
+
+
+class ACSSMSReceivedEventData(ACSSMSEventBaseProperties):
+    """Schema of the Data property of an EventGridEvent for an Microsoft.Communication.SMSReceived event.
+
+    :param message_id: The identity of the SMS message.
+    :type message_id: str
+    :param from_property: The identity of SMS message sender.
+    :type from_property: str
+    :param to: The identity of SMS message receiver.
+    :type to: str
+    :param message: The SMS content.
+    :type message: str
+    :param received_timestamp: The time at which the SMS was received.
+    :type received_timestamp: ~datetime.datetime
+    """
+
+    _attribute_map = {
+        'message_id': {'key': 'messageId', 'type': 'str'},
+        'from_property': {'key': 'from', 'type': 'str'},
+        'to': {'key': 'to', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'received_timestamp': {'key': 'receivedTimestamp', 'type': 'iso-8601'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ACSSMSReceivedEventData, self).__init__(**kwargs)
+        self.message = kwargs.get('message', None)
+        self.received_timestamp = kwargs.get('received_timestamp', None)
+
+
 class AppConfigurationKeyValueDeletedEventData(msrest.serialization.Model):
     """Schema of the Data property of an EventGridEvent for an Microsoft.AppConfiguration.KeyValueDeleted event.
 

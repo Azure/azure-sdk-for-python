@@ -1,5 +1,10 @@
 # Release History
 
+## 2.0.0b2 (2020-09-25)
+
+  **Features**
+  - Added support for Azure Communication Services event types.
+
 ## 2.0.0b1 (2020-09-08)
 
   **Features**
