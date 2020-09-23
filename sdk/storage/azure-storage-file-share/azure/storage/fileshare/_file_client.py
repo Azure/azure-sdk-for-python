@@ -33,7 +33,7 @@ from ._shared.parser import _str
 from ._parser import _get_file_permission, _datetime_to_str
 from ._lease import ShareLeaseClient
 from ._serialize import get_source_conditions, get_access_conditions, get_smb_properties, get_api_version
-from ._deserialize import deserialize_file_properties, deserialize_file_stream
+from ._deserialize import deserialize_file_properties, deserialize_file_stream, get_file_ranges_result
 from ._models import HandlesPaged, NTFSAttributes  # pylint: disable=unused-import
 from ._download import StorageStreamDownloader
 
@@ -1163,12 +1163,11 @@ class ShareFileClient(StorageAccountHostsMixin):
             length=length,
             previous_sharesnapshot=previous_sharesnapshot,
             **kwargs)
-
         try:
             ranges = self._client.file.get_range_list(**options)
         except StorageErrorException as error:
             process_storage_error(error)
-        return [{'start': b.start, 'end': b.end} for b in ranges]
+        return get_file_ranges_result(ranges)
 
     @distributed_trace
     def clear_range( # type: ignore

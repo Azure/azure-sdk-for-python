@@ -6,6 +6,7 @@
 
 from ._models import ShareProperties, DirectoryProperties, FileProperties
 from ._shared.response_handlers import deserialize_metadata
+from ._generated.models import ShareFileRangeList
 
 
 def deserialize_share_properties(response, obj, headers):
@@ -62,3 +63,14 @@ def deserialize_permission_key(response, obj, headers):  # pylint: disable=unuse
     if response is None or headers is None:
         return None
     return headers.get('x-ms-file-permission-key', None)
+
+
+def get_file_ranges_result(ranges):
+    # type: (ShareFileRangeList) -> Tuple[List[Dict[str, int]], List[Dict[str, int]]]
+    ranges = []  # type: ignore
+    clear_ranges = []  # type: List
+    if ranges.ranges:
+        ranges = [{'start': b.start, 'end': b.end} for b in ranges.ranges]  # type: ignore
+    if ranges.clear_ranges:
+        clear_ranges = [{'start': b.start, 'end': b.end} for b in ranges.clear_ranges]
+    return ranges, clear_ranges
