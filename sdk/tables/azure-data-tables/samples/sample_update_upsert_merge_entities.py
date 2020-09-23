@@ -25,6 +25,7 @@ import os
 
 
 class TableEntitySamples(object):
+    connection_string = os.getenv("AZURE_TABLES_CONNECTION_STRING")
 
     def create_and_get_entities(self):
         # Instantiate a table service client
@@ -95,10 +96,12 @@ class TableEntitySamples(object):
         table.create_table()
 
         entity = {'PartitionKey': 'color', 'RowKey': 'sharpie', 'text': 'Marker', 'color': 'Purple', 'price': '5'}
+        entity1 = {'PartitionKey': 'color2', 'RowKey': 'crayola', 'text': 'Marker', 'color': 'Red', 'price': '3'}
 
         try:
             # Create entities
-            created = table.create_entity(entity=entity)
+            table.create_entity(entity=entity)
+            created = table.get_entity(partition_key=entity["PartitionKey"], row_key=entity["RowKey"])
 
             # [START upsert_entity]
             # Try Replace and then Insert on Fail
@@ -140,8 +143,6 @@ class TableEntitySamples(object):
 
 if __name__ == '__main__':
     sample = TableEntitySamples()
-    sample.set_access_policy()
     sample.create_and_get_entities()
     sample.list_all_entities()
-    sample.upsert_entities()
     sample.update_entities()

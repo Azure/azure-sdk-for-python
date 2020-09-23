@@ -49,6 +49,7 @@ class CreateClients(object):
         )
         print("Table name: {}".format(table_client.table_name))
         # [END create_table_client]
+        await table_client.close()
 
 
 async def main():

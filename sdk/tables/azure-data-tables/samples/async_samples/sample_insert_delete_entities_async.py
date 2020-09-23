@@ -57,6 +57,7 @@ class InsertDeleteEntity(object):
         except ResourceExistsError:
             print("Entity already exists")
         # [END create_entity]
+        await table_client.close()
 
 
     async def delete_entity(self):
@@ -81,6 +82,7 @@ class InsertDeleteEntity(object):
         except ResourceNotFoundError:
             print("Entity does not exists")
         # [END delete_entity]
+        await table_client.close()
 
 
 async def main():

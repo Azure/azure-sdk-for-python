@@ -53,6 +53,8 @@ class SampleTablesQuery(object):
             e["Color"] = random.choice(colors)
             await table_client.create_entity(entity=e)
 
+        await table_client.close()
+
 
     async def sample_query_entities(self):
         await self._insert_random_entities()
@@ -64,9 +66,8 @@ class SampleTablesQuery(object):
         try:
             entity_name = "marker"
             name_filter = "Name eq '{}'".format(entity_name)
-            queried_entities = table_client.query_entities(filter=name_filter, select=["Brand","Color"])
 
-            for entity_chosen in queried_entities:
+            async for entity_chosen in table_client.query_entities(filter=name_filter, select=["Brand","Color"]):
                 print(entity_chosen)
 
         except HttpResponseError as e:
@@ -74,6 +75,7 @@ class SampleTablesQuery(object):
         # [END query_entities]
         finally:
             await table_client.delete_table()
+        await table_client.close()
 
 
 async def main():

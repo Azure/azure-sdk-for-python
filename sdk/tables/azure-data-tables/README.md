@@ -242,7 +242,11 @@ When you interact with the Azure table library using the Python SDK, errors retu
 
 For examples, if you try to create a table that already exists, a `409` error is returned indicating "Conflict".
 ```python
-service_client = TableServiceClient(connection_string)
+from azure.data.tables import TableServiceClient
+from azure.core.exceptions import HttpResponseError
+table_name = 'YourTableName
+
+service_client = TableServiceClient.from_connection_string(connection_string)
 
 # Create the table if it does not already exist
 tc = service_client.create_table_if_not_exists(table_name)

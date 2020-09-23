@@ -56,6 +56,7 @@ class TableEntitySamples(object):
         finally:
             # Delete the table
             await table.delete_table()
+        await table_client.close()
 
     async def list_all_entities(self):
         # Instantiate a table service client
@@ -63,7 +64,7 @@ class TableEntitySamples(object):
         table = TableClient.from_connection_string(self.connection_string, table_name="mytable4")
 
         # Create the table
-        table.create_table()
+        await table.create_table()
 
         entity = {'PartitionKey': 'color2', 'RowKey': 'sharpie', 'text': 'Marker', 'color': 'Purple', 'price': '5'}
         entity1 = {'PartitionKey': 'color2', 'RowKey': 'crayola', 'text': 'Marker', 'color': 'Red', 'price': '3'}
@@ -74,7 +75,9 @@ class TableEntitySamples(object):
             await table.create_entity(entity=entity1)
             # [START list_entities]
             # Query the entities in the table
-            entities = list(table.list_entities())
+            entities = list()
+            async for e in table.list_entities():
+                entities.append(e)
 
             for entity, i in enumerate(entities):
                 print("Entity #{}: {}".format(entity, i))
@@ -83,6 +86,7 @@ class TableEntitySamples(object):
         finally:
             # Delete the table
             await table.delete_table()
+        await table_client.close()
 
     async def update_entities(self):
         # Instantiate a table service client
@@ -94,10 +98,12 @@ class TableEntitySamples(object):
         await table.create_table()
 
         entity = {'PartitionKey': 'color', 'RowKey': 'sharpie', 'text': 'Marker', 'color': 'Purple', 'price': '5'}
+        entity1 = {'PartitionKey': 'color2', 'RowKey': 'crayola', 'text': 'Marker', 'color': 'Red', 'price': '3'}
 
         try:
             # Create entities
-            created = await table.create_entity(entity=entity)
+            await table.create_entity(entity=entity)
+            created = await table.get_entity(partition_key=entity["PartitionKey"], row_key=entity["RowKey"])
 
             # [START upsert_entity]
             # Try Replace and then Insert on Fail
@@ -133,6 +139,7 @@ class TableEntitySamples(object):
         finally:
             # Delete the table
             await table.delete_table()
+        await table_client.close()
 
 
 async def main():
