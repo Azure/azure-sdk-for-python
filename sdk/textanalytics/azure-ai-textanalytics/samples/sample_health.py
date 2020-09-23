@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_recognize_healthcare_entities.py
+FILE: sample_health.py
 
 DESCRIPTION:
     This sample demonstrates how to detect healthcare entities in a batch of documents.
@@ -15,7 +15,7 @@ DESCRIPTION:
     data source.  Relations between entities will also be included in the response.
 
 USAGE:
-    python sample_recognize_healthcare_entities.py
+    python sample_health.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_TEXT_ANALYTICS_ENDPOINT - the endpoint to your Cognitive Services resource.
@@ -26,10 +26,10 @@ USAGE:
 import os
 
 
-class RecognizeHealthcareEntitiesSample(object):
+class HealthSample(object):
 
-    def recognize_healthcare_entities(self):
-        # [START recognize_healthcare_entities]
+    def health(self):
+        # [START health]
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.textanalytics import TextAnalyticsClient
 
@@ -57,9 +57,13 @@ class RecognizeHealthcareEntitiesSample(object):
             for revascularization with open heart surgery."
         ]
 
-        poller = text_analytics_client.begin_recognize_health_entities(documents)
-        result = poller.result()
-        docs = [doc for doc in result if not doc.is_error]
+        job_id = text_analytics_client.begin_health(documents)
+        job_details = text_analytics_client.health_status(job_id)
+        
+        while job_details.status != "succeeded":
+            job_details = text_analytics_client.health_status(job_id)
+
+        docs = [doc for doc in job_details.result if not doc.is_error]
 
         for idx, doc in enumerate(docs):
             print("Document text: {}\n".format(documents[idx]))
@@ -85,7 +89,7 @@ class RecognizeHealthcareEntitiesSample(object):
 
 
 if __name__ == "__main__":
-    sample = RecognizeHealthcareEntitiesSample()
-    sample.recognize_healthcare_entities()
+    sample = HealthSample()
+    sample.health()
 
 
