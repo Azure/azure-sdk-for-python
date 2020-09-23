@@ -1196,3 +1196,234 @@ class SentimentConfidenceScores(DictMixin):
     def __repr__(self):
         return "SentimentConfidenceScores(positive={}, neutral={}, negative={})" \
             .format(self.positive, self.neutral, self.negative)[:1024]
+
+
+class EntitiesRecognitionTask(DictMixin):
+    """EntitiesRecognitionTask encapsulates the parameters for starting a long-running Entities Recognition operation.
+
+    :ivar str name: An optional descriptive name for the task.
+    :ivar str model_version: The model version to use for the analysis.
+    :ivar str string_index_type: An optional string for specifying the method used to interpret string offsets.  
+        Defaults to Text Elements (Graphemes) according to Unicode v8.0.0. For additional information see 
+        https://aka.ms/text-analytics-offsets
+    """
+
+    def __init__(self, **kwargs):
+        self.name = kwargs.get("name", "Entities Recognition")
+        self.model_version = kwargs.get("model_version", "latest")
+        self.string_index_type = kwargs.get("string_index_type", "TextElements_v8")
+
+    def __repr__(self, **kwargs):
+        return "EntitiesRecognitionTask(name={}, model_version={}, string_index_type={})" \
+            .format(self.name, self.model_version, self.string_index_type)[:1024]
+
+
+class EntitiesRecognitionTaskResult(DictMixin):
+    """EntitiesRecognitionTaskResult contains the results of a single Entities Recognition task, 
+        including additional task metadata.
+
+    :ivar str name: The name of the task.
+    :ivar results: The results of the analysis.
+    :vartype results: list[~azure.ai.textanalytics.RecognizeEntitiesResult]
+    """
+
+    def __init__(self, **kwargs):
+        self.name = kwargs.get("name", None)
+        self.results = kwargs.get("results", [])
+
+    def __repr__(self, **kwargs):
+        return "EntitiesRecognitionTaskResult(name={}, results={})" \
+            .format(self.name, repr(self.results))[:1024]
+
+
+class PiiEntitiesRecognitionTask(DictMixin):
+    """PiiEntitiesRecognitionTask encapsulates the parameters for starting a long-running PII Entities Recognition operation.
+
+    :ivar str name: An optional descriptive name for the task.
+    :ivar str model_version: The model version to use for the analysis.
+    :ivar str string_index_type: An optional string for specifying the method used to interpret string offsets.  
+        Defaults to Text Elements (Graphemes) according to Unicode v8.0.0. For additional information see 
+        https://aka.ms/text-analytics-offsets
+    :ivar str domain: An optional string to set the PII domain to include only a subset of the entity categories. Possible values include 'PHI' or None.
+    """
+
+    def __init__(self, **kwargs):
+        self.name = kwargs.get("name", "PII Entities Recognition")
+        self.model_version = kwargs.get("model_version", "latest")
+        self.string_index_type = kwargs.get("string_index_type", "TextElements_v8")
+        self.domain = kwargs.get("domain", None)
+
+    def __repr__(self, **kwargs):
+        return "PiiEntitiesRecognitionTask(name={}, model_version={}, string_index_type={}, domain={})" \
+            .format(self.name, self.model_version, self.string_index_type, self.domain)[:1024]
+
+
+class PiiEntitiesRecognitionTaskResult(DictMixin):
+    """PiiEntitiesRecognitionTaskResult contains the results of a single PII Entities Recognition task, 
+        including additional task metadata.
+
+    :ivar str name: The name of the task.
+    :ivar results: The results of the analysis.
+    :vartype results: list[~azure.ai.textanalytics.RecognizePiiEntitiesResult]
+    """
+
+    def __init__(self, **kwargs):
+        self.name = kwargs.get("name", None)
+        self.results = kwargs.get("results", [])
+
+    def __repr__(self, **kwargs):
+        return "PiiEntitiesRecognitionTaskResult(name={}, results={})" \
+            .format(self.name, repr(self.results))[:1024]
+
+
+class EntityLinkingTask(DictMixin):
+    """EntityLinkingTask encapsulates the parameters for starting a long-running Entity Linking operation.
+
+    :ivar str name: An optional descriptive name for the task.
+    :ivar str model_version: The model version to use for the analysis.
+    :ivar str string_index_type: An optional string for specifying the method used to interpret string offsets.  
+        Defaults to Text Elements (Graphemes) according to Unicode v8.0.0. For additional information see 
+        https://aka.ms/text-analytics-offsets
+    """
+
+    def __init__(self, **kwargs):
+        self.name = kwargs.get("name", "Entity Linking")
+        self.model_version = kwargs.get("model_version", "latest")
+        self.string_index_type = kwargs.get("string_index_type", "TextElements_v8")
+
+    def __repr__(self, **kwargs):
+        return "EntityLinkingTask(name={}, model_version={}, string_index_type={})" \
+            .format(self.name, self.model_version, self.string_index_type)[:1024]
+
+
+class EntityLinkingTaskResult(DictMixin):
+    """EntityLinkingTaskResult contains the results of a single Entity Linking task, including additional 
+        task metadata.
+
+    :ivar str name: The name of the task.
+    :ivar results: The results of the analysis.
+    :vartype results: list[~azure.ai.textanalytics.RecognizeLinkedEntitiesResult]
+    """
+
+    def __init__(self, **kwargs):
+        self.name = kwargs.get("name", None)
+        self.results = kwargs.get("results", [])
+
+    def __repr__(self, **kwargs):
+        return "EntityLinkingTaskResult(name={}, results={})" \
+            .format(self.name, repr(self.results))[:1024]
+
+
+class KeyPhraseExtractionTask(DictMixin):
+    """KeyPhraseExtractionTask encapsulates the parameters for starting a long-running Key Phrase Extraction operation.
+
+    :ivar str name: An optional descriptive name for the task.
+    :ivar str model_version: The model version to use for the analysis.
+    """
+
+    def __init__(self, **kwargs):
+        self.name = kwargs.get("name", "Key Phrase Extraction")
+        self.model_version = kwargs.get("model_version", "latest")
+
+    def __repr__(self, **kwargs):
+        return "KeyPhraseExtractionTask(name={}, model_version={}, string_index_type={})" \
+            .format(self.name, self.model_version)[:1024]
+
+
+class KeyPhraseExtractionTaskResult(DictMixin):
+    """KeyPhraseExtractionTaskResult contains the results of a single Key Phrase Extraction task, including additional 
+        task metadata.
+
+    :ivar str name: The name of the task.
+    :ivar results: The results of the analysis.
+    :vartype results: list[~azure.ai.textanalytics.ExtractKeyPhrasesResult]
+    """
+
+    def __init__(self, **kwargs):
+        self.name = kwargs.get("name", None)
+        self.results = kwargs.get("results", [])
+
+    def __repr__(self, **kwargs):
+        return "KeyPhraseExtractionTaskResult(name={}, results={})" \
+            .format(self.name, repr(self.results))[:1024]
+
+
+class SentimentAnalysisTask(DictMixin):
+    """SentimentAnalysisTask encapsulates the parameters for starting a long-running Sentiment Analysis operation.
+
+    :ivar str name: An optional descriptive name for the task.
+    :ivar str model_version: The model version to use for the analysis.
+    :ivar bool enable_opinion_mining: A boolean value indicating whether or not to enable opinion mining for
+        the analysis.
+    :ivar str string_index_type: An optional string for specifying the method used to interpret string offsets.  
+        Defaults to Text Elements (Graphemes) according to Unicode v8.0.0. For additional information see 
+        https://aka.ms/text-analytics-offsets
+    """
+
+    def __init__(self, **kwargs):
+        self.name = kwargs.get("name", "Sentiment Analysis")
+        self.model_version = kwargs.get("model_version", "latest")
+        self.enable_opinion_mining = kwargs.get("enable_opinion_mining", False)
+        self.string_index_type = kwargs.get("string_index_type", "TextElements_v8")
+
+    def __repr__(self, **kwargs):
+        return "SentimentAnalysisTask(name={}, model_version={}, string_index_type={}, enable_opinion_mining={})" \
+            .format(self.name, self.model_version, self.string_index_type, self.enable_opinion_mining)[:1024]
+
+
+class SentimentAnalysisTaskResult(DictMixin):
+    """SentimentAnalysisTaskResult contains the results of a single Sentiment Analysis task, including additional 
+        task metadata.
+
+    :ivar str name: The name of the task.
+    :ivar results: The results of the analysis.
+    :vartype results: list[~azure.ai.textanalytics.AnalyzeSentimentResult]
+    """
+
+    def __init__(self, **kwargs):
+        self.name = kwargs.get("name", None)
+        self.results = kwargs.get("results", [])
+
+    def __repr__(self, **kwargs):
+        return "SentimentAnalysisTaskResult(name={}, results={})" \
+            .format(self.name, repr(self.results))[:1024]
+
+
+class TextAnalysisResult(DictMixin):
+    """TextAnalysisResult contains the results of multiple text analyses performed on a batch of documents.
+
+    :ivar entities_recognition_results: A list of objects containing results for all Entity Recognition tasks
+        included in the analysis.
+    :vartype entities_recognition_results: list[~azure.ai.textanalytics.EntitiesRecognitionTaskResult]
+    :ivar pii_entities_recognition_results: A list of objects containing results for all PII Entity Recognition
+        tasks included in the analysis.
+    :vartype pii_entities_recogition_results: list[~azure.ai.textanalytics.PiiEntitiesRecognitionTaskResult]
+    :ivar entity_linking_results: A list of objects containing results for all Entity Linking tasks included in 
+        the analysis.
+    :vartype entity_linking_results: list[~azure.ai.textanalytics.EntityLinkingTaskResult]
+    :ivar key_phrase_extraction_results: A list of objects containing results for all Key Phrase Extraction tasks 
+        included in the analysis.
+    :vartype key_phrase_extraction_results: list[~azure.ai.textanalytics.KeyPhraseExtractionTaskResult]
+    :ivar sentiment_analysis_results: A list of objects containing results for all Sentiment Analysis tasks 
+        included in the analysis.
+    :vartype sentiment_analysis_results: list[~azure.ai.textanalytics.SentimentAnalysisTaskResult]
+    """
+    def __init__(self, **kwargs):
+        self.entities_recognition_results = kwargs.get("entities_recognition_results", [])
+        self.pii_entities_recognition_results = kwargs.get("pii_entities_recognition_results", [])
+        self.entity_linking_results = kwargs.get("entity_linking_results", [])
+        self.key_phrase_extraction_results = kwargs.get("key_phrase_extraction_results", [])
+        self.sentiment_analysis_results = kwargs.get("sentiment_analysis_results", [])
+
+    def __repr__(self):
+        return "TextAnalysisResult(entities_recognition_results={}, pii_entities_recognition_results={}, \
+            entity_linking_results={}, key_phrase_extraction_results={}, sentiment_analysis_results={})" \
+            .format(
+                repr(self.entities_extraction_results),
+                repr(self.pii_entities_extraction_results),
+                repr(self.entity_linking_results),
+                repr(self.key_phrase_extraction_results),
+                repr(self.sentiment_analysis_results)
+            )[:1024]
+
+
