@@ -27,6 +27,9 @@ from ._models import (
     TextAnalyticsWarning,
     RecognizePiiEntitiesResult,
     PiiEntity,
+    RecognizeHealthcareEntitiesResult,
+    HealthcareEntity,
+    HealthcareRelation
 )
 
 class CSODataV4Format(ODataV4Format):
@@ -74,6 +77,26 @@ def prepare_result(func):
             else:
                 results[idx] = func(item, results)
         return results
+
+    return wrapper
+
+
+def prepare_paged_result(func):  # TODO: properly implement paging, ordering of results based on the original request
+    def wrapper(response, obj, response_headers):
+        results = obj.results
+        if results.errors:
+            paged_results = results.documents + results.errors
+        
+        else:
+            paged_results = results.documents
+
+        for idx, item in enumerate(paged_results):
+            if hasattr(item, "error"):
+                paged_results[idx] = DocumentError(id=item.id, error=TextAnalyticsError._from_generated(item.error))
+            else:
+                paged_results[idx] = func(item, results)
+        
+        return paged_results
 
     return wrapper
 
@@ -138,3 +161,7 @@ def pii_entities_result(entity, results):  # pylint: disable=unused-argument
         warnings=[TextAnalyticsWarning._from_generated(w) for w in entity.warnings],  # pylint: disable=protected-access
         statistics=TextDocumentStatistics._from_generated(entity.statistics),  # pylint: disable=protected-access
     )
+
+@prepare_paged_result
+def healthcare_result(health, results):
+    return RecognizeHealthcareEntitiesResult._from_generated(health)

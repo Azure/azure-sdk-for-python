@@ -14,6 +14,7 @@ from typing import (  # pylint: disable=unused-import
 )
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import HttpResponseError
+from azure.core.polling.base_polling import LROBasePolling
 from ._base_client import TextAnalyticsClientBase
 from ._request_handlers import _validate_input
 from ._response_handlers import (
@@ -23,7 +24,8 @@ from ._response_handlers import (
     key_phrases_result,
     sentiment_result,
     language_result,
-    pii_entities_result
+    pii_entities_result,
+    healthcare_result
 )
 
 if TYPE_CHECKING:
@@ -375,6 +377,70 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             process_http_response_error(error)
 
     @distributed_trace
+    def begin_health(  # type: ignore
+        self,
+        documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
+        **kwargs  # type: Any
+    ):  # type: (...) -> LROPoller[List[RecognizeHealthcareEntitiesResult]]
+        """Recognize healthcare entities and identify relationships between these entities in a batch of documents.
+
+        Entities are associated with references that can be found in existing knowledge bases, such as UMLS, CHV, MSH, etc.
+        Relations are comprised of a pair of entities and a directional relationship.
+
+        :param documents: The set of documents to process as part of this batch.
+            If you wish to specify the ID and language on a per-item basis you must
+            use as input a list[:class:`~azure.ai.textanalytics.TextDocumentInput`] or a list of
+            dict representations of :class:`~azure.ai.textanalytics.TextDocumentInput`, like
+            `{"id": "1", "language": "en", "text": "hello world"}`.
+        :type documents:
+            list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or
+            list[dict[str, str]]
+        :keyword str model_version: This value indicates which model will
+            be used for scoring, e.g. "latest", "2019-10-01". If a model-version
+            is not specified, the API will default to the latest, non-preview version.
+        :keyword bool show_stats: If set to true, response will contain document level statistics.
+        :keyword int polling_interval: Waiting time between two polls for LRO operations
+            if no Retry-After header is present. Defaults to 30 seconds.
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :return: An instance of an LROPoller. Call `result()` on the poller
+            object to return a list[:class:`~azure.ai.textanalytics.RecognizeHealthcareEntitiesResult`].
+        :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_recognize_healthcare_entities.py
+                :start-after: [START recognize_healthcare_entities]
+                :end-before: [END recognize_healthcare_entities]
+                :language: python
+                :dedent: 8
+                :caption: Recognize healthcare entities in a batch of documents.
+        """
+
+        docs = docs = _validate_input(documents, "language", self._default_language)
+        model_version = kwargs.pop("model_version", None)
+        show_stats = kwargs.pop("show_stats", False)
+        polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
+        continuation_token = kwargs.pop("continuation_token", None)
+
+        # TODO: figure out why string_index_type is unexpected
+        # if self._string_code_unit:
+        #     kwargs.update({"string_index_type": self._string_code_unit})
+
+        try:
+            return self._client.begin_health(
+                docs,
+                model_version=model_version,
+                # show_stats=show_stats,  TODO: figure out why show_stats is unexpected
+                cls=kwargs.pop("cls", healthcare_result),
+                polling=LROBasePolling(timeout=polling_interval, **kwargs),
+                continuation_token=continuation_token,
+                **kwargs
+            )
+        
+        except HttpResponseError as error:
+            process_http_response_error(error)
+
+    @distributed_trace
     def extract_key_phrases(  # type: ignore
         self,
         documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
@@ -524,3 +590,4 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             raise error
         except HttpResponseError as error:
             process_http_response_error(error)
+

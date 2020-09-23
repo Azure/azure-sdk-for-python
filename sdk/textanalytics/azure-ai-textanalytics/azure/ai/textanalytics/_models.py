@@ -213,6 +213,23 @@ class RecognizeHealthcareEntitiesResult(DictMixin):
         self.statistics = kwargs.get("statistics", None)
         self.is_error = False
 
+    @classmethod
+    def _from_generated(cls, healthcare_result):
+        entities = [HealthcareEntity._from_generated(e) for e in healthcare_result.entities]
+        relations = []
+        for r in healthcare_result.relations:
+            _, source_idx = _get_indices(r.source)
+            _, target_idx = _get_indices(r.target)
+            relations.append(HealthcareRelation._from_generated(r, entities[source_idx], entities[target_idx]))
+        
+        return cls(
+            id=healthcare_result.id,
+            entities=entities,
+            relations=relations,
+            warnings=healthcare_result.warnings,
+            statistics=healthcare_result.statistics
+        )
+
     def __repr__(self):
         return "RecognizeHealthcareEntitiesResult(id={}, entities={}, relations={}, warnings={}, statistics={}, \
         is_error={})".format(
@@ -391,6 +408,18 @@ class HealthcareEntity(DictMixin):
         self.confidence_score = kwargs.get("confidence_score", None)
         self.links = kwargs.get("links", [])
 
+    @classmethod
+    def _from_generated(cls, healthcare_entity):
+        return cls(
+            text=healthcare_entity.text,
+            category=healthcare_entity.category,
+            subcategory=healthcare_entity.subcategory,
+            offset=healthcare_entity.offset,
+            length=healthcare_entity.length,
+            confidence_score=healthcare_entity.confidence_score,
+            links=[HealthcareEntityLink(id=l.id, data_source=l.data_source) for l in healthcare_entity.links] if healthcare_entity.links else None
+        )
+
     def __repr__(self):
         return "HealthcareEntity(text={}, category={}, subcategory={}, offset={}, length={}, confidence_score={},\
         links={})".format(
@@ -419,14 +448,23 @@ class HealthcareRelation(DictMixin):
     """
 
     def __init__(self, **kwargs):
-        self.type = kwargs.get("type", None)
+        self.relation_type = kwargs.get("relation_type", None)
         self.is_bidirectional = kwargs.get("is_bidirectional", None)
         self.source = kwargs.get("source", None)
         self.target = kwargs.get("target", None)
 
+    @classmethod
+    def _from_generated(cls, healthcare_relation, source_entity, target_entity):
+        return cls(
+            relation_type=healthcare_relation.relation_type,
+            is_bidirectional=healthcare_relation.bidirectional,
+            source=source_entity,
+            target=target_entity
+        )
+
     def __repr__(self):
-        return "HealthcareRelation(type={}, is_bidirectional={}, source={}, target={})".format(
-            self.type,
+        return "HealthcareRelation(relation_type={}, is_bidirectional={}, source={}, target={})".format(
+            self.relation_type,
             self.is_bidirectional,
             repr(self.source),
             repr(self.target)

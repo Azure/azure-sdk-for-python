@@ -32,6 +32,7 @@ from ._models import (
     RecognizePiiEntitiesResult,
     PiiEntity,
     PiiEntityDomainType,
+    RecognizeHealthcareEntitiesResult
 )
 
 __all__ = [

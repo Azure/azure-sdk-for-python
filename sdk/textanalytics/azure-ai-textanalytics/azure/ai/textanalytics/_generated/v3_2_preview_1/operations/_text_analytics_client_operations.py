@@ -473,6 +473,7 @@ class TextAnalyticsClientOperationsMixin(object):
         deserialized = None
         if response.status_code == 202:
             response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
+            pipeline_response.http_response.headers.update({"Operation-Location": operation_location})
 
         if response.status_code == 400:
             deserialized = self._deserialize('ErrorResponse', pipeline_response)
@@ -537,12 +538,23 @@ class TextAnalyticsClientOperationsMixin(object):
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
 
+        # Updated this method by hand to enable proper deserialization of the response
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize('ErrorResponse', pipeline_response)
+            if pipeline_response.http_response.status_code not in [200, 400, 500]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
+
+            if pipeline_response.http_response.status_code == 200:
+                deserialized = self._deserialize('HealthcareJobState', pipeline_response)
+
+            if pipeline_response.http_response.status_code == 400:
+                deserialized = self._deserialize('ErrorResponse', pipeline_response)
+
+            if pipeline_response.http_response.status_code == 500:
+                deserialized = self._deserialize('ErrorResponse', pipeline_response)
 
             if cls:
                 return cls(pipeline_response, deserialized, {})
-            return deserialized
 
         if polling is True: polling_method = LROBasePolling(lro_delay,  **kwargs)
         elif polling is False: polling_method = NoPolling()

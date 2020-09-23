@@ -36,14 +36,29 @@ class RecognizeHealthcareEntitiesSample(object):
         endpoint = os.environ["AZURE_TEXT_ANALYTICS_ENDPOINT"]
         key = os.environ["AZURE_TEXT_ANALYTICS_KEY"]
 
-        text_analytics_client = TextAnalyticsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+        text_analytics_client = TextAnalyticsClient(
+            endpoint=endpoint, 
+            credential=AzureKeyCredential(key),
+            api_version="v3.2-preview.1")
+
         documents = [
-            "Subject is taking 100mg of ibuprofen twice daily."
+            "RECORD #333582770390100 | MH | 85986313 | | 054351 | 2/14/2001 12:00:00 AM | \
+            CORONARY ARTERY DISEASE | Signed | DIS | Admission Date: 5/22/2001 \
+            Report Status: Signed Discharge Date: 4/24/2001 ADMISSION DIAGNOSIS: \
+            CORONARY ARTERY DISEASE. HISTORY OF PRESENT ILLNESS: \
+            The patient is a 54-year-old gentleman with a history of progressive angina over the past several months. \
+            The patient had a cardiac catheterization in July of this year revealing total occlusion of the RCA and \
+            50% left main disease , with a strong family history of coronary artery disease with a brother dying at \
+            the age of 52 from a myocardial infarction and another brother who is status post coronary artery bypass grafting. \
+            The patient had a stress echocardiogram done on July , 2001 , which showed no wall motion abnormalities ,\
+            but this was a difficult study due to body habitus. The patient went for six minutes with minimal ST depressions \
+            in the anterior lateral leads , thought due to fatigue and wrist pain , his anginal equivalent. Due to the patient's \
+            increased symptoms and family history and history left main disease with total occasional of his RCA was referred \
+            for revascularization with open heart surgery."
         ]
 
         poller = text_analytics_client.begin_health(documents)
         result = poller.result()
-
         docs = [doc for doc in result if not doc.is_error]
 
         for idx, doc in enumerate(docs):
@@ -55,16 +70,17 @@ class RecognizeHealthcareEntitiesSample(object):
                 print("...Offset: {}".format(entity.offset))
                 print("...Length: {}".format(entity.length))
                 print("...Confidence score: {}".format(entity.confidence_score))
-                print("...Links:")
-                for link in entity.links:
-                    print("......ID: {}".format(link.id))
-                    print("......Data source: {}".format(link.datasource))
+                if entity.links is not None:
+                    print("...Links:")
+                    for link in entity.links:
+                        print("......ID: {}".format(link.id))
+                        print("......Data source: {}".format(link.data_source))
             for relation in doc.relations:
                 print("Relation:")
-                print("...Source: {}".format(relation.source))
-                print("...Target: {}".format(relation.target))
-                print("...Type: {}".format(relation.type))
-                print("...Bidirectional: {}".format(relation.bidirectional))
+                print("...Source: {}".format(relation.source.text))
+                print("...Target: {}".format(relation.target.text))
+                print("...Type: {}".format(relation.relation_type))
+                print("...Bidirectional: {}".format(relation.is_bidirectional))
             print("------------------------------------------")
 
 
