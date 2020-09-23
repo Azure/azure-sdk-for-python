@@ -1,0 +1,60 @@
+interactions:
+- request:
+    body: ''
+    headers:
+      Accept:
+      - application/json
+      Date:
+      - Thu, 17 Sep 2020 21:13:29 GMT
+      User-Agent:
+      - azsdk-python-communication-administration/1.0.0b1 Python/3.8.3 (Windows-10-10.0.19041-SP0)
+      x-ms-return-client-request-id:
+      - 'true'
+    method: POST
+    uri: https://sanitized.communication.azure.com/identities?api-version=2020-07-20-preview2
+  response:
+    body: '{"id": "sanitized"}'
+    headers:
+      api-supported-versions: 2020-07-20-preview1, 2020-07-20-preview2
+      content-type: application/json; charset=utf-8
+      date: Thu, 17 Sep 2020 21:13:28 GMT
+      ms-cv: a23r/TKZoEqUmi6KuYK9XQ.0
+      strict-transport-security: max-age=2592000
+      transfer-encoding: chunked
+      x-processing-time: 15ms
+    status:
+      code: 200
+      message: OK
+    url: https://sanitized.communication.azure.com/identities?api-version=2020-07-20-preview2
+- request:
+    body: '{"scopes": ["chat"]}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '20'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 17 Sep 2020 21:13:29 GMT
+      User-Agent:
+      - azsdk-python-communication-administration/1.0.0b1 Python/3.8.3 (Windows-10-10.0.19041-SP0)
+      x-ms-return-client-request-id:
+      - 'true'
+    method: POST
+    uri: https://sanitized.communication.azure.com/identities/sanitized/token?api-version=2020-07-20-preview2
+  response:
+    body: '{"id": "sanitized", "token": "sanitized", "expiresOn": "2020-09-18T21:13:28.3346806+00:00"}'
+    headers:
+      api-supported-versions: 2020-07-20-preview1, 2020-07-20-preview2
+      content-type: application/json; charset=utf-8
+      date: Thu, 17 Sep 2020 21:13:29 GMT
+      ms-cv: m2ZudHejpk6Zy4x8gmlKaQ.0
+      strict-transport-security: max-age=2592000
+      transfer-encoding: chunked
+      x-processing-time: 26ms
+    status:
+      code: 200
+      message: OK
+    url: https://sanitized.communication.azure.com/identities/sanitized/token?api-version=2020-07-20-preview2
+version: 1
