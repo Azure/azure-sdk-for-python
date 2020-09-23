@@ -42,6 +42,22 @@ class TableServiceClient(TableServiceClientBase):
             key.
         :type credential: str
         :returns: None
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_authentication.py
+                :start-after: [START auth_from_sas]
+                :end-before: [END auth_from_sas]
+                :language: python
+                :dedent: 8
+                :caption: Authenticating a TableServiceClient from a Shared Access Key
+
+            .. literalinclude:: ../samples/sample_authentication.py
+                :start-after: [START auth_from_shared_key]
+                :end-before: [END auth_from_shared_key]
+                :language: python
+                :dedent: 8
+                :caption: Authenticating a TableServiceClient from a Shared Account Key
         """
 
         super(TableServiceClient, self).__init__(account_url, service='table', credential=credential, **kwargs)
@@ -59,6 +75,15 @@ class TableServiceClient(TableServiceClientBase):
         :type conn_str: str
         :returns: A Table service client.
         :rtype: ~azure.data.tables.TableServiceClient
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_authentication.py
+                :start-after: [START auth_from_connection_string]
+                :end-before: [END auth_from_connection_string]
+                :language: python
+                :dedent: 8
+                :caption: Authenticating a TableServiceClient from a connection_string
         """
         account_url, credential = parse_connection_str(
             conn_str=conn_str, credential=None, service='table', keyword_args=kwargs)
@@ -149,6 +174,15 @@ class TableServiceClient(TableServiceClientBase):
         :return: TableClient
         :rtype: ~azure.data.tables.TableClient
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_create_delete_table.py
+                :start-after: [START create_table_from_tc]
+                :end-before: [END create_table_from_tc]
+                :language: python
+                :dedent: 8
+                :caption: Creating a table from the TableServiceClient object
         """
         table = self.get_table_client(table_name=table_name)
         table.create_table(**kwargs)
@@ -170,6 +204,15 @@ class TableServiceClient(TableServiceClientBase):
         :return: TableClient
         :rtype: ~azure.data.tables.TableClient
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_create_delete_table.py
+                :start-after: [START create_table_if_not_exists]
+                :end-before: [END create_table_if_not_exists]
+                :language: python
+                :dedent: 8
+                :caption: Deleting a table from the TableServiceClient object
         """
         table = self.get_table_client(table_name=table_name)
         try:
@@ -191,6 +234,15 @@ class TableServiceClient(TableServiceClientBase):
         :type table_name: str
         :return: None
         :rtype: None
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_create_delete_table.py
+                :start-after: [START delete_table_from_tc]
+                :end-before: [END delete_table_from_tc]
+                :language: python
+                :dedent: 8
+                :caption: Deleting a table from the TableServiceClient object
         """
         table = self.get_table_client(table_name=table_name)
         table.delete_table(**kwargs)
@@ -211,6 +263,15 @@ class TableServiceClient(TableServiceClientBase):
         :return: A query of tables
         :rtype: ItemPaged[TableItem]
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_query_tables.py
+                :start-after: [START tsc_query_tables]
+                :end-before: [END tsc_query_tables]
+                :language: python
+                :dedent: 8
+                :caption: Querying tables in a storage account
         """
         parameters = kwargs.pop('parameters', None)
         filter = self._parameter_filter_substitution(parameters, filter)  # pylint: disable=W0622
@@ -241,6 +302,15 @@ class TableServiceClient(TableServiceClientBase):
         :return: A query of tables
         :rtype: ItemPaged[TableItem]
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_query_tables.py
+                :start-after: [START tsc_list_tables]
+                :end-before: [END tsc_list_tables]
+                :language: python
+                :dedent: 8
+                :caption: Listing all tables in a storage account
         """
         user_select = kwargs.pop('select', None)
         if user_select and not isinstance(user_select, str):

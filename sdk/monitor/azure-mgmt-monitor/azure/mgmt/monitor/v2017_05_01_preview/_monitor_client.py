@@ -22,6 +22,7 @@ from .operations import DiagnosticSettingsCategoryOperations
 from .operations import DiagnosticSettingsOperations
 from .operations import MetricDefinitionsOperations
 from .operations import MetricsOperations
+from .operations import SubscriptionDiagnosticSettingsOperations
 from . import models
 
 
@@ -36,10 +37,11 @@ class MonitorClient(object):
     :vartype metric_definitions: $(python-base-namespace).v2017_05_01_preview.operations.MetricDefinitionsOperations
     :ivar metrics: MetricsOperations operations
     :vartype metrics: $(python-base-namespace).v2017_05_01_preview.operations.MetricsOperations
+    :ivar subscription_diagnostic_settings: SubscriptionDiagnosticSettingsOperations operations
+    :vartype subscription_diagnostic_settings: $(python-base-namespace).v2017_05_01_preview.operations.SubscriptionDiagnosticSettingsOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
     :param str base_url: Service URL
-    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
     def __init__(
@@ -56,6 +58,7 @@ class MonitorClient(object):
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
+        self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
 
         self.diagnostic_settings_category = DiagnosticSettingsCategoryOperations(
@@ -65,6 +68,8 @@ class MonitorClient(object):
         self.metric_definitions = MetricDefinitionsOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.metrics = MetricsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.subscription_diagnostic_settings = SubscriptionDiagnosticSettingsOperations(
             self._client, self._config, self._serialize, self._deserialize)
 
     def close(self):

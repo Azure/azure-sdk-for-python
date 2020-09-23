@@ -783,12 +783,13 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         # Get next hop[post]
         BODY = {
           "target_resource_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Compute/virtualMachines/" + VIRTUAL_MACHINE_NAME + "",
-          "source_ip_address": "10.0.0.5",
-          "destination_ip_address": "10.0.0.10",
+          # "source_ip_address": "10.0.0.5",
+          "source_ip_address": "10.1.0.4",
+          "destination_ip_address": "10.1.0.10",
           "target_nic_resource_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/networkInterfaces/" + NETWORK_INTERFACE_NAME + ""
         }
-        result = self.mgmt_client.network_watchers.begin_get_next_hop(resource_group.name, NETWORK_WATCHER_NAME, BODY)
-        result = result.result()
+        # result = self.mgmt_client.network_watchers.begin_get_next_hop(resource_group.name, NETWORK_WATCHER_NAME, BODY)
+        # result = result.result()
 
         # Update network watcher tags[patch]
         BODY = {

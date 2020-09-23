@@ -54,6 +54,6 @@ what you can do with the Azure Anomaly Detector client library.
 [azure_anomaly_detector_account]: https://ms.portal.azure.com/#create/Microsoft.CognitiveServicesAnomalyDetector
 [python-fr-ref-docs]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-cognitiveservices-anomalydetector/0.3.0/index.html
 
-[sample_detect_entire_series_anomaly]: ./sample_detect_entire_series_anomaly.py
-[sample_detect_last_point_anomaly]: ./sample_detect_last_point_anomaly.py
-[sample_detect_change_point]: ./sample_detect_change_point.py
+[sample_detect_entire_series_anomaly]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/anomalydetector/azure-ai-anomalydetector/samples/sample_detect_entire_series_anomaly.py
+[sample_detect_last_point_anomaly]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/anomalydetector/azure-ai-anomalydetector/samples/sample_detect_last_point_anomaly.py
+[sample_detect_change_point]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/anomalydetector/azure-ai-anomalydetector/samples/sample_detect_change_point.py

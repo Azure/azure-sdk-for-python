@@ -410,7 +410,11 @@ class StoragePageBlobTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_upload_pages_from_url(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
+        account_url = self.account_url(storage_account, "blob")
+        if not isinstance(account_url, str):
+            account_url = account_url.encode('utf-8')
+            storage_account_key = storage_account_key.encode('utf-8')
+        bsc = BlobServiceClient(account_url, credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
         self._setup(bsc)
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)

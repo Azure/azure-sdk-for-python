@@ -70,8 +70,6 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
         self._config = StorageManagementClientConfiguration(credential, subscription_id, **kwargs)
         self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
         super(StorageManagementClient, self).__init__(
-            credential,
-            self._config,
             api_version=api_version,
             profile=profile
         )
@@ -129,7 +127,7 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2019-06-01':
             from .v2019_06_01 import models
             return models
-        raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        raise ValueError("API version {} is not available".format(api_version))
 
     @property
     def blob_containers(self):
@@ -156,7 +154,7 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2019-06-01':
             from .v2019_06_01.operations import BlobContainersOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+            raise ValueError("API version {} does not have operation group 'blob_containers'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -178,7 +176,7 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2019-06-01':
             from .v2019_06_01.operations import BlobServicesOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+            raise ValueError("API version {} does not have operation group 'blob_services'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -191,7 +189,7 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
         if api_version == '2019-06-01':
             from .v2019_06_01.operations import EncryptionScopesOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+            raise ValueError("API version {} does not have operation group 'encryption_scopes'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -207,7 +205,7 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2019-06-01':
             from .v2019_06_01.operations import FileServicesOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+            raise ValueError("API version {} does not have operation group 'file_services'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -223,7 +221,7 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2019-06-01':
             from .v2019_06_01.operations import FileSharesOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+            raise ValueError("API version {} does not have operation group 'file_shares'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -245,7 +243,7 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2019-06-01':
             from .v2019_06_01.operations import ManagementPoliciesOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+            raise ValueError("API version {} does not have operation group 'management_policies'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -258,7 +256,7 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
         if api_version == '2019-06-01':
             from .v2019_06_01.operations import ObjectReplicationPoliciesOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+            raise ValueError("API version {} does not have operation group 'object_replication_policies'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -292,7 +290,7 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2019-06-01':
             from .v2019_06_01.operations import Operations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+            raise ValueError("API version {} does not have operation group 'operations'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -305,7 +303,7 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
         if api_version == '2019-06-01':
             from .v2019_06_01.operations import PrivateEndpointConnectionsOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+            raise ValueError("API version {} does not have operation group 'private_endpoint_connections'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -318,7 +316,7 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
         if api_version == '2019-06-01':
             from .v2019_06_01.operations import PrivateLinkResourcesOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+            raise ValueError("API version {} does not have operation group 'private_link_resources'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -331,7 +329,7 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
         if api_version == '2019-06-01':
             from .v2019_06_01.operations import QueueOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+            raise ValueError("API version {} does not have operation group 'queue'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -344,7 +342,7 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
         if api_version == '2019-06-01':
             from .v2019_06_01.operations import QueueServicesOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+            raise ValueError("API version {} does not have operation group 'queue_services'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -378,7 +376,7 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2019-06-01':
             from .v2019_06_01.operations import SkusOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+            raise ValueError("API version {} does not have operation group 'skus'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -421,7 +419,7 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2019-06-01':
             from .v2019_06_01.operations import StorageAccountsOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+            raise ValueError("API version {} does not have operation group 'storage_accounts'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -434,7 +432,7 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
         if api_version == '2019-06-01':
             from .v2019_06_01.operations import TableOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+            raise ValueError("API version {} does not have operation group 'table'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -447,7 +445,7 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
         if api_version == '2019-06-01':
             from .v2019_06_01.operations import TableServicesOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+            raise ValueError("API version {} does not have operation group 'table_services'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -475,7 +473,7 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2018-02-01':
             from .v2018_02_01.operations import UsageOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+            raise ValueError("API version {} does not have operation group 'usage'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -500,7 +498,7 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2019-06-01':
             from .v2019_06_01.operations import UsagesOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+            raise ValueError("API version {} does not have operation group 'usages'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     def close(self):

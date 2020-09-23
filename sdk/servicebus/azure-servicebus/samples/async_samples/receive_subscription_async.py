@@ -29,7 +29,7 @@ async def main():
             subscription_name=SUBSCRIPTION_NAME
         )
         async with receiver:
-            received_msgs = await receiver.receive_messages(max_batch_size=10, max_wait_time=5)
+            received_msgs = await receiver.receive_messages(max_message_count=10, max_wait_time=5)
             for msg in received_msgs:
                 print(str(msg))
                 await msg.complete()

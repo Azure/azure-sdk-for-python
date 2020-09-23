@@ -27,11 +27,11 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '446'
+      - '469'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 May 2020 17:10:18 GMT
+      - Thu, 17 Sep 2020 08:45:58 GMT
       expires:
       - '-1'
       pragma:
@@ -48,9 +48,9 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-resource:
-      - Microsoft.Compute/PutVM3Min;234,Microsoft.Compute/PutVM30Min;1192
+      - Microsoft.Compute/PutVM3Min;238,Microsoft.Compute/PutVM30Min;1196
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1199'
+      - '1198'
     status:
       code: 200
       message: OK
@@ -78,11 +78,11 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '337'
+      - '360'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 May 2020 17:10:20 GMT
+      - Thu, 17 Sep 2020 08:45:59 GMT
       expires:
       - '-1'
       pragma:
@@ -92,7 +92,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1199'
+      - '1196'
     status:
       code: 201
       message: Created
@@ -116,11 +116,11 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '337'
+      - '360'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 May 2020 17:10:20 GMT
+      - Thu, 17 Sep 2020 08:45:59 GMT
       expires:
       - '-1'
       pragma:
@@ -160,7 +160,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 19 May 2020 17:10:21 GMT
+      - Thu, 17 Sep 2020 08:46:00 GMT
       expires:
       - '-1'
       pragma:
@@ -170,7 +170,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14999'
+      - '14996'
     status:
       code: 200
       message: OK
@@ -178,7 +178,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -198,7 +198,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 19 May 2020 17:10:22 GMT
+      - Thu, 17 Sep 2020 08:46:04 GMT
       expires:
       - '-1'
       pragma:
@@ -211,7 +211,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-resource:
-      - Microsoft.Compute/DeleteVM3Min;234,Microsoft.Compute/DeleteVM30Min;1194
+      - Microsoft.Compute/DeleteVM3Min;238,Microsoft.Compute/DeleteVM30Min;1196
       x-ms-ratelimit-remaining-subscription-deletes:
       - '14999'
     status:

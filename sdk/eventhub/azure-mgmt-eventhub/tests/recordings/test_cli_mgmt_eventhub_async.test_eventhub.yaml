@@ -30,11 +30,11 @@ interactions:
       content-type:
       - text/plain; charset=utf-8
       date:
-      - Tue, 26 May 2020 09:26:40 GMT
+      - Wed, 16 Sep 2020 03:32:05 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/locations/eastus/asyncoperations/1dc7a385-4b62-402a-9e54-95351122e05f?monitor=true&api-version=2019-04-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/locations/eastus/asyncoperations/5bafcb9e-1204-439c-976d-2ff61b898607?monitor=true&api-version=2019-04-01
       pragma:
       - no-cache
       server:
@@ -61,19 +61,19 @@ interactions:
       - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
         msrest_azure/0.6.2 azure-mgmt-storage/5.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/locations/eastus/asyncoperations/1dc7a385-4b62-402a-9e54-95351122e05f?monitor=true&api-version=2019-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/locations/eastus/asyncoperations/5bafcb9e-1204-439c-976d-2ff61b898607?monitor=true&api-version=2019-04-01
   response:
     body:
-      string: '{"sku":{"name":"Standard_LRS","tier":"Standard"},"kind":"Storage","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/storageaccount75861157","name":"storageaccount75861157","type":"Microsoft.Storage/storageAccounts","location":"eastus","tags":{},"properties":{"networkAcls":{"bypass":"AzureServices","virtualNetworkRules":[],"ipRules":[],"defaultAction":"Allow"},"supportsHttpsTrafficOnly":true,"encryption":{"services":{"file":{"enabled":true,"lastEnabledTime":"2020-05-26T09:26:39.9369563Z"},"blob":{"enabled":true,"lastEnabledTime":"2020-05-26T09:26:39.9369563Z"}},"keySource":"Microsoft.Storage"},"provisioningState":"Succeeded","creationTime":"2020-05-26T09:26:39.8431994Z","primaryEndpoints":{"blob":"https://storageaccount75861157.blob.core.windows.net/","queue":"https://storageaccount75861157.queue.core.windows.net/","table":"https://storageaccount75861157.table.core.windows.net/","file":"https://storageaccount75861157.file.core.windows.net/"},"primaryLocation":"eastus","statusOfPrimary":"available"}}'
+      string: '{"sku":{"name":"Standard_LRS","tier":"Standard"},"kind":"Storage","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/storageaccount75861157","name":"storageaccount75861157","type":"Microsoft.Storage/storageAccounts","location":"eastus","tags":{},"properties":{"networkAcls":{"bypass":"AzureServices","virtualNetworkRules":[],"ipRules":[],"defaultAction":"Allow"},"supportsHttpsTrafficOnly":true,"encryption":{"services":{"file":{"enabled":true,"lastEnabledTime":"2020-09-16T03:32:06.2490774Z"},"blob":{"enabled":true,"lastEnabledTime":"2020-09-16T03:32:06.2490774Z"}},"keySource":"Microsoft.Storage"},"provisioningState":"Succeeded","creationTime":"2020-09-16T03:32:06.1396628Z","primaryEndpoints":{"blob":"https://storageaccount75861157.blob.core.windows.net/","queue":"https://storageaccount75861157.queue.core.windows.net/","table":"https://storageaccount75861157.table.core.windows.net/","file":"https://storageaccount75861157.file.core.windows.net/"},"primaryLocation":"eastus","statusOfPrimary":"available"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '1131'
+      - '1156'
       content-type:
       - application/json
       date:
-      - Tue, 26 May 2020 09:26:58 GMT
+      - Wed, 16 Sep 2020 03:32:24 GMT
       expires:
       - '-1'
       pragma:
@@ -117,14 +117,14 @@ interactions:
   response:
     body:
       string: "{\r\n  \"name\": \"virtualnetwork75861157\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetwork75861157\"\
-        ,\r\n  \"etag\": \"W/\\\"2bc0c762-db3e-466b-8831-2d5fc8b527b1\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"05a7436d-44fb-4b25-ba53-6faf46fecc3d\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/virtualNetworks\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n \
-        \   \"resourceGuid\": \"7cae4761-af6d-49d1-97db-5dbda8ce347d\",\r\n    \"\
+        \   \"resourceGuid\": \"31efd706-4599-41ae-83ab-12ddbf4b8383\",\r\n    \"\
         addressSpace\": {\r\n      \"addressPrefixes\": [\r\n        \"10.0.0.0/16\"\
         \r\n      ]\r\n    },\r\n    \"subnets\": [\r\n      {\r\n        \"name\"\
         : \"subnet75861157\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetwork75861157/subnets/subnet75861157\"\
-        ,\r\n        \"etag\": \"W/\\\"2bc0c762-db3e-466b-8831-2d5fc8b527b1\\\"\"\
+        ,\r\n        \"etag\": \"W/\\\"05a7436d-44fb-4b25-ba53-6faf46fecc3d\\\"\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Updating\"\
         ,\r\n          \"addressPrefix\": \"10.0.0.0/24\",\r\n          \"delegations\"\
         : [],\r\n          \"privateEndpointNetworkPolicies\": \"Enabled\",\r\n  \
@@ -136,15 +136,15 @@ interactions:
       azure-asyncnotification:
       - Enabled
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/7cd351b1-d0ee-4837-829c-f5418506354f?api-version=2019-09-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/4384d76a-9a2a-46af-939d-1f341ea6a4b8?api-version=2019-09-01
       cache-control:
       - no-cache
       content-length:
-      - '1383'
+      - '1433'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 26 May 2020 09:27:13 GMT
+      - Wed, 16 Sep 2020 03:32:29 GMT
       expires:
       - '-1'
       pragma:
@@ -157,9 +157,9 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 07e18411-aa70-497a-bef8-18e6f9f552d3
+      - ed3d3337-ea14-469d-93c1-a7a6444754a1
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1199'
+      - '1197'
     status:
       code: 201
       message: Created
@@ -176,53 +176,7 @@ interactions:
       - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
         msrest_azure/0.6.2 azure-mgmt-network/7.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/7cd351b1-d0ee-4837-829c-f5418506354f?api-version=2019-09-01
-  response:
-    body:
-      string: "{\r\n  \"status\": \"InProgress\"\r\n}"
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '30'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Tue, 26 May 2020 09:27:17 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-      x-ms-arm-service-request-id:
-      - 00df9460-0c3a-42d8-bd79-6d10e8c2dd17
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-network/7.0.0 Azure-SDK-For-Python
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/7cd351b1-d0ee-4837-829c-f5418506354f?api-version=2019-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/4384d76a-9a2a-46af-939d-1f341ea6a4b8?api-version=2019-09-01
   response:
     body:
       string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
@@ -234,7 +188,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 26 May 2020 09:27:28 GMT
+      - Wed, 16 Sep 2020 03:32:35 GMT
       expires:
       - '-1'
       pragma:
@@ -251,7 +205,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 61f85ef4-3783-4af3-8eb6-11949c7081bd
+      - f72d395d-5f51-4095-bdb6-5129d60f4d86
     status:
       code: 200
       message: OK
@@ -272,14 +226,14 @@ interactions:
   response:
     body:
       string: "{\r\n  \"name\": \"virtualnetwork75861157\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetwork75861157\"\
-        ,\r\n  \"etag\": \"W/\\\"308ec8a9-641a-4bce-9bd7-be1c44d63d7c\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"6a7919c1-0bd6-49f2-8dc4-dfd1a3c722fe\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/virtualNetworks\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n\
-        \    \"resourceGuid\": \"7cae4761-af6d-49d1-97db-5dbda8ce347d\",\r\n    \"\
+        \    \"resourceGuid\": \"31efd706-4599-41ae-83ab-12ddbf4b8383\",\r\n    \"\
         addressSpace\": {\r\n      \"addressPrefixes\": [\r\n        \"10.0.0.0/16\"\
         \r\n      ]\r\n    },\r\n    \"subnets\": [\r\n      {\r\n        \"name\"\
         : \"subnet75861157\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetwork75861157/subnets/subnet75861157\"\
-        ,\r\n        \"etag\": \"W/\\\"308ec8a9-641a-4bce-9bd7-be1c44d63d7c\\\"\"\
+        ,\r\n        \"etag\": \"W/\\\"6a7919c1-0bd6-49f2-8dc4-dfd1a3c722fe\\\"\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
         ,\r\n          \"addressPrefix\": \"10.0.0.0/24\",\r\n          \"delegations\"\
         : [],\r\n          \"privateEndpointNetworkPolicies\": \"Enabled\",\r\n  \
@@ -291,13 +245,13 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '1385'
+      - '1435'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 26 May 2020 09:27:28 GMT
+      - Wed, 16 Sep 2020 03:32:35 GMT
       etag:
-      - W/"308ec8a9-641a-4bce-9bd7-be1c44d63d7c"
+      - W/"6a7919c1-0bd6-49f2-8dc4-dfd1a3c722fe"
       expires:
       - '-1'
       pragma:
@@ -314,7 +268,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - ab496790-f83a-451e-833f-cd69e1e8cc59
+      - e8029cd9-73d8-43a4-b286-79ae17c37989
     status:
       code: 200
       message: OK
@@ -337,7 +291,7 @@ interactions:
   response:
     body:
       string: "{\r\n  \"name\": \"subnet75861157\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetwork75861157/subnets/subnet75861157\"\
-        ,\r\n  \"etag\": \"W/\\\"308ec8a9-641a-4bce-9bd7-be1c44d63d7c\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"6a7919c1-0bd6-49f2-8dc4-dfd1a3c722fe\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"\
         addressPrefix\": \"10.0.0.0/24\",\r\n    \"delegations\": [],\r\n    \"privateEndpointNetworkPolicies\"\
         : \"Enabled\",\r\n    \"privateLinkServiceNetworkPolicies\": \"Enabled\"\r\
@@ -346,13 +300,13 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '592'
+      - '617'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 26 May 2020 09:27:29 GMT
+      - Wed, 16 Sep 2020 03:32:36 GMT
       etag:
-      - W/"308ec8a9-641a-4bce-9bd7-be1c44d63d7c"
+      - W/"6a7919c1-0bd6-49f2-8dc4-dfd1a3c722fe"
       expires:
       - '-1'
       pragma:
@@ -369,7 +323,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - b1dd8aad-eb08-4851-bf61-34e6b146c51e
+      - 7d923e15-fb3c-49e6-a836-3c6afe0828dd
     status:
       code: 200
       message: OK
@@ -384,47 +338,47 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157?api-version=2017-04-01
   response:
     body:
       string: '{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157","name":"namespace75861157","type":"Microsoft.EventHub/Namespaces","location":"South
-        Central US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"kafkaEnabled":true,"provisioningState":"Created","metricId":"00000000-0000-0000-0000-000000000000:namespace75861157","createdAt":"2020-05-26T09:27:40.367Z","updatedAt":"2020-05-26T09:27:40.367Z","serviceBusEndpoint":"https://namespace75861157.servicebus.windows.net:443/","status":"Activating"}}'
+        Central US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"kafkaEnabled":true,"provisioningState":"Created","metricId":"00000000-0000-0000-0000-000000000000:namespace75861157","createdAt":"2020-09-16T03:32:46.16Z","updatedAt":"2020-09-16T03:32:46.16Z","serviceBusEndpoint":"https://namespace75861157.servicebus.windows.net:443/","status":"Activating"}}'
     headers:
       cache-control: no-cache
       content-encoding: gzip
       content-type: application/json; charset=utf-8
-      date: Tue, 26 May 2020 09:27:41 GMT
+      date: Wed, 16 Sep 2020 03:32:47 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-HTTPAPI/2.0
-      server-sb: Service-Bus-Resource-Provider/CH3
+      server-sb: Service-Bus-Resource-Provider/SN1
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
       vary: Accept-Encoding
       x-content-type-options: nosniff
-      x-ms-ratelimit-remaining-subscription-resource-requests: '49'
+      x-ms-ratelimit-remaining-subscription-resource-requests: '47'
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157?api-version=2017-04-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/7wtij4p6f6esljsgpllyyqddjvezv3htie5d5lei4pkcw3o57fo5l5khn2nxdqkwyjbbw5e6y6z/providers/Microsoft.EventHub/namespaces/namespace75861157?api-version=2017-04-01
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157?api-version=2017-04-01
   response:
     body:
       string: '{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157","name":"namespace75861157","type":"Microsoft.EventHub/Namespaces","location":"South
-        Central US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"kafkaEnabled":true,"provisioningState":"Created","metricId":"00000000-0000-0000-0000-000000000000:namespace75861157","createdAt":"2020-05-26T09:27:40.367Z","updatedAt":"2020-05-26T09:27:40.367Z","serviceBusEndpoint":"https://namespace75861157.servicebus.windows.net:443/","status":"Activating"}}'
+        Central US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"kafkaEnabled":true,"provisioningState":"Created","metricId":"00000000-0000-0000-0000-000000000000:namespace75861157","createdAt":"2020-09-16T03:32:46.16Z","updatedAt":"2020-09-16T03:32:46.16Z","serviceBusEndpoint":"https://namespace75861157.servicebus.windows.net:443/","status":"Activating"}}'
     headers:
       cache-control: no-cache
       content-encoding: gzip
       content-type: application/json; charset=utf-8
-      date: Tue, 26 May 2020 09:28:13 GMT
+      date: Wed, 16 Sep 2020 03:33:18 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-HTTPAPI/2.0
@@ -436,27 +390,27 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157?api-version=2017-04-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/7wtij4p6f6esljsgpllyyqddjvezv3htie5d5lei4pkcw3o57fo5l5khn2nxdqkwyjbbw5e6y6z/providers/Microsoft.EventHub/namespaces/namespace75861157?api-version=2017-04-01
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157?api-version=2017-04-01
   response:
     body:
       string: '{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157","name":"namespace75861157","type":"Microsoft.EventHub/Namespaces","location":"South
-        Central US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"kafkaEnabled":true,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:namespace75861157","createdAt":"2020-05-26T09:27:40.367Z","updatedAt":"2020-05-26T09:28:24.093Z","serviceBusEndpoint":"https://namespace75861157.servicebus.windows.net:443/","status":"Active"}}'
+        Central US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"kafkaEnabled":true,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:namespace75861157","createdAt":"2020-09-16T03:32:46.16Z","updatedAt":"2020-09-16T03:33:32.26Z","serviceBusEndpoint":"https://namespace75861157.servicebus.windows.net:443/","status":"Active"}}'
     headers:
       cache-control: no-cache
       content-encoding: gzip
       content-type: application/json; charset=utf-8
-      date: Tue, 26 May 2020 09:28:44 GMT
+      date: Wed, 16 Sep 2020 03:33:49 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-HTTPAPI/2.0
-      server-sb: Service-Bus-Resource-Provider/CH3
+      server-sb: Service-Bus-Resource-Provider/SN1
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
       vary: Accept-Encoding
@@ -464,28 +418,28 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157?api-version=2017-04-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/7wtij4p6f6esljsgpllyyqddjvezv3htie5d5lei4pkcw3o57fo5l5khn2nxdqkwyjbbw5e6y6z/providers/Microsoft.EventHub/namespaces/namespace75861157?api-version=2017-04-01
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/messagingplan?api-version=2017-04-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/messagingplan","name":"2","type":"Microsoft.EventHub/MessagingSKUPlan","location":null,"tags":null,"properties":{"sku":2,"selectedEventHubUnit":1,"updatedAt":"2020-05-26T09:27:42.3183966Z","revision":3}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/messagingplan","name":"2","type":"Microsoft.EventHub/MessagingSKUPlan","location":null,"tags":null,"properties":{"sku":2,"selectedEventHubUnit":1,"updatedAt":"2020-09-16T03:32:46.5659797Z","revision":1}}'
     headers:
       cache-control: no-cache
       content-encoding: gzip
       content-type: application/json; charset=utf-8
-      date: Tue, 26 May 2020 09:28:51 GMT
+      date: Wed, 16 Sep 2020 03:33:49 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-HTTPAPI/2.0
-      server-sb: Service-Bus-Resource-Provider/CH3
+      server-sb: Service-Bus-Resource-Provider/SN1
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
       vary: Accept-Encoding
@@ -493,60 +447,61 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/messagingplan?api-version=2017-04-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/7wtij4p6f6esljsgpllyyqddjvezv3htie5d5lei4pkcw3o57fo5l5khn2nxdqkwyjbbw5e6y6z/providers/Microsoft.EventHub/namespaces/namespace75861157/messagingplan?api-version=2017-04-01
 - request:
-    body: 'b''{"properties": {"messageRetentionInDays": 4, "partitionCount": 4, "status":
-      "Active", "captureDescription": {"enabled": true, "encoding": "Avro", "intervalInSeconds":
-      120, "sizeLimitInBytes": 10485763, "destination": {"name": "EventHubArchive.AzureBlockBlob",
-      "properties": {"storageAccountResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/storageaccount75861157",
-      "blobContainer": "container", "archiveNameFormat": "{Namespace}/{EventHub}/{PartitionId}/{Year}/{Month}/{Day}/{Hour}/{Minute}/{Second}"}}}}}'''
+    body: 'b''b\''{"properties": {"messageRetentionInDays": 4, "partitionCount": 4,
+      "status": "Active", "captureDescription": {"enabled": true, "encoding": "Avro",
+      "intervalInSeconds": 120, "sizeLimitInBytes": 10485763, "destination": {"name":
+      "EventHubArchive.AzureBlockBlob", "properties": {"storageAccountResourceId":
+      "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/storageaccount75861157",
+      "blobContainer": "container", "archiveNameFormat": "{Namespace}/{EventHub}/{PartitionId}/{Year}/{Month}/{Day}/{Hour}/{Minute}/{Second}"}}}}}\'''''
     headers:
       Accept:
       - application/json
       Content-Length:
-      - '631'
+      - '656'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157?api-version=2017-04-01
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157","name":"eventhub75861157","type":"Microsoft.EventHub/Namespaces/EventHubs","location":"South
-        Central US","properties":{"messageRetentionInDays":4,"partitionCount":4,"status":"Active","createdAt":"2020-05-26T09:28:54.57Z","updatedAt":"2020-05-26T09:28:55.22Z","partitionIds":["0","1","2","3"],"captureDescription":{"enabled":true,"encoding":"Avro","destination":{"name":"EventHubArchive.AzureBlockBlob","properties":{"storageAccountResourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/storageaccount75861157","blobContainer":"container","archiveNameFormat":"{Namespace}/{EventHub}/{PartitionId}/{Year}/{Month}/{Day}/{Hour}/{Minute}/{Second}"}},"intervalInSeconds":120,"sizeLimitInBytes":10485763}}}'
+        Central US","properties":{"messageRetentionInDays":4,"partitionCount":4,"status":"Active","createdAt":"2020-09-16T03:33:53.07Z","updatedAt":"2020-09-16T03:33:53.37Z","partitionIds":["0","1","2","3"],"captureDescription":{"enabled":true,"encoding":"Avro","destination":{"name":"EventHubArchive.AzureBlockBlob","properties":{"storageAccountResourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/storageaccount75861157","blobContainer":"container","archiveNameFormat":"{Namespace}/{EventHub}/{PartitionId}/{Year}/{Month}/{Day}/{Hour}/{Minute}/{Second}"}},"intervalInSeconds":120,"sizeLimitInBytes":10485763}}}'
     headers:
       cache-control: no-cache
       content-encoding: gzip
       content-type: application/json; charset=utf-8
-      date: Tue, 26 May 2020 09:28:54 GMT
+      date: Wed, 16 Sep 2020 03:33:53 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-HTTPAPI/2.0
-      server-sb: Service-Bus-Resource-Provider/CH3
+      server-sb: Service-Bus-Resource-Provider/SN1
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
       vary: Accept-Encoding
       x-content-type-options: nosniff
-      x-ms-ratelimit-remaining-subscription-writes: '1199'
+      x-ms-ratelimit-remaining-subscription-writes: '1197'
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157?api-version=2017-04-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/7wtij4p6f6esljsgpllyyqddjvezv3htie5d5lei4pkcw3o57fo5l5khn2nxdqkwyjbbw5e6y6z/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157?api-version=2017-04-01
 - request:
-    body: 'b''{"properties": {"defaultAction": "Deny", "virtualNetworkRules": [{"subnet":
-      {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetwork75861157/subnets/subnet75861157"},
+    body: 'b''b\''{"properties": {"defaultAction": "Deny", "virtualNetworkRules":
+      [{"subnet": {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/virtualnetwork75861157/subnets/subnet75861157"},
       "ignoreMissingVnetServiceEndpoint": true}], "ipRules": [{"ipMask": "1.1.1.1",
-      "action": "Allow"}]}}'''
+      "action": "Allow"}]}}\'''''
     headers:
       Accept:
       - application/json
       Content-Length:
-      - '394'
+      - '419'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/networkRuleSets/default?api-version=2017-04-01
   response:
@@ -557,20 +512,20 @@ interactions:
       cache-control: no-cache
       content-encoding: gzip
       content-type: application/json; charset=utf-8
-      date: Tue, 26 May 2020 09:29:18 GMT
+      date: Wed, 16 Sep 2020 03:34:10 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-HTTPAPI/2.0
-      server-sb: Service-Bus-Resource-Provider/CH3
+      server-sb: Service-Bus-Resource-Provider/SN1
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
       vary: Accept-Encoding
       x-content-type-options: nosniff
-      x-ms-ratelimit-remaining-subscription-writes: '1198'
+      x-ms-ratelimit-remaining-subscription-writes: '1196'
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/networkRuleSets/default?api-version=2017-04-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/7wtij4p6f6esljsgpllyyqddjvezv3htie5d5lei4pkcw3o57fo5l5khn2nxdqkwyjbbw5e6y6z/providers/Microsoft.EventHub/namespaces/namespace75861157/networkRuleSets/default?api-version=2017-04-01
 - request:
     body: '{"properties": {"rights": ["Listen", "Send"]}}'
     headers:
@@ -581,7 +536,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/authorizationRules/authorizationrule75861157?api-version=2017-04-01
   response:
@@ -592,20 +547,20 @@ interactions:
       cache-control: no-cache
       content-encoding: gzip
       content-type: application/json; charset=utf-8
-      date: Tue, 26 May 2020 09:29:25 GMT
+      date: Wed, 16 Sep 2020 03:34:17 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-HTTPAPI/2.0
-      server-sb: Service-Bus-Resource-Provider/CH3
+      server-sb: Service-Bus-Resource-Provider/SN1
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
       vary: Accept-Encoding
       x-content-type-options: nosniff
-      x-ms-ratelimit-remaining-subscription-writes: '1197'
+      x-ms-ratelimit-remaining-subscription-writes: '1195'
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/authorizationRules/authorizationrule75861157?api-version=2017-04-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/7wtij4p6f6esljsgpllyyqddjvezv3htie5d5lei4pkcw3o57fo5l5khn2nxdqkwyjbbw5e6y6z/providers/Microsoft.EventHub/namespaces/namespace75861157/authorizationRules/authorizationrule75861157?api-version=2017-04-01
 - request:
     body: '{"properties": {"userMetadata": "New consumergroup"}}'
     headers:
@@ -616,32 +571,32 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/consumergroups/consumergroup75861157?api-version=2017-04-01
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/consumergroups/consumergroup75861157","name":"consumergroup75861157","type":"Microsoft.EventHub/Namespaces/EventHubs/ConsumerGroups","location":"South
-        Central US","properties":{"createdAt":"2020-05-26T09:29:27.1938923Z","updatedAt":"2020-05-26T09:29:27.1938923Z","userMetadata":"New
+        Central US","properties":{"createdAt":"2020-09-16T03:34:19.4735733Z","updatedAt":"2020-09-16T03:34:19.4735733Z","userMetadata":"New
         consumergroup"}}'
     headers:
       cache-control: no-cache
       content-encoding: gzip
       content-type: application/json; charset=utf-8
-      date: Tue, 26 May 2020 09:29:27 GMT
+      date: Wed, 16 Sep 2020 03:34:18 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-HTTPAPI/2.0
-      server-sb: Service-Bus-Resource-Provider/CH3
+      server-sb: Service-Bus-Resource-Provider/SN1
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
       vary: Accept-Encoding
       x-content-type-options: nosniff
-      x-ms-ratelimit-remaining-subscription-writes: '1196'
+      x-ms-ratelimit-remaining-subscription-writes: '1194'
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/consumergroups/consumergroup75861157?api-version=2017-04-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/7wtij4p6f6esljsgpllyyqddjvezv3htie5d5lei4pkcw3o57fo5l5khn2nxdqkwyjbbw5e6y6z/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/consumergroups/consumergroup75861157?api-version=2017-04-01
 - request:
     body: '{"properties": {"rights": ["Listen", "Send"]}}'
     headers:
@@ -652,7 +607,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/authorizationRules/authorizationrule75861157?api-version=2017-04-01
   response:
@@ -663,27 +618,27 @@ interactions:
       cache-control: no-cache
       content-encoding: gzip
       content-type: application/json; charset=utf-8
-      date: Tue, 26 May 2020 09:29:28 GMT
+      date: Wed, 16 Sep 2020 03:34:19 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-HTTPAPI/2.0
-      server-sb: Service-Bus-Resource-Provider/CH3
+      server-sb: Service-Bus-Resource-Provider/SN1
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
       vary: Accept-Encoding
       x-content-type-options: nosniff
-      x-ms-ratelimit-remaining-subscription-writes: '1195'
+      x-ms-ratelimit-remaining-subscription-writes: '1193'
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/authorizationRules/authorizationrule75861157?api-version=2017-04-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/7wtij4p6f6esljsgpllyyqddjvezv3htie5d5lei4pkcw3o57fo5l5khn2nxdqkwyjbbw5e6y6z/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/authorizationRules/authorizationrule75861157?api-version=2017-04-01
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/authorizationRules/authorizationrule75861157?api-version=2017-04-01
   response:
@@ -694,11 +649,11 @@ interactions:
       cache-control: no-cache
       content-encoding: gzip
       content-type: application/json; charset=utf-8
-      date: Tue, 26 May 2020 09:29:29 GMT
+      date: Wed, 16 Sep 2020 03:34:20 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-HTTPAPI/2.0
-      server-sb: Service-Bus-Resource-Provider/CH3
+      server-sb: Service-Bus-Resource-Provider/SN1
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
       vary: Accept-Encoding
@@ -706,14 +661,14 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/authorizationRules/authorizationrule75861157?api-version=2017-04-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/7wtij4p6f6esljsgpllyyqddjvezv3htie5d5lei4pkcw3o57fo5l5khn2nxdqkwyjbbw5e6y6z/providers/Microsoft.EventHub/namespaces/namespace75861157/authorizationRules/authorizationrule75861157?api-version=2017-04-01
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/authorizationRules/authorizationrule75861157?api-version=2017-04-01
   response:
@@ -724,11 +679,11 @@ interactions:
       cache-control: no-cache
       content-encoding: gzip
       content-type: application/json; charset=utf-8
-      date: Tue, 26 May 2020 09:29:29 GMT
+      date: Wed, 16 Sep 2020 03:34:20 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-HTTPAPI/2.0
-      server-sb: Service-Bus-Resource-Provider/CH3
+      server-sb: Service-Bus-Resource-Provider/SN1
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
       vary: Accept-Encoding
@@ -736,30 +691,30 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/authorizationRules/authorizationrule75861157?api-version=2017-04-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/7wtij4p6f6esljsgpllyyqddjvezv3htie5d5lei4pkcw3o57fo5l5khn2nxdqkwyjbbw5e6y6z/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/authorizationRules/authorizationrule75861157?api-version=2017-04-01
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/consumergroups/consumergroup75861157?api-version=2017-04-01
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/consumergroups/consumergroup75861157","name":"consumergroup75861157","type":"Microsoft.EventHub/Namespaces/EventHubs/ConsumerGroups","location":"South
-        Central US","properties":{"createdAt":"2020-05-26T09:29:27.189Z","updatedAt":"2020-05-26T09:29:27.189Z","userMetadata":"New
+        Central US","properties":{"createdAt":"2020-09-16T03:34:19.482Z","updatedAt":"2020-09-16T03:34:19.482Z","userMetadata":"New
         consumergroup"}}'
     headers:
       cache-control: no-cache
       content-encoding: gzip
       content-type: application/json; charset=utf-8
-      date: Tue, 26 May 2020 09:29:40 GMT
+      date: Wed, 16 Sep 2020 03:34:21 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-HTTPAPI/2.0
-      server-sb: Service-Bus-Resource-Provider/CH3
+      server-sb: Service-Bus-Resource-Provider/SN1
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
       vary: Accept-Encoding
@@ -767,14 +722,14 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/consumergroups/consumergroup75861157?api-version=2017-04-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/7wtij4p6f6esljsgpllyyqddjvezv3htie5d5lei4pkcw3o57fo5l5khn2nxdqkwyjbbw5e6y6z/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/consumergroups/consumergroup75861157?api-version=2017-04-01
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/authorizationRules?api-version=2017-04-01
   response:
@@ -785,11 +740,11 @@ interactions:
       cache-control: no-cache
       content-encoding: gzip
       content-type: application/json; charset=utf-8
-      date: Tue, 26 May 2020 09:29:40 GMT
+      date: Wed, 16 Sep 2020 03:34:21 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-HTTPAPI/2.0
-      server-sb: Service-Bus-Resource-Provider/CH3
+      server-sb: Service-Bus-Resource-Provider/SN1
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
       vary: Accept-Encoding
@@ -797,31 +752,31 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/authorizationRules?api-version=2017-04-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/7wtij4p6f6esljsgpllyyqddjvezv3htie5d5lei4pkcw3o57fo5l5khn2nxdqkwyjbbw5e6y6z/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/authorizationRules?api-version=2017-04-01
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/consumergroups?api-version=2017-04-01
   response:
     body:
       string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/consumergroups/$Default","name":"$Default","type":"Microsoft.EventHub/Namespaces/EventHubs/ConsumerGroups","location":"South
-        Central US","properties":{"createdAt":"2020-05-26T09:28:54.672Z","updatedAt":"2020-05-26T09:28:54.672Z"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/consumergroups/consumergroup75861157","name":"consumergroup75861157","type":"Microsoft.EventHub/Namespaces/EventHubs/ConsumerGroups","location":"South
-        Central US","properties":{"createdAt":"2020-05-26T09:29:27.189Z","updatedAt":"2020-05-26T09:29:27.189Z","userMetadata":"New
+        Central US","properties":{"createdAt":"2020-09-16T03:33:53.122Z","updatedAt":"2020-09-16T03:33:53.122Z"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/consumergroups/consumergroup75861157","name":"consumergroup75861157","type":"Microsoft.EventHub/Namespaces/EventHubs/ConsumerGroups","location":"South
+        Central US","properties":{"createdAt":"2020-09-16T03:34:19.478Z","updatedAt":"2020-09-16T03:34:19.478Z","userMetadata":"New
         consumergroup"}}]}'
     headers:
       cache-control: no-cache
       content-encoding: gzip
       content-type: application/json; charset=utf-8
-      date: Tue, 26 May 2020 09:29:40 GMT
+      date: Wed, 16 Sep 2020 03:34:21 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-HTTPAPI/2.0
-      server-sb: Service-Bus-Resource-Provider/CH3
+      server-sb: Service-Bus-Resource-Provider/SN1
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
       vary: Accept-Encoding
@@ -830,14 +785,14 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/consumergroups?api-version=2017-04-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/7wtij4p6f6esljsgpllyyqddjvezv3htie5d5lei4pkcw3o57fo5l5khn2nxdqkwyjbbw5e6y6z/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/consumergroups?api-version=2017-04-01
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/networkRuleSets/default?api-version=2017-04-01
   response:
@@ -848,11 +803,11 @@ interactions:
       cache-control: no-cache
       content-encoding: gzip
       content-type: application/json; charset=utf-8
-      date: Tue, 26 May 2020 09:29:41 GMT
+      date: Wed, 16 Sep 2020 03:34:23 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-HTTPAPI/2.0
-      server-sb: Service-Bus-Resource-Provider/CH3
+      server-sb: Service-Bus-Resource-Provider/SN1
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
       vary: Accept-Encoding
@@ -860,29 +815,29 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/networkRuleSets/default?api-version=2017-04-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/7wtij4p6f6esljsgpllyyqddjvezv3htie5d5lei4pkcw3o57fo5l5khn2nxdqkwyjbbw5e6y6z/providers/Microsoft.EventHub/namespaces/namespace75861157/networkRuleSets/default?api-version=2017-04-01
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157?api-version=2017-04-01
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157","name":"eventhub75861157","type":"Microsoft.EventHub/Namespaces/EventHubs","location":"South
-        Central US","properties":{"messageRetentionInDays":4,"partitionCount":4,"status":"Active","createdAt":"2020-05-26T09:28:54.57","updatedAt":"2020-05-26T09:29:28.17","partitionIds":["0","1","2","3"],"captureDescription":{"enabled":true,"encoding":"Avro","destination":{"name":"EventHubArchive.AzureBlockBlob","properties":{"storageAccountResourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/storageaccount75861157","blobContainer":"container","archiveNameFormat":"{Namespace}/{EventHub}/{PartitionId}/{Year}/{Month}/{Day}/{Hour}/{Minute}/{Second}"}},"intervalInSeconds":120,"sizeLimitInBytes":10485763}}}'
+        Central US","properties":{"messageRetentionInDays":4,"partitionCount":4,"status":"Active","createdAt":"2020-09-16T03:33:53.07","updatedAt":"2020-09-16T03:34:20.507","partitionIds":["0","1","2","3"],"captureDescription":{"enabled":true,"encoding":"Avro","destination":{"name":"EventHubArchive.AzureBlockBlob","properties":{"storageAccountResourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/storageaccount75861157","blobContainer":"container","archiveNameFormat":"{Namespace}/{EventHub}/{PartitionId}/{Year}/{Month}/{Day}/{Hour}/{Minute}/{Second}"}},"intervalInSeconds":120,"sizeLimitInBytes":10485763}}}'
     headers:
       cache-control: no-cache
       content-encoding: gzip
       content-type: application/json; charset=utf-8
-      date: Tue, 26 May 2020 09:29:42 GMT
+      date: Wed, 16 Sep 2020 03:34:23 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-HTTPAPI/2.0
-      server-sb: Service-Bus-Resource-Provider/CH3
+      server-sb: Service-Bus-Resource-Provider/SN1
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
       vary: Accept-Encoding
@@ -890,14 +845,14 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157?api-version=2017-04-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/7wtij4p6f6esljsgpllyyqddjvezv3htie5d5lei4pkcw3o57fo5l5khn2nxdqkwyjbbw5e6y6z/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157?api-version=2017-04-01
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/authorizationRules?api-version=2017-04-01
   response:
@@ -909,11 +864,11 @@ interactions:
       cache-control: no-cache
       content-encoding: gzip
       content-type: application/json; charset=utf-8
-      date: Tue, 26 May 2020 09:29:42 GMT
+      date: Wed, 16 Sep 2020 03:34:24 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-HTTPAPI/2.0
-      server-sb: Service-Bus-Resource-Provider/CH3
+      server-sb: Service-Bus-Resource-Provider/SN1
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
       vary: Accept-Encoding
@@ -921,14 +876,14 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/authorizationRules?api-version=2017-04-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/7wtij4p6f6esljsgpllyyqddjvezv3htie5d5lei4pkcw3o57fo5l5khn2nxdqkwyjbbw5e6y6z/providers/Microsoft.EventHub/namespaces/namespace75861157/authorizationRules?api-version=2017-04-01
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/networkRuleSets?api-version=2017-04-01
   response:
@@ -939,11 +894,11 @@ interactions:
       cache-control: no-cache
       content-encoding: gzip
       content-type: application/json; charset=utf-8
-      date: Tue, 26 May 2020 09:29:43 GMT
+      date: Wed, 16 Sep 2020 03:34:25 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-HTTPAPI/2.0
-      server-sb: Service-Bus-Resource-Provider/CH3
+      server-sb: Service-Bus-Resource-Provider/SN1
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
       vary: Accept-Encoding
@@ -951,29 +906,29 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/networkRuleSets?api-version=2017-04-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/7wtij4p6f6esljsgpllyyqddjvezv3htie5d5lei4pkcw3o57fo5l5khn2nxdqkwyjbbw5e6y6z/providers/Microsoft.EventHub/namespaces/namespace75861157/networkRuleSets?api-version=2017-04-01
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs?api-version=2017-04-01
   response:
     body:
       string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157","name":"eventhub75861157","type":"Microsoft.EventHub/Namespaces/EventHubs","location":"South
-        Central US","properties":{"messageRetentionInDays":4,"partitionCount":4,"status":"Active","createdAt":"2020-05-26T09:28:54.57","updatedAt":"2020-05-26T09:29:28.17","partitionIds":["0","1","2","3"],"captureDescription":{"enabled":true,"encoding":"Avro","destination":{"name":"EventHubArchive.AzureBlockBlob","properties":{"storageAccountResourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/storageaccount75861157","blobContainer":"container","archiveNameFormat":"{Namespace}/{EventHub}/{PartitionId}/{Year}/{Month}/{Day}/{Hour}/{Minute}/{Second}"}},"intervalInSeconds":120,"sizeLimitInBytes":10485763}}}]}'
+        Central US","properties":{"messageRetentionInDays":4,"partitionCount":4,"status":"Active","createdAt":"2020-09-16T03:33:53.07","updatedAt":"2020-09-16T03:34:20.507","partitionIds":["0","1","2","3"],"captureDescription":{"enabled":true,"encoding":"Avro","destination":{"name":"EventHubArchive.AzureBlockBlob","properties":{"storageAccountResourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/storageaccount75861157","blobContainer":"container","archiveNameFormat":"{Namespace}/{EventHub}/{PartitionId}/{Year}/{Month}/{Day}/{Hour}/{Minute}/{Second}"}},"intervalInSeconds":120,"sizeLimitInBytes":10485763}}}]}'
     headers:
       cache-control: no-cache
       content-encoding: gzip
       content-type: application/json; charset=utf-8
-      date: Tue, 26 May 2020 09:29:44 GMT
+      date: Wed, 16 Sep 2020 03:34:26 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-HTTPAPI/2.0
-      server-sb: Service-Bus-Resource-Provider/CH3
+      server-sb: Service-Bus-Resource-Provider/SN1
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
       vary: Accept-Encoding
@@ -982,29 +937,29 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs?api-version=2017-04-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/7wtij4p6f6esljsgpllyyqddjvezv3htie5d5lei4pkcw3o57fo5l5khn2nxdqkwyjbbw5e6y6z/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs?api-version=2017-04-01
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157?api-version=2017-04-01
   response:
     body:
       string: '{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157","name":"namespace75861157","type":"Microsoft.EventHub/Namespaces","location":"South
-        Central US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"kafkaEnabled":true,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:namespace75861157","createdAt":"2020-05-26T09:27:40.367Z","updatedAt":"2020-05-26T09:28:24.093Z","serviceBusEndpoint":"https://namespace75861157.servicebus.windows.net:443/","status":"Active"}}'
+        Central US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"kafkaEnabled":true,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:namespace75861157","createdAt":"2020-09-16T03:32:46.16Z","updatedAt":"2020-09-16T03:33:32.26Z","serviceBusEndpoint":"https://namespace75861157.servicebus.windows.net:443/","status":"Active"}}'
     headers:
       cache-control: no-cache
       content-encoding: gzip
       content-type: application/json; charset=utf-8
-      date: Tue, 26 May 2020 09:29:45 GMT
+      date: Wed, 16 Sep 2020 03:34:26 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-HTTPAPI/2.0
-      server-sb: Service-Bus-Resource-Provider/CH3
+      server-sb: Service-Bus-Resource-Provider/SN1
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
       vary: Accept-Encoding
@@ -1012,29 +967,29 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157?api-version=2017-04-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/7wtij4p6f6esljsgpllyyqddjvezv3htie5d5lei4pkcw3o57fo5l5khn2nxdqkwyjbbw5e6y6z/providers/Microsoft.EventHub/namespaces/namespace75861157?api-version=2017-04-01
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces?api-version=2017-04-01
   response:
     body:
       string: '{"value":[{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157","name":"namespace75861157","type":"Microsoft.EventHub/Namespaces","location":"South
-        Central US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"kafkaEnabled":true,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:namespace75861157","createdAt":"2020-05-26T09:27:40.367Z","updatedAt":"2020-05-26T09:28:24.093Z","serviceBusEndpoint":"https://namespace75861157.servicebus.windows.net:443/","status":"Active"}}]}'
+        Central US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"kafkaEnabled":true,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:namespace75861157","createdAt":"2020-09-16T03:32:46.16Z","updatedAt":"2020-09-16T03:33:32.26Z","serviceBusEndpoint":"https://namespace75861157.servicebus.windows.net:443/","status":"Active"}}]}'
     headers:
       cache-control: no-cache
       content-encoding: gzip
       content-type: application/json; charset=utf-8
-      date: Tue, 26 May 2020 09:29:46 GMT
+      date: Wed, 16 Sep 2020 03:34:26 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-HTTPAPI/2.0
-      server-sb: Service-Bus-Resource-Provider/CH3
+      server-sb: Service-Bus-Resource-Provider/SN1
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
       vary: Accept-Encoding
@@ -1042,14 +997,14 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces?api-version=2017-04-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/7wtij4p6f6esljsgpllyyqddjvezv3htie5d5lei4pkcw3o57fo5l5khn2nxdqkwyjbbw5e6y6z/providers/Microsoft.EventHub/namespaces?api-version=2017-04-01
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.EventHub/sku/Basic/regions?api-version=2017-04-01
   response:
@@ -1142,16 +1097,18 @@ interactions:
         East","type":"Microsoft.EventHub/sku/Regions","location":null,"tags":null,"properties":{"code":"Norway
         East","fullName":"Norway East"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.EventHub/sku/Basic/regions/NorwayWest","name":"Norway
         West","type":"Microsoft.EventHub/sku/Regions","location":null,"tags":null,"properties":{"code":"Norway
-        West","fullName":"Norway West"}}],"nextLink":null}'
+        West","fullName":"Norway West"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.EventHub/sku/Basic/regions/BrazilSoutheast","name":"Brazil
+        Southeast","type":"Microsoft.EventHub/sku/Regions","location":null,"tags":null,"properties":{"code":"Brazil
+        Southeast","fullName":"Brazil Southeast"}}],"nextLink":null}'
     headers:
       cache-control: no-cache
       content-encoding: gzip
       content-type: application/json; charset=utf-8
-      date: Tue, 26 May 2020 09:29:48 GMT
+      date: Wed, 16 Sep 2020 03:34:27 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-HTTPAPI/2.0
-      server-sb: Service-Bus-Resource-Provider/CH3
+      server-sb: Service-Bus-Resource-Provider/SN1
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
       vary: Accept-Encoding
@@ -1166,22 +1123,25 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.EventHub/namespaces?api-version=2017-04-01
   response:
     body:
-      string: '{"value":[{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157","name":"namespace75861157","type":"Microsoft.EventHub/Namespaces","location":"South
-        Central US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"kafkaEnabled":true,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:namespace75861157","createdAt":"2020-05-26T09:27:40.367Z","updatedAt":"2020-05-26T09:28:24.093Z","serviceBusEndpoint":"https://namespace75861157.servicebus.windows.net:443/","status":"Active"}}]}'
+      string: '{"value":[{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/7vx5onejribdkm3bpke5mddlz57worfeu7edc4sdd5xec2dng2m4hhit6yy7d5u6asotq6vmh6a/providers/Microsoft.EventHub/namespaces/myNamespacexxyyzzykk","name":"myNamespacexxyyzzykk","type":"Microsoft.EventHub/Namespaces","location":"East
+        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"kafkaEnabled":true,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:mynamespacexxyyzzykk","createdAt":"2020-08-18T05:04:57.527Z","updatedAt":"2020-08-18T05:11:09.503Z","serviceBusEndpoint":"https://myNamespacexxyyzzykk.servicebus.windows.net:443/","status":"Active","alternateName":"postmigrationxxxy"}},{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pddr3wg3pl4rkkpm72j4ktc36kvz76yhaqpylpakpnoe4zmekffxzdvaq2cpddpf67uj6yfqaqh/providers/Microsoft.EventHub/namespaces/namespacexf7e318f9","name":"namespacexf7e318f9","type":"Microsoft.EventHub/Namespaces","location":"East
+        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"kafkaEnabled":true,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:namespacexf7e318f9","createdAt":"2020-09-16T03:32:46.977Z","updatedAt":"2020-09-16T03:33:36.487Z","serviceBusEndpoint":"https://namespacexf7e318f9.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_servicebus_namespace_test_migration_configsa9a51771/providers/Microsoft.EventHub/namespaces/myNamespacexxyyzzy","name":"myNamespacexxyyzzy","type":"Microsoft.EventHub/Namespaces","location":"East
+        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"kafkaEnabled":true,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:mynamespacexxyyzzy","createdAt":"2020-08-17T08:07:13.307Z","updatedAt":"2020-08-17T08:27:01.143Z","serviceBusEndpoint":"https://myNamespacexxyyzzy.servicebus.windows.net:443/","status":"Active","alternateName":"postmigrationxxy"}},{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157","name":"namespace75861157","type":"Microsoft.EventHub/Namespaces","location":"South
+        Central US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"kafkaEnabled":true,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:namespace75861157","createdAt":"2020-09-16T03:32:46.16Z","updatedAt":"2020-09-16T03:33:32.26Z","serviceBusEndpoint":"https://namespace75861157.servicebus.windows.net:443/","status":"Active"}}]}'
     headers:
       cache-control: no-cache
       content-encoding: gzip
       content-type: application/json; charset=utf-8
-      date: Tue, 26 May 2020 09:29:48 GMT
+      date: Wed, 16 Sep 2020 03:34:27 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-HTTPAPI/2.0
-      server-sb: Service-Bus-Resource-Provider/CH3
+      server-sb: Service-Bus-Resource-Provider/SN1
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
       vary: Accept-Encoding
@@ -1196,7 +1156,7 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/providers/Microsoft.EventHub/operations?api-version=2017-04-01
   response:
@@ -1253,7 +1213,13 @@ interactions:
         Authorization Rule (Deprecated)","description":"Updates Namespace Authorization
         Rule. This API is depricated. Please use a PUT call to update the Namespace
         Authorization Rule instead.. This operation is not supported on API version
-        2017-04-01."},"isDataAction":false},{"name":"Microsoft.EventHub/namespaces/eventhubs/write","display":{"provider":"Microsoft
+        2017-04-01."},"isDataAction":false},{"name":"Microsoft.EventHub/namespaces/schemagroups/write","display":{"provider":"Microsoft
+        Azure EventHub","resource":"SchemaGroup","operation":"Create or Update SchemaGroup","description":"Create
+        or Update SchemaGroup properties."},"isDataAction":false},{"name":"Microsoft.EventHub/namespaces/schemagroups/read","display":{"provider":"Microsoft
+        Azure EventHub","resource":"SchemaGroup","operation":"Get SchemaGroup","description":"Get
+        list of SchemaGroup Resource Descriptions"},"isDataAction":false},{"name":"Microsoft.EventHub/namespaces/schemagroups/delete","display":{"provider":"Microsoft
+        Azure EventHub","resource":"SchemaGroup","operation":"Delete SchemaGroup","description":"Operation
+        to delete SchemaGroup Resource"},"isDataAction":false},{"name":"Microsoft.EventHub/namespaces/eventhubs/write","display":{"provider":"Microsoft
         Azure EventHub","resource":"EventHub","operation":"Create or Update EventHub","description":"Create
         or Update EventHub properties."},"isDataAction":false},{"name":"Microsoft.EventHub/namespaces/eventhubs/read","display":{"provider":"Microsoft
         Azure EventHub","resource":"EventHub","operation":"Get EventHub","description":"Get
@@ -1369,8 +1335,8 @@ interactions:
         utilization for the Event Hub Cluster as a percentage","unit":"Percent","aggregationType":"Maximum","internalMetricName":"Processor\\%
         Processor Time","resourceIdDimensionNameOverride":"ScaleUnit","sourceMdmAccount":"servicebus","sourceMdmNamespace":"PerformanceCountersV2","availabilities":[{"timeGrain":"PT1M","blobDuration":"P30D"}],"dimensions":[{"name":"Role","toBeExportedForShoebox":true}],"fillGapWithZero":true},{"name":"AvailableMemory","displayName":"Available
         Memory","displayDescription":"Available memory for the Event Hub Cluster as
-        a percentage of total memory.","unit":"Percent","aggregationType":"Maximum","internalMetricName":"NodeMemoryUtilization","resourceIdDimensionNameOverride":"ScaleUnit","sourceMdmAccount":"servicebus","sourceMdmNamespace":"OperationQoSMetrics","availabilities":[{"timeGrain":"PT1M","blobDuration":"P30D"}],"dimensions":[{"name":"Role","toBeExportedForShoebox":true}],"fillGapWithZero":true},{"name":"Size","displayName":"Size
-        of an EventHub in Bytes.","displayDescription":"Size of an EventHub in Bytes.","unit":"Bytes","aggregationType":"Average","internalMetricName":"EntitySize","isDimensionRequired":false,"sourceMdmAccount":"servicebus","sourceMdmNamespace":"OperationQoSMetrics","lockAggregationType":"Total","availabilities":[{"timeGrain":"PT1M","blobDuration":"P30D"}],"dimensions":[{"name":"Role","toBeExportedForShoebox":true}],"supportedAggregationTypes":["Average","Min","Max"],"fillGapWithZero":true}]}},"isDataAction":false},{"name":"Microsoft.EventHub/namespaces/providers/Microsoft.Insights/diagnosticSettings/read","display":{"provider":"Microsoft
+        a percentage of total memory.","unit":"Percent","aggregationType":"Maximum","internalMetricName":"NodeMemoryUtilization","resourceIdDimensionNameOverride":"ScaleUnit","sourceMdmAccount":"servicebus","sourceMdmNamespace":"OperationQoSMetrics","availabilities":[{"timeGrain":"PT1M","blobDuration":"P30D"}],"dimensions":[{"name":"Role","toBeExportedForShoebox":true}],"fillGapWithZero":true},{"name":"Size","displayName":"Size","displayDescription":"Size
+        of an EventHub in Bytes.","unit":"Bytes","aggregationType":"Average","internalMetricName":"EntitySize","isDimensionRequired":false,"sourceMdmAccount":"servicebus","sourceMdmNamespace":"OperationQoSMetrics","lockAggregationType":"Total","availabilities":[{"timeGrain":"PT1M","blobDuration":"P30D"}],"dimensions":[{"name":"Role","toBeExportedForShoebox":true}],"supportedAggregationTypes":["Average","Min","Max"],"fillGapWithZero":true}]}},"isDataAction":false},{"name":"Microsoft.EventHub/namespaces/providers/Microsoft.Insights/diagnosticSettings/read","display":{"provider":"Microsoft
         Azure EventHub","resource":"Namespace diagnostic settings","operation":"Get
         Namespace diagnostic settings","description":"Get list of Namespace diagnostic
         settings Resource Descriptions"},"isDataAction":false},{"name":"Microsoft.EventHub/namespaces/providers/Microsoft.Insights/diagnosticSettings/write","display":{"provider":"Microsoft
@@ -1414,7 +1380,13 @@ interactions:
         Azure EventHub","resource":"Messages","operation":"Send messages","description":"Send
         messages"},"isDataAction":true},{"name":"Microsoft.EventHub/namespaces/messages/receive/action","display":{"provider":"Microsoft
         Azure EventHub","resource":"Messages","operation":"Receive messages","description":"Receive
-        messages"},"isDataAction":true},{"name":"Microsoft.EventHub/namespaces/removeAcsNamepsace/action","display":{"provider":"Microsoft
+        messages"},"isDataAction":true},{"name":"Microsoft.EventHub/namespaces/schemas/read","display":{"provider":"Microsoft
+        Azure EventHub","resource":"Schemas","operation":"Retrieve schemas","description":"Retrieve
+        schemas"},"isDataAction":true},{"name":"Microsoft.EventHub/namespaces/schemas/write","display":{"provider":"Microsoft
+        Azure EventHub","resource":"Schemas","operation":"Write schemas","description":"Write
+        schemas"},"isDataAction":true},{"name":"Microsoft.EventHub/namespaces/schemas/delete","display":{"provider":"Microsoft
+        Azure EventHub","resource":"Schemas","operation":"Delete schemas","description":"Delete
+        schemas"},"isDataAction":true},{"name":"Microsoft.EventHub/namespaces/removeAcsNamepsace/action","display":{"provider":"Microsoft
         Azure EventHub","resource":"Remove ACS namespace","operation":"Remove ACS
         namespace","description":"Remove ACS namespace"},"isDataAction":false},{"name":"Microsoft.EventHub/namespaces/ipFilterRules/read","display":{"provider":"Microsoft
         Azure EventHub","resource":"IPFilter","operation":"Get IP Filter Resource","description":"Get
@@ -1466,16 +1438,32 @@ interactions:
         Connection Proxy"},"isDataAction":false},{"name":"Microsoft.EventHub/namespaces/privateEndpointConnectionProxies/delete","display":{"provider":"Microsoft
         Azure EventHub","resource":"Private Endpoint Connection Proxy","operation":"Delete
         Private Endpoint Connection Proxy","description":"Delete Private Endpoint
-        Connection Proxy"},"isDataAction":false}],"nextLink":""}'
+        Connection Proxy"},"isDataAction":false},{"name":"Microsoft.EventHub/namespaces/privateEndpointConnectionProxies/operationstatus/read","display":{"provider":"Microsoft
+        Azure EventHub","resource":"Non Resource Operation","operation":"Private endpoint
+        operation status","description":"Get the status of an asynchronous private
+        endpoint operation"},"isDataAction":false},{"name":"Microsoft.EventHub/namespaces/privateEndpointConnections/read","display":{"provider":"Microsoft
+        Azure EventHub","resource":"Private Endpoint Connection","operation":"Get
+        Private Endpoint Connection","description":"Get Private Endpoint Connection"},"isDataAction":false},{"name":"Microsoft.EventHub/namespaces/privateEndpointConnections/write","display":{"provider":"Microsoft
+        Azure EventHub","resource":"Private Endpoint Connection","operation":"Create
+        or Update Private Endpoint Connection","description":"Create or Update Private
+        Endpoint Connection"},"isDataAction":false},{"name":"Microsoft.EventHub/namespaces/privateEndpointConnections/delete","display":{"provider":"Microsoft
+        Azure EventHub","resource":"Private Endpoint Connection","operation":"Removes
+        Private Endpoint Connection","description":"Removes Private Endpoint Connection"},"isDataAction":false},{"name":"Microsoft.EventHub/namespaces/privateLinkResources/read","display":{"provider":"Microsoft
+        Azure EventHub","resource":"PrivateLinks","operation":"Gets the resource types
+        that support private endpoint connections","description":"Gets the resource
+        types that support private endpoint connections"},"isDataAction":false},{"name":"Microsoft.EventHub/namespaces/privateEndpointConnections/operationstatus/read","display":{"provider":"Microsoft
+        Azure EventHub","resource":"Non Resource Operation","operation":"Private endpoint
+        operation status","description":"Get the status of an asynchronous private
+        endpoint operation"},"isDataAction":false}],"nextLink":""}'
     headers:
       cache-control: no-cache
       content-encoding: gzip
       content-type: application/json; charset=utf-8
-      date: Tue, 26 May 2020 09:29:49 GMT
+      date: Wed, 16 Sep 2020 03:34:27 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-HTTPAPI/2.0
-      server-sb: Service-Bus-Resource-Provider/CH3
+      server-sb: Service-Bus-Resource-Provider/SN1
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
       vary: Accept-Encoding
@@ -1494,21 +1482,21 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/authorizationRules/authorizationrule75861157/regenerateKeys?api-version=2017-04-01
   response:
     body:
-      string: '{"primaryConnectionString":"Endpoint=sb://namespace75861157.servicebus.windows.net/;SharedAccessKeyName=authorizationrule75861157;SharedAccessKey=XmddPAoTx1/rCJybpo+XwqTG6cMClocfQJxmvVpA7CA=;EntityPath=eventhub75861157","secondaryConnectionString":"Endpoint=sb://namespace75861157.servicebus.windows.net/;SharedAccessKeyName=authorizationrule75861157;SharedAccessKey=KsEvOfxf25LTaJu2dJ+xD0OYdcESRz8/c+GKMr2yiLU=;EntityPath=eventhub75861157","primaryKey":"XmddPAoTx1/rCJybpo+XwqTG6cMClocfQJxmvVpA7CA=","secondaryKey":"KsEvOfxf25LTaJu2dJ+xD0OYdcESRz8/c+GKMr2yiLU=","keyName":"authorizationrule75861157"}'
+      string: '{"primaryConnectionString":"Endpoint=sb://namespace75861157.servicebus.windows.net/;SharedAccessKeyName=authorizationrule75861157;SharedAccessKey=CZCxHdd79rH8kMfw8TT95OMWzrO0ejsUePsuYIlhbZM=;EntityPath=eventhub75861157","secondaryConnectionString":"Endpoint=sb://namespace75861157.servicebus.windows.net/;SharedAccessKeyName=authorizationrule75861157;SharedAccessKey=r9jrnqiCV0vq7XSyxD7CbCco94X+Vxno26J5Bo75uvw=;EntityPath=eventhub75861157","primaryKey":"CZCxHdd79rH8kMfw8TT95OMWzrO0ejsUePsuYIlhbZM=","secondaryKey":"r9jrnqiCV0vq7XSyxD7CbCco94X+Vxno26J5Bo75uvw=","keyName":"authorizationrule75861157"}'
     headers:
       cache-control: no-cache
       content-encoding: gzip
       content-type: application/json; charset=utf-8
-      date: Tue, 26 May 2020 09:29:50 GMT
+      date: Wed, 16 Sep 2020 03:34:28 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-HTTPAPI/2.0
-      server-sb: Service-Bus-Resource-Provider/CH3
+      server-sb: Service-Bus-Resource-Provider/SN1
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
       vary: Accept-Encoding
@@ -1517,28 +1505,28 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/authorizationRules/authorizationrule75861157/regenerateKeys?api-version=2017-04-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/7wtij4p6f6esljsgpllyyqddjvezv3htie5d5lei4pkcw3o57fo5l5khn2nxdqkwyjbbw5e6y6z/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/authorizationRules/authorizationrule75861157/regenerateKeys?api-version=2017-04-01
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/authorizationRules/authorizationrule75861157/listKeys?api-version=2017-04-01
   response:
     body:
-      string: '{"primaryConnectionString":"Endpoint=sb://namespace75861157.servicebus.windows.net/;SharedAccessKeyName=authorizationrule75861157;SharedAccessKey=XmddPAoTx1/rCJybpo+XwqTG6cMClocfQJxmvVpA7CA=;EntityPath=eventhub75861157","secondaryConnectionString":"Endpoint=sb://namespace75861157.servicebus.windows.net/;SharedAccessKeyName=authorizationrule75861157;SharedAccessKey=KsEvOfxf25LTaJu2dJ+xD0OYdcESRz8/c+GKMr2yiLU=;EntityPath=eventhub75861157","primaryKey":"XmddPAoTx1/rCJybpo+XwqTG6cMClocfQJxmvVpA7CA=","secondaryKey":"KsEvOfxf25LTaJu2dJ+xD0OYdcESRz8/c+GKMr2yiLU=","keyName":"authorizationrule75861157"}'
+      string: '{"primaryConnectionString":"Endpoint=sb://namespace75861157.servicebus.windows.net/;SharedAccessKeyName=authorizationrule75861157;SharedAccessKey=CZCxHdd79rH8kMfw8TT95OMWzrO0ejsUePsuYIlhbZM=;EntityPath=eventhub75861157","secondaryConnectionString":"Endpoint=sb://namespace75861157.servicebus.windows.net/;SharedAccessKeyName=authorizationrule75861157;SharedAccessKey=r9jrnqiCV0vq7XSyxD7CbCco94X+Vxno26J5Bo75uvw=;EntityPath=eventhub75861157","primaryKey":"CZCxHdd79rH8kMfw8TT95OMWzrO0ejsUePsuYIlhbZM=","secondaryKey":"r9jrnqiCV0vq7XSyxD7CbCco94X+Vxno26J5Bo75uvw=","keyName":"authorizationrule75861157"}'
     headers:
       cache-control: no-cache
       content-encoding: gzip
       content-type: application/json; charset=utf-8
-      date: Tue, 26 May 2020 09:29:50 GMT
+      date: Wed, 16 Sep 2020 03:34:28 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-HTTPAPI/2.0
-      server-sb: Service-Bus-Resource-Provider/CH3
+      server-sb: Service-Bus-Resource-Provider/SN1
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
       vary: Accept-Encoding
@@ -1547,7 +1535,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/authorizationRules/authorizationrule75861157/listKeys?api-version=2017-04-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/7wtij4p6f6esljsgpllyyqddjvezv3htie5d5lei4pkcw3o57fo5l5khn2nxdqkwyjbbw5e6y6z/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/authorizationRules/authorizationrule75861157/listKeys?api-version=2017-04-01
 - request:
     body: '{"keyType": "PrimaryKey"}'
     headers:
@@ -1558,21 +1546,21 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/authorizationRules/authorizationrule75861157/regenerateKeys?api-version=2017-04-01
   response:
     body:
-      string: '{"primaryConnectionString":"Endpoint=sb://namespace75861157.servicebus.windows.net/;SharedAccessKeyName=authorizationrule75861157;SharedAccessKey=ea+qgt5h9AjMeBgjOjR6twCWqh2T8rNgVWxtfkeVZMo=","secondaryConnectionString":"Endpoint=sb://namespace75861157.servicebus.windows.net/;SharedAccessKeyName=authorizationrule75861157;SharedAccessKey=3A0sluHf6h3K8tfPLXzsM3zniumqNBIArWiJBCnkjpo=","primaryKey":"ea+qgt5h9AjMeBgjOjR6twCWqh2T8rNgVWxtfkeVZMo=","secondaryKey":"3A0sluHf6h3K8tfPLXzsM3zniumqNBIArWiJBCnkjpo=","keyName":"authorizationrule75861157"}'
+      string: '{"primaryConnectionString":"Endpoint=sb://namespace75861157.servicebus.windows.net/;SharedAccessKeyName=authorizationrule75861157;SharedAccessKey=KB7Q+5PcOdkx5KlyH98Y7/kFasn8FTWFKK9H6okufGw=","secondaryConnectionString":"Endpoint=sb://namespace75861157.servicebus.windows.net/;SharedAccessKeyName=authorizationrule75861157;SharedAccessKey=ILU4lF4Neqek49ux6cK5B+iVWWmCWMM/rMw8R0dTtFI=","primaryKey":"KB7Q+5PcOdkx5KlyH98Y7/kFasn8FTWFKK9H6okufGw=","secondaryKey":"ILU4lF4Neqek49ux6cK5B+iVWWmCWMM/rMw8R0dTtFI=","keyName":"authorizationrule75861157"}'
     headers:
       cache-control: no-cache
       content-encoding: gzip
       content-type: application/json; charset=utf-8
-      date: Tue, 26 May 2020 09:29:56 GMT
+      date: Wed, 16 Sep 2020 03:34:34 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-HTTPAPI/2.0
-      server-sb: Service-Bus-Resource-Provider/CH3
+      server-sb: Service-Bus-Resource-Provider/SN1
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
       vary: Accept-Encoding
@@ -1581,28 +1569,28 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/authorizationRules/authorizationrule75861157/regenerateKeys?api-version=2017-04-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/7wtij4p6f6esljsgpllyyqddjvezv3htie5d5lei4pkcw3o57fo5l5khn2nxdqkwyjbbw5e6y6z/providers/Microsoft.EventHub/namespaces/namespace75861157/authorizationRules/authorizationrule75861157/regenerateKeys?api-version=2017-04-01
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/authorizationRules/authorizationrule75861157/listKeys?api-version=2017-04-01
   response:
     body:
-      string: '{"primaryConnectionString":"Endpoint=sb://namespace75861157.servicebus.windows.net/;SharedAccessKeyName=authorizationrule75861157;SharedAccessKey=ea+qgt5h9AjMeBgjOjR6twCWqh2T8rNgVWxtfkeVZMo=","secondaryConnectionString":"Endpoint=sb://namespace75861157.servicebus.windows.net/;SharedAccessKeyName=authorizationrule75861157;SharedAccessKey=3A0sluHf6h3K8tfPLXzsM3zniumqNBIArWiJBCnkjpo=","primaryKey":"ea+qgt5h9AjMeBgjOjR6twCWqh2T8rNgVWxtfkeVZMo=","secondaryKey":"3A0sluHf6h3K8tfPLXzsM3zniumqNBIArWiJBCnkjpo=","keyName":"authorizationrule75861157"}'
+      string: '{"primaryConnectionString":"Endpoint=sb://namespace75861157.servicebus.windows.net/;SharedAccessKeyName=authorizationrule75861157;SharedAccessKey=KB7Q+5PcOdkx5KlyH98Y7/kFasn8FTWFKK9H6okufGw=","secondaryConnectionString":"Endpoint=sb://namespace75861157.servicebus.windows.net/;SharedAccessKeyName=authorizationrule75861157;SharedAccessKey=ILU4lF4Neqek49ux6cK5B+iVWWmCWMM/rMw8R0dTtFI=","primaryKey":"KB7Q+5PcOdkx5KlyH98Y7/kFasn8FTWFKK9H6okufGw=","secondaryKey":"ILU4lF4Neqek49ux6cK5B+iVWWmCWMM/rMw8R0dTtFI=","keyName":"authorizationrule75861157"}'
     headers:
       cache-control: no-cache
       content-encoding: gzip
       content-type: application/json; charset=utf-8
-      date: Tue, 26 May 2020 09:29:58 GMT
+      date: Wed, 16 Sep 2020 03:34:35 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-HTTPAPI/2.0
-      server-sb: Service-Bus-Resource-Provider/CH3
+      server-sb: Service-Bus-Resource-Provider/SN1
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
       vary: Accept-Encoding
@@ -1611,7 +1599,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/authorizationRules/authorizationrule75861157/listKeys?api-version=2017-04-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/7wtij4p6f6esljsgpllyyqddjvezv3htie5d5lei4pkcw3o57fo5l5khn2nxdqkwyjbbw5e6y6z/providers/Microsoft.EventHub/namespaces/namespace75861157/authorizationRules/authorizationrule75861157/listKeys?api-version=2017-04-01
 - request:
     body: '{"location": "South Central US", "tags": {"tag3": "value3", "tag4": "value4"}}'
     headers:
@@ -1622,31 +1610,31 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PATCH
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157?api-version=2017-04-01
   response:
     body:
       string: '{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157","name":"namespace75861157","type":"Microsoft.EventHub/Namespaces","location":"South
-        Central US","tags":{"tag3":"value3","tag4":"value4"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"kafkaEnabled":true,"provisioningState":"Updating","metricId":"00000000-0000-0000-0000-000000000000:namespace75861157","createdAt":"2020-05-26T09:27:40.367Z","updatedAt":"2020-05-26T09:30:00.48Z","serviceBusEndpoint":"https://namespace75861157.servicebus.windows.net:443/","status":"Activating"}}'
+        Central US","tags":{"tag3":"value3","tag4":"value4"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"kafkaEnabled":true,"provisioningState":"Updating","metricId":"00000000-0000-0000-0000-000000000000:namespace75861157","createdAt":"2020-09-16T03:32:46.16Z","updatedAt":"2020-09-16T03:34:36.993Z","serviceBusEndpoint":"https://namespace75861157.servicebus.windows.net:443/","status":"Activating"}}'
     headers:
       cache-control: no-cache
       content-encoding: gzip
       content-type: application/json; charset=utf-8
-      date: Tue, 26 May 2020 09:30:04 GMT
+      date: Wed, 16 Sep 2020 03:34:39 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-HTTPAPI/2.0
-      server-sb: Service-Bus-Resource-Provider/CH3
+      server-sb: Service-Bus-Resource-Provider/SN1
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
       vary: Accept-Encoding
       x-content-type-options: nosniff
-      x-ms-ratelimit-remaining-subscription-resource-requests: '49'
+      x-ms-ratelimit-remaining-subscription-resource-requests: '46'
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157?api-version=2017-04-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/7wtij4p6f6esljsgpllyyqddjvezv3htie5d5lei4pkcw3o57fo5l5khn2nxdqkwyjbbw5e6y6z/providers/Microsoft.EventHub/namespaces/namespace75861157?api-version=2017-04-01
 - request:
     body: '{"name": "sdk-DisasterRecovery-9474"}'
     headers:
@@ -1657,7 +1645,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.EventHub/checkNameAvailability?api-version=2017-04-01
   response:
@@ -1667,11 +1655,11 @@ interactions:
       cache-control: no-cache
       content-encoding: gzip
       content-type: application/json; charset=utf-8
-      date: Tue, 26 May 2020 09:30:04 GMT
+      date: Wed, 16 Sep 2020 03:34:40 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-HTTPAPI/2.0
-      server-sb: Service-Bus-Resource-Provider/CH3
+      server-sb: Service-Bus-Resource-Provider/SN1
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
       vary: Accept-Encoding
@@ -1684,8 +1672,10 @@ interactions:
 - request:
     body: null
     headers:
+      Accept:
+      - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/authorizationRules/authorizationrule75861157?api-version=2017-04-01
   response:
@@ -1694,23 +1684,25 @@ interactions:
     headers:
       cache-control: no-cache
       content-length: '0'
-      date: Tue, 26 May 2020 09:30:05 GMT
+      date: Wed, 16 Sep 2020 03:34:40 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-HTTPAPI/2.0
-      server-sb: Service-Bus-Resource-Provider/CH3
+      server-sb: Service-Bus-Resource-Provider/SN1
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
-      x-ms-ratelimit-remaining-subscription-deletes: '14999'
+      x-ms-ratelimit-remaining-subscription-deletes: '14997'
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/authorizationRules/authorizationrule75861157?api-version=2017-04-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/7wtij4p6f6esljsgpllyyqddjvezv3htie5d5lei4pkcw3o57fo5l5khn2nxdqkwyjbbw5e6y6z/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/authorizationRules/authorizationrule75861157?api-version=2017-04-01
 - request:
     body: null
     headers:
+      Accept:
+      - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/consumergroups/consumergroup75861157?api-version=2017-04-01
   response:
@@ -1719,23 +1711,25 @@ interactions:
     headers:
       cache-control: no-cache
       content-length: '0'
-      date: Tue, 26 May 2020 09:30:06 GMT
+      date: Wed, 16 Sep 2020 03:34:41 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-HTTPAPI/2.0
-      server-sb: Service-Bus-Resource-Provider/CH3
+      server-sb: Service-Bus-Resource-Provider/SN1
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
-      x-ms-ratelimit-remaining-subscription-deletes: '14998'
+      x-ms-ratelimit-remaining-subscription-deletes: '14996'
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/consumergroups/consumergroup75861157?api-version=2017-04-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/7wtij4p6f6esljsgpllyyqddjvezv3htie5d5lei4pkcw3o57fo5l5khn2nxdqkwyjbbw5e6y6z/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157/consumergroups/consumergroup75861157?api-version=2017-04-01
 - request:
     body: null
     headers:
+      Accept:
+      - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/authorizationRules/authorizationrule75861157?api-version=2017-04-01
   response:
@@ -1744,23 +1738,25 @@ interactions:
     headers:
       cache-control: no-cache
       content-length: '0'
-      date: Tue, 26 May 2020 09:30:13 GMT
+      date: Wed, 16 Sep 2020 03:34:47 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-HTTPAPI/2.0
-      server-sb: Service-Bus-Resource-Provider/CH3
+      server-sb: Service-Bus-Resource-Provider/SN1
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
-      x-ms-ratelimit-remaining-subscription-deletes: '14997'
+      x-ms-ratelimit-remaining-subscription-deletes: '14995'
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/authorizationRules/authorizationrule75861157?api-version=2017-04-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/7wtij4p6f6esljsgpllyyqddjvezv3htie5d5lei4pkcw3o57fo5l5khn2nxdqkwyjbbw5e6y6z/providers/Microsoft.EventHub/namespaces/namespace75861157/authorizationRules/authorizationrule75861157?api-version=2017-04-01
 - request:
     body: null
     headers:
+      Accept:
+      - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157?api-version=2017-04-01
   response:
@@ -1769,23 +1765,25 @@ interactions:
     headers:
       cache-control: no-cache
       content-length: '0'
-      date: Tue, 26 May 2020 09:30:28 GMT
+      date: Wed, 16 Sep 2020 03:34:49 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-HTTPAPI/2.0
-      server-sb: Service-Bus-Resource-Provider/CH3
+      server-sb: Service-Bus-Resource-Provider/SN1
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
-      x-ms-ratelimit-remaining-subscription-deletes: '14996'
+      x-ms-ratelimit-remaining-subscription-deletes: '14994'
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157?api-version=2017-04-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/7wtij4p6f6esljsgpllyyqddjvezv3htie5d5lei4pkcw3o57fo5l5khn2nxdqkwyjbbw5e6y6z/providers/Microsoft.EventHub/namespaces/namespace75861157/eventhubs/eventhub75861157?api-version=2017-04-01
 - request:
     body: null
     headers:
+      Accept:
+      - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157?api-version=2017-04-01
   response:
@@ -1794,24 +1792,24 @@ interactions:
     headers:
       cache-control: no-cache
       content-length: '0'
-      date: Tue, 26 May 2020 09:30:30 GMT
+      date: Wed, 16 Sep 2020 03:34:50 GMT
       expires: '-1'
       location: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/operationresults/namespace75861157?api-version=2017-04-01
       pragma: no-cache
       server: Microsoft-HTTPAPI/2.0
-      server-sb: Service-Bus-Resource-Provider/CH3
+      server-sb: Service-Bus-Resource-Provider/SN1
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
-      x-ms-ratelimit-remaining-subscription-deletes: '14995'
+      x-ms-ratelimit-remaining-subscription-deletes: '14993'
     status:
       code: 202
       message: Accepted
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157?api-version=2017-04-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/7wtij4p6f6esljsgpllyyqddjvezv3htie5d5lei4pkcw3o57fo5l5khn2nxdqkwyjbbw5e6y6z/providers/Microsoft.EventHub/namespaces/namespace75861157?api-version=2017-04-01
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/4.0.0b1 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/8.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/operationresults/namespace75861157?api-version=2017-04-01
   response:
@@ -1820,15 +1818,15 @@ interactions:
     headers:
       cache-control: no-cache
       content-length: '0'
-      date: Tue, 26 May 2020 09:31:04 GMT
+      date: Wed, 16 Sep 2020 03:35:21 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-HTTPAPI/2.0
-      server-sb: Service-Bus-Resource-Provider/SN1
+      server-sb: Service-Bus-Resource-Provider/CH3
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespace75861157/operationresults/namespace75861157?api-version=2017-04-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/7wtij4p6f6esljsgpllyyqddjvezv3htie5d5lei4pkcw3o57fo5l5khn2nxdqkwyjbbw5e6y6z/providers/Microsoft.EventHub/namespaces/namespace75861157/operationresults/namespace75861157?api-version=2017-04-01
 version: 1

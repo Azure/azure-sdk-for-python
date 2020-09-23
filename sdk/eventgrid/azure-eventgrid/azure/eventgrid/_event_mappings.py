@@ -19,7 +19,8 @@ _event_mappings = {
     "Microsoft.EventGrid.SubscriptionValidationEvent": models.SubscriptionValidationEventData,
     "Microsoft.EventGrid.SubscriptionDeletedEvent": models.SubscriptionDeletedEventData,
     "Microsoft.EventHub.CaptureFileCreated": models.EventHubCaptureFileCreatedEventData,
-    "Microsoft.MachineLearningServices.DatasetDriftDetected": models.MachineLearningServicesDatasetDriftDetectedEventData,
+    "Microsoft.MachineLearningServices.DatasetDriftDetected":
+    models.MachineLearningServicesDatasetDriftDetectedEventData,
     "Microsoft.MachineLearningServices.ModelDeployed": models.MachineLearningServicesModelDeployedEventData,
     "Microsoft.MachineLearningServices.ModelRegistered": models.MachineLearningServicesModelRegisteredEventData,
     "Microsoft.MachineLearningServices.RunCompleted": models.MachineLearningServicesRunCompletedEventData,
@@ -47,7 +48,8 @@ _event_mappings = {
     "Microsoft.Media.LiveEventEncoderDisconnected": models.MediaLiveEventEncoderDisconnectedEventData,
     "Microsoft.Media.LiveEventIncomingStreamReceived": models.MediaLiveEventIncomingStreamReceivedEventData,
     "Microsoft.Media.LiveEventIncomingStreamsOutOfSync": models.MediaLiveEventIncomingStreamsOutOfSyncEventData,
-    "Microsoft.Media.LiveEventIncomingVideoStreamsOutOfSync": models.MediaLiveEventIncomingVideoStreamsOutOfSyncEventData,
+    "Microsoft.Media.LiveEventIncomingVideoStreamsOutOfSync":
+    models.MediaLiveEventIncomingVideoStreamsOutOfSyncEventData,
     "Microsoft.Media.LiveEventIncomingDataChunkDropped": models.MediaLiveEventIncomingDataChunkDroppedEventData,
     "Microsoft.Media.LiveEventIngestHeartbeat": models.MediaLiveEventIngestHeartbeatEventData,
     "Microsoft.Media.LiveEventTrackDiscontinuityDetected": models.MediaLiveEventTrackDiscontinuityDetectedEventData,
@@ -60,8 +62,10 @@ _event_mappings = {
     "Microsoft.Resources.ResourceActionSuccess": models.ResourceActionSuccessData,
     "Microsoft.Resources.ResourceActionFailure": models.ResourceActionFailureData,
     "Microsoft.Resources.ResourceActionCancel": models.ResourceActionCancelData,
-    "Microsoft.ServiceBus.ActiveMessagesAvailableWithNoListeners": models.ServiceBusActiveMessagesAvailableWithNoListenersEventData,
-    "Microsoft.ServiceBus.DeadletterMessagesAvailableWithNoListener": models.ServiceBusDeadletterMessagesAvailableWithNoListenersEventData,
+    "Microsoft.ServiceBus.ActiveMessagesAvailableWithNoListeners":
+    models.ServiceBusActiveMessagesAvailableWithNoListenersEventData,
+    "Microsoft.ServiceBus.DeadletterMessagesAvailableWithNoListener":
+    models.ServiceBusDeadletterMessagesAvailableWithNoListenersEventData,
     "Microsoft.Storage.BlobCreated": models.StorageBlobCreatedEventData,
     "Microsoft.Storage.BlobDeleted": models.StorageBlobDeletedEventData,
     "Microsoft.Storage.BlobRenamed": models.StorageBlobRenamedEventData,

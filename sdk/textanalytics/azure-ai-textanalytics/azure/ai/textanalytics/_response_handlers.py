@@ -126,7 +126,7 @@ def sentiment_result(sentiment, results):
         warnings=[TextAnalyticsWarning._from_generated(w) for w in sentiment.warnings],  # pylint: disable=protected-access
         statistics=TextDocumentStatistics._from_generated(sentiment.statistics),  # pylint: disable=protected-access
         confidence_scores=SentimentConfidenceScores._from_generated(sentiment.confidence_scores),  # pylint: disable=protected-access
-        sentences=[SentenceSentiment._from_generated(s, results) for s in sentiment.sentences],  # pylint: disable=protected-access
+        sentences=[SentenceSentiment._from_generated(s, results, sentiment) for s in sentiment.sentences],  # pylint: disable=protected-access
     )
 
 @prepare_result

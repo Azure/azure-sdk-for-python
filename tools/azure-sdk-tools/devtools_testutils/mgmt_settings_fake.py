@@ -4,11 +4,6 @@
 # license information.
 #--------------------------------------------------------------------------
 
-from azure.common.credentials import (
-    BasicTokenAuthentication,
-    UserPassCredentials
-)
-
 SUBSCRIPTION_ID = "00000000-0000-0000-0000-000000000000"
 
 # Keyvault tests
@@ -53,6 +48,11 @@ def get_azure_core_credentials(**kwargs):
 
 
 def get_credentials(**kwargs):
+    from azure.common.credentials import (
+        BasicTokenAuthentication,
+        UserPassCredentials
+    )
+
     # Put your credentials here in the "real" file
     #return UserPassCredentials(
     #    'user@myaddomain.onmicrosoft.com',

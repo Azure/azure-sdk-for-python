@@ -639,9 +639,9 @@ class EncryptionSetIdentity(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar type: The type of Managed Identity used by the DiskEncryptionSet. Only SystemAssigned is
-     supported. Default value: "SystemAssigned".
-    :vartype type: str
+    :param type: The type of Managed Identity used by the DiskEncryptionSet. Only SystemAssigned is
+     supported. Possible values include: "SystemAssigned".
+    :type type: str or ~azure.mgmt.compute.v2019_11_01.models.DiskEncryptionSetIdentityType
     :ivar principal_id: The object id of the Managed Identity Resource. This will be sent to the RP
      from ARM via the x-ms-identity-principal-id header in the PUT request if the resource has a
      systemAssigned(implicit) identity.
@@ -653,7 +653,6 @@ class EncryptionSetIdentity(msrest.serialization.Model):
     """
 
     _validation = {
-        'type': {'constant': True},
         'principal_id': {'readonly': True},
         'tenant_id': {'readonly': True},
     }
@@ -664,13 +663,12 @@ class EncryptionSetIdentity(msrest.serialization.Model):
         'tenant_id': {'key': 'tenantId', 'type': 'str'},
     }
 
-    type = "SystemAssigned"
-
     def __init__(
         self,
         **kwargs
     ):
         super(EncryptionSetIdentity, self).__init__(**kwargs)
+        self.type = kwargs.get('type', None)
         self.principal_id = None
         self.tenant_id = None
 

@@ -6,10 +6,11 @@
 import pytest
 import time
 import threading
+import datetime
 
 from azure.identity import EnvironmentCredential
-from azure.eventhub import EventData, EventHubProducerClient, EventHubConsumerClient
-
+from azure.eventhub import EventData, EventHubProducerClient, EventHubConsumerClient, EventHubSharedKeyCredential
+from azure.eventhub._client_base import EventHubSASTokenCredential
 
 @pytest.mark.liveTest
 def test_client_secret_credential(live_eventhub):
@@ -46,3 +47,37 @@ def test_client_secret_credential(live_eventhub):
     assert on_event.called is True
     assert on_event.partition_id == "0"
     assert list(on_event.event.body)[0] == 'A single message'.encode('utf-8')
+
+@pytest.mark.liveTest
+def test_client_sas_credential(live_eventhub):
+    # This should "just work" to validate known-good.
+    hostname = live_eventhub['hostname']
+    producer_client = EventHubProducerClient.from_connection_string(live_eventhub['connection_str'], eventhub_name = live_eventhub['event_hub'])
+
+    with producer_client:
+        batch = producer_client.create_batch(partition_id='0')
+        batch.add(EventData(body='A single message'))
+        producer_client.send_batch(batch)
+
+    # This should also work, but now using SAS tokens.
+    credential = EventHubSharedKeyCredential(live_eventhub['key_name'], live_eventhub['access_key'])
+    auth_uri = "sb://{}/{}".format(hostname, live_eventhub['event_hub'])
+    token = credential.get_token(auth_uri).token
+    producer_client = EventHubProducerClient(fully_qualified_namespace=hostname,
+                                             eventhub_name=live_eventhub['event_hub'],
+                                             credential=EventHubSASTokenCredential(token, time.time() + 3000))
+
+    with producer_client:
+        batch = producer_client.create_batch(partition_id='0')
+        batch.add(EventData(body='A single message'))
+        producer_client.send_batch(batch)
+
+    # Finally let's do it with SAS token + conn str
+    token_conn_str = "Endpoint=sb://{}/;SharedAccessSignature={};".format(hostname, token.decode())
+    conn_str_producer_client = EventHubProducerClient.from_connection_string(token_conn_str,
+                                                                             eventhub_name=live_eventhub['event_hub'])
+
+    with conn_str_producer_client:
+        batch = conn_str_producer_client.create_batch(partition_id='0')
+        batch.add(EventData(body='A single message'))
+        conn_str_producer_client.send_batch(batch)

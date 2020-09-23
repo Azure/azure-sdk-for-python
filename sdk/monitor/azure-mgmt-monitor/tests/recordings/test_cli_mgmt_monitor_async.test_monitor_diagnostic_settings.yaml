@@ -30,11 +30,11 @@ interactions:
       content-type:
       - text/plain; charset=utf-8
       date:
-      - Wed, 27 May 2020 06:46:59 GMT
+      - Wed, 16 Sep 2020 03:32:22 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/locations/eastus/asyncoperations/1b44cf4a-bd0c-48a5-a4ac-92a9178d6dc6?monitor=true&api-version=2019-04-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/locations/eastus/asyncoperations/c7d2644c-2d52-41d4-9d7d-0ac14a8f542f?monitor=true&api-version=2019-04-01
       pragma:
       - no-cache
       server:
@@ -44,7 +44,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1198'
+      - '1195'
     status:
       code: 202
       message: Accepted
@@ -61,19 +61,19 @@ interactions:
       - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
         msrest_azure/0.6.2 azure-mgmt-storage/5.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/locations/eastus/asyncoperations/1b44cf4a-bd0c-48a5-a4ac-92a9178d6dc6?monitor=true&api-version=2019-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/locations/eastus/asyncoperations/c7d2644c-2d52-41d4-9d7d-0ac14a8f542f?monitor=true&api-version=2019-04-01
   response:
     body:
-      string: '{"sku":{"name":"Standard_LRS","tier":"Standard"},"kind":"Storage","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/storageaccountxf7e318f9","name":"storageaccountxf7e318f9","type":"Microsoft.Storage/storageAccounts","location":"eastus","tags":{},"properties":{"networkAcls":{"bypass":"AzureServices","virtualNetworkRules":[],"ipRules":[],"defaultAction":"Allow"},"supportsHttpsTrafficOnly":true,"encryption":{"services":{"file":{"enabled":true,"lastEnabledTime":"2020-05-27T06:46:59.1054036Z"},"blob":{"enabled":true,"lastEnabledTime":"2020-05-27T06:46:59.1054036Z"}},"keySource":"Microsoft.Storage"},"provisioningState":"Succeeded","creationTime":"2020-05-27T06:46:59.0272945Z","primaryEndpoints":{"blob":"https://storageaccountxf7e318f9.blob.core.windows.net/","queue":"https://storageaccountxf7e318f9.queue.core.windows.net/","table":"https://storageaccountxf7e318f9.table.core.windows.net/","file":"https://storageaccountxf7e318f9.file.core.windows.net/"},"primaryLocation":"eastus","statusOfPrimary":"available"}}'
+      string: '{"sku":{"name":"Standard_LRS","tier":"Standard"},"kind":"Storage","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/storageaccountxf7e318f9","name":"storageaccountxf7e318f9","type":"Microsoft.Storage/storageAccounts","location":"eastus","tags":{},"properties":{"networkAcls":{"bypass":"AzureServices","virtualNetworkRules":[],"ipRules":[],"defaultAction":"Allow"},"supportsHttpsTrafficOnly":true,"encryption":{"services":{"file":{"enabled":true,"lastEnabledTime":"2020-09-16T03:32:22.0927868Z"},"blob":{"enabled":true,"lastEnabledTime":"2020-09-16T03:32:22.0927868Z"}},"keySource":"Microsoft.Storage"},"provisioningState":"Succeeded","creationTime":"2020-09-16T03:32:21.9990807Z","primaryEndpoints":{"blob":"https://storageaccountxf7e318f9.blob.core.windows.net/","queue":"https://storageaccountxf7e318f9.queue.core.windows.net/","table":"https://storageaccountxf7e318f9.table.core.windows.net/","file":"https://storageaccountxf7e318f9.file.core.windows.net/"},"primaryLocation":"eastus","statusOfPrimary":"available"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '1155'
+      - '1162'
       content-type:
       - application/json
       date:
-      - Wed, 27 May 2020 06:47:17 GMT
+      - Wed, 16 Sep 2020 03:32:40 GMT
       expires:
       - '-1'
       pragma:
@@ -107,7 +107,7 @@ interactions:
       - application/json; charset=utf-8
       User-Agent:
       - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-eventhub/3.1.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-eventhub/2.6.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
@@ -115,25 +115,25 @@ interactions:
   response:
     body:
       string: '{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespacexf7e318f9","name":"namespacexf7e318f9","type":"Microsoft.EventHub/Namespaces","location":"East
-        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"kafkaEnabled":true,"provisioningState":"Created","metricId":"00000000-0000-0000-0000-000000000000:namespacexf7e318f9","createdAt":"2020-05-27T06:47:25.247Z","updatedAt":"2020-05-27T06:47:25.247Z","serviceBusEndpoint":"https://namespacexf7e318f9.servicebus.windows.net:443/","status":"Activating"}}'
+        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"kafkaEnabled":true,"provisioningState":"Created","metricId":"00000000-0000-0000-0000-000000000000:namespacexf7e318f9","createdAt":"2020-09-16T03:32:46.977Z","updatedAt":"2020-09-16T03:32:46.977Z","serviceBusEndpoint":"https://namespacexf7e318f9.servicebus.windows.net:443/","status":"Activating"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '757'
+      - '764'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 27 May 2020 06:47:25 GMT
+      - Wed, 16 Sep 2020 03:32:48 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       server:
-      - Service-Bus-Resource-Provider/SN1
+      - Service-Bus-Resource-Provider/CH3
       - Microsoft-HTTPAPI/2.0
       server-sb:
-      - Service-Bus-Resource-Provider/SN1
+      - Service-Bus-Resource-Provider/CH3
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -143,7 +143,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-resource-requests:
-      - '49'
+      - '47'
     status:
       code: 200
       message: OK
@@ -158,31 +158,31 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-eventhub/3.1.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-eventhub/2.6.0 Azure-SDK-For-Python
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespacexf7e318f9?api-version=2017-04-01
   response:
     body:
       string: '{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespacexf7e318f9","name":"namespacexf7e318f9","type":"Microsoft.EventHub/Namespaces","location":"East
-        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"kafkaEnabled":true,"provisioningState":"Created","metricId":"00000000-0000-0000-0000-000000000000:namespacexf7e318f9","createdAt":"2020-05-27T06:47:25.247Z","updatedAt":"2020-05-27T06:47:25.247Z","serviceBusEndpoint":"https://namespacexf7e318f9.servicebus.windows.net:443/","status":"Activating"}}'
+        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"kafkaEnabled":true,"provisioningState":"Created","metricId":"00000000-0000-0000-0000-000000000000:namespacexf7e318f9","createdAt":"2020-09-16T03:32:46.977Z","updatedAt":"2020-09-16T03:32:46.977Z","serviceBusEndpoint":"https://namespacexf7e318f9.servicebus.windows.net:443/","status":"Activating"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '757'
+      - '764'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 27 May 2020 06:47:56 GMT
+      - Wed, 16 Sep 2020 03:33:19 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       server:
-      - Service-Bus-Resource-Provider/SN1
+      - Service-Bus-Resource-Provider/CH3
       - Microsoft-HTTPAPI/2.0
       server-sb:
-      - Service-Bus-Resource-Provider/SN1
+      - Service-Bus-Resource-Provider/CH3
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -205,31 +205,31 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-eventhub/3.1.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-eventhub/2.6.0 Azure-SDK-For-Python
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespacexf7e318f9?api-version=2017-04-01
   response:
     body:
       string: '{"sku":{"name":"Standard","tier":"Standard","capacity":1},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespacexf7e318f9","name":"namespacexf7e318f9","type":"Microsoft.EventHub/Namespaces","location":"East
-        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"kafkaEnabled":true,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:namespacexf7e318f9","createdAt":"2020-05-27T06:47:25.247Z","updatedAt":"2020-05-27T06:48:13.263Z","serviceBusEndpoint":"https://namespacexf7e318f9.servicebus.windows.net:443/","status":"Active"}}'
+        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"isAutoInflateEnabled":false,"maximumThroughputUnits":0,"kafkaEnabled":true,"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:namespacexf7e318f9","createdAt":"2020-09-16T03:32:46.977Z","updatedAt":"2020-09-16T03:33:36.487Z","serviceBusEndpoint":"https://namespacexf7e318f9.servicebus.windows.net:443/","status":"Active"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '755'
+      - '762'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 27 May 2020 06:48:27 GMT
+      - Wed, 16 Sep 2020 03:33:50 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       server:
-      - Service-Bus-Resource-Provider/SN1
+      - Service-Bus-Resource-Provider/CH3
       - Microsoft-HTTPAPI/2.0
       server-sb:
-      - Service-Bus-Resource-Provider/SN1
+      - Service-Bus-Resource-Provider/CH3
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -256,33 +256,33 @@ interactions:
       - application/json; charset=utf-8
       User-Agent:
       - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-eventhub/3.1.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-eventhub/2.6.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespacexf7e318f9/authorizationRules/authorizationrulexf7e318f9?api-version=2017-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespacexf7e318f9/AuthorizationRules/authorizationrulexf7e318f9?api-version=2017-04-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespacexf7e318f9/authorizationRules/authorizationrulexf7e318f9","name":"authorizationrulexf7e318f9","type":"Microsoft.EventHub/Namespaces/AuthorizationRules","location":"East
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespacexf7e318f9/AuthorizationRules/authorizationrulexf7e318f9","name":"authorizationrulexf7e318f9","type":"Microsoft.EventHub/Namespaces/AuthorizationRules","location":"East
         US","properties":{"rights":["Listen","Send","Manage"]}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '415'
+      - '422'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 27 May 2020 06:48:34 GMT
+      - Wed, 16 Sep 2020 03:33:58 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       server:
-      - Service-Bus-Resource-Provider/SN1
+      - Service-Bus-Resource-Provider/CH3
       - Microsoft-HTTPAPI/2.0
       server-sb:
-      - Service-Bus-Resource-Provider/SN1
+      - Service-Bus-Resource-Provider/CH3
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -292,16 +292,17 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1199'
+      - '1196'
     status:
       code: 200
       message: OK
 - request:
-    body: 'b''{"properties": {"messageRetentionInDays": 4, "partitionCount": 4, "status":
-      "Active", "captureDescription": {"enabled": true, "encoding": "Avro", "intervalInSeconds":
-      120, "sizeLimitInBytes": 10485763, "destination": {"name": "EventHubArchive.AzureBlockBlob",
-      "properties": {"storageAccountResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/storageaccountxf7e318f9",
-      "blobContainer": "container", "archiveNameFormat": "{Namespace}/{EventHub}/{PartitionId}/{Year}/{Month}/{Day}/{Hour}/{Minute}/{Second}"}}}}}'''
+    body: 'b''b\''{"properties": {"messageRetentionInDays": 4, "partitionCount": 4,
+      "status": "Active", "captureDescription": {"enabled": true, "encoding": "Avro",
+      "intervalInSeconds": 120, "sizeLimitInBytes": 10485763, "destination": {"name":
+      "EventHubArchive.AzureBlockBlob", "properties": {"storageAccountResourceId":
+      "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/storageaccountxf7e318f9",
+      "blobContainer": "container", "archiveNameFormat": "{Namespace}/{EventHub}/{PartitionId}/{Year}/{Month}/{Day}/{Hour}/{Minute}/{Second}"}}}}}\'''''
     headers:
       Accept:
       - application/json
@@ -310,12 +311,12 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '650'
+      - '657'
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
       - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-eventhub/3.1.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-eventhub/2.6.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
@@ -323,25 +324,25 @@ interactions:
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.EventHub/namespaces/namespacexf7e318f9/eventhubs/eventhubxf7e318f9","name":"eventhubxf7e318f9","type":"Microsoft.EventHub/Namespaces/EventHubs","location":"East
-        US","properties":{"messageRetentionInDays":4,"partitionCount":4,"status":"Active","createdAt":"2020-05-27T06:48:38.027Z","updatedAt":"2020-05-27T06:48:38.72Z","partitionIds":["0","1","2","3"],"captureDescription":{"enabled":true,"encoding":"Avro","destination":{"name":"EventHubArchive.AzureBlockBlob","properties":{"storageAccountResourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/storageaccountxf7e318f9","blobContainer":"container","archiveNameFormat":"{Namespace}/{EventHub}/{PartitionId}/{Year}/{Month}/{Day}/{Hour}/{Minute}/{Second}"}},"intervalInSeconds":120,"sizeLimitInBytes":10485763}}}'
+        US","properties":{"messageRetentionInDays":4,"partitionCount":4,"status":"Active","createdAt":"2020-09-16T03:34:11.863Z","updatedAt":"2020-09-16T03:34:12.86Z","partitionIds":["0","1","2","3"],"captureDescription":{"enabled":true,"encoding":"Avro","destination":{"name":"EventHubArchive.AzureBlockBlob","properties":{"storageAccountResourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/storageaccountxf7e318f9","blobContainer":"container","archiveNameFormat":"{Namespace}/{EventHub}/{PartitionId}/{Year}/{Month}/{Day}/{Hour}/{Minute}/{Second}"}},"intervalInSeconds":120,"sizeLimitInBytes":10485763}}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '1062'
+      - '1076'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 27 May 2020 06:48:38 GMT
+      - Wed, 16 Sep 2020 03:34:13 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       server:
-      - Service-Bus-Resource-Provider/SN1
+      - Service-Bus-Resource-Provider/CH3
       - Microsoft-HTTPAPI/2.0
       server-sb:
-      - Service-Bus-Resource-Provider/SN1
+      - Service-Bus-Resource-Provider/CH3
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -370,7 +371,7 @@ interactions:
       - application/json; charset=utf-8
       User-Agent:
       - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-eventhub/3.1.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-eventhub/2.6.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
@@ -383,20 +384,20 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '453'
+      - '460'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 27 May 2020 06:48:39 GMT
+      - Wed, 16 Sep 2020 03:34:15 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       server:
-      - Service-Bus-Resource-Provider/SN1
+      - Service-Bus-Resource-Provider/CH3
       - Microsoft-HTTPAPI/2.0
       server-sb:
-      - Service-Bus-Resource-Provider/SN1
+      - Service-Bus-Resource-Provider/CH3
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -406,12 +407,12 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1197'
+      - '1195'
     status:
       code: 200
       message: OK
 - request:
-    body: '{"tags": {"tag1": "val1"}, "location": "eastus", "properties": {"sku":
+    body: '{"location": "eastus", "tags": {"tag1": "val1"}, "properties": {"sku":
       {"name": "PerNode"}, "retentionInDays": 30}}'
     headers:
       Accept:
@@ -426,25 +427,26 @@ interactions:
       - application/json; charset=utf-8
       User-Agent:
       - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-loganalytics/0.5.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-loganalytics/0.2.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rgname/providers/Microsoft.OperationalInsights/workspaces/workspacexf7e318f9?api-version=2020-03-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rgname/providers/Microsoft.OperationalInsights/workspaces/workspacexf7e318f9?api-version=2015-11-01-preview
   response:
     body:
       string: "{\r\n  \"properties\": {\r\n    \"source\": \"Azure\",\r\n    \"customerId\"\
-        : \"71da7a8a-2930-4a12-a7a1-54e9c2e1b81e\",\r\n    \"provisioningState\":\
-        \ \"Succeeded\",\r\n    \"sku\": {\r\n      \"name\": \"pergb2018\",\r\n \
-        \     \"maxCapacityReservationLevel\": 1000,\r\n      \"lastSkuUpdate\": \"\
-        Wed, 27 May 2020 05:37:16 GMT\"\r\n    },\r\n    \"retentionInDays\": 30,\r\
+        : \"e7e831de-c457-40ae-a801-0340b76252f1\",\r\n    \"provisioningState\":\
+        \ \"Creating\",\r\n    \"sku\": {\r\n      \"name\": \"pergb2018\",\r\n  \
+        \    \"maxCapacityReservationLevel\": 3000,\r\n      \"lastSkuUpdate\": \"\
+        Wed, 16 Sep 2020 03:34:22 GMT\"\r\n    },\r\n    \"retentionInDays\": 30,\r\
         \n    \"features\": {\r\n      \"legacy\": 0,\r\n      \"searchVersion\":\
         \ 1,\r\n      \"enableLogAccessUsingOnlyResourcePermissions\": true\r\n  \
         \  },\r\n    \"workspaceCapping\": {\r\n      \"dailyQuotaGb\": -1.0,\r\n\
-        \      \"quotaNextResetTime\": \"Wed, 27 May 2020 10:00:00 GMT\",\r\n    \
+        \      \"quotaNextResetTime\": \"Wed, 16 Sep 2020 16:00:00 GMT\",\r\n    \
         \  \"dataIngestionStatus\": \"RespectQuota\"\r\n    },\r\n    \"publicNetworkAccessForIngestion\"\
-        : \"Enabled\",\r\n    \"publicNetworkAccessForQuery\": \"Enabled\"\r\n  },\r\
-        \n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rgname/providers/microsoft.operationalinsights/workspaces/workspacexf7e318f9\"\
+        : \"Enabled\",\r\n    \"publicNetworkAccessForQuery\": \"Enabled\",\r\n  \
+        \  \"createdDate\": \"Wed, 16 Sep 2020 03:34:22 GMT\",\r\n    \"modifiedDate\"\
+        : \"Wed, 16 Sep 2020 03:34:22 GMT\"\r\n  },\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rgname/providers/microsoft.operationalinsights/workspaces/workspacexf7e318f9\"\
         ,\r\n  \"name\": \"workspacexf7e318f9\",\r\n  \"type\": \"Microsoft.OperationalInsights/workspaces\"\
         ,\r\n  \"location\": \"eastus\",\r\n  \"tags\": {\r\n    \"tag1\": \"val1\"\
         \r\n  }\r\n}"
@@ -452,11 +454,69 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '1099'
+      - '1212'
       content-type:
       - application/json
       date:
-      - Wed, 27 May 2020 06:48:51 GMT
+      - Wed, 16 Sep 2020 03:34:25 GMT
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-IIS/10.0
+      - Microsoft-IIS/10.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1197'
+      x-powered-by:
+      - ASP.NET
+      - ASP.NET
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-loganalytics/0.2.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rgname/providers/Microsoft.OperationalInsights/workspaces/workspacexf7e318f9?api-version=2015-11-01-preview
+  response:
+    body:
+      string: "{\r\n  \"properties\": {\r\n    \"source\": \"Azure\",\r\n    \"customerId\"\
+        : \"e7e831de-c457-40ae-a801-0340b76252f1\",\r\n    \"provisioningState\":\
+        \ \"Succeeded\",\r\n    \"sku\": {\r\n      \"name\": \"pergb2018\",\r\n \
+        \     \"maxCapacityReservationLevel\": 3000,\r\n      \"lastSkuUpdate\": \"\
+        Wed, 16 Sep 2020 03:34:22 GMT\"\r\n    },\r\n    \"retentionInDays\": 30,\r\
+        \n    \"features\": {\r\n      \"legacy\": 0,\r\n      \"searchVersion\":\
+        \ 1,\r\n      \"enableLogAccessUsingOnlyResourcePermissions\": true\r\n  \
+        \  },\r\n    \"workspaceCapping\": {\r\n      \"dailyQuotaGb\": -1.0,\r\n\
+        \      \"quotaNextResetTime\": \"Wed, 16 Sep 2020 16:00:00 GMT\",\r\n    \
+        \  \"dataIngestionStatus\": \"RespectQuota\"\r\n    },\r\n    \"publicNetworkAccessForIngestion\"\
+        : \"Enabled\",\r\n    \"publicNetworkAccessForQuery\": \"Enabled\",\r\n  \
+        \  \"createdDate\": \"Wed, 16 Sep 2020 03:34:22 GMT\",\r\n    \"modifiedDate\"\
+        : \"Wed, 16 Sep 2020 03:34:23 GMT\"\r\n  },\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rgname/providers/microsoft.operationalinsights/workspaces/workspacexf7e318f9\"\
+        ,\r\n  \"name\": \"workspacexf7e318f9\",\r\n  \"type\": \"Microsoft.OperationalInsights/workspaces\"\
+        ,\r\n  \"location\": \"eastus\",\r\n  \"tags\": {\r\n    \"tag1\": \"val1\"\
+        \r\n  }\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1213'
+      content-type:
+      - application/json
+      date:
+      - Wed, 16 Sep 2020 03:34:55 GMT
       pragma:
       - no-cache
       server:
@@ -470,8 +530,6 @@ interactions:
       - Accept-Encoding
       x-content-type-options:
       - nosniff
-      x-ms-ratelimit-remaining-subscription-writes:
-      - '1196'
       x-powered-by:
       - ASP.NET
       - ASP.NET
@@ -495,23 +553,23 @@ interactions:
       - application/json; charset=utf-8
       User-Agent:
       - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-logic/4.0.0rc2 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-logic/3.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Logic/workflows/workflowf7e318f9?api-version=2018-07-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Logic/workflows/workflowf7e318f9?api-version=2016-06-01
   response:
     body:
-      string: '{"properties":{"provisioningState":"Succeeded","createdTime":"2020-05-27T06:48:57.8880591Z","changedTime":"2020-05-27T06:48:57.8848779Z","state":"Enabled","version":"08586110447476180552","accessEndpoint":"https://prod-26.eastus.logic.azure.com:443/workflows/7ad6e93020c746f997017a206ec14299","definition":{"$schema":"https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#","contentVersion":"1.0.0.0","parameters":{},"triggers":{},"actions":{},"outputs":{}},"parameters":{},"endpointsConfiguration":{"workflow":{"outgoingIpAddresses":[{"address":"13.92.98.111"},{"address":"40.121.91.41"},{"address":"40.114.82.191"},{"address":"23.101.139.153"},{"address":"23.100.29.190"},{"address":"23.101.136.201"},{"address":"104.45.153.81"},{"address":"23.101.132.208"}],"accessEndpointIpAddresses":[{"address":"137.135.106.54"},{"address":"40.117.99.79"},{"address":"40.117.100.228"},{"address":"137.116.126.165"}]},"connector":{"outgoingIpAddresses":[{"address":"40.71.11.80/28"},{"address":"40.71.249.205"},{"address":"191.237.41.52"},{"address":"40.114.40.132"},{"address":"40.71.249.139"}]}}},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Logic/workflows/workflowf7e318f9","name":"workflowf7e318f9","type":"Microsoft.Logic/workflows","location":"eastus"}'
+      string: '{"properties":{"provisioningState":"Succeeded","createdTime":"2020-09-16T03:35:00.8522178Z","changedTime":"2020-09-16T03:35:00.845895Z","state":"Enabled","version":"08586013795847441261","accessEndpoint":"https://prod-94.eastus.logic.azure.com:443/workflows/358c66b445744e4f8207436f2a024d9c","definition":{"$schema":"https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#","contentVersion":"1.0.0.0","parameters":{},"triggers":{},"actions":{},"outputs":{}},"parameters":{},"endpointsConfiguration":{"workflow":{"outgoingIpAddresses":[{"address":"13.92.98.111"},{"address":"40.121.91.41"},{"address":"40.114.82.191"},{"address":"23.101.139.153"},{"address":"23.100.29.190"},{"address":"23.101.136.201"},{"address":"104.45.153.81"},{"address":"23.101.132.208"}],"accessEndpointIpAddresses":[{"address":"137.135.106.54"},{"address":"40.117.99.79"},{"address":"40.117.100.228"},{"address":"137.116.126.165"}]},"connector":{"outgoingIpAddresses":[{"address":"40.71.11.80/28"},{"address":"40.71.249.205"},{"address":"40.114.40.132"},{"address":"40.71.249.139"}]}}},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Logic/workflows/workflowf7e318f9","name":"workflowf7e318f9","type":"Microsoft.Logic/workflows","location":"eastus"}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '1416'
+      - '1394'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 27 May 2020 06:48:58 GMT
+      - Wed, 16 Sep 2020 03:35:01 GMT
       expires:
       - '-1'
       pragma:
@@ -521,25 +579,25 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1199'
+      - '1196'
     status:
       code: 201
       message: Created
 - request:
-    body: 'b''{"properties": {"storageAccountId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/storageaccountxf7e318f9",
+    body: 'b''b\''{"properties": {"storageAccountId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/storageaccountxf7e318f9",
       "eventHubAuthorizationRuleId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/microsoft.eventhub/namespaces/namespacexf7e318f9/authorizationrules/authorizationrulexf7e318f9",
       "eventHubName": "eventhubxf7e318f9", "metrics": [], "logs": [{"category": "WorkflowRuntime",
       "enabled": true, "retentionPolicy": {"enabled": false, "days": 0}}], "workspaceId":
-      "/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rgname/providers/microsoft.operationalinsights/workspaces/workspacexf7e318f9"}}'''
+      "/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rgname/providers/microsoft.operationalinsights/workspaces/workspacexf7e318f9"}}\'''''
     headers:
       Accept:
       - application/json
       Content-Length:
-      - '904'
+      - '925'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Logic/workflows/workflowf7e318f9/providers/microsoft.insights/diagnosticSettings/insightxf7e318f9?api-version=2017-05-01-preview
   response:
@@ -549,7 +607,7 @@ interactions:
       cache-control: no-cache
       content-encoding: gzip
       content-type: application/json; charset=utf-8
-      date: Wed, 27 May 2020 06:49:07 GMT
+      date: Wed, 16 Sep 2020 03:35:10 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-IIS/10.0
@@ -561,14 +619,14 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/rgname/providers/Microsoft.Logic/workflows/workflowf7e318f9/providers/microsoft.insights/diagnosticSettings/insightxf7e318f9?api-version=2017-05-01-preview
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/pddr3wg3pl4rkkpm72j4ktc36kvz76yhaqpylpakpnoe4zmekffxzdvaq2cpddpf67uj6yfqaqh/providers/Microsoft.Logic/workflows/workflowf7e318f9/providers/microsoft.insights/diagnosticSettings/insightxf7e318f9?api-version=2017-05-01-preview
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rgname/providers/microsoft.logic/workflows/workflowf7e318f9/providers/microsoft.insights/diagnosticSettingsCategories?api-version=2017-05-01-preview
   response:
@@ -578,7 +636,7 @@ interactions:
       cache-control: no-cache
       content-encoding: gzip
       content-type: application/json; charset=utf-8
-      date: Wed, 27 May 2020 06:49:08 GMT
+      date: Wed, 16 Sep 2020 03:35:11 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-IIS/10.0
@@ -589,14 +647,14 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourcegroups/rgname/providers/microsoft.logic/workflows/workflowf7e318f9/providers/microsoft.insights/diagnosticSettingsCategories?api-version=2017-05-01-preview
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourcegroups/pddr3wg3pl4rkkpm72j4ktc36kvz76yhaqpylpakpnoe4zmekffxzdvaq2cpddpf67uj6yfqaqh/providers/microsoft.logic/workflows/workflowf7e318f9/providers/microsoft.insights/diagnosticSettingsCategories?api-version=2017-05-01-preview
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rgname/providers/microsoft.logic/workflows/workflowf7e318f9/providers/microsoft.insights/diagnosticSettings?api-version=2017-05-01-preview
   response:
@@ -606,7 +664,7 @@ interactions:
       cache-control: no-cache
       content-encoding: gzip
       content-type: application/json; charset=utf-8
-      date: Wed, 27 May 2020 06:49:08 GMT
+      date: Wed, 16 Sep 2020 03:35:11 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-IIS/10.0
@@ -617,14 +675,14 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourcegroups/rgname/providers/microsoft.logic/workflows/workflowf7e318f9/providers/microsoft.insights/diagnosticSettings?api-version=2017-05-01-preview
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourcegroups/pddr3wg3pl4rkkpm72j4ktc36kvz76yhaqpylpakpnoe4zmekffxzdvaq2cpddpf67uj6yfqaqh/providers/microsoft.logic/workflows/workflowf7e318f9/providers/microsoft.insights/diagnosticSettings?api-version=2017-05-01-preview
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rgname/providers/microsoft.logic/workflows/workflowf7e318f9/providers/microsoft.insights/diagnosticSettings/insightxf7e318f9?api-version=2017-05-01-preview
   response:
@@ -634,7 +692,7 @@ interactions:
       cache-control: no-cache
       content-encoding: gzip
       content-type: application/json; charset=utf-8
-      date: Wed, 27 May 2020 06:49:09 GMT
+      date: Wed, 16 Sep 2020 03:35:12 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-IIS/10.0
@@ -645,14 +703,14 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourcegroups/rgname/providers/microsoft.logic/workflows/workflowf7e318f9/providers/microsoft.insights/diagnosticSettings/insightxf7e318f9?api-version=2017-05-01-preview
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourcegroups/pddr3wg3pl4rkkpm72j4ktc36kvz76yhaqpylpakpnoe4zmekffxzdvaq2cpddpf67uj6yfqaqh/providers/microsoft.logic/workflows/workflowf7e318f9/providers/microsoft.insights/diagnosticSettings/insightxf7e318f9?api-version=2017-05-01-preview
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rgname/providers/microsoft.logic/workflows/workflowf7e318f9/providers/microsoft.insights/diagnosticSettingsCategories/WorkflowRuntime?api-version=2017-05-01-preview
   response:
@@ -662,7 +720,7 @@ interactions:
       cache-control: no-cache
       content-encoding: gzip
       content-type: application/json; charset=utf-8
-      date: Wed, 27 May 2020 06:49:09 GMT
+      date: Wed, 16 Sep 2020 03:35:12 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-IIS/10.0
@@ -673,12 +731,14 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourcegroups/rgname/providers/microsoft.logic/workflows/workflowf7e318f9/providers/microsoft.insights/diagnosticSettingsCategories/WorkflowRuntime?api-version=2017-05-01-preview
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourcegroups/pddr3wg3pl4rkkpm72j4ktc36kvz76yhaqpylpakpnoe4zmekffxzdvaq2cpddpf67uj6yfqaqh/providers/microsoft.logic/workflows/workflowf7e318f9/providers/microsoft.insights/diagnosticSettingsCategories/WorkflowRuntime?api-version=2017-05-01-preview
 - request:
     body: null
     headers:
+      Accept:
+      - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rgname/providers/microsoft.logic/workflows/workflowf7e318f9/providers/microsoft.insights/diagnosticSettings/insightxf7e318f9?api-version=2017-05-01-preview
   response:
@@ -687,7 +747,7 @@ interactions:
     headers:
       cache-control: no-cache
       content-length: '0'
-      date: Wed, 27 May 2020 06:49:11 GMT
+      date: Wed, 16 Sep 2020 03:35:14 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-IIS/10.0
@@ -697,5 +757,5 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourcegroups/rgname/providers/microsoft.logic/workflows/workflowf7e318f9/providers/microsoft.insights/diagnosticSettings/insightxf7e318f9?api-version=2017-05-01-preview
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourcegroups/pddr3wg3pl4rkkpm72j4ktc36kvz76yhaqpylpakpnoe4zmekffxzdvaq2cpddpf67uj6yfqaqh/providers/microsoft.logic/workflows/workflowf7e318f9/providers/microsoft.insights/diagnosticSettings/insightxf7e318f9?api-version=2017-05-01-preview
 version: 1

@@ -25,7 +25,7 @@ from azure.storage.blob import (
     PremiumPageBlobTier,
     generate_container_sas,
     PartialBatchErrorException,
-    generate_account_sas, ResourceTypes, AccountSasPermissions, ContainerClient)
+    generate_account_sas, ResourceTypes, AccountSasPermissions, ContainerClient, ContentSettings)
 
 #------------------------------------------------------------------------------
 TEST_CONTAINER_PREFIX = 'container'
@@ -987,13 +987,17 @@ class StorageContainerTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_list_blobs_with_include_metadata(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
-        pytest.skip("Waiting on metadata XML fix in msrest")
+        # pytest.skip("Waiting on metadata XML fix in msrest")
         container = self._create_container(bsc)
         data = b'hello world'
+        content_settings = ContentSettings(
+            content_language='spanish',
+            content_disposition='inline')
         blob1 = container.get_blob_client('blob1')
-        blob1.upload_blob(data, metadata={'number': '1', 'name': 'bob'})
+        blob1.upload_blob(data, overwrite=True, content_settings=content_settings, metadata={'number': '1', 'name': 'bob'})
         blob1.create_snapshot()
-        container.get_blob_client('blob2').upload_blob(data, metadata={'number': '2', 'name': 'car'})
+
+        container.get_blob_client('blob2').upload_blob(data, overwrite=True, content_settings=content_settings, metadata={'number': '2', 'name': 'car'})
 
         # Act
         blobs =list(container.list_blobs(include="metadata"))
@@ -1006,6 +1010,8 @@ class StorageContainerTest(StorageTestCase):
         self.assertEqual(blobs[1].name, 'blob2')
         self.assertEqual(blobs[1].metadata['number'], '2')
         self.assertEqual(blobs[1].metadata['name'], 'car')
+        self.assertEqual(blobs[1].content_settings.content_language, 'spanish')
+        self.assertEqual(blobs[1].content_settings.content_disposition, 'inline')
 
     @GlobalStorageAccountPreparer()
     def test_list_blobs_with_include_uncommittedblobs(self, resource_group, location, storage_account, storage_account_key):
@@ -1713,7 +1719,7 @@ class StorageContainerTest(StorageTestCase):
         self.assertEqual(permission.read, True)
         self.assertEqual(permission.list, True)
         self.assertEqual(permission.write, True)
-        self.assertEqual(permission._str, 'wrlx')
+        self.assertEqual(permission._str, 'rwxl')
 
     @GlobalStorageAccountPreparer()
     def test_download_blob(self, resource_group, location, storage_account, storage_account_key):
