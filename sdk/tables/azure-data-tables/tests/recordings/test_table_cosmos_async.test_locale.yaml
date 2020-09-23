@@ -11,51 +11,51 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Fri, 18 Sep 2020 19:52:43 GMT
+      - Wed, 23 Sep 2020 23:15:33 GMT
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 18 Sep 2020 19:52:43 GMT
+      - Wed, 23 Sep 2020 23:15:33 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
-    uri: https://cosmostablescosmosname.table.cosmos.azure.com/Tables
+    uri: https://cosmostables.table.cosmos.azure.com/Tables
   response:
     body:
-      string: '{"TableName":"pytableasync4390e55","odata.metadata":"https://cosmostablescosmosname.table.cosmos.azure.com/$metadata#Tables/@Element"}'
+      string: '{"TableName":"pytableasync4390e55","odata.metadata":"https://cosmostables.table.cosmos.azure.com/$metadata#Tables/@Element"}'
     headers:
       content-type: application/json;odata=minimalmetadata
-      date: Fri, 18 Sep 2020 19:52:44 GMT
-      etag: W/"datetime'2020-09-18T19%3A52%3A43.7231623Z'"
-      location: https://cosmostablescosmosname.table.cosmos.azure.com/Tables('pytableasync4390e55')
+      date: Wed, 23 Sep 2020 23:15:34 GMT
+      etag: W/"datetime'2020-09-23T23%3A15%3A33.8545159Z'"
+      location: https://cosmostables.table.cosmos.azure.com/Tables('pytableasync4390e55')
       server: Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
     status:
       code: 201
       message: Ok
-    url: https://cosmostablessmfocuv35lkx.table.cosmos.azure.com/Tables
+    url: https://cosmostables4c3215c8.table.cosmos.azure.com/Tables
 - request:
     body: null
     headers:
       Date:
-      - Fri, 18 Sep 2020 19:52:43 GMT
+      - Wed, 23 Sep 2020 23:15:34 GMT
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 18 Sep 2020 19:52:43 GMT
+      - Wed, 23 Sep 2020 23:15:34 GMT
       x-ms-version:
       - '2019-07-07'
     method: DELETE
-    uri: https://cosmostablescosmosname.table.cosmos.azure.com/Tables('pytableasync4390e55')
+    uri: https://cosmostables.table.cosmos.azure.com/Tables('pytableasync4390e55')
   response:
     body:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 18 Sep 2020 19:52:44 GMT
+      date: Wed, 23 Sep 2020 23:15:34 GMT
       server: Microsoft-HTTPAPI/2.0
     status:
       code: 204
       message: No Content
-    url: https://cosmostablessmfocuv35lkx.table.cosmos.azure.com/Tables('pytableasync4390e55')
+    url: https://cosmostables4c3215c8.table.cosmos.azure.com/Tables('pytableasync4390e55')
 version: 1

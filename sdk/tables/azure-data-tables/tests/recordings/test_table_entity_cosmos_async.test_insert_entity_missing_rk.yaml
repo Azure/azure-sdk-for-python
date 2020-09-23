@@ -11,51 +11,51 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Fri, 18 Sep 2020 20:39:14 GMT
+      - Wed, 23 Sep 2020 23:31:54 GMT
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 18 Sep 2020 20:39:14 GMT
+      - Wed, 23 Sep 2020 23:31:54 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
-    uri: https://cosmostestcosmosname.table.cosmos.azure.com/Tables
+    uri: https://cosmostest.table.cosmos.azure.com/Tables
   response:
     body:
-      string: '{"TableName":"uttablef9e71907","odata.metadata":"https://cosmostestcosmosname.table.cosmos.azure.com/$metadata#Tables/@Element"}'
+      string: '{"TableName":"uttablef9e71907","odata.metadata":"https://cosmostest.table.cosmos.azure.com/$metadata#Tables/@Element"}'
     headers:
       content-type: application/json;odata=minimalmetadata
-      date: Fri, 18 Sep 2020 20:39:14 GMT
-      etag: W/"datetime'2020-09-18T20%3A39%3A14.8183559Z'"
-      location: https://cosmostestcosmosname.table.cosmos.azure.com/Tables('uttablef9e71907')
+      date: Wed, 23 Sep 2020 23:31:54 GMT
+      etag: W/"datetime'2020-09-23T23%3A31%3A54.3801863Z'"
+      location: https://cosmostest.table.cosmos.azure.com/Tables('uttablef9e71907')
       server: Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
     status:
       code: 201
       message: Ok
-    url: https://cosmostables7jyy4tyvaxat.table.cosmos.azure.com/Tables
+    url: https://cosmostables4c3215c8.table.cosmos.azure.com/Tables
 - request:
     body: null
     headers:
       Date:
-      - Fri, 18 Sep 2020 20:39:14 GMT
+      - Wed, 23 Sep 2020 23:31:54 GMT
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 18 Sep 2020 20:39:14 GMT
+      - Wed, 23 Sep 2020 23:31:54 GMT
       x-ms-version:
       - '2019-07-07'
     method: DELETE
-    uri: https://cosmostestcosmosname.table.cosmos.azure.com/Tables('uttablef9e71907')
+    uri: https://cosmostest.table.cosmos.azure.com/Tables('uttablef9e71907')
   response:
     body:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 18 Sep 2020 20:39:15 GMT
+      date: Wed, 23 Sep 2020 23:31:54 GMT
       server: Microsoft-HTTPAPI/2.0
     status:
       code: 204
       message: No Content
-    url: https://cosmostables7jyy4tyvaxat.table.cosmos.azure.com/Tables('uttablef9e71907')
+    url: https://cosmostables4c3215c8.table.cosmos.azure.com/Tables('uttablef9e71907')
 version: 1

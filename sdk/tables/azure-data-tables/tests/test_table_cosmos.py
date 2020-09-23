@@ -125,6 +125,7 @@ class StorageTableTest(TableTestCase):
     @CachedCosmosAccountPreparer(name_prefix='cosmostables')
     def test_create_table(self, resource_group, location, cosmos_account, cosmos_account_key):
         # # Arrange
+        print("First test")
         ts = TableServiceClient(self.account_url(cosmos_account, "cosmos"), cosmos_account_key)
 
         table_name = self._get_table_reference()

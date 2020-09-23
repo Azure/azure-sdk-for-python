@@ -11,29 +11,29 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Fri, 18 Sep 2020 20:40:51 GMT
+      - Wed, 23 Sep 2020 23:33:30 GMT
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 18 Sep 2020 20:40:51 GMT
+      - Wed, 23 Sep 2020 23:33:30 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
-    uri: https://cosmostestcosmosname.table.cosmos.azure.com/Tables
+    uri: https://cosmostest.table.cosmos.azure.com/Tables
   response:
     body:
-      string: '{"TableName":"uttable80ea16f1","odata.metadata":"https://cosmostestcosmosname.table.cosmos.azure.com/$metadata#Tables/@Element"}'
+      string: '{"TableName":"uttable80ea16f1","odata.metadata":"https://cosmostest.table.cosmos.azure.com/$metadata#Tables/@Element"}'
     headers:
       content-type: application/json;odata=minimalmetadata
-      date: Fri, 18 Sep 2020 20:40:51 GMT
-      etag: W/"datetime'2020-09-18T20%3A40%3A51.8071303Z'"
-      location: https://cosmostestcosmosname.table.cosmos.azure.com/Tables('uttable80ea16f1')
+      date: Wed, 23 Sep 2020 23:33:30 GMT
+      etag: W/"datetime'2020-09-23T23%3A33%3A30.2935559Z'"
+      location: https://cosmostest.table.cosmos.azure.com/Tables('uttable80ea16f1')
       server: Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
     status:
       code: 201
       message: Ok
-    url: https://cosmostables7jyy4tyvaxat.table.cosmos.azure.com/Tables
+    url: https://cosmostables4c3215c8.table.cosmos.azure.com/Tables
 - request:
     body: '{"PartitionKey": "pk80ea16f1", "RowKey": "rk80ea16f1"}'
     headers:
@@ -46,29 +46,29 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Fri, 18 Sep 2020 20:40:51 GMT
+      - Wed, 23 Sep 2020 23:33:30 GMT
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 18 Sep 2020 20:40:51 GMT
+      - Wed, 23 Sep 2020 23:33:30 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
-    uri: https://cosmostestcosmosname.table.cosmos.azure.com/uttable80ea16f1
+    uri: https://cosmostest.table.cosmos.azure.com/uttable80ea16f1
   response:
     body:
-      string: '{"odata.metadata":"https://cosmostestcosmosname.table.cosmos.azure.com/uttable80ea16f1/$metadata#uttable80ea16f1/@Element","odata.etag":"W/\"datetime''2020-09-18T20%3A40%3A52.2803207Z''\"","PartitionKey":"pk80ea16f1","RowKey":"rk80ea16f1","Timestamp":"2020-09-18T20:40:52.2803207Z"}'
+      string: '{"odata.metadata":"https://cosmostest.table.cosmos.azure.com/uttable80ea16f1/$metadata#uttable80ea16f1/@Element","odata.etag":"W/\"datetime''2020-09-23T23%3A33%3A30.7404295Z''\"","PartitionKey":"pk80ea16f1","RowKey":"rk80ea16f1","Timestamp":"2020-09-23T23:33:30.7404295Z"}'
     headers:
       content-type: application/json;odata=minimalmetadata
-      date: Fri, 18 Sep 2020 20:40:51 GMT
-      etag: W/"datetime'2020-09-18T20%3A40%3A52.2803207Z'"
-      location: https://cosmostestcosmosname.table.cosmos.azure.com/uttable80ea16f1(PartitionKey='pk80ea16f1',RowKey='rk80ea16f1')
+      date: Wed, 23 Sep 2020 23:33:30 GMT
+      etag: W/"datetime'2020-09-23T23%3A33%3A30.7404295Z'"
+      location: https://cosmostest.table.cosmos.azure.com/uttable80ea16f1(PartitionKey='pk80ea16f1',RowKey='rk80ea16f1')
       server: Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
     status:
       code: 201
       message: Created
-    url: https://cosmostables7jyy4tyvaxat.table.cosmos.azure.com/uttable80ea16f1
+    url: https://cosmostables4c3215c8.table.cosmos.azure.com/uttable80ea16f1
 - request:
     body: null
     headers:
@@ -77,50 +77,50 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Fri, 18 Sep 2020 20:40:52 GMT
+      - Wed, 23 Sep 2020 23:33:30 GMT
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 18 Sep 2020 20:40:52 GMT
+      - Wed, 23 Sep 2020 23:33:30 GMT
       x-ms-version:
       - '2019-07-07'
     method: GET
-    uri: https://cosmostestcosmosname.table.cosmos.azure.com/uttable80ea16f1(PartitionKey='pk80ea16f1',RowKey='rk80ea16f1')
+    uri: https://cosmostest.table.cosmos.azure.com/uttable80ea16f1(PartitionKey='pk80ea16f1',RowKey='rk80ea16f1')
   response:
     body:
-      string: '{"odata.metadata":"https://cosmostestcosmosname.table.cosmos.azure.com/uttable80ea16f1/$metadata#uttable80ea16f1/@Element","odata.etag":"W/\"datetime''2020-09-18T20%3A40%3A52.2803207Z''\"","PartitionKey":"pk80ea16f1","RowKey":"rk80ea16f1","Timestamp":"2020-09-18T20:40:52.2803207Z"}'
+      string: '{"odata.metadata":"https://cosmostest.table.cosmos.azure.com/uttable80ea16f1/$metadata#uttable80ea16f1/@Element","odata.etag":"W/\"datetime''2020-09-23T23%3A33%3A30.7404295Z''\"","PartitionKey":"pk80ea16f1","RowKey":"rk80ea16f1","Timestamp":"2020-09-23T23:33:30.7404295Z"}'
     headers:
       content-type: application/json;odata=minimalmetadata
-      date: Fri, 18 Sep 2020 20:40:52 GMT
-      etag: W/"datetime'2020-09-18T20%3A40%3A52.2803207Z'"
+      date: Wed, 23 Sep 2020 23:33:30 GMT
+      etag: W/"datetime'2020-09-23T23%3A33%3A30.7404295Z'"
       server: Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
     status:
       code: 200
       message: Ok
-    url: https://cosmostables7jyy4tyvaxat.table.cosmos.azure.com/uttable80ea16f1(PartitionKey='pk80ea16f1',RowKey='rk80ea16f1')
+    url: https://cosmostables4c3215c8.table.cosmos.azure.com/uttable80ea16f1(PartitionKey='pk80ea16f1',RowKey='rk80ea16f1')
 - request:
     body: null
     headers:
       Date:
-      - Fri, 18 Sep 2020 20:40:52 GMT
+      - Wed, 23 Sep 2020 23:33:30 GMT
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 18 Sep 2020 20:40:52 GMT
+      - Wed, 23 Sep 2020 23:33:30 GMT
       x-ms-version:
       - '2019-07-07'
     method: DELETE
-    uri: https://cosmostestcosmosname.table.cosmos.azure.com/Tables('uttable80ea16f1')
+    uri: https://cosmostest.table.cosmos.azure.com/Tables('uttable80ea16f1')
   response:
     body:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 18 Sep 2020 20:40:52 GMT
+      date: Wed, 23 Sep 2020 23:33:30 GMT
       server: Microsoft-HTTPAPI/2.0
     status:
       code: 204
       message: No Content
-    url: https://cosmostables7jyy4tyvaxat.table.cosmos.azure.com/Tables('uttable80ea16f1')
+    url: https://cosmostables4c3215c8.table.cosmos.azure.com/Tables('uttable80ea16f1')
 version: 1

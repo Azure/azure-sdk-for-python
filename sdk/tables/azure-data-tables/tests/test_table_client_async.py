@@ -496,12 +496,11 @@ class StorageTableClientTest(TableTestCase):
         # Arrange
         table_url = "https://{}.table.core.windows.net:443/foo".format(storage_account.name)
         service = TableClient(account_url=table_url, table_name='bar', credential=storage_account_key)
-        
+
         # Assert
         self.assertEqual(service.scheme, 'https')
         self.assertEqual(service.table_name, 'bar')
         self.assertEqual(service.account_name, storage_account.name)
-
 
     async def test_create_table_client_with_invalid_name_async(self):
         # Arrange

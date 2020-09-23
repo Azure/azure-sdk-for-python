@@ -15,27 +15,27 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Fri, 18 Sep 2020 19:50:57 GMT
+      - Wed, 23 Sep 2020 23:11:00 GMT
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 18 Sep 2020 19:50:57 GMT
+      - Wed, 23 Sep 2020 23:11:00 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
-    uri: https://cosmostablescosmosname.table.cosmos.azure.com/Tables
+    uri: https://cosmostables.table.cosmos.azure.com/Tables
   response:
     body:
-      string: '{"TableName":"pytablesyncf46e1406","odata.metadata":"https://cosmostablescosmosname.table.cosmos.azure.com/$metadata#Tables/@Element"}'
+      string: '{"TableName":"pytablesyncf46e1406","odata.metadata":"https://cosmostables.table.cosmos.azure.com/$metadata#Tables/@Element"}'
     headers:
       content-type:
       - application/json;odata=minimalmetadata
       date:
-      - Fri, 18 Sep 2020 19:50:58 GMT
+      - Wed, 23 Sep 2020 23:11:01 GMT
       etag:
-      - W/"datetime'2020-09-18T19%3A50%3A59.1292423Z'"
+      - W/"datetime'2020-09-23T23%3A11%3A01.4195207Z'"
       location:
-      - https://cosmostablescosmosname.table.cosmos.azure.com/Tables('pytablesyncf46e1406')
+      - https://cosmostables.table.cosmos.azure.com/Tables('pytablesyncf46e1406')
       server:
       - Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -59,24 +59,24 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Fri, 18 Sep 2020 19:50:59 GMT
+      - Wed, 23 Sep 2020 23:11:02 GMT
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 18 Sep 2020 19:50:59 GMT
+      - Wed, 23 Sep 2020 23:11:02 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
-    uri: https://cosmostablescosmosname.table.cosmos.azure.com/Tables
+    uri: https://cosmostables.table.cosmos.azure.com/Tables
   response:
     body:
       string: "{\"odata.error\":{\"code\":\"TableAlreadyExists\",\"message\":{\"lang\":\"en-us\",\"value\":\"The
-        specified table already exists.\\nRequestID:463177c1-f9e8-11ea-a185-58961df361d1\\n\"}}}\r\n"
+        specified table already exists.\\nRequestID:0c67bba4-fdf2-11ea-9a74-58961df361d1\\n\"}}}\r\n"
     headers:
       content-type:
       - application/json;odata=minimalmetadata
       date:
-      - Fri, 18 Sep 2020 19:50:58 GMT
+      - Wed, 23 Sep 2020 23:11:01 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -96,15 +96,15 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Fri, 18 Sep 2020 19:50:59 GMT
+      - Wed, 23 Sep 2020 23:11:02 GMT
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 18 Sep 2020 19:50:59 GMT
+      - Wed, 23 Sep 2020 23:11:02 GMT
       x-ms-version:
       - '2019-07-07'
     method: DELETE
-    uri: https://cosmostablescosmosname.table.cosmos.azure.com/Tables('pytablesyncf46e1406')
+    uri: https://cosmostables.table.cosmos.azure.com/Tables('pytablesyncf46e1406')
   response:
     body:
       string: ''
@@ -112,7 +112,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 18 Sep 2020 19:50:59 GMT
+      - Wed, 23 Sep 2020 23:11:01 GMT
       server:
       - Microsoft-HTTPAPI/2.0
     status:

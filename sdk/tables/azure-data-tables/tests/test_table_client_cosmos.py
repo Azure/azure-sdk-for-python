@@ -529,6 +529,7 @@ class StorageTableClientTest(TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
+    @pytest.mark.skip("kierans theory")
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
     @CachedCosmosAccountPreparer(name_prefix='cosmostables')
     def test_create_table_client_with_complete_table_url(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -541,8 +542,7 @@ class StorageTableClientTest(TableTestCase):
         self.assertEqual(service.table_name, 'bar')
         self.assertEqual(service.account_name, cosmos_account.name)
 
-
-    # @pytest.mark.skip("Cosmos differential")
+    @pytest.mark.skip("cosmos differential")
     @CachedResourceGroupPreparer(name_prefix='cosmostables')
     @CachedCosmosAccountPreparer(name_prefix='cosmostables')
     def test_create_table_client_with_complete_url(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -558,6 +558,7 @@ class StorageTableClientTest(TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
+    @pytest.mark.skip("kierans theory")
     def test_create_table_client_with_invalid_name(self):
         # Arrange
         table_url = "https://{}.table.cosmos.azure.com:443/foo".format("cosmos_account_name")

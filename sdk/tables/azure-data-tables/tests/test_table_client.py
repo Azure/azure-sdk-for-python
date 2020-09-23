@@ -488,7 +488,6 @@ class StorageTableClientTest(TableTestCase):
         self.assertEqual(service.table_name, 'bar')
         self.assertEqual(service.account_name, storage_account.name)
 
-
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_create_table_client_with_complete_url(self, resource_group, location, storage_account, storage_account_key):
@@ -500,7 +499,6 @@ class StorageTableClientTest(TableTestCase):
         self.assertEqual(service.scheme, 'https')
         self.assertEqual(service.table_name, 'bar')
         self.assertEqual(service.account_name, storage_account.name)
-
 
     def test_create_table_client_with_invalid_name(self):
         # Arrange

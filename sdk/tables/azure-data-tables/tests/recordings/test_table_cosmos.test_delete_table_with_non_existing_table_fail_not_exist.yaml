@@ -11,24 +11,24 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Fri, 18 Sep 2020 19:51:21 GMT
+      - Wed, 23 Sep 2020 23:12:04 GMT
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 18 Sep 2020 19:51:21 GMT
+      - Wed, 23 Sep 2020 23:12:04 GMT
       x-ms-version:
       - '2019-07-07'
     method: DELETE
-    uri: https://cosmostablescosmosname.table.cosmos.azure.com/Tables('pytablesync71e81e6f')
+    uri: https://cosmostables.table.cosmos.azure.com/Tables('pytablesync71e81e6f')
   response:
     body:
       string: "{\"odata.error\":{\"code\":\"ResourceNotFound\",\"message\":{\"lang\":\"en-us\",\"value\":\"The
-        specified resource does not exist.\\nRequestID:5369d9be-f9e8-11ea-be19-58961df361d1\\n\"}}}\r\n"
+        specified resource does not exist.\\nRequestID:31d87e95-fdf2-11ea-a10c-58961df361d1\\n\"}}}\r\n"
     headers:
       content-type:
       - application/json;odata=fullmetadata
       date:
-      - Fri, 18 Sep 2020 19:51:22 GMT
+      - Wed, 23 Sep 2020 23:12:05 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       transfer-encoding:

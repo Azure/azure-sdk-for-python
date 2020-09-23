@@ -15,27 +15,27 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Fri, 18 Sep 2020 19:51:27 GMT
+      - Wed, 23 Sep 2020 23:12:20 GMT
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 18 Sep 2020 19:51:27 GMT
+      - Wed, 23 Sep 2020 23:12:20 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
-    uri: https://cosmostablescosmosname.table.cosmos.azure.com/Tables
+    uri: https://cosmostables.table.cosmos.azure.com/Tables
   response:
     body:
-      string: '{"TableName":"pytablesyncb3170bd8","odata.metadata":"https://cosmostablescosmosname.table.cosmos.azure.com/$metadata#Tables/@Element"}'
+      string: '{"TableName":"pytablesyncb3170bd8","odata.metadata":"https://cosmostables.table.cosmos.azure.com/$metadata#Tables/@Element"}'
     headers:
       content-type:
       - application/json;odata=minimalmetadata
       date:
-      - Fri, 18 Sep 2020 19:51:27 GMT
+      - Wed, 23 Sep 2020 23:12:20 GMT
       etag:
-      - W/"datetime'2020-09-18T19%3A51%3A27.9273991Z'"
+      - W/"datetime'2020-09-23T23%3A12%3A20.5088775Z'"
       location:
-      - https://cosmostablescosmosname.table.cosmos.azure.com/Tables('pytablesyncb3170bd8')
+      - https://cosmostables.table.cosmos.azure.com/Tables('pytablesyncb3170bd8')
       server:
       - Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -55,15 +55,15 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Fri, 18 Sep 2020 19:51:28 GMT
+      - Wed, 23 Sep 2020 23:12:21 GMT
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 18 Sep 2020 19:51:28 GMT
+      - Wed, 23 Sep 2020 23:12:21 GMT
       x-ms-version:
       - '2019-07-07'
     method: DELETE
-    uri: https://cosmostablescosmosname.table.cosmos.azure.com/Tables('pytablesyncb3170bd8')
+    uri: https://cosmostables.table.cosmos.azure.com/Tables('pytablesyncb3170bd8')
   response:
     body:
       string: ''
@@ -71,7 +71,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 18 Sep 2020 19:51:28 GMT
+      - Wed, 23 Sep 2020 23:12:21 GMT
       server:
       - Microsoft-HTTPAPI/2.0
     status:
