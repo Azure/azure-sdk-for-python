@@ -51,7 +51,7 @@ from .._generated.models import(
     IotHubDeviceDeletedEventData,
     IotHubDeviceDisconnectedEventData,
     IotHubDeviceTelemetryEventData,
-    KeyVaultAccessPolicyChangedEventData
+    KeyVaultAccessPolicyChangedEventData,
     KeyVaultCertificateExpiredEventData,
     KeyVaultCertificateNearExpiryEventData,
     KeyVaultCertificateNewVersionCreatedEventData,
