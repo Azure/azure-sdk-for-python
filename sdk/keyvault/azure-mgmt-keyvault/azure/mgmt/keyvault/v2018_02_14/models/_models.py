@@ -735,19 +735,17 @@ class ServiceSpecification(msrest.serialization.Model):
 class Sku(msrest.serialization.Model):
     """SKU details.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     All required parameters must be populated in order to send to Azure.
 
-    :ivar family: Required. SKU family name. Default value: "A".
-    :vartype family: str
+    :param family: Required. SKU family name. Possible values include: "A".
+    :type family: str or ~azure.mgmt.keyvault.v2018_02_14.models.SkuFamily
     :param name: Required. SKU name to specify whether the key vault is a standard vault or a
      premium vault. Possible values include: "standard", "premium".
     :type name: str or ~azure.mgmt.keyvault.v2018_02_14.models.SkuName
     """
 
     _validation = {
-        'family': {'required': True, 'constant': True},
+        'family': {'required': True},
         'name': {'required': True},
     }
 
@@ -756,13 +754,12 @@ class Sku(msrest.serialization.Model):
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    family = "A"
-
     def __init__(
         self,
         **kwargs
     ):
         super(Sku, self).__init__(**kwargs)
+        self.family = kwargs['family']
         self.name = kwargs['name']
 
 
@@ -1011,7 +1008,7 @@ class VaultPatchProperties(msrest.serialization.Model):
     :type tenant_id: str
     :param sku: SKU details.
     :type sku: ~azure.mgmt.keyvault.v2018_02_14.models.Sku
-    :param access_policies: An array of 0 to 16 identities that have access to the key vault. All
+    :param access_policies: An array of 0 to 1024 identities that have access to the key vault. All
      identities in the array must use the same tenant ID as the key vault's tenant ID.
     :type access_policies: list[~azure.mgmt.keyvault.v2018_02_14.models.AccessPolicyEntry]
     :param enabled_for_deployment: Property to specify whether Azure Virtual Machines are permitted

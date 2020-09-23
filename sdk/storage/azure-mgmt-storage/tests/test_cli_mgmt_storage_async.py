@@ -98,7 +98,7 @@ class MgmtStorageTest(AzureMgmtAsyncTestCase):
 
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
         RESOURCE_GROUP = resource_group.name
-        STORAGE_ACCOUNT_NAME = "storageaccountxxyyzzn"  # TODO: need change a random name, if need run live test again.
+        STORAGE_ACCOUNT_NAME = "storageaccountxxyyzznzn"  # TODO: need change a random name, if need run live test again.
         FILE_SERVICE_NAME = "fileservicexxyyzz"
         SHARE_NAME = "filesharenamexxyyzz"
         BLOB_SERVICE_NAME = "blobservicexxyyzz"
@@ -347,7 +347,7 @@ class MgmtStorageTest(AzureMgmtAsyncTestCase):
           }
         }
         result = self.event_loop.run_until_complete(
-            self.mgmt_client.management_policies.create_or_update(resource_group.name, STORAGE_ACCOUNT_NAME, BODY)
+            self.mgmt_client.management_policies.create_or_update(resource_group.name, STORAGE_ACCOUNT_NAME, "default", BODY)
         )
 
         # PutShares[put]
@@ -434,7 +434,7 @@ class MgmtStorageTest(AzureMgmtAsyncTestCase):
 
         # StorageAccountGetManagementPolicies[get]
         result = self.event_loop.run_until_complete(
-            self.mgmt_client.management_policies.get(resource_group.name, STORAGE_ACCOUNT_NAME)
+            self.mgmt_client.management_policies.get(resource_group.name, STORAGE_ACCOUNT_NAME, "default")
         )
 
         # ListContainers[get]
@@ -673,7 +673,7 @@ class MgmtStorageTest(AzureMgmtAsyncTestCase):
 
         # StorageAccountDeleteManagementPolicies[delete]
         result = self.event_loop.run_until_complete(
-            self.mgmt_client.management_policies.delete(resource_group.name, STORAGE_ACCOUNT_NAME)
+            self.mgmt_client.management_policies.delete(resource_group.name, STORAGE_ACCOUNT_NAME, "default")
         )
 
         # StorageAccountDelete[delete]

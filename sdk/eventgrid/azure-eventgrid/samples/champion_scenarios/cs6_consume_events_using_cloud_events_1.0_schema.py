@@ -1,10 +1,22 @@
+# --------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# --------------------------------------------------------------------------
+"""
+FILE: cs6_consume_events_using_cloud_events_1.0_schema.py
+DESCRIPTION:
+    These samples demonstrate creating a list of CloudEvents and sending then as a list.
+USAGE:
+    python cs6_consume_events_using_cloud_events_1.0_schema.py
+"""
 import os
 from azure.eventgrid import EventGridConsumer
 
 consumer = EventGridConsumer()
 
 # returns List[DeserializedEvent]
-deserialized_events = consumer.deserialize_events(service_bus_received_message)
+deserialized_events = consumer.decode_eventgrid_event(service_bus_received_message)
 
 # CloudEvent schema
 for event in deserialized_events:

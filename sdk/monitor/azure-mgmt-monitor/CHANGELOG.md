@@ -1,5 +1,23 @@
 # Release History
 
+## 1.0.1 (2020-09-18)
+
+**Bug fix**
+
+  - Require azure-mgmt-core>=1.2.0 in setup.py
+
+## 1.0.0 (2020-09-16)
+
+**Features**
+
+  - Model MultiMetricCriteria has a new parameter skip_metric_validation
+  - Model DynamicMetricCriteria has a new parameter skip_metric_validation
+  - Model MetricTrigger has a new parameter dimensions
+  - Model MetricTrigger has a new parameter metric_namespace
+  - Model MetricCriteria has a new parameter skip_metric_validation
+  - Added operation group SubscriptionDiagnosticSettingsOperations
+  - Added operation group ManagementGroupDiagnosticSettingsOperations
+
 ## 1.0.0b1 (2020-06-17)
 
 This is beta preview version.

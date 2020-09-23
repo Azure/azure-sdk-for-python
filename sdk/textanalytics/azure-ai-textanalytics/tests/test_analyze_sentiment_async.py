@@ -669,6 +669,40 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
+    async def test_opinion_mining_more_than_5_documents(self, client):
+        documents = [
+            "The food was unacceptable",
+            "The rooms were beautiful. The AC was good and quiet.",
+            "The breakfast was good, but the toilet was smelly.",
+            "Loved this hotel - good breakfast - nice shuttle service - clean rooms.",
+            "I had a great unobstructed view of the Microsoft campus.",
+            "Nice rooms but bathrooms were old and the toilet was dirty when we arrived.",
+            "The toilet smelled."
+        ]
+
+        analyzed_documents = await client.analyze_sentiment(documents, show_opinion_mining=True)
+        doc_5 = analyzed_documents[5]
+        doc_6 = analyzed_documents[6]
+
+        doc_5_opinions = [
+            opinion.text
+            for sentence in doc_5.sentences
+            for mined_opinion in sentence.mined_opinions
+            for opinion in mined_opinion.opinions
+        ]
+
+        doc_6_opinions = [
+            opinion.text
+            for sentence in doc_6.sentences
+            for mined_opinion in sentence.mined_opinions
+            for opinion in mined_opinion.opinions
+        ]
+
+        assert doc_5_opinions == ["nice", "old", "dirty"]
+        assert doc_6_opinions == ["smelled"]
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
     async def test_opinion_mining_no_mined_opinions(self, client):
         document = (await client.analyze_sentiment(documents=["today is a hot day"], show_opinion_mining=True))[0]
 
@@ -680,7 +714,7 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
         with pytest.raises(NotImplementedError) as excinfo:
             await client.analyze_sentiment(["will fail"], show_opinion_mining=True)
 
-        assert "'show_opinion_mining' is only available for API version v3.1-preview.1 and up" in str(excinfo.value)
+        assert "'show_opinion_mining' is only available for API version v3.1-preview and up" in str(excinfo.value)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()

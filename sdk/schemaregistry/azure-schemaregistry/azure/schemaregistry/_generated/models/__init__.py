@@ -11,6 +11,11 @@ try:
 except (SyntaxError, ImportError):
     from ._models import SchemaId  # type: ignore
 
+from ._azure_schema_registry_enums import (
+    SerializationType,
+)
+
 __all__ = [
     'SchemaId',
+    'SerializationType',
 ]

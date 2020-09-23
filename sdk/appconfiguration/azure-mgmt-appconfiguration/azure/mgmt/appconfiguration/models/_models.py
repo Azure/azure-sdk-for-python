@@ -87,20 +87,18 @@ class ApiKeyListResult(msrest.serialization.Model):
 class CheckNameAvailabilityParameters(msrest.serialization.Model):
     """Parameters used for checking whether a resource name is available.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     All required parameters must be populated in order to send to Azure.
 
     :param name: Required. The name to check for availability.
     :type name: str
-    :ivar type: Required. The resource type to check for name availability. Default value:
-     "Microsoft.AppConfiguration/configurationStores".
-    :vartype type: str
+    :param type: Required. The resource type to check for name availability. Possible values
+     include: "Microsoft.AppConfiguration/configurationStores".
+    :type type: str or ~app_configuration_management_client.models.ConfigurationResourceType
     """
 
     _validation = {
         'name': {'required': True},
-        'type': {'required': True, 'constant': True},
+        'type': {'required': True},
     }
 
     _attribute_map = {
@@ -108,14 +106,13 @@ class CheckNameAvailabilityParameters(msrest.serialization.Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    type = "Microsoft.AppConfiguration/configurationStores"
-
     def __init__(
         self,
         **kwargs
     ):
         super(CheckNameAvailabilityParameters, self).__init__(**kwargs)
         self.name = kwargs['name']
+        self.type = kwargs['type']
 
 
 class Resource(msrest.serialization.Model):
@@ -284,6 +281,10 @@ class ConfigurationStoreUpdateParameters(msrest.serialization.Model):
     :type tags: dict[str, str]
     :param encryption: The encryption settings of the configuration store.
     :type encryption: ~app_configuration_management_client.models.EncryptionProperties
+    :param public_network_access: Control permission for data plane traffic coming from public
+     networks while private endpoint is enabled. Possible values include: "Enabled", "Disabled".
+    :type public_network_access: str or
+     ~app_configuration_management_client.models.PublicNetworkAccess
     """
 
     _attribute_map = {
@@ -291,6 +292,7 @@ class ConfigurationStoreUpdateParameters(msrest.serialization.Model):
         'sku': {'key': 'sku', 'type': 'Sku'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'encryption': {'key': 'properties.encryption', 'type': 'EncryptionProperties'},
+        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
     }
 
     def __init__(
@@ -302,6 +304,7 @@ class ConfigurationStoreUpdateParameters(msrest.serialization.Model):
         self.sku = kwargs.get('sku', None)
         self.tags = kwargs.get('tags', None)
         self.encryption = kwargs.get('encryption', None)
+        self.public_network_access = kwargs.get('public_network_access', None)
 
 
 class EncryptionProperties(msrest.serialization.Model):

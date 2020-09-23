@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
+import six
 
 from .utilities import is_text_payload, is_json_payload
 
@@ -177,7 +178,7 @@ class GeneralNameReplacer(RecordingProcessor):
             request.uri = request.uri.replace(old, new)
 
             if is_text_payload(request) and request.body:
-                body = str(request.body)
+                body = six.ensure_str(request.body)
                 if old in body:
                     request.body = body.replace(old, new)
 
@@ -186,8 +187,11 @@ class GeneralNameReplacer(RecordingProcessor):
     def process_response(self, response):
         for old, new in self.names_name:
             if is_text_payload(response) and response['body']['string']:
-                response['body']['string'] = response['body']['string'].replace(old, new)
-
+                try:
+                    response['body']['string'] = response['body']['string'].replace(old, new)
+                except UnicodeDecodeError:
+                    body = response['body']['string']
+                    response['body']['string'].decode('utf8', 'backslashreplace').replace(old, new).encode('utf8', 'backslashreplace')
             self.replace_header(response, 'location', old, new)
             self.replace_header(response, 'azure-asyncoperation', old, new)
 

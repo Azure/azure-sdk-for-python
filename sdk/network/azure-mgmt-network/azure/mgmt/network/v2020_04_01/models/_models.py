@@ -2283,7 +2283,7 @@ class FirewallPolicyRuleCondition(msrest.serialization.Model):
         super(FirewallPolicyRuleCondition, self).__init__(**kwargs)
         self.name = kwargs.get('name', None)
         self.description = kwargs.get('description', None)
-        self.rule_condition_type = None
+        self.rule_condition_type = None  # type: Optional[str]
 
 
 class ApplicationRuleCondition(FirewallPolicyRuleCondition):
@@ -2306,8 +2306,6 @@ class ApplicationRuleCondition(FirewallPolicyRuleCondition):
     :param protocols: Array of Application Protocols.
     :type protocols:
      list[~azure.mgmt.network.v2020_04_01.models.FirewallPolicyRuleConditionApplicationProtocol]
-    :param target_urls: List of Urls for this rule condition.
-    :type target_urls: list[str]
     :param target_fqdns: List of FQDNs for this rule condition.
     :type target_fqdns: list[str]
     :param fqdn_tags: List of FQDN Tags for this rule condition.
@@ -2327,7 +2325,6 @@ class ApplicationRuleCondition(FirewallPolicyRuleCondition):
         'source_addresses': {'key': 'sourceAddresses', 'type': '[str]'},
         'destination_addresses': {'key': 'destinationAddresses', 'type': '[str]'},
         'protocols': {'key': 'protocols', 'type': '[FirewallPolicyRuleConditionApplicationProtocol]'},
-        'target_urls': {'key': 'targetUrls', 'type': '[str]'},
         'target_fqdns': {'key': 'targetFqdns', 'type': '[str]'},
         'fqdn_tags': {'key': 'fqdnTags', 'type': '[str]'},
         'source_ip_groups': {'key': 'sourceIpGroups', 'type': '[str]'},
@@ -2338,11 +2335,10 @@ class ApplicationRuleCondition(FirewallPolicyRuleCondition):
         **kwargs
     ):
         super(ApplicationRuleCondition, self).__init__(**kwargs)
-        self.rule_condition_type = 'ApplicationRuleCondition'
+        self.rule_condition_type = 'ApplicationRuleCondition'  # type: str
         self.source_addresses = kwargs.get('source_addresses', None)
         self.destination_addresses = kwargs.get('destination_addresses', None)
         self.protocols = kwargs.get('protocols', None)
-        self.target_urls = kwargs.get('target_urls', None)
         self.target_fqdns = kwargs.get('target_fqdns', None)
         self.fqdn_tags = kwargs.get('fqdn_tags', None)
         self.source_ip_groups = kwargs.get('source_ip_groups', None)
@@ -3773,13 +3769,13 @@ class BackendAddressPool(SubResource):
     :vartype etag: str
     :ivar type: Type of the resource.
     :vartype type: str
+    :param load_balancer_backend_addresses: An array of backend addresses.
+    :type load_balancer_backend_addresses:
+     list[~azure.mgmt.network.v2020_04_01.models.LoadBalancerBackendAddress]
     :ivar backend_ip_configurations: An array of references to IP addresses defined in network
      interfaces.
     :vartype backend_ip_configurations:
      list[~azure.mgmt.network.v2020_04_01.models.NetworkInterfaceIPConfiguration]
-    :param load_balancer_backend_addresses: An array of backend addresses.
-    :type load_balancer_backend_addresses:
-     list[~azure.mgmt.network.v2020_04_01.models.LoadBalancerBackendAddress]
     :ivar load_balancing_rules: An array of references to load balancing rules that use this
      backend address pool.
     :vartype load_balancing_rules: list[~azure.mgmt.network.v2020_04_01.models.SubResource]
@@ -3808,8 +3804,8 @@ class BackendAddressPool(SubResource):
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'backend_ip_configurations': {'key': 'properties.backendIPConfigurations', 'type': '[NetworkInterfaceIPConfiguration]'},
         'load_balancer_backend_addresses': {'key': 'properties.loadBalancerBackendAddresses', 'type': '[LoadBalancerBackendAddress]'},
+        'backend_ip_configurations': {'key': 'properties.backendIPConfigurations', 'type': '[NetworkInterfaceIPConfiguration]'},
         'load_balancing_rules': {'key': 'properties.loadBalancingRules', 'type': '[SubResource]'},
         'outbound_rule': {'key': 'properties.outboundRule', 'type': 'SubResource'},
         'outbound_rules': {'key': 'properties.outboundRules', 'type': '[SubResource]'},
@@ -3824,8 +3820,8 @@ class BackendAddressPool(SubResource):
         self.name = kwargs.get('name', None)
         self.etag = None
         self.type = None
-        self.backend_ip_configurations = None
         self.load_balancer_backend_addresses = kwargs.get('load_balancer_backend_addresses', None)
+        self.backend_ip_configurations = None
         self.load_balancing_rules = None
         self.outbound_rule = None
         self.outbound_rules = None
@@ -4648,62 +4644,49 @@ class ConnectionMonitorEndpoint(msrest.serialization.Model):
 class ConnectionMonitorEndpointFilter(msrest.serialization.Model):
     """Describes the connection monitor endpoint filter.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar type: The behavior of the endpoint filter. Currently only 'Include' is supported. Default
-     value: "Include".
-    :vartype type: str
+    :param type: The behavior of the endpoint filter. Currently only 'Include' is supported.
+     Possible values include: "Include".
+    :type type: str or ~azure.mgmt.network.v2020_04_01.models.ConnectionMonitorEndpointFilterType
     :param items: List of items in the filter.
     :type items: list[~azure.mgmt.network.v2020_04_01.models.ConnectionMonitorEndpointFilterItem]
     """
-
-    _validation = {
-        'type': {'constant': True},
-    }
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'str'},
         'items': {'key': 'items', 'type': '[ConnectionMonitorEndpointFilterItem]'},
     }
 
-    type = "Include"
-
     def __init__(
         self,
         **kwargs
     ):
         super(ConnectionMonitorEndpointFilter, self).__init__(**kwargs)
+        self.type = kwargs.get('type', None)
         self.items = kwargs.get('items', None)
 
 
 class ConnectionMonitorEndpointFilterItem(msrest.serialization.Model):
     """Describes the connection monitor endpoint filter item.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar type: The type of item included in the filter. Currently only 'AgentAddress' is
-     supported. Default value: "AgentAddress".
-    :vartype type: str
+    :param type: The type of item included in the filter. Currently only 'AgentAddress' is
+     supported. Possible values include: "AgentAddress".
+    :type type: str or
+     ~azure.mgmt.network.v2020_04_01.models.ConnectionMonitorEndpointFilterItemType
     :param address: The address of the filter item.
     :type address: str
     """
-
-    _validation = {
-        'type': {'constant': True},
-    }
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'str'},
         'address': {'key': 'address', 'type': 'str'},
     }
 
-    type = "AgentAddress"
-
     def __init__(
         self,
         **kwargs
     ):
         super(ConnectionMonitorEndpointFilterItem, self).__init__(**kwargs)
+        self.type = kwargs.get('type', None)
         self.address = kwargs.get('address', None)
 
 
@@ -4790,33 +4773,26 @@ class ConnectionMonitorListResult(msrest.serialization.Model):
 class ConnectionMonitorOutput(msrest.serialization.Model):
     """Describes a connection monitor output destination.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar type: Connection monitor output destination type. Currently, only "Workspace" is
-     supported. Default value: "Workspace".
-    :vartype type: str
+    :param type: Connection monitor output destination type. Currently, only "Workspace" is
+     supported. Possible values include: "Workspace".
+    :type type: str or ~azure.mgmt.network.v2020_04_01.models.OutputType
     :param workspace_settings: Describes the settings for producing output into a log analytics
      workspace.
     :type workspace_settings:
      ~azure.mgmt.network.v2020_04_01.models.ConnectionMonitorWorkspaceSettings
     """
 
-    _validation = {
-        'type': {'constant': True},
-    }
-
     _attribute_map = {
         'type': {'key': 'type', 'type': 'str'},
         'workspace_settings': {'key': 'workspaceSettings', 'type': 'ConnectionMonitorWorkspaceSettings'},
     }
-
-    type = "Workspace"
 
     def __init__(
         self,
         **kwargs
     ):
         super(ConnectionMonitorOutput, self).__init__(**kwargs)
+        self.type = kwargs.get('type', None)
         self.workspace_settings = kwargs.get('workspace_settings', None)
 
 
@@ -8393,8 +8369,6 @@ class FirewallPolicy(Resource):
     :type tags: dict[str, str]
     :ivar etag: A unique read-only string that changes whenever the resource is updated.
     :vartype etag: str
-    :param identity: The identity of the firewall policy.
-    :type identity: ~azure.mgmt.network.v2020_04_01.models.ManagedServiceIdentity
     :ivar rule_groups: List of references to FirewallPolicyRuleGroups.
     :vartype rule_groups: list[~azure.mgmt.network.v2020_04_01.models.SubResource]
     :ivar provisioning_state: The provisioning state of the firewall policy resource. Possible
@@ -8414,13 +8388,6 @@ class FirewallPolicy(Resource):
     :param threat_intel_whitelist: ThreatIntel Whitelist for Firewall Policy.
     :type threat_intel_whitelist:
      ~azure.mgmt.network.v2020_04_01.models.FirewallPolicyThreatIntelWhitelist
-    :param intrusion_system_mode: The operation mode for Intrusion system. Possible values include:
-     "Enabled", "Disabled".
-    :type intrusion_system_mode: str or
-     ~azure.mgmt.network.v2020_04_01.models.FirewallPolicyIntrusionSystemMode
-    :param transport_security: TLS Configuration definition.
-    :type transport_security:
-     ~azure.mgmt.network.v2020_04_01.models.FirewallPolicyTransportSecurity
     """
 
     _validation = {
@@ -8440,7 +8407,6 @@ class FirewallPolicy(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'etag': {'key': 'etag', 'type': 'str'},
-        'identity': {'key': 'identity', 'type': 'ManagedServiceIdentity'},
         'rule_groups': {'key': 'properties.ruleGroups', 'type': '[SubResource]'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'base_policy': {'key': 'properties.basePolicy', 'type': 'SubResource'},
@@ -8448,8 +8414,6 @@ class FirewallPolicy(Resource):
         'child_policies': {'key': 'properties.childPolicies', 'type': '[SubResource]'},
         'threat_intel_mode': {'key': 'properties.threatIntelMode', 'type': 'str'},
         'threat_intel_whitelist': {'key': 'properties.threatIntelWhitelist', 'type': 'FirewallPolicyThreatIntelWhitelist'},
-        'intrusion_system_mode': {'key': 'properties.intrusionSystemMode', 'type': 'str'},
-        'transport_security': {'key': 'properties.transportSecurity', 'type': 'FirewallPolicyTransportSecurity'},
     }
 
     def __init__(
@@ -8458,7 +8422,6 @@ class FirewallPolicy(Resource):
     ):
         super(FirewallPolicy, self).__init__(**kwargs)
         self.etag = None
-        self.identity = kwargs.get('identity', None)
         self.rule_groups = None
         self.provisioning_state = None
         self.base_policy = kwargs.get('base_policy', None)
@@ -8466,32 +8429,6 @@ class FirewallPolicy(Resource):
         self.child_policies = None
         self.threat_intel_mode = kwargs.get('threat_intel_mode', None)
         self.threat_intel_whitelist = kwargs.get('threat_intel_whitelist', None)
-        self.intrusion_system_mode = kwargs.get('intrusion_system_mode', None)
-        self.transport_security = kwargs.get('transport_security', None)
-
-
-class FirewallPolicyCertificateAuthority(msrest.serialization.Model):
-    """Trusted Root certificates properties for tls.
-
-    :param name: Name of the CA certificate.
-    :type name: str
-    :param key_vault_secret_id: Secret Id of (base-64 encoded unencrypted pfx) 'Secret' or
-     'Certificate' object stored in KeyVault.
-    :type key_vault_secret_id: str
-    """
-
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'key_vault_secret_id': {'key': 'properties.keyVaultSecretId', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(FirewallPolicyCertificateAuthority, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.key_vault_secret_id = kwargs.get('key_vault_secret_id', None)
 
 
 class FirewallPolicyRule(msrest.serialization.Model):
@@ -8531,7 +8468,7 @@ class FirewallPolicyRule(msrest.serialization.Model):
         **kwargs
     ):
         super(FirewallPolicyRule, self).__init__(**kwargs)
-        self.rule_type = None
+        self.rule_type = None  # type: Optional[str]
         self.name = kwargs.get('name', None)
         self.priority = kwargs.get('priority', None)
 
@@ -8572,7 +8509,7 @@ class FirewallPolicyFilterRule(FirewallPolicyRule):
         **kwargs
     ):
         super(FirewallPolicyFilterRule, self).__init__(**kwargs)
-        self.rule_type = 'FirewallPolicyFilterRule'
+        self.rule_type = 'FirewallPolicyFilterRule'  # type: str
         self.action = kwargs.get('action', None)
         self.rule_conditions = kwargs.get('rule_conditions', None)
 
@@ -8661,7 +8598,7 @@ class FirewallPolicyNatRule(FirewallPolicyRule):
         **kwargs
     ):
         super(FirewallPolicyNatRule, self).__init__(**kwargs)
-        self.rule_type = 'FirewallPolicyNatRule'
+        self.rule_type = 'FirewallPolicyNatRule'  # type: str
         self.action = kwargs.get('action', None)
         self.translated_address = kwargs.get('translated_address', None)
         self.translated_port = kwargs.get('translated_port', None)
@@ -8671,27 +8608,20 @@ class FirewallPolicyNatRule(FirewallPolicyRule):
 class FirewallPolicyNatRuleAction(msrest.serialization.Model):
     """Properties of the FirewallPolicyNatRuleAction.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar type: The type of action. Default value: "DNAT".
-    :vartype type: str
+    :param type: The type of action. Possible values include: "DNAT".
+    :type type: str or ~azure.mgmt.network.v2020_04_01.models.FirewallPolicyNatRuleActionType
     """
-
-    _validation = {
-        'type': {'constant': True},
-    }
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'str'},
     }
-
-    type = "DNAT"
 
     def __init__(
         self,
         **kwargs
     ):
         super(FirewallPolicyNatRuleAction, self).__init__(**kwargs)
+        self.type = kwargs.get('type', None)
 
 
 class FirewallPolicyRuleConditionApplicationProtocol(msrest.serialization.Model):
@@ -8821,59 +8751,6 @@ class FirewallPolicyThreatIntelWhitelist(msrest.serialization.Model):
         self.fqdns = kwargs.get('fqdns', None)
 
 
-class FirewallPolicyTransportSecurity(msrest.serialization.Model):
-    """Configuration needed to perform TLS termination & initiation.
-
-    :param certificate_authority: The CA used for intermediate CA generation.
-    :type certificate_authority:
-     ~azure.mgmt.network.v2020_04_01.models.FirewallPolicyCertificateAuthority
-    :param excluded_domains: List of domains which are excluded from TLS termination.
-    :type excluded_domains: list[str]
-    :param trusted_root_certificates: Certificates which are to be trusted by the firewall.
-    :type trusted_root_certificates:
-     list[~azure.mgmt.network.v2020_04_01.models.FirewallPolicyTrustedRootCertificate]
-    """
-
-    _attribute_map = {
-        'certificate_authority': {'key': 'certificateAuthority', 'type': 'FirewallPolicyCertificateAuthority'},
-        'excluded_domains': {'key': 'excludedDomains', 'type': '[str]'},
-        'trusted_root_certificates': {'key': 'trustedRootCertificates', 'type': '[FirewallPolicyTrustedRootCertificate]'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(FirewallPolicyTransportSecurity, self).__init__(**kwargs)
-        self.certificate_authority = kwargs.get('certificate_authority', None)
-        self.excluded_domains = kwargs.get('excluded_domains', None)
-        self.trusted_root_certificates = kwargs.get('trusted_root_certificates', None)
-
-
-class FirewallPolicyTrustedRootCertificate(msrest.serialization.Model):
-    """Trusted Root certificates of a firewall policy.
-
-    :param name: Name of the trusted root certificate that is unique within a firewall policy.
-    :type name: str
-    :param key_vault_secret_id: Secret Id of (base-64 encoded unencrypted pfx) the public
-     certificate data stored in KeyVault.
-    :type key_vault_secret_id: str
-    """
-
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'key_vault_secret_id': {'key': 'properties.keyVaultSecretId', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(FirewallPolicyTrustedRootCertificate, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.key_vault_secret_id = kwargs.get('key_vault_secret_id', None)
-
-
 class FlowLog(Resource):
     """A flow log resource.
 
@@ -8956,30 +8833,23 @@ class FlowLog(Resource):
 class FlowLogFormatParameters(msrest.serialization.Model):
     """Parameters that define the flow log format.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar type: The file type of flow log. Default value: "JSON".
-    :vartype type: str
+    :param type: The file type of flow log. Possible values include: "JSON".
+    :type type: str or ~azure.mgmt.network.v2020_04_01.models.FlowLogFormatType
     :param version: The version (revision) of the flow log.
     :type version: int
     """
-
-    _validation = {
-        'type': {'constant': True},
-    }
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'str'},
         'version': {'key': 'version', 'type': 'int'},
     }
 
-    type = "JSON"
-
     def __init__(
         self,
         **kwargs
     ):
         super(FlowLogFormatParameters, self).__init__(**kwargs)
+        self.type = kwargs.get('type', None)
         self.version = kwargs.get('version', 0)
 
 
@@ -9291,19 +9161,13 @@ class GetVpnSitesConfigurationRequest(msrest.serialization.Model):
 class HTTPConfiguration(msrest.serialization.Model):
     """HTTP configuration of the connectivity check.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar method: HTTP method. Default value: "Get".
-    :vartype method: str
+    :param method: HTTP method. Possible values include: "Get".
+    :type method: str or ~azure.mgmt.network.v2020_04_01.models.HTTPMethod
     :param headers: List of HTTP headers.
     :type headers: list[~azure.mgmt.network.v2020_04_01.models.HTTPHeader]
     :param valid_status_codes: Valid status codes.
     :type valid_status_codes: list[int]
     """
-
-    _validation = {
-        'method': {'constant': True},
-    }
 
     _attribute_map = {
         'method': {'key': 'method', 'type': 'str'},
@@ -9311,13 +9175,12 @@ class HTTPConfiguration(msrest.serialization.Model):
         'valid_status_codes': {'key': 'validStatusCodes', 'type': '[int]'},
     }
 
-    method = "Get"
-
     def __init__(
         self,
         **kwargs
     ):
         super(HTTPConfiguration, self).__init__(**kwargs)
+        self.method = kwargs.get('method', None)
         self.headers = kwargs.get('headers', None)
         self.valid_status_codes = kwargs.get('valid_status_codes', None)
 
@@ -9434,9 +9297,9 @@ class HubRouteTable(SubResource):
     :param labels: List of labels associated with this route table.
     :type labels: list[str]
     :ivar associated_connections: List of all connections associated with this route table.
-    :vartype associated_connections: list[~azure.mgmt.network.v2020_04_01.models.SubResource]
+    :vartype associated_connections: list[str]
     :ivar propagating_connections: List of all connections that advertise to this route table.
-    :vartype propagating_connections: list[~azure.mgmt.network.v2020_04_01.models.SubResource]
+    :vartype propagating_connections: list[str]
     :ivar provisioning_state: The provisioning state of the RouteTable resource. Possible values
      include: "Succeeded", "Updating", "Deleting", "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2020_04_01.models.ProvisioningState
@@ -9457,8 +9320,8 @@ class HubRouteTable(SubResource):
         'type': {'key': 'type', 'type': 'str'},
         'routes': {'key': 'properties.routes', 'type': '[HubRoute]'},
         'labels': {'key': 'properties.labels', 'type': '[str]'},
-        'associated_connections': {'key': 'properties.associatedConnections', 'type': '[SubResource]'},
-        'propagating_connections': {'key': 'properties.propagatingConnections', 'type': '[SubResource]'},
+        'associated_connections': {'key': 'properties.associatedConnections', 'type': '[str]'},
+        'propagating_connections': {'key': 'properties.propagatingConnections', 'type': '[str]'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
@@ -10632,23 +10495,28 @@ class LoadBalancer(Resource):
 class LoadBalancerBackendAddress(msrest.serialization.Model):
     """Load balancer backend addresses.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
     :param name: Name of the backend address.
     :type name: str
     :param virtual_network: Reference to an existing virtual network.
-    :type virtual_network: ~azure.mgmt.network.v2020_04_01.models.VirtualNetwork
+    :type virtual_network: ~azure.mgmt.network.v2020_04_01.models.SubResource
     :param ip_address: IP Address belonging to the referenced virtual network.
     :type ip_address: str
-    :param network_interface_ip_configuration: Reference to IP address defined in network
+    :ivar network_interface_ip_configuration: Reference to IP address defined in network
      interfaces.
-    :type network_interface_ip_configuration:
-     ~azure.mgmt.network.v2020_04_01.models.NetworkInterfaceIPConfiguration
+    :vartype network_interface_ip_configuration: ~azure.mgmt.network.v2020_04_01.models.SubResource
     """
+
+    _validation = {
+        'network_interface_ip_configuration': {'readonly': True},
+    }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
-        'virtual_network': {'key': 'properties.virtualNetwork', 'type': 'VirtualNetwork'},
+        'virtual_network': {'key': 'properties.virtualNetwork', 'type': 'SubResource'},
         'ip_address': {'key': 'properties.ipAddress', 'type': 'str'},
-        'network_interface_ip_configuration': {'key': 'properties.networkInterfaceIPConfiguration', 'type': 'NetworkInterfaceIPConfiguration'},
+        'network_interface_ip_configuration': {'key': 'properties.networkInterfaceIPConfiguration', 'type': 'SubResource'},
     }
 
     def __init__(
@@ -10659,7 +10527,7 @@ class LoadBalancerBackendAddress(msrest.serialization.Model):
         self.name = kwargs.get('name', None)
         self.virtual_network = kwargs.get('virtual_network', None)
         self.ip_address = kwargs.get('ip_address', None)
-        self.network_interface_ip_configuration = kwargs.get('network_interface_ip_configuration', None)
+        self.network_interface_ip_configuration = None
 
 
 class LoadBalancerBackendAddressPoolListResult(msrest.serialization.Model):
@@ -11114,20 +10982,17 @@ class ManagedRuleGroupOverride(msrest.serialization.Model):
 class ManagedRuleOverride(msrest.serialization.Model):
     """Defines a managed rule group override setting.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     All required parameters must be populated in order to send to Azure.
 
     :param rule_id: Required. Identifier for the managed rule.
     :type rule_id: str
-    :ivar state: The state of the managed rule. Defaults to Disabled if not specified. Default
-     value: "Disabled".
-    :vartype state: str
+    :param state: The state of the managed rule. Defaults to Disabled if not specified. Possible
+     values include: "Disabled".
+    :type state: str or ~azure.mgmt.network.v2020_04_01.models.ManagedRuleEnabledState
     """
 
     _validation = {
         'rule_id': {'required': True},
-        'state': {'constant': True},
     }
 
     _attribute_map = {
@@ -11135,14 +11000,13 @@ class ManagedRuleOverride(msrest.serialization.Model):
         'state': {'key': 'state', 'type': 'str'},
     }
 
-    state = "Disabled"
-
     def __init__(
         self,
         **kwargs
     ):
         super(ManagedRuleOverride, self).__init__(**kwargs)
         self.rule_id = kwargs['rule_id']
+        self.state = kwargs.get('state', None)
 
 
 class ManagedRulesDefinition(msrest.serialization.Model):
@@ -11535,27 +11399,20 @@ class NatGatewayListResult(msrest.serialization.Model):
 class NatGatewaySku(msrest.serialization.Model):
     """SKU of nat gateway.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar name: Name of Nat Gateway SKU. Default value: "Standard".
-    :vartype name: str
+    :param name: Name of Nat Gateway SKU. Possible values include: "Standard".
+    :type name: str or ~azure.mgmt.network.v2020_04_01.models.NatGatewaySkuName
     """
-
-    _validation = {
-        'name': {'constant': True},
-    }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
     }
-
-    name = "Standard"
 
     def __init__(
         self,
         **kwargs
     ):
         super(NatGatewaySku, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
 
 
 class NatRuleCondition(FirewallPolicyRuleCondition):
@@ -11582,8 +11439,6 @@ class NatRuleCondition(FirewallPolicyRuleCondition):
     :type destination_ports: list[str]
     :param source_ip_groups: List of source IpGroups for this rule.
     :type source_ip_groups: list[str]
-    :param terminate_tls: Terminate TLS connections for this rule.
-    :type terminate_tls: bool
     """
 
     _validation = {
@@ -11599,7 +11454,6 @@ class NatRuleCondition(FirewallPolicyRuleCondition):
         'destination_addresses': {'key': 'destinationAddresses', 'type': '[str]'},
         'destination_ports': {'key': 'destinationPorts', 'type': '[str]'},
         'source_ip_groups': {'key': 'sourceIpGroups', 'type': '[str]'},
-        'terminate_tls': {'key': 'terminateTLS', 'type': 'bool'},
     }
 
     def __init__(
@@ -11607,13 +11461,12 @@ class NatRuleCondition(FirewallPolicyRuleCondition):
         **kwargs
     ):
         super(NatRuleCondition, self).__init__(**kwargs)
-        self.rule_condition_type = 'NatRuleCondition'
+        self.rule_condition_type = 'NatRuleCondition'  # type: str
         self.ip_protocols = kwargs.get('ip_protocols', None)
         self.source_addresses = kwargs.get('source_addresses', None)
         self.destination_addresses = kwargs.get('destination_addresses', None)
         self.destination_ports = kwargs.get('destination_ports', None)
         self.source_ip_groups = kwargs.get('source_ip_groups', None)
-        self.terminate_tls = kwargs.get('terminate_tls', None)
 
 
 class NetworkConfigurationDiagnosticParameters(msrest.serialization.Model):
@@ -12441,7 +12294,7 @@ class NetworkRuleCondition(FirewallPolicyRuleCondition):
         **kwargs
     ):
         super(NetworkRuleCondition, self).__init__(**kwargs)
-        self.rule_condition_type = 'NetworkRuleCondition'
+        self.rule_condition_type = 'NetworkRuleCondition'  # type: str
         self.ip_protocols = kwargs.get('ip_protocols', None)
         self.source_addresses = kwargs.get('source_addresses', None)
         self.destination_addresses = kwargs.get('destination_addresses', None)
@@ -13709,8 +13562,8 @@ class PatchRouteFilterRule(SubResource):
     :vartype etag: str
     :param access: The access type of the rule. Possible values include: "Allow", "Deny".
     :type access: str or ~azure.mgmt.network.v2020_04_01.models.Access
-    :ivar route_filter_rule_type: The rule type of the rule. Default value: "Community".
-    :vartype route_filter_rule_type: str
+    :param route_filter_rule_type: The rule type of the rule. Possible values include: "Community".
+    :type route_filter_rule_type: str or ~azure.mgmt.network.v2020_04_01.models.RouteFilterRuleType
     :param communities: The collection for bgp community values to filter on. e.g.
      ['12076:5010','12076:5020'].
     :type communities: list[str]
@@ -13722,7 +13575,6 @@ class PatchRouteFilterRule(SubResource):
     _validation = {
         'name': {'readonly': True},
         'etag': {'readonly': True},
-        'route_filter_rule_type': {'constant': True},
         'provisioning_state': {'readonly': True},
     }
 
@@ -13736,8 +13588,6 @@ class PatchRouteFilterRule(SubResource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    route_filter_rule_type = "Community"
-
     def __init__(
         self,
         **kwargs
@@ -13746,6 +13596,7 @@ class PatchRouteFilterRule(SubResource):
         self.name = None
         self.etag = None
         self.access = kwargs.get('access', None)
+        self.route_filter_rule_type = kwargs.get('route_filter_rule_type', None)
         self.communities = kwargs.get('communities', None)
         self.provisioning_state = None
 
@@ -15025,27 +14876,20 @@ class PublicIPPrefixListResult(msrest.serialization.Model):
 class PublicIPPrefixSku(msrest.serialization.Model):
     """SKU of a public IP prefix.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar name: Name of a public IP prefix SKU. Default value: "Standard".
-    :vartype name: str
+    :param name: Name of a public IP prefix SKU. Possible values include: "Standard".
+    :type name: str or ~azure.mgmt.network.v2020_04_01.models.PublicIPPrefixSkuName
     """
-
-    _validation = {
-        'name': {'constant': True},
-    }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
     }
-
-    name = "Standard"
 
     def __init__(
         self,
         **kwargs
     ):
         super(PublicIPPrefixSku, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
 
 
 class QueryTroubleshootingParameters(msrest.serialization.Model):
@@ -15430,8 +15274,8 @@ class RouteFilterRule(SubResource):
     :vartype etag: str
     :param access: The access type of the rule. Possible values include: "Allow", "Deny".
     :type access: str or ~azure.mgmt.network.v2020_04_01.models.Access
-    :ivar route_filter_rule_type: The rule type of the rule. Default value: "Community".
-    :vartype route_filter_rule_type: str
+    :param route_filter_rule_type: The rule type of the rule. Possible values include: "Community".
+    :type route_filter_rule_type: str or ~azure.mgmt.network.v2020_04_01.models.RouteFilterRuleType
     :param communities: The collection for bgp community values to filter on. e.g.
      ['12076:5010','12076:5020'].
     :type communities: list[str]
@@ -15442,7 +15286,6 @@ class RouteFilterRule(SubResource):
 
     _validation = {
         'etag': {'readonly': True},
-        'route_filter_rule_type': {'constant': True},
         'provisioning_state': {'readonly': True},
     }
 
@@ -15457,8 +15300,6 @@ class RouteFilterRule(SubResource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    route_filter_rule_type = "Community"
-
     def __init__(
         self,
         **kwargs
@@ -15468,6 +15309,7 @@ class RouteFilterRule(SubResource):
         self.location = kwargs.get('location', None)
         self.etag = None
         self.access = kwargs.get('access', None)
+        self.route_filter_rule_type = kwargs.get('route_filter_rule_type', None)
         self.communities = kwargs.get('communities', None)
         self.provisioning_state = None
 
@@ -17042,8 +16884,9 @@ class Usage(msrest.serialization.Model):
 
     :ivar id: Resource identifier.
     :vartype id: str
-    :ivar unit: Required. An enum describing the unit of measurement. Default value: "Count".
-    :vartype unit: str
+    :param unit: Required. An enum describing the unit of measurement. Possible values include:
+     "Count".
+    :type unit: str or ~azure.mgmt.network.v2020_04_01.models.UsageUnit
     :param current_value: Required. The current value of the usage.
     :type current_value: long
     :param limit: Required. The limit of usage.
@@ -17054,7 +16897,7 @@ class Usage(msrest.serialization.Model):
 
     _validation = {
         'id': {'readonly': True},
-        'unit': {'required': True, 'constant': True},
+        'unit': {'required': True},
         'current_value': {'required': True},
         'limit': {'required': True},
         'name': {'required': True},
@@ -17068,14 +16911,13 @@ class Usage(msrest.serialization.Model):
         'name': {'key': 'name', 'type': 'UsageName'},
     }
 
-    unit = "Count"
-
     def __init__(
         self,
         **kwargs
     ):
         super(Usage, self).__init__(**kwargs)
         self.id = None
+        self.unit = kwargs['unit']
         self.current_value = kwargs['current_value']
         self.limit = kwargs['limit']
         self.name = kwargs['name']

@@ -27,7 +27,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 May 2020 17:10:07 GMT
+      - Thu, 17 Sep 2020 08:45:46 GMT
       expires:
       - '-1'
       pragma:
@@ -37,7 +37,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1199'
+      - '1196'
     status:
       code: 201
       message: Created
@@ -65,7 +65,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 May 2020 17:10:07 GMT
+      - Thu, 17 Sep 2020 08:45:46 GMT
       expires:
       - '-1'
       pragma:
@@ -96,40 +96,16 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/locks?api-version=2016-09-01
   response:
     body:
-      string: '{"value":[{"properties":{"level":"CanNotDelete"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/locks/pylockrg","type":"Microsoft.Authorization/locks","name":"pylockrg"},{"properties":{"level":"CanNotDelete","notes":""},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/jenkins-demo-1/providers/Microsoft.Authorization/locks/demo-environment","type":"Microsoft.Authorization/locks","name":"demo-environment"},{"properties":{"level":"CanNotDelete"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/st-test1e58c78d873a46d9bea81ff17d3f555f/providers/Microsoft.Authorization/locks/del-lock","type":"Microsoft.Authorization/locks","name":"del-lock"},{"properties":{"level":"CanNotDelete"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/st-test02a7bc99641a44058386410673212e0e/providers/Microsoft.Authorization/locks/del-lock","type":"Microsoft.Authorization/locks","name":"del-lock"},{"properties":{"level":"CanNotDelete","notes":""},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Testing/providers/Microsoft.Authorization/locks/d","type":"Microsoft.Authorization/locks","name":"d"},{"properties":{"level":"CanNotDelete","notes":""},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ci-jenkins-agents/providers/Microsoft.Network/networkSecurityGroups/placeholder/providers/Microsoft.Authorization/locks/del","type":"Microsoft.Authorization/locks","name":"del"},{"properties":{"level":"CanNotDelete","notes":""},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/jenkins-demo-cosmosdb/providers/Microsoft.DocumentDb/databaseAccounts/jenkinsdemo/providers/Microsoft.Authorization/locks/demo","type":"Microsoft.Authorization/locks","name":"demo"},{"properties":{"level":"CanNotDelete","notes":""},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/MC_demo-aks_demoaks_eastus/providers/Microsoft.Authorization/locks/demo","type":"Microsoft.Authorization/locks","name":"demo"},{"properties":{"level":"CanNotDelete","notes":"by
-        ken"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cleanupservice/providers/Microsoft.Authorization/locks/ttl-lock","type":"Microsoft.Authorization/locks","name":"ttl-lock"},{"properties":{"level":"CanNotDelete","notes":"public
-        resources among Jenkins team, do not delete"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/jenkins-public/providers/Microsoft.Authorization/locks/public
-        manifest","type":"Microsoft.Authorization/locks","name":"public manifest"},{"properties":{"level":"CanNotDelete","notes":""},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pcansrg/providers/Microsoft.Authorization/locks/ttl-lock","type":"Microsoft.Authorization/locks","name":"ttl-lock"},{"properties":{"level":"CanNotDelete","notes":"By
-        PC"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pcansiblerg/providers/Microsoft.Authorization/locks/ttl-lock","type":"Microsoft.Authorization/locks","name":"ttl-lock"},{"properties":{"level":"CanNotDelete","notes":"By
-        PC - for demo"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/pcjenkinsdemo/providers/Microsoft.Authorization/locks/ttl-lock","type":"Microsoft.Authorization/locks","name":"ttl-lock"},{"properties":{"level":"CanNotDelete","notes":"Telemetry
-        for Jenkins dev environment"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/jenkins-bi-test/providers/Microsoft.Authorization/locks/BI
-        test resource","type":"Microsoft.Authorization/locks","name":"BI test resource"},{"properties":{"level":"CanNotDelete"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/st-test0904a644d7cd41c28c894b7e94f33226/providers/Microsoft.Authorization/locks/del-lock","type":"Microsoft.Authorization/locks","name":"del-lock"},{"properties":{"level":"CanNotDelete","notes":"Resource
-        group for PC''s  Docker Registry"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/pclinux/providers/Microsoft.Authorization/locks/ttl-lock","type":"Microsoft.Authorization/locks","name":"ttl-lock"},{"properties":{"level":"CanNotDelete","notes":"lock
-        for ci"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/jenkinsciacr/providers/Microsoft.Authorization/locks/ttllock","type":"Microsoft.Authorization/locks","name":"ttllock"},{"properties":{"level":"CanNotDelete","notes":"Demo
-        environment for ignite 2019"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-k8stest/providers/Microsoft.Authorization/locks/ignite2019","type":"Microsoft.Authorization/locks","name":"ignite2019"},{"properties":{"level":"CanNotDelete"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/jenkins-demo-webapp/providers/Microsoft.Authorization/locks/demo","type":"Microsoft.Authorization/locks","name":"demo"},{"properties":{"level":"CanNotDelete","notes":"Demo
-        environment for ignite 2019"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/MC_azure-k8stest_k8stest_eastus/providers/Microsoft.Authorization/locks/iginite2019","type":"Microsoft.Authorization/locks","name":"iginite2019"},{"properties":{"level":"CanNotDelete","notes":"For
-        demo - by PC"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pcFunctiongp2/providers/Microsoft.Authorization/locks/ttl-lock","type":"Microsoft.Authorization/locks","name":"ttl-lock"},{"properties":{"level":"CanNotDelete","notes":""},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/jenkins-demo-2/providers/Microsoft.Authorization/locks/demo-backup","type":"Microsoft.Authorization/locks","name":"demo-backup"},{"properties":{"level":"CanNotDelete","notes":""},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/demo-aks/providers/Microsoft.Authorization/locks/demo","type":"Microsoft.Authorization/locks","name":"demo"},{"properties":{"level":"CanNotDelete","notes":"PC''s
-        cloud shell storage - need it for demo."},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cloud-shell-storage-westus/providers/Microsoft.Authorization/locks/ttl-lock","type":"Microsoft.Authorization/locks","name":"ttl-lock"},{"properties":{"level":"CanNotDelete","notes":"Used
-        for jenkins world"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/AzureDevops/providers/Microsoft.Authorization/locks/ttl-lock","type":"Microsoft.Authorization/locks","name":"ttl-lock"},{"properties":{"level":"CanNotDelete","notes":""},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/AzureDevops/providers/Microsoft.ContainerRegistry/registries/AzureDevops/providers/Microsoft.Authorization/locks/d","type":"Microsoft.Authorization/locks","name":"d"},{"properties":{"level":"CanNotDelete","notes":""},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/jieshe-jenkins/providers/Microsoft.Authorization/locks/jieshe-dev","type":"Microsoft.Authorization/locks","name":"jieshe-dev"},{"properties":{"level":"CanNotDelete","notes":"for
-        ci"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/jenkins/providers/Microsoft.Storage/storageAccounts/vsjenkins/providers/Microsoft.Authorization/locks/lock","type":"Microsoft.Authorization/locks","name":"lock"},{"properties":{"level":"CanNotDelete","notes":"for
-        ci"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/JENKINS/providers/Microsoft.Compute/disks/jenkinsVM_osdisk/providers/Microsoft.Authorization/locks/del","type":"Microsoft.Authorization/locks","name":"del"},{"properties":{"level":"CanNotDelete","notes":"for
-        ci"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/jenkins/providers/Microsoft.Compute/virtualMachines/Artifactory/providers/Microsoft.Authorization/locks/delete-lock","type":"Microsoft.Authorization/locks","name":"delete-lock"},{"properties":{"level":"CanNotDelete","notes":"for
-        ci"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/jenkins/providers/Microsoft.Compute/virtualMachines/jenkinsVM/providers/Microsoft.Authorization/locks/lock","type":"Microsoft.Authorization/locks","name":"lock"},{"properties":{"level":"CanNotDelete","notes":"for
-        ci"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/jenkins/providers/Microsoft.Network/publicIPAddresses/jenkinsPublicIP/providers/Microsoft.Authorization/locks/lock","type":"Microsoft.Authorization/locks","name":"lock"},{"properties":{"level":"CanNotDelete","notes":""},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/jenkins/providers/Microsoft.Network/publicIPAddresses/Artifactory-ip/providers/Microsoft.Authorization/locks/lock","type":"Microsoft.Authorization/locks","name":"lock"},{"properties":{"level":"CanNotDelete","notes":"for
-        ci"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/jenkins/providers/Microsoft.Network/networkSecurityGroups/agents-NSG/providers/Microsoft.Authorization/locks/deletelock","type":"Microsoft.Authorization/locks","name":"deletelock"},{"properties":{"level":"CanNotDelete","notes":""},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/jenkins/providers/Microsoft.Network/networkSecurityGroups/Artifactory-nsg/providers/Microsoft.Authorization/locks/lock","type":"Microsoft.Authorization/locks","name":"lock"},{"properties":{"level":"CanNotDelete","notes":"for
-        ci"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/jenkins/providers/Microsoft.Network/networkSecurityGroups/jenkinsNSG/providers/Microsoft.Authorization/locks/lock","type":"Microsoft.Authorization/locks","name":"lock"},{"properties":{"level":"CanNotDelete","notes":""},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/jenkins/providers/Microsoft.Network/networkInterfaces/artifactory642/providers/Microsoft.Authorization/locks/delete-lock","type":"Microsoft.Authorization/locks","name":"delete-lock"},{"properties":{"level":"CanNotDelete","notes":"for
-        ci"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/jenkins/providers/Microsoft.Network/networkInterfaces/jenkinsVMNic/providers/Microsoft.Authorization/locks/lock","type":"Microsoft.Authorization/locks","name":"lock"},{"properties":{"level":"CanNotDelete","notes":"for
-        ci"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/jenkins/providers/Microsoft.Network/virtualNetworks/jenkinsVNET/providers/Microsoft.Authorization/locks/lock","type":"Microsoft.Authorization/locks","name":"lock"},{"properties":{"level":"CanNotDelete"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/st-testf365810dee394b758c5552eea26bf8da/providers/Microsoft.Authorization/locks/del-lock","type":"Microsoft.Authorization/locks","name":"del-lock"},{"properties":{"level":"CanNotDelete","notes":"PC
-        dev environment."},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pcansibledev/providers/Microsoft.Authorization/locks/ttl-lock","type":"Microsoft.Authorization/locks","name":"ttl-lock"}]}'
+      string: '{"value":[{"properties":{"level":"CanNotDelete"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/locks/pylockrg","type":"Microsoft.Authorization/locks","name":"pylockrg"}]}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '11236'
+      - '216'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 May 2020 17:10:07 GMT
+      - Thu, 17 Sep 2020 08:45:46 GMT
       expires:
       - '-1'
       pragma:
@@ -169,7 +145,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 19 May 2020 17:10:07 GMT
+      - Thu, 17 Sep 2020 08:45:46 GMT
       expires:
       - '-1'
       pragma:
@@ -179,7 +155,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14999'
+      - '14996'
     status:
       code: 200
       message: OK
