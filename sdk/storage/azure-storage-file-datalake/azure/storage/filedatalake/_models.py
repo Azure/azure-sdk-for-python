@@ -335,11 +335,6 @@ class LeaseProperties(BlobLeaseProperties):
         When a file is leased, specifies whether the lease is of infinite or fixed duration.
     """
 
-    def __init__(self):
-        self.status = None
-        self.state = None
-        self.duration = None
-
 
 class ContentSettings(BlobContentSettings):
     """The content settings of a file or directory.

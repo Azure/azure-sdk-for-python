@@ -13,8 +13,7 @@ from azure.core import MatchConditions
 
 from ._models import (
     ContainerEncryptionScope,
-    DelimitedJsonDialect,
-    ArrowDialect)
+    DelimitedJsonDialect)
 from ._generated.models import (
     ModifiedAccessConditions,
     SourceModifiedAccessConditions,

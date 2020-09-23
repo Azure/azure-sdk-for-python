@@ -1109,7 +1109,7 @@ class ArrowDialect(ArrowField):
     :keyword int precision: The precision of the field.
     :keyword int scale: The scale of the field.
     """
-    def __init__(self, type, **kwargs):
+    def __init__(self, type, **kwargs):   # pylint: disable=redefined-builtin
         super(ArrowDialect, self).__init__(type=type, **kwargs)
 
 
