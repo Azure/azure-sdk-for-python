@@ -10,9 +10,6 @@ trigger:
   paths:
     include:
     - sdk/baremetalinfrastructure/
-    - sdk/core/
-    - tools/
-    - eng/
 
 pr:
   branches:
@@ -25,9 +22,6 @@ pr:
   paths:
     include:
     - sdk/baremetalinfrastructure/
-    - sdk/core/
-    - tools/
-    - eng/
 
 extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
