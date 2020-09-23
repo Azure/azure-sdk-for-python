@@ -107,5 +107,5 @@ class EventGridSerializationTests(AzureMgmtTestCase):
         exposed = dir(models)
         generated = dir(internal_models)
 
-        diff = [m for m in list(set(generated) - set(exposed)) if not m.startswith('_')]
-        assert diff == ['CloudEvent', 'EventGridEvent']
+        diff = {m for m in list(set(generated) - set(exposed)) if not m.startswith('_')}
+        assert diff == {'CloudEvent', 'EventGridEvent'}
