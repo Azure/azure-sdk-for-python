@@ -1113,11 +1113,11 @@ class ArrowDialect(ArrowField):
         super(ArrowDialect, self).__init__(type=type, **kwargs)
 
 
-class ArrowType (str, Enum):
+class ArrowType(str, Enum):
 
     INT64 = "int64"
     BOOL = "bool"
-    TIMESTAMP = "timestamp[ms]"
+    TIMESTAMP_MS = "timestamp[ms]"
     STRING = "string"
     DOUBLE = "double"
     DECIMAL = 'decimal'
