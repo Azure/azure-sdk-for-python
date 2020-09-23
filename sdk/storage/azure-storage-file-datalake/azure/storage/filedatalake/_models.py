@@ -646,8 +646,6 @@ class ArrowDialect(BlobArrowDialect):
     :keyword int precision: The precision of the field.
     :keyword int scale: The scale of the field.
     """
-    def __init__(self, type, **kwargs):
-        super(ArrowDialect, self).__init__(type, **kwargs)
 
 
 class ArrowType(str, Enum):
