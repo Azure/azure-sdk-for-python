@@ -60,7 +60,7 @@ class TestDigitalTinwsClient(object):
         digital_twin_client = DigitalTwinsClient(fake_endpoint, fake_credential)
 
         digital_twin_client.upsert_digital_twin(fake_digital_twin_id, fake_digital_twin)
-        add.assert_called_with(fake_digital_twin_id, fake_digital_twin)
+        add.assert_called_with(fake_digital_twin_id, fake_digital_twin, if_none_match="")
 
     @mock.patch(
         'azure.digitaltwins._generated.operations._digital_twins_operations.DigitalTwinsOperations.add'
@@ -74,7 +74,7 @@ class TestDigitalTinwsClient(object):
         digital_twin_client = DigitalTwinsClient(fake_endpoint, fake_credential)
 
         digital_twin_client.upsert_digital_twin(fake_digital_twin_id, fake_digital_twin, **fake_kwargs)
-        add.assert_called_with(fake_digital_twin_id, fake_digital_twin, **fake_kwargs)
+        add.assert_called_with(fake_digital_twin_id, fake_digital_twin, if_none_match="", **fake_kwargs)
 
     @mock.patch(
         'azure.digitaltwins._generated.operations._digital_twins_operations.DigitalTwinsOperations.update'
@@ -348,6 +348,7 @@ class TestDigitalTinwsClient(object):
         add_relationship.assert_called_with(
             id=fake_digital_twin_id,
             relationship_id=fake_relationship_id,
+            if_none_match="",
             relationship=None,
             **fake_kwargs
         )
@@ -368,6 +369,7 @@ class TestDigitalTinwsClient(object):
         add_relationship.assert_called_with(
             id=fake_digital_twin_id,
             relationship_id=fake_relationship_id,
+            if_none_match="",
             relationship=fake_relationship,
             **fake_kwargs
         )
@@ -757,13 +759,12 @@ class TestDigitalTinwsClient(object):
         fake_endpoint = 'endpoint'
         fake_credential = 'credential'
         fake_dependencies_for = 'dependencies_for'
-        fake_model_definition = True
         digital_twin_models_client = DigitalTwinsClient(fake_endpoint, fake_credential)
 
-        digital_twin_models_client.list_models(fake_dependencies_for, fake_model_definition)
+        digital_twin_models_client.list_models(fake_dependencies_for)
         list.assert_called_with(
             dependencies_for=fake_dependencies_for,
-            include_model_definition=fake_model_definition,
+            include_model_definition=False,
             digital_twin_models_list_options={'max_item_count': -1}
         )
 
@@ -778,7 +779,11 @@ class TestDigitalTinwsClient(object):
         fake_max_item_count = 42
         digital_twin_models_client = DigitalTwinsClient(fake_endpoint, fake_credential)
 
-        digital_twin_models_client.list_models(fake_dependencies_for, fake_model_definition, fake_max_item_count)
+        digital_twin_models_client.list_models(
+            fake_dependencies_for, 
+            include_model_definition=fake_model_definition, 
+            max_item_count=fake_max_item_count
+        )
         list.assert_called_with(
             dependencies_for=fake_dependencies_for,
             include_model_definition=fake_model_definition,
@@ -797,7 +802,12 @@ class TestDigitalTinwsClient(object):
         fake_kwargs = {'par1_key':'par1_val', 'par2_key':2}
         digital_twin_models_client = DigitalTwinsClient(fake_endpoint, fake_credential)
 
-        digital_twin_models_client.list_models(fake_dependencies_for, fake_model_definition, fake_max_item_count, **fake_kwargs)
+        digital_twin_models_client.list_models(
+            fake_dependencies_for, 
+            include_model_definition=fake_model_definition, 
+            max_item_count=fake_max_item_count, 
+            **fake_kwargs
+        )
         list.assert_called_with(
             dependencies_for=fake_dependencies_for,
             include_model_definition=fake_model_definition,
@@ -855,13 +865,13 @@ class TestDigitalTinwsClient(object):
         fake_endpoint = 'endpoint'
         fake_credential = 'credential'
         fake_model_id = 'model_id'
-        fake_model_patch = 'model_patch'
+        decommission_patch = "{ 'op': 'replace', 'path': '/decommissioned', 'value': true }"
         digital_twin_models_client = DigitalTwinsClient(fake_endpoint, fake_credential)
 
-        digital_twin_models_client.decommission_model(fake_model_id, fake_model_patch)
+        digital_twin_models_client.decommission_model(fake_model_id)
         update.assert_called_with(
             fake_model_id,
-            fake_model_patch
+            decommission_patch
         )
 
     @mock.patch(
@@ -871,14 +881,14 @@ class TestDigitalTinwsClient(object):
         fake_endpoint = 'endpoint'
         fake_credential = 'credential'
         fake_model_id = 'model_id'
-        fake_model_patch = 'model_patch'
+        decommission_patch = "{ 'op': 'replace', 'path': '/decommissioned', 'value': true }"
         fake_kwargs = {'par1_key':'par1_val', 'par2_key':2}
         digital_twin_models_client = DigitalTwinsClient(fake_endpoint, fake_credential)
 
-        digital_twin_models_client.decommission_model(fake_model_id, fake_model_patch, **fake_kwargs)
+        digital_twin_models_client.decommission_model(fake_model_id, **fake_kwargs)
         update.assert_called_with(
             fake_model_id,
-            fake_model_patch,
+            decommission_patch,
             **fake_kwargs
         )
 
