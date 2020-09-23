@@ -13,6 +13,7 @@ except ImportError:
 from ._download_async import StorageStreamDownloader
 from ._path_client_async import PathClient
 from .._data_lake_file_client import DataLakeFileClient as DataLakeFileClientBase
+from .._serialize import convert_datetime_to_rfc1123
 from .._deserialize import process_storage_error, deserialize_file_properties
 from .._generated.models import StorageErrorException
 from .._models import FileProperties
@@ -225,6 +226,10 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
             The timeout parameter is expressed in seconds.
         :rtype: None
         """
+        try:
+            expires_on = convert_datetime_to_rfc1123(expires_on)
+        except AttributeError:
+            expires_on = str(expires_on)
         return await self._blob_client._client.blob.set_expiry(expiry_options, expires_on=expires_on, **kwargs) # pylint: disable=protected-access
 
     async def upload_data(self, data,  # type: Union[AnyStr, Iterable[AnyStr], IO[AnyStr]]

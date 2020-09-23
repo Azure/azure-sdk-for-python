@@ -35,7 +35,7 @@ from ._models import (
     AccessControlChangeFailure,
     AccessControlChanges,
 )
-from ._list_paths_helper import PathPropertiesPaged
+
 from ._shared_access_signature import generate_account_sas, generate_file_system_sas, generate_directory_sas, \
     generate_file_sas
 

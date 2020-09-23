@@ -21,7 +21,8 @@ from ._upload_helper import upload_datalake_file
 from ._generated.models import StorageErrorException
 from ._download import StorageStreamDownloader
 from ._path_client import PathClient
-from ._serialize import get_mod_conditions, get_path_http_headers, get_access_conditions, add_metadata_headers
+from ._serialize import get_mod_conditions, get_path_http_headers, get_access_conditions, add_metadata_headers, \
+    convert_datetime_to_rfc1123
 from ._deserialize import process_storage_error, deserialize_file_properties
 from ._models import FileProperties, DataLakeFileQueryError
 
@@ -259,11 +260,16 @@ class DataLakeFileClient(PathClient):
             Possible values include: 'NeverExpire', 'RelativeToCreation', 'RelativeToNow', 'Absolute'
         :param datetime or int expires_on:
             The time to set the file to expiry.
-            When expiry_options is RelativeTo*, expires_on should be an int in milliseconds
+            When expiry_options is RelativeTo*, expires_on should be an int in milliseconds.
+            If the type of expires_on is datetime, it should be in UTC time.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
         """
+        try:
+            expires_on = convert_datetime_to_rfc1123(expires_on)
+        except AttributeError:
+            expires_on = str(expires_on)
         return self._datalake_client_for_blob_operation.path\
             .set_expiry(expiry_options, expires_on=expires_on, **kwargs) # pylint: disable=protected-access
 
