@@ -51,6 +51,7 @@ from .._generated.models import(
     IotHubDeviceDeletedEventData,
     IotHubDeviceDisconnectedEventData,
     IotHubDeviceTelemetryEventData,
+    KeyVaultAccessPolicyChangedEventData
     KeyVaultCertificateExpiredEventData,
     KeyVaultCertificateNearExpiryEventData,
     KeyVaultCertificateNewVersionCreatedEventData,
@@ -200,6 +201,7 @@ __all__ = [
     'IotHubDeviceDeletedEventData',
     'IotHubDeviceDisconnectedEventData',
     'IotHubDeviceTelemetryEventData',
+    'KeyVaultAccessPolicyChangedEventData',
     'KeyVaultCertificateExpiredEventData',
     'KeyVaultCertificateNearExpiryEventData',
     'KeyVaultCertificateNewVersionCreatedEventData',
