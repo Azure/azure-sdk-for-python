@@ -15,27 +15,27 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Fri, 18 Sep 2020 20:34:21 GMT
+      - Wed, 23 Sep 2020 19:51:40 GMT
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 18 Sep 2020 20:34:21 GMT
+      - Wed, 23 Sep 2020 19:51:40 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
-    uri: https://cosmostablescosmosname.table.cosmos.azure.com/Tables
+    uri: https://cosmostables.table.cosmos.azure.com/Tables
   response:
     body:
-      string: '{"TableName":"uttablede911870","odata.metadata":"https://cosmostablescosmosname.table.cosmos.azure.com/$metadata#Tables/@Element"}'
+      string: '{"TableName":"uttablede911870","odata.metadata":"https://cosmostables.table.cosmos.azure.com/$metadata#Tables/@Element"}'
     headers:
       content-type:
       - application/json;odata=minimalmetadata
       date:
-      - Fri, 18 Sep 2020 20:34:21 GMT
+      - Wed, 23 Sep 2020 19:51:40 GMT
       etag:
-      - W/"datetime'2020-09-18T20%3A34%3A21.7762823Z'"
+      - W/"datetime'2020-09-23T19%3A51%3A40.9763335Z'"
       location:
-      - https://cosmostablescosmosname.table.cosmos.azure.com/Tables('uttablede911870')
+      - https://cosmostables.table.cosmos.azure.com/Tables('uttablede911870')
       server:
       - Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -65,27 +65,27 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Fri, 18 Sep 2020 20:34:21 GMT
+      - Wed, 23 Sep 2020 19:51:41 GMT
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 18 Sep 2020 20:34:21 GMT
+      - Wed, 23 Sep 2020 19:51:41 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
-    uri: https://cosmostablescosmosname.table.cosmos.azure.com/uttablede911870
+    uri: https://cosmostables.table.cosmos.azure.com/uttablede911870
   response:
     body:
-      string: '{"odata.metadata":"https://cosmostablescosmosname.table.cosmos.azure.com/uttablede911870/$metadata#uttablede911870/@Element","odata.etag":"W/\"datetime''2020-09-18T20%3A34%3A22.2355463Z''\"","PartitionKey":"pkde911870","RowKey":"rkde911870","age@odata.type":"Edm.Int64","age":"39","sex":"male","married":true,"deceased":false,"ratio":3.1,"evenratio":3.0,"large@odata.type":"Edm.Int64","large":"933311100","Birthday@odata.type":"Edm.DateTime","Birthday":"1973-10-04T00:00:00.0000000Z","birthday@odata.type":"Edm.DateTime","birthday":"1970-10-04T00:00:00.0000000Z","binary@odata.type":"Edm.Binary","binary":"YmluYXJ5","other":20,"clsid@odata.type":"Edm.Guid","clsid":"c9da6455-213d-42c9-9a79-3e9149a57833","Timestamp":"2020-09-18T20:34:22.2355463Z"}'
+      string: '{"odata.metadata":"https://cosmostables.table.cosmos.azure.com/uttablede911870/$metadata#uttablede911870/@Element","odata.etag":"W/\"datetime''2020-09-23T19%3A51%3A41.3810183Z''\"","PartitionKey":"pkde911870","RowKey":"rkde911870","age@odata.type":"Edm.Int64","age":"39","sex":"male","married":true,"deceased":false,"ratio":3.1,"evenratio":3.0,"large@odata.type":"Edm.Int64","large":"933311100","Birthday@odata.type":"Edm.DateTime","Birthday":"1973-10-04T00:00:00.0000000Z","birthday@odata.type":"Edm.DateTime","birthday":"1970-10-04T00:00:00.0000000Z","binary@odata.type":"Edm.Binary","binary":"YmluYXJ5","other":20,"clsid@odata.type":"Edm.Guid","clsid":"c9da6455-213d-42c9-9a79-3e9149a57833","Timestamp":"2020-09-23T19:51:41.3810183Z"}'
     headers:
       content-type:
       - application/json;odata=minimalmetadata
       date:
-      - Fri, 18 Sep 2020 20:34:21 GMT
+      - Wed, 23 Sep 2020 19:51:40 GMT
       etag:
-      - W/"datetime'2020-09-18T20%3A34%3A22.2355463Z'"
+      - W/"datetime'2020-09-23T19%3A51%3A41.3810183Z'"
       location:
-      - https://cosmostablescosmosname.table.cosmos.azure.com/uttablede911870(PartitionKey='pkde911870',RowKey='rkde911870')
+      - https://cosmostables.table.cosmos.azure.com/uttablede911870(PartitionKey='pkde911870',RowKey='rkde911870')
       server:
       - Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -111,17 +111,17 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Fri, 18 Sep 2020 20:34:22 GMT
+      - Wed, 23 Sep 2020 19:51:41 GMT
       If-Match:
-      - W/"datetime'2020-09-18T20%3A34%3A22.2355463Z'"
+      - W/"datetime'2020-09-23T19%3A51%3A41.3810183Z'"
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 18 Sep 2020 20:34:22 GMT
+      - Wed, 23 Sep 2020 19:51:41 GMT
       x-ms-version:
       - '2019-07-07'
     method: PUT
-    uri: https://cosmostablescosmosname.table.cosmos.azure.com/uttablede911870(PartitionKey='pkde911870',RowKey='rkde911870')
+    uri: https://cosmostables.table.cosmos.azure.com/uttablede911870(PartitionKey='pkde911870',RowKey='rkde911870')
   response:
     body:
       string: ''
@@ -129,9 +129,9 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 18 Sep 2020 20:34:21 GMT
+      - Wed, 23 Sep 2020 19:51:41 GMT
       etag:
-      - W/"datetime'2020-09-18T20%3A34%3A22.2781447Z'"
+      - W/"datetime'2020-09-23T19%3A51%3A41.4332423Z'"
       server:
       - Microsoft-HTTPAPI/2.0
     status:
@@ -149,25 +149,25 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Fri, 18 Sep 2020 20:34:22 GMT
+      - Wed, 23 Sep 2020 19:51:41 GMT
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 18 Sep 2020 20:34:22 GMT
+      - Wed, 23 Sep 2020 19:51:41 GMT
       x-ms-version:
       - '2019-07-07'
     method: GET
-    uri: https://cosmostablescosmosname.table.cosmos.azure.com/uttablede911870(PartitionKey='pkde911870',RowKey='rkde911870')
+    uri: https://cosmostables.table.cosmos.azure.com/uttablede911870(PartitionKey='pkde911870',RowKey='rkde911870')
   response:
     body:
-      string: '{"odata.metadata":"https://cosmostablescosmosname.table.cosmos.azure.com/uttablede911870/$metadata#uttablede911870/@Element","odata.etag":"W/\"datetime''2020-09-18T20%3A34%3A22.2781447Z''\"","PartitionKey":"pkde911870","RowKey":"rkde911870","age":"abc","sex":"female","sign":"aquarius","birthday@odata.type":"Edm.DateTime","birthday":"1991-10-04T00:00:00.0000000Z","Timestamp":"2020-09-18T20:34:22.2781447Z"}'
+      string: '{"odata.metadata":"https://cosmostables.table.cosmos.azure.com/uttablede911870/$metadata#uttablede911870/@Element","odata.etag":"W/\"datetime''2020-09-23T19%3A51%3A41.4332423Z''\"","PartitionKey":"pkde911870","RowKey":"rkde911870","age":"abc","sex":"female","sign":"aquarius","birthday@odata.type":"Edm.DateTime","birthday":"1991-10-04T00:00:00.0000000Z","Timestamp":"2020-09-23T19:51:41.4332423Z"}'
     headers:
       content-type:
       - application/json;odata=minimalmetadata
       date:
-      - Fri, 18 Sep 2020 20:34:21 GMT
+      - Wed, 23 Sep 2020 19:51:41 GMT
       etag:
-      - W/"datetime'2020-09-18T20%3A34%3A22.2781447Z'"
+      - W/"datetime'2020-09-23T19%3A51%3A41.4332423Z'"
       server:
       - Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -187,15 +187,15 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Fri, 18 Sep 2020 20:34:22 GMT
+      - Wed, 23 Sep 2020 19:51:41 GMT
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 18 Sep 2020 20:34:22 GMT
+      - Wed, 23 Sep 2020 19:51:41 GMT
       x-ms-version:
       - '2019-07-07'
     method: DELETE
-    uri: https://cosmostablescosmosname.table.cosmos.azure.com/Tables('uttablede911870')
+    uri: https://cosmostables.table.cosmos.azure.com/Tables('uttablede911870')
   response:
     body:
       string: ''
@@ -203,7 +203,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 18 Sep 2020 20:34:21 GMT
+      - Wed, 23 Sep 2020 19:51:41 GMT
       server:
       - Microsoft-HTTPAPI/2.0
     status:
@@ -221,23 +221,23 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Fri, 18 Sep 2020 20:34:22 GMT
+      - Wed, 23 Sep 2020 19:51:42 GMT
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 18 Sep 2020 20:34:22 GMT
+      - Wed, 23 Sep 2020 19:51:42 GMT
       x-ms-version:
       - '2019-07-07'
     method: GET
-    uri: https://cosmostablescosmosname.table.cosmos.azure.com/Tables
+    uri: https://cosmostables.table.cosmos.azure.com/Tables
   response:
     body:
-      string: '{"value":[{"TableName":"querytable2da719db"},{"TableName":"querytable981b173a"},{"TableName":"querytablefe63147d"},{"TableName":"querytablec80b1810"},{"TableName":"querytable5436162b"},{"TableName":"querytable9c05125e"}],"odata.metadata":"https://cosmostablescosmosname.table.cosmos.azure.com/$metadata#Tables"}'
+      string: '{"value":[{"TableName":"querytablec80b1810"},{"TableName":"querytable5436162b"},{"TableName":"querytable981b173a"},{"TableName":"querytablefe63147d"},{"TableName":"querytable9c05125e"},{"TableName":"querytable2da719db"}],"odata.metadata":"https://cosmostables.table.cosmos.azure.com/$metadata#Tables"}'
     headers:
       content-type:
       - application/json;odata=minimalmetadata
       date:
-      - Fri, 18 Sep 2020 20:34:21 GMT
+      - Wed, 23 Sep 2020 19:51:41 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       transfer-encoding:

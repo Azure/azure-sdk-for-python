@@ -15,27 +15,27 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Fri, 18 Sep 2020 20:29:56 GMT
+      - Wed, 23 Sep 2020 19:47:15 GMT
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 18 Sep 2020 20:29:56 GMT
+      - Wed, 23 Sep 2020 19:47:15 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
-    uri: https://cosmostablescosmosname.table.cosmos.azure.com/Tables
+    uri: https://cosmostables.table.cosmos.azure.com/Tables
   response:
     body:
-      string: '{"TableName":"uttable5dfd1e10","odata.metadata":"https://cosmostablescosmosname.table.cosmos.azure.com/$metadata#Tables/@Element"}'
+      string: '{"TableName":"uttable5dfd1e10","odata.metadata":"https://cosmostables.table.cosmos.azure.com/$metadata#Tables/@Element"}'
     headers:
       content-type:
       - application/json;odata=minimalmetadata
       date:
-      - Fri, 18 Sep 2020 20:29:56 GMT
+      - Wed, 23 Sep 2020 19:47:15 GMT
       etag:
-      - W/"datetime'2020-09-18T20%3A29%3A57.0826247Z'"
+      - W/"datetime'2020-09-23T19%3A47%3A15.8316039Z'"
       location:
-      - https://cosmostablescosmosname.table.cosmos.azure.com/Tables('uttable5dfd1e10')
+      - https://cosmostables.table.cosmos.azure.com/Tables('uttable5dfd1e10')
       server:
       - Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -55,15 +55,15 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Fri, 18 Sep 2020 20:29:57 GMT
+      - Wed, 23 Sep 2020 19:47:16 GMT
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 18 Sep 2020 20:29:57 GMT
+      - Wed, 23 Sep 2020 19:47:16 GMT
       x-ms-version:
       - '2019-07-07'
     method: DELETE
-    uri: https://cosmostablescosmosname.table.cosmos.azure.com/Tables('uttable5dfd1e10')
+    uri: https://cosmostables.table.cosmos.azure.com/Tables('uttable5dfd1e10')
   response:
     body:
       string: ''
@@ -71,7 +71,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 18 Sep 2020 20:29:57 GMT
+      - Wed, 23 Sep 2020 19:47:16 GMT
       server:
       - Microsoft-HTTPAPI/2.0
     status:
@@ -89,23 +89,23 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Fri, 18 Sep 2020 20:29:57 GMT
+      - Wed, 23 Sep 2020 19:47:16 GMT
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 18 Sep 2020 20:29:57 GMT
+      - Wed, 23 Sep 2020 19:47:16 GMT
       x-ms-version:
       - '2019-07-07'
     method: GET
-    uri: https://cosmostablescosmosname.table.cosmos.azure.com/Tables
+    uri: https://cosmostables.table.cosmos.azure.com/Tables
   response:
     body:
-      string: '{"value":[],"odata.metadata":"https://cosmostablescosmosname.table.cosmos.azure.com/$metadata#Tables"}'
+      string: '{"value":[],"odata.metadata":"https://cosmostables.table.cosmos.azure.com/$metadata#Tables"}'
     headers:
       content-type:
       - application/json;odata=minimalmetadata
       date:
-      - Fri, 18 Sep 2020 20:29:57 GMT
+      - Wed, 23 Sep 2020 19:47:16 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       transfer-encoding:

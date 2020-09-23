@@ -15,27 +15,27 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Fri, 18 Sep 2020 20:26:40 GMT
+      - Wed, 23 Sep 2020 19:43:57 GMT
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 18 Sep 2020 20:26:40 GMT
+      - Wed, 23 Sep 2020 19:43:57 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
-    uri: https://cosmostablescosmosname.table.cosmos.azure.com/Tables
+    uri: https://cosmostables.table.cosmos.azure.com/Tables
   response:
     body:
-      string: '{"TableName":"uttable5269161a","odata.metadata":"https://cosmostablescosmosname.table.cosmos.azure.com/$metadata#Tables/@Element"}'
+      string: '{"TableName":"uttable5269161a","odata.metadata":"https://cosmostables.table.cosmos.azure.com/$metadata#Tables/@Element"}'
     headers:
       content-type:
       - application/json;odata=minimalmetadata
       date:
-      - Fri, 18 Sep 2020 20:26:41 GMT
+      - Wed, 23 Sep 2020 19:43:58 GMT
       etag:
-      - W/"datetime'2020-09-18T20%3A26%3A41.2067847Z'"
+      - W/"datetime'2020-09-23T19%3A43%3A58.7988487Z'"
       location:
-      - https://cosmostablescosmosname.table.cosmos.azure.com/Tables('uttable5269161a')
+      - https://cosmostables.table.cosmos.azure.com/Tables('uttable5269161a')
       server:
       - Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -55,24 +55,24 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Fri, 18 Sep 2020 20:26:41 GMT
+      - Wed, 23 Sep 2020 19:43:59 GMT
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 18 Sep 2020 20:26:41 GMT
+      - Wed, 23 Sep 2020 19:43:59 GMT
       x-ms-version:
       - '2019-07-07'
     method: GET
-    uri: https://cosmostablescosmosname.table.cosmos.azure.com/uttable5269161a(PartitionKey='pk5269161a',RowKey='rk5269161a')
+    uri: https://cosmostables.table.cosmos.azure.com/uttable5269161a(PartitionKey='pk5269161a',RowKey='rk5269161a')
   response:
     body:
       string: "{\"odata.error\":{\"code\":\"ResourceNotFound\",\"message\":{\"lang\":\"en-us\",\"value\":\"The
-        specified resource does not exist.\\nRequestID:42e7c2dc-f9ed-11ea-8ab6-58961df361d1\\n\"}}}\r\n"
+        specified resource does not exist.\\nRequestID:1feda357-fdd5-11ea-be44-58961df361d1\\n\"}}}\r\n"
     headers:
       content-type:
       - application/json;odata=minimalmetadata
       date:
-      - Fri, 18 Sep 2020 20:26:41 GMT
+      - Wed, 23 Sep 2020 19:43:58 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -92,15 +92,15 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Fri, 18 Sep 2020 20:26:41 GMT
+      - Wed, 23 Sep 2020 19:43:59 GMT
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 18 Sep 2020 20:26:41 GMT
+      - Wed, 23 Sep 2020 19:43:59 GMT
       x-ms-version:
       - '2019-07-07'
     method: DELETE
-    uri: https://cosmostablescosmosname.table.cosmos.azure.com/Tables('uttable5269161a')
+    uri: https://cosmostables.table.cosmos.azure.com/Tables('uttable5269161a')
   response:
     body:
       string: ''
@@ -108,7 +108,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 18 Sep 2020 20:26:41 GMT
+      - Wed, 23 Sep 2020 19:43:58 GMT
       server:
       - Microsoft-HTTPAPI/2.0
     status:
@@ -126,23 +126,23 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Fri, 18 Sep 2020 20:26:41 GMT
+      - Wed, 23 Sep 2020 19:43:59 GMT
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 18 Sep 2020 20:26:41 GMT
+      - Wed, 23 Sep 2020 19:43:59 GMT
       x-ms-version:
       - '2019-07-07'
     method: GET
-    uri: https://cosmostablescosmosname.table.cosmos.azure.com/Tables
+    uri: https://cosmostables.table.cosmos.azure.com/Tables
   response:
     body:
-      string: '{"value":[],"odata.metadata":"https://cosmostablescosmosname.table.cosmos.azure.com/$metadata#Tables"}'
+      string: '{"value":[],"odata.metadata":"https://cosmostables.table.cosmos.azure.com/$metadata#Tables"}'
     headers:
       content-type:
       - application/json;odata=minimalmetadata
       date:
-      - Fri, 18 Sep 2020 20:26:41 GMT
+      - Wed, 23 Sep 2020 19:43:58 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       transfer-encoding:
