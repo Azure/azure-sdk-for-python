@@ -461,13 +461,16 @@ class StorageTableBatchTest(TableTestCase):
             for i in range(100):
                 entity.RowKey = str(i)
                 batch.create_entity(entity)
-            self.table.send_batch(batch)
+            transaction = self.table.send_batch(batch)
 
             entities = list(self.table.query_entities("PartitionKey eq 'batch_inserts'"))
 
             # Assert
             self.assertIsNotNone(entities)
             self.assertEqual(100, len(entities))
+            e = self.table.get_entity('batch_inserts', '1')
+            e = transaction.get_entity(row_key='1')
+            r = transaction.get_request(row_key='2')
         finally:
             self._tear_down()
 

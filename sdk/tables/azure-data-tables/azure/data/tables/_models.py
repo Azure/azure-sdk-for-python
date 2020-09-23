@@ -530,6 +530,30 @@ class BatchErrorException(HttpResponseError):
         super(BatchErrorException, self).__init__(message=message, response=response)
 
 
+class BatchTransactionResult(object):
+    """The result of a successful batch operation, can be used by a user to
+    recreate a request in the case of BatchErrorException
+
+    :param List[HttpRequest] requests: The requests of the batch
+    :param List[HttpResponse] results: The HTTP response of each request
+    """
+
+    def __init__(self, requests, results):
+        self.requests = requests
+        self.results = results
+
+    def get_entity(self, row_key):
+        for request in self.requests:
+            temp_entity = _convert_to_entity(request.body)
+            if temp_entity['RowKey'] == row_key:
+                return temp_entity
+
+    def get_request(self, row_key):
+        for request in self.requests:
+            temp_entity = _convert_to_entity(request.body)
+            if temp_entity['RowKey'] == row_key:
+                return request
+
 
 class LocationMode(object):
     """

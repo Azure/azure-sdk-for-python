@@ -47,7 +47,7 @@ from azure.core.pipeline.policies import (
 
 from ._shared_access_signature import QueryStringConstants
 from ._constants import STORAGE_OAUTH_SCOPE, SERVICE_HOST_BASE, CONNECTION_TIMEOUT, READ_TIMEOUT
-from ._models import LocationMode
+from ._models import LocationMode, BatchTransactionResult
 from ._authentication import SharedKeyCredentialPolicy
 from ._policies import (
     StorageHeadersPolicy,
@@ -293,6 +293,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             if response.status_code not in [202]:
                 raise HttpResponseError(response=response)
             parts = response.parts()
+            transaction_result = BatchTransactionResult(reqs, parts)
             if raise_on_any_failure:
                 parts = list(response.parts())
                 if any(p for p in parts if not 200 <= p.status_code < 300):
@@ -301,8 +302,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
                         response=response, parts=parts
                     )
                     raise error
-                # return iter(parts)
-            return parts
+            return transaction_result
         except HttpResponseError as error:
             _process_table_error(error)
 
