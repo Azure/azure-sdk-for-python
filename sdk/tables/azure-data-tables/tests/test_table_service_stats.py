@@ -48,8 +48,6 @@ class TableServiceStatsTest(TableTestCase):
 
     # --Test cases per service ---------------------------------------
 
-    # @pytest.mark.skip("pending")
-    #@GlobalStorageAccountPreparer()
     @GlobalResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage', sku='Standard_RAGRS', random_name_enabled=True)
     def test_table_service_stats_f(self, resource_group, location, storage_account, storage_account_key):
@@ -61,7 +59,6 @@ class TableServiceStatsTest(TableTestCase):
         # Assert
         self._assert_stats_default(stats)
 
-    # @pytest.mark.skip("pending")
     @GlobalResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage', sku='Standard_RAGRS', random_name_enabled=True)
     def test_table_service_stats_when_unavailable(self, resource_group, location, storage_account, storage_account_key):

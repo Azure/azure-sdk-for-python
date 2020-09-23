@@ -149,7 +149,6 @@ class StorageTableBatchTest(TableTestCase):
         self.assertIsInstance(entity.timestamp, datetime)
 
     #--Test cases for batch ---------------------------------------------
-
     def test_inferred_types(self):
         # Arrange
         # Act
@@ -174,7 +173,6 @@ class StorageTableBatchTest(TableTestCase):
         self.assertEqual(entity.test6.type, EdmType.DOUBLE)
         self.assertEqual(entity.test7.type, EdmType.INT32)
         self.assertEqual(entity.test8.type, EdmType.INT64)
-
 
     @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()

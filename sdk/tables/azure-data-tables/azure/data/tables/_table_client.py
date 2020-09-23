@@ -21,7 +21,7 @@ from ._deserialize import _convert_to_entity, _trim_service_metadata
 from ._entity import TableEntity
 from ._generated import AzureTable
 from ._generated.models import (
-    AccessPolicy,
+    # AccessPolicy,
     SignedIdentifier,
     TableProperties,
     QueryOptions
@@ -32,7 +32,7 @@ from ._table_client_base import TableClientBase
 from ._serialize import serialize_iso
 from ._deserialize import _return_headers_and_deserialized
 from ._error import _process_table_error
-from ._models import TableEntityPropertiesPaged, UpdateMode
+from ._models import TableEntityPropertiesPaged, UpdateMode, AccessPolicy
 
 
 class TableClient(TableClientBase):
@@ -155,7 +155,7 @@ class TableClient(TableClientBase):
                 **kwargs)
         except HttpResponseError as error:
             _process_table_error(error)
-        return {s.id: s.access_policy or AccessPolicy() for s in identifiers}  # pylint: disable=E1125
+        return {s.id: s.access_policy or AccessPolicy() for s in identifiers}
 
     @distributed_trace
     def set_table_access_policy(

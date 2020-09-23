@@ -12,11 +12,11 @@ interactions:
       Content-Type:
       - application/xml
       Date:
-      - Fri, 04 Sep 2020 23:58:56 GMT
+      - Wed, 16 Sep 2020 21:56:42 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 04 Sep 2020 23:58:56 GMT
+      - Wed, 16 Sep 2020 21:56:42 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -25,25 +25,25 @@ interactions:
     body:
       string: ''
     headers:
-      date: Fri, 04 Sep 2020 23:58:56 GMT
+      date: Wed, 16 Sep 2020 21:56:42 GMT
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-ms-version: '2019-02-02'
     status:
       code: 202
       message: Accepted
-    url: https://pyacrstorageok324lpz7akw.table.core.windows.net/?restype=service&comp=properties
+    url: https://pyacrstoragewrla36mtikyp.table.core.windows.net/?restype=service&comp=properties
 - request:
     body: null
     headers:
       Accept:
       - application/xml
       Date:
-      - Fri, 04 Sep 2020 23:59:26 GMT
+      - Wed, 16 Sep 2020 21:57:12 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 04 Sep 2020 23:59:26 GMT
+      - Wed, 16 Sep 2020 21:57:12 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
@@ -54,12 +54,12 @@ interactions:
         /></StorageServiceProperties>"
     headers:
       content-type: application/xml
-      date: Fri, 04 Sep 2020 23:59:26 GMT
+      date: Wed, 16 Sep 2020 21:57:12 GMT
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-ms-version: '2019-02-02'
     status:
       code: 200
       message: OK
-    url: https://pyacrstorageok324lpz7akw.table.core.windows.net/?restype=service&comp=properties
+    url: https://pyacrstoragewrla36mtikyp.table.core.windows.net/?restype=service&comp=properties
 version: 1
