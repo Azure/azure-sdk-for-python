@@ -499,6 +499,11 @@ class SalesforceSinkWriteBehavior(str, Enum):
     upsert = "Upsert"
 
 
+class DynamicsSinkWriteBehavior(str, Enum):
+
+    upsert = "Upsert"
+
+
 class AzureSearchIndexWriteBehaviorType(str, Enum):
 
     merge = "Merge"
@@ -605,3 +610,10 @@ class IntegrationRuntimeAuthKeyName(str, Enum):
 
     auth_key1 = "authKey1"
     auth_key2 = "authKey2"
+
+
+class CopyBehaviorType(str, Enum):
+
+    preserve_hierarchy = "PreserveHierarchy"
+    flatten_hierarchy = "FlattenHierarchy"
+    merge_files = "MergeFiles"
