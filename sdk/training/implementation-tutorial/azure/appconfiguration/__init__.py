@@ -5,6 +5,13 @@
 # --------------------------------------------------------------------------
 
 from ._version import VERSION
+from ._client import AppConfigurationClient
+from ._models import ConfigurationSetting
 
+
+__all__ = [
+    'AppConfigurationClient',
+    'ConfigurationSetting'
+]
 
 __version__ = VERSION
