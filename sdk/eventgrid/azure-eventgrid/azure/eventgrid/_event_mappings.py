@@ -5,6 +5,17 @@
 from ._generated import models
 
 _event_mappings = {
+    "Microsoft.Communication.ChatMemberAddedToThreadWithUser": models.ACSChatMemberAddedToThreadWithUserEventData,
+    "Microsoft.Communication.ChatMemberRemovedFromThreadWithUser":
+    models.ACSChatMemberRemovedFromThreadWithUserEventData,
+    "Microsoft.Communication.ChatMessageDeleted": models.ACSChatMessageDeletedEventData,
+    "Microsoft.Communication.ChatMessageEdited": models.ACSChatMessageEditedEventData,
+    "Microsoft.Communication.ChatMessageReceived": models.ACSChatMessageReceivedEventData,
+    "Microsoft.Communication.ChatThreadCreatedWithUser": models.ACSChatThreadCreatedWithUserEventData,
+    "Microsoft.Communication.ChatThreadPropertiesUpdatedPerUser": models.ACSChatThreadPropertiesUpdatedPerUserEventData,
+    "Microsoft.Communication.ChatThreadWithUserDeleted": models.ACSChatThreadWithUserDeletedEventData,
+    "Microsoft.Communication.SMSDeliveryReportReceived": models.ACSSMSDeliveryReportReceivedEventData,
+    "Microsoft.Communication.SMSReceived": models.ACSSMSReceivedEventData,
     "Microsoft.AppConfiguration.KeyValueDeleted": models.AppConfigurationKeyValueDeletedEventData,
     "Microsoft.AppConfiguration.KeyValueModified": models.AppConfigurationKeyValueModifiedEventData,
     "Microsoft.ContainerRegistry.ImagePushed": models.ContainerRegistryImagePushedEventData,
