@@ -8,7 +8,7 @@ from typing import Optional, List, Union
 
 from azure.core import MatchConditions
 
-from .._generated.models import Get7ItemsItem
+from .._generated.models import SettingFields
 from .._models import ConfigurationSetting
 
 class AppConfigurationClient(object):
@@ -27,7 +27,7 @@ class AppConfigurationClient(object):
         *,
         label: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
-        select: Optional[List[Union[str, Get7ItemsItem]]] = None,
+        select: Optional[List[Union[str, SettingFields]]] = None,
         etag: Optional[str] = None,
         **kwargs
     ) -> ConfigurationSetting:
@@ -38,7 +38,7 @@ class AppConfigurationClient(object):
         :keyword ~azure.core.MatchConditions match_condition: A condition under which the operation should be completed.
         :keyword str etag: The etag by which the match condition should be assessed.
         :keyword select: The specific properties of the setting that should be returned.
-        :paramtype select: List[Union[str, Get7ItemsItem]]
+        :paramtype select: List[Union[str, ~azure.appconfiguration.SettingFields]]
         :raises ~azure.core.exceptions.ResourceNotFoundError: If no matching configuration setting exists.
         """
         pass

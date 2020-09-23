@@ -7,11 +7,13 @@
 from ._version import VERSION
 from ._client import AppConfigurationClient
 from ._models import ConfigurationSetting
+from ._generated.models import SettingFields
 
 
 __all__ = [
     'AppConfigurationClient',
-    'ConfigurationSetting'
+    'ConfigurationSetting',
+    'SettingFields'
 ]
 
 __version__ = VERSION

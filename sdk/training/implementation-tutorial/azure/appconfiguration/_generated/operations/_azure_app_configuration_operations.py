@@ -188,7 +188,7 @@ class AzureAppConfigurationOperationsMixin(object):
         label=None,  # type: Optional[str]
         after=None,  # type: Optional[str]
         accept_datetime=None,  # type: Optional[str]
-        select=None,  # type: Optional[List[Union[str, "models.Get6ItemsItem"]]]
+        select=None,  # type: Optional[List[Union[str, "models.SettingFields"]]]
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable["models.KeyValueListResult"]
@@ -207,7 +207,7 @@ class AzureAppConfigurationOperationsMixin(object):
          specified time.
         :type accept_datetime: str
         :param select: Used to select what fields are present in the returned resource(s).
-        :type select: list[str or ~azure.appconfiguration.models.Get6ItemsItem]
+        :type select: list[str or ~azure.appconfiguration.models.SettingFields]
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either KeyValueListResult or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.appconfiguration.models.KeyValueListResult]
@@ -288,7 +288,7 @@ class AzureAppConfigurationOperationsMixin(object):
         label=None,  # type: Optional[str]
         after=None,  # type: Optional[str]
         accept_datetime=None,  # type: Optional[str]
-        select=None,  # type: Optional[List[Union[str, "models.Head6ItemsItem"]]]
+        select=None,  # type: Optional[List[Union[str, "models.SettingFields"]]]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -307,7 +307,7 @@ class AzureAppConfigurationOperationsMixin(object):
          specified time.
         :type accept_datetime: str
         :param select: Used to select what fields are present in the returned resource(s).
-        :type select: list[str or ~azure.appconfiguration.models.Head6ItemsItem]
+        :type select: list[str or ~azure.appconfiguration.models.SettingFields]
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -367,7 +367,7 @@ class AzureAppConfigurationOperationsMixin(object):
         accept_datetime=None,  # type: Optional[str]
         if_match=None,  # type: Optional[str]
         if_none_match=None,  # type: Optional[str]
-        select=None,  # type: Optional[List[Union[str, "models.Get7ItemsItem"]]]
+        select=None,  # type: Optional[List[Union[str, "models.SettingFields"]]]
         **kwargs  # type: Any
     ):
         # type: (...) -> "models.KeyValue"
@@ -389,7 +389,7 @@ class AzureAppConfigurationOperationsMixin(object):
          not match the value provided.
         :type if_none_match: str
         :param select: Used to select what fields are present in the returned resource(s).
-        :type select: list[str or ~azure.appconfiguration.models.Get7ItemsItem]
+        :type select: list[str or ~azure.appconfiguration.models.SettingFields]
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: KeyValue, or the result of cls(response)
         :rtype: ~azure.appconfiguration.models.KeyValue
@@ -621,7 +621,7 @@ class AzureAppConfigurationOperationsMixin(object):
         accept_datetime=None,  # type: Optional[str]
         if_match=None,  # type: Optional[str]
         if_none_match=None,  # type: Optional[str]
-        select=None,  # type: Optional[List[Union[str, "models.Head7ItemsItem"]]]
+        select=None,  # type: Optional[List[Union[str, "models.SettingFields"]]]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -643,7 +643,7 @@ class AzureAppConfigurationOperationsMixin(object):
          not match the value provided.
         :type if_none_match: str
         :param select: Used to select what fields are present in the returned resource(s).
-        :type select: list[str or ~azure.appconfiguration.models.Head7ItemsItem]
+        :type select: list[str or ~azure.appconfiguration.models.SettingFields]
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -1027,7 +1027,7 @@ class AzureAppConfigurationOperationsMixin(object):
         label=None,  # type: Optional[str]
         after=None,  # type: Optional[str]
         accept_datetime=None,  # type: Optional[str]
-        select=None,  # type: Optional[List[Union[str, "models.Enum4"]]]
+        select=None,  # type: Optional[List[Union[str, "models.SettingFields"]]]
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable["models.KeyValueListResult"]
@@ -1046,7 +1046,7 @@ class AzureAppConfigurationOperationsMixin(object):
          specified time.
         :type accept_datetime: str
         :param select: Used to select what fields are present in the returned resource(s).
-        :type select: list[str or ~azure.appconfiguration.models.Enum4]
+        :type select: list[str or ~azure.appconfiguration.models.SettingFields]
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either KeyValueListResult or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.appconfiguration.models.KeyValueListResult]
@@ -1127,7 +1127,7 @@ class AzureAppConfigurationOperationsMixin(object):
         label=None,  # type: Optional[str]
         after=None,  # type: Optional[str]
         accept_datetime=None,  # type: Optional[str]
-        select=None,  # type: Optional[List[Union[str, "models.Enum5"]]]
+        select=None,  # type: Optional[List[Union[str, "models.SettingFields"]]]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -1146,7 +1146,7 @@ class AzureAppConfigurationOperationsMixin(object):
          specified time.
         :type accept_datetime: str
         :param select: Used to select what fields are present in the returned resource(s).
-        :type select: list[str or ~azure.appconfiguration.models.Enum5]
+        :type select: list[str or ~azure.appconfiguration.models.SettingFields]
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
