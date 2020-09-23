@@ -29,3 +29,13 @@ extends:
   parameters:
     ServiceDirectory: communication
     Artifacts:
+    - name: azure_communication_nspkg
+      safeName: azurecommunicationnspkg
+    - name: azure_communication_administration
+      safeName: azurecommunicationadministration
+    - name: azure_communication_chat
+      safeName: azurecommunicationchat
+    - name: azure_mgmt_communication
+      safeName: azuremgmtcommunication
+    - name: azure_communication_sms
+      safeName: azurecommunicationsms
