@@ -12,15 +12,15 @@
 # Methods Total   : 26
 # Methods Covered : 26
 # Examples Total  : 26
-# Examples Tested : 16
-# Coverage %      : 62
+# Examples Tested : 20
+# Coverage %      : 77
 # ----------------------
 
 # Current Operation Coverage:
 #   Operations: 1/1
-#   Redis: 9/13
+#   Redis: 10/13
 #   FirewallRules: 4/4
-#   PatchSchedules: 1/4
+#   PatchSchedules: 4/4
 #   LinkedServer: 1/4
 
 import time
@@ -77,7 +77,7 @@ class MgmtRedisTest(AzureMgmtTestCase):
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
         TENANT_ID = self.settings.TENANT_ID
         RESOURCE_GROUP = resource_group.name
-        NAME = "myosgk"
+        NAME = "myosgkxy"
         VIRTUAL_NETWORK_NAME = "myVirtualNetwork"
         SUBNET_NAME = "mySubnet"
         # CACHE_NAME = "myCache"
@@ -132,11 +132,10 @@ class MgmtRedisTest(AzureMgmtTestCase):
             }
           ]
         }
-        # result = self.mgmt_client.patch_schedules.create_or_update(resource_group_name=RESOURCE_GROUP, name=NAME, default=DEFAULT, parameters=BODY)
+        result = self.mgmt_client.patch_schedules.create_or_update(resource_group_name=RESOURCE_GROUP, name=NAME, parameters=BODY)
 
         if self.is_live:
             time.sleep(1800)
-            
 
 #--------------------------------------------------------------------------
         # /FirewallRules/put/RedisCacheFirewallRuleCreate[put]
@@ -196,7 +195,7 @@ class MgmtRedisTest(AzureMgmtTestCase):
 #--------------------------------------------------------------------------
         # /Redis/get/RedisCacheGet[get]
 #--------------------------------------------------------------------------
-        # result = self.mgmt_client.redis.list_upgrade_notifications(resource_group_name=RESOURCE_GROUP, name=NAME, history="5000")
+        result = self.mgmt_client.redis.get(resource_group_name=RESOURCE_GROUP, name=NAME)
 
 #--------------------------------------------------------------------------
         # /Redis/get/RedisCacheListByResourceGroup[get]
@@ -288,7 +287,7 @@ class MgmtRedisTest(AzureMgmtTestCase):
 #--------------------------------------------------------------------------
         # /PatchSchedules/delete/RedisCachePatchSchedulesDelete[delete]
 #--------------------------------------------------------------------------
-        # result = self.mgmt_client.patch_schedules.delete(resource_group_name=RESOURCE_GROUP, name=NAME, default=DEFAULT)
+        result = self.mgmt_client.patch_schedules.delete(resource_group_name=RESOURCE_GROUP, name=NAME)
 
 #--------------------------------------------------------------------------
         # /Redis/delete/RedisCacheDelete[delete]
