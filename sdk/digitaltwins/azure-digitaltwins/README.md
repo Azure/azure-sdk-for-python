@@ -60,7 +60,43 @@ credential = DefaultAzureCredential()
 serviceClient = DigitalTwinsClient(url, credential)
 ```
 
+## Logging
+This library uses the standard logging library for logging. Basic information about HTTP sessions (URLs, headers, etc.) is logged at INFO level.
 
+Detailed DEBUG level logging, including request/response bodies and unredacted headers, can be enabled on a client with the logging_enable keyword argument:
+
+### Client level logging
+```python Snippet:dt_digitaltwins_get.py
+import sys
+import logging
+
+# Create logger
+logger = logging.getLogger('azure')
+logger.setLevel(logging.DEBUG)
+handler = logging.StreamHandler(stream=sys.stdout)
+logger.addHandler(handler)
+
+# Create service client and enable logging for all operations
+service_client = DigitalTwinsClient(url, credential, logging_enable=True)
+```
+
+### Per-operation level logging
+```python Snippet:dt_models_get.py
+import sys
+import logging
+
+# Create logger
+logger = logging.getLogger('azure')
+logger.setLevel(logging.DEBUG)
+handler = logging.StreamHandler(stream=sys.stdout)
+logger.addHandler(handler)
+
+# Get model with logging enabled
+model = service_client.get_model(model_id, logging_enable=True)
+```
+
+### Optional Configuration
+Optional keyword arguments can be passed in at the client and per-operation level. The azure-core [reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-core/latest/azure.core.html) describes available configurations for retries, logging, transport protocols, and more.
 
 [azure_identity]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity
 [azure_identity_pypi]: https://pypi.org/project/azure-identity/

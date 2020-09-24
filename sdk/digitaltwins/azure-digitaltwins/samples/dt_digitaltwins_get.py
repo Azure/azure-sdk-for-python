@@ -3,6 +3,8 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import os
+import sys
+import logging
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 from azure.digitaltwins import DigitalTwinsClient
@@ -27,9 +29,24 @@ try:
     # - AZURE_CLIENT_ID: The application (client) ID registered in the AAD tenant
     # - AZURE_CLIENT_SECRET: The client secret for the registered application
     credential = DefaultAzureCredential()
-    service_client = DigitalTwinsClient(url, credential)
 
-    digital_twint_id = "BuildingTwin" # from the samples: BuildingTwin, FloorTwin, HVACTwin, RoomTwin
+    # Create logger
+    logger = logging.getLogger('azure')
+    logger.setLevel(logging.DEBUG)
+    handler = logging.StreamHandler(stream=sys.stdout)
+    logger.addHandler(handler)
+
+    # Create service client and enable logging for all operations
+    service_client = DigitalTwinsClient(url, credential, logging_enable=True)
+
+    # DigitalTwinId from the samples: 
+    #   BuildingTwin
+    #   FloorTwin
+    #   HVACTwin
+    #   RoomTwin
+    digital_twint_id = "<DIGITAL_TWIN_ID>"
+
+    # Get twin
     digital_twin = service_client.get_digital_twin(digital_twint_id)
 
     print(digital_twin)

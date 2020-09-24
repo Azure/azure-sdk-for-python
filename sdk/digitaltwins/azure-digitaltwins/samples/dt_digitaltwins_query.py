@@ -30,10 +30,12 @@ try:
     service_client = DigitalTwinsClient(url, credential)
 
     # Query digital twins
-    query = "SELECT * FROM digitaltwins"
+    query = {'query': 'SELECT * FROM digitaltwins'}
     query_result = service_client.query_twins(query)
 
-    print(query_result)
+    for i in range(len(query_result.items)):
+        print(query_result.items[i])
+        print()
 
 except HttpResponseError as e:
     print("\nThis sample has caught an error. {0}".format(e.message))
