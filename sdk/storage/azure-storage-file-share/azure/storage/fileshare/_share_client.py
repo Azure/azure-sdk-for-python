@@ -390,7 +390,7 @@ class ShareClient(StorageAccountHostsMixin):
         :param bool delete_snapshots:
             Indicates if snapshots are to be deleted.
         :keyword lease:
-            Required if the file has an active lease. Value can be a ShareLeaseClient object
+            Required if the share has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
 
             .. versionadded:: 12.2.0
