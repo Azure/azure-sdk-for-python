@@ -43,7 +43,7 @@ class SchemaOperations:
         self,
         schema_id: str,
         **kwargs
-    ) -> None:
+    ) -> str:
         """Get a registered schema by its unique ID reference.
 
         Gets a registered schema by its unique ID.  Azure Schema Registry guarantees that ID is unique
@@ -52,16 +52,17 @@ class SchemaOperations:
         :param schema_id: References specific schema in registry namespace.
         :type schema_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
-        :rtype: None
+        :return: str, or the result of cls(response)
+        :rtype: str
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls = kwargs.pop('cls', None)  # type: ClsType[str]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2020-09-01-preview"
+        accept = "text/plain; charset=utf-8"
 
         # Construct URL
         url = self.get_by_id.metadata['url']  # type: ignore
@@ -77,6 +78,7 @@ class SchemaOperations:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -84,7 +86,8 @@ class SchemaOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = self._deserialize('object', response)
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers['Location']=self._deserialize('str', response.headers.get('Location'))
@@ -92,10 +95,12 @@ class SchemaOperations:
         response_headers['Schema-Id']=self._deserialize('str', response.headers.get('Schema-Id'))
         response_headers['Schema-Id-Location']=self._deserialize('str', response.headers.get('Schema-Id-Location'))
         response_headers['Schema-Version']=self._deserialize('int', response.headers.get('Schema-Version'))
+        deserialized = self._deserialize('str', pipeline_response)
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)
 
+        return deserialized
     get_by_id.metadata = {'url': '/$schemagroups/getSchemaById/{schema-id}'}  # type: ignore
 
     async def query_id_by_content(
