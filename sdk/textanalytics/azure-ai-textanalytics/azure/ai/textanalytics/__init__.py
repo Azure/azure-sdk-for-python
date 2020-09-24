@@ -32,7 +32,12 @@ from ._models import (
     RecognizePiiEntitiesResult,
     PiiEntity,
     PiiEntityDomainType,
-    RecognizeHealthcareEntitiesResult
+    RecognizeHealthcareEntitiesResult,
+    EntitiesRecognitionTask,
+    PiiEntitiesRecognitionTask,
+    EntityLinkingTask,
+    KeyPhraseExtractionTask,
+    SentimentAnalysisTask
 )
 
 __all__ = [

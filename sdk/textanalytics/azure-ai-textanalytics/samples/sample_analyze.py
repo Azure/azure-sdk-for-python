@@ -31,7 +31,12 @@ class AnalyzeSample(object):
     def analyze(self):
         # [START analyze]
         from azure.core.credentials import AzureKeyCredential
-        from azure.ai.textanalytics import TextAnalyticsClient
+        from azure.ai.textanalytics import TextAnalyticsClient, \
+            EntitiesRecognitionTask, \
+            PiiEntitiesRecognitionTask, \
+            EntityLinkingTask, \
+            KeyPhraseExtractionTask, \
+            SentimentAnalysisTask
 
         endpoint = os.environ["AZURE_TEXT_ANALYTICS_ENDPOINT"]
         key = os.environ["AZURE_TEXT_ANALYTICS_KEY"]
@@ -45,12 +50,13 @@ class AnalyzeSample(object):
 
         job_id = text_analytics_client.begin_analyze(
             documents,
+            display_name="Sample Text Analysis",
             tasks=[
-                EntitiesRecognitionTask(name="Entities Recognition Sample Task"),
-                PiiEntitiesRecognitionTask(name="PII Entities Recognition Sample Task"),
-                EntityLinkingTask(name="Entity Linking Sample Task"),
-                KeyPhraseExtractionTask(name="Key Phrase Extraction Sample Task"),
-                SentimentAnalysisTask(name="Sentiment Analysis Sample Task")
+                EntitiesRecognitionTask(),
+                PiiEntitiesRecognitionTask(),
+                EntityLinkingTask(),
+                KeyPhraseExtractionTask(),
+                SentimentAnalysisTask()
             ]
         )
 
@@ -59,7 +65,7 @@ class AnalyzeSample(object):
         while job_details.status != "succeeded":
             job_details = text_analytics_client.analyze_status(job_id)
 
-        for task in result.entities_recognition_tasks:
+        for task in job_details.results.entities_recognition_tasks:
             print("Results of task '{}':".format(task.name))
             
             docs = [doc for doc in task.result.documents if not doc.is_error]
@@ -73,7 +79,7 @@ class AnalyzeSample(object):
                     print("...Length: {}".format(entity.length))
                 print("------------------------------------------")
 
-        for task in result.pii_entities_recognition_tasks:
+        for task in job_details.results.pii_entities_recognition_tasks:
             print("Results of task '{}':".format(task.name))
 
             docs = [doc for doc in task.result.documents if not doc.is_error]
@@ -86,7 +92,7 @@ class AnalyzeSample(object):
                 print("------------------------------------------")
 
 
-        for task in result.entity_linking_tasks:
+        for task in job_details.results.entity_linking_tasks:
             print("Results of task '{}':".format(task.name))
 
             docs = [doc for doc in result if not doc.is_error]
@@ -104,7 +110,7 @@ class AnalyzeSample(object):
                         print("......Length: {}".format(match.length))
                 print("------------------------------------------")
 
-        for task in result.keyphrase_extraction_tasks:
+        for task in job_details.results.keyphrase_extraction_tasks:
             print("Results of task '{}':".format(task.name))
 
             docs = [doc for doc in result if not doc.is_error]
@@ -141,5 +147,5 @@ class AnalyzeSample(object):
 
 
 if __name__ == "__main__":
-    sample = AnalyzeTextSample()
-    sample.analyze_text()
+    sample = AnalyzeSample()
+    sample.analyze()

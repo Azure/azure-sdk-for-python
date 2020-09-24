@@ -31,7 +31,12 @@ class AnalyzeTextSample(object):
     def analyze_text(self):
         # [START analyze_text]
         from azure.core.credentials import AzureKeyCredential
-        from azure.ai.textanalytics import TextAnalyticsClient
+        from azure.ai.textanalytics import TextAnalyticsClient, \
+            EntitiesRecognitionTask, \
+            PiiEntitiesRecognitionTask, \
+            EntityLinkingTask, \
+            KeyPhraseExtractionTask, \
+            SentimentAnalysisTask
 
         endpoint = os.environ["AZURE_TEXT_ANALYTICS_ENDPOINT"]
         key = os.environ["AZURE_TEXT_ANALYTICS_KEY"]
@@ -45,7 +50,7 @@ class AnalyzeTextSample(object):
 
         poller = text_analytics_client.begin_analyze_text(
             documents,
-            display_name="Sample Text Analysis"
+            display_name="Sample Text Analysis",
             tasks=[
                 EntitiesRecognitionTask(),
                 PiiEntitiesRecognitionTask(),
