@@ -18,6 +18,8 @@ class NodeSize(str, Enum):
     small = "Small"
     medium = "Medium"
     large = "Large"
+    xlarge = "XLarge"
+    xx_large = "XXLarge"
 
 
 class NodeSizeFamily(str, Enum):
