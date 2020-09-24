@@ -138,7 +138,7 @@ class ShareLeaseClient(object):
                 sharesnapshot=self.snapshot,
                 cls=return_response_headers,
                 **kwargs)
-            
+
         except StorageErrorException as error:
             process_storage_error(error)
         self.etag = response.get('etag')  # type: str
