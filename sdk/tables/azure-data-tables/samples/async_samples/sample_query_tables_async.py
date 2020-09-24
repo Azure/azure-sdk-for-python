@@ -38,9 +38,8 @@ class QueryTables(object):
         try:
             # [START tsc_list_tables]
             # List all the tables in the service
-            list_tables = table_service.list_tables()
             print("Listing tables:")
-            for table in list_tables:
+            async for table in table_service.list_tables():
                 print("\t{}".format(table.table_name))
             # [END tsc_list_tables]
 
@@ -48,15 +47,14 @@ class QueryTables(object):
             # Query for "table1" in the tables created
             table_name = "mytable1"
             name_filter = "TableName eq '{}'".format(table_name)
-            queried_tables = table_service.query_tables(filter=name_filter, results_per_page=10)
-
             print("Queried_tables")
-            for table in queried_tables:
+            async for table in table_service.query_tables(filter=name_filter, results_per_page=10):
                 print("\t{}".format(table.table_name))
             # [END tsc_query_tables]
 
         finally:
             await self.delete_tables()
+            await table_service.close()
 
     async def delete_tables(self):
         from azure.data.tables.aio import TableServiceClient
@@ -67,6 +65,7 @@ class QueryTables(object):
                 await ts.delete_table(table_name=table)
             except:
                 pass
+        await ts.close()
 
 
 async def main():

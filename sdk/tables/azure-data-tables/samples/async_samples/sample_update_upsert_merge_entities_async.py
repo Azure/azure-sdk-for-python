@@ -56,7 +56,7 @@ class TableEntitySamples(object):
         finally:
             # Delete the table
             await table.delete_table()
-        await table_client.close()
+        await table.close()
 
     async def list_all_entities(self):
         # Instantiate a table service client
@@ -86,7 +86,7 @@ class TableEntitySamples(object):
         finally:
             # Delete the table
             await table.delete_table()
-        await table_client.close()
+        await table.close()
 
     async def update_entities(self):
         # Instantiate a table service client
@@ -139,7 +139,7 @@ class TableEntitySamples(object):
         finally:
             # Delete the table
             await table.delete_table()
-        await table_client.close()
+        await table.close()
 
 
 async def main():
