@@ -86,13 +86,6 @@ class ShareLeaseClient(LeaseClientBase):
                 duration=-1,
                 proposed_lease_id=self.id,
                 cls=return_response_headers,
-                **kwargs) if isinstance(self._client, FileOperations) \
-                else await self._client.acquire_lease(
-                timeout=kwargs.pop('timeout', None),
-                duration=lease_duration,
-                sharesnapshot=self.snapshot,
-                proposed_lease_id=self.id,
-                cls=return_response_headers,
                 **kwargs)
 
         except StorageErrorException as error:
@@ -136,6 +129,7 @@ class ShareLeaseClient(LeaseClientBase):
                 sharesnapshot=self.snapshot,
                 cls=return_response_headers,
                 **kwargs)
+
         except StorageErrorException as error:
             process_storage_error(error)
         self.etag = response.get('etag')  # type: str
@@ -157,12 +151,6 @@ class ShareLeaseClient(LeaseClientBase):
             response = await self._client.release_lease(
                 lease_id=self.id,
                 timeout=kwargs.pop('timeout', None),
-                cls=return_response_headers,
-                **kwargs) if isinstance(self._client, FileOperations) \
-                else await self._client.release_lease(
-                lease_id=self.id,
-                timeout=kwargs.pop('timeout', None),
-                sharesnapshot=self.snapshot,
                 cls=return_response_headers,
                 **kwargs)
 
@@ -192,13 +180,6 @@ class ShareLeaseClient(LeaseClientBase):
                 proposed_lease_id=proposed_lease_id,
                 timeout=kwargs.pop('timeout', None),
                 cls=return_response_headers,
-                **kwargs) if isinstance(self._client, FileOperations) \
-                else await self._client.change_lease(
-                lease_id=self.id,
-                proposed_lease_id=proposed_lease_id,
-                timeout=kwargs.pop('timeout', None),
-                sharesnapshot=self.snapshot,
-                cls=return_response_headers,
                 **kwargs)
 
         except StorageErrorException as error:
@@ -227,12 +208,8 @@ class ShareLeaseClient(LeaseClientBase):
             response = await self._client.break_lease(
                 timeout=kwargs.pop('timeout', None),
                 cls=return_response_headers,
-                **kwargs) if isinstance(self._client, FileOperations) \
-                else await self._client.break_lease(
-                timeout=kwargs.pop('timeout', None),
-                sharesnapshot=self.snapshot,
-                cls=return_response_headers,
                 **kwargs)
+            
         except StorageErrorException as error:
             process_storage_error(error)
         return response.get('lease_time') # type: ignore
