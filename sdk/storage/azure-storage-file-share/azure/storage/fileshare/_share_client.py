@@ -393,7 +393,7 @@ class ShareClient(StorageAccountHostsMixin):
             Required if the share has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
 
-            .. versionadded:: 12.2.0
+            .. versionadded:: 12.6.0
 
         :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
         :keyword int timeout:
@@ -402,7 +402,7 @@ class ShareClient(StorageAccountHostsMixin):
             Required if the share has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
 
-            .. versionadded:: 12.2.0
+            .. versionadded:: 12.6.0
 
         :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
         :rtype: None
@@ -444,7 +444,7 @@ class ShareClient(StorageAccountHostsMixin):
             Required if the share has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
 
-            .. versionadded:: 12.2.0
+            .. versionadded:: 12.6.0
 
         :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
         :returns: The share properties.
@@ -488,7 +488,7 @@ class ShareClient(StorageAccountHostsMixin):
             Required if the share has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
 
-            .. versionadded:: 12.2.0
+            .. versionadded:: 12.6.0
 
         :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
         :returns: Share-updated property dict (Etag and last modified).
@@ -533,7 +533,7 @@ class ShareClient(StorageAccountHostsMixin):
             Required if the share has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
 
-            .. versionadded:: 12.2.0
+            .. versionadded:: 12.6.0
 
         :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
         :returns: Share-updated property dict (Etag and last modified).
@@ -574,7 +574,7 @@ class ShareClient(StorageAccountHostsMixin):
             Required if the share has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
 
-            .. versionadded:: 12.2.0
+            .. versionadded:: 12.6.0
 
         :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
         :returns: Access policy information in a dict.
@@ -613,7 +613,7 @@ class ShareClient(StorageAccountHostsMixin):
             Required if the share has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
 
-            .. versionadded:: 12.2.0
+            .. versionadded:: 12.6.0
 
         :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
         :returns: Share-updated property dict (Etag and last modified).
@@ -656,7 +656,7 @@ class ShareClient(StorageAccountHostsMixin):
             Required if the share has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
 
-            .. versionadded:: 12.2.0
+            .. versionadded:: 12.6.0
 
         :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
         :return: The approximate size of the data (in bytes) stored on the share.
