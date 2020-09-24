@@ -25,7 +25,7 @@ from .._shared.uploads_async import upload_data_chunks, FileChunkUploader, IterS
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 from .._shared.request_handlers import add_metadata_headers, get_length
 from .._shared.response_handlers import return_response_headers, process_storage_error
-from .._deserialize import deserialize_file_properties, deserialize_file_stream
+from .._deserialize import deserialize_file_properties, deserialize_file_stream, get_file_ranges_result
 from .._serialize import get_access_conditions, get_smb_properties, get_api_version
 from .._file_client import ShareFileClient as ShareFileClientBase
 from ._models import HandlesPaged
@@ -952,8 +952,10 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         :paramtype lease: ~azure.storage.fileshare.aio.ShareLeaseClient or str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :returns: A list of valid ranges.
-        :rtype: List[dict[str, int]]
+        :returns:
+            A tuple of two lists of file ranges as dictionaries with 'start' and 'end' keys.
+            The first element are filled file ranges, the 2nd element is cleared file ranges.
+        :rtype: tuple(list(dict(str, str), list(dict(str, str))
         """
         options = self._get_ranges_options(
             offset=offset,
@@ -965,7 +967,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             ranges = await self._client.file.get_range_list(**options)
         except StorageErrorException as error:
             process_storage_error(error)
-        return [{"start": b.start, "end": b.end} for b in ranges]
+        return get_file_ranges_result(ranges)
 
     @distributed_trace_async
     async def clear_range(  # type: ignore

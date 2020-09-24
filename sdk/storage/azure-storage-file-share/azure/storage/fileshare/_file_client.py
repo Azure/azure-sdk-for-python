@@ -1155,8 +1155,10 @@ class ShareFileClient(StorageAccountHostsMixin):
         :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :returns: A list of valid ranges.
-        :rtype: List[dict[str, int]]
+        :returns:
+            A tuple of two lists of file ranges as dictionaries with 'start' and 'end' keys.
+            The first element are filled file ranges, the 2nd element is cleared file ranges.
+        :rtype: tuple(list(dict(str, str), list(dict(str, str))
         """
         options = self._get_ranges_options(
             offset=offset,

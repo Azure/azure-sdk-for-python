@@ -67,10 +67,10 @@ def deserialize_permission_key(response, obj, headers):  # pylint: disable=unuse
 
 def get_file_ranges_result(ranges):
     # type: (ShareFileRangeList) -> Tuple[List[Dict[str, int]], List[Dict[str, int]]]
-    ranges = []  # type: ignore
+    file_ranges = []  # type: ignore
     clear_ranges = []  # type: List
     if ranges.ranges:
-        ranges = [{'start': b.start, 'end': b.end} for b in ranges.ranges]  # type: ignore
+        file_ranges = [{'start': b.start, 'end': b.end} for b in ranges.ranges]  # type: ignore
     if ranges.clear_ranges:
         clear_ranges = [{'start': b.start, 'end': b.end} for b in ranges.clear_ranges]
-    return ranges, clear_ranges
+    return file_ranges, clear_ranges
