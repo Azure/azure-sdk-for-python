@@ -47,8 +47,8 @@ class Operations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: OperationList or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.azurestackhci.models.OperationList or
+        :return: AvailableOperations or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.azurestackhci.models.AvailableOperations or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.azurestackhci.models.ErrorResponseException>`
@@ -79,7 +79,7 @@ class Operations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('OperationList', response)
+            deserialized = self._deserialize('AvailableOperations', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
