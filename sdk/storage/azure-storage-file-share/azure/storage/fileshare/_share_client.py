@@ -389,8 +389,22 @@ class ShareClient(StorageAccountHostsMixin):
 
         :param bool delete_snapshots:
             Indicates if snapshots are to be deleted.
+        :keyword lease:
+            Required if the file has an active lease. Value can be a ShareLeaseClient object
+            or the lease ID as a string.
+
+            .. versionadded:: 12.2.0
+
+        :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
+        :keyword lease:
+            Required if the share has an active lease. Value can be a ShareLeaseClient object
+            or the lease ID as a string.
+
+            .. versionadded:: 12.2.0
+
+        :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
         :rtype: None
 
         .. admonition:: Example:
@@ -426,6 +440,13 @@ class ShareClient(StorageAccountHostsMixin):
 
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
+        :keyword lease:
+            Required if the share has an active lease. Value can be a ShareLeaseClient object
+            or the lease ID as a string.
+
+            .. versionadded:: 12.2.0
+
+        :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
         :returns: The share properties.
         :rtype: ~azure.storage.fileshare.ShareProperties
 
@@ -463,6 +484,13 @@ class ShareClient(StorageAccountHostsMixin):
             Must be greater than 0, and less than or equal to 5TB.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
+        :keyword lease:
+            Required if the share has an active lease. Value can be a ShareLeaseClient object
+            or the lease ID as a string.
+
+            .. versionadded:: 12.2.0
+
+        :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
         :returns: Share-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
 
@@ -501,6 +529,13 @@ class ShareClient(StorageAccountHostsMixin):
         :type metadata: dict(str, str)
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
+        :keyword lease:
+            Required if the share has an active lease. Value can be a ShareLeaseClient object
+            or the lease ID as a string.
+
+            .. versionadded:: 12.2.0
+
+        :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
         :returns: Share-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
 
@@ -535,6 +570,13 @@ class ShareClient(StorageAccountHostsMixin):
 
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
+        :keyword lease:
+            Required if the share has an active lease. Value can be a ShareLeaseClient object
+            or the lease ID as a string.
+
+            .. versionadded:: 12.2.0
+
+        :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
         :returns: Access policy information in a dict.
         :rtype: dict[str, Any]
         """
@@ -567,6 +609,13 @@ class ShareClient(StorageAccountHostsMixin):
         :type signed_identifiers: dict(str, :class:`~azure.storage.fileshare.AccessPolicy`)
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
+        :keyword lease:
+            Required if the share has an active lease. Value can be a ShareLeaseClient object
+            or the lease ID as a string.
+
+            .. versionadded:: 12.2.0
+
+        :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
         :returns: Share-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
         """
@@ -603,6 +652,13 @@ class ShareClient(StorageAccountHostsMixin):
 
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
+        :keyword lease:
+            Required if the share has an active lease. Value can be a ShareLeaseClient object
+            or the lease ID as a string.
+
+            .. versionadded:: 12.2.0
+
+        :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
         :return: The approximate size of the data (in bytes) stored on the share.
         :rtype: int
         """

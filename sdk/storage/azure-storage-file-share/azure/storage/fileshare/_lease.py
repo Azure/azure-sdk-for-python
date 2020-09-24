@@ -168,7 +168,7 @@ class ShareLeaseClient(object):
                 timeout=kwargs.pop('timeout', None),
                 cls=return_response_headers,
                 **kwargs) if isinstance(self._client, FileOperations) \
-                else self._client.renew_lease(
+                else self._client.release_lease(
                 lease_id=self.id,
                 timeout=kwargs.pop('timeout', None),
                 sharesnapshot=self.snapshot,
