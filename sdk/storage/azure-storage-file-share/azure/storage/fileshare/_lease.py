@@ -96,7 +96,6 @@ class ShareLeaseClient(object):
                 proposed_lease_id=self.id,
                 cls=return_response_headers,
                 **kwargs)
-
         except StorageErrorException as error:
             process_storage_error(error)
         self.id = response.get('lease_id')  # type: str
@@ -138,7 +137,6 @@ class ShareLeaseClient(object):
                 sharesnapshot=self.snapshot,
                 cls=return_response_headers,
                 **kwargs)
-
         except StorageErrorException as error:
             process_storage_error(error)
         self.etag = response.get('etag')  # type: str
@@ -162,7 +160,6 @@ class ShareLeaseClient(object):
                 timeout=kwargs.pop('timeout', None),
                 cls=return_response_headers,
                 **kwargs)
-
         except StorageErrorException as error:
             process_storage_error(error)
         self.etag = response.get('etag')  # type: str
@@ -190,7 +187,6 @@ class ShareLeaseClient(object):
                 timeout=kwargs.pop('timeout', None),
                 cls=return_response_headers,
                 **kwargs)
-
         except StorageErrorException as error:
             process_storage_error(error)
         self.etag = response.get('etag')  # type: str
@@ -218,7 +214,6 @@ class ShareLeaseClient(object):
                 timeout=kwargs.pop('timeout', None),
                 cls=return_response_headers,
                 **kwargs)
-
         except StorageErrorException as error:
             process_storage_error(error)
         return response.get('lease_time')  # type: ignore
