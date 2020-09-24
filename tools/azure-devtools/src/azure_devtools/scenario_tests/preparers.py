@@ -41,6 +41,7 @@ class AbstractPreparer(object):
         self.test_class_instance = test_class_instance
 
         if self.live_test or test_class_instance.in_recording:
+            print("JFJFJFKDKDLAOEIEIEIEIEI")
             resource_name = self.random_name
             if not self.live_test and isinstance(self, RecordingProcessor):
                 test_class_instance.recording_processors.append(self)
@@ -66,7 +67,7 @@ class AbstractPreparer(object):
                 except Exception as e:
                     msg = "Preparer failure when creating resource {} for test {}: {}".format(
                                   self.__class__.__name__,
-                                  test_class_instance, 
+                                  test_class_instance,
                                   e)
                     while e:
                         try:
@@ -132,7 +133,7 @@ You must specify use_cache=True in the preparer decorator""".format(test_class_i
                     self.moniker
                 )
 
-            # We shouldn't trim the same kwargs that we use for deletion, 
+            # We shouldn't trim the same kwargs that we use for deletion,
             # we may remove some of the variables we needed to do the delete.
             trimmed_kwargs = {k:v for k,v in kwargs.items()}
             trim_kwargs_from_test_function(fn, trimmed_kwargs)
@@ -147,7 +148,7 @@ You must specify use_cache=True in the preparer decorator""".format(test_class_i
                         fn(test_class_instance, **trimmed_kwargs)
                 except (ImportError, SyntaxError): # ImportError for if asyncio isn't available, syntaxerror on some versions of 2.7
                     fn(test_class_instance, **trimmed_kwargs)
-            finally:              
+            finally:
                 # If we use cache we delay deletion for the end.
                 # This won't guarantee deletion order, but it will guarantee everything delayed
                 # does get deleted, in the worst case by getting rid of the RG at the top.

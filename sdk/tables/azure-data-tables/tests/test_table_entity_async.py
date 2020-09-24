@@ -300,7 +300,7 @@ class StorageTableEntityTest(TableTestCase):
             # resp = self.table.create_item(entity)
             resp = await self.table.create_entity(entity=entity)
 
-            # Assert  --- Does this mean insert returns nothing?
+            # Assert  
             self.assertIsNotNone(resp)
         finally:
             await self._tear_down()
