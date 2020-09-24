@@ -35,7 +35,7 @@ class MgmtSearchTest(AzureMgmtTestCase):
                 'partition_count': 1,
                 'hosting_mode': 'Default',
                 'sku': {
-                    'name': 'free'
+                    'name': 'basic'
                 }
             }
         ).result()
@@ -101,7 +101,7 @@ class MgmtSearchTest(AzureMgmtTestCase):
 
     @ResourceGroupPreparer()
     def test_search_admin_keys(self, resource_group, location):
-        account_name = 'ptvstestquerykeys'
+        account_name = 'ptvstestquerykeyss'
 
         service = self.client.services.create_or_update(
             resource_group.name,
@@ -112,7 +112,7 @@ class MgmtSearchTest(AzureMgmtTestCase):
                 'partition_count': 1,
                 'hosting_mode': 'Default',
                 'sku': {
-                    'name': 'free'
+                    'name': 'standard'
                 }
             }
         )
