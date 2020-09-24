@@ -44,11 +44,11 @@ def create_index():
     fields = [
         SimpleField(name="hotelId", type=SearchFieldDataType.String, key=True),
         SimpleField(name="baseRate", type=SearchFieldDataType.Double),
-        SearchableField(name="description", type=SearchFieldDataType.String),
+        SearchableField(name="description", type=SearchFieldDataType.String, collection=True),
         ComplexField(name="address", fields=[
             SimpleField(name="streetAddress", type=SearchFieldDataType.String),
             SimpleField(name="city", type=SearchFieldDataType.String),
-        ])
+        ], collection=True)
     ]
     cors_options = CorsOptions(allowed_origins=["*"], max_age_in_seconds=60)
     scoring_profiles = []
@@ -73,13 +73,13 @@ def update_index():
     fields = [
         SimpleField(name="hotelId", type=SearchFieldDataType.String, key=True),
         SimpleField(name="baseRate", type=SearchFieldDataType.Double),
-        SearchableField(name="description", type=SearchFieldDataType.String),
+        SearchableField(name="description", type=SearchFieldDataType.String, collection=True),
         SearchableField(name="hotelName", type=SearchFieldDataType.String),
         ComplexField(name="address", fields=[
             SimpleField(name="streetAddress", type=SearchFieldDataType.String),
             SimpleField(name="city", type=SearchFieldDataType.String),
             SimpleField(name="state", type=SearchFieldDataType.String),
-        ])
+        ], collection=True)
     ]
     cors_options = CorsOptions(allowed_origins=["*"], max_age_in_seconds=60)
     scoring_profile = ScoringProfile(
