@@ -52,8 +52,6 @@ class CheckNameResult(Model):
     :param name_available: Specifies a Boolean value that indicates if the
      name is available.
     :type name_available: bool
-    :param name: The name that was checked.
-    :type name: str
     :param message: Message indicating an unavailable name due to a conflict,
      or a description of the naming rules that are violated.
     :type message: str
@@ -64,15 +62,13 @@ class CheckNameResult(Model):
 
     _attribute_map = {
         'name_available': {'key': 'nameAvailable', 'type': 'bool'},
-        'name': {'key': 'name', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
         'reason': {'key': 'reason', 'type': 'str'},
     }
 
-    def __init__(self, *, name_available: bool=None, name: str=None, message: str=None, reason=None, **kwargs) -> None:
+    def __init__(self, *, name_available: bool=None, message: str=None, reason=None, **kwargs) -> None:
         super(CheckNameResult, self).__init__(**kwargs)
         self.name_available = name_available
-        self.name = name
         self.message = message
         self.reason = reason
 
@@ -103,17 +99,13 @@ class DigitalTwinsResource(Model):
     :type location: str
     :param tags: The resource tags.
     :type tags: dict[str, str]
-    :ivar sku: This property is reserved for future use, and will be
-     ignored/omitted
-    :vartype sku: ~azure.mgmt.digitaltwins.models.DigitalTwinsSkuInfo
     """
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'readonly': True, 'pattern': r'^(?![0-9]+$)(?!-)[a-zA-Z0-9-]{2,49}[a-zA-Z0-9]$'},
+        'name': {'readonly': True, 'pattern': r'^(?!-)[A-Za-z0-9-]{3,63}(?<!-)$'},
         'type': {'readonly': True},
         'location': {'required': True},
-        'sku': {'constant': True},
     }
 
     _attribute_map = {
@@ -122,10 +114,7 @@ class DigitalTwinsResource(Model):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'sku': {'key': 'sku', 'type': 'DigitalTwinsSkuInfo'},
     }
-
-    sku = DigitalTwinsSkuInfo()
 
     def __init__(self, *, location: str, tags=None, **kwargs) -> None:
         super(DigitalTwinsResource, self).__init__(**kwargs)
@@ -154,15 +143,13 @@ class DigitalTwinsDescription(DigitalTwinsResource):
     :type location: str
     :param tags: The resource tags.
     :type tags: dict[str, str]
-    :ivar sku: This property is reserved for future use, and will be
-     ignored/omitted
-    :vartype sku: ~azure.mgmt.digitaltwins.models.DigitalTwinsSkuInfo
     :ivar created_time: Time when DigitalTwinsInstance was created.
     :vartype created_time: datetime
-    :ivar last_updated_time: Time when DigitalTwinsInstance was created.
+    :ivar last_updated_time: Time when DigitalTwinsInstance was updated.
     :vartype last_updated_time: datetime
     :ivar provisioning_state: The provisioning state. Possible values include:
-     'Provisioning', 'Deleting', 'Succeeded', 'Failed', 'Canceled'
+     'Provisioning', 'Deleting', 'Succeeded', 'Failed', 'Canceled', 'Deleted',
+     'Warning', 'Suspending', 'Restoring', 'Moving'
     :vartype provisioning_state: str or
      ~azure.mgmt.digitaltwins.models.ProvisioningState
     :ivar host_name: Api endpoint to work with DigitalTwinsInstance.
@@ -171,10 +158,9 @@ class DigitalTwinsDescription(DigitalTwinsResource):
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'readonly': True, 'pattern': r'^(?![0-9]+$)(?!-)[a-zA-Z0-9-]{2,49}[a-zA-Z0-9]$'},
+        'name': {'readonly': True, 'pattern': r'^(?!-)[A-Za-z0-9-]{3,63}(?<!-)$'},
         'type': {'readonly': True},
         'location': {'required': True},
-        'sku': {'constant': True},
         'created_time': {'readonly': True},
         'last_updated_time': {'readonly': True},
         'provisioning_state': {'readonly': True},
@@ -187,7 +173,6 @@ class DigitalTwinsDescription(DigitalTwinsResource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'sku': {'key': 'sku', 'type': 'DigitalTwinsSkuInfo'},
         'created_time': {'key': 'properties.createdTime', 'type': 'iso-8601'},
         'last_updated_time': {'key': 'properties.lastUpdatedTime', 'type': 'iso-8601'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
@@ -203,7 +188,7 @@ class DigitalTwinsDescription(DigitalTwinsResource):
 
 
 class ExternalResource(Model):
-    """Definition of a Resource.
+    """Definition of a resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -282,14 +267,16 @@ class DigitalTwinsEndpointResourceProperties(Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar provisioning_state: The provisioning state. Possible values include:
-     'Provisioning', 'Deleting', 'Succeeded', 'Failed', 'Canceled'
+     'Provisioning', 'Deleting', 'Succeeded', 'Failed', 'Canceled', 'Deleted',
+     'Warning', 'Suspending', 'Restoring', 'Moving', 'Disabled'
     :vartype provisioning_state: str or
      ~azure.mgmt.digitaltwins.models.EndpointProvisioningState
     :ivar created_time: Time when the Endpoint was added to
      DigitalTwinsInstance.
     :vartype created_time: datetime
-    :param tags: The resource tags.
-    :type tags: dict[str, str]
+    :param dead_letter_secret: Dead letter storage secret. Will be obfuscated
+     during read.
+    :type dead_letter_secret: str
     :param endpoint_type: Required. Constant filled by server.
     :type endpoint_type: str
     """
@@ -303,7 +290,7 @@ class DigitalTwinsEndpointResourceProperties(Model):
     _attribute_map = {
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
         'created_time': {'key': 'createdTime', 'type': 'iso-8601'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        'dead_letter_secret': {'key': 'deadLetterSecret', 'type': 'str'},
         'endpoint_type': {'key': 'endpointType', 'type': 'str'},
     }
 
@@ -311,11 +298,11 @@ class DigitalTwinsEndpointResourceProperties(Model):
         'endpoint_type': {'ServiceBus': 'ServiceBus', 'EventHub': 'EventHub', 'EventGrid': 'EventGrid'}
     }
 
-    def __init__(self, *, tags=None, **kwargs) -> None:
+    def __init__(self, *, dead_letter_secret: str=None, **kwargs) -> None:
         super(DigitalTwinsEndpointResourceProperties, self).__init__(**kwargs)
         self.provisioning_state = None
         self.created_time = None
-        self.tags = tags
+        self.dead_letter_secret = dead_letter_secret
         self.endpoint_type = None
 
 
@@ -333,29 +320,6 @@ class DigitalTwinsPatchDescription(Model):
     def __init__(self, *, tags=None, **kwargs) -> None:
         super(DigitalTwinsPatchDescription, self).__init__(**kwargs)
         self.tags = tags
-
-
-class DigitalTwinsSkuInfo(Model):
-    """Information about the SKU of the DigitalTwinsInstance.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar name: Required. The name of the SKU. Default value: "F1" .
-    :vartype name: str
-    """
-
-    _validation = {
-        'name': {'required': True, 'constant': True},
-    }
-
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-    }
-
-    name = "F1"
 
 
 class ErrorDefinition(Model):
@@ -421,7 +385,7 @@ class ErrorResponseException(HttpOperationError):
 
 
 class EventGrid(DigitalTwinsEndpointResourceProperties):
-    """properties related to eventgrid.
+    """Properties related to EventGrid.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -429,23 +393,25 @@ class EventGrid(DigitalTwinsEndpointResourceProperties):
     All required parameters must be populated in order to send to Azure.
 
     :ivar provisioning_state: The provisioning state. Possible values include:
-     'Provisioning', 'Deleting', 'Succeeded', 'Failed', 'Canceled'
+     'Provisioning', 'Deleting', 'Succeeded', 'Failed', 'Canceled', 'Deleted',
+     'Warning', 'Suspending', 'Restoring', 'Moving', 'Disabled'
     :vartype provisioning_state: str or
      ~azure.mgmt.digitaltwins.models.EndpointProvisioningState
     :ivar created_time: Time when the Endpoint was added to
      DigitalTwinsInstance.
     :vartype created_time: datetime
-    :param tags: The resource tags.
-    :type tags: dict[str, str]
+    :param dead_letter_secret: Dead letter storage secret. Will be obfuscated
+     during read.
+    :type dead_letter_secret: str
     :param endpoint_type: Required. Constant filled by server.
     :type endpoint_type: str
-    :param topic_endpoint: EventGrid Topic Endpoint
+    :param topic_endpoint: Required. EventGrid Topic Endpoint
     :type topic_endpoint: str
     :param access_key1: Required. EventGrid secondary accesskey. Will be
-     obfuscated during read
+     obfuscated during read.
     :type access_key1: str
-    :param access_key2: Required. EventGrid secondary accesskey. Will be
-     obfuscated during read
+    :param access_key2: EventGrid secondary accesskey. Will be obfuscated
+     during read.
     :type access_key2: str
     """
 
@@ -453,22 +419,22 @@ class EventGrid(DigitalTwinsEndpointResourceProperties):
         'provisioning_state': {'readonly': True},
         'created_time': {'readonly': True},
         'endpoint_type': {'required': True},
+        'topic_endpoint': {'required': True},
         'access_key1': {'required': True},
-        'access_key2': {'required': True},
     }
 
     _attribute_map = {
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
         'created_time': {'key': 'createdTime', 'type': 'iso-8601'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        'dead_letter_secret': {'key': 'deadLetterSecret', 'type': 'str'},
         'endpoint_type': {'key': 'endpointType', 'type': 'str'},
         'topic_endpoint': {'key': 'TopicEndpoint', 'type': 'str'},
         'access_key1': {'key': 'accessKey1', 'type': 'str'},
         'access_key2': {'key': 'accessKey2', 'type': 'str'},
     }
 
-    def __init__(self, *, access_key1: str, access_key2: str, tags=None, topic_endpoint: str=None, **kwargs) -> None:
-        super(EventGrid, self).__init__(tags=tags, **kwargs)
+    def __init__(self, *, topic_endpoint: str, access_key1: str, dead_letter_secret: str=None, access_key2: str=None, **kwargs) -> None:
+        super(EventGrid, self).__init__(dead_letter_secret=dead_letter_secret, **kwargs)
         self.topic_endpoint = topic_endpoint
         self.access_key1 = access_key1
         self.access_key2 = access_key2
@@ -476,7 +442,7 @@ class EventGrid(DigitalTwinsEndpointResourceProperties):
 
 
 class EventHub(DigitalTwinsEndpointResourceProperties):
-    """properties related to eventhub.
+    """Properties related to EventHub.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -484,21 +450,23 @@ class EventHub(DigitalTwinsEndpointResourceProperties):
     All required parameters must be populated in order to send to Azure.
 
     :ivar provisioning_state: The provisioning state. Possible values include:
-     'Provisioning', 'Deleting', 'Succeeded', 'Failed', 'Canceled'
+     'Provisioning', 'Deleting', 'Succeeded', 'Failed', 'Canceled', 'Deleted',
+     'Warning', 'Suspending', 'Restoring', 'Moving', 'Disabled'
     :vartype provisioning_state: str or
      ~azure.mgmt.digitaltwins.models.EndpointProvisioningState
     :ivar created_time: Time when the Endpoint was added to
      DigitalTwinsInstance.
     :vartype created_time: datetime
-    :param tags: The resource tags.
-    :type tags: dict[str, str]
+    :param dead_letter_secret: Dead letter storage secret. Will be obfuscated
+     during read.
+    :type dead_letter_secret: str
     :param endpoint_type: Required. Constant filled by server.
     :type endpoint_type: str
     :param connection_string_primary_key: Required. PrimaryConnectionString of
-     the endpoint. Will be obfuscated during read
+     the endpoint. Will be obfuscated during read.
     :type connection_string_primary_key: str
-    :param connection_string_secondary_key: Required.
-     SecondaryConnectionString of the endpoint. Will be obfuscated during read
+    :param connection_string_secondary_key: SecondaryConnectionString of the
+     endpoint. Will be obfuscated during read.
     :type connection_string_secondary_key: str
     """
 
@@ -507,20 +475,19 @@ class EventHub(DigitalTwinsEndpointResourceProperties):
         'created_time': {'readonly': True},
         'endpoint_type': {'required': True},
         'connection_string_primary_key': {'required': True},
-        'connection_string_secondary_key': {'required': True},
     }
 
     _attribute_map = {
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
         'created_time': {'key': 'createdTime', 'type': 'iso-8601'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        'dead_letter_secret': {'key': 'deadLetterSecret', 'type': 'str'},
         'endpoint_type': {'key': 'endpointType', 'type': 'str'},
-        'connection_string_primary_key': {'key': 'connectionString-PrimaryKey', 'type': 'str'},
-        'connection_string_secondary_key': {'key': 'connectionString-SecondaryKey', 'type': 'str'},
+        'connection_string_primary_key': {'key': 'connectionStringPrimaryKey', 'type': 'str'},
+        'connection_string_secondary_key': {'key': 'connectionStringSecondaryKey', 'type': 'str'},
     }
 
-    def __init__(self, *, connection_string_primary_key: str, connection_string_secondary_key: str, tags=None, **kwargs) -> None:
-        super(EventHub, self).__init__(tags=tags, **kwargs)
+    def __init__(self, *, connection_string_primary_key: str, dead_letter_secret: str=None, connection_string_secondary_key: str=None, **kwargs) -> None:
+        super(EventHub, self).__init__(dead_letter_secret=dead_letter_secret, **kwargs)
         self.connection_string_primary_key = connection_string_primary_key
         self.connection_string_secondary_key = connection_string_secondary_key
         self.endpoint_type = 'EventHub'
@@ -537,21 +504,32 @@ class Operation(Model):
     :vartype name: str
     :param display: Operation properties display
     :type display: ~azure.mgmt.digitaltwins.models.OperationDisplay
+    :ivar origin: The intended executor of the operation.
+    :vartype origin: str
+    :ivar is_data_action: If the operation is a data action (for data plane
+     rbac).
+    :vartype is_data_action: bool
     """
 
     _validation = {
         'name': {'readonly': True},
+        'origin': {'readonly': True},
+        'is_data_action': {'readonly': True},
     }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'display': {'key': 'display', 'type': 'OperationDisplay'},
+        'origin': {'key': 'origin', 'type': 'str'},
+        'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
     }
 
     def __init__(self, *, display=None, **kwargs) -> None:
         super(Operation, self).__init__(**kwargs)
         self.name = None
         self.display = display
+        self.origin = None
+        self.is_data_action = None
 
 
 class OperationDisplay(Model):
@@ -593,7 +571,7 @@ class OperationDisplay(Model):
 
 
 class ServiceBus(DigitalTwinsEndpointResourceProperties):
-    """properties related to servicebus.
+    """Properties related to ServiceBus.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -601,21 +579,23 @@ class ServiceBus(DigitalTwinsEndpointResourceProperties):
     All required parameters must be populated in order to send to Azure.
 
     :ivar provisioning_state: The provisioning state. Possible values include:
-     'Provisioning', 'Deleting', 'Succeeded', 'Failed', 'Canceled'
+     'Provisioning', 'Deleting', 'Succeeded', 'Failed', 'Canceled', 'Deleted',
+     'Warning', 'Suspending', 'Restoring', 'Moving', 'Disabled'
     :vartype provisioning_state: str or
      ~azure.mgmt.digitaltwins.models.EndpointProvisioningState
     :ivar created_time: Time when the Endpoint was added to
      DigitalTwinsInstance.
     :vartype created_time: datetime
-    :param tags: The resource tags.
-    :type tags: dict[str, str]
+    :param dead_letter_secret: Dead letter storage secret. Will be obfuscated
+     during read.
+    :type dead_letter_secret: str
     :param endpoint_type: Required. Constant filled by server.
     :type endpoint_type: str
     :param primary_connection_string: Required. PrimaryConnectionString of the
-     endpoint. Will be obfuscated during read
+     endpoint. Will be obfuscated during read.
     :type primary_connection_string: str
-    :param secondary_connection_string: Required. SecondaryConnectionString of
-     the endpoint. Will be obfuscated during read
+    :param secondary_connection_string: SecondaryConnectionString of the
+     endpoint. Will be obfuscated during read.
     :type secondary_connection_string: str
     """
 
@@ -624,20 +604,19 @@ class ServiceBus(DigitalTwinsEndpointResourceProperties):
         'created_time': {'readonly': True},
         'endpoint_type': {'required': True},
         'primary_connection_string': {'required': True},
-        'secondary_connection_string': {'required': True},
     }
 
     _attribute_map = {
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
         'created_time': {'key': 'createdTime', 'type': 'iso-8601'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        'dead_letter_secret': {'key': 'deadLetterSecret', 'type': 'str'},
         'endpoint_type': {'key': 'endpointType', 'type': 'str'},
         'primary_connection_string': {'key': 'primaryConnectionString', 'type': 'str'},
         'secondary_connection_string': {'key': 'secondaryConnectionString', 'type': 'str'},
     }
 
-    def __init__(self, *, primary_connection_string: str, secondary_connection_string: str, tags=None, **kwargs) -> None:
-        super(ServiceBus, self).__init__(tags=tags, **kwargs)
+    def __init__(self, *, primary_connection_string: str, dead_letter_secret: str=None, secondary_connection_string: str=None, **kwargs) -> None:
+        super(ServiceBus, self).__init__(dead_letter_secret=dead_letter_secret, **kwargs)
         self.primary_connection_string = primary_connection_string
         self.secondary_connection_string = secondary_connection_string
         self.endpoint_type = 'ServiceBus'
