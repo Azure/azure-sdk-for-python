@@ -26,7 +26,7 @@ FakeCosmosAccount = FakeResource
 class CosmosAccountPreparer(AzureMgmtPreparer):
     def __init__(
         self,
-        name_prefix='cosmostables',
+        name_prefix='',
         sku='Standard_LRS',
         location='westus',
         kind='StorageV2',
@@ -122,4 +122,4 @@ class CosmosAccountPreparer(AzureMgmtPreparer):
                        'decorator @{} in front of this cosmos account preparer.'
             raise AzureTestError(template.format(ResourceGroupPreparer.__name__))
 
-CachedCosmosAccountPreparer = functools.partial(CosmosAccountPreparer, use_cache=True)
+CachedCosmosAccountPreparer = functools.partial(CosmosAccountPreparer, use_cache=True, random_name_enabled=False)

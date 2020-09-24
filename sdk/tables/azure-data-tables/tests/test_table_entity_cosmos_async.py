@@ -37,8 +37,11 @@ from _shared.testcase import TableTestCase, LogCaptured, RERUNS_DELAY, SLEEP_DEL
 class StorageTableEntityTest(TableTestCase):
 
     async def _set_up(self, cosmos_account, cosmos_account_key):
-        self.ts = TableServiceClient(self.account_url(cosmos_account, "cosmos"), cosmos_account_key)
+        account_url = self.account_url(cosmos_account, "cosmos")
+        print(f"Account_url: {account_url}")
+        self.ts = TableServiceClient(account_url, cosmos_account_key)
         self.table_name = self.get_resource_name('uttable')
+        print(self.table_name)
         self.table = self.ts.get_table_client(self.table_name)
         if self.is_live:
             try:
@@ -809,6 +812,7 @@ class StorageTableEntityTest(TableTestCase):
         await self._set_up(cosmos_account, cosmos_account_key)
         try:
             entity, _ = await self._insert_random_entity()
+            print("Table name: ", self.table.table_name)
 
             # Act
             sent_entity = self._create_updated_entity_dict(entity.PartitionKey, entity.RowKey)
