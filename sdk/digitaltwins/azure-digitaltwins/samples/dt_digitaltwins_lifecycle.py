@@ -47,7 +47,7 @@ try:
     print(model)
 
     # Create digital twin based on the created model
-    digital_twin_id = 'digitalTwin-' + uuid.UUID
+    digital_twin_id = 'digitalTwin-' + str(uuid.uuid4())
     with open(r"dtdl\digital_twins_\buildingTwin.json") as f:
         dtdl_digital_twins_building_twin = json.load(f)
 

@@ -92,28 +92,28 @@ try:
     print(models)
 
     # Create digital twins from the sample dtdls
-    building_twin_id = 'BuildingTwin-' + uuid.UUID
+    building_twin_id = 'BuildingTwin-' + str(uuid.uuid4())
     with open(r"dtdl\digital_twins\buildingTwin.json") as f:
         dtdl_digital_twins_building = json.load(f)
     created_building_twin = service_client.upsert_digital_twin(building_twin_id, dtdl_digital_twins_building)
     print('BuildingTwin:')
     print(created_building_twin)
 
-    floor_twin_id = 'FloorTwin-' + uuid.UUID
+    floor_twin_id = 'FloorTwin-' + str(uuid.uuid4())
     with open(r"dtdl\digital_twins\floorTwin.json") as f:
         dtdl_digital_twins_floor = json.load(f)
     created_floor_twin = service_client.upsert_digital_twin(floor_twin_id, dtdl_digital_twins_floor)
     print('FloorTwin:')
     print(created_floor_twin)
 
-    hvac_twin_id = 'HVACTwin-' + uuid.UUID
+    hvac_twin_id = 'HVACTwin-' + str(uuid.uuid4())
     with open(r"dtdl\digital_twins\hvacTwin.json") as f:
         dtdl_digital_twins_hvac = json.load(f)
     created_hvac_twin = service_client.upsert_digital_twin(hvac_twin_id, dtdl_digital_twins_hvac)
     print('HVACTwin:')
     print(created_hvac_twin)
 
-    room_twin_id = 'RoomTwin-' + uuid.UUID
+    room_twin_id = 'RoomTwin-' + str(uuid.uuid4())
     with open(r"dtdl\digital_twins\hvacTwin.json") as f:
         dtdl_digital_twins_room = json.load(f)
     created_room_twin = service_client.upsert_digital_twin(room_twin_id, dtdl_digital_twins_room)
@@ -131,7 +131,7 @@ try:
         )
 
     # Create event route
-    event_route_id = 'eventRoute-' + uuid.UUID
+    event_route_id = 'eventRoute-' + str(uuid.uuid4())
     event_filter = "$eventType = 'DigitalTwinTelemetryMessages' or $eventType = 'DigitalTwinLifecycleNotification'"
     service_client.upsert_event_route(
         event_route_id,
@@ -158,10 +158,10 @@ try:
     service_client.delete_digital_twin(hvac_twin_id)
     service_client.delete_digital_twin(room_twin_id)
 
-    service_client.decommission_model(building_twin_id, "")
-    service_client.decommission_model(floor_twin_id, "")
-    service_client.decommission_model(hvac_twin_id, "")
-    service_client.decommission_model(room_twin_id, "")
+    service_client.decommission_model(building_twin_id)
+    service_client.decommission_model(floor_twin_id)
+    service_client.decommission_model(hvac_twin_id)
+    service_client.decommission_model(room_twin_id)
 
     service_client.delete_model(building_twin_id)
     service_client.delete_model(floor_twin_id)

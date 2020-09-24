@@ -23,8 +23,8 @@ from azure.digitaltwins import DigitalTwinsClient
 # For the purpose of this example we will create temporary model and a temporay component model using random Ids.
 # We have to make sure these model Ids are unique within the DT instance so we use generated UUIDs.
 try:
-    model_id = 'model-' + uuid.UUID
-    component_id = 'component-' + uuid.UUID
+    model_id = 'model-' + str(uuid.uuid4())
+    component_id = 'component-' + str(uuid.uuid4())
 
     temporary_component = {
         "@id": component_id,
@@ -104,8 +104,8 @@ try:
         print(model + '\n')
 
     # Decomission models
-    service_client.decommission_model(model_id, "")
-    service_client.decommission_model(component_id, "")
+    service_client.decommission_model(model_id)
+    service_client.decommission_model(component_id)
 
     # Delete models
     service_client.delete_model(model_id)
