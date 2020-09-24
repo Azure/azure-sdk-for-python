@@ -659,7 +659,7 @@ class CustomFormModel(object):
          Metadata about each of the documents used to train the model.
     :ivar str display_name: Optional user defined model name (max length: 1024).
     :ivar properties: Optional model properties.
-    :vartype properties: ~azure.ai.formrecognizer.ModelProperties
+    :vartype properties: ~azure.ai.formrecognizer.CustomFormModelProperties
     """
 
     def __init__(self, **kwargs):
@@ -686,7 +686,7 @@ class CustomFormModel(object):
             if model.train_result else None,
             training_documents=TrainingDocumentInfo._from_generated(model.train_result)
             if model.train_result else None,
-            properties=ModelProperties._from_generated(model.model_info),
+            properties=CustomFormModelProperties._from_generated(model.model_info),
             display_name=model.model_info.model_name
         )
 
@@ -698,9 +698,8 @@ class CustomFormModel(object):
             training_started_on=model.model_info.created_date_time,
             training_completed_on=model.model_info.last_updated_date_time,
             submodels=CustomFormSubmodel._from_generated_composed(model),
-            errors=FormRecognizerError._from_generated_composed(model, model.model_info.model_id),
             training_documents=TrainingDocumentInfo._from_generated_composed(model),
-            properties=ModelProperties._from_generated(model.model_info),
+            properties=CustomFormModelProperties._from_generated(model.model_info),
             display_name=model.model_info.model_name
         )
 
@@ -890,13 +889,11 @@ class FormRecognizerError(object):
 
     :ivar str code: Error code.
     :ivar str message: Error message.
-    :ivar str model_id: Model ID the error was found under.
     """
 
     def __init__(self, **kwargs):
         self.code = kwargs.get("code", None)
         self.message = kwargs.get("message", None)
-        self.model_id = kwargs.get("model_id", None)
 
     @classmethod
     def _from_generated(cls, err):
@@ -904,25 +901,11 @@ class FormRecognizerError(object):
             cls(code=error.code, message=error.message) for error in err
         ] if err else []
 
-    @classmethod
-    def _from_generated_composed(cls, model, model_id):
-        errors = []
-        for train_result in model.composed_train_results:
-            for err in train_result.errors:
-                errors.append(
-                    cls(
-                        code=err.code,
-                        message=err.message,
-                        model_id=model_id
-                    )
-                )
-        return errors
-
     def __repr__(self):
         return "FormRecognizerError(code={}, message={})".format(self.code, self.message)[:1024]
 
 
-class ModelProperties(object):
+class CustomFormModelProperties(object):
     """Optional model properties.
 
     :ivar bool is_composed_model: Is this model composed? (default: false).
@@ -941,7 +924,7 @@ class ModelProperties(object):
         )
 
     def __repr__(self):
-        return "ModelProperties(is_composed_model={})".format(self.is_composed_model)
+        return "CustomFormModelProperties(is_composed_model={})".format(self.is_composed_model)
 
 
 class CustomFormModelInfo(object):
@@ -958,7 +941,7 @@ class CustomFormModelInfo(object):
     :ivar display_name: Optional user defined model name (max length: 1024).
     :vartype display_name: str
     :ivar properties: Optional model properties.
-    :vartype properties: ~azure.ai.formrecognizer.ModelProperties
+    :vartype properties: ~azure.ai.formrecognizer.CustomFormModelProperties
     """
 
     def __init__(self, **kwargs):
@@ -978,7 +961,7 @@ class CustomFormModelInfo(object):
             status=model.status,
             training_started_on=model.created_date_time,
             training_completed_on=model.last_updated_date_time,
-            properties=ModelProperties._from_generated(model),
+            properties=CustomFormModelProperties._from_generated(model),
             display_name=model.model_name
         )
 

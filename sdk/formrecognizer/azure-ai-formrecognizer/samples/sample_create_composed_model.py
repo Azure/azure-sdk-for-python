@@ -46,8 +46,8 @@ class CompositeModelSample(object):
         print("Model display name: {}".format(model.display_name))
         print("Is this a composite model?: {}".format(model.properties.is_composed_model))
         print("Status: {}".format(model.status))
-        print("Training started on: {}".format(model.training_started_on))
-        print("Training completed on: {}".format(model.training_completed_on))
+        print("Composed model creation started on: {}".format(model.training_started_on))
+        print("Creation completed on: {}".format(model.training_completed_on))
 
         print("Recognized fields:")
         for submodel in model.submodels:
