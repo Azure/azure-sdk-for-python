@@ -24,9 +24,9 @@ from azure.digitaltwins import DigitalTwinsClient
 # For the purpose of this example we will create temporary digital twin using random Ids.
 # We have to make sure these model Ids are unique within the DT instance so we use generated UUIDs.
 try:
-    model_id = 'model-' + uuid.UUID
-    component_id = 'component-' + uuid.UUID
-    digital_twin_id = 'digitalTwin-' + uuid.UUID
+    model_id = 'model-' + str(uuid.uuid4())
+    component_id = 'component-' + str(uuid.uuid4())
+    digital_twin_id = 'digitalTwin-' + str(uuid.uuid4())
 
     temporary_component = {
         "@id": component_id,
