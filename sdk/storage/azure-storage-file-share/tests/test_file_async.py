@@ -885,7 +885,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
 
         # Assert
         # To make sure the range of the file is actually updated
-        file_ranges = await destination_file_client.get_ranges()
+        file_ranges, cleared = await destination_file_client.get_ranges()
         file_content = await destination_file_client.download_file(offset=0, length=end + 1)
         file_content = await file_content.readall()
         self.assertEqual(1, len(file_ranges))
@@ -943,7 +943,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         await file_client.create_file(1024)
 
         # Act
-        ranges = await file_client.get_ranges()
+        ranges, cleared = await file_client.get_ranges()
 
         # Assert
         self.assertIsNotNone(ranges)
@@ -969,7 +969,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
             await file_client.get_ranges(lease=str(uuid.uuid4()))
 
         # Get ranges on a leased file will succeed without provide the lease
-        ranges = await file_client.get_ranges()
+        ranges, cleared = await file_client.get_ranges()
 
         # Assert
         self.assertIsNotNone(ranges)
