@@ -291,7 +291,7 @@ class ShareFileClient(StorageAccountHostsMixin):
                 :caption: Acquiring a lease on a file.
         """
         lease = ShareLeaseClient(self, lease_id=lease_id)  # type: ignore
-        lease.acquire(**kwargs)
+        lease.acquire(lease_duration=-1, **kwargs)
         return lease
 
     @distributed_trace

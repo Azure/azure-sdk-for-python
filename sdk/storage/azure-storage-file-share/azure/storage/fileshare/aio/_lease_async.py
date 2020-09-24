@@ -83,7 +83,7 @@ class ShareLeaseClient(LeaseClientBase):
         try:
             response = await self._client.acquire_lease(
                 timeout=kwargs.pop('timeout', None),
-                duration=-1,
+                duration=lease_duration,
                 proposed_lease_id=self.id,
                 cls=return_response_headers,
                 **kwargs)

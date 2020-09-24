@@ -166,7 +166,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
                 :caption: Acquiring a lease on a blob.
         """
         lease = ShareLeaseClient(self, lease_id=lease_id)  # type: ignore
-        await lease.acquire(**kwargs)
+        await lease.acquire(lease_duration=-1, **kwargs)
         return lease
 
     @distributed_trace_async
