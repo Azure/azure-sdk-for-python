@@ -27,6 +27,7 @@
 #   DatabaseAutomaticTuning: 2/2
 #   RestorePoints: 4/4
 #   BackupShortTermRetentionPolicies: 4/4
+#   LongTermRetentionBackups: 6/10
 
 import unittest
 
@@ -472,8 +473,8 @@ class MgmtSqlTest(AzureMgmtTestCase):
         LONG_TERM_RETENTION_SERVER_NAME = "myserverxpxyz"
         LONG_TERM_RETENTION_DATABASE_NAME = "mydatabase"
         LOCATION_NAME = AZURE_LOCATION
-        BACKUP_NAME = ""
-        POLICY_NAME = "Default
+        BACKUP_NAME = "t"
+        POLICY_NAME = "Default"
 
 #--------------------------------------------------------------------------
         # /LongTermRetentionBackups/get/Get the long term retention backup.[get]
@@ -518,14 +519,14 @@ class MgmtSqlTest(AzureMgmtTestCase):
 #--------------------------------------------------------------------------
         # /LongTermRetentionBackups/delete/Delete the long term retention backup.[delete]
 #--------------------------------------------------------------------------
-        result = self.mgmt_client.long_term_retention_backups.begin_delete_by_resource_group(resource_group_name=RESOURCE_GROUP, location_name=LOCATION_NAME, long_term_retention_server_name=LONG_TERM_RETENTION_SERVER_NAME, long_term_retention_database_name=LONG_TERM_RETENTION_DATABASE_NAME, backup_name=BACKUP_NAME)
-        result = result.result()
+        # result = self.mgmt_client.long_term_retention_backups.begin_delete_by_resource_group(resource_group_name=RESOURCE_GROUP, location_name=LOCATION_NAME, long_term_retention_server_name=LONG_TERM_RETENTION_SERVER_NAME, long_term_retention_database_name=LONG_TERM_RETENTION_DATABASE_NAME, backup_name=BACKUP_NAME)
+        # result = result.result()
 
 #--------------------------------------------------------------------------
         # /LongTermRetentionBackups/delete/Delete the long term retention backup.[delete]
 #--------------------------------------------------------------------------
-        result = self.mgmt_client.long_term_retention_backups.begin_delete_by_resource_group(resource_group_name=RESOURCE_GROUP, location_name=LOCATION_NAME, long_term_retention_server_name=LONG_TERM_RETENTION_SERVER_NAME, long_term_retention_database_name=LONG_TERM_RETENTION_DATABASE_NAME, backup_name=BACKUP_NAME)
-        result = result.result()
+        # result = self.mgmt_client.long_term_retention_backups.begin_delete_by_resource_group(resource_group_name=RESOURCE_GROUP, location_name=LOCATION_NAME, long_term_retention_server_name=LONG_TERM_RETENTION_SERVER_NAME, long_term_retention_database_name=LONG_TERM_RETENTION_DATABASE_NAME, backup_name=BACKUP_NAME)
+        # result = result.result()
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_backup_long_term_retention_policy(self, resource_group):

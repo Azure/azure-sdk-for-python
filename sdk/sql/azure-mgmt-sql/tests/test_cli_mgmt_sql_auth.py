@@ -9,6 +9,9 @@
 # Current Operation Coverage:
 #   ServerKeys: 4/4
 #   ServerAzureADOnlyAuthentications: 0/4
+#   EncryptionProtectors: 4/4
+#   ManagedInstanceKeys: 4/4
+#   ManagedInstanceEncryptionProtectors: 3/4
 
 import unittest
 
@@ -143,6 +146,184 @@ class MgmtSqlTest(AzureMgmtTestCase):
             return (vault_id, key.id)
         else:
             return ('000', '000')
+
+    def test_managed_instance_encryption_protector(self):
+
+        RESOURCE_GROUP = "testManagedInstance"
+        MANAGED_INSTANCE_NAME = "testinstancexxy"
+        SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
+        TENANT_ID = self.settings.TENANT_ID
+        CLIENT_OID = self.settings.CLIENT_OID if self.is_live else "000"
+        KEY_VAULT_NAME = self.get_resource_name("keyvaultxmmxh")
+        ENCRYPTION_PROTECTOR_NAME = "current"
+
+#--------------------------------------------------------------------------
+        # /ManagedInstances/get/Get managed instance[get]
+#--------------------------------------------------------------------------
+        instance = self.mgmt_client.managed_instances.get(resource_group_name=RESOURCE_GROUP, managed_instance_name=MANAGED_INSTANCE_NAME)
+        oid2 = instance.identity.principal_id
+
+        VAULT_ID, KEY_URI = self.create_key(RESOURCE_GROUP, AZURE_LOCATION, KEY_VAULT_NAME, TENANT_ID, CLIENT_OID, oid2)
+
+#--------------------------------------------------------------------------
+        # /ManagedInstanceKeys/put/Creates or updates a managed instance key[put]
+#--------------------------------------------------------------------------
+        KEY_NAME = KEY_VAULT_NAME + "_testkey_" + KEY_URI.split("/")[-1]
+        BODY = {
+          "server_key_type": "AzureKeyVault",
+          "uri": KEY_URI
+        }
+        result = self.mgmt_client.managed_instance_keys.begin_create_or_update(resource_group_name=RESOURCE_GROUP, managed_instance_name=MANAGED_INSTANCE_NAME, key_name=KEY_NAME, parameters=BODY)
+        result = result.result()
+
+#--------------------------------------------------------------------------
+        # /ManagedInstanceEncryptionProtectors/put/Update the encryption protector to key vault[put]
+#--------------------------------------------------------------------------
+        BODY = {
+          "server_key_type": "AzureKeyVault",
+          "server_key_name": KEY_NAME
+        }
+        result = self.mgmt_client.managed_instance_encryption_protectors.begin_create_or_update(resource_group_name=RESOURCE_GROUP, managed_instance_name=MANAGED_INSTANCE_NAME, encryption_protector_name=ENCRYPTION_PROTECTOR_NAME, parameters=BODY)
+        result = result.result()
+
+#--------------------------------------------------------------------------
+        # /ManagedInstanceEncryptionProtectors/get/Get the encryption protector[get]
+#--------------------------------------------------------------------------
+        result = self.mgmt_client.managed_instance_encryption_protectors.get(resource_group_name=RESOURCE_GROUP, managed_instance_name=MANAGED_INSTANCE_NAME, encryption_protector_name=ENCRYPTION_PROTECTOR_NAME)
+
+#--------------------------------------------------------------------------
+        # /ManagedInstanceEncryptionProtectors/get/List encryption protectors by managed instance[get]
+#--------------------------------------------------------------------------
+        result = self.mgmt_client.managed_instance_encryption_protectors.list_by_instance(resource_group_name=RESOURCE_GROUP, managed_instance_name=MANAGED_INSTANCE_NAME)
+
+#--------------------------------------------------------------------------
+        # /ManagedInstanceEncryptionProtectors/post/Revalidates the encryption protector[post]
+#--------------------------------------------------------------------------
+        # result = self.mgmt_client.managed_instance_encryption_protectors.begin_revalidate(resource_group_name=RESOURCE_GROUP, managed_instance_name=MANAGED_INSTANCE_NAME, encryption_protector_name=ENCRYPTION_PROTECTOR_NAME)
+        # result = result.result()
+
+#--------------------------------------------------------------------------
+        # /ManagedInstanceKeys/delete/Delete the managed instance key[delete]
+#--------------------------------------------------------------------------
+        # result = self.mgmt_client.managed_instance_keys.begin_delete(resource_group_name=RESOURCE_GROUP, managed_instance_name=MANAGED_INSTANCE_NAME, key_name=KEY_NAME)
+        # result = result.result()
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    def test_encryption_protector(self, resource_group):
+
+        SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
+        TENANT_ID = self.settings.TENANT_ID
+        CLIENT_OID = self.settings.CLIENT_OID if self.is_live else "000"
+        RESOURCE_GROUP = resource_group.name
+        SERVER_NAME = "myserverxpcz"
+        KEY_VAULT_NAME = self.get_resource_name("keyvaultxmmxk")
+        ENCRYPTION_PROTECTOR_NAME = "current"
+
+#--------------------------------------------------------------------------
+        # /Servers/put/Create server[put]
+#--------------------------------------------------------------------------
+        BODY = {
+          "location": AZURE_LOCATION,
+          "identity": {
+            "type": "SystemAssigned"
+          },
+          "administrator_login": "dummylogin",
+          "administrator_login_password": "Un53cuRE!",
+          "version": "12.0",
+          "public_network_access":"Enabled"
+        }
+        result = self.mgmt_client.servers.begin_create_or_update(resource_group_name=RESOURCE_GROUP, server_name=SERVER_NAME, parameters=BODY)
+        server = result.result()
+        oid2 = server.identity.principal_id
+
+        VAULT_ID, KEY_URI = self.create_key(RESOURCE_GROUP, AZURE_LOCATION, KEY_VAULT_NAME, TENANT_ID, CLIENT_OID, oid2)
+
+#--------------------------------------------------------------------------
+        # /ServerKeys/put/Creates or updates a server key[put]
+#--------------------------------------------------------------------------
+        KEY_NAME = KEY_VAULT_NAME + "_testkey_" + KEY_URI.split("/")[-1]
+        BODY = {
+          "server_key_type": "AzureKeyVault",
+          "uri": KEY_URI
+        }
+        result = self.mgmt_client.server_keys.begin_create_or_update(resource_group_name=RESOURCE_GROUP, server_name=SERVER_NAME, key_name=KEY_NAME, parameters=BODY)
+        result = result.result()
+
+#--------------------------------------------------------------------------
+        # /EncryptionProtectors/put/Update the encryption protector to service managed[put]
+#--------------------------------------------------------------------------
+        BODY = {
+          "server_key_type": "AzureKeyVault",
+          "server_key_name": KEY_NAME
+        }
+        result = self.mgmt_client.encryption_protectors.begin_create_or_update(resource_group_name=RESOURCE_GROUP, server_name=SERVER_NAME, encryption_protector_name=ENCRYPTION_PROTECTOR_NAME, parameters=BODY)
+        result = result.result()
+
+#--------------------------------------------------------------------------
+        # /EncryptionProtectors/get/Get the encryption protector[get]
+#--------------------------------------------------------------------------
+        result = self.mgmt_client.encryption_protectors.get(resource_group_name=RESOURCE_GROUP, server_name=SERVER_NAME, encryption_protector_name=ENCRYPTION_PROTECTOR_NAME)
+
+#--------------------------------------------------------------------------
+        # /EncryptionProtectors/get/List encryption protectors by server[get]
+#--------------------------------------------------------------------------
+        result = self.mgmt_client.encryption_protectors.list_by_server(resource_group_name=RESOURCE_GROUP, server_name=SERVER_NAME)
+
+#--------------------------------------------------------------------------
+        # /EncryptionProtectors/post/Revalidates the encryption protector[post]
+#--------------------------------------------------------------------------
+        result = self.mgmt_client.encryption_protectors.begin_revalidate(resource_group_name=RESOURCE_GROUP, server_name=SERVER_NAME, encryption_protector_name=ENCRYPTION_PROTECTOR_NAME)
+        result = result.result()
+
+#--------------------------------------------------------------------------
+        # /Servers/delete/Delete server[delete]
+#--------------------------------------------------------------------------
+        result = self.mgmt_client.servers.begin_delete(resource_group_name=RESOURCE_GROUP, server_name=SERVER_NAME)
+        result = result.result()
+
+    def test_instance_key(self):
+        
+        RESOURCE_GROUP = "testManagedInstance"
+        MANAGED_INSTANCE_NAME = "testinstancexxy"
+        SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
+        TENANT_ID = self.settings.TENANT_ID
+        CLIENT_OID = self.settings.CLIENT_OID if self.is_live else "000"
+        KEY_VAULT_NAME = self.get_resource_name("keyvaultxmmxh")
+
+#--------------------------------------------------------------------------
+        # /ManagedInstances/get/Get managed instance[get]
+#--------------------------------------------------------------------------
+        instance = self.mgmt_client.managed_instances.get(resource_group_name=RESOURCE_GROUP, managed_instance_name=MANAGED_INSTANCE_NAME)
+        oid2 = instance.identity.principal_id
+
+        VAULT_ID, KEY_URI = self.create_key(RESOURCE_GROUP, AZURE_LOCATION, KEY_VAULT_NAME, TENANT_ID, CLIENT_OID, oid2)
+
+#--------------------------------------------------------------------------
+        # /ManagedInstanceKeys/put/Creates or updates a managed instance key[put]
+#--------------------------------------------------------------------------
+        KEY_NAME = KEY_VAULT_NAME + "_testkey_" + KEY_URI.split("/")[-1]
+        BODY = {
+          "server_key_type": "AzureKeyVault",
+          "uri": KEY_URI
+        }
+        result = self.mgmt_client.managed_instance_keys.begin_create_or_update(resource_group_name=RESOURCE_GROUP, managed_instance_name=MANAGED_INSTANCE_NAME, key_name=KEY_NAME, parameters=BODY)
+        result = result.result()
+
+#--------------------------------------------------------------------------
+        # /ManagedInstanceKeys/get/Get the managed instance key[get]
+#--------------------------------------------------------------------------
+        result = self.mgmt_client.managed_instance_keys.get(resource_group_name=RESOURCE_GROUP, managed_instance_name=MANAGED_INSTANCE_NAME, key_name=KEY_NAME)
+
+#--------------------------------------------------------------------------
+        # /ManagedInstanceKeys/get/List the keys for a managed instance.[get]
+#--------------------------------------------------------------------------
+        result = self.mgmt_client.managed_instance_keys.list_by_instance(resource_group_name=RESOURCE_GROUP, managed_instance_name=MANAGED_INSTANCE_NAME)
+
+#--------------------------------------------------------------------------
+        # /ManagedInstanceKeys/delete/Delete the managed instance key[delete]
+#--------------------------------------------------------------------------
+        result = self.mgmt_client.managed_instance_keys.begin_delete(resource_group_name=RESOURCE_GROUP, managed_instance_name=MANAGED_INSTANCE_NAME, key_name=KEY_NAME)
+        result = result.result()
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_server_key(self, resource_group):

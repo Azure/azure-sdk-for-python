@@ -7,7 +7,8 @@
 #--------------------------------------------------------------------------
 
 # Current Operation Coverage:
-#   ManagedInstances: 8/8
+#   ManagedInstances: 6/8
+#   ManagedInstanceOperations: 1/3
 
 import unittest
 
@@ -157,6 +158,26 @@ class MgmtSqlTest(AzureMgmtTestCase):
 
         return subnet_info
 
+    def test_instance_operation(self):
+
+        RESOURCE_GROUP = "testManagedInstance"
+        MANAGED_INSTANCE_NAME = "testinstancexxy"
+
+#--------------------------------------------------------------------------
+        # /ManagedInstanceOperations/get/List the managed instance management operations[get]
+#--------------------------------------------------------------------------
+        result = self.mgmt_client.managed_instance_operations.list_by_managed_instance(resource_group_name=RESOURCE_GROUP, managed_instance_name=MANAGED_INSTANCE_NAME)
+
+#--------------------------------------------------------------------------
+        # /ManagedInstanceOperations/get/Gets the managed instance management operation[get]
+#--------------------------------------------------------------------------
+        # result = self.mgmt_client.managed_instance_operations.get(resource_group_name=RESOURCE_GROUP, managed_instance_name=MANAGED_INSTANCE_NAME, operation_id=OPERATION_ID)
+
+#--------------------------------------------------------------------------
+        # /ManagedInstanceOperations/post/Cancel the managed instance management operation[post]
+#--------------------------------------------------------------------------
+        # result = self.mgmt_client.managed_instance_operations.cancel(resource_group_name=RESOURCE_GROUP, managed_instance_name=MANAGED_INSTANCE_NAME, operation_id=OPERATION_ID)
+
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_managed_instances(self, resource_group):
 
@@ -166,7 +187,7 @@ class MgmtSqlTest(AzureMgmtTestCase):
         SUBNET_NAME = "mysubnet"
         NETWORK_SECURITY_GROUP = "mynetworksecuritygroup"
         ROUTE_TABLE = "myroutetable"
-        MANAGED_INSTANCE_NAME = "mymanagedinstancexpnc"
+        MANAGED_INSTANCE_NAME = "mymanagedinstancexpnvcxxvx"
         INSTANCE_POOL_NAME = "myinstancepool"
 
         if self.is_live:
@@ -177,54 +198,48 @@ class MgmtSqlTest(AzureMgmtTestCase):
 #--------------------------------------------------------------------------
         BODY = {
           "sku": {
-            "name": "BC_Gen5",
+            # "name": "BC_Gen5",
             # "tier": "GeneralPurpose"
+            "name": "MIGP8G4",
+            "tier": "GeneralPurpose",
+            "family": "Gen5"
           },
-          "location": AZURE_LOCATION,
+          "location": "westeurope",
           "administrator_login": "dummylogin",
           "administrator_login_password": "Un53cuRE!",
           "subnet_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/virtualNetworks/" + VIRTUAL_NETWORK_NAME + "/subnets/" + SUBNET_NAME,
-          "v_cores": "8",
-          "storage_size_in_gb": "128",
-          "collection": "Serbian_Cyrillic_100_CS_AS",
-          "public_data_endpoint_enabled": True,
-          "proxy_override": "Proxy",
-          "timezone_id": "Central European Standard Time",
-          "minimal_tls_version": "1.2",
+          "storage_account_type": "GRS",
+        #   "v_cores": "8",
+        #   "storage_size_in_gb": "128",
+        #   "collection": "Serbian_Cyrillic_100_CS_AS",
+        #   "public_data_endpoint_enabled": True,
+        #   "proxy_override": "Proxy",
+        #   "timezone_id": "Central European Standard Time",
+        #   "minimal_tls_version": "1.2",
         #   "license_type": "LicenseIncluded"
         }
         result = self.mgmt_client180601.managed_instances.begin_create_or_update(resource_group_name=RESOURCE_GROUP, managed_instance_name=MANAGED_INSTANCE_NAME, parameters=BODY)
-        try:
-            print("here0")
-            result = result.result()
-        except HttpResponseError as e:
-            print("here")
-            # TODO: [Kaihui] seems like codegen error.
-            if not str(e).startswith("Operation returned an invalid status 'OK'"):
-                raise e
+        # [Kaihui] it will use 6 hours to complete creation, so comment it.
+        # result = result.result()
 
 #--------------------------------------------------------------------------
         # /ManagedInstances/get/List managed instances by instance pool[get]
 #--------------------------------------------------------------------------
-        print("here2")
         result = self.mgmt_client.managed_instances.list_by_instance_pool(resource_group_name=RESOURCE_GROUP, instance_pool_name=INSTANCE_POOL_NAME)
 
 #--------------------------------------------------------------------------
         # /ManagedInstances/get/Get managed instance[get]
 #--------------------------------------------------------------------------
-        print("here3")
-        result = self.mgmt_client.managed_instances.get(resource_group_name=RESOURCE_GROUP, managed_instance_name=MANAGED_INSTANCE_NAME)
+        # result = self.mgmt_client.managed_instances.get(resource_group_name=RESOURCE_GROUP, managed_instance_name=MANAGED_INSTANCE_NAME)
 
 #--------------------------------------------------------------------------
         # /ManagedInstances/get/List managed instances by resource group[get]
 #--------------------------------------------------------------------------
-        print("here4")
         result = self.mgmt_client.managed_instances.list_by_resource_group(resource_group_name=RESOURCE_GROUP)
 
 #--------------------------------------------------------------------------
         # /ManagedInstances/get/List managed instances[get]
 #--------------------------------------------------------------------------
-        print("here5")
         result = self.mgmt_client.managed_instances.list()
 
 #--------------------------------------------------------------------------
@@ -233,7 +248,6 @@ class MgmtSqlTest(AzureMgmtTestCase):
         # result = self.mgmt_client.managed_instances.begin_failover(resource_group_name=RESOURCE_GROUP, managed_instance_name=MANAGED_INSTANCE_NAME, replica_type="Primary")
         # result = result.result()
 
-        print("arrive at here.")
 # #--------------------------------------------------------------------------
 #         # /ManagedInstances/patch/Update managed instance with minimal properties[patch]
 # #--------------------------------------------------------------------------
@@ -250,7 +264,7 @@ class MgmtSqlTest(AzureMgmtTestCase):
 #           "minimal_tls_version": "1.2"
 #         }
 #         result = self.mgmt_client.managed_instances.begin_update(resource_group_name=RESOURCE_GROUP, managed_instance_name=MANAGED_INSTANCE_NAME, parameters=BODY)
-#         result = result.result()
+        # result = result.result()
 
 #--------------------------------------------------------------------------
         # /ManagedInstances/delete/Delete managed instance[delete]

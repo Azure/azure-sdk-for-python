@@ -54,6 +54,7 @@ class MgmtSqlTest(AzureMgmtTestCase):
 
         return subnet_info
 
+    @unittest.skip("unavailable")
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_instance_pool(self, resource_group):
 
