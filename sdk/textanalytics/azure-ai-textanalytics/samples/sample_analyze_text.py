@@ -45,12 +45,13 @@ class AnalyzeTextSample(object):
 
         poller = text_analytics_client.begin_analyze_text(
             documents,
+            display_name="Sample Text Analysis"
             tasks=[
-                EntitiesRecognitionTask(name="Entities Recognition Sample Task"),
-                PiiEntitiesRecognitionTask(name="PII Entities Recognition Sample Task"),
-                EntityLinkingTask(name="Entity Linking Sample Task"),
-                KeyPhraseExtractionTask(name="Key Phrase Extraction Sample Task"),
-                SentimentAnalysisTask(name="Sentiment Analysis Sample Task")
+                EntitiesRecognitionTask(),
+                PiiEntitiesRecognitionTask(),
+                EntityLinkingTask(),
+                KeyPhraseExtractionTask(),
+                SentimentAnalysisTask()
             ]
         )
 

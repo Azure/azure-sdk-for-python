@@ -63,7 +63,7 @@ class HealthSample(object):
         while job_details.status != "succeeded":
             job_details = text_analytics_client.health_status(job_id)
 
-        docs = [doc for doc in job_details.result if not doc.is_error]
+        docs = [doc for doc in job_details.results if not doc.is_error]
 
         for idx, doc in enumerate(docs):
             print("Document text: {}\n".format(documents[idx]))

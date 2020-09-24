@@ -25,7 +25,8 @@ from ._response_handlers import (
     sentiment_result,
     language_result,
     pii_entities_result,
-    healthcare_result
+    healthcare_result,
+    analyze_result
 )
 
 if TYPE_CHECKING:
@@ -40,6 +41,11 @@ if TYPE_CHECKING:
         AnalyzeSentimentResult,
         DocumentError,
         RecognizePiiEntitiesResult,
+        EntitiesRecognitionTask,
+        PiiEntitiesRecognitionTask,
+        EntityLinkingTask,
+        KeyPhraseExtractionTask,
+        SentimentAnalysisTask
     )
 
 
@@ -672,8 +678,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     def begin_analyze_text(  # type: ignore
         self,
         documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
+        tasks, # type: list[Union[~azure.ai.textanalytics.EntitiesRecognitionTask, ~azure.ai.textanalytics.PiiEntitiesRecognitionTask, ~azure.ai.textanalytics.EntityLinkingTask, ~azure.ai.textanalytics.KeyPhraseExtractionTask, ~azure.ai.textanalytics.SentimentAnalysisTask]]
         **kwargs  # type: Any
-    ):  # type: (...) -> LROPoller[None]):
+    ):  # type: (...) -> LROPoller[TextAnalysisResult]):
         """Start a long-running operation to perform a variety of text analysis tasks over a batch of documents.
 
         :param documents: The set of documents to process as part of this batch.
@@ -684,19 +691,23 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :type documents:
             list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or
             list[dict[str, str]]
+        :param tasks: A list of tasks to include in the analysis.  Each task object encapsulates the parameters
+            used for the particular task type.
+        :type tasks: list[Union[~azure.ai.textanalytics.EntitiesRecognitionTask, 
+            ~azure.ai.textanalytics.PiiEntitiesRecognitionTask, ~azure.ai.textanalytics.EntityLinkingTask,
+            ~azure.ai.textanalytics.KeyPhraseExtractionTask, ~azure.ai.textanalytics.SentimentAnalysisTask]]
+        :keyword str display_name: An optional display name to set for the requested analysis.
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
             take precedence over whole batch language. See https://aka.ms/talangs for
             supported languages in Text Analytics API.
         :keyword bool show_stats: If set to true, response will contain document level statistics.
-        :keyword tasks: A list of tasks to include in the analysis.  Each task object encapsulates the parameters
-            used for the particular task type.
-        :type tasks: list[Union[~azure.ai.textanalytics.EntitiesRecognitionTask, 
-            ~azure.ai.textanalytics.PiiEntitiesRecognitionTask, ~azure.ai.textanalytics.EntityLinkingTask,
-            ~azure.ai.textanalytics.KeyPhraseExtractionTask, ~azure.ai.textanalytics.SentimentAnalysisTask]]
-        :return: An instance of LROPoller that returns either None or the result of the operation.
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :keyword int polling_interval: Waiting time between two polls for LRO operations
+            if no Retry-After header is present. Defaults to 30 seconds.
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :return: An instance of an LROPoller. Call `result()` on the poller
+            object to return an instance of TextAnalysisResult.
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
 
         .. admonition:: Example:
@@ -708,3 +719,56 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 :dedent: 8
                 :caption: Start a long-running operation to perform a variety of text analysis tasks over a batch of documents.
         """
+
+        display_name = kwargs.pop("display_name", None)
+        language_arg = kwargs.pop("language", None)
+        language = language_arg if language_arg is not None else self._default_language
+        docs = _validate_input(documents, "language", language)
+        show_stats = kwargs.pop("show_stats", False)
+        polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
+        continuation_token = kwargs.pop("continuation_token", None)
+
+        if self._string_code_unit:
+            kwargs.update({"string_index_type": self._string_code_unit})
+
+        try:
+            from itertools import groupby
+
+            grouping_func = lambda x: x.__class__.__name__
+            sorted_tasks = sorted(tasks, key=grouping_func)
+            grouped_tasks = dict(groupby(sorted_tasks, grouping_func))
+
+            analyze_tasks = self._client.models.JobManifestTasks(
+                entity_recognition_tasks = [t.to_generated() for t in grouped_tasks[EntitiesRecognitionTask.__name__]],
+                entity_recognition_pii_tasks = [t.to_generated() for t in grouped_tasks[PiiEntitiesRecognitionTask.__name__]],
+                entity_linking_tasks = [t.to_generated() for t in grouped_tasks[EntityLinkingTask.__name__]],
+                key_phrase_tasks = [t.to_generated() for t in grouped_tasks[KeyPhraseExtractionTask.__name__]],
+                sentiment_tasks = [t.to_generated() for t in grouped_tasks[SentimentAnalysisTask.__name__]]
+                # TODO: add custom task types
+            )
+            analyze_body = self._client.models.AnalyzeBatchInput(
+                display_name=display_name,
+                tasks=analyze_tasks,
+                analyze_input=docs
+            )
+            return self._client.begin_analyze(
+                body=analyze_body,
+                cls=kwargs.pop("cls", analyze_result),
+                polling=LROBasePolling(timeout=polling_interval, **kwargs),
+                **kwargs
+            )
+
+        except NameError:
+            raise NotImplementedError("Service method 'begin_analyze_text' is only available for API versions v3.2-preview.1 and up.")
+        
+        except HttpResponseError as error:
+            process_http_response_error(error)
+
+    @distributed_trace
+    def begin_analyze():
+        pass
+
+    @distributed_trace
+    def analyze_status():
+        pass
+
