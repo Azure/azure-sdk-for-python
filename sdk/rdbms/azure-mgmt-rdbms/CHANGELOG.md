@@ -1,5 +1,12 @@
 # Release History
 
+## 3.1.0rc1 (2020-09-25)
+
+**Features**
+
+  - Model Operation has a new parameter is_data_action
+  - Model OperationListResult has a new parameter next_link
+
 ## 3.0.0rc1 (2020-09-15)
 
 **Features**
