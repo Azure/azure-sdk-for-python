@@ -138,7 +138,7 @@ class TestContentFromStream(FormRecognizerTest):
         responses = []
 
         def callback(raw_response, _, headers):
-            analyze_result = client._client._deserialize(AnalyzeOperationResult, raw_response)
+            analyze_result = client._deserialize(AnalyzeOperationResult, raw_response)
             extracted_layout = prepare_content_result(analyze_result)
             responses.append(analyze_result)
             responses.append(extracted_layout)
@@ -178,7 +178,7 @@ class TestContentFromStream(FormRecognizerTest):
         responses = []
 
         def callback(raw_response, _, headers):
-            analyze_result = client._client._deserialize(AnalyzeOperationResult, raw_response)
+            analyze_result = client._deserialize(AnalyzeOperationResult, raw_response)
             extracted_layout = prepare_content_result(analyze_result)
             responses.append(analyze_result)
             responses.append(extracted_layout)
@@ -230,7 +230,7 @@ class TestContentFromStream(FormRecognizerTest):
         responses = []
 
         def callback(raw_response, _, headers):
-            analyze_result = client._client._deserialize(AnalyzeOperationResult, raw_response)
+            analyze_result = client._deserialize(AnalyzeOperationResult, raw_response)
             extracted_layout = prepare_content_result(analyze_result)
             responses.append(analyze_result)
             responses.append(extracted_layout)
@@ -293,7 +293,7 @@ class TestContentFromStream(FormRecognizerTest):
         responses = []
 
         def callback(raw_response, _, headers):
-            analyze_result = client._client._deserialize(AnalyzeOperationResult, raw_response)
+            analyze_result = client._deserialize(AnalyzeOperationResult, raw_response)
             extracted_layout = prepare_content_result(analyze_result)
             responses.append(analyze_result)
             responses.append(extracted_layout)

@@ -25,6 +25,10 @@ error_map = {
     401: ClientAuthenticationError
 }
 
+def _get_deserialize():
+    from ._generated.v2_1_preview_1 import FormRecognizerClient
+    return FormRecognizerClient("dummy", "dummy")._deserialize  # pylint: disable=protected-access
+
 
 def get_element_type(element_pointer):
     word_ref = re.compile(r'/readResults/\d+/lines/\d+/words/\d+')
