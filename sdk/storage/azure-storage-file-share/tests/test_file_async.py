@@ -808,7 +808,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
 
         # Assert
         # To make sure the range of the file is actually updated
-        file_ranges, cleared = await destination_file_client.get_ranges()
+        file_ranges = await destination_file_client.get_ranges()
         file_content = await destination_file_client.download_file(offset=0, length=512)
         file_content = await file_content.readall()
         self.assertEqual(1, len(file_ranges))
@@ -847,7 +847,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
 
         # Assert
         # To make sure the range of the file is actually updated
-        file_ranges, cleared = await destination_file_client.get_ranges()
+        file_ranges = await destination_file_client.get_ranges()
         file_content = await destination_file_client.download_file(offset=0, length=512)
         file_content = await file_content.readall()
         self.assertEqual(1, len(file_ranges))
@@ -885,7 +885,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
 
         # Assert
         # To make sure the range of the file is actually updated
-        file_ranges, cleared = await destination_file_client.get_ranges()
+        file_ranges = await destination_file_client.get_ranges()
         file_content = await destination_file_client.download_file(offset=0, length=end + 1)
         file_content = await file_content.readall()
         self.assertEqual(1, len(file_ranges))
@@ -943,7 +943,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         await file_client.create_file(1024)
 
         # Act
-        ranges, cleared = await file_client.get_ranges()
+        ranges = await file_client.get_ranges()
 
         # Assert
         self.assertIsNotNone(ranges)
@@ -969,7 +969,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
             await file_client.get_ranges(lease=str(uuid.uuid4()))
 
         # Get ranges on a leased file will succeed without provide the lease
-        ranges, cleared = await file_client.get_ranges()
+        ranges = await file_client.get_ranges()
 
         # Assert
         self.assertIsNotNone(ranges)
@@ -1039,11 +1039,10 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         resp2 = await file_client.upload_range(data, offset=1024, length=512)
 
         # Act
-        ranges, cleared = await file_client.get_ranges()
+        ranges = await file_client.get_ranges()
 
         # Assert
         self.assertIsNotNone(ranges)
-        self.assertEqual(len(cleared), 0)
         self.assertEqual(len(ranges), 2)
         self.assertEqual(ranges[0]['start'], 0)
         self.assertEqual(ranges[0]['end'], 511)
@@ -1076,7 +1075,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         await file_client.delete_file()
 
         # Act
-        ranges, cleared = await snapshot_client.get_ranges()
+        ranges = await snapshot_client.get_ranges()
 
         # Assert
         self.assertIsNotNone(ranges)
@@ -1112,7 +1111,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         await file_client.delete_file()
 
         # Act
-        ranges, cleared = await snapshot_client.get_ranges()
+        ranges = await snapshot_client.get_ranges()
 
         # Assert
         self.assertIsNotNone(ranges)
