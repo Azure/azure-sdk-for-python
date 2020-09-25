@@ -1,10 +1,14 @@
 {
-    "chosen_version": "2019-11-01-preview",
-    "total_api_version_list": ["2019-11-01-preview"],
+    "chosen_version": "2020-06-01",
+    "total_api_version_list": ["2020-06-01"],
     "client": {
         "name": "AppConfigurationManagementClient",
         "filename": "_app_configuration_management_client",
-        "description": "AppConfigurationManagementClient."
+        "description": "AppConfigurationManagementClient.",
+        "base_url": "\u0027https://management.azure.com\u0027",
+        "custom_base_url": null,
+        "azure_arm": true,
+        "has_lro_operations": true
     },
     "global_parameters": {
         "sync_method": {
@@ -41,7 +45,10 @@
     },
     "config": {
         "credential": true,
-        "credential_scopes": ["https://management.azure.com/.default"]
+        "credential_scopes": ["https://management.azure.com/.default"],
+        "credential_default_policy_type": "BearerTokenCredentialPolicy",
+        "credential_default_policy_type_has_async_version": true,
+        "credential_key_header_name": null
     },
     "operation_groups": {
         "configuration_stores": "ConfigurationStoresOperations",
