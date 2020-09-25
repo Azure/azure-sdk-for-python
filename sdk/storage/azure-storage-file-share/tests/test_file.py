@@ -749,7 +749,7 @@ class StorageFileTest(StorageTestCase):
 
         # Assert
         # To make sure the range of the file is actually updated
-        file_ranges, cleared = destination_file_client.get_ranges()
+        file_ranges = destination_file_client.get_ranges()
         file_content = destination_file_client.download_file(offset=0, length=512).readall()
         self.assertEqual(1, len(file_ranges))
         self.assertEqual(0, file_ranges[0].get('start'))
@@ -791,7 +791,7 @@ class StorageFileTest(StorageTestCase):
 
         # Assert
         # To make sure the range of the file is actually updated
-        file_ranges, cleared = destination_file_client.get_ranges()
+        file_ranges = destination_file_client.get_ranges()
         file_content = destination_file_client.download_file(offset=0, length=512).readall()
         self.assertEqual(1, len(file_ranges))
         self.assertEqual(0, file_ranges[0].get('start'))
@@ -827,7 +827,7 @@ class StorageFileTest(StorageTestCase):
 
         # Assert
         # To make sure the range of the file is actually updated
-        file_ranges, cleared = destination_file_client.get_ranges()
+        file_ranges = destination_file_client.get_ranges()
         file_content = destination_file_client.download_file(offset=0, length=end + 1).readall()
         self.assertEqual(1, len(file_ranges))
         self.assertEqual(0, file_ranges[0].get('start'))
@@ -877,7 +877,7 @@ class StorageFileTest(StorageTestCase):
         file_client.create_file(1024)
 
         # Act
-        ranges, cleared = file_client.get_ranges()
+        ranges = file_client.get_ranges()
 
         # Assert
         self.assertIsNotNone(ranges)
@@ -901,7 +901,7 @@ class StorageFileTest(StorageTestCase):
             file_client.get_ranges(lease=str(uuid.uuid4()))
 
         # Get ranges on a leased file will succeed without provide the lease
-        ranges, cleared = file_client.get_ranges()
+        ranges = file_client.get_ranges()
 
         # Assert
         self.assertIsNotNone(ranges)
@@ -966,7 +966,7 @@ class StorageFileTest(StorageTestCase):
         resp2 = file_client.upload_range(data, offset=1024, length=512)
 
         # Act
-        ranges, cleared = file_client.get_ranges()
+        ranges = file_client.get_ranges()
 
         # Assert
         self.assertIsNotNone(ranges)
@@ -999,7 +999,7 @@ class StorageFileTest(StorageTestCase):
         file_client.delete_file()
 
         # Act
-        ranges, cleared = snapshot_client.get_ranges()
+        ranges = snapshot_client.get_ranges()
 
         # Assert
         self.assertIsNotNone(ranges)
@@ -1031,7 +1031,7 @@ class StorageFileTest(StorageTestCase):
         file_client.delete_file()
 
         # Act
-        ranges, cleared = snapshot_client.get_ranges()
+        ranges = snapshot_client.get_ranges()
 
         # Assert
         self.assertIsNotNone(ranges)

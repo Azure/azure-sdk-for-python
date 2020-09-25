@@ -932,7 +932,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         previous_sharesnapshot=None,  # type: Optional[Union[str, Dict[str, Any]]]
         **kwargs
     ):
-        # type: (...) -> List[Dict[str, int]]
+        # type: (...) -> Union[List[Dict[str, int]], Tuple[List[Dict[str, int]], List[Dict[str, int]]]]
         """Returns the list of valid ranges of a file.
 
         :param int offset:
@@ -967,7 +967,8 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             ranges = await self._client.file.get_range_list(**options)
         except StorageErrorException as error:
             process_storage_error(error)
-        return get_file_ranges_result(ranges)
+        return get_file_ranges_result(ranges) if previous_sharesnapshot else [
+            {'start': file_range.start, 'end': file_range.end} for file_range in ranges.ranges]
 
     @distributed_trace_async
     async def clear_range(  # type: ignore

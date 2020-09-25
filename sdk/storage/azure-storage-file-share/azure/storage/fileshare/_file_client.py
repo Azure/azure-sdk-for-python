@@ -8,7 +8,7 @@ import functools
 import time
 from io import BytesIO
 from typing import ( # pylint: disable=unused-import
-    Optional, Union, IO, List, Dict, Any, Iterable,
+    Optional, Union, IO, List, Dict, Any, Iterable, Tuple,
     TYPE_CHECKING
 )
 
@@ -1134,7 +1134,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             previous_sharesnapshot=None,  # type: Optional[Union[str, Dict[str, Any]]]
             **kwargs  # type: Any
         ):
-        # type: (...) -> List[Dict[str, int]]
+        # type: (...) -> Union[List[Dict[str, int]], Tuple[List[Dict[str, int]], List[Dict[str, int]]]]
         """Returns the list of valid page ranges for a file or snapshot
         of a file.
 
@@ -1169,7 +1169,8 @@ class ShareFileClient(StorageAccountHostsMixin):
             ranges = self._client.file.get_range_list(**options)
         except StorageErrorException as error:
             process_storage_error(error)
-        return get_file_ranges_result(ranges)
+        return get_file_ranges_result(ranges) if previous_sharesnapshot else [
+            {'start': file_range.start, 'end': file_range.end} for file_range in ranges.ranges]
 
     @distributed_trace
     def clear_range( # type: ignore

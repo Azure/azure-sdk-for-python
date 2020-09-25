@@ -3,6 +3,11 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=no-self-use
+from typing import (  # pylint: disable=unused-import
+    Tuple, Dict, List,
+    TYPE_CHECKING
+)
 
 from ._models import ShareProperties, DirectoryProperties, FileProperties
 from ._shared.response_handlers import deserialize_metadata
@@ -70,7 +75,9 @@ def get_file_ranges_result(ranges):
     file_ranges = []  # type: ignore
     clear_ranges = []  # type: List
     if ranges.ranges:
-        file_ranges = [{'start': b.start, 'end': b.end} for b in ranges.ranges]  # type: ignore
+        file_ranges = [
+            {'start': file_range.start, 'end': file_range.end} for file_range in ranges.ranges]  # type: ignore
     if ranges.clear_ranges:
-        clear_ranges = [{'start': b.start, 'end': b.end} for b in ranges.clear_ranges]
+        clear_ranges = [
+            {'start': clear_range.start, 'end': clear_range.end} for clear_range in ranges.clear_ranges]
     return file_ranges, clear_ranges
