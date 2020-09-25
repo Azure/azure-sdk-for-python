@@ -212,6 +212,9 @@ class StorageShareTest(StorageTestCase):
         share_lease = share.acquire_lease()
         share_snapshot_lease = snapshot_client.acquire_lease()
 
+        share.get_share_properties()
+        snapshot_client.get_share_properties()
+
         # Assert
         self.assertIsNotNone(snapshot['snapshot'])
         self.assertIsNotNone(snapshot['etag'])

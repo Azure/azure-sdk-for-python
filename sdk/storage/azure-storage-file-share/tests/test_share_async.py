@@ -231,6 +231,9 @@ class StorageShareTest(AsyncStorageTestCase):
         share_lease = await share.acquire_lease()
         share_snapshot_lease = await snapshot_client.acquire_lease()
 
+        await share.get_share_properties()
+        await snapshot_client.get_share_properties()
+
         # Assert
         self.assertIsNotNone(snapshot['snapshot'])
         self.assertIsNotNone(snapshot['etag'])
