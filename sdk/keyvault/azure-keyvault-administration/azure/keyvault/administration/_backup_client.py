@@ -118,5 +118,6 @@ class KeyVaultBackupClient(KeyVaultClientBase):
         """
         return self._client.restore_status(
             vault_base_url=self.vault_url,
-            job_id=job_id
+            job_id=job_id,
+            **kwargs
         )
