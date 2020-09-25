@@ -10,51 +10,51 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .delete_operation_result_py3 import DeleteOperationResult
-    from .endpoint_properties_subnets_item_py3 import EndpointPropertiesSubnetsItem
-    from .endpoint_properties_custom_headers_item_py3 import EndpointPropertiesCustomHeadersItem
-    from .heat_map_endpoint_py3 import HeatMapEndpoint
-    from .query_experience_py3 import QueryExperience
-    from .traffic_flow_py3 import TrafficFlow
-    from .heat_map_model_py3 import HeatMapModel
-    from .user_metrics_model_py3 import UserMetricsModel
-    from .endpoint_py3 import Endpoint
-    from .check_traffic_manager_relative_dns_name_availability_parameters_py3 import CheckTrafficManagerRelativeDnsNameAvailabilityParameters
-    from .dns_config_py3 import DnsConfig
-    from .monitor_config_custom_headers_item_py3 import MonitorConfigCustomHeadersItem
-    from .monitor_config_expected_status_code_ranges_item_py3 import MonitorConfigExpectedStatusCodeRangesItem
-    from .monitor_config_py3 import MonitorConfig
-    from .profile_py3 import Profile
-    from .traffic_manager_name_availability_py3 import TrafficManagerNameAvailability
-    from .region_py3 import Region
-    from .traffic_manager_geographic_hierarchy_py3 import TrafficManagerGeographicHierarchy
-    from .resource_py3 import Resource
-    from .tracked_resource_py3 import TrackedResource
-    from .proxy_resource_py3 import ProxyResource
+    from ._models_py3 import CheckTrafficManagerRelativeDnsNameAvailabilityParameters
+    from ._models_py3 import DeleteOperationResult
+    from ._models_py3 import DnsConfig
+    from ._models_py3 import Endpoint
+    from ._models_py3 import EndpointPropertiesCustomHeadersItem
+    from ._models_py3 import EndpointPropertiesSubnetsItem
+    from ._models_py3 import HeatMapEndpoint
+    from ._models_py3 import HeatMapModel
+    from ._models_py3 import MonitorConfig
+    from ._models_py3 import MonitorConfigCustomHeadersItem
+    from ._models_py3 import MonitorConfigExpectedStatusCodeRangesItem
+    from ._models_py3 import Profile
+    from ._models_py3 import ProxyResource
+    from ._models_py3 import QueryExperience
+    from ._models_py3 import Region
+    from ._models_py3 import Resource
+    from ._models_py3 import TrackedResource
+    from ._models_py3 import TrafficFlow
+    from ._models_py3 import TrafficManagerGeographicHierarchy
+    from ._models_py3 import TrafficManagerNameAvailability
+    from ._models_py3 import UserMetricsModel
 except (SyntaxError, ImportError):
-    from .delete_operation_result import DeleteOperationResult
-    from .endpoint_properties_subnets_item import EndpointPropertiesSubnetsItem
-    from .endpoint_properties_custom_headers_item import EndpointPropertiesCustomHeadersItem
-    from .heat_map_endpoint import HeatMapEndpoint
-    from .query_experience import QueryExperience
-    from .traffic_flow import TrafficFlow
-    from .heat_map_model import HeatMapModel
-    from .user_metrics_model import UserMetricsModel
-    from .endpoint import Endpoint
-    from .check_traffic_manager_relative_dns_name_availability_parameters import CheckTrafficManagerRelativeDnsNameAvailabilityParameters
-    from .dns_config import DnsConfig
-    from .monitor_config_custom_headers_item import MonitorConfigCustomHeadersItem
-    from .monitor_config_expected_status_code_ranges_item import MonitorConfigExpectedStatusCodeRangesItem
-    from .monitor_config import MonitorConfig
-    from .profile import Profile
-    from .traffic_manager_name_availability import TrafficManagerNameAvailability
-    from .region import Region
-    from .traffic_manager_geographic_hierarchy import TrafficManagerGeographicHierarchy
-    from .resource import Resource
-    from .tracked_resource import TrackedResource
-    from .proxy_resource import ProxyResource
-from .profile_paged import ProfilePaged
-from .traffic_manager_management_client_enums import (
+    from ._models import CheckTrafficManagerRelativeDnsNameAvailabilityParameters
+    from ._models import DeleteOperationResult
+    from ._models import DnsConfig
+    from ._models import Endpoint
+    from ._models import EndpointPropertiesCustomHeadersItem
+    from ._models import EndpointPropertiesSubnetsItem
+    from ._models import HeatMapEndpoint
+    from ._models import HeatMapModel
+    from ._models import MonitorConfig
+    from ._models import MonitorConfigCustomHeadersItem
+    from ._models import MonitorConfigExpectedStatusCodeRangesItem
+    from ._models import Profile
+    from ._models import ProxyResource
+    from ._models import QueryExperience
+    from ._models import Region
+    from ._models import Resource
+    from ._models import TrackedResource
+    from ._models import TrafficFlow
+    from ._models import TrafficManagerGeographicHierarchy
+    from ._models import TrafficManagerNameAvailability
+    from ._models import UserMetricsModel
+from ._paged_models import ProfilePaged
+from ._traffic_manager_management_client_enums import (
     EndpointStatus,
     EndpointMonitorStatus,
     ProfileMonitorStatus,
@@ -65,27 +65,27 @@ from .traffic_manager_management_client_enums import (
 )
 
 __all__ = [
-    'DeleteOperationResult',
-    'EndpointPropertiesSubnetsItem',
-    'EndpointPropertiesCustomHeadersItem',
-    'HeatMapEndpoint',
-    'QueryExperience',
-    'TrafficFlow',
-    'HeatMapModel',
-    'UserMetricsModel',
-    'Endpoint',
     'CheckTrafficManagerRelativeDnsNameAvailabilityParameters',
+    'DeleteOperationResult',
     'DnsConfig',
+    'Endpoint',
+    'EndpointPropertiesCustomHeadersItem',
+    'EndpointPropertiesSubnetsItem',
+    'HeatMapEndpoint',
+    'HeatMapModel',
+    'MonitorConfig',
     'MonitorConfigCustomHeadersItem',
     'MonitorConfigExpectedStatusCodeRangesItem',
-    'MonitorConfig',
     'Profile',
-    'TrafficManagerNameAvailability',
+    'ProxyResource',
+    'QueryExperience',
     'Region',
-    'TrafficManagerGeographicHierarchy',
     'Resource',
     'TrackedResource',
-    'ProxyResource',
+    'TrafficFlow',
+    'TrafficManagerGeographicHierarchy',
+    'TrafficManagerNameAvailability',
+    'UserMetricsModel',
     'ProfilePaged',
     'EndpointStatus',
     'EndpointMonitorStatus',

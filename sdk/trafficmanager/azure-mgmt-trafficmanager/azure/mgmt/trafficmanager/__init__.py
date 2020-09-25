@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .traffic_manager_management_client import TrafficManagerManagementClient
-from .version import VERSION
+from ._configuration import TrafficManagerManagementClientConfiguration
+from ._traffic_manager_management_client import TrafficManagerManagementClient
+__all__ = ['TrafficManagerManagementClient', 'TrafficManagerManagementClientConfiguration']
 
-__all__ = ['TrafficManagerManagementClient']
+from .version import VERSION
 
 __version__ = VERSION
 
