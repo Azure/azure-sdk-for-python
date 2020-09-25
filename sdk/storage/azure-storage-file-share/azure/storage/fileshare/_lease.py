@@ -125,6 +125,7 @@ class ShareLeaseClient(object):
             eg. "\"tagname\"='my tag'"
 
             .. versionadded:: 12.4.0
+
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :return: None
