@@ -1,5 +1,13 @@
 # Release History
 
+## 0.4.0 (2020-09-25)
+
+**Features**
+
+  - Model BigDataPoolResourceInfo has a new parameter is_compute_isolation_enabled
+  - Model Workspace has a new parameter extra_properties
+  - Model Sku has a new parameter capacity
+
 ## 0.3.0 (2020-06-17)
 
 **Features**
