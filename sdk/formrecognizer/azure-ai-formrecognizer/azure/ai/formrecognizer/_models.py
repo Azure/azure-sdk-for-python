@@ -196,7 +196,7 @@ class RecognizedForm(object):
         self.form_type_confidence = kwargs.get('form_type_confidence', None)
 
     def __repr__(self):
-        return "RecognizedForm(form_type={}, fields={}, page_range={}, pages={}, form_type_confidence={}," \
+        return "RecognizedForm(form_type={}, fields={}, page_range={}, pages={}, form_type_confidence={}, " \
                "model_id={})" \
             .format(
                 self.form_type,
@@ -717,12 +717,12 @@ class CustomFormSubmodel(object):
         ]
 
     def __repr__(self):
-        return "CustomFormSubmodel(accuracy={}, fields={}, form_type={}, model_id={})" \
+        return "CustomFormSubmodel(accuracy={}, model_id={}, fields={}, form_type={})" \
             .format(
                 self.accuracy,
+                self.model_id,
                 repr(self.fields),
                 self.form_type,
-                self.model_id
             )[:1024]
 
 
@@ -879,13 +879,19 @@ class CustomFormModelInfo(object):
     def _from_generated(cls, model, model_id=None):
         if model.status == "succeeded":  # map copy status to model status
             model.status = "ready"
+
+        properties, display_name = None, None
+        if hasattr(model, "attributes"):
+            properties = CustomFormModelProperties._from_generated(model)
+        if hasattr(model, "model_name"):
+            display_name = model.model_name
         return cls(
             model_id=model_id if model_id else model.model_id,
             status=model.status,
             training_started_on=model.created_date_time,
             training_completed_on=model.last_updated_date_time,
-            properties=CustomFormModelProperties._from_generated(model),
-            display_name=model.model_name
+            properties=properties,
+            display_name=display_name
         )
 
     def __repr__(self):

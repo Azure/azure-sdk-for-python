@@ -147,7 +147,7 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
         poller = fr_client.begin_recognize_custom_forms_from_url(model.model_id, self.form_url_jpg)
         form = poller.result()
 
-        self.assertEqual(form[0].form_type, "form-"+model.model_id)
+        self.assertEqual(form[0].form_type, "custom:"+model.model_id)
         self.assertFormPagesHasValues(form[0].pages)
         for label, field in form[0].fields.items():
             self.assertIsNotNone(field.confidence)
@@ -173,7 +173,7 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
         forms = poller.result()
 
         for form in forms:
-            self.assertEqual(form.form_type, "form-"+model.model_id)
+            self.assertEqual(form.form_type, "custom:"+model.model_id)
             self.assertFormPagesHasValues(form.pages)
             for label, field in form.fields.items():
                 self.assertIsNotNone(field.confidence)
@@ -319,7 +319,7 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
         for form, actual in zip(recognized_form, document_results):
             self.assertEqual(form.page_range.first_page_number, actual.page_range[0])
             self.assertEqual(form.page_range.last_page_number, actual.page_range[1])
-            self.assertEqual(form.form_type, "form-"+model.model_id)
+            self.assertEqual(form.form_type, "custom:"+model.model_id)
             self.assertLabeledFormFieldDictTransformCorrect(form.fields, actual.fields, read_results)
 
     @GlobalFormRecognizerAccountPreparer()
@@ -379,7 +379,7 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
         for form, actual in zip(recognized_form, document_results):
             self.assertEqual(form.page_range.first_page_number, actual.page_range[0])
             self.assertEqual(form.page_range.last_page_number, actual.page_range[1])
-            self.assertEqual(form.form_type, "form-"+model.model_id)
+            self.assertEqual(form.form_type, "custom:"+model.model_id)
             self.assertLabeledFormFieldDictTransformCorrect(form.fields, actual.fields, read_results)
 
     @GlobalFormRecognizerAccountPreparer()
@@ -415,5 +415,5 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
         for form, actual in zip(recognized_form, document_results):
             self.assertEqual(form.page_range.first_page_number, actual.page_range[0])
             self.assertEqual(form.page_range.last_page_number, actual.page_range[1])
-            self.assertEqual(form.form_type, "form-"+model.model_id)
+            self.assertEqual(form.form_type, "custom:"+model.model_id)
             self.assertLabeledFormFieldDictTransformCorrect(form.fields, actual.fields, read_results)
