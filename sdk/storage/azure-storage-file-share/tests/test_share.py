@@ -194,6 +194,37 @@ class StorageShareTest(StorageTestCase):
         # Assert
 
     @GlobalStorageAccountPreparer()
+    def test_acquire_lease_on_sharesnapshot(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
+        share = self._get_share_reference()
+
+        # Act
+        share.create_share()
+        snapshot = share.create_snapshot()
+
+        snapshot_client = ShareClient(
+            self.account_url(storage_account, "file"),
+            share_name=share.share_name,
+            snapshot=snapshot,
+            credential=storage_account_key
+        )
+
+        share_lease = share.acquire_lease()
+        share_snapshot_lease = snapshot_client.acquire_lease()
+
+        # Assert
+        self.assertIsNotNone(snapshot['snapshot'])
+        self.assertIsNotNone(snapshot['etag'])
+        self.assertIsNotNone(snapshot['last_modified'])
+        self.assertIsNotNone(share_lease)
+        self.assertIsNotNone(share_snapshot_lease)
+        self.assertNotEqual(share_lease, share_snapshot_lease)
+
+        share_snapshot_lease.release()
+        share_lease.release()
+        self._delete_shares(share.share_name)
+
+    @GlobalStorageAccountPreparer()
     def test_lease_share_renew(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         share_client = self._create_share('test')
