@@ -11,6 +11,7 @@ from typing import (
     Any,
     Dict,
     Union,
+    List,
     TYPE_CHECKING,
 )
 from azure.core.tracing.decorator import distributed_trace
@@ -119,6 +120,7 @@ class FormTrainingClient(object):
         :keyword bool include_subfolders: A flag to indicate if subfolders within the set of prefix folders
             will also need to be included when searching for content to be preprocessed. Not supported if
             training with labels.
+        :keyword str display_name: A display name for your model.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
@@ -128,6 +130,8 @@ class FormTrainingClient(object):
         :raises ~azure.core.exceptions.HttpResponseError:
             Note that if the training fails, the exception is raised, but a model with an
             "invalid" status is still created. You can delete this model by calling :func:`~delete_model()`
+        .. versionadded:: v2.1-preview
+            The *display_name* keyword argument
 
         .. admonition:: Example:
 
@@ -148,6 +152,7 @@ class FormTrainingClient(object):
             return CustomFormModel._from_generated(model)
 
         cls = kwargs.pop("cls", None)
+        display_name = kwargs.pop("display_name", None)
         continuation_token = kwargs.pop("continuation_token", None)
         polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
 
@@ -193,6 +198,7 @@ class FormTrainingClient(object):
                     prefix=kwargs.pop("prefix", ""),
                     include_sub_folders=kwargs.pop("include_subfolders", False),
                 ),
+                model_name=display_name
             ),
             cls=deserialization_callback,
             continuation_token=continuation_token,
@@ -401,6 +407,43 @@ class FormTrainingClient(object):
             ),
             cls=kwargs.pop("cls", _copy_callback),
             polling=LROBasePolling(timeout=polling_interval, lro_algorithms=[CopyPolling()], **kwargs),
+            error_map=error_map,
+            continuation_token=continuation_token,
+            **kwargs
+        )
+
+    @distributed_trace
+    def begin_create_composed_model(
+        self,
+        model_ids,
+        **kwargs
+    ):
+        # type: (List[str], Any) -> LROPoller[CustomFormModel]
+        """Begin create composed model
+
+        :param list[str] model_ids: List of model IDs that were trained with labels.
+        :keyword str display_name: Optional model display name.
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if
+            no Retry-After header is present.
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :return: An instance of an LROPoller. Call `result()` on the poller
+            object to return a :class:`~azure.ai.formrecognizer.CustomFormModel`.
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.formrecognizer.CustomFormModel]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+        def _compose_callback(raw_response, _, headers):  # pylint: disable=unused-argument
+            model = self._deserialize(self._generated_models.Model, raw_response)
+            return CustomFormModel._from_generated_composed(model)
+
+        display_name = kwargs.pop("display_name", None)
+        polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
+        continuation_token = kwargs.pop("continuation_token", None)
+
+        return self._client.begin_compose_custom_models_async(
+            {"model_ids": model_ids, "model_name": display_name},
+            cls=kwargs.pop("cls", _compose_callback),
+            polling=LROBasePolling(timeout=polling_interval, lro_algorithms=[TrainingPolling()], **kwargs),
             error_map=error_map,
             continuation_token=continuation_token,
             **kwargs
