@@ -56,7 +56,6 @@ def _get_client_args(**kwargs):
     if url and secret and thumbprint:
         version = "2019-07-01-preview"
         base_headers = {"Secret": secret}
-        content_callback = None
         connection_verify = False
     else:
         # Service Fabric managed identity isn't available in this environment
@@ -64,7 +63,6 @@ def _get_client_args(**kwargs):
 
     return dict(
         kwargs,
-        _content_callback=content_callback,
         _identity_config=identity_config,
         base_headers=base_headers,
         connection_verify=connection_verify,
@@ -77,31 +75,3 @@ def _get_request(url, version, scope, identity_config):
     request = HttpRequest("GET", url)
     request.format_parameters(dict({"api-version": version, "resource": scope}, **identity_config))
     return request
-
-
-def _parse_app_service_expires_on(content):
-    # type: (dict) -> None
-    """Parse an App Service MSI version 2017-09-01 expires_on value to epoch seconds.
-
-    This version of the API returns expires_on as a UTC datetime string rather than epoch seconds. The string's
-    format depends on the OS. Responses on Windows include AM/PM, for example "1/16/2020 5:24:12 AM +00:00".
-    Responses on Linux do not, for example "06/20/2019 02:57:58 +00:00".
-
-    :raises ValueError: ``expires_on`` didn't match an expected format
-    """
-    import calendar
-    import time
-
-    # parse the string minus the timezone offset
-    expires_on = content["expires_on"]
-    if expires_on.endswith(" +00:00"):
-        date_string = expires_on[: -len(" +00:00")]
-        for format_string in ("%m/%d/%Y %H:%M:%S", "%m/%d/%Y %I:%M:%S %p"):  # (Linux, Windows)
-            try:
-                t = time.strptime(date_string, format_string)
-                content["expires_on"] = calendar.timegm(t)
-                return
-            except ValueError:
-                pass
-
-    raise ValueError("'{}' doesn't match the expected format".format(expires_on))
