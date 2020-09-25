@@ -502,6 +502,7 @@ class QueueClient(StorageAccountHostsMixin):
             a single message is retrieved from the queue with this operation.
             `by_page()` can be used to provide a page iterator on the AsyncItemPaged if messages_per_page is set.
             `next()` can be used to get the next page.
+            
             .. admonition:: Example:
 
                 .. literalinclude:: ../samples/queue_samples_message.py

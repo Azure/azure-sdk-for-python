@@ -160,18 +160,20 @@ class QueueMessageSamples(object):
             queue.send_message(u"message3")
             queue.send_message(u"message4")
             queue.send_message(u"message5")
-            queue.send_message(u"message6", visibility_timeout=30)
+            queue.send_message(u"message6")
 
             # [START receive_messages_listing]
             # Store two messages in each page
-            messages = queue.receive_messages(messages_per_page=2).by_page()
+            message_batches = queue.receive_messages(messages_per_page=2).by_page()
 
             # Iterate through the page lists
-            print(list(next(messages)))
-            print(list(next(messages)))
+            print(list(next(message_batches)))
+            print(list(next(message_batches)))
 
-            # Third list has one message since `message6` is still invisible
-            print(list(next(messages)))
+            # There are two iterations in the last page as well.
+            last_page = next(message_batches)
+            for message in last_page:
+                print(message)
             # [END receive_messages_listing]
 
         finally:
