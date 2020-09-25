@@ -58,10 +58,10 @@ class SchemaProperties(object):
     ):
         # type: (Optional[str], Any) -> None
         self.location = kwargs.get('Location')
-        self.schema_id = schema_id or kwargs.get("X-Schema-Id")
-        self.location_by_id = kwargs.get('X-Schema-Id-Location')
-        self.serialization_type = kwargs.get('X-Schema-Type')
-        self.version = kwargs.get('X-Schema-Version')
+        self.schema_id = schema_id or kwargs.get("Schema-Id")
+        self.location_by_id = kwargs.get('Schema-Id-Location')
+        self.serialization_type = kwargs.get('Serialization-Type')
+        self.version = kwargs.get('Schema-Version')
 
 
 class Schema(object):
