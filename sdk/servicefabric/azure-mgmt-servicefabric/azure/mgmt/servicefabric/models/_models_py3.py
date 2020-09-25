@@ -901,7 +901,7 @@ class ClientCertificate(Model):
     :param common_name: Certificate Common name.
     :type common_name: str
     :param issuer_thumbprint: Issuer thumbprint for the certificate. Its only
-     use ehn CommonName is used.
+     use CommonName is used.
     :type issuer_thumbprint: str
     """
 
@@ -1958,9 +1958,6 @@ class ManagedCluster(Resource):
      the cluster.
     :type fabric_settings:
      list[~azure.mgmt.servicefabric.models.SettingsSectionDescription]
-    :param use_test_extension: Use service fabric test vm extension, by
-     default it's false.
-    :type use_test_extension: bool
     :ivar provisioning_state: The provisioning state of the managed cluster
      resource. Possible values include: 'None', 'Creating', 'Created',
      'Updating', 'Succeeded', 'Failed', 'Canceled', 'Deleting', 'Deleted',
@@ -1985,8 +1982,6 @@ class ManagedCluster(Resource):
      upgrading the cluster.
     :type cluster_upgrade_description:
      ~azure.mgmt.servicefabric.models.ClusterUpgradePolicy
-    :param reverse_proxy_endpoint_port: The endpoint used by reverse proxy.
-    :type reverse_proxy_endpoint_port: int
     :param sku: The sku of the managed cluster
     :type sku: ~azure.mgmt.servicefabric.models.Sku
     """
@@ -2026,16 +2021,14 @@ class ManagedCluster(Resource):
         'clients': {'key': 'properties.clients', 'type': '[ClientCertificate]'},
         'azure_active_directory': {'key': 'properties.azureActiveDirectory', 'type': 'AzureActiveDirectory'},
         'fabric_settings': {'key': 'properties.fabricSettings', 'type': '[SettingsSectionDescription]'},
-        'use_test_extension': {'key': 'properties.useTestExtension', 'type': 'bool'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'cluster_code_version': {'key': 'properties.clusterCodeVersion', 'type': 'str'},
         'cluster_upgrade_mode': {'key': 'properties.clusterUpgradeMode', 'type': 'str'},
         'cluster_upgrade_description': {'key': 'properties.clusterUpgradeDescription', 'type': 'ClusterUpgradePolicy'},
-        'reverse_proxy_endpoint_port': {'key': 'properties.reverseProxyEndpointPort', 'type': 'int'},
         'sku': {'key': 'sku', 'type': 'Sku'},
     }
 
-    def __init__(self, *, location: str, dns_name: str, admin_user_name: str, tags=None, client_connection_port: int=19000, http_gateway_connection_port: int=19080, admin_password: str=None, load_balancing_rules=None, clients=None, azure_active_directory=None, fabric_settings=None, use_test_extension: bool=None, cluster_code_version: str=None, cluster_upgrade_mode=None, cluster_upgrade_description=None, reverse_proxy_endpoint_port: int=None, sku=None, **kwargs) -> None:
+    def __init__(self, *, location: str, dns_name: str, admin_user_name: str, tags=None, client_connection_port: int=19000, http_gateway_connection_port: int=19080, admin_password: str=None, load_balancing_rules=None, clients=None, azure_active_directory=None, fabric_settings=None, cluster_code_version: str=None, cluster_upgrade_mode=None, cluster_upgrade_description=None, sku=None, **kwargs) -> None:
         super(ManagedCluster, self).__init__(location=location, tags=tags, **kwargs)
         self.dns_name = dns_name
         self.fqdn = None
@@ -2050,12 +2043,10 @@ class ManagedCluster(Resource):
         self.clients = clients
         self.azure_active_directory = azure_active_directory
         self.fabric_settings = fabric_settings
-        self.use_test_extension = use_test_extension
         self.provisioning_state = None
         self.cluster_code_version = cluster_code_version
         self.cluster_upgrade_mode = cluster_upgrade_mode
         self.cluster_upgrade_description = cluster_upgrade_description
-        self.reverse_proxy_endpoint_port = reverse_proxy_endpoint_port
         self.sku = sku
 
 
@@ -2099,8 +2090,6 @@ class ManagedClusterUpdateParameters(Model):
      upgrading the cluster.
     :type cluster_upgrade_description:
      ~azure.mgmt.servicefabric.models.ClusterUpgradePolicy
-    :param reverse_proxy_endpoint_port: The endpoint used by reverse proxy.
-    :type reverse_proxy_endpoint_port: int
     :param tags: Managed cluster update parameters
     :type tags: dict[str, str]
     """
@@ -2115,11 +2104,10 @@ class ManagedClusterUpdateParameters(Model):
         'cluster_code_version': {'key': 'properties.clusterCodeVersion', 'type': 'str'},
         'cluster_upgrade_mode': {'key': 'properties.clusterUpgradeMode', 'type': 'str'},
         'cluster_upgrade_description': {'key': 'properties.clusterUpgradeDescription', 'type': 'ClusterUpgradePolicy'},
-        'reverse_proxy_endpoint_port': {'key': 'properties.reverseProxyEndpointPort', 'type': 'int'},
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, *, client_connection_port: int=None, http_gateway_connection_port: int=None, load_balancing_rules=None, clients=None, azure_active_directory=None, fabric_settings=None, cluster_code_version: str=None, cluster_upgrade_mode=None, cluster_upgrade_description=None, reverse_proxy_endpoint_port: int=None, tags=None, **kwargs) -> None:
+    def __init__(self, *, client_connection_port: int=None, http_gateway_connection_port: int=None, load_balancing_rules=None, clients=None, azure_active_directory=None, fabric_settings=None, cluster_code_version: str=None, cluster_upgrade_mode=None, cluster_upgrade_description=None, tags=None, **kwargs) -> None:
         super(ManagedClusterUpdateParameters, self).__init__(**kwargs)
         self.client_connection_port = client_connection_port
         self.http_gateway_connection_port = http_gateway_connection_port
@@ -2130,7 +2118,6 @@ class ManagedClusterUpdateParameters(Model):
         self.cluster_code_version = cluster_code_version
         self.cluster_upgrade_mode = cluster_upgrade_mode
         self.cluster_upgrade_description = cluster_upgrade_description
-        self.reverse_proxy_endpoint_port = reverse_proxy_endpoint_port
         self.tags = tags
 
 
@@ -2326,8 +2313,6 @@ class NodeType(ManagedProxyResource):
      cannot be deleted or changed for existing clusters.
     :type is_primary: bool
     :param vm_instance_count: Required. The number of nodes in the node type.
-     This count should match the capacity property in the corresponding
-     VirtualMachineScaleSet resource.
     :type vm_instance_count: int
     :param data_disk_size_gb: Required. Disk size for each vm in the node type
      in GBs.
@@ -3310,7 +3295,7 @@ class Sku(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. Sku Name. Basic will hav a minimum of 3 seed nodes
+    :param name: Required. Sku Name. Basic will have a minimum of 3 seed nodes
      and Standard a minimum of 5. Basic only allows 1 node type. Possible
      values include: 'Basic', 'Standard'
     :type name: str or ~azure.mgmt.servicefabric.models.enum
