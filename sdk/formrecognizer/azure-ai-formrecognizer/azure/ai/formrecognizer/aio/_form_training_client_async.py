@@ -460,7 +460,7 @@ class FormTrainingClient(object):
         polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
         continuation_token = kwargs.pop("continuation_token", None)
 
-        return await self._client.begin_compose_custom_models_async(
+        return await self._client.begin_compose_custom_models_async(  # type: ignore
             {"model_ids": model_ids, "model_name": display_name},
             cls=kwargs.pop("cls", _compose_callback),
             polling=AsyncLROBasePolling(timeout=polling_interval, lro_algorithms=[TrainingPolling()], **kwargs),
