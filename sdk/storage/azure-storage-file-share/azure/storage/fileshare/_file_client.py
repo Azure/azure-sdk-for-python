@@ -1146,6 +1146,10 @@ class ShareFileClient(StorageAccountHostsMixin):
             The snapshot diff parameter that contains an opaque DateTime value that
             specifies a previous file snapshot to be compared
             against a more recent snapshot or the current file.
+
+            .. versionadded:: 12.6.0
+            This keyword argument was introduced in API version '2020-02-02'.
+
         :keyword lease:
             Required if the file has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
