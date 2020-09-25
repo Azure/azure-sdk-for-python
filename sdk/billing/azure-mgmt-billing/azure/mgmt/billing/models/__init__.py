@@ -9,32 +9,271 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .enrollment_account import EnrollmentAccount
-from .billing_period import BillingPeriod
-from .download_url import DownloadUrl
-from .error_details import ErrorDetails
-from .error_response import ErrorResponse, ErrorResponseException
-from .invoice import Invoice
-from .operation_display import OperationDisplay
-from .operation import Operation
-from .resource import Resource
-from .enrollment_account_paged import EnrollmentAccountPaged
-from .billing_period_paged import BillingPeriodPaged
-from .invoice_paged import InvoicePaged
-from .operation_paged import OperationPaged
+try:
+    from ._models_py3 import AddressDetails
+    from ._models_py3 import Agreement
+    from ._models_py3 import Amount
+    from ._models_py3 import AvailableBalance
+    from ._models_py3 import AzurePlan
+    from ._models_py3 import BillingAccount
+    from ._models_py3 import BillingAccountUpdateRequest
+    from ._models_py3 import BillingPeriod
+    from ._models_py3 import BillingPermissionsProperties
+    from ._models_py3 import BillingProfile
+    from ._models_py3 import BillingProfileCreationRequest
+    from ._models_py3 import BillingProfilesOnExpand
+    from ._models_py3 import BillingProperty
+    from ._models_py3 import BillingRoleAssignment
+    from ._models_py3 import BillingRoleDefinition
+    from ._models_py3 import BillingSubscription
+    from ._models_py3 import Customer
+    from ._models_py3 import CustomerPolicy
+    from ._models_py3 import Department
+    from ._models_py3 import Document
+    from ._models_py3 import DownloadUrl
+    from ._models_py3 import Enrollment
+    from ._models_py3 import EnrollmentAccount
+    from ._models_py3 import EnrollmentAccountContext
+    from ._models_py3 import EnrollmentAccountSummary
+    from ._models_py3 import EnrollmentPolicies
+    from ._models_py3 import ErrorDetails
+    from ._models_py3 import ErrorResponse, ErrorResponseException
+    from ._models_py3 import ErrorSubDetailsItem
+    from ._models_py3 import IndirectRelationshipInfo
+    from ._models_py3 import Instruction
+    from ._models_py3 import Invoice
+    from ._models_py3 import InvoiceSection
+    from ._models_py3 import InvoiceSectionCreationRequest
+    from ._models_py3 import InvoiceSectionsOnExpand
+    from ._models_py3 import InvoiceSectionWithCreateSubPermission
+    from ._models_py3 import Operation
+    from ._models_py3 import OperationDisplay
+    from ._models_py3 import Participants
+    from ._models_py3 import PaymentProperties
+    from ._models_py3 import Policy
+    from ._models_py3 import Product
+    from ._models_py3 import RebillDetails
+    from ._models_py3 import Reseller
+    from ._models_py3 import Resource
+    from ._models_py3 import Transaction
+    from ._models_py3 import TransferBillingSubscriptionRequestProperties
+    from ._models_py3 import TransferProductRequestProperties
+    from ._models_py3 import ValidateAddressResponse
+    from ._models_py3 import ValidateProductTransferEligibilityError
+    from ._models_py3 import ValidateProductTransferEligibilityResult
+    from ._models_py3 import ValidateSubscriptionTransferEligibilityError
+    from ._models_py3 import ValidateSubscriptionTransferEligibilityResult
+except (SyntaxError, ImportError):
+    from ._models import AddressDetails
+    from ._models import Agreement
+    from ._models import Amount
+    from ._models import AvailableBalance
+    from ._models import AzurePlan
+    from ._models import BillingAccount
+    from ._models import BillingAccountUpdateRequest
+    from ._models import BillingPeriod
+    from ._models import BillingPermissionsProperties
+    from ._models import BillingProfile
+    from ._models import BillingProfileCreationRequest
+    from ._models import BillingProfilesOnExpand
+    from ._models import BillingProperty
+    from ._models import BillingRoleAssignment
+    from ._models import BillingRoleDefinition
+    from ._models import BillingSubscription
+    from ._models import Customer
+    from ._models import CustomerPolicy
+    from ._models import Department
+    from ._models import Document
+    from ._models import DownloadUrl
+    from ._models import Enrollment
+    from ._models import EnrollmentAccount
+    from ._models import EnrollmentAccountContext
+    from ._models import EnrollmentAccountSummary
+    from ._models import EnrollmentPolicies
+    from ._models import ErrorDetails
+    from ._models import ErrorResponse, ErrorResponseException
+    from ._models import ErrorSubDetailsItem
+    from ._models import IndirectRelationshipInfo
+    from ._models import Instruction
+    from ._models import Invoice
+    from ._models import InvoiceSection
+    from ._models import InvoiceSectionCreationRequest
+    from ._models import InvoiceSectionsOnExpand
+    from ._models import InvoiceSectionWithCreateSubPermission
+    from ._models import Operation
+    from ._models import OperationDisplay
+    from ._models import Participants
+    from ._models import PaymentProperties
+    from ._models import Policy
+    from ._models import Product
+    from ._models import RebillDetails
+    from ._models import Reseller
+    from ._models import Resource
+    from ._models import Transaction
+    from ._models import TransferBillingSubscriptionRequestProperties
+    from ._models import TransferProductRequestProperties
+    from ._models import ValidateAddressResponse
+    from ._models import ValidateProductTransferEligibilityError
+    from ._models import ValidateProductTransferEligibilityResult
+    from ._models import ValidateSubscriptionTransferEligibilityError
+    from ._models import ValidateSubscriptionTransferEligibilityResult
+from ._paged_models import AgreementPaged
+from ._paged_models import BillingAccountPaged
+from ._paged_models import BillingPeriodPaged
+from ._paged_models import BillingPermissionsPropertiesPaged
+from ._paged_models import BillingProfilePaged
+from ._paged_models import BillingRoleAssignmentPaged
+from ._paged_models import BillingRoleDefinitionPaged
+from ._paged_models import BillingSubscriptionPaged
+from ._paged_models import CustomerPaged
+from ._paged_models import EnrollmentAccountSummaryPaged
+from ._paged_models import InstructionPaged
+from ._paged_models import InvoicePaged
+from ._paged_models import InvoiceSectionPaged
+from ._paged_models import InvoiceSectionWithCreateSubPermissionPaged
+from ._paged_models import OperationPaged
+from ._paged_models import ProductPaged
+from ._paged_models import TransactionPaged
+from ._billing_management_client_enums import (
+    AddressValidationStatus,
+    SubscriptionTransferValidationErrorCode,
+    AgreementType,
+    AccountType,
+    AccountStatus,
+    BillingRelationshipType,
+    InvoiceSectionState,
+    TargetCloud,
+    BillingProfileStatus,
+    StatusReasonCode,
+    SpendingLimit,
+    BillingProfileStatusReasonCode,
+    BillingProfileSpendingLimit,
+    StatusReasonCodeForBillingProfile,
+    SpendingLimitForBillingProfile,
+    InvoiceStatus,
+    InvoiceType,
+    DocumentType,
+    DocumentSource,
+    PaymentMethodFamily,
+    InvoiceDocumentType,
+    AutoRenew,
+    ProductStatusType,
+    BillingFrequency,
+    ProductTransferValidationErrorCode,
+    BillingSubscriptionStatusType,
+    TransactionTypeKind,
+    ReservationType,
+    MarketplacePurchasesPolicy,
+    ReservationPurchasesPolicy,
+    ViewChargesPolicy,
+    ViewCharges,
+    Category,
+    AcceptanceMode,
+)
 
 __all__ = [
-    'EnrollmentAccount',
+    'AddressDetails',
+    'Agreement',
+    'Amount',
+    'AvailableBalance',
+    'AzurePlan',
+    'BillingAccount',
+    'BillingAccountUpdateRequest',
     'BillingPeriod',
+    'BillingPermissionsProperties',
+    'BillingProfile',
+    'BillingProfileCreationRequest',
+    'BillingProfilesOnExpand',
+    'BillingProperty',
+    'BillingRoleAssignment',
+    'BillingRoleDefinition',
+    'BillingSubscription',
+    'Customer',
+    'CustomerPolicy',
+    'Department',
+    'Document',
     'DownloadUrl',
+    'Enrollment',
+    'EnrollmentAccount',
+    'EnrollmentAccountContext',
+    'EnrollmentAccountSummary',
+    'EnrollmentPolicies',
     'ErrorDetails',
     'ErrorResponse', 'ErrorResponseException',
+    'ErrorSubDetailsItem',
+    'IndirectRelationshipInfo',
+    'Instruction',
     'Invoice',
-    'OperationDisplay',
+    'InvoiceSection',
+    'InvoiceSectionCreationRequest',
+    'InvoiceSectionsOnExpand',
+    'InvoiceSectionWithCreateSubPermission',
     'Operation',
+    'OperationDisplay',
+    'Participants',
+    'PaymentProperties',
+    'Policy',
+    'Product',
+    'RebillDetails',
+    'Reseller',
     'Resource',
-    'EnrollmentAccountPaged',
-    'BillingPeriodPaged',
+    'Transaction',
+    'TransferBillingSubscriptionRequestProperties',
+    'TransferProductRequestProperties',
+    'ValidateAddressResponse',
+    'ValidateProductTransferEligibilityError',
+    'ValidateProductTransferEligibilityResult',
+    'ValidateSubscriptionTransferEligibilityError',
+    'ValidateSubscriptionTransferEligibilityResult',
+    'BillingAccountPaged',
+    'InvoiceSectionWithCreateSubPermissionPaged',
+    'InstructionPaged',
+    'BillingProfilePaged',
+    'CustomerPaged',
+    'InvoiceSectionPaged',
+    'BillingPermissionsPropertiesPaged',
+    'BillingSubscriptionPaged',
+    'ProductPaged',
     'InvoicePaged',
+    'TransactionPaged',
     'OperationPaged',
+    'BillingRoleDefinitionPaged',
+    'BillingRoleAssignmentPaged',
+    'AgreementPaged',
+    'EnrollmentAccountSummaryPaged',
+    'BillingPeriodPaged',
+    'AddressValidationStatus',
+    'SubscriptionTransferValidationErrorCode',
+    'AgreementType',
+    'AccountType',
+    'AccountStatus',
+    'BillingRelationshipType',
+    'InvoiceSectionState',
+    'TargetCloud',
+    'BillingProfileStatus',
+    'StatusReasonCode',
+    'SpendingLimit',
+    'BillingProfileStatusReasonCode',
+    'BillingProfileSpendingLimit',
+    'StatusReasonCodeForBillingProfile',
+    'SpendingLimitForBillingProfile',
+    'InvoiceStatus',
+    'InvoiceType',
+    'DocumentType',
+    'DocumentSource',
+    'PaymentMethodFamily',
+    'InvoiceDocumentType',
+    'AutoRenew',
+    'ProductStatusType',
+    'BillingFrequency',
+    'ProductTransferValidationErrorCode',
+    'BillingSubscriptionStatusType',
+    'TransactionTypeKind',
+    'ReservationType',
+    'MarketplacePurchasesPolicy',
+    'ReservationPurchasesPolicy',
+    'ViewChargesPolicy',
+    'ViewCharges',
+    'Category',
+    'AcceptanceMode',
 ]
