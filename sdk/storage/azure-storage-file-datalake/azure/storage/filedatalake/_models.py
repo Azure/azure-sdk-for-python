@@ -680,7 +680,7 @@ class DataLakeFileQueryError(object):
         self.position = position
 
 
-class AccessControlChangeCounters(object):
+class AccessControlChangeCounters(DictMixin):
     """
     AccessControlChangeCounters contains counts of operations that change Access Control Lists recursively.
 
@@ -698,7 +698,7 @@ class AccessControlChangeCounters(object):
         self.failure_count = failure_count
 
 
-class AccessControlChangeResult(object):
+class AccessControlChangeResult(DictMixin):
     """
     AccessControlChangeResult contains result of operations that change Access Control Lists recursively.
 
@@ -714,7 +714,7 @@ class AccessControlChangeResult(object):
         self.continuation = continuation
 
 
-class AccessControlChangeFailure(object):
+class AccessControlChangeFailure(DictMixin):
     """
     Represents an entry that failed to update Access Control List.
 
@@ -732,7 +732,7 @@ class AccessControlChangeFailure(object):
         self.error_message = error_message
 
 
-class AccessControlChanges(object):
+class AccessControlChanges(DictMixin):
     """
     AccessControlChanges contains batch and cumulative counts of operations
     that change Access Control Lists recursively.
