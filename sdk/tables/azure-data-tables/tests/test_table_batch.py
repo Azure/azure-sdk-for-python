@@ -461,7 +461,8 @@ class StorageTableBatchTest(TableTestCase):
             for i in range(100):
                 entity.RowKey = str(i)
                 batch.create_entity(entity)
-            transaction = self.table.send_batch(batch)
+            # transaction = self.table.send_batch(batch)
+            transaction = batch.send_batch()
 
             entities = list(self.table.query_entities("PartitionKey eq 'batch_inserts'"))
 

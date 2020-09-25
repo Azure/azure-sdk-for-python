@@ -3,11 +3,25 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from azure.core.exceptions import  ResourceExistsError, ResourceNotFoundError
+from typing import (
+    Union,
+    Any,
+    Dict,
+    List,
+)
+from uuid import uuid4
+
+from azure.core.exceptions import (
+    ResourceExistsError,
+    ResourceNotFoundError,
+    HttpResponseError
+)
 from azure.core.pipeline import PipelineResponse
+from azure.core.pipeline.transport import HttpRequest
 
 from ._deserialize import _return_headers_and_deserialized
-from ._models import PartialBatchErrorException, UpdateMode
+from ._models import PartialBatchErrorException, UpdateMode, BatchTransactionResult
+from ._policies import StorageHeadersPolicy
 from ._serialize import _get_match_headers, _add_entity_properties
 from ._generated.models import (
     QueryOptions
@@ -702,6 +716,61 @@ class TableBatchOperations(object):
         request = self._client._client.get(url, query_parameters, header_parameters) # pylint:disable=protected-access
         self._requests.append(request)
     _batch_query.metadata = {'url': '/{table}()'}  # type: ignore
+
+
+    def send_batch(self, **kwargs) -> BatchTransactionResult:
+        return self._batch_send(**kwargs)
+
+
+    def _batch_send(self, **kwargs: Dict[str,Any]) -> BatchTransactionResult:
+        # (...) -> List[HttpResponse]
+        """Given a series of request, do a Storage batch call.
+        """
+        # Pop it here, so requests doesn't feel bad about additional kwarg
+        raise_on_any_failure = kwargs.pop("raise_on_any_failure", True)
+        policies = [StorageHeadersPolicy()]
+
+        changeset = HttpRequest('POST', None)
+        changeset.set_multipart_mixed(
+            *self._requests,
+            policies=policies,
+            boundary="changeset_{}".format(uuid4())
+        )
+        request = self._client._client.post(  # pylint: disable=protected-access
+            url='https://{}/$batch'.format(self._table_client._primary_hostname),
+            headers={
+                'x-ms-version': self._table_client.api_version,
+                'DataServiceVersion': '3.0',
+                'MaxDataServiceVersion': '3.0;NetFx',
+            }
+        )
+        request.set_multipart_mixed(
+            changeset,
+            policies=policies,
+            enforce_https=False,
+            boundary="batch_{}".format(uuid4())
+        )
+
+        pipeline_response = self._table_client._pipeline.run(
+            request, **kwargs
+        )
+        response = pipeline_response.http_response
+        try:
+            if response.status_code not in [202]:
+                raise HttpResponseError(response=response)
+            parts = response.parts()
+            transaction_result = BatchTransactionResult(self._requests, parts)
+            if raise_on_any_failure:
+                parts = list(response.parts())
+                if any(p for p in parts if not 200 <= p.status_code < 300):
+                    error = PartialBatchErrorException(
+                        message="There is a failure in the batch operation.",
+                        response=response, parts=parts
+                    )
+                    raise error
+            return transaction_result
+        except HttpResponseError as error:
+            _process_table_error(error)
 
 
     def __enter__(self):
