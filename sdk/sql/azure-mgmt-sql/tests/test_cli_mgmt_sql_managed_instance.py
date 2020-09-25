@@ -178,6 +178,7 @@ class MgmtSqlTest(AzureMgmtTestCase):
 #--------------------------------------------------------------------------
         # result = self.mgmt_client.managed_instance_operations.cancel(resource_group_name=RESOURCE_GROUP, managed_instance_name=MANAGED_INSTANCE_NAME, operation_id=OPERATION_ID)
 
+    @unittest.skip("it will take a long time.")
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_managed_instances(self, resource_group):
 
