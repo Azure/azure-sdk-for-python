@@ -14,7 +14,8 @@ from ._models import (
     FormTable,
     FormTableCell,
     FormPageRange,
-    RecognizedForm
+    RecognizedForm,
+    FormSelectionMark
 )
 
 
@@ -69,6 +70,8 @@ def prepare_content_result(response):
             unit=page.unit,
             lines=[FormLine._from_generated(line, page=page.page) for line in page.lines] if page.lines else None,
             tables=prepare_tables(page_result[idx], read_result),
+            selection_marks=[FormSelectionMark._from_generated(mark, page.page) for mark in page.selection_marks]
+            if page.selection_marks else None
         )
         pages.append(form_page)
     return pages

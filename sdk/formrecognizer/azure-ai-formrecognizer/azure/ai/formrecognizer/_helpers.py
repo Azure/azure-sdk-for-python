@@ -39,6 +39,10 @@ def get_element_type(element_pointer):
     if re.search(line_ref, element_pointer):
         return "line"
 
+    selection_mark_ref = re.compile(r'/readResults/\d+/selectionMarks/\d+')
+    if re.search(selection_mark_ref, element_pointer):
+        return "selectionMark"
+
     return None
 
 
@@ -56,6 +60,11 @@ def get_element(element_pointer, read_result):
         line = indices[1]
         ocr_line = read_result[read].lines[line]
         return "line", ocr_line, read+1
+
+    if get_element_type(element_pointer) == "selectionMark":
+        mark = indices[1]
+        selection_mark = read_result[read].selection_marks[mark]
+        return "selectionMark", selection_mark, read+1
 
     return None, None, None
 
