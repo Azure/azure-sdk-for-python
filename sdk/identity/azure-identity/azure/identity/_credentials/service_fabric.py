@@ -6,28 +6,16 @@ import functools
 import os
 from typing import TYPE_CHECKING
 
-from azure.core.configuration import Configuration
 from azure.core.credentials import AccessToken
 from azure.core.pipeline.transport import HttpRequest
-from azure.core.pipeline.policies import (
-    ContentDecodePolicy,
-    DistributedTracingPolicy,
-    HeadersPolicy,
-    HttpLoggingPolicy,
-    UserAgentPolicy,
-    RetryPolicy,
-    NetworkTraceLoggingPolicy,
-)
 
 from .. import CredentialUnavailableError
 from .._constants import EnvironmentVariables
 from .._internal.managed_identity_client import ManagedIdentityClient
 from .._internal.get_token_mixin import GetTokenMixin
-from .._internal.user_agent import USER_AGENT
 
 if TYPE_CHECKING:
     from typing import Any, Optional
-    from azure.core.pipeline.policies import SansIOHTTPPolicy
 
 
 class ServiceFabricCredential(GetTokenMixin):
@@ -70,8 +58,6 @@ def _get_client_args(**kwargs):
         base_headers = {"Secret": secret}
         content_callback = None
         connection_verify = False
-        config = _get_configuration(**kwargs)
-        policies = _get_policies(config, **kwargs)
     else:
         # Service Fabric managed identity isn't available in this environment
         return None
@@ -83,28 +69,7 @@ def _get_client_args(**kwargs):
         base_headers=base_headers,
         connection_verify=connection_verify,
         request_factory=functools.partial(_get_request, url, version),
-        policies=policies,
     )
-
-
-def _get_policies(config, **kwargs):
-    return [
-        HeadersPolicy(**kwargs),
-        UserAgentPolicy(base_user_agent=USER_AGENT, **kwargs),
-        config.proxy_policy,
-        config.retry_policy,
-        NetworkTraceLoggingPolicy(**kwargs),
-        DistributedTracingPolicy(**kwargs),
-        HttpLoggingPolicy(**kwargs),
-        _ServiceFabricCertificatePolicy()
-    ]
-
-
-def _get_configuration(**kwargs):
-    # type: (**Any) -> Configuration
-    config = Configuration()
-    config.retry_policy = RetryPolicy(**kwargs)
-    return config
 
 
 def _get_request(url, version, scope, identity_config):
@@ -140,35 +105,3 @@ def _parse_app_service_expires_on(content):
                 pass
 
     raise ValueError("'{}' doesn't match the expected format".format(expires_on))
-
-
-class _ServiceFabricCertificatePolicy(SansIOHTTPPolicy):
-    """
-
-    """
-
-    def __init__(self):
-
-
-    def on_response(self, request, response):
-        certificate = response.http_response
-
-
-def _verify_certificate(expected_thumbprint):
-    parsed_identity_endpoint = urlparse(os.environ.get(EnvironmentVariables.IDENTITY_ENDPOINT))
-    address = parsed_identity_endpoint.hostname
-    port = parsed_identity_endpoint.port
-
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sock.settimeout(1)
-    wrappedSocket = ssl.wrap_socket(sock)
-
-    attempts = 5
-    for i in range(attempts):
-        try:
-            wrappedSocket.connect((address, port))
-            break
-        except:
-            time.sleep(1)
-    der_certificate_binary = wrappedSocket.getpeercert(True)
-    thumbprint_sha1 = hashlib.sha1(der_certificate_binary).hexdigest()
