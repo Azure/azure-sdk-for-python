@@ -3,7 +3,7 @@ interactions:
     body: 'b''{"source": "https://fakeuri.com/blank%20space"}'''
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -13,20 +13,20 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/custom/models/00000000-0000-0000-0000-000000000000/analyze?includeTextDetails=false
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/00000000-0000-0000-0000-000000000000/analyze?includeTextDetails=false
   response:
     body:
       string: '{"error": {"code": "1001", "message": "Specified model not found or
         not ready, Model Id: 00000000-0000-0000-0000-000000000000"}}'
     headers:
       apim-request-id:
-      - 46abbfdd-c1f0-4a4f-a473-4b3321512c43
+      - b56d7bd6-60bf-4707-8677-d43490fdee9d
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 10 Jul 2020 18:47:17 GMT
+      - Mon, 14 Sep 2020 20:14:45 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -34,7 +34,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '14'
+      - '13'
     status:
       code: 400
       message: Bad Request
