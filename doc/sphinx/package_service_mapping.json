@@ -159,7 +159,7 @@
     "category": "Other",
     "service_name": "Other"
   },
-  "azure-communication-adminstration": {
+  "azure-communication-administration": {
     "category": "Client",
     "service_name": "Communication",
     "manually_generated": true
