@@ -54,10 +54,10 @@ class ShareLeaseClient(object):
         self.etag = None
         if hasattr(client, 'file_name'):
             self._client = client._client.file  # type: ignore # pylint: disable=protected-access
-            self.snapshot = None
+            self._snapshot = None
         elif hasattr(client, 'share_name'):
             self._client = client._client.share
-            self.snapshot = client.snapshot
+            self._snapshot = client.snapshot
         else:
             raise TypeError("Lease must use ShareFileClient or ShareClient.")
 
@@ -90,6 +90,8 @@ class ShareLeaseClient(object):
         :rtype: None
         """
         try:
+            if self._snapshot:
+                kwargs['sharesnapshot'] = self._snapshot
             response = self._client.acquire_lease(
                 timeout=kwargs.pop('timeout', None),
                 duration=lease_duration,
@@ -134,7 +136,7 @@ class ShareLeaseClient(object):
             response = self._client.renew_lease(
                 lease_id=self.id,
                 timeout=kwargs.pop('timeout', None),
-                sharesnapshot=self.snapshot,
+                sharesnapshot=self._snapshot,
                 cls=return_response_headers,
                 **kwargs)
         except StorageErrorException as error:
@@ -155,6 +157,8 @@ class ShareLeaseClient(object):
         :return: None
         """
         try:
+            if self._snapshot:
+                kwargs['sharesnapshot'] = self._snapshot
             response = self._client.release_lease(
                 lease_id=self.id,
                 timeout=kwargs.pop('timeout', None),
@@ -181,6 +185,8 @@ class ShareLeaseClient(object):
         :return: None
         """
         try:
+            if self._snapshot:
+                kwargs['sharesnapshot'] = self._snapshot
             response = self._client.change_lease(
                 lease_id=self.id,
                 proposed_lease_id=proposed_lease_id,
@@ -195,7 +201,7 @@ class ShareLeaseClient(object):
 
     @distributed_trace
     def break_lease(self, **kwargs):
-        # type: (Optional[int], Any) -> int
+        # type: (Optional[int, str], Any) -> int
         """Force breaks the lease if the file or share has an active lease. Any authorized request can break the lease;
         the request is not required to specify a matching lease ID. An infinite lease breaks immediately.
 
@@ -210,6 +216,8 @@ class ShareLeaseClient(object):
         :rtype: int
         """
         try:
+            if self._snapshot:
+                kwargs['sharesnapshot'] = self._snapshot
             response = self._client.break_lease(
                 timeout=kwargs.pop('timeout', None),
                 cls=return_response_headers,

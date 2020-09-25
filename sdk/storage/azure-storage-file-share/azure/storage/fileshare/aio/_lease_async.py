@@ -81,6 +81,8 @@ class ShareLeaseClient(LeaseClientBase):
         :rtype: None
         """
         try:
+            if self._snapshot:
+                kwargs['sharesnapshot'] = self._snapshot
             response = await self._client.acquire_lease(
                 timeout=kwargs.pop('timeout', None),
                 duration=lease_duration,
@@ -125,7 +127,7 @@ class ShareLeaseClient(LeaseClientBase):
             response = await self._client.renew_lease(
                 lease_id=self.id,
                 timeout=kwargs.pop('timeout', None),
-                sharesnapshot=self.snapshot,
+                sharesnapshot=self._snapshot,
                 cls=return_response_headers,
                 **kwargs)
         except StorageErrorException as error:
@@ -146,6 +148,8 @@ class ShareLeaseClient(LeaseClientBase):
         :return: None
         """
         try:
+            if self._snapshot:
+                kwargs['sharesnapshot'] = self._snapshot
             response = await self._client.release_lease(
                 lease_id=self.id,
                 timeout=kwargs.pop('timeout', None),
@@ -172,6 +176,8 @@ class ShareLeaseClient(LeaseClientBase):
         :return: None
         """
         try:
+            if self._snapshot:
+                kwargs['sharesnapshot'] = self._snapshot
             response = await self._client.change_lease(
                 lease_id=self.id,
                 proposed_lease_id=proposed_lease_id,
@@ -186,7 +192,7 @@ class ShareLeaseClient(LeaseClientBase):
 
     @distributed_trace_async
     async def break_lease(self, **kwargs):
-        # type: (Optional[int], Any) -> int
+        # type: (Optional[int, str], Any) -> int
         """Force breaks the lease if the file or share has an active lease. Any authorized request can break the lease;
         the request is not required to specify a matching lease ID. An infinite lease breaks immediately.
 
@@ -201,6 +207,8 @@ class ShareLeaseClient(LeaseClientBase):
         :rtype: int
         """
         try:
+            if self._snapshot:
+                kwargs['sharesnapshot'] = self._snapshot
             response = await self._client.break_lease(
                 timeout=kwargs.pop('timeout', None),
                 cls=return_response_headers,
