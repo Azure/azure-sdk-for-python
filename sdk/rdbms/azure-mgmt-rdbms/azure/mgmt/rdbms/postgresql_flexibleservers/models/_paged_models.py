@@ -51,19 +51,6 @@ class ConfigurationPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(ConfigurationPaged, self).__init__(*args, **kwargs)
-class ServerKeyPaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`ServerKey <azure.mgmt.rdbms.postgresql_flexibleservers.models.ServerKey>` object
-    """
-
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[ServerKey]'}
-    }
-
-    def __init__(self, *args, **kwargs):
-
-        super(ServerKeyPaged, self).__init__(*args, **kwargs)
 class CapabilityPropertiesPaged(Paged):
     """
     A paging container for iterating over a list of :class:`CapabilityProperties <azure.mgmt.rdbms.postgresql_flexibleservers.models.CapabilityProperties>` object

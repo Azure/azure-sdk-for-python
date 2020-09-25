@@ -515,6 +515,8 @@ class Operation(Model):
      operation or action.
     :vartype display:
      ~azure.mgmt.rdbms.postgresql_flexibleservers.models.OperationDisplay
+    :param is_data_action: Indicates whether the operation is a data action
+    :type is_data_action: bool
     :ivar origin: The intended executor of the operation. Possible values
      include: 'NotSpecified', 'user', 'system'
     :vartype origin: str or
@@ -533,6 +535,7 @@ class Operation(Model):
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'display': {'key': 'display', 'type': 'OperationDisplay'},
+        'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
         'origin': {'key': 'origin', 'type': 'str'},
         'properties': {'key': 'properties', 'type': '{object}'},
     }
@@ -541,6 +544,7 @@ class Operation(Model):
         super(Operation, self).__init__(**kwargs)
         self.name = None
         self.display = None
+        self.is_data_action = kwargs.get('is_data_action', None)
         self.origin = None
         self.properties = None
 
@@ -586,18 +590,24 @@ class OperationDisplay(Model):
 class OperationListResult(Model):
     """A list of resource provider operations.
 
-    :param value: The list of resource provider operations.
+    :param value: Collection of available operation details
     :type value:
      list[~azure.mgmt.rdbms.postgresql_flexibleservers.models.Operation]
+    :param next_link: URL client should use to fetch the next page (per server
+     side paging).
+     It's null for now, added for future use.
+    :type next_link: str
     """
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[Operation]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(OperationListResult, self).__init__(**kwargs)
         self.value = kwargs.get('value', None)
+        self.next_link = kwargs.get('next_link', None)
 
 
 class Plan(Model):
@@ -1138,61 +1148,6 @@ class ServerForUpdate(Model):
         self.ha_enabled = kwargs.get('ha_enabled', None)
         self.maintenance_window = kwargs.get('maintenance_window', None)
         self.tags = kwargs.get('tags', None)
-
-
-class ServerKey(ProxyResource):
-    """A PostgreSQL Server key.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar id: Fully qualified resource Id for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
-    :vartype id: str
-    :ivar name: The name of the resource
-    :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
-    :vartype type: str
-    :ivar kind: Kind of encryption protector used to protect the key.
-    :vartype kind: str
-    :ivar server_key_type: Required. The key type like 'AzureKeyVault'.
-     Default value: "AzureKeyVault" .
-    :vartype server_key_type: str
-    :param uri: The URI of the key.
-    :type uri: str
-    :ivar creation_date: The key creation date.
-    :vartype creation_date: datetime
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'kind': {'readonly': True},
-        'server_key_type': {'required': True, 'constant': True},
-        'creation_date': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'server_key_type': {'key': 'properties.serverKeyType', 'type': 'str'},
-        'uri': {'key': 'properties.uri', 'type': 'str'},
-        'creation_date': {'key': 'properties.creationDate', 'type': 'iso-8601'},
-    }
-
-    server_key_type = "AzureKeyVault"
-
-    def __init__(self, **kwargs):
-        super(ServerKey, self).__init__(**kwargs)
-        self.kind = None
-        self.uri = kwargs.get('uri', None)
-        self.creation_date = None
 
 
 class ServerPropertiesDelegatedSubnetArguments(Model):

@@ -34,7 +34,6 @@ try:
     from ._models_py3 import Server
     from ._models_py3 import ServerEditionCapability
     from ._models_py3 import ServerForUpdate
-    from ._models_py3 import ServerKey
     from ._models_py3 import ServerPropertiesDelegatedSubnetArguments
     from ._models_py3 import ServerVersionCapability
     from ._models_py3 import Sku
@@ -70,7 +69,6 @@ except (SyntaxError, ImportError):
     from ._models import Server
     from ._models import ServerEditionCapability
     from ._models import ServerForUpdate
-    from ._models import ServerKey
     from ._models import ServerPropertiesDelegatedSubnetArguments
     from ._models import ServerVersionCapability
     from ._models import Sku
@@ -84,7 +82,6 @@ except (SyntaxError, ImportError):
 from ._paged_models import CapabilityPropertiesPaged
 from ._paged_models import ConfigurationPaged
 from ._paged_models import FirewallRulePaged
-from ._paged_models import ServerKeyPaged
 from ._paged_models import ServerPaged
 from ._postgre_sql_management_client_enums import (
     ServerVersion,
@@ -124,7 +121,6 @@ __all__ = [
     'Server',
     'ServerEditionCapability',
     'ServerForUpdate',
-    'ServerKey',
     'ServerPropertiesDelegatedSubnetArguments',
     'ServerVersionCapability',
     'Sku',
@@ -138,7 +134,6 @@ __all__ = [
     'ServerPaged',
     'FirewallRulePaged',
     'ConfigurationPaged',
-    'ServerKeyPaged',
     'CapabilityPropertiesPaged',
     'ServerVersion',
     'ServerState',

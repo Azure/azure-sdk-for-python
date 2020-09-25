@@ -16,7 +16,6 @@ from ._configuration import PostgreSQLManagementClientConfiguration
 from .operations import ServersOperations
 from .operations import FirewallRulesOperations
 from .operations import ConfigurationsOperations
-from .operations import ServerKeysOperations
 from .operations import CheckNameAvailabilityOperations
 from .operations import LocationBasedCapabilitiesOperations
 from .operations import VirtualNetworkSubnetUsageOperations
@@ -36,8 +35,6 @@ class PostgreSQLManagementClient(SDKClient):
     :vartype firewall_rules: azure.mgmt.rdbms.postgresql_flexibleservers.operations.FirewallRulesOperations
     :ivar configurations: Configurations operations
     :vartype configurations: azure.mgmt.rdbms.postgresql_flexibleservers.operations.ConfigurationsOperations
-    :ivar server_keys: ServerKeys operations
-    :vartype server_keys: azure.mgmt.rdbms.postgresql_flexibleservers.operations.ServerKeysOperations
     :ivar check_name_availability: CheckNameAvailability operations
     :vartype check_name_availability: azure.mgmt.rdbms.postgresql_flexibleservers.operations.CheckNameAvailabilityOperations
     :ivar location_based_capabilities: LocationBasedCapabilities operations
@@ -62,7 +59,7 @@ class PostgreSQLManagementClient(SDKClient):
         super(PostgreSQLManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2020-02-14-privatepreview'
+        self.api_version = '2020-02-14-preview'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -71,8 +68,6 @@ class PostgreSQLManagementClient(SDKClient):
         self.firewall_rules = FirewallRulesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.configurations = ConfigurationsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.server_keys = ServerKeysOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.check_name_availability = CheckNameAvailabilityOperations(
             self._client, self.config, self._serialize, self._deserialize)
