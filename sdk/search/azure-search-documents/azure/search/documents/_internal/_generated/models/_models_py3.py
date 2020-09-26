@@ -574,6 +574,17 @@ class SearchOptions(msrest.serialization.Model):
     :param search_mode: A value that specifies whether any or all of the search terms must be
      matched in order to count the document as a match. Possible values include: "any", "all".
     :type search_mode: str or ~azure.search.documents.models.SearchMode
+    :param scoring_statistics: A value that specifies whether we want to calculate scoring
+     statistics (such as document frequency) globally for more consistent scoring, or locally, for
+     lower latency. Possible values include: "local", "global".
+    :type scoring_statistics: str or ~azure.search.documents.models.ScoringStatistics
+    :param session_id: A value to be used to create a sticky session, which can help to get more
+     consistent results. As long as the same sessionId is used, a best-effort attempt will be made
+     to target the same replica set. Be wary that reusing the same sessionID values repeatedly can
+     interfere with the load balancing of the requests across replicas and adversely affect the
+     performance of the search service. The value used as sessionId cannot start with a '_'
+     character.
+    :type session_id: str
     :param select: The list of fields to retrieve. If unspecified, all fields marked as retrievable
      in the schema are included.
     :type select: list[str]
@@ -602,6 +613,8 @@ class SearchOptions(msrest.serialization.Model):
         'scoring_profile': {'key': 'scoringProfile', 'type': 'str'},
         'search_fields': {'key': 'searchFields', 'type': '[str]'},
         'search_mode': {'key': 'searchMode', 'type': 'str'},
+        'scoring_statistics': {'key': 'scoringStatistics', 'type': 'str'},
+        'session_id': {'key': 'sessionId', 'type': 'str'},
         'select': {'key': '$select', 'type': '[str]'},
         'skip': {'key': '$skip', 'type': 'int'},
         'top': {'key': '$top', 'type': 'int'},
@@ -623,6 +636,8 @@ class SearchOptions(msrest.serialization.Model):
         scoring_profile: Optional[str] = None,
         search_fields: Optional[List[str]] = None,
         search_mode: Optional[Union[str, "SearchMode"]] = None,
+        scoring_statistics: Optional[Union[str, "ScoringStatistics"]] = None,
+        session_id: Optional[str] = None,
         select: Optional[List[str]] = None,
         skip: Optional[int] = None,
         top: Optional[int] = None,
@@ -642,6 +657,8 @@ class SearchOptions(msrest.serialization.Model):
         self.scoring_profile = scoring_profile
         self.search_fields = search_fields
         self.search_mode = search_mode
+        self.scoring_statistics = scoring_statistics
+        self.session_id = session_id
         self.select = select
         self.skip = skip
         self.top = top
@@ -685,6 +702,19 @@ class SearchRequest(msrest.serialization.Model):
      'simple'. Use 'full' if your query uses the Lucene query syntax. Possible values include:
      "simple", "full".
     :type query_type: str or ~azure.search.documents.models.QueryType
+    :param scoring_statistics: A value that specifies whether we want to calculate scoring
+     statistics (such as document frequency) globally for more consistent scoring, or locally, for
+     lower latency. The default is 'local'. Use 'global' to aggregate scoring statistics globally
+     before scoring. Using global scoring statistics can increase latency of search queries.
+     Possible values include: "local", "global".
+    :type scoring_statistics: str or ~azure.search.documents.models.ScoringStatistics
+    :param session_id: A value to be used to create a sticky session, which can help getting more
+     consistent results. As long as the same sessionId is used, a best-effort attempt will be made
+     to target the same replica set. Be wary that reusing the same sessionID values repeatedly can
+     interfere with the load balancing of the requests across replicas and adversely affect the
+     performance of the search service. The value used as sessionId cannot start with a '_'
+     character.
+    :type session_id: str
     :param scoring_parameters: The list of parameter values to be used in scoring functions (for
      example, referencePointParameter) using the format name-values. For example, if the scoring
      profile defines a function with a parameter called 'mylocation' the parameter string would be
@@ -728,6 +758,8 @@ class SearchRequest(msrest.serialization.Model):
         'minimum_coverage': {'key': 'minimumCoverage', 'type': 'float'},
         'order_by': {'key': 'orderby', 'type': 'str'},
         'query_type': {'key': 'queryType', 'type': 'str'},
+        'scoring_statistics': {'key': 'scoringStatistics', 'type': 'str'},
+        'session_id': {'key': 'sessionId', 'type': 'str'},
         'scoring_parameters': {'key': 'scoringParameters', 'type': '[str]'},
         'scoring_profile': {'key': 'scoringProfile', 'type': 'str'},
         'search_text': {'key': 'search', 'type': 'str'},
@@ -750,6 +782,8 @@ class SearchRequest(msrest.serialization.Model):
         minimum_coverage: Optional[float] = None,
         order_by: Optional[str] = None,
         query_type: Optional[Union[str, "QueryType"]] = None,
+        scoring_statistics: Optional[Union[str, "ScoringStatistics"]] = None,
+        session_id: Optional[str] = None,
         scoring_parameters: Optional[List[str]] = None,
         scoring_profile: Optional[str] = None,
         search_text: Optional[str] = None,
@@ -770,6 +804,8 @@ class SearchRequest(msrest.serialization.Model):
         self.minimum_coverage = minimum_coverage
         self.order_by = order_by
         self.query_type = query_type
+        self.scoring_statistics = scoring_statistics
+        self.session_id = session_id
         self.scoring_parameters = scoring_parameters
         self.scoring_profile = scoring_profile
         self.search_text = search_text
