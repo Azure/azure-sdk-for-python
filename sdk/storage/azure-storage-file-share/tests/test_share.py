@@ -402,6 +402,9 @@ class StorageShareTest(StorageTestCase):
         share_client = self._create_share('test')
         lease = share_client.acquire_lease(lease_duration=15)
 
+        with self.assertRaises(ValueError):
+            share_client.delete_share()
+
         # Act
         deleted = share_client.delete_share(lease=lease)
 
