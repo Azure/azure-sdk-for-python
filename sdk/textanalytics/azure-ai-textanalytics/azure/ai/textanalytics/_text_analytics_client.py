@@ -12,6 +12,7 @@ from typing import (  # pylint: disable=unused-import
     Dict,
     TYPE_CHECKING,
 )
+from functools import partial
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import HttpResponseError
 from azure.core.polling.base_polling import LROBasePolling
@@ -25,8 +26,8 @@ from ._response_handlers import (
     sentiment_result,
     language_result,
     pii_entities_result,
-    healthcare_result,
-    analyze_result
+    healthcare_paged_result,
+    analyze_paged_result
 )
 
 if TYPE_CHECKING:
@@ -453,7 +454,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         try:
             return self._client.health_status(
                 job_id, 
-                cls=kwargs.pop('cls', healthcare_result),
+                cls=kwargs.pop('cls', partial(healthcare_paged_result, self._client.health_status, show_stats=show_stats)),
                 **kwargs)
 
         except HttpResponseError as error:
@@ -464,7 +465,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         self,
         documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
         **kwargs  # type: Any
-    ):  # type: (...) -> LROPoller[List[RecognizeHealthcareEntitiesResult]]
+    ):  # type: (...) -> LROPoller[ItemPaged[RecognizeHealthcareEntitiesResult]]
         """Recognize healthcare entities and identify relationships between these entities in a batch of documents.
 
         Entities are associated with references that can be found in existing knowledge bases, such as UMLS, CHV, MSH, etc.
@@ -505,16 +506,12 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
         continuation_token = kwargs.pop("continuation_token", None)
 
-        # TODO: figure out why string_index_type is unexpected
-        # if self._string_code_unit:
-        #     kwargs.update({"string_index_type": self._string_code_unit})
-
         try:
             return self._client.begin_health(
                 docs,
                 model_version=model_version,
-                # show_stats=show_stats,  TODO: figure out why show_stats is unexpected
-                cls=kwargs.pop("cls", healthcare_result),
+                string_index_type=self._string_code_unit,
+                cls=kwargs.pop("cls", partial(healthcare_paged_result, self._client.health_status, show_stats=show_stats)),
                 polling=LROBasePolling(timeout=polling_interval, **kwargs),
                 continuation_token=continuation_token,
                 **kwargs
@@ -728,9 +725,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
         continuation_token = kwargs.pop("continuation_token", None)
 
-        if self._string_code_unit:
-            kwargs.update({"string_index_type": self._string_code_unit})
-
         try:
             from itertools import groupby
 
@@ -744,7 +738,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 entity_linking_tasks = [t.to_generated() for t in grouped_tasks[EntityLinkingTask.__name__]],
                 key_phrase_tasks = [t.to_generated() for t in grouped_tasks[KeyPhraseExtractionTask.__name__]],
                 sentiment_tasks = [t.to_generated() for t in grouped_tasks[SentimentAnalysisTask.__name__]]
-                # TODO: add custom task types
+                # TODO: add custom task types later
             )
             analyze_body = self._client.models.AnalyzeBatchInput(
                 display_name=display_name,

@@ -1451,6 +1451,7 @@ class TextAnalysisResult(DictMixin):
     :vartype sentiment_analysis_results: list[~azure.ai.textanalytics.SentimentAnalysisTaskResult]
     """
     def __init__(self, **kwargs):
+
         self.entities_recognition_results = kwargs.get("entities_recognition_results", [])
         self.pii_entities_recognition_results = kwargs.get("pii_entities_recognition_results", [])
         self.entity_linking_results = kwargs.get("entity_linking_results", [])

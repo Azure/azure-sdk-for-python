@@ -5,11 +5,14 @@
 # ------------------------------------
 
 import json
+import functools
+from urllib.parse import urlparse, parse_qsl
 from azure.core.exceptions import (
     HttpResponseError,
     ClientAuthenticationError,
     ODataV4Format
 )
+from azure.core.paging import ItemPaged
 from ._models import (
     RecognizeEntitiesResult,
     CategorizedEntity,
@@ -29,7 +32,8 @@ from ._models import (
     PiiEntity,
     RecognizeHealthcareEntitiesResult,
     HealthcareEntity,
-    HealthcareRelation
+    HealthcareRelation,
+    TextAnalysisResult
 )
 
 class CSODataV4Format(ODataV4Format):
@@ -64,10 +68,13 @@ def order_results(response, combined):
 
 
 def prepare_result(func):
-    def wrapper(response, obj, response_headers):  # pylint: disable=unused-argument
+    def wrapper(response, obj, response_headers, lro=False):  # pylint: disable=unused-argument
         if obj.errors:
             combined = obj.documents + obj.errors
-            results = order_results(response, combined)
+            if lro:
+                results = combined
+            else:
+                results = order_results(response, combined)
         else:
             results = obj.documents
 
@@ -77,26 +84,6 @@ def prepare_result(func):
             else:
                 results[idx] = func(item, results)
         return results
-
-    return wrapper
-
-
-def prepare_paged_result(func):  # TODO: properly implement paging, ordering of results based on the original request
-    def wrapper(response, obj, response_headers):
-        results = obj.results
-        if results.errors:
-            paged_results = results.documents + results.errors
-        
-        else:
-            paged_results = results.documents
-
-        for idx, item in enumerate(paged_results):
-            if hasattr(item, "error"):
-                paged_results[idx] = DocumentError(id=item.id, error=TextAnalyticsError._from_generated(item.error))
-            else:
-                paged_results[idx] = func(item, results)
-        
-        return paged_results
 
     return wrapper
 
@@ -162,6 +149,26 @@ def pii_entities_result(entity, results):  # pylint: disable=unused-argument
         statistics=TextDocumentStatistics._from_generated(entity.statistics),  # pylint: disable=protected-access
     )
 
-@prepare_paged_result
-def healthcare_result(health, results):
-    return RecognizeHealthcareEntitiesResult._from_generated(health)
+
+@prepare_result
+def healthcare_result(health_result):
+    return RecognizeHealthcareEntitiesResult._from_generated(health_result)
+
+
+def healthcare_extract_page_data(response, obj, response_headers, health_job_state):
+    return health_job_state.next_link, [healthcare_result(response, result, response_headers, lro=True) for result in health_job_state.results]
+
+
+def lro_get_next_page(lro_status_callback, continuation_token):
+    parsed_url = urlparse(continuation_token)
+    job_id = parsed_url.path.split("/")[-1]
+    query_params = dict(parse_qsl(parsed_url.query.replace("$", "")))
+    return lro_status_callback(job_id, **query_params)
+    
+
+def healthcare_paged_result(health_status_callback, response, obj, response_headers):
+    return ItemPaged(
+        functools.partial(lro_get_next_page, health_status_callback),
+        functools.partial(healthcare_extract_page_data, response, obj, response_headers),
+        None
+    )
