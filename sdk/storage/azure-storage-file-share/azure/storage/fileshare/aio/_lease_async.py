@@ -109,10 +109,6 @@ class ShareLeaseClient(LeaseClientBase):
 
         .. versionadded:: 12.6.0
 
-        :keyword str etag:
-            An ETag value, or the wildcard character (*). Used to check if the resource has changed,
-            and act according to the condition specified by the `match_condition` parameter.
-
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :return: None
