@@ -137,17 +137,17 @@ an error.
 The following example demonstrates creating a credential which will attempt to
 authenticate using managed identity, and fall back to authenticating via the
 Azure CLI when a managed identity is unavailable. This example uses the
-`EventHubClient` from the [azure-eventhub][azure_eventhub] client library.
+`EventHubProducerClient` from the [azure-eventhub][azure_eventhub] client library.
 
 ```py
-from azure.eventhub import EventHubClient
+from azure.eventhub import EventHubProducerClient
 from azure.identity import AzureCliCredential, ChainedTokenCredential, ManagedIdentityCredential
 
 managed_identity = ManagedIdentityCredential()
 azure_cli = AzureCliCredential()
 credential_chain = ChainedTokenCredential(managed_identity, azure_cli)
 
-client = EventHubClient(host, event_hub_path, credential_chain)
+client = EventHubProducerClient(namespace, eventhub_name, credential_chain)
 ```
 
 ## Async credentials
