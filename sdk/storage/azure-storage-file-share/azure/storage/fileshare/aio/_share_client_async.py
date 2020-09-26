@@ -137,7 +137,6 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         Service creates a lease on the share and returns a new lease.
 
         .. versionadded:: 12.6.0
-        This keyword argument was introduced in API version '2020-02-02'.
 
         :param int lease_duration:
             Specifies the duration of the lease, in seconds, or negative one
