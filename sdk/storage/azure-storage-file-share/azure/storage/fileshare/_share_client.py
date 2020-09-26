@@ -399,18 +399,8 @@ class ShareClient(StorageAccountHostsMixin):
             .. versionadded:: 12.6.0
             This keyword argument was introduced in API version '2020-02-02'.
 
-        :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :keyword lease:
-            Required if the share has an active lease. Value can be a ShareLeaseClient object
-            or the lease ID as a string.
-
-            .. versionadded:: 12.6.0
-            This keyword argument was introduced in API version '2020-02-02'.
-
-        :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
-        :rtype: None
 
         .. admonition:: Example:
 
@@ -452,7 +442,6 @@ class ShareClient(StorageAccountHostsMixin):
             .. versionadded:: 12.6.0
             This keyword argument was introduced in API version '2020-02-02'.
 
-        :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
         :returns: The share properties.
         :rtype: ~azure.storage.fileshare.ShareProperties
 
@@ -497,7 +486,6 @@ class ShareClient(StorageAccountHostsMixin):
             .. versionadded:: 12.6.0
             This keyword argument was introduced in API version '2020-02-02'.
 
-        :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
         :returns: Share-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
 
@@ -543,7 +531,6 @@ class ShareClient(StorageAccountHostsMixin):
             .. versionadded:: 12.6.0
             This keyword argument was introduced in API version '2020-02-02'.
 
-        :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
         :returns: Share-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
 
@@ -585,7 +572,6 @@ class ShareClient(StorageAccountHostsMixin):
             .. versionadded:: 12.6.0
             This keyword argument was introduced in API version '2020-02-02'.
 
-        :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
         :returns: Access policy information in a dict.
         :rtype: dict[str, Any]
         """
@@ -625,7 +611,6 @@ class ShareClient(StorageAccountHostsMixin):
             .. versionadded:: 12.6.0
             This keyword argument was introduced in API version '2020-02-02'.
 
-        :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
         :returns: Share-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
         """
@@ -669,7 +654,6 @@ class ShareClient(StorageAccountHostsMixin):
             .. versionadded:: 12.6.0
             This keyword argument was introduced in API version '2020-02-02'.
 
-        :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
         :return: The approximate size of the data (in bytes) stored on the share.
         :rtype: int
         """

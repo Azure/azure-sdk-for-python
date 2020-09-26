@@ -272,9 +272,6 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
             .. versionadded:: 12.6.0
             This keyword argument was introduced in API version '2020-02-02'.
 
-        :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
-        :rtype: None
-
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/file_samples_share_async.py
@@ -315,7 +312,6 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
             .. versionadded:: 12.6.0
             This keyword argument was introduced in API version '2020-02-02'.
 
-        :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
         :returns: The share properties.
         :rtype: ~azure.storage.fileshare.ShareProperties
 
@@ -360,7 +356,6 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
             .. versionadded:: 12.6.0
             This keyword argument was introduced in API version '2020-02-02'.
 
-        :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
         :returns: Share-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
 
@@ -406,7 +401,6 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
             .. versionadded:: 12.6.0
             This keyword argument was introduced in API version '2020-02-02'.
 
-        :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
         :returns: Share-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
 
@@ -448,7 +442,6 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
             .. versionadded:: 12.6.0
             This keyword argument was introduced in API version '2020-02-02'.
 
-        :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
         :returns: Access policy information in a dict.
         :rtype: dict[str, Any]
         """
@@ -488,7 +481,6 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
             .. versionadded:: 12.6.0
             This keyword argument was introduced in API version '2020-02-02'.
 
-        :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
         :returns: Share-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
         """
@@ -533,7 +525,6 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
             .. versionadded:: 12.6.0
             This keyword argument was introduced in API version '2020-02-02'.
 
-        :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
         :return: The approximate size of the data (in bytes) stored on the share.
         :rtype: int
         """

@@ -14,7 +14,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from .._shared.response_handlers import return_response_headers, process_storage_error
 from .._generated.models import (
     StorageErrorException)
-from .._generated.aio.operations_async._file_operations_async import FileOperations
+from .._generated.aio.operations_async import FileOperations, ShareOperations
 from .._lease import ShareLeaseClient as LeaseClientBase
 
 if TYPE_CHECKING:
@@ -26,7 +26,7 @@ if TYPE_CHECKING:
 class ShareLeaseClient(LeaseClientBase):
     """Creates a new ShareLeaseClient.
 
-    This client provides lease operations on a ShareFileClient.
+    This client provides lease operations on a ShareClient or ShareFileClient.
 
     :ivar str id:
         The ID of the lease currently being maintained. This will be `None` if no
@@ -39,8 +39,9 @@ class ShareLeaseClient(LeaseClientBase):
         This will be `None` if no lease has yet been acquired or modified.
 
     :param client:
-        The client of the file to lease.
-    :type client: ~azure.storage.fileshare.aio.ShareFileClient
+        The client of the file or share to lease.
+    :type client: ~azure.storage.fileshare.ShareFileClient or
+        ~azure.storage.fileshare.ShareClient
     :param str lease_id:
         A string representing the lease ID of an existing lease. This value does not
         need to be specified in order to acquire a new lease, or break one.
@@ -112,13 +113,6 @@ class ShareLeaseClient(LeaseClientBase):
         :keyword str etag:
             An ETag value, or the wildcard character (*). Used to check if the resource has changed,
             and act according to the condition specified by the `match_condition` parameter.
-        :keyword ~azure.core.MatchConditions match_condition:
-            The match condition to use upon the etag.
-        :keyword str if_tags_match_condition
-            Specify a SQL where clause on share tags to operate only on share with a matching value.
-            eg. "\"tagname\"='my tag'"
-
-            .. versionadded:: 12.4.0
 
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
@@ -170,7 +164,6 @@ class ShareLeaseClient(LeaseClientBase):
         """ Changes the lease ID of an active lease. A change must include the current lease ID in x-ms-lease-id and
         a new lease ID in x-ms-proposed-lease-id.
 
-
         :param str proposed_lease_id:
             Proposed lease ID, in a GUID string format. The File or Share service returns 400
             (Invalid request) if the proposed lease ID is not in the correct format.
@@ -195,7 +188,7 @@ class ShareLeaseClient(LeaseClientBase):
 
     @distributed_trace_async
     async def break_lease(self, **kwargs):
-        # type: (Optional[int, str], Any) -> int
+        # type: (Any) -> int
         """Force breaks the lease if the file or share has an active lease. Any authorized request can break the lease;
         the request is not required to specify a matching lease ID. An infinite lease breaks immediately.
 
@@ -206,12 +199,24 @@ class ShareLeaseClient(LeaseClientBase):
 
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
+        :keyword int lease_break_period:
+            This is the proposed duration of seconds that the share lease
+            should continue before it is broken, between 0 and 60 seconds. This
+            break period is only used if it is shorter than the time remaining
+            on the share lease. If longer, the time remaining on the share lease is used.
+            A new share lease will not be available before the break period has
+            expired, but the share lease may be held for longer than the break
+            period. If this header does not appear with a break
+            operation, a fixed-duration share lease breaks after the remaining share lease
+            period elapses, and an infinite share lease breaks immediately.
         :return: Approximate time remaining in the lease period, in seconds.
         :rtype: int
         """
         try:
             if self._snapshot:
                 kwargs['sharesnapshot'] = self._snapshot
+            if isinstance(self._client, ShareOperations):
+                kwargs['break_period'] = kwargs.pop('lease_break_period', None)
             response = await self._client.break_lease(
                 timeout=kwargs.pop('timeout', None),
                 cls=return_response_headers,

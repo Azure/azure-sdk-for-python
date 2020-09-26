@@ -14,7 +14,7 @@ from azure.core.tracing.decorator import distributed_trace
 
 from ._shared.response_handlers import return_response_headers, process_storage_error
 from ._generated.models import StorageErrorException
-from ._generated.operations import FileOperations
+from ._generated.operations import FileOperations, ShareOperations
 
 if TYPE_CHECKING:
     from datetime import datetime
@@ -121,13 +121,6 @@ class ShareLeaseClient(object):
         :keyword str etag:
             An ETag value, or the wildcard character (*). Used to check if the resource has changed,
             and act according to the condition specified by the `match_condition` parameter.
-        :keyword ~azure.core.MatchConditions match_condition:
-            The match condition to use upon the etag.
-        :keyword str if_tags_match_condition
-            Specify a SQL where clause on share tags to operate only on share with a matching value.
-            eg. "\"tagname\"='my tag'"
-
-            .. versionadded:: 12.4.0
 
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
@@ -179,7 +172,6 @@ class ShareLeaseClient(object):
         """ Changes the lease ID of an active lease. A change must include the current lease ID in x-ms-lease-id and
         a new lease ID in x-ms-proposed-lease-id.
 
-
         :param str proposed_lease_id:
             Proposed lease ID, in a GUID string format. The File or Share service returns 400
             (Invalid request) if the proposed lease ID is not in the correct format.
@@ -204,7 +196,7 @@ class ShareLeaseClient(object):
 
     @distributed_trace
     def break_lease(self, **kwargs):
-        # type: (Optional[int, str], Any) -> int
+        # type: (Any) -> int
         """Force breaks the lease if the file or share has an active lease. Any authorized request can break the lease;
         the request is not required to specify a matching lease ID. An infinite lease breaks immediately.
 
@@ -215,12 +207,24 @@ class ShareLeaseClient(object):
 
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
+        :keyword int lease_break_period:
+            This is the proposed duration of seconds that the share lease
+            should continue before it is broken, between 0 and 60 seconds. This
+            break period is only used if it is shorter than the time remaining
+            on the share lease. If longer, the time remaining on the share lease is used.
+            A new share lease will not be available before the break period has
+            expired, but the share lease may be held for longer than the break
+            period. If this header does not appear with a break
+            operation, a fixed-duration share lease breaks after the remaining share lease
+            period elapses, and an infinite share lease breaks immediately.
         :return: Approximate time remaining in the lease period, in seconds.
         :rtype: int
         """
         try:
             if self._snapshot:
                 kwargs['sharesnapshot'] = self._snapshot
+            if isinstance(self._client, ShareOperations):
+                kwargs['break_period'] = kwargs.pop('lease_break_period', None)
             response = self._client.break_lease(
                 timeout=kwargs.pop('timeout', None),
                 cls=return_response_headers,
