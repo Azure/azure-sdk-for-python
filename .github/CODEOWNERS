@@ -40,6 +40,9 @@
 # PRLabel: %Monitor - LogAnalytics
 /sdk/loganalytics/                                                   @alexeldeib
 
+# PRLabel: %Monitor - Exporter
+/sdk/monitor/opentelemetry-exporter-azuremonitor                     @rakshith91 @lmazuel @hectorhdzg @lzchen
+
 # PRLabel: %Consumption
 /sdk/consumption/                                                    @sandeepnl
 
