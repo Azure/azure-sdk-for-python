@@ -50,6 +50,25 @@ class ServerVersion(str, Enum):
     three_full_stop_six = "3.6"
 
 
+class CreateMode(str, Enum):
+
+    default = "Default"
+    restore = "Restore"
+
+
+class RestoreMode(str, Enum):
+
+    point_in_time = "PointInTime"
+
+
+class CreatedByType(str, Enum):
+
+    user = "User"
+    application = "Application"
+    managed_identity = "ManagedIdentity"
+    key = "Key"
+
+
 class IndexingMode(str, Enum):
 
     consistent = "Consistent"
@@ -115,6 +134,14 @@ class TriggerOperation(str, Enum):
     replace = "Replace"
 
 
+class ResourceIdentityType(str, Enum):
+
+    system_assigned = "SystemAssigned"
+    user_assigned = "UserAssigned"
+    system_assigned_user_assigned = "SystemAssigned,UserAssigned"
+    none = "None"
+
+
 class KeyKind(str, Enum):
 
     primary = "primary"
@@ -142,3 +169,9 @@ class PrimaryAggregationType(str, Enum):
     minimum = "Minimum"
     maximum = "Maximum"
     last = "Last"
+
+
+class RoleDefinitionType(str, Enum):
+
+    built_in_role = "BuiltInRole"
+    custom_role = "CustomRole"
