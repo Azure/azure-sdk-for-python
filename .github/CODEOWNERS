@@ -25,7 +25,8 @@
 # PRLabel: %Storage
 /sdk/storage/                                                        @amishra-dev @zezha-msft @annatisch @rakshith91 @xiafu-msft @tasherif-msft @kasobol-msft
 
-/sdk/applicationinsights/                                            @alexeldeib
+/sdk/applicationinsights/azure-applicationinsights/                  @divya-jay @geneh @alongafni
+/sdk/loganalytics/azure-loganalytics/                                @divya-jay @geneh @alongafni
 
 # PRLabel: %Batch
 /sdk/batch/                                                          @bgklein @xingwu1
