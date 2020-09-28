@@ -107,6 +107,7 @@ from .operations import ManagedDatabasesOperations
 from .operations import ServerAzureADOnlyAuthenticationsOperations
 from .operations import ImportExportOperations
 from .operations import ManagedInstanceAzureADOnlyAuthenticationsOperations
+from .operations import ServerTrustGroupsOperations
 from . import models
 
 
@@ -304,6 +305,8 @@ class SqlManagementClient(SDKClient):
     :vartype import_export: azure.mgmt.sql.operations.ImportExportOperations
     :ivar managed_instance_azure_ad_only_authentications: ManagedInstanceAzureADOnlyAuthentications operations
     :vartype managed_instance_azure_ad_only_authentications: azure.mgmt.sql.operations.ManagedInstanceAzureADOnlyAuthenticationsOperations
+    :ivar server_trust_groups: ServerTrustGroups operations
+    :vartype server_trust_groups: azure.mgmt.sql.operations.ServerTrustGroupsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -511,4 +514,6 @@ class SqlManagementClient(SDKClient):
         self.import_export = ImportExportOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.managed_instance_azure_ad_only_authentications = ManagedInstanceAzureADOnlyAuthenticationsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.server_trust_groups = ServerTrustGroupsOperations(
             self._client, self.config, self._serialize, self._deserialize)

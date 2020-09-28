@@ -628,8 +628,7 @@ class Database(TrackedResource):
      automatically paused. A value of -1 means that automatic pause is disabled
     :type auto_pause_delay: int
     :param storage_account_type: The storage account type used to store
-     backups for this database. Currently the only supported option is GRS
-     (GeoRedundantStorage). Possible values include: 'GRS', 'LRS', 'ZRS'
+     backups for this database. Possible values include: 'GRS', 'LRS', 'ZRS'
     :type storage_account_type: str or
      ~azure.mgmt.sql.models.StorageAccountType
     :param min_capacity: Minimal capacity that database will always have
@@ -1280,8 +1279,7 @@ class DatabaseUpdate(Model):
      automatically paused. A value of -1 means that automatic pause is disabled
     :type auto_pause_delay: int
     :param storage_account_type: The storage account type used to store
-     backups for this database. Currently the only supported option is GRS
-     (GeoRedundantStorage). Possible values include: 'GRS', 'LRS', 'ZRS'
+     backups for this database. Possible values include: 'GRS', 'LRS', 'ZRS'
     :type storage_account_type: str or
      ~azure.mgmt.sql.models.StorageAccountType
     :param min_capacity: Minimal capacity that database will always have
@@ -8408,6 +8406,28 @@ class ServerDnsAliasAcquisition(Model):
         self.old_server_dns_alias_id = kwargs.get('old_server_dns_alias_id', None)
 
 
+class ServerInfo(Model):
+    """Server info for the server trust group.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param server_id: Required. Server Id.
+    :type server_id: str
+    """
+
+    _validation = {
+        'server_id': {'required': True},
+    }
+
+    _attribute_map = {
+        'server_id': {'key': 'serverId', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ServerInfo, self).__init__(**kwargs)
+        self.server_id = kwargs.get('server_id', None)
+
+
 class ServerKey(ProxyResource):
     """A server key.
 
@@ -8577,6 +8597,49 @@ class ServerSecurityAlertPolicy(ProxyResource):
         self.storage_account_access_key = kwargs.get('storage_account_access_key', None)
         self.retention_days = kwargs.get('retention_days', None)
         self.creation_time = None
+
+
+class ServerTrustGroup(ProxyResource):
+    """A server trust group.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param group_members: Required. Group members information for the server
+     trust group.
+    :type group_members: list[~azure.mgmt.sql.models.ServerInfo]
+    :param trust_scopes: Required. Trust scope of the server trust group.
+    :type trust_scopes: list[str]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'group_members': {'required': True},
+        'trust_scopes': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'group_members': {'key': 'properties.groupMembers', 'type': '[ServerInfo]'},
+        'trust_scopes': {'key': 'properties.trustScopes', 'type': '[str]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ServerTrustGroup, self).__init__(**kwargs)
+        self.group_members = kwargs.get('group_members', None)
+        self.trust_scopes = kwargs.get('trust_scopes', None)
 
 
 class ServerUpdate(Model):
@@ -9599,6 +9662,9 @@ class SyncGroup(ProxyResource):
     :param use_private_link_connection: If use private link connection is
      enabled.
     :type use_private_link_connection: bool
+    :ivar private_endpoint_name: Private endpoint name of the sync group if
+     use private link connection is enabled.
+    :vartype private_endpoint_name: str
     """
 
     _validation = {
@@ -9607,6 +9673,7 @@ class SyncGroup(ProxyResource):
         'type': {'readonly': True},
         'last_sync_time': {'readonly': True},
         'sync_state': {'readonly': True},
+        'private_endpoint_name': {'readonly': True},
     }
 
     _attribute_map = {
@@ -9622,6 +9689,7 @@ class SyncGroup(ProxyResource):
         'sync_state': {'key': 'properties.syncState', 'type': 'str'},
         'schema': {'key': 'properties.schema', 'type': 'SyncGroupSchema'},
         'use_private_link_connection': {'key': 'properties.usePrivateLinkConnection', 'type': 'bool'},
+        'private_endpoint_name': {'key': 'properties.privateEndpointName', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -9635,6 +9703,7 @@ class SyncGroup(ProxyResource):
         self.sync_state = None
         self.schema = kwargs.get('schema', None)
         self.use_private_link_connection = kwargs.get('use_private_link_connection', None)
+        self.private_endpoint_name = None
 
 
 class SyncGroupLogProperties(Model):
@@ -9777,6 +9846,9 @@ class SyncMember(ProxyResource):
     :param use_private_link_connection: Whether to use private link
      connection.
     :type use_private_link_connection: bool
+    :ivar private_endpoint_name: Private endpoint name of the sync member if
+     use private link connection is enabled, for sync members in Azure.
+    :vartype private_endpoint_name: str
     :param server_name: Server name of the member database in the sync member
     :type server_name: str
     :param database_name: Database name of the member database in the sync
@@ -9803,6 +9875,7 @@ class SyncMember(ProxyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'private_endpoint_name': {'readonly': True},
         'sync_state': {'readonly': True},
     }
 
@@ -9815,6 +9888,7 @@ class SyncMember(ProxyResource):
         'sql_server_database_id': {'key': 'properties.sqlServerDatabaseId', 'type': 'str'},
         'sync_member_azure_database_resource_id': {'key': 'properties.syncMemberAzureDatabaseResourceId', 'type': 'str'},
         'use_private_link_connection': {'key': 'properties.usePrivateLinkConnection', 'type': 'bool'},
+        'private_endpoint_name': {'key': 'properties.privateEndpointName', 'type': 'str'},
         'server_name': {'key': 'properties.serverName', 'type': 'str'},
         'database_name': {'key': 'properties.databaseName', 'type': 'str'},
         'user_name': {'key': 'properties.userName', 'type': 'str'},
@@ -9830,6 +9904,7 @@ class SyncMember(ProxyResource):
         self.sql_server_database_id = kwargs.get('sql_server_database_id', None)
         self.sync_member_azure_database_resource_id = kwargs.get('sync_member_azure_database_resource_id', None)
         self.use_private_link_connection = kwargs.get('use_private_link_connection', None)
+        self.private_endpoint_name = None
         self.server_name = kwargs.get('server_name', None)
         self.database_name = kwargs.get('database_name', None)
         self.user_name = kwargs.get('user_name', None)
