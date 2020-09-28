@@ -52,7 +52,7 @@ class ResourceGroupPreparer(AzureMgmtPreparer):
             self._need_creation = False
         if self.random_name_enabled:
             self.resource_moniker = self.name_prefix + "rgname"
-        self.set_cache(use_cache, parameter_name)
+        self.set_cache(use_cache, parameter_name, name_prefix)
         self.delete_after_tag_timedelta = delete_after_tag_timedelta
 
     def create_resource(self, name, **kwargs):

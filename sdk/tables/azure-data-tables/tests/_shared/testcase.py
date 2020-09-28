@@ -184,7 +184,7 @@ class TableTestCase(AzureMgmtTestCase):
         """Return an url of storage account.
 
         :param str storage_account: Storage account name
-        :param str storage_type: The Storage type part of the URL. Should be "blob", or "queue", etc.
+        :param str storage_type: The Storage type part of the URL. Should be "table", or "cosmos", etc.
         """
         try:
             if endpoint_type == "table":

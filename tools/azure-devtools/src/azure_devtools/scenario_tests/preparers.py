@@ -41,10 +41,12 @@ class AbstractPreparer(object):
         self.test_class_instance = test_class_instance
 
         if self.live_test or test_class_instance.in_recording:
-            print("JFJFJFKDKDLAOEIEIEIEIEI")
-            resource_name = self.random_name
-            if not self.live_test and isinstance(self, RecordingProcessor):
-                test_class_instance.recording_processors.append(self)
+            if not self._use_cache:
+                resource_name = self.random_name
+                if not self.live_test and isinstance(self, RecordingProcessor):
+                    test_class_instance.recording_processors.append(self)
+            else:
+                resource_name = self.moniker
         else:
             resource_name = self.moniker
 

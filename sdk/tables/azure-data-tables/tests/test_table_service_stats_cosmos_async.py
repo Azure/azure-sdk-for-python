@@ -47,8 +47,8 @@ class TableServiceStatsTest(TableTestCase):
     # --Test cases per service ---------------------------------------
 
     @pytest.mark.skip("invalid json")
-    @CachedResourceGroupPreparer(name_prefix="pyacrstorage")
-    @CachedCosmosAccountPreparer(name_prefix="pyacrstorage", sku='Standard_RAGRS', random_name_enabled=True)
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest", sku='Standard_RAGRS')
     async def test_table_service_stats_f(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         tsc = TableServiceClient(self.account_url(cosmos_account, "cosmos"), cosmos_account_key)
@@ -62,8 +62,8 @@ class TableServiceStatsTest(TableTestCase):
             sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("invalid json")
-    @CachedResourceGroupPreparer(name_prefix="pyacrstorage")
-    @CachedCosmosAccountPreparer(name_prefix="pyacrstorage", sku='Standard_RAGRS', random_name_enabled=True)
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest", sku='Standard_RAGRS')
     async def test_table_service_stats_when_unavailable(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         tsc = TableServiceClient(self.account_url(cosmos_account, "cosmos"), cosmos_account_key)

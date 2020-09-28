@@ -11,11 +11,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Wed, 23 Sep 2020 23:16:39 GMT
+      - Mon, 28 Sep 2020 17:30:07 GMT
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 23 Sep 2020 23:16:39 GMT
+      - Mon, 28 Sep 2020 17:30:07 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
@@ -26,7 +26,7 @@ interactions:
     headers:
       cache-control: no-cache
       content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
-      date: Wed, 23 Sep 2020 23:16:39 GMT
+      date: Mon, 28 Sep 2020 17:30:06 GMT
       location: https://tablesteststorname.table.core.windows.net/Tables('uttable42981007')
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
@@ -35,7 +35,7 @@ interactions:
     status:
       code: 201
       message: Created
-    url: https://tablestesthqucsobaj5c3zh.table.core.windows.net/Tables
+    url: https://tablestestbluanwepmj6h4i.table.core.windows.net/Tables
 - request:
     body: '{"PartitionKey": "pk42981007", "RowKey": "rk42981007", "age": "39", "age@odata.type":
       "Edm.Int64", "sex": "male", "married": true, "deceased": false, "ratio": 3.1,
@@ -54,23 +54,23 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Wed, 23 Sep 2020 23:16:40 GMT
+      - Mon, 28 Sep 2020 17:30:07 GMT
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 23 Sep 2020 23:16:40 GMT
+      - Mon, 28 Sep 2020 17:30:07 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
     uri: https://tablesteststorname.table.core.windows.net/uttable42981007
   response:
     body:
-      string: '{"odata.metadata":"https://tablesteststorname.table.core.windows.net/$metadata#uttable42981007/@Element","odata.etag":"W/\"datetime''2020-09-23T23%3A16%3A39.9595615Z''\"","PartitionKey":"pk42981007","RowKey":"rk42981007","Timestamp":"2020-09-23T23:16:39.9595615Z","age@odata.type":"Edm.Int64","age":"39","sex":"male","married":true,"deceased":false,"ratio":3.1,"evenratio":3.0,"large@odata.type":"Edm.Int64","large":"933311100","Birthday@odata.type":"Edm.DateTime","Birthday":"1973-10-04T00:00:00Z","birthday@odata.type":"Edm.DateTime","birthday":"1970-10-04T00:00:00Z","binary@odata.type":"Edm.Binary","binary":"YmluYXJ5","other":20,"clsid@odata.type":"Edm.Guid","clsid":"c9da6455-213d-42c9-9a79-3e9149a57833"}'
+      string: '{"odata.metadata":"https://tablesteststorname.table.core.windows.net/$metadata#uttable42981007/@Element","odata.etag":"W/\"datetime''2020-09-28T17%3A30%3A07.4717804Z''\"","PartitionKey":"pk42981007","RowKey":"rk42981007","Timestamp":"2020-09-28T17:30:07.4717804Z","age@odata.type":"Edm.Int64","age":"39","sex":"male","married":true,"deceased":false,"ratio":3.1,"evenratio":3.0,"large@odata.type":"Edm.Int64","large":"933311100","Birthday@odata.type":"Edm.DateTime","Birthday":"1973-10-04T00:00:00Z","birthday@odata.type":"Edm.DateTime","birthday":"1970-10-04T00:00:00Z","binary@odata.type":"Edm.Binary","binary":"YmluYXJ5","other":20,"clsid@odata.type":"Edm.Guid","clsid":"c9da6455-213d-42c9-9a79-3e9149a57833"}'
     headers:
       cache-control: no-cache
       content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
-      date: Wed, 23 Sep 2020 23:16:39 GMT
-      etag: W/"datetime'2020-09-23T23%3A16%3A39.9595615Z'"
+      date: Mon, 28 Sep 2020 17:30:06 GMT
+      etag: W/"datetime'2020-09-28T17%3A30%3A07.4717804Z'"
       location: https://tablesteststorname.table.core.windows.net/uttable42981007(PartitionKey='pk42981007',RowKey='rk42981007')
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
@@ -79,38 +79,38 @@ interactions:
     status:
       code: 201
       message: Created
-    url: https://tablestesthqucsobaj5c3zh.table.core.windows.net/uttable42981007
+    url: https://tablestestbluanwepmj6h4i.table.core.windows.net/uttable42981007
 - request:
     body: null
     headers:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Wed, 23 Sep 2020 23:16:40 GMT
+      - Mon, 28 Sep 2020 17:30:07 GMT
       If-Match:
       - '*'
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 23 Sep 2020 23:16:40 GMT
+      - Mon, 28 Sep 2020 17:30:07 GMT
       x-ms-version:
       - '2019-07-07'
     method: DELETE
-    uri: https://tablesteststorname.table.core.windows.net/uttable42981007(PartitionKey='pk42981007',RowKey='rk42981007')?se=2020-09-24T00:16:40Z&sp=d&sv=2019-02-02&tn=uttable42981007&sig=/HfqjqUplKcN%2BL9uo8FXMHSPsPVMIW4Zfsm8zrJp0ME%3D
+    uri: https://tablesteststorname.table.core.windows.net/uttable42981007(PartitionKey='pk42981007',RowKey='rk42981007')?se=2020-09-28T18:30:07Z&sp=d&sv=2019-02-02&tn=uttable42981007&sig=T1vvPZuIedAShlAqFiHjL%2B6iGNnEsaL0acz8Ugy/XZs%3D
   response:
     body:
       string: ''
     headers:
       cache-control: no-cache
       content-length: '0'
-      date: Wed, 23 Sep 2020 23:16:39 GMT
+      date: Mon, 28 Sep 2020 17:30:06 GMT
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options: nosniff
       x-ms-version: '2019-07-07'
     status:
       code: 204
       message: No Content
-    url: https://tablestesthqucsobaj5c3zh.table.core.windows.net/uttable42981007(PartitionKey='pk42981007',RowKey='rk42981007')?se=2020-09-24T00:16:40Z&sp=d&sv=2019-02-02&tn=uttable42981007&sig=/HfqjqUplKcN%2BL9uo8FXMHSPsPVMIW4Zfsm8zrJp0ME%3D
+    url: https://tablestestbluanwepmj6h4i.table.core.windows.net/uttable42981007(PartitionKey='pk42981007',RowKey='rk42981007')?se=2020-09-28T18:30:07Z&sp=d&sv=2019-02-02&tn=uttable42981007&sig=T1vvPZuIedAShlAqFiHjL%2B6iGNnEsaL0acz8Ugy/XZs%3D
 - request:
     body: null
     headers:
@@ -119,11 +119,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Wed, 23 Sep 2020 23:16:40 GMT
+      - Mon, 28 Sep 2020 17:30:07 GMT
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 23 Sep 2020 23:16:40 GMT
+      - Mon, 28 Sep 2020 17:30:07 GMT
       x-ms-version:
       - '2019-07-07'
     method: GET
@@ -131,11 +131,11 @@ interactions:
   response:
     body:
       string: '{"odata.error":{"code":"ResourceNotFound","message":{"lang":"en-US","value":"The
-        specified resource does not exist.\nRequestId:e97b4a4a-d002-002d-36ff-9179b2000000\nTime:2020-09-23T23:16:40.1276816Z"}}}'
+        specified resource does not exist.\nRequestId:c6de9c80-f002-0026-22bd-9545d5000000\nTime:2020-09-28T17:30:07.7229575Z"}}}'
     headers:
       cache-control: no-cache
       content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
-      date: Wed, 23 Sep 2020 23:16:39 GMT
+      date: Mon, 28 Sep 2020 17:30:07 GMT
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-content-type-options: nosniff
@@ -143,16 +143,16 @@ interactions:
     status:
       code: 404
       message: Not Found
-    url: https://tablestesthqucsobaj5c3zh.table.core.windows.net/uttable42981007(PartitionKey='pk42981007',RowKey='rk42981007')
+    url: https://tablestestbluanwepmj6h4i.table.core.windows.net/uttable42981007(PartitionKey='pk42981007',RowKey='rk42981007')
 - request:
     body: null
     headers:
       Date:
-      - Wed, 23 Sep 2020 23:16:40 GMT
+      - Mon, 28 Sep 2020 17:30:07 GMT
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 23 Sep 2020 23:16:40 GMT
+      - Mon, 28 Sep 2020 17:30:07 GMT
       x-ms-version:
       - '2019-07-07'
     method: DELETE
@@ -163,12 +163,12 @@ interactions:
     headers:
       cache-control: no-cache
       content-length: '0'
-      date: Wed, 23 Sep 2020 23:16:40 GMT
+      date: Mon, 28 Sep 2020 17:30:07 GMT
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options: nosniff
       x-ms-version: '2019-07-07'
     status:
       code: 204
       message: No Content
-    url: https://tablestesthqucsobaj5c3zh.table.core.windows.net/Tables('uttable42981007')
+    url: https://tablestestbluanwepmj6h4i.table.core.windows.net/Tables('uttable42981007')
 version: 1

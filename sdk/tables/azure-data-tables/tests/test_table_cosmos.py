@@ -95,8 +95,8 @@ class StorageTableTest(TableTestCase):
 
     # --Test cases for tables --------------------------------------------------
     @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix='cosmostables')
-    @CachedCosmosAccountPreparer(name_prefix='cosmostables')
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_create_properties(self, resource_group, location, cosmos_account, cosmos_account_key):
         # # Arrange
         ts = TableServiceClient(self.account_url(cosmos_account, "cosmos"), cosmos_account_key)
@@ -121,8 +121,9 @@ class StorageTableTest(TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @CachedResourceGroupPreparer(name_prefix='cosmostables')
-    @CachedCosmosAccountPreparer(name_prefix='cosmostables')
+    @pytest.mark.skip("pending")
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_create_table(self, resource_group, location, cosmos_account, cosmos_account_key):
         # # Arrange
         print("First test")
@@ -140,8 +141,8 @@ class StorageTableTest(TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @CachedResourceGroupPreparer(name_prefix='cosmostables')
-    @CachedCosmosAccountPreparer(name_prefix='cosmostables')
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_create_table_fail_on_exist(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         ts = TableServiceClient(self.account_url(cosmos_account, "cosmos"), cosmos_account_key)
@@ -159,8 +160,8 @@ class StorageTableTest(TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @CachedResourceGroupPreparer(name_prefix='cosmostables')
-    @CachedCosmosAccountPreparer(name_prefix='cosmostables')
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_create_table_invalid_name(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         ts = TableServiceClient(self.account_url(cosmos_account, "cosmos"), cosmos_account_key)
@@ -175,8 +176,8 @@ class StorageTableTest(TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @CachedResourceGroupPreparer(name_prefix='cosmostables')
-    @CachedCosmosAccountPreparer(name_prefix='cosmostables')
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_delete_table_invalid_name(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         ts = TableServiceClient(self.account_url(cosmos_account, "cosmos"), cosmos_account_key)
@@ -191,8 +192,8 @@ class StorageTableTest(TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @CachedResourceGroupPreparer(name_prefix='cosmostables')
-    @CachedCosmosAccountPreparer(name_prefix='cosmostables')
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_query_tables(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         ts = TableServiceClient(self.account_url(cosmos_account, "cosmos"), cosmos_account_key)
@@ -210,8 +211,8 @@ class StorageTableTest(TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @CachedResourceGroupPreparer(name_prefix='cosmostables')
-    @CachedCosmosAccountPreparer(name_prefix='cosmostables')
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_query_tables_with_filter(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         ts = TableServiceClient(self.account_url(cosmos_account, "cosmos"), cosmos_account_key)
@@ -229,8 +230,8 @@ class StorageTableTest(TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @CachedResourceGroupPreparer(name_prefix='cosmostables')
-    @CachedCosmosAccountPreparer(name_prefix='cosmostables')
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_query_tables_with_num_results(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         prefix = 'listtable'
@@ -254,8 +255,8 @@ class StorageTableTest(TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @CachedResourceGroupPreparer(name_prefix='cosmostables')
-    @CachedCosmosAccountPreparer(name_prefix='cosmostables')
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_query_tables_with_marker(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         ts = TableServiceClient(self.account_url(cosmos_account, "cosmos"), cosmos_account_key)
@@ -284,8 +285,8 @@ class StorageTableTest(TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @CachedResourceGroupPreparer(name_prefix='cosmostables')
-    @CachedCosmosAccountPreparer(name_prefix='cosmostables')
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_delete_table_with_existing_table(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         ts = TableServiceClient(self.account_url(cosmos_account, "cosmos"), cosmos_account_key)
@@ -301,8 +302,8 @@ class StorageTableTest(TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @CachedResourceGroupPreparer(name_prefix='cosmostables')
-    @CachedCosmosAccountPreparer(name_prefix='cosmostables')
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_delete_table_with_non_existing_table_fail_not_exist(self, resource_group, location, cosmos_account,
                                                                  cosmos_account_key):
         # Arrange
@@ -317,8 +318,8 @@ class StorageTableTest(TableTestCase):
             sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix='cosmostables')
-    @CachedCosmosAccountPreparer(name_prefix='cosmostables')
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_unicode_create_table_unicode_name(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         url = self.account_url(cosmos_account, "cosmos")
@@ -334,8 +335,8 @@ class StorageTableTest(TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @CachedResourceGroupPreparer(name_prefix='cosmostables')
-    @CachedCosmosAccountPreparer(name_prefix='cosmostables')
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_get_table_acl(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         url = self.account_url(cosmos_account, "cosmos")
@@ -357,8 +358,8 @@ class StorageTableTest(TableTestCase):
             sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix='cosmostables')
-    @CachedCosmosAccountPreparer(name_prefix='cosmostables')
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_set_table_acl_with_empty_signed_identifiers(self, resource_group, location, cosmos_account,
                                                          cosmos_account_key):
         # Arrange
@@ -382,8 +383,8 @@ class StorageTableTest(TableTestCase):
             sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix='cosmostables')
-    @CachedCosmosAccountPreparer(name_prefix='cosmostables')
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_set_table_acl_with_empty_signed_identifier(self, resource_group, location, cosmos_account,
                                                         cosmos_account_key):
         # Arrange
@@ -410,8 +411,8 @@ class StorageTableTest(TableTestCase):
             sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix='cosmostables')
-    @CachedCosmosAccountPreparer(name_prefix='cosmostables')
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_set_table_acl_with_signed_identifiers(self, resource_group, location, cosmos_account,
                                                    cosmos_account_key):
         # Arrange
@@ -440,8 +441,8 @@ class StorageTableTest(TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @CachedResourceGroupPreparer(name_prefix='cosmostables')
-    @CachedCosmosAccountPreparer(name_prefix='cosmostables')
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_set_table_acl_too_many_ids(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         url = self.account_url(cosmos_account, "cosmos")
@@ -466,8 +467,8 @@ class StorageTableTest(TableTestCase):
 
     @pytest.mark.skip("Merge operation fails from Tables SDK")
     @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix='cosmostables')
-    @CachedCosmosAccountPreparer(name_prefix='cosmostables')
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_account_sas(self, resource_group, location, cosmos_account, cosmos_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
 
@@ -512,8 +513,8 @@ class StorageTableTest(TableTestCase):
         finally:
             self._delete_table(table=table, ts=tsc)
 
-    @CachedResourceGroupPreparer(name_prefix='cosmostables')
-    @CachedCosmosAccountPreparer(name_prefix='cosmostables')
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_locale(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         ts = TableServiceClient(self.account_url(cosmos_account, "cosmos"), cosmos_account_key)

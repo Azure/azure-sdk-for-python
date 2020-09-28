@@ -11,11 +11,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Wed, 23 Sep 2020 23:16:27 GMT
+      - Mon, 28 Sep 2020 17:29:51 GMT
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 23 Sep 2020 23:16:27 GMT
+      - Mon, 28 Sep 2020 17:29:51 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
@@ -26,7 +26,7 @@ interactions:
     headers:
       cache-control: no-cache
       content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
-      date: Wed, 23 Sep 2020 23:16:26 GMT
+      date: Mon, 28 Sep 2020 17:29:50 GMT
       location: https://tablesteststorname.table.core.windows.net/Tables('uttable7cd216d7')
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
@@ -35,20 +35,20 @@ interactions:
     status:
       code: 201
       message: Created
-    url: https://tablestesthqucsobaj5c3zh.table.core.windows.net/Tables
+    url: https://tablestestbluanwepmj6h4i.table.core.windows.net/Tables
 - request:
     body: null
     headers:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Wed, 23 Sep 2020 23:16:27 GMT
+      - Mon, 28 Sep 2020 17:29:51 GMT
       If-Match:
       - '*'
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 23 Sep 2020 23:16:27 GMT
+      - Mon, 28 Sep 2020 17:29:51 GMT
       x-ms-version:
       - '2019-07-07'
     method: DELETE
@@ -58,13 +58,13 @@ interactions:
       string: '<?xml version="1.0" encoding="utf-8"?><error xmlns="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"><code>ResourceNotFound</code><message
         xml:lang="en-US">The specified resource does not exist.
 
-        RequestId:1f2945f3-7002-0079-2dff-9136e5000000
+        RequestId:721d3b4b-c002-0043-66bc-95f488000000
 
-        Time:2020-09-23T23:16:27.1322846Z</message></error>'
+        Time:2020-09-28T17:29:51.3885259Z</message></error>'
     headers:
       cache-control: no-cache
       content-type: application/xml;charset=utf-8
-      date: Wed, 23 Sep 2020 23:16:26 GMT
+      date: Mon, 28 Sep 2020 17:29:50 GMT
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-content-type-options: nosniff
@@ -72,16 +72,16 @@ interactions:
     status:
       code: 404
       message: Not Found
-    url: https://tablestesthqucsobaj5c3zh.table.core.windows.net/uttable7cd216d7(PartitionKey='pk7cd216d7',RowKey='rk7cd216d7')
+    url: https://tablestestbluanwepmj6h4i.table.core.windows.net/uttable7cd216d7(PartitionKey='pk7cd216d7',RowKey='rk7cd216d7')
 - request:
     body: null
     headers:
       Date:
-      - Wed, 23 Sep 2020 23:16:27 GMT
+      - Mon, 28 Sep 2020 17:29:51 GMT
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 23 Sep 2020 23:16:27 GMT
+      - Mon, 28 Sep 2020 17:29:51 GMT
       x-ms-version:
       - '2019-07-07'
     method: DELETE
@@ -92,12 +92,12 @@ interactions:
     headers:
       cache-control: no-cache
       content-length: '0'
-      date: Wed, 23 Sep 2020 23:16:26 GMT
+      date: Mon, 28 Sep 2020 17:29:50 GMT
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options: nosniff
       x-ms-version: '2019-07-07'
     status:
       code: 204
       message: No Content
-    url: https://tablestesthqucsobaj5c3zh.table.core.windows.net/Tables('uttable7cd216d7')
+    url: https://tablestestbluanwepmj6h4i.table.core.windows.net/Tables('uttable7cd216d7')
 version: 1

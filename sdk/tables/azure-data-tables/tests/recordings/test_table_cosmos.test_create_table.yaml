@@ -15,27 +15,27 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Wed, 23 Sep 2020 23:10:43 GMT
+      - Sat, 26 Sep 2020 01:05:31 GMT
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 23 Sep 2020 23:10:43 GMT
+      - Sat, 26 Sep 2020 01:05:31 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
-    uri: https://cosmostables.table.cosmos.azure.com/Tables
+    uri: https://cosmostablescosmosname.table.cosmos.azure.com/Tables
   response:
     body:
-      string: '{"TableName":"pytablesync2a40e43","odata.metadata":"https://cosmostables.table.cosmos.azure.com/$metadata#Tables/@Element"}'
+      string: '{"TableName":"pytablesync2a40e43","odata.metadata":"https://cosmostablescosmosname.table.cosmos.azure.com/$metadata#Tables/@Element"}'
     headers:
       content-type:
       - application/json;odata=minimalmetadata
       date:
-      - Wed, 23 Sep 2020 23:10:44 GMT
+      - Sat, 26 Sep 2020 01:05:33 GMT
       etag:
-      - W/"datetime'2020-09-23T23%3A10%3A44.7112199Z'"
+      - W/"datetime'2020-09-26T01%3A05%3A32.7777799Z'"
       location:
-      - https://cosmostables.table.cosmos.azure.com/Tables('pytablesync2a40e43')
+      - https://cosmostablescosmosname.table.cosmos.azure.com/Tables('pytablesync2a40e43')
       server:
       - Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -55,15 +55,15 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Wed, 23 Sep 2020 23:10:45 GMT
+      - Sat, 26 Sep 2020 01:05:33 GMT
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 23 Sep 2020 23:10:45 GMT
+      - Sat, 26 Sep 2020 01:05:33 GMT
       x-ms-version:
       - '2019-07-07'
     method: DELETE
-    uri: https://cosmostables.table.cosmos.azure.com/Tables('pytablesync2a40e43')
+    uri: https://cosmostablescosmosname.table.cosmos.azure.com/Tables('pytablesync2a40e43')
   response:
     body:
       string: ''
@@ -71,7 +71,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 23 Sep 2020 23:10:44 GMT
+      - Sat, 26 Sep 2020 01:05:33 GMT
       server:
       - Microsoft-HTTPAPI/2.0
     status:

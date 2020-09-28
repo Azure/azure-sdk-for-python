@@ -179,8 +179,8 @@ class cosmosTableBatchTest(TableTestCase):
 
 
     @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix='cosmostables')
-    @CachedCosmosAccountPreparer(name_prefix='cosmostables')
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_batch_insert(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         self._set_up(cosmos_account, cosmos_account_key)
@@ -207,8 +207,8 @@ class cosmosTableBatchTest(TableTestCase):
             self._tear_down()
 
     @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix='cosmostables')
-    @CachedCosmosAccountPreparer(name_prefix='cosmostables')
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_batch_update(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         self._set_up(cosmos_account, cosmos_account_key)
@@ -241,8 +241,8 @@ class cosmosTableBatchTest(TableTestCase):
             self._tear_down()
 
     @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix='cosmostables')
-    @CachedCosmosAccountPreparer(name_prefix='cosmostables')
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_batch_merge(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         self._set_up(cosmos_account, cosmos_account_key)
@@ -279,8 +279,8 @@ class cosmosTableBatchTest(TableTestCase):
             self._tear_down()
 
     @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix='cosmostables')
-    @CachedCosmosAccountPreparer(name_prefix='cosmostables')
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_batch_update_if_match(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         self._set_up(cosmos_account, cosmos_account_key)
@@ -303,8 +303,8 @@ class cosmosTableBatchTest(TableTestCase):
             self._tear_down()
 
     @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix='cosmostables')
-    @CachedCosmosAccountPreparer(name_prefix='cosmostables')
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_batch_update_if_doesnt_match(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         self._set_up(cosmos_account, cosmos_account_key)
@@ -336,8 +336,8 @@ class cosmosTableBatchTest(TableTestCase):
             self._tear_down()
 
     @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix='cosmostables')
-    @CachedCosmosAccountPreparer(name_prefix='cosmostables')
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_batch_insert_replace(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         self._set_up(cosmos_account, cosmos_account_key)
@@ -367,8 +367,8 @@ class cosmosTableBatchTest(TableTestCase):
             self._tear_down()
 
     @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix='cosmostables')
-    @CachedCosmosAccountPreparer(name_prefix='cosmostables')
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_batch_insert_merge(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         self._set_up(cosmos_account, cosmos_account_key)
@@ -398,8 +398,8 @@ class cosmosTableBatchTest(TableTestCase):
             self._tear_down()
 
     @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix='cosmostables')
-    @CachedCosmosAccountPreparer(name_prefix='cosmostables')
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_batch_delete(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         self._set_up(cosmos_account, cosmos_account_key)
@@ -429,8 +429,8 @@ class cosmosTableBatchTest(TableTestCase):
             self._tear_down()
 
     @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix='cosmostables')
-    @CachedCosmosAccountPreparer(name_prefix='cosmostables')
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_batch_inserts(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         self._set_up(cosmos_account, cosmos_account_key)
@@ -458,8 +458,8 @@ class cosmosTableBatchTest(TableTestCase):
             self._tear_down()
 
     @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix='cosmostables')
-    @CachedCosmosAccountPreparer(name_prefix='cosmostables')
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_batch_all_operations_together(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         self._set_up(cosmos_account, cosmos_account_key)
@@ -507,8 +507,8 @@ class cosmosTableBatchTest(TableTestCase):
             self._tear_down()
 
     @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix='cosmostables')
-    @CachedCosmosAccountPreparer(name_prefix='cosmostables')
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_batch_all_operations_together_context_manager(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         self._set_up(cosmos_account, cosmos_account_key)
@@ -554,8 +554,8 @@ class cosmosTableBatchTest(TableTestCase):
             self._tear_down()
 
     @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix='cosmostables')
-    @CachedCosmosAccountPreparer(name_prefix='cosmostables')
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_batch_reuse(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         self._set_up(cosmos_account, cosmos_account_key)
@@ -613,8 +613,8 @@ class cosmosTableBatchTest(TableTestCase):
             self._tear_down()
 
     @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix='cosmostables')
-    @CachedCosmosAccountPreparer(name_prefix='cosmostables')
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_batch_same_row_operations_fail(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         self._set_up(cosmos_account, cosmos_account_key)
@@ -638,8 +638,8 @@ class cosmosTableBatchTest(TableTestCase):
             self._tear_down()
 
     @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix='cosmostables')
-    @CachedCosmosAccountPreparer(name_prefix='cosmostables')
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_batch_different_partition_operations_fail(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         self._set_up(cosmos_account, cosmos_account_key)
@@ -664,8 +664,8 @@ class cosmosTableBatchTest(TableTestCase):
             self._tear_down()
 
     @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix='cosmostables')
-    @CachedCosmosAccountPreparer(name_prefix='cosmostables')
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_batch_too_many_ops(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         self._set_up(cosmos_account, cosmos_account_key)

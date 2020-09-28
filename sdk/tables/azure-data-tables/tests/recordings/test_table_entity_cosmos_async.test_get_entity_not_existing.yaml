@@ -11,29 +11,29 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Wed, 23 Sep 2020 23:30:01 GMT
+      - Mon, 28 Sep 2020 17:43:39 GMT
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 23 Sep 2020 23:30:01 GMT
+      - Mon, 28 Sep 2020 17:43:39 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
-    uri: https://cosmostest.table.cosmos.azure.com/Tables
+    uri: https://tablestestcosmosname.table.cosmos.azure.com/Tables
   response:
     body:
-      string: '{"TableName":"uttabledfb11897","odata.metadata":"https://cosmostest.table.cosmos.azure.com/$metadata#Tables/@Element"}'
+      string: '{"TableName":"uttabledfb11897","odata.metadata":"https://tablestestcosmosname.table.cosmos.azure.com/$metadata#Tables/@Element"}'
     headers:
       content-type: application/json;odata=minimalmetadata
-      date: Wed, 23 Sep 2020 23:30:01 GMT
-      etag: W/"datetime'2020-09-23T23%3A30%3A01.9001351Z'"
-      location: https://cosmostest.table.cosmos.azure.com/Tables('uttabledfb11897')
+      date: Mon, 28 Sep 2020 17:43:39 GMT
+      etag: W/"datetime'2020-09-28T17%3A43%3A40.1597959Z'"
+      location: https://tablestestcosmosname.table.cosmos.azure.com/Tables('uttabledfb11897')
       server: Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
     status:
       code: 201
       message: Ok
-    url: https://cosmostables4c3215c8.table.cosmos.azure.com/Tables
+    url: https://tablestestr2gpz4h5wetuu2.table.cosmos.azure.com/Tables
 - request:
     body: null
     headers:
@@ -42,50 +42,50 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Wed, 23 Sep 2020 23:30:02 GMT
+      - Mon, 28 Sep 2020 17:43:40 GMT
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 23 Sep 2020 23:30:02 GMT
+      - Mon, 28 Sep 2020 17:43:40 GMT
       x-ms-version:
       - '2019-07-07'
     method: GET
-    uri: https://cosmostest.table.cosmos.azure.com/uttabledfb11897(PartitionKey='pkdfb11897',RowKey='rkdfb11897')
+    uri: https://tablestestcosmosname.table.cosmos.azure.com/uttabledfb11897(PartitionKey='pkdfb11897',RowKey='rkdfb11897')
   response:
     body:
       string: "{\"odata.error\":{\"code\":\"ResourceNotFound\",\"message\":{\"lang\":\"en-us\",\"value\":\"The
-        specified resource does not exist.\\nRequestID:b429d094-fdf4-11ea-bafb-58961df361d1\\n\"}}}\r\n"
+        specified resource does not exist.\\nRequestID:253ff8fa-01b2-11eb-92d0-58961df361d1\\n\"}}}\r\n"
     headers:
       content-type: application/json;odata=minimalmetadata
-      date: Wed, 23 Sep 2020 23:30:01 GMT
+      date: Mon, 28 Sep 2020 17:43:39 GMT
       server: Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
     status:
       code: 404
       message: Not Found
-    url: https://cosmostables4c3215c8.table.cosmos.azure.com/uttabledfb11897(PartitionKey='pkdfb11897',RowKey='rkdfb11897')
+    url: https://tablestestr2gpz4h5wetuu2.table.cosmos.azure.com/uttabledfb11897(PartitionKey='pkdfb11897',RowKey='rkdfb11897')
 - request:
     body: null
     headers:
       Date:
-      - Wed, 23 Sep 2020 23:30:02 GMT
+      - Mon, 28 Sep 2020 17:43:40 GMT
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 23 Sep 2020 23:30:02 GMT
+      - Mon, 28 Sep 2020 17:43:40 GMT
       x-ms-version:
       - '2019-07-07'
     method: DELETE
-    uri: https://cosmostest.table.cosmos.azure.com/Tables('uttabledfb11897')
+    uri: https://tablestestcosmosname.table.cosmos.azure.com/Tables('uttabledfb11897')
   response:
     body:
       string: ''
     headers:
       content-length: '0'
-      date: Wed, 23 Sep 2020 23:30:02 GMT
+      date: Mon, 28 Sep 2020 17:43:40 GMT
       server: Microsoft-HTTPAPI/2.0
     status:
       code: 204
       message: No Content
-    url: https://cosmostables4c3215c8.table.cosmos.azure.com/Tables('uttabledfb11897')
+    url: https://tablestestr2gpz4h5wetuu2.table.cosmos.azure.com/Tables('uttabledfb11897')
 version: 1

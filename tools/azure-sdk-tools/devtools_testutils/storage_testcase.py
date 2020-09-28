@@ -46,7 +46,7 @@ class StorageAccountPreparer(AzureMgmtPreparer):
         self.parameter_name = parameter_name
         self.storage_key = ''
         self.resource_moniker = self.name_prefix
-        self.set_cache(use_cache, sku, location)
+        self.set_cache(use_cache, sku, location, name_prefix)
         if random_name_enabled:
             self.resource_moniker += "storname"
 
@@ -80,6 +80,7 @@ class StorageAccountPreparer(AzureMgmtPreparer):
                 location=self.location,
             )
             self.resource.name = name
+            print(f"STORAGE RESOURCE NAME: {self.resource.name}")
             self.resource.id = name
             self.resource.primary_endpoints = Endpoints()
             self.resource.primary_endpoints.blob = 'https://{}.{}.core.windows.net'.format(name, 'blob')

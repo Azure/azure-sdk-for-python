@@ -55,7 +55,7 @@ class CosmosAccountPreparer(AzureMgmtPreparer):
         self.cosmos_account_name = ''
         self.primary_endpoint = ''
         self.resource_moniker = self.name_prefix
-        self.set_cache(use_cache, sku, location)
+        self.set_cache(use_cache, sku, location, name_prefix)
         if random_name_enabled:
             self.resource_moniker += "cosmosname"
 
@@ -122,4 +122,4 @@ class CosmosAccountPreparer(AzureMgmtPreparer):
                        'decorator @{} in front of this cosmos account preparer.'
             raise AzureTestError(template.format(ResourceGroupPreparer.__name__))
 
-CachedCosmosAccountPreparer = functools.partial(CosmosAccountPreparer, use_cache=True, random_name_enabled=False)
+CachedCosmosAccountPreparer = functools.partial(CosmosAccountPreparer, use_cache=True, random_name_enabled=True)

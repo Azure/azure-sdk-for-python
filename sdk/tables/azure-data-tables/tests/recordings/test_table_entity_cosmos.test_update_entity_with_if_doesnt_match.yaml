@@ -15,27 +15,27 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Wed, 23 Sep 2020 23:26:48 GMT
+      - Mon, 28 Sep 2020 17:40:23 GMT
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 23 Sep 2020 23:26:48 GMT
+      - Mon, 28 Sep 2020 17:40:23 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
-    uri: https://cosmostables.table.cosmos.azure.com/Tables
+    uri: https://tablestestcosmosname.table.cosmos.azure.com/Tables
   response:
     body:
-      string: '{"TableName":"uttable5f481a84","odata.metadata":"https://cosmostables.table.cosmos.azure.com/$metadata#Tables/@Element"}'
+      string: '{"TableName":"uttable5f481a84","odata.metadata":"https://tablestestcosmosname.table.cosmos.azure.com/$metadata#Tables/@Element"}'
     headers:
       content-type:
       - application/json;odata=minimalmetadata
       date:
-      - Wed, 23 Sep 2020 23:26:48 GMT
+      - Mon, 28 Sep 2020 17:40:24 GMT
       etag:
-      - W/"datetime'2020-09-23T23%3A26%3A48.2516999Z'"
+      - W/"datetime'2020-09-28T17%3A40%3A24.2031623Z'"
       location:
-      - https://cosmostables.table.cosmos.azure.com/Tables('uttable5f481a84')
+      - https://tablestestcosmosname.table.cosmos.azure.com/Tables('uttable5f481a84')
       server:
       - Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -65,27 +65,27 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Wed, 23 Sep 2020 23:26:48 GMT
+      - Mon, 28 Sep 2020 17:40:24 GMT
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 23 Sep 2020 23:26:48 GMT
+      - Mon, 28 Sep 2020 17:40:24 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
-    uri: https://cosmostables.table.cosmos.azure.com/uttable5f481a84
+    uri: https://tablestestcosmosname.table.cosmos.azure.com/uttable5f481a84
   response:
     body:
-      string: '{"odata.metadata":"https://cosmostables.table.cosmos.azure.com/uttable5f481a84/$metadata#uttable5f481a84/@Element","odata.etag":"W/\"datetime''2020-09-23T23%3A26%3A48.7535623Z''\"","PartitionKey":"pk5f481a84","RowKey":"rk5f481a84","age@odata.type":"Edm.Int64","age":"39","sex":"male","married":true,"deceased":false,"ratio":3.1,"evenratio":3.0,"large@odata.type":"Edm.Int64","large":"933311100","Birthday@odata.type":"Edm.DateTime","Birthday":"1973-10-04T00:00:00.0000000Z","birthday@odata.type":"Edm.DateTime","birthday":"1970-10-04T00:00:00.0000000Z","binary@odata.type":"Edm.Binary","binary":"YmluYXJ5","other":20,"clsid@odata.type":"Edm.Guid","clsid":"c9da6455-213d-42c9-9a79-3e9149a57833","Timestamp":"2020-09-23T23:26:48.7535623Z"}'
+      string: '{"odata.metadata":"https://tablestestcosmosname.table.cosmos.azure.com/uttable5f481a84/$metadata#uttable5f481a84/@Element","odata.etag":"W/\"datetime''2020-09-28T17%3A40%3A24.7706631Z''\"","PartitionKey":"pk5f481a84","RowKey":"rk5f481a84","age@odata.type":"Edm.Int64","age":"39","sex":"male","married":true,"deceased":false,"ratio":3.1,"evenratio":3.0,"large@odata.type":"Edm.Int64","large":"933311100","Birthday@odata.type":"Edm.DateTime","Birthday":"1973-10-04T00:00:00.0000000Z","birthday@odata.type":"Edm.DateTime","birthday":"1970-10-04T00:00:00.0000000Z","binary@odata.type":"Edm.Binary","binary":"YmluYXJ5","other":20,"clsid@odata.type":"Edm.Guid","clsid":"c9da6455-213d-42c9-9a79-3e9149a57833","Timestamp":"2020-09-28T17:40:24.7706631Z"}'
     headers:
       content-type:
       - application/json;odata=minimalmetadata
       date:
-      - Wed, 23 Sep 2020 23:26:48 GMT
+      - Mon, 28 Sep 2020 17:40:24 GMT
       etag:
-      - W/"datetime'2020-09-23T23%3A26%3A48.7535623Z'"
+      - W/"datetime'2020-09-28T17%3A40%3A24.7706631Z'"
       location:
-      - https://cosmostables.table.cosmos.azure.com/uttable5f481a84(PartitionKey='pk5f481a84',RowKey='rk5f481a84')
+      - https://tablestestcosmosname.table.cosmos.azure.com/uttable5f481a84(PartitionKey='pk5f481a84',RowKey='rk5f481a84')
       server:
       - Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -111,27 +111,27 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Wed, 23 Sep 2020 23:26:48 GMT
+      - Mon, 28 Sep 2020 17:40:24 GMT
       If-Match:
       - W/"datetime'2012-06-15T22%3A51%3A44.9662825Z'"
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 23 Sep 2020 23:26:48 GMT
+      - Mon, 28 Sep 2020 17:40:24 GMT
       x-ms-version:
       - '2019-07-07'
     method: PATCH
-    uri: https://cosmostables.table.cosmos.azure.com/uttable5f481a84(PartitionKey='pk5f481a84',RowKey='rk5f481a84')
+    uri: https://tablestestcosmosname.table.cosmos.azure.com/uttable5f481a84(PartitionKey='pk5f481a84',RowKey='rk5f481a84')
   response:
     body:
       string: "{\"odata.error\":{\"code\":\"InvalidInput\",\"message\":{\"lang\":\"en-us\",\"value\":\"One
-        of the input values is invalid.\\r\\nActivityId: 40cebabd-fdf4-11ea-a6b9-58961df361d1,
-        documentdb-dotnet-sdk/2.11.0 Host/64-bit MicrosoftWindowsNT/6.2.9200.0\\nRequestID:40cebabd-fdf4-11ea-a6b9-58961df361d1\\n\"}}}\r\n"
+        of the input values is invalid.\\r\\nActivityId: b08d8db9-01b1-11eb-b583-58961df361d1,
+        documentdb-dotnet-sdk/2.11.0 Host/64-bit MicrosoftWindowsNT/6.2.9200.0\\nRequestID:b08d8db9-01b1-11eb-b583-58961df361d1\\n\"}}}\r\n"
     headers:
       content-type:
       - application/json;odata=fullmetadata
       date:
-      - Wed, 23 Sep 2020 23:26:48 GMT
+      - Mon, 28 Sep 2020 17:40:24 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -151,15 +151,15 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Wed, 23 Sep 2020 23:26:48 GMT
+      - Mon, 28 Sep 2020 17:40:24 GMT
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 23 Sep 2020 23:26:48 GMT
+      - Mon, 28 Sep 2020 17:40:24 GMT
       x-ms-version:
       - '2019-07-07'
     method: DELETE
-    uri: https://cosmostables.table.cosmos.azure.com/Tables('uttable5f481a84')
+    uri: https://tablestestcosmosname.table.cosmos.azure.com/Tables('uttable5f481a84')
   response:
     body:
       string: ''
@@ -167,7 +167,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 23 Sep 2020 23:26:48 GMT
+      - Mon, 28 Sep 2020 17:40:24 GMT
       server:
       - Microsoft-HTTPAPI/2.0
     status:
@@ -185,23 +185,23 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Wed, 23 Sep 2020 23:26:49 GMT
+      - Mon, 28 Sep 2020 17:40:25 GMT
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 23 Sep 2020 23:26:49 GMT
+      - Mon, 28 Sep 2020 17:40:25 GMT
       x-ms-version:
       - '2019-07-07'
     method: GET
-    uri: https://cosmostables.table.cosmos.azure.com/Tables
+    uri: https://tablestestcosmosname.table.cosmos.azure.com/Tables
   response:
     body:
-      string: '{"value":[{"TableName":"querytable9c05125e"},{"TableName":"listtable33a8d15b3"},{"TableName":"querytablec80b1810"},{"TableName":"listtable1d2351374"},{"TableName":"querytable5436162b"},{"TableName":"listtable23a8d15b3"},{"TableName":"listtable0d2351374"},{"TableName":"listtable3d2351374"},{"TableName":"pytableasync52bb107b"},{"TableName":"querytable2da719db"},{"TableName":"listtable2d2351374"},{"TableName":"listtable13a8d15b3"},{"TableName":"querytable981b173a"},{"TableName":"querytablefe63147d"},{"TableName":"listtable03a8d15b3"}],"odata.metadata":"https://cosmostables.table.cosmos.azure.com/$metadata#Tables"}'
+      string: '{"value":[{"TableName":"listtable0d2351374"},{"TableName":"listtable13a8d15b3"},{"TableName":"listtable3d2351374"},{"TableName":"querytable2da719db"},{"TableName":"listtable1d2351374"},{"TableName":"querytable5436162b"},{"TableName":"querytablec80b1810"},{"TableName":"listtable33a8d15b3"},{"TableName":"pytableasync52bb107b"},{"TableName":"querytable981b173a"},{"TableName":"listtable2d2351374"},{"TableName":"querytablefe63147d"},{"TableName":"listtable03a8d15b3"},{"TableName":"querytable9c05125e"},{"TableName":"listtable23a8d15b3"}],"odata.metadata":"https://tablestestcosmosname.table.cosmos.azure.com/$metadata#Tables"}'
     headers:
       content-type:
       - application/json;odata=minimalmetadata
       date:
-      - Wed, 23 Sep 2020 23:26:48 GMT
+      - Mon, 28 Sep 2020 17:40:24 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       transfer-encoding:

@@ -11,11 +11,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Wed, 23 Sep 2020 23:16:31 GMT
+      - Mon, 28 Sep 2020 17:29:57 GMT
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 23 Sep 2020 23:16:31 GMT
+      - Mon, 28 Sep 2020 17:29:57 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
@@ -26,7 +26,7 @@ interactions:
     headers:
       cache-control: no-cache
       content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
-      date: Wed, 23 Sep 2020 23:16:31 GMT
+      date: Mon, 28 Sep 2020 17:29:56 GMT
       location: https://tablesteststorname.table.core.windows.net/Tables('uttable2c5919f0')
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
@@ -35,7 +35,7 @@ interactions:
     status:
       code: 201
       message: Created
-    url: https://tablestesthqucsobaj5c3zh.table.core.windows.net/Tables
+    url: https://tablestestbluanwepmj6h4i.table.core.windows.net/Tables
 - request:
     body: '{"PartitionKey": "pk2c5919f0", "RowKey": "rk2c5919f0", "key0": "value0",
       "key1": "value1", "key2": "value2", "key3": "value3", "key4": "value4", "key5":
@@ -117,11 +117,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Wed, 23 Sep 2020 23:16:31 GMT
+      - Mon, 28 Sep 2020 17:29:57 GMT
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 23 Sep 2020 23:16:31 GMT
+      - Mon, 28 Sep 2020 17:29:57 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
@@ -130,11 +130,11 @@ interactions:
     body:
       string: '{"odata.error":{"code":"TooManyProperties","message":{"lang":"en-US","value":"The
         entity contains more properties than allowed. Each entity can include up to
-        252 properties to store data. Each entity also has 3 system properties.\nRequestId:99b091be-f002-002a-52ff-9115d1000000\nTime:2020-09-23T23:16:31.8439101Z"}}}'
+        252 properties to store data. Each entity also has 3 system properties.\nRequestId:b995eb74-7002-0051-10bc-95c094000000\nTime:2020-09-28T17:29:57.5110359Z"}}}'
     headers:
       cache-control: no-cache
       content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
-      date: Wed, 23 Sep 2020 23:16:31 GMT
+      date: Mon, 28 Sep 2020 17:29:56 GMT
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-content-type-options: nosniff
@@ -142,16 +142,16 @@ interactions:
     status:
       code: 400
       message: Bad Request
-    url: https://tablestesthqucsobaj5c3zh.table.core.windows.net/uttable2c5919f0
+    url: https://tablestestbluanwepmj6h4i.table.core.windows.net/uttable2c5919f0
 - request:
     body: null
     headers:
       Date:
-      - Wed, 23 Sep 2020 23:16:32 GMT
+      - Mon, 28 Sep 2020 17:29:57 GMT
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 23 Sep 2020 23:16:32 GMT
+      - Mon, 28 Sep 2020 17:29:57 GMT
       x-ms-version:
       - '2019-07-07'
     method: DELETE
@@ -162,12 +162,12 @@ interactions:
     headers:
       cache-control: no-cache
       content-length: '0'
-      date: Wed, 23 Sep 2020 23:16:31 GMT
+      date: Mon, 28 Sep 2020 17:29:56 GMT
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options: nosniff
       x-ms-version: '2019-07-07'
     status:
       code: 204
       message: No Content
-    url: https://tablestesthqucsobaj5c3zh.table.core.windows.net/Tables('uttable2c5919f0')
+    url: https://tablestestbluanwepmj6h4i.table.core.windows.net/Tables('uttable2c5919f0')
 version: 1

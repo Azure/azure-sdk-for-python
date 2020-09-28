@@ -52,8 +52,8 @@ class StorageTableClientTest(TableTestCase):
             ('{}.{}'.format(account_name, 'table.cosmos.azure.com') in service.url))
 
     # --Direct Parameters Test Cases --------------------------------------------
-    @CachedResourceGroupPreparer(name_prefix="cosmostables")
-    @CachedCosmosAccountPreparer(name_prefix="cosmostables")
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_create_service_with_key_async(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
 
@@ -68,8 +68,8 @@ class StorageTableClientTest(TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @CachedResourceGroupPreparer(name_prefix="cosmostables")
-    @CachedCosmosAccountPreparer(name_prefix="cosmostables")
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_create_service_with_connection_string_async(self, resource_group, location, cosmos_account, cosmos_account_key):
 
         for service_type in SERVICES.items():
@@ -81,8 +81,8 @@ class StorageTableClientTest(TableTestCase):
             self.validate_standard_account_endpoints(service, cosmos_account.name, cosmos_account_key)
             self.assertEqual(service.scheme, 'https')
 
-    @CachedResourceGroupPreparer(name_prefix="cosmostables")
-    @CachedCosmosAccountPreparer(name_prefix="cosmostables")
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_create_service_with_sas_async(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         url = self.account_url(cosmos_account, "cosmos")
@@ -101,8 +101,8 @@ class StorageTableClientTest(TableTestCase):
             self.assertTrue(service.url.endswith(self.sas_token))
             self.assertIsNone(service.credential)
 
-    @CachedResourceGroupPreparer(name_prefix="cosmostables")
-    @CachedCosmosAccountPreparer(name_prefix="cosmostables")
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_create_service_with_token_async(self, resource_group, location, cosmos_account, cosmos_account_key):
         url = self.account_url(cosmos_account, "cosmos")
         suffix = '.table.core.windows.net'
@@ -120,8 +120,8 @@ class StorageTableClientTest(TableTestCase):
             self.assertFalse(hasattr(service.credential, 'account_key'))
             self.assertTrue(hasattr(service.credential, 'get_token'))
 
-    @CachedResourceGroupPreparer(name_prefix="cosmostables")
-    @CachedCosmosAccountPreparer(name_prefix="cosmostables")
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_create_service_with_token_and_http_async(self, resource_group, location, cosmos_account, cosmos_account_key):
         for service_type in SERVICES:
             # Act
@@ -129,8 +129,8 @@ class StorageTableClientTest(TableTestCase):
                 url = self.account_url(cosmos_account, "cosmos").replace('https', 'http')
                 service_type(url, credential=self.token_credential, table_name='foo')
 
-    @CachedResourceGroupPreparer(name_prefix="cosmostables")
-    @CachedCosmosAccountPreparer(name_prefix="cosmostables")
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_create_service_china_async(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         # TODO: Confirm regional cloud cosmos URLs
@@ -150,8 +150,8 @@ class StorageTableClientTest(TableTestCase):
             self.assertTrue(service._primary_endpoint.startswith(
                 'https://{}.{}.core.chinacloudapi.cn'.format(cosmos_account.name, "cosmos")))
 
-    @CachedResourceGroupPreparer(name_prefix="cosmostables")
-    @CachedCosmosAccountPreparer(name_prefix="cosmostables")
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_create_service_protocol_async(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
 
@@ -165,8 +165,8 @@ class StorageTableClientTest(TableTestCase):
             self.validate_standard_account_endpoints(service, cosmos_account.name, cosmos_account_key)
             self.assertEqual(service.scheme, 'http')
 
-    @CachedResourceGroupPreparer(name_prefix="cosmostables")
-    @CachedCosmosAccountPreparer(name_prefix="cosmostables")
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_create_service_empty_key_async(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         TABLE_SERVICES = [TableServiceClient, TableClient]
@@ -179,8 +179,8 @@ class StorageTableClientTest(TableTestCase):
             self.assertEqual(
                 str(e.exception), "You need to provide either a SAS token or an account shared key to authenticate.")
 
-    @CachedResourceGroupPreparer(name_prefix="cosmostables")
-    @CachedCosmosAccountPreparer(name_prefix="cosmostables")
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_create_service_with_socket_timeout_async(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
 
@@ -198,8 +198,8 @@ class StorageTableClientTest(TableTestCase):
             assert default_service._client._client._pipeline._transport.connection_config.timeout in [20, (20, 2000)]
 
     # --Connection String Test Cases --------------------------------------------
-    @CachedResourceGroupPreparer(name_prefix="cosmostables")
-    @CachedCosmosAccountPreparer(name_prefix="cosmostables")
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_create_service_with_connection_string_key_async(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         conn_string = 'AccountName={};AccountKey={};'.format(cosmos_account.name, cosmos_account_key)
@@ -213,8 +213,8 @@ class StorageTableClientTest(TableTestCase):
             self.assertEqual(service.scheme, 'https')
 
     @pytest.mark.skip("Error with sas formation")
-    @CachedResourceGroupPreparer(name_prefix="cosmostables")
-    @CachedCosmosAccountPreparer(name_prefix="cosmostables")
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_create_service_with_connection_string_sas_async(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         conn_string = 'AccountName={};SharedAccessSignature={};'.format(cosmos_account.name, self.sas_token)
@@ -230,8 +230,8 @@ class StorageTableClientTest(TableTestCase):
             self.assertTrue(service.url.endswith(self.sas_token))
             self.assertIsNone(service.credential)
 
-    @CachedResourceGroupPreparer(name_prefix="cosmostables")
-    @CachedCosmosAccountPreparer(name_prefix="cosmostables")
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_create_service_with_connection_string_cosmos_async(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         conn_string = 'DefaultEndpointsProtocol=https;AccountName={0};AccountKey={1};TableEndpoint=https://{0}.table.cosmos.azure.com:443/;'.format(
@@ -251,8 +251,8 @@ class StorageTableClientTest(TableTestCase):
             self.assertEqual(service.scheme, 'https')
 
     @pytest.mark.skip("Error with china cloud")
-    @CachedResourceGroupPreparer(name_prefix="cosmostables")
-    @CachedCosmosAccountPreparer(name_prefix="cosmostables")
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_create_service_with_connection_string_endpoint_protocol_async(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         conn_string = 'AccountName={};AccountKey={};DefaultEndpointsProtocol=http;EndpointSuffix=core.chinacloudapi.cn;'.format(
@@ -272,8 +272,8 @@ class StorageTableClientTest(TableTestCase):
                     'http://{}.{}.core.chinacloudapi.cn'.format(cosmos_account.name, "cosmos")))
             self.assertEqual(service.scheme, 'http')
 
-    @CachedResourceGroupPreparer(name_prefix="cosmostables")
-    @CachedCosmosAccountPreparer(name_prefix="cosmostables")
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_create_service_with_connection_string_emulated_async(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         for service_type in SERVICES.items():
@@ -283,8 +283,8 @@ class StorageTableClientTest(TableTestCase):
             with self.assertRaises(ValueError):
                 service = service_type[0].from_connection_string(conn_string, table_name="foo")
 
-    @CachedResourceGroupPreparer(name_prefix="cosmostables")
-    @CachedCosmosAccountPreparer(name_prefix="cosmostables")
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_create_service_with_connection_string_custom_domain_async(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         for service_type in SERVICES.items():
@@ -301,8 +301,8 @@ class StorageTableClientTest(TableTestCase):
             self.assertEqual(service.credential.account_key, cosmos_account_key)
             self.assertTrue(service._primary_endpoint.startswith('https://www.mydomain.com'))
 
-    @CachedResourceGroupPreparer(name_prefix="cosmostables")
-    @CachedCosmosAccountPreparer(name_prefix="cosmostables")
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_create_service_with_conn_str_custom_domain_trailing_slash_async(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         for service_type in SERVICES.items():
@@ -319,8 +319,8 @@ class StorageTableClientTest(TableTestCase):
             self.assertEqual(service.credential.account_key, cosmos_account_key)
             self.assertTrue(service._primary_endpoint.startswith('https://www.mydomain.com'))
 
-    @CachedResourceGroupPreparer(name_prefix="cosmostables")
-    @CachedCosmosAccountPreparer(name_prefix="cosmostables")
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_create_service_with_conn_str_custom_domain_sec_override_async(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         for service_type in SERVICES.items():
@@ -338,8 +338,8 @@ class StorageTableClientTest(TableTestCase):
             self.assertEqual(service.credential.account_key, cosmos_account_key)
             self.assertTrue(service._primary_endpoint.startswith('https://www.mydomain.com'))
 
-    @CachedResourceGroupPreparer(name_prefix="cosmostables")
-    @CachedCosmosAccountPreparer(name_prefix="cosmostables")
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_create_service_with_conn_str_fails_if_sec_without_primary_async(self, resource_group, location, cosmos_account, cosmos_account_key):
         for service_type in SERVICES.items():
             # Arrange
@@ -351,8 +351,8 @@ class StorageTableClientTest(TableTestCase):
             with self.assertRaises(ValueError):
                 service = service_type[0].from_connection_string(conn_string, table_name="foo")
 
-    @CachedResourceGroupPreparer(name_prefix="cosmostables")
-    @CachedCosmosAccountPreparer(name_prefix="cosmostables")
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_create_service_with_conn_str_succeeds_if_sec_with_primary_async(self, resource_group, location, cosmos_account, cosmos_account_key):
         for service_type in SERVICES.items():
             # Arrange
@@ -373,8 +373,8 @@ class StorageTableClientTest(TableTestCase):
             self.assertTrue(service._primary_endpoint.startswith('https://www.mydomain.com'))
 
     @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix="cosmostables")
-    @CachedCosmosAccountPreparer(name_prefix="cosmostables")
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_create_service_with_custom_account_endpoint_path_async(self, resource_group, location, cosmos_account, cosmos_account_key):
         custom_account_url = "http://local-machine:11002/custom/account/path/" + self.sas_token
         for service_type in SERVICES.items():
@@ -412,8 +412,8 @@ class StorageTableClientTest(TableTestCase):
         self.assertTrue(service.url.startswith('http://local-machine:11002/custom/account/path'))
 
     @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix="cosmostables")
-    @CachedCosmosAccountPreparer(name_prefix="cosmostables")
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_user_agent_default_async(self, resource_group, location, cosmos_account, cosmos_account_key):
         service = TableServiceClient(self.account_url(cosmos_account, "cosmos"), credential=cosmos_account_key)
 
@@ -430,8 +430,8 @@ class StorageTableClientTest(TableTestCase):
         self.assertIsInstance(tables, list)
 
     @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix="cosmostables")
-    @CachedCosmosAccountPreparer(name_prefix="cosmostables")
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_user_agent_custom_async(self, resource_group, location, cosmos_account, cosmos_account_key):
         custom_app = "TestApp/v1.0"
         service = TableServiceClient(
@@ -463,8 +463,8 @@ class StorageTableClientTest(TableTestCase):
         tables = list(service.list_tables(raw_response_hook=callback, user_agent="TestApp/v2.0"))
         self.assertIsInstance(tables, list)
 
-    @CachedResourceGroupPreparer(name_prefix="cosmostables")
-    @CachedCosmosAccountPreparer(name_prefix="cosmostables")
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_user_agent_append(self, resource_group, location, cosmos_account, cosmos_account_key):
         # TODO: fix this one
         service = TableServiceClient(self.account_url(cosmos_account, "cosmos"), credential=cosmos_account_key)
@@ -483,8 +483,8 @@ class StorageTableClientTest(TableTestCase):
         tables = service.list_tables(raw_response_hook=callback, headers=custom_headers)
 
     @pytest.mark.skip("kierans theory")
-    @CachedResourceGroupPreparer(name_prefix="cosmostables")
-    @CachedCosmosAccountPreparer(name_prefix="cosmostables")
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_create_table_client_with_complete_table_url_async(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         table_url = self.account_url(cosmos_account, "cosmos") + "/foo"
@@ -496,8 +496,8 @@ class StorageTableClientTest(TableTestCase):
         self.assertEqual(service.account_name, cosmos_account.name)
 
     @pytest.mark.skip("cosmos differential")
-    @CachedResourceGroupPreparer(name_prefix="cosmostables")
-    @CachedCosmosAccountPreparer(name_prefix="cosmostables")
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_create_table_client_with_complete_url_async(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         table_url = "https://{}.table.cosmos.azure.com:443/foo".format(cosmos_account.name)
@@ -536,8 +536,8 @@ class StorageTableClientTest(TableTestCase):
                     self.assertEqual(
                         str(e.exception), "Connection string missing required connection details.")
 
-    @CachedResourceGroupPreparer(name_prefix="cosmostables")
-    @CachedCosmosAccountPreparer(name_prefix="cosmostables")
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_closing_pipeline_client_async(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         for client, url in SERVICES.items():
@@ -550,8 +550,8 @@ class StorageTableClientTest(TableTestCase):
                 assert hasattr(service, 'close')
                 await service.close()
 
-    @CachedResourceGroupPreparer(name_prefix="cosmostables")
-    @CachedCosmosAccountPreparer(name_prefix="cosmostables")
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_closing_pipeline_client_simple_async(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         for client, url in SERVICES.items():

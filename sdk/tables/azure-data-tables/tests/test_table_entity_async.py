@@ -31,16 +31,16 @@ from azure.data.tables import TableSasPermissions, AccessPolicy, UpdateMode
 from devtools_testutils import CachedResourceGroupPreparer, CachedStorageAccountPreparer
 from _shared.testcase import TableTestCase, LogCaptured
 
-
-# ------------------------------------------------------------------------------
-
 # ------------------------------------------------------------------------------
 
 class StorageTableEntityTest(TableTestCase):
 
     async def _set_up(self, storage_account, storage_account_key):
-        self.ts = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
+        account_url = self.account_url(storage_account, "table")
+        print(f"Account_url: {account_url}")
+        self.ts = TableServiceClient(account_url, storage_account_key)
         self.table_name = self.get_resource_name('uttable')
+        print(f"Table name: {self.table_name}")
         self.table = self.ts.get_table_client(self.table_name)
         if self.is_live:
             try:
@@ -300,7 +300,7 @@ class StorageTableEntityTest(TableTestCase):
             # resp = self.table.create_item(entity)
             resp = await self.table.create_entity(entity=entity)
 
-            # Assert  
+            # Assert
             self.assertIsNotNone(resp)
         finally:
             await self._tear_down()

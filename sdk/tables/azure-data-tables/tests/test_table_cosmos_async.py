@@ -45,8 +45,8 @@ class TableTestAsync(AsyncTableTestCase):
 
     # --Test cases for tables --------------------------------------------------
 
-    @CachedResourceGroupPreparer(name_prefix="cosmostables")
-    @CachedCosmosAccountPreparer(name_prefix="cosmostables")
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_create_table(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         ts = TableServiceClient(self.account_url(cosmos_account, "cosmos"), cosmos_account_key)
@@ -63,8 +63,8 @@ class TableTestAsync(AsyncTableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @CachedResourceGroupPreparer(name_prefix="cosmostables")
-    @CachedCosmosAccountPreparer(name_prefix="cosmostables")
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_create_table_fail_on_exist(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         ts = TableServiceClient(self.account_url(cosmos_account, "cosmos"), cosmos_account_key)
@@ -82,8 +82,8 @@ class TableTestAsync(AsyncTableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @CachedResourceGroupPreparer(name_prefix="cosmostables")
-    @CachedCosmosAccountPreparer(name_prefix="cosmostables")
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_create_table_invalid_name(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         ts = TableServiceClient(self.account_url(cosmos_account, "cosmos"), cosmos_account_key)
@@ -98,8 +98,8 @@ class TableTestAsync(AsyncTableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @CachedResourceGroupPreparer(name_prefix="cosmostables")
-    @CachedCosmosAccountPreparer(name_prefix="cosmostables")
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_delete_table_invalid_name(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         ts = TableServiceClient(self.account_url(cosmos_account, "cosmos"), cosmos_account_key)
@@ -114,8 +114,8 @@ class TableTestAsync(AsyncTableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @CachedResourceGroupPreparer(name_prefix="cosmostables")
-    @CachedCosmosAccountPreparer(name_prefix="cosmostables")
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_list_tables(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         ts = TableServiceClient(self.account_url(cosmos_account, "cosmos"), cosmos_account_key)
@@ -134,8 +134,8 @@ class TableTestAsync(AsyncTableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @CachedResourceGroupPreparer(name_prefix="cosmostables")
-    @CachedCosmosAccountPreparer(name_prefix="cosmostables")
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_query_tables_with_filter(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         ts = TableServiceClient(self.account_url(cosmos_account, "cosmos"), cosmos_account_key)
@@ -156,8 +156,8 @@ class TableTestAsync(AsyncTableTestCase):
             sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("small page and large page issues")
-    @CachedResourceGroupPreparer(name_prefix="cosmostables")
-    @CachedCosmosAccountPreparer(name_prefix="cosmostables")
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_list_tables_with_num_results(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         prefix = 'listtable'
@@ -182,8 +182,8 @@ class TableTestAsync(AsyncTableTestCase):
             sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix="cosmostables")
-    @CachedCosmosAccountPreparer(name_prefix="cosmostables")
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_list_tables_with_marker(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         ts = TableServiceClient(self.account_url(cosmos_account, "cosmos"), cosmos_account_key)
@@ -213,8 +213,8 @@ class TableTestAsync(AsyncTableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @CachedResourceGroupPreparer(name_prefix="cosmostables")
-    @CachedCosmosAccountPreparer(name_prefix="cosmostables")
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_delete_table_with_existing_table(self, resource_group, location, cosmos_account,
                                                     cosmos_account_key):
         # Arrange
@@ -231,8 +231,8 @@ class TableTestAsync(AsyncTableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @CachedResourceGroupPreparer(name_prefix="cosmostables")
-    @CachedCosmosAccountPreparer(name_prefix="cosmostables")
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_delete_table_with_non_existing_table_fail_not_exist(self, resource_group, location, cosmos_account,
                                                                        cosmos_account_key):
         # Arrange
@@ -246,8 +246,8 @@ class TableTestAsync(AsyncTableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @CachedResourceGroupPreparer(name_prefix="cosmostables")
-    @CachedCosmosAccountPreparer(name_prefix="cosmostables")
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_unicode_create_table_unicode_name(self, resource_group, location, cosmos_account,
                                                      cosmos_account_key):
         # Arrange
@@ -269,8 +269,8 @@ class TableTestAsync(AsyncTableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @CachedResourceGroupPreparer(name_prefix="cosmostables")
-    @CachedCosmosAccountPreparer(name_prefix="cosmostables")
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_get_table_acl(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         url = self.account_url(cosmos_account, "cosmos")
@@ -292,8 +292,8 @@ class TableTestAsync(AsyncTableTestCase):
             sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix="cosmostables")
-    @CachedCosmosAccountPreparer(name_prefix="cosmostables")
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_set_table_acl_with_empty_signed_identifiers(self, resource_group, location, cosmos_account,
                                                                cosmos_account_key):
         # Arrange
@@ -317,8 +317,8 @@ class TableTestAsync(AsyncTableTestCase):
             sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix="cosmostables")
-    @CachedCosmosAccountPreparer(name_prefix="cosmostables")
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_set_table_acl_with_empty_signed_identifier(self, resource_group, location, cosmos_account,
                                                               cosmos_account_key):
         # Arrange
@@ -345,8 +345,8 @@ class TableTestAsync(AsyncTableTestCase):
             sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix="cosmostables")
-    @CachedCosmosAccountPreparer(name_prefix="cosmostables")
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_set_table_acl_with_signed_identifiers(self, resource_group, location, cosmos_account,
                                                          cosmos_account_key):
         # Arrange
@@ -376,8 +376,8 @@ class TableTestAsync(AsyncTableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @CachedResourceGroupPreparer(name_prefix="cosmostables")
-    @CachedCosmosAccountPreparer(name_prefix="cosmostables")
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_set_table_acl_too_many_ids(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         url = self.account_url(cosmos_account, "cosmos")
@@ -402,8 +402,8 @@ class TableTestAsync(AsyncTableTestCase):
 
     @pytest.mark.skip("pending")
     @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix="cosmostables")
-    @CachedCosmosAccountPreparer(name_prefix="cosmostables")
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_account_sas(self, resource_group, location, cosmos_account, cosmos_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
 
@@ -452,8 +452,8 @@ class TableTestAsync(AsyncTableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @CachedResourceGroupPreparer(name_prefix="cosmostables")
-    @CachedCosmosAccountPreparer(name_prefix="cosmostables")
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_locale(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         ts = TableServiceClient(self.account_url(cosmos_account, "cosmos"), cosmos_account_key)

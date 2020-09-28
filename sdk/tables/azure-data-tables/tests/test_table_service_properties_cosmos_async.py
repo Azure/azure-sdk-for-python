@@ -97,8 +97,8 @@ class TableServicePropertiesTest(TableTestCase):
         self.assertEqual(ret1.days, ret2.days)
 
     # --Test cases per service ---------------------------------------
-    @CachedResourceGroupPreparer(name_prefix="cosmos_tables")
-    @CachedCosmosAccountPreparer(name_prefix="cosmostables")
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_table_service_properties_async(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         url = self.account_url(cosmos_account, "cosmos")
@@ -119,8 +119,8 @@ class TableServicePropertiesTest(TableTestCase):
             sleep(SLEEP_DELAY)
 
     # --Test cases per feature ---------------------------------------
-    @CachedResourceGroupPreparer(name_prefix="cosmos_tables")
-    @CachedCosmosAccountPreparer(name_prefix="cosmostables")
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_set_logging_async(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         url = self.account_url(cosmos_account, "cosmos")
@@ -138,8 +138,8 @@ class TableServicePropertiesTest(TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @CachedResourceGroupPreparer(name_prefix="cosmos_tables")
-    @CachedCosmosAccountPreparer(name_prefix="cosmostables")
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_set_hour_metrics_async(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         url = self.account_url(cosmos_account, "cosmos")
@@ -157,8 +157,8 @@ class TableServicePropertiesTest(TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @CachedResourceGroupPreparer(name_prefix="cosmos_tables")
-    @CachedCosmosAccountPreparer(name_prefix="cosmostables")
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_set_minute_metrics_async(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         url = self.account_url(cosmos_account, "cosmos")
@@ -177,8 +177,8 @@ class TableServicePropertiesTest(TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @CachedResourceGroupPreparer(name_prefix="cosmos_tables")
-    @CachedCosmosAccountPreparer(name_prefix="cosmostables")
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_set_cors_async(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         url = self.account_url(cosmos_account, "cosmos")
@@ -211,8 +211,8 @@ class TableServicePropertiesTest(TableTestCase):
             sleep(SLEEP_DELAY)
 
     # --Test cases for errors ---------------------------------------
-    @CachedResourceGroupPreparer(name_prefix="cosmos_tables")
-    @CachedCosmosAccountPreparer(name_prefix="cosmostables")
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_retention_no_days_async(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Assert
         self.assertRaises(ValueError,
@@ -222,8 +222,8 @@ class TableServicePropertiesTest(TableTestCase):
             sleep(SLEEP_DELAY)
 
     @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix="cosmos_tables")
-    @CachedCosmosAccountPreparer(name_prefix="cosmostables")
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_too_many_cors_rules_async(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         tsc = TableServiceClient(self.account_url(cosmos_account, "cosmos"), cosmos_account_key)
@@ -239,8 +239,8 @@ class TableServicePropertiesTest(TableTestCase):
 
 
     @pytest.mark.skip("pending")
-    @CachedResourceGroupPreparer(name_prefix="cosmos_tables")
-    @CachedCosmosAccountPreparer(name_prefix="cosmostables")
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_retention_too_long_async(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         tsc = TableServiceClient(self.account_url(cosmos_account, "cosmos"), cosmos_account_key)
