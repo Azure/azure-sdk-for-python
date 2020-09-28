@@ -69,6 +69,7 @@ jobs:
           CoverageArg: $(CoverageArg)
           EnvVars:
             AZURE_RUN_MODE: 'Live' #Record, Playback
+            RESOURCE_REGION: $(TestRegionOverride)
             ${{ insert }}: ${{ parameters.EnvVars }}
           BeforeTestSteps: ${{ parameters.BeforeTestSteps }}
           AfterTestSteps: ${{ parameters.AfterTestSteps }}

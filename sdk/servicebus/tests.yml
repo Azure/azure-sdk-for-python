@@ -6,6 +6,7 @@ jobs:
       ServiceDirectory: servicebus
       TestTimeoutInMinutes: 300
       BuildTargetingString: azure-servicebus*
+      TestCanary: false
       EnvVars:
         AZURE_SUBSCRIPTION_ID: $(azure-subscription-id)
         AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
@@ -25,3 +26,8 @@ jobs:
         Linux_Python38:
           OSVmImage: 'ubuntu-18.04'
           PythonVersion: '3.8'
+       - ${{ if eq(parameters.TestCanary, 'true') }}:
+            Linux_Python38_Canary:
+              TestRegionOverride: 'centraluseuap'
+              OSVmImage: 'ubuntu-18.04'
+              PythonVersion: '3.8'
