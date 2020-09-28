@@ -19,9 +19,9 @@ DEPENDENCIES = [
     # 'azure-storage-file<2.0',
     'azure-storage-common<1.4.1',
     'pyopenssl',
-    'azure-mgmt-resource',
-    'azure-mgmt-storage',
-    'azure-mgmt-keyvault'
+    'azure-mgmt-resource<15.0.0b1',
+    'azure-mgmt-storage<16.0.0b1',
+    'azure-mgmt-keyvault<7.0.0b1'
 ]
 
 setup(
