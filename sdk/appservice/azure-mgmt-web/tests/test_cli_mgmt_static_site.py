@@ -7,7 +7,7 @@
 #--------------------------------------------------------------------------
 
 # Current Operation Coverage:
-#   StaticSites: 26/26
+#   StaticSites: 12/26
 
 import unittest
 
@@ -24,11 +24,10 @@ class MgmtWebSiteTest(AzureMgmtTestCase):
             azure.mgmt.web.WebSiteManagementClient
         )
 
-    @unittest.skip("unavailable")
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_static_site(self, resource_group):
 
-        GITHUB_TOKEN = self.settings.GITHUB_TOKEN
+        GITHUB_TOKEN = self.settings.GITHUB_TOKEN if self.is_live else "xxx"
         TENANT_ID = self.settings.TENANT_ID
         RESOURCE_GROUP = resource_group.name
         NAME = "myname"
@@ -66,12 +65,12 @@ class MgmtWebSiteTest(AzureMgmtTestCase):
             "setting2": "someval2"
           }
         }
-        result = self.mgmt_client.static_sites.create_or_update_static_site_function_app_settings(resource_group_name=RESOURCE_GROUP, name=NAME, app_settings=BODY)
+        # result = self.mgmt_client.static_sites.create_or_update_static_site_function_app_settings(resource_group_name=RESOURCE_GROUP, name=NAME, app_settings=BODY)
 
 #--------------------------------------------------------------------------
         # /StaticSites/put/Create or update a custom domain for a static site[put]
 #--------------------------------------------------------------------------
-        result = self.mgmt_client.static_sites.create_or_update_static_site_custom_domain(resource_group_name=RESOURCE_GROUP, name=NAME, domain_name=DOMAIN_NAME)
+        # result = self.mgmt_client.static_sites.create_or_update_static_site_custom_domain(resource_group_name=RESOURCE_GROUP, name=NAME, domain_name=DOMAIN_NAME)
 
 #--------------------------------------------------------------------------
         # /StaticSites/put/Creates or updates the function app settings of a static site build.[put]
@@ -80,7 +79,7 @@ class MgmtWebSiteTest(AzureMgmtTestCase):
           "setting1": "someval",
           "setting2": "someval2"
         }
-        result = self.mgmt_client.static_sites.create_or_update_static_site_build_function_app_settings(resource_group_name=RESOURCE_GROUP, name=NAME, pr_id=PR_ID, app_settings=BODY)
+        # result = self.mgmt_client.static_sites.create_or_update_static_site_build_function_app_settings(resource_group_name=RESOURCE_GROUP, name=NAME, pr_id=PR_ID, app_settings=BODY)
 
 #--------------------------------------------------------------------------
         # /StaticSites/get/Gets the functions of a particular static site build[get]
@@ -90,7 +89,7 @@ class MgmtWebSiteTest(AzureMgmtTestCase):
 #--------------------------------------------------------------------------
         # /StaticSites/get/Get a static site build[get]
 #--------------------------------------------------------------------------
-        result = self.mgmt_client.static_sites.get_static_site_build(resource_group_name=RESOURCE_GROUP, name=NAME, pr_id=PR_ID)
+        # result = self.mgmt_client.static_sites.get_static_site_build(resource_group_name=RESOURCE_GROUP, name=NAME, pr_id=PR_ID)
 
 #--------------------------------------------------------------------------
         # /StaticSites/get/List custom domains for a static site[get]
@@ -138,17 +137,17 @@ class MgmtWebSiteTest(AzureMgmtTestCase):
 #--------------------------------------------------------------------------
         # /StaticSites/post/Get function app settings of a static site build[post]
 #--------------------------------------------------------------------------
-        result = self.mgmt_client.static_sites.list_static_site_build_function_app_settings(resource_group_name=RESOURCE_GROUP, name=NAME, pr_id=PR_ID)
+        # result = self.mgmt_client.static_sites.list_static_site_build_function_app_settings(resource_group_name=RESOURCE_GROUP, name=NAME, pr_id=PR_ID)
 
 #--------------------------------------------------------------------------
         # /StaticSites/post/Validate a custom domain for a static site[post]
 #--------------------------------------------------------------------------
-        result = self.mgmt_client.static_sites.validate_custom_domain_can_be_added_to_static_site(resource_group_name=RESOURCE_GROUP, name=NAME, domain_name=DOMAIN_NAME)
+        # result = self.mgmt_client.static_sites.validate_custom_domain_can_be_added_to_static_site(resource_group_name=RESOURCE_GROUP, name=NAME, domain_name=DOMAIN_NAME)
 
 #--------------------------------------------------------------------------
         # /StaticSites/post/Get function app settings of a static site[post]
 #--------------------------------------------------------------------------
-        result = self.mgmt_client.static_sites.list_static_site_function_app_settings(resource_group_name=RESOURCE_GROUP, name=NAME)
+        # result = self.mgmt_client.static_sites.list_static_site_function_app_settings(resource_group_name=RESOURCE_GROUP, name=NAME)
 
 #--------------------------------------------------------------------------
         # /StaticSites/post/Create an invitation link for a user for a static site[post]
@@ -160,7 +159,7 @@ class MgmtWebSiteTest(AzureMgmtTestCase):
           "roles": "admin,contributor",
           "num_hours_to_expiration": "1"
         }
-        result = self.mgmt_client.static_sites.create_user_roles_invitation_link(resource_group_name=RESOURCE_GROUP, name=NAME, static_site_user_roles_invitation_envelope=BODY)
+        # result = self.mgmt_client.static_sites.create_user_roles_invitation_link(resource_group_name=RESOURCE_GROUP, name=NAME, static_site_user_roles_invitation_envelope=BODY)
 
 #--------------------------------------------------------------------------
         # /StaticSites/post/List secrets for a static site[post]
@@ -185,7 +184,7 @@ class MgmtWebSiteTest(AzureMgmtTestCase):
         # /StaticSites/patch/Patch a static site[patch]
 #--------------------------------------------------------------------------
         BODY = {}
-        result = self.mgmt_client.static_sites.update_static_site(resource_group_name=RESOURCE_GROUP, name=NAME, static_site_envelope=BODY)
+        # result = self.mgmt_client.static_sites.update_static_site(resource_group_name=RESOURCE_GROUP, name=NAME, static_site_envelope=BODY)
 
 #--------------------------------------------------------------------------
         # /StaticSites/delete/Delete a user for a static site[delete]
@@ -195,12 +194,12 @@ class MgmtWebSiteTest(AzureMgmtTestCase):
 #--------------------------------------------------------------------------
         # /StaticSites/delete/Delete a custom domain for a static site[delete]
 #--------------------------------------------------------------------------
-        result = self.mgmt_client.static_sites.delete_static_site_custom_domain(resource_group_name=RESOURCE_GROUP, name=NAME, domain_name=DOMAIN_NAME)
+        # result = self.mgmt_client.static_sites.delete_static_site_custom_domain(resource_group_name=RESOURCE_GROUP, name=NAME, domain_name=DOMAIN_NAME)
 
 #--------------------------------------------------------------------------
         # /StaticSites/delete/Delete a static site build[delete]
 #--------------------------------------------------------------------------
-        result = self.mgmt_client.static_sites.delete_static_site_build(resource_group_name=RESOURCE_GROUP, name=NAME, pr_id=PR_ID)
+        # result = self.mgmt_client.static_sites.delete_static_site_build(resource_group_name=RESOURCE_GROUP, name=NAME, pr_id=PR_ID)
 
 #--------------------------------------------------------------------------
         # /StaticSites/delete/Delete a static site[delete]
