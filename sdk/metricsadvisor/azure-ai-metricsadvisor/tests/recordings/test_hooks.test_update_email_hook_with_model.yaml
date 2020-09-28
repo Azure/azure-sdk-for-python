@@ -1,0 +1,192 @@
+interactions:
+- request:
+    body: '{"hookType": "Email", "hookName": "testwebhook978c1216", "description":
+      "my email hook", "externalLink": "external link", "hookParameter": {"toList":
+      ["yournamehere@microsoft.com"]}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '182'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-metricsadvisor/1.0.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks
+  response:
+    body:
+      string: ''
+    headers:
+      apim-request-id:
+      - 0ec5b292-e211-47bc-830d-09120443613b
+      content-length:
+      - '0'
+      date:
+      - Mon, 21 Sep 2020 21:18:29 GMT
+      location:
+      - https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks/c30eb188-05d5-496e-88d4-b25b9ba34787
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '427'
+      x-request-id:
+      - 0ec5b292-e211-47bc-830d-09120443613b
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-metricsadvisor/1.0.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks/c30eb188-05d5-496e-88d4-b25b9ba34787
+  response:
+    body:
+      string: '{"hookId":"c30eb188-05d5-496e-88d4-b25b9ba34787","hookName":"testwebhook978c1216","hookType":"Email","externalLink":"external
+        link","description":"my email hook","admins":["krpratic@microsoft.com"],"hookParameter":{"toList":["yournamehere@microsoft.com"],"ccList":null,"bccList":null}}'
+    headers:
+      apim-request-id:
+      - 127c66ed-7af7-4668-861d-5213e557528c
+      content-length:
+      - '285'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 21 Sep 2020 21:18:30 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '159'
+      x-request-id:
+      - 127c66ed-7af7-4668-861d-5213e557528c
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"hookType": "Email", "hookName": "update", "description": "update", "externalLink":
+      "update", "hookParameter": {"toList": ["myemail@m.com"]}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '142'
+      Content-Type:
+      - application/merge-patch+json
+      User-Agent:
+      - azsdk-python-ai-metricsadvisor/1.0.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+    method: PATCH
+    uri: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks/c30eb188-05d5-496e-88d4-b25b9ba34787
+  response:
+    body:
+      string: ''
+    headers:
+      apim-request-id:
+      - 7a23fbc7-75db-48b5-bb93-474d6abef638
+      content-length:
+      - '0'
+      date:
+      - Mon, 21 Sep 2020 21:18:30 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '416'
+      x-request-id:
+      - 7a23fbc7-75db-48b5-bb93-474d6abef638
+    status:
+      code: 204
+      message: No Content
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-metricsadvisor/1.0.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks/c30eb188-05d5-496e-88d4-b25b9ba34787
+  response:
+    body:
+      string: '{"hookId":"c30eb188-05d5-496e-88d4-b25b9ba34787","hookName":"update","hookType":"Email","externalLink":"update","description":"update","admins":["krpratic@microsoft.com"],"hookParameter":{"toList":["myemail@m.com"],"ccList":null,"bccList":null}}'
+    headers:
+      apim-request-id:
+      - 294669c2-96db-41be-a482-c3ca0161e57f
+      content-length:
+      - '245'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 21 Sep 2020 21:18:31 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '130'
+      x-request-id:
+      - 294669c2-96db-41be-a482-c3ca0161e57f
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-ai-metricsadvisor/1.0.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+    method: DELETE
+    uri: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks/c30eb188-05d5-496e-88d4-b25b9ba34787
+  response:
+    body:
+      string: ''
+    headers:
+      apim-request-id:
+      - 39c7c615-9b19-4712-854b-ca4a0494f827
+      content-length:
+      - '0'
+      date:
+      - Mon, 21 Sep 2020 21:18:31 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '154'
+      x-request-id:
+      - 39c7c615-9b19-4712-854b-ca4a0494f827
+    status:
+      code: 204
+      message: No Content
+version: 1
