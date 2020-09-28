@@ -51,7 +51,7 @@ class StorageAccountPreparer(AzureMgmtPreparer):
         if self.is_live:
             self.client = self.create_mgmt_client(StorageManagementClient)
             group = self._get_resource_group(**kwargs)
-            storage_async_operation = self.client.storage_accounts.create(
+            storage_async_operation = self.client.storage_accounts.begin_create(
                 group.name,
                 name,
                 {
