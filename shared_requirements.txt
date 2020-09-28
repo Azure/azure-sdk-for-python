@@ -169,3 +169,4 @@ opentelemetry-api==0.10b0
 #override azure-communication-sms msrest>=0.6.0
 #override azure-communication-administration msrest>=0.6.0
 #override azure-ai-metricsadvisor azure-core<2.0.0,>=1.6.0
+#override azure-ai-formrecognizer msrest>=0.6.12
