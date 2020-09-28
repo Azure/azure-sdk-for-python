@@ -646,6 +646,19 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
     @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
+    async def test_break_lease_with_broken_period_fails(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
+        file_client = await self._create_file(storage_account, storage_account_key)
+        lease = await file_client.acquire_lease()
+
+        # Assert
+        self.assertIsNotNone(lease)
+        with self.assertRaises(TypeError):
+            await lease.break_lease(lease_break_period=5)
+
+    @pytest.mark.live_test_only
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
     async def test_set_file_metadata_with_broken_lease_async(self, resource_group, location, storage_account, storage_account_key):
         # Make this test live test only, for the reason that metadata can only be recorded in lower case.
         self._setup(storage_account, storage_account_key)

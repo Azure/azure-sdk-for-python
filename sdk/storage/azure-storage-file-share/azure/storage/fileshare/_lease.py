@@ -190,8 +190,8 @@ class ShareLeaseClient(object):
         self.last_modified = response.get('last_modified')   # type: datetime
 
     @distributed_trace
-    def break_lease(self, **kwargs):
-        # type: (Any) -> int
+    def break_lease(self, lease_break_period=None, **kwargs):
+        # type: (Optional[int], Any) -> int
         """Force breaks the lease if the file or share has an active lease. Any authorized request can break the lease;
         the request is not required to specify a matching lease ID. An infinite lease breaks immediately.
 
@@ -200,9 +200,7 @@ class ShareLeaseClient(object):
         When a lease is successfully broken, the response indicates the interval
         in seconds until a new lease can be acquired.
 
-        :keyword int timeout:
-            The timeout parameter is expressed in seconds.
-        :keyword int lease_break_period:
+        :param int lease_break_period:
             This is the proposed duration of seconds that the share lease
             should continue before it is broken, between 0 and 60 seconds. This
             break period is only used if it is shorter than the time remaining
@@ -212,6 +210,11 @@ class ShareLeaseClient(object):
             period. If this header does not appear with a break
             operation, a fixed-duration share lease breaks after the remaining share lease
             period elapses, and an infinite share lease breaks immediately.
+
+            .. versionadded:: 12.6.0
+
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
         :return: Approximate time remaining in the lease period, in seconds.
         :rtype: int
         """
@@ -219,7 +222,10 @@ class ShareLeaseClient(object):
             if self._snapshot:
                 kwargs['sharesnapshot'] = self._snapshot
             if isinstance(self._client, ShareOperations):
-                kwargs['break_period'] = kwargs.pop('lease_break_period', None)
+                kwargs['break_period'] = lease_break_period
+            if isinstance(self._client, FileOperations) and lease_break_period:
+                raise TypeError("Setting a lease break period is only applicable to Share leases.")
+
             response = self._client.break_lease(
                 timeout=kwargs.pop('timeout', None),
                 cls=return_response_headers,

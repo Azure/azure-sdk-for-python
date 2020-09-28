@@ -426,7 +426,7 @@ class StorageShareTest(AsyncStorageTestCase):
         lease = await share_client.acquire_lease(lease_duration=15)
 
         # Assert
-        await lease.break_lease(break_period=5)
+        await lease.break_lease(lease_break_period=5)
         self.sleep(6)
         with self.assertRaises(HttpResponseError):
             await share_client.delete_share(lease=lease)
