@@ -14,8 +14,8 @@ if TYPE_CHECKING:
     from typing import Any
     from azure.core.credentials import AzureKeyCredential
 
-class SearchIndexDocumentBatchingClientBase(HeadersMixin):
-    """Base of search index document batching client"""
+class SearchIndexingBufferedSenderBase(HeadersMixin):
+    """Base of search indexing buffered sender"""
     _ODATA_ACCEPT = "application/json;odata.metadata=none"  # type: str
     _DEFAULT_AUTO_FLUSH_INTERVAL = 60
     _DEFAULT_BATCH_SIZE = 100

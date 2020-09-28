@@ -4,13 +4,17 @@
 
 **Breaking Changes**
 
-- Stopped supporting `window` kwargs for `SearchIndexDocumentBatchingClient`
+- Renamed `SearchIndexDocumentBatchingClient` to `SearchIndexingBufferedSender`
+- Renamed `SearchIndexDocumentBatchingClient.add_upload_actions` to `SearchIndexingBufferedSender.upload_documents`
+- Renamed `SearchIndexDocumentBatchingClient.add_delete_actions` to `SearchIndexingBufferedSender.delete_documents`
+- Renamed `SearchIndexDocumentBatchingClient.add_merge_actions` to `SearchIndexingBufferedSender.merge_documents`
+- Renamed `SearchIndexDocumentBatchingClient.add_merge_or_upload_actions` to `SearchIndexingBufferedSender.merge_or_upload_documents`
+- Stopped supporting `window` kwargs for `SearchIndexingBufferedSender`
 - Splitted kwarg `hook` into `new_callback`, `progress_callback`, `error_callback`, `remove_callback` for `SearchIndexDocumentBatchingClient`
 
 **Features**
 
-- Added `auto_flush_interval` support for `SearchIndexDocumentBatchingClient`
-- Added `max_retry_count` support for `SearchIndexDocumentBatchingClient`
+- Added `auto_flush_interval` support for `SearchIndexingBufferedSender`
 
 ## 11.1.0b2 (2020-09-08)
 

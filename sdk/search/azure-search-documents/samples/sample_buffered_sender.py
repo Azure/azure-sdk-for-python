@@ -9,7 +9,7 @@
 """
 FILE: sample_batch_client.py
 DESCRIPTION:
-    This sample demonstrates how to upload, merge, or delete documents using SearchIndexDocumentBatchingClient.
+    This sample demonstrates how to upload, merge, or delete documents using SearchIndexingBufferedSender.
 USAGE:
     python sample_batch_client.py
 
@@ -26,7 +26,7 @@ index_name = os.getenv("AZURE_SEARCH_INDEX_NAME")
 key = os.getenv("AZURE_SEARCH_API_KEY")
 
 from azure.core.credentials import AzureKeyCredential
-from azure.search.documents import SearchIndexDocumentBatchingClient
+from azure.search.documents import SearchIndexingBufferedSender
 
 
 def sample_batching_client():
@@ -38,16 +38,16 @@ def sample_batching_client():
         'HotelName': 'Azure Inn',
     }
 
-    with SearchIndexDocumentBatchingClient(
+    with SearchIndexingBufferedSender(
             service_endpoint,
             index_name,
             AzureKeyCredential(key)) as batch_client:
         # add upload actions
-        batch_client.add_upload_actions(documents=[DOCUMENT])
+        batch_client.upload_documents(documents=[DOCUMENT])
         # add merge actions
-        batch_client.add_merge_actions(documents=[{"HotelId": "1000", "Rating": 4.5}])
+        batch_client.merge_documents(documents=[{"HotelId": "1000", "Rating": 4.5}])
         # add delete actions
-        batch_client.add_delete_actions(documents=[{"HotelId": "1000"}])
+        batch_client.delete_documents(documents=[{"HotelId": "1000"}])
 
 if __name__ == '__main__':
     sample_batching_client()

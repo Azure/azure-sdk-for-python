@@ -23,11 +23,11 @@ except UnicodeDecodeError:
     BATCH = json.load(open(join(CWD, "hotel_small.json"), encoding='utf-8'))
 from azure.core.exceptions import HttpResponseError
 from azure.core.credentials import AzureKeyCredential
-from azure.search.documents import SearchIndexDocumentBatchingClient, SearchClient
+from azure.search.documents import SearchIndexingBufferedSender, SearchClient
 
 TIME_TO_SLEEP = 3
 
-class SearchIndexDocumentBatchingClientTest(AzureMgmtTestCase):
+class SearchIndexingBufferedSenderTest(AzureMgmtTestCase):
     FILTER_HEADERS = ReplayableTest.FILTER_HEADERS + ['api-key']
 
     @ResourceGroupPreparer(random_name_enabled=True)
@@ -36,7 +36,7 @@ class SearchIndexDocumentBatchingClientTest(AzureMgmtTestCase):
         client = SearchClient(
             endpoint, index_name, AzureKeyCredential(api_key)
         )
-        batch_client = SearchIndexDocumentBatchingClient(
+        batch_client = SearchIndexingBufferedSender(
             endpoint, index_name, AzureKeyCredential(api_key)
         )
         batch_client._batch_size = 2
@@ -44,7 +44,7 @@ class SearchIndexDocumentBatchingClientTest(AzureMgmtTestCase):
             {"hotelId": "1000", "rating": 5, "rooms": [], "hotelName": "Azure Inn"},
             {"hotelId": "1001", "rating": 4, "rooms": [], "hotelName": "Redmond Hotel"},
         ]
-        batch_client.add_upload_actions(DOCUMENTS)
+        batch_client.upload_documents(DOCUMENTS)
 
         # There can be some lag before a document is searchable
         if self.is_live:
@@ -65,7 +65,7 @@ class SearchIndexDocumentBatchingClientTest(AzureMgmtTestCase):
         client = SearchClient(
             endpoint, index_name, AzureKeyCredential(api_key)
         )
-        batch_client = SearchIndexDocumentBatchingClient(
+        batch_client = SearchIndexingBufferedSender(
             endpoint, index_name, AzureKeyCredential(api_key)
         )
         batch_client._batch_size = 2
@@ -73,7 +73,7 @@ class SearchIndexDocumentBatchingClientTest(AzureMgmtTestCase):
             {"hotelId": "1000", "rating": 5, "rooms": [], "hotelName": "Azure Inn"},
             {"hotelId": "3", "rating": 4, "rooms": [], "hotelName": "Redmond Hotel"},
         ]
-        batch_client.add_upload_actions(DOCUMENTS)
+        batch_client.upload_documents(DOCUMENTS)
 
         # There can be some lag before a document is searchable
         if self.is_live:
@@ -89,11 +89,11 @@ class SearchIndexDocumentBatchingClientTest(AzureMgmtTestCase):
         client = SearchClient(
             endpoint, index_name, AzureKeyCredential(api_key)
         )
-        batch_client = SearchIndexDocumentBatchingClient(
+        batch_client = SearchIndexingBufferedSender(
             endpoint, index_name, AzureKeyCredential(api_key)
         )
         batch_client._batch_size = 2
-        batch_client.add_delete_actions([{"hotelId": "3"}, {"hotelId": "4"}])
+        batch_client.delete_documents([{"hotelId": "3"}, {"hotelId": "4"}])
         batch_client.close()
 
         # There can be some lag before a document is searchable
@@ -114,11 +114,11 @@ class SearchIndexDocumentBatchingClientTest(AzureMgmtTestCase):
         client = SearchClient(
             endpoint, index_name, AzureKeyCredential(api_key)
         )
-        batch_client = SearchIndexDocumentBatchingClient(
+        batch_client = SearchIndexingBufferedSender(
             endpoint, index_name, AzureKeyCredential(api_key)
         )
         batch_client._batch_size = 2
-        batch_client.add_delete_actions([{"hotelId": "1000"}, {"hotelId": "4"}])
+        batch_client.delete_documents([{"hotelId": "1000"}, {"hotelId": "4"}])
         batch_client.close()
 
         # There can be some lag before a document is searchable
@@ -139,11 +139,11 @@ class SearchIndexDocumentBatchingClientTest(AzureMgmtTestCase):
         client = SearchClient(
             endpoint, index_name, AzureKeyCredential(api_key)
         )
-        batch_client = SearchIndexDocumentBatchingClient(
+        batch_client = SearchIndexingBufferedSender(
             endpoint, index_name, AzureKeyCredential(api_key)
         )
         batch_client._batch_size = 2
-        batch_client.add_merge_actions(
+        batch_client.merge_documents(
             [{"hotelId": "3", "rating": 1}, {"hotelId": "4", "rating": 2}]
         )
         batch_client.close()
@@ -166,11 +166,11 @@ class SearchIndexDocumentBatchingClientTest(AzureMgmtTestCase):
         client = SearchClient(
             endpoint, index_name, AzureKeyCredential(api_key)
         )
-        batch_client = SearchIndexDocumentBatchingClient(
+        batch_client = SearchIndexingBufferedSender(
             endpoint, index_name, AzureKeyCredential(api_key)
         )
         batch_client._batch_size = 2
-        batch_client.add_merge_actions(
+        batch_client.merge_documents(
             [{"hotelId": "1000", "rating": 1}, {"hotelId": "4", "rating": 2}]
         )
         batch_client.close()
@@ -193,11 +193,11 @@ class SearchIndexDocumentBatchingClientTest(AzureMgmtTestCase):
         client = SearchClient(
             endpoint, index_name, AzureKeyCredential(api_key)
         )
-        batch_client = SearchIndexDocumentBatchingClient(
+        batch_client = SearchIndexingBufferedSender(
             endpoint, index_name, AzureKeyCredential(api_key)
         )
         batch_client._batch_size = 2
-        batch_client.add_merge_or_upload_actions(
+        batch_client.merge_or_upload_documents(
             [{"hotelId": "1000", "rating": 1}, {"hotelId": "4", "rating": 2}]
         )
         batch_client.close()

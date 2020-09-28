@@ -10,7 +10,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.exceptions import ServiceResponseTimeoutError
 from ._timer import Timer
 from .._utils import is_retryable_status_code
-from .._search_index_document_batching_client_base import SearchIndexDocumentBatchingClientBase
+from .._search_indexing_buffered_sender_base import SearchIndexingBufferedSenderBase
 from ...indexes.aio import SearchIndexClient as SearchServiceClient
 from .._generated.aio import SearchIndexClient
 from .._generated.models import IndexBatch, IndexingResult
@@ -25,8 +25,8 @@ if TYPE_CHECKING:
     from azure.core.credentials import AzureKeyCredential
 
 
-class SearchIndexDocumentBatchingClient(SearchIndexDocumentBatchingClientBase, HeadersMixin):
-    """A client to do index document batching.
+class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixin):
+    """A buffered sender for document indexing actions.
 
     :param endpoint: The URL endpoint of an Azure search service
     :type endpoint: str
@@ -37,7 +37,6 @@ class SearchIndexDocumentBatchingClient(SearchIndexDocumentBatchingClientBase, H
     :keyword bool auto_flush: if the auto flush mode is on. Default to True.
     :keyword int auto_flush_interval: how many max seconds if between 2 flushes. This only takes effect
         when auto_flush is on. Default to 60 seconds
-    :keyword int max_retry_count: total number of retries to allow. Default to 3.
     :keyword callable on_new: If it is set, the client will call corresponding methods when there
         is a new IndexAction added.
     :keyword callable on_progress: If it is set, the client will call corresponding methods when there
@@ -52,7 +51,7 @@ class SearchIndexDocumentBatchingClient(SearchIndexDocumentBatchingClientBase, H
 
     def __init__(self, endpoint, index_name, credential, **kwargs):
         # type: (str, str, AzureKeyCredential, **Any) -> None
-        super(SearchIndexDocumentBatchingClient, self).__init__(
+        super(SearchIndexingBufferedSender, self).__init__(
             endpoint=endpoint,
             index_name=index_name,
             credential=credential,
@@ -77,7 +76,7 @@ class SearchIndexDocumentBatchingClient(SearchIndexDocumentBatchingClientBase, H
 
     def __repr__(self):
         # type: () -> str
-        return "<SearchIndexDocumentBatchingClient [endpoint={}, index={}]>".format(
+        return "<SearchIndexingBufferedSender [endpoint={}, index={}]>".format(
             repr(self._endpoint), repr(self._index_name)
         )[:1024]
 
@@ -185,7 +184,7 @@ class SearchIndexDocumentBatchingClient(SearchIndexDocumentBatchingClientBase, H
             self._timer = Timer(self._auto_flush_interval, self._process)
 
     @distributed_trace_async
-    async def add_upload_actions(self, documents, **kwargs):  # pylint: disable=unused-argument
+    async def upload_documents(self, documents, **kwargs):  # pylint: disable=unused-argument
         # type: (List[dict]) -> None
         """Queue upload documents actions.
         :param documents: A list of documents to upload.
@@ -196,7 +195,7 @@ class SearchIndexDocumentBatchingClient(SearchIndexDocumentBatchingClientBase, H
         await self._process_if_needed()
 
     @distributed_trace_async
-    async def add_delete_actions(self, documents, **kwargs):  # pylint: disable=unused-argument
+    async def delete_documents(self, documents, **kwargs):  # pylint: disable=unused-argument
         # type: (List[dict]) -> None
         """Queue delete documents actions
         :param documents: A list of documents to delete.
@@ -207,7 +206,7 @@ class SearchIndexDocumentBatchingClient(SearchIndexDocumentBatchingClientBase, H
         await self._process_if_needed()
 
     @distributed_trace_async
-    async def add_merge_actions(self, documents, **kwargs):  # pylint: disable=unused-argument
+    async def merge_documents(self, documents, **kwargs):  # pylint: disable=unused-argument
         # type: (List[dict]) -> None
         """Queue merge documents actions
         :param documents: A list of documents to merge.
@@ -218,7 +217,7 @@ class SearchIndexDocumentBatchingClient(SearchIndexDocumentBatchingClientBase, H
         await self._process_if_needed()
 
     @distributed_trace_async
-    async def add_merge_or_upload_actions(self, documents, **kwargs):  # pylint: disable=unused-argument
+    async def merge_or_upload_documents(self, documents, **kwargs):  # pylint: disable=unused-argument
         # type: (List[dict]) -> None
         """Queue merge documents or upload documents actions
         :param documents: A list of documents to merge or upload.
@@ -272,7 +271,7 @@ class SearchIndexDocumentBatchingClient(SearchIndexDocumentBatchingClientBase, H
             return result_first_half.extend(result_second_half)
 
     async def __aenter__(self):
-        # type: () -> SearchIndexDocumentBatchingClient
+        # type: () -> SearchIndexingBufferedSender
         await self._client.__aenter__()  # pylint: disable=no-member
         return self
 
