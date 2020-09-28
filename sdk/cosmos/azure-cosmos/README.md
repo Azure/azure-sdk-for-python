@@ -83,13 +83,22 @@ For more information about these resources, see [Working with Azure Cosmos datab
 
 ## Limitations
 
-As of August 2020 the features below are not yet supported.
+As of August 2020 the features below are **not yet supported**.
 
-* Bulk/Batch processing
+* Bulk/Transactional batch processing
 * Group By queries
 * Direct TCP Mode access
 * Language Native async i/o
 * Continuation token for cross partitions queries
+* Change Feed: Processor
+* Change Feed: Read multiple partitions key values
+* Change Feed: Read specific time 
+* Change Feed: Read from the beggining
+* Change Feed: Pull model
+* Get CollectionSizeUsage, DatabaseUsage, and DocumentUsage metrics
+* Create User
+* Create Geospatial Index
+* Provision Autoscale DBs or containers
 
 ## Bulk processing limitation workaround
 
