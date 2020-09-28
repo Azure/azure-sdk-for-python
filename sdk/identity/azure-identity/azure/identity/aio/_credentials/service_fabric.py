@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 
 class ServiceFabricCredential(AsyncContextManager, GetTokenMixin):
     def __init__(self, **kwargs: "Any") -> None:
-        super(ServiceFabricCredential, self).__init__()
+        super().__init__()
 
         client_args = _get_client_args(**kwargs)
         if client_args:
@@ -30,7 +30,7 @@ class ServiceFabricCredential(AsyncContextManager, GetTokenMixin):
     ) -> "AccessToken":
         if not self._client:
             raise CredentialUnavailableError(
-                message="App Service managed identity configuration not found in environment"
+                message="Service Fabric managed identity configuration not found in environment"
             )
 
         return await super().get_token(*scopes, **kwargs)

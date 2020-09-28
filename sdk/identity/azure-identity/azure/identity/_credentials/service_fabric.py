@@ -6,7 +6,6 @@ import functools
 import os
 from typing import TYPE_CHECKING
 
-from azure.core.credentials import AccessToken
 from azure.core.pipeline.transport import HttpRequest
 
 from .. import CredentialUnavailableError
@@ -16,6 +15,7 @@ from .._internal.get_token_mixin import GetTokenMixin
 
 if TYPE_CHECKING:
     from typing import Any, Optional
+    from azure.core.credentials import AccessToken
 
 
 class ServiceFabricCredential(GetTokenMixin):
@@ -47,9 +47,7 @@ class ServiceFabricCredential(GetTokenMixin):
 
 
 def _get_client_args(**kwargs):
-    # type: (dict) -> Optional[dict]
-    identity_config = kwargs.pop("identity_config", None) or {}
-
+    # type: (**Any) -> Optional[dict]
     url = os.environ.get(EnvironmentVariables.IDENTITY_ENDPOINT)
     secret = os.environ.get(EnvironmentVariables.IDENTITY_HEADER)
     thumbprint = os.environ.get(EnvironmentVariables.IDENTITY_SERVER_THUMBPRINT)
@@ -63,7 +61,6 @@ def _get_client_args(**kwargs):
 
     return dict(
         kwargs,
-        _identity_config=identity_config,
         base_headers=base_headers,
         connection_verify=connection_verify,
         request_factory=functools.partial(_get_request, url, version),
