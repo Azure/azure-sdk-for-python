@@ -9,14 +9,12 @@
 import os
 import colorama
 
-from azure.identity import DefaultAzureCredential
 from azure.appconfiguration import AppConfigurationClient
 from azure.core.exceptions import ResourceNotFoundError
 
 def main():
-    endpoint = os.environ['APP_CONFIG_URL']
-    credentials = DefaultAzureCredential()
-    client = AppConfigurationClient(endpoint, credentials)
+    connection_string = os.environment.get('APP_CONFIG_CONN_STR')
+    client = AppConfigurationClient.from_connection_string(connection_string)
 
     try:
         color_setting = client.get_configuration_setting('FontColor')

@@ -10,16 +10,14 @@ import asyncio
 import os
 import colorama
 
-from azure.identity import DefaultAzureCredential
 from azure.appconfiguration.aio import AppConfigurationClient
 from azure.core.exceptions import ResourceNotFoundError, ResourceNotModifiedError
 from azure.core import MatchConditions
 
 
 async def main():
-    endpoint = os.environ['APP_CONFIG_URL']
-    credentials = DefaultAzureCredential()
-    client = AppConfigurationClient(endpoint, credentials)
+    connection_string = os.environment.get('APP_CONFIG_CONN_STR')
+    client = AppConfigurationClient.from_connection_string(connection_string)
 
     # Retrieve initial color value
     try:
