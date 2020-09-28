@@ -37,13 +37,13 @@ class SearchIndexDocumentBatchingClient(SearchIndexDocumentBatchingClientBase, H
     :keyword int auto_flush_interval: how many max seconds if between 2 flushes. This only takes effect
         when auto_flush is on. Default to 60 seconds
     :keyword int max_retry_count: total number of retries to allow. Default to 3.
-    :keyword callable new_callback: If it is set, the client will call corresponding methods when there
+    :keyword callable on_new: If it is set, the client will call corresponding methods when there
         is a new IndexAction added.
-    :keyword callable progress_callback: If it is set, the client will call corresponding methods when there
+    :keyword callable on_progress: If it is set, the client will call corresponding methods when there
         is a IndexAction succeeds.
-    :keyword callable error_callback: If it is set, the client will call corresponding methods when there
+    :keyword callable on_error: If it is set, the client will call corresponding methods when there
         is a IndexAction fails.
-    :keyword callable remove_callback: If it is set, the client will call corresponding methods when there
+    :keyword callable on_remove: If it is set, the client will call corresponding methods when there
         is a IndexAction removed from the queue (succeeds or fails).
     :keyword str api_version: The Search API version to use for requests.
     """

@@ -19,7 +19,7 @@ class SearchIndexDocumentBatchingClientBase(HeadersMixin):
     _ODATA_ACCEPT = "application/json;odata.metadata=none"  # type: str
     _DEFAULT_AUTO_FLUSH_INTERVAL = 60
     _DEFAULT_BATCH_SIZE = 100
-    _MAX_RETRY_COUNT = 3
+    _DEFAULT_MAX_RETRY_COUNT = 3
 
     def __init__(self, endpoint, index_name, credential, **kwargs):
         # type: (str, str, AzureKeyCredential, **Any) -> None
@@ -31,15 +31,15 @@ class SearchIndexDocumentBatchingClientBase(HeadersMixin):
         self._auto_flush_interval = kwargs.pop('auto_flush_interval', self._DEFAULT_AUTO_FLUSH_INTERVAL)
         if self._auto_flush_interval <= 0:
             self._auto_flush_interval = 86400
-        self._max_retry_count = kwargs.pop('max_retry_count', self._MAX_RETRY_COUNT)
+        self._max_retry_count = kwargs.pop('max_retry_count', self._DEFAULT_MAX_RETRY_COUNT)
         self._endpoint = endpoint  # type: str
         self._index_name = index_name  # type: str
         self._index_key = None
         self._credential = credential  # type: AzureKeyCredential
-        self._new_callback = kwargs.pop('new_callback', None)
-        self._progress_callback = kwargs.pop('progress_callback', None)
-        self._error_callback = kwargs.pop('error_callback', None)
-        self._remove_callback = kwargs.pop('remove_callback', None)
+        self._new_callback = kwargs.pop('on_new', None)
+        self._progress_callback = kwargs.pop('on_progress', None)
+        self._error_callback = kwargs.pop('on_error', None)
+        self._remove_callback = kwargs.pop('on_remove', None)
         self._retry_counter = {}
 
     @property

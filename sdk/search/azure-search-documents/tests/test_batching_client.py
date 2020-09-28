@@ -12,6 +12,7 @@ from azure.search.documents import (
 )
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import HttpResponseError
+from azure.search.documents.models import IndexingResult
 
 CREDENTIAL = AzureKeyCredential(key="test_api_key")
 
@@ -75,3 +76,57 @@ class TestSearchBatchingClient(object):
                 client.add_upload_actions([DOCUMENT])
                 client.flush()
                 assert len(client.actions) == 0
+
+    def test_callback_new(self):
+        on_new = mock.Mock()
+        with SearchIndexDocumentBatchingClient("endpoint", "index name", CREDENTIAL, auto_flush=False, on_new=on_new) as client:
+            client.add_upload_actions(["upload1"])
+            assert on_new.called
+
+    def test_callback_error(self):
+        def mock_fail_index_documents(actions, timeout=86400):
+            if len(actions) > 0:
+                print("There is something wrong")
+                result = IndexingResult()
+                result.key = actions[0].additional_properties.get('id')
+                result.status_code = 400
+                result.succeeded = False
+                self.uploaded = self.uploaded + len(actions) - 1
+                return [result]
+
+        on_error = mock.Mock()
+        with SearchIndexDocumentBatchingClient("endpoint",
+                                               "index name",
+                                               CREDENTIAL,
+                                               auto_flush=False,
+                                               on_error=on_error) as client:
+            client._index_documents_actions = mock_fail_index_documents
+            client._index_key = "id"
+            client.add_upload_actions({"id": 0})
+            client.flush()
+            assert on_error.called
+
+    def test_callback_progress(self):
+        def mock_successful_index_documents(actions, timeout=86400):
+            if len(actions) > 0:
+                print("There is something wrong")
+                result = IndexingResult()
+                result.key = actions[0].additional_properties.get('id')
+                result.status_code = 200
+                result.succeeded = True
+                return [result]
+
+        on_progress = mock.Mock()
+        on_remove = mock.Mock()
+        with SearchIndexDocumentBatchingClient("endpoint",
+                                               "index name",
+                                               CREDENTIAL,
+                                               auto_flush=False,
+                                               on_progress=on_progress,
+                                               on_remove=on_remove) as client:
+            client._index_documents_actions = mock_successful_index_documents
+            client._index_key = "id"
+            client.add_upload_actions({"id": 0})
+            client.flush()
+            assert on_progress.called
+            assert on_remove.called
