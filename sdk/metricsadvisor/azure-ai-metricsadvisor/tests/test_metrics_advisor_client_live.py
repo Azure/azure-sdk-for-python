@@ -94,7 +94,7 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
             metric_id=self.metric_id,
             start_time=datetime.datetime(2020, 1, 1),
             end_time=datetime.datetime(2020, 9, 9),
-            filter=[
+            series_to_filter=[
                 {"city": "Mumbai", "category": "Shoes Handbags & Sunglasses"}
             ]
         ))

@@ -3,7 +3,10 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import TYPE_CHECKING
+
+# pylint: disable=protected-access
+
+from typing import List, Union, Dict, TYPE_CHECKING
 import datetime
 
 from azure.core.tracing.decorator import distributed_trace
@@ -47,7 +50,6 @@ from .models._models import (
 from ._version import SDK_MONIKER
 
 if TYPE_CHECKING:
-    from typing import cast, List, Union, Optional, Dict
     from ._generated.models import (
         MetricFeedback,
         SeriesResult,
@@ -87,6 +89,7 @@ class MetricsAdvisorClient(object):
             raise ValueError("Missing credential")
 
         self._config = AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2Configuration(endpoint=endpoint, **kwargs)
+        self._endpoint = endpoint
         self._credential = credential
         self._config.user_agent_policy = UserAgentPolicy(
             sdk_moniker=SDK_MONIKER, **kwargs
@@ -314,8 +317,14 @@ class MetricsAdvisorClient(object):
         )
 
     @distributed_trace
-    def list_metric_enriched_series_data(self, detection_configuration_id, series, start_time, end_time, **kwargs):
-        # type: (str, Union[List[SeriesIdentity], List[Dict[str, str]]], datetime, datetime, dict) -> ItemPaged[SeriesResult]
+    def list_metric_enriched_series_data(
+            self, detection_configuration_id,  # type: str
+            series,  # type: Union[List[SeriesIdentity], List[Dict[str, str]]]
+            start_time,  # type: datetime
+            end_time,  # type: datetime
+            **kwargs  # type: dict
+    ):
+        # type: (...) -> ItemPaged[SeriesResult]
         """Query series enriched by anomaly detection.
 
         :param str detection_configuration_id: anomaly alerting configuration unique id.
@@ -452,11 +461,11 @@ class MetricsAdvisorClient(object):
         }
 
         skip = kwargs.pop('skip', None)
-        filter = kwargs.pop('filter', None)
+        filter_condition = kwargs.pop('filter', None)
         detection_anomaly_result_query = DetectionAnomalyResultQuery(
             start_time=start_time,
             end_time=end_time,
-            filter=filter,
+            filter=filter_condition,
         )
 
         return self._client.get_anomalies_by_anomaly_detection_configuration(
@@ -560,12 +569,12 @@ class MetricsAdvisorClient(object):
             401: ClientAuthenticationError
         }
 
-        filter = kwargs.pop('filter', None)
+        filter_condition = kwargs.pop('filter', None)
 
         detection_incident_result_query = DetectionIncidentResultQuery(
             start_time=start_time,
             end_time=end_time,
-            filter=filter,
+            filter=filter_condition,
         )
 
         return self._client.get_incidents_by_anomaly_detection_configuration(
@@ -612,7 +621,7 @@ class MetricsAdvisorClient(object):
             **kwargs)
 
     @distributed_trace
-    def list_metrics_series_data(self, metric_id, start_time, end_time, filter, **kwargs):
+    def list_metrics_series_data(self, metric_id, start_time, end_time, series_to_filter, **kwargs):
         # type: (str, datetime, datetime, List[Dict[str, str]], dict) -> ItemPaged[MetricSeriesData]
 
         """Get time series data from metric.
@@ -621,8 +630,8 @@ class MetricsAdvisorClient(object):
         :type metric_id: str
         :param ~datetime.datetime start_time: start time filter under chosen time mode.
         :param ~datetime.datetime end_time: end time filter under chosen time mode.
-        :param filter: query specific series.
-        :type filter: list[dict[str, str]]
+        :param series_to_filter: query specific series.
+        :type series_to_filter: list[dict[str, str]]
         :return: Time series data from metric.
         :rtype: ItemPaged[~azure.ai.metriscadvisor.models.MetricSeriesData]
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -634,7 +643,7 @@ class MetricsAdvisorClient(object):
         metric_data_query_options = MetricDataQueryOptions(
             start_time=start_time,
             end_time=end_time,
-            series=filter,
+            series=series_to_filter,
         )
 
         return self._client.get_metric_data(
