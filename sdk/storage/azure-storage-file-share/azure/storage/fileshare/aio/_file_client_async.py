@@ -943,7 +943,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             The snapshot diff parameter that contains an opaque DateTime value that
             specifies a previous file snapshot to be compared
             against a more recent snapshot or the current file.
-            
+
             .. versionadded:: 12.6.0
             This keyword argument was introduced in API version '2020-02-02'.
 
