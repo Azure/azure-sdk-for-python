@@ -1,5 +1,78 @@
 # Release History
 
+## 2.0.0 (2020-09-27)
+
+**Features**
+
+  - Model MongoDBCollectionCreateUpdateParameters has a new parameter identity
+  - Model GremlinGraphGetResults has a new parameter identity
+  - Model SqlDatabaseGetResults has a new parameter identity
+  - Model DatabaseAccountGetResults has a new parameter identity
+  - Model DatabaseAccountGetResults has a new parameter instance_id
+  - Model DatabaseAccountGetResults has a new parameter backup_policy
+  - Model DatabaseAccountGetResults has a new parameter system_data
+  - Model DatabaseAccountGetResults has a new parameter restore_parameters
+  - Model DatabaseAccountGetResults has a new parameter create_mode
+  - Model SqlDatabaseCreateUpdateParameters has a new parameter identity
+  - Model GremlinDatabaseGetResults has a new parameter identity
+  - Model CassandraTableCreateUpdateParameters has a new parameter identity
+  - Model ARMResourceProperties has a new parameter identity
+  - Model SqlContainerGetResults has a new parameter identity
+  - Model GremlinGraphCreateUpdateParameters has a new parameter identity
+  - Model SqlUserDefinedFunctionGetResults has a new parameter identity
+  - Model CassandraKeyspaceGetResults has a new parameter identity
+  - Model DatabaseAccountUpdateParameters has a new parameter identity
+  - Model DatabaseAccountUpdateParameters has a new parameter backup_policy
+  - Model ThroughputSettingsUpdateParameters has a new parameter identity
+  - Model CassandraTableGetResults has a new parameter identity
+  - Model SqlTriggerGetResults has a new parameter identity
+  - Model MongoDBDatabaseCreateUpdateParameters has a new parameter identity
+  - Model GremlinDatabaseCreateUpdateParameters has a new parameter identity
+  - Model SqlContainerCreateUpdateParameters has a new parameter identity
+  - Model CassandraKeyspaceCreateUpdateParameters has a new parameter identity
+  - Model MongoDBCollectionGetResults has a new parameter identity
+  - Model ThroughputSettingsGetResults has a new parameter identity
+  - Model SqlStoredProcedureCreateUpdateParameters has a new parameter identity
+  - Model TableCreateUpdateParameters has a new parameter identity
+  - Model SqlStoredProcedureGetResults has a new parameter identity
+  - Model MongoDBDatabaseGetResults has a new parameter identity
+  - Model TableGetResults has a new parameter identity
+  - Model SqlUserDefinedFunctionCreateUpdateParameters has a new parameter identity
+  - Model SqlTriggerCreateUpdateParameters has a new parameter identity
+  - Added operation SqlResourcesOperations.get_sql_role_definition
+  - Added operation SqlResourcesOperations.delete_sql_role_definition
+  - Added operation SqlResourcesOperations.list_sql_role_definitions
+  - Added operation SqlResourcesOperations.get_sql_role_assignment
+  - Added operation SqlResourcesOperations.create_update_sql_role_definition
+  - Added operation SqlResourcesOperations.create_update_sql_role_assignment
+  - Added operation SqlResourcesOperations.delete_sql_role_assignment
+  - Added operation SqlResourcesOperations.list_sql_role_assignments
+  - Added operation group RestorableDatabaseAccountsOperations
+
+**Breaking changes**
+
+  - Model SqlContainerResource no longer has parameter analytical_storage_ttl
+  - Model SqlContainerGetPropertiesResource no longer has parameter analytical_storage_ttl
+  - Removed operation TableResourcesOperations.migrate_table_to_autoscale
+  - Removed operation TableResourcesOperations.migrate_table_to_manual_throughput
+  - Removed operation SqlResourcesOperations.migrate_sql_database_to_autoscale
+  - Removed operation SqlResourcesOperations.migrate_sql_database_to_manual_throughput
+  - Removed operation SqlResourcesOperations.migrate_sql_container_to_manual_throughput
+  - Removed operation SqlResourcesOperations.migrate_sql_container_to_autoscale
+  - Removed operation GremlinResourcesOperations.migrate_gremlin_graph_to_manual_throughput
+  - Removed operation GremlinResourcesOperations.migrate_gremlin_graph_to_autoscale
+  - Removed operation GremlinResourcesOperations.migrate_gremlin_database_to_manual_throughput
+  - Removed operation GremlinResourcesOperations.migrate_gremlin_database_to_autoscale
+  - Removed operation CassandraResourcesOperations.migrate_cassandra_table_to_manual_throughput
+  - Removed operation CassandraResourcesOperations.migrate_cassandra_keyspace_to_manual_throughput
+  - Removed operation CassandraResourcesOperations.migrate_cassandra_keyspace_to_autoscale
+  - Removed operation CassandraResourcesOperations.migrate_cassandra_table_to_autoscale
+  - Removed operation MongoDBResourcesOperations.migrate_mongo_db_collection_to_autoscale
+  - Removed operation MongoDBResourcesOperations.migrate_mongo_db_database_to_autoscale
+  - Removed operation MongoDBResourcesOperations.migrate_mongo_db_database_to_manual_throughput
+  - Removed operation MongoDBResourcesOperations.migrate_mongo_db_collection_to_manual_throughput
+  - Model DatabaseAccountCreateUpdateParameters has a new signature
+
 ## 1.0.0 (2020-08-17)
 
 **Features**

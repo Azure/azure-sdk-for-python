@@ -32,6 +32,7 @@ class MgmtCosmosDBTest(AzureMgmtTestCase):
             {
                 'location': location,
                 'properties': {
+                    'create_mode': 'Default',
                     'databaseAccountOfferType': 'Standard',
                     'locations': [{
                         'location_name': self.region,
@@ -57,6 +58,7 @@ class MgmtCosmosDBTest(AzureMgmtTestCase):
                 {
                     'location': location,
                     'properties': {
+                        'create_mode': 'Default',
                         'databaseAccountOfferType': 'Standard',
                         'locations': [{
                             'location_name': self.region,
@@ -127,6 +129,7 @@ class MgmtCosmosDBTest(AzureMgmtTestCase):
                 {
                     'location': location,
                     'properties': {
+                        'create_mode': 'Default',
                         'databaseAccountOfferType': 'Standard',
                         'locations': [{
                             'location_name': self.region,
