@@ -3,6 +3,10 @@
 
 ## 1.8.2 (Unreleased)
 
+### Bug fixes
+
+- Can now correctly poll in the case of parameterized endpoints with relative polling urls  #14097
+
 
 ## 1.8.1 (2020-09-08)
 
