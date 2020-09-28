@@ -188,11 +188,11 @@ class LeaseProperties(DictMixin):
     """File Lease Properties.
 
     :ivar str status:
-        The lease status of the file. Possible values: locked|unlocked
+        The lease status of the file or share. Possible values: locked|unlocked
     :ivar str state:
-        Lease state of the file. Possible values: available|leased|expired|breaking|broken
+        Lease state of the file or share. Possible values: available|leased|expired|breaking|broken
     :ivar str duration:
-        When a file is leased, specifies whether the lease is of infinite or fixed duration.
+        When a file or share is leased, specifies whether the lease is of infinite or fixed duration.
     """
 
     def __init__(self, **kwargs):

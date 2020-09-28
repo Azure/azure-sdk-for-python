@@ -13,11 +13,11 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 25 Sep 2020 01:26:17 GMT
+      - Mon, 28 Sep 2020 14:07:26 GMT
       x-ms-version:
       - '2020-02-10'
     method: PUT
-    uri: https://storagename.file.core.windows.net/shareba3e12f1?restype=share
+    uri: https://storagename.file.core.windows.net/testshare1ba3e12f1?restype=share
   response:
     body:
       string: ''
@@ -25,11 +25,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 25 Sep 2020 01:26:36 GMT
+      - Mon, 28 Sep 2020 14:07:26 GMT
       etag:
-      - '"0x8D860F20BD8FD08"'
+      - '"0x8D863B7D4A57EE8"'
       last-modified:
-      - Fri, 25 Sep 2020 01:26:37 GMT
+      - Mon, 28 Sep 2020 14:07:27 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -51,11 +51,11 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 25 Sep 2020 01:26:37 GMT
+      - Mon, 28 Sep 2020 14:07:27 GMT
       x-ms-version:
       - '2020-02-10'
     method: PUT
-    uri: https://storagename.file.core.windows.net/shareba3e12f1?restype=share&comp=snapshot
+    uri: https://storagename.file.core.windows.net/testshare1ba3e12f1?restype=share&comp=snapshot
   response:
     body:
       string: ''
@@ -63,15 +63,15 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 25 Sep 2020 01:26:36 GMT
+      - Mon, 28 Sep 2020 14:07:26 GMT
       etag:
-      - '"0x8D860F20BD8FD08"'
+      - '"0x8D863B7D4A57EE8"'
       last-modified:
-      - Fri, 25 Sep 2020 01:26:37 GMT
+      - Mon, 28 Sep 2020 14:07:27 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-snapshot:
-      - '2020-09-25T01:26:37.0000000Z'
+      - '2020-09-28T14:07:27.0000000Z'
       x-ms-version:
       - '2020-02-10'
     status:
@@ -91,17 +91,17 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 25 Sep 2020 01:26:37 GMT
+      - Mon, 28 Sep 2020 14:07:27 GMT
       x-ms-lease-action:
       - acquire
       x-ms-lease-duration:
       - '-1'
       x-ms-proposed-lease-id:
-      - 9353fd58-7786-4290-b0ea-262d1bed2be1
+      - dbd11c56-6134-4f30-b330-b88e631ea233
       x-ms-version:
       - '2020-02-10'
     method: PUT
-    uri: https://storagename.file.core.windows.net/shareba3e12f1?comp=lease&restype=share
+    uri: https://storagename.file.core.windows.net/testshare1ba3e12f1?comp=lease&restype=share
   response:
     body:
       string: ''
@@ -109,15 +109,15 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 25 Sep 2020 01:26:36 GMT
+      - Mon, 28 Sep 2020 14:07:26 GMT
       etag:
-      - '"0x8D860F20BD8FD08"'
+      - '"0x8D863B7D4A57EE8"'
       last-modified:
-      - Fri, 25 Sep 2020 01:26:37 GMT
+      - Mon, 28 Sep 2020 14:07:27 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-lease-id:
-      - 9353fd58-7786-4290-b0ea-262d1bed2be1
+      - dbd11c56-6134-4f30-b330-b88e631ea233
       x-ms-version:
       - '2020-02-10'
     status:
@@ -137,17 +137,17 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 25 Sep 2020 01:26:38 GMT
+      - Mon, 28 Sep 2020 14:07:27 GMT
       x-ms-lease-action:
       - acquire
       x-ms-lease-duration:
       - '-1'
       x-ms-proposed-lease-id:
-      - 94aab6c8-04ca-466c-b351-35645d021017
+      - 007d9fe8-3406-4481-95dd-dc4337e440d6
       x-ms-version:
       - '2020-02-10'
     method: PUT
-    uri: https://storagename.file.core.windows.net/shareba3e12f1?sharesnapshot=2020-09-25T01:26:37.0000000Z&comp=lease&restype=share
+    uri: https://storagename.file.core.windows.net/testshare1ba3e12f1?sharesnapshot=2020-09-28T14:07:27.0000000Z&comp=lease&restype=share
   response:
     body:
       string: ''
@@ -155,15 +155,15 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 25 Sep 2020 01:26:37 GMT
+      - Mon, 28 Sep 2020 14:07:27 GMT
       etag:
-      - '"0x8D860F20BD8FD08"'
+      - '"0x8D863B7D4A57EE8"'
       last-modified:
-      - Fri, 25 Sep 2020 01:26:37 GMT
+      - Mon, 28 Sep 2020 14:07:27 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-lease-id:
-      - 94aab6c8-04ca-466c-b351-35645d021017
+      - 007d9fe8-3406-4481-95dd-dc4337e440d6
       x-ms-version:
       - '2020-02-10'
     status:
@@ -181,48 +181,35 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 25 Sep 2020 01:26:38 GMT
+      - Mon, 28 Sep 2020 14:07:31 GMT
+      x-ms-lease-id:
+      - 007d9fe8-3406-4481-95dd-dc4337e440d6
       x-ms-version:
       - '2020-02-10'
     method: GET
-    uri: https://storagename.file.core.windows.net/shareba3e12f1?restype=share
+    uri: https://storagename.file.core.windows.net/testshare1ba3e12f1?restype=share
   response:
     body:
-      string: ''
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMismatchWithContainerOperation</Code><Message>The
+        lease ID specified did not match the lease ID for the file share.\nRequestId:32d76f5c-a01a-002d-33a0-9569b1000000\nTime:2020-09-28T14:07:31.6658474Z</Message></Error>"
     headers:
       content-length:
-      - '0'
+      - '275'
+      content-type:
+      - application/xml
       date:
-      - Fri, 25 Sep 2020 01:26:37 GMT
-      etag:
-      - '"0x8D860F20BD8FD08"'
-      last-modified:
-      - Fri, 25 Sep 2020 01:26:37 GMT
+      - Mon, 28 Sep 2020 14:07:30 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       vary:
       - Origin
-      x-ms-access-tier:
-      - TransactionOptimized
-      x-ms-access-tier-change-time:
-      - Fri, 25 Sep 2020 01:26:36 GMT
-      x-ms-has-immutability-policy:
-      - 'false'
-      x-ms-has-legal-hold:
-      - 'false'
-      x-ms-lease-duration:
-      - infinite
-      x-ms-lease-state:
-      - leased
-      x-ms-lease-status:
-      - locked
-      x-ms-share-quota:
-      - '5120'
+      x-ms-error-code:
+      - LeaseIdMismatchWithContainerOperation
       x-ms-version:
       - '2020-02-10'
     status:
-      code: 200
-      message: OK
+      code: 412
+      message: The lease ID specified did not match the lease ID for the file share.
 - request:
     body: null
     headers:
@@ -235,48 +222,35 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 25 Sep 2020 01:26:38 GMT
+      - Mon, 28 Sep 2020 14:07:46 GMT
+      x-ms-lease-id:
+      - dbd11c56-6134-4f30-b330-b88e631ea233
       x-ms-version:
       - '2020-02-10'
     method: GET
-    uri: https://storagename.file.core.windows.net/shareba3e12f1?sharesnapshot=2020-09-25T01:26:37.0000000Z&restype=share
+    uri: https://storagename.file.core.windows.net/testshare1ba3e12f1?sharesnapshot=2020-09-28T14:07:27.0000000Z&restype=share
   response:
     body:
-      string: ''
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMismatchWithContainerOperation</Code><Message>The
+        lease ID specified did not match the lease ID for the file share.\nRequestId:1c9b3cbf-901a-007b-5ea0-95985e000000\nTime:2020-09-28T14:07:46.8501182Z</Message></Error>"
     headers:
       content-length:
-      - '0'
+      - '275'
+      content-type:
+      - application/xml
       date:
-      - Fri, 25 Sep 2020 01:26:37 GMT
-      etag:
-      - '"0x8D860F20BD8FD08"'
-      last-modified:
-      - Fri, 25 Sep 2020 01:26:37 GMT
+      - Mon, 28 Sep 2020 14:07:46 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       vary:
       - Origin
-      x-ms-access-tier:
-      - TransactionOptimized
-      x-ms-access-tier-change-time:
-      - Fri, 25 Sep 2020 01:26:36 GMT
-      x-ms-has-immutability-policy:
-      - 'false'
-      x-ms-has-legal-hold:
-      - 'false'
-      x-ms-lease-duration:
-      - infinite
-      x-ms-lease-state:
-      - leased
-      x-ms-lease-status:
-      - locked
-      x-ms-share-quota:
-      - '5120'
+      x-ms-error-code:
+      - LeaseIdMismatchWithContainerOperation
       x-ms-version:
       - '2020-02-10'
     status:
-      code: 200
-      message: OK
+      code: 412
+      message: The lease ID specified did not match the lease ID for the file share.
 - request:
     body: null
     headers:
@@ -291,15 +265,15 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 25 Sep 2020 01:26:38 GMT
+      - Mon, 28 Sep 2020 14:07:49 GMT
       x-ms-lease-action:
       - release
       x-ms-lease-id:
-      - 94aab6c8-04ca-466c-b351-35645d021017
+      - 007d9fe8-3406-4481-95dd-dc4337e440d6
       x-ms-version:
       - '2020-02-10'
     method: PUT
-    uri: https://storagename.file.core.windows.net/shareba3e12f1?sharesnapshot=2020-09-25T01:26:37.0000000Z&comp=lease&restype=share
+    uri: https://storagename.file.core.windows.net/testshare1ba3e12f1?sharesnapshot=2020-09-28T14:07:27.0000000Z&comp=lease&restype=share
   response:
     body:
       string: ''
@@ -307,11 +281,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 25 Sep 2020 01:26:37 GMT
+      - Mon, 28 Sep 2020 14:07:49 GMT
       etag:
-      - '"0x8D860F20BD8FD08"'
+      - '"0x8D863B7D4A57EE8"'
       last-modified:
-      - Fri, 25 Sep 2020 01:26:37 GMT
+      - Mon, 28 Sep 2020 14:07:27 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-lease-time:
@@ -335,15 +309,15 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 25 Sep 2020 01:26:38 GMT
+      - Mon, 28 Sep 2020 14:07:49 GMT
       x-ms-lease-action:
       - release
       x-ms-lease-id:
-      - 9353fd58-7786-4290-b0ea-262d1bed2be1
+      - dbd11c56-6134-4f30-b330-b88e631ea233
       x-ms-version:
       - '2020-02-10'
     method: PUT
-    uri: https://storagename.file.core.windows.net/shareba3e12f1?comp=lease&restype=share
+    uri: https://storagename.file.core.windows.net/testshare1ba3e12f1?comp=lease&restype=share
   response:
     body:
       string: ''
@@ -351,11 +325,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 25 Sep 2020 01:26:37 GMT
+      - Mon, 28 Sep 2020 14:07:48 GMT
       etag:
-      - '"0x8D860F20BD8FD08"'
+      - '"0x8D863B7D4A57EE8"'
       last-modified:
-      - Fri, 25 Sep 2020 01:26:37 GMT
+      - Mon, 28 Sep 2020 14:07:27 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-lease-time:
@@ -377,7 +351,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 25 Sep 2020 01:26:38 GMT
+      - Mon, 28 Sep 2020 14:07:49 GMT
       x-ms-version:
       - '2020-02-10'
     method: GET
@@ -397,10 +371,10 @@ interactions:
         10 Sep 2020 23:48:33 GMT</Last-Modified><Etag>\"0x8D855E4070545FC\"</Etag><LeaseStatus>locked</LeaseStatus><LeaseState>leased</LeaseState><LeaseDuration>infinite</LeaseDuration><Quota>5120</Quota><AccessTier>TransactionOptimized</AccessTier><AccessTierChangeTime>Thu,
         10 Sep 2020 23:48:33 GMT</AccessTierChangeTime><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride></Properties></Share><Share><Name>sharea7a1477</Name><Properties><Last-Modified>Thu,
         10 Sep 2020 23:48:04 GMT</Last-Modified><Etag>\"0x8D855E3F609C583\"</Etag><LeaseStatus>locked</LeaseStatus><LeaseState>leased</LeaseState><LeaseDuration>infinite</LeaseDuration><Quota>5120</Quota><AccessTier>TransactionOptimized</AccessTier><AccessTierChangeTime>Thu,
-        10 Sep 2020 23:48:04 GMT</AccessTierChangeTime><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride></Properties></Share><Share><Name>shareba3e12f1</Name><Snapshot>2020-09-25T01:26:37.0000000Z</Snapshot><Properties><Last-Modified>Fri,
-        25 Sep 2020 01:26:37 GMT</Last-Modified><Etag>\"0x8D860F20BD8FD08\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><Quota>5120</Quota><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride></Properties></Share><Share><Name>shareba3e12f1</Name><Properties><Last-Modified>Fri,
-        25 Sep 2020 01:26:37 GMT</Last-Modified><Etag>\"0x8D860F20BD8FD08\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><Quota>5120</Quota><AccessTier>TransactionOptimized</AccessTier><AccessTierChangeTime>Fri,
-        25 Sep 2020 01:26:36 GMT</AccessTierChangeTime><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride></Properties></Share><Share><Name>sharec80148e</Name><Properties><Last-Modified>Fri,
+        10 Sep 2020 23:48:04 GMT</AccessTierChangeTime><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride></Properties></Share><Share><Name>shareba3e12f1</Name><Snapshot>2020-09-28T14:03:31.0000000Z</Snapshot><Properties><Last-Modified>Mon,
+        28 Sep 2020 14:03:31 GMT</Last-Modified><Etag>\"0x8D863B748689793\"</Etag><LeaseStatus>locked</LeaseStatus><LeaseState>leased</LeaseState><LeaseDuration>infinite</LeaseDuration><Quota>5120</Quota><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride></Properties></Share><Share><Name>shareba3e12f1</Name><Properties><Last-Modified>Mon,
+        28 Sep 2020 14:03:31 GMT</Last-Modified><Etag>\"0x8D863B748689793\"</Etag><LeaseStatus>locked</LeaseStatus><LeaseState>leased</LeaseState><LeaseDuration>infinite</LeaseDuration><Quota>5120</Quota><AccessTier>TransactionOptimized</AccessTier><AccessTierChangeTime>Mon,
+        28 Sep 2020 14:03:31 GMT</AccessTierChangeTime><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride></Properties></Share><Share><Name>sharec80148e</Name><Properties><Last-Modified>Fri,
         11 Sep 2020 00:25:51 GMT</Last-Modified><Etag>\"0x8D855E93D722BB0\"</Etag><LeaseStatus>locked</LeaseStatus><LeaseState>leased</LeaseState><LeaseDuration>infinite</LeaseDuration><Quota>5120</Quota><AccessTier>TransactionOptimized</AccessTier><AccessTierChangeTime>Fri,
         11 Sep 2020 00:03:40 GMT</AccessTierChangeTime><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride></Properties></Share><Share><Name>sharecb2f1317</Name><Properties><Last-Modified>Fri,
         11 Sep 2020 00:59:09 GMT</Last-Modified><Etag>\"0x8D855EDE422992F\"</Etag><LeaseStatus>locked</LeaseStatus><LeaseState>leased</LeaseState><LeaseDuration>infinite</LeaseDuration><Quota>5120</Quota><AccessTier>TransactionOptimized</AccessTier><AccessTierChangeTime>Fri,
@@ -480,13 +454,54 @@ interactions:
         11 Sep 2020 13:53:58 GMT</Last-Modified><Etag>\"0x8D8565A21BA7745\"</Etag><LeaseStatus>locked</LeaseStatus><LeaseState>leased</LeaseState><LeaseDuration>infinite</LeaseDuration><Quota>5120</Quota><AccessTier>TransactionOptimized</AccessTier><AccessTierChangeTime>Fri,
         11 Sep 2020 13:53:58 GMT</AccessTierChangeTime><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride></Properties></Share><Share><Name>testf69713fa</Name><Properties><Last-Modified>Fri,
         11 Sep 2020 13:54:36 GMT</Last-Modified><Etag>\"0x8D8565A3813B91A\"</Etag><LeaseStatus>locked</LeaseStatus><LeaseState>leased</LeaseState><LeaseDuration>infinite</LeaseDuration><Quota>5120</Quota><AccessTier>TransactionOptimized</AccessTier><AccessTierChangeTime>Fri,
-        11 Sep 2020 13:54:35 GMT</AccessTierChangeTime><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride></Properties></Share></Shares><NextMarker
+        11 Sep 2020 13:54:35 GMT</AccessTierChangeTime><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride></Properties></Share><Share><Name>testshare1ba3e12f1</Name><Snapshot>2020-09-28T14:07:27.0000000Z</Snapshot><Properties><Last-Modified>Mon,
+        28 Sep 2020 14:07:27 GMT</Last-Modified><Etag>\"0x8D863B7D4A57EE8\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><Quota>5120</Quota><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride></Properties></Share><Share><Name>testshare1ba3e12f1</Name><Properties><Last-Modified>Mon,
+        28 Sep 2020 14:07:27 GMT</Last-Modified><Etag>\"0x8D863B7D4A57EE8\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><Quota>5120</Quota><AccessTier>TransactionOptimized</AccessTier><AccessTierChangeTime>Mon,
+        28 Sep 2020 14:07:27 GMT</AccessTierChangeTime><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride></Properties></Share><Share><Name>utshare1cf914ce</Name><Properties><Last-Modified>Fri,
+        25 Sep 2020 13:06:11 GMT</Last-Modified><Etag>\"0x8D86153C67F13EA\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><Quota>5120</Quota><AccessTier>TransactionOptimized</AccessTier><AccessTierChangeTime>Fri,
+        25 Sep 2020 13:06:11 GMT</AccessTierChangeTime><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride></Properties></Share><Share><Name>utshare20670f1d</Name><Snapshot>2020-09-25T13:06:56.0000000Z</Snapshot><Properties><Last-Modified>Fri,
+        25 Sep 2020 13:06:55 GMT</Last-Modified><Etag>\"0x8D86153E1115B2D\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><Quota>5120</Quota><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride></Properties></Share><Share><Name>utshare20670f1d</Name><Snapshot>2020-09-25T13:06:57.0000000Z</Snapshot><Properties><Last-Modified>Fri,
+        25 Sep 2020 13:06:55 GMT</Last-Modified><Etag>\"0x8D86153E1115B2D\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><Quota>5120</Quota><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride></Properties></Share><Share><Name>utshare20670f1d</Name><Properties><Last-Modified>Fri,
+        25 Sep 2020 13:06:55 GMT</Last-Modified><Etag>\"0x8D86153E1115B2D\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><Quota>5120</Quota><AccessTier>TransactionOptimized</AccessTier><AccessTierChangeTime>Fri,
+        25 Sep 2020 13:06:55 GMT</AccessTierChangeTime><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride></Properties></Share><Share><Name>utshare325d1544</Name><Properties><Last-Modified>Fri,
+        25 Sep 2020 12:56:51 GMT</Last-Modified><Etag>\"0x8D861527918EE3C\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><Quota>5120</Quota><AccessTier>TransactionOptimized</AccessTier><AccessTierChangeTime>Fri,
+        25 Sep 2020 12:56:51 GMT</AccessTierChangeTime><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride></Properties></Share><Share><Name>utshare4ee91033</Name><Properties><Last-Modified>Fri,
+        25 Sep 2020 13:08:46 GMT</Last-Modified><Etag>\"0x8D861542341E830\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><Quota>5120</Quota><AccessTier>TransactionOptimized</AccessTier><AccessTierChangeTime>Fri,
+        25 Sep 2020 13:08:46 GMT</AccessTierChangeTime><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride></Properties></Share><Share><Name>utshare539b1a3e</Name><Properties><Last-Modified>Fri,
+        25 Sep 2020 13:05:57 GMT</Last-Modified><Etag>\"0x8D86153BE078BEA\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><Quota>5120</Quota><AccessTier>TransactionOptimized</AccessTier><AccessTierChangeTime>Fri,
+        25 Sep 2020 13:05:57 GMT</AccessTierChangeTime><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride></Properties></Share><Share><Name>utshare5db41615</Name><Snapshot>2020-09-25T13:09:26.0000000Z</Snapshot><Properties><Last-Modified>Fri,
+        25 Sep 2020 13:09:26 GMT</Last-Modified><Etag>\"0x8D861543A93CC28\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><Quota>5120</Quota><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride></Properties></Share><Share><Name>utshare5db41615</Name><Properties><Last-Modified>Fri,
+        25 Sep 2020 13:09:26 GMT</Last-Modified><Etag>\"0x8D861543A93CC28\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><Quota>5120</Quota><AccessTier>TransactionOptimized</AccessTier><AccessTierChangeTime>Fri,
+        25 Sep 2020 13:09:26 GMT</AccessTierChangeTime><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride></Properties></Share><Share><Name>utshare5ed210c0</Name><Properties><Last-Modified>Fri,
+        25 Sep 2020 12:56:34 GMT</Last-Modified><Etag>\"0x8D861526E674AAC\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><Quota>5120</Quota><AccessTier>TransactionOptimized</AccessTier><AccessTierChangeTime>Fri,
+        25 Sep 2020 12:56:33 GMT</AccessTierChangeTime><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride></Properties></Share><Share><Name>utshare6e4e111b</Name><Snapshot>2020-09-25T13:02:47.0000000Z</Snapshot><Properties><Last-Modified>Fri,
+        25 Sep 2020 13:02:46 GMT</Last-Modified><Etag>\"0x8D861534C7974F5\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><Quota>5120</Quota><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride></Properties></Share><Share><Name>utshare6e4e111b</Name><Properties><Last-Modified>Fri,
+        25 Sep 2020 13:02:46 GMT</Last-Modified><Etag>\"0x8D861534C7974F5\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><Quota>5120</Quota><AccessTier>TransactionOptimized</AccessTier><AccessTierChangeTime>Fri,
+        25 Sep 2020 13:02:46 GMT</AccessTierChangeTime><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride></Properties></Share><Share><Name>utshare847d11b1</Name><Properties><Last-Modified>Fri,
+        25 Sep 2020 13:06:25 GMT</Last-Modified><Etag>\"0x8D86153CED0B766\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><Quota>5120</Quota><AccessTier>TransactionOptimized</AccessTier><AccessTierChangeTime>Fri,
+        25 Sep 2020 13:06:25 GMT</AccessTierChangeTime><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride></Properties></Share><Share><Name>utshare8e3816ef</Name><Properties><Last-Modified>Fri,
+        25 Sep 2020 13:01:37 GMT</Last-Modified><Etag>\"0x8D861532300C28B\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><Quota>5120</Quota><AccessTier>TransactionOptimized</AccessTier><AccessTierChangeTime>Fri,
+        25 Sep 2020 13:01:36 GMT</AccessTierChangeTime><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride></Properties></Share><Share><Name>utsharea5a50b39</Name><Properties><Last-Modified>Fri,
+        25 Sep 2020 13:02:09 GMT</Last-Modified><Etag>\"0x8D8615336826AE6\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><Quota>5120</Quota><AccessTier>TransactionOptimized</AccessTier><AccessTierChangeTime>Fri,
+        25 Sep 2020 13:02:09 GMT</AccessTierChangeTime><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride></Properties></Share><Share><Name>utsharea82c1793</Name><Snapshot>2020-09-25T13:09:04.0000000Z</Snapshot><Properties><Last-Modified>Fri,
+        25 Sep 2020 13:09:03 GMT</Last-Modified><Etag>\"0x8D861542D3AAFF3\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><Quota>5120</Quota><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride></Properties></Share><Share><Name>utsharea82c1793</Name><Properties><Last-Modified>Fri,
+        25 Sep 2020 13:09:03 GMT</Last-Modified><Etag>\"0x8D861542D3AAFF3\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><Quota>5120</Quota><AccessTier>TransactionOptimized</AccessTier><AccessTierChangeTime>Fri,
+        25 Sep 2020 13:09:03 GMT</AccessTierChangeTime><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride></Properties></Share><Share><Name>utsharea85b1299</Name><Snapshot>2020-09-25T13:02:28.0000000Z</Snapshot><Properties><Last-Modified>Fri,
+        25 Sep 2020 13:02:27 GMT</Last-Modified><Etag>\"0x8D8615341284CD1\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><Quota>5120</Quota><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride></Properties></Share><Share><Name>utsharea85b1299</Name><Properties><Last-Modified>Fri,
+        25 Sep 2020 13:02:27 GMT</Last-Modified><Etag>\"0x8D8615341284CD1\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><Quota>5120</Quota><AccessTier>TransactionOptimized</AccessTier><AccessTierChangeTime>Fri,
+        25 Sep 2020 13:02:25 GMT</AccessTierChangeTime><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride></Properties></Share><Share><Name>utshareca850ca0</Name><Snapshot>2020-09-25T13:01:56.0000000Z</Snapshot><Properties><Last-Modified>Fri,
+        25 Sep 2020 13:01:55 GMT</Last-Modified><Etag>\"0x8D861532DF221C2\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><Quota>5120</Quota><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride></Properties></Share><Share><Name>utshareca850ca0</Name><Snapshot>2020-09-25T13:01:57.0000000Z</Snapshot><Properties><Last-Modified>Fri,
+        25 Sep 2020 13:01:55 GMT</Last-Modified><Etag>\"0x8D861532DF221C2\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><Quota>5120</Quota><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride></Properties></Share><Share><Name>utshareca850ca0</Name><Properties><Last-Modified>Fri,
+        25 Sep 2020 13:01:55 GMT</Last-Modified><Etag>\"0x8D861532DF221C2\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><Quota>5120</Quota><AccessTier>TransactionOptimized</AccessTier><AccessTierChangeTime>Fri,
+        25 Sep 2020 13:01:55 GMT</AccessTierChangeTime><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride></Properties></Share><Share><Name>utsharecd87133d</Name><Properties><Last-Modified>Fri,
+        25 Sep 2020 13:05:35 GMT</Last-Modified><Etag>\"0x8D86153B0EBD9F9\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><Quota>5120</Quota><AccessTier>TransactionOptimized</AccessTier><AccessTierChangeTime>Fri,
+        25 Sep 2020 13:05:35 GMT</AccessTierChangeTime><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride></Properties></Share></Shares><NextMarker
         /></EnumerationResults>"
     headers:
       content-type:
       - application/xml
       date:
-      - Fri, 25 Sep 2020 01:26:37 GMT
+      - Mon, 28 Sep 2020 14:07:49 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -512,7 +527,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 25 Sep 2020 01:26:39 GMT
+      - Mon, 28 Sep 2020 14:07:50 GMT
       x-ms-delete-snapshots:
       - include
       x-ms-version:
@@ -523,14 +538,14 @@ interactions:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMissing</Code><Message>There
         is currently a lease on the file share and no lease ID was specified in the
-        request.\nRequestId:83926f46-601a-001d-3fda-92d77e000000\nTime:2020-09-25T01:26:38.6448786Z</Message></Error>"
+        request.\nRequestId:32d76feb-a01a-002d-27a0-9569b1000000\nTime:2020-09-28T14:07:50.2940482Z</Message></Error>"
     headers:
       content-length:
       - '273'
       content-type:
       - application/xml
       date:
-      - Fri, 25 Sep 2020 01:26:37 GMT
+      - Mon, 28 Sep 2020 14:07:49 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
@@ -555,7 +570,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 25 Sep 2020 01:26:39 GMT
+      - Mon, 28 Sep 2020 14:07:50 GMT
       x-ms-delete-snapshots:
       - include
       x-ms-version:
@@ -566,14 +581,14 @@ interactions:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMissing</Code><Message>There
         is currently a lease on the file share and no lease ID was specified in the
-        request.\nRequestId:83926f47-601a-001d-40da-92d77e000000\nTime:2020-09-25T01:26:38.7629618Z</Message></Error>"
+        request.\nRequestId:32d76fed-a01a-002d-29a0-9569b1000000\nTime:2020-09-28T14:07:50.4301448Z</Message></Error>"
     headers:
       content-length:
       - '273'
       content-type:
       - application/xml
       date:
-      - Fri, 25 Sep 2020 01:26:38 GMT
+      - Mon, 28 Sep 2020 14:07:49 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
@@ -598,7 +613,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 25 Sep 2020 01:26:39 GMT
+      - Mon, 28 Sep 2020 14:07:50 GMT
       x-ms-delete-snapshots:
       - include
       x-ms-version:
@@ -609,14 +624,14 @@ interactions:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMissing</Code><Message>There
         is currently a lease on the file share and no lease ID was specified in the
-        request.\nRequestId:83926f48-601a-001d-41da-92d77e000000\nTime:2020-09-25T01:26:38.8880499Z</Message></Error>"
+        request.\nRequestId:32d76fef-a01a-002d-2ba0-9569b1000000\nTime:2020-09-28T14:07:50.5462281Z</Message></Error>"
     headers:
       content-length:
       - '273'
       content-type:
       - application/xml
       date:
-      - Fri, 25 Sep 2020 01:26:38 GMT
+      - Mon, 28 Sep 2020 14:07:49 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
@@ -641,7 +656,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 25 Sep 2020 01:26:39 GMT
+      - Mon, 28 Sep 2020 14:07:50 GMT
       x-ms-delete-snapshots:
       - include
       x-ms-version:
@@ -652,14 +667,14 @@ interactions:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMissing</Code><Message>There
         is currently a lease on the file share and no lease ID was specified in the
-        request.\nRequestId:83926f4e-601a-001d-46da-92d77e000000\nTime:2020-09-25T01:26:39.0081340Z</Message></Error>"
+        request.\nRequestId:32d76ff0-a01a-002d-2ca0-9569b1000000\nTime:2020-09-28T14:07:50.6773207Z</Message></Error>"
     headers:
       content-length:
       - '273'
       content-type:
       - application/xml
       date:
-      - Fri, 25 Sep 2020 01:26:38 GMT
+      - Mon, 28 Sep 2020 14:07:49 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
@@ -684,7 +699,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 25 Sep 2020 01:26:39 GMT
+      - Mon, 28 Sep 2020 14:07:50 GMT
       x-ms-delete-snapshots:
       - include
       x-ms-version:
@@ -695,14 +710,14 @@ interactions:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMissing</Code><Message>There
         is currently a lease on the file share and no lease ID was specified in the
-        request.\nRequestId:83926f54-601a-001d-4cda-92d77e000000\nTime:2020-09-25T01:26:39.1292198Z</Message></Error>"
+        request.\nRequestId:32d76ff1-a01a-002d-2da0-9569b1000000\nTime:2020-09-28T14:07:50.8314297Z</Message></Error>"
     headers:
       content-length:
       - '273'
       content-type:
       - application/xml
       date:
-      - Fri, 25 Sep 2020 01:26:38 GMT
+      - Mon, 28 Sep 2020 14:07:50 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
@@ -727,7 +742,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 25 Sep 2020 01:26:39 GMT
+      - Mon, 28 Sep 2020 14:07:50 GMT
       x-ms-delete-snapshots:
       - include
       x-ms-version:
@@ -738,14 +753,14 @@ interactions:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMissing</Code><Message>There
         is currently a lease on the file share and no lease ID was specified in the
-        request.\nRequestId:83926f55-601a-001d-4dda-92d77e000000\nTime:2020-09-25T01:26:39.2443008Z</Message></Error>"
+        request.\nRequestId:32d76ff3-a01a-002d-2ea0-9569b1000000\nTime:2020-09-28T14:07:50.9565189Z</Message></Error>"
     headers:
       content-length:
       - '273'
       content-type:
       - application/xml
       date:
-      - Fri, 25 Sep 2020 01:26:38 GMT
+      - Mon, 28 Sep 2020 14:07:50 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
@@ -770,7 +785,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 25 Sep 2020 01:26:39 GMT
+      - Mon, 28 Sep 2020 14:07:50 GMT
       x-ms-delete-snapshots:
       - include
       x-ms-version:
@@ -779,19 +794,28 @@ interactions:
     uri: https://storagename.file.core.windows.net/shareba3e12f1?restype=share
   response:
     body:
-      string: ''
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>DeleteShareWhenSnapshotLeased</Code><Message>Unable
+        to delete share because one or more share snapshots have active leases. Release
+        the share snapshot leases or delete the share with the include-leased parameter
+        for x-ms-delete-snapshots.\nRequestId:32d76ff4-a01a-002d-2fa0-9569b1000000\nTime:2020-09-28T14:07:51.0896138Z</Message></Error>"
     headers:
       content-length:
-      - '0'
+      - '391'
+      content-type:
+      - application/xml
       date:
-      - Fri, 25 Sep 2020 01:26:38 GMT
+      - Mon, 28 Sep 2020 14:07:50 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code:
+      - DeleteShareWhenSnapshotLeased
       x-ms-version:
       - '2020-02-10'
     status:
-      code: 202
-      message: Accepted
+      code: 409
+      message: Unable to delete share because one or more share snapshots have active
+        leases. Release the share snapshot leases or delete the share with the include-leased
+        parameter for x-ms-delete-snapshots.
 - request:
     body: null
     headers:
@@ -806,7 +830,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 25 Sep 2020 01:26:40 GMT
+      - Mon, 28 Sep 2020 14:07:51 GMT
       x-ms-delete-snapshots:
       - include
       x-ms-version:
@@ -815,19 +839,28 @@ interactions:
     uri: https://storagename.file.core.windows.net/shareba3e12f1?restype=share
   response:
     body:
-      string: ''
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>DeleteShareWhenSnapshotLeased</Code><Message>Unable
+        to delete share because one or more share snapshots have active leases. Release
+        the share snapshot leases or delete the share with the include-leased parameter
+        for x-ms-delete-snapshots.\nRequestId:32d76ff9-a01a-002d-32a0-9569b1000000\nTime:2020-09-28T14:07:51.2177038Z</Message></Error>"
     headers:
       content-length:
-      - '0'
+      - '391'
+      content-type:
+      - application/xml
       date:
-      - Fri, 25 Sep 2020 01:26:38 GMT
+      - Mon, 28 Sep 2020 14:07:50 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code:
+      - DeleteShareWhenSnapshotLeased
       x-ms-version:
       - '2020-02-10'
     status:
-      code: 202
-      message: Accepted
+      code: 409
+      message: Unable to delete share because one or more share snapshots have active
+        leases. Release the share snapshot leases or delete the share with the include-leased
+        parameter for x-ms-delete-snapshots.
 - request:
     body: null
     headers:
@@ -842,7 +875,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 25 Sep 2020 01:26:40 GMT
+      - Mon, 28 Sep 2020 14:07:51 GMT
       x-ms-delete-snapshots:
       - include
       x-ms-version:
@@ -853,14 +886,14 @@ interactions:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMissing</Code><Message>There
         is currently a lease on the file share and no lease ID was specified in the
-        request.\nRequestId:83926f59-601a-001d-51da-92d77e000000\nTime:2020-09-25T01:26:39.6225668Z</Message></Error>"
+        request.\nRequestId:32d76ffa-a01a-002d-33a0-9569b1000000\nTime:2020-09-28T14:07:51.3487969Z</Message></Error>"
     headers:
       content-length:
       - '273'
       content-type:
       - application/xml
       date:
-      - Fri, 25 Sep 2020 01:26:38 GMT
+      - Mon, 28 Sep 2020 14:07:50 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
@@ -885,7 +918,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 25 Sep 2020 01:26:40 GMT
+      - Mon, 28 Sep 2020 14:07:51 GMT
       x-ms-delete-snapshots:
       - include
       x-ms-version:
@@ -896,14 +929,14 @@ interactions:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMissing</Code><Message>There
         is currently a lease on the file share and no lease ID was specified in the
-        request.\nRequestId:83926f5a-601a-001d-52da-92d77e000000\nTime:2020-09-25T01:26:39.7636661Z</Message></Error>"
+        request.\nRequestId:32d76ffc-a01a-002d-35a0-9569b1000000\nTime:2020-09-28T14:07:51.4788890Z</Message></Error>"
     headers:
       content-length:
       - '273'
       content-type:
       - application/xml
       date:
-      - Fri, 25 Sep 2020 01:26:39 GMT
+      - Mon, 28 Sep 2020 14:07:50 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
@@ -928,7 +961,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 25 Sep 2020 01:26:40 GMT
+      - Mon, 28 Sep 2020 14:07:51 GMT
       x-ms-delete-snapshots:
       - include
       x-ms-version:
@@ -939,14 +972,14 @@ interactions:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMissing</Code><Message>There
         is currently a lease on the file share and no lease ID was specified in the
-        request.\nRequestId:83926f5b-601a-001d-53da-92d77e000000\nTime:2020-09-25T01:26:39.8777469Z</Message></Error>"
+        request.\nRequestId:32d76ffe-a01a-002d-37a0-9569b1000000\nTime:2020-09-28T14:07:51.6079799Z</Message></Error>"
     headers:
       content-length:
       - '273'
       content-type:
       - application/xml
       date:
-      - Fri, 25 Sep 2020 01:26:39 GMT
+      - Mon, 28 Sep 2020 14:07:50 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
@@ -971,7 +1004,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 25 Sep 2020 01:26:40 GMT
+      - Mon, 28 Sep 2020 14:07:51 GMT
       x-ms-delete-snapshots:
       - include
       x-ms-version:
@@ -982,14 +1015,14 @@ interactions:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMissing</Code><Message>There
         is currently a lease on the file share and no lease ID was specified in the
-        request.\nRequestId:83926f5d-601a-001d-54da-92d77e000000\nTime:2020-09-25T01:26:39.9978319Z</Message></Error>"
+        request.\nRequestId:32d77000-a01a-002d-39a0-9569b1000000\nTime:2020-09-28T14:07:51.7400724Z</Message></Error>"
     headers:
       content-length:
       - '273'
       content-type:
       - application/xml
       date:
-      - Fri, 25 Sep 2020 01:26:39 GMT
+      - Mon, 28 Sep 2020 14:07:50 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
@@ -1014,7 +1047,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 25 Sep 2020 01:26:40 GMT
+      - Mon, 28 Sep 2020 14:07:51 GMT
       x-ms-delete-snapshots:
       - include
       x-ms-version:
@@ -1025,14 +1058,14 @@ interactions:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMissing</Code><Message>There
         is currently a lease on the file share and no lease ID was specified in the
-        request.\nRequestId:83926f5e-601a-001d-55da-92d77e000000\nTime:2020-09-25T01:26:40.1689524Z</Message></Error>"
+        request.\nRequestId:32d77001-a01a-002d-3aa0-9569b1000000\nTime:2020-09-28T14:07:51.8661612Z</Message></Error>"
     headers:
       content-length:
       - '273'
       content-type:
       - application/xml
       date:
-      - Fri, 25 Sep 2020 01:26:39 GMT
+      - Mon, 28 Sep 2020 14:07:51 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
@@ -1057,7 +1090,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 25 Sep 2020 01:26:40 GMT
+      - Mon, 28 Sep 2020 14:07:51 GMT
       x-ms-delete-snapshots:
       - include
       x-ms-version:
@@ -1068,14 +1101,14 @@ interactions:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMissing</Code><Message>There
         is currently a lease on the file share and no lease ID was specified in the
-        request.\nRequestId:83926f61-601a-001d-58da-92d77e000000\nTime:2020-09-25T01:26:40.3040467Z</Message></Error>"
+        request.\nRequestId:32d77002-a01a-002d-3ba0-9569b1000000\nTime:2020-09-28T14:07:51.9962531Z</Message></Error>"
     headers:
       content-length:
       - '273'
       content-type:
       - application/xml
       date:
-      - Fri, 25 Sep 2020 01:26:39 GMT
+      - Mon, 28 Sep 2020 14:07:51 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
@@ -1100,7 +1133,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 25 Sep 2020 01:26:40 GMT
+      - Mon, 28 Sep 2020 14:07:52 GMT
       x-ms-delete-snapshots:
       - include
       x-ms-version:
@@ -1111,14 +1144,14 @@ interactions:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMissing</Code><Message>There
         is currently a lease on the file share and no lease ID was specified in the
-        request.\nRequestId:83926f62-601a-001d-59da-92d77e000000\nTime:2020-09-25T01:26:40.4321369Z</Message></Error>"
+        request.\nRequestId:32d77003-a01a-002d-3ca0-9569b1000000\nTime:2020-09-28T14:07:52.1233426Z</Message></Error>"
     headers:
       content-length:
       - '273'
       content-type:
       - application/xml
       date:
-      - Fri, 25 Sep 2020 01:26:39 GMT
+      - Mon, 28 Sep 2020 14:07:51 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
@@ -1143,7 +1176,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 25 Sep 2020 01:26:41 GMT
+      - Mon, 28 Sep 2020 14:07:52 GMT
       x-ms-delete-snapshots:
       - include
       x-ms-version:
@@ -1154,14 +1187,14 @@ interactions:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMissing</Code><Message>There
         is currently a lease on the file share and no lease ID was specified in the
-        request.\nRequestId:83926f65-601a-001d-5cda-92d77e000000\nTime:2020-09-25T01:26:40.5612283Z</Message></Error>"
+        request.\nRequestId:32d77006-a01a-002d-3ea0-9569b1000000\nTime:2020-09-28T14:07:52.2494313Z</Message></Error>"
     headers:
       content-length:
       - '273'
       content-type:
       - application/xml
       date:
-      - Fri, 25 Sep 2020 01:26:39 GMT
+      - Mon, 28 Sep 2020 14:07:51 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
@@ -1186,7 +1219,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 25 Sep 2020 01:26:41 GMT
+      - Mon, 28 Sep 2020 14:07:52 GMT
       x-ms-delete-snapshots:
       - include
       x-ms-version:
@@ -1197,14 +1230,14 @@ interactions:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMissing</Code><Message>There
         is currently a lease on the file share and no lease ID was specified in the
-        request.\nRequestId:83926f67-601a-001d-5eda-92d77e000000\nTime:2020-09-25T01:26:40.6883178Z</Message></Error>"
+        request.\nRequestId:32d77007-a01a-002d-3fa0-9569b1000000\nTime:2020-09-28T14:07:52.3775216Z</Message></Error>"
     headers:
       content-length:
       - '273'
       content-type:
       - application/xml
       date:
-      - Fri, 25 Sep 2020 01:26:39 GMT
+      - Mon, 28 Sep 2020 14:07:51 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
@@ -1229,7 +1262,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 25 Sep 2020 01:26:41 GMT
+      - Mon, 28 Sep 2020 14:07:52 GMT
       x-ms-delete-snapshots:
       - include
       x-ms-version:
@@ -1240,14 +1273,14 @@ interactions:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMissing</Code><Message>There
         is currently a lease on the file share and no lease ID was specified in the
-        request.\nRequestId:83926f68-601a-001d-5fda-92d77e000000\nTime:2020-09-25T01:26:40.8094031Z</Message></Error>"
+        request.\nRequestId:32d77009-a01a-002d-41a0-9569b1000000\nTime:2020-09-28T14:07:52.5126175Z</Message></Error>"
     headers:
       content-length:
       - '273'
       content-type:
       - application/xml
       date:
-      - Fri, 25 Sep 2020 01:26:40 GMT
+      - Mon, 28 Sep 2020 14:07:51 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
@@ -1272,7 +1305,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 25 Sep 2020 01:26:41 GMT
+      - Mon, 28 Sep 2020 14:07:52 GMT
       x-ms-delete-snapshots:
       - include
       x-ms-version:
@@ -1283,14 +1316,14 @@ interactions:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMissing</Code><Message>There
         is currently a lease on the file share and no lease ID was specified in the
-        request.\nRequestId:83926f69-601a-001d-60da-92d77e000000\nTime:2020-09-25T01:26:40.9444978Z</Message></Error>"
+        request.\nRequestId:32d7700b-a01a-002d-43a0-9569b1000000\nTime:2020-09-28T14:07:52.6467126Z</Message></Error>"
     headers:
       content-length:
       - '273'
       content-type:
       - application/xml
       date:
-      - Fri, 25 Sep 2020 01:26:40 GMT
+      - Mon, 28 Sep 2020 14:07:51 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
@@ -1315,7 +1348,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 25 Sep 2020 01:26:41 GMT
+      - Mon, 28 Sep 2020 14:07:52 GMT
       x-ms-delete-snapshots:
       - include
       x-ms-version:
@@ -1326,14 +1359,14 @@ interactions:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMissing</Code><Message>There
         is currently a lease on the file share and no lease ID was specified in the
-        request.\nRequestId:83926f6a-601a-001d-61da-92d77e000000\nTime:2020-09-25T01:26:41.0645828Z</Message></Error>"
+        request.\nRequestId:32d7700c-a01a-002d-44a0-9569b1000000\nTime:2020-09-28T14:07:52.7808083Z</Message></Error>"
     headers:
       content-length:
       - '273'
       content-type:
       - application/xml
       date:
-      - Fri, 25 Sep 2020 01:26:40 GMT
+      - Mon, 28 Sep 2020 14:07:51 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
@@ -1358,7 +1391,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 25 Sep 2020 01:26:41 GMT
+      - Mon, 28 Sep 2020 14:07:52 GMT
       x-ms-delete-snapshots:
       - include
       x-ms-version:
@@ -1369,14 +1402,14 @@ interactions:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMissing</Code><Message>There
         is currently a lease on the file share and no lease ID was specified in the
-        request.\nRequestId:83926f6b-601a-001d-62da-92d77e000000\nTime:2020-09-25T01:26:41.1966754Z</Message></Error>"
+        request.\nRequestId:32d7700d-a01a-002d-45a0-9569b1000000\nTime:2020-09-28T14:07:52.9088992Z</Message></Error>"
     headers:
       content-length:
       - '273'
       content-type:
       - application/xml
       date:
-      - Fri, 25 Sep 2020 01:26:40 GMT
+      - Mon, 28 Sep 2020 14:07:52 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
@@ -1401,7 +1434,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 25 Sep 2020 01:26:41 GMT
+      - Mon, 28 Sep 2020 14:07:52 GMT
       x-ms-delete-snapshots:
       - include
       x-ms-version:
@@ -1412,14 +1445,14 @@ interactions:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMissing</Code><Message>There
         is currently a lease on the file share and no lease ID was specified in the
-        request.\nRequestId:83926f6c-601a-001d-63da-92d77e000000\nTime:2020-09-25T01:26:41.3167600Z</Message></Error>"
+        request.\nRequestId:32d7700f-a01a-002d-47a0-9569b1000000\nTime:2020-09-28T14:07:53.0479971Z</Message></Error>"
     headers:
       content-length:
       - '273'
       content-type:
       - application/xml
       date:
-      - Fri, 25 Sep 2020 01:26:40 GMT
+      - Mon, 28 Sep 2020 14:07:52 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
@@ -1444,7 +1477,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 25 Sep 2020 01:26:42 GMT
+      - Mon, 28 Sep 2020 14:07:53 GMT
       x-ms-delete-snapshots:
       - include
       x-ms-version:
@@ -1455,14 +1488,14 @@ interactions:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMissing</Code><Message>There
         is currently a lease on the file share and no lease ID was specified in the
-        request.\nRequestId:83926f6d-601a-001d-64da-92d77e000000\nTime:2020-09-25T01:26:41.4298400Z</Message></Error>"
+        request.\nRequestId:32d77010-a01a-002d-48a0-9569b1000000\nTime:2020-09-28T14:07:53.1780898Z</Message></Error>"
     headers:
       content-length:
       - '273'
       content-type:
       - application/xml
       date:
-      - Fri, 25 Sep 2020 01:26:40 GMT
+      - Mon, 28 Sep 2020 14:07:52 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
@@ -1487,7 +1520,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 25 Sep 2020 01:26:42 GMT
+      - Mon, 28 Sep 2020 14:07:53 GMT
       x-ms-delete-snapshots:
       - include
       x-ms-version:
@@ -1498,14 +1531,14 @@ interactions:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMissing</Code><Message>There
         is currently a lease on the file share and no lease ID was specified in the
-        request.\nRequestId:83926f78-601a-001d-6eda-92d77e000000\nTime:2020-09-25T01:26:41.5639345Z</Message></Error>"
+        request.\nRequestId:32d77011-a01a-002d-49a0-9569b1000000\nTime:2020-09-28T14:07:53.3041789Z</Message></Error>"
     headers:
       content-length:
       - '273'
       content-type:
       - application/xml
       date:
-      - Fri, 25 Sep 2020 01:26:40 GMT
+      - Mon, 28 Sep 2020 14:07:52 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
@@ -1530,7 +1563,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 25 Sep 2020 01:26:42 GMT
+      - Mon, 28 Sep 2020 14:07:53 GMT
       x-ms-delete-snapshots:
       - include
       x-ms-version:
@@ -1541,14 +1574,14 @@ interactions:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMissing</Code><Message>There
         is currently a lease on the file share and no lease ID was specified in the
-        request.\nRequestId:83926f81-601a-001d-77da-92d77e000000\nTime:2020-09-25T01:26:41.6900231Z</Message></Error>"
+        request.\nRequestId:32d77012-a01a-002d-4aa0-9569b1000000\nTime:2020-09-28T14:07:53.4462806Z</Message></Error>"
     headers:
       content-length:
       - '273'
       content-type:
       - application/xml
       date:
-      - Fri, 25 Sep 2020 01:26:40 GMT
+      - Mon, 28 Sep 2020 14:07:52 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
@@ -1573,7 +1606,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 25 Sep 2020 01:26:42 GMT
+      - Mon, 28 Sep 2020 14:07:53 GMT
       x-ms-delete-snapshots:
       - include
       x-ms-version:
@@ -1584,14 +1617,14 @@ interactions:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMissing</Code><Message>There
         is currently a lease on the file share and no lease ID was specified in the
-        request.\nRequestId:83926f82-601a-001d-78da-92d77e000000\nTime:2020-09-25T01:26:41.8081070Z</Message></Error>"
+        request.\nRequestId:32d77013-a01a-002d-4ba0-9569b1000000\nTime:2020-09-28T14:07:53.5723697Z</Message></Error>"
     headers:
       content-length:
       - '273'
       content-type:
       - application/xml
       date:
-      - Fri, 25 Sep 2020 01:26:41 GMT
+      - Mon, 28 Sep 2020 14:07:52 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
@@ -1616,7 +1649,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 25 Sep 2020 01:26:42 GMT
+      - Mon, 28 Sep 2020 14:07:53 GMT
       x-ms-delete-snapshots:
       - include
       x-ms-version:
@@ -1627,14 +1660,14 @@ interactions:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMissing</Code><Message>There
         is currently a lease on the file share and no lease ID was specified in the
-        request.\nRequestId:83926f83-601a-001d-79da-92d77e000000\nTime:2020-09-25T01:26:41.9251901Z</Message></Error>"
+        request.\nRequestId:32d77015-a01a-002d-4ca0-9569b1000000\nTime:2020-09-28T14:07:53.7024620Z</Message></Error>"
     headers:
       content-length:
       - '273'
       content-type:
       - application/xml
       date:
-      - Fri, 25 Sep 2020 01:26:41 GMT
+      - Mon, 28 Sep 2020 14:07:52 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
@@ -1659,7 +1692,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 25 Sep 2020 01:26:42 GMT
+      - Mon, 28 Sep 2020 14:07:53 GMT
       x-ms-delete-snapshots:
       - include
       x-ms-version:
@@ -1670,14 +1703,14 @@ interactions:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMissing</Code><Message>There
         is currently a lease on the file share and no lease ID was specified in the
-        request.\nRequestId:83926f86-601a-001d-7bda-92d77e000000\nTime:2020-09-25T01:26:42.0522808Z</Message></Error>"
+        request.\nRequestId:32d77018-a01a-002d-4fa0-9569b1000000\nTime:2020-09-28T14:07:53.8335547Z</Message></Error>"
     headers:
       content-length:
       - '273'
       content-type:
       - application/xml
       date:
-      - Fri, 25 Sep 2020 01:26:41 GMT
+      - Mon, 28 Sep 2020 14:07:53 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
@@ -1702,7 +1735,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 25 Sep 2020 01:26:42 GMT
+      - Mon, 28 Sep 2020 14:07:53 GMT
       x-ms-delete-snapshots:
       - include
       x-ms-version:
@@ -1713,14 +1746,14 @@ interactions:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMissing</Code><Message>There
         is currently a lease on the file share and no lease ID was specified in the
-        request.\nRequestId:83926f87-601a-001d-7cda-92d77e000000\nTime:2020-09-25T01:26:42.1713654Z</Message></Error>"
+        request.\nRequestId:32d7701a-a01a-002d-51a0-9569b1000000\nTime:2020-09-28T14:07:53.9596442Z</Message></Error>"
     headers:
       content-length:
       - '273'
       content-type:
       - application/xml
       date:
-      - Fri, 25 Sep 2020 01:26:41 GMT
+      - Mon, 28 Sep 2020 14:07:53 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
@@ -1745,7 +1778,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 25 Sep 2020 01:26:42 GMT
+      - Mon, 28 Sep 2020 14:07:53 GMT
       x-ms-delete-snapshots:
       - include
       x-ms-version:
@@ -1756,14 +1789,14 @@ interactions:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMissing</Code><Message>There
         is currently a lease on the file share and no lease ID was specified in the
-        request.\nRequestId:83926f89-601a-001d-7eda-92d77e000000\nTime:2020-09-25T01:26:42.2884486Z</Message></Error>"
+        request.\nRequestId:32d7701b-a01a-002d-52a0-9569b1000000\nTime:2020-09-28T14:07:54.0847334Z</Message></Error>"
     headers:
       content-length:
       - '273'
       content-type:
       - application/xml
       date:
-      - Fri, 25 Sep 2020 01:26:41 GMT
+      - Mon, 28 Sep 2020 14:07:53 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
@@ -1788,7 +1821,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 25 Sep 2020 01:26:42 GMT
+      - Mon, 28 Sep 2020 14:07:54 GMT
       x-ms-delete-snapshots:
       - include
       x-ms-version:
@@ -1799,14 +1832,14 @@ interactions:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMissing</Code><Message>There
         is currently a lease on the file share and no lease ID was specified in the
-        request.\nRequestId:83926f8b-601a-001d-7fda-92d77e000000\nTime:2020-09-25T01:26:42.4145386Z</Message></Error>"
+        request.\nRequestId:32d7701c-a01a-002d-53a0-9569b1000000\nTime:2020-09-28T14:07:54.2098222Z</Message></Error>"
     headers:
       content-length:
       - '273'
       content-type:
       - application/xml
       date:
-      - Fri, 25 Sep 2020 01:26:41 GMT
+      - Mon, 28 Sep 2020 14:07:53 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
@@ -1831,7 +1864,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 25 Sep 2020 01:26:43 GMT
+      - Mon, 28 Sep 2020 14:07:54 GMT
       x-ms-delete-snapshots:
       - include
       x-ms-version:
@@ -1842,14 +1875,14 @@ interactions:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMissing</Code><Message>There
         is currently a lease on the file share and no lease ID was specified in the
-        request.\nRequestId:83926f8c-601a-001d-80da-92d77e000000\nTime:2020-09-25T01:26:42.5546376Z</Message></Error>"
+        request.\nRequestId:32d7701d-a01a-002d-54a0-9569b1000000\nTime:2020-09-28T14:07:54.3379127Z</Message></Error>"
     headers:
       content-length:
       - '273'
       content-type:
       - application/xml
       date:
-      - Fri, 25 Sep 2020 01:26:41 GMT
+      - Mon, 28 Sep 2020 14:07:53 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
@@ -1874,7 +1907,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 25 Sep 2020 01:26:43 GMT
+      - Mon, 28 Sep 2020 14:07:54 GMT
       x-ms-delete-snapshots:
       - include
       x-ms-version:
@@ -1885,14 +1918,14 @@ interactions:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMissing</Code><Message>There
         is currently a lease on the file share and no lease ID was specified in the
-        request.\nRequestId:83926f8d-601a-001d-01da-92d77e000000\nTime:2020-09-25T01:26:42.6987397Z</Message></Error>"
+        request.\nRequestId:32d7701e-a01a-002d-55a0-9569b1000000\nTime:2020-09-28T14:07:54.4620012Z</Message></Error>"
     headers:
       content-length:
       - '273'
       content-type:
       - application/xml
       date:
-      - Fri, 25 Sep 2020 01:26:42 GMT
+      - Mon, 28 Sep 2020 14:07:53 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
@@ -1917,7 +1950,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 25 Sep 2020 01:26:43 GMT
+      - Mon, 28 Sep 2020 14:07:54 GMT
       x-ms-delete-snapshots:
       - include
       x-ms-version:
@@ -1928,14 +1961,14 @@ interactions:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMissing</Code><Message>There
         is currently a lease on the file share and no lease ID was specified in the
-        request.\nRequestId:83926f8f-601a-001d-03da-92d77e000000\nTime:2020-09-25T01:26:42.8178235Z</Message></Error>"
+        request.\nRequestId:32d7701f-a01a-002d-56a0-9569b1000000\nTime:2020-09-28T14:07:54.5920935Z</Message></Error>"
     headers:
       content-length:
       - '273'
       content-type:
       - application/xml
       date:
-      - Fri, 25 Sep 2020 01:26:42 GMT
+      - Mon, 28 Sep 2020 14:07:53 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
@@ -1960,7 +1993,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 25 Sep 2020 01:26:43 GMT
+      - Mon, 28 Sep 2020 14:07:54 GMT
       x-ms-delete-snapshots:
       - include
       x-ms-version:
@@ -1971,14 +2004,14 @@ interactions:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMissing</Code><Message>There
         is currently a lease on the file share and no lease ID was specified in the
-        request.\nRequestId:83926f90-601a-001d-04da-92d77e000000\nTime:2020-09-25T01:26:42.9419109Z</Message></Error>"
+        request.\nRequestId:32d77020-a01a-002d-57a0-9569b1000000\nTime:2020-09-28T14:07:54.7221859Z</Message></Error>"
     headers:
       content-length:
       - '273'
       content-type:
       - application/xml
       date:
-      - Fri, 25 Sep 2020 01:26:42 GMT
+      - Mon, 28 Sep 2020 14:07:53 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
@@ -2003,7 +2036,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 25 Sep 2020 01:26:43 GMT
+      - Mon, 28 Sep 2020 14:07:54 GMT
       x-ms-delete-snapshots:
       - include
       x-ms-version:
@@ -2014,14 +2047,14 @@ interactions:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMissing</Code><Message>There
         is currently a lease on the file share and no lease ID was specified in the
-        request.\nRequestId:83926f91-601a-001d-05da-92d77e000000\nTime:2020-09-25T01:26:43.0589934Z</Message></Error>"
+        request.\nRequestId:32d77021-a01a-002d-58a0-9569b1000000\nTime:2020-09-28T14:07:54.8722920Z</Message></Error>"
     headers:
       content-length:
       - '273'
       content-type:
       - application/xml
       date:
-      - Fri, 25 Sep 2020 01:26:42 GMT
+      - Mon, 28 Sep 2020 14:07:54 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
@@ -2046,7 +2079,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 25 Sep 2020 01:26:43 GMT
+      - Mon, 28 Sep 2020 14:07:54 GMT
       x-ms-delete-snapshots:
       - include
       x-ms-version:
@@ -2057,14 +2090,14 @@ interactions:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMissing</Code><Message>There
         is currently a lease on the file share and no lease ID was specified in the
-        request.\nRequestId:83926f92-601a-001d-06da-92d77e000000\nTime:2020-09-25T01:26:43.1830808Z</Message></Error>"
+        request.\nRequestId:32d77022-a01a-002d-59a0-9569b1000000\nTime:2020-09-28T14:07:55.0013841Z</Message></Error>"
     headers:
       content-length:
       - '273'
       content-type:
       - application/xml
       date:
-      - Fri, 25 Sep 2020 01:26:42 GMT
+      - Mon, 28 Sep 2020 14:07:54 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
@@ -2089,7 +2122,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 25 Sep 2020 01:26:43 GMT
+      - Mon, 28 Sep 2020 14:07:55 GMT
       x-ms-delete-snapshots:
       - include
       x-ms-version:
@@ -2100,14 +2133,14 @@ interactions:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMissing</Code><Message>There
         is currently a lease on the file share and no lease ID was specified in the
-        request.\nRequestId:83926f96-601a-001d-09da-92d77e000000\nTime:2020-09-25T01:26:43.3021642Z</Message></Error>"
+        request.\nRequestId:32d77023-a01a-002d-5aa0-9569b1000000\nTime:2020-09-28T14:07:55.1364795Z</Message></Error>"
     headers:
       content-length:
       - '273'
       content-type:
       - application/xml
       date:
-      - Fri, 25 Sep 2020 01:26:42 GMT
+      - Mon, 28 Sep 2020 14:07:54 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
@@ -2132,7 +2165,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 25 Sep 2020 01:26:43 GMT
+      - Mon, 28 Sep 2020 14:07:55 GMT
       x-ms-delete-snapshots:
       - include
       x-ms-version:
@@ -2143,14 +2176,14 @@ interactions:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMissing</Code><Message>There
         is currently a lease on the file share and no lease ID was specified in the
-        request.\nRequestId:83926f97-601a-001d-0ada-92d77e000000\nTime:2020-09-25T01:26:43.4292537Z</Message></Error>"
+        request.\nRequestId:32d77026-a01a-002d-5ca0-9569b1000000\nTime:2020-09-28T14:07:55.2655716Z</Message></Error>"
     headers:
       content-length:
       - '273'
       content-type:
       - application/xml
       date:
-      - Fri, 25 Sep 2020 01:26:42 GMT
+      - Mon, 28 Sep 2020 14:07:54 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
@@ -2175,7 +2208,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 25 Sep 2020 01:26:44 GMT
+      - Mon, 28 Sep 2020 14:07:55 GMT
       x-ms-delete-snapshots:
       - include
       x-ms-version:
@@ -2186,14 +2219,14 @@ interactions:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMissing</Code><Message>There
         is currently a lease on the file share and no lease ID was specified in the
-        request.\nRequestId:83926f98-601a-001d-0bda-92d77e000000\nTime:2020-09-25T01:26:43.5463362Z</Message></Error>"
+        request.\nRequestId:32d77027-a01a-002d-5da0-9569b1000000\nTime:2020-09-28T14:07:55.3936625Z</Message></Error>"
     headers:
       content-length:
       - '273'
       content-type:
       - application/xml
       date:
-      - Fri, 25 Sep 2020 01:26:42 GMT
+      - Mon, 28 Sep 2020 14:07:54 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
@@ -2218,7 +2251,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 25 Sep 2020 01:26:44 GMT
+      - Mon, 28 Sep 2020 14:07:55 GMT
       x-ms-delete-snapshots:
       - include
       x-ms-version:
@@ -2229,14 +2262,14 @@ interactions:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMissing</Code><Message>There
         is currently a lease on the file share and no lease ID was specified in the
-        request.\nRequestId:83926f99-601a-001d-0cda-92d77e000000\nTime:2020-09-25T01:26:43.6634191Z</Message></Error>"
+        request.\nRequestId:32d77028-a01a-002d-5ea0-9569b1000000\nTime:2020-09-28T14:07:55.5257558Z</Message></Error>"
     headers:
       content-length:
       - '273'
       content-type:
       - application/xml
       date:
-      - Fri, 25 Sep 2020 01:26:42 GMT
+      - Mon, 28 Sep 2020 14:07:54 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
@@ -2261,7 +2294,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 25 Sep 2020 01:26:44 GMT
+      - Mon, 28 Sep 2020 14:07:55 GMT
       x-ms-delete-snapshots:
       - include
       x-ms-version:
@@ -2272,14 +2305,14 @@ interactions:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMissing</Code><Message>There
         is currently a lease on the file share and no lease ID was specified in the
-        request.\nRequestId:83926f9b-601a-001d-0eda-92d77e000000\nTime:2020-09-25T01:26:43.7925095Z</Message></Error>"
+        request.\nRequestId:32d7702a-a01a-002d-60a0-9569b1000000\nTime:2020-09-28T14:07:55.6588503Z</Message></Error>"
     headers:
       content-length:
       - '273'
       content-type:
       - application/xml
       date:
-      - Fri, 25 Sep 2020 01:26:43 GMT
+      - Mon, 28 Sep 2020 14:07:54 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
@@ -2304,7 +2337,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 25 Sep 2020 01:26:44 GMT
+      - Mon, 28 Sep 2020 14:07:55 GMT
       x-ms-delete-snapshots:
       - include
       x-ms-version:
@@ -2315,14 +2348,14 @@ interactions:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMissing</Code><Message>There
         is currently a lease on the file share and no lease ID was specified in the
-        request.\nRequestId:83926f9c-601a-001d-0fda-92d77e000000\nTime:2020-09-25T01:26:43.9105931Z</Message></Error>"
+        request.\nRequestId:32d7702b-a01a-002d-61a0-9569b1000000\nTime:2020-09-28T14:07:55.7909445Z</Message></Error>"
     headers:
       content-length:
       - '273'
       content-type:
       - application/xml
       date:
-      - Fri, 25 Sep 2020 01:26:43 GMT
+      - Mon, 28 Sep 2020 14:07:54 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
@@ -2347,7 +2380,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 25 Sep 2020 01:26:44 GMT
+      - Mon, 28 Sep 2020 14:07:55 GMT
       x-ms-delete-snapshots:
       - include
       x-ms-version:
@@ -2358,14 +2391,14 @@ interactions:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMissing</Code><Message>There
         is currently a lease on the file share and no lease ID was specified in the
-        request.\nRequestId:83926f9d-601a-001d-10da-92d77e000000\nTime:2020-09-25T01:26:44.0286759Z</Message></Error>"
+        request.\nRequestId:32d7702f-a01a-002d-64a0-9569b1000000\nTime:2020-09-28T14:07:55.9160329Z</Message></Error>"
     headers:
       content-length:
       - '273'
       content-type:
       - application/xml
       date:
-      - Fri, 25 Sep 2020 01:26:43 GMT
+      - Mon, 28 Sep 2020 14:07:55 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
@@ -2390,7 +2423,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 25 Sep 2020 01:26:44 GMT
+      - Mon, 28 Sep 2020 14:07:55 GMT
       x-ms-delete-snapshots:
       - include
       x-ms-version:
@@ -2401,14 +2434,14 @@ interactions:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMissing</Code><Message>There
         is currently a lease on the file share and no lease ID was specified in the
-        request.\nRequestId:83926f9f-601a-001d-12da-92d77e000000\nTime:2020-09-25T01:26:44.1497616Z</Message></Error>"
+        request.\nRequestId:32d77030-a01a-002d-65a0-9569b1000000\nTime:2020-09-28T14:07:56.0391207Z</Message></Error>"
     headers:
       content-length:
       - '273'
       content-type:
       - application/xml
       date:
-      - Fri, 25 Sep 2020 01:26:43 GMT
+      - Mon, 28 Sep 2020 14:07:55 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
@@ -2433,7 +2466,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 25 Sep 2020 01:26:44 GMT
+      - Mon, 28 Sep 2020 14:07:56 GMT
       x-ms-delete-snapshots:
       - include
       x-ms-version:
@@ -2444,14 +2477,14 @@ interactions:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMissing</Code><Message>There
         is currently a lease on the file share and no lease ID was specified in the
-        request.\nRequestId:83926fa0-601a-001d-13da-92d77e000000\nTime:2020-09-25T01:26:44.2668440Z</Message></Error>"
+        request.\nRequestId:32d77031-a01a-002d-66a0-9569b1000000\nTime:2020-09-28T14:07:56.1642090Z</Message></Error>"
     headers:
       content-length:
       - '273'
       content-type:
       - application/xml
       date:
-      - Fri, 25 Sep 2020 01:26:43 GMT
+      - Mon, 28 Sep 2020 14:07:55 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
@@ -2476,7 +2509,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 25 Sep 2020 01:26:44 GMT
+      - Mon, 28 Sep 2020 14:07:56 GMT
       x-ms-delete-snapshots:
       - include
       x-ms-version:
@@ -2487,14 +2520,14 @@ interactions:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMissing</Code><Message>There
         is currently a lease on the file share and no lease ID was specified in the
-        request.\nRequestId:83926fa1-601a-001d-14da-92d77e000000\nTime:2020-09-25T01:26:44.3859279Z</Message></Error>"
+        request.\nRequestId:32d77033-a01a-002d-67a0-9569b1000000\nTime:2020-09-28T14:07:56.2943018Z</Message></Error>"
     headers:
       content-length:
       - '273'
       content-type:
       - application/xml
       date:
-      - Fri, 25 Sep 2020 01:26:43 GMT
+      - Mon, 28 Sep 2020 14:07:55 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
@@ -2519,7 +2552,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 25 Sep 2020 01:26:45 GMT
+      - Mon, 28 Sep 2020 14:07:56 GMT
       x-ms-delete-snapshots:
       - include
       x-ms-version:
@@ -2530,14 +2563,14 @@ interactions:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMissing</Code><Message>There
         is currently a lease on the file share and no lease ID was specified in the
-        request.\nRequestId:83926fa2-601a-001d-15da-92d77e000000\nTime:2020-09-25T01:26:44.5040106Z</Message></Error>"
+        request.\nRequestId:32d77035-a01a-002d-69a0-9569b1000000\nTime:2020-09-28T14:07:56.4283966Z</Message></Error>"
     headers:
       content-length:
       - '273'
       content-type:
       - application/xml
       date:
-      - Fri, 25 Sep 2020 01:26:43 GMT
+      - Mon, 28 Sep 2020 14:07:55 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
@@ -2548,4 +2581,904 @@ interactions:
       code: 412
       message: There is currently a lease on the file share and no lease ID was specified
         in the request.
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Mon, 28 Sep 2020 14:07:56 GMT
+      x-ms-delete-snapshots:
+      - include
+      x-ms-version:
+      - '2020-02-10'
+    method: DELETE
+    uri: https://storagename.file.core.windows.net/testshare1ba3e12f1?restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Mon, 28 Sep 2020 14:07:55 GMT
+      server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version:
+      - '2020-02-10'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Mon, 28 Sep 2020 14:07:56 GMT
+      x-ms-delete-snapshots:
+      - include
+      x-ms-version:
+      - '2020-02-10'
+    method: DELETE
+    uri: https://storagename.file.core.windows.net/testshare1ba3e12f1?restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Mon, 28 Sep 2020 14:07:55 GMT
+      server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version:
+      - '2020-02-10'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Mon, 28 Sep 2020 14:07:56 GMT
+      x-ms-delete-snapshots:
+      - include
+      x-ms-version:
+      - '2020-02-10'
+    method: DELETE
+    uri: https://storagename.file.core.windows.net/utshare1cf914ce?restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Mon, 28 Sep 2020 14:07:55 GMT
+      server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version:
+      - '2020-02-10'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Mon, 28 Sep 2020 14:07:56 GMT
+      x-ms-delete-snapshots:
+      - include
+      x-ms-version:
+      - '2020-02-10'
+    method: DELETE
+    uri: https://storagename.file.core.windows.net/utshare20670f1d?restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Mon, 28 Sep 2020 14:07:56 GMT
+      server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version:
+      - '2020-02-10'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Mon, 28 Sep 2020 14:07:56 GMT
+      x-ms-delete-snapshots:
+      - include
+      x-ms-version:
+      - '2020-02-10'
+    method: DELETE
+    uri: https://storagename.file.core.windows.net/utshare20670f1d?restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Mon, 28 Sep 2020 14:07:56 GMT
+      server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version:
+      - '2020-02-10'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Mon, 28 Sep 2020 14:07:57 GMT
+      x-ms-delete-snapshots:
+      - include
+      x-ms-version:
+      - '2020-02-10'
+    method: DELETE
+    uri: https://storagename.file.core.windows.net/utshare20670f1d?restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Mon, 28 Sep 2020 14:07:56 GMT
+      server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version:
+      - '2020-02-10'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Mon, 28 Sep 2020 14:07:57 GMT
+      x-ms-delete-snapshots:
+      - include
+      x-ms-version:
+      - '2020-02-10'
+    method: DELETE
+    uri: https://storagename.file.core.windows.net/utshare325d1544?restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Mon, 28 Sep 2020 14:07:56 GMT
+      server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version:
+      - '2020-02-10'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Mon, 28 Sep 2020 14:07:57 GMT
+      x-ms-delete-snapshots:
+      - include
+      x-ms-version:
+      - '2020-02-10'
+    method: DELETE
+    uri: https://storagename.file.core.windows.net/utshare4ee91033?restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Mon, 28 Sep 2020 14:07:56 GMT
+      server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version:
+      - '2020-02-10'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Mon, 28 Sep 2020 14:07:57 GMT
+      x-ms-delete-snapshots:
+      - include
+      x-ms-version:
+      - '2020-02-10'
+    method: DELETE
+    uri: https://storagename.file.core.windows.net/utshare539b1a3e?restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Mon, 28 Sep 2020 14:07:56 GMT
+      server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version:
+      - '2020-02-10'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Mon, 28 Sep 2020 14:07:57 GMT
+      x-ms-delete-snapshots:
+      - include
+      x-ms-version:
+      - '2020-02-10'
+    method: DELETE
+    uri: https://storagename.file.core.windows.net/utshare5db41615?restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Mon, 28 Sep 2020 14:07:56 GMT
+      server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version:
+      - '2020-02-10'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Mon, 28 Sep 2020 14:07:57 GMT
+      x-ms-delete-snapshots:
+      - include
+      x-ms-version:
+      - '2020-02-10'
+    method: DELETE
+    uri: https://storagename.file.core.windows.net/utshare5db41615?restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Mon, 28 Sep 2020 14:07:56 GMT
+      server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version:
+      - '2020-02-10'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Mon, 28 Sep 2020 14:07:57 GMT
+      x-ms-delete-snapshots:
+      - include
+      x-ms-version:
+      - '2020-02-10'
+    method: DELETE
+    uri: https://storagename.file.core.windows.net/utshare5ed210c0?restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Mon, 28 Sep 2020 14:07:57 GMT
+      server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version:
+      - '2020-02-10'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Mon, 28 Sep 2020 14:07:57 GMT
+      x-ms-delete-snapshots:
+      - include
+      x-ms-version:
+      - '2020-02-10'
+    method: DELETE
+    uri: https://storagename.file.core.windows.net/utshare6e4e111b?restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Mon, 28 Sep 2020 14:07:57 GMT
+      server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version:
+      - '2020-02-10'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Mon, 28 Sep 2020 14:07:58 GMT
+      x-ms-delete-snapshots:
+      - include
+      x-ms-version:
+      - '2020-02-10'
+    method: DELETE
+    uri: https://storagename.file.core.windows.net/utshare6e4e111b?restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Mon, 28 Sep 2020 14:07:57 GMT
+      server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version:
+      - '2020-02-10'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Mon, 28 Sep 2020 14:07:58 GMT
+      x-ms-delete-snapshots:
+      - include
+      x-ms-version:
+      - '2020-02-10'
+    method: DELETE
+    uri: https://storagename.file.core.windows.net/utshare847d11b1?restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Mon, 28 Sep 2020 14:07:57 GMT
+      server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version:
+      - '2020-02-10'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Mon, 28 Sep 2020 14:07:58 GMT
+      x-ms-delete-snapshots:
+      - include
+      x-ms-version:
+      - '2020-02-10'
+    method: DELETE
+    uri: https://storagename.file.core.windows.net/utshare8e3816ef?restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Mon, 28 Sep 2020 14:07:57 GMT
+      server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version:
+      - '2020-02-10'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Mon, 28 Sep 2020 14:07:58 GMT
+      x-ms-delete-snapshots:
+      - include
+      x-ms-version:
+      - '2020-02-10'
+    method: DELETE
+    uri: https://storagename.file.core.windows.net/utsharea5a50b39?restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Mon, 28 Sep 2020 14:07:57 GMT
+      server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version:
+      - '2020-02-10'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Mon, 28 Sep 2020 14:07:58 GMT
+      x-ms-delete-snapshots:
+      - include
+      x-ms-version:
+      - '2020-02-10'
+    method: DELETE
+    uri: https://storagename.file.core.windows.net/utsharea82c1793?restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Mon, 28 Sep 2020 14:07:57 GMT
+      server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version:
+      - '2020-02-10'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Mon, 28 Sep 2020 14:07:58 GMT
+      x-ms-delete-snapshots:
+      - include
+      x-ms-version:
+      - '2020-02-10'
+    method: DELETE
+    uri: https://storagename.file.core.windows.net/utsharea82c1793?restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Mon, 28 Sep 2020 14:07:58 GMT
+      server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version:
+      - '2020-02-10'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Mon, 28 Sep 2020 14:07:58 GMT
+      x-ms-delete-snapshots:
+      - include
+      x-ms-version:
+      - '2020-02-10'
+    method: DELETE
+    uri: https://storagename.file.core.windows.net/utsharea85b1299?restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Mon, 28 Sep 2020 14:07:58 GMT
+      server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version:
+      - '2020-02-10'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Mon, 28 Sep 2020 14:07:59 GMT
+      x-ms-delete-snapshots:
+      - include
+      x-ms-version:
+      - '2020-02-10'
+    method: DELETE
+    uri: https://storagename.file.core.windows.net/utsharea85b1299?restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Mon, 28 Sep 2020 14:07:58 GMT
+      server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version:
+      - '2020-02-10'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Mon, 28 Sep 2020 14:07:59 GMT
+      x-ms-delete-snapshots:
+      - include
+      x-ms-version:
+      - '2020-02-10'
+    method: DELETE
+    uri: https://storagename.file.core.windows.net/utshareca850ca0?restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Mon, 28 Sep 2020 14:07:58 GMT
+      server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version:
+      - '2020-02-10'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Mon, 28 Sep 2020 14:07:59 GMT
+      x-ms-delete-snapshots:
+      - include
+      x-ms-version:
+      - '2020-02-10'
+    method: DELETE
+    uri: https://storagename.file.core.windows.net/utshareca850ca0?restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Mon, 28 Sep 2020 14:07:58 GMT
+      server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version:
+      - '2020-02-10'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Mon, 28 Sep 2020 14:07:59 GMT
+      x-ms-delete-snapshots:
+      - include
+      x-ms-version:
+      - '2020-02-10'
+    method: DELETE
+    uri: https://storagename.file.core.windows.net/utshareca850ca0?restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Mon, 28 Sep 2020 14:07:58 GMT
+      server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version:
+      - '2020-02-10'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Mon, 28 Sep 2020 14:07:59 GMT
+      x-ms-delete-snapshots:
+      - include
+      x-ms-version:
+      - '2020-02-10'
+    method: DELETE
+    uri: https://storagename.file.core.windows.net/utsharecd87133d?restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Mon, 28 Sep 2020 14:07:58 GMT
+      server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version:
+      - '2020-02-10'
+    status:
+      code: 202
+      message: Accepted
 version: 1

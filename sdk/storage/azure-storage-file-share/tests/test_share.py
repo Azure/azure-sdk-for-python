@@ -196,7 +196,7 @@ class StorageShareTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_acquire_lease_on_sharesnapshot(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
-        share = self._get_share_reference()
+        share = self._get_share_reference("testshare1")
 
         # Act
         share.create_share()
@@ -212,10 +212,13 @@ class StorageShareTest(StorageTestCase):
         share_lease = share.acquire_lease()
         share_snapshot_lease = snapshot_client.acquire_lease()
 
-        share.get_share_properties()
-        snapshot_client.get_share_properties()
-
         # Assert
+        with self.assertRaises(HttpResponseError):
+            share.get_share_properties(lease=share_snapshot_lease)
+
+        with self.assertRaises(HttpResponseError):
+            snapshot_client.get_share_properties(lease=share_lease)
+
         self.assertIsNotNone(snapshot['snapshot'])
         self.assertIsNotNone(snapshot['etag'])
         self.assertIsNotNone(snapshot['last_modified'])
@@ -402,7 +405,8 @@ class StorageShareTest(StorageTestCase):
         share_client = self._create_share('test')
         lease = share_client.acquire_lease(lease_duration=15)
 
-        with self.assertRaises(ValueError):
+        # Assert
+        with self.assertRaises(HttpResponseError):
             share_client.delete_share()
 
         # Act

@@ -231,10 +231,13 @@ class StorageShareTest(AsyncStorageTestCase):
         share_lease = await share.acquire_lease()
         share_snapshot_lease = await snapshot_client.acquire_lease()
 
-        await share.get_share_properties()
-        await snapshot_client.get_share_properties()
-
         # Assert
+        with self.assertRaises(HttpResponseError):
+            await share.get_share_properties(lease=share_snapshot_lease)
+
+        with self.assertRaises(HttpResponseError):
+            await snapshot_client.get_share_properties(lease=share_lease)
+
         self.assertIsNotNone(snapshot['snapshot'])
         self.assertIsNotNone(snapshot['etag'])
         self.assertIsNotNone(snapshot['last_modified'])
@@ -434,6 +437,10 @@ class StorageShareTest(AsyncStorageTestCase):
         self._setup(storage_account, storage_account_key)
         share_client = await self._create_share('test')
         lease = await share_client.acquire_lease(lease_duration=15)
+
+        # Assert
+        with self.assertRaises(HttpResponseError):
+            await share_client.delete_share()
 
         # Act
         deleted = await share_client.delete_share(lease=lease)
