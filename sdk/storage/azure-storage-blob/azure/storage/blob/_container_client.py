@@ -883,7 +883,7 @@ class ContainerClient(StorageAccountHostsMixin):
 
             .. versionadded:: 12.4.0
             This keyword argument was introduced in API version '2019-12-12'.
-            
+
         :keyword lease:
             Required if the blob has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
