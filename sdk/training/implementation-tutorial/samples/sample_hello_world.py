@@ -13,7 +13,7 @@ from azure.appconfiguration import AppConfigurationClient
 from azure.core.exceptions import ResourceNotFoundError
 
 def main():
-    connection_string = os.environment.get('APP_CONFIG_CONN_STR')
+    connection_string = os.environ.get('APP_CONFIG_CONN_STR')
     client = AppConfigurationClient.from_connection_string(connection_string)
 
     try:

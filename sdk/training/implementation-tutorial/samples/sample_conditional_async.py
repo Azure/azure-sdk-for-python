@@ -16,7 +16,7 @@ from azure.core import MatchConditions
 
 
 async def main():
-    connection_string = os.environment.get('APP_CONFIG_CONN_STR')
+    connection_string = os.environ.get('APP_CONFIG_CONN_STR')
     client = AppConfigurationClient.from_connection_string(connection_string)
 
     # Retrieve initial color value
