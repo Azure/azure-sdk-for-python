@@ -1,0 +1,38 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-metricsadvisor/1.0.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds?dataFeedName=testDataFeed1
+  response:
+    body:
+      string: '{"value":[{"dataFeedId":"data_feed_id","dataFeedName":"testDataFeed1","metrics":[{"metricId":"metric_id","metricName":"Metric1","metricDisplayName":"Metric1","metricDescription":""},{"metricId":"6b593f73-345c-40eb-a15c-7ec1fc73b028","metricName":"Metric2","metricDisplayName":"Metric2","metricDescription":""}],"dimension":[{"dimensionName":"Dim1","dimensionDisplayName":"Dim1"},{"dimensionName":"Dim2","dimensionDisplayName":"Dim2"}],"dataStartFrom":"2020-08-09T00:00:00Z","dataSourceType":"AzureBlob","timestampColumn":"Timestamp","startOffsetInSeconds":0,"maxQueryPerMinute":30.0,"granularityName":"Daily","granularityAmount":null,"allUpIdentification":null,"needRollup":"NoRollup","fillMissingPointType":"SmartFilling","fillMissingPointValue":0.0,"rollUpMethod":"None","rollUpColumns":[],"dataFeedDescription":"","stopRetryAfterInSeconds":-1,"minRetryIntervalInSeconds":-1,"maxConcurrency":-1,"viewMode":"Private","admins":["anuchan@microsoft.com","xiangyan@microsoft.com","krpratic@microsoft.com","mayurid@microsoft.com","savaity@microsoft.com","yumeng@microsoft.com","camaiaor@microsoft.com","kaghiya@microsoft.com","johanste@microsoft.com","kaolsze@microsoft.com","chriss@microsoft.com"],"viewers":[],"creator":"savaity@microsoft.com","status":"Active","createdTime":"2020-09-12T00:43:30Z","isAdmin":true,"actionLinkTemplate":"","dataSourceParameter":{"container":"adsample","connectionString":"connectionstring","blobTemplate":"%Y/%m/%d/%h/JsonFormatV2.json","jsonFormatVersion":"V2"}}],"@nextLink":null}'
+    headers:
+      apim-request-id:
+      - bbf5e272-5515-4bfb-ad39-c0abad6155ff
+      content-length:
+      - '1933'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 22 Sep 2020 01:43:57 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '693'
+      x-request-id:
+      - bbf5e272-5515-4bfb-ad39-c0abad6155ff
+    status:
+      code: 200
+      message: OK
+version: 1

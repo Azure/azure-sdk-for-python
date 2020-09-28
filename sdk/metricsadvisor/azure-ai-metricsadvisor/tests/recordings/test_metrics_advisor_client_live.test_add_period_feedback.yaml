@@ -1,0 +1,44 @@
+interactions:
+- request:
+    body: '{"feedbackType": "Comment", "metricId": "metric_id", "dimensionFilter":
+      {"dimension": {"dimension_name": "Common Lime"}}, "value": {"periodType": "AssignValue",
+      "periodValue": 2}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '196'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-metricsadvisor/1.0.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/feedback/metric
+  response:
+    body:
+      string: ''
+    headers:
+      apim-request-id:
+      - 741abfc4-0329-4b18-8d8e-86f115ab09d5
+      content-length:
+      - '0'
+      date:
+      - Tue, 22 Sep 2020 20:31:30 GMT
+      location:
+      - https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/feedback/metric/a5bc8268-cc9f-4cdb-82b4-a75acc465774
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '356'
+      x-request-id:
+      - 741abfc4-0329-4b18-8d8e-86f115ab09d5
+    status:
+      code: 201
+      message: Created
+version: 1

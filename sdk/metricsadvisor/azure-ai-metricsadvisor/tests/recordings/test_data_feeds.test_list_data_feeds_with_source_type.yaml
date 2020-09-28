@@ -1,0 +1,40 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-metricsadvisor/1.0.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds?dataSourceType=AzureBlob
+  response:
+    body:
+      string: '{"value":[{"dataFeedId":"cf291ce6-ea8e-409b-b17d-bed01cc57dc0","dataFeedName":"updated
+        name","metrics":[{"metricId":"af6224d9-cbd2-43ac-914b-0d9cc5a6132e","metricName":"cost","metricDisplayName":"cost","metricDescription":""},{"metricId":"b4a6347b-0696-4541-954d-4fb0a307acfb","metricName":"revenue","metricDisplayName":"revenue","metricDescription":""}],"dimension":[{"dimensionName":"category","dimensionDisplayName":"category"},{"dimensionName":"city","dimensionDisplayName":"city"}],"dataStartFrom":"2019-01-02T00:00:00Z","dataSourceType":"AzureBlob","timestampColumn":"timestamp","startOffsetInSeconds":0,"maxQueryPerMinute":30.0,"granularityName":"Daily","granularityAmount":null,"allUpIdentification":null,"needRollup":"NoRollup","fillMissingPointType":"SmartFilling","fillMissingPointValue":0.0,"rollUpMethod":"None","rollUpColumns":[],"dataFeedDescription":"updated
+        description","stopRetryAfterInSeconds":-1,"minRetryIntervalInSeconds":-1,"maxConcurrency":-1,"viewMode":"Private","admins":["krpratic@microsoft.com"],"viewers":["krpratic@microsoft.com"],"creator":"krpratic@microsoft.com","status":"Active","createdTime":"2020-09-16T19:36:50Z","isAdmin":true,"actionLinkTemplate":"","dataSourceParameter":{"container":"adsample","connectionString":"no","blobTemplate":"%Y/%m/%d/%h/JsonFormatV2.json"}},{"dataFeedId":"data_feed_id","dataFeedName":"testDataFeed1","metrics":[{"metricId":"metric_id","metricName":"Metric1","metricDisplayName":"Metric1","metricDescription":""},{"metricId":"6b593f73-345c-40eb-a15c-7ec1fc73b028","metricName":"Metric2","metricDisplayName":"Metric2","metricDescription":""}],"dimension":[{"dimensionName":"Dim1","dimensionDisplayName":"Dim1"},{"dimensionName":"Dim2","dimensionDisplayName":"Dim2"}],"dataStartFrom":"2020-08-09T00:00:00Z","dataSourceType":"AzureBlob","timestampColumn":"Timestamp","startOffsetInSeconds":0,"maxQueryPerMinute":30.0,"granularityName":"Daily","granularityAmount":null,"allUpIdentification":null,"needRollup":"NoRollup","fillMissingPointType":"SmartFilling","fillMissingPointValue":0.0,"rollUpMethod":"None","rollUpColumns":[],"dataFeedDescription":"","stopRetryAfterInSeconds":-1,"minRetryIntervalInSeconds":-1,"maxConcurrency":-1,"viewMode":"Private","admins":["anuchan@microsoft.com","xiangyan@microsoft.com","krpratic@microsoft.com","mayurid@microsoft.com","savaity@microsoft.com","yumeng@microsoft.com","camaiaor@microsoft.com","kaghiya@microsoft.com","johanste@microsoft.com","kaolsze@microsoft.com","chriss@microsoft.com"],"viewers":[],"creator":"savaity@microsoft.com","status":"Active","createdTime":"2020-09-12T00:43:30Z","isAdmin":true,"actionLinkTemplate":"","dataSourceParameter":{"container":"adsample","connectionString":"connectionstring","blobTemplate":"%Y/%m/%d/%h/JsonFormatV2.json","jsonFormatVersion":"V2"}}],"@nextLink":null}'
+    headers:
+      apim-request-id:
+      - 197bf079-7b3e-4410-b270-ffa87012f7fe
+      content-length:
+      - '3233'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 22 Sep 2020 01:44:02 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '1166'
+      x-request-id:
+      - 197bf079-7b3e-4410-b270-ffa87012f7fe
+    status:
+      code: 200
+      message: OK
+version: 1
