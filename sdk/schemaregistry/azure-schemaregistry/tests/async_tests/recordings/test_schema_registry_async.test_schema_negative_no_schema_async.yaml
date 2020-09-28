@@ -3,49 +3,49 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - text/plain; charset=utf-8
       User-Agent:
-      - azsdk-python-azureschemaregistry/1.0.0b1 Python/3.7.7 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azureschemaregistry/1.0.0b2 Python/3.7.7 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://sr-playground.servicebus.windows.net/$schemagroups/getSchemaById/a?api-version=2017-04
+    uri: https://sr-playground.servicebus.windows.net/$schemagroups/getSchemaById/a?api-version=2020-09-01-preview
   response:
     body:
-      string: <Error><Code>400</Code><Detail>SubCode=40000, UnknownType:The request
-        is invalid. [MGResponseHttpError=BadRequest]. TrackingId:67733d61-7b5b-4e51-9b06-72a6afba9bdf_G1,
-        SystemTracker:sr-playground.servicebus.windows.net:$schemagroups/getSchemaById/a,
-        Timestamp:2020-09-04T22:07:32</Detail></Error>
+      string: '{"Code":400,"Detail":"SubCode=40000, UnknownType:The request is invalid.
+        [MGResponseHttpError=BadRequest]. TrackingId:6851fe0c-0b09-4782-9c97-2096985a3793_G2,
+        SystemTracker:sr-playground.servicebus.windows.net:$schemagroups\/getSchemaById\/a,
+        Timestamp:2020-09-28T23:18:07"}'
     headers:
-      content-type: application/xml; charset=utf-8
-      date: Fri, 04 Sep 2020 22:07:32 GMT
+      content-type: application/json
+      date: Mon, 28 Sep 2020 23:18:07 GMT
       server: Microsoft-HTTPAPI/2.0
       strict-transport-security: max-age=31536000
       transfer-encoding: chunked
     status:
       code: 400
       message: Bad Request
-    url: https://sr-playground.servicebus.windows.net/$schemagroups/getSchemaById/a?api-version=2017-04
+    url: https://sr-playground.servicebus.windows.net/$schemagroups/getSchemaById/a?api-version=2020-09-01-preview
 - request:
     body: null
     headers:
       Accept:
-      - application/json
+      - text/plain; charset=utf-8
       User-Agent:
-      - azsdk-python-azureschemaregistry/1.0.0b1 Python/3.7.7 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azureschemaregistry/1.0.0b2 Python/3.7.7 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://sr-playground.servicebus.windows.net/$schemagroups/getSchemaById/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa?api-version=2017-04
+    uri: https://sr-playground.servicebus.windows.net/$schemagroups/getSchemaById/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa?api-version=2020-09-01-preview
   response:
     body:
-      string: <Error><Code>404</Code><Detail>Schema id aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-        does not exist. TrackingId:17234c8c-2982-4d72-b05d-28df0d550d73_G1, SystemTracker:sr-playground.servicebus.windows.net:$schemagroups/getSchemaById/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa,
-        Timestamp:2020-09-04T22:07:33</Detail></Error>
+      string: '{"Code":404,"Detail":"Schema id aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa does
+        not exist. TrackingId:1ab914de-3fcc-44b7-a2cf-987bd2de0744_G2, SystemTracker:sr-playground.servicebus.windows.net:$schemagroups\/getSchemaById\/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa,
+        Timestamp:2020-09-28T23:18:07"}'
     headers:
-      content-type: application/xml; charset=utf-8
-      date: Fri, 04 Sep 2020 22:07:32 GMT
+      content-type: application/json
+      date: Mon, 28 Sep 2020 23:18:07 GMT
       server: Microsoft-HTTPAPI/2.0
       strict-transport-security: max-age=31536000
       transfer-encoding: chunked
     status:
       code: 404
       message: Not Found
-    url: https://sr-playground.servicebus.windows.net/$schemagroups/getSchemaById/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa?api-version=2017-04
+    url: https://sr-playground.servicebus.windows.net/$schemagroups/getSchemaById/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa?api-version=2020-09-01-preview
 version: 1

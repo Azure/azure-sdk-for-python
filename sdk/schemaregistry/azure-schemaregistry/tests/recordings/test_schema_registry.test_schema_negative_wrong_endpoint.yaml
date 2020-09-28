@@ -28,13 +28,13 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 28 Sep 2020 23:17:51 GMT
+      - Mon, 28 Sep 2020 23:17:54 GMT
       p3p:
       - CP="DSP CUR OTPi IND OTRi ONL FIN"
       set-cookie:
-      - fpc=ArAJMFudbRBKrr1qd8T67Zc; expires=Wed, 28-Oct-2020 23:17:52 GMT; path=/;
+      - fpc=Ap8dx27gTIlEoMFAdXE2t4o; expires=Wed, 28-Oct-2020 23:17:54 GMT; path=/;
         secure; HttpOnly; SameSite=None
-      - esctx=AQABAAAAAAB2UyzwtQEKR7-rWbgdcBZIX1W9OZoEBEKDJwgrKUrcH7gDmwpwffo-SUwxJ93GGGUmhbC-YWU_6V6eTsY4R8YMS-gyWdk-o7YgY-PxJ4IFQ37EJiFglQtGiB0wdRN7kBKGat4kMMl9gYTaLMNAUB2yrV0spwCl2UcER20FU75AapKDR-Ns64GZ5dtSafT4Qq4gAA;
+      - esctx=AQABAAAAAAB2UyzwtQEKR7-rWbgdcBZI0o7tbff9VqUnI4fX4Gn3qWZmoMRPjtSHOC00M-Yynxh16x1Th4dOoKDLpYMS5sfmsSuu-9M-EWfSe5a4lp443JsRBRpeQ9GHJ6MWSGTT2HsrgalE946NDN2wtYqR-9ylnpPwNTmvBS6lu7u5a97NTZHUJSKm4deyPrO7M0snHTEgAA;
         domain=.login.microsoftonline.com; path=/; secure; HttpOnly; SameSite=None
       - x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly
       - stsservicecookie=estsfd; path=/; secure; samesite=none; httponly
@@ -57,8 +57,8 @@ interactions:
       Connection:
       - keep-alive
       Cookie:
-      - esctx=AQABAAAAAAB2UyzwtQEKR7-rWbgdcBZIX1W9OZoEBEKDJwgrKUrcH7gDmwpwffo-SUwxJ93GGGUmhbC-YWU_6V6eTsY4R8YMS-gyWdk-o7YgY-PxJ4IFQ37EJiFglQtGiB0wdRN7kBKGat4kMMl9gYTaLMNAUB2yrV0spwCl2UcER20FU75AapKDR-Ns64GZ5dtSafT4Qq4gAA;
-        fpc=ArAJMFudbRBKrr1qd8T67Zc; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd
+      - esctx=AQABAAAAAAB2UyzwtQEKR7-rWbgdcBZI0o7tbff9VqUnI4fX4Gn3qWZmoMRPjtSHOC00M-Yynxh16x1Th4dOoKDLpYMS5sfmsSuu-9M-EWfSe5a4lp443JsRBRpeQ9GHJ6MWSGTT2HsrgalE946NDN2wtYqR-9ylnpPwNTmvBS6lu7u5a97NTZHUJSKm4deyPrO7M0snHTEgAA;
+        fpc=Ap8dx27gTIlEoMFAdXE2t4o; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd
       User-Agent:
       - azsdk-python-identity/1.5.0b2 Python/3.7.7 (Windows-10-10.0.19041-SP0)
     method: GET
@@ -78,7 +78,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 28 Sep 2020 23:17:51 GMT
+      - Mon, 28 Sep 2020 23:17:54 GMT
       nel:
       - '{"report_to":"network-errors","max_age":86400,"success_fraction":0.001,"failure_fraction":1.0}'
       p3p:
@@ -86,7 +86,7 @@ interactions:
       report-to:
       - '{"group":"network-errors","max_age":86400,"endpoints":[{"url":"https://ffde.nelreports.net/api/report?cat=estscorp+wst"}]}'
       set-cookie:
-      - fpc=ArAJMFudbRBKrr1qd8T67Zc; expires=Wed, 28-Oct-2020 23:17:52 GMT; path=/;
+      - fpc=Ap8dx27gTIlEoMFAdXE2t4o; expires=Wed, 28-Oct-2020 23:17:54 GMT; path=/;
         secure; HttpOnly; SameSite=None
       - x-ms-gateway-slice=corp; path=/; secure; samesite=none; httponly
       - stsservicecookie=estsfd; path=/; secure; samesite=none; httponly
@@ -99,69 +99,4 @@ interactions:
     status:
       code: 200
       message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - text/plain; charset=utf-8
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-azureschemaregistry/1.0.0b2 Python/3.7.7 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://sr-playground.servicebus.windows.net/$schemagroups/getSchemaById/a?api-version=2020-09-01-preview
-  response:
-    body:
-      string: '{"Code":400,"Detail":"SubCode=40000, UnknownType:The request is invalid.
-        [MGResponseHttpError=BadRequest]. TrackingId:e5c3caec-e880-41f8-89af-75ffde9bbc1e_G3,
-        SystemTracker:sr-playground.servicebus.windows.net:$schemagroups\/getSchemaById\/a,
-        Timestamp:2020-09-28T23:17:53"}'
-    headers:
-      content-type:
-      - application/json
-      date:
-      - Mon, 28 Sep 2020 23:17:53 GMT
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000
-      transfer-encoding:
-      - chunked
-    status:
-      code: 400
-      message: Bad Request
-- request:
-    body: null
-    headers:
-      Accept:
-      - text/plain; charset=utf-8
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-azureschemaregistry/1.0.0b2 Python/3.7.7 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://sr-playground.servicebus.windows.net/$schemagroups/getSchemaById/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa?api-version=2020-09-01-preview
-  response:
-    body:
-      string: '{"Code":404,"Detail":"Schema id aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa does
-        not exist. TrackingId:d3025fe0-b028-4ec2-9d8c-2b63ccc3680c_G3, SystemTracker:sr-playground.servicebus.windows.net:$schemagroups\/getSchemaById\/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa,
-        Timestamp:2020-09-28T23:17:54"}'
-    headers:
-      content-type:
-      - application/json
-      date:
-      - Mon, 28 Sep 2020 23:17:53 GMT
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000
-      transfer-encoding:
-      - chunked
-    status:
-      code: 404
-      message: Not Found
 version: 1

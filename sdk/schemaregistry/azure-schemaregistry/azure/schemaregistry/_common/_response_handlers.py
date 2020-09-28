@@ -52,5 +52,5 @@ def _parse_response_schema(pipeline_response, deserialized, response_headers):  
     :param response_headers:
     :return:
     """
-
-    return Schema(schema_content=deserialized, schema_properties=SchemaProperties(**response_headers))
+    schema_content = pipeline_response.http_response.text('utf-8-sig')
+    return Schema(schema_content=schema_content, schema_properties=SchemaProperties(**response_headers))
