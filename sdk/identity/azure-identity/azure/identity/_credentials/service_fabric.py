@@ -67,8 +67,8 @@ def _get_client_args(**kwargs):
     )
 
 
-def _get_request(url, version, scope, identity_config):
-    # type: (str, str, str, dict) -> HttpRequest
+def _get_request(url, version, scope):
+    # type: (str, str, str) -> HttpRequest
     request = HttpRequest("GET", url)
-    request.format_parameters(dict({"api-version": version, "resource": scope}, **identity_config))
+    request.format_parameters({"api-version": version, "resource": scope})
     return request
