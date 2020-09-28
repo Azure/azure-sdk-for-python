@@ -99,6 +99,7 @@ As of August 2020 the features below are **not yet supported**.
 * Create User
 * Create Geospatial Index
 * Provision Autoscale DBs or containers
+* Cross-partition ORDER BY for mixed types 
 
 ## Bulk processing limitation workaround
 
