@@ -34,9 +34,9 @@ AZURE_STORAGE_CONNECTION_STRING = 'DefaultEndpointsProtocol=https;AccountName=st
 # https://github.com/Azure/azure-sdk-for-python/wiki/Contributing-to-the-tests
 
 def get_azure_core_credentials(**kwargs):
-    from azure.identity import (
-        ClientSecretCredential
-    )
+    # from azure.identity import (
+    #     ClientSecretCredential
+    # )
     # return ClientSecretCredential(
     #     client_id = '<AAD App client id>',
     #     client_secret = '<secret for the aad app>',
