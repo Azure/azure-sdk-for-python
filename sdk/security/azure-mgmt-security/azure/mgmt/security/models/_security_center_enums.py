@@ -26,14 +26,6 @@ class PricingTier(str, Enum):
     standard = "Standard"  #: Get the standard Azure security center experience with advanced security features
 
 
-class ReportedSeverity(str, Enum):
-
-    informational = "Informational"
-    low = "Low"
-    medium = "Medium"
-    high = "High"
-
-
 class ValueType(str, Enum):
 
     ip_cidr = "IpCidr"  #: An IP range in CIDR format (e.g. '192.168.0.1/8').
@@ -88,6 +80,53 @@ class UnmaskedIpLoggingStatus(str, Enum):
     enabled = "Enabled"  #: Unmasked IP logging is enabled
 
 
+class ReportedSeverity(str, Enum):
+
+    informational = "Informational"
+    low = "Low"
+    medium = "Medium"
+    high = "High"
+
+
+class AlertSeverity(str, Enum):
+
+    informational = "Informational"
+    low = "Low"
+    medium = "Medium"
+    high = "High"
+
+
+class AlertIntent(str, Enum):
+
+    unknown = "Unknown"
+    pre_attack = "PreAttack"
+    initial_access = "InitialAccess"
+    persistence = "Persistence"
+    privilege_escalation = "PrivilegeEscalation"
+    defense_evasion = "DefenseEvasion"
+    credential_access = "CredentialAccess"
+    discovery = "Discovery"
+    lateral_movement = "LateralMovement"
+    execution = "Execution"
+    collection = "Collection"
+    exfiltration = "Exfiltration"
+    command_and_control = "CommandAndControl"
+    impact = "Impact"
+    probing = "Probing"
+    exploitation = "Exploitation"
+
+
+class RecommendationSeverity(str, Enum):
+
+    unknown = "Unknown"
+    not_applicable = "NotApplicable"
+    healthy = "Healthy"
+    off_by_policy = "OffByPolicy"
+    low = "Low"
+    medium = "Medium"
+    high = "High"
+
+
 class AutoProvision(str, Enum):
 
     on = "On"  #: Install missing security agent on VMs automatically
@@ -140,6 +179,7 @@ class Severity(str, Enum):
 class EventSource(str, Enum):
 
     assessments = "Assessments"
+    sub_assessments = "SubAssessments"
     alerts = "Alerts"
 
 
@@ -233,6 +273,33 @@ class TransportProtocol(str, Enum):
     udp = "UDP"
 
 
+class Intent(str, Enum):
+
+    unknown = "Unknown"  #: Unknown
+    pre_attack = "PreAttack"  #: PreAttack could be either an attempt to access a certain resource regardless of a malicious intent, or a failed attempt to gain access to a target system to gather information prior to exploitation. This step is usually detected as an attempt, originating from outside the network, to scan the target system and find a way in.  Further details on the PreAttack stage can be read in [MITRE Pre-Att&ck matrix](https://attack.mitre.org/matrices/pre/).
+    initial_access = "InitialAccess"  #: InitialAccess is the stage where an attacker manages to get foothold on the attacked resource.
+    persistence = "Persistence"  #: Persistence is any access, action, or configuration change to a system that gives a threat actor a persistent presence on that system.
+    privilege_escalation = "PrivilegeEscalation"  #: Privilege escalation is the result of actions that allow an adversary to obtain a higher level of permissions on a system or network.
+    defense_evasion = "DefenseEvasion"  #: Defense evasion consists of techniques an adversary may use to evade detection or avoid other defenses.
+    credential_access = "CredentialAccess"  #: Credential access represents techniques resulting in access to or control over system, domain, or service credentials that are used within an enterprise environment.
+    discovery = "Discovery"  #: Discovery consists of techniques that allow the adversary to gain knowledge about the system and internal network.
+    lateral_movement = "LateralMovement"  #: Lateral movement consists of techniques that enable an adversary to access and control remote systems on a network and could, but does not necessarily, include execution of tools on remote systems.
+    execution = "Execution"  #: The execution tactic represents techniques that result in execution of adversary-controlled code on a local or remote system.
+    collection = "Collection"  #: Collection consists of techniques used to identify and gather information, such as sensitive files, from a target network prior to exfiltration.
+    exfiltration = "Exfiltration"  #: Exfiltration refers to techniques and attributes that result or aid in the adversary removing files and information from a target network.
+    command_and_control = "CommandAndControl"  #: The command and control tactic represents how adversaries communicate with systems under their control within a target network.
+    impact = "Impact"  #: Impact events primarily try to directly reduce the availability or integrity of a system, service, or network; including manipulation of data to impact a business or operational process.
+    probing = "Probing"  #: Probing could be either an attempt to access a certain resource regardless of a malicious intent, or a failed attempt to gain access to a target system to gather information prior to exploitation.
+    exploitation = "Exploitation"  #: Exploitation is the stage where an attacker manages to get a foothold on the attacked resource. This stage is relevant for compute hosts and resources such as user accounts, certificates etc.
+
+
+class AlertStatus(str, Enum):
+
+    active = "Active"  #: An alert which doesn't specify a value is assigned the status 'Active'
+    resolved = "Resolved"  #: Alert closed after handling
+    dismissed = "Dismissed"  #: Alert dismissed as false positive
+
+
 class Protocol(str, Enum):
 
     tcp = "TCP"
@@ -279,6 +346,43 @@ class ControlType(str, Enum):
 
     built_in = "BuiltIn"  #: Azure Security Center managed assessments
     custom = "Custom"  #: Non Azure Security Center managed assessments
+
+
+class ProvisioningState(str, Enum):
+
+    succeeded = "Succeeded"
+    failed = "Failed"
+    updating = "Updating"
+
+
+class HybridComputeProvisioningState(str, Enum):
+
+    valid = "Valid"  #: Valid service principal details.
+    invalid = "Invalid"  #: Invalid service principal details.
+    expired = "Expired"  #: the service principal details are expired
+
+
+class AuthenticationProvisioningState(str, Enum):
+
+    valid = "Valid"  #: Valid connector
+    invalid = "Invalid"  #: Invalid connector
+    expired = "Expired"  #: the connection is expired
+    incorrect_policy = "IncorrectPolicy"  #: Incorrect policy of the connector
+
+
+class PermissionProperty(str, Enum):
+
+    awsaws_security_hub_read_only_access = "AWS::AWSSecurityHubReadOnlyAccess"  #: This permission provides read only access to AWS Security Hub resources.
+    aws_security_audit = "AWS::SecurityAudit"  #: This permission grants access to read security configuration metadata.
+    aws_amazon_ssm_automation_role = "AWS::AmazonSSMAutomationRole"  #: The permission provides for EC2 Automation service to execute activities defined within Automation documents.
+    gcp_security_center_admin_viewer = "GCP::Security Center Admin Viewer"  #: This permission provides read only access to GCP Security Command Center.
+
+
+class VersionKind(str, Enum):
+
+    latest = "Latest"
+    previous = "Previous"
+    preview = "Preview"
 
 
 class ExpandEnum(str, Enum):
