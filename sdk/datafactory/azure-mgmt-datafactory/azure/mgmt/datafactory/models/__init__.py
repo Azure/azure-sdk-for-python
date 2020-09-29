@@ -48,6 +48,12 @@ try:
     from ._models_py3 import AzureBlobStorageLocation
     from ._models_py3 import AzureBlobStorageReadSettings
     from ._models_py3 import AzureBlobStorageWriteSettings
+    from ._models_py3 import AzureDatabricksDeltaLakeDataset
+    from ._models_py3 import AzureDatabricksDeltaLakeExportCommand
+    from ._models_py3 import AzureDatabricksDeltaLakeImportCommand
+    from ._models_py3 import AzureDatabricksDeltaLakeLinkedService
+    from ._models_py3 import AzureDatabricksDeltaLakeSink
+    from ._models_py3 import AzureDatabricksDeltaLakeSource
     from ._models_py3 import AzureDatabricksLinkedService
     from ._models_py3 import AzureDataExplorerCommandActivity
     from ._models_py3 import AzureDataExplorerLinkedService
@@ -131,6 +137,7 @@ try:
     from ._models_py3 import CopyActivity
     from ._models_py3 import CopySink
     from ._models_py3 import CopySource
+    from ._models_py3 import CopyTranslator
     from ._models_py3 import CosmosDbLinkedService
     from ._models_py3 import CosmosDbMongoDbApiCollectionDataset
     from ._models_py3 import CosmosDbMongoDbApiLinkedService
@@ -173,6 +180,7 @@ try:
     from ._models_py3 import Dataset
     from ._models_py3 import DatasetBZip2Compression
     from ._models_py3 import DatasetCompression
+    from ._models_py3 import DatasetDataElement
     from ._models_py3 import DatasetDebugResource
     from ._models_py3 import DatasetDeflateCompression
     from ._models_py3 import DatasetFolder
@@ -180,7 +188,10 @@ try:
     from ._models_py3 import DatasetLocation
     from ._models_py3 import DatasetReference
     from ._models_py3 import DatasetResource
+    from ._models_py3 import DatasetSchemaDataElement
     from ._models_py3 import DatasetStorageFormat
+    from ._models_py3 import DatasetTarCompression
+    from ._models_py3 import DatasetTarGZipCompression
     from ._models_py3 import DatasetZipDeflateCompression
     from ._models_py3 import Db2LinkedService
     from ._models_py3 import Db2Source
@@ -367,6 +378,9 @@ try:
     from ._models_py3 import MicrosoftAccessSink
     from ._models_py3 import MicrosoftAccessSource
     from ._models_py3 import MicrosoftAccessTableDataset
+    from ._models_py3 import MongoDbAtlasCollectionDataset
+    from ._models_py3 import MongoDbAtlasLinkedService
+    from ._models_py3 import MongoDbAtlasSource
     from ._models_py3 import MongoDbCollectionDataset
     from ._models_py3 import MongoDbCursorMethodsProperties
     from ._models_py3 import MongoDbLinkedService
@@ -411,12 +425,14 @@ try:
     from ._models_py3 import OrcFormat
     from ._models_py3 import OrcSink
     from ._models_py3 import OrcSource
+    from ._models_py3 import OrcWriteSettings
     from ._models_py3 import PackageStore
     from ._models_py3 import ParameterSpecification
     from ._models_py3 import ParquetDataset
     from ._models_py3 import ParquetFormat
     from ._models_py3 import ParquetSink
     from ._models_py3 import ParquetSource
+    from ._models_py3 import ParquetWriteSettings
     from ._models_py3 import PaypalLinkedService
     from ._models_py3 import PaypalObjectDataset
     from ._models_py3 import PaypalSource
@@ -567,6 +583,9 @@ try:
     from ._models_py3 import SybaseSource
     from ._models_py3 import SybaseTableDataset
     from ._models_py3 import TabularSource
+    from ._models_py3 import TabularTranslator
+    from ._models_py3 import TarGZipReadSettings
+    from ._models_py3 import TarReadSettings
     from ._models_py3 import TeradataLinkedService
     from ._models_py3 import TeradataPartitionSettings
     from ._models_py3 import TeradataSource
@@ -585,6 +604,7 @@ try:
     from ._models_py3 import TriggerSubscriptionOperationStatus
     from ._models_py3 import TumblingWindowTrigger
     from ._models_py3 import TumblingWindowTriggerDependencyReference
+    from ._models_py3 import TypeConversionSettings
     from ._models_py3 import UntilActivity
     from ._models_py3 import UpdateIntegrationRuntimeNodeRequest
     from ._models_py3 import UpdateIntegrationRuntimeRequest
@@ -655,6 +675,12 @@ except (SyntaxError, ImportError):
     from ._models import AzureBlobStorageLocation
     from ._models import AzureBlobStorageReadSettings
     from ._models import AzureBlobStorageWriteSettings
+    from ._models import AzureDatabricksDeltaLakeDataset
+    from ._models import AzureDatabricksDeltaLakeExportCommand
+    from ._models import AzureDatabricksDeltaLakeImportCommand
+    from ._models import AzureDatabricksDeltaLakeLinkedService
+    from ._models import AzureDatabricksDeltaLakeSink
+    from ._models import AzureDatabricksDeltaLakeSource
     from ._models import AzureDatabricksLinkedService
     from ._models import AzureDataExplorerCommandActivity
     from ._models import AzureDataExplorerLinkedService
@@ -738,6 +764,7 @@ except (SyntaxError, ImportError):
     from ._models import CopyActivity
     from ._models import CopySink
     from ._models import CopySource
+    from ._models import CopyTranslator
     from ._models import CosmosDbLinkedService
     from ._models import CosmosDbMongoDbApiCollectionDataset
     from ._models import CosmosDbMongoDbApiLinkedService
@@ -780,6 +807,7 @@ except (SyntaxError, ImportError):
     from ._models import Dataset
     from ._models import DatasetBZip2Compression
     from ._models import DatasetCompression
+    from ._models import DatasetDataElement
     from ._models import DatasetDebugResource
     from ._models import DatasetDeflateCompression
     from ._models import DatasetFolder
@@ -787,7 +815,10 @@ except (SyntaxError, ImportError):
     from ._models import DatasetLocation
     from ._models import DatasetReference
     from ._models import DatasetResource
+    from ._models import DatasetSchemaDataElement
     from ._models import DatasetStorageFormat
+    from ._models import DatasetTarCompression
+    from ._models import DatasetTarGZipCompression
     from ._models import DatasetZipDeflateCompression
     from ._models import Db2LinkedService
     from ._models import Db2Source
@@ -974,6 +1005,9 @@ except (SyntaxError, ImportError):
     from ._models import MicrosoftAccessSink
     from ._models import MicrosoftAccessSource
     from ._models import MicrosoftAccessTableDataset
+    from ._models import MongoDbAtlasCollectionDataset
+    from ._models import MongoDbAtlasLinkedService
+    from ._models import MongoDbAtlasSource
     from ._models import MongoDbCollectionDataset
     from ._models import MongoDbCursorMethodsProperties
     from ._models import MongoDbLinkedService
@@ -1018,12 +1052,14 @@ except (SyntaxError, ImportError):
     from ._models import OrcFormat
     from ._models import OrcSink
     from ._models import OrcSource
+    from ._models import OrcWriteSettings
     from ._models import PackageStore
     from ._models import ParameterSpecification
     from ._models import ParquetDataset
     from ._models import ParquetFormat
     from ._models import ParquetSink
     from ._models import ParquetSource
+    from ._models import ParquetWriteSettings
     from ._models import PaypalLinkedService
     from ._models import PaypalObjectDataset
     from ._models import PaypalSource
@@ -1174,6 +1210,9 @@ except (SyntaxError, ImportError):
     from ._models import SybaseSource
     from ._models import SybaseTableDataset
     from ._models import TabularSource
+    from ._models import TabularTranslator
+    from ._models import TarGZipReadSettings
+    from ._models import TarReadSettings
     from ._models import TeradataLinkedService
     from ._models import TeradataPartitionSettings
     from ._models import TeradataSource
@@ -1192,6 +1231,7 @@ except (SyntaxError, ImportError):
     from ._models import TriggerSubscriptionOperationStatus
     from ._models import TumblingWindowTrigger
     from ._models import TumblingWindowTriggerDependencyReference
+    from ._models import TypeConversionSettings
     from ._models import UntilActivity
     from ._models import UpdateIntegrationRuntimeNodeRequest
     from ._models import UpdateIntegrationRuntimeRequest
@@ -1236,6 +1276,7 @@ from ._paged_models import PipelineResourcePaged
 from ._paged_models import TriggerResourcePaged
 from ._data_factory_management_client_enums import (
     GlobalParameterType,
+    PublicNetworkAccess,
     IntegrationRuntimeState,
     IntegrationRuntimeAutoUpdate,
     ParameterType,
@@ -1297,6 +1338,7 @@ from ._data_factory_management_client_enums import (
     SsisPackageLocationType,
     HDInsightActivityDebugInfoOption,
     SalesforceSinkWriteBehavior,
+    DynamicsSinkWriteBehavior,
     AzureSearchIndexWriteBehaviorType,
     PolybaseSettingsRejectType,
     JsonWriteFilePattern,
@@ -1313,6 +1355,7 @@ from ._data_factory_management_client_enums import (
     IntegrationRuntimeEdition,
     SsisObjectMetadataType,
     IntegrationRuntimeAuthKeyName,
+    CopyBehaviorType,
 )
 
 __all__ = [
@@ -1354,6 +1397,12 @@ __all__ = [
     'AzureBlobStorageLocation',
     'AzureBlobStorageReadSettings',
     'AzureBlobStorageWriteSettings',
+    'AzureDatabricksDeltaLakeDataset',
+    'AzureDatabricksDeltaLakeExportCommand',
+    'AzureDatabricksDeltaLakeImportCommand',
+    'AzureDatabricksDeltaLakeLinkedService',
+    'AzureDatabricksDeltaLakeSink',
+    'AzureDatabricksDeltaLakeSource',
     'AzureDatabricksLinkedService',
     'AzureDataExplorerCommandActivity',
     'AzureDataExplorerLinkedService',
@@ -1437,6 +1486,7 @@ __all__ = [
     'CopyActivity',
     'CopySink',
     'CopySource',
+    'CopyTranslator',
     'CosmosDbLinkedService',
     'CosmosDbMongoDbApiCollectionDataset',
     'CosmosDbMongoDbApiLinkedService',
@@ -1479,6 +1529,7 @@ __all__ = [
     'Dataset',
     'DatasetBZip2Compression',
     'DatasetCompression',
+    'DatasetDataElement',
     'DatasetDebugResource',
     'DatasetDeflateCompression',
     'DatasetFolder',
@@ -1486,7 +1537,10 @@ __all__ = [
     'DatasetLocation',
     'DatasetReference',
     'DatasetResource',
+    'DatasetSchemaDataElement',
     'DatasetStorageFormat',
+    'DatasetTarCompression',
+    'DatasetTarGZipCompression',
     'DatasetZipDeflateCompression',
     'Db2LinkedService',
     'Db2Source',
@@ -1673,6 +1727,9 @@ __all__ = [
     'MicrosoftAccessSink',
     'MicrosoftAccessSource',
     'MicrosoftAccessTableDataset',
+    'MongoDbAtlasCollectionDataset',
+    'MongoDbAtlasLinkedService',
+    'MongoDbAtlasSource',
     'MongoDbCollectionDataset',
     'MongoDbCursorMethodsProperties',
     'MongoDbLinkedService',
@@ -1717,12 +1774,14 @@ __all__ = [
     'OrcFormat',
     'OrcSink',
     'OrcSource',
+    'OrcWriteSettings',
     'PackageStore',
     'ParameterSpecification',
     'ParquetDataset',
     'ParquetFormat',
     'ParquetSink',
     'ParquetSource',
+    'ParquetWriteSettings',
     'PaypalLinkedService',
     'PaypalObjectDataset',
     'PaypalSource',
@@ -1873,6 +1932,9 @@ __all__ = [
     'SybaseSource',
     'SybaseTableDataset',
     'TabularSource',
+    'TabularTranslator',
+    'TarGZipReadSettings',
+    'TarReadSettings',
     'TeradataLinkedService',
     'TeradataPartitionSettings',
     'TeradataSource',
@@ -1891,6 +1953,7 @@ __all__ = [
     'TriggerSubscriptionOperationStatus',
     'TumblingWindowTrigger',
     'TumblingWindowTriggerDependencyReference',
+    'TypeConversionSettings',
     'UntilActivity',
     'UpdateIntegrationRuntimeNodeRequest',
     'UpdateIntegrationRuntimeRequest',
@@ -1934,6 +1997,7 @@ __all__ = [
     'ManagedVirtualNetworkResourcePaged',
     'ManagedPrivateEndpointResourcePaged',
     'GlobalParameterType',
+    'PublicNetworkAccess',
     'IntegrationRuntimeState',
     'IntegrationRuntimeAutoUpdate',
     'ParameterType',
@@ -1995,6 +2059,7 @@ __all__ = [
     'SsisPackageLocationType',
     'HDInsightActivityDebugInfoOption',
     'SalesforceSinkWriteBehavior',
+    'DynamicsSinkWriteBehavior',
     'AzureSearchIndexWriteBehaviorType',
     'PolybaseSettingsRejectType',
     'JsonWriteFilePattern',
@@ -2011,4 +2076,5 @@ __all__ = [
     'IntegrationRuntimeEdition',
     'SsisObjectMetadataType',
     'IntegrationRuntimeAuthKeyName',
+    'CopyBehaviorType',
 ]
