@@ -246,8 +246,8 @@ class TableServicePropertiesTest(TableTestCase):
             cors.append(CorsRule(['www.xyz.com'], ['GET']))
 
         # Assert
-        self.assertRaises(HttpResponseError,
-                          tsc.set_service_properties, None, None, None, cors)
+        with self.assertRaises(HttpResponseError):
+            await tsc.set_service_properties(None, None, None, cors)
 
 
     @pytest.mark.skip("pending")
@@ -259,11 +259,9 @@ class TableServicePropertiesTest(TableTestCase):
         minute_metrics = Metrics(enabled=True, include_apis=True,
                                  retention_policy=RetentionPolicy(enabled=True, days=366))
 
-        await tsc.set_service_properties(None, None, minute_metrics)
         # Assert
-        self.assertRaises(HttpResponseError,
-                          tsc.set_service_properties,
-                          None, None, minute_metrics)
+        with self.assertRaises(HttpResponseError):
+            await tsc.set_service_properties(None, None, minute_metrics)
 
 
 # ------------------------------------------------------------------------------

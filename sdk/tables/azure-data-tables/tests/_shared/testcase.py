@@ -13,9 +13,6 @@ import os.path
 import time
 from datetime import datetime, timedelta
 
-from azure.data.tables import ResourceTypes, AccountSasPermissions
-from azure.data.tables._table_shared_access_signature import generate_account_sas
-
 try:
     import unittest.mock as mock
 except ImportError:
@@ -44,7 +41,9 @@ except ImportError:
 
 from azure.core.credentials import AccessToken
 from azure.mgmt.storage.models import StorageAccount, Endpoints
+
 from azure.mgmt.cosmosdb import CosmosDBManagementClient
+from azure.data.tables import generate_account_sas, AccountSasPermissions, ResourceTypes
 
 try:
     from devtools_testutils import mgmt_settings_real as settings
@@ -391,6 +390,9 @@ def storage_account():
     i_need_to_create_rg = not (existing_rg_name or existing_storage_name or storage_connection_string)
     got_storage_info_from_env = existing_storage_name or storage_connection_string
     got_cosmos_info_from_env = existing_cosmos_name or cosmos_connection_string
+
+    storage_name = None
+    rg_kwargs = {}
 
     try:
         if i_need_to_create_rg:

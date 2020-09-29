@@ -786,28 +786,21 @@ class DiagnosticsProfile(msrest.serialization.Model):
 class DiffDiskSettings(msrest.serialization.Model):
     """Describes the parameters of ephemeral disk settings that can be specified for operating system disk. :code:`<br>`:code:`<br>` NOTE: The ephemeral disk settings can only be specified for managed disk.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar option: Specifies the ephemeral disk settings for operating system disk. Default value:
-     "Local".
-    :vartype option: str
+    :param option: Specifies the ephemeral disk settings for operating system disk. Possible values
+     include: "Local".
+    :type option: str or ~azure.mgmt.compute.v2018_06_01.models.DiffDiskOptions
     """
-
-    _validation = {
-        'option': {'constant': True},
-    }
 
     _attribute_map = {
         'option': {'key': 'option', 'type': 'str'},
     }
-
-    option = "Local"
 
     def __init__(
         self,
         **kwargs
     ):
         super(DiffDiskSettings, self).__init__(**kwargs)
+        self.option = kwargs.get('option', None)
 
 
 class Disallowed(msrest.serialization.Model):
@@ -7367,8 +7360,7 @@ class WindowsConfiguration(msrest.serialization.Model):
      the VM so that extensions can be added to the VM later.
     :type provision_vm_agent: bool
     :param enable_automatic_updates: Indicates whether virtual machine is enabled for automatic
-     Windows updates. Default value is true. :code:`<br>`:code:`<br>` For virtual machine scale
-     sets, this property can be updated and updates will take effect on OS reprovisioning.
+     updates.
     :type enable_automatic_updates: bool
     :param time_zone: Specifies the time zone of the virtual machine. e.g. "Pacific Standard Time".
     :type time_zone: str

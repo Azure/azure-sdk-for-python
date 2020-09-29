@@ -2167,7 +2167,7 @@ class FirewallPolicyRuleCondition(msrest.serialization.Model):
         super(FirewallPolicyRuleCondition, self).__init__(**kwargs)
         self.name = kwargs.get('name', None)
         self.description = kwargs.get('description', None)
-        self.rule_condition_type = None
+        self.rule_condition_type = None  # type: Optional[str]
 
 
 class ApplicationRuleCondition(FirewallPolicyRuleCondition):
@@ -2216,7 +2216,7 @@ class ApplicationRuleCondition(FirewallPolicyRuleCondition):
         **kwargs
     ):
         super(ApplicationRuleCondition, self).__init__(**kwargs)
-        self.rule_condition_type = 'ApplicationRuleCondition'
+        self.rule_condition_type = 'ApplicationRuleCondition'  # type: str
         self.source_addresses = kwargs.get('source_addresses', None)
         self.destination_addresses = kwargs.get('destination_addresses', None)
         self.protocols = kwargs.get('protocols', None)
@@ -7433,7 +7433,7 @@ class FirewallPolicyRule(msrest.serialization.Model):
         **kwargs
     ):
         super(FirewallPolicyRule, self).__init__(**kwargs)
-        self.rule_type = None
+        self.rule_type = None  # type: Optional[str]
         self.name = kwargs.get('name', None)
         self.priority = kwargs.get('priority', None)
 
@@ -7474,7 +7474,7 @@ class FirewallPolicyFilterRule(FirewallPolicyRule):
         **kwargs
     ):
         super(FirewallPolicyFilterRule, self).__init__(**kwargs)
-        self.rule_type = 'FirewallPolicyFilterRule'
+        self.rule_type = 'FirewallPolicyFilterRule'  # type: str
         self.action = kwargs.get('action', None)
         self.rule_conditions = kwargs.get('rule_conditions', None)
 
@@ -7563,7 +7563,7 @@ class FirewallPolicyNatRule(FirewallPolicyRule):
         **kwargs
     ):
         super(FirewallPolicyNatRule, self).__init__(**kwargs)
-        self.rule_type = 'FirewallPolicyNatRule'
+        self.rule_type = 'FirewallPolicyNatRule'  # type: str
         self.action = kwargs.get('action', None)
         self.translated_address = kwargs.get('translated_address', None)
         self.translated_port = kwargs.get('translated_port', None)
@@ -7696,30 +7696,23 @@ class FirewallPolicyRuleGroupListResult(msrest.serialization.Model):
 class FlowLogFormatParameters(msrest.serialization.Model):
     """Parameters that define the flow log format.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar type: The file type of flow log. Default value: "JSON".
-    :vartype type: str
+    :param type: The file type of flow log. Possible values include: "JSON".
+    :type type: str or ~azure.mgmt.network.v2019_07_01.models.FlowLogFormatType
     :param version: The version (revision) of the flow log.
     :type version: int
     """
-
-    _validation = {
-        'type': {'constant': True},
-    }
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'str'},
         'version': {'key': 'version', 'type': 'int'},
     }
 
-    type = "JSON"
-
     def __init__(
         self,
         **kwargs
     ):
         super(FlowLogFormatParameters, self).__init__(**kwargs)
+        self.type = kwargs.get('type', None)
         self.version = kwargs.get('version', 0)
 
 
@@ -8001,19 +7994,13 @@ class GetVpnSitesConfigurationRequest(msrest.serialization.Model):
 class HTTPConfiguration(msrest.serialization.Model):
     """HTTP configuration of the connectivity check.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar method: HTTP method. Default value: "Get".
-    :vartype method: str
+    :param method: HTTP method. Possible values include: "Get".
+    :type method: str or ~azure.mgmt.network.v2019_07_01.models.HTTPMethod
     :param headers: List of HTTP headers.
     :type headers: list[~azure.mgmt.network.v2019_07_01.models.HTTPHeader]
     :param valid_status_codes: Valid status codes.
     :type valid_status_codes: list[int]
     """
-
-    _validation = {
-        'method': {'constant': True},
-    }
 
     _attribute_map = {
         'method': {'key': 'method', 'type': 'str'},
@@ -8021,13 +8008,12 @@ class HTTPConfiguration(msrest.serialization.Model):
         'valid_status_codes': {'key': 'validStatusCodes', 'type': '[int]'},
     }
 
-    method = "Get"
-
     def __init__(
         self,
         **kwargs
     ):
         super(HTTPConfiguration, self).__init__(**kwargs)
+        self.method = kwargs.get('method', None)
         self.headers = kwargs.get('headers', None)
         self.valid_status_codes = kwargs.get('valid_status_codes', None)
 
@@ -9657,27 +9643,20 @@ class NatGatewayListResult(msrest.serialization.Model):
 class NatGatewaySku(msrest.serialization.Model):
     """SKU of nat gateway.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar name: Name of Nat Gateway SKU. Default value: "Standard".
-    :vartype name: str
+    :param name: Name of Nat Gateway SKU. Possible values include: "Standard".
+    :type name: str or ~azure.mgmt.network.v2019_07_01.models.NatGatewaySkuName
     """
-
-    _validation = {
-        'name': {'constant': True},
-    }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
     }
-
-    name = "Standard"
 
     def __init__(
         self,
         **kwargs
     ):
         super(NatGatewaySku, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
 
 
 class NetworkConfigurationDiagnosticParameters(msrest.serialization.Model):
@@ -10481,7 +10460,7 @@ class NetworkRuleCondition(FirewallPolicyRuleCondition):
         **kwargs
     ):
         super(NetworkRuleCondition, self).__init__(**kwargs)
-        self.rule_condition_type = 'NetworkRuleCondition'
+        self.rule_condition_type = 'NetworkRuleCondition'  # type: str
         self.ip_protocols = kwargs.get('ip_protocols', None)
         self.source_addresses = kwargs.get('source_addresses', None)
         self.destination_addresses = kwargs.get('destination_addresses', None)
@@ -11755,8 +11734,8 @@ class PatchRouteFilterRule(SubResource):
     :vartype etag: str
     :param access: The access type of the rule. Possible values include: "Allow", "Deny".
     :type access: str or ~azure.mgmt.network.v2019_07_01.models.Access
-    :ivar route_filter_rule_type: The rule type of the rule. Default value: "Community".
-    :vartype route_filter_rule_type: str
+    :param route_filter_rule_type: The rule type of the rule. Possible values include: "Community".
+    :type route_filter_rule_type: str or ~azure.mgmt.network.v2019_07_01.models.RouteFilterRuleType
     :param communities: The collection for bgp community values to filter on. e.g.
      ['12076:5010','12076:5020'].
     :type communities: list[str]
@@ -11768,7 +11747,6 @@ class PatchRouteFilterRule(SubResource):
     _validation = {
         'name': {'readonly': True},
         'etag': {'readonly': True},
-        'route_filter_rule_type': {'constant': True},
         'provisioning_state': {'readonly': True},
     }
 
@@ -11782,8 +11760,6 @@ class PatchRouteFilterRule(SubResource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    route_filter_rule_type = "Community"
-
     def __init__(
         self,
         **kwargs
@@ -11792,6 +11768,7 @@ class PatchRouteFilterRule(SubResource):
         self.name = None
         self.etag = None
         self.access = kwargs.get('access', None)
+        self.route_filter_rule_type = kwargs.get('route_filter_rule_type', None)
         self.communities = kwargs.get('communities', None)
         self.provisioning_state = None
 
@@ -12870,27 +12847,20 @@ class PublicIPPrefixListResult(msrest.serialization.Model):
 class PublicIPPrefixSku(msrest.serialization.Model):
     """SKU of a public IP prefix.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar name: Name of a public IP prefix SKU. Default value: "Standard".
-    :vartype name: str
+    :param name: Name of a public IP prefix SKU. Possible values include: "Standard".
+    :type name: str or ~azure.mgmt.network.v2019_07_01.models.PublicIPPrefixSkuName
     """
-
-    _validation = {
-        'name': {'constant': True},
-    }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
     }
-
-    name = "Standard"
 
     def __init__(
         self,
         **kwargs
     ):
         super(PublicIPPrefixSku, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
 
 
 class QueryTroubleshootingParameters(msrest.serialization.Model):
@@ -13193,8 +13163,8 @@ class RouteFilterRule(SubResource):
     :vartype etag: str
     :param access: The access type of the rule. Possible values include: "Allow", "Deny".
     :type access: str or ~azure.mgmt.network.v2019_07_01.models.Access
-    :ivar route_filter_rule_type: The rule type of the rule. Default value: "Community".
-    :vartype route_filter_rule_type: str
+    :param route_filter_rule_type: The rule type of the rule. Possible values include: "Community".
+    :type route_filter_rule_type: str or ~azure.mgmt.network.v2019_07_01.models.RouteFilterRuleType
     :param communities: The collection for bgp community values to filter on. e.g.
      ['12076:5010','12076:5020'].
     :type communities: list[str]
@@ -13205,7 +13175,6 @@ class RouteFilterRule(SubResource):
 
     _validation = {
         'etag': {'readonly': True},
-        'route_filter_rule_type': {'constant': True},
         'provisioning_state': {'readonly': True},
     }
 
@@ -13220,8 +13189,6 @@ class RouteFilterRule(SubResource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    route_filter_rule_type = "Community"
-
     def __init__(
         self,
         **kwargs
@@ -13231,6 +13198,7 @@ class RouteFilterRule(SubResource):
         self.location = kwargs.get('location', None)
         self.etag = None
         self.access = kwargs.get('access', None)
+        self.route_filter_rule_type = kwargs.get('route_filter_rule_type', None)
         self.communities = kwargs.get('communities', None)
         self.provisioning_state = None
 
@@ -14644,8 +14612,9 @@ class Usage(msrest.serialization.Model):
 
     :ivar id: Resource identifier.
     :vartype id: str
-    :ivar unit: Required. An enum describing the unit of measurement. Default value: "Count".
-    :vartype unit: str
+    :param unit: Required. An enum describing the unit of measurement. Possible values include:
+     "Count".
+    :type unit: str or ~azure.mgmt.network.v2019_07_01.models.UsageUnit
     :param current_value: Required. The current value of the usage.
     :type current_value: long
     :param limit: Required. The limit of usage.
@@ -14656,7 +14625,7 @@ class Usage(msrest.serialization.Model):
 
     _validation = {
         'id': {'readonly': True},
-        'unit': {'required': True, 'constant': True},
+        'unit': {'required': True},
         'current_value': {'required': True},
         'limit': {'required': True},
         'name': {'required': True},
@@ -14670,14 +14639,13 @@ class Usage(msrest.serialization.Model):
         'name': {'key': 'name', 'type': 'UsageName'},
     }
 
-    unit = "Count"
-
     def __init__(
         self,
         **kwargs
     ):
         super(Usage, self).__init__(**kwargs)
         self.id = None
+        self.unit = kwargs['unit']
         self.current_value = kwargs['current_value']
         self.limit = kwargs['limit']
         self.name = kwargs['name']

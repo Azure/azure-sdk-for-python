@@ -11,8 +11,6 @@ interactions:
       - application/json
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Darwin-19.3.0-x86_64-i386-64bit)
-      api-key:
-      - 49925E98B4E6A6E7BB8023C66DCE85A0
     method: POST
     uri: https://searchada412b6.search.windows.net/synonymmaps?api-version=2020-06-30
   response:
@@ -49,8 +47,6 @@ interactions:
       - application/json
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Darwin-19.3.0-x86_64-i386-64bit)
-      api-key:
-      - 49925E98B4E6A6E7BB8023C66DCE85A0
     method: POST
     uri: https://searchada412b6.search.windows.net/synonymmaps?api-version=2020-06-30
   response:
@@ -82,8 +78,6 @@ interactions:
       - application/json;odata.metadata=minimal
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Darwin-19.3.0-x86_64-i386-64bit)
-      api-key:
-      - 49925E98B4E6A6E7BB8023C66DCE85A0
     method: GET
     uri: https://searchada412b6.search.windows.net/synonymmaps?api-version=2020-06-30
   response:

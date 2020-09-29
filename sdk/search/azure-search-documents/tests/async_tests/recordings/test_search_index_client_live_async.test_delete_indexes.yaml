@@ -6,8 +6,6 @@ interactions:
       - application/json;odata.metadata=minimal
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-      api-key:
-      - EAB85C4DC88E310CC1A4F960639838CF
     method: DELETE
     uri: https://search785e1686.search.windows.net/indexes('drgqefsg')?api-version=2020-06-30
   response:
@@ -15,11 +13,11 @@ interactions:
       string: ''
     headers:
       cache-control: no-cache
-      date: Thu, 13 Aug 2020 00:54:58 GMT
-      elapsed-time: '217'
+      date: Fri, 28 Aug 2020 21:48:55 GMT
+      elapsed-time: '371'
       expires: '-1'
       pragma: no-cache
-      request-id: 9c39c50c-dcff-11ea-b28a-5cf37071153c
+      request-id: 44586fa7-e978-11ea-99f8-5cf37071153c
       strict-transport-security: max-age=15724800; includeSubDomains
     status:
       code: 204
@@ -32,8 +30,6 @@ interactions:
       - application/json;odata.metadata=minimal
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-      api-key:
-      - EAB85C4DC88E310CC1A4F960639838CF
     method: GET
     uri: https://search785e1686.search.windows.net/indexes?api-version=2020-06-30
   response:
@@ -44,13 +40,13 @@ interactions:
       content-encoding: gzip
       content-length: '200'
       content-type: application/json; odata.metadata=minimal
-      date: Thu, 13 Aug 2020 00:55:03 GMT
-      elapsed-time: '20'
+      date: Fri, 28 Aug 2020 21:49:00 GMT
+      elapsed-time: '34'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 9f6f7a88-dcff-11ea-a292-5cf37071153c
+      request-id: 485a1109-e978-11ea-97b6-5cf37071153c
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:

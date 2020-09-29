@@ -15,13 +15,21 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
+<<<<<<< HEAD
       - Mon, 28 Sep 2020 17:29:30 GMT
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
       - Mon, 28 Sep 2020 17:29:30 GMT
+=======
+      - Wed, 16 Sep 2020 21:51:33 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 16 Sep 2020 21:51:33 GMT
+>>>>>>> 40774230c02233ce98169513320c19ccc2184174
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     method: POST
     uri: https://tablesteststorname.table.core.windows.net/Tables
   response:
@@ -33,7 +41,11 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
+<<<<<<< HEAD
       - Mon, 28 Sep 2020 17:29:30 GMT
+=======
+      - Wed, 16 Sep 2020 21:51:33 GMT
+>>>>>>> 40774230c02233ce98169513320c19ccc2184174
       location:
       - https://tablesteststorname.table.core.windows.net/Tables('uttable65ff1655')
       server:
@@ -43,12 +55,13 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
 - request:
-    body: '{"PartitionKey": "pk65ff1655", "RowKey": "rk65ff1655", "inf": "Infinity",
+    body: '{"PartitionKey": "pk65ff1655", "PartitionKey@odata.type": "Edm.String",
+      "RowKey": "rk65ff1655", "RowKey@odata.type": "Edm.String", "inf": "Infinity",
       "inf@odata.type": "Edm.Double", "negativeinf": "-Infinity", "negativeinf@odata.type":
       "Edm.Double", "nan": "NaN", "nan@odata.type": "Edm.Double"}'
     headers:
@@ -59,33 +72,51 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '219'
+      - '295'
       Content-Type:
       - application/json;odata=nometadata
       DataServiceVersion:
       - '3.0'
       Date:
+<<<<<<< HEAD
       - Mon, 28 Sep 2020 17:29:30 GMT
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
       - Mon, 28 Sep 2020 17:29:30 GMT
+=======
+      - Wed, 16 Sep 2020 21:51:33 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 16 Sep 2020 21:51:33 GMT
+>>>>>>> 40774230c02233ce98169513320c19ccc2184174
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     method: POST
     uri: https://tablesteststorname.table.core.windows.net/uttable65ff1655
   response:
     body:
+<<<<<<< HEAD
       string: '{"odata.metadata":"https://tablesteststorname.table.core.windows.net/$metadata#uttable65ff1655/@Element","odata.etag":"W/\"datetime''2020-09-28T17%3A29%3A30.861448Z''\"","PartitionKey":"pk65ff1655","RowKey":"rk65ff1655","Timestamp":"2020-09-28T17:29:30.861448Z","inf@odata.type":"Edm.Double","inf":"Infinity","negativeinf@odata.type":"Edm.Double","negativeinf":"-Infinity","nan@odata.type":"Edm.Double","nan":"NaN"}'
+=======
+      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#uttable65ff1655/@Element","odata.etag":"W/\"datetime''2020-09-16T21%3A51%3A33.5903588Z''\"","PartitionKey":"pk65ff1655","RowKey":"rk65ff1655","Timestamp":"2020-09-16T21:51:33.5903588Z","inf@odata.type":"Edm.Double","inf":"Infinity","negativeinf@odata.type":"Edm.Double","negativeinf":"-Infinity","nan@odata.type":"Edm.Double","nan":"NaN"}'
+>>>>>>> 40774230c02233ce98169513320c19ccc2184174
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
+<<<<<<< HEAD
       - Mon, 28 Sep 2020 17:29:30 GMT
       etag:
       - W/"datetime'2020-09-28T17%3A29%3A30.861448Z'"
+=======
+      - Wed, 16 Sep 2020 21:51:33 GMT
+      etag:
+      - W/"datetime'2020-09-16T21%3A51%3A33.5903588Z'"
+>>>>>>> 40774230c02233ce98169513320c19ccc2184174
       location:
       - https://tablesteststorname.table.core.windows.net/uttable65ff1655(PartitionKey='pk65ff1655',RowKey='rk65ff1655')
       server:
@@ -95,7 +126,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -111,27 +142,45 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
+<<<<<<< HEAD
       - Mon, 28 Sep 2020 17:29:30 GMT
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
       - Mon, 28 Sep 2020 17:29:30 GMT
+=======
+      - Wed, 16 Sep 2020 21:51:33 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 16 Sep 2020 21:51:33 GMT
+>>>>>>> 40774230c02233ce98169513320c19ccc2184174
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     method: GET
     uri: https://tablesteststorname.table.core.windows.net/uttable65ff1655(PartitionKey='pk65ff1655',RowKey='rk65ff1655')
   response:
     body:
+<<<<<<< HEAD
       string: '{"odata.metadata":"https://tablesteststorname.table.core.windows.net/$metadata#uttable65ff1655/@Element","odata.etag":"W/\"datetime''2020-09-28T17%3A29%3A30.861448Z''\"","PartitionKey":"pk65ff1655","RowKey":"rk65ff1655","Timestamp":"2020-09-28T17:29:30.861448Z","inf@odata.type":"Edm.Double","inf":"Infinity","negativeinf@odata.type":"Edm.Double","negativeinf":"-Infinity","nan@odata.type":"Edm.Double","nan":"NaN"}'
+=======
+      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#uttable65ff1655/@Element","odata.etag":"W/\"datetime''2020-09-16T21%3A51%3A33.5903588Z''\"","PartitionKey":"pk65ff1655","RowKey":"rk65ff1655","Timestamp":"2020-09-16T21:51:33.5903588Z","inf@odata.type":"Edm.Double","inf":"Infinity","negativeinf@odata.type":"Edm.Double","negativeinf":"-Infinity","nan@odata.type":"Edm.Double","nan":"NaN"}'
+>>>>>>> 40774230c02233ce98169513320c19ccc2184174
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
+<<<<<<< HEAD
       - Mon, 28 Sep 2020 17:29:30 GMT
       etag:
       - W/"datetime'2020-09-28T17%3A29%3A30.861448Z'"
+=======
+      - Wed, 16 Sep 2020 21:51:33 GMT
+      etag:
+      - W/"datetime'2020-09-16T21%3A51%3A33.5903588Z'"
+>>>>>>> 40774230c02233ce98169513320c19ccc2184174
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -139,7 +188,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     status:
       code: 200
       message: OK
@@ -147,7 +196,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -155,13 +204,21 @@ interactions:
       Content-Length:
       - '0'
       Date:
+<<<<<<< HEAD
       - Mon, 28 Sep 2020 17:29:30 GMT
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
       - Mon, 28 Sep 2020 17:29:30 GMT
+=======
+      - Wed, 16 Sep 2020 21:51:33 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 16 Sep 2020 21:51:33 GMT
+>>>>>>> 40774230c02233ce98169513320c19ccc2184174
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     method: DELETE
     uri: https://tablesteststorname.table.core.windows.net/Tables('uttable65ff1655')
   response:
@@ -173,13 +230,17 @@ interactions:
       content-length:
       - '0'
       date:
+<<<<<<< HEAD
       - Mon, 28 Sep 2020 17:29:30 GMT
+=======
+      - Wed, 16 Sep 2020 21:51:33 GMT
+>>>>>>> 40774230c02233ce98169513320c19ccc2184174
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options:
       - nosniff
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     status:
       code: 204
       message: No Content

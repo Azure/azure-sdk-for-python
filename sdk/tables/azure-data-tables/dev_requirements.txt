@@ -3,5 +3,10 @@
 ../../core/azure-core
 cryptography>=2.1.4
 aiohttp>=3.0; python_version >= '3.5'
+<<<<<<< HEAD
 pytest-rerunfailures
 -e ../../cosmos/azure-mgmt-cosmosdb
+=======
+azure-identity
+../azure-data-nspkg
+>>>>>>> 40774230c02233ce98169513320c19ccc2184174

@@ -44,7 +44,7 @@ Network interfaces operations are defines in a [network interface file](https://
 
 **Python multi-api packaging is based on the assumptions that it's true.** If it's not, it's usually ok but requires a little more subtle packaging (see final section here)
 
-Being that a given Swagger defines only *one* fixed API version, doing multi-api version in one package implies shipping several Swagger files into one package. This is archived by the `batch` directive of Autorest. More details on how to write Readme for Swagger in the specific page for it [swagger_conf.md](./swagger_conf.md).
+Being that a given Swagger defines only *one* fixed API version, doing multi-api version in one package implies shipping several Swagger files into one package. This is archived by the `batch` directive of Autorest. More details on how to write Readme for Swagger in the specific page for it [swagger_conf.md](https://github.com/Azure/azure-sdk-for-python/blob/master/doc/dev/mgmt/swagger_conf.md).
 
 Python SDK team is responsible to design the correct set of tags to set for the `batch` node. Each line of the batch directive should contains only *one* api version to match the folder name used. this might require adding new tags in the readme.md that are specific to only one API version. These tags are usually suffixed by "-only" ([example with compute](https://github.com/Azure/azure-rest-api-specs/tree/master/specification/compute/resource-manager#tag-package-2019-03-01-only))
 

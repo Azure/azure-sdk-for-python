@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: table_samples_authentication.py
+FILE: sample_authentication_async.py
 
 DESCRIPTION:
     These samples demonstrate authenticating a client via:
@@ -17,7 +17,7 @@ DESCRIPTION:
     the credential parameter of any TableServiceClient or TableClient
 
 USAGE:
-    python table_samples_authentication.py
+    python sample_authentication_async.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
@@ -42,24 +42,28 @@ class TableAuthSamples(object):
         # [START auth_from_connection_string]
         from azure.data.tables.aio import TableServiceClient
         table_service = TableServiceClient.from_connection_string(conn_str=self.connection_string)
-        properties = table_service.get_service_properties()
+        properties = await table_service.get_service_properties()
         print("Connection String: {}".format(properties))
+        # [END auth_from_connection_string]
 
     async def authentication_by_shared_key(self):
         # Instantiate a TableServiceClient using a shared access key
-        # [START create_Table_service_client]
+        # [START auth_from_shared_key]
         from azure.data.tables.aio import TableServiceClient
         table_service = TableServiceClient(account_url=self.account_url, credential=self.access_key)
-        properties = table_service.get_service_properties()
+        properties = await table_service.get_service_properties()
         print("Shared Key: {}".format(properties))
+        # [END auth_from_shared_key]
 
     async def authentication_by_shared_access_signature(self):
         # Instantiate a TableServiceClient using a connection string
+        # [START auth_by_sas]
         from azure.data.tables.aio import TableServiceClient
         table_service = TableServiceClient.from_connection_string(conn_str=self.connection_string)
 
         # Create a SAS token to use for authentication of a client
         from azure.data.tables import generate_account_sas, ResourceTypes, AccountSasPermissions
+        print(self.account_name)
         sas_token = generate_account_sas(
             self.account_name,
             self.access_key,
@@ -69,6 +73,7 @@ class TableAuthSamples(object):
         )
 
         token_auth_table_service = TableServiceClient(account_url=self.account_url, credential=sas_token)
+        # [END auth_by_sas]
 
         properties = await table_service.get_service_properties()
         print("Shared Access Signature: {}".format(properties))
@@ -81,5 +86,4 @@ async def main():
 
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    asyncio.run(main())

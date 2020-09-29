@@ -258,6 +258,14 @@ def example_send_and_receive_sync():
             message.abandon()
         # [END abandon_message]
 
+    # [START receive_forever]
+    with servicebus_receiver:
+        for message in servicebus_receiver.get_streaming_message_iter():
+            print(str(message))
+            message.complete()
+    # [END receive_forever]
+
+
 def example_receive_deferred_sync():
     servicebus_sender = example_create_servicebus_sender_sync()
     servicebus_receiver = example_create_servicebus_receiver_sync()
@@ -315,13 +323,13 @@ def example_session_ops_sync():
         # [START get_session_state_sync]
         with servicebus_client.get_queue_session_receiver(queue_name=queue_name, session_id=session_id) as receiver:
             session = receiver.session
-            session_state = session.get_session_state()
+            session_state = session.get_state()
         # [END get_session_state_sync]
 
         # [START set_session_state_sync]
         with servicebus_client.get_queue_session_receiver(queue_name=queue_name, session_id=session_id) as receiver:
             session = receiver.session
-            session_state = session.set_session_state("START")
+            session_state = session.set_state("START")
         # [END set_session_state_sync]
 
         # [START session_renew_lock_sync]

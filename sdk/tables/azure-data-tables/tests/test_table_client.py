@@ -168,6 +168,10 @@ class StorageTableClientTest(TableTestCase):
             with self.assertRaises(ValueError) as e:
                 test_service = service_type('testaccount', credential='', table_name='foo')
 
+            # test non-string account URL
+            with self.assertRaises(ValueError):
+                test_service = service_type(account_url=123456, credential=storage_account_key, table_name='foo')
+
             self.assertEqual(
                 str(e.exception), "You need to provide either a SAS token or an account shared key to authenticate.")
 
@@ -239,7 +243,6 @@ class StorageTableClientTest(TableTestCase):
             self.assertEqual(service.credential.account_name, storage_account.name)
             self.assertEqual(service.credential.account_key, storage_account_key)
             self.assertTrue(service._primary_endpoint.startswith('https://' + storage_account.name + '.table.cosmos.azure.com'))
-            # self.assertTrue(service.secondary_endpoint.startswith('https://' + storage_account.name + '-secondary.table.cosmos.azure.com'))
             self.assertEqual(service.scheme, 'https')
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
@@ -261,9 +264,6 @@ class StorageTableClientTest(TableTestCase):
             self.assertTrue(
                 service._primary_endpoint.startswith(
                     'http://{}.{}.core.chinacloudapi.cn'.format(storage_account.name, "table")))
-            # self.assertTrue(
-            #     service.secondary_endpoint.startswith(
-            #         'http://{}-secondary.{}.core.chinacloudapi.cn'.format(storage_account.name, "table")))
             self.assertEqual(service.scheme, 'http')
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
@@ -389,7 +389,6 @@ class StorageTableClientTest(TableTestCase):
         self.assertEqual(service.account_name, None)
         self.assertEqual(service.credential, None)
         self.assertEqual(service._primary_hostname, 'local-machine:11002/custom/account/path')
-        # mine doesnt have a question mark at the end
         self.assertTrue(service.url.startswith('http://local-machine:11002/custom/account/path'))
 
         service = TableClient(account_url=custom_account_url, table_name="foo")
@@ -414,12 +413,11 @@ class StorageTableClientTest(TableTestCase):
 
         def callback(response):
             self.assertTrue('User-Agent' in response.http_request.headers)
-            self.assertEqual(
-                response.http_request.headers['User-Agent'],
-                "azsdk-python-storage-table/{} Python/{} ({})".format(
-                    VERSION,
-                    platform.python_version(),
-                    platform.platform()))
+            self.assertIn("azsdk-python-data-tables/{} Python/{} ({})".format(
+                VERSION,
+                platform.python_version(),
+                platform.platform()),
+                response.http_request.headers['User-Agent'])
 
         tables = list(service.list_tables(raw_response_hook=callback))
         self.assertIsInstance(tables, list)
@@ -465,9 +463,9 @@ class StorageTableClientTest(TableTestCase):
 
         def callback(response):
             self.assertTrue('User-Agent' in response.http_request.headers)
-            self.assertEqual(
+            self.assertIn(
                 response.http_request.headers['User-Agent'],
-                "azsdk-python-storage-tables/{} Python/{} ({}) customer_user_agent".format(
+                "azsdk-python-data-tables/{} Python/{} ({}) customer_user_agent".format(
                     VERSION,
                     platform.python_version(),
                     platform.platform())

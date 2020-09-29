@@ -16,7 +16,7 @@ from azure.ai.textanalytics import (
     TextAnalyticsClient,
     TextDocumentInput,
     VERSION,
-    TextAnalyticsApiVersion
+    TextAnalyticsApiVersion,
 )
 
 # pre-apply the client_cls positional argument so it needn't be explicitly passed below
@@ -651,6 +651,41 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
             self.assertEqual(4, food_opinion.length)
             self.assertTrue(food_opinion.is_negated)
 
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    def test_opinion_mining_more_than_5_documents(self, client):
+        documents = [
+            "The food was unacceptable",
+            "The rooms were beautiful. The AC was good and quiet.",
+            "The breakfast was good, but the toilet was smelly.",
+            "Loved this hotel - good breakfast - nice shuttle service - clean rooms.",
+            "I had a great unobstructed view of the Microsoft campus.",
+            "Nice rooms but bathrooms were old and the toilet was dirty when we arrived.",
+            "The toilet smelled."
+        ]
+
+        analyzed_documents = client.analyze_sentiment(documents, show_opinion_mining=True)
+        doc_5 = analyzed_documents[5]
+        doc_6 = analyzed_documents[6]
+
+        doc_5_opinions = [
+            opinion.text
+            for sentence in doc_5.sentences
+            for mined_opinion in sentence.mined_opinions
+            for opinion in mined_opinion.opinions
+        ]
+
+        doc_6_opinions = [
+            opinion.text
+            for sentence in doc_6.sentences
+            for mined_opinion in sentence.mined_opinions
+            for opinion in mined_opinion.opinions
+        ]
+
+        assert doc_5_opinions == ["nice", "old", "dirty"]
+        assert doc_6_opinions == ["smelled"]
+
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
     def test_opinion_mining_no_mined_opinions(self, client):
@@ -664,4 +699,31 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         with pytest.raises(NotImplementedError) as excinfo:
             client.analyze_sentiment(["will fail"], show_opinion_mining=True)
 
-        assert "'show_opinion_mining' is only available for API version v3.1-preview.1 and up" in str(excinfo.value)
+        assert "'show_opinion_mining' is only available for API version v3.1-preview and up" in str(excinfo.value)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    def test_offset_length(self, client):
+        result = client.analyze_sentiment(["I like nature. I do not like being inside"])
+        sentences = result[0].sentences
+        self.assertEqual(sentences[0].offset, 0)
+        self.assertEqual(sentences[0].length, 14)
+        self.assertEqual(sentences[1].offset, 15)
+        self.assertEqual(sentences[1].length, 26)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_0})
+    def test_no_offset_length_v3_sentence_sentiment(self, client):
+        result = client.analyze_sentiment(["I like nature. I do not like being inside"])
+        sentences = result[0].sentences
+        self.assertIsNone(sentences[0].offset)
+        self.assertIsNone(sentences[0].length)
+        self.assertIsNone(sentences[1].offset)
+        self.assertIsNone(sentences[1].length)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_0})
+    def test_string_index_type_not_fail_v3(self, client):
+        # make sure that the addition of the string_index_type kwarg for v3.1-preview.1 doesn't
+        # cause v3.0 calls to fail
+        client.analyze_sentiment(["please don't fail"])

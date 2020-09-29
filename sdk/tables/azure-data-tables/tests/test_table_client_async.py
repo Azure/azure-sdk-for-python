@@ -390,7 +390,6 @@ class StorageTableClientTest(TableTestCase):
         self.assertEqual(service.account_name, None)
         self.assertEqual(service.credential, None)
         self.assertEqual(service._primary_hostname, 'local-machine:11002/custom/account/path')
-        # mine doesnt have a question mark at the end
         self.assertTrue(service.url.startswith('http://local-machine:11002/custom/account/path'))
 
         service = TableClient(account_url=custom_account_url, table_name="foo")
@@ -415,15 +414,15 @@ class StorageTableClientTest(TableTestCase):
 
         def callback(response):
             self.assertTrue('User-Agent' in response.http_request.headers)
-            self.assertEqual(
+            self.assertIn(
                 response.http_request.headers['User-Agent'],
-                "azsdk-python-storage-table/{} Python/{} ({})".format(
+                "azsdk-python-data-tables/{} Python/{} ({})".format(
                     VERSION,
                     platform.python_version(),
                     platform.platform()))
 
-        tables = list(service.list_tables(raw_response_hook=callback))
-        self.assertIsInstance(tables, list)
+        tables = service.list_tables(raw_response_hook=callback)
+        self.assertIsNotNone(tables)
 
     @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
@@ -436,28 +435,28 @@ class StorageTableClientTest(TableTestCase):
         def callback(response):
             self.assertTrue('User-Agent' in response.http_request.headers)
             self.assertIn(
-                "TestApp/v1.0 azsdk-python-storage-table/{} Python/{} ({})".format(
+                "TestApp/v1.0 azsdk-python-data-tables/{} Python/{} ({})".format(
                     VERSION,
                     platform.python_version(),
                     platform.platform()),
                 response.http_request.headers['User-Agent']
                 )
 
-        tables = list(service.list_tables(raw_response_hook=callback))
-        self.assertIsInstance(tables, list)
+        tables = service.list_tables(raw_response_hook=callback)
+        self.assertIsNotNone(tables)
 
         def callback(response):
             self.assertTrue('User-Agent' in response.http_request.headers)
             self.assertIn(
-                "TestApp/v2.0 TestApp/v1.0 azsdk-python-storage-table/{} Python/{} ({})".format(
+                "TestApp/v2.0 TestApp/v1.0 azsdk-python-data-tables/{} Python/{} ({})".format(
                     VERSION,
                     platform.python_version(),
                     platform.platform()),
                 response.http_request.headers['User-Agent']
                 )
 
-        tables = list(service.list_tables(raw_response_hook=callback, user_agent="TestApp/v2.0"))
-        self.assertIsInstance(tables, list)
+        tables = service.list_tables(raw_response_hook=callback, user_agent="TestApp/v2.0")
+        self.assertIsNotNone(tables)
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
@@ -469,7 +468,7 @@ class StorageTableClientTest(TableTestCase):
             self.assertTrue('User-Agent' in response.http_request.headers)
             self.assertEqual(
                 response.http_request.headers['User-Agent'],
-                "azsdk-python-storage-tables/{} Python/{} ({}) customer_user_agent".format(
+                "azsdk-python-data-tables/{} Python/{} ({}) customer_user_agent".format(
                     VERSION,
                     platform.python_version(),
                     platform.platform())

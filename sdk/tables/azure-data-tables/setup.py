@@ -43,11 +43,16 @@ with open(os.path.join(package_folder_path, '_version.py'), 'r') as fd:
 if not version:
     raise RuntimeError('Cannot find version information')
 
+with open("README.md", encoding="utf-8") as f:
+    readme = f.read()
+with open("CHANGELOG.md", encoding="utf-8") as f:
+    changelog = f.read()
+
 setup(
     name=PACKAGE_NAME,
     version=version,
     description='Microsoft Azure {} Client Library for Python'.format(PACKAGE_PPRINT_NAME),
-    long_description='\n\n',
+    long_description=readme + '\n\n' + changelog,
     long_description_content_type='text/markdown',
     license='MIT License',
     author='Microsoft Corporation',
@@ -70,6 +75,7 @@ setup(
         # Exclude packages that will be covered by PEP420 or nspkg
         'azure',
         'tests',
+        'azure.data',
     ]),
     install_requires=[
         "azure-core<2.0.0,>=1.2.2",
@@ -77,7 +83,7 @@ setup(
         # azure-data-tables
     ],
     extras_require={
-        ":python_version<'3.0'": ['futures'],
+        ":python_version<'3.0'": ['futures', 'azure-data-nspkg<2.0.0,>=1.0.0'],
         ":python_version<'3.4'": ['enum34>=1.0.4'],
         ":python_version<'3.5'": ["typing"]
     },

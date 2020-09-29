@@ -15,13 +15,21 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
+<<<<<<< HEAD
       - Thu, 17 Sep 2020 21:35:02 GMT
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
       - Thu, 17 Sep 2020 21:35:02 GMT
+=======
+      - Wed, 16 Sep 2020 21:51:21 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 16 Sep 2020 21:51:21 GMT
+>>>>>>> 40774230c02233ce98169513320c19ccc2184174
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     method: POST
     uri: https://tablesteststorname.table.core.windows.net/Tables
   response:
@@ -33,7 +41,11 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
+<<<<<<< HEAD
       - Thu, 17 Sep 2020 21:35:01 GMT
+=======
+      - Wed, 16 Sep 2020 21:51:22 GMT
+>>>>>>> 40774230c02233ce98169513320c19ccc2184174
       location:
       - https://tablesteststorname.table.core.windows.net/Tables('pytablesync45dd15a0')
       server:
@@ -43,14 +55,18 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
 - request:
     body: '<?xml version=''1.0'' encoding=''utf-8''?>
 
+<<<<<<< HEAD
       <SignedIdentifiers><SignedIdentifier><Id>testid</Id><AccessPolicy><Start>2020-09-17T21:30:02Z</Start><Expiry>2020-09-17T22:35:02Z</Expiry><Permission>r</Permission></AccessPolicy></SignedIdentifier></SignedIdentifiers>'
+=======
+      <SignedIdentifiers><SignedIdentifier><Id>testid</Id><AccessPolicy><Start>2020-09-16T21:46:22Z</Start><Expiry>2020-09-16T22:51:22Z</Expiry><Permission>r</Permission></AccessPolicy></SignedIdentifier></SignedIdentifiers>'
+>>>>>>> 40774230c02233ce98169513320c19ccc2184174
     headers:
       Accept:
       - '*/*'
@@ -63,13 +79,21 @@ interactions:
       Content-Type:
       - application/xml
       Date:
+<<<<<<< HEAD
       - Thu, 17 Sep 2020 21:35:02 GMT
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
       - Thu, 17 Sep 2020 21:35:02 GMT
+=======
+      - Wed, 16 Sep 2020 21:51:22 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 16 Sep 2020 21:51:22 GMT
+>>>>>>> 40774230c02233ce98169513320c19ccc2184174
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     method: PUT
     uri: https://tablesteststorname.table.core.windows.net/pytablesync45dd15a0?comp=acl
   response:
@@ -82,17 +106,57 @@ interactions:
         Time:2020-09-17T21:35:02.8632906Z</m:message></m:error>'
     headers:
       content-length:
+<<<<<<< HEAD
       - '335'
       content-type:
       - application/xml
       date:
       - Thu, 17 Sep 2020 21:35:01 GMT
+=======
+      - '0'
+      date:
+      - Wed, 16 Sep 2020 21:51:22 GMT
+      server:
+      - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 204
+      message: No Content
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Date:
+      - Wed, 16 Sep 2020 21:51:22 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 16 Sep 2020 21:51:22 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://storagename.table.core.windows.net/pytablesync45dd15a0?comp=acl
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><SignedIdentifiers><SignedIdentifier><Id>testid</Id><AccessPolicy><Start>2020-09-16T21:46:22.0000000Z</Start><Expiry>2020-09-16T22:51:22.0000000Z</Expiry><Permission>r</Permission></AccessPolicy></SignedIdentifier></SignedIdentifiers>"
+    headers:
+      content-type:
+      - application/xml
+      date:
+      - Wed, 16 Sep 2020 21:51:22 GMT
+>>>>>>> 40774230c02233ce98169513320c19ccc2184174
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
       - MediaTypeNotSupported
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     status:
       code: 415
       message: None of the provided media types are supported
@@ -100,7 +164,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -108,13 +172,21 @@ interactions:
       Content-Length:
       - '0'
       Date:
+<<<<<<< HEAD
       - Thu, 17 Sep 2020 21:35:02 GMT
       User-Agent:
       - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
       - Thu, 17 Sep 2020 21:35:02 GMT
+=======
+      - Wed, 16 Sep 2020 21:51:22 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 16 Sep 2020 21:51:22 GMT
+>>>>>>> 40774230c02233ce98169513320c19ccc2184174
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     method: DELETE
     uri: https://tablesteststorname.table.core.windows.net/Tables('pytablesync45dd15a0')
   response:
@@ -126,13 +198,17 @@ interactions:
       content-length:
       - '0'
       date:
+<<<<<<< HEAD
       - Thu, 17 Sep 2020 21:35:01 GMT
+=======
+      - Wed, 16 Sep 2020 21:51:22 GMT
+>>>>>>> 40774230c02233ce98169513320c19ccc2184174
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options:
       - nosniff
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     status:
       code: 204
       message: No Content

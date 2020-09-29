@@ -8,7 +8,7 @@
 from typing import TYPE_CHECKING
 import warnings
 
-from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
@@ -58,10 +58,13 @@ class GalleryImageVersionsOperations(object):
     ):
         # type: (...) -> "models.GalleryImageVersion"
         cls = kwargs.pop('cls', None)  # type: ClsType["models.GalleryImageVersion"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-03-01"
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
 
         # Construct URL
         url = self._create_or_update_initial.metadata['url']  # type: ignore
@@ -81,14 +84,12 @@ class GalleryImageVersionsOperations(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(gallery_image_version, 'GalleryImageVersion')
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -96,7 +97,6 @@ class GalleryImageVersionsOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('GalleryImageVersion', pipeline_response)
 
@@ -121,24 +121,24 @@ class GalleryImageVersionsOperations(object):
         gallery_image_version,  # type: "models.GalleryImageVersion"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller["models.GalleryImageVersion"]
         """Create or update a gallery Image Version.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param gallery_name: The name of the Shared Image Gallery in which the Image Definition
-     resides.
+         resides.
         :type gallery_name: str
         :param gallery_image_name: The name of the gallery Image Definition in which the Image Version
-     is to be created.
+         is to be created.
         :type gallery_image_name: str
         :param gallery_image_version_name: The name of the gallery Image Version to be created. Needs
-     to follow semantic version name pattern: The allowed characters are digit and period. Digits
-     must be within the range of a 32-bit integer. Format:
-     :code:`<MajorVersion>`.:code:`<MinorVersion>`.:code:`<Patch>`.
+         to follow semantic version name pattern: The allowed characters are digit and period. Digits
+         must be within the range of a 32-bit integer. Format:
+         :code:`<MajorVersion>`.:code:`<MinorVersion>`.:code:`<Patch>`.
         :type gallery_image_version_name: str
         :param gallery_image_version: Parameters supplied to the create or update gallery Image Version
-     operation.
+         operation.
         :type gallery_image_version: ~azure.mgmt.compute.v2019_03_01.models.GalleryImageVersion
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
@@ -198,7 +198,7 @@ class GalleryImageVersionsOperations(object):
         gallery_name,  # type: str
         gallery_image_name,  # type: str
         gallery_image_version_name,  # type: str
-        expand="ReplicationStatus",  # type: Optional[str]
+        expand=None,  # type: Optional[Union[str, "models.ReplicationStatusTypes"]]
         **kwargs  # type: Any
     ):
         # type: (...) -> "models.GalleryImageVersion"
@@ -215,16 +215,19 @@ class GalleryImageVersionsOperations(object):
         :param gallery_image_version_name: The name of the gallery Image Version to be retrieved.
         :type gallery_image_version_name: str
         :param expand: The expand expression to apply on the operation.
-        :type expand: str
+        :type expand: str or ~azure.mgmt.compute.v2019_03_01.models.ReplicationStatusTypes
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: GalleryImageVersion, or the result of cls(response)
         :rtype: ~azure.mgmt.compute.v2019_03_01.models.GalleryImageVersion
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.GalleryImageVersion"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-03-01"
+        accept = "application/json"
 
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
@@ -245,9 +248,8 @@ class GalleryImageVersionsOperations(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
-        # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -274,9 +276,12 @@ class GalleryImageVersionsOperations(object):
     ):
         # type: (...) -> None
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-03-01"
+        accept = "application/json"
 
         # Construct URL
         url = self._delete_initial.metadata['url']  # type: ignore
@@ -295,8 +300,8 @@ class GalleryImageVersionsOperations(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
-        # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -318,16 +323,16 @@ class GalleryImageVersionsOperations(object):
         gallery_image_version_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller[None]
         """Delete a gallery Image Version.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param gallery_name: The name of the Shared Image Gallery in which the Image Definition
-     resides.
+         resides.
         :type gallery_name: str
         :param gallery_image_name: The name of the gallery Image Definition in which the Image Version
-     resides.
+         resides.
         :type gallery_image_name: str
         :param gallery_image_version_name: The name of the gallery Image Version to be deleted.
         :type gallery_image_version_name: str
@@ -392,10 +397,10 @@ class GalleryImageVersionsOperations(object):
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param gallery_name: The name of the Shared Image Gallery in which the Image Definition
-     resides.
+         resides.
         :type gallery_name: str
         :param gallery_image_name: The name of the Shared Image Gallery Image Definition from which the
-     Image Versions are to be listed.
+         Image Versions are to be listed.
         :type gallery_image_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either GalleryImageVersionList or the result of cls(response)
@@ -403,11 +408,18 @@ class GalleryImageVersionsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.GalleryImageVersionList"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-03-01"
+        accept = "application/json"
 
         def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
             if not next_link:
                 # Construct URL
                 url = self.list_by_gallery_image.metadata['url']  # type: ignore
@@ -422,15 +434,11 @@ class GalleryImageVersionsOperations(object):
                 query_parameters = {}  # type: Dict[str, Any]
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
+                request = self._client.get(url, query_parameters, header_parameters)
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
+                request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         def extract_data(pipeline_response):

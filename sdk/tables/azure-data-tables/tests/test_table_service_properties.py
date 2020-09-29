@@ -14,15 +14,6 @@ from msrest.exceptions import ValidationError  # TODO This should be an azure-co
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from azure.core.exceptions import HttpResponseError
 
-# from azure.data.tabless import (
-#     TableServiceClient,
-#     TableClient,
-#     TableAnalyticsLogging,
-#     Metrics,
-#     CorsRule,
-#     RetentionPolicy,
-# )
-
 from azure.data.tables import TableServiceClient
 
 from _shared.testcase import GlobalStorageAccountPreparer, TableTestCase

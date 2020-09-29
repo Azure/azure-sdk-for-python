@@ -1,41 +1,79 @@
+# coding: utf-8
+
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# --------------------------------------------------------------------------
+
+"""
+FILE: sample_query_tables_async.py
+
+DESCRIPTION:
+    These samples demonstrate the following: listing and querying all Tables within
+    a storage account.
+
+USAGE:
+    python sample_query_tables_async.py
+
+    Set the environment variables with your own values before running the sample:
+    1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
+"""
+
 import os
 import asyncio
 
-class QueryTable(object):
+class QueryTables(object):
     connection_string = os.getenv("AZURE_TABLES_CONNECTION_STRING")
-    access_key = os.getenv("AZURE_TABLES_KEY")
-    account_url = os.getenv("AZURE_TABLES_ACCOUNT_URL")
-    account_name = os.getenv("AZURE_TABLES_ACCOUNT_NAME")
     table_name = "OfficeSupplies"
 
-    # Creating query filter for that table
-    name_filter = "TableName eq '{}'".format(table_name)
-
-    @classmethod
-    async def query_tables(self):
+    async def tables_in_account(self):
+        # Instantiate the TableServiceClient from a connection string
         from azure.data.tables.aio import TableServiceClient
-        from azure.core.exceptions import ResourceExistsError
+        table_service = TableServiceClient.from_connection_string(conn_str=self.connection_string)
 
-        # table_service_client = TableServiceClient(account_url=self.account_url, credential=self.access_key)
-        table_service_client = TableServiceClient.from_connection_string(self.connection_string)
+        await table_service.create_table("mytable1")
+        await table_service.create_table("mytable2")
 
-        # Create Tables to query
         try:
-            my_table = await table_service_client.create_table(table_name=self.table_name)
-        except ResourceExistsError:
-            pass
+            # [START tsc_list_tables]
+            # List all the tables in the service
+            list_tables = table_service.list_tables()
+            print("Listing tables:")
+            for table in list_tables:
+                print("\t{}".format(table.table_name))
+            # [END tsc_list_tables]
 
-        # Query tables
-        queried_tables = await table_service_client.query_tables(filter=self.name_filter, results_per_page=10)
+            # [START tsc_query_tables]
+            # Query for "table1" in the tables created
+            table_name = "mytable1"
+            name_filter = "TableName eq '{}'".format(table_name)
+            queried_tables = table_service.query_tables(filter=name_filter, results_per_page=10)
 
-        for table in queried_tables:
-            print(table.table_name)
+            print("Queried_tables")
+            for table in queried_tables:
+                print("\t{}".format(table.table_name))
+            # [END tsc_query_tables]
+
+        finally:
+            await self.delete_tables()
+
+    async def delete_tables(self):
+        from azure.data.tables.aio import TableServiceClient
+        ts = TableServiceClient.from_connection_string(conn_str=self.connection_string)
+        tables = ["mytable1", "mytable2"]
+        for table in tables:
+            try:
+                await ts.delete_table(table_name=table)
+            except:
+                pass
 
 
 async def main():
-    await QueryTable.query_tables()
+    sample = QueryTables()
+    await sample.delete_tables()
+    await sample.tables_in_account()
 
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    asyncio.run(main())

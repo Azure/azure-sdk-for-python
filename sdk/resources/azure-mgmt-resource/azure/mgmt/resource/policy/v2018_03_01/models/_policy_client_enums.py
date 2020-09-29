@@ -6,20 +6,38 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum
+from enum import Enum, EnumMeta
+from six import with_metaclass
 
-class PolicyMode(str, Enum):
+class _CaseInsensitiveEnumMeta(EnumMeta):
+    def __getitem__(self, name):
+        return super().__getitem__(name.upper())
+
+    def __getattr__(cls, name):
+        """Return the enum member matching `name`
+        We use __getattr__ instead of descriptors or inserting into the enum
+        class' __dict__ in order to support `name` and `value` being both
+        properties for enum members (which live in the class' __dict__) and
+        enum members themselves.
+        """
+        try:
+            return cls._member_map_[name.upper()]
+        except KeyError:
+            raise AttributeError(name)
+
+
+class PolicyMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The policy definition mode. Possible values are NotSpecified, Indexed, and All.
     """
 
-    not_specified = "NotSpecified"
-    indexed = "Indexed"
-    all = "All"
+    NOT_SPECIFIED = "NotSpecified"
+    INDEXED = "Indexed"
+    ALL = "All"
 
-class PolicyType(str, Enum):
+class PolicyType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The type of policy definition. Possible values are NotSpecified, BuiltIn, and Custom.
     """
 
-    not_specified = "NotSpecified"
-    built_in = "BuiltIn"
-    custom = "Custom"
+    NOT_SPECIFIED = "NotSpecified"
+    BUILT_IN = "BuiltIn"
+    CUSTOM = "Custom"

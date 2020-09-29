@@ -68,10 +68,9 @@ async def run_sample():
 
         tags = {"a": "b"}
 
-        updated_bank_certificate_poller = await client.create_certificate(
+        bank_certificate = await client.create_certificate(
             certificate_name=bank_cert_name, policy=CertificatePolicy.get_default(), tags=tags
         )
-        bank_certificate = await updated_bank_certificate_poller
         print(
             "Certificate with name '{0}' was created again with tags '{1}'".format(
                 bank_certificate.name, bank_certificate.properties.tags

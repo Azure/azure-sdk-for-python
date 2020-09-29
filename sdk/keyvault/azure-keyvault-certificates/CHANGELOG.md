@@ -1,6 +1,12 @@
 # Release History
 
-## 4.2.1 (Unreleased)
+## 4.2.2 (Unreleased)
+
+
+## 4.2.1 (2020-09-08)
+### Fixed
+- Correct typing for paging methods
+- Fixed incompatibility issues with API version 2016-10-01
 
 
 ## 4.2.0 (2020-08-11)

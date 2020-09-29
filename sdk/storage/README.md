@@ -28,12 +28,12 @@ or contact [opencode@microsoft.com][coc_contact] with any
 additional questions or comments.
 
 <!-- LINKS -->
-[blobs]: ./azure-storage-blob/README.md
-[queues]: ./azure-storage-queue/README.md
-[fileshares]: ./azure-storage-file-share/README.md
-[datalake]: ./azure-storage-file-datalake/README.md
-[management]: ./azure-mgmt-storage/
-[storage_contrib]: ./../../CONTRIBUTING.md
+[blobs]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/storage/azure-storage-blob/README.md
+[queues]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/storage/azure-storage-queue/README.md
+[fileshares]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/storage/azure-storage-file-share/README.md
+[datalake]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/storage/azure-storage-file-datalake/README.md
+[management]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/storage/azure-mgmt-storage/
+[storage_contrib]: https://github.com/Azure/azure-sdk-for-python/blob/master/CONTRIBUTING.md
 [cla]: https://cla.microsoft.com
 [coc]: https://opensource.microsoft.com/codeofconduct/
 [coc_faq]: https://opensource.microsoft.com/codeofconduct/faq/

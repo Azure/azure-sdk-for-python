@@ -217,6 +217,13 @@ async def example_send_and_receive_async():
             await message.complete()
     # [END receive_async]
 
+    # [START receive_forever_async]
+    async with servicebus_receiver:
+        async for message in servicebus_receiver.get_streaming_message_iter():
+            print(str(message))
+            await message.complete()
+    # [END receive_forever_async]
+
     # [START auto_lock_renew_message_async]
     from azure.servicebus.aio import AutoLockRenew
 
@@ -266,13 +273,13 @@ async def example_session_ops_async():
         # [START get_session_state_async]
         async with servicebus_client.get_queue_session_receiver(queue_name=queue_name, session_id=session_id) as receiver:
             session = receiver.session
-            session_state = await session.get_session_state()
+            session_state = await session.get_state()
         # [END get_session_state_async]
 
         # [START set_session_state_async]
         async with servicebus_client.get_queue_session_receiver(queue_name=queue_name, session_id=session_id) as receiver:
             session = receiver.session
-            session_state = await session.set_session_state("START")
+            session_state = await session.set_state("START")
         # [END set_session_state_async]
 
         # [START session_renew_lock_async]

@@ -2,29 +2,31 @@ interactions:
 - request:
     body: 'b''{"source": "https://fakeuri.com/blank%20space"}'''
     headers:
+      Accept:
+      - application/json
       Content-Length:
       - '47'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/prebuilt/receipt/analyze?includeTextDetails=false
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/prebuilt/receipt/analyze?includeTextDetails=false
   response:
     body:
       string: '{"error": {"code": "FailedToDownloadImage", "innerError": {"requestId":
-        "58ece1db-cd7a-472c-8fbd-a726fb02c211"}, "message": "Failed to download image
+        "3fd11330-e352-4cd6-b95f-df0dbe584298"}, "message": "Failed to download image
         from input URL."}}'
     headers:
-      apim-request-id: 58ece1db-cd7a-472c-8fbd-a726fb02c211
+      apim-request-id: 3fd11330-e352-4cd6-b95f-df0dbe584298
+      content-length: '161'
       content-type: application/json; charset=utf-8
-      date: Fri, 10 Jul 2020 18:54:27 GMT
+      date: Mon, 14 Sep 2020 22:44:36 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '3896'
+      x-envoy-upstream-service-time: '3810'
     status:
       code: 400
       message: Bad Request
-    url: https://centraluseuap.api.cognitive.microsoft.com//formrecognizer/v2.0/prebuilt/receipt/analyze?includeTextDetails=false
+    url: https://centraluseuap.api.cognitive.microsoft.com//formrecognizer/v2.1-preview.1/prebuilt/receipt/analyze?includeTextDetails=false
 version: 1

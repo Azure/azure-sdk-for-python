@@ -162,7 +162,7 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
         responses = []
 
         def callback(raw_response, _, headers):
-            analyze_result = client._client._deserialize(AnalyzeOperationResult, raw_response)
+            analyze_result = client._deserialize(AnalyzeOperationResult, raw_response)
             extracted_receipt = prepare_receipt(analyze_result)
             responses.append(analyze_result)
             responses.append(extracted_receipt)
@@ -217,7 +217,7 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
         responses = []
 
         def callback(raw_response, _, headers):
-            analyze_result = client._client._deserialize(AnalyzeOperationResult, raw_response)
+            analyze_result = client._deserialize(AnalyzeOperationResult, raw_response)
             extracted_receipt = prepare_receipt(analyze_result)
             responses.append(analyze_result)
             responses.append(extracted_receipt)
@@ -381,7 +381,7 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
         responses = []
 
         def callback(raw_response, _, headers):
-            analyze_result = client._client._deserialize(AnalyzeOperationResult, raw_response)
+            analyze_result = client._deserialize(AnalyzeOperationResult, raw_response)
             extracted_receipt = prepare_receipt(analyze_result)
             responses.append(analyze_result)
             responses.append(extracted_receipt)

@@ -1,8 +1,8 @@
 # Generation of SDK
 
-Assuming your Swagger are associated with correct Readmes (otherwise see previous chapter [Swagger conf](./swagger_conf.md)), this page explains how to generate your packages.
+Assuming your Swagger are associated with correct Readmes (otherwise see previous chapter [Swagger conf](https://github.com/Azure/azure-sdk-for-python/blob/master/doc/dev/mgmt/swagger_conf.md)), this page explains how to generate your packages.
 
-IMPORTANT NOTE: All the commands prefixed by `python` in this page assumes you have loaded the [dev_setup](../dev_setup.md) in your currently loaded virtual environment.
+IMPORTANT NOTE: All the commands prefixed by `python` in this page assumes you have loaded the [dev_setup](https://github.com/Azure/azure-sdk-for-python/blob/master/doc/dev/dev_setup.md) in your currently loaded virtual environment.
 
 ## Building the code
 

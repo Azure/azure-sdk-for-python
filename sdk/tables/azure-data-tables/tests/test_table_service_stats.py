@@ -50,9 +50,8 @@ class TableServiceStatsTest(TableTestCase):
 
     # --Test cases per service ---------------------------------------
 
-    # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest", sku='Standard_RAGRS')
+    @CachedStorageAccountPreparer(name_prefix='pyacrstorage', sku='Standard_RAGRS', random_name_enabled=True)
     def test_table_service_stats_f(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         tsc = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
@@ -63,7 +62,7 @@ class TableServiceStatsTest(TableTestCase):
         self._assert_stats_default(stats)
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest", sku='Standard_RAGRS')
+    @CachedStorageAccountPreparer(name_prefix='pyacrstorage', sku='Standard_RAGRS', random_name_enabled=True)
     def test_table_service_stats_when_unavailable(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         tsc = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)

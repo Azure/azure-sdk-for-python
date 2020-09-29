@@ -19,6 +19,7 @@ from uamqp import (
     Message,
     AMQPClientAsync,
 )
+from azure.core.credentials import AccessToken
 
 from .._client_base import ClientBase, _generate_sas_token, _parse_conn_str
 from .._utils import utc_from_timestamp
@@ -62,6 +63,28 @@ class EventHubSharedKeyCredential(object):
         return _generate_sas_token(scopes[0], self.policy, self.key)
 
 
+class EventHubSASTokenCredential(object):
+    """The shared access token credential used for authentication.
+
+    :param str token: The shared access token string
+    :param int expiry: The epoch timestamp
+    """
+    def __init__(self, token: str, expiry: int) -> None:
+        """
+        :param str token: The shared access token string
+        :param int expiry: The epoch timestamp
+        """
+        self.token = token
+        self.expiry = expiry
+        self.token_type = b"servicebus.windows.net:sastoken"
+
+    async def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:  # pylint:disable=unused-argument
+        """
+        This method is automatically called when token is about to expire.
+        """
+        return AccessToken(self.token, self.expiry)
+
+
 class ClientBaseAsync(ClientBase):
     def __init__(
         self,
@@ -86,10 +109,13 @@ class ClientBaseAsync(ClientBase):
 
     @staticmethod
     def _from_connection_string(conn_str: str, **kwargs) -> Dict[str, Any]:
-        host, policy, key, entity = _parse_conn_str(conn_str, kwargs)
+        host, policy, key, entity, token, token_expiry = _parse_conn_str(conn_str, kwargs)
         kwargs["fully_qualified_namespace"] = host
         kwargs["eventhub_name"] = entity
-        kwargs["credential"] = EventHubSharedKeyCredential(policy, key)
+        if token and token_expiry:
+            kwargs["credential"] = EventHubSASTokenCredential(token, token_expiry)
+        elif policy and key:
+            kwargs["credential"] = EventHubSharedKeyCredential(policy, key)
         return kwargs
 
     async def _create_auth_async(self) -> authentication.JWTTokenAsync:

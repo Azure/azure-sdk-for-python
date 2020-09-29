@@ -15,13 +15,11 @@ interactions:
       - application/json
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-      api-key:
-      - 29C5A4303121A8463A635CEB4E544072
     method: POST
     uri: https://search299919b9.search.windows.net/synonymmaps?api-version=2020-06-30
   response:
     body:
-      string: '{"@odata.context":"https://search299919b9.search.windows.net/$metadata#synonymmaps/$entity","@odata.etag":"\"0x8D83FAD81C81855\"","name":"test-syn-map","format":"solr","synonyms":"USA,
+      string: '{"@odata.context":"https://search299919b9.search.windows.net/$metadata#synonymmaps/$entity","@odata.etag":"\"0x8D84B8A2DC218F0\"","name":"test-syn-map","format":"solr","synonyms":"USA,
         United States, United States of America\nWashington, Wash. => WA","encryptionKey":null}'
     headers:
       cache-control:
@@ -31,11 +29,11 @@ interactions:
       content-type:
       - application/json; odata.metadata=minimal
       date:
-      - Thu, 13 Aug 2020 17:22:50 GMT
+      - Fri, 28 Aug 2020 19:40:11 GMT
       elapsed-time:
-      - '37'
+      - '21'
       etag:
-      - W/"0x8D83FAD81C81855"
+      - W/"0x8D84B8A2DC218F0"
       expires:
       - '-1'
       location:
@@ -47,7 +45,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - 9d722ef9-dd89-11ea-80f2-5cf37071153c
+      - 4951ae04-e966-11ea-8594-5cf37071153c
       strict-transport-security:
       - max-age=15724800; includeSubDomains
     status:
@@ -64,13 +62,11 @@ interactions:
       - keep-alive
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-      api-key:
-      - 29C5A4303121A8463A635CEB4E544072
     method: GET
     uri: https://search299919b9.search.windows.net/synonymmaps?api-version=2020-06-30
   response:
     body:
-      string: '{"@odata.context":"https://search299919b9.search.windows.net/$metadata#synonymmaps","value":[{"@odata.etag":"\"0x8D83FAD81C81855\"","name":"test-syn-map","format":"solr","synonyms":"USA,
+      string: '{"@odata.context":"https://search299919b9.search.windows.net/$metadata#synonymmaps","value":[{"@odata.etag":"\"0x8D84B8A2DC218F0\"","name":"test-syn-map","format":"solr","synonyms":"USA,
         United States, United States of America\nWashington, Wash. => WA","encryptionKey":null}]}'
     headers:
       cache-control:
@@ -80,9 +76,9 @@ interactions:
       content-type:
       - application/json; odata.metadata=minimal
       date:
-      - Thu, 13 Aug 2020 17:22:50 GMT
+      - Fri, 28 Aug 2020 19:40:11 GMT
       elapsed-time:
-      - '10'
+      - '26'
       expires:
       - '-1'
       odata-version:
@@ -92,7 +88,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - 9daa0011-dd89-11ea-b80f-5cf37071153c
+      - 49cbb87e-e966-11ea-8041-5cf37071153c
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:
@@ -111,13 +107,11 @@ interactions:
       - keep-alive
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-      api-key:
-      - 29C5A4303121A8463A635CEB4E544072
     method: GET
     uri: https://search299919b9.search.windows.net/synonymmaps('test-syn-map')?api-version=2020-06-30
   response:
     body:
-      string: '{"@odata.context":"https://search299919b9.search.windows.net/$metadata#synonymmaps/$entity","@odata.etag":"\"0x8D83FAD81C81855\"","name":"test-syn-map","format":"solr","synonyms":"USA,
+      string: '{"@odata.context":"https://search299919b9.search.windows.net/$metadata#synonymmaps/$entity","@odata.etag":"\"0x8D84B8A2DC218F0\"","name":"test-syn-map","format":"solr","synonyms":"USA,
         United States, United States of America\nWashington, Wash. => WA","encryptionKey":null}'
     headers:
       cache-control:
@@ -127,11 +121,11 @@ interactions:
       content-type:
       - application/json; odata.metadata=minimal
       date:
-      - Thu, 13 Aug 2020 17:22:50 GMT
+      - Fri, 28 Aug 2020 19:40:11 GMT
       elapsed-time:
-      - '7'
+      - '5'
       etag:
-      - W/"0x8D83FAD81C81855"
+      - W/"0x8D84B8A2DC218F0"
       expires:
       - '-1'
       odata-version:
@@ -141,7 +135,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - 9db72e15-dd89-11ea-87bc-5cf37071153c
+      - 49e75dd5-e966-11ea-b134-5cf37071153c
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:
