@@ -98,6 +98,9 @@
 # PRLabel: %Cognitive - Form Recognizer
 /sdk/formrecognizer/                                                 @kristapratico @iscai-msft @rakshith91
 
+# PRLabel: %Cognitive - Metrics Advisor
+/sdk/metricsadvisor/                                                 @xiangyan99 @kristapratico
+
 # PRLabel: %Tables
 /sdk/tables/                                                         @seankane-msft
 
