@@ -15,7 +15,7 @@ from msrest import Serializer, Deserializer
 from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
 from ._configuration import SubscriptionClientConfiguration
-
+from ._operations_mixin import SubscriptionClientOperationsMixin
 class _SDKClient(object):
     def __init__(self, *args, **kwargs):
         """This is a fake class to support current implemetation of MultiApiClientMixin."
@@ -23,7 +23,7 @@ class _SDKClient(object):
         """
         pass
 
-class SubscriptionClient(MultiApiClientMixin, _SDKClient):
+class SubscriptionClient(SubscriptionClientOperationsMixin, MultiApiClientMixin, _SDKClient):
     """All resource groups and resources exist within subscriptions. These operation enable you get information about your subscriptions and tenants. A tenant is a dedicated instance of Azure Active Directory (Azure AD) for your organization.
 
     This ready contains multiple API versions, to help you deal with all of the Azure clouds
@@ -41,7 +41,6 @@ class SubscriptionClient(MultiApiClientMixin, _SDKClient):
     :param str base_url: Service URL
     :param profile: A profile definition, from KnownProfiles to dict.
     :type profile: azure.profiles.KnownProfiles
-    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
     DEFAULT_API_VERSION = '2019-11-01'
@@ -66,8 +65,6 @@ class SubscriptionClient(MultiApiClientMixin, _SDKClient):
         self._config = SubscriptionClientConfiguration(credential, **kwargs)
         self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
         super(SubscriptionClient, self).__init__(
-            credential,
-            self._config,
             api_version=api_version,
             profile=profile
         )
@@ -97,7 +94,7 @@ class SubscriptionClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2019-11-01':
             from .v2019_11_01 import models
             return models
-        raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        raise ValueError("API version {} is not available".format(api_version))
 
     @property
     def operations(self):
@@ -118,7 +115,7 @@ class SubscriptionClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2019-11-01':
             from .v2019_11_01.operations import Operations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+            raise ValueError("API version {} does not have operation group 'operations'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -140,7 +137,7 @@ class SubscriptionClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2019-11-01':
             from .v2019_11_01.operations import SubscriptionsOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+            raise ValueError("API version {} does not have operation group 'subscriptions'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -162,7 +159,7 @@ class SubscriptionClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2019-11-01':
             from .v2019_11_01.operations import TenantsOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+            raise ValueError("API version {} does not have operation group 'tenants'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     def close(self):

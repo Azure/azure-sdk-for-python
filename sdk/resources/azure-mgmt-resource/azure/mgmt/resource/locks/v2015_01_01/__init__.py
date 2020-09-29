@@ -10,7 +10,7 @@ from ._management_lock_client import ManagementLockClient
 __all__ = ['ManagementLockClient']
 
 try:
-    from ._patch import patch_sdk
+    from ._patch import patch_sdk  # type: ignore
     patch_sdk()
 except ImportError:
     pass

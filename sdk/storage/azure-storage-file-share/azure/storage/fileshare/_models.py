@@ -773,7 +773,7 @@ class FileSasPermissions(object):
         p_delete = 'd' in permission
 
         parsed = cls(p_read, p_create, p_write, p_delete)
-        parsed._str = permission # pylint: disable = protected-access
+
         return parsed
 
 
@@ -830,7 +830,7 @@ class ShareSasPermissions(object):
         p_list = 'l' in permission
 
         parsed = cls(p_read, p_write, p_delete, p_list)
-        parsed._str = permission # pylint: disable = protected-access
+
         return parsed
 
 class NTFSAttributes(object):

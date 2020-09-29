@@ -34,7 +34,8 @@
 import unittest
 
 import azure.mgmt.network
-from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer
+from azure.core.exceptions import ResourceExistsError
+from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer, RandomNameResourceGroupPreparer
 
 AZURE_LOCATION = 'eastus'
 
@@ -500,7 +501,8 @@ class MgmtNetworkTest(AzureMgmtTestCase):
             "tag2": "value2"
           }
         }
-        result = self.mgmt_client.vpn_gateways.update_tags(resource_group.name, VPN_GATEWAY_NAME, BODY)
+        # result = self.mgmt_client.vpn_gateways.begin_update_tags(resource_group.name, VPN_GATEWAY_NAME, BODY)
+        # result = result.result()
 
         # VpnSiteUpdate[patch]
         BODY = {
@@ -541,10 +543,14 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         result = result.result()
 
         # VpnGatewayDelete[delete]
+        # try:
         result = self.mgmt_client.vpn_gateways.begin_delete(resource_group.name, VPN_GATEWAY_NAME)
         result = result.result()
+        # except ResourceExistsError as e:
+        #     if not str(e).startswith("(AnotherOperationInProgress)"):
+        #         raise e
 
-        # # VirtualHubDelete[delete]
+        # VirtualHubDelete[delete]
         result = self.mgmt_client.virtual_hubs.begin_delete(resource_group.name, VIRTUAL_HUB_NAME)
         result = result.result()
 

@@ -692,10 +692,10 @@ Operations removed:
       - Added ReadScale, SampleName, ServerState
   - Added missing Database properties (failover_group_id,
     restore_point_in_time, read_scale, sample_name)
-  - Added missing ElasticPoolActivity properties ([requested]()*)
+  - Added missing ElasticPoolActivity properties ([requested](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/sql/azure-mgmt-sql)*)
   - Added missing ReplicationLink properties (is_termination_allowed,
     replication_mode)
-  - Added missing Server properties ([external_administrator]()*,
+  - Added missing Server properties ([external_administrator](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/sql/azure-mgmt-sql)*,
     state)
   - Added operations APIs
   - Removed unused Database.upgrade_hint property

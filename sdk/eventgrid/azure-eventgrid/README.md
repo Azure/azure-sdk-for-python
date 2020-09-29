@@ -219,10 +219,11 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 
 [python-eg-src]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventgrid/azure-eventgrid/
 [python-eg-pypi]: https://pypi.org/project/azure-eventgrid
-[python-eg-product-docs]: https://docs.microsoft.com/en-us/azure/event-grid/overview
+[python-eg-product-docs]: https://docs.microsoft.com/azure/event-grid/overview
 [python-eg-ref-docs]: https://aka.ms/azsdk/python/eventgrid/docs
 [python-eg-samples]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventgrid/azure-eventgrid/samples
 [python-eg-changelog]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventgrid/azure-eventgrid/CHANGELOG.md
+[pip]: https://pypi.org/project/pip/
 
 [azure_portal_create_EG_resource]: https://ms.portal.azure.com/#blade/HubsExtension/BrowseResource/resourceType/Microsoft.EventGrid%2Ftopics
 [azure-key-credential]: https://aka.ms/azsdk/python/core/azurekeycredential
@@ -237,7 +238,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [python-eg-sample-consume-customevent]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventgrid/azure-eventgrid/samples/champion_scenarios/cs4_consume_custom_events.py
 [python-eg-sample-send-cloudevent]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventgrid/azure-eventgrid/samples/champion_scenarios/cs5_publish_events_using_cloud_events_1.0_schema.py
 [python-eg-sample-consume-cloudevent]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventgrid/azure-eventgrid/samples/champion_scenarios/cs6_consume_events_using_cloud_events_1.0_schema.py
-[publisher-service-doc]: https://docs.microsoft.com/en-us/azure/event-grid/concepts
+[publisher-service-doc]: https://docs.microsoft.com/azure/event-grid/concepts
 
 [cla]: https://cla.microsoft.com
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/

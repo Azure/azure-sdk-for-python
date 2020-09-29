@@ -7,6 +7,7 @@ from cryptography.hazmat.primitives.asymmetric import padding
 
 from ..algorithm import AsymmetricEncryptionAlgorithm
 from ..transform import CryptoTransform
+from ..._enums import EncryptionAlgorithm
 
 
 class _Rsa1_5Encryptor(CryptoTransform):
@@ -20,7 +21,7 @@ class _Rsa1_5Decryptor(CryptoTransform):
 
 
 class Rsa1_5(AsymmetricEncryptionAlgorithm):  # pylint:disable=client-incorrect-naming-convention
-    _name = "RSA1_5"
+    _name = EncryptionAlgorithm.rsa1_5
 
     def create_encryptor(self, key):
         return _Rsa1_5Encryptor(key)
@@ -54,7 +55,7 @@ class _RsaOaepEncryptor(CryptoTransform):
 
 
 class RsaOaep(AsymmetricEncryptionAlgorithm):
-    _name = "RSA-OAEP"
+    _name = EncryptionAlgorithm.rsa_oaep
 
     def create_encryptor(self, key):
         return _RsaOaepEncryptor(key, hashes.SHA1)
@@ -64,7 +65,7 @@ class RsaOaep(AsymmetricEncryptionAlgorithm):
 
 
 class RsaOaep256(AsymmetricEncryptionAlgorithm):
-    _name = "RSA-OAEP-256"
+    _name = EncryptionAlgorithm.rsa_oaep_256
 
     def create_encryptor(self, key):
         return _RsaOaepEncryptor(key, hashes.SHA256)

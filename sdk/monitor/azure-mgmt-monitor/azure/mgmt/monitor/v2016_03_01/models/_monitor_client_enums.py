@@ -6,46 +6,64 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum
+from enum import Enum, EnumMeta
+from six import with_metaclass
 
-class AggregationType(str, Enum):
+class _CaseInsensitiveEnumMeta(EnumMeta):
+    def __getitem__(self, name):
+        return super().__getitem__(name.upper())
+
+    def __getattr__(cls, name):
+        """Return the enum member matching `name`
+        We use __getattr__ instead of descriptors or inserting into the enum
+        class' __dict__ in order to support `name` and `value` being both
+        properties for enum members (which live in the class' __dict__) and
+        enum members themselves.
+        """
+        try:
+            return cls._member_map_[name.upper()]
+        except KeyError:
+            raise AttributeError(name)
+
+
+class AggregationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """the primary aggregation type value defining how to use the values for display.
     """
 
-    none = "None"
-    average = "Average"
-    count = "Count"
-    minimum = "Minimum"
-    maximum = "Maximum"
-    total = "Total"
+    NONE = "None"
+    AVERAGE = "Average"
+    COUNT = "Count"
+    MINIMUM = "Minimum"
+    MAXIMUM = "Maximum"
+    TOTAL = "Total"
 
-class ConditionOperator(str, Enum):
+class ConditionOperator(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Operators allowed in the rule condition.
     """
 
-    greater_than = "GreaterThan"
-    greater_than_or_equal = "GreaterThanOrEqual"
-    less_than = "LessThan"
-    less_than_or_equal = "LessThanOrEqual"
+    GREATER_THAN = "GreaterThan"
+    GREATER_THAN_OR_EQUAL = "GreaterThanOrEqual"
+    LESS_THAN = "LessThan"
+    LESS_THAN_OR_EQUAL = "LessThanOrEqual"
 
-class TimeAggregationOperator(str, Enum):
+class TimeAggregationOperator(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Aggregation operators allowed in a rule.
     """
 
-    average = "Average"
-    minimum = "Minimum"
-    maximum = "Maximum"
-    total = "Total"
-    last = "Last"
+    AVERAGE = "Average"
+    MINIMUM = "Minimum"
+    MAXIMUM = "Maximum"
+    TOTAL = "Total"
+    LAST = "Last"
 
-class Unit(str, Enum):
+class Unit(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """the unit of the metric.
     """
 
-    count = "Count"
-    bytes = "Bytes"
-    seconds = "Seconds"
-    count_per_second = "CountPerSecond"
-    bytes_per_second = "BytesPerSecond"
-    percent = "Percent"
-    milli_seconds = "MilliSeconds"
+    COUNT = "Count"
+    BYTES = "Bytes"
+    SECONDS = "Seconds"
+    COUNT_PER_SECOND = "CountPerSecond"
+    BYTES_PER_SECOND = "BytesPerSecond"
+    PERCENT = "Percent"
+    MILLI_SECONDS = "MilliSeconds"

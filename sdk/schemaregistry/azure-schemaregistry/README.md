@@ -1,7 +1,8 @@
 # Azure Schema Registry client library for Python
 
-Azure Schema Registry is a service that provides the ability to store and retrieve different types of schemas such as
-Avro, Json, etc.
+Azure Schema Registry is a schema repository service hosted by Azure Event Hubs, providing schema storage, versioning,
+and management. The registry is leveraged by serializers to reduce payload size while describing payload structure with
+schema identifiers rather than full schemas.
 
 [Source code][source_code] | [Package (PyPi)][pypi] | [API reference documentation][api_reference] | [Samples][sr_samples] | [Changelog][change_log]
 
@@ -18,7 +19,7 @@ pip install azure-schemaregistry azure-identity
 ### Prerequisites: 
 To use this package, you must have:
 * Azure subscription - [Create a free account][azure_sub]
-* Azure Schema Registry
+* [Azure Schema Registry][schemaregistry_service]
 * Python 2.7, 3.5 or later - [Install Python][python]
 
 ### Authenticate the client
@@ -39,6 +40,8 @@ schema_registry_client = SchemaRegistryClient(endpoint, credential)
 
 - Schema: Schema is the organization or structure for data.
 
+- SchemaRegistryClient: `SchemaRegistryClient ` provides the API for storing and retrieving schemas in schema registry.
+
 ## Examples
 
 The following sections provide several code snippets covering some of the most common Schema Registry tasks, including:
@@ -48,6 +51,8 @@ The following sections provide several code snippets covering some of the most c
 - [Get the id of a schema](#get-the-id-of-a-schema)
 
 ### Register a schema
+
+Use `SchemaRegistryClient.register_schema` method to register a schema.
 
 ```python
 import os
@@ -80,6 +85,8 @@ with schema_registry_client:
 
 ### Get the schema by id
 
+Get the schema content and its properties by schema id.
+
 ```python
 import os
 
@@ -97,6 +104,8 @@ with schema_registry_client:
 ```
 
 ### Get the id of a schema
+
+Get the schema id of a schema by schema content and its properties.
 
 ```python
 import os
@@ -172,6 +181,13 @@ schema_registry_client.get_schema(schema_id, logging_enable=True)
 
 Please take a look at the [samples][sr_samples] directory for detailed examples of how to use this library to register and retrieve schema to/from Schema Registry.
 
+### Event Hubs and Avro Serializer
+
+We provide [azure-schemaregistry-avroserializer][schemaregistry_avroserializer_pypi] library as serializer
+implementation to serialize/deserialize avro data integrated with `azure-schemaregistry` for automatic schema registration and retrieval.
+It integrates nicely with the [EventHubs SDK][eventhubs_repo].
+For more information and sample codes, please refer to the [Azure Schema Registry Avro Serializer SDK][schemaregistry_avroserializer_repo].
+
 ## Contributing
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
@@ -197,3 +213,7 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 [api_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-schemaregistry/latest/index.html
 [source_code]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/schemaregistry/azure-schemaregistry
 [change_log]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/schemaregistry/azure-schemaregistry/CHANGELOG.md
+[schemaregistry_service]: https://aka.ms/schemaregistry
+[schemaregistry_avroserializer_repo]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/schemaregistry/azure-schemaregistry-avroserializer
+[schemaregistry_avroserializer_pypi]: https://pypi.org/project/azure-schemaregistry-avroserializer/
+[eventhubs_repo]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhub

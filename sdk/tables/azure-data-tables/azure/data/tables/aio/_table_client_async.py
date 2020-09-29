@@ -44,7 +44,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
             self,
             account_url,  # type: str
             table_name,  # type: str
-            credential,  # type : Optional[Any]=None
+            credential=None,  # type : Optional[Any]=None
             **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -91,7 +91,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_create_client_async.py
+            .. literalinclude:: ../samples/async_samples/sample_create_client_async.py
                 :start-after: [START create_table_client]
                 :end-before: [END create_table_client]
                 :language: python
@@ -163,7 +163,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
                 **kwargs)
         except HttpResponseError as error:
             _process_table_error(error)
-        return {s.id: s.access_policy or AccessPolicy() for s in identifiers}
+        return {s.id: s.access_policy or AccessPolicy(start=None, expiry=None, permission=None) for s in identifiers}
 
     @distributed_trace_async
     async def set_table_access_policy(
@@ -208,7 +208,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_create_delete_table_async.py
+            .. literalinclude:: ../samples/async_samples/sample_create_delete_table_async.py
                 :start-after: [START create_table]
                 :end-before: [END create_table]
                 :language: python
@@ -236,7 +236,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_create_delete_table_async.py
+            .. literalinclude:: ../samples/async_samples/sample_create_delete_table_async.py
                 :start-after: [START delete_table]
                 :end-before: [END delete_table]
                 :language: python
@@ -269,7 +269,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_insert_delete_entities_async.py
+            .. literalinclude:: ../samples/async_samples/sample_insert_delete_entities_async.py
                 :start-after: [START delete_entity]
                 :end-before: [END delete_entity]
                 :language: python
@@ -305,7 +305,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_insert_delete_entities_async.py
+            .. literalinclude:: ../samples/async_samples/sample_insert_delete_entities_async.py
                 :start-after: [START create_entity]
                 :end-before: [END create_entity]
                 :language: python
@@ -354,7 +354,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_update_upsert_merge_entities_async.py
+            .. literalinclude:: ../samples/async_samples/sample_update_upsert_merge_entities_async.py
                 :start-after: [START update_entity]
                 :end-before: [END update_entity]
                 :language: python
@@ -409,7 +409,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_update_upsert_merge_entities_async.py
+            .. literalinclude:: ../samples/async_samples/sample_update_upsert_merge_entities_async.py
                 :start-after: [START list_entities]
                 :end-before: [END list_entities]
                 :language: python
@@ -449,7 +449,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_query_table_async.py
+            .. literalinclude:: ../samples/async_samples/sample_query_table_async.py
                 :start-after: [START query_entities]
                 :end-before: [END query_entities]
                 :language: python
@@ -494,7 +494,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_update_upsert_merge_entities.py
+            .. literalinclude:: ../samples/async_samples/sample_update_upsert_merge_entities_async.py
                 :start-after: [START get_entity]
                 :end-before: [END get_entity]
                 :language: python
@@ -532,7 +532,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_update_upsert_merge_entities_async.py
+            .. literalinclude:: ../samples/async_samples/sample_update_upsert_merge_entities_async.py
                 :start-after: [START upsert_entity]
                 :end-before: [END upsert_entity]
                 :language: python
@@ -567,10 +567,5 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
                 raise ValueError("""Update mode {} is not supported.
                     For a list of supported modes see the UpdateMode enum""".format(mode))
             return _trim_service_metadata(metadata)
-        except ResourceNotFoundError:
-            return await self.create_entity(
-                partition_key=partition_key,
-                row_key=row_key,
-                table_entity_properties=entity,
-                **kwargs
-            )
+        except HttpResponseError as error:
+            _process_table_error(error)

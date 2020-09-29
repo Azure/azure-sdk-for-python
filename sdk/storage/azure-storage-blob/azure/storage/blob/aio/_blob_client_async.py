@@ -363,7 +363,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
 
     @distributed_trace_async
     async def delete_blob(self, delete_snapshots=False, **kwargs):
-        # type: (bool, Any) -> None
+        # type: (str, Any) -> None
         """Marks the specified blob for deletion.
 
         The blob is later deleted during garbage collection.
@@ -567,6 +567,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         except StorageErrorException as error:
             process_storage_error(error)
         blob_props.name = self.blob_name
+        blob_props.snapshot = self.snapshot
         blob_props.container = self.container_name
         return blob_props # type: ignore
 

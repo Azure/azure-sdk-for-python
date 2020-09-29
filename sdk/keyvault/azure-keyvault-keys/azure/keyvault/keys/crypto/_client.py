@@ -2,65 +2,27 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from datetime import datetime, timedelta, tzinfo
+import logging
+from typing import TYPE_CHECKING
 
 import six
-from azure.core.exceptions import AzureError, HttpResponseError
+from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
 
 from . import DecryptResult, EncryptResult, SignResult, VerifyResult, UnwrapResult, WrapResult
-from ._internal import EllipticCurveKey, RsaKey, SymmetricKey
+from ._key_validity import raise_if_time_invalid
+from ._providers import get_local_cryptography_provider, NoLocalCryptography
+from .. import KeyOperation
 from .._models import KeyVaultKey
 from .._shared import KeyVaultClientBase, parse_vault_id
-
-try:
-    from typing import TYPE_CHECKING
-except ImportError:
-    TYPE_CHECKING = False
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import
     from typing import Any, Optional, Union
     from azure.core.credentials import TokenCredential
     from . import EncryptionAlgorithm, KeyWrapAlgorithm, SignatureAlgorithm
-    from ._internal import Key as _Key
 
-
-class _UTC_TZ(tzinfo):
-    """from https://docs.python.org/2/library/datetime.html#tzinfo-objects"""
-
-    ZERO = timedelta(0)
-
-    def utcoffset(self, dt):
-        return self.ZERO
-
-    def tzname(self, dt):
-        return "UTC"
-
-    def dst(self, dt):
-        return self.ZERO
-
-
-_UTC = _UTC_TZ()
-
-
-def _enforce_nbf_exp(key):
-    # type: (KeyVaultKey) -> None
-    try:
-        nbf = key.properties.not_before
-        exp = key.properties.expires_on
-    except AttributeError:
-        # we consider the key valid because a user must have deliberately created it
-        # (if it came from Key Vault, it would have those attributes)
-        return
-
-    now = datetime.now(_UTC)
-    if (nbf and exp) and not nbf <= now <= exp:
-        raise ValueError("This client's key is useable only between {} and {} (UTC)".format(nbf, exp))
-    if nbf and nbf >= now:
-        raise ValueError("This client's key is not useable until {} (UTC)".format(nbf))
-    if exp and exp <= now:
-        raise ValueError("This client's key expired at {} (UTC)".format(exp))
+_LOGGER = logging.getLogger(__name__)
 
 
 class CryptographyClient(KeyVaultClientBase):
@@ -78,23 +40,12 @@ class CryptographyClient(KeyVaultClientBase):
     :keyword transport: transport to use. Defaults to :class:`~azure.core.pipeline.transport.RequestsTransport`.
     :paramtype transport: ~azure.core.pipeline.transport.HttpTransport
 
-    Creating a ``CryptographyClient``:
-
-    .. code-block:: python
-
-        from azure.identity import DefaultAzureCredential
-        from azure.keyvault.keys.crypto import CryptographyClient
-
-        credential = DefaultAzureCredential()
-
-        # create a CryptographyClient using a KeyVaultKey instance
-        key = key_client.get_key("mykey")
-        crypto_client = CryptographyClient(key, credential)
-
-        # or a key's id, which must include a version
-        key_id = "https://<your vault>.vault.azure.net/keys/mykey/fe4fdcab688c479a9aa80f01ffeac26"
-        crypto_client = CryptographyClient(key_id, credential)
-
+    .. literalinclude:: ../tests/test_examples_crypto.py
+        :start-after: [START create_client]
+        :end-before: [END create_client]
+        :caption: Create a CryptographyClient
+        :language: python
+        :dedent: 8
     """
 
     def __init__(self, key, credential, **kwargs):
@@ -103,21 +54,18 @@ class CryptographyClient(KeyVaultClientBase):
         if isinstance(key, KeyVaultKey):
             self._key = key
             self._key_id = parse_vault_id(key.id)
-            self._allowed_ops = frozenset(self._key.key_operations)
         elif isinstance(key, six.string_types):
             self._key = None
             self._key_id = parse_vault_id(key)
             self._keys_get_forbidden = None  # type: Optional[bool]
-
-            # will be replaced with actual permissions before any local operations are attempted, if we can get the key
-            self._allowed_ops = frozenset()
         else:
             raise ValueError("'key' must be a KeyVaultKey instance or a key ID string including a version")
 
         if not self._key_id.version:
             raise ValueError("'key' must include a version")
 
-        self._internal_key = None  # type: Optional[_Key]
+        self._local_provider = NoLocalCryptography()
+        self._initialized = False
 
         super(CryptographyClient, self).__init__(vault_url=self._key_id.vault_url, credential=credential, **kwargs)
 
@@ -131,48 +79,29 @@ class CryptographyClient(KeyVaultClientBase):
         return "/".join(self._key_id)
 
     @distributed_trace
-    def _get_key(self, **kwargs):
-        # type: (**Any) -> Optional[KeyVaultKey]
-        """Get the client's :class:`~azure.keyvault.keys.KeyVaultKey`.
+    def _initialize(self, **kwargs):
+        # type: (**Any) -> None
+        if self._initialized:
+            return
 
-        Can be ``None``, if the client lacks keys/get permission.
-
-        :rtype: :class:`~azure.keyvault.keys.KeyVaultKey` or ``None``
-        """
-
+        # try to get the key material, if we don't have it and aren't forbidden to do so
         if not (self._key or self._keys_get_forbidden):
             try:
                 self._key = self._client.get_key(
                     self._key_id.vault_url, self._key_id.name, self._key_id.version, **kwargs
                 )
-                self._allowed_ops = frozenset(self._key.key_operations)
             except HttpResponseError as ex:
                 # if we got a 403, we don't have keys/get permission and won't try to get the key again
                 # (other errors may be transient)
                 self._keys_get_forbidden = ex.status_code == 403
-        return self._key
 
-    def _get_local_key(self, **kwargs):
-        # type: (**Any) -> Optional[_Key]
-        """Gets an object implementing local operations. Will be ``None``, if the client was instantiated with a key
-        id and lacks keys/get permission."""
-
-        if not self._internal_key:
-            key = self._get_key(**kwargs)
-            if not key:
-                return None
-
-            kty = key.key_type.lower()
-            if kty.startswith("ec"):
-                self._internal_key = EllipticCurveKey.from_jwk(key.key)
-            elif kty.startswith("rsa"):
-                self._internal_key = RsaKey.from_jwk(key.key)
-            elif kty == "oct":
-                self._internal_key = SymmetricKey.from_jwk(key.key)
-            else:
-                raise ValueError("Unsupported key type '{}'".format(key.key_type))
-
-        return self._internal_key
+        # if we have the key material, create a local crypto provider with it
+        if self._key:
+            self._local_provider = get_local_cryptography_provider(self._key)
+            self._initialized = True
+        else:
+            # try to get the key again next time unless we know we're forbidden to do so
+            self._initialized = self._keys_get_forbidden
 
     @distributed_trace
     def encrypt(self, algorithm, plaintext, **kwargs):
@@ -186,41 +115,30 @@ class CryptographyClient(KeyVaultClientBase):
         :param bytes plaintext: bytes to encrypt
         :rtype: :class:`~azure.keyvault.keys.crypto.EncryptResult`
 
-        Example:
-
-        .. code-block:: python
-
-            from azure.keyvault.keys.crypto import EncryptionAlgorithm
-
-            # the result holds the ciphertext and identifies the encryption key and algorithm used
-            result = client.encrypt(EncryptionAlgorithm.rsa_oaep, b"plaintext")
-            ciphertext = result.ciphertext
-            print(result.key_id)
-            print(result.algorithm)
-
+        .. literalinclude:: ../tests/test_examples_crypto.py
+            :start-after: [START encrypt]
+            :end-before: [END encrypt]
+            :caption: Encrypt bytes
+            :language: python
+            :dedent: 8
         """
+        self._initialize(**kwargs)
+        if self._local_provider.supports(KeyOperation.encrypt, algorithm):
+            raise_if_time_invalid(self._key)
+            try:
+                return self._local_provider.encrypt(algorithm, plaintext)
+            except Exception as ex:  # pylint:disable=broad-except
+                _LOGGER.warning("Local encrypt operation failed: %s", ex, exc_info=_LOGGER.isEnabledFor(logging.DEBUG))
 
-        local_key = self._get_local_key(**kwargs)
-        if local_key:
-            _enforce_nbf_exp(self._key)
-            if "encrypt" not in self._allowed_ops:
-                raise AzureError("This client doesn't have 'keys/encrypt' permission")
-            result = local_key.encrypt(plaintext, algorithm=algorithm.value)
-        else:
+        operation_result = self._client.encrypt(
+            vault_base_url=self._key_id.vault_url,
+            key_name=self._key_id.name,
+            key_version=self._key_id.version,
+            parameters=self._models.KeyOperationsParameters(algorithm=algorithm, value=plaintext),
+            **kwargs
+        )
 
-            parameters = self._models.KeyOperationsParameters(
-                algorithm=algorithm,
-                value=plaintext
-            )
-
-            result = self._client.encrypt(
-                vault_base_url=self._key_id.vault_url,
-                key_name=self._key_id.name,
-                key_version=self._key_id.version,
-                parameters=parameters,
-                **kwargs
-            ).result
-        return EncryptResult(key_id=self.key_id, algorithm=algorithm, ciphertext=result)
+        return EncryptResult(key_id=self.key_id, algorithm=algorithm, ciphertext=operation_result.result)
 
     @distributed_trace
     def decrypt(self, algorithm, ciphertext, **kwargs):
@@ -234,29 +152,29 @@ class CryptographyClient(KeyVaultClientBase):
         :param bytes ciphertext: encrypted bytes to decrypt
         :rtype: :class:`~azure.keyvault.keys.crypto.DecryptResult`
 
-        Example:
-
-        .. code-block:: python
-
-            from azure.keyvault.keys.crypto import EncryptionAlgorithm
-
-            result = client.decrypt(EncryptionAlgorithm.rsa_oaep, ciphertext)
-            print(result.plaintext)
-
+        .. literalinclude:: ../tests/test_examples_crypto.py
+            :start-after: [START decrypt]
+            :end-before: [END decrypt]
+            :caption: Decrypt bytes
+            :language: python
+            :dedent: 8
         """
+        self._initialize(**kwargs)
+        if self._local_provider.supports(KeyOperation.decrypt, algorithm):
+            try:
+                return self._local_provider.decrypt(algorithm, ciphertext)
+            except Exception as ex:  # pylint:disable=broad-except
+                _LOGGER.warning("Local decrypt operation failed: %s", ex, exc_info=_LOGGER.isEnabledFor(logging.DEBUG))
 
-        parameters = self._models.KeyOperationsParameters(
-            algorithm=algorithm,
-            value=ciphertext
-        )
-        result = self._client.decrypt(
+        operation_result = self._client.decrypt(
             vault_base_url=self._key_id.vault_url,
             key_name=self._key_id.name,
             key_version=self._key_id.version,
-            parameters=parameters,
+            parameters=self._models.KeyOperationsParameters(algorithm=algorithm, value=ciphertext),
             **kwargs
         )
-        return DecryptResult(key_id=self.key_id, algorithm=algorithm, plaintext=result.result)
+
+        return DecryptResult(key_id=self.key_id, algorithm=algorithm, plaintext=operation_result.result)
 
     @distributed_trace
     def wrap_key(self, algorithm, key, **kwargs):
@@ -268,39 +186,30 @@ class CryptographyClient(KeyVaultClientBase):
         :param bytes key: key to wrap
         :rtype: :class:`~azure.keyvault.keys.crypto.WrapResult`
 
-        Example:
-
-        .. code-block:: python
-
-            from azure.keyvault.keys.crypto import KeyWrapAlgorithm
-
-            # the result holds the encrypted key and identifies the encryption key and algorithm used
-            result = client.wrap_key(KeyWrapAlgorithm.rsa_oaep, key_bytes)
-            encrypted_key = result.encrypted_key
-            print(result.key_id)
-            print(result.algorithm)
-
+        .. literalinclude:: ../tests/test_examples_crypto.py
+            :start-after: [START wrap_key]
+            :end-before: [END wrap_key]
+            :caption: Wrap a key
+            :language: python
+            :dedent: 8
         """
+        self._initialize(**kwargs)
+        if self._local_provider.supports(KeyOperation.wrap_key, algorithm):
+            raise_if_time_invalid(self._key)
+            try:
+                return self._local_provider.wrap_key(algorithm, key)
+            except Exception as ex:  # pylint:disable=broad-except
+                _LOGGER.warning("Local wrap operation failed: %s", ex, exc_info=_LOGGER.isEnabledFor(logging.DEBUG))
 
-        local_key = self._get_local_key(**kwargs)
-        if local_key:
-            _enforce_nbf_exp(self._key)
-            if "wrapKey" not in self._allowed_ops:
-                raise AzureError("This client doesn't have 'keys/wrapKey' permission")
-            result = local_key.wrap_key(key, algorithm=algorithm.value)
-        else:
-            parameters = self._models.KeyOperationsParameters(
-                algorithm=algorithm,
-                value=key,
-            )
-            result = self._client.wrap_key(
-                self._key_id.vault_url,
-                self._key_id.name,
-                self._key_id.version,
-                parameters=parameters
-            ).result
+        operation_result = self._client.wrap_key(
+            vault_base_url=self._key_id.vault_url,
+            key_name=self._key_id.name,
+            key_version=self._key_id.version,
+            parameters=self._models.KeyOperationsParameters(algorithm=algorithm, value=key),
+            **kwargs
+        )
 
-        return WrapResult(key_id=self.key_id, algorithm=algorithm, encrypted_key=result)
+        return WrapResult(key_id=self.key_id, algorithm=algorithm, encrypted_key=operation_result.result)
 
     @distributed_trace
     def unwrap_key(self, algorithm, encrypted_key, **kwargs):
@@ -312,36 +221,28 @@ class CryptographyClient(KeyVaultClientBase):
         :param bytes encrypted_key: the wrapped key
         :rtype: :class:`~azure.keyvault.keys.crypto.UnwrapResult`
 
-        Example:
-
-        .. code-block:: python
-
-            from azure.keyvault.keys.crypto import KeyWrapAlgorithm
-
-            result = client.unwrap_key(KeyWrapAlgorithm.rsa_oaep, wrapped_bytes)
-            key = result.key
-
+        .. literalinclude:: ../tests/test_examples_crypto.py
+            :start-after: [START unwrap_key]
+            :end-before: [END unwrap_key]
+            :caption: Unwrap a key
+            :language: python
+            :dedent: 8
         """
-        local_key = self._get_local_key(**kwargs)
-        if local_key and local_key.is_private_key():
-            if "unwrapKey" not in self._allowed_ops:
-                raise AzureError("This client doesn't have 'keys/unwrapKey' permission")
-            result = local_key.unwrap_key(encrypted_key, **kwargs)
-        else:
+        self._initialize(**kwargs)
+        if self._local_provider.supports(KeyOperation.unwrap_key, algorithm):
+            try:
+                return self._local_provider.unwrap_key(algorithm, encrypted_key)
+            except Exception as ex:  # pylint:disable=broad-except
+                _LOGGER.warning("Local unwrap operation failed: %s", ex, exc_info=_LOGGER.isEnabledFor(logging.DEBUG))
 
-            parameters = self._models.KeyOperationsParameters(
-                algorithm=algorithm,
-                value=encrypted_key
-            )
-
-            result = self._client.unwrap_key(
-                vault_base_url=self._key_id.vault_url,
-                key_name=self._key_id.name,
-                key_version=self._key_id.version,
-                parameters=parameters,
-                **kwargs
-            ).result
-        return UnwrapResult(key_id=self._key_id, algorithm=algorithm, key=result)
+        operation_result = self._client.unwrap_key(
+            vault_base_url=self._key_id.vault_url,
+            key_name=self._key_id.name,
+            key_version=self._key_id.version,
+            parameters=self._models.KeyOperationsParameters(algorithm=algorithm, value=encrypted_key),
+            **kwargs
+        )
+        return UnwrapResult(key_id=self._key_id, algorithm=algorithm, key=operation_result.result)
 
     @distributed_trace
     def sign(self, algorithm, digest, **kwargs):
@@ -353,38 +254,30 @@ class CryptographyClient(KeyVaultClientBase):
         :param bytes digest: hashed bytes to sign
         :rtype: :class:`~azure.keyvault.keys.crypto.SignResult`
 
-        Example:
-
-        .. code-block:: python
-
-            import hashlib
-            from azure.keyvault.keys.crypto import SignatureAlgorithm
-
-            digest = hashlib.sha256(b"plaintext").digest()
-
-            # sign returns a tuple with the signature and the metadata required to verify it
-            result = client.sign(SignatureAlgorithm.rs256, digest)
-
-            # the result contains the signature and identifies the key and algorithm used
-            signature = result.signature
-            print(result.key_id)
-            print(result.algorithm)
-
+        .. literalinclude:: ../tests/test_examples_crypto.py
+            :start-after: [START sign]
+            :end-before: [END sign]
+            :caption: Sign bytes
+            :language: python
+            :dedent: 8
         """
+        self._initialize(**kwargs)
+        if self._local_provider.supports(KeyOperation.sign, algorithm):
+            raise_if_time_invalid(self._key)
+            try:
+                return self._local_provider.sign(algorithm, digest)
+            except Exception as ex:  # pylint:disable=broad-except
+                _LOGGER.warning("Local sign operation failed: %s", ex, exc_info=_LOGGER.isEnabledFor(logging.DEBUG))
 
-        parameters = self._models.KeySignParameters(
-            algorithm=algorithm,
-            value=digest
-        )
-
-        result = self._client.sign(
+        operation_result = self._client.sign(
             vault_base_url=self._key_id.vault_url,
             key_name=self._key_id.name,
             key_version=self._key_id.version,
-            parameters=parameters,
+            parameters=self._models.KeySignParameters(algorithm=algorithm, value=digest),
             **kwargs
         )
-        return SignResult(key_id=self.key_id, algorithm=algorithm, signature=result.result)
+
+        return SignResult(key_id=self.key_id, algorithm=algorithm, signature=operation_result.result)
 
     @distributed_trace
     def verify(self, algorithm, digest, signature, **kwargs):
@@ -398,34 +291,26 @@ class CryptographyClient(KeyVaultClientBase):
         :param bytes signature: signature to verify
         :rtype: :class:`~azure.keyvault.keys.crypto.VerifyResult`
 
-        Example:
-
-        .. code-block:: python
-
-            from azure.keyvault.keys.crypto import SignatureAlgorithm
-
-            verified = client.verify(SignatureAlgorithm.rs256, digest, signature)
-            assert verified.is_valid
-
+        .. literalinclude:: ../tests/test_examples_crypto.py
+            :start-after: [START verify]
+            :end-before: [END verify]
+            :caption: Verify a signature
+            :language: python
+            :dedent: 8
         """
+        self._initialize(**kwargs)
+        if self._local_provider.supports(KeyOperation.verify, algorithm):
+            try:
+                return self._local_provider.verify(algorithm, digest, signature)
+            except Exception as ex:  # pylint:disable=broad-except
+                _LOGGER.warning("Local verify operation failed: %s", ex, exc_info=_LOGGER.isEnabledFor(logging.DEBUG))
 
-        local_key = self._get_local_key(**kwargs)
-        if local_key:
-            if "verify" not in self._allowed_ops:
-                raise AzureError("This client doesn't have 'keys/verify' permission")
-            result = local_key.verify(digest, signature, algorithm=algorithm.value)
-        else:
-            parameters = self._models.KeyVerifyParameters(
-                algorithm=algorithm,
-                digest=digest,
-                signature=signature
-            )
+        operation_result = self._client.verify(
+            vault_base_url=self._key_id.vault_url,
+            key_name=self._key_id.name,
+            key_version=self._key_id.version,
+            parameters=self._models.KeyVerifyParameters(algorithm=algorithm, digest=digest, signature=signature),
+            **kwargs
+        )
 
-            result = self._client.verify(
-                vault_base_url=self._key_id.vault_url,
-                key_name=self._key_id.name,
-                key_version=self._key_id.version,
-                parameters=parameters,
-                **kwargs
-            ).value
-        return VerifyResult(key_id=self.key_id, algorithm=algorithm, is_valid=result)
+        return VerifyResult(key_id=self.key_id, algorithm=algorithm, is_valid=operation_result.value)

@@ -1,0 +1,9 @@
+[packaging]
+package_name = "azure-mgmt-streamanalytics"
+package_nspkg = "azure-mgmt-nspkg"
+package_pprint_name = "Stream Analytics Management"
+package_doc_id = "?view=azure-python-preview"
+is_stable = false
+is_arm = true
+need_msrestazure = false
+need_azuremgmtcore = true

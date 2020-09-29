@@ -6,75 +6,93 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum
+from enum import Enum, EnumMeta
+from six import with_metaclass
 
-class AccessRights(str, Enum):
+class _CaseInsensitiveEnumMeta(EnumMeta):
+    def __getitem__(self, name):
+        return super().__getitem__(name.upper())
 
-    manage = "Manage"
-    send = "Send"
-    listen = "Listen"
+    def __getattr__(cls, name):
+        """Return the enum member matching `name`
+        We use __getattr__ instead of descriptors or inserting into the enum
+        class' __dict__ in order to support `name` and `value` being both
+        properties for enum members (which live in the class' __dict__) and
+        enum members themselves.
+        """
+        try:
+            return cls._member_map_[name.upper()]
+        except KeyError:
+            raise AttributeError(name)
 
-class EntityStatus(str, Enum):
+
+class AccessRights(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    MANAGE = "Manage"
+    SEND = "Send"
+    LISTEN = "Listen"
+
+class EntityStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Enumerates the possible values for the status of the Event Hub.
     """
 
-    active = "Active"
-    disabled = "Disabled"
-    restoring = "Restoring"
-    send_disabled = "SendDisabled"
-    receive_disabled = "ReceiveDisabled"
-    creating = "Creating"
-    deleting = "Deleting"
-    renaming = "Renaming"
-    unknown = "Unknown"
+    ACTIVE = "Active"
+    DISABLED = "Disabled"
+    RESTORING = "Restoring"
+    SEND_DISABLED = "SendDisabled"
+    RECEIVE_DISABLED = "ReceiveDisabled"
+    CREATING = "Creating"
+    DELETING = "Deleting"
+    RENAMING = "Renaming"
+    UNKNOWN = "Unknown"
 
-class NamespaceState(str, Enum):
+class NamespaceState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """State of the Namespace.
     """
 
-    unknown = "Unknown"
-    creating = "Creating"
-    created = "Created"
-    activating = "Activating"
-    enabling = "Enabling"
-    active = "Active"
-    disabling = "Disabling"
-    disabled = "Disabled"
-    soft_deleting = "SoftDeleting"
-    soft_deleted = "SoftDeleted"
-    removing = "Removing"
-    removed = "Removed"
-    failed = "Failed"
+    UNKNOWN = "Unknown"
+    CREATING = "Creating"
+    CREATED = "Created"
+    ACTIVATING = "Activating"
+    ENABLING = "Enabling"
+    ACTIVE = "Active"
+    DISABLING = "Disabling"
+    DISABLED = "Disabled"
+    SOFT_DELETING = "SoftDeleting"
+    SOFT_DELETED = "SoftDeleted"
+    REMOVING = "Removing"
+    REMOVED = "Removed"
+    FAILED = "Failed"
 
-class Policykey(str, Enum):
+class Policykey(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Key that needs to be regenerated.
     """
 
-    primary_key = "PrimaryKey"
-    secondary_key = "SecondaryKey"
+    PRIMARY_KEY = "PrimaryKey"
+    SECONDARY_KEY = "SecondaryKey"
 
-class SkuName(str, Enum):
+class SkuName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Name of this SKU.
     """
 
-    basic = "Basic"
-    standard = "Standard"
+    BASIC = "Basic"
+    STANDARD = "Standard"
 
-class SkuTier(str, Enum):
+class SkuTier(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The billing tier of this particular SKU.
     """
 
-    basic = "Basic"
-    standard = "Standard"
-    premium = "Premium"
+    BASIC = "Basic"
+    STANDARD = "Standard"
+    PREMIUM = "Premium"
 
-class UnavailableReason(str, Enum):
+class UnavailableReason(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies the reason for the unavailability of the service.
     """
 
-    none = "None"
-    invalid_name = "InvalidName"
-    subscription_is_disabled = "SubscriptionIsDisabled"
-    name_in_use = "NameInUse"
-    name_in_lockdown = "NameInLockdown"
-    too_many_namespace_in_current_subscription = "TooManyNamespaceInCurrentSubscription"
+    NONE = "None"
+    INVALID_NAME = "InvalidName"
+    SUBSCRIPTION_IS_DISABLED = "SubscriptionIsDisabled"
+    NAME_IN_USE = "NameInUse"
+    NAME_IN_LOCKDOWN = "NameInLockdown"
+    TOO_MANY_NAMESPACE_IN_CURRENT_SUBSCRIPTION = "TooManyNamespaceInCurrentSubscription"
