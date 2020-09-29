@@ -270,8 +270,8 @@ class DataLakeFileClient(PathClient):
             expires_on = convert_datetime_to_rfc1123(expires_on)
         except AttributeError:
             expires_on = str(expires_on)
-        return self._datalake_client_for_blob_operation.path\
-            .set_expiry(expiry_options, expires_on=expires_on, **kwargs) # pylint: disable=protected-access
+        self._datalake_client_for_blob_operation.path \
+            .set_expiry(expiry_options, expires_on=expires_on, **kwargs)  # pylint: disable=protected-access
 
     def _upload_options(  # pylint:disable=too-many-statements
             self, data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
