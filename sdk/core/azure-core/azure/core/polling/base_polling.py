@@ -361,7 +361,7 @@ class StatusCheckPolling(LongRunningOperation):
         return None
 
 
-class LROBasePolling(PollingMethod):
+class LROBasePolling(PollingMethod):  # pylint: disable=too-many-instance-attributes
     """A base LRO poller.
 
     This assumes a basic flow:
