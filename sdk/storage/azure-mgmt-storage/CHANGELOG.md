@@ -1,5 +1,15 @@
 # Release History
 
+## 12.0.0 (2020-09-29)
+
+**Features**
+
+  - Added operation group DeletedAccountsOperations
+
+**Breaking changes**
+
+  - Model ErrorResponse has a new signature
+
 ## 11.2.0 (2020-08-20)
 
 **Features**
