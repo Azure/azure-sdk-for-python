@@ -6,7 +6,7 @@
 
 # pylint:disable=protected-access
 
-from typing import List, Union, Dict, TYPE_CHECKING
+from typing import List, Union, Dict, Any, cast, TYPE_CHECKING
 import datetime
 
 from azure.core.tracing.decorator import distributed_trace
@@ -54,7 +54,6 @@ from .._version import SDK_MONIKER
 if TYPE_CHECKING:
     from azure.core.async_paging import AsyncItemPaged
     from .._generated.models import (
-        MetricFeedback,
         SeriesResult,
         EnrichmentStatus,
         MetricSeriesItem as MetricSeriesDefinition
@@ -92,7 +91,7 @@ class MetricsAdvisorClient(object):
         self._endpoint = endpoint
         self._credential = credential
         self._config.user_agent_policy = UserAgentPolicy(
-            sdk_moniker=SDK_MONIKER, **kwargs
+            base_user_agent=None, sdk_moniker=SDK_MONIKER, **kwargs
         )
 
         pipeline = kwargs.get("pipeline")
@@ -164,7 +163,7 @@ class MetricsAdvisorClient(object):
 
     @distributed_trace_async
     async def add_feedback(self, feedback, **kwargs):
-        # type: (Union[AnomalyFeedback, ChangePointFeedback, CommentFeedback, PeriodFeedback], dict) -> None
+        # type: (Union[AnomalyFeedback, ChangePointFeedback, CommentFeedback, PeriodFeedback], Any) -> None
 
         """Create a new metric feedback.
 
@@ -195,7 +194,7 @@ class MetricsAdvisorClient(object):
 
     @distributed_trace_async
     async def get_feedback(self, feedback_id, **kwargs):
-        # type: (str, dict) -> Union[AnomalyFeedback, ChangePointFeedback, CommentFeedback, PeriodFeedback]
+        # type: (str, Any) -> Union[AnomalyFeedback, ChangePointFeedback, CommentFeedback, PeriodFeedback]
 
         """Get a metric feedback by its id.
 
@@ -230,7 +229,7 @@ class MetricsAdvisorClient(object):
     @distributed_trace
     def list_feedbacks(
         self, metric_id,  # type: str
-        **kwargs  # type: dict
+        **kwargs  # type: Any
     ):
         # type: (...) -> AsyncItemPaged[Union[AnomalyFeedback, ChangePointFeedback, CommentFeedback, PeriodFeedback]]
 
@@ -283,7 +282,7 @@ class MetricsAdvisorClient(object):
             time_mode=time_mode,
         )
 
-        return self._client.list_metric_feedbacks(
+        return self._client.list_metric_feedbacks(  # type: ignore
             skip=skip,
             body=feedback_filter,
             cls=kwargs.pop("cls", lambda result: [
@@ -294,7 +293,7 @@ class MetricsAdvisorClient(object):
 
     @distributed_trace
     def list_incident_root_causes(self, detection_configuration_id, incident_id, **kwargs):
-        # type: (str, str, dict) -> AsyncItemPaged[IncidentRootCause]
+        # type: (str, str, Any) -> AsyncItemPaged[IncidentRootCause]
 
         """Query root cause for incident.
 
@@ -309,7 +308,7 @@ class MetricsAdvisorClient(object):
         error_map = {
             401: ClientAuthenticationError
         }
-        return self._client.get_root_cause_of_incident_by_anomaly_detection_configuration(
+        return self._client.get_root_cause_of_incident_by_anomaly_detection_configuration(  # type: ignore
             configuration_id=detection_configuration_id,
             incident_id=incident_id,
             error_map=error_map,
@@ -323,9 +322,9 @@ class MetricsAdvisorClient(object):
     def list_metric_enriched_series_data(
         self, detection_configuration_id,  # type: str
         series,  # type: Union[List[SeriesIdentity], List[Dict[str, str]]]
-        start_time,  # type: datetime
-        end_time,  # type: datetime
-        **kwargs  # type: dict
+        start_time,  # type: datetime.datetime
+        end_time,  # type: datetime.datetime
+        **kwargs  # type: Any
     ):
         # type: (...) -> AsyncItemPaged[SeriesResult]
         """Query series enriched by anomaly detection.
@@ -343,17 +342,20 @@ class MetricsAdvisorClient(object):
             401: ClientAuthenticationError
         }
 
-        detection_series_query = DetectionSeriesQuery(
-            start_time=start_time,
-            end_time=end_time,
-            series=[
+        series_list = [
                 SeriesIdentity(dimension=dimension)
                 for dimension in series
                 if isinstance(dimension, dict)
-            ] or series,
+            ] or series
+
+        series_list = cast(List[SeriesIdentity], series_list)
+        detection_series_query = DetectionSeriesQuery(
+            start_time=start_time,
+            end_time=end_time,
+            series=series_list
         )
 
-        return self._client.get_series_by_anomaly_detection_configuration(
+        return self._client.get_series_by_anomaly_detection_configuration(  # type: ignore
             configuration_id=detection_configuration_id,
             body=detection_series_query,
             error_map=error_map,
@@ -361,7 +363,7 @@ class MetricsAdvisorClient(object):
 
     @distributed_trace
     def list_alerts_for_alert_configuration(self, alert_configuration_id, start_time, end_time, time_mode, **kwargs):
-        # type: (str, datetime, datetime, Union[str, TimeMode], dict) -> AsyncItemPaged[Alert]
+        # type: (str, datetime.datetime, datetime.datetime, Union[str, TimeMode], Any) -> AsyncItemPaged[Alert]
         """Query alerts under anomaly alert configuration.
 
         :param alert_configuration_id: anomaly alert configuration unique id.
@@ -396,7 +398,7 @@ class MetricsAdvisorClient(object):
             time_mode=time_mode,
         )
 
-        return self._client.get_alerts_by_anomaly_alerting_configuration(
+        return self._client.get_alerts_by_anomaly_alerting_configuration(  # type: ignore
             configuration_id=alert_configuration_id,
             skip=skip,
             body=alerting_result_query,
@@ -406,7 +408,7 @@ class MetricsAdvisorClient(object):
 
     @distributed_trace
     def list_anomalies_for_alert(self, alert_configuration_id, alert_id, **kwargs):
-        # type: (str, str, dict) -> AsyncItemPaged[Anomaly]
+        # type: (str, str, Any) -> AsyncItemPaged[Anomaly]
 
         """Query anomalies under a specific alert.
 
@@ -433,7 +435,7 @@ class MetricsAdvisorClient(object):
 
         skip = kwargs.pop('skip', None)
 
-        return self._client.get_anomalies_from_alert_by_anomaly_alerting_configuration(
+        return self._client.get_anomalies_from_alert_by_anomaly_alerting_configuration(  # type: ignore
             configuration_id=alert_configuration_id,
             alert_id=alert_id,
             skip=skip,
@@ -443,7 +445,7 @@ class MetricsAdvisorClient(object):
 
     @distributed_trace
     def list_anomalies_for_detection_configuration(self, detection_configuration_id, start_time, end_time, **kwargs):
-        # type: (str, datetime, datetime, dict) -> AsyncItemPaged[Anomaly]
+        # type: (str, datetime.datetime, datetime.datetime, Any) -> AsyncItemPaged[Anomaly]
 
         """Query anomalies under anomaly detection configuration.
 
@@ -470,7 +472,7 @@ class MetricsAdvisorClient(object):
             filter=filter_condition,
         )
 
-        return self._client.get_anomalies_by_anomaly_detection_configuration(
+        return self._client.get_anomalies_by_anomaly_detection_configuration(  # type: ignore
             configuration_id=detection_configuration_id,
             skip=skip,
             body=detection_anomaly_result_query,
@@ -486,7 +488,7 @@ class MetricsAdvisorClient(object):
             end_time,
             **kwargs
     ):
-        # type: (str, str, datetime, datetime, dict) -> AsyncItemPaged[str]
+        # type: (str, str, datetime.datetime, datetime.datetime, Any) -> AsyncItemPaged[str]
 
         """Query dimension values of anomalies.
 
@@ -515,7 +517,7 @@ class MetricsAdvisorClient(object):
             dimension_filter=dimension_filter,
         )
 
-        return self._client.get_dimension_of_anomalies_by_anomaly_detection_configuration(
+        return self._client.get_dimension_of_anomalies_by_anomaly_detection_configuration(  # type: ignore
             configuration_id=detection_configuration_id,
             skip=skip,
             body=anomaly_dimension_query,
@@ -524,7 +526,7 @@ class MetricsAdvisorClient(object):
 
     @distributed_trace
     def list_incidents_for_alert(self, alert_configuration_id, alert_id, **kwargs):
-        # type: (str, str, dict) -> AsyncItemPaged[Incident]
+        # type: (str, str, Any) -> AsyncItemPaged[Incident]
 
         """Query incidents under a specific alert.
 
@@ -543,7 +545,7 @@ class MetricsAdvisorClient(object):
 
         skip = kwargs.pop('skip', None)
 
-        return self._client.get_incidents_from_alert_by_anomaly_alerting_configuration(
+        return self._client.get_incidents_from_alert_by_anomaly_alerting_configuration(  # type: ignore
             configuration_id=alert_configuration_id,
             alert_id=alert_id,
             skip=skip,
@@ -553,7 +555,7 @@ class MetricsAdvisorClient(object):
 
     @distributed_trace
     def list_incidents_for_detection_configuration(self, detection_configuration_id, start_time, end_time, **kwargs):
-        # type: (str, datetime, datetime, dict) -> AsyncItemPaged[Incident]
+        # type: (str, datetime.datetime, datetime.datetime, Any) -> AsyncItemPaged[Incident]
 
         """Query incidents under a specific alert.
 
@@ -579,7 +581,7 @@ class MetricsAdvisorClient(object):
             filter=filter_condition,
         )
 
-        return self._client.get_incidents_by_anomaly_detection_configuration(
+        return self._client.get_incidents_by_anomaly_detection_configuration(  # type: ignore
             configuration_id=detection_configuration_id,
             body=detection_incident_result_query,
             cls=lambda objs: [Incident._from_generated(x) for x in objs],
@@ -588,7 +590,7 @@ class MetricsAdvisorClient(object):
 
     @distributed_trace
     def list_metric_dimension_values(self, metric_id, dimension_name, **kwargs):
-        # type: (str, str, dict) -> AsyncItemPaged[str]
+        # type: (str, str, Any) -> AsyncItemPaged[str]
 
         """List dimension from certain metric.
 
@@ -615,7 +617,7 @@ class MetricsAdvisorClient(object):
             dimension_value_filter=dimension_value_filter,
         )
 
-        return self._client.get_metric_dimension(
+        return self._client.get_metric_dimension(  # type: ignore
             metric_id=metric_id,
             body=metric_dimension_query_options,
             skip=skip,
@@ -623,8 +625,14 @@ class MetricsAdvisorClient(object):
             **kwargs)
 
     @distributed_trace
-    def list_metrics_series_data(self, metric_id, start_time, end_time, series_to_filter, **kwargs):
-        # type: (str, List[Dict[str, str]], datetime, datetime, dict) -> AsyncItemPaged[MetricSeriesData]
+    def list_metrics_series_data(
+        self, metric_id,  # type: str
+        start_time,  # type: datetime.datetime
+        end_time,  # type: datetime.datetime
+        series_to_filter,  # type: List[Dict[str, str]]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> AsyncItemPaged[MetricSeriesData]
 
         """Get time series data from metric.
 
@@ -648,7 +656,7 @@ class MetricsAdvisorClient(object):
             series=series_to_filter,
         )
 
-        return self._client.get_metric_data(
+        return self._client.get_metric_data(  # type: ignore
             metric_id=metric_id,
             body=metric_data_query_options,
             error_map=error_map,
@@ -657,7 +665,7 @@ class MetricsAdvisorClient(object):
 
     @distributed_trace
     def list_metric_series_definitions(self, metric_id, active_since, **kwargs):
-        # type: (str, datetime, dict) -> AsyncItemPaged[MetricSeriesDefinition]
+        # type: (str, datetime.datetime, Any) -> AsyncItemPaged[MetricSeriesDefinition]
 
         """List series (dimension combinations) from metric.
 
@@ -687,7 +695,7 @@ class MetricsAdvisorClient(object):
             dimension_filter=dimension_filter,
         )
 
-        return self._client.get_metric_series(
+        return self._client.get_metric_series(  # type: ignore
             metric_id=metric_id,
             body=metric_series_query_options,
             skip=skip,
@@ -696,7 +704,7 @@ class MetricsAdvisorClient(object):
 
     @distributed_trace
     def list_metric_enrichment_status(self, metric_id, start_time, end_time, **kwargs):
-        # type: (str, datetime, datetime, dict) -> AsyncItemPaged[EnrichmentStatus]
+        # type: (str, datetime.datetime, datetime.datetime, Any) -> AsyncItemPaged[EnrichmentStatus]
 
         """Query anomaly detection status.
 
@@ -719,7 +727,7 @@ class MetricsAdvisorClient(object):
             end_time=end_time,
         )
 
-        return self._client.get_enrichment_status_by_metric(
+        return self._client.get_enrichment_status_by_metric(  # type: ignore
             metric_id=metric_id,
             skip=skip,
             body=enrichment_status_query_option,

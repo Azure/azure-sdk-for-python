@@ -1884,7 +1884,7 @@ class Anomaly(msrest.serialization.Model):
 
     @classmethod
     def _from_generated(cls, anomaly_result):
-        # type: (AnomalyResult) -> Anomaly
+        # type: (AnomalyResult) -> Union[Anomaly, None]
         if not anomaly_result:
             return None
         severity = None
@@ -1969,7 +1969,7 @@ class Incident(msrest.serialization.Model):
 
     @classmethod
     def _from_generated(cls, incident_result):
-        # type: (IncidentResult) -> Incident
+        # type: (IncidentResult) -> Union[Incident, None]
         if not incident_result:
             return None
         dimension_key = incident_result.root_node.dimension if incident_result.root_node else None
@@ -2029,7 +2029,7 @@ class IncidentRootCause(msrest.serialization.Model):
 
     @classmethod
     def _from_generated(cls, root_cause):
-        # type: (RootCause) -> IncidentRootCause
+        # type: (RootCause) -> Union[IncidentRootCause, None]
         if not root_cause:
             return None
         dimension_key = root_cause.root_cause.dimension if root_cause.root_cause else None
@@ -2126,7 +2126,7 @@ class AnomalyFeedback(msrest.serialization.Model):  # pylint:disable=too-many-in
 
     @classmethod
     def _from_generated(cls, anomaly_feedback):
-        # type: (_AnomalyFeedback) -> AnomalyFeedback
+        # type: (_AnomalyFeedback) -> Union[AnomalyFeedback, None]
         if not anomaly_feedback:
             return None
         dimension_key = anomaly_feedback.dimension_filter.dimension
@@ -2236,7 +2236,7 @@ class ChangePointFeedback(msrest.serialization.Model):
 
     @classmethod
     def _from_generated(cls, change_point_feedback):
-        # type: (_ChangePointFeedback) -> ChangePointFeedback
+        # type: (_ChangePointFeedback) -> Union[ChangePointFeedback, None]
         if not change_point_feedback:
             return None
         dimension_key = change_point_feedback.dimension_filter.dimension
@@ -2340,7 +2340,7 @@ class CommentFeedback(msrest.serialization.Model):
 
     @classmethod
     def _from_generated(cls, comment_feedback):
-        # type: (_CommentFeedback) -> CommentFeedback
+        # type: (_CommentFeedback) -> Union[CommentFeedback, None]
         if not comment_feedback:
             return None
         dimension_key = comment_feedback.dimension_filter.dimension
@@ -2440,7 +2440,7 @@ class PeriodFeedback(msrest.serialization.Model):
 
     @classmethod
     def _from_generated(cls, period_feedback):
-        # type: (_PeriodFeedback) -> PeriodFeedback
+        # type: (_PeriodFeedback) -> Union[PeriodFeedback, None]
         if not period_feedback:
             return None
         dimension_key = period_feedback.dimension_filter.dimension
@@ -2460,7 +2460,7 @@ class PeriodFeedback(msrest.serialization.Model):
         # type: (PeriodFeedback) -> _PeriodFeedback
         dimension_filter = FeedbackDimensionFilter(dimension=self.dimension_key)
         value = PeriodFeedbackValue(period_type=self.period_type, period_value=self.value)
-        return _CommentFeedback(
+        return _PeriodFeedback(
             feedback_id=self.id,
             created_time=self.created_time,
             user_principal=self.user_principal,

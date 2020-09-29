@@ -11,6 +11,7 @@ from typing import (
     Any,
     List,
     Union,
+    cast
 )
 import datetime
 import six
@@ -18,9 +19,13 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.async_paging import AsyncItemPaged
 from .._generated.aio import AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2 as _ClientAsync
-from .._generated.models import AnomalyAlertingConfiguration as _AnomalyAlertingConfiguration
-from .._generated.models import AnomalyDetectionConfiguration as _AnomalyDetectionConfiguration
-from .._generated.models import IngestionStatus as DataFeedIngestionStatus
+from .._generated.models import (
+    AnomalyAlertingConfiguration as _AnomalyAlertingConfiguration,
+    AnomalyDetectionConfiguration as _AnomalyDetectionConfiguration,
+    IngestionStatus as DataFeedIngestionStatus,
+    IngestionProgressResetOptions as _IngestionProgressResetOptions,
+    IngestionStatusQueryOptions as _IngestionStatusQueryOptions,
+)
 from .._version import SDK_MONIKER
 from .._metrics_advisor_key_credential import MetricsAdvisorKeyCredential
 from .._metrics_advisor_key_credential_policy import MetricsAdvisorKeyCredentialPolicy
@@ -138,7 +143,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
             cls=lambda pipeline_response, _, response_headers: response_headers,
             **kwargs
         )
-
+        response_headers = cast(dict, response_headers)
         config_id = response_headers["Location"].split("configurations/")[1]
         return await self.get_anomaly_alert_configuration(config_id)
 
@@ -201,6 +206,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
             cls=lambda pipeline_response, _, response_headers: response_headers,
             **kwargs
         )
+        response_headers = cast(dict, response_headers)
         data_feed_id = response_headers["Location"].split("dataFeeds/")[1]
         return await self.get_data_feed(data_feed_id)
 
@@ -238,10 +244,11 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
             hook_request = hook._to_generated(name)
 
         response_headers = await self._client.create_hook(
-            hook_request,
+            hook_request,  # type: ignore
             cls=lambda pipeline_response, _, response_headers: response_headers,
             **kwargs
         )
+        response_headers = cast(dict, response_headers)
         hook_id = response_headers["Location"].split("hooks/")[1]
         return await self.get_hook(hook_id)
 
@@ -299,6 +306,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
             cls=lambda pipeline_response, _, response_headers: response_headers,
             **kwargs
         )
+        response_headers = cast(dict, response_headers)
         config_id = response_headers["Location"].split("configurations/")[1]
         return await self.get_metric_anomaly_detection_configuration(config_id)
 
@@ -468,10 +476,10 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         """
         await self._client.reset_data_feed_ingestion_status(
             data_feed_id,
-            body={
-                "start_time": start_time,
-                "end_time": end_time
-            },
+            body=_IngestionProgressResetOptions(
+                start_time=start_time,
+                end_time=end_time
+            ),
             **kwargs
         )
 
@@ -866,6 +874,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         else:
             hook_id = hook.id
             if hook.hook_type == "Email":
+                hook = cast(EmailHook, hook)
                 hook_patch = hook._to_generated_patch(
                     name=update.pop("hookName", None),
                     description=update.pop("description", None),
@@ -874,6 +883,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                 )
 
             elif hook.hook_type == "Webhook":
+                hook = cast(WebHook, hook)
                 hook_patch = hook._to_generated_patch(
                     name=update.pop("hookName", None),
                     description=update.pop("description", None),
@@ -923,7 +933,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                 return EmailHook._from_generated(hook)
             return WebHook._from_generated(hook)
 
-        return self._client.list_hooks(
+        return self._client.list_hooks(  # type: ignore
             hook_name=hook_name,
             skip=skip,
             cls=kwargs.pop("cls", lambda hooks: [_convert_to_hook_type(hook) for hook in hooks]),
@@ -967,7 +977,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         creator = kwargs.pop("creator", None)
         skip = kwargs.pop("skip", None)
 
-        return self._client.list_data_feeds(
+        return self._client.list_data_feeds(  # type: ignore
             data_feed_name=data_feed_name,
             data_source_type=data_source_type,
             granularity_name=granularity_type,
@@ -1001,7 +1011,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                 :dedent: 4
                 :caption: List all anomaly alert configurations for specific anomaly detection configuration
         """
-        return self._client.get_anomaly_alerting_configurations_by_anomaly_detection_configuration(
+        return self._client.get_anomaly_alerting_configurations_by_anomaly_detection_configuration(  # type: ignore
             detection_configuration_id,
             cls=kwargs.pop("cls", lambda confs: [
                 AnomalyAlertConfiguration._from_generated(conf) for conf in confs
@@ -1032,7 +1042,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                 :dedent: 4
                 :caption: List all anomaly detection configurations for a specific metric
         """
-        return self._client.get_anomaly_detection_configurations_by_metric(
+        return self._client.get_anomaly_detection_configurations_by_metric(  # type: ignore
             metric_id,
             cls=kwargs.pop("cls", lambda confs: [
                 AnomalyDetectionConfiguration._from_generated(conf) for conf in confs
@@ -1073,12 +1083,12 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
 
         skip = kwargs.pop("skip", None)
 
-        return self._client.get_data_feed_ingestion_status(
+        return self._client.get_data_feed_ingestion_status(  # type: ignore
             data_feed_id=data_feed_id,
-            body={
-                "start_time": start_time,
-                "end_time": end_time
-            },
+            body=_IngestionStatusQueryOptions(
+                start_time=start_time,
+                end_time=end_time
+            ),
             skip=skip,
             **kwargs
         )
