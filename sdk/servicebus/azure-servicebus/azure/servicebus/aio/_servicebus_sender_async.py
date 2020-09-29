@@ -134,15 +134,15 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         self._set_msg_timeout(timeout, last_exception)
         await self._handler.send_message_async(message.message)
 
-    async def schedule_messages(self, messages, schedule_time_utc, timeout=None):
-        # type: (Union[Message, List[Message]], datetime.datetime, Optional[float]) -> List[int]
+    async def schedule_messages(self, messages, schedule_time_utc, **kwargs):
+        # type: (Union[Message, List[Message]], datetime.datetime, Any) -> List[int]
         """Send Message or multiple Messages to be enqueued at a specific time by the service.
         Returns a list of the sequence numbers of the enqueued messages.
         :param messages: The message or list of messages to schedule.
         :type messages: ~azure.servicebus.Message or list[~azure.servicebus.Message]
         :param schedule_time_utc: The utc date and time to enqueue the messages.
         :type schedule_time_utc: ~datetime.datetime
-        :param float timeout: The total operation timeout in seconds including all the retries.
+        :keyword float timeout: The total operation timeout in seconds including all the retries.
         :rtype: list[int]
 
         .. admonition:: Example:
@@ -155,6 +155,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 :caption: Schedule a message to be sent in future
         """
         # pylint: disable=protected-access
+        timeout = kwargs.pop("timeout", None)
         await self._open()
         if isinstance(messages, Message):
             request_body = self._build_schedule_request(schedule_time_utc, messages)
@@ -167,14 +168,14 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             timeout=timeout
         )
 
-    async def cancel_scheduled_messages(self, sequence_numbers, timeout=None):
-        # type: (Union[int, List[int]], Optional[float]) -> None
+    async def cancel_scheduled_messages(self, sequence_numbers, **kwargs):
+        # type: (Union[int, List[int]], Any) -> None
         """
         Cancel one or more messages that have previously been scheduled and are still pending.
 
         :param sequence_numbers: The sequence numbers of the scheduled messages.
         :type sequence_numbers: int or list[int]
-        :param float timeout: The total operation timeout in seconds including all the retries.
+        :keyword float timeout: The total operation timeout in seconds including all the retries.
         :rtype: None
         :raises: ~azure.servicebus.exceptions.ServiceBusError if messages cancellation failed due to message already
          cancelled or enqueued.
@@ -188,6 +189,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 :dedent: 4
                 :caption: Cancelling messages scheduled to be sent in future
         """
+        timeout = kwargs.pop("timeout", None)
         await self._open()
         if isinstance(sequence_numbers, int):
             numbers = [types.AMQPLong(sequence_numbers)]
@@ -241,8 +243,8 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         )
         return cls(**constructor_args)
 
-    async def send_messages(self, message, timeout=None):
-        # type: (Union[Message, BatchMessage, List[Message]], Optional[float]) -> None
+    async def send_messages(self, message, **kwargs):
+        # type: (Union[Message, BatchMessage, List[Message]], Any) -> None
         """Sends message and blocks until acknowledgement is received or operation times out.
 
         If a list of messages was provided, attempts to send them as a single batch, throwing a
@@ -250,7 +252,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
 
         :param message: The ServiceBus message to be sent.
         :type message: ~azure.servicebus.Message or ~azure.servicebus.BatchMessage or list[~azure.servicebus.Message]
-        :param float timeout: The total operation timeout in seconds including all the retries.
+        :keyword float timeout: The total operation timeout in seconds including all the retries.
         :rtype: None
         :raises:
                 :class: ~azure.servicebus.exceptions.OperationTimeoutError if sending times out.
@@ -271,6 +273,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 :caption: Send message.
 
         """
+        timeout = kwargs.pop("timeout", None)
         message = transform_messages_to_sendable_if_needed(message)
         try:
             batch = await self.create_batch()

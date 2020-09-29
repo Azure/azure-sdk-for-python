@@ -410,8 +410,8 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             require_timeout=True
         )
 
-    async def receive_deferred_messages(self, sequence_numbers, timeout=None):
-        # type: (Union[int, List[int]], Optional[float]) -> List[ReceivedMessage]
+    async def receive_deferred_messages(self, sequence_numbers, **kwargs):
+        # type: (Union[int, List[int]], Any) -> List[ReceivedMessage]
         """Receive messages that have previously been deferred.
 
         When receiving deferred messages from a partitioned entity, all of the supplied
@@ -419,7 +419,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
 
         :param Union[int, list[int]] sequence_numbers: A list of the sequence numbers of messages that have been
          deferred.
-        :param float timeout: The total operation timeout in seconds including all the retries.
+        :keyword float timeout: The total operation timeout in seconds including all the retries.
         :rtype: list[~azure.servicebus.aio.ReceivedMessage]
 
         .. admonition:: Example:
@@ -432,6 +432,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
                 :caption: Receive deferred messages from ServiceBus.
 
         """
+        timeout = kwargs.pop("timeout", None)
         self._check_live()
         if isinstance(sequence_numbers, six.integer_types):
             sequence_numbers = [sequence_numbers]
@@ -461,8 +462,8 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         )
         return messages
 
-    async def peek_messages(self, max_message_count=1, sequence_number=0, timeout=None):
-        # type: (int, int, Optional[float]) -> List[PeekedMessage]
+    async def peek_messages(self, max_message_count=1, **kwargs):
+        # type: (int, Optional[float]) -> List[PeekedMessage]
         """Browse messages currently pending in the queue.
 
         Peeked messages are not removed from queue, nor are they locked. They cannot be completed,
@@ -470,8 +471,8 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
 
         :param int max_message_count: The maximum number of messages to try and peek. The default
          value is 1.
-        :param int sequence_number: A message sequence number from which to start browsing messages.
-        :param float timeout: The total operation timeout in seconds including all the retries.
+        :keyword int sequence_number: A message sequence number from which to start browsing messages.
+        :keyword float timeout: The total operation timeout in seconds including all the retries.
         :rtype: list[~azure.servicebus.PeekedMessage]
 
         .. admonition:: Example:
@@ -483,6 +484,8 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
                 :dedent: 4
                 :caption: Peek messages in the queue.
         """
+        sequence_number = kwargs.pop("sequence_number", 0)
+        timeout = kwargs.pop("timeout", None)
         self._check_live()
         if not sequence_number:
             sequence_number = self._last_received_sequenced_number or 1

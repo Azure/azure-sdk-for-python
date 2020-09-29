@@ -5,7 +5,7 @@
 # -------------------------------------------------------------------------
 import logging
 import datetime
-from typing import Optional
+from typing import Any, Optional
 
 from .._common import message as sync_message
 from .._common.constants import (
@@ -129,7 +129,7 @@ class ReceivedMessage(sync_message.ReceivedMessageBase):
         await self._settle_message(MESSAGE_DEFER)
         self._settled = True
 
-    async def renew_lock(self, timeout=None) -> datetime.datetime:
+    async def renew_lock(self, **kwargs: Any) -> datetime.datetime:
         # pylint: disable=protected-access
         """Renew the message lock.
 
@@ -140,7 +140,7 @@ class ReceivedMessage(sync_message.ReceivedMessageBase):
         background task by registering the message with an `azure.servicebus.aio.AutoLockRenew` instance.
         This operation is only available for non-sessionful messages.
 
-        :param float timeout: The total operation timeout in seconds including all the retries.
+        :keyword float timeout: The total operation timeout in seconds including all the retries.
         :returns: The utc datetime the lock is set to expire at.
         :rtype: datetime.datetime
         :raises: TypeError if the message is sessionful.
@@ -148,6 +148,7 @@ class ReceivedMessage(sync_message.ReceivedMessageBase):
         :raises: ~azure.servicebus.exceptions.SessionLockExpired if session lock has already expired.
         :raises: ~azure.servicebus.exceptions.MessageAlreadySettled is message has already been settled.
         """
+        timeout = kwargs.pop("timeout", None)
         try:
             if self._receiver.session:  # type: ignore
                 raise TypeError("Session messages cannot be renewed. Please renew the Session lock instead.")

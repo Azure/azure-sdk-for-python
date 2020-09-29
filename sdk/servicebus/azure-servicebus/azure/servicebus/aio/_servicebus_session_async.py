@@ -4,7 +4,7 @@
 # --------------------------------------------------------------------------------------------
 import logging
 import datetime
-from typing import Union, Optional
+from typing import Union, Any
 import six
 
 from .._servicebus_session import BaseSession
@@ -40,13 +40,13 @@ class ServiceBusSession(BaseSession):
             :caption: Get session from a receiver
     """
 
-    async def get_state(self, timeout=None):
-        # type: (Optional[float]) -> str
+    async def get_state(self, **kwargs):
+        # type: (Any) -> str
         """Get the session state.
 
         Returns None if no state has been set.
 
-        :param float timeout: The total operation timeout in seconds including all the retries.
+        :keyword float timeout: The total operation timeout in seconds including all the retries.
         :rtype: str
 
         .. admonition:: Example:
@@ -58,6 +58,7 @@ class ServiceBusSession(BaseSession):
                 :dedent: 4
                 :caption: Get the session state
         """
+        timeout = kwargs.pop("timeout", None)
         self._check_live()
         response = await self._receiver._mgmt_request_response_with_retry(  # pylint: disable=protected-access
             REQUEST_RESPONSE_GET_SESSION_STATE_OPERATION,
@@ -70,13 +71,13 @@ class ServiceBusSession(BaseSession):
             session_state = session_state.decode('UTF-8')
         return session_state
 
-    async def set_state(self, state, timeout=None):
-        # type: (Union[str, bytes, bytearray], Optional[float]) -> None
+    async def set_state(self, state, **kwargs):
+        # type: (Union[str, bytes, bytearray], Any) -> None
         """Set the session state.
 
         :param state: The state value.
         :type state: Union[str, bytes, bytearray]
-        :param float timeout: The total operation timeout in seconds including all the retries.
+        :keyword float timeout: The total operation timeout in seconds including all the retries.
         :rtype: None
 
         .. admonition:: Example:
@@ -88,6 +89,7 @@ class ServiceBusSession(BaseSession):
                 :dedent: 4
                 :caption: Set the session state
         """
+        timeout = kwargs.pop("timeout", None)
         self._check_live()
         state = state.encode(self._encoding) if isinstance(state, six.text_type) else state
         return await self._receiver._mgmt_request_response_with_retry(  # pylint: disable=protected-access
@@ -97,8 +99,8 @@ class ServiceBusSession(BaseSession):
             timeout=timeout
         )
 
-    async def renew_lock(self, timeout=None):
-        # type: (Optional[float]) -> datetime.datetime
+    async def renew_lock(self, **kwargs):
+        # type: (Any) -> datetime.datetime
         """Renew the session lock.
 
         This operation must be performed periodically in order to retain a lock on the
@@ -109,7 +111,7 @@ class ServiceBusSession(BaseSession):
         This operation can also be performed as a threaded background task by registering the session
         with an `azure.servicebus.aio.AutoLockRenew` instance.
 
-        :param float timeout: The total operation timeout in seconds including all the retries.
+        :keyword float timeout: The total operation timeout in seconds including all the retries.
         :returns: The utc datetime the lock is set to expire at.
         :rtype: datetime
 
@@ -122,6 +124,7 @@ class ServiceBusSession(BaseSession):
                 :dedent: 4
                 :caption: Renew the session lock before it expires
         """
+        timeout = kwargs.pop("timeout", None)
         self._check_live()
         expiry = await self._receiver._mgmt_request_response_with_retry(  # pylint: disable=protected-access
             REQUEST_RESPONSE_RENEW_SESSION_LOCK_OPERATION,
