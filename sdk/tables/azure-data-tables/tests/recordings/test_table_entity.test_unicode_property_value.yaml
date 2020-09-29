@@ -15,19 +15,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-<<<<<<< HEAD
-      - Mon, 28 Sep 2020 17:29:48 GMT
-      User-Agent:
-      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
-      x-ms-date:
-      - Mon, 28 Sep 2020 17:29:48 GMT
-=======
-      - Wed, 16 Sep 2020 21:51:48 GMT
+      - Tue, 29 Sep 2020 17:15:59 GMT
       User-Agent:
       - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 16 Sep 2020 21:51:48 GMT
->>>>>>> 40774230c02233ce98169513320c19ccc2184174
+      - Tue, 29 Sep 2020 17:15:59 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
@@ -41,11 +33,7 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-<<<<<<< HEAD
-      - Mon, 28 Sep 2020 17:29:47 GMT
-=======
-      - Wed, 16 Sep 2020 21:51:49 GMT
->>>>>>> 40774230c02233ce98169513320c19ccc2184174
+      - Tue, 29 Sep 2020 17:15:59 GMT
       location:
       - https://tablesteststorname.table.core.windows.net/Tables('uttableac7612b8')
       server:
@@ -77,45 +65,27 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-<<<<<<< HEAD
-      - Mon, 28 Sep 2020 17:29:48 GMT
-      User-Agent:
-      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
-      x-ms-date:
-      - Mon, 28 Sep 2020 17:29:48 GMT
-=======
-      - Wed, 16 Sep 2020 21:51:49 GMT
+      - Tue, 29 Sep 2020 17:15:59 GMT
       User-Agent:
       - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 16 Sep 2020 21:51:49 GMT
->>>>>>> 40774230c02233ce98169513320c19ccc2184174
+      - Tue, 29 Sep 2020 17:15:59 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
     uri: https://tablesteststorname.table.core.windows.net/uttableac7612b8
   response:
     body:
-<<<<<<< HEAD
-      string: '{"odata.metadata":"https://tablesteststorname.table.core.windows.net/$metadata#uttableac7612b8/@Element","odata.etag":"W/\"datetime''2020-09-28T17%3A29%3A48.58876Z''\"","PartitionKey":"pkac7612b8","RowKey":"rkac7612b8","Timestamp":"2020-09-28T17:29:48.58876Z","Description":"\ua015"}'
-=======
-      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#uttableac7612b8/@Element","odata.etag":"W/\"datetime''2020-09-16T21%3A51%3A49.2127525Z''\"","PartitionKey":"pkac7612b8","RowKey":"rkac7612b8","Timestamp":"2020-09-16T21:51:49.2127525Z","Description":"\ua015"}'
->>>>>>> 40774230c02233ce98169513320c19ccc2184174
+      string: '{"odata.metadata":"https://tablesteststorname.table.core.windows.net/$metadata#uttableac7612b8/@Element","odata.etag":"W/\"datetime''2020-09-29T17%3A15%3A59.8446205Z''\"","PartitionKey":"pkac7612b8","RowKey":"rkac7612b8","Timestamp":"2020-09-29T17:15:59.8446205Z","Description":"\ua015"}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-<<<<<<< HEAD
-      - Mon, 28 Sep 2020 17:29:47 GMT
+      - Tue, 29 Sep 2020 17:15:59 GMT
       etag:
-      - W/"datetime'2020-09-28T17%3A29%3A48.58876Z'"
-=======
-      - Wed, 16 Sep 2020 21:51:49 GMT
-      etag:
-      - W/"datetime'2020-09-16T21%3A51%3A49.2127525Z'"
->>>>>>> 40774230c02233ce98169513320c19ccc2184174
+      - W/"datetime'2020-09-29T17%3A15%3A59.8446205Z'"
       location:
       - https://tablesteststorname.table.core.windows.net/uttableac7612b8(PartitionKey='pkac7612b8',RowKey='rkac7612b8')
       server:
@@ -147,45 +117,27 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-<<<<<<< HEAD
-      - Mon, 28 Sep 2020 17:29:48 GMT
-      User-Agent:
-      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
-      x-ms-date:
-      - Mon, 28 Sep 2020 17:29:48 GMT
-=======
-      - Wed, 16 Sep 2020 21:51:49 GMT
+      - Tue, 29 Sep 2020 17:15:59 GMT
       User-Agent:
       - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 16 Sep 2020 21:51:49 GMT
->>>>>>> 40774230c02233ce98169513320c19ccc2184174
+      - Tue, 29 Sep 2020 17:15:59 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
     uri: https://tablesteststorname.table.core.windows.net/uttableac7612b8
   response:
     body:
-<<<<<<< HEAD
-      string: '{"odata.metadata":"https://tablesteststorname.table.core.windows.net/$metadata#uttableac7612b8/@Element","odata.etag":"W/\"datetime''2020-09-28T17%3A29%3A48.6427982Z''\"","PartitionKey":"pkac7612b8","RowKey":"test2","Timestamp":"2020-09-28T17:29:48.6427982Z","Description":"\ua015"}'
-=======
-      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#uttableac7612b8/@Element","odata.etag":"W/\"datetime''2020-09-16T21%3A51%3A49.2527827Z''\"","PartitionKey":"pkac7612b8","RowKey":"test2","Timestamp":"2020-09-16T21:51:49.2527827Z","Description":"\ua015"}'
->>>>>>> 40774230c02233ce98169513320c19ccc2184174
+      string: '{"odata.metadata":"https://tablesteststorname.table.core.windows.net/$metadata#uttableac7612b8/@Element","odata.etag":"W/\"datetime''2020-09-29T17%3A15%3A59.9587016Z''\"","PartitionKey":"pkac7612b8","RowKey":"test2","Timestamp":"2020-09-29T17:15:59.9587016Z","Description":"\ua015"}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-<<<<<<< HEAD
-      - Mon, 28 Sep 2020 17:29:47 GMT
+      - Tue, 29 Sep 2020 17:15:59 GMT
       etag:
-      - W/"datetime'2020-09-28T17%3A29%3A48.6427982Z'"
-=======
-      - Wed, 16 Sep 2020 21:51:49 GMT
-      etag:
-      - W/"datetime'2020-09-16T21%3A51%3A49.2527827Z'"
->>>>>>> 40774230c02233ce98169513320c19ccc2184174
+      - W/"datetime'2020-09-29T17%3A15%3A59.9587016Z'"
       location:
       - https://tablesteststorname.table.core.windows.net/uttableac7612b8(PartitionKey='pkac7612b8',RowKey='test2')
       server:
@@ -211,41 +163,25 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-<<<<<<< HEAD
-      - Mon, 28 Sep 2020 17:29:48 GMT
-      User-Agent:
-      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
-      x-ms-date:
-      - Mon, 28 Sep 2020 17:29:48 GMT
-=======
-      - Wed, 16 Sep 2020 21:51:49 GMT
+      - Tue, 29 Sep 2020 17:15:59 GMT
       User-Agent:
       - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 16 Sep 2020 21:51:49 GMT
->>>>>>> 40774230c02233ce98169513320c19ccc2184174
+      - Tue, 29 Sep 2020 17:15:59 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
     uri: https://tablesteststorname.table.core.windows.net/uttableac7612b8()
   response:
     body:
-<<<<<<< HEAD
-      string: '{"odata.metadata":"https://tablesteststorname.table.core.windows.net/$metadata#uttableac7612b8","value":[{"odata.etag":"W/\"datetime''2020-09-28T17%3A29%3A48.58876Z''\"","PartitionKey":"pkac7612b8","RowKey":"rkac7612b8","Timestamp":"2020-09-28T17:29:48.58876Z","Description":"\ua015"},{"odata.etag":"W/\"datetime''2020-09-28T17%3A29%3A48.6427982Z''\"","PartitionKey":"pkac7612b8","RowKey":"test2","Timestamp":"2020-09-28T17:29:48.6427982Z","Description":"\ua015"}]}'
-=======
-      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#uttableac7612b8","value":[{"odata.etag":"W/\"datetime''2020-09-16T21%3A51%3A49.2127525Z''\"","PartitionKey":"pkac7612b8","RowKey":"rkac7612b8","Timestamp":"2020-09-16T21:51:49.2127525Z","Description":"\ua015"},{"odata.etag":"W/\"datetime''2020-09-16T21%3A51%3A49.2527827Z''\"","PartitionKey":"pkac7612b8","RowKey":"test2","Timestamp":"2020-09-16T21:51:49.2527827Z","Description":"\ua015"}]}'
->>>>>>> 40774230c02233ce98169513320c19ccc2184174
+      string: '{"odata.metadata":"https://tablesteststorname.table.core.windows.net/$metadata#uttableac7612b8","value":[{"odata.etag":"W/\"datetime''2020-09-29T17%3A15%3A59.8446205Z''\"","PartitionKey":"pkac7612b8","RowKey":"rkac7612b8","Timestamp":"2020-09-29T17:15:59.8446205Z","Description":"\ua015"},{"odata.etag":"W/\"datetime''2020-09-29T17%3A15%3A59.9587016Z''\"","PartitionKey":"pkac7612b8","RowKey":"test2","Timestamp":"2020-09-29T17:15:59.9587016Z","Description":"\ua015"}]}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-<<<<<<< HEAD
-      - Mon, 28 Sep 2020 17:29:47 GMT
-=======
-      - Wed, 16 Sep 2020 21:51:49 GMT
->>>>>>> 40774230c02233ce98169513320c19ccc2184174
+      - Tue, 29 Sep 2020 17:15:59 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -269,19 +205,11 @@ interactions:
       Content-Length:
       - '0'
       Date:
-<<<<<<< HEAD
-      - Mon, 28 Sep 2020 17:29:48 GMT
-      User-Agent:
-      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
-      x-ms-date:
-      - Mon, 28 Sep 2020 17:29:48 GMT
-=======
-      - Wed, 16 Sep 2020 21:51:49 GMT
+      - Tue, 29 Sep 2020 17:15:59 GMT
       User-Agent:
       - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 16 Sep 2020 21:51:49 GMT
->>>>>>> 40774230c02233ce98169513320c19ccc2184174
+      - Tue, 29 Sep 2020 17:15:59 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
@@ -295,11 +223,7 @@ interactions:
       content-length:
       - '0'
       date:
-<<<<<<< HEAD
-      - Mon, 28 Sep 2020 17:29:47 GMT
-=======
-      - Wed, 16 Sep 2020 21:51:49 GMT
->>>>>>> 40774230c02233ce98169513320c19ccc2184174
+      - Tue, 29 Sep 2020 17:15:59 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options:

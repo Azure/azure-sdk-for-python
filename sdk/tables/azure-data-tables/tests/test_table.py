@@ -139,7 +139,6 @@ class StorageTableTest(TableTestCase):
         created = ts.create_table(table_name)
         with self.assertRaises(ResourceExistsError):
             ts.create_table(table_name)
-        print(created)
 
         name_filter = "TableName eq '{}'".format(table_name)
         existing = list(ts.query_tables(filter=name_filter))
@@ -148,7 +147,8 @@ class StorageTableTest(TableTestCase):
         self.assertIsNotNone(created)
         ts.delete_table(table_name)
 
-    @GlobalStorageAccountPreparer()
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_create_table_if_exists(self, resource_group, location, storage_account, storage_account_key):
         ts = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
         table_name = self._get_table_reference()
@@ -161,7 +161,8 @@ class StorageTableTest(TableTestCase):
         self.assertEqual(t0.table_name, t1.table_name)
         ts.delete_table(table_name)
 
-    @GlobalStorageAccountPreparer()
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_create_table_if_exists_new_table(self, resource_group, location, storage_account, storage_account_key):
         ts = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
         table_name = self._get_table_reference()

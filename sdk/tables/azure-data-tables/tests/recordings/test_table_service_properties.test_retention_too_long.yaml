@@ -15,19 +15,11 @@ interactions:
       Content-Type:
       - application/xml
       Date:
-<<<<<<< HEAD
-      - Mon, 28 Sep 2020 17:51:03 GMT
-      User-Agent:
-      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
-      x-ms-date:
-      - Mon, 28 Sep 2020 17:51:03 GMT
-=======
-      - Wed, 16 Sep 2020 21:52:08 GMT
+      - Tue, 29 Sep 2020 17:06:47 GMT
       User-Agent:
       - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 16 Sep 2020 21:52:08 GMT
->>>>>>> 40774230c02233ce98169513320c19ccc2184174
+      - Tue, 29 Sep 2020 17:06:47 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -37,26 +29,16 @@ interactions:
       string: '<?xml version="1.0" encoding="utf-8"?><m:error xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"><m:code>InvalidXmlDocument</m:code><m:message
         xml:lang="en-US">XML specified is not syntactically valid.
 
-<<<<<<< HEAD
-        RequestId:fdb3d61a-c002-0061-1bbf-959abe000000
+        RequestId:49903da0-2002-009c-0e82-961935000000
 
-        Time:2020-09-28T17:51:03.6792749Z</m:message></m:error>'
-=======
-        RequestId:881e7ef3-5002-0074-5f73-8cee41000000
-
-        Time:2020-09-16T21:52:08.4760441Z</m:message></m:error>'
->>>>>>> 40774230c02233ce98169513320c19ccc2184174
+        Time:2020-09-29T17:06:47.8963081Z</m:message></m:error>'
     headers:
       content-length:
       - '327'
       content-type:
       - application/xml
       date:
-<<<<<<< HEAD
-      - Mon, 28 Sep 2020 17:51:03 GMT
-=======
-      - Wed, 16 Sep 2020 21:52:08 GMT
->>>>>>> 40774230c02233ce98169513320c19ccc2184174
+      - Tue, 29 Sep 2020 17:06:47 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:

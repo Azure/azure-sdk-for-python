@@ -37,10 +37,8 @@ class StorageTableEntityTest(TableTestCase):
 
     async def _set_up(self, storage_account, storage_account_key):
         account_url = self.account_url(storage_account, "table")
-        print(f"Account_url: {account_url}")
         self.ts = TableServiceClient(account_url, storage_account_key)
         self.table_name = self.get_resource_name('uttable')
-        print(f"Table name: {self.table_name}")
         self.table = self.ts.get_table_client(self.table_name)
         if self.is_live:
             try:
@@ -124,7 +122,6 @@ class StorageTableEntityTest(TableTestCase):
 
     async def _insert_random_entity(self, pk=None, rk=None):
         entity = self._create_random_entity_dict(pk, rk)
-        # , response_hook=lambda e, h: h['etag']
         metadata = await self.table.create_entity(entity=entity)
         return entity, metadata['etag']
 
@@ -159,16 +156,11 @@ class StorageTableEntityTest(TableTestCase):
         self.assertEqual(entity['large'].value, 933311100)
         self.assertEqual(entity['Birthday'], datetime(1973, 10, 4, tzinfo=tzutc()))
         self.assertEqual(entity['birthday'], datetime(1970, 10, 4, tzinfo=tzutc()))
-        self.assertEqual(entity['binary'].value, b'binary') # TODO: added the ".value" portion, verify this is correct
+        self.assertEqual(entity['binary'].value, b'binary')
         self.assertIsInstance(entity['other'], EntityProperty)
         self.assertEqual(entity['other'].type, EdmType.INT32)
         self.assertEqual(entity['other'].value, 20)
         self.assertEqual(entity['clsid'], uuid.UUID('c9da6455-213d-42c9-9a79-3e9149a57833'))
-        # self.assertTrue('metadata' in entity.odata)
-
-        # TODO: these are commented out / nonexistent in sync code, should we have them?
-        # self.assertIsNotNone(entity.Timestamp)
-        # self.assertIsInstance(entity.Timestamp, datetime)
         if headers:
             self.assertTrue("etag" in headers)
             self.assertIsNotNone(headers['etag'])
@@ -193,18 +185,6 @@ class StorageTableEntityTest(TableTestCase):
         self.assertEqual(entity['other'].type, EdmType.INT32)
         self.assertEqual(entity['other'].value, 20)
         self.assertEqual(entity['clsid'], uuid.UUID('c9da6455-213d-42c9-9a79-3e9149a57833'))
-        # self.assertTrue('metadata' in entity.odata)
-        # self.assertTrue('id' in entity.odata)
-        # self.assertTrue('type' in entity.odata)
-        # self.assertTrue('etag' in entity.odata)
-        # self.assertTrue('editLink' in entity.odata)
-
-        # TODO: commented out in sync, should we have these?
-        # self.assertIsNotNone(entity.Timestamp)
-        # self.assertIsInstance(entity.Timestamp, datetime)
-        # if headers:
-        #     self.assertTrue("etag" in headers)
-        #     self.assertIsNotNone(headers['etag'])
 
     def _assert_default_entity_json_no_metadata(self, entity, headers=None):
         '''
@@ -249,14 +229,9 @@ class StorageTableEntityTest(TableTestCase):
         self.assertFalse(hasattr(entity, "evenratio"))
         self.assertFalse(hasattr(entity, "large"))
         self.assertFalse(hasattr(entity, "Birthday"))
-        # self.assertEqual(entity.birthday, "1991-10-04 00:00:00+00:00")
         self.assertEqual(entity.birthday, datetime(1991, 10, 4, tzinfo=tzutc()))
         self.assertFalse(hasattr(entity, "other"))
         self.assertFalse(hasattr(entity, "clsid"))
-        # TODO: should these all be commented out?
-        #        self.assertIsNotNone(entity.odata.etag)
-        # self.assertIsNotNone(entity.Timestamp)
-        # self.assertIsInstance(entity.timestamp, datetime)
 
     def _assert_merged_entity(self, entity):
         '''
@@ -278,11 +253,6 @@ class StorageTableEntityTest(TableTestCase):
         self.assertEqual(entity.other.value, 20)
         self.assertIsInstance(entity.clsid, uuid.UUID)
         self.assertEqual(str(entity.clsid), 'c9da6455-213d-42c9-9a79-3e9149a57833')
-        # TODO: should these all be commented out?
-        # self.assertIsNotNone(entity.etag)
-        # self.assertIsNotNone(entity.odata['etag'])
-        # self.assertIsNotNone(entity.Timestamp)
-        # self.assertIsInstance(entity.Timestamp, datetime)
 
     def _assert_valid_metadata(self, metadata):
         keys = metadata.keys()
@@ -1376,8 +1346,6 @@ class StorageTableEntityTest(TableTestCase):
 
         # Assert
         print('query_entities took {0} secs.'.format(elapsed_time.total_seconds()))
-        # azure allocates 5 seconds to execute a query
-        # if it runs slowly, it will return fewer results and make the test fail
         self.assertEqual(len(entities), total_entities_count)
 
 

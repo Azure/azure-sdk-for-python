@@ -15,13 +15,13 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Mon, 28 Sep 2020 17:30:45 GMT
+      - Tue, 29 Sep 2020 18:30:17 GMT
       User-Agent:
-      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Mon, 28 Sep 2020 17:30:45 GMT
+      - Tue, 29 Sep 2020 18:30:17 GMT
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     method: POST
     uri: https://tablestestcosmosname.table.cosmos.azure.com/Tables
   response:
@@ -31,9 +31,9 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata
       date:
-      - Mon, 28 Sep 2020 17:30:46 GMT
+      - Tue, 29 Sep 2020 18:30:18 GMT
       etag:
-      - W/"datetime'2020-09-28T17%3A30%3A46.0340231Z'"
+      - W/"datetime'2020-09-29T18%3A30%3A18.3433223Z'"
       location:
       - https://tablestestcosmosname.table.cosmos.azure.com/Tables('uttable959b174d')
       server:
@@ -47,7 +47,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/json;odata=minimalmetadata
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -57,26 +57,26 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Mon, 28 Sep 2020 17:30:46 GMT
+      - Tue, 29 Sep 2020 18:30:18 GMT
       If-Match:
       - '*'
       User-Agent:
-      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Mon, 28 Sep 2020 17:30:46 GMT
+      - Tue, 29 Sep 2020 18:30:18 GMT
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     method: DELETE
     uri: https://tablestestcosmosname.table.cosmos.azure.com/uttable959b174d(PartitionKey='pk959b174d',RowKey='rk959b174d')
   response:
     body:
       string: "{\"odata.error\":{\"code\":\"ResourceNotFound\",\"message\":{\"lang\":\"en-us\",\"value\":\"The
-        specified resource does not exist.\\nRequestID:57da8a70-01b0-11eb-9a02-58961df361d1\\n\"}}}\r\n"
+        specified resource does not exist.\\nRequestID:d3620f4b-0281-11eb-9309-58961df361d1\\n\"}}}\r\n"
     headers:
       content-type:
       - application/json;odata=fullmetadata
       date:
-      - Mon, 28 Sep 2020 17:30:46 GMT
+      - Tue, 29 Sep 2020 18:30:18 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -88,7 +88,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -96,13 +96,13 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Mon, 28 Sep 2020 17:30:46 GMT
+      - Tue, 29 Sep 2020 18:30:18 GMT
       User-Agent:
-      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Mon, 28 Sep 2020 17:30:46 GMT
+      - Tue, 29 Sep 2020 18:30:18 GMT
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     method: DELETE
     uri: https://tablestestcosmosname.table.cosmos.azure.com/Tables('uttable959b174d')
   response:
@@ -112,7 +112,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 28 Sep 2020 17:30:46 GMT
+      - Tue, 29 Sep 2020 18:30:18 GMT
       server:
       - Microsoft-HTTPAPI/2.0
     status:
@@ -130,23 +130,23 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Mon, 28 Sep 2020 17:30:46 GMT
+      - Tue, 29 Sep 2020 18:30:18 GMT
       User-Agent:
-      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Mon, 28 Sep 2020 17:30:46 GMT
+      - Tue, 29 Sep 2020 18:30:18 GMT
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     method: GET
     uri: https://tablestestcosmosname.table.cosmos.azure.com/Tables
   response:
     body:
-      string: '{"value":[{"TableName":"listtable0d2351374"},{"TableName":"listtable13a8d15b3"},{"TableName":"listtable3d2351374"},{"TableName":"listtable1d2351374"},{"TableName":"listtable33a8d15b3"},{"TableName":"pytableasync52bb107b"},{"TableName":"listtable2d2351374"},{"TableName":"listtable03a8d15b3"},{"TableName":"listtable23a8d15b3"}],"odata.metadata":"https://tablestestcosmosname.table.cosmos.azure.com/$metadata#Tables"}'
+      string: '{"value":[],"odata.metadata":"https://tablestestcosmosname.table.cosmos.azure.com/$metadata#Tables"}'
     headers:
       content-type:
       - application/json;odata=minimalmetadata
       date:
-      - Mon, 28 Sep 2020 17:30:46 GMT
+      - Tue, 29 Sep 2020 18:30:19 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       transfer-encoding:

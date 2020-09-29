@@ -80,7 +80,6 @@ class StorageAccountPreparer(AzureMgmtPreparer):
                 location=self.location,
             )
             self.resource.name = name
-            print(f"STORAGE RESOURCE NAME: {self.resource.name}")
             self.resource.id = name
             self.resource.primary_endpoints = Endpoints()
             self.resource.primary_endpoints.blob = 'https://{}.{}.core.windows.net'.format(name, 'blob')

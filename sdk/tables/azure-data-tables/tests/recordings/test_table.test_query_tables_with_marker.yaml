@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: !!python/unicode '{"TableName": "listtable051291081"}'
+    body: '{"TableName": "listtable051291081"}'
     headers:
       Accept:
       - application/json;odata=minimalmetadata
@@ -15,48 +15,27 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-<<<<<<< HEAD
-      - Mon, 28 Sep 2020 17:02:24 GMT
+      - Tue, 29 Sep 2020 17:15:27 GMT
       User-Agent:
-      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Mon, 28 Sep 2020 17:02:24 GMT
-=======
-      - Fri, 04 Sep 2020 23:53:35 GMT
-      User-Agent:
-      - azsdk-python-data-tables/12.0.0b1 Python/2.7.18 (Windows-10-10.0.19041)
-      x-ms-date:
-      - Fri, 04 Sep 2020 23:53:35 GMT
->>>>>>> 40774230c02233ce98169513320c19ccc2184174
+      - Tue, 29 Sep 2020 17:15:27 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
-<<<<<<< HEAD
     uri: https://tablesteststorname.table.core.windows.net/Tables
   response:
     body:
       string: '{"odata.metadata":"https://tablesteststorname.table.core.windows.net/$metadata#Tables/@Element","TableName":"listtable051291081"}'
-=======
-    uri: !!python/unicode https://storagename.table.core.windows.net/Tables
-  response:
-    body:
-      string: !!python/unicode '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#Tables/@Element","TableName":"listtable051291081"}'
->>>>>>> 40774230c02233ce98169513320c19ccc2184174
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-<<<<<<< HEAD
-      - Mon, 28 Sep 2020 17:02:24 GMT
+      - Tue, 29 Sep 2020 17:15:27 GMT
       location:
       - https://tablesteststorname.table.core.windows.net/Tables('listtable051291081')
-=======
-      - Fri, 04 Sep 2020 23:53:34 GMT
-      location:
-      - !!python/unicode https://storagename.table.core.windows.net/Tables('listtable051291081')
->>>>>>> 40774230c02233ce98169513320c19ccc2184174
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -69,7 +48,7 @@ interactions:
       code: 201
       message: Created
 - request:
-    body: !!python/unicode '{"TableName": "listtable151291081"}'
+    body: '{"TableName": "listtable151291081"}'
     headers:
       Accept:
       - application/json;odata=minimalmetadata
@@ -84,48 +63,27 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-<<<<<<< HEAD
-      - Mon, 28 Sep 2020 17:02:24 GMT
+      - Tue, 29 Sep 2020 17:15:27 GMT
       User-Agent:
-      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Mon, 28 Sep 2020 17:02:24 GMT
-=======
-      - Fri, 04 Sep 2020 23:53:35 GMT
-      User-Agent:
-      - azsdk-python-data-tables/12.0.0b1 Python/2.7.18 (Windows-10-10.0.19041)
-      x-ms-date:
-      - Fri, 04 Sep 2020 23:53:35 GMT
->>>>>>> 40774230c02233ce98169513320c19ccc2184174
+      - Tue, 29 Sep 2020 17:15:27 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
-<<<<<<< HEAD
     uri: https://tablesteststorname.table.core.windows.net/Tables
   response:
     body:
       string: '{"odata.metadata":"https://tablesteststorname.table.core.windows.net/$metadata#Tables/@Element","TableName":"listtable151291081"}'
-=======
-    uri: !!python/unicode https://storagename.table.core.windows.net/Tables
-  response:
-    body:
-      string: !!python/unicode '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#Tables/@Element","TableName":"listtable151291081"}'
->>>>>>> 40774230c02233ce98169513320c19ccc2184174
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-<<<<<<< HEAD
-      - Mon, 28 Sep 2020 17:02:24 GMT
+      - Tue, 29 Sep 2020 17:15:27 GMT
       location:
       - https://tablesteststorname.table.core.windows.net/Tables('listtable151291081')
-=======
-      - Fri, 04 Sep 2020 23:53:35 GMT
-      location:
-      - !!python/unicode https://storagename.table.core.windows.net/Tables('listtable151291081')
->>>>>>> 40774230c02233ce98169513320c19ccc2184174
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -138,7 +96,7 @@ interactions:
       code: 201
       message: Created
 - request:
-    body: !!python/unicode '{"TableName": "listtable251291081"}'
+    body: '{"TableName": "listtable251291081"}'
     headers:
       Accept:
       - application/json;odata=minimalmetadata
@@ -153,48 +111,27 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-<<<<<<< HEAD
-      - Mon, 28 Sep 2020 17:02:24 GMT
+      - Tue, 29 Sep 2020 17:15:27 GMT
       User-Agent:
-      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Mon, 28 Sep 2020 17:02:24 GMT
-=======
-      - Fri, 04 Sep 2020 23:53:35 GMT
-      User-Agent:
-      - azsdk-python-data-tables/12.0.0b1 Python/2.7.18 (Windows-10-10.0.19041)
-      x-ms-date:
-      - Fri, 04 Sep 2020 23:53:35 GMT
->>>>>>> 40774230c02233ce98169513320c19ccc2184174
+      - Tue, 29 Sep 2020 17:15:27 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
-<<<<<<< HEAD
     uri: https://tablesteststorname.table.core.windows.net/Tables
   response:
     body:
       string: '{"odata.metadata":"https://tablesteststorname.table.core.windows.net/$metadata#Tables/@Element","TableName":"listtable251291081"}'
-=======
-    uri: !!python/unicode https://storagename.table.core.windows.net/Tables
-  response:
-    body:
-      string: !!python/unicode '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#Tables/@Element","TableName":"listtable251291081"}'
->>>>>>> 40774230c02233ce98169513320c19ccc2184174
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-<<<<<<< HEAD
-      - Mon, 28 Sep 2020 17:02:24 GMT
+      - Tue, 29 Sep 2020 17:15:27 GMT
       location:
       - https://tablesteststorname.table.core.windows.net/Tables('listtable251291081')
-=======
-      - Fri, 04 Sep 2020 23:53:35 GMT
-      location:
-      - !!python/unicode https://storagename.table.core.windows.net/Tables('listtable251291081')
->>>>>>> 40774230c02233ce98169513320c19ccc2184174
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -207,7 +144,7 @@ interactions:
       code: 201
       message: Created
 - request:
-    body: !!python/unicode '{"TableName": "listtable351291081"}'
+    body: '{"TableName": "listtable351291081"}'
     headers:
       Accept:
       - application/json;odata=minimalmetadata
@@ -222,48 +159,27 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-<<<<<<< HEAD
-      - Mon, 28 Sep 2020 17:02:25 GMT
+      - Tue, 29 Sep 2020 17:15:27 GMT
       User-Agent:
-      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Mon, 28 Sep 2020 17:02:25 GMT
-=======
-      - Fri, 04 Sep 2020 23:53:35 GMT
-      User-Agent:
-      - azsdk-python-data-tables/12.0.0b1 Python/2.7.18 (Windows-10-10.0.19041)
-      x-ms-date:
-      - Fri, 04 Sep 2020 23:53:35 GMT
->>>>>>> 40774230c02233ce98169513320c19ccc2184174
+      - Tue, 29 Sep 2020 17:15:27 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
-<<<<<<< HEAD
     uri: https://tablesteststorname.table.core.windows.net/Tables
   response:
     body:
       string: '{"odata.metadata":"https://tablesteststorname.table.core.windows.net/$metadata#Tables/@Element","TableName":"listtable351291081"}'
-=======
-    uri: !!python/unicode https://storagename.table.core.windows.net/Tables
-  response:
-    body:
-      string: !!python/unicode '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#Tables/@Element","TableName":"listtable351291081"}'
->>>>>>> 40774230c02233ce98169513320c19ccc2184174
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-<<<<<<< HEAD
-      - Mon, 28 Sep 2020 17:02:24 GMT
+      - Tue, 29 Sep 2020 17:15:27 GMT
       location:
       - https://tablesteststorname.table.core.windows.net/Tables('listtable351291081')
-=======
-      - Fri, 04 Sep 2020 23:53:35 GMT
-      location:
-      - !!python/unicode https://storagename.table.core.windows.net/Tables('listtable351291081')
->>>>>>> 40774230c02233ce98169513320c19ccc2184174
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -287,44 +203,25 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-<<<<<<< HEAD
-      - Mon, 28 Sep 2020 17:02:25 GMT
+      - Tue, 29 Sep 2020 17:15:27 GMT
       User-Agent:
-      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Mon, 28 Sep 2020 17:02:25 GMT
-=======
-      - Fri, 04 Sep 2020 23:53:35 GMT
-      User-Agent:
-      - azsdk-python-data-tables/12.0.0b1 Python/2.7.18 (Windows-10-10.0.19041)
-      x-ms-date:
-      - Fri, 04 Sep 2020 23:53:35 GMT
->>>>>>> 40774230c02233ce98169513320c19ccc2184174
+      - Tue, 29 Sep 2020 17:15:27 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
-<<<<<<< HEAD
     uri: https://tablesteststorname.table.core.windows.net/Tables?$top=2
   response:
     body:
       string: '{"odata.metadata":"https://tablesteststorname.table.core.windows.net/$metadata#Tables","value":[{"TableName":"listtable051291081"},{"TableName":"listtable151291081"}]}'
-=======
-    uri: !!python/unicode https://storagename.table.core.windows.net/Tables?$top=2
-  response:
-    body:
-      string: !!python/unicode '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#Tables","value":[{"TableName":"listtable051291081"},{"TableName":"listtable151291081"}]}'
->>>>>>> 40774230c02233ce98169513320c19ccc2184174
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-<<<<<<< HEAD
-      - Mon, 28 Sep 2020 17:02:24 GMT
-=======
-      - Fri, 04 Sep 2020 23:53:35 GMT
->>>>>>> 40774230c02233ce98169513320c19ccc2184174
+      - Tue, 29 Sep 2020 17:15:27 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -332,11 +229,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-continuation-nexttablename:
-<<<<<<< HEAD
-      - 1!48!bGlzdHRhYmxlMjUxMjkxMDgxATAxZDY5NWI5MjM2ZmQ3YTY-
-=======
-      - 1!48!bGlzdHRhYmxlMjUxMjkxMDgxATAxZDY4MzE2OWEzNjQ1Yjk-
->>>>>>> 40774230c02233ce98169513320c19ccc2184174
+      - 1!48!bGlzdHRhYmxlMjUxMjkxMDgxATAxZDY5Njg0MjA3NmQ3ZTQ-
       x-ms-version:
       - '2019-02-02'
     status:
@@ -354,44 +247,25 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-<<<<<<< HEAD
-      - Mon, 28 Sep 2020 17:02:25 GMT
+      - Tue, 29 Sep 2020 17:15:27 GMT
       User-Agent:
-      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Mon, 28 Sep 2020 17:02:25 GMT
-=======
-      - Fri, 04 Sep 2020 23:53:35 GMT
-      User-Agent:
-      - azsdk-python-data-tables/12.0.0b1 Python/2.7.18 (Windows-10-10.0.19041)
-      x-ms-date:
-      - Fri, 04 Sep 2020 23:53:35 GMT
->>>>>>> 40774230c02233ce98169513320c19ccc2184174
+      - Tue, 29 Sep 2020 17:15:27 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
-<<<<<<< HEAD
-    uri: https://tablesteststorname.table.core.windows.net/Tables?$top=2&NextTableName=1%2148%21bGlzdHRhYmxlMjUxMjkxMDgxATAxZDY5NWI5MjM2ZmQ3YTY-
+    uri: https://tablesteststorname.table.core.windows.net/Tables?$top=2&NextTableName=1%2148%21bGlzdHRhYmxlMjUxMjkxMDgxATAxZDY5Njg0MjA3NmQ3ZTQ-
   response:
     body:
       string: '{"odata.metadata":"https://tablesteststorname.table.core.windows.net/$metadata#Tables","value":[{"TableName":"listtable251291081"},{"TableName":"listtable351291081"}]}'
-=======
-    uri: !!python/unicode https://storagename.table.core.windows.net/Tables?$top=2&NextTableName=1%2148%21bGlzdHRhYmxlMjUxMjkxMDgxATAxZDY4MzE2OWEzNjQ1Yjk-
-  response:
-    body:
-      string: !!python/unicode '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#Tables","value":[{"TableName":"listtable251291081"},{"TableName":"listtable351291081"}]}'
->>>>>>> 40774230c02233ce98169513320c19ccc2184174
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-<<<<<<< HEAD
-      - Mon, 28 Sep 2020 17:02:24 GMT
-=======
-      - Fri, 04 Sep 2020 23:53:35 GMT
->>>>>>> 40774230c02233ce98169513320c19ccc2184174
+      - Tue, 29 Sep 2020 17:15:27 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -399,11 +273,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-continuation-nexttablename:
-<<<<<<< HEAD
-      - 1!48!cHl0YWJsZXN5bmM1MTJhMTA4NQEwMWQ2OTViOTIzMmVhM2Y4
-=======
-      - 1!48!cHl0YWJsZXN5bmMyYzVhMGY3ZAEwMWQ2ODMxNjk4ZWU3MWY1
->>>>>>> 40774230c02233ce98169513320c19ccc2184174
+      - 1!48!cHl0YWJsZXN5bmMyYzVhMGY3ZAEwMWQ2OTY4NDFlNjU5YTUx
       x-ms-version:
       - '2019-02-02'
     status:

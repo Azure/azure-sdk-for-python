@@ -15,19 +15,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-<<<<<<< HEAD
-      - Mon, 28 Sep 2020 17:29:32 GMT
-      User-Agent:
-      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
-      x-ms-date:
-      - Mon, 28 Sep 2020 17:29:32 GMT
-=======
-      - Wed, 16 Sep 2020 21:51:35 GMT
+      - Tue, 29 Sep 2020 17:15:38 GMT
       User-Agent:
       - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 16 Sep 2020 21:51:35 GMT
->>>>>>> 40774230c02233ce98169513320c19ccc2184174
+      - Tue, 29 Sep 2020 17:15:38 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
@@ -41,11 +33,7 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-<<<<<<< HEAD
-      - Mon, 28 Sep 2020 17:29:32 GMT
-=======
-      - Wed, 16 Sep 2020 21:51:34 GMT
->>>>>>> 40774230c02233ce98169513320c19ccc2184174
+      - Tue, 29 Sep 2020 17:15:38 GMT
       location:
       - https://tablesteststorname.table.core.windows.net/Tables('uttablee10d18a6')
       server:
@@ -78,19 +66,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-<<<<<<< HEAD
-      - Mon, 28 Sep 2020 17:29:33 GMT
-      User-Agent:
-      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
-      x-ms-date:
-      - Mon, 28 Sep 2020 17:29:33 GMT
-=======
-      - Wed, 16 Sep 2020 21:51:35 GMT
+      - Tue, 29 Sep 2020 17:15:38 GMT
       User-Agent:
       - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 16 Sep 2020 21:51:35 GMT
->>>>>>> 40774230c02233ce98169513320c19ccc2184174
+      - Tue, 29 Sep 2020 17:15:38 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
@@ -98,22 +78,14 @@ interactions:
   response:
     body:
       string: '{"odata.error":{"code":"PropertyNameTooLong","message":{"lang":"en-US","value":"The
-<<<<<<< HEAD
-        property name exceeds the maximum allowed length (255).\nRequestId:eaa1c55d-4002-0070-44bc-95ada5000000\nTime:2020-09-28T17:29:33.1926922Z"}}}'
-=======
-        property name exceeds the maximum allowed length (255).\nRequestId:e4752103-9002-0026-4c73-8cf3b3000000\nTime:2020-09-16T21:51:35.3483393Z"}}}'
->>>>>>> 40774230c02233ce98169513320c19ccc2184174
+        property name exceeds the maximum allowed length (255).\nRequestId:293f01b0-d002-005c-1d84-962f98000000\nTime:2020-09-29T17:15:38.5397168Z"}}}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-<<<<<<< HEAD
-      - Mon, 28 Sep 2020 17:29:32 GMT
-=======
-      - Wed, 16 Sep 2020 21:51:34 GMT
->>>>>>> 40774230c02233ce98169513320c19ccc2184174
+      - Tue, 29 Sep 2020 17:15:38 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -137,19 +109,11 @@ interactions:
       Content-Length:
       - '0'
       Date:
-<<<<<<< HEAD
-      - Mon, 28 Sep 2020 17:29:33 GMT
-      User-Agent:
-      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
-      x-ms-date:
-      - Mon, 28 Sep 2020 17:29:33 GMT
-=======
-      - Wed, 16 Sep 2020 21:51:35 GMT
+      - Tue, 29 Sep 2020 17:15:38 GMT
       User-Agent:
       - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 16 Sep 2020 21:51:35 GMT
->>>>>>> 40774230c02233ce98169513320c19ccc2184174
+      - Tue, 29 Sep 2020 17:15:38 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
@@ -163,11 +127,7 @@ interactions:
       content-length:
       - '0'
       date:
-<<<<<<< HEAD
-      - Mon, 28 Sep 2020 17:29:32 GMT
-=======
-      - Wed, 16 Sep 2020 21:51:34 GMT
->>>>>>> 40774230c02233ce98169513320c19ccc2184174
+      - Tue, 29 Sep 2020 17:15:38 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options:

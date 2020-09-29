@@ -11,13 +11,13 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Mon, 28 Sep 2020 17:49:08 GMT
+      - Tue, 29 Sep 2020 18:48:45 GMT
       User-Agent:
-      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Mon, 28 Sep 2020 17:49:08 GMT
+      - Tue, 29 Sep 2020 18:48:45 GMT
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     method: POST
     uri: https://tablestestcosmosname.table.cosmos.azure.com/Tables
   response:
@@ -25,15 +25,15 @@ interactions:
       string: '{"TableName":"uttable81c616fa","odata.metadata":"https://tablestestcosmosname.table.cosmos.azure.com/$metadata#Tables/@Element"}'
     headers:
       content-type: application/json;odata=minimalmetadata
-      date: Mon, 28 Sep 2020 17:49:09 GMT
-      etag: W/"datetime'2020-09-28T17%3A49%3A09.3621767Z'"
+      date: Tue, 29 Sep 2020 18:48:46 GMT
+      etag: W/"datetime'2020-09-29T18%3A48%3A46.1681671Z'"
       location: https://tablestestcosmosname.table.cosmos.azure.com/Tables('uttable81c616fa')
       server: Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
     status:
       code: 201
       message: Ok
-    url: https://tablestestr2gpz4h5wetuu2.table.cosmos.azure.com/Tables
+    url: https://tablestestcosmosname.table.cosmos.azure.com/Tables
 - request:
     body: '{"TableName": "querytable81c616fa"}'
     headers:
@@ -46,13 +46,13 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Mon, 28 Sep 2020 17:49:09 GMT
+      - Tue, 29 Sep 2020 18:48:46 GMT
       User-Agent:
-      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Mon, 28 Sep 2020 17:49:09 GMT
+      - Tue, 29 Sep 2020 18:48:46 GMT
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     method: POST
     uri: https://tablestestcosmosname.table.cosmos.azure.com/Tables
   response:
@@ -60,15 +60,15 @@ interactions:
       string: '{"TableName":"querytable81c616fa","odata.metadata":"https://tablestestcosmosname.table.cosmos.azure.com/$metadata#Tables/@Element"}'
     headers:
       content-type: application/json;odata=minimalmetadata
-      date: Mon, 28 Sep 2020 17:49:09 GMT
-      etag: W/"datetime'2020-09-28T17%3A49%3A09.8921991Z'"
+      date: Tue, 29 Sep 2020 18:48:46 GMT
+      etag: W/"datetime'2020-09-29T18%3A48%3A46.6816007Z'"
       location: https://tablestestcosmosname.table.cosmos.azure.com/Tables('querytable81c616fa')
       server: Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
     status:
       code: 201
       message: Ok
-    url: https://tablestestr2gpz4h5wetuu2.table.cosmos.azure.com/Tables
+    url: https://tablestestcosmosname.table.cosmos.azure.com/Tables
 - request:
     body: null
     headers:
@@ -77,13 +77,13 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Mon, 28 Sep 2020 17:49:10 GMT
+      - Tue, 29 Sep 2020 18:48:46 GMT
       User-Agent:
-      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Mon, 28 Sep 2020 17:49:10 GMT
+      - Tue, 29 Sep 2020 18:48:46 GMT
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     method: GET
     uri: https://tablestestcosmosname.table.cosmos.azure.com/querytable81c616fa()
   response:
@@ -91,24 +91,26 @@ interactions:
       string: '{"value":[],"odata.metadata":"https://tablestestcosmosname.table.cosmos.azure.com/$metadata#querytable81c616fa"}'
     headers:
       content-type: application/json;odata=minimalmetadata
-      date: Mon, 28 Sep 2020 17:49:10 GMT
+      date: Tue, 29 Sep 2020 18:48:46 GMT
       server: Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
     status:
       code: 200
       message: Ok
-    url: https://tablestestr2gpz4h5wetuu2.table.cosmos.azure.com/querytable81c616fa()
+    url: https://tablestestcosmosname.table.cosmos.azure.com/querytable81c616fa()
 - request:
     body: null
     headers:
+      Accept:
+      - application/json
       Date:
-      - Mon, 28 Sep 2020 17:49:10 GMT
+      - Tue, 29 Sep 2020 18:48:47 GMT
       User-Agent:
-      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Mon, 28 Sep 2020 17:49:10 GMT
+      - Tue, 29 Sep 2020 18:48:47 GMT
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     method: DELETE
     uri: https://tablestestcosmosname.table.cosmos.azure.com/Tables('uttable81c616fa')
   response:
@@ -116,23 +118,25 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Mon, 28 Sep 2020 17:49:10 GMT
+      date: Tue, 29 Sep 2020 18:48:47 GMT
       server: Microsoft-HTTPAPI/2.0
     status:
       code: 204
       message: No Content
-    url: https://tablestestr2gpz4h5wetuu2.table.cosmos.azure.com/Tables('uttable81c616fa')
+    url: https://tablestestcosmosname.table.cosmos.azure.com/Tables('uttable81c616fa')
 - request:
     body: null
     headers:
+      Accept:
+      - application/json
       Date:
-      - Mon, 28 Sep 2020 17:49:10 GMT
+      - Tue, 29 Sep 2020 18:48:47 GMT
       User-Agent:
-      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Mon, 28 Sep 2020 17:49:10 GMT
+      - Tue, 29 Sep 2020 18:48:47 GMT
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     method: DELETE
     uri: https://tablestestcosmosname.table.cosmos.azure.com/Tables('querytable81c616fa')
   response:
@@ -140,10 +144,10 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Mon, 28 Sep 2020 17:49:10 GMT
+      date: Tue, 29 Sep 2020 18:48:47 GMT
       server: Microsoft-HTTPAPI/2.0
     status:
       code: 204
       message: No Content
-    url: https://tablestestr2gpz4h5wetuu2.table.cosmos.azure.com/Tables('querytable81c616fa')
+    url: https://tablestestcosmosname.table.cosmos.azure.com/Tables('querytable81c616fa')
 version: 1

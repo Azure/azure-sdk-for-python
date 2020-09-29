@@ -37,12 +37,9 @@ from _shared.testcase import TableTestCase, LogCaptured, RERUNS_DELAY, SLEEP_DEL
 class StorageTableEntityTest(TableTestCase):
 
     async def _set_up(self, cosmos_account, cosmos_account_key):
-        print(f"Cosmos_account: {cosmos_account}")
         account_url = self.account_url(cosmos_account, "cosmos")
-        print(f"Account_url: {account_url}")
         self.ts = TableServiceClient(account_url, cosmos_account_key)
         self.table_name = self.get_resource_name('uttable')
-        print(f"Table name: {self.table_name}")
         self.table = self.ts.get_table_client(self.table_name)
         if self.is_live:
             try:
@@ -126,10 +123,7 @@ class StorageTableEntityTest(TableTestCase):
 
     async def _insert_random_entity(self, pk=None, rk=None):
         entity = self._create_random_entity_dict(pk, rk)
-        # , response_hook=lambda e, h: h['etag']
-        e = await self.table.create_entity(entity=entity)
-        metadata = e.metadata()
-        # etag = e['etag']
+        metadata = await self.table.create_entity(entity=entity)
         return entity, metadata['etag']
 
     def _create_updated_entity_dict(self, partition, row):
@@ -152,27 +146,22 @@ class StorageTableEntityTest(TableTestCase):
         '''
         Asserts that the entity passed in matches the default entity.
         '''
-        self.assertEqual(entity['age'], 39)
-        self.assertEqual(entity['sex'], 'male')
+        self.assertEqual(entity['age'].value, 39)
+        self.assertEqual(entity['sex'].value, 'male')
         self.assertEqual(entity['married'], True)
         self.assertEqual(entity['deceased'], False)
         self.assertFalse("optional" in entity)
         self.assertFalse("aquarius" in entity)
         self.assertEqual(entity['ratio'], 3.1)
         self.assertEqual(entity['evenratio'], 3.0)
-        self.assertEqual(entity['large'], 933311100)
+        self.assertEqual(entity['large'].value, 933311100)
         self.assertEqual(entity['Birthday'], datetime(1973, 10, 4, tzinfo=tzutc()))
         self.assertEqual(entity['birthday'], datetime(1970, 10, 4, tzinfo=tzutc()))
-        self.assertEqual(entity['binary'].value, b'binary') # TODO: added the ".value" portion, verify this is correct
+        self.assertEqual(entity['binary'].value, b'binary')
         self.assertIsInstance(entity['other'], EntityProperty)
-        self.assertEqual(entity['other'].type, EdmType.INT64)
+        self.assertEqual(entity['other'].type, EdmType.INT32)
         self.assertEqual(entity['other'].value, 20)
         self.assertEqual(entity['clsid'], uuid.UUID('c9da6455-213d-42c9-9a79-3e9149a57833'))
-        # self.assertTrue('metadata' in entity.odata)
-
-        # TODO: these are commented out / nonexistent in sync code, should we have them?
-        # self.assertIsNotNone(entity.Timestamp)
-        # self.assertIsInstance(entity.Timestamp, datetime)
         if headers:
             self.assertTrue("etag" in headers)
             self.assertIsNotNone(headers['etag'])
@@ -181,57 +170,45 @@ class StorageTableEntityTest(TableTestCase):
         '''
         Asserts that the entity passed in matches the default entity.
         '''
-        self.assertEqual(entity['age'], 39)
-        self.assertEqual(entity['sex'], 'male')
+        self.assertEqual(entity['age'].value, 39)
+        self.assertEqual(entity['sex'].value, 'male')
         self.assertEqual(entity['married'], True)
         self.assertEqual(entity['deceased'], False)
         self.assertFalse("optional" in entity)
         self.assertFalse("aquarius" in entity)
         self.assertEqual(entity['ratio'], 3.1)
         self.assertEqual(entity['evenratio'], 3.0)
-        self.assertEqual(entity['large'], 933311100)
+        self.assertEqual(entity['large'].value, 933311100)
         self.assertEqual(entity['Birthday'], datetime(1973, 10, 4, tzinfo=tzutc()))
         self.assertEqual(entity['birthday'], datetime(1970, 10, 4, tzinfo=tzutc()))
         self.assertEqual(entity['binary'].value, b'binary')
         self.assertIsInstance(entity['other'], EntityProperty)
-        self.assertEqual(entity['other'].type, EdmType.INT64)
+        self.assertEqual(entity['other'].type, EdmType.INT32)
         self.assertEqual(entity['other'].value, 20)
         self.assertEqual(entity['clsid'], uuid.UUID('c9da6455-213d-42c9-9a79-3e9149a57833'))
-        # self.assertTrue('metadata' in entity.odata)
-        # self.assertTrue('id' in entity.odata)
-        # self.assertTrue('type' in entity.odata)
-        # self.assertTrue('etag' in entity.odata)
-        # self.assertTrue('editLink' in entity.odata)
-
-        # TODO: commented out in sync, should we have these?
-        # self.assertIsNotNone(entity.Timestamp)
-        # self.assertIsInstance(entity.Timestamp, datetime)
-        # if headers:
-        #     self.assertTrue("etag" in headers)
-        #     self.assertIsNotNone(headers['etag'])
 
     def _assert_default_entity_json_no_metadata(self, entity, headers=None):
         '''
         Asserts that the entity passed in matches the default entity.
         '''
-        self.assertEqual(entity['age'], '39')
-        self.assertEqual(entity['sex'], 'male')
+        self.assertEqual(entity['age'].value, 39)
+        self.assertEqual(entity['sex'].value, 'male')
         self.assertEqual(entity['married'], True)
         self.assertEqual(entity['deceased'], False)
         self.assertFalse("optional" in entity)
         self.assertFalse("aquarius" in entity)
         self.assertEqual(entity['ratio'], 3.1)
         self.assertEqual(entity['evenratio'], 3.0)
-        self.assertEqual(entity['large'], '933311100')
-        self.assertTrue(entity['Birthday'].startswith('1973-10-04T00:00:00'))
-        self.assertTrue(entity['birthday'].startswith('1970-10-04T00:00:00'))
-        self.assertTrue(entity['Birthday'].endswith('00Z'))
-        self.assertTrue(entity['birthday'].endswith('00Z'))
-        self.assertEqual(entity['binary'], b64encode(b'binary').decode('utf-8'))
+        self.assertEqual(entity['large'].value, 933311100)
+        self.assertTrue(entity['Birthday'].value.startswith('1973-10-04T00:00:00'))
+        self.assertTrue(entity['birthday'].value.startswith('1970-10-04T00:00:00'))
+        self.assertTrue(entity['Birthday'].value.endswith('00Z'))
+        self.assertTrue(entity['birthday'].value.endswith('00Z'))
+        self.assertEqual(entity['binary'].value, b64encode(b'binary').decode('utf-8'))
         self.assertIsInstance(entity['other'], EntityProperty)
-        self.assertEqual(entity['other'].type, EdmType.INT64)
+        self.assertEqual(entity['other'].type, EdmType.INT32)
         self.assertEqual(entity['other'].value, 20)
-        self.assertEqual(entity['clsid'], 'c9da6455-213d-42c9-9a79-3e9149a57833')
+        self.assertEqual(entity['clsid'].value, 'c9da6455-213d-42c9-9a79-3e9149a57833')
         # self.assertIsNone(entity.odata)
         # self.assertIsNotNone(entity.Timestamp)
         # self.assertIsInstance(entity.Timestamp, datetime)
@@ -243,51 +220,47 @@ class StorageTableEntityTest(TableTestCase):
         '''
         Asserts that the entity passed in matches the updated entity.
         '''
-        self.assertEqual(entity.age, 'abc')
-        self.assertEqual(entity.sex, 'female')
+        self.assertEqual(entity.age.value, 'abc')
+        self.assertEqual(entity.sex.value, 'female')
         self.assertFalse(hasattr(entity, "married"))
         self.assertFalse(hasattr(entity, "deceased"))
-        self.assertEqual(entity.sign, 'aquarius')
+        self.assertEqual(entity.sign.value, 'aquarius')
         self.assertFalse(hasattr(entity, "optional"))
         self.assertFalse(hasattr(entity, "ratio"))
         self.assertFalse(hasattr(entity, "evenratio"))
         self.assertFalse(hasattr(entity, "large"))
         self.assertFalse(hasattr(entity, "Birthday"))
-        # self.assertEqual(entity.birthday, "1991-10-04 00:00:00+00:00")
         self.assertEqual(entity.birthday, datetime(1991, 10, 4, tzinfo=tzutc()))
         self.assertFalse(hasattr(entity, "other"))
         self.assertFalse(hasattr(entity, "clsid"))
-        # TODO: should these all be commented out?
-        #        self.assertIsNotNone(entity.odata.etag)
-        # self.assertIsNotNone(entity.Timestamp)
-        # self.assertIsInstance(entity.timestamp, datetime)
 
     def _assert_merged_entity(self, entity):
         '''
         Asserts that the entity passed in matches the default entity
         merged with the updated entity.
         '''
-        self.assertEqual(entity.age, 'abc')
-        self.assertEqual(entity.sex, 'female')
-        self.assertEqual(entity.sign, 'aquarius')
+        self.assertEqual(entity.age.value, 'abc')
+        self.assertEqual(entity.sex.value, 'female')
+        self.assertEqual(entity.sign.value, 'aquarius')
         self.assertEqual(entity.married, True)
         self.assertEqual(entity.deceased, False)
-        self.assertEqual(entity.sign, 'aquarius')
         self.assertEqual(entity.ratio, 3.1)
         self.assertEqual(entity.evenratio, 3.0)
-        self.assertEqual(entity.large, 933311100)
+        self.assertEqual(entity.large.value, 933311100)
         self.assertEqual(entity.Birthday, datetime(1973, 10, 4, tzinfo=tzutc()))
         self.assertEqual(entity.birthday, datetime(1991, 10, 4, tzinfo=tzutc()))
         self.assertIsInstance(entity.other, EntityProperty)
-        self.assertEqual(entity.other.type, EdmType.INT64)
+        self.assertEqual(entity.other.type, EdmType.INT32)
         self.assertEqual(entity.other.value, 20)
         self.assertIsInstance(entity.clsid, uuid.UUID)
         self.assertEqual(str(entity.clsid), 'c9da6455-213d-42c9-9a79-3e9149a57833')
-        # TODO: should these all be commented out?
-        # self.assertIsNotNone(entity.etag)
-        # self.assertIsNotNone(entity.odata['etag'])
-        # self.assertIsNotNone(entity.Timestamp)
-        # self.assertIsInstance(entity.Timestamp, datetime)
+
+    def _assert_valid_metadata(self, metadata):
+        keys = metadata.keys()
+        self.assertIn("version", keys)
+        self.assertIn("date", keys)
+        self.assertIn("etag", keys)
+        self.assertEqual(len(keys), 3)
 
     # --Test cases for entities ------------------------------------------
     @pytest.mark.skip("Merge operation fails from Tables SDK")
@@ -319,12 +292,14 @@ class StorageTableEntityTest(TableTestCase):
             entity = self._create_random_entity_dict()
 
             # Act
-            # , response_hook = lambda e, h: (e, h)
             resp = await self.table.create_entity(entity=entity)
-
+            received_entity = await self.table.get_entity(
+                partition_key=entity["PartitionKey"],
+                row_key=entity["RowKey"]
+            )
             # Assert
-            self.assertIsNotNone(resp)
-            self._assert_default_entity(resp)
+            self._assert_valid_metadata(resp)
+            self._assert_default_entity(received_entity)
         finally:
             await self._tear_down()
             if self.is_live:
@@ -337,17 +312,22 @@ class StorageTableEntityTest(TableTestCase):
         await self._set_up(cosmos_account, cosmos_account_key)
         try:
             entity = self._create_random_entity_dict()
+            headers = {'Accept': 'application/json;odata=nometadata'}
 
             # Act
-            # response_hook = lambda e, h: (e, h)
             resp = await self.table.create_entity(
                 entity=entity,
                 headers={'Accept': 'application/json;odata=nometadata'},
-                )
+            )
+            received_entity = await self.table.get_entity(
+                partition_key=entity["PartitionKey"],
+                row_key=entity["RowKey"],
+                headers=headers
+            )
 
             # Assert
-            self.assertIsNotNone(resp)
-            self._assert_default_entity_json_no_metadata(resp)
+            self._assert_valid_metadata(resp)
+            self._assert_default_entity_json_no_metadata(received_entity)
         finally:
             await self._tear_down()
             if self.is_live:
@@ -361,16 +341,22 @@ class StorageTableEntityTest(TableTestCase):
         await self._set_up(cosmos_account, cosmos_account_key)
         try:
             entity = self._create_random_entity_dict()
+            headers = {'Accept': 'application/json;odata=fullmetadata'}
 
             # Act
-            # response_hook=lambda e, h: (e, h)
             resp = await self.table.create_entity(
                 entity=entity,
-                headers={'Accept': 'application/json;odata=fullmetadata'},)
+                headers=headers
+            )
+            received_entity = await self.table.get_entity(
+                partition_key=entity["PartitionKey"],
+                row_key=entity["RowKey"],
+                headers=headers
+            )
 
             # Assert
-            self.assertIsNotNone(resp)
-            self._assert_default_entity_json_full_metadata(resp)
+            self._assert_valid_metadata(resp)
+            self._assert_default_entity_json_full_metadata(received_entity)
         finally:
             await self._tear_down()
             if self.is_live:
@@ -427,13 +413,13 @@ class StorageTableEntityTest(TableTestCase):
         try:
             # Act
             dict64 = self._create_random_base_entity_dict()
-            dict64['large'] = EntityProperty(2 ** 63)
+            dict64['large'] = EntityProperty(2 ** 63, EdmType.INT64)
 
             # Assert
             with self.assertRaises(TypeError):
                 await self.table.create_entity(entity=dict64)
 
-            dict64['large'] = EntityProperty(-(2 ** 63 + 1))
+            dict64['large'] = EntityProperty(-(2 ** 63 + 1), EdmType.INT64)
             with self.assertRaises(TypeError):
                 await self.table.create_entity(entity=dict64)
         finally:
@@ -814,7 +800,6 @@ class StorageTableEntityTest(TableTestCase):
         await self._set_up(cosmos_account, cosmos_account_key)
         try:
             entity, _ = await self._insert_random_entity()
-            print("Table name: ", self.table.table_name)
 
             # Act
             sent_entity = self._create_updated_entity_dict(entity.PartitionKey, entity.RowKey)
@@ -1123,8 +1108,8 @@ class StorageTableEntityTest(TableTestCase):
 
             # Assert
             self.assertEqual(len(entities), 2)
-            self.assertEqual(entities[0].Description, u'ꀕ')
-            self.assertEqual(entities[1].Description, u'ꀕ')
+            self.assertEqual(entities[0].Description.value, u'ꀕ')
+            self.assertEqual(entities[1].Description.value, u'ꀕ')
         finally:
             await self._tear_down()
             if self.is_live:
@@ -1152,8 +1137,8 @@ class StorageTableEntityTest(TableTestCase):
 
             # Assert
             self.assertEqual(len(entities), 2)
-            self.assertEqual(entities[0][u'啊齄丂狛狜'], u'ꀕ')
-            self.assertEqual(entities[1][u'啊齄丂狛狜'], u'hello')
+            self.assertEqual(entities[0][u'啊齄丂狛狜'].value, u'ꀕ')
+            self.assertEqual(entities[1][u'啊齄丂狛狜'].value, u'hello')
         finally:
             await self._tear_down()
             if self.is_live:
@@ -1232,16 +1217,16 @@ class StorageTableEntityTest(TableTestCase):
 
             # Assert
             self.assertIsNotNone(resp)
-            self.assertEqual(resp.EmptyByte, '')
-            self.assertEqual(resp.EmptyUnicode, u'')
-            self.assertEqual(resp.SpacesOnlyByte, '   ')
-            self.assertEqual(resp.SpacesOnlyUnicode, u'   ')
-            self.assertEqual(resp.SpacesBeforeByte, '   Text')
-            self.assertEqual(resp.SpacesBeforeUnicode, u'   Text')
-            self.assertEqual(resp.SpacesAfterByte, 'Text   ')
-            self.assertEqual(resp.SpacesAfterUnicode, u'Text   ')
-            self.assertEqual(resp.SpacesBeforeAndAfterByte, '   Text   ')
-            self.assertEqual(resp.SpacesBeforeAndAfterUnicode, u'   Text   ')
+            self.assertEqual(resp.EmptyByte.value, '')
+            self.assertEqual(resp.EmptyUnicode.value, u'')
+            self.assertEqual(resp.SpacesOnlyByte.value, '   ')
+            self.assertEqual(resp.SpacesOnlyUnicode.value, u'   ')
+            self.assertEqual(resp.SpacesBeforeByte.value, '   Text')
+            self.assertEqual(resp.SpacesBeforeUnicode.value, u'   Text')
+            self.assertEqual(resp.SpacesAfterByte.value, 'Text   ')
+            self.assertEqual(resp.SpacesAfterUnicode.value, u'Text   ')
+            self.assertEqual(resp.SpacesBeforeAndAfterByte.value, '   Text   ')
+            self.assertEqual(resp.SpacesBeforeAndAfterUnicode.value, u'   Text   ')
         finally:
             await self._tear_down()
             if self.is_live:

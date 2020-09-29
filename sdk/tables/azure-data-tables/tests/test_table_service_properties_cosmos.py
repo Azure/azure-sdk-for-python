@@ -113,8 +113,6 @@ class TableServicePropertiesTest(TableTestCase):
             minute_metrics=Metrics(),
             cors=list())
 
-        print(resp)
-
         # Assert
         self.assertIsNone(resp)
         self._assert_properties_default(tsc.get_service_properties())

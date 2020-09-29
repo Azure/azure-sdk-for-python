@@ -80,11 +80,14 @@ class StorageTableEntityTest(TableTestCase):
             except:
                 pass
 
-            for table_name in self.query_tables:
-                try:
-                    self.ts.delete_table(table_name)
-                except:
-                    pass
+            try:
+                for table_name in self.query_tables:
+                    try:
+                        self.ts.delete_table(table_name)
+                    except:
+                        pass
+            except AttributeError:
+                pass
 
     # --Helpers-----------------------------------------------------------------
 
@@ -159,9 +162,7 @@ class StorageTableEntityTest(TableTestCase):
 
     def _insert_random_entity(self, pk=None, rk=None):
         entity = self._create_random_entity_dict(pk, rk)
-        # etag = self.table.create_item(entity, response_hook=lambda e, h: h['etag'])
         metadata = self.table.create_entity(entity)
-        # metadata = e.metadata()
         return entity, metadata['etag']
 
     def _create_updated_entity_dict(self, partition, row):
@@ -610,7 +611,8 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    @GlobalStorageAccountPreparer()
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_insert_entity_with_enums(self, resource_group, location, storage_account,
                                                          storage_account_key):
         # Arrange
@@ -875,14 +877,17 @@ class StorageTableEntityTest(TableTestCase):
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_update_entity_with_if_doesnt_match(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
+        self._set_up(storage_account, storage_account_key)
         try:
             entity, _ = self._insert_random_entity()
 
-                    mode=UpdateMode.MERGE,
+            sent_entity = self._create_updated_entity_dict(entity.PartitionKey, entity.RowKey)
+            with self.assertRaises(HttpResponseError):
+                self.table.update_entity(
+                    mode=UpdateMode.REPLACE,
                     entity=sent_entity,
                     etag=u'W/"datetime\'2012-06-15T22%3A51%3A44.9662825Z\'"',
                     match_condition=MatchConditions.IfNotModified)
-
             # Assert
         finally:
             self._tear_down()

@@ -12,19 +12,11 @@ interactions:
       Content-Type:
       - application/xml
       Date:
-<<<<<<< HEAD
-      - Mon, 28 Sep 2020 17:55:39 GMT
-      User-Agent:
-      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
-      x-ms-date:
-      - Mon, 28 Sep 2020 17:55:39 GMT
-=======
-      - Wed, 16 Sep 2020 21:56:42 GMT
+      - Tue, 29 Sep 2020 17:11:59 GMT
       User-Agent:
       - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 16 Sep 2020 21:56:42 GMT
->>>>>>> 40774230c02233ce98169513320c19ccc2184174
+      - Tue, 29 Sep 2020 17:11:59 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -33,41 +25,25 @@ interactions:
     body:
       string: ''
     headers:
-<<<<<<< HEAD
-      date: Mon, 28 Sep 2020 17:55:39 GMT
-=======
-      date: Wed, 16 Sep 2020 21:56:42 GMT
->>>>>>> 40774230c02233ce98169513320c19ccc2184174
+      date: Tue, 29 Sep 2020 17:12:00 GMT
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-ms-version: '2019-02-02'
     status:
       code: 202
       message: Accepted
-<<<<<<< HEAD
-    url: https://tablestestbluanwepmj6h4i.table.core.windows.net/?restype=service&comp=properties
-=======
-    url: https://pyacrstoragewrla36mtikyp.table.core.windows.net/?restype=service&comp=properties
->>>>>>> 40774230c02233ce98169513320c19ccc2184174
+    url: https://tablesteststorname.table.core.windows.net/?restype=service&comp=properties
 - request:
     body: null
     headers:
       Accept:
       - application/xml
       Date:
-<<<<<<< HEAD
-      - Mon, 28 Sep 2020 17:56:09 GMT
-      User-Agent:
-      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
-      x-ms-date:
-      - Mon, 28 Sep 2020 17:56:09 GMT
-=======
-      - Wed, 16 Sep 2020 21:57:12 GMT
+      - Tue, 29 Sep 2020 17:12:30 GMT
       User-Agent:
       - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 16 Sep 2020 21:57:12 GMT
->>>>>>> 40774230c02233ce98169513320c19ccc2184174
+      - Tue, 29 Sep 2020 17:12:30 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
@@ -78,20 +54,12 @@ interactions:
         /></StorageServiceProperties>"
     headers:
       content-type: application/xml
-<<<<<<< HEAD
-      date: Mon, 28 Sep 2020 17:56:09 GMT
-=======
-      date: Wed, 16 Sep 2020 21:57:12 GMT
->>>>>>> 40774230c02233ce98169513320c19ccc2184174
+      date: Tue, 29 Sep 2020 17:12:30 GMT
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-ms-version: '2019-02-02'
     status:
       code: 200
       message: OK
-<<<<<<< HEAD
-    url: https://tablestestbluanwepmj6h4i.table.core.windows.net/?restype=service&comp=properties
-=======
-    url: https://pyacrstoragewrla36mtikyp.table.core.windows.net/?restype=service&comp=properties
->>>>>>> 40774230c02233ce98169513320c19ccc2184174
+    url: https://tablesteststorname.table.core.windows.net/?restype=service&comp=properties
 version: 1
