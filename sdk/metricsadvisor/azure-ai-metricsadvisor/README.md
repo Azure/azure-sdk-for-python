@@ -410,7 +410,7 @@ client = MetricsAdvisorClient(service_endpoint,
 
 ### More sample code
 
- For more details see the [samples README](https://github.com/Azure/azure-sdk-for-python-pr/tree/feature/metricsadvisor/sdk/metricsadvisor/azure-ai-metricsadvisor/samples/README.md).
+ For more details see the [samples README](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/metricsadvisor/azure-ai-metricsadvisor/samples/README.md).
 
 ## Contributing
 
