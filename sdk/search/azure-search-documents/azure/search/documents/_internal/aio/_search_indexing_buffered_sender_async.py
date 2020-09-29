@@ -227,6 +227,18 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         await self._new_action_callback(actions)
         await self._process_if_needed()
 
+    @distributed_trace_async
+    async def index_documents(self, batch, **kwargs):
+        # type: (IndexDocumentsBatch, **Any) -> List[IndexingResult]
+        """Specify a document operations to perform as a batch.
+
+        :param batch: A batch of document operations to perform.
+        :type batch: IndexDocumentsBatch
+        :rtype:  List[IndexingResult]
+        :raises :class:`~azure.search.documents.RequestEntityTooLargeError`
+        """
+        return await self._index_documents_actions(actions=batch.actions, **kwargs)
+
     async def _index_documents_actions(self, actions, **kwargs):
         # type: (List[IndexAction], **Any) -> List[IndexingResult]
         error_map = {413: RequestEntityTooLargeError}
