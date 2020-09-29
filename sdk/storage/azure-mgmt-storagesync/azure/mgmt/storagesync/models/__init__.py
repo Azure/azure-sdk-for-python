@@ -16,6 +16,12 @@ try:
     from ._models_py3 import CheckNameAvailabilityResult
     from ._models_py3 import CloudEndpoint
     from ._models_py3 import CloudEndpointCreateParameters
+    from ._models_py3 import CloudTieringCachePerformance
+    from ._models_py3 import CloudTieringDatePolicyStatus
+    from ._models_py3 import CloudTieringFilesNotTiering
+    from ._models_py3 import CloudTieringSpaceSavings
+    from ._models_py3 import CloudTieringVolumeFreeSpacePolicyStatus
+    from ._models_py3 import FilesNotTieringError
     from ._models_py3 import OperationDisplayInfo
     from ._models_py3 import OperationDisplayResource
     from ._models_py3 import OperationEntity
@@ -23,6 +29,11 @@ try:
     from ._models_py3 import PostBackupResponse
     from ._models_py3 import PostRestoreRequest
     from ._models_py3 import PreRestoreRequest
+    from ._models_py3 import PrivateEndpoint
+    from ._models_py3 import PrivateEndpointConnection
+    from ._models_py3 import PrivateLinkResource
+    from ._models_py3 import PrivateLinkResourceListResult
+    from ._models_py3 import PrivateLinkServiceConnectionState
     from ._models_py3 import ProxyResource
     from ._models_py3 import RecallActionParameters
     from ._models_py3 import RegisteredServer
@@ -60,6 +71,12 @@ except (SyntaxError, ImportError):
     from ._models import CheckNameAvailabilityResult
     from ._models import CloudEndpoint
     from ._models import CloudEndpointCreateParameters
+    from ._models import CloudTieringCachePerformance
+    from ._models import CloudTieringDatePolicyStatus
+    from ._models import CloudTieringFilesNotTiering
+    from ._models import CloudTieringSpaceSavings
+    from ._models import CloudTieringVolumeFreeSpacePolicyStatus
+    from ._models import FilesNotTieringError
     from ._models import OperationDisplayInfo
     from ._models import OperationDisplayResource
     from ._models import OperationEntity
@@ -67,6 +84,11 @@ except (SyntaxError, ImportError):
     from ._models import PostBackupResponse
     from ._models import PostRestoreRequest
     from ._models import PreRestoreRequest
+    from ._models import PrivateEndpoint
+    from ._models import PrivateEndpointConnection
+    from ._models import PrivateLinkResource
+    from ._models import PrivateLinkResourceListResult
+    from ._models import PrivateLinkServiceConnectionState
     from ._models import ProxyResource
     from ._models import RecallActionParameters
     from ._models import RegisteredServer
@@ -99,6 +121,7 @@ except (SyntaxError, ImportError):
     from ._models import Workflow
 from ._paged_models import CloudEndpointPaged
 from ._paged_models import OperationEntityPaged
+from ._paged_models import PrivateEndpointConnectionPaged
 from ._paged_models import RegisteredServerPaged
 from ._paged_models import ServerEndpointPaged
 from ._paged_models import StorageSyncServicePaged
@@ -106,8 +129,21 @@ from ._paged_models import SyncGroupPaged
 from ._paged_models import WorkflowPaged
 from ._storage_sync_management_client_enums import (
     Reason,
+    IncomingTrafficPolicy,
+    PrivateEndpointServiceConnectionStatus,
+    PrivateEndpointConnectionProvisioningState,
     ChangeDetectionMode,
+    FeatureStatus,
+    InitialDownloadPolicy,
+    LocalCacheMode,
+    ServerEndpointSyncHealthState,
+    ServerEndpointSyncActivityState,
+    ServerEndpointOfflineDataTransferState,
+    ServerEndpointCloudTieringHealthState,
+    WorkflowStatus,
+    OperationDirection,
     NameAvailabilityReason,
+    ProgressType,
 )
 
 __all__ = [
@@ -117,6 +153,12 @@ __all__ = [
     'CheckNameAvailabilityResult',
     'CloudEndpoint',
     'CloudEndpointCreateParameters',
+    'CloudTieringCachePerformance',
+    'CloudTieringDatePolicyStatus',
+    'CloudTieringFilesNotTiering',
+    'CloudTieringSpaceSavings',
+    'CloudTieringVolumeFreeSpacePolicyStatus',
+    'FilesNotTieringError',
     'OperationDisplayInfo',
     'OperationDisplayResource',
     'OperationEntity',
@@ -124,6 +166,11 @@ __all__ = [
     'PostBackupResponse',
     'PostRestoreRequest',
     'PreRestoreRequest',
+    'PrivateEndpoint',
+    'PrivateEndpointConnection',
+    'PrivateLinkResource',
+    'PrivateLinkResourceListResult',
+    'PrivateLinkServiceConnectionState',
     'ProxyResource',
     'RecallActionParameters',
     'RegisteredServer',
@@ -156,12 +203,26 @@ __all__ = [
     'Workflow',
     'OperationEntityPaged',
     'StorageSyncServicePaged',
+    'PrivateEndpointConnectionPaged',
     'SyncGroupPaged',
     'CloudEndpointPaged',
     'ServerEndpointPaged',
     'RegisteredServerPaged',
     'WorkflowPaged',
     'Reason',
+    'IncomingTrafficPolicy',
+    'PrivateEndpointServiceConnectionStatus',
+    'PrivateEndpointConnectionProvisioningState',
     'ChangeDetectionMode',
+    'FeatureStatus',
+    'InitialDownloadPolicy',
+    'LocalCacheMode',
+    'ServerEndpointSyncHealthState',
+    'ServerEndpointSyncActivityState',
+    'ServerEndpointOfflineDataTransferState',
+    'ServerEndpointCloudTieringHealthState',
+    'WorkflowStatus',
+    'OperationDirection',
     'NameAvailabilityReason',
+    'ProgressType',
 ]
