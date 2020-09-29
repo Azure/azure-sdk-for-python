@@ -31,76 +31,92 @@ class PhoneNumberAdministrationClientTestAsync(AsyncCommunicationTestCase):
             ),
             PhoneNumberUriReplacer(),
             ResponseReplacerProcessor(keys=[self._resource_name])])
-
         self._phone_number_administration_client = PhoneNumberAdministrationClient.from_connection_string(
             self.connection_str)
-        self.country_code = os.getenv('AZURE_COMMUNICATION_SERVICE_TNM_COUNTRY_CODE', "US")
-        self.locale = os.getenv('AZURE_COMMUNICATION_SERVICE_TNM_LOCALE', "en-us")
-        self.phone_plan_group_id = os.getenv('AZURE_COMMUNICATION_SERVICE_TNM_PHONE_PLAN_GROUP_ID', "phone-plan-group-id-1")
-        self.phone_plan_id = os.getenv('AZURE_COMMUNICATION_SERVICE_TNM_PHONE_PLAN_ID', "phone-plan-id-1")
-        self.phone_plan_id_area_codes = os.getenv('AZURE_COMMUNICATION_SERVICE_TNM_PHONE_PLAN_ID_AREA_CODES', "phone-plan-id-1")
-        self.area_code_for_search = os.getenv('AZURE_COMMUNICATION_SERVICE_TNM_AREA_CODE_FOR_SEARCH', "777")
-        self.search_id = os.getenv('AZURE_COMMUNICATION_SERVICE_TNM_SEARCH_ID', "search-id-1")
-        self.search_id_to_purchase = os.getenv('AZURE_COMMUNICATION_SERVICE_TNM_SEARCH_ID_TO_PURCHASE', "search-id-1")
-        self.search_id_to_cancel = os.getenv('AZURE_COMMUNICATION_SERVICE_TNM_SEARCH_ID_TO_CANCEL', "search-id-2")
-        self.phonenumber_to_configure = os.getenv('AZURE_COMMUNICATION_SERVICE_TNM_PHONENUMBER_TO_CONFIGURE', "+17771234567")
-        self.phonenumber_to_get_config = os.getenv('AZURE_COMMUNICATION_SERVICE_TNM_PHONENUMBER_TO_GET_CONFIG', "+17771234567")
-        self.phonenumber_to_unconfigure = os.getenv('AZURE_COMMUNICATION_SERVICE_TNM_PHONENUMBER_TO_UNCONFIGURE', "+17771234567")
-        self.phonenumber_for_capabilities = os.getenv('AZURE_COMMUNICATION_SERVICE_TNM_PHONENUMBER_FOR_CAPABILITIES', "+17771234567")
-        self.capabilities_id = os.getenv('AZURE_COMMUNICATION_SERVICE_TNM_CAPABILITIES_ID', "capabilities-id-1")
-        self.release_id = os.getenv('AZURE_COMMUNICATION_SERVICE_TNM_RELEASE_ID', "release_id_1")
-        self.scrubber.register_name_pair(
-            self.phone_plan_group_id,
-            "phone_plan_group_id"
-        )
-        self.scrubber.register_name_pair(
-            self.phone_plan_id,
-            "phone_plan_id"
-        )
-        self.scrubber.register_name_pair(
-            self.phone_plan_id_area_codes,
-            "phone_plan_id_area_codes"
-        )
-        self.scrubber.register_name_pair(
-            self.area_code_for_search,
-            "area_code_for_search"
-        )
-        self.scrubber.register_name_pair(
-            self.search_id,
-            "search_id"
-        )
-        self.scrubber.register_name_pair(
-            self.search_id_to_purchase,
-            "search_id_to_purchase"
-        )
-        self.scrubber.register_name_pair(
-            self.search_id_to_cancel,
-            "search_id_to_cancel"
-        )
-        self.scrubber.register_name_pair(
-            self.phonenumber_to_configure,
-            "phonenumber_to_configure"
-        )
-        self.scrubber.register_name_pair(
-            self.phonenumber_to_get_config,
-            "phonenumber_to_get_config"
-        )
-        self.scrubber.register_name_pair(
-            self.phonenumber_to_unconfigure,
-            "phonenumber_to_unconfigure"
-        )
-        self.scrubber.register_name_pair(
-            self.phonenumber_for_capabilities,
-            "phonenumber_for_capabilities"
-        )
-        self.scrubber.register_name_pair(
-            self.capabilities_id,
-            "capabilities_id"
-        )
-        self.scrubber.register_name_pair(
-            self.release_id,
-            "release_id"
-        )
+        if self.is_live:
+            self.country_code = os.getenv('AZURE_COMMUNICATION_SERVICE_TNM_COUNTRY_CODE')
+            self.locale = os.getenv('AZURE_COMMUNICATION_SERVICE_TNM_LOCALE')
+            self.phone_plan_group_id = os.getenv('AZURE_COMMUNICATION_SERVICE_TNM_PHONE_PLAN_GROUP_ID')
+            self.phone_plan_id = os.getenv('AZURE_COMMUNICATION_SERVICE_TNM_PHONE_PLAN_ID')
+            self.phone_plan_id_area_codes = os.getenv('AZURE_COMMUNICATION_SERVICE_TNM_PHONE_PLAN_ID_AREA_CODES')
+            self.area_code_for_search = os.getenv('AZURE_COMMUNICATION_SERVICE_TNM_AREA_CODE_FOR_SEARCH')
+            self.search_id = os.getenv('AZURE_COMMUNICATION_SERVICE_TNM_SEARCH_ID')
+            self.search_id_to_purchase = os.getenv('AZURE_COMMUNICATION_SERVICE_TNM_SEARCH_ID_TO_PURCHASE')
+            self.search_id_to_cancel = os.getenv('AZURE_COMMUNICATION_SERVICE_TNM_SEARCH_ID_TO_CANCEL')
+            self.phonenumber_to_configure = os.getenv('AZURE_COMMUNICATION_SERVICE_TNM_PHONENUMBER_TO_CONFIGURE')
+            self.phonenumber_to_get_config = os.getenv('AZURE_COMMUNICATION_SERVICE_TNM_PHONENUMBER_TO_GET_CONFIG')
+            self.phonenumber_to_unconfigure = os.getenv('AZURE_COMMUNICATION_SERVICE_TNM_PHONENUMBER_TO_UNCONFIGURE')
+            self.phonenumber_for_capabilities = os.getenv('AZURE_COMMUNICATION_SERVICE_TNM_PHONENUMBER_FOR_CAPABILITIES')
+            self.capabilities_id = os.getenv('AZURE_COMMUNICATION_SERVICE_TNM_CAPABILITIES_ID')
+            self.release_id = os.getenv('AZURE_COMMUNICATION_SERVICE_TNM_RELEASE_ID')
+            self.scrubber.register_name_pair(
+                self.phone_plan_group_id,
+                "phone_plan_group_id"
+            )
+            self.scrubber.register_name_pair(
+                self.phone_plan_id,
+                "phone_plan_id"
+            )
+            self.scrubber.register_name_pair(
+                self.phone_plan_id_area_codes,
+                "phone_plan_id_area_codes"
+            )
+            self.scrubber.register_name_pair(
+                self.area_code_for_search,
+                "area_code_for_search"
+            )
+            self.scrubber.register_name_pair(
+                self.search_id,
+                "search_id"
+            )
+            self.scrubber.register_name_pair(
+                self.search_id_to_purchase,
+                "search_id_to_purchase"
+            )
+            self.scrubber.register_name_pair(
+                self.search_id_to_cancel,
+                "search_id_to_cancel"
+            )
+            self.scrubber.register_name_pair(
+                self.phonenumber_to_configure,
+                "phonenumber_to_configure"
+            )
+            self.scrubber.register_name_pair(
+                self.phonenumber_to_get_config,
+                "phonenumber_to_get_config"
+            )
+            self.scrubber.register_name_pair(
+                self.phonenumber_to_unconfigure,
+                "phonenumber_to_unconfigure"
+            )
+            self.scrubber.register_name_pair(
+                self.phonenumber_for_capabilities,
+                "phonenumber_for_capabilities"
+            )
+            self.scrubber.register_name_pair(
+                self.capabilities_id,
+                "capabilities_id"
+            )
+            self.scrubber.register_name_pair(
+                self.release_id,
+                "release_id"
+            )
+        else:
+            self.country_code = "US"
+            self.locale = "en-us"
+            self.phone_plan_group_id = "phone-plan-group-id-1"
+            self.phone_plan_id = "phone-plan-id-1"
+            self.phone_plan_id_area_codes = "phone-plan-id-1"
+            self.area_code_for_search = "777"
+            self.search_id = "search-id-1"
+            self.search_id_to_purchase = "search-id-1"
+            self.search_id_to_cancel = "search-id-2"
+            self.phonenumber_to_configure = "+17771234567"
+            self.phonenumber_to_get_config = "+17771234567"
+            self.phonenumber_to_unconfigure = "+17771234567"
+            self.phonenumber_for_capabilities = "+17771234567"
+            self.capabilities_id = "capabilities-id-1"
+            self.release_id = "release_id_1"
 
     @AsyncCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
@@ -111,7 +127,7 @@ class PhoneNumberAdministrationClientTestAsync(AsyncCommunicationTestCase):
             items = []
             async for item in pages:
                 items.append(item)
-        self.assertGreater(len(items), 0)
+        assert len(items) > 0
 
     @AsyncCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
@@ -122,7 +138,7 @@ class PhoneNumberAdministrationClientTestAsync(AsyncCommunicationTestCase):
                 country_code=self.country_code,
                 phone_plan_id=self.phone_plan_id_area_codes
             )
-        assert area_codes.primary_area_codes is not None
+        assert area_codes.primary_area_codes
 
     @AsyncCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
@@ -131,7 +147,7 @@ class PhoneNumberAdministrationClientTestAsync(AsyncCommunicationTestCase):
             capability_response = await self._phone_number_administration_client.get_capabilities_update(
                 capabilities_update_id=self.capabilities_id
             )
-        assert capability_response.capabilities_update_id is not None
+        assert capability_response.capabilities_update_id
 
     @AsyncCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
@@ -146,7 +162,7 @@ class PhoneNumberAdministrationClientTestAsync(AsyncCommunicationTestCase):
             capability_response = await self._phone_number_administration_client.update_capabilities(
                 phone_number_capabilities_update=phone_number_capabilities_update
             )
-        assert capability_response.capabilities_update_id is not None
+        assert capability_response.capabilities_update_id
 
     @AsyncCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
@@ -157,7 +173,7 @@ class PhoneNumberAdministrationClientTestAsync(AsyncCommunicationTestCase):
             async for item in countries:
                 items.append(item)
         self.assertGreater(len(items), 0)
-        assert items[0].localized_name is not None
+        assert items[0].localized_name
 
     @AsyncCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
@@ -166,7 +182,7 @@ class PhoneNumberAdministrationClientTestAsync(AsyncCommunicationTestCase):
             phone_number_response = await self._phone_number_administration_client.get_number_configuration(
                 phone_number=self.phonenumber_to_get_config
             )
-        assert phone_number_response.pstn_configuration is not None
+        assert phone_number_response.pstn_configuration
 
     @AsyncCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
@@ -193,8 +209,8 @@ class PhoneNumberAdministrationClientTestAsync(AsyncCommunicationTestCase):
             items = []
             async for item in phone_plan_group_response:
                 items.append(item)
-        self.assertGreater(len(items), 0)
-        assert items[0].phone_plan_group_id is not None
+        assert len(items) > 0
+        assert items[0].phone_plan_group_id
 
     @AsyncCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
@@ -208,8 +224,8 @@ class PhoneNumberAdministrationClientTestAsync(AsyncCommunicationTestCase):
             items = []
             async for item in phone_plan_response:
                 items.append(item)
-        self.assertGreater(len(items), 0)
-        assert items[0].phone_plan_id is not None
+        assert len(items) > 0
+        assert items[0].phone_plan_id
 
     @AsyncCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
@@ -220,7 +236,7 @@ class PhoneNumberAdministrationClientTestAsync(AsyncCommunicationTestCase):
                 phone_plan_group_id=self.phone_plan_group_id,
                 phone_plan_id=self.phone_plan_id
             )
-        assert location_options_response.location_options.label_id is not None
+        assert location_options_response.location_options.label_id
 
     @AsyncCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
@@ -229,7 +245,7 @@ class PhoneNumberAdministrationClientTestAsync(AsyncCommunicationTestCase):
             phone_number_release_response = await self._phone_number_administration_client.get_release_by_id(
                 release_id=self.release_id
             )
-        assert phone_number_release_response.release_id is not None
+        assert phone_number_release_response.release_id
 
     @AsyncCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
@@ -241,7 +257,7 @@ class PhoneNumberAdministrationClientTestAsync(AsyncCommunicationTestCase):
             async for item in releases_response:
                 items.append(item)
         self.assertGreater(len(items), 0)
-        assert items[0].id is not None
+        assert items[0].id
 
     @AsyncCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
@@ -250,7 +266,7 @@ class PhoneNumberAdministrationClientTestAsync(AsyncCommunicationTestCase):
             phone_number_search_response = await self._phone_number_administration_client.get_search_by_id(
                 search_id=self.search_id
             )
-        assert phone_number_search_response.search_id is not None
+        assert phone_number_search_response.search_id
 
     @AsyncCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
@@ -266,7 +282,7 @@ class PhoneNumberAdministrationClientTestAsync(AsyncCommunicationTestCase):
             search_response = await self._phone_number_administration_client.create_search(
                 body=searchOptions
             )
-        assert search_response.search_id is not None
+        assert search_response.search_id
 
     @AsyncCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
