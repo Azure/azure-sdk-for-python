@@ -184,13 +184,9 @@ class MetricsAdvisorClient(object):
                 :dedent: 4
                 :caption: Add new feedback.
         """
-        error_map = {
-            401: ClientAuthenticationError
-        }
 
         return self._client.create_metric_feedback(
             body=feedback._to_generated(),
-            error_map=error_map,
             **kwargs)
 
     @distributed_trace
@@ -216,13 +212,9 @@ class MetricsAdvisorClient(object):
                 :dedent: 4
                 :caption: Get a metric feedback by its id.
         """
-        error_map = {
-            401: ClientAuthenticationError
-        }
 
         return convert_to_sub_feedback(self._client.get_metric_feedback(
             feedback_id=feedback_id,
-            error_map=error_map,
             **kwargs))
 
     @distributed_trace
@@ -256,9 +248,6 @@ class MetricsAdvisorClient(object):
                 :dedent: 4
                 :caption: List feedback on the given metric.
         """
-        error_map = {
-            401: ClientAuthenticationError
-        }
 
         skip = kwargs.pop('skip', None)
         dimension_filter = None
@@ -284,7 +273,6 @@ class MetricsAdvisorClient(object):
             cls=kwargs.pop("cls", lambda result: [
                 convert_to_sub_feedback(x) for x in result
             ]),
-            error_map=error_map,
             **kwargs)
 
     @distributed_trace
@@ -301,14 +289,10 @@ class MetricsAdvisorClient(object):
         :rtype: ItemPaged[~azure.ai.metriscadvisor.models.IncidentRootCause]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        error_map = {
-            401: ClientAuthenticationError
-        }
 
         return self._client.get_root_cause_of_incident_by_anomaly_detection_configuration(  # type: ignore
             configuration_id=detection_configuration_id,
             incident_id=incident_id,
-            error_map=error_map,
             cls=kwargs.pop("cls", lambda result: [
                 IncidentRootCause._from_generated(x) for x in result
             ]),
@@ -335,9 +319,6 @@ class MetricsAdvisorClient(object):
         :rtype: ItemPaged[~azure.ai.metricsadvisor.models.SeriesResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        error_map = {
-            401: ClientAuthenticationError
-        }
 
         series_list = [
                 SeriesIdentity(dimension=dimension)
@@ -355,7 +336,6 @@ class MetricsAdvisorClient(object):
         return self._client.get_series_by_anomaly_detection_configuration(  # type: ignore
             configuration_id=detection_configuration_id,
             body=detection_series_query,
-            error_map=error_map,
             **kwargs)
 
     @distributed_trace
@@ -384,9 +364,6 @@ class MetricsAdvisorClient(object):
                 :dedent: 4
                 :caption: Query anomaly detection results.
         """
-        error_map = {
-            401: ClientAuthenticationError
-        }
 
         skip = kwargs.pop('skip', None)
 
@@ -400,7 +377,6 @@ class MetricsAdvisorClient(object):
             configuration_id=alert_configuration_id,
             skip=skip,
             body=alerting_result_query,
-            error_map=error_map,
             cls=kwargs.pop("cls", lambda alerts: [Alert._from_generated(alert) for alert in alerts]),
             **kwargs)
 
@@ -427,9 +403,6 @@ class MetricsAdvisorClient(object):
                 :dedent: 4
                 :caption: Query anomalies using alert id.
         """
-        error_map = {
-            401: ClientAuthenticationError
-        }
 
         skip = kwargs.pop('skip', None)
 
@@ -438,7 +411,6 @@ class MetricsAdvisorClient(object):
             alert_id=alert_id,
             skip=skip,
             cls=lambda objs: [Anomaly._from_generated(x) for x in objs],
-            error_map=error_map,
             **kwargs)
 
     @distributed_trace
@@ -458,9 +430,6 @@ class MetricsAdvisorClient(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.Anomaly]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        error_map = {
-            401: ClientAuthenticationError
-        }
 
         skip = kwargs.pop('skip', None)
         filter_condition = kwargs.pop('filter', None)
@@ -475,7 +444,6 @@ class MetricsAdvisorClient(object):
             skip=skip,
             body=detection_anomaly_result_query,
             cls=lambda objs: [Anomaly._from_generated(x) for x in objs],
-            error_map=error_map,
             **kwargs)
 
     @distributed_trace
@@ -502,9 +470,6 @@ class MetricsAdvisorClient(object):
         :rtype: ~azure.core.paging.ItemPaged[str]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        error_map = {
-            401: ClientAuthenticationError
-        }
 
         skip = kwargs.pop('skip', None)
         dimension_filter = kwargs.pop('dimension_filter', None)
@@ -519,7 +484,6 @@ class MetricsAdvisorClient(object):
             configuration_id=detection_configuration_id,
             skip=skip,
             body=anomaly_dimension_query,
-            error_map=error_map,
             **kwargs)
 
     @distributed_trace
@@ -537,9 +501,6 @@ class MetricsAdvisorClient(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metriscadvisor.models.Incident]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        error_map = {
-            401: ClientAuthenticationError
-        }
 
         skip = kwargs.pop('skip', None)
 
@@ -548,7 +509,6 @@ class MetricsAdvisorClient(object):
             alert_id=alert_id,
             skip=skip,
             cls=lambda objs: [Incident._from_generated(x) for x in objs],
-            error_map=error_map,
             **kwargs)
 
     @distributed_trace
@@ -567,9 +527,6 @@ class MetricsAdvisorClient(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metriscadvisor.models.Incident]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        error_map = {
-            401: ClientAuthenticationError
-        }
 
         filter_condition = kwargs.pop('filter', None)
 
@@ -583,7 +540,6 @@ class MetricsAdvisorClient(object):
             configuration_id=detection_configuration_id,
             body=detection_incident_result_query,
             cls=lambda objs: [Incident._from_generated(x) for x in objs],
-            error_map=error_map,
             **kwargs)
 
     @distributed_trace
@@ -603,9 +559,6 @@ class MetricsAdvisorClient(object):
         :rtype: ~azure.core.paging.ItemPaged[str]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        error_map = {
-            401: ClientAuthenticationError
-        }
 
         skip = kwargs.pop('skip', None)
         dimension_value_filter = kwargs.pop('dimension_value_filter', None)
@@ -619,7 +572,6 @@ class MetricsAdvisorClient(object):
             metric_id=metric_id,
             body=metric_dimension_query_options,
             skip=skip,
-            error_map=error_map,
             **kwargs)
 
     @distributed_trace
@@ -638,9 +590,6 @@ class MetricsAdvisorClient(object):
         :rtype: ItemPaged[~azure.ai.metriscadvisor.models.MetricSeriesData]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        error_map = {
-            401: ClientAuthenticationError
-        }
 
         metric_data_query_options = MetricDataQueryOptions(
             start_time=start_time,
@@ -651,7 +600,6 @@ class MetricsAdvisorClient(object):
         return self._client.get_metric_data(  # type: ignore
             metric_id=metric_id,
             body=metric_data_query_options,
-            error_map=error_map,
             cls=kwargs.pop("cls", lambda result: [MetricSeriesData._from_generated(series) for series in result]),
             **kwargs)
 
@@ -675,9 +623,6 @@ class MetricsAdvisorClient(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metriscadvisor.models.MetricSeriesDefinition]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        error_map = {
-            401: ClientAuthenticationError
-        }
 
         skip = kwargs.pop('skip', None)
         dimension_filter = kwargs.pop('dimension_filter', None)
@@ -691,7 +636,6 @@ class MetricsAdvisorClient(object):
             metric_id=metric_id,
             body=metric_series_query_options,
             skip=skip,
-            error_map=error_map,
             **kwargs)
 
     @distributed_trace
@@ -709,9 +653,6 @@ class MetricsAdvisorClient(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metriscadvisor.models.EnrichmentStatus]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        error_map = {
-            401: ClientAuthenticationError
-        }
 
         skip = kwargs.pop('skip', None)
         enrichment_status_query_option = EnrichmentStatusQueryOption(
@@ -723,5 +664,4 @@ class MetricsAdvisorClient(object):
             metric_id=metric_id,
             skip=skip,
             body=enrichment_status_query_option,
-            error_map=error_map,
             **kwargs)
