@@ -560,13 +560,16 @@ class TableClient(TableClientBase):
         except HttpResponseError as error:
             _process_table_error(error)
 
-
-    @distributed_trace
     def create_batch(
-        self, **kwargs # type: Dict[str, Any]
+        self,
+        **kwargs # type: Dict[str, Any]
     ):
-        # (...) -> TableBatchOperations
-        """Update/Merge or Insert entity into table.
+        # type: (...) -> TableBatchOperations
+        """Create a Batching object from a Table Client
+
+        :return: Object containing requests and responses
+        :rtype: TableBatchOperations
+        :raises: ~azure.core.exceptions.HttpResponseError
 
         .. admonition:: Example:
             # TODO:
@@ -583,21 +586,24 @@ class TableClient(TableClientBase):
         """
         return TableBatchOperations(
             self._client,
-            self._client._serialize,
-            self._client._deserialize,
-            self._client._config,
+            self._client._serialize,  # pylint:disable=protected-access
+            self._client._deserialize,  # pylint:disable=protected-access
+            self._client._config,  # pylint:disable=protected-access
             self.table_name,
             self,
             **kwargs
         )
 
     def send_batch(
-        self,
-        batch, # type: TableBatchOperations
+        self, batch, # type: TableBatchOperations
         **kwargs # type: Any
     ):
-        # (...) -> None
+        # type: (...) -> None
         """Commit a TableBatchOperations to send requests to the server
+
+        :return: Object containing requests and responses
+        :rtype: BatchTransactionResult
+        :raises: ~azure.data.tables.PartialBatchErrorException
 
         .. admonition:: Example:
             # TODO:

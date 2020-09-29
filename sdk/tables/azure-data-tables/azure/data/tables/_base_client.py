@@ -59,7 +59,7 @@ from ._policies import (
     TablesRetryPolicy,
 )
 from ._error import _process_table_error
-from ._models import PartialBatchErrorException, BatchErrorException
+from ._models import PartialBatchErrorException
 from ._sdk_moniker import SDK_MONIKER
 
 
@@ -297,7 +297,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             if raise_on_any_failure:
                 parts = list(response.parts())
                 if any(p for p in parts if not 200 <= p.status_code < 300):
-                    error = BatchErrorException(
+                    error = PartialBatchErrorException(
                         message="There is a failure in the batch operation.",
                         response=response, parts=parts
                     )

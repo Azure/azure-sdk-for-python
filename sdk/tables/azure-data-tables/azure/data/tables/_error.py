@@ -207,9 +207,6 @@ class TableErrorCode(str, Enum):
 
 class BatchErrorException(Exception):
 
-    def __init__(self):
+    def __init__(self): # pylint: disable=super-init-not-called
         self.results = None
         self.requests = None
-
-    def __iter__(self):
-        return self

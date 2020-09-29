@@ -7,7 +7,6 @@ from typing import (
     Union,
     Any,
     Dict,
-    List,
 )
 from uuid import uuid4
 
@@ -19,6 +18,7 @@ from azure.core.exceptions import (
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest
 
+from ._error import _process_table_error
 from ._deserialize import _return_headers_and_deserialized
 from ._models import PartialBatchErrorException, UpdateMode, BatchTransactionResult
 from ._policies import StorageHeadersPolicy
@@ -106,7 +106,7 @@ class TableBatchOperations(object):
             **kwargs)
 
 
-    def _parameter_filter_substitution(
+    def _parameter_filter_substitution( # pylint:disable=no-self-use
             self,
             parameters,  # type: dict[str,str]
             filter  # type: str # pylint:disable=redefined-builtin
@@ -718,12 +718,15 @@ class TableBatchOperations(object):
     _batch_query.metadata = {'url': '/{table}()'}  # type: ignore
 
 
-    def send_batch(self, **kwargs) -> BatchTransactionResult:
+    def send_batch(self, **kwargs):
+        # (...) -> BatchTransactionResult:
         return self._batch_send(**kwargs)
 
 
-    def _batch_send(self, **kwargs: Dict[str,Any]) -> BatchTransactionResult:
-        # (...) -> List[HttpResponse]
+    def _batch_send(
+        self, **kwargs # type: Dict[str,Any]
+    ):
+        # (...) -> BatchTransactionResult
         """Given a series of request, do a Storage batch call.
         """
         # Pop it here, so requests doesn't feel bad about additional kwarg
@@ -737,7 +740,7 @@ class TableBatchOperations(object):
             boundary="changeset_{}".format(uuid4())
         )
         request = self._client._client.post(  # pylint: disable=protected-access
-            url='https://{}/$batch'.format(self._table_client._primary_hostname),
+            url='https://{}/$batch'.format(self._table_client._primary_hostname),  # pylint: disable=protected-access
             headers={
                 'x-ms-version': self._table_client.api_version,
                 'DataServiceVersion': '3.0',
@@ -751,7 +754,7 @@ class TableBatchOperations(object):
             boundary="batch_{}".format(uuid4())
         )
 
-        pipeline_response = self._table_client._pipeline.run(
+        pipeline_response = self._table_client._pipeline.run(  # pylint: disable=protected-access
             request, **kwargs
         )
         response = pipeline_response.http_response

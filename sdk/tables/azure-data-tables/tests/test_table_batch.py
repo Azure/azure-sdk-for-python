@@ -24,7 +24,7 @@ from azure.data.tables import EdmType, TableEntity, EntityProperty, UpdateMode
 
 from _shared.testcase import GlobalStorageAccountPreparer, TableTestCase, LogCaptured
 
-from azure.data.tables._models import BatchErrorException
+from azure.data.tables._models import PartialBatchErrorException
 from azure.data.tables import (
     TableServiceClient,
     TableEntity,
@@ -495,8 +495,6 @@ class StorageTableBatchTest(TableTestCase):
             self.assertIsNotNone(entities)
             self.assertEqual(100, len(entities))
             e = self.table.get_entity('batch_inserts', '1')
-            e = transaction.get_entity(row_key='1')
-            r = transaction.get_request(row_key='2')
         finally:
             self._tear_down()
 
@@ -734,7 +732,7 @@ class StorageTableBatchTest(TableTestCase):
 
             batch = self.table.create_batch()
             batch.create_entity(entity)
-            with self.assertRaises(BatchErrorException):
+            with self.assertRaises(PartialBatchErrorException):
                 batch.create_entity(entity2)
 
             # Assert

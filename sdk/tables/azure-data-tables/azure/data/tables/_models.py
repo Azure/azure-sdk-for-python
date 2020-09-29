@@ -547,12 +547,14 @@ class BatchTransactionResult(object):
             temp_entity = _convert_to_entity(request.body)
             if temp_entity['RowKey'] == row_key:
                 return temp_entity
+        return None
 
     def get_request(self, row_key):
         for request in self.requests:
             temp_entity = _convert_to_entity(request.body)
             if temp_entity['RowKey'] == row_key:
                 return request
+        return None
 
 
 class LocationMode(object):

@@ -1,12 +1,31 @@
-from azure.core.exceptions import  ResourceExistsError, ResourceNotFoundError
-from azure.core.pipeline import PipelineResponse
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# --------------------------------------------------------------------------
+from typing import (
+    Dict,
+    Any,
+    Optional,
+    Union
+)
+import msrest
 
-from .._deserialize import _return_headers_and_deserialized
+from azure.core.pipeline import PipelineResponse
+from azure.core.exceptions import (  # pylint:disable=unused-import
+    ClientAuthenticationError,
+    ResourceNotFoundError,
+    ResourceExistsError
+)
+
+from ._table_client_async import TableClient
 from .._models import PartialBatchErrorException, UpdateMode
-from .._serialize import _get_match_headers, _add_entity_properties
-from .._generated.models import (
+from .._serialize import _get_match_headers, _add_entity_properties  # pylint:disable=unused-import
+from .._generated.models import (  # pylint:disable=unused-import
     QueryOptions
 )
+from .._generated.aio._azure_table import AzureTable
+from .._generated.aio._configuration import AzureTableConfiguration
 
 class TableBatchOperations(object):
     '''
@@ -51,7 +70,7 @@ class TableBatchOperations(object):
             if entity['PartitionKey'] != self._partition_key:
                 raise PartialBatchErrorException("Partition Keys must all be the same", None, None)
 
-    def create_entity(
+    async def create_entity(
         self,
         entity,  # type: Union[TableEntity, Dict[str,str]]
         **kwargs  # type: Any
@@ -81,6 +100,72 @@ class TableBatchOperations(object):
         self._batch_create_entity(
             table=self.table_name,
             entity=entity,
-            cls=kwargs.pop('cls', _return_headers_and_deserialized),
             **kwargs)
 
+
+
+    async def _batch_create_entity(
+        self,
+        table_properties: "models.TableProperties",
+        request_id_parameter: Optional[str] = None,
+        response_preference: Optional[Union[str, "models.ResponseFormat"]] = None,
+        query_options: Optional["models.QueryOptions"] = None,
+        **kwargs
+    ) -> Optional["models.TableResponse"]:
+        """Creates a new table under the given account.
+
+        :param table_properties: The Table properties.
+        :type table_properties: ~azure.data.tables.models.TableProperties
+        :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
+         limit that is recorded in the analytics logs when analytics logging is enabled.
+        :type request_id_parameter: str
+        :param response_preference: Specifies whether the response should include the inserted entity
+         in the payload. Possible values are return-no-content and return-content.
+        :type response_preference: str or ~azure.data.tables.models.ResponseFormat
+        :param query_options: Parameter group.
+        :type query_options: ~azure.data.tables.models.QueryOptions
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: TableResponse, or the result of cls(response)
+        :rtype: ~azure.data.tables.models.TableResponse or None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+
+        _format = None
+        if query_options is not None:
+            _format = query_options.format
+        data_service_version = "3.0"
+        content_type = kwargs.pop("content_type", "application/json;odata=nometadata")
+        accept = "application/json;odata=minimalmetadata"
+
+        # Construct URL
+        url = self._batch_create_entity.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        if _format is not None:
+            query_parameters['$format'] = self._serialize.query("format", _format, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
+        if request_id_parameter is not None:
+            header_parameters['x-ms-client-request-id'] = self._serialize.header(
+                "request_id_parameter", request_id_parameter, 'str')
+        header_parameters['DataServiceVersion'] = self._serialize.header(
+            "data_service_version", data_service_version, 'str')
+        if response_preference is not None:
+            header_parameters['Prefer'] = self._serialize.header("response_preference", response_preference, 'str')
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        body_content = self._serialize.body(table_properties, 'TableProperties')
+        body_content_kwargs['content'] = body_content
+        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
+        self._requests.append(request)
+
+    _batch_create_entity.metadata = {'url': '/Tables'}  # type: ignore
