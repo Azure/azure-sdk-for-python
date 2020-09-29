@@ -1,7 +1,7 @@
 # Azure Metrics Advisor client library for Python
 Metrics Advisor is a scalable real-time time series monitoring, alerting, and root cause analysis platform.
 
-[Source code]() | [Package (Pypi)][package] | [API reference documentation]() | [Product documentation][ma_docs]
+[Source code][src_code] | [Package (Pypi)][package] | [API reference documentation][reference_documentation] | [Product documentation][ma_docs]
 
 ## Getting started
 
@@ -425,6 +425,8 @@ or contact [opencode@microsoft.com][coc_contact] with any
 additional questions or comments.
 
 <!-- LINKS -->
+[src_code]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/metricsadvisor/azure-ai-metricsadvisor
+[reference_documentation]: https://aka.ms/azsdk/python/metricsadvisor/docs
 [ma_docs]: https://aka.ms/azsdk/python/metricsadvisor/docs
 [azure_cli]: https://docs.microsoft.com/cli/azure
 [azure_sub]: https://azure.microsoft.com/free/
