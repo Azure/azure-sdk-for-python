@@ -1897,8 +1897,10 @@ class AppServicePlanPatchResource(ProxyOnlyResource):
     :type free_offer_expiration_time: datetime
     :ivar resource_group: Resource group of the App Service plan.
     :vartype resource_group: str
-    :param reserved: If Linux app service plan <code>true</code>,
-     <code>false</code> otherwise. Default value: False .
+    :param reserved: This needs to set to <code>true</code> when creating a
+     Linux App Service Plan, along with <code>kind</code> set to
+     <code>Linux</code>. It should be <code>false</code> otherwise. Default
+     value: False .
     :type reserved: bool
     :param is_xenon: Obsolete: If Hyper-V container app service plan
      <code>true</code>, <code>false</code> otherwise. Default value: False .
@@ -9616,6 +9618,12 @@ class SiteConfig(Model):
     :param http_logging_enabled: <code>true</code> if HTTP logging is enabled;
      otherwise, <code>false</code>.
     :type http_logging_enabled: bool
+    :param acr_use_managed_identity_creds: Flag to use Managed Identity Creds
+     for ACR pull
+    :type acr_use_managed_identity_creds: bool
+    :param acr_user_managed_identity_id: If using user managed identity, the
+     user managed identity ClientId
+    :type acr_user_managed_identity_id: str
     :param logs_directory_size_limit: HTTP logs directory size limit.
     :type logs_directory_size_limit: int
     :param detailed_error_logging_enabled: <code>true</code> if detailed error
@@ -9748,6 +9756,8 @@ class SiteConfig(Model):
         'remote_debugging_enabled': {'key': 'remoteDebuggingEnabled', 'type': 'bool'},
         'remote_debugging_version': {'key': 'remoteDebuggingVersion', 'type': 'str'},
         'http_logging_enabled': {'key': 'httpLoggingEnabled', 'type': 'bool'},
+        'acr_use_managed_identity_creds': {'key': 'acrUseManagedIdentityCreds', 'type': 'bool'},
+        'acr_user_managed_identity_id': {'key': 'acrUserManagedIdentityID', 'type': 'str'},
         'logs_directory_size_limit': {'key': 'logsDirectorySizeLimit', 'type': 'int'},
         'detailed_error_logging_enabled': {'key': 'detailedErrorLoggingEnabled', 'type': 'bool'},
         'publishing_username': {'key': 'publishingUsername', 'type': 'str'},
@@ -9807,6 +9817,8 @@ class SiteConfig(Model):
         self.remote_debugging_enabled = kwargs.get('remote_debugging_enabled', None)
         self.remote_debugging_version = kwargs.get('remote_debugging_version', None)
         self.http_logging_enabled = kwargs.get('http_logging_enabled', None)
+        self.acr_use_managed_identity_creds = kwargs.get('acr_use_managed_identity_creds', None)
+        self.acr_user_managed_identity_id = kwargs.get('acr_user_managed_identity_id', None)
         self.logs_directory_size_limit = kwargs.get('logs_directory_size_limit', None)
         self.detailed_error_logging_enabled = kwargs.get('detailed_error_logging_enabled', None)
         self.publishing_username = kwargs.get('publishing_username', None)
@@ -9896,6 +9908,12 @@ class SiteConfigResource(ProxyOnlyResource):
     :param http_logging_enabled: <code>true</code> if HTTP logging is enabled;
      otherwise, <code>false</code>.
     :type http_logging_enabled: bool
+    :param acr_use_managed_identity_creds: Flag to use Managed Identity Creds
+     for ACR pull
+    :type acr_use_managed_identity_creds: bool
+    :param acr_user_managed_identity_id: If using user managed identity, the
+     user managed identity ClientId
+    :type acr_user_managed_identity_id: str
     :param logs_directory_size_limit: HTTP logs directory size limit.
     :type logs_directory_size_limit: int
     :param detailed_error_logging_enabled: <code>true</code> if detailed error
@@ -10035,6 +10053,8 @@ class SiteConfigResource(ProxyOnlyResource):
         'remote_debugging_enabled': {'key': 'properties.remoteDebuggingEnabled', 'type': 'bool'},
         'remote_debugging_version': {'key': 'properties.remoteDebuggingVersion', 'type': 'str'},
         'http_logging_enabled': {'key': 'properties.httpLoggingEnabled', 'type': 'bool'},
+        'acr_use_managed_identity_creds': {'key': 'properties.acrUseManagedIdentityCreds', 'type': 'bool'},
+        'acr_user_managed_identity_id': {'key': 'properties.acrUserManagedIdentityID', 'type': 'str'},
         'logs_directory_size_limit': {'key': 'properties.logsDirectorySizeLimit', 'type': 'int'},
         'detailed_error_logging_enabled': {'key': 'properties.detailedErrorLoggingEnabled', 'type': 'bool'},
         'publishing_username': {'key': 'properties.publishingUsername', 'type': 'str'},
@@ -10094,6 +10114,8 @@ class SiteConfigResource(ProxyOnlyResource):
         self.remote_debugging_enabled = kwargs.get('remote_debugging_enabled', None)
         self.remote_debugging_version = kwargs.get('remote_debugging_version', None)
         self.http_logging_enabled = kwargs.get('http_logging_enabled', None)
+        self.acr_use_managed_identity_creds = kwargs.get('acr_use_managed_identity_creds', None)
+        self.acr_user_managed_identity_id = kwargs.get('acr_user_managed_identity_id', None)
         self.logs_directory_size_limit = kwargs.get('logs_directory_size_limit', None)
         self.detailed_error_logging_enabled = kwargs.get('detailed_error_logging_enabled', None)
         self.publishing_username = kwargs.get('publishing_username', None)

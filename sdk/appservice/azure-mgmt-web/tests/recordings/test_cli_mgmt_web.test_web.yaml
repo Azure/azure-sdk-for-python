@@ -14,8 +14,8 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.6.8 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
-        msrest_azure/0.4.34 azure-mgmt-web/0.47.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.19
+        msrest_azure/0.6.2 azure-mgmt-web/0.48.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
@@ -23,8 +23,8 @@ interactions:
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_web_test_web90230a94/providers/Microsoft.Web/serverfarms/myappxyza","name":"myappxyza","type":"Microsoft.Web/serverfarms","kind":"app","location":"West
-        US 2","properties":{"serverFarmId":15042,"name":"myappxyza","workerSize":"Default","workerSizeId":0,"workerTierName":null,"numberOfWorkers":1,"currentWorkerSize":"Default","currentWorkerSizeId":0,"currentNumberOfWorkers":1,"status":"Ready","webSpace":"test_cli_mgmt_web_test_web90230a94-WestUS2webspace","subscription":"00000000-0000-0000-0000-000000000000","adminSiteName":null,"hostingEnvironment":null,"hostingEnvironmentProfile":null,"maximumNumberOfWorkers":20,"planName":"VirtualDedicatedPlan","adminRuntimeSiteName":null,"computeMode":"Dedicated","siteMode":null,"geoRegion":"West
-        US 2","perSiteScaling":false,"maximumElasticWorkerCount":1,"numberOfSites":0,"hostingEnvironmentId":null,"isSpot":false,"spotExpirationTime":null,"freeOfferExpirationTime":null,"tags":null,"kind":"app","resourceGroup":"test_cli_mgmt_web_test_web90230a94","reserved":false,"isXenon":false,"hyperV":false,"mdmId":"waws-prod-mwh-045_15042","targetWorkerCount":0,"targetWorkerSizeId":0,"provisioningState":"Succeeded","webSiteId":null,"existingServerFarmIds":null},"sku":{"name":"P1","tier":"Premium","size":"P1","family":"P","capacity":1}}'
+        US 2","properties":{"serverFarmId":10230,"name":"myappxyza","workerSize":"Default","workerSizeId":0,"workerTierName":null,"numberOfWorkers":1,"currentWorkerSize":"Default","currentWorkerSizeId":0,"currentNumberOfWorkers":1,"status":"Ready","webSpace":"test_cli_mgmt_web_test_web90230a94-WestUS2webspace","subscription":"00000000-0000-0000-0000-000000000000","adminSiteName":null,"hostingEnvironment":null,"hostingEnvironmentProfile":null,"maximumNumberOfWorkers":20,"planName":"VirtualDedicatedPlan","adminRuntimeSiteName":null,"computeMode":"Dedicated","siteMode":null,"geoRegion":"West
+        US 2","perSiteScaling":false,"maximumElasticWorkerCount":1,"numberOfSites":0,"hostingEnvironmentId":null,"isSpot":false,"spotExpirationTime":null,"freeOfferExpirationTime":null,"tags":null,"kind":"app","resourceGroup":"test_cli_mgmt_web_test_web90230a94","reserved":false,"isXenon":false,"hyperV":false,"mdmId":"waws-prod-mwh-051_10230","targetWorkerCount":0,"targetWorkerSizeId":0,"provisioningState":"Succeeded","webSiteId":null,"existingServerFarmIds":null},"sku":{"name":"P1","tier":"Premium","size":"P1","family":"P","capacity":1}}'
     headers:
       cache-control:
       - no-cache
@@ -33,7 +33,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Fri, 05 Jun 2020 10:02:20 GMT
+      - Tue, 22 Sep 2020 07:40:36 GMT
       expires:
       - '-1'
       pragma:
@@ -51,7 +51,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1198'
+      - '1199'
       x-powered-by:
       - ASP.NET
     status:
@@ -67,8 +67,8 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.8 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
-        msrest_azure/0.4.34 azure-mgmt-web/0.47.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.19
+        msrest_azure/0.6.2 azure-mgmt-web/0.48.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
@@ -76,8 +76,8 @@ interactions:
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_web_test_web90230a94/providers/Microsoft.Web/serverfarms/myappxyza","name":"myappxyza","type":"Microsoft.Web/serverfarms","kind":"app","location":"West
-        US 2","properties":{"serverFarmId":15042,"name":"myappxyza","workerSize":"Default","workerSizeId":0,"workerTierName":null,"numberOfWorkers":1,"currentWorkerSize":"Default","currentWorkerSizeId":0,"currentNumberOfWorkers":1,"status":"Ready","webSpace":"test_cli_mgmt_web_test_web90230a94-WestUS2webspace","subscription":"00000000-0000-0000-0000-000000000000","adminSiteName":null,"hostingEnvironment":null,"hostingEnvironmentProfile":null,"maximumNumberOfWorkers":20,"planName":"VirtualDedicatedPlan","adminRuntimeSiteName":null,"computeMode":"Dedicated","siteMode":null,"geoRegion":"West
-        US 2","perSiteScaling":false,"maximumElasticWorkerCount":1,"numberOfSites":0,"hostingEnvironmentId":null,"isSpot":false,"spotExpirationTime":null,"freeOfferExpirationTime":null,"tags":null,"kind":"app","resourceGroup":"test_cli_mgmt_web_test_web90230a94","reserved":false,"isXenon":false,"hyperV":false,"mdmId":"waws-prod-mwh-045_15042","targetWorkerCount":0,"targetWorkerSizeId":0,"provisioningState":"Succeeded","webSiteId":null,"existingServerFarmIds":null},"sku":{"name":"P1","tier":"Premium","size":"P1","family":"P","capacity":1}}'
+        US 2","properties":{"serverFarmId":10230,"name":"myappxyza","workerSize":"Default","workerSizeId":0,"workerTierName":null,"numberOfWorkers":1,"currentWorkerSize":"Default","currentWorkerSizeId":0,"currentNumberOfWorkers":1,"status":"Ready","webSpace":"test_cli_mgmt_web_test_web90230a94-WestUS2webspace","subscription":"00000000-0000-0000-0000-000000000000","adminSiteName":null,"hostingEnvironment":null,"hostingEnvironmentProfile":null,"maximumNumberOfWorkers":20,"planName":"VirtualDedicatedPlan","adminRuntimeSiteName":null,"computeMode":"Dedicated","siteMode":null,"geoRegion":"West
+        US 2","perSiteScaling":false,"maximumElasticWorkerCount":1,"numberOfSites":0,"hostingEnvironmentId":null,"isSpot":false,"spotExpirationTime":null,"freeOfferExpirationTime":null,"tags":null,"kind":"app","resourceGroup":"test_cli_mgmt_web_test_web90230a94","reserved":false,"isXenon":false,"hyperV":false,"mdmId":"waws-prod-mwh-051_10230","targetWorkerCount":0,"targetWorkerSizeId":0,"provisioningState":"Succeeded","webSiteId":null,"existingServerFarmIds":null},"sku":{"name":"P1","tier":"Premium","size":"P1","family":"P","capacity":1}}'
     headers:
       cache-control:
       - no-cache
@@ -86,7 +86,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Fri, 05 Jun 2020 10:02:20 GMT
+      - Tue, 22 Sep 2020 07:40:36 GMT
       expires:
       - '-1'
       pragma:
@@ -120,8 +120,8 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.6.8 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
-        msrest_azure/0.4.34 azure-mgmt-web/0.47.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.19
+        msrest_azure/0.6.2 azure-mgmt-web/0.48.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: DELETE
@@ -135,7 +135,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 05 Jun 2020 10:02:23 GMT
+      - Tue, 22 Sep 2020 07:40:43 GMT
       expires:
       - '-1'
       pragma:

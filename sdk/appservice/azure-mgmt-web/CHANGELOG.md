@@ -1,5 +1,14 @@
 # Release History
 
+## 0.48.0 (2020-09-22)
+
+**Features**
+
+  - Model SiteConfig has a new parameter acr_use_managed_identity_creds
+  - Model SiteConfig has a new parameter acr_user_managed_identity_id
+  - Model SiteConfigResource has a new parameter acr_use_managed_identity_creds
+  - Model SiteConfigResource has a new parameter acr_user_managed_identity_id
+
 ## 0.47.0 (2020-06-03)
 
 **Features**
