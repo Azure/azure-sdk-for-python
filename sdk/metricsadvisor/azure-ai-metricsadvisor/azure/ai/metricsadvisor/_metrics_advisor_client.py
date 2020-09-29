@@ -20,7 +20,6 @@ from azure.core.pipeline.policies import (
     HttpLoggingPolicy,
 )
 from azure.core.pipeline.transport import RequestsTransport
-from azure.core.exceptions import ClientAuthenticationError
 from ._metrics_advisor_key_credential import MetricsAdvisorKeyCredential
 from ._metrics_advisor_key_credential_policy import MetricsAdvisorKeyCredentialPolicy
 from ._generated._configuration import AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2Configuration

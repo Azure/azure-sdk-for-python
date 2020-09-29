@@ -451,8 +451,8 @@ class TopNGroupScope(object):
     :type min_top_count: int
     """
 
-    def __init__(self, top, period, min_top_count):
-        # type: (int, int, int) -> None
+    def __init__(self, top, period, min_top_count, **kwargs):  # pylint: disable=unused-argument
+        # type: (int, int, int, Any) -> None
         self.top = top
         self.period = period
         self.min_top_count = min_top_count
@@ -469,8 +469,8 @@ class SeverityCondition(object):
     :type max_alert_severity: str or ~azure.ai.metricsadvisor.models.Severity
     """
 
-    def __init__(self, min_alert_severity, max_alert_severity):
-        # type: (Union[str, Severity], Union[str, Severity]) -> None
+    def __init__(self, min_alert_severity, max_alert_severity, **kwargs):  # pylint: disable=unused-argument
+        # type: (Union[str, Severity], Union[str, Severity], Any) -> None
         self.min_alert_severity = min_alert_severity
         self.max_alert_severity = max_alert_severity
 
@@ -486,8 +486,8 @@ class MetricAnomalyAlertSnoozeCondition(object):
     :type only_for_successive: bool
     """
 
-    def __init__(self, auto_snooze, snooze_scope, only_for_successive):
-        # type: (int, Union[str, SnoozeScope], bool) -> None
+    def __init__(self, auto_snooze, snooze_scope, only_for_successive, **kwargs):  # pylint: disable=unused-argument
+        # type: (int, Union[str, SnoozeScope], bool, Any) -> None
         self.auto_snooze = auto_snooze
         self.snooze_scope = snooze_scope
         self.only_for_successive = only_for_successive
@@ -751,8 +751,8 @@ class AzureApplicationInsightsDataFeed(object):
     :type query: str
     """
 
-    def __init__(self, azure_cloud, application_id, api_key, query):
-        # type: (str, str, str, str) -> None
+    def __init__(self, azure_cloud, application_id, api_key, query, **kwargs):  # pylint: disable=unused-argument
+        # type: (str, str, str, str, Any) -> None
         self.data_source_type = 'AzureApplicationInsights'  # type: str
         self.azure_cloud = azure_cloud
         self.application_id = application_id
@@ -788,8 +788,8 @@ class AzureBlobDataFeed(object):
     :type blob_template: str
     """
 
-    def __init__(self, connection_string, container, blob_template):
-        # type: (str, str, str) -> None
+    def __init__(self, connection_string, container, blob_template, **kwargs):  # pylint: disable=unused-argument
+        # type: (str, str, str, Any) -> None
         self.data_source_type = 'AzureBlob'  # type: str
         self.connection_string = connection_string
         self.container = container
@@ -824,8 +824,14 @@ class AzureCosmosDBDataFeed(object):
     :type collection_id: str
     """
 
-    def __init__(self, connection_string, sql_query, database, collection_id):
-        # type: (str, str, str, str) -> None
+    def __init__(
+        self, connection_string,
+        sql_query,
+        database,
+        collection_id,
+        **kwargs
+    ):  # pylint: disable=unused-argument
+        # type: (str, str, str, str, Any) -> None
         self.data_source_type = 'AzureCosmosDB'  # type: str
         self.connection_string = connection_string
         self.sql_query = sql_query
@@ -859,8 +865,8 @@ class AzureDataExplorerDataFeed(object):
     :type query: str
     """
 
-    def __init__(self, connection_string, query):
-        # type: (str, str) -> None
+    def __init__(self, connection_string, query, **kwargs):  # pylint: disable=unused-argument
+        # type: (str, str, Any) -> None
         self.data_source_type = 'AzureDataExplorer'  # type: str
         self.connection_string = connection_string
         self.query = query
@@ -890,8 +896,8 @@ class AzureTableDataFeed(object):
     :type table: str
     """
 
-    def __init__(self, connection_string, query, table):
-        # type: (str, str, str) -> None
+    def __init__(self, connection_string, query, table, **kwargs):  # pylint: disable=unused-argument
+        # type: (str, str, str, Any) -> None
         self.data_source_type = 'AzureTable'  # type: str
         self.connection_string = connection_string
         self.query = query
@@ -965,8 +971,15 @@ class InfluxDBDataFeed(object):
     :type query: str
     """
 
-    def __init__(self, connection_string, database, user_name, password, query):
-        # type: (str, str, str, str, str) -> None
+    def __init__(
+        self, connection_string,
+        database,
+        user_name,
+        password,
+        query,
+        **kwargs
+    ):  # pylint: disable=unused-argument
+        # type: (str, str, str, str, str, Any) -> None
         self.data_source_type = 'InfluxDB'  # type: str
         self.connection_string = connection_string
         self.database = database
@@ -1003,8 +1016,8 @@ class MySqlDataFeed(object):
     :type query: str
     """
 
-    def __init__(self, connection_string, query):
-        # type: (str, str) -> None
+    def __init__(self, connection_string, query, **kwargs):  # pylint: disable=unused-argument
+        # type: (str, str, Any) -> None
         self.data_source_type = 'MySql'  # type: str
         self.connection_string = connection_string
         self.query = query
@@ -1032,8 +1045,8 @@ class PostgreSqlDataFeed(object):
     :type query: str
     """
 
-    def __init__(self, connection_string, query):
-        # type: (str, str) -> None
+    def __init__(self, connection_string, query, **kwargs):  # pylint: disable=unused-argument
+        # type: (str, str, Any) -> None
         self.data_source_type = 'PostgreSql'  # type: str
         self.connection_string = connection_string
         self.query = query
@@ -1061,8 +1074,8 @@ class SQLServerDataFeed(object):
     :type query: str
     """
 
-    def __init__(self, connection_string, query):
-        # type: (str, str) -> None
+    def __init__(self, connection_string, query, **kwargs):  # pylint: disable=unused-argument
+        # type: (str, str, Any) -> None
         self.data_source_type = 'SqlServer'  # type: str
         self.connection_string = connection_string
         self.query = query
@@ -1102,9 +1115,10 @@ class AzureDataLakeStorageGen2DataFeed(object):
         account_key,
         file_system_name,
         directory_template,
-        file_template
-    ):
-        # type: (str, str, str, str, str) -> None
+        file_template,
+        **kwargs
+    ):  # pylint: disable=unused-argument
+        # type: (str, str, str, str, str, Any) -> None
         self.data_source_type = 'AzureDataLakeStorageGen2'  # type: str
         self.account_name = account_name
         self.account_key = account_key
@@ -1145,8 +1159,8 @@ class ElasticsearchDataFeed(object):
     :type query: str
     """
 
-    def __init__(self, host, port, auth_header, query):
-        # type: (str, str, str, str) -> None
+    def __init__(self, host, port, auth_header, query, **kwargs):  # pylint: disable=unused-argument
+        # type: (str, str, str, str, Any) -> None
         self.data_source_type = 'Elasticsearch'  # type: str
         self.host = host
         self.port = port
@@ -1182,8 +1196,8 @@ class MongoDBDataFeed(object):
     :type command: str
     """
 
-    def __init__(self, connection_string, database, command):
-        # type: (str, str, str) -> None
+    def __init__(self, connection_string, database, command, **kwargs):  # pylint: disable=unused-argument
+        # type: (str, str, str, Any) -> None
         self.data_source_type = 'MongoDB'  # type: str
         self.connection_string = connection_string
         self.database = database
@@ -1428,7 +1442,8 @@ class ChangeThresholdCondition(object):
             within_range,  # type: bool
             anomaly_detector_direction,  # type: Union[str, AnomalyDetectorDirection]
             suppress_condition,  # type: SuppressCondition
-    ):
+            **kwargs  # type: Any
+    ):  # pylint: disable=unused-argument
         # type: (...) -> None
         self.change_percentage = change_percentage
         self.shift_point = shift_point
@@ -1468,8 +1483,8 @@ class SuppressCondition(object):
     :type min_ratio: float
     """
 
-    def __init__(self, min_number, min_ratio):
-        # type: (int, float) -> None
+    def __init__(self, min_number, min_ratio, **kwargs):  # pylint: disable=unused-argument
+        # type: (int, float, Any) -> None
         self.min_number = min_number
         self.min_ratio = min_ratio
 
@@ -1494,8 +1509,13 @@ class SmartDetectionCondition(object):
     :type suppress_condition: ~azure.ai.metricsadvisor.models.SuppressCondition
     """
 
-    def __init__(self, sensitivity, anomaly_detector_direction, suppress_condition):
-        # type: (float, Union[str, AnomalyDetectorDirection], SuppressCondition) -> None
+    def __init__(
+        self, sensitivity,
+        anomaly_detector_direction,
+        suppress_condition,
+        **kwargs
+    ):  # pylint: disable=unused-argument
+        # type: (float, Union[str, AnomalyDetectorDirection], SuppressCondition, Any) -> None
         self.sensitivity = sensitivity
         self.anomaly_detector_direction = anomaly_detector_direction
         self.suppress_condition = suppress_condition
