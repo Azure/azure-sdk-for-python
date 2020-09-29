@@ -734,6 +734,7 @@ class StorageTableEntityTest(TableTestCase):
             if self.is_live:
                 sleep(SLEEP_DELAY)
 
+    @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_update_entity(self, resource_group, location, cosmos_account, cosmos_account_key):
