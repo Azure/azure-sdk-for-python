@@ -430,7 +430,7 @@ additional questions or comments.
 [ma_docs]: https://aka.ms/azsdk/python/metricsadvisor/docs
 [azure_cli]: https://docs.microsoft.com/cli/azure
 [azure_sub]: https://azure.microsoft.com/free/
-[package]: https://pypi.org/
+[package]: https://aka.ms/azsdk/python/metricsadvisor/pypi
 [ma_service]: https://go.microsoft.com/fwlink/?linkid=2142156
 [python_logging]: https://docs.python.org/3.5/library/logging.html
 
