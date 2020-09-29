@@ -170,10 +170,11 @@ class PhoneNumberAdministrationClientTest(CommunicationTestCase):
             application_id="ApplicationId",
             azure_pstn_target_id="AzurePstnTargetId"
         )
-        self._phone_number_administration_client.configure_number(
+        configure_number_response = self._phone_number_administration_client.configure_number(
             pstn_configuration=pstnConfig,
             phone_number=self.phonenumber_to_unconfigure
         )
+        assert not configure_number_response
 
     @pytest.mark.live_test_only
     def test_list_phone_plan_groups(self):
@@ -234,12 +235,14 @@ class PhoneNumberAdministrationClientTest(CommunicationTestCase):
 
     @pytest.mark.live_test_only
     def test_cancel_search(self):
-        self._phone_number_administration_client.cancel_search(
+        cancel_search_response = self._phone_number_administration_client.cancel_search(
             search_id=self.search_id_to_cancel
         )
+        assert not cancel_search_response
 
     @pytest.mark.live_test_only
     def test_purchase_search(self):
-        self._phone_number_administration_client.purchase_search(
+        purchase_search_response = self._phone_number_administration_client.purchase_search(
             search_id=self.search_id_to_purchase
         )
+        assert not purchase_search_response

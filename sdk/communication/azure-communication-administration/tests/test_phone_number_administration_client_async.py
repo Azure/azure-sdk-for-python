@@ -193,10 +193,11 @@ class PhoneNumberAdministrationClientTestAsync(AsyncCommunicationTestCase):
             azure_pstn_target_id="AzurePstnTargetId"
         )
         async with self._phone_number_administration_client:
-            await self._phone_number_administration_client.configure_number(
+            configure_number_response = await self._phone_number_administration_client.configure_number(
                 pstn_configuration=pstnConfig,
                 phone_number=self.phonenumber_to_configure
             )
+        assert not configure_number_response
 
     @AsyncCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
@@ -288,14 +289,16 @@ class PhoneNumberAdministrationClientTestAsync(AsyncCommunicationTestCase):
     @pytest.mark.live_test_only
     async def test_cancel_search(self):
         async with self._phone_number_administration_client:
-            await self._phone_number_administration_client.cancel_search(
+            cancel_search_response = await self._phone_number_administration_client.cancel_search(
                 search_id=self.search_id_to_cancel
             )
+        assert not cancel_search_response
 
     @AsyncCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
     async def test_purchase_search(self):
         async with self._phone_number_administration_client:
-            await self._phone_number_administration_client.purchase_search(
+            purchase_search_response = await self._phone_number_administration_client.purchase_search(
                 search_id=self.search_id_to_purchase
             )
+        assert not purchase_search_response
