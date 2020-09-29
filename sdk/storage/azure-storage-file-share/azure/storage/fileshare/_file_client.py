@@ -1131,12 +1131,51 @@ class ShareFileClient(StorageAccountHostsMixin):
     def get_ranges(  # type: ignore
             self, offset=None,  # type: Optional[int]
             length=None,  # type: Optional[int]
-            previous_sharesnapshot=None,  # type: Optional[Union[str, Dict[str, Any]]]
             **kwargs  # type: Any
         ):
-        # type: (...) -> Union[List[Dict[str, int]], Tuple[List[Dict[str, int]], List[Dict[str, int]]]]
+        # type: (...) -> List[Dict[str, int]]
         """Returns the list of valid page ranges for a file or snapshot
         of a file.
+
+        :param int offset:
+            Specifies the start offset of bytes over which to get ranges.
+        :param int length:
+           Number of bytes to use over which to get ranges.
+        :keyword lease:
+            Required if the file has an active lease. Value can be a ShareLeaseClient object
+            or the lease ID as a string.
+
+            .. versionadded:: 12.1.0
+
+        :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns:
+            A list of valid ranges.
+        :rtype: List[dict[str, int]]
+        """
+        options = self._get_ranges_options(
+            offset=offset,
+            length=length,
+            **kwargs)
+        try:
+            ranges = self._client.file.get_range_list(**options)
+        except StorageErrorException as error:
+            process_storage_error(error)
+        return [{'start': file_range.start, 'end': file_range.end} for file_range in ranges.ranges]
+
+    def get_ranges_diff(  # type: ignore
+            self,
+            previous_sharesnapshot,  # type: Union[str, Dict[str, Any]]
+            offset=None,  # type: Optional[int]
+            length=None,  # type: Optional[int]
+            **kwargs  # type: Any
+            ):
+        # type: (...) -> Tuple[List[Dict[str, int]], List[Dict[str, int]]]
+        """Returns the list of valid page ranges for a file or snapshot
+        of a file.
+
+        .. versionadded:: 12.6.0
 
         :param int offset:
             Specifies the start offset of bytes over which to get ranges.
@@ -1146,16 +1185,9 @@ class ShareFileClient(StorageAccountHostsMixin):
             The snapshot diff parameter that contains an opaque DateTime value that
             specifies a previous file snapshot to be compared
             against a more recent snapshot or the current file.
-
-            .. versionadded:: 12.6.0
-            This keyword argument was introduced in API version '2020-02-02'.
-
         :keyword lease:
             Required if the file has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
-
-            .. versionadded:: 12.1.0
-
         :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
@@ -1173,8 +1205,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             ranges = self._client.file.get_range_list(**options)
         except StorageErrorException as error:
             process_storage_error(error)
-        return get_file_ranges_result(ranges) if previous_sharesnapshot else [
-            {'start': file_range.start, 'end': file_range.end} for file_range in ranges.ranges]
+        return get_file_ranges_result(ranges)
 
     @distributed_trace
     def clear_range( # type: ignore

@@ -926,8 +926,8 @@ class StorageFileTest(StorageTestCase):
         snapshot2 = share_client.create_snapshot()
         file_client.clear_range(offset=512, length=512)
 
-        ranges1, cleared1 = file_client.get_ranges(previous_sharesnapshot=snapshot1)
-        ranges2, cleared2 = file_client.get_ranges(previous_sharesnapshot=snapshot2['snapshot'])
+        ranges1, cleared1 = file_client.get_ranges_diff(previous_sharesnapshot=snapshot1)
+        ranges2, cleared2 = file_client.get_ranges_diff(previous_sharesnapshot=snapshot2['snapshot'])
 
         # Assert
         self.assertIsNotNone(ranges1)

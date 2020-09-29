@@ -13,7 +13,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 25 Sep 2020 13:01:55 GMT
+      - Tue, 29 Sep 2020 19:55:21 GMT
       x-ms-version:
       - '2020-02-10'
     method: PUT
@@ -25,11 +25,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 25 Sep 2020 13:01:54 GMT
+      - Tue, 29 Sep 2020 19:55:37 GMT
       etag:
-      - '"0x8D861532DF221C2"'
+      - '"0x8D864B1A3818C66"'
       last-modified:
-      - Fri, 25 Sep 2020 13:01:55 GMT
+      - Tue, 29 Sep 2020 19:55:38 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -53,7 +53,7 @@ interactions:
       x-ms-content-length:
       - '2048'
       x-ms-date:
-      - Fri, 25 Sep 2020 13:01:55 GMT
+      - Tue, 29 Sep 2020 19:55:38 GMT
       x-ms-file-attributes:
       - none
       x-ms-file-creation-time:
@@ -75,23 +75,23 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 25 Sep 2020 13:01:55 GMT
+      - Tue, 29 Sep 2020 19:55:38 GMT
       etag:
-      - '"0x8D861532E3D7587"'
+      - '"0x8D864B1A3D3948B"'
       last-modified:
-      - Fri, 25 Sep 2020 13:01:55 GMT
+      - Tue, 29 Sep 2020 19:55:39 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-file-attributes:
       - Archive
       x-ms-file-change-time:
-      - '2020-09-25T13:01:55.8884743Z'
+      - '2020-09-29T19:55:39.3466507Z'
       x-ms-file-creation-time:
-      - '2020-09-25T13:01:55.8884743Z'
+      - '2020-09-29T19:55:39.3466507Z'
       x-ms-file-id:
       - '13835128424026341376'
       x-ms-file-last-write-time:
-      - '2020-09-25T13:01:55.8884743Z'
+      - '2020-09-29T19:55:39.3466507Z'
       x-ms-file-parent-id:
       - '0'
       x-ms-file-permission-key:
@@ -117,7 +117,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 25 Sep 2020 13:01:56 GMT
+      - Tue, 29 Sep 2020 19:55:39 GMT
       x-ms-version:
       - '2020-02-10'
     method: PUT
@@ -129,15 +129,15 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 25 Sep 2020 13:01:55 GMT
+      - Tue, 29 Sep 2020 19:55:38 GMT
       etag:
-      - '"0x8D861532DF221C2"'
+      - '"0x8D864B1A3818C66"'
       last-modified:
-      - Fri, 25 Sep 2020 13:01:55 GMT
+      - Tue, 29 Sep 2020 19:55:38 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-snapshot:
-      - '2020-09-25T13:01:56.0000000Z'
+      - '2020-09-29T19:55:39.0000000Z'
       x-ms-version:
       - '2020-02-10'
     status:
@@ -159,7 +159,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 25 Sep 2020 13:01:56 GMT
+      - Tue, 29 Sep 2020 19:55:39 GMT
       x-ms-range:
       - bytes=0-1535
       x-ms-version:
@@ -177,11 +177,11 @@ interactions:
       content-md5:
       - e4FaZ8aPiasHKL7jmukQuQ==
       date:
-      - Fri, 25 Sep 2020 13:01:55 GMT
+      - Tue, 29 Sep 2020 19:55:39 GMT
       etag:
-      - '"0x8D861532E67253F"'
+      - '"0x8D864B1A3FC80BF"'
       last-modified:
-      - Fri, 25 Sep 2020 13:01:56 GMT
+      - Tue, 29 Sep 2020 19:55:39 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted:
@@ -205,7 +205,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 25 Sep 2020 13:01:56 GMT
+      - Tue, 29 Sep 2020 19:55:39 GMT
       x-ms-version:
       - '2020-02-10'
     method: PUT
@@ -217,15 +217,15 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 25 Sep 2020 13:01:55 GMT
+      - Tue, 29 Sep 2020 19:55:38 GMT
       etag:
-      - '"0x8D861532DF221C2"'
+      - '"0x8D864B1A3818C66"'
       last-modified:
-      - Fri, 25 Sep 2020 13:01:55 GMT
+      - Tue, 29 Sep 2020 19:55:38 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-snapshot:
-      - '2020-09-25T13:01:57.0000000Z'
+      - '2020-09-29T19:55:40.0000000Z'
       x-ms-version:
       - '2020-02-10'
     status:
@@ -247,7 +247,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 25 Sep 2020 13:01:56 GMT
+      - Tue, 29 Sep 2020 19:55:39 GMT
       x-ms-range:
       - bytes=512-1023
       x-ms-version:
@@ -263,11 +263,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 25 Sep 2020 13:01:56 GMT
+      - Tue, 29 Sep 2020 19:55:39 GMT
       etag:
-      - '"0x8D861532E9E44F3"'
+      - '"0x8D864B1A42A4FB5"'
       last-modified:
-      - Fri, 25 Sep 2020 13:01:56 GMT
+      - Tue, 29 Sep 2020 19:55:39 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -287,11 +287,11 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 25 Sep 2020 13:01:56 GMT
+      - Tue, 29 Sep 2020 19:55:40 GMT
       x-ms-version:
       - '2020-02-10'
     method: GET
-    uri: https://storagename.file.core.windows.net/utshareca850ca0/fileca850ca0?prevsharesnapshot=2020-09-25T13%3A01%3A56.0000000Z&comp=rangelist
+    uri: https://storagename.file.core.windows.net/utshareca850ca0/fileca850ca0?prevsharesnapshot=2020-09-29T19%3A55%3A39.0000000Z&comp=rangelist
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Ranges><Range><Start>0</Start><End>511</End></Range><ClearRange><Start>512</Start><End>1023</End></ClearRange><Range><Start>1024</Start><End>1535</End></Range></Ranges>"
@@ -299,11 +299,11 @@ interactions:
       content-type:
       - application/xml
       date:
-      - Fri, 25 Sep 2020 13:01:56 GMT
+      - Tue, 29 Sep 2020 19:55:39 GMT
       etag:
-      - '"0x8D861532E9E44F3"'
+      - '"0x8D864B1A42A4FB5"'
       last-modified:
-      - Fri, 25 Sep 2020 13:01:56 GMT
+      - Tue, 29 Sep 2020 19:55:39 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -329,11 +329,11 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 25 Sep 2020 13:01:57 GMT
+      - Tue, 29 Sep 2020 19:55:40 GMT
       x-ms-version:
       - '2020-02-10'
     method: GET
-    uri: https://storagename.file.core.windows.net/utshareca850ca0/fileca850ca0?prevsharesnapshot=2020-09-25T13%3A01%3A57.0000000Z&comp=rangelist
+    uri: https://storagename.file.core.windows.net/utshareca850ca0/fileca850ca0?prevsharesnapshot=2020-09-29T19%3A55%3A40.0000000Z&comp=rangelist
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Ranges><ClearRange><Start>512</Start><End>1023</End></ClearRange></Ranges>"
@@ -341,11 +341,11 @@ interactions:
       content-type:
       - application/xml
       date:
-      - Fri, 25 Sep 2020 13:01:56 GMT
+      - Tue, 29 Sep 2020 19:55:39 GMT
       etag:
-      - '"0x8D861532E9E44F3"'
+      - '"0x8D864B1A42A4FB5"'
       last-modified:
-      - Fri, 25 Sep 2020 13:01:56 GMT
+      - Tue, 29 Sep 2020 19:55:39 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:

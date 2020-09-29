@@ -996,8 +996,8 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         snapshot2 = await share_client.create_snapshot()
         await file_client.clear_range(offset=512, length=512)
 
-        ranges1, cleared1 = await file_client.get_ranges(previous_sharesnapshot=snapshot1)
-        ranges2, cleared2 = await file_client.get_ranges(previous_sharesnapshot=snapshot2['snapshot'])
+        ranges1, cleared1 = await file_client.get_ranges_diff(previous_sharesnapshot=snapshot1)
+        ranges2, cleared2 = await file_client.get_ranges_diff(previous_sharesnapshot=snapshot2['snapshot'])
 
         # Assert
         self.assertIsNotNone(ranges1)
