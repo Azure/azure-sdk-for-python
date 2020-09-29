@@ -7,7 +7,7 @@
 # pylint: disable=protected-access
 
 from typing import List, Union, Dict, Any, cast, TYPE_CHECKING
-import datetime
+import datetime  # pylint:disable=unused-import
 
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline import Pipeline
