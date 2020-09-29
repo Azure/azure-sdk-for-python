@@ -23,8 +23,7 @@ from common_tasks import (
     find_packages_missing_on_pypi,
     find_whl,
     find_tools_packages,
-    get_installed_packages,
-    extend_dev_requirements
+    get_installed_packages
 )
 from git_helper import get_release_tag, git_checkout_tag, git_checkout_branch, clone_repo
 
@@ -39,12 +38,7 @@ VENV_NAME = "regressionenv"
 AZURE_SDK_FOR_PYTHON_GIT_URL = "https://github.com/Azure/azure-sdk-for-python.git"
 TEMP_FOLDER_NAME = ".tmp_code_path"
 
-CUSTOM_REGRESSION_INSTALLED_PACKAGES = [
-    'msrestazure'
-]
-
 logging.getLogger().setLevel(logging.INFO)
-
 
 class CustomVirtualEnv:
     def __init__(self, path):
