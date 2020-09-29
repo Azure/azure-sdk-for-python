@@ -38,6 +38,7 @@ from .._generated.models._azure_cognitive_service_metrics_advisor_restapi_open_a
     AnomalyValue,
     ChangePointValue,
     PeriodType,
+    FeedbackType
 )
 
 from .._generated.models import (
@@ -47,7 +48,6 @@ from .._generated.models import (
     DetectionAnomalyFilterCondition,
     DimensionGroupIdentity,
     DetectionIncidentFilterCondition,
-    AnomalyDetectionConfiguration,
     DimensionGroupConfiguration,
     SeriesConfiguration,
     EnrichmentStatus,
@@ -171,7 +171,6 @@ __all__ = (
     "WebHook",
     "DataFeedIngestionProgress",
     "DetectionConditionsOperator",
-    "AnomalyDetectionConfiguration",
     "MetricAnomalyAlertConditions",
     "EnrichmentStatus",
     "DataFeedGranularityType",
@@ -196,4 +195,5 @@ __all__ = (
     "AnomalyValue",
     "ChangePointValue",
     "PeriodType",
+    "FeedbackType"
 )

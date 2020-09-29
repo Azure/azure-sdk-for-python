@@ -6,7 +6,7 @@
 
 # pylint:disable=protected-access
 
-from typing import List, Union, Dict, TYPE_CHECKING
+from typing import List, Union, Dict, Any, cast, TYPE_CHECKING
 import datetime
 
 from azure.core.tracing.decorator import distributed_trace
@@ -21,7 +21,6 @@ from azure.core.pipeline.policies import (
     HttpLoggingPolicy,
 )
 from azure.core.pipeline.transport import AioHttpTransport
-from azure.core.exceptions import ClientAuthenticationError
 from .._metrics_advisor_key_credential import MetricsAdvisorKeyCredential
 from .._metrics_advisor_key_credential_policy import MetricsAdvisorKeyCredentialPolicy
 from .._generated.aio._configuration import AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2Configuration
@@ -54,7 +53,6 @@ from .._version import SDK_MONIKER
 if TYPE_CHECKING:
     from azure.core.async_paging import AsyncItemPaged
     from .._generated.models import (
-        MetricFeedback,
         SeriesResult,
         EnrichmentStatus,
         MetricSeriesItem as MetricSeriesDefinition
@@ -92,7 +90,7 @@ class MetricsAdvisorClient(object):
         self._endpoint = endpoint
         self._credential = credential
         self._config.user_agent_policy = UserAgentPolicy(
-            sdk_moniker=SDK_MONIKER, **kwargs
+            base_user_agent=None, sdk_moniker=SDK_MONIKER, **kwargs
         )
 
         pipeline = kwargs.get("pipeline")
@@ -164,7 +162,7 @@ class MetricsAdvisorClient(object):
 
     @distributed_trace_async
     async def add_feedback(self, feedback, **kwargs):
-        # type: (Union[AnomalyFeedback, ChangePointFeedback, CommentFeedback, PeriodFeedback], dict) -> None
+        # type: (Union[AnomalyFeedback, ChangePointFeedback, CommentFeedback, PeriodFeedback], Any) -> None
 
         """Create a new metric feedback.
 
@@ -184,18 +182,14 @@ class MetricsAdvisorClient(object):
                 :dedent: 4
                 :caption: Add new feedback.
         """
-        error_map = {
-            401: ClientAuthenticationError
-        }
 
         return await self._client.create_metric_feedback(
             body=feedback._to_generated(),
-            error_map=error_map,
             **kwargs)
 
     @distributed_trace_async
     async def get_feedback(self, feedback_id, **kwargs):
-        # type: (str, dict) -> Union[AnomalyFeedback, ChangePointFeedback, CommentFeedback, PeriodFeedback]
+        # type: (str, Any) -> Union[AnomalyFeedback, ChangePointFeedback, CommentFeedback, PeriodFeedback]
 
         """Get a metric feedback by its id.
 
@@ -216,13 +210,9 @@ class MetricsAdvisorClient(object):
                 :dedent: 4
                 :caption: Get a metric feedback by its id.
         """
-        error_map = {
-            401: ClientAuthenticationError
-        }
 
         feedback = await self._client.get_metric_feedback(
             feedback_id=feedback_id,
-            error_map=error_map,
             **kwargs)
 
         return convert_to_sub_feedback(feedback)
@@ -230,7 +220,7 @@ class MetricsAdvisorClient(object):
     @distributed_trace
     def list_feedbacks(
         self, metric_id,  # type: str
-        **kwargs  # type: dict
+        **kwargs  # type: Any
     ):
         # type: (...) -> AsyncItemPaged[Union[AnomalyFeedback, ChangePointFeedback, CommentFeedback, PeriodFeedback]]
 
@@ -261,9 +251,6 @@ class MetricsAdvisorClient(object):
                 :dedent: 4
                 :caption: List feedback on the given metric.
         """
-        error_map = {
-            401: ClientAuthenticationError
-        }
 
         skip = kwargs.pop('skip', None)
         dimension_filter = None
@@ -283,18 +270,17 @@ class MetricsAdvisorClient(object):
             time_mode=time_mode,
         )
 
-        return self._client.list_metric_feedbacks(
+        return self._client.list_metric_feedbacks(  # type: ignore
             skip=skip,
             body=feedback_filter,
             cls=kwargs.pop("cls", lambda result: [
                 convert_to_sub_feedback(x) for x in result
             ]),
-            error_map=error_map,
             **kwargs)
 
     @distributed_trace
     def list_incident_root_causes(self, detection_configuration_id, incident_id, **kwargs):
-        # type: (str, str, dict) -> AsyncItemPaged[IncidentRootCause]
+        # type: (str, str, Any) -> AsyncItemPaged[IncidentRootCause]
 
         """Query root cause for incident.
 
@@ -306,13 +292,10 @@ class MetricsAdvisorClient(object):
         :rtype: AsyncItemPaged[~azure.ai.metriscadvisor.models.IncidentRootCause]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        error_map = {
-            401: ClientAuthenticationError
-        }
-        return self._client.get_root_cause_of_incident_by_anomaly_detection_configuration(
+
+        return self._client.get_root_cause_of_incident_by_anomaly_detection_configuration(  # type: ignore
             configuration_id=detection_configuration_id,
             incident_id=incident_id,
-            error_map=error_map,
             cls=kwargs.pop("cls", lambda result: [
                 IncidentRootCause._from_generated(x) for x in result
             ]),
@@ -323,9 +306,9 @@ class MetricsAdvisorClient(object):
     def list_metric_enriched_series_data(
         self, detection_configuration_id,  # type: str
         series,  # type: Union[List[SeriesIdentity], List[Dict[str, str]]]
-        start_time,  # type: datetime
-        end_time,  # type: datetime
-        **kwargs  # type: dict
+        start_time,  # type: datetime.datetime
+        end_time,  # type: datetime.datetime
+        **kwargs  # type: Any
     ):
         # type: (...) -> AsyncItemPaged[SeriesResult]
         """Query series enriched by anomaly detection.
@@ -339,29 +322,28 @@ class MetricsAdvisorClient(object):
         :rtype: AsyncItemPaged[~azure.ai.metricsadvisor.models.SeriesResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        error_map = {
-            401: ClientAuthenticationError
-        }
 
-        detection_series_query = DetectionSeriesQuery(
-            start_time=start_time,
-            end_time=end_time,
-            series=[
+        series_list = [
                 SeriesIdentity(dimension=dimension)
                 for dimension in series
                 if isinstance(dimension, dict)
-            ] or series,
+            ] or series
+
+        series_list = cast(List[SeriesIdentity], series_list)
+        detection_series_query = DetectionSeriesQuery(
+            start_time=start_time,
+            end_time=end_time,
+            series=series_list
         )
 
-        return self._client.get_series_by_anomaly_detection_configuration(
+        return self._client.get_series_by_anomaly_detection_configuration(  # type: ignore
             configuration_id=detection_configuration_id,
             body=detection_series_query,
-            error_map=error_map,
             **kwargs)
 
     @distributed_trace
     def list_alerts_for_alert_configuration(self, alert_configuration_id, start_time, end_time, time_mode, **kwargs):
-        # type: (str, datetime, datetime, Union[str, TimeMode], dict) -> AsyncItemPaged[Alert]
+        # type: (str, datetime.datetime, datetime.datetime, Union[str, TimeMode], Any) -> AsyncItemPaged[Alert]
         """Query alerts under anomaly alert configuration.
 
         :param alert_configuration_id: anomaly alert configuration unique id.
@@ -384,9 +366,6 @@ class MetricsAdvisorClient(object):
                 :dedent: 4
                 :caption: Query anomaly detection results.
         """
-        error_map = {
-            401: ClientAuthenticationError
-        }
 
         skip = kwargs.pop('skip', None)
 
@@ -396,17 +375,16 @@ class MetricsAdvisorClient(object):
             time_mode=time_mode,
         )
 
-        return self._client.get_alerts_by_anomaly_alerting_configuration(
+        return self._client.get_alerts_by_anomaly_alerting_configuration(  # type: ignore
             configuration_id=alert_configuration_id,
             skip=skip,
             body=alerting_result_query,
-            error_map=error_map,
             cls=kwargs.pop("cls", lambda alerts: [Alert._from_generated(alert) for alert in alerts]),
             **kwargs)
 
     @distributed_trace
     def list_anomalies_for_alert(self, alert_configuration_id, alert_id, **kwargs):
-        # type: (str, str, dict) -> AsyncItemPaged[Anomaly]
+        # type: (str, str, Any) -> AsyncItemPaged[Anomaly]
 
         """Query anomalies under a specific alert.
 
@@ -427,23 +405,19 @@ class MetricsAdvisorClient(object):
                 :dedent: 4
                 :caption: Query anomalies using alert id.
         """
-        error_map = {
-            401: ClientAuthenticationError
-        }
 
         skip = kwargs.pop('skip', None)
 
-        return self._client.get_anomalies_from_alert_by_anomaly_alerting_configuration(
+        return self._client.get_anomalies_from_alert_by_anomaly_alerting_configuration(  # type: ignore
             configuration_id=alert_configuration_id,
             alert_id=alert_id,
             skip=skip,
             cls=lambda objs: [Anomaly._from_generated(x) for x in objs],
-            error_map=error_map,
             **kwargs)
 
     @distributed_trace
     def list_anomalies_for_detection_configuration(self, detection_configuration_id, start_time, end_time, **kwargs):
-        # type: (str, datetime, datetime, dict) -> AsyncItemPaged[Anomaly]
+        # type: (str, datetime.datetime, datetime.datetime, Any) -> AsyncItemPaged[Anomaly]
 
         """Query anomalies under anomaly detection configuration.
 
@@ -458,9 +432,6 @@ class MetricsAdvisorClient(object):
         :rtype: ~azure.core.paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.Anomaly]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        error_map = {
-            401: ClientAuthenticationError
-        }
 
         skip = kwargs.pop('skip', None)
         filter_condition = kwargs.pop('filter', None)
@@ -470,12 +441,11 @@ class MetricsAdvisorClient(object):
             filter=filter_condition,
         )
 
-        return self._client.get_anomalies_by_anomaly_detection_configuration(
+        return self._client.get_anomalies_by_anomaly_detection_configuration(  # type: ignore
             configuration_id=detection_configuration_id,
             skip=skip,
             body=detection_anomaly_result_query,
             cls=lambda objs: [Anomaly._from_generated(x) for x in objs],
-            error_map=error_map,
             **kwargs)
 
     @distributed_trace
@@ -486,7 +456,7 @@ class MetricsAdvisorClient(object):
             end_time,
             **kwargs
     ):
-        # type: (str, str, datetime, datetime, dict) -> AsyncItemPaged[str]
+        # type: (str, str, datetime.datetime, datetime.datetime, Any) -> AsyncItemPaged[str]
 
         """Query dimension values of anomalies.
 
@@ -502,9 +472,6 @@ class MetricsAdvisorClient(object):
         :rtype: ~azure.core.paging.AsyncItemPaged[str]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        error_map = {
-            401: ClientAuthenticationError
-        }
 
         skip = kwargs.pop('skip', None)
         dimension_filter = kwargs.pop('dimension_filter', None)
@@ -515,16 +482,15 @@ class MetricsAdvisorClient(object):
             dimension_filter=dimension_filter,
         )
 
-        return self._client.get_dimension_of_anomalies_by_anomaly_detection_configuration(
+        return self._client.get_dimension_of_anomalies_by_anomaly_detection_configuration(  # type: ignore
             configuration_id=detection_configuration_id,
             skip=skip,
             body=anomaly_dimension_query,
-            error_map=error_map,
             **kwargs)
 
     @distributed_trace
     def list_incidents_for_alert(self, alert_configuration_id, alert_id, **kwargs):
-        # type: (str, str, dict) -> AsyncItemPaged[Incident]
+        # type: (str, str, Any) -> AsyncItemPaged[Incident]
 
         """Query incidents under a specific alert.
 
@@ -537,23 +503,19 @@ class MetricsAdvisorClient(object):
         :rtype: ~azure.core.paging.AsyncItemPaged[~azure.ai.metriscadvisor.models.Incident]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        error_map = {
-            401: ClientAuthenticationError
-        }
 
         skip = kwargs.pop('skip', None)
 
-        return self._client.get_incidents_from_alert_by_anomaly_alerting_configuration(
+        return self._client.get_incidents_from_alert_by_anomaly_alerting_configuration(  # type: ignore
             configuration_id=alert_configuration_id,
             alert_id=alert_id,
             skip=skip,
             cls=lambda objs: [Incident._from_generated(x) for x in objs],
-            error_map=error_map,
             **kwargs)
 
     @distributed_trace
     def list_incidents_for_detection_configuration(self, detection_configuration_id, start_time, end_time, **kwargs):
-        # type: (str, datetime, datetime, dict) -> AsyncItemPaged[Incident]
+        # type: (str, datetime.datetime, datetime.datetime, Any) -> AsyncItemPaged[Incident]
 
         """Query incidents under a specific alert.
 
@@ -567,9 +529,6 @@ class MetricsAdvisorClient(object):
         :rtype: ~azure.core.paging.AsyncItemPaged[~azure.ai.metriscadvisor.models.Incident]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        error_map = {
-            401: ClientAuthenticationError
-        }
 
         filter_condition = kwargs.pop('filter', None)
 
@@ -579,16 +538,15 @@ class MetricsAdvisorClient(object):
             filter=filter_condition,
         )
 
-        return self._client.get_incidents_by_anomaly_detection_configuration(
+        return self._client.get_incidents_by_anomaly_detection_configuration(  # type: ignore
             configuration_id=detection_configuration_id,
             body=detection_incident_result_query,
             cls=lambda objs: [Incident._from_generated(x) for x in objs],
-            error_map=error_map,
             **kwargs)
 
     @distributed_trace
     def list_metric_dimension_values(self, metric_id, dimension_name, **kwargs):
-        # type: (str, str, dict) -> AsyncItemPaged[str]
+        # type: (str, str, Any) -> AsyncItemPaged[str]
 
         """List dimension from certain metric.
 
@@ -603,9 +561,6 @@ class MetricsAdvisorClient(object):
         :rtype: ~azure.core.paging.AsyncItemPaged[str]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        error_map = {
-            401: ClientAuthenticationError
-        }
 
         skip = kwargs.pop('skip', None)
         dimension_value_filter = kwargs.pop('dimension_value_filter', None)
@@ -615,16 +570,21 @@ class MetricsAdvisorClient(object):
             dimension_value_filter=dimension_value_filter,
         )
 
-        return self._client.get_metric_dimension(
+        return self._client.get_metric_dimension(  # type: ignore
             metric_id=metric_id,
             body=metric_dimension_query_options,
             skip=skip,
-            error_map=error_map,
             **kwargs)
 
     @distributed_trace
-    def list_metrics_series_data(self, metric_id, start_time, end_time, series_to_filter, **kwargs):
-        # type: (str, List[Dict[str, str]], datetime, datetime, dict) -> AsyncItemPaged[MetricSeriesData]
+    def list_metrics_series_data(
+        self, metric_id,  # type: str
+        start_time,  # type: datetime.datetime
+        end_time,  # type: datetime.datetime
+        series_to_filter,  # type: List[Dict[str, str]]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> AsyncItemPaged[MetricSeriesData]
 
         """Get time series data from metric.
 
@@ -638,9 +598,6 @@ class MetricsAdvisorClient(object):
         :rtype: AsyncItemPaged[~azure.ai.metriscadvisor.models.MetricSeriesData]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        error_map = {
-            401: ClientAuthenticationError
-        }
 
         metric_data_query_options = MetricDataQueryOptions(
             start_time=start_time,
@@ -648,16 +605,15 @@ class MetricsAdvisorClient(object):
             series=series_to_filter,
         )
 
-        return self._client.get_metric_data(
+        return self._client.get_metric_data(  # type: ignore
             metric_id=metric_id,
             body=metric_data_query_options,
-            error_map=error_map,
             cls=kwargs.pop("cls", lambda result: [MetricSeriesData._from_generated(series) for series in result]),
             **kwargs)
 
     @distributed_trace
     def list_metric_series_definitions(self, metric_id, active_since, **kwargs):
-        # type: (str, datetime, dict) -> AsyncItemPaged[MetricSeriesDefinition]
+        # type: (str, datetime.datetime, Any) -> AsyncItemPaged[MetricSeriesDefinition]
 
         """List series (dimension combinations) from metric.
 
@@ -675,9 +631,6 @@ class MetricsAdvisorClient(object):
         :rtype: ~azure.core.paging.AsyncItemPaged[~azure.ai.metriscadvisor.models.MetricSeriesDefinition]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        error_map = {
-            401: ClientAuthenticationError
-        }
 
         skip = kwargs.pop('skip', None)
         dimension_filter = kwargs.pop('dimension_filter', None)
@@ -687,16 +640,15 @@ class MetricsAdvisorClient(object):
             dimension_filter=dimension_filter,
         )
 
-        return self._client.get_metric_series(
+        return self._client.get_metric_series(  # type: ignore
             metric_id=metric_id,
             body=metric_series_query_options,
             skip=skip,
-            error_map=error_map,
             **kwargs)
 
     @distributed_trace
     def list_metric_enrichment_status(self, metric_id, start_time, end_time, **kwargs):
-        # type: (str, datetime, datetime, dict) -> AsyncItemPaged[EnrichmentStatus]
+        # type: (str, datetime.datetime, datetime.datetime, Any) -> AsyncItemPaged[EnrichmentStatus]
 
         """Query anomaly detection status.
 
@@ -709,9 +661,6 @@ class MetricsAdvisorClient(object):
         :rtype: ~azure.core.paging.AsyncItemPaged[~azure.ai.metriscadvisor.models.EnrichmentStatus]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        error_map = {
-            401: ClientAuthenticationError
-        }
 
         skip = kwargs.pop('skip', None)
         enrichment_status_query_option = EnrichmentStatusQueryOption(
@@ -719,9 +668,8 @@ class MetricsAdvisorClient(object):
             end_time=end_time,
         )
 
-        return self._client.get_enrichment_status_by_metric(
+        return self._client.get_enrichment_status_by_metric(  # type: ignore
             metric_id=metric_id,
             skip=skip,
             body=enrichment_status_query_option,
-            error_map=error_map,
             **kwargs)
