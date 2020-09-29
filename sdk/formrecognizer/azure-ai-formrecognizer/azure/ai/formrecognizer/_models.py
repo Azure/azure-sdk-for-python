@@ -700,7 +700,7 @@ class CustomFormSubmodel(object):
                 accuracy=model.train_result.average_model_accuracy,
                 fields={field.field_name: CustomFormModelField._from_generated_labeled(field)
                         for field in model.train_result.fields} if model.train_result.fields else None,
-                form_type="form-" + model.model_info.model_id
+                form_type="form-" + model.model_info.model_id  # FIXME: should match form_type in RecognizedForm
             )
         ] if model.train_result else None
 
@@ -711,7 +711,7 @@ class CustomFormSubmodel(object):
                 accuracy=train_result.average_model_accuracy,
                 fields={field.field_name: CustomFormModelField._from_generated_labeled(field)
                         for field in train_result.fields} if train_result.fields else None,
-                form_type="form-" + train_result.model_id,  # FIXME?
+                form_type="form-" + train_result.model_id,  # FIXME: should match form_type in RecognizedForm
                 model_id=train_result.model_id
             ) for train_result in model.composed_train_results
         ]
