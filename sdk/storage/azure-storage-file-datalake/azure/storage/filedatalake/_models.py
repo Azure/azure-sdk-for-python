@@ -7,7 +7,6 @@
 # pylint: disable=super-init-not-called, too-many-lines
 from enum import Enum
 
-from azure.core.paging import PageIterator
 from azure.storage.blob import LeaseProperties as BlobLeaseProperties
 from azure.storage.blob import AccountSasPermissions as BlobAccountSasPermissions
 from azure.storage.blob import ResourceTypes as BlobResourceTypes
@@ -20,10 +19,7 @@ from azure.storage.blob import DelimitedJsonDialect as BlobDelimitedJSON
 from azure.storage.blob import ArrowDialect as BlobArrowDialect
 from azure.storage.blob._generated.models import StorageErrorException
 from azure.storage.blob._models import ContainerPropertiesPaged
-from ._deserialize import return_headers_and_deserialized_path_list
-from ._generated.models import Path
 from ._shared.models import DictMixin
-from ._shared.response_handlers import process_storage_error
 
 
 class FileSystemProperties(object):
@@ -134,33 +130,15 @@ class DirectoryProperties(DictMixin):
     """
 
     def __init__(self, **kwargs):
-        super(DirectoryProperties, self).__init__(
-            **kwargs
-        )
-        self.name = None
-        self.etag = None
+        self.name = kwargs.get('name')
+        self.etag = kwargs.get('ETag')
         self.deleted = None
-        self.metadata = None
-        self.lease = None
-        self.last_modified = None
-        self.creation_time = None
+        self.metadata = kwargs.get('metadata')
+        self.lease = LeaseProperties(**kwargs)
+        self.last_modified = kwargs.get('Last-Modified')
+        self.creation_time = kwargs.get('x-ms-creation-time')
         self.deleted_time = None
         self.remaining_retention_days = None
-
-    @classmethod
-    def _from_blob_properties(cls, blob_properties):
-        directory_props = DirectoryProperties()
-        directory_props.name = blob_properties.name
-        directory_props.etag = blob_properties.etag
-        directory_props.deleted = blob_properties.deleted
-        directory_props.metadata = blob_properties.metadata
-        directory_props.lease = blob_properties.lease
-        directory_props.lease.__class__ = LeaseProperties
-        directory_props.last_modified = blob_properties.last_modified
-        directory_props.creation_time = blob_properties.creation_time
-        directory_props.deleted_time = blob_properties.deleted_time
-        directory_props.remaining_retention_days = blob_properties.remaining_retention_days
-        return directory_props
 
 
 class FileProperties(DictMixin):
@@ -183,37 +161,18 @@ class FileProperties(DictMixin):
     """
 
     def __init__(self, **kwargs):
-        super(FileProperties, self).__init__(
-            **kwargs
-        )
-        self.name = None
-        self.etag = None
+        self.name = kwargs.get('name')
+        self.etag = kwargs.get('ETag')
         self.deleted = None
-        self.metadata = None
-        self.lease = None
-        self.last_modified = None
-        self.creation_time = None
-        self.size = None
+        self.metadata = kwargs.get('metadata')
+        self.lease = LeaseProperties(**kwargs)
+        self.last_modified = kwargs.get('Last-Modified')
+        self.creation_time = kwargs.get('x-ms-creation-time')
+        self.size = kwargs.get('Content-Length')
         self.deleted_time = None
+        self.expiry_time = kwargs.get("x-ms-expiry-time")
         self.remaining_retention_days = None
-        self.content_settings = None
-
-    @classmethod
-    def _from_blob_properties(cls, blob_properties):
-        file_props = FileProperties()
-        file_props.name = blob_properties.name
-        file_props.etag = blob_properties.etag
-        file_props.deleted = blob_properties.deleted
-        file_props.metadata = blob_properties.metadata
-        file_props.lease = blob_properties.lease
-        file_props.lease.__class__ = LeaseProperties
-        file_props.last_modified = blob_properties.last_modified
-        file_props.creation_time = blob_properties.creation_time
-        file_props.size = blob_properties.size
-        file_props.deleted_time = blob_properties.deleted_time
-        file_props.remaining_retention_days = blob_properties.remaining_retention_days
-        file_props.content_settings = blob_properties.content_settings
-        return file_props
+        self.content_settings = ContentSettings(**kwargs)
 
 
 class PathProperties(object):
@@ -259,69 +218,6 @@ class PathProperties(object):
         path_prop.etag = generated.additional_properties.get('etag')
         path_prop.content_length = generated.content_length
         return path_prop
-
-
-class PathPropertiesPaged(PageIterator):
-    """An Iterable of Path properties.
-
-    :ivar str path: Filters the results to return only paths under the specified path.
-    :ivar int results_per_page: The maximum number of results retrieved per API call.
-    :ivar str continuation_token: The continuation token to retrieve the next page of results.
-    :ivar list(~azure.storage.filedatalake.PathProperties) current_page: The current page of listed results.
-
-    :param callable command: Function to retrieve the next page of items.
-    :param str path: Filters the results to return only paths under the specified path.
-    :param int max_results: The maximum number of psths to retrieve per
-        call.
-    :param str continuation_token: An opaque continuation token.
-    """
-
-    def __init__(
-            self, command,
-            recursive,
-            path=None,
-            max_results=None,
-            continuation_token=None,
-            upn=None):
-        super(PathPropertiesPaged, self).__init__(
-            get_next=self._get_next_cb,
-            extract_data=self._extract_data_cb,
-            continuation_token=continuation_token or ""
-        )
-        self._command = command
-        self.recursive = recursive
-        self.results_per_page = max_results
-        self.path = path
-        self.upn = upn
-        self.current_page = None
-        self.path_list = None
-
-    def _get_next_cb(self, continuation_token):
-        try:
-            return self._command(
-                self.recursive,
-                continuation=continuation_token or None,
-                path=self.path,
-                max_results=self.results_per_page,
-                upn=self.upn,
-                cls=return_headers_and_deserialized_path_list)
-        except StorageErrorException as error:
-            process_storage_error(error)
-
-    def _extract_data_cb(self, get_next_return):
-        self.path_list, self._response = get_next_return
-        self.current_page = [self._build_item(item) for item in self.path_list]
-
-        return self._response['continuation'] or None, self.current_page
-
-    @staticmethod
-    def _build_item(item):
-        if isinstance(item, PathProperties):
-            return item
-        if isinstance(item, Path):
-            path = PathProperties._from_generated(item)  # pylint: disable=protected-access
-            return path
-        return item
 
 
 class LeaseProperties(BlobLeaseProperties):

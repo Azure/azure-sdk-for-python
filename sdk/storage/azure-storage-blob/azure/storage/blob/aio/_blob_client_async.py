@@ -561,14 +561,15 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
                 snapshot=self.snapshot,
                 lease_access_conditions=access_conditions,
                 modified_access_conditions=mod_conditions,
-                cls=deserialize_blob_properties,
+                cls=kwargs.pop('cls', None) or deserialize_blob_properties,
                 cpk_info=cpk_info,
                 **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
         blob_props.name = self.blob_name
-        blob_props.snapshot = self.snapshot
-        blob_props.container = self.container_name
+        if isinstance(blob_props, BlobProperties):
+            blob_props.container = self.container_name
+            blob_props.snapshot = self.snapshot
         return blob_props # type: ignore
 
     @distributed_trace_async
