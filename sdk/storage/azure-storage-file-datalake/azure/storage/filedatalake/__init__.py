@@ -29,6 +29,8 @@ from ._models import (
     AccessPolicy,
     DelimitedTextDialect,
     DelimitedJsonDialect,
+    ArrowDialect,
+    ArrowType,
     DataLakeFileQueryError,
     AccessControlChangeResult,
     AccessControlChangeCounters,
@@ -82,5 +84,7 @@ __all__ = [
     'StorageStreamDownloader',
     'DelimitedTextDialect',
     'DelimitedJsonDialect',
+    'ArrowDialect',
+    'ArrowType',
     'DataLakeFileQueryError'
 ]

@@ -695,7 +695,7 @@ class DataLakeFileClient(PathClient):
         :param str query_expression:
             Required. a query statement.
             eg. Select * from DataLakeStorage
-        :keyword Callable[Exception] on_error:
+        :keyword Callable[~azure.storage.filedatalake.DataLakeFileQueryError] on_error:
             A function to be called on any processing errors returned by the service.
         :keyword file_format:
             Optional. Defines the serialization of the data currently stored in the file. The default is to
@@ -708,7 +708,8 @@ class DataLakeFileClient(PathClient):
             as it is represented in the file. By providing an output format, the file data will be reformatted
             according to that profile. This value can be a DelimitedTextDialect or a DelimitedJsonDialect.
         :paramtype output_format:
-            ~azure.storage.filedatalake.DelimitedTextDialect or ~azure.storage.filedatalake.DelimitedJsonDialect
+            ~azure.storage.filedatalake.DelimitedTextDialect, ~azure.storage.filedatalake.DelimitedJsonDialect
+            or list[~azure.storage.filedatalake.ArrowDialect]
         :keyword lease:
             Required if the file has an active lease. Value can be a DataLakeLeaseClient object
             or the lease ID as a string.

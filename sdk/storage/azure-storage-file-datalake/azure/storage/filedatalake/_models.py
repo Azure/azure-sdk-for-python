@@ -16,6 +16,8 @@ from azure.storage.blob import ContainerSasPermissions, BlobSasPermissions
 from azure.storage.blob import AccessPolicy as BlobAccessPolicy
 from azure.storage.blob import DelimitedTextDialect as BlobDelimitedTextDialect
 from azure.storage.blob import DelimitedJsonDialect as BlobDelimitedJSON
+from azure.storage.blob import ArrowDialect as BlobArrowDialect
+from azure.storage.blob._generated.models import StorageErrorException
 from azure.storage.blob._models import ContainerPropertiesPaged
 from ._shared.models import DictMixin
 
@@ -530,6 +532,28 @@ class DelimitedTextDialect(BlobDelimitedTextDialect):
     """
 
 
+class ArrowDialect(BlobArrowDialect):
+    """field of an arrow schema.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param str type: Required.
+    :keyword str name: The name of the field.
+    :keyword int precision: The precision of the field.
+    :keyword int scale: The scale of the field.
+    """
+
+
+class ArrowType(str, Enum):
+
+    INT64 = "int64"
+    BOOL = "bool"
+    TIMESTAMP_MS = "timestamp[ms]"
+    STRING = "string"
+    DOUBLE = "double"
+    DECIMAL = 'decimal'
+
+
 class DataLakeFileQueryError(object):
     """The error happened during quick query operation.
 
@@ -552,7 +576,7 @@ class DataLakeFileQueryError(object):
         self.position = position
 
 
-class AccessControlChangeCounters(object):
+class AccessControlChangeCounters(DictMixin):
     """
     AccessControlChangeCounters contains counts of operations that change Access Control Lists recursively.
 
@@ -570,7 +594,7 @@ class AccessControlChangeCounters(object):
         self.failure_count = failure_count
 
 
-class AccessControlChangeResult(object):
+class AccessControlChangeResult(DictMixin):
     """
     AccessControlChangeResult contains result of operations that change Access Control Lists recursively.
 
@@ -586,7 +610,7 @@ class AccessControlChangeResult(object):
         self.continuation = continuation
 
 
-class AccessControlChangeFailure(object):
+class AccessControlChangeFailure(DictMixin):
     """
     Represents an entry that failed to update Access Control List.
 
@@ -604,7 +628,7 @@ class AccessControlChangeFailure(object):
         self.error_message = error_message
 
 
-class AccessControlChanges(object):
+class AccessControlChanges(DictMixin):
     """
     AccessControlChanges contains batch and cumulative counts of operations
     that change Access Control Lists recursively.
