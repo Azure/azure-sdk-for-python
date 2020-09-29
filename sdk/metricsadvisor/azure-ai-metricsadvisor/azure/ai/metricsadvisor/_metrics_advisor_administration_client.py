@@ -4,14 +4,17 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-import six
-import datetime
+# pylint: disable=protected-access
+# pylint: disable=too-many-lines
+
 from typing import (
     Any,
     List,
     Union,
     TYPE_CHECKING
 )
+import datetime
+import six
 from azure.core.tracing.decorator import distributed_trace
 from ._generated._azure_cognitive_service_metrics_advisor_restapi_open_ap_iv2 \
     import AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2 as _Client
@@ -85,8 +88,7 @@ if TYPE_CHECKING:
         DataFeedSchema,
         DataFeedIngestionSettings,
         Hook,
-        MetricDetectionCondition,
-        DataFeedIngestionProgress
+        MetricDetectionCondition
     )
 
 DataFeedSourceUnion = Union[
@@ -140,7 +142,7 @@ DATA_FEED_PATCH = {
 }
 
 
-class MetricsAdvisorAdministrationClient(object):
+class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-public-methods
     """MetricsAdvisorAdministrationClient is used to create and manage data feeds.
 
     :param str endpoint: Supported Cognitive Services endpoints (protocol and hostname,

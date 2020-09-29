@@ -4,14 +4,16 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-import six
-import datetime
+# pylint:disable=protected-access
+# pylint:disable=too-many-lines
+
 from typing import (
     Any,
     List,
-    Union
+    Union,
 )
-
+import datetime
+import six
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.async_paging import AsyncItemPaged
@@ -51,7 +53,7 @@ from .._metrics_advisor_administration_client import (
 )
 
 
-class MetricsAdvisorAdministrationClient(object):
+class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-public-methods
     """MetricsAdvisorAdministrationClient is used to create and manage data feeds.
 
     :param str endpoint: Supported Cognitive Services endpoints (protocol and hostname,

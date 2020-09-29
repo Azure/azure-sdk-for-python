@@ -3,6 +3,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+
+# pylint: disable=protected-access
+
 from typing import (
     Union,
     TYPE_CHECKING
@@ -126,7 +129,7 @@ def convert_to_generated_data_feed_type(
     :return: The generated model for the data source type
     """
 
-    if isinstance(granularity, six.string_types) or isinstance(granularity, DataFeedGranularityType):
+    if isinstance(granularity, (DataFeedGranularityType, six.string_types)):
         granularity = DataFeedGranularity(
             granularity_type=granularity,
         )
@@ -136,7 +139,7 @@ def convert_to_generated_data_feed_type(
             metrics=[Metric(name=metric_name) for metric_name in schema]
         )
 
-    if isinstance(ingestion_settings, datetime.datetime) or isinstance(ingestion_settings, six.string_types):
+    if isinstance(ingestion_settings, (datetime.datetime, six.string_types)):
         ingestion_settings = DataFeedIngestionSettings(
             ingestion_begin_time=ingestion_settings
         )
