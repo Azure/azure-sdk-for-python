@@ -135,7 +135,7 @@ class AuthenticationMetadataFilter(RecordingProcessor):
     """
 
     def process_request(self, request):
-        if "/.well-known/openid-configuration" in request.uri or "/discovery/instance" in request.uri:
+        if "/.well-known/openid-configuration" in request.uri or "/common/discovery/instance" in request.uri:
             return None
         return request
 
