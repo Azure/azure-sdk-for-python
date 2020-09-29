@@ -45,6 +45,9 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
                                        **kwargs)
 
         self._client = DataLakeStorageClient(self.url, file_system_name, path_name, pipeline=self._pipeline)
+        self._datalake_client_for_blob_operation = DataLakeStorageClient(self._blob_client.url,
+                                                                         file_system_name, path_name,
+                                                                         pipeline=self._pipeline)
         self._loop = kwargs.get('loop', None)
 
     async def __aexit__(self, *args):
@@ -568,7 +571,6 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
         :rtype: DirectoryProperties or FileProperties
         """
         path_properties = await self._blob_client.get_blob_properties(**kwargs)
-        path_properties.__class__ = DirectoryProperties
         return path_properties
 
     async def set_metadata(self, metadata,  # type: Dict[str, str]

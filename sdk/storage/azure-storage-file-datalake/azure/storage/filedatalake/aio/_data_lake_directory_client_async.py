@@ -11,6 +11,7 @@ except ImportError:
 from ._data_lake_file_client_async import DataLakeFileClient
 from .._data_lake_directory_client import DataLakeDirectoryClient as DataLakeDirectoryClientBase
 from .._models import DirectoryProperties
+from .._deserialize import deserialize_dir_properties
 from ._path_client_async import PathClient
 
 
@@ -203,8 +204,7 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
                 :dedent: 4
                 :caption: Getting the properties for a file/directory.
         """
-        blob_properties = await self._get_path_properties(**kwargs)
-        return DirectoryProperties._from_blob_properties(blob_properties)  # pylint: disable=protected-access
+        return await self._get_path_properties(cls=deserialize_dir_properties, **kwargs)  # pylint: disable=protected-access
 
     async def rename_directory(self, new_name,  # type: str
                                **kwargs):
