@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: !!python/unicode '{"name": "Testingthenamespacenameforpython"}'
+    body: '{"name": "Testingthenamespacenameforpython"}'
     headers:
       Accept:
       - application/json
@@ -13,15 +13,15 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/2.7.13 (Windows-10-10.0.18362) msrest/0.6.11 msrest_azure/0.6.3 azure-mgmt-servicebus/0.6.0
-        Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-servicebus/1.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ServiceBus/CheckNameAvailability?api-version=2017-04-01
   response:
     body:
-      string: !!python/unicode '{"nameAvailable":true,"reason":"None","message":null}'
+      string: '{"nameAvailable":true,"reason":"None","message":null}'
     headers:
       cache-control:
       - no-cache
@@ -30,7 +30,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 24 Mar 2020 07:11:16 GMT
+      - Wed, 16 Sep 2020 02:34:23 GMT
       expires:
       - '-1'
       pragma:
