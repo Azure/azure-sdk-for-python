@@ -22,9 +22,8 @@ from ._response_handlers import (
     prepare_content_result,
     prepare_form_result
 )
-from ._generated.models import AnalyzeOperationResult
-from ._api_versions import validate_api_version
-from ._helpers import get_content_type, get_authentication_policy, error_map, POLLING_INTERVAL
+from ._api_versions import FormRecognizerApiVersion, validate_api_version
+from ._helpers import _get_deserialize, get_content_type, get_authentication_policy, error_map, POLLING_INTERVAL
 from ._user_agent import USER_AGENT
 from ._polling import AnalyzePolling
 if TYPE_CHECKING:
@@ -72,19 +71,22 @@ class FormRecognizerClient(object):
 
         authentication_policy = get_authentication_policy(credential)
         polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
-        api_version = kwargs.pop('api_version', None)
-        validate_api_version(api_version)
+        self.api_version = kwargs.pop('api_version', FormRecognizerApiVersion.V2_1_PREVIEW_1)
+        validate_api_version(self.api_version)
         self._client = FormRecognizer(
             endpoint=endpoint,
             credential=credential,  # type: ignore
+            api_version=self.api_version,
             sdk_moniker=USER_AGENT,
             authentication_policy=authentication_policy,
             polling_interval=polling_interval,
             **kwargs
         )
+        self._deserialize = _get_deserialize()
+        self._generated_models = self._client.models(self.api_version)
 
     def _receipt_callback(self, raw_response, _, headers):  # pylint: disable=unused-argument
-        analyze_result = self._client._deserialize(AnalyzeOperationResult, raw_response)
+        analyze_result = self._deserialize(self._generated_models.AnalyzeOperationResult, raw_response)
         return prepare_receipt(analyze_result)
 
     @distributed_trace
@@ -123,24 +125,27 @@ class FormRecognizerClient(object):
                 :dedent: 8
                 :caption: Recognize US sales receipt fields.
         """
-
+        locale = kwargs.pop("locale", None)
         polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
         continuation_token = kwargs.pop("continuation_token", None)
         content_type = kwargs.pop("content_type", None)
+        include_field_elements = kwargs.pop("include_field_elements", False)
         if content_type == "application/json":
             raise TypeError("Call begin_recognize_receipts_from_url() to analyze a receipt from a URL.")
-
-        include_field_elements = kwargs.pop("include_field_elements", False)
-
+        cls = kwargs.pop("cls", self._receipt_callback)
+        polling = LROBasePolling(timeout=polling_interval, **kwargs)
         if content_type is None:
             content_type = get_content_type(receipt)
+
+        if self.api_version == "2.1-preview.1" and locale:
+            kwargs.update({"locale": locale})
 
         return self._client.begin_analyze_receipt_async(  # type: ignore
             file_stream=receipt,
             content_type=content_type,
             include_text_details=include_field_elements,
-            cls=kwargs.pop("cls", self._receipt_callback),
-            polling=LROBasePolling(timeout=polling_interval, **kwargs),
+            cls=cls,
+            polling=polling,
             error_map=error_map,
             continuation_token=continuation_token,
             **kwargs
@@ -177,23 +182,26 @@ class FormRecognizerClient(object):
                 :dedent: 8
                 :caption: Recognize US sales receipt fields from a URL.
         """
-
+        locale = kwargs.pop("locale", None)
         polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
         continuation_token = kwargs.pop("continuation_token", None)
         include_field_elements = kwargs.pop("include_field_elements", False)
-
+        cls = kwargs.pop("cls", self._receipt_callback)
+        polling = LROBasePolling(timeout=polling_interval, **kwargs)
+        if self.api_version == "2.1-preview.1" and locale:
+            kwargs.update({"locale": locale})
         return self._client.begin_analyze_receipt_async(  # type: ignore
             file_stream={"source": receipt_url},
             include_text_details=include_field_elements,
-            cls=kwargs.pop("cls", self._receipt_callback),
-            polling=LROBasePolling(timeout=polling_interval, **kwargs),
+            cls=cls,
+            polling=polling,
             error_map=error_map,
             continuation_token=continuation_token,
             **kwargs
         )
 
     def _content_callback(self, raw_response, _, headers):  # pylint: disable=unused-argument
-        analyze_result = self._client._deserialize(AnalyzeOperationResult, raw_response)
+        analyze_result = self._deserialize(self._generated_models.AnalyzeOperationResult, raw_response)
         return prepare_content_result(analyze_result)
 
     @distributed_trace
@@ -325,7 +333,7 @@ class FormRecognizerClient(object):
             content_type = get_content_type(form)
 
         def analyze_callback(raw_response, _, headers):  # pylint: disable=unused-argument
-            analyze_result = self._client._deserialize(AnalyzeOperationResult, raw_response)
+            analyze_result = self._deserialize(self._generated_models.AnalyzeOperationResult, raw_response)
             return prepare_form_result(analyze_result, model_id)
 
         deserialization_callback = cls if cls else analyze_callback
@@ -371,7 +379,7 @@ class FormRecognizerClient(object):
         include_field_elements = kwargs.pop("include_field_elements", False)
 
         def analyze_callback(raw_response, _, headers):  # pylint: disable=unused-argument
-            analyze_result = self._client._deserialize(AnalyzeOperationResult, raw_response)
+            analyze_result = self._deserialize(self._generated_models.AnalyzeOperationResult, raw_response)
             return prepare_form_result(analyze_result, model_id)
 
         deserialization_callback = cls if cls else analyze_callback

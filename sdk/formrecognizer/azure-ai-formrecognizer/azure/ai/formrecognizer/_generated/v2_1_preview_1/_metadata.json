@@ -1,0 +1,348 @@
+{
+    "chosen_version": "2.1-preview.1",
+    "total_api_version_list": ["2.1-preview.1"],
+    "client": {
+        "name": "FormRecognizerClient",
+        "filename": "_form_recognizer_client",
+        "description": "Extracts information from forms and images into structured data.",
+        "base_url": null,
+        "custom_base_url": "\u0027{endpoint}/formrecognizer/v2.1-preview.1\u0027",
+        "azure_arm": false,
+        "has_lro_operations": true,
+        "client_side_validation": false
+    },
+    "global_parameters": {
+        "sync_method": {
+            "credential": {
+                "method_signature": "credential,  # type: \"TokenCredential\"",
+                "description": "Credential needed for the client to connect to Azure.",
+                "docstring_type": "~azure.core.credentials.TokenCredential",
+                "required": true
+            },
+            "endpoint": {
+                "method_signature": "endpoint,  # type: str",
+                "description": "Supported Cognitive Services endpoints (protocol and hostname, for example: https://westus2.api.cognitive.microsoft.com).",
+                "docstring_type": "str",
+                "required": true
+            }
+        },
+        "async_method": {
+            "credential": {
+                "method_signature": "credential,  # type: \"AsyncTokenCredential\"",
+                "description": "Credential needed for the client to connect to Azure.",
+                "docstring_type": "~azure.core.credentials_async.AsyncTokenCredential",
+                "required": true
+            },
+            "endpoint": {
+                "method_signature": "endpoint,  # type: str",
+                "description": "Supported Cognitive Services endpoints (protocol and hostname, for example: https://westus2.api.cognitive.microsoft.com).",
+                "docstring_type": "str",
+                "required": true
+            }
+        },
+        "constant": {
+        },
+        "call": "credential, endpoint"
+    },
+    "config": {
+        "credential": true,
+        "credential_scopes": ["https://cognitiveservices.azure.com/.default"],
+        "credential_default_policy_type": "BearerTokenCredentialPolicy",
+        "credential_default_policy_type_has_async_version": true,
+        "credential_key_header_name": null
+    },
+    "operation_groups": {
+    },
+    "operation_mixins": {
+        "_train_custom_model_async_initial" : {
+            "sync": {
+                "signature": "def _train_custom_model_async_initial(\n    self,\n    train_request,  # type: \"models.TrainRequest\"\n    **kwargs  # type: Any\n):\n",
+                "doc": "\"\"\"\n\n:param train_request: Training request parameters.\n:type train_request: ~azure.ai.formrecognizer.models.TrainRequest\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: None, or the result of cls(response)\n:rtype: None\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+            },
+            "async": {
+                "coroutine": true,
+                "signature": "async def _train_custom_model_async_initial(\n    self,\n    train_request: \"models.TrainRequest\",\n    **kwargs\n) -\u003e None:\n",
+                "doc": "\"\"\"\n\n:param train_request: Training request parameters.\n:type train_request: ~azure.ai.formrecognizer.models.TrainRequest\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: None, or the result of cls(response)\n:rtype: None\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+            },
+            "call": "train_request"
+        },
+        "begin_train_custom_model_async" : {
+            "sync": {
+                "signature": "def begin_train_custom_model_async(\n    self,\n    train_request,  # type: \"models.TrainRequest\"\n    **kwargs  # type: Any\n):\n",
+                "doc": "\"\"\"Train Custom Model.\n\nCreate and train a custom model. The request must include a source parameter that is either an\nexternally accessible Azure storage blob container Uri (preferably a Shared Access Signature\nUri) or valid path to a data folder in a locally mounted drive. When local paths are specified,\nthey must follow the Linux/Unix path format and be an absolute path rooted to the input mount\nconfiguration setting value e.g., if \u0027{Mounts:Input}\u0027 configuration setting value is \u0027/input\u0027\nthen a valid source path would be \u0027/input/contosodataset\u0027. All data to be trained is expected\nto be under the source folder or sub folders under it. Models are trained using documents that\nare of the following content type - \u0027application/pdf\u0027, \u0027image/jpeg\u0027, \u0027image/png\u0027, \u0027image/tiff\u0027.\nOther type of content is ignored.\n\n:param train_request: Training request parameters.\n:type train_request: ~azure.ai.formrecognizer.models.TrainRequest\n:keyword callable cls: A custom type or function that will be passed the direct response\n:keyword str continuation_token: A continuation token to restart a poller from a saved state.\n:keyword polling: True for ARMPolling, False for no polling, or a\n polling object for personal polling strategy\n:paramtype polling: bool or ~azure.core.polling.PollingMethod\n:keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.\n:return: An instance of LROPoller that returns either None or the result of cls(response)\n:rtype: ~azure.core.polling.LROPoller[None]\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\""
+            },
+            "async": {
+                "coroutine": true,
+                "signature": "async def begin_train_custom_model_async(\n    self,\n    train_request: \"models.TrainRequest\",\n    **kwargs\n) -\u003e AsyncLROPoller[None]:\n",
+                "doc": "\"\"\"Train Custom Model.\n\nCreate and train a custom model. The request must include a source parameter that is either an\nexternally accessible Azure storage blob container Uri (preferably a Shared Access Signature\nUri) or valid path to a data folder in a locally mounted drive. When local paths are specified,\nthey must follow the Linux/Unix path format and be an absolute path rooted to the input mount\nconfiguration setting value e.g., if \u0027{Mounts:Input}\u0027 configuration setting value is \u0027/input\u0027\nthen a valid source path would be \u0027/input/contosodataset\u0027. All data to be trained is expected\nto be under the source folder or sub folders under it. Models are trained using documents that\nare of the following content type - \u0027application/pdf\u0027, \u0027image/jpeg\u0027, \u0027image/png\u0027, \u0027image/tiff\u0027.\nOther type of content is ignored.\n\n:param train_request: Training request parameters.\n:type train_request: ~azure.ai.formrecognizer.models.TrainRequest\n:keyword callable cls: A custom type or function that will be passed the direct response\n:keyword str continuation_token: A continuation token to restart a poller from a saved state.\n:keyword polling: True for ARMPolling, False for no polling, or a\n polling object for personal polling strategy\n:paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod\n:keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.\n:return: An instance of AsyncLROPoller that returns either None or the result of cls(response)\n:rtype: ~azure.core.polling.AsyncLROPoller[None]\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\""
+            },
+            "call": "train_request"
+        },
+        "get_custom_model" : {
+            "sync": {
+                "signature": "def get_custom_model(\n    self,\n    model_id,  # type: str\n    include_keys=False,  # type: Optional[bool]\n    **kwargs  # type: Any\n):\n",
+                "doc": "\"\"\"Get Custom Model.\n\nGet detailed information about a custom model.\n\n:param model_id: Model identifier.\n:type model_id: str\n:param include_keys: Include list of extracted keys in model information.\n:type include_keys: bool\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: Model, or the result of cls(response)\n:rtype: ~azure.ai.formrecognizer.models.Model\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+            },
+            "async": {
+                "coroutine": true,
+                "signature": "async def get_custom_model(\n    self,\n    model_id: str,\n    include_keys: Optional[bool] = False,\n    **kwargs\n) -\u003e \"models.Model\":\n",
+                "doc": "\"\"\"Get Custom Model.\n\nGet detailed information about a custom model.\n\n:param model_id: Model identifier.\n:type model_id: str\n:param include_keys: Include list of extracted keys in model information.\n:type include_keys: bool\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: Model, or the result of cls(response)\n:rtype: ~azure.ai.formrecognizer.models.Model\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+            },
+            "call": "model_id, include_keys"
+        },
+        "delete_custom_model" : {
+            "sync": {
+                "signature": "def delete_custom_model(\n    self,\n    model_id,  # type: str\n    **kwargs  # type: Any\n):\n",
+                "doc": "\"\"\"Delete Custom Model.\n\nMark model for deletion. Model artifacts will be permanently removed within a predetermined\nperiod.\n\n:param model_id: Model identifier.\n:type model_id: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: None, or the result of cls(response)\n:rtype: None\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+            },
+            "async": {
+                "coroutine": true,
+                "signature": "async def delete_custom_model(\n    self,\n    model_id: str,\n    **kwargs\n) -\u003e None:\n",
+                "doc": "\"\"\"Delete Custom Model.\n\nMark model for deletion. Model artifacts will be permanently removed within a predetermined\nperiod.\n\n:param model_id: Model identifier.\n:type model_id: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: None, or the result of cls(response)\n:rtype: None\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+            },
+            "call": "model_id"
+        },
+        "_analyze_with_custom_model_initial" : {
+            "sync": {
+                "signature": "def _analyze_with_custom_model_initial(\n    self,\n    model_id,  # type: str\n    include_text_details=False,  # type: Optional[bool]\n    file_stream=None,  # type: Optional[Union[IO, \"models.SourcePath\"]]\n    **kwargs  # type: Any\n):\n",
+                "doc": "\"\"\"\n\n:param model_id: Model identifier.\n:type model_id: str\n:param include_text_details: Include text lines and element references in the result.\n:type include_text_details: bool\n:param file_stream: .json, .pdf, .jpg, .png or .tiff type file stream.\n:type file_stream: IO or ~azure.ai.formrecognizer.models.SourcePath\n:keyword str content_type: Media type of the body sent to the API. Default value is \"application/json\".\n Allowed values are: \"application/pdf\", \"image/jpeg\", \"image/png\", \"image/tiff\", \"application/json\".\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: None, or the result of cls(response)\n:rtype: None\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+            },
+            "async": {
+                "coroutine": true,
+                "signature": "async def _analyze_with_custom_model_initial(\n    self,\n    model_id: str,\n    include_text_details: Optional[bool] = False,\n    file_stream: Optional[Union[IO, \"models.SourcePath\"]] = None,\n    **kwargs\n) -\u003e None:\n",
+                "doc": "\"\"\"\n\n:param model_id: Model identifier.\n:type model_id: str\n:param include_text_details: Include text lines and element references in the result.\n:type include_text_details: bool\n:param file_stream: .json, .pdf, .jpg, .png or .tiff type file stream.\n:type file_stream: IO or ~azure.ai.formrecognizer.models.SourcePath\n:keyword str content_type: Media type of the body sent to the API. Default value is \"application/json\".\n Allowed values are: \"application/pdf\", \"image/jpeg\", \"image/png\", \"image/tiff\", \"application/json\".\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: None, or the result of cls(response)\n:rtype: None\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+            },
+            "call": "model_id, include_text_details, file_stream"
+        },
+        "begin_analyze_with_custom_model" : {
+            "sync": {
+                "signature": "def begin_analyze_with_custom_model(\n    self,\n    model_id,  # type: str\n    include_text_details=False,  # type: Optional[bool]\n    file_stream=None,  # type: Optional[Union[IO, \"models.SourcePath\"]]\n    **kwargs  # type: Any\n):\n",
+                "doc": "\"\"\"Analyze Form.\n\nExtract key-value pairs, tables, and semantic values from a given document. The input document\nmust be of one of the supported content types - \u0027application/pdf\u0027, \u0027image/jpeg\u0027, \u0027image/png\u0027 or\n\u0027image/tiff\u0027. Alternatively, use \u0027application/json\u0027 type to specify the location (Uri or local\npath) of the document to be analyzed.\n\n:param model_id: Model identifier.\n:type model_id: str\n:param include_text_details: Include text lines and element references in the result.\n:type include_text_details: bool\n:param file_stream: .json, .pdf, .jpg, .png or .tiff type file stream.\n:type file_stream: IO or ~azure.ai.formrecognizer.models.SourcePath\n:keyword callable cls: A custom type or function that will be passed the direct response\n:keyword str continuation_token: A continuation token to restart a poller from a saved state.\n:keyword polling: True for ARMPolling, False for no polling, or a\n polling object for personal polling strategy\n:paramtype polling: bool or ~azure.core.polling.PollingMethod\n:keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.\n:return: An instance of LROPoller that returns either None or the result of cls(response)\n:rtype: ~azure.core.polling.LROPoller[None]\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\""
+            },
+            "async": {
+                "coroutine": true,
+                "signature": "async def begin_analyze_with_custom_model(\n    self,\n    model_id: str,\n    include_text_details: Optional[bool] = False,\n    file_stream: Optional[Union[IO, \"models.SourcePath\"]] = None,\n    **kwargs\n) -\u003e AsyncLROPoller[None]:\n",
+                "doc": "\"\"\"Analyze Form.\n\nExtract key-value pairs, tables, and semantic values from a given document. The input document\nmust be of one of the supported content types - \u0027application/pdf\u0027, \u0027image/jpeg\u0027, \u0027image/png\u0027 or\n\u0027image/tiff\u0027. Alternatively, use \u0027application/json\u0027 type to specify the location (Uri or local\npath) of the document to be analyzed.\n\n:param model_id: Model identifier.\n:type model_id: str\n:param include_text_details: Include text lines and element references in the result.\n:type include_text_details: bool\n:param file_stream: .json, .pdf, .jpg, .png or .tiff type file stream.\n:type file_stream: IO or ~azure.ai.formrecognizer.models.SourcePath\n:keyword callable cls: A custom type or function that will be passed the direct response\n:keyword str continuation_token: A continuation token to restart a poller from a saved state.\n:keyword polling: True for ARMPolling, False for no polling, or a\n polling object for personal polling strategy\n:paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod\n:keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.\n:return: An instance of AsyncLROPoller that returns either None or the result of cls(response)\n:rtype: ~azure.core.polling.AsyncLROPoller[None]\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\""
+            },
+            "call": "model_id, include_text_details, file_stream"
+        },
+        "get_analyze_form_result" : {
+            "sync": {
+                "signature": "def get_analyze_form_result(\n    self,\n    model_id,  # type: str\n    result_id,  # type: str\n    **kwargs  # type: Any\n):\n",
+                "doc": "\"\"\"Get Analyze Form Result.\n\nObtain current status and the result of the analyze form operation.\n\n:param model_id: Model identifier.\n:type model_id: str\n:param result_id: Analyze operation result identifier.\n:type result_id: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: AnalyzeOperationResult, or the result of cls(response)\n:rtype: ~azure.ai.formrecognizer.models.AnalyzeOperationResult\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+            },
+            "async": {
+                "coroutine": true,
+                "signature": "async def get_analyze_form_result(\n    self,\n    model_id: str,\n    result_id: str,\n    **kwargs\n) -\u003e \"models.AnalyzeOperationResult\":\n",
+                "doc": "\"\"\"Get Analyze Form Result.\n\nObtain current status and the result of the analyze form operation.\n\n:param model_id: Model identifier.\n:type model_id: str\n:param result_id: Analyze operation result identifier.\n:type result_id: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: AnalyzeOperationResult, or the result of cls(response)\n:rtype: ~azure.ai.formrecognizer.models.AnalyzeOperationResult\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+            },
+            "call": "model_id, result_id"
+        },
+        "_copy_custom_model_initial" : {
+            "sync": {
+                "signature": "def _copy_custom_model_initial(\n    self,\n    model_id,  # type: str\n    copy_request,  # type: \"models.CopyRequest\"\n    **kwargs  # type: Any\n):\n",
+                "doc": "\"\"\"\n\n:param model_id: Model identifier.\n:type model_id: str\n:param copy_request: Copy request parameters.\n:type copy_request: ~azure.ai.formrecognizer.models.CopyRequest\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: None, or the result of cls(response)\n:rtype: None\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+            },
+            "async": {
+                "coroutine": true,
+                "signature": "async def _copy_custom_model_initial(\n    self,\n    model_id: str,\n    copy_request: \"models.CopyRequest\",\n    **kwargs\n) -\u003e None:\n",
+                "doc": "\"\"\"\n\n:param model_id: Model identifier.\n:type model_id: str\n:param copy_request: Copy request parameters.\n:type copy_request: ~azure.ai.formrecognizer.models.CopyRequest\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: None, or the result of cls(response)\n:rtype: None\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+            },
+            "call": "model_id, copy_request"
+        },
+        "begin_copy_custom_model" : {
+            "sync": {
+                "signature": "def begin_copy_custom_model(\n    self,\n    model_id,  # type: str\n    copy_request,  # type: \"models.CopyRequest\"\n    **kwargs  # type: Any\n):\n",
+                "doc": "\"\"\"Copy Custom Model.\n\nCopy custom model stored in this resource (the source) to user specified target Form Recognizer\nresource.\n\n:param model_id: Model identifier.\n:type model_id: str\n:param copy_request: Copy request parameters.\n:type copy_request: ~azure.ai.formrecognizer.models.CopyRequest\n:keyword callable cls: A custom type or function that will be passed the direct response\n:keyword str continuation_token: A continuation token to restart a poller from a saved state.\n:keyword polling: True for ARMPolling, False for no polling, or a\n polling object for personal polling strategy\n:paramtype polling: bool or ~azure.core.polling.PollingMethod\n:keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.\n:return: An instance of LROPoller that returns either None or the result of cls(response)\n:rtype: ~azure.core.polling.LROPoller[None]\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\""
+            },
+            "async": {
+                "coroutine": true,
+                "signature": "async def begin_copy_custom_model(\n    self,\n    model_id: str,\n    copy_request: \"models.CopyRequest\",\n    **kwargs\n) -\u003e AsyncLROPoller[None]:\n",
+                "doc": "\"\"\"Copy Custom Model.\n\nCopy custom model stored in this resource (the source) to user specified target Form Recognizer\nresource.\n\n:param model_id: Model identifier.\n:type model_id: str\n:param copy_request: Copy request parameters.\n:type copy_request: ~azure.ai.formrecognizer.models.CopyRequest\n:keyword callable cls: A custom type or function that will be passed the direct response\n:keyword str continuation_token: A continuation token to restart a poller from a saved state.\n:keyword polling: True for ARMPolling, False for no polling, or a\n polling object for personal polling strategy\n:paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod\n:keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.\n:return: An instance of AsyncLROPoller that returns either None or the result of cls(response)\n:rtype: ~azure.core.polling.AsyncLROPoller[None]\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\""
+            },
+            "call": "model_id, copy_request"
+        },
+        "get_custom_model_copy_result" : {
+            "sync": {
+                "signature": "def get_custom_model_copy_result(\n    self,\n    model_id,  # type: str\n    result_id,  # type: str\n    **kwargs  # type: Any\n):\n",
+                "doc": "\"\"\"Get Custom Model Copy Result.\n\nObtain current status and the result of a custom model copy operation.\n\n:param model_id: Model identifier.\n:type model_id: str\n:param result_id: Copy operation result identifier.\n:type result_id: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: CopyOperationResult, or the result of cls(response)\n:rtype: ~azure.ai.formrecognizer.models.CopyOperationResult\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+            },
+            "async": {
+                "coroutine": true,
+                "signature": "async def get_custom_model_copy_result(\n    self,\n    model_id: str,\n    result_id: str,\n    **kwargs\n) -\u003e \"models.CopyOperationResult\":\n",
+                "doc": "\"\"\"Get Custom Model Copy Result.\n\nObtain current status and the result of a custom model copy operation.\n\n:param model_id: Model identifier.\n:type model_id: str\n:param result_id: Copy operation result identifier.\n:type result_id: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: CopyOperationResult, or the result of cls(response)\n:rtype: ~azure.ai.formrecognizer.models.CopyOperationResult\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+            },
+            "call": "model_id, result_id"
+        },
+        "generate_model_copy_authorization" : {
+            "sync": {
+                "signature": "def generate_model_copy_authorization(\n    self,\n    **kwargs  # type: Any\n):\n",
+                "doc": "\"\"\"Generate Copy Authorization.\n\nGenerate authorization to copy a model into the target Form Recognizer resource.\n\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: CopyAuthorizationResult, or the result of cls(response)\n:rtype: ~azure.ai.formrecognizer.models.CopyAuthorizationResult\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+            },
+            "async": {
+                "coroutine": true,
+                "signature": "async def generate_model_copy_authorization(\n    self,\n    **kwargs\n) -\u003e \"models.CopyAuthorizationResult\":\n",
+                "doc": "\"\"\"Generate Copy Authorization.\n\nGenerate authorization to copy a model into the target Form Recognizer resource.\n\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: CopyAuthorizationResult, or the result of cls(response)\n:rtype: ~azure.ai.formrecognizer.models.CopyAuthorizationResult\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+            },
+            "call": ""
+        },
+        "_compose_custom_models_async_initial" : {
+            "sync": {
+                "signature": "def _compose_custom_models_async_initial(\n    self,\n    compose_request,  # type: \"models.ComposeRequest\"\n    **kwargs  # type: Any\n):\n",
+                "doc": "\"\"\"\n\n:param compose_request: Compose models.\n:type compose_request: ~azure.ai.formrecognizer.models.ComposeRequest\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: None, or the result of cls(response)\n:rtype: None\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+            },
+            "async": {
+                "coroutine": true,
+                "signature": "async def _compose_custom_models_async_initial(\n    self,\n    compose_request: \"models.ComposeRequest\",\n    **kwargs\n) -\u003e None:\n",
+                "doc": "\"\"\"\n\n:param compose_request: Compose models.\n:type compose_request: ~azure.ai.formrecognizer.models.ComposeRequest\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: None, or the result of cls(response)\n:rtype: None\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+            },
+            "call": "compose_request"
+        },
+        "begin_compose_custom_models_async" : {
+            "sync": {
+                "signature": "def begin_compose_custom_models_async(\n    self,\n    compose_request,  # type: \"models.ComposeRequest\"\n    **kwargs  # type: Any\n):\n",
+                "doc": "\"\"\"Compose trained with labels models into one composed model.\n\nCompose request would include list of models ids.\nIt would validate what all models either trained with labels model or composed model.\nIt would validate limit of models put together.\n\n:param compose_request: Compose models.\n:type compose_request: ~azure.ai.formrecognizer.models.ComposeRequest\n:keyword callable cls: A custom type or function that will be passed the direct response\n:keyword str continuation_token: A continuation token to restart a poller from a saved state.\n:keyword polling: True for ARMPolling, False for no polling, or a\n polling object for personal polling strategy\n:paramtype polling: bool or ~azure.core.polling.PollingMethod\n:keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.\n:return: An instance of LROPoller that returns either None or the result of cls(response)\n:rtype: ~azure.core.polling.LROPoller[None]\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\""
+            },
+            "async": {
+                "coroutine": true,
+                "signature": "async def begin_compose_custom_models_async(\n    self,\n    compose_request: \"models.ComposeRequest\",\n    **kwargs\n) -\u003e AsyncLROPoller[None]:\n",
+                "doc": "\"\"\"Compose trained with labels models into one composed model.\n\nCompose request would include list of models ids.\nIt would validate what all models either trained with labels model or composed model.\nIt would validate limit of models put together.\n\n:param compose_request: Compose models.\n:type compose_request: ~azure.ai.formrecognizer.models.ComposeRequest\n:keyword callable cls: A custom type or function that will be passed the direct response\n:keyword str continuation_token: A continuation token to restart a poller from a saved state.\n:keyword polling: True for ARMPolling, False for no polling, or a\n polling object for personal polling strategy\n:paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod\n:keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.\n:return: An instance of AsyncLROPoller that returns either None or the result of cls(response)\n:rtype: ~azure.core.polling.AsyncLROPoller[None]\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\""
+            },
+            "call": "compose_request"
+        },
+        "_analyze_business_card_async_initial" : {
+            "sync": {
+                "signature": "def _analyze_business_card_async_initial(\n    self,\n    include_text_details=False,  # type: Optional[bool]\n    locale=None,  # type: Optional[str]\n    file_stream=None,  # type: Optional[Union[IO, \"models.SourcePath\"]]\n    **kwargs  # type: Any\n):\n",
+                "doc": "\"\"\"\n\n:param include_text_details: Include text lines and element references in the result.\n:type include_text_details: bool\n:param locale: Locale of the business card. Supported locales include: en-AU, en-CA, en-GB, en-\n IN, en-US(default).\n:type locale: str\n:param file_stream: .json, .pdf, .jpg, .png or .tiff type file stream.\n:type file_stream: IO or ~azure.ai.formrecognizer.models.SourcePath\n:keyword str content_type: Media type of the body sent to the API. Default value is \"application/json\".\n Allowed values are: \"application/pdf\", \"image/jpeg\", \"image/png\", \"image/tiff\", \"application/json\".\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: None, or the result of cls(response)\n:rtype: None\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+            },
+            "async": {
+                "coroutine": true,
+                "signature": "async def _analyze_business_card_async_initial(\n    self,\n    include_text_details: Optional[bool] = False,\n    locale: Optional[str] = None,\n    file_stream: Optional[Union[IO, \"models.SourcePath\"]] = None,\n    **kwargs\n) -\u003e None:\n",
+                "doc": "\"\"\"\n\n:param include_text_details: Include text lines and element references in the result.\n:type include_text_details: bool\n:param locale: Locale of the business card. Supported locales include: en-AU, en-CA, en-GB, en-\n IN, en-US(default).\n:type locale: str\n:param file_stream: .json, .pdf, .jpg, .png or .tiff type file stream.\n:type file_stream: IO or ~azure.ai.formrecognizer.models.SourcePath\n:keyword str content_type: Media type of the body sent to the API. Default value is \"application/json\".\n Allowed values are: \"application/pdf\", \"image/jpeg\", \"image/png\", \"image/tiff\", \"application/json\".\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: None, or the result of cls(response)\n:rtype: None\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+            },
+            "call": "include_text_details, locale, file_stream"
+        },
+        "begin_analyze_business_card_async" : {
+            "sync": {
+                "signature": "def begin_analyze_business_card_async(\n    self,\n    include_text_details=False,  # type: Optional[bool]\n    locale=None,  # type: Optional[str]\n    file_stream=None,  # type: Optional[Union[IO, \"models.SourcePath\"]]\n    **kwargs  # type: Any\n):\n",
+                "doc": "\"\"\"Analyze Business Card.\n\nExtract field text and semantic values from a given business card document. The input document\nmust be of one of the supported content types - \u0027application/pdf\u0027, \u0027image/jpeg\u0027, \u0027image/png\u0027 or\n\u0027image/tiff\u0027. Alternatively, use \u0027application/json\u0027 type to specify the location (Uri) of the\ndocument to be analyzed.\n\n:param include_text_details: Include text lines and element references in the result.\n:type include_text_details: bool\n:param locale: Locale of the business card. Supported locales include: en-AU, en-CA, en-GB, en-\n IN, en-US(default).\n:type locale: str\n:param file_stream: .json, .pdf, .jpg, .png or .tiff type file stream.\n:type file_stream: IO or ~azure.ai.formrecognizer.models.SourcePath\n:keyword callable cls: A custom type or function that will be passed the direct response\n:keyword str continuation_token: A continuation token to restart a poller from a saved state.\n:keyword polling: True for ARMPolling, False for no polling, or a\n polling object for personal polling strategy\n:paramtype polling: bool or ~azure.core.polling.PollingMethod\n:keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.\n:return: An instance of LROPoller that returns either None or the result of cls(response)\n:rtype: ~azure.core.polling.LROPoller[None]\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\""
+            },
+            "async": {
+                "coroutine": true,
+                "signature": "async def begin_analyze_business_card_async(\n    self,\n    include_text_details: Optional[bool] = False,\n    locale: Optional[str] = None,\n    file_stream: Optional[Union[IO, \"models.SourcePath\"]] = None,\n    **kwargs\n) -\u003e AsyncLROPoller[None]:\n",
+                "doc": "\"\"\"Analyze Business Card.\n\nExtract field text and semantic values from a given business card document. The input document\nmust be of one of the supported content types - \u0027application/pdf\u0027, \u0027image/jpeg\u0027, \u0027image/png\u0027 or\n\u0027image/tiff\u0027. Alternatively, use \u0027application/json\u0027 type to specify the location (Uri) of the\ndocument to be analyzed.\n\n:param include_text_details: Include text lines and element references in the result.\n:type include_text_details: bool\n:param locale: Locale of the business card. Supported locales include: en-AU, en-CA, en-GB, en-\n IN, en-US(default).\n:type locale: str\n:param file_stream: .json, .pdf, .jpg, .png or .tiff type file stream.\n:type file_stream: IO or ~azure.ai.formrecognizer.models.SourcePath\n:keyword callable cls: A custom type or function that will be passed the direct response\n:keyword str continuation_token: A continuation token to restart a poller from a saved state.\n:keyword polling: True for ARMPolling, False for no polling, or a\n polling object for personal polling strategy\n:paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod\n:keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.\n:return: An instance of AsyncLROPoller that returns either None or the result of cls(response)\n:rtype: ~azure.core.polling.AsyncLROPoller[None]\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\""
+            },
+            "call": "include_text_details, locale, file_stream"
+        },
+        "get_analyze_business_card_result" : {
+            "sync": {
+                "signature": "def get_analyze_business_card_result(\n    self,\n    result_id,  # type: str\n    **kwargs  # type: Any\n):\n",
+                "doc": "\"\"\"Get Analyze Business Card Result.\n\nTrack the progress and obtain the result of the analyze business card operation.\n\n:param result_id: Analyze operation result identifier.\n:type result_id: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: AnalyzeOperationResult, or the result of cls(response)\n:rtype: ~azure.ai.formrecognizer.models.AnalyzeOperationResult\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+            },
+            "async": {
+                "coroutine": true,
+                "signature": "async def get_analyze_business_card_result(\n    self,\n    result_id: str,\n    **kwargs\n) -\u003e \"models.AnalyzeOperationResult\":\n",
+                "doc": "\"\"\"Get Analyze Business Card Result.\n\nTrack the progress and obtain the result of the analyze business card operation.\n\n:param result_id: Analyze operation result identifier.\n:type result_id: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: AnalyzeOperationResult, or the result of cls(response)\n:rtype: ~azure.ai.formrecognizer.models.AnalyzeOperationResult\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+            },
+            "call": "result_id"
+        },
+        "_analyze_receipt_async_initial" : {
+            "sync": {
+                "signature": "def _analyze_receipt_async_initial(\n    self,\n    include_text_details=False,  # type: Optional[bool]\n    locale=None,  # type: Optional[str]\n    file_stream=None,  # type: Optional[Union[IO, \"models.SourcePath\"]]\n    **kwargs  # type: Any\n):\n",
+                "doc": "\"\"\"\n\n:param include_text_details: Include text lines and element references in the result.\n:type include_text_details: bool\n:param locale: Locale of the receipt. Supported locales include: en-AU, en-CA, en-GB, en-IN,\n en-US(default).\n:type locale: str\n:param file_stream: .json, .pdf, .jpg, .png or .tiff type file stream.\n:type file_stream: IO or ~azure.ai.formrecognizer.models.SourcePath\n:keyword str content_type: Media type of the body sent to the API. Default value is \"application/json\".\n Allowed values are: \"application/pdf\", \"image/jpeg\", \"image/png\", \"image/tiff\", \"application/json\".\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: None, or the result of cls(response)\n:rtype: None\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+            },
+            "async": {
+                "coroutine": true,
+                "signature": "async def _analyze_receipt_async_initial(\n    self,\n    include_text_details: Optional[bool] = False,\n    locale: Optional[str] = None,\n    file_stream: Optional[Union[IO, \"models.SourcePath\"]] = None,\n    **kwargs\n) -\u003e None:\n",
+                "doc": "\"\"\"\n\n:param include_text_details: Include text lines and element references in the result.\n:type include_text_details: bool\n:param locale: Locale of the receipt. Supported locales include: en-AU, en-CA, en-GB, en-IN,\n en-US(default).\n:type locale: str\n:param file_stream: .json, .pdf, .jpg, .png or .tiff type file stream.\n:type file_stream: IO or ~azure.ai.formrecognizer.models.SourcePath\n:keyword str content_type: Media type of the body sent to the API. Default value is \"application/json\".\n Allowed values are: \"application/pdf\", \"image/jpeg\", \"image/png\", \"image/tiff\", \"application/json\".\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: None, or the result of cls(response)\n:rtype: None\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+            },
+            "call": "include_text_details, locale, file_stream"
+        },
+        "begin_analyze_receipt_async" : {
+            "sync": {
+                "signature": "def begin_analyze_receipt_async(\n    self,\n    include_text_details=False,  # type: Optional[bool]\n    locale=None,  # type: Optional[str]\n    file_stream=None,  # type: Optional[Union[IO, \"models.SourcePath\"]]\n    **kwargs  # type: Any\n):\n",
+                "doc": "\"\"\"Analyze Receipt.\n\nExtract field text and semantic values from a given receipt document. The input document must\nbe of one of the supported content types - \u0027application/pdf\u0027, \u0027image/jpeg\u0027, \u0027image/png\u0027 or\n\u0027image/tiff\u0027. Alternatively, use \u0027application/json\u0027 type to specify the location (Uri) of the\ndocument to be analyzed.\n\n:param include_text_details: Include text lines and element references in the result.\n:type include_text_details: bool\n:param locale: Locale of the receipt. Supported locales include: en-AU, en-CA, en-GB, en-IN,\n en-US(default).\n:type locale: str\n:param file_stream: .json, .pdf, .jpg, .png or .tiff type file stream.\n:type file_stream: IO or ~azure.ai.formrecognizer.models.SourcePath\n:keyword callable cls: A custom type or function that will be passed the direct response\n:keyword str continuation_token: A continuation token to restart a poller from a saved state.\n:keyword polling: True for ARMPolling, False for no polling, or a\n polling object for personal polling strategy\n:paramtype polling: bool or ~azure.core.polling.PollingMethod\n:keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.\n:return: An instance of LROPoller that returns either None or the result of cls(response)\n:rtype: ~azure.core.polling.LROPoller[None]\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\""
+            },
+            "async": {
+                "coroutine": true,
+                "signature": "async def begin_analyze_receipt_async(\n    self,\n    include_text_details: Optional[bool] = False,\n    locale: Optional[str] = None,\n    file_stream: Optional[Union[IO, \"models.SourcePath\"]] = None,\n    **kwargs\n) -\u003e AsyncLROPoller[None]:\n",
+                "doc": "\"\"\"Analyze Receipt.\n\nExtract field text and semantic values from a given receipt document. The input document must\nbe of one of the supported content types - \u0027application/pdf\u0027, \u0027image/jpeg\u0027, \u0027image/png\u0027 or\n\u0027image/tiff\u0027. Alternatively, use \u0027application/json\u0027 type to specify the location (Uri) of the\ndocument to be analyzed.\n\n:param include_text_details: Include text lines and element references in the result.\n:type include_text_details: bool\n:param locale: Locale of the receipt. Supported locales include: en-AU, en-CA, en-GB, en-IN,\n en-US(default).\n:type locale: str\n:param file_stream: .json, .pdf, .jpg, .png or .tiff type file stream.\n:type file_stream: IO or ~azure.ai.formrecognizer.models.SourcePath\n:keyword callable cls: A custom type or function that will be passed the direct response\n:keyword str continuation_token: A continuation token to restart a poller from a saved state.\n:keyword polling: True for ARMPolling, False for no polling, or a\n polling object for personal polling strategy\n:paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod\n:keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.\n:return: An instance of AsyncLROPoller that returns either None or the result of cls(response)\n:rtype: ~azure.core.polling.AsyncLROPoller[None]\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\""
+            },
+            "call": "include_text_details, locale, file_stream"
+        },
+        "get_analyze_receipt_result" : {
+            "sync": {
+                "signature": "def get_analyze_receipt_result(\n    self,\n    result_id,  # type: str\n    **kwargs  # type: Any\n):\n",
+                "doc": "\"\"\"Get Analyze Receipt Result.\n\nTrack the progress and obtain the result of the analyze receipt operation.\n\n:param result_id: Analyze operation result identifier.\n:type result_id: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: AnalyzeOperationResult, or the result of cls(response)\n:rtype: ~azure.ai.formrecognizer.models.AnalyzeOperationResult\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+            },
+            "async": {
+                "coroutine": true,
+                "signature": "async def get_analyze_receipt_result(\n    self,\n    result_id: str,\n    **kwargs\n) -\u003e \"models.AnalyzeOperationResult\":\n",
+                "doc": "\"\"\"Get Analyze Receipt Result.\n\nTrack the progress and obtain the result of the analyze receipt operation.\n\n:param result_id: Analyze operation result identifier.\n:type result_id: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: AnalyzeOperationResult, or the result of cls(response)\n:rtype: ~azure.ai.formrecognizer.models.AnalyzeOperationResult\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+            },
+            "call": "result_id"
+        },
+        "_analyze_layout_async_initial" : {
+            "sync": {
+                "signature": "def _analyze_layout_async_initial(\n    self,\n    file_stream=None,  # type: Optional[Union[IO, \"models.SourcePath\"]]\n    **kwargs  # type: Any\n):\n",
+                "doc": "\"\"\"\n\n:param file_stream: .json, .pdf, .jpg, .png or .tiff type file stream.\n:type file_stream: IO or ~azure.ai.formrecognizer.models.SourcePath\n:keyword str content_type: Media type of the body sent to the API. Default value is \"application/json\".\n Allowed values are: \"application/pdf\", \"image/jpeg\", \"image/png\", \"image/tiff\", \"application/json\".\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: None, or the result of cls(response)\n:rtype: None\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+            },
+            "async": {
+                "coroutine": true,
+                "signature": "async def _analyze_layout_async_initial(\n    self,\n    file_stream: Optional[Union[IO, \"models.SourcePath\"]] = None,\n    **kwargs\n) -\u003e None:\n",
+                "doc": "\"\"\"\n\n:param file_stream: .json, .pdf, .jpg, .png or .tiff type file stream.\n:type file_stream: IO or ~azure.ai.formrecognizer.models.SourcePath\n:keyword str content_type: Media type of the body sent to the API. Default value is \"application/json\".\n Allowed values are: \"application/pdf\", \"image/jpeg\", \"image/png\", \"image/tiff\", \"application/json\".\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: None, or the result of cls(response)\n:rtype: None\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+            },
+            "call": "file_stream"
+        },
+        "begin_analyze_layout_async" : {
+            "sync": {
+                "signature": "def begin_analyze_layout_async(\n    self,\n    file_stream=None,  # type: Optional[Union[IO, \"models.SourcePath\"]]\n    **kwargs  # type: Any\n):\n",
+                "doc": "\"\"\"Analyze Layout.\n\nExtract text and layout information from a given document. The input document must be of one of\nthe supported content types - \u0027application/pdf\u0027, \u0027image/jpeg\u0027, \u0027image/png\u0027 or \u0027image/tiff\u0027.\nAlternatively, use \u0027application/json\u0027 type to specify the location (Uri or local path) of the\ndocument to be analyzed.\n\n:param file_stream: .json, .pdf, .jpg, .png or .tiff type file stream.\n:type file_stream: IO or ~azure.ai.formrecognizer.models.SourcePath\n:keyword callable cls: A custom type or function that will be passed the direct response\n:keyword str continuation_token: A continuation token to restart a poller from a saved state.\n:keyword polling: True for ARMPolling, False for no polling, or a\n polling object for personal polling strategy\n:paramtype polling: bool or ~azure.core.polling.PollingMethod\n:keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.\n:return: An instance of LROPoller that returns either None or the result of cls(response)\n:rtype: ~azure.core.polling.LROPoller[None]\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\""
+            },
+            "async": {
+                "coroutine": true,
+                "signature": "async def begin_analyze_layout_async(\n    self,\n    file_stream: Optional[Union[IO, \"models.SourcePath\"]] = None,\n    **kwargs\n) -\u003e AsyncLROPoller[None]:\n",
+                "doc": "\"\"\"Analyze Layout.\n\nExtract text and layout information from a given document. The input document must be of one of\nthe supported content types - \u0027application/pdf\u0027, \u0027image/jpeg\u0027, \u0027image/png\u0027 or \u0027image/tiff\u0027.\nAlternatively, use \u0027application/json\u0027 type to specify the location (Uri or local path) of the\ndocument to be analyzed.\n\n:param file_stream: .json, .pdf, .jpg, .png or .tiff type file stream.\n:type file_stream: IO or ~azure.ai.formrecognizer.models.SourcePath\n:keyword callable cls: A custom type or function that will be passed the direct response\n:keyword str continuation_token: A continuation token to restart a poller from a saved state.\n:keyword polling: True for ARMPolling, False for no polling, or a\n polling object for personal polling strategy\n:paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod\n:keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.\n:return: An instance of AsyncLROPoller that returns either None or the result of cls(response)\n:rtype: ~azure.core.polling.AsyncLROPoller[None]\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\""
+            },
+            "call": "file_stream"
+        },
+        "get_analyze_layout_result" : {
+            "sync": {
+                "signature": "def get_analyze_layout_result(\n    self,\n    result_id,  # type: str\n    **kwargs  # type: Any\n):\n",
+                "doc": "\"\"\"Get Analyze Layout Result.\n\nTrack the progress and obtain the result of the analyze layout operation.\n\n:param result_id: Analyze operation result identifier.\n:type result_id: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: AnalyzeOperationResult, or the result of cls(response)\n:rtype: ~azure.ai.formrecognizer.models.AnalyzeOperationResult\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+            },
+            "async": {
+                "coroutine": true,
+                "signature": "async def get_analyze_layout_result(\n    self,\n    result_id: str,\n    **kwargs\n) -\u003e \"models.AnalyzeOperationResult\":\n",
+                "doc": "\"\"\"Get Analyze Layout Result.\n\nTrack the progress and obtain the result of the analyze layout operation.\n\n:param result_id: Analyze operation result identifier.\n:type result_id: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: AnalyzeOperationResult, or the result of cls(response)\n:rtype: ~azure.ai.formrecognizer.models.AnalyzeOperationResult\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+            },
+            "call": "result_id"
+        },
+        "list_custom_models" : {
+            "sync": {
+                "signature": "def list_custom_models(\n    self,\n    **kwargs  # type: Any\n):\n",
+                "doc": "\"\"\"List Custom Models.\n\nGet information about all custom models.\n\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: An iterator like instance of either Models or the result of cls(response)\n:rtype: ~azure.core.paging.ItemPaged[~azure.ai.formrecognizer.models.Models]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+            },
+            "async": {
+                "coroutine": false,
+                "signature": "def list_custom_models(\n    self,\n    **kwargs\n) -\u003e AsyncItemPaged[\"models.Models\"]:\n",
+                "doc": "\"\"\"List Custom Models.\n\nGet information about all custom models.\n\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: An iterator like instance of either Models or the result of cls(response)\n:rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.formrecognizer.models.Models]\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+            },
+            "call": ""
+        },
+        "get_custom_models" : {
+            "sync": {
+                "signature": "def get_custom_models(\n    self,\n    **kwargs  # type: Any\n):\n",
+                "doc": "\"\"\"Get Custom Models.\n\nGet information about all custom models.\n\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: Models, or the result of cls(response)\n:rtype: ~azure.ai.formrecognizer.models.Models\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+            },
+            "async": {
+                "coroutine": true,
+                "signature": "async def get_custom_models(\n    self,\n    **kwargs\n) -\u003e \"models.Models\":\n",
+                "doc": "\"\"\"Get Custom Models.\n\nGet information about all custom models.\n\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: Models, or the result of cls(response)\n:rtype: ~azure.ai.formrecognizer.models.Models\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+            },
+            "call": ""
+        }
+    },
+    "sync_imports": "{\"regular\": {\"azurecore\": {\"azure.core.exceptions\": [\"ClientAuthenticationError\", \"HttpResponseError\", \"ResourceExistsError\", \"ResourceNotFoundError\", \"map_error\"], \"azure.core.pipeline\": [\"PipelineResponse\"], \"azure.core.pipeline.transport\": [\"HttpRequest\", \"HttpResponse\"], \"azure.core.polling\": [\"LROPoller\", \"NoPolling\", \"PollingMethod\"], \"azure.core.polling.base_polling\": [\"LROBasePolling\"], \"azure.core.paging\": [\"ItemPaged\"]}, \"stdlib\": {\"warnings\": [null]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Callable\", \"Dict\", \"Generic\", \"IO\", \"Iterable\", \"Optional\", \"TypeVar\", \"Union\"]}}}",
+    "async_imports": "{\"regular\": {\"azurecore\": {\"azure.core.exceptions\": [\"ClientAuthenticationError\", \"HttpResponseError\", \"ResourceExistsError\", \"ResourceNotFoundError\", \"map_error\"], \"azure.core.pipeline\": [\"PipelineResponse\"], \"azure.core.pipeline.transport\": [\"AsyncHttpResponse\", \"HttpRequest\"], \"azure.core.polling\": [\"AsyncLROPoller\", \"AsyncNoPolling\", \"AsyncPollingMethod\"], \"azure.core.polling.async_base_polling\": [\"AsyncLROBasePolling\"], \"azure.core.async_paging\": [\"AsyncItemPaged\", \"AsyncList\"]}, \"stdlib\": {\"warnings\": [null]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"AsyncIterable\", \"Callable\", \"Dict\", \"Generic\", \"IO\", \"Optional\", \"TypeVar\", \"Union\"]}}}"
+}

@@ -211,7 +211,7 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
         responses = []
 
         def callback(raw_response, _, headers):
-            analyze_result = fr_client._client._deserialize(AnalyzeOperationResult, raw_response)
+            analyze_result = fr_client._deserialize(AnalyzeOperationResult, raw_response)
             form = prepare_form_result(analyze_result, model.model_id)
             responses.append(analyze_result)
             responses.append(form)
@@ -248,7 +248,7 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
         responses = []
 
         def callback(raw_response, _, headers):
-            analyze_result = fr_client._client._deserialize(AnalyzeOperationResult, raw_response)
+            analyze_result = fr_client._deserialize(AnalyzeOperationResult, raw_response)
             form = prepare_form_result(analyze_result, model.model_id)
             responses.append(analyze_result)
             responses.append(form)
@@ -286,7 +286,7 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
         responses = []
 
         def callback(raw_response, _, headers):
-            analyze_result = fr_client._client._deserialize(AnalyzeOperationResult, raw_response)
+            analyze_result = fr_client._deserialize(AnalyzeOperationResult, raw_response)
             form = prepare_form_result(analyze_result, model.model_id)
             responses.append(analyze_result)
             responses.append(form)
@@ -323,7 +323,7 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
         responses = []
 
         def callback(raw_response, _, headers):
-            analyze_result = fr_client._client._deserialize(AnalyzeOperationResult, raw_response)
+            analyze_result = fr_client._deserialize(AnalyzeOperationResult, raw_response)
             form = prepare_form_result(analyze_result, model.model_id)
             responses.append(analyze_result)
             responses.append(form)
@@ -387,7 +387,7 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
         responses = []
 
         def callback(raw_response, _, headers):
-            analyze_result = fr_client._client._deserialize(AnalyzeOperationResult, raw_response)
+            analyze_result = fr_client._deserialize(AnalyzeOperationResult, raw_response)
             form = prepare_form_result(analyze_result, model.model_id)
             responses.append(analyze_result)
             responses.append(form)
@@ -425,7 +425,7 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
         responses = []
 
         def callback(raw_response, _, headers):
-            analyze_result = fr_client._client._deserialize(AnalyzeOperationResult, raw_response)
+            analyze_result = fr_client._deserialize(AnalyzeOperationResult, raw_response)
             form = prepare_form_result(analyze_result, model.model_id)
             responses.append(analyze_result)
             responses.append(form)

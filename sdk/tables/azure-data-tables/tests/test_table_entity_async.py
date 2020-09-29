@@ -1075,7 +1075,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    @pytest.mark.skip("pending")
+    @pytest.mark.skip("Authentication and conflict error")
     @GlobalStorageAccountPreparer()
     async def test_operations_on_entity_with_partition_key_having_single_quote(self, resource_group, location,
                                                                                storage_account, storage_account_key):
@@ -1298,6 +1298,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
+    # TODO: move this over to the batch test file when merged
     @pytest.mark.skip("Batch not implemented")
     @GlobalStorageAccountPreparer()
     def test_query_entities_large(self, resource_group, location, storage_account, storage_account_key):

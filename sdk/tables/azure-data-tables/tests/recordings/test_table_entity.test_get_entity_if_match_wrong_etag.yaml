@@ -15,11 +15,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Sat, 05 Sep 2020 00:17:59 GMT
+      - Wed, 16 Sep 2020 21:51:32 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Sat, 05 Sep 2020 00:17:59 GMT
+      - Wed, 16 Sep 2020 21:51:32 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
@@ -33,7 +33,7 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Sat, 05 Sep 2020 00:17:59 GMT
+      - Wed, 16 Sep 2020 21:51:32 GMT
       location:
       - https://storagename.table.core.windows.net/Tables('uttable4e1a15d3')
       server:
@@ -63,11 +63,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Sat, 05 Sep 2020 00:18:00 GMT
+      - Wed, 16 Sep 2020 21:51:32 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Sat, 05 Sep 2020 00:18:00 GMT
+      - Wed, 16 Sep 2020 21:51:32 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
@@ -81,7 +81,7 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Sat, 05 Sep 2020 00:17:59 GMT
+      - Wed, 16 Sep 2020 21:51:32 GMT
       location:
       - https://storagename.table.core.windows.net/Tables('testtable')
       server:
@@ -112,27 +112,27 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Sat, 05 Sep 2020 00:18:00 GMT
+      - Wed, 16 Sep 2020 21:51:32 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Sat, 05 Sep 2020 00:18:00 GMT
+      - Wed, 16 Sep 2020 21:51:32 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
     uri: https://storagename.table.core.windows.net/testtable
   response:
     body:
-      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#testtable/@Element","odata.etag":"W/\"datetime''2020-09-05T00%3A18%3A00.1669886Z''\"","PartitionKey":"PartitionKey","RowKey":"RowKey","Timestamp":"2020-09-05T00:18:00.1669886Z","Value":1}'
+      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#testtable/@Element","odata.etag":"W/\"datetime''2020-09-16T21%3A51%3A32.4686738Z''\"","PartitionKey":"PartitionKey","RowKey":"RowKey","Timestamp":"2020-09-16T21:51:32.4686738Z","Value":1}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Sat, 05 Sep 2020 00:17:59 GMT
+      - Wed, 16 Sep 2020 21:51:32 GMT
       etag:
-      - W/"datetime'2020-09-05T00%3A18%3A00.1669886Z'"
+      - W/"datetime'2020-09-16T21%3A51%3A32.4686738Z'"
       location:
       - https://storagename.table.core.windows.net/testtable(PartitionKey='PartitionKey',RowKey='RowKey')
       server:
@@ -163,13 +163,13 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Sat, 05 Sep 2020 00:18:00 GMT
+      - Wed, 16 Sep 2020 21:51:32 GMT
       If-Match:
       - '*'
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Sat, 05 Sep 2020 00:18:00 GMT
+      - Wed, 16 Sep 2020 21:51:32 GMT
       x-ms-version:
       - '2019-02-02'
     method: PATCH
@@ -183,9 +183,9 @@ interactions:
       content-length:
       - '0'
       date:
-      - Sat, 05 Sep 2020 00:17:59 GMT
+      - Wed, 16 Sep 2020 21:51:32 GMT
       etag:
-      - W/"datetime'2020-09-05T00%3A18%3A00.2049619Z'"
+      - W/"datetime'2020-09-16T21%3A51%3A32.5121869Z'"
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options:
@@ -209,13 +209,13 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Sat, 05 Sep 2020 00:18:00 GMT
+      - Wed, 16 Sep 2020 21:51:32 GMT
       If-Match:
-      - W/"datetime'2020-09-05T00%3A18%3A00.1669886Z'"
+      - W/"datetime'2020-09-16T21%3A51%3A32.4686738Z'"
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Sat, 05 Sep 2020 00:18:00 GMT
+      - Wed, 16 Sep 2020 21:51:32 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
@@ -223,14 +223,14 @@ interactions:
   response:
     body:
       string: '{"odata.error":{"code":"UpdateConditionNotSatisfied","message":{"lang":"en-US","value":"The
-        update condition specified in the request was not satisfied.\nRequestId:1ee04f47-b002-0044-401a-835a5b000000\nTime:2020-09-05T00:18:00.2400412Z"}}}'
+        update condition specified in the request was not satisfied.\nRequestId:8aee9936-4002-0006-6173-8c9f7f000000\nTime:2020-09-16T21:51:32.5437272Z"}}}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Sat, 05 Sep 2020 00:17:59 GMT
+      - Wed, 16 Sep 2020 21:51:32 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -254,11 +254,11 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Sat, 05 Sep 2020 00:18:00 GMT
+      - Wed, 16 Sep 2020 21:51:32 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Sat, 05 Sep 2020 00:18:00 GMT
+      - Wed, 16 Sep 2020 21:51:32 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
@@ -272,7 +272,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Sat, 05 Sep 2020 00:17:59 GMT
+      - Wed, 16 Sep 2020 21:51:32 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options:

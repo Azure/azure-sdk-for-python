@@ -54,7 +54,7 @@ async def create_indexer():
     # create a datasource
     container = SearchIndexerDataContainer(name='searchcontainer')
     data_source_connection = SearchIndexerDataSourceConnection(
-        name="indexer-datasource",
+        name="async-indexer-datasource",
         type="azureblob",
         connection_string=connection_string,
         container=container
