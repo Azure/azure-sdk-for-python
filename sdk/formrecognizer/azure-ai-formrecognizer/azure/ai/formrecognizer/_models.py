@@ -880,9 +880,11 @@ class CustomFormModelInfo(object):
         if model.status == "succeeded":  # map copy status to model status
             model.status = "ready"
 
-        properties, display_name = None, None
+        display_name = None
         if hasattr(model, "attributes"):
             properties = CustomFormModelProperties._from_generated(model)
+        else:
+            properties = CustomFormModelProperties(is_composed_model=False)
         if hasattr(model, "model_name"):
             display_name = model.model_name
         return cls(

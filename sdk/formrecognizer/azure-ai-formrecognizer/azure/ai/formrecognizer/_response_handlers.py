@@ -6,7 +6,7 @@
 
 # pylint: disable=protected-access
 
-from ._helpers import adjust_text_angle
+from ._helpers import adjust_text_angle, adjust_confidence
 from ._models import (
     FormField,
     FormPage,
@@ -131,7 +131,7 @@ def prepare_labeled_result(response, model_id):
             },
             pages=form_pages[doc.page_range[0]-1:doc.page_range[1]],
             form_type=form_type if form_type else doc.doc_type,
-            form_type_confidence=doc.doc_type_confidence,
+            form_type_confidence=adjust_confidence(doc.doc_type_confidence),
             model_id=doc.model_id
         )
         result.append(form)
