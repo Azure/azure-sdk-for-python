@@ -5,10 +5,13 @@ from datetime import datetime, timedelta
 from time import sleep
 
 import pytest
-from devtools_testutils import CachedResourceGroupPreparer, CachedCosmosAccountPreparer
+
+from devtools_testutils import CachedResourceGroupPreparer
 from azure.core.exceptions import ResourceNotFoundError, ResourceExistsError, HttpResponseError
 from _shared.asynctestcase import AsyncTableTestCase
 from _shared.testcase import RERUNS_DELAY, SLEEP_DELAY
+from _shared.cosmos_testcase import CachedCosmosAccountPreparer
+
 from azure.data.tables import AccessPolicy, TableSasPermissions, ResourceTypes, AccountSasPermissions
 from azure.data.tables.aio import TableServiceClient
 from azure.data.tables._generated.models import QueryOptions

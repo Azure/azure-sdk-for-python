@@ -13,15 +13,14 @@ from azure.data.tables._version import VERSION
 from devtools_testutils import (
     ResourceGroupPreparer,
     CachedResourceGroupPreparer,
-    CachedCosmosAccountPreparer
 )
 from _shared.testcase import (
     GlobalStorageAccountPreparer,
-    GlobalCosmosAccountPreparer,
     TableTestCase,
     RERUNS_DELAY,
     SLEEP_DELAY
 )
+from _shared.cosmos_testcase import CachedCosmosAccountPreparer
 
 from azure.core.exceptions import HttpResponseError
 # ------------------------------------------------------------------------------

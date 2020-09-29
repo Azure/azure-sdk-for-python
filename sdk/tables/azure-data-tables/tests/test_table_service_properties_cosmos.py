@@ -17,7 +17,9 @@ from azure.core.exceptions import HttpResponseError
 from azure.data.tables import TableServiceClient
 
 from _shared.testcase import TableTestCase, RERUNS_DELAY
-from devtools_testutils import CachedResourceGroupPreparer, CachedCosmosAccountPreparer
+from _shared.cosmos_testcase import CachedCosmosAccountPreparer
+
+from devtools_testutils import CachedResourceGroupPreparer
 # ------------------------------------------------------------------------------
 
 class TableServicePropertiesTest(TableTestCase):

@@ -19,14 +19,15 @@ from azure.core.exceptions import (
 from azure.data.tables import EdmType, TableEntity, EntityProperty
 
 from _shared.testcase import TableTestCase, LogCaptured, RERUNS_DELAY
+from _shared.cosmos_testcase import CachedCosmosAccountPreparer
 
-from devtools_testutils import CachedResourceGroupPreparer, CachedCosmosAccountPreparer
+from devtools_testutils import CachedResourceGroupPreparer
 
 #------------------------------------------------------------------------------
 TEST_TABLE_PREFIX = 'table'
 #------------------------------------------------------------------------------
 
-class cosmosTableBatchTest(TableTestCase):
+class StorageTableClientTest(TableTestCase):
 
     def _set_up(self, cosmos_account, cosmos_account_key):
         self.ts = TableServiceClient(self.account_url(cosmos_account, "table"), cosmos_account_key)

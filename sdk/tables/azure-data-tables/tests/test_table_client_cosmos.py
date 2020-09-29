@@ -19,8 +19,9 @@ from _shared.testcase import (
     SLEEP_DELAY
 )
 from azure.core.exceptions import HttpResponseError
+from _shared.cosmos_testcase import CachedCosmosAccountPreparer
 
-from devtools_testutils import CachedResourceGroupPreparer, CachedCosmosAccountPreparer
+from devtools_testutils import CachedResourceGroupPreparer
 
 # ------------------------------------------------------------------------------
 SERVICES = {

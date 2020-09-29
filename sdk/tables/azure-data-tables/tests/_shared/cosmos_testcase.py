@@ -15,11 +15,10 @@ from azure.mgmt.cosmosdb.models import (
 
 from azure_devtools.scenario_tests.exceptions import AzureTestError
 
-from . import AzureMgmtPreparer, ResourceGroupPreparer, FakeResource
-from .resource_testcase import RESOURCE_GROUP_PARAM
-
+from devtools_testutils import AzureMgmtPreparer, ResourceGroupPreparer, FakeResource
 
 FakeCosmosAccount = FakeResource
+RESOURCE_GROUP_PARAM = 'resource_group'
 
 # Cosmos Account Preparer and its shorthand decorator
 

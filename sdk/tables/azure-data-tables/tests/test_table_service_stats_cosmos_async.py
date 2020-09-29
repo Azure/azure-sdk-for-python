@@ -8,7 +8,9 @@ import pytest
 
 # from azure.data.tabless import TableServiceClient
 from azure.data.tables.aio import TableServiceClient
-from devtools_testutils import CachedResourceGroupPreparer, CachedCosmosAccountPreparer
+from _shared.cosmos_testcase import CachedCosmosAccountPreparer
+
+from devtools_testutils import CachedResourceGroupPreparer
 from _shared.testcase import TableTestCase, RERUNS_DELAY, SLEEP_DELAY
 
 SERVICE_UNAVAILABLE_RESP_BODY = '<?xml version="1.0" encoding="utf-8"?><StorageServiceStats><GeoReplication><Status' \

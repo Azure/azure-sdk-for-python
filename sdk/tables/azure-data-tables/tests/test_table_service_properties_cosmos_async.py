@@ -17,7 +17,9 @@ from azure.data.tables._models import TableAnalyticsLogging, Metrics, RetentionP
 from azure.data.tables.aio import TableServiceClient
 
 from _shared.testcase import TableTestCase, RERUNS_DELAY, SLEEP_DELAY
-from devtools_testutils import CachedResourceGroupPreparer, CachedCosmosAccountPreparer
+from _shared.cosmos_testcase import CachedCosmosAccountPreparer
+
+from devtools_testutils import CachedResourceGroupPreparer
 # ------------------------------------------------------------------------------
 
 class TableServicePropertiesTest(TableTestCase):

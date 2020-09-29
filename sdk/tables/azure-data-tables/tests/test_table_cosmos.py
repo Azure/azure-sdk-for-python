@@ -41,6 +41,9 @@ from _shared.testcase import (
     RERUNS_DELAY,
     SLEEP_DELAY
 )
+from _shared.cosmos_testcase import CachedCosmosAccountPreparer
+
+from devtools_testutils import CachedResourceGroupPreparer
 from azure.data.tables._authentication import SharedKeyCredentialPolicy
 from azure.data.tables._table_shared_access_signature import generate_account_sas
 from azure.core.pipeline.transport import RequestsTransport
@@ -50,7 +53,7 @@ from azure.core.exceptions import (
     ResourceExistsError
 )
 
-from devtools_testutils import CachedResourceGroupPreparer, CachedCosmosAccountPreparer
+from devtools_testutils import CachedResourceGroupPreparer
 
 # ------------------------------------------------------------------------------
 TEST_TABLE_PREFIX = 'pytablesync'

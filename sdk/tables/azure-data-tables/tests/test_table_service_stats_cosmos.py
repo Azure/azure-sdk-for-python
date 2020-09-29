@@ -9,7 +9,9 @@ from time import sleep
 
 from azure.data.tables import TableServiceClient
 from _shared.testcase import TableTestCase, RERUNS_DELAY, SLEEP_DELAY
-from devtools_testutils import CachedResourceGroupPreparer, CachedCosmosAccountPreparer
+from _shared.cosmos_testcase import CachedCosmosAccountPreparer
+
+from devtools_testutils import CachedResourceGroupPreparer
 
 SERVICE_UNAVAILABLE_RESP_BODY = '<?xml version="1.0" encoding="utf-8"?><StorageServiceStats><GeoReplication><Status' \
                                 '>unavailable</Status><LastSyncTime></LastSyncTime></GeoReplication' \
