@@ -147,7 +147,7 @@ class RecognizePiiEntitiesResult(DictMixin):
     :vartype entities:
         list[~azure.ai.textanalytics.PiiEntity]
     :ivar str redacted_text: Returns the text of the input document with all of the PII information
-        redacted out. Only returned for API versions v3.1-preview.2 and up.
+        redacted out. Only returned for API versions v3.1-preview and up.
     :ivar warnings: Warnings encountered while processing document. Results will still be returned
         if there are warnings, but they may not be fully accurate.
     :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
@@ -157,7 +157,7 @@ class RecognizePiiEntitiesResult(DictMixin):
         ~azure.ai.textanalytics.TextDocumentStatistics
     :ivar bool is_error: Boolean check for error item when iterating over list of
         results. Always False for an instance of a RecognizePiiEntitiesResult.
-    .. versionadded:: v3.1-preview.2
+    .. versionadded:: v3.1-preview
         The *redacted_text* parameter.
     """
 
@@ -226,13 +226,13 @@ class CategorizedEntity(DictMixin):
     :ivar subcategory: Entity subcategory, such as Age/Year/TimeRange etc
     :vartype subcategory: str
     :ivar int offset: The entity text offset from the start of the document.
-        Returned in unicode code points. Only returned for API versions v3.1-preview.1 and up.
+        Returned in unicode code points. Only returned for API versions v3.1-preview and up.
     :ivar int length: The length of the entity text. Returned
-        in unicode code points. Only returned for API versions v3.1-preview.1 and up.
+        in unicode code points. Only returned for API versions v3.1-preview and up.
     :ivar confidence_score: Confidence score between 0 and 1 of the extracted
         entity.
     :vartype confidence_score: float
-    .. versionadded:: v3.1-preview.1
+    .. versionadded:: v3.1-preview
         The *offset* and *length* properties.
     """
 
@@ -632,8 +632,8 @@ class LinkedEntity(DictMixin):
     :vartype data_source: str
     :ivar str bing_entity_search_api_id: Bing Entity Search unique identifier of the recognized entity.
         Use in conjunction with the Bing Entity Search SDK to fetch additional relevant information.
-        Only available for API version v3.1-preview.2 and up.
-    .. versionadded:: v3.1-preview.2
+        Only available for API version v3.1-preview and up.
+    .. versionadded:: v3.1-preview
         The *bing_entity_search_api_id* property.
     """
 
@@ -683,11 +683,11 @@ class LinkedEntityMatch(DictMixin):
     :vartype confidence_score: float
     :ivar text: Entity text as appears in the request.
     :ivar int offset: The linked entity match text offset from the start of the document.
-        Returned in unicode code points. Only returned for API versions v3.1-preview.1 and up.
+        Returned in unicode code points. Only returned for API versions v3.1-preview and up.
     :ivar int length: The length of the linked entity match text. Returned
-        in unicode code points. Only returned for API versions v3.1-preview.1 and up.
+        in unicode code points. Only returned for API versions v3.1-preview and up.
     :vartype text: str
-    .. versionadded:: v3.1-preview.1
+    .. versionadded:: v3.1-preview
         The *offset* and *length* properties.
     """
 
@@ -797,17 +797,17 @@ class SentenceSentiment(DictMixin):
     :vartype confidence_scores:
         ~azure.ai.textanalytics.SentimentConfidenceScores
     :ivar int offset: The sentence offset from the start of the document. Returned
-        in unicode code points. Only returned for API versions v3.1-preview.1 and up.
+        in unicode code points. Only returned for API versions v3.1-preview and up.
     :ivar int length: The length of the sentence. Returned
-        in unicode code points. Only returned for API versions v3.1-preview.1 and up.
+        in unicode code points. Only returned for API versions v3.1-preview and up.
     :ivar mined_opinions: The list of opinions mined from this sentence.
         For example in "The food is good, but the service is bad", we would
         mind these two opinions "food is good", "service is bad". Only returned
         if `show_opinion_mining` is set to True in the call to `analyze_sentiment` and
-        api version is v3.1-preview.1 and up.
+        api version is v3.1-preview and up.
     :vartype mined_opinions:
         list[~azure.ai.textanalytics.MinedOpinion]
-    .. versionadded:: v3.1-preview.1
+    .. versionadded:: v3.1-preview
         The *offset*, *length*, and *mined_opinions* properties.
     """
 
@@ -820,7 +820,7 @@ class SentenceSentiment(DictMixin):
         self.mined_opinions = kwargs.get("mined_opinions", None)
 
     @classmethod
-    def _from_generated(cls, sentence, results):
+    def _from_generated(cls, sentence, results, sentiment):
         offset = sentence.offset
         length = sentence.length
         if isinstance(sentence, _v3_0_models.SentenceSentiment):
@@ -830,7 +830,7 @@ class SentenceSentiment(DictMixin):
             length = None
         if hasattr(sentence, "aspects"):
             mined_opinions = (
-                [MinedOpinion._from_generated(aspect, results) for aspect in sentence.aspects]  # pylint: disable=protected-access
+                [MinedOpinion._from_generated(aspect, results, sentiment) for aspect in sentence.aspects]  # pylint: disable=protected-access
                 if sentence.aspects else []
             )
         else:
@@ -871,27 +871,27 @@ class MinedOpinion(DictMixin):
         self.opinions = kwargs.get("opinions", None)
 
     @staticmethod
-    def _get_opinions(relations, results):
+    def _get_opinions(relations, results, sentiment):  # pylint: disable=unused-argument
         if not relations:
             return []
         opinion_relations = [r.ref for r in relations if r.relation_type == "opinion"]
         opinions = []
         for opinion_relation in opinion_relations:
             nums = _get_indices(opinion_relation)
-            document_index = nums[0]
             sentence_index = nums[1]
             opinion_index = nums[2]
             opinions.append(
-                results[document_index].sentences[sentence_index].opinions[opinion_index]
+                sentiment.sentences[sentence_index].opinions[opinion_index]
             )
         return opinions
 
     @classmethod
-    def _from_generated(cls, aspect, results):
+    def _from_generated(cls, aspect, results, sentiment):
         return cls(
             aspect=AspectSentiment._from_generated(aspect),  # pylint: disable=protected-access
             opinions=[
-                OpinionSentiment._from_generated(opinion) for opinion in cls._get_opinions(aspect.relations, results)  # pylint: disable=protected-access
+                OpinionSentiment._from_generated(opinion)  # pylint: disable=protected-access
+                for opinion in cls._get_opinions(aspect.relations, results, sentiment)
             ],
         )
 

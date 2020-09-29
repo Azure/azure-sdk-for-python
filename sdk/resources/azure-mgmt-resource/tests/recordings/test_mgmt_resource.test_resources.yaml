@@ -3,7 +3,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -19,11 +19,11 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '199'
+      - '301'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 May 2020 17:02:02 GMT
+      - Thu, 17 Sep 2020 07:41:00 GMT
       expires:
       - '-1'
       pragma:
@@ -41,7 +41,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -57,11 +57,11 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '202'
+      - '304'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 May 2020 17:02:02 GMT
+      - Thu, 17 Sep 2020 07:41:00 GMT
       expires:
       - '-1'
       pragma:
@@ -103,11 +103,11 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '441'
+      - '475'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 May 2020 17:02:11 GMT
+      - Thu, 17 Sep 2020 07:41:07 GMT
       expires:
       - '-1'
       pragma:
@@ -124,9 +124,9 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-resource:
-      - Microsoft.Compute/PutVM3Min;239,Microsoft.Compute/PutVM30Min;1199
+      - Microsoft.Compute/PutVM3Min;238,Microsoft.Compute/PutVM30Min;1194
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1199'
+      - '1198'
     status:
       code: 200
       message: OK
@@ -158,11 +158,11 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '435'
+      - '469'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 May 2020 17:02:14 GMT
+      - Thu, 17 Sep 2020 07:41:11 GMT
       expires:
       - '-1'
       pragma:
@@ -179,9 +179,9 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-resource:
-      - Microsoft.Compute/PutVM3Min;238,Microsoft.Compute/PutVM30Min;1198
+      - Microsoft.Compute/PutVM3Min;237,Microsoft.Compute/PutVM30Min;1193
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1198'
+      - '1197'
     status:
       code: 200
       message: OK
@@ -209,11 +209,11 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '463'
+      - '497'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 May 2020 17:02:15 GMT
+      - Thu, 17 Sep 2020 07:41:11 GMT
       expires:
       - '-1'
       pragma:
@@ -230,7 +230,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-resource:
-      - Microsoft.Compute/LowCostGet3Min;3999,Microsoft.Compute/LowCostGet30Min;31999
+      - Microsoft.Compute/LowCostGet3Min;3998,Microsoft.Compute/LowCostGet30Min;31996
     status:
       code: 200
       message: OK
@@ -258,11 +258,11 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '469'
+      - '503'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 May 2020 17:02:15 GMT
+      - Thu, 17 Sep 2020 07:41:11 GMT
       expires:
       - '-1'
       pragma:
@@ -279,7 +279,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-resource:
-      - Microsoft.Compute/LowCostGet3Min;3998,Microsoft.Compute/LowCostGet30Min;31998
+      - Microsoft.Compute/LowCostGet3Min;3997,Microsoft.Compute/LowCostGet30Min;31995
     status:
       code: 200
       message: OK
@@ -295,45 +295,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resources?$filter=name%20eq%20%27pytestavsetea520dc4%27&api-version=2019-10-01
-  response:
-    body:
-      string: '{"value":[],"nextLink":"https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resources?%24filter=name+eq+%27pytestavsetea520dc4%27&api-version=2019-10-01&%24skiptoken=eyJuZXh0UGFydGl0aW9uS2V5IjoiMSE4IU9EUTBRVFEtIiwibmV4dFJvd0tleSI6IjEhMTg4IU1VTTFRamd5UlVVNU1qazBORFUyT0VJd1F6QkNPVU0xTWpOQ1F6QkVPRFpmUjFKTUxWRlRWRVZUVkRWQlJUQTRSVFJHTlVFek5EUkZNVUU0TmtVNE1VWkRPRGswTnpVMk9EUTNMVTFKUTFKUFUwOUdWRG95UlU1RlZGZFBVa3M2TWtaUVZVSk1TVU5KVUVGRVJGSkZVMU5GVXpveVJrcEZUa3RKVGxOUVZVSk1TVU5KVUMxRlFWTlVWVk0tIn0%3d"}'
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '526'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Tue, 19 May 2020 17:02:15 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resources?%24filter=name+eq+%27pytestavsetea520dc4%27&api-version=2019-10-01&%24skiptoken=eyJuZXh0UGFydGl0aW9uS2V5IjoiMSE4IU9EUTBRVFEtIiwibmV4dFJvd0tleSI6IjEhMTg4IU1VTTFRamd5UlVVNU1qazBORFUyT0VJd1F6QkNPVU0xTWpOQ1F6QkVPRFpmUjFKTUxWRlRWRVZUVkRWQlJUQTRSVFJHTlVFek5EUkZNVUU0TmtVNE1VWkRPRGswTnpVMk9EUTNMVTFKUTFKUFUwOUdWRG95UlU1RlZGZFBVa3M2TWtaUVZVSk1TVU5KVUVGRVJGSkZVMU5GVXpveVJrcEZUa3RKVGxOUVZVSk1TVU5KVUMxRlFWTlVWVk0tIn0%3d
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resources?$filter=name%20eq%20%27pytestavsetea520dc4%27&api-version=2020-06-01
   response:
     body:
       string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/availabilitySets/pytestavsetea520dc4","name":"pytestavsetea520dc4","type":"Microsoft.Compute/availabilitySets","sku":{"name":"Classic"},"location":"westus"}]}'
@@ -341,11 +303,11 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '312'
+      - '346'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 May 2020 17:02:15 GMT
+      - Thu, 17 Sep 2020 07:41:11 GMT
       expires:
       - '-1'
       pragma:
@@ -375,7 +337,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/pynewgroupea520dc4?api-version=2019-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/pynewgroupea520dc4?api-version=2020-06-01
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pynewgroupea520dc4","name":"pynewgroupea520dc4","type":"Microsoft.Resources/resourceGroups","location":"westus","properties":{"provisioningState":"Succeeded"}}'
@@ -387,38 +349,42 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 May 2020 17:02:16 GMT
+      - Thu, 17 Sep 2020 07:41:13 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       strict-transport-security:
       - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1197'
+      - '1196'
     status:
-      code: 201
-      message: Created
+      code: 200
+      message: OK
 - request:
-    body: 'b''{"resources": ["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/availabilitySets/pytestavset123ea520dc4"],
-      "targetResourceGroup": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pynewgroupea520dc4"}'''
+    body: 'b''b\''{"resources": ["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/availabilitySets/pytestavset123ea520dc4"],
+      "targetResourceGroup": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pynewgroupea520dc4"}\'''''
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
-      - '307'
+      - '341'
       Content-Type:
       - application/json
       User-Agent:
       - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/validateMoveResources?api-version=2019-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/validateMoveResources?api-version=2020-06-01
   response:
     body:
       string: ''
@@ -428,11 +394,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 19 May 2020 17:02:21 GMT
+      - Thu, 17 Sep 2020 07:41:16 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLVRFU1Q6NUZNR01UOjVGUkVTT1VSQ0U6NUZURVNUOjVGUkVTT1VSQ0VTRUE1MjBEQzQtV0VTVFVTLVZBTElEQVRFIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2019-10-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLTVOS1JEQTdTVTNYRUlXRUdDSUZPTkdSSDZHSjJLQUpYS0JMWUU2S0FXQ08yQVg0fDREMkM1NEI2NkYwOTY1QzAtV0VTVFVTLVZBTElEQVRFIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2020-06-01
       pragma:
       - no-cache
       strict-transport-security:
@@ -440,7 +406,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1195'
+      - '1199'
     status:
       code: 202
       message: Accepted
@@ -456,7 +422,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLVRFU1Q6NUZNR01UOjVGUkVTT1VSQ0U6NUZURVNUOjVGUkVTT1VSQ0VTRUE1MjBEQzQtV0VTVFVTLVZBTElEQVRFIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2019-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLTVOS1JEQTdTVTNYRUlXRUdDSUZPTkdSSDZHSjJLQUpYS0JMWUU2S0FXQ08yQVg0fDREMkM1NEI2NkYwOTY1QzAtV0VTVFVTLVZBTElEQVRFIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2020-06-01
   response:
     body:
       string: ''
@@ -466,11 +432,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 19 May 2020 17:02:35 GMT
+      - Thu, 17 Sep 2020 07:41:32 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLVRFU1Q6NUZNR01UOjVGUkVTT1VSQ0U6NUZURVNUOjVGUkVTT1VSQ0VTRUE1MjBEQzQtV0VTVFVTLVZBTElEQVRFIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2019-10-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLTVOS1JEQTdTVTNYRUlXRUdDSUZPTkdSSDZHSjJLQUpYS0JMWUU2S0FXQ08yQVg0fDREMkM1NEI2NkYwOTY1QzAtV0VTVFVTLVZBTElEQVRFIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2020-06-01
       pragma:
       - no-cache
       strict-transport-security:
@@ -492,7 +458,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLVRFU1Q6NUZNR01UOjVGUkVTT1VSQ0U6NUZURVNUOjVGUkVTT1VSQ0VTRUE1MjBEQzQtV0VTVFVTLVZBTElEQVRFIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2019-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLTVOS1JEQTdTVTNYRUlXRUdDSUZPTkdSSDZHSjJLQUpYS0JMWUU2S0FXQ08yQVg0fDREMkM1NEI2NkYwOTY1QzAtV0VTVFVTLVZBTElEQVRFIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2020-06-01
   response:
     body:
       string: ''
@@ -502,11 +468,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 19 May 2020 17:02:51 GMT
+      - Thu, 17 Sep 2020 07:41:47 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLVRFU1Q6NUZNR01UOjVGUkVTT1VSQ0U6NUZURVNUOjVGUkVTT1VSQ0VTRUE1MjBEQzQtV0VTVFVTLVZBTElEQVRFIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2019-10-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLTVOS1JEQTdTVTNYRUlXRUdDSUZPTkdSSDZHSjJLQUpYS0JMWUU2S0FXQ08yQVg0fDREMkM1NEI2NkYwOTY1QzAtV0VTVFVTLVZBTElEQVRFIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2020-06-01
       pragma:
       - no-cache
       strict-transport-security:
@@ -528,7 +494,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLVRFU1Q6NUZNR01UOjVGUkVTT1VSQ0U6NUZURVNUOjVGUkVTT1VSQ0VTRUE1MjBEQzQtV0VTVFVTLVZBTElEQVRFIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2019-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLTVOS1JEQTdTVTNYRUlXRUdDSUZPTkdSSDZHSjJLQUpYS0JMWUU2S0FXQ08yQVg0fDREMkM1NEI2NkYwOTY1QzAtV0VTVFVTLVZBTElEQVRFIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2020-06-01
   response:
     body:
       string: ''
@@ -538,11 +504,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 19 May 2020 17:03:07 GMT
+      - Thu, 17 Sep 2020 07:42:03 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLVRFU1Q6NUZNR01UOjVGUkVTT1VSQ0U6NUZURVNUOjVGUkVTT1VSQ0VTRUE1MjBEQzQtV0VTVFVTLVZBTElEQVRFIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2019-10-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLTVOS1JEQTdTVTNYRUlXRUdDSUZPTkdSSDZHSjJLQUpYS0JMWUU2S0FXQ08yQVg0fDREMkM1NEI2NkYwOTY1QzAtV0VTVFVTLVZBTElEQVRFIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2020-06-01
       pragma:
       - no-cache
       strict-transport-security:
@@ -564,7 +530,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLVRFU1Q6NUZNR01UOjVGUkVTT1VSQ0U6NUZURVNUOjVGUkVTT1VSQ0VTRUE1MjBEQzQtV0VTVFVTLVZBTElEQVRFIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2019-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLTVOS1JEQTdTVTNYRUlXRUdDSUZPTkdSSDZHSjJLQUpYS0JMWUU2S0FXQ08yQVg0fDREMkM1NEI2NkYwOTY1QzAtV0VTVFVTLVZBTElEQVRFIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2020-06-01
   response:
     body:
       string: ''
@@ -574,11 +540,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 19 May 2020 17:03:23 GMT
+      - Thu, 17 Sep 2020 07:42:19 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLVRFU1Q6NUZNR01UOjVGUkVTT1VSQ0U6NUZURVNUOjVGUkVTT1VSQ0VTRUE1MjBEQzQtV0VTVFVTLVZBTElEQVRFIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2019-10-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLTVOS1JEQTdTVTNYRUlXRUdDSUZPTkdSSDZHSjJLQUpYS0JMWUU2S0FXQ08yQVg0fDREMkM1NEI2NkYwOTY1QzAtV0VTVFVTLVZBTElEQVRFIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2020-06-01
       pragma:
       - no-cache
       strict-transport-security:
@@ -600,7 +566,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLVRFU1Q6NUZNR01UOjVGUkVTT1VSQ0U6NUZURVNUOjVGUkVTT1VSQ0VTRUE1MjBEQzQtV0VTVFVTLVZBTElEQVRFIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2019-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLTVOS1JEQTdTVTNYRUlXRUdDSUZPTkdSSDZHSjJLQUpYS0JMWUU2S0FXQ08yQVg0fDREMkM1NEI2NkYwOTY1QzAtV0VTVFVTLVZBTElEQVRFIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2020-06-01
   response:
     body:
       string: ''
@@ -610,11 +576,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 19 May 2020 17:03:38 GMT
+      - Thu, 17 Sep 2020 07:42:34 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLVRFU1Q6NUZNR01UOjVGUkVTT1VSQ0U6NUZURVNUOjVGUkVTT1VSQ0VTRUE1MjBEQzQtV0VTVFVTLVZBTElEQVRFIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2019-10-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLTVOS1JEQTdTVTNYRUlXRUdDSUZPTkdSSDZHSjJLQUpYS0JMWUU2S0FXQ08yQVg0fDREMkM1NEI2NkYwOTY1QzAtV0VTVFVTLVZBTElEQVRFIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2020-06-01
       pragma:
       - no-cache
       strict-transport-security:
@@ -636,7 +602,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLVRFU1Q6NUZNR01UOjVGUkVTT1VSQ0U6NUZURVNUOjVGUkVTT1VSQ0VTRUE1MjBEQzQtV0VTVFVTLVZBTElEQVRFIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2019-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLTVOS1JEQTdTVTNYRUlXRUdDSUZPTkdSSDZHSjJLQUpYS0JMWUU2S0FXQ08yQVg0fDREMkM1NEI2NkYwOTY1QzAtV0VTVFVTLVZBTElEQVRFIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2020-06-01
   response:
     body:
       string: ''
@@ -644,7 +610,7 @@ interactions:
       cache-control:
       - no-cache
       date:
-      - Tue, 19 May 2020 17:03:53 GMT
+      - Thu, 17 Sep 2020 07:42:49 GMT
       expires:
       - '-1'
       pragma:
@@ -657,23 +623,23 @@ interactions:
       code: 204
       message: No Content
 - request:
-    body: 'b''{"resources": ["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/availabilitySets/pytestavset123ea520dc4"],
-      "targetResourceGroup": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pynewgroupea520dc4"}'''
+    body: 'b''b\''{"resources": ["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/availabilitySets/pytestavset123ea520dc4"],
+      "targetResourceGroup": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pynewgroupea520dc4"}\'''''
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
-      - '307'
+      - '341'
       Content-Type:
       - application/json
       User-Agent:
       - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/moveResources?api-version=2019-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/moveResources?api-version=2020-06-01
   response:
     body:
       string: ''
@@ -683,11 +649,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 19 May 2020 17:03:58 GMT
+      - Thu, 17 Sep 2020 07:42:55 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLVRFU1Q6NUZNR01UOjVGUkVTT1VSQ0U6NUZURVNUOjVGUkVTT1VSQ0VTRUE1MjBEQzQtV0VTVFVTLU1PVkUiLCJqb2JMb2NhdGlvbiI6Indlc3R1cyJ9?api-version=2019-10-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLTVOS1JEQTdTVTNYRUlXRUdDSUZPTkdSSDZHSjJLQUpYS0JMWUU2S0FXQ08yQVg0fDREMkM1NEI2NkYwOTY1QzAtV0VTVFVTLU1PVkUiLCJqb2JMb2NhdGlvbiI6Indlc3R1cyJ9?api-version=2020-06-01
       pragma:
       - no-cache
       strict-transport-security:
@@ -695,7 +661,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1194'
+      - '1198'
     status:
       code: 202
       message: Accepted
@@ -711,7 +677,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLVRFU1Q6NUZNR01UOjVGUkVTT1VSQ0U6NUZURVNUOjVGUkVTT1VSQ0VTRUE1MjBEQzQtV0VTVFVTLU1PVkUiLCJqb2JMb2NhdGlvbiI6Indlc3R1cyJ9?api-version=2019-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLTVOS1JEQTdTVTNYRUlXRUdDSUZPTkdSSDZHSjJLQUpYS0JMWUU2S0FXQ08yQVg0fDREMkM1NEI2NkYwOTY1QzAtV0VTVFVTLU1PVkUiLCJqb2JMb2NhdGlvbiI6Indlc3R1cyJ9?api-version=2020-06-01
   response:
     body:
       string: ''
@@ -721,11 +687,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 19 May 2020 17:04:14 GMT
+      - Thu, 17 Sep 2020 07:43:10 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLVRFU1Q6NUZNR01UOjVGUkVTT1VSQ0U6NUZURVNUOjVGUkVTT1VSQ0VTRUE1MjBEQzQtV0VTVFVTLU1PVkUiLCJqb2JMb2NhdGlvbiI6Indlc3R1cyJ9?api-version=2019-10-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLTVOS1JEQTdTVTNYRUlXRUdDSUZPTkdSSDZHSjJLQUpYS0JMWUU2S0FXQ08yQVg0fDREMkM1NEI2NkYwOTY1QzAtV0VTVFVTLU1PVkUiLCJqb2JMb2NhdGlvbiI6Indlc3R1cyJ9?api-version=2020-06-01
       pragma:
       - no-cache
       strict-transport-security:
@@ -747,7 +713,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLVRFU1Q6NUZNR01UOjVGUkVTT1VSQ0U6NUZURVNUOjVGUkVTT1VSQ0VTRUE1MjBEQzQtV0VTVFVTLU1PVkUiLCJqb2JMb2NhdGlvbiI6Indlc3R1cyJ9?api-version=2019-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLTVOS1JEQTdTVTNYRUlXRUdDSUZPTkdSSDZHSjJLQUpYS0JMWUU2S0FXQ08yQVg0fDREMkM1NEI2NkYwOTY1QzAtV0VTVFVTLU1PVkUiLCJqb2JMb2NhdGlvbiI6Indlc3R1cyJ9?api-version=2020-06-01
   response:
     body:
       string: ''
@@ -757,11 +723,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 19 May 2020 17:04:29 GMT
+      - Thu, 17 Sep 2020 07:43:25 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLVRFU1Q6NUZNR01UOjVGUkVTT1VSQ0U6NUZURVNUOjVGUkVTT1VSQ0VTRUE1MjBEQzQtV0VTVFVTLU1PVkUiLCJqb2JMb2NhdGlvbiI6Indlc3R1cyJ9?api-version=2019-10-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLTVOS1JEQTdTVTNYRUlXRUdDSUZPTkdSSDZHSjJLQUpYS0JMWUU2S0FXQ08yQVg0fDREMkM1NEI2NkYwOTY1QzAtV0VTVFVTLU1PVkUiLCJqb2JMb2NhdGlvbiI6Indlc3R1cyJ9?api-version=2020-06-01
       pragma:
       - no-cache
       strict-transport-security:
@@ -783,7 +749,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLVRFU1Q6NUZNR01UOjVGUkVTT1VSQ0U6NUZURVNUOjVGUkVTT1VSQ0VTRUE1MjBEQzQtV0VTVFVTLU1PVkUiLCJqb2JMb2NhdGlvbiI6Indlc3R1cyJ9?api-version=2019-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLTVOS1JEQTdTVTNYRUlXRUdDSUZPTkdSSDZHSjJLQUpYS0JMWUU2S0FXQ08yQVg0fDREMkM1NEI2NkYwOTY1QzAtV0VTVFVTLU1PVkUiLCJqb2JMb2NhdGlvbiI6Indlc3R1cyJ9?api-version=2020-06-01
   response:
     body:
       string: ''
@@ -793,11 +759,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 19 May 2020 17:04:44 GMT
+      - Thu, 17 Sep 2020 07:43:41 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLVRFU1Q6NUZNR01UOjVGUkVTT1VSQ0U6NUZURVNUOjVGUkVTT1VSQ0VTRUE1MjBEQzQtV0VTVFVTLU1PVkUiLCJqb2JMb2NhdGlvbiI6Indlc3R1cyJ9?api-version=2019-10-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLTVOS1JEQTdTVTNYRUlXRUdDSUZPTkdSSDZHSjJLQUpYS0JMWUU2S0FXQ08yQVg0fDREMkM1NEI2NkYwOTY1QzAtV0VTVFVTLU1PVkUiLCJqb2JMb2NhdGlvbiI6Indlc3R1cyJ9?api-version=2020-06-01
       pragma:
       - no-cache
       strict-transport-security:
@@ -819,7 +785,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLVRFU1Q6NUZNR01UOjVGUkVTT1VSQ0U6NUZURVNUOjVGUkVTT1VSQ0VTRUE1MjBEQzQtV0VTVFVTLU1PVkUiLCJqb2JMb2NhdGlvbiI6Indlc3R1cyJ9?api-version=2019-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLTVOS1JEQTdTVTNYRUlXRUdDSUZPTkdSSDZHSjJLQUpYS0JMWUU2S0FXQ08yQVg0fDREMkM1NEI2NkYwOTY1QzAtV0VTVFVTLU1PVkUiLCJqb2JMb2NhdGlvbiI6Indlc3R1cyJ9?api-version=2020-06-01
   response:
     body:
       string: ''
@@ -829,11 +795,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 19 May 2020 17:05:00 GMT
+      - Thu, 17 Sep 2020 07:43:56 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLVRFU1Q6NUZNR01UOjVGUkVTT1VSQ0U6NUZURVNUOjVGUkVTT1VSQ0VTRUE1MjBEQzQtV0VTVFVTLU1PVkUiLCJqb2JMb2NhdGlvbiI6Indlc3R1cyJ9?api-version=2019-10-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLTVOS1JEQTdTVTNYRUlXRUdDSUZPTkdSSDZHSjJLQUpYS0JMWUU2S0FXQ08yQVg0fDREMkM1NEI2NkYwOTY1QzAtV0VTVFVTLU1PVkUiLCJqb2JMb2NhdGlvbiI6Indlc3R1cyJ9?api-version=2020-06-01
       pragma:
       - no-cache
       strict-transport-security:
@@ -855,7 +821,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLVRFU1Q6NUZNR01UOjVGUkVTT1VSQ0U6NUZURVNUOjVGUkVTT1VSQ0VTRUE1MjBEQzQtV0VTVFVTLU1PVkUiLCJqb2JMb2NhdGlvbiI6Indlc3R1cyJ9?api-version=2019-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLTVOS1JEQTdTVTNYRUlXRUdDSUZPTkdSSDZHSjJLQUpYS0JMWUU2S0FXQ08yQVg0fDREMkM1NEI2NkYwOTY1QzAtV0VTVFVTLU1PVkUiLCJqb2JMb2NhdGlvbiI6Indlc3R1cyJ9?api-version=2020-06-01
   response:
     body:
       string: ''
@@ -865,11 +831,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 19 May 2020 17:05:15 GMT
+      - Thu, 17 Sep 2020 07:44:11 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLVRFU1Q6NUZNR01UOjVGUkVTT1VSQ0U6NUZURVNUOjVGUkVTT1VSQ0VTRUE1MjBEQzQtV0VTVFVTLU1PVkUiLCJqb2JMb2NhdGlvbiI6Indlc3R1cyJ9?api-version=2019-10-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLTVOS1JEQTdTVTNYRUlXRUdDSUZPTkdSSDZHSjJLQUpYS0JMWUU2S0FXQ08yQVg0fDREMkM1NEI2NkYwOTY1QzAtV0VTVFVTLU1PVkUiLCJqb2JMb2NhdGlvbiI6Indlc3R1cyJ9?api-version=2020-06-01
       pragma:
       - no-cache
       strict-transport-security:
@@ -891,7 +857,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLVRFU1Q6NUZNR01UOjVGUkVTT1VSQ0U6NUZURVNUOjVGUkVTT1VSQ0VTRUE1MjBEQzQtV0VTVFVTLU1PVkUiLCJqb2JMb2NhdGlvbiI6Indlc3R1cyJ9?api-version=2019-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLTVOS1JEQTdTVTNYRUlXRUdDSUZPTkdSSDZHSjJLQUpYS0JMWUU2S0FXQ08yQVg0fDREMkM1NEI2NkYwOTY1QzAtV0VTVFVTLU1PVkUiLCJqb2JMb2NhdGlvbiI6Indlc3R1cyJ9?api-version=2020-06-01
   response:
     body:
       string: ''
@@ -901,11 +867,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 19 May 2020 17:05:31 GMT
+      - Thu, 17 Sep 2020 07:44:28 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLVRFU1Q6NUZNR01UOjVGUkVTT1VSQ0U6NUZURVNUOjVGUkVTT1VSQ0VTRUE1MjBEQzQtV0VTVFVTLU1PVkUiLCJqb2JMb2NhdGlvbiI6Indlc3R1cyJ9?api-version=2019-10-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLTVOS1JEQTdTVTNYRUlXRUdDSUZPTkdSSDZHSjJLQUpYS0JMWUU2S0FXQ08yQVg0fDREMkM1NEI2NkYwOTY1QzAtV0VTVFVTLU1PVkUiLCJqb2JMb2NhdGlvbiI6Indlc3R1cyJ9?api-version=2020-06-01
       pragma:
       - no-cache
       strict-transport-security:
@@ -927,7 +893,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLVRFU1Q6NUZNR01UOjVGUkVTT1VSQ0U6NUZURVNUOjVGUkVTT1VSQ0VTRUE1MjBEQzQtV0VTVFVTLU1PVkUiLCJqb2JMb2NhdGlvbiI6Indlc3R1cyJ9?api-version=2019-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLTVOS1JEQTdTVTNYRUlXRUdDSUZPTkdSSDZHSjJLQUpYS0JMWUU2S0FXQ08yQVg0fDREMkM1NEI2NkYwOTY1QzAtV0VTVFVTLU1PVkUiLCJqb2JMb2NhdGlvbiI6Indlc3R1cyJ9?api-version=2020-06-01
   response:
     body:
       string: ''
@@ -937,11 +903,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 19 May 2020 17:05:45 GMT
+      - Thu, 17 Sep 2020 07:44:43 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLVRFU1Q6NUZNR01UOjVGUkVTT1VSQ0U6NUZURVNUOjVGUkVTT1VSQ0VTRUE1MjBEQzQtV0VTVFVTLU1PVkUiLCJqb2JMb2NhdGlvbiI6Indlc3R1cyJ9?api-version=2019-10-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLTVOS1JEQTdTVTNYRUlXRUdDSUZPTkdSSDZHSjJLQUpYS0JMWUU2S0FXQ08yQVg0fDREMkM1NEI2NkYwOTY1QzAtV0VTVFVTLU1PVkUiLCJqb2JMb2NhdGlvbiI6Indlc3R1cyJ9?api-version=2020-06-01
       pragma:
       - no-cache
       strict-transport-security:
@@ -963,7 +929,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLVRFU1Q6NUZNR01UOjVGUkVTT1VSQ0U6NUZURVNUOjVGUkVTT1VSQ0VTRUE1MjBEQzQtV0VTVFVTLU1PVkUiLCJqb2JMb2NhdGlvbiI6Indlc3R1cyJ9?api-version=2019-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLTVOS1JEQTdTVTNYRUlXRUdDSUZPTkdSSDZHSjJLQUpYS0JMWUU2S0FXQ08yQVg0fDREMkM1NEI2NkYwOTY1QzAtV0VTVFVTLU1PVkUiLCJqb2JMb2NhdGlvbiI6Indlc3R1cyJ9?api-version=2020-06-01
   response:
     body:
       string: ''
@@ -973,11 +939,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 19 May 2020 17:06:02 GMT
+      - Thu, 17 Sep 2020 07:44:59 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLVRFU1Q6NUZNR01UOjVGUkVTT1VSQ0U6NUZURVNUOjVGUkVTT1VSQ0VTRUE1MjBEQzQtV0VTVFVTLU1PVkUiLCJqb2JMb2NhdGlvbiI6Indlc3R1cyJ9?api-version=2019-10-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLTVOS1JEQTdTVTNYRUlXRUdDSUZPTkdSSDZHSjJLQUpYS0JMWUU2S0FXQ08yQVg0fDREMkM1NEI2NkYwOTY1QzAtV0VTVFVTLU1PVkUiLCJqb2JMb2NhdGlvbiI6Indlc3R1cyJ9?api-version=2020-06-01
       pragma:
       - no-cache
       strict-transport-security:
@@ -999,7 +965,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLVRFU1Q6NUZNR01UOjVGUkVTT1VSQ0U6NUZURVNUOjVGUkVTT1VSQ0VTRUE1MjBEQzQtV0VTVFVTLU1PVkUiLCJqb2JMb2NhdGlvbiI6Indlc3R1cyJ9?api-version=2019-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLTVOS1JEQTdTVTNYRUlXRUdDSUZPTkdSSDZHSjJLQUpYS0JMWUU2S0FXQ08yQVg0fDREMkM1NEI2NkYwOTY1QzAtV0VTVFVTLU1PVkUiLCJqb2JMb2NhdGlvbiI6Indlc3R1cyJ9?api-version=2020-06-01
   response:
     body:
       string: ''
@@ -1009,11 +975,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 19 May 2020 17:06:29 GMT
+      - Thu, 17 Sep 2020 07:45:14 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLVRFU1Q6NUZNR01UOjVGUkVTT1VSQ0U6NUZURVNUOjVGUkVTT1VSQ0VTRUE1MjBEQzQtV0VTVFVTLU1PVkUiLCJqb2JMb2NhdGlvbiI6Indlc3R1cyJ9?api-version=2019-10-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLTVOS1JEQTdTVTNYRUlXRUdDSUZPTkdSSDZHSjJLQUpYS0JMWUU2S0FXQ08yQVg0fDREMkM1NEI2NkYwOTY1QzAtV0VTVFVTLU1PVkUiLCJqb2JMb2NhdGlvbiI6Indlc3R1cyJ9?api-version=2020-06-01
       pragma:
       - no-cache
       strict-transport-security:
@@ -1035,7 +1001,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLVRFU1Q6NUZNR01UOjVGUkVTT1VSQ0U6NUZURVNUOjVGUkVTT1VSQ0VTRUE1MjBEQzQtV0VTVFVTLU1PVkUiLCJqb2JMb2NhdGlvbiI6Indlc3R1cyJ9?api-version=2019-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLTVOS1JEQTdTVTNYRUlXRUdDSUZPTkdSSDZHSjJLQUpYS0JMWUU2S0FXQ08yQVg0fDREMkM1NEI2NkYwOTY1QzAtV0VTVFVTLU1PVkUiLCJqb2JMb2NhdGlvbiI6Indlc3R1cyJ9?api-version=2020-06-01
   response:
     body:
       string: ''
@@ -1045,11 +1011,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 19 May 2020 17:06:45 GMT
+      - Thu, 17 Sep 2020 07:45:29 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLVRFU1Q6NUZNR01UOjVGUkVTT1VSQ0U6NUZURVNUOjVGUkVTT1VSQ0VTRUE1MjBEQzQtV0VTVFVTLU1PVkUiLCJqb2JMb2NhdGlvbiI6Indlc3R1cyJ9?api-version=2019-10-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLTVOS1JEQTdTVTNYRUlXRUdDSUZPTkdSSDZHSjJLQUpYS0JMWUU2S0FXQ08yQVg0fDREMkM1NEI2NkYwOTY1QzAtV0VTVFVTLU1PVkUiLCJqb2JMb2NhdGlvbiI6Indlc3R1cyJ9?api-version=2020-06-01
       pragma:
       - no-cache
       strict-transport-security:
@@ -1071,7 +1037,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLVRFU1Q6NUZNR01UOjVGUkVTT1VSQ0U6NUZURVNUOjVGUkVTT1VSQ0VTRUE1MjBEQzQtV0VTVFVTLU1PVkUiLCJqb2JMb2NhdGlvbiI6Indlc3R1cyJ9?api-version=2019-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLTVOS1JEQTdTVTNYRUlXRUdDSUZPTkdSSDZHSjJLQUpYS0JMWUU2S0FXQ08yQVg0fDREMkM1NEI2NkYwOTY1QzAtV0VTVFVTLU1PVkUiLCJqb2JMb2NhdGlvbiI6Indlc3R1cyJ9?api-version=2020-06-01
   response:
     body:
       string: ''
@@ -1081,11 +1047,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 19 May 2020 17:07:01 GMT
+      - Thu, 17 Sep 2020 07:45:45 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLVRFU1Q6NUZNR01UOjVGUkVTT1VSQ0U6NUZURVNUOjVGUkVTT1VSQ0VTRUE1MjBEQzQtV0VTVFVTLU1PVkUiLCJqb2JMb2NhdGlvbiI6Indlc3R1cyJ9?api-version=2019-10-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLTVOS1JEQTdTVTNYRUlXRUdDSUZPTkdSSDZHSjJLQUpYS0JMWUU2S0FXQ08yQVg0fDREMkM1NEI2NkYwOTY1QzAtV0VTVFVTLU1PVkUiLCJqb2JMb2NhdGlvbiI6Indlc3R1cyJ9?api-version=2020-06-01
       pragma:
       - no-cache
       strict-transport-security:
@@ -1107,7 +1073,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLVRFU1Q6NUZNR01UOjVGUkVTT1VSQ0U6NUZURVNUOjVGUkVTT1VSQ0VTRUE1MjBEQzQtV0VTVFVTLU1PVkUiLCJqb2JMb2NhdGlvbiI6Indlc3R1cyJ9?api-version=2019-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLTVOS1JEQTdTVTNYRUlXRUdDSUZPTkdSSDZHSjJLQUpYS0JMWUU2S0FXQ08yQVg0fDREMkM1NEI2NkYwOTY1QzAtV0VTVFVTLU1PVkUiLCJqb2JMb2NhdGlvbiI6Indlc3R1cyJ9?api-version=2020-06-01
   response:
     body:
       string: ''
@@ -1117,11 +1083,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 19 May 2020 17:07:16 GMT
+      - Thu, 17 Sep 2020 07:46:00 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLVRFU1Q6NUZNR01UOjVGUkVTT1VSQ0U6NUZURVNUOjVGUkVTT1VSQ0VTRUE1MjBEQzQtV0VTVFVTLU1PVkUiLCJqb2JMb2NhdGlvbiI6Indlc3R1cyJ9?api-version=2019-10-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLTVOS1JEQTdTVTNYRUlXRUdDSUZPTkdSSDZHSjJLQUpYS0JMWUU2S0FXQ08yQVg0fDREMkM1NEI2NkYwOTY1QzAtV0VTVFVTLU1PVkUiLCJqb2JMb2NhdGlvbiI6Indlc3R1cyJ9?api-version=2020-06-01
       pragma:
       - no-cache
       strict-transport-security:
@@ -1143,7 +1109,43 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLVRFU1Q6NUZNR01UOjVGUkVTT1VSQ0U6NUZURVNUOjVGUkVTT1VSQ0VTRUE1MjBEQzQtV0VTVFVTLU1PVkUiLCJqb2JMb2NhdGlvbiI6Indlc3R1cyJ9?api-version=2019-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLTVOS1JEQTdTVTNYRUlXRUdDSUZPTkdSSDZHSjJLQUpYS0JMWUU2S0FXQ08yQVg0fDREMkM1NEI2NkYwOTY1QzAtV0VTVFVTLU1PVkUiLCJqb2JMb2NhdGlvbiI6Indlc3R1cyJ9?api-version=2020-06-01
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '0'
+      date:
+      - Thu, 17 Sep 2020 07:46:16 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLTVOS1JEQTdTVTNYRUlXRUdDSUZPTkdSSDZHSjJLQUpYS0JMWUU2S0FXQ08yQVg0fDREMkM1NEI2NkYwOTY1QzAtV0VTVFVTLU1PVkUiLCJqb2JMb2NhdGlvbiI6Indlc3R1cyJ9?api-version=2020-06-01
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFQkFUQ0hNT1ZFSk9CLTVOS1JEQTdTVTNYRUlXRUdDSUZPTkdSSDZHSjJLQUpYS0JMWUU2S0FXQ08yQVg0fDREMkM1NEI2NkYwOTY1QzAtV0VTVFVTLU1PVkUiLCJqb2JMb2NhdGlvbiI6Indlc3R1cyJ9?api-version=2020-06-01
   response:
     body:
       string: ''
@@ -1151,7 +1153,7 @@ interactions:
       cache-control:
       - no-cache
       date:
-      - Tue, 19 May 2020 17:07:32 GMT
+      - Thu, 17 Sep 2020 07:46:32 GMT
       expires:
       - '-1'
       pragma:
@@ -1191,11 +1193,11 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '476'
+      - '510'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 May 2020 17:07:37 GMT
+      - Thu, 17 Sep 2020 07:46:36 GMT
       expires:
       - '-1'
       pragma:
@@ -1212,9 +1214,9 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-resource:
-      - Microsoft.Compute/PutVM3Min;239,Microsoft.Compute/PutVM30Min;1197
+      - Microsoft.Compute/PutVM3Min;239,Microsoft.Compute/PutVM30Min;1192
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1196'
+      - '1195'
     status:
       code: 200
       message: OK
@@ -1250,7 +1252,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 May 2020 17:07:38 GMT
+      - Thu, 17 Sep 2020 07:46:39 GMT
       expires:
       - '-1'
       pragma:
@@ -1267,9 +1269,9 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-resource:
-      - Microsoft.Compute/PutVM3Min;238,Microsoft.Compute/PutVM30Min;1196
+      - Microsoft.Compute/PutVM3Min;238,Microsoft.Compute/PutVM30Min;1191
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1195'
+      - '1194'
     status:
       code: 200
       message: OK
@@ -1277,7 +1279,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -1297,7 +1299,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 19 May 2020 17:07:48 GMT
+      - Thu, 17 Sep 2020 07:46:44 GMT
       expires:
       - '-1'
       pragma:
@@ -1310,9 +1312,9 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-resource:
-      - Microsoft.Compute/DeleteVM3Min;239,Microsoft.Compute/DeleteVM30Min;1199
+      - Microsoft.Compute/DeleteVM3Min;239,Microsoft.Compute/DeleteVM30Min;1195
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14998'
+      - '14999'
     status:
       code: 200
       message: OK
@@ -1320,7 +1322,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -1340,7 +1342,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 19 May 2020 17:07:52 GMT
+      - Thu, 17 Sep 2020 07:46:48 GMT
       expires:
       - '-1'
       pragma:
@@ -1353,9 +1355,9 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-resource:
-      - Microsoft.Compute/DeleteVM3Min;238,Microsoft.Compute/DeleteVM30Min;1198
+      - Microsoft.Compute/DeleteVM3Min;238,Microsoft.Compute/DeleteVM30Min;1194
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14997'
+      - '14998'
     status:
       code: 200
       message: OK
@@ -1363,7 +1365,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -1373,7 +1375,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/pynewgroupea520dc4?api-version=2019-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/pynewgroupea520dc4?api-version=2020-06-01
   response:
     body:
       string: ''
@@ -1383,11 +1385,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 19 May 2020 17:07:56 GMT
+      - Thu, 17 Sep 2020 07:46:50 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFR1JPVVBERUxFVElPTkpPQi1QWU5FV0dST1VQRUE1MjBEQzQtV0VTVFVTIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2019-10-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFR1JPVVBERUxFVElPTkpPQi1QWU5FV0dST1VQRUE1MjBEQzQtV0VTVFVTIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2020-06-01
       pragma:
       - no-cache
       strict-transport-security:
@@ -1395,7 +1397,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14996'
+      - '14997'
     status:
       code: 202
       message: Accepted
@@ -1411,7 +1413,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFR1JPVVBERUxFVElPTkpPQi1QWU5FV0dST1VQRUE1MjBEQzQtV0VTVFVTIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2019-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFR1JPVVBERUxFVElPTkpPQi1QWU5FV0dST1VQRUE1MjBEQzQtV0VTVFVTIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2020-06-01
   response:
     body:
       string: ''
@@ -1421,11 +1423,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 19 May 2020 17:08:12 GMT
+      - Thu, 17 Sep 2020 07:47:05 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFR1JPVVBERUxFVElPTkpPQi1QWU5FV0dST1VQRUE1MjBEQzQtV0VTVFVTIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2019-10-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFR1JPVVBERUxFVElPTkpPQi1QWU5FV0dST1VQRUE1MjBEQzQtV0VTVFVTIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2020-06-01
       pragma:
       - no-cache
       strict-transport-security:
@@ -1447,7 +1449,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFR1JPVVBERUxFVElPTkpPQi1QWU5FV0dST1VQRUE1MjBEQzQtV0VTVFVTIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2019-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFR1JPVVBERUxFVElPTkpPQi1QWU5FV0dST1VQRUE1MjBEQzQtV0VTVFVTIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2020-06-01
   response:
     body:
       string: ''
@@ -1457,11 +1459,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 19 May 2020 17:08:27 GMT
+      - Thu, 17 Sep 2020 07:47:21 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFR1JPVVBERUxFVElPTkpPQi1QWU5FV0dST1VQRUE1MjBEQzQtV0VTVFVTIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2019-10-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFR1JPVVBERUxFVElPTkpPQi1QWU5FV0dST1VQRUE1MjBEQzQtV0VTVFVTIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2020-06-01
       pragma:
       - no-cache
       strict-transport-security:
@@ -1483,7 +1485,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFR1JPVVBERUxFVElPTkpPQi1QWU5FV0dST1VQRUE1MjBEQzQtV0VTVFVTIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2019-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFR1JPVVBERUxFVElPTkpPQi1QWU5FV0dST1VQRUE1MjBEQzQtV0VTVFVTIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2020-06-01
   response:
     body:
       string: ''
@@ -1493,7 +1495,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 19 May 2020 17:08:42 GMT
+      - Thu, 17 Sep 2020 07:47:36 GMT
       expires:
       - '-1'
       pragma:

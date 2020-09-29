@@ -27,6 +27,7 @@ from pkg_resources import parse_version, parse_requirements, Requirement, Workin
 # this assumes the presence of "packaging"
 from packaging.specifiers import SpecifierSet
 from packaging.version import Version
+from packaging.version import parse
 
 
 DEV_REQ_FILE = "dev_requirements.txt"
@@ -340,13 +341,15 @@ def find_whl(package_name, version, whl_directory):
         logging.error("Whl directory is incorrect")
         exit(1)
 
-    logging.info("Searching whl for package {}".format(package_name))
-    whl_name = "{0}-{1}*.whl".format(package_name.replace("-", "_"), version)
+    parsed_version = parse(version)
+
+    logging.info("Searching whl for package {0}-{1}".format(package_name, parsed_version.base_version))
+    whl_name = "{0}-{1}*.whl".format(package_name.replace("-", "_"), parsed_version.base_version)
     paths = glob.glob(os.path.join(whl_directory, whl_name))
     if not paths:
         logging.error(
-            "whl is not found in whl directory {0} for package {1}".format(
-                whl_directory, package_name
+            "whl is not found in whl directory {0} for package {1}-{2}".format(
+                whl_directory, package_name, parsed_version.base_version
             )
         )
         exit(1)

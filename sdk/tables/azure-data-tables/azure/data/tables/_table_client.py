@@ -22,7 +22,7 @@ from ._entity import TableEntity
 from ._error import _process_table_error
 from ._generated import AzureTable
 from ._generated.models import (
-    AccessPolicy,
+    # AccessPolicy,
     SignedIdentifier,
     TableProperties,
     QueryOptions
@@ -32,8 +32,9 @@ from ._base_client import parse_connection_str
 from ._table_client_base import TableClientBase
 from ._serialize import serialize_iso
 from ._deserialize import _return_headers_and_deserialized
-from ._models import TableEntityPropertiesPaged, UpdateMode
+
 from ._table_batch import TableBatchOperations
+from ._models import TableEntityPropertiesPaged, UpdateMode, AccessPolicy
 
 
 class TableClient(TableClientBase):
@@ -157,7 +158,7 @@ class TableClient(TableClientBase):
                 **kwargs)
         except HttpResponseError as error:
             _process_table_error(error)
-        return {s.id: s.access_policy or AccessPolicy() for s in identifiers}  # pylint: disable=E1125
+        return {s.id: s.access_policy or AccessPolicy() for s in identifiers}
 
     @distributed_trace
     def set_table_access_policy(
@@ -533,7 +534,6 @@ class TableClient(TableClientBase):
         partition_key = entity['PartitionKey']
         row_key = entity['RowKey']
         entity = _add_entity_properties(entity)
-
         try:
             metadata = None
             if mode is UpdateMode.MERGE:
@@ -557,13 +557,9 @@ class TableClient(TableClientBase):
                 raise ValueError("""Update mode {} is not supported.
                     For a list of supported modes see the UpdateMode enum""".format(mode))
             return _trim_service_metadata(metadata)
-        except ResourceNotFoundError:
-            return self.create_entity(
-                partition_key=partition_key,
-                row_key=row_key,
-                table_entity_properties=entity,
-                **kwargs
-            )
+        except HttpResponseError as error:
+            _process_table_error(error)
+
 
     @distributed_trace
     def create_batch(

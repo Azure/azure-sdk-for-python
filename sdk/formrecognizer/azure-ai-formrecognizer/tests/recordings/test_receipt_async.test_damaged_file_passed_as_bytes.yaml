@@ -2,26 +2,28 @@ interactions:
 - request:
     body: '%PDFUUU'
     headers:
+      Accept:
+      - application/json
       Content-Type:
       - application/pdf
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/prebuilt/receipt/analyze?includeTextDetails=false
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/prebuilt/receipt/analyze?includeTextDetails=false
   response:
     body:
-      string: '{"error": {"code": "BadArgument", "innerError": {"requestId": "42b0450f-ee0a-4325-bf88-9f7e39f20935"},
+      string: '{"error": {"code": "BadArgument", "innerError": {"requestId": "727f9a99-d16b-45bc-9a6a-3e66e304fd5a"},
         "message": "Bad or unrecognizable request JSON or binary file."}}'
     headers:
-      apim-request-id: 42b0450f-ee0a-4325-bf88-9f7e39f20935
+      apim-request-id: 727f9a99-d16b-45bc-9a6a-3e66e304fd5a
+      content-length: '161'
       content-type: application/json; charset=utf-8
-      date: Fri, 10 Jul 2020 18:54:21 GMT
+      date: Mon, 14 Sep 2020 22:41:42 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '5'
+      x-envoy-upstream-service-time: '4'
     status:
       code: 400
       message: Bad Request
-    url: https://centraluseuap.api.cognitive.microsoft.com//formrecognizer/v2.0/prebuilt/receipt/analyze?includeTextDetails=false
+    url: https://centraluseuap.api.cognitive.microsoft.com//formrecognizer/v2.1-preview.1/prebuilt/receipt/analyze?includeTextDetails=false
 version: 1

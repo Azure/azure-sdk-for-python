@@ -13,6 +13,7 @@ parameters:
   RunCoverage: ne(variables['CoverageArg'], '--disablecov')
   ToxEnvParallel: ''
   InjectedPackages: ''
+  DevFeedName: 'public/azure-sdk-for-python'
 
 steps:
   - pwsh: |
@@ -31,6 +32,11 @@ steps:
       pip --version
       pip freeze
     displayName: 'Prep Environment'
+
+  - ${{if eq(variables['System.TeamProject'], 'internal') }}:
+    - template: ../steps/auth-dev-feed.yml
+      parameters: 
+        DevFeedName: ${{ parameters.DevFeedName }}
 
   - ${{ parameters.BeforeTestSteps }}
 

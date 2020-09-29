@@ -531,21 +531,21 @@ class CRUDTests(unittest.TestCase):
     def test_partitioned_collection_permissions(self):
         created_db = self.databaseForTest
 
-        collection_id = 'test_partitioned_collection_permissions all collection'
+        collection_id = 'test_partitioned_collection_permissions all collection' + str(uuid.uuid4())
 
         all_collection = created_db.create_container(
             id=collection_id,
             partition_key=PartitionKey(path='/key', kind=documents.PartitionKind.Hash)
         )
 
-        collection_id = 'test_partitioned_collection_permissions read collection'
+        collection_id = 'test_partitioned_collection_permissions read collection' + str(uuid.uuid4())
 
         read_collection = created_db.create_container(
             id=collection_id,
             partition_key=PartitionKey(path='/key', kind=documents.PartitionKind.Hash)
         )
 
-        user = created_db.create_user(body={'id': 'user'})
+        user = created_db.create_user(body={'id': 'user' + str(uuid.uuid4())})
 
         permission_definition = {
             'id': 'all permission',
@@ -567,8 +567,8 @@ class CRUDTests(unittest.TestCase):
 
         resource_tokens = {}
         # storing the resource tokens based on Resource IDs
-        resource_tokens[urllib.quote(all_collection.id)] = (all_permission.properties['_token'])
-        resource_tokens[urllib.quote(read_collection.id)] = (read_permission.properties['_token'])
+        resource_tokens["dbs/" + created_db.id + "/colls/" + all_collection.id] = (all_permission.properties['_token'])
+        resource_tokens["dbs/" + created_db.id + "/colls/" + read_collection.id] = (read_permission.properties['_token'])
 
         restricted_client = cosmos_client.CosmosClient(
             CRUDTests.host, resource_tokens, "Session", connection_policy=CRUDTests.connectionPolicy)
@@ -1302,71 +1302,48 @@ class CRUDTests(unittest.TestCase):
             """
             # create database
             db = self.databaseForTest
-            # create collection1
-            collection1 = db.create_container(
+            # create collection
+            collection = db.create_container(
                 id='test_authorization' + str(uuid.uuid4()),
                 partition_key=PartitionKey(path='/id', kind='Hash')
             )
             # create document1
-            document1 = collection1.create_item(
-                            body={'id': 'coll1doc1',
+            document = collection.create_item(
+                            body={'id': 'doc1',
                                   'spam': 'eggs',
                                   'key': 'value'},
             )
-            # create document 2
-            document2 = collection1.create_item(
-                body={'id': 'coll1doc2', 'spam': 'eggs2', 'key': 'value2'}
-            )
 
-            # create collection 2
-            collection2 = db.create_container(
-                id='test_authorization2' + str(uuid.uuid4()),
-                partition_key=PartitionKey(path='/id', kind='Hash')
-            )
-            # create user1
-            user1 = db.create_user(body={'id': 'user1'})
-            collection1_properties = collection1.read()
+            # create user
+            user = db.create_user(body={'id': 'user' + str(uuid.uuid4())})
+
+            # create permission for collection
             permission = {
-                'id': 'permission On Coll1',
+                'id': 'permission On Coll',
                 'permissionMode': documents.PermissionMode.Read,
-                'resource': collection1_properties['_self']
+                'resource': "dbs/" + db.id + "/colls/" + collection.id
             }
-            # create permission for collection1
-            permission_on_coll1 = user1.create_permission(body=permission)
-            self.assertIsNotNone(permission_on_coll1.properties['_token'],
+            permission_on_coll = user.create_permission(body=permission)
+            self.assertIsNotNone(permission_on_coll.properties['_token'],
                             'permission token is invalid')
+
+            # create permission for document
             permission = {
-                'id': 'permission On Doc1',
+                'id': 'permission On Doc',
                 'permissionMode': documents.PermissionMode.All,
-                'resource': document2['_self']
+                'resource': "dbs/" + db.id + "/colls/" + collection.id + "/docs/" + document["id"]
             }
-            # create permission for document 2
-            permission_on_doc2 = user1.create_permission(body=permission)
-            self.assertIsNotNone(permission_on_doc2.properties['_token'],
+            permission_on_doc = user.create_permission(body=permission)
+            self.assertIsNotNone(permission_on_doc.properties['_token'],
                             'permission token is invalid')
-            # create user 2
-            user2 = db.create_user(body={'id': 'user2'})
-            collection2_properties = collection2.read()
-            permission = {
-                'id': 'permission On coll2',
-                'permissionMode': documents.PermissionMode.All,
-                'resource': collection2_properties['_self']
-            }
-            # create permission on collection 2
-            permission_on_coll2 = user2.create_permission(body=permission)
-            self.assertIsNotNone(permission_on_coll2.properties['_token'],
-                            'permission token is invalid')
+
             entities = {
                 'db': db,
-                'coll1': collection1,
-                'coll2': collection2,
-                'doc1': document1,
-                'doc2': document2,
-                'user1': user1,
-                'user2': user2,
-                'permissionOnColl1': permission_on_coll1,
-                'permissionOnDoc2': permission_on_doc2,
-                'permissionOnColl2': permission_on_coll2
+                'coll': collection,
+                'doc': document,
+                'user': user,
+                'permissionOnColl': permission_on_coll,
+                'permissionOnDoc': permission_on_doc,
             }
             return entities
 
@@ -1382,60 +1359,61 @@ class CRUDTests(unittest.TestCase):
                                             connection_policy=CRUDTests.connectionPolicy)
         # setup entities
         entities = __SetupEntities(client)
-        resource_tokens = {}
-        resource_tokens[entities['coll1'].id] = (
-            entities['permissionOnColl1'].properties['_token'])
-        resource_tokens[entities['doc1']['id']]= (
-            entities['permissionOnColl1'].properties['_token'])
-        col1_client = cosmos_client.CosmosClient(
+        resource_tokens = {"dbs/" + entities['db'].id + "/colls/" + entities['coll'].id:
+                           entities['permissionOnColl'].properties['_token']}
+        col_client = cosmos_client.CosmosClient(
             CRUDTests.host, resource_tokens,"Session", connection_policy=CRUDTests.connectionPolicy)
         db = entities['db']
 
         old_client_connection = db.client_connection
-        db.client_connection = col1_client.client_connection
-        # 1. Success-- Use Col1 Permission to Read
-        success_coll1 = db.get_container_client(container=entities['coll1'])
-        # 2. Failure-- Use Col1 Permission to delete
+        db.client_connection = col_client.client_connection
+        # 1. Success-- Use Col Permission to Read
+        success_coll = db.get_container_client(container=entities['coll'])
+        # 2. Failure-- Use Col Permission to delete
         self.__AssertHTTPFailureWithStatus(StatusCodes.FORBIDDEN,
                                            db.delete_container,
-                                           success_coll1)
-        # 3. Success-- Use Col1 Permission to Read All Docs
-        success_documents = list(success_coll1.read_all_items())
+                                           success_coll)
+        # 3. Success-- Use Col Permission to Read All Docs
+        success_documents = list(success_coll.read_all_items())
         self.assertTrue(success_documents != None,
                         'error reading documents')
         self.assertEqual(len(success_documents),
-                         2,
-                         'Expected 2 Documents to be succesfully read')
-        # 4. Success-- Use Col1 Permission to Read Col1Doc1
-        success_doc = success_coll1.read_item(
-            item=entities['doc1']['id'],
-            partition_key=entities['doc1']['id']
+                         1,
+                         'Expected 1 Document to be succesfully read')
+        # 4. Success-- Use Col Permission to Read Doc
+
+        docId = entities['doc']['id']
+        success_doc = success_coll.read_item(
+            item=docId,
+            partition_key=docId
         )
         self.assertTrue(success_doc != None, 'error reading document')
         self.assertEqual(
             success_doc['id'],
-            entities['doc1']['id'],
+            entities['doc']['id'],
             'Expected to read children using parent permissions')
-        col2_client = cosmos_client.CosmosClient(
-            CRUDTests.host,
-            [entities['permissionOnColl2'].properties],
-            "Session",
-            connection_policy=CRUDTests.connectionPolicy)
-        doc = {
-            'CustomProperty1': 'BBBBBB',
-            'customProperty2': 1000,
-            'id': entities['doc2']['id']
-        }
-        entities['coll2'].client_connection = col2_client.client_connection
-        success_doc = entities['coll2'].create_item(body=doc)
-        self.assertTrue(success_doc != None, 'error creating document')
-        self.assertEqual(success_doc['CustomProperty1'],
-                         doc['CustomProperty1'],
-                         'document should have been created successfully')
+
+        #5. Failure-- Use Col Permission to Delete Doc
+        self.__AssertHTTPFailureWithStatus(StatusCodes.FORBIDDEN,
+                                           success_coll.delete_item,
+                                           docId, docId)
+
+        resource_tokens = {"dbs/" + entities['db'].id + "/colls/" + entities['coll'].id + "/docs/" + docId :
+            entities['permissionOnDoc'].properties['_token']}
+
+        doc_client = cosmos_client.CosmosClient(
+            CRUDTests.host, resource_tokens,"Session", connection_policy=CRUDTests.connectionPolicy)
+
+        #6. Success-- Use Doc permission to read doc
+        read_doc = doc_client.get_database_client(db.id).get_container_client(success_coll.id).read_item(docId, docId)
+        self.assertEqual(read_doc["id"], docId)
+
+        #6. Success-- Use Doc permission to delete doc
+        doc_client.get_database_client(db.id).get_container_client(success_coll.id).delete_item(docId, docId)
+        self.assertEqual(read_doc["id"], docId)
 
         db.client_connection = old_client_connection
-        db.delete_container(entities['coll1'])
-        db.delete_container(entities['coll2'])
+        db.delete_container(entities['coll'])
 
     def test_trigger_crud(self):
         # create database

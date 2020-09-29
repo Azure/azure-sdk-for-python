@@ -162,6 +162,31 @@ class StorageTableBatchTest(TableTestCase):
         self.assertIsNotNone(entity['_metadata']['etag'])
 
     #--Test cases for batch ---------------------------------------------
+    def test_inferred_types(self):
+        # Arrange
+        # Act
+        entity = TableEntity()
+        entity.PartitionKey = '003'
+        entity.RowKey = 'batch_all_operations_together-1'
+        entity.test = EntityProperty(True)
+        entity.test2 = EntityProperty(b'abcdef')
+        entity.test3 = EntityProperty(u'c9da6455-213d-42c9-9a79-3e9149a57833')
+        entity.test4 = EntityProperty(datetime(1973, 10, 4, tzinfo=tzutc()))
+        entity.test5 = EntityProperty(u"stringystring")
+        entity.test6 = EntityProperty(3.14159)
+        entity.test7 = EntityProperty(100)
+        entity.test8 = EntityProperty(2 ** 33, EdmType.INT64)
+
+        # Assert
+        self.assertEqual(entity.test.type, EdmType.BOOLEAN)
+        self.assertEqual(entity.test2.type, EdmType.BINARY)
+        self.assertEqual(entity.test3.type, EdmType.GUID)
+        self.assertEqual(entity.test4.type, EdmType.DATETIME)
+        self.assertEqual(entity.test5.type, EdmType.STRING)
+        self.assertEqual(entity.test6.type, EdmType.DOUBLE)
+        self.assertEqual(entity.test7.type, EdmType.INT32)
+        self.assertEqual(entity.test8.type, EdmType.INT64)
+
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @GlobalStorageAccountPreparer()
     def test_batch_insert(self, resource_group, location, storage_account, storage_account_key):

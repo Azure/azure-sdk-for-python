@@ -1,0 +1,12 @@
+trigger: none
+
+jobs:
+  - template: ../../eng/pipelines/templates/jobs/archetype-sdk-tests.yml
+    parameters:
+      AllocateResourceGroup: 'false'
+      BuildTargetingString: $(BuildTargetingString)
+      ServiceDirectory: communication
+      EnvVars:
+        AZURE_TEST_RUN_LIVE: 'true'
+        AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING: $(python-communication-connection-string)
+        PHONE_NUMBER: $(python-communication-phone-number)

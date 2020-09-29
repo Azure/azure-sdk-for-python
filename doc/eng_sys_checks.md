@@ -2,7 +2,7 @@
 
 There are various tests currently enabled in Azure pipeline for Python SDK and some of them are enabled only for nightly CI checks. We also run some static analysis tool to verify code completeness, security and lint check.  
 
-Check the [contributing guide](../CONTRIBUTING.md#building-and-testing) for an intro to `tox`.
+Check the [contributing guide](https://github.com/Azure/azure-sdk-for-python/blob/master/CONTRIBUTING.md#building-and-testing) for an intro to `tox`.
 
 As a contributor, you will see the build jobs run in two modes: `Nightly Scheduled` and `Pull Request`.
 
@@ -45,7 +45,7 @@ Analyze job in both nightly CI and pull request validation pipeline runs a set o
 
 #### Change log verification
 
-Change log verification is added to ensure package has valid change log for current version. Guidelines to properly maintain the change log is documented [here]()
+Change log verification is added to ensure package has valid change log for current version. Guidelines to properly maintain the change log is documented [here](https://github.com/Azure/azure-sdk-for-python/blob/master/doc/)
 
 ## PR Validation Checks
 Each pull request runs various tests using `pytest` in addition to all the tests mentioned above in analyze check. Pull request validation performs 3 different types of test: `whl, sdist and depends`. Following section explains the purpose of each of these tests and how to execute them locally. All pull requests are validated on multiple python versions across different platforms and below is the test matrix for pull request.

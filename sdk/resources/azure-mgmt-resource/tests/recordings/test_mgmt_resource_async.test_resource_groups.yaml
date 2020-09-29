@@ -11,26 +11,24 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_resource_groups457f1050?api-version=2019-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_resource_groups457f1050?api-version=2020-06-01
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_resource_groups457f1050","name":"test_mgmt_resource_test_resource_groups457f1050","type":"Microsoft.Resources/resourceGroups","location":"westus","tags":{"tag1":"value1"},"properties":{"provisioningState":"Succeeded"}}'
     headers:
       cache-control: no-cache
-      content-encoding: gzip
+      content-length: '316'
       content-type: application/json; charset=utf-8
-      date: Tue, 02 Jun 2020 03:40:57 GMT
+      date: Thu, 17 Sep 2020 08:11:15 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000; includeSubDomains
-      transfer-encoding: chunked
-      vary: Accept-Encoding
       x-content-type-options: nosniff
-      x-ms-ratelimit-remaining-subscription-writes: '1196'
+      x-ms-ratelimit-remaining-subscription-writes: '1199'
     status:
-      code: 200
-      message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourcegroups/test_mgmt_resource_test_resource_groups457f1050?api-version=2019-10-01
+      code: 201
+      message: Created
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourcegroups/test_mgmt_resource_test_resource_groups457f1050?api-version=2020-06-01
 - request:
     body: null
     headers:
@@ -39,7 +37,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_resource_groups457f1050?api-version=2019-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_resource_groups457f1050?api-version=2020-06-01
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_resource_groups457f1050","name":"test_mgmt_resource_test_resource_groups457f1050","type":"Microsoft.Resources/resourceGroups","location":"westus","tags":{"tag1":"value1"},"properties":{"provisioningState":"Succeeded"}}'
@@ -48,7 +46,7 @@ interactions:
       content-encoding: gzip
       content-length: '319'
       content-type: application/json; charset=utf-8
-      date: Tue, 02 Jun 2020 03:40:57 GMT
+      date: Thu, 17 Sep 2020 08:11:15 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -57,21 +55,23 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourcegroups/test_mgmt_resource_test_resource_groups457f1050?api-version=2019-10-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourcegroups/test_mgmt_resource_test_resource_groups457f1050?api-version=2020-06-01
 - request:
     body: null
     headers:
+      Accept:
+      - application/json
       User-Agent:
       - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: HEAD
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_resource_groups457f1050?api-version=2019-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_resource_groups457f1050?api-version=2020-06-01
   response:
     body:
       string: ''
     headers:
       cache-control: no-cache
       content-length: '0'
-      date: Tue, 02 Jun 2020 03:40:57 GMT
+      date: Thu, 17 Sep 2020 08:11:15 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -79,14 +79,16 @@ interactions:
     status:
       code: 204
       message: No Content
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourcegroups/test_mgmt_resource_test_resource_groups457f1050?api-version=2019-10-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourcegroups/test_mgmt_resource_test_resource_groups457f1050?api-version=2020-06-01
 - request:
     body: null
     headers:
+      Accept:
+      - application/json
       User-Agent:
       - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: HEAD
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/unknowngroup?api-version=2019-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/unknowngroup?api-version=2020-06-01
   response:
     body:
       string: ''
@@ -94,7 +96,7 @@ interactions:
       cache-control: no-cache
       content-length: '104'
       content-type: application/json; charset=utf-8
-      date: Tue, 02 Jun 2020 03:40:57 GMT
+      date: Thu, 17 Sep 2020 08:11:15 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -103,7 +105,7 @@ interactions:
     status:
       code: 404
       message: Not Found
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourcegroups/unknowngroup?api-version=2019-10-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourcegroups/unknowngroup?api-version=2020-06-01
 - request:
     body: null
     headers:
@@ -112,18 +114,18 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups?api-version=2019-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups?api-version=2020-06-01
   response:
     body:
-      string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/arm-python-RG","name":"arm-python-RG","type":"Microsoft.Resources/resourceGroups","location":"westeurope","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/lianwtest-rg","name":"lianwtest-rg","type":"Microsoft.Resources/resourceGroups","location":"southcentralus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-test-qa2-R-3","name":"sdk-test-qa2-R-3","type":"Microsoft.Resources/resourceGroups","location":"eastus2","tags":{},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/VstsRG-lianwtestdevops-ffd5","name":"VstsRG-lianwtestdevops-ffd5","type":"Microsoft.Resources/resourceGroups","location":"centralus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/qiaozhatest","name":"qiaozhatest","type":"Microsoft.Resources/resourceGroups","location":"eastus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sqlresourceGroupName","name":"sqlresourceGroupName","type":"Microsoft.Resources/resourceGroups","location":"eastus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa2","name":"sdk-net-test-qa2","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-test-qa2","name":"sdk-test-qa2","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/devops_pipeline_resourcename","name":"devops_pipeline_resourcename","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/devops_pipeline_resourcename2","name":"devops_pipeline_resourcename2","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_virtual_network_test_network168d14fb","name":"test_cli_mgmt_network_virtual_network_test_network168d14fb","type":"Microsoft.Resources/resourceGroups","location":"eastus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/lianw","name":"lianw","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cafkkxao3up6mhasfalpf3bya4ckrefgcxmbhec7oejs5zdjihc5x5pabfrlnztzoiqsez6od6i","name":"cafkkxao3up6mhasfalpf3bya4ckrefgcxmbhec7oejs5zdjihc5x5pabfrlnztzoiqsez6od6i","type":"Microsoft.Resources/resourceGroups","location":"eastus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/awxdx7x2w42dnihlmciaropy454gia4tuk4kytfdyrhdb7szcu3kbdgzdlg25l67jnqnujjxxsw","name":"awxdx7x2w42dnihlmciaropy454gia4tuk4kytfdyrhdb7szcu3kbdgzdlg25l67jnqnujjxxsw","type":"Microsoft.Resources/resourceGroups","location":"eastus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-changlong","name":"test-changlong","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pcodogvglm7lkk32ymil2uey4ohpexgcexgx5hc4wp7urvjewg3sl6wbebtbkbzocao2rf235t5","name":"pcodogvglm7lkk32ymil2uey4ohpexgcexgx5hc4wp7urvjewg3sl6wbebtbkbzocao2rf235t5","type":"Microsoft.Resources/resourceGroups","location":"eastus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_galleries_test_compute_galleries10bb14a9","name":"test_mgmt_compute_galleries_test_compute_galleries10bb14a9","type":"Microsoft.Resources/resourceGroups","location":"eastus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/testvmmultiapi","name":"testvmmultiapi","type":"Microsoft.Resources/resourceGroups","location":"eastus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_watcher_test_network777c1179","name":"test_cli_mgmt_network_watcher_test_network777c1179","type":"Microsoft.Resources/resourceGroups","location":"eastus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/acctestRG-backup-200214153104593818-1","name":"acctestRG-backup-200214153104593818-1","type":"Microsoft.Resources/resourceGroups","location":"westus","tags":{},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-test-qa2-R","name":"sdk-test-qa2-R","type":"Microsoft.Resources/resourceGroups","location":"westus","tags":{},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/IT_cafkkxao3up6mhasfalpf3bya4ckrefgcxmbhec7_4b3f70c7-334e-4380-968d-eeb13c406e05","name":"IT_cafkkxao3up6mhasfalpf3bya4ckrefgcxmbhec7_4b3f70c7-334e-4380-968d-eeb13c406e05","type":"Microsoft.Resources/resourceGroups","location":"westus","managedBy":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/cafkkxao3up6mhasfalpf3bya4ckrefgcxmbhec7oejs5zdjihc5x5pabfrlnztzoiqsez6od6i/providers/Microsoft.VirtualMachineImages/imageTemplates/MyImageTemplate","tags":{"createdBy":"AzureVMImageBuilder","imageTemplateName":"MyImageTemplate","imageTemplateResourceGroupName":"cafkkxao3up6mhasfalpf3bya4ckrefgcxmbhec7oejs5zdjihc5x5pabfrlnztzoiqsez6od6i"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/IT_awxdx7x2w42dnihlmciaropy454gia4tuk4kytfd_ba3e8225-b61a-4af4-8bcd-2c1827d6fb2e","name":"IT_awxdx7x2w42dnihlmciaropy454gia4tuk4kytfd_ba3e8225-b61a-4af4-8bcd-2c1827d6fb2e","type":"Microsoft.Resources/resourceGroups","location":"westus","managedBy":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/awxdx7x2w42dnihlmciaropy454gia4tuk4kytfdyrhdb7szcu3kbdgzdlg25l67jnqnujjxxsw/providers/Microsoft.VirtualMachineImages/imageTemplates/MyImageTemplate","tags":{"createdBy":"AzureVMImageBuilder","imageTemplateName":"MyImageTemplate","imageTemplateResourceGroupName":"awxdx7x2w42dnihlmciaropy454gia4tuk4kytfdyrhdb7szcu3kbdgzdlg25l67jnqnujjxxsw"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/IT_pcodogvglm7lkk32ymil2uey4ohpexgcexgx5hc4_e48166ab-9535-46c0-aea5-65ab7ad129bc","name":"IT_pcodogvglm7lkk32ymil2uey4ohpexgcexgx5hc4_e48166ab-9535-46c0-aea5-65ab7ad129bc","type":"Microsoft.Resources/resourceGroups","location":"westus","managedBy":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/pcodogvglm7lkk32ymil2uey4ohpexgcexgx5hc4wp7urvjewg3sl6wbebtbkbzocao2rf235t5/providers/Microsoft.VirtualMachineImages/imageTemplates/MyNewImageTemplate","tags":{"createdBy":"AzureVMImageBuilder","imageTemplateName":"MyNewImageTemplate","imageTemplateResourceGroupName":"pcodogvglm7lkk32ymil2uey4ohpexgcexgx5hc4wp7urvjewg3sl6wbebtbkbzocao2rf235t5"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-sample-group-virtual-machines","name":"azure-sample-group-virtual-machines","type":"Microsoft.Resources/resourceGroups","location":"westus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_resource_groups457f1050","name":"test_mgmt_resource_test_resource_groups457f1050","type":"Microsoft.Resources/resourceGroups","location":"westus","tags":{"tag1":"value1"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/92F95D8F-3C67-4124-91C7-8CF07CDBF241/resourceGroups/DEFAULT-EVENTGRID","name":"DEFAULT-EVENTGRID","type":"Microsoft.Resources/resourceGroups","location":"westus2","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cloud-shell-storage-southeastasia","name":"cloud-shell-storage-southeastasia","type":"Microsoft.Resources/resourceGroups","location":"southeastasia","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/testresourceGroupName","name":"testresourceGroupName","type":"Microsoft.Resources/resourceGroups","location":"eastasia","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myDevopsResourceGroup2","name":"myDevopsResourceGroup2","type":"Microsoft.Resources/resourceGroups","location":"eastasia","tags":{"environment":"Terraform
-        Devops Test"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-sdk-for-js","name":"azure-sdk-for-js","type":"Microsoft.Resources/resourceGroups","location":"westus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-sdk-for-node","name":"azure-sdk-for-node","type":"Microsoft.Resources/resourceGroups","location":"westus","tags":{},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cleanupservice","name":"cleanupservice","type":"Microsoft.Resources/resourceGroups","location":"westus","tags":{"What
+      string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/arm-python-RG","name":"arm-python-RG","type":"Microsoft.Resources/resourceGroups","location":"westeurope","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-test-qa2-R-3","name":"sdk-test-qa2-R-3","type":"Microsoft.Resources/resourceGroups","location":"eastus2","tags":{},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/VstsRG-lianwtestdevops-ffd5","name":"VstsRG-lianwtestdevops-ffd5","type":"Microsoft.Resources/resourceGroups","location":"centralus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/qiaozhatest","name":"qiaozhatest","type":"Microsoft.Resources/resourceGroups","location":"eastus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sqlresourceGroupName","name":"sqlresourceGroupName","type":"Microsoft.Resources/resourceGroups","location":"eastus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-net-test-qa2","name":"sdk-net-test-qa2","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-test-qa2","name":"sdk-test-qa2","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/devops_pipeline_resourcename","name":"devops_pipeline_resourcename","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/devops_pipeline_resourcename2","name":"devops_pipeline_resourcename2","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/lianw","name":"lianw","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/acctestRG-backup-200214153104593818-1","name":"acctestRG-backup-200214153104593818-1","type":"Microsoft.Resources/resourceGroups","location":"westus","tags":{},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sdk-test-qa2-R","name":"sdk-test-qa2-R","type":"Microsoft.Resources/resourceGroups","location":"westus","tags":{},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-sample-group-virtual-machines","name":"azure-sample-group-virtual-machines","type":"Microsoft.Resources/resourceGroups","location":"westus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/92F95D8F-3C67-4124-91C7-8CF07CDBF241/resourceGroups/DEFAULT-EVENTGRID","name":"DEFAULT-EVENTGRID","type":"Microsoft.Resources/resourceGroups","location":"westus2","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cloud-shell-storage-southeastasia","name":"cloud-shell-storage-southeastasia","type":"Microsoft.Resources/resourceGroups","location":"southeastasia","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/testresourceGroupName","name":"testresourceGroupName","type":"Microsoft.Resources/resourceGroups","location":"eastasia","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myDevopsResourceGroup2","name":"myDevopsResourceGroup2","type":"Microsoft.Resources/resourceGroups","location":"eastasia","tags":{"environment":"Terraform
+        Devops Test"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/resourceGroupYC","name":"resourceGroupYC","type":"Microsoft.Resources/resourceGroups","location":"westeurope","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cjf_resource_group_name2","name":"cjf_resource_group_name2","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-changlong","name":"test-changlong","type":"Microsoft.Resources/resourceGroups","location":"eastus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/testgroupx","name":"testgroupx","type":"Microsoft.Resources/resourceGroups","location":"eastus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/lianwrs","name":"lianwrs","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/AzureBackupRG_eastus_1","name":"AzureBackupRG_eastus_1","type":"Microsoft.Resources/resourceGroups","location":"eastus","managedBy":"subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.RecoveryServices/","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/iyljd2wtoqh43dern43sawzmqxkeari3bcqiadgfste4outj7cdmmslvr4yfw2vmrsqeiogmitj","name":"iyljd2wtoqh43dern43sawzmqxkeari3bcqiadgfste4outj7cdmmslvr4yfw2vmrsqeiogmitj","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{"DeleteAfter":"2020-08-15T07:02:26.327834"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_compute_test_computef5f00e12","name":"test_cli_mgmt_compute_test_computef5f00e12","type":"Microsoft.Resources/resourceGroups","location":"eastus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-sdk-test","name":"azure-sdk-test","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/DefaultResourceGroup-EUS","name":"DefaultResourceGroup-EUS","type":"Microsoft.Resources/resourceGroups","location":"eastus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_network_wan_hub_test_network76dc116f","name":"test_cli_mgmt_network_wan_hub_test_network76dc116f","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{"DeleteAfter":"2020-09-16T09:14:35"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/xqdh7wqbpok3jowpcsbkn5hxf6h56g24so7m2mq3vqmhg22rrldipp7rdxiweaneio324yjjag7","name":"xqdh7wqbpok3jowpcsbkn5hxf6h56g24so7m2mq3vqmhg22rrldipp7rdxiweaneio324yjjag7","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{"DeleteAfter":"2020-09-17T02:52:26"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/uqyfn2w3rdkpalowspvhsoaodfg7253ejab37imk6a5rwo2fkuhztgxbkli72ireymqxzh4xeeh","name":"uqyfn2w3rdkpalowspvhsoaodfg7253ejab37imk6a5rwo2fkuhztgxbkli72ireymqxzh4xeeh","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{"DeleteAfter":"2020-09-17T04:25:53"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/asdasasd_group","name":"asdasasd_group","type":"Microsoft.Resources/resourceGroups","location":"westus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/clitestqz44lhgyfadyuonzthxmzgrq4qtw5vctntbi2lyggv5neas6jklmdw2ot3qrglwn4xgw","name":"clitestqz44lhgyfadyuonzthxmzgrq4qtw5vctntbi2lyggv5neas6jklmdw2ot3qrglwn4xgw","type":"Microsoft.Resources/resourceGroups","location":"westus","tags":{"product":"azurecli","cause":"automation","date":"2020-08-07T03:31:29Z"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/clitestt766m3arr3aw6mv4bamwqplradoeeyqcy2ivqpqsigthyiarurwanqjqzt6qaubnepb7","name":"clitestt766m3arr3aw6mv4bamwqplradoeeyqcy2ivqpqsigthyiarurwanqjqzt6qaubnepb7","type":"Microsoft.Resources/resourceGroups","location":"westus","tags":{"product":"azurecli","cause":"automation","date":"2020-08-07T06:12:37Z"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/clitestleo4ph5sfx6z3zktznstrtxzj7llbya26xdg4qe477ebxol4xpl7zniwh3wkrh2m22uf","name":"clitestleo4ph5sfx6z3zktznstrtxzj7llbya26xdg4qe477ebxol4xpl7zniwh3wkrh2m22uf","type":"Microsoft.Resources/resourceGroups","location":"westus","tags":{"product":"azurecli","cause":"automation","date":"2020-08-14T05:19:35Z"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/xtz6sueevhsiau66hc5ccdmccqiru5l44rkejgbiujqrpvjfpmdn5mklbpyg34nyqpjlypwcdve","name":"xtz6sueevhsiau66hc5ccdmccqiru5l44rkejgbiujqrpvjfpmdn5mklbpyg34nyqpjlypwcdve","type":"Microsoft.Resources/resourceGroups","location":"westus","tags":{"DeleteAfter":"2020-09-02T08:47:56.593193"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_managed_disks_test_grant_access609310b8","name":"test_mgmt_managed_disks_test_grant_access609310b8","type":"Microsoft.Resources/resourceGroups","location":"westus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ixatdrpmhso76rpni7zf4voepgpqxqfllzsuavybrhzwdd64eaeaq2ogq63i7numq3gfsetwvhx","name":"ixatdrpmhso76rpni7zf4voepgpqxqfllzsuavybrhzwdd64eaeaq2ogq63i7numq3gfsetwvhx","type":"Microsoft.Resources/resourceGroups","location":"westus","tags":{"DeleteAfter":"2020-09-18T07:29:38"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/zwwhzeymmg3wfx4qtc3f5o2j5stk4ll6mtuzortcgsyg2dyqbfqb66eiikdphauomr5g3knxv6q","name":"zwwhzeymmg3wfx4qtc3f5o2j5stk4ll6mtuzortcgsyg2dyqbfqb66eiikdphauomr5g3knxv6q","type":"Microsoft.Resources/resourceGroups","location":"westus","tags":{"DeleteAfter":"2020-09-18T07:37:32"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_resource_groups457f1050","name":"test_mgmt_resource_test_resource_groups457f1050","type":"Microsoft.Resources/resourceGroups","location":"westus","tags":{"tag1":"value1"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-sdk-for-js","name":"azure-sdk-for-js","type":"Microsoft.Resources/resourceGroups","location":"westus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-sdk-for-node","name":"azure-sdk-for-node","type":"Microsoft.Resources/resourceGroups","location":"westus","tags":{},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cleanupservice","name":"cleanupservice","type":"Microsoft.Resources/resourceGroups","location":"westus","tags":{"What
         Is Cleanup Service":"https://aka.ms/WhatIsCleanupService"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/dev-box","name":"dev-box","type":"Microsoft.Resources/resourceGroups","location":"westus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/git2gridtemplate","name":"git2gridtemplate","type":"Microsoft.Resources/resourceGroups","location":"westus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/git2gridtesting","name":"git2gridtesting","type":"Microsoft.Resources/resourceGroups","location":"westus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ml-test","name":"ml-test","type":"Microsoft.Resources/resourceGroups","location":"southcentralus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/msi-test-functions","name":"msi-test-functions","type":"Microsoft.Resources/resourceGroups","location":"westus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/vpn","name":"vpn","type":"Microsoft.Resources/resourceGroups","location":"ukwest","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/vpn-lon","name":"vpn-lon","type":"Microsoft.Resources/resourceGroups","location":"ukwest","properties":{"provisioningState":"Succeeded"}}]}'
     headers:
       cache-control: no-cache
       content-encoding: gzip
-      content-length: '1824'
+      content-length: '2375'
       content-type: application/json; charset=utf-8
-      date: Tue, 02 Jun 2020 03:40:57 GMT
+      date: Thu, 17 Sep 2020 08:11:16 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -132,7 +134,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourcegroups?api-version=2019-10-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourcegroups?api-version=2020-06-01
 - request:
     body: '{"tags": {"tag1": "valueA", "tag2": "valueB"}}'
     headers:
@@ -145,7 +147,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PATCH
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_resource_groups457f1050?api-version=2019-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_resource_groups457f1050?api-version=2020-06-01
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_resource_groups457f1050","name":"test_mgmt_resource_test_resource_groups457f1050","type":"Microsoft.Resources/resourceGroups","location":"westus","tags":{"tag1":"valueA","tag2":"valueB"},"properties":{"provisioningState":"Succeeded"}}'
@@ -153,18 +155,18 @@ interactions:
       cache-control: no-cache
       content-encoding: gzip
       content-type: application/json; charset=utf-8
-      date: Tue, 02 Jun 2020 03:40:59 GMT
+      date: Thu, 17 Sep 2020 08:11:18 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
       vary: Accept-Encoding
       x-content-type-options: nosniff
-      x-ms-ratelimit-remaining-subscription-writes: '1198'
+      x-ms-ratelimit-remaining-subscription-writes: '1194'
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourcegroups/test_mgmt_resource_test_resource_groups457f1050?api-version=2019-10-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourcegroups/test_mgmt_resource_test_resource_groups457f1050?api-version=2020-06-01
 - request:
     body: null
     headers:
@@ -173,7 +175,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_resource_groups457f1050/resources?api-version=2019-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_resource_groups457f1050/resources?api-version=2020-06-01
   response:
     body:
       string: '{"value":[]}'
@@ -182,7 +184,7 @@ interactions:
       content-encoding: gzip
       content-length: '133'
       content-type: application/json; charset=utf-8
-      date: Tue, 02 Jun 2020 03:40:59 GMT
+      date: Thu, 17 Sep 2020 08:11:18 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -191,7 +193,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/test_mgmt_resource_test_resource_groups457f1050/resources?api-version=2019-10-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/test_mgmt_resource_test_resource_groups457f1050/resources?api-version=2020-06-01
 - request:
     body: '{"resources": ["*"]}'
     headers:
@@ -204,7 +206,7 @@ interactions:
       User-Agent:
       - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_resource_groups457f1050/exportTemplate?api-version=2019-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_resource_groups457f1050/exportTemplate?api-version=2020-06-01
   response:
     body:
       string: '{"template":{"$schema":"https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#","contentVersion":"1.0.0.0","parameters":{},"variables":{},"resources":[]}}'
@@ -213,7 +215,7 @@ interactions:
       content-encoding: gzip
       content-length: '257'
       content-type: application/json; charset=utf-8
-      date: Tue, 02 Jun 2020 03:41:00 GMT
+      date: Thu, 17 Sep 2020 08:11:19 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -222,91 +224,93 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourcegroups/test_mgmt_resource_test_resource_groups457f1050/exportTemplate?api-version=2019-10-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourcegroups/test_mgmt_resource_test_resource_groups457f1050/exportTemplate?api-version=2020-06-01
 - request:
     body: null
     headers:
+      Accept:
+      - application/json
       User-Agent:
       - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_resource_groups457f1050?api-version=2019-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_resource_groups457f1050?api-version=2020-06-01
   response:
     body:
       string: ''
     headers:
       cache-control: no-cache
       content-length: '0'
-      date: Tue, 02 Jun 2020 03:41:02 GMT
+      date: Thu, 17 Sep 2020 08:11:22 GMT
       expires: '-1'
-      location: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFR1JPVVBERUxFVElPTkpPQi1URVNUOjVGTUdNVDo1RlJFU09VUkNFOjVGVEVTVDo1RlJFU09VUkNFOjVGR1JPVVBTNDU3RjEwNTAtV0VTVFVTIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2019-10-01
+      location: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFR1JPVVBERUxFVElPTkpPQi1URVNUOjVGTUdNVDo1RlJFU09VUkNFOjVGVEVTVDo1RlJFU09VUkNFOjVGR1JPVVBTNDU3RjEwNTAtV0VTVFVTIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2020-06-01
       pragma: no-cache
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
-      x-ms-ratelimit-remaining-subscription-deletes: '14998'
+      x-ms-ratelimit-remaining-subscription-deletes: '14995'
     status:
       code: 202
       message: Accepted
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourcegroups/test_mgmt_resource_test_resource_groups457f1050?api-version=2019-10-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourcegroups/test_mgmt_resource_test_resource_groups457f1050?api-version=2020-06-01
 - request:
     body: null
     headers:
       User-Agent:
       - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFR1JPVVBERUxFVElPTkpPQi1URVNUOjVGTUdNVDo1RlJFU09VUkNFOjVGVEVTVDo1RlJFU09VUkNFOjVGR1JPVVBTNDU3RjEwNTAtV0VTVFVTIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2019-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFR1JPVVBERUxFVElPTkpPQi1URVNUOjVGTUdNVDo1RlJFU09VUkNFOjVGVEVTVDo1RlJFU09VUkNFOjVGR1JPVVBTNDU3RjEwNTAtV0VTVFVTIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2020-06-01
   response:
     body:
       string: ''
     headers:
       cache-control: no-cache
       content-length: '0'
-      date: Tue, 02 Jun 2020 03:41:19 GMT
+      date: Thu, 17 Sep 2020 08:11:38 GMT
       expires: '-1'
-      location: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFR1JPVVBERUxFVElPTkpPQi1URVNUOjVGTUdNVDo1RlJFU09VUkNFOjVGVEVTVDo1RlJFU09VUkNFOjVGR1JPVVBTNDU3RjEwNTAtV0VTVFVTIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2019-10-01
+      location: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFR1JPVVBERUxFVElPTkpPQi1URVNUOjVGTUdNVDo1RlJFU09VUkNFOjVGVEVTVDo1RlJFU09VUkNFOjVGR1JPVVBTNDU3RjEwNTAtV0VTVFVTIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2020-06-01
       pragma: no-cache
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
     status:
       code: 202
       message: Accepted
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/operationresults/eyJqb2JJZCI6IlJFU09VUkNFR1JPVVBERUxFVElPTkpPQi1URVNUOjVGTUdNVDo1RlJFU09VUkNFOjVGVEVTVDo1RlJFU09VUkNFOjVGR1JPVVBTNDU3RjEwNTAtV0VTVFVTIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2019-10-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/operationresults/eyJqb2JJZCI6IlJFU09VUkNFR1JPVVBERUxFVElPTkpPQi1URVNUOjVGTUdNVDo1RlJFU09VUkNFOjVGVEVTVDo1RlJFU09VUkNFOjVGR1JPVVBTNDU3RjEwNTAtV0VTVFVTIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2020-06-01
 - request:
     body: null
     headers:
       User-Agent:
       - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFR1JPVVBERUxFVElPTkpPQi1URVNUOjVGTUdNVDo1RlJFU09VUkNFOjVGVEVTVDo1RlJFU09VUkNFOjVGR1JPVVBTNDU3RjEwNTAtV0VTVFVTIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2019-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFR1JPVVBERUxFVElPTkpPQi1URVNUOjVGTUdNVDo1RlJFU09VUkNFOjVGVEVTVDo1RlJFU09VUkNFOjVGR1JPVVBTNDU3RjEwNTAtV0VTVFVTIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2020-06-01
   response:
     body:
       string: ''
     headers:
       cache-control: no-cache
       content-length: '0'
-      date: Tue, 02 Jun 2020 03:41:35 GMT
+      date: Thu, 17 Sep 2020 08:11:54 GMT
       expires: '-1'
-      location: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFR1JPVVBERUxFVElPTkpPQi1URVNUOjVGTUdNVDo1RlJFU09VUkNFOjVGVEVTVDo1RlJFU09VUkNFOjVGR1JPVVBTNDU3RjEwNTAtV0VTVFVTIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2019-10-01
+      location: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFR1JPVVBERUxFVElPTkpPQi1URVNUOjVGTUdNVDo1RlJFU09VUkNFOjVGVEVTVDo1RlJFU09VUkNFOjVGR1JPVVBTNDU3RjEwNTAtV0VTVFVTIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2020-06-01
       pragma: no-cache
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
     status:
       code: 202
       message: Accepted
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/operationresults/eyJqb2JJZCI6IlJFU09VUkNFR1JPVVBERUxFVElPTkpPQi1URVNUOjVGTUdNVDo1RlJFU09VUkNFOjVGVEVTVDo1RlJFU09VUkNFOjVGR1JPVVBTNDU3RjEwNTAtV0VTVFVTIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2019-10-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/operationresults/eyJqb2JJZCI6IlJFU09VUkNFR1JPVVBERUxFVElPTkpPQi1URVNUOjVGTUdNVDo1RlJFU09VUkNFOjVGVEVTVDo1RlJFU09VUkNFOjVGR1JPVVBTNDU3RjEwNTAtV0VTVFVTIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2020-06-01
 - request:
     body: null
     headers:
       User-Agent:
       - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFR1JPVVBERUxFVElPTkpPQi1URVNUOjVGTUdNVDo1RlJFU09VUkNFOjVGVEVTVDo1RlJFU09VUkNFOjVGR1JPVVBTNDU3RjEwNTAtV0VTVFVTIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2019-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFR1JPVVBERUxFVElPTkpPQi1URVNUOjVGTUdNVDo1RlJFU09VUkNFOjVGVEVTVDo1RlJFU09VUkNFOjVGR1JPVVBTNDU3RjEwNTAtV0VTVFVTIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2020-06-01
   response:
     body:
       string: ''
     headers:
       cache-control: no-cache
       content-length: '0'
-      date: Tue, 02 Jun 2020 03:41:51 GMT
+      date: Thu, 17 Sep 2020 08:12:11 GMT
       expires: '-1'
       pragma: no-cache
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -314,5 +318,5 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/operationresults/eyJqb2JJZCI6IlJFU09VUkNFR1JPVVBERUxFVElPTkpPQi1URVNUOjVGTUdNVDo1RlJFU09VUkNFOjVGVEVTVDo1RlJFU09VUkNFOjVGR1JPVVBTNDU3RjEwNTAtV0VTVFVTIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2019-10-01
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/operationresults/eyJqb2JJZCI6IlJFU09VUkNFR1JPVVBERUxFVElPTkpPQi1URVNUOjVGTUdNVDo1RlJFU09VUkNFOjVGVEVTVDo1RlJFU09VUkNFOjVGR1JPVVBTNDU3RjEwNTAtV0VTVFVTIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2020-06-01
 version: 1

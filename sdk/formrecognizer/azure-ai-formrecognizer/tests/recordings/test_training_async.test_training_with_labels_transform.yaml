@@ -3,65 +3,67 @@ interactions:
     body: 'b''b\''{"source": "containersasurl", "sourceFilter": {"prefix": "", "includeSubFolders":
       false}, "useLabelFile": true}\'''''
     headers:
+      Accept:
+      - application/json
       Content-Length:
       - '287'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/custom/models
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models
   response:
     body:
       string: ''
     headers:
-      apim-request-id: 1fb37500-40c8-45d3-9a90-2c1a4f74539d
+      apim-request-id: 3158636d-28bc-40f8-88ec-4c286fa0110a
       content-length: '0'
-      date: Fri, 10 Jul 2020 19:00:35 GMT
-      location: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/custom/models/7acb3752-3266-4dcf-91e9-1189cdf98e38
+      date: Mon, 14 Sep 2020 22:21:36 GMT
+      location: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/4c209102-eaf7-4a08-a32d-49bc5f8ec289
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '5099'
+      x-envoy-upstream-service-time: '47'
     status:
       code: 201
       message: Created
-    url: https://centraluseuap.api.cognitive.microsoft.com//formrecognizer/v2.0/custom/models
+    url: https://centraluseuap.api.cognitive.microsoft.com//formrecognizer/v2.1-preview.1/custom/models
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/custom/models/7acb3752-3266-4dcf-91e9-1189cdf98e38?includeKeys=true
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/4c209102-eaf7-4a08-a32d-49bc5f8ec289?includeKeys=true
   response:
     body:
-      string: '{"modelInfo": {"modelId": "7acb3752-3266-4dcf-91e9-1189cdf98e38", "status":
-        "ready", "createdDateTime": "2020-07-10T19:00:30Z", "lastUpdatedDateTime":
-        "2020-07-10T19:00:39Z"}, "trainResult": {"averageModelAccuracy": 0.973, "trainingDocuments":
-        [{"documentName": "Form_1.jpg", "pages": 1, "status": "succeeded"}, {"documentName":
-        "Form_2.jpg", "pages": 1, "status": "succeeded"}, {"documentName": "Form_3.jpg",
-        "pages": 1, "status": "succeeded"}, {"documentName": "Form_4.jpg", "pages":
-        1, "status": "succeeded"}, {"documentName": "Form_5.jpg", "pages": 1, "status":
-        "succeeded"}], "fields": [{"fieldName": "CompanyAddress", "accuracy": 0.8},
-        {"fieldName": "CompanyName", "accuracy": 1.0}, {"fieldName": "CompanyPhoneNumber",
-        "accuracy": 1.0}, {"fieldName": "DatedAs", "accuracy": 1.0}, {"fieldName":
-        "Email", "accuracy": 0.8}, {"fieldName": "Merchant", "accuracy": 1.0}, {"fieldName":
-        "PhoneNumber", "accuracy": 1.0}, {"fieldName": "PurchaseOrderNumber", "accuracy":
-        1.0}, {"fieldName": "Quantity", "accuracy": 1.0}, {"fieldName": "Signature",
-        "accuracy": 1.0}, {"fieldName": "Subtotal", "accuracy": 1.0}, {"fieldName":
-        "Tax", "accuracy": 1.0}, {"fieldName": "Total", "accuracy": 1.0}, {"fieldName":
-        "VendorName", "accuracy": 1.0}, {"fieldName": "Website", "accuracy": 1.0}],
-        "errors": []}}'
+      string: '{"modelInfo": {"modelId": "4c209102-eaf7-4a08-a32d-49bc5f8ec289", "attributes":
+        {"isComposed": false}, "status": "ready", "createdDateTime": "2020-09-14T22:21:36Z",
+        "lastUpdatedDateTime": "2020-09-14T22:21:38Z"}, "trainResult": {"averageModelAccuracy":
+        0.96, "trainingDocuments": [{"documentName": "Form_1.jpg", "pages": 1, "status":
+        "succeeded"}, {"documentName": "Form_2.jpg", "pages": 1, "status": "succeeded"},
+        {"documentName": "Form_3.jpg", "pages": 1, "status": "succeeded"}, {"documentName":
+        "Form_4.jpg", "pages": 1, "status": "succeeded"}, {"documentName": "Form_5.jpg",
+        "pages": 1, "status": "succeeded"}], "fields": [{"fieldName": "CompanyAddress",
+        "accuracy": 0.8}, {"fieldName": "CompanyName", "accuracy": 1.0}, {"fieldName":
+        "CompanyPhoneNumber", "accuracy": 1.0}, {"fieldName": "DatedAs", "accuracy":
+        1.0}, {"fieldName": "Email", "accuracy": 0.8}, {"fieldName": "Merchant", "accuracy":
+        1.0}, {"fieldName": "PhoneNumber", "accuracy": 1.0}, {"fieldName": "PurchaseOrderNumber",
+        "accuracy": 1.0}, {"fieldName": "Quantity", "accuracy": 1.0}, {"fieldName":
+        "Signature", "accuracy": 0.8}, {"fieldName": "Subtotal", "accuracy": 1.0},
+        {"fieldName": "Tax", "accuracy": 1.0}, {"fieldName": "Total", "accuracy":
+        1.0}, {"fieldName": "VendorName", "accuracy": 1.0}, {"fieldName": "Website",
+        "accuracy": 1.0}], "errors": []}}'
     headers:
-      apim-request-id: 22b04da9-9460-421a-ac33-927c2f009336
+      apim-request-id: 04773b6e-29f6-4b8b-89c6-81dace7cbc05
       content-type: application/json; charset=utf-8
-      date: Fri, 10 Jul 2020 19:00:40 GMT
+      date: Mon, 14 Sep 2020 22:21:41 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '15'
+      x-envoy-upstream-service-time: '14'
     status:
       code: 200
       message: OK
-    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/custom/models/7acb3752-3266-4dcf-91e9-1189cdf98e38?includeKeys=true
+    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/4c209102-eaf7-4a08-a32d-49bc5f8ec289?includeKeys=true
 version: 1

@@ -36,7 +36,7 @@ async def filter_query():
     search_client = SearchClient(service_endpoint, index_name, AzureKeyCredential(key))
 
     async with search_client:
-        results = await search_client.search(search_text="WiFi", facets=["Category"], top=0)
+        results = await search_client.search(search_text="WiFi", facets=["Category,count:3", "ParkingIncluded"])
 
         facets = await results.get_facets()
 

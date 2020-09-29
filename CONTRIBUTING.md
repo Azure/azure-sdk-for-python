@@ -113,7 +113,7 @@ Mypy install and run.
 
 ### More Reading
 
-We maintain an [additional document](doc/eng_sys_checks.md) that has a ton of detail as to what is actually _happening_ in these executions.
+We maintain an [additional document](https://github.com/Azure/azure-sdk-for-python/blob/master/doc/eng_sys_checks.md) that has a ton of detail as to what is actually _happening_ in these executions.
 
 ### Dev Feed
 Daily dev build version of Azure sdk packages for python are available and are uploaded to Azure devops feed daily. We have also created a tox environment to test a package against dev built version of dependent packages. Below is the link to Azure devops feed.

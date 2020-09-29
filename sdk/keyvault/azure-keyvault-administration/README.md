@@ -146,7 +146,7 @@ List the role definitions available for assignment.
 
 ```python
 from azure.identity import DefaultAzureCredential
-from azure.keyvault.administration import KeyVaultAccessControlClient
+from azure.keyvault.administration import KeyVaultAccessControlClient, KeyVaultRoleScope
 
 credential = DefaultAzureCredential()
 
@@ -166,7 +166,7 @@ Before creating a new role assignment in the [next snippet](#create-get-and-dele
 
 ```python
 from azure.identity import DefaultAzureCredential
-from azure.keyvault.administration import KeyVaultAccessControlClient
+from azure.keyvault.administration import KeyVaultAccessControlClient, KeyVaultRoleScope
 
 credential = DefaultAzureCredential()
 
@@ -221,7 +221,7 @@ print(role_assignment.role_definition_id)
 Back up your entire collection of keys. The backing store for full key backups is a blob storage container using Shared Access Signature authentication.
 
 For more details on creating a SAS token using the `BlobServiceClient`, see the sample [here](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/storage/azure-storage-blob/samples/blob_samples_authentication.py#L105).
-Alternatively, it is possible to [generate a SAS token in Storage Explorer](https://docs.microsoft.com/en-us/azure/vs-azure-tools-storage-manage-with-storage-explorer?tabs=windows#generate-a-shared-access-signature-in-storage-explorer)
+Alternatively, it is possible to [generate a SAS token in Storage Explorer](https://docs.microsoft.com/azure/vs-azure-tools-storage-manage-with-storage-explorer?tabs=windows#generate-a-shared-access-signature-in-storage-explorer)
 
 ```python
 from azure.identity import DefaultAzureCredential
@@ -251,7 +251,7 @@ Restore your entire collection of keys from a backup. The data source for a full
 You will also need the `azure_storage_blob_container_uri` from the [above snippet](#perform-a-full-key-backup).
 
 For more details on creating a SAS token using the `BlobServiceClient`, see the sample [here](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/storage/azure-storage-blob/samples/blob_samples_authentication.py#L105).
-Alternatively, it is possible to [generate a SAS token in Storage Explorer](https://docs.microsoft.com/en-us/azure/vs-azure-tools-storage-manage-with-storage-explorer?tabs=windows#generate-a-shared-access-signature-in-storage-explorer)
+Alternatively, it is possible to [generate a SAS token in Storage Explorer](https://docs.microsoft.com/azure/vs-azure-tools-storage-manage-with-storage-explorer?tabs=windows#generate-a-shared-access-signature-in-storage-explorer)
 
 ```python
 from azure.identity import DefaultAzureCredential
@@ -314,10 +314,10 @@ you need to provide a CLA and decorate the PR appropriately (e.g., label,
 comment). Simply follow the instructions provided by the bot. You will only
 need to do this once across all repos using our CLA.
 
-This project has adopted the
-[Microsoft Open Source Code of Conduct][code_of_conduct]. For more information,
-see the Code of Conduct FAQ or contact opencode@microsoft.com with any
-additional questions or comments.
+This project has adopted the [Microsoft Open Source Code of Conduct][code_of_conduct].
+For more information, see the
+[Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
+contact opencode@microsoft.com with any additional questions or comments.
 
 <!-- LINKS -->
 [azure_cloud_shell]: https://shell.azure.com/bash

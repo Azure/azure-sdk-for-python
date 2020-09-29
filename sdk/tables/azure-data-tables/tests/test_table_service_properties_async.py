@@ -215,7 +215,6 @@ class TableServicePropertiesTest(TableTestCase):
                           RetentionPolicy,
                           True, None)
 
-    @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     async def test_too_many_cors_rules_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -225,22 +224,19 @@ class TableServicePropertiesTest(TableTestCase):
             cors.append(CorsRule(['www.xyz.com'], ['GET']))
 
         # Assert
-        self.assertRaises(HttpResponseError,
-                          tsc.set_service_properties, None, None, None, cors)
+        with self.assertRaises(HttpResponseError):
+            await tsc.set_service_properties(None, None, None, cors)
 
-    @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     async def test_retention_too_long_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         tsc = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
         minute_metrics = Metrics(enabled=True, include_apis=True,
                                  retention_policy=RetentionPolicy(enabled=True, days=366))
-        
-        await tsc.set_service_properties(None, None, minute_metrics)
+
         # Assert
-        self.assertRaises(HttpResponseError,
-                          tsc.set_service_properties,
-                          None, None, minute_metrics)
+        with self.assertRaises(HttpResponseError):
+            await tsc.set_service_properties(None, None, minute_metrics)
 
 
 # ------------------------------------------------------------------------------
