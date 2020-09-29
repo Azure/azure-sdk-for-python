@@ -12,7 +12,6 @@
 from ._servers_operations import ServersOperations
 from ._firewall_rules_operations import FirewallRulesOperations
 from ._configurations_operations import ConfigurationsOperations
-from ._server_keys_operations import ServerKeysOperations
 from ._check_name_availability_operations import CheckNameAvailabilityOperations
 from ._location_based_capabilities_operations import LocationBasedCapabilitiesOperations
 from ._virtual_network_subnet_usage_operations import VirtualNetworkSubnetUsageOperations
@@ -22,7 +21,6 @@ __all__ = [
     'ServersOperations',
     'FirewallRulesOperations',
     'ConfigurationsOperations',
-    'ServerKeysOperations',
     'CheckNameAvailabilityOperations',
     'LocationBasedCapabilitiesOperations',
     'VirtualNetworkSubnetUsageOperations',
