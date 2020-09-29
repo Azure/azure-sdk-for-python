@@ -31,8 +31,9 @@ from devtools_testutils import (
     ResourceGroupPreparer,
     StorageAccountPreparer,
     FakeResource,
-    CosmosAccountPreparer,
+    # CosmosAccountPreparer,
 )
+from .cosmos_testcase import CosmosAccountPreparer, CachedCosmosAccountPreparer
 from azure_devtools.scenario_tests import RecordingProcessor, AzureTestError, create_random_name
 try:
     from cStringIO import StringIO      # Python 2

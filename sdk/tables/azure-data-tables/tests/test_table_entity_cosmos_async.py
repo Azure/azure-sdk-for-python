@@ -29,7 +29,8 @@ from azure.core.exceptions import (
 
 from azure.data.tables._entity import TableEntity, EntityProperty, EdmType
 from azure.data.tables import TableSasPermissions, AccessPolicy, UpdateMode
-from devtools_testutils import CachedResourceGroupPreparer, CachedCosmosAccountPreparer
+from devtools_testutils import CachedResourceGroupPreparer
+from _shared.cosmos_testcase import CachedCosmosAccountPreparer
 from _shared.testcase import TableTestCase, LogCaptured, RERUNS_DELAY, SLEEP_DELAY
 
 # ------------------------------------------------------------------------------
