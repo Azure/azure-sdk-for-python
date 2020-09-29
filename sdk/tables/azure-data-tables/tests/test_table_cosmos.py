@@ -520,7 +520,7 @@ class StorageTableTest(TableTestCase):
     def test_locale(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         ts = TableServiceClient(self.account_url(cosmos_account, "cosmos"), cosmos_account_key)
-        table_name = self._get_table_reference()
+        table = (self._get_table_reference())
         init_locale = locale.getlocale()
         if os.name == "nt":
             culture = "Spanish_Spain"
@@ -531,7 +531,9 @@ class StorageTableTest(TableTestCase):
 
         locale.setlocale(locale.LC_ALL, culture)
         e = None
-        table = ts.create_table(table_name)
+
+        # Act
+        ts.create_table(table)
 
         resp = ts.list_tables()
 
@@ -540,7 +542,7 @@ class StorageTableTest(TableTestCase):
         # Assert
         self.assertIsNone(e)
 
-        ts.delete_table(table_name)
+        ts.delete_table(table)
         locale.setlocale(locale.LC_ALL, init_locale[0] or 'en_US')
 
         if self.is_live:
