@@ -620,6 +620,25 @@ class StorageShareTest(StorageTestCase):
         self._delete_shares()
 
     @GlobalStorageAccountPreparer()
+    def test_list_shares_leased_share(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
+        share = self._create_share("test1")
+
+        # Act
+        lease = share.acquire_lease()
+        resp = list(self.fsc.list_shares())
+
+        # Assert
+        self.assertIsNotNone(resp)
+        self.assertGreaterEqual(len(resp), 1)
+        self.assertIsNotNone(resp[0])
+        self.assertEqual(resp[0].lease.duration, 'infinite')
+        self.assertEqual(resp[0].lease.status, 'locked')
+        self.assertEqual(resp[0].lease.state, 'leased')
+        lease.release()
+        self._delete_shares()
+
+    @GlobalStorageAccountPreparer()
     def test_list_shares_with_snapshot(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         #share = self._get_share_reference()
