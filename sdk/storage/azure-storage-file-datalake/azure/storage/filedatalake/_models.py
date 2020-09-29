@@ -17,7 +17,7 @@ from azure.storage.blob import ContainerSasPermissions, BlobSasPermissions
 from azure.storage.blob import AccessPolicy as BlobAccessPolicy
 from azure.storage.blob import DelimitedTextDialect as BlobDelimitedTextDialect
 from azure.storage.blob import DelimitedJsonDialect as BlobDelimitedJSON
-from azure.storage.blob._generated.models import StorageErrorException
+from azure.storage.blob._generated.models import StorageErrorException  # pylint: disable=unused-import
 from azure.storage.blob._models import ContainerPropertiesPaged
 from ._deserialize import return_headers_and_deserialized_path_list
 from ._generated.models import Path
