@@ -11,6 +11,7 @@
 * Sending a message twice will no longer result in a MessageAlreadySettled exception.
 * `ServiceBusClient.close()` now closes spawned senders and receivers.
 * Attempting to initialize a sender or receiver with a different connection string entity and specified entity (e.g. `queue_name`) will result in an AuthenticationError
+* Administration Client calls now take only entity names, not `EntityDescriptions` as well to reduce ambiguity in which entity was being acted on.  TypeError will now be thrown on improper parameter types (non-string.)
 
 ## 7.0.0b5 (2020-08-10)
 

@@ -185,8 +185,8 @@ class ServiceBusManagementClientQueueAsyncTests(AzureMgmtTestCase):
         with pytest.raises(ValueError):
             await mgmt_service.delete_queue("")
 
-        with pytest.raises(ValueError):
-            await mgmt_service.delete_queue(queue=None)
+        with pytest.raises(TypeError):
+            await mgmt_service.delete_queue(queue_name=None)
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
@@ -441,7 +441,7 @@ class ServiceBusManagementClientQueueAsyncTests(AzureMgmtTestCase):
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     async def test_async_mgmt_queue_get_runtime_info_negative(self, servicebus_namespace_connection_string):
         mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
-        with pytest.raises(msrest.exceptions.ValidationError):
+        with pytest.raises(TypeError):
             await mgmt_service.get_queue_runtime_info(None)
 
         with pytest.raises(msrest.exceptions.ValidationError):

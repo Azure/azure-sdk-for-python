@@ -191,8 +191,8 @@ class ServiceBusManagementClientQueueTests(AzureMgmtTestCase):
         with pytest.raises(ValueError):
             mgmt_service.delete_queue("")
 
-        with pytest.raises(ValueError):
-            mgmt_service.delete_queue(queue=None)
+        with pytest.raises(TypeError):
+            mgmt_service.delete_queue(queue_name=None)
 
     @pytest.mark.liveTest
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -464,7 +464,7 @@ class ServiceBusManagementClientQueueTests(AzureMgmtTestCase):
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     def test_mgmt_queue_get_runtime_info_negative(self, servicebus_namespace_connection_string):
         mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
-        with pytest.raises(msrest.exceptions.ValidationError):
+        with pytest.raises(TypeError):
             mgmt_service.get_queue_runtime_info(None)
 
         with pytest.raises(msrest.exceptions.ValidationError):

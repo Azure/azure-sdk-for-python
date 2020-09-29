@@ -90,8 +90,13 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
             transport = RequestsTransport(**kwargs)
         return Pipeline(transport, policies)
 
+    def _validate_entity_name_type(self, entity_name, display_name='entity name'):
+        if not isinstance(entity_name, str):
+            raise TypeError("{} must be a string, not {}".format(display_name, type(entity_name)))
+
     def _get_entity_element(self, entity_name, enrich=False, **kwargs):
         # type: (str, bool, Any) -> ElementTree
+        self._validate_entity_name_type(entity_name)
 
         with _handle_response_error():
             element = cast(
@@ -100,9 +105,14 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
             )
         return element
 
+    def _validate_topic_and_subscription_types(self, topic_name, subscription_name):
+        if not isinstance(topic_name, str) or not isinstance(subscription_name, str):
+            raise TypeError("topic name and subscription name must be strings, not {} and {}".format(
+                type(topic_name), type(subscription_name)))
+
     def _get_subscription_element(self, topic_name, subscription_name, enrich=False, **kwargs):
         # type: (str, str, bool, Any) -> ElementTree
-
+        self._validate_topic_and_subscription_types(topic_name, subscription_name)
         with _handle_response_error():
             element = cast(
                 ElementTree,
@@ -111,8 +121,14 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
             )
         return element
 
+    def _validate_topic_subscription_and_rule_types(self, topic_name, subscription_name, rule_name):
+        if not isinstance(topic_name, str) or not isinstance(subscription_name, str) or not isinstance(rule_name, str):
+            raise TypeError("topic name, subscription name and rule name must be strings, not {} {} and {}".format(
+                type(topic_name), type(subscription_name), type(rule_name)))
+
     def _get_rule_element(self, topic_name, subscription_name, rule_name, **kwargs):
         # type: (str, str, str, Any) -> ElementTree
+        self._validate_topic_subscription_and_rule_types(topic_name, subscription_name, rule_name)
 
         with _handle_response_error():
             element = cast(
@@ -310,6 +326,8 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
          a `QueueProperties` with name.
         :rtype: None
         """
+        self._validate_entity_name_type(queue_name)
+
         if not queue_name:
             raise ValueError("queue_name must not be None or empty")
         with _handle_response_error():
@@ -522,6 +540,8 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
         :param str topic_name: The topic to be deleted.
         :rtype: None
         """
+        self._validate_entity_name_type(topic_name)
+
         self._impl.entity.delete(topic_name, api_version=constants.API_VERSION, **kwargs)
 
     def list_topics(self, **kwargs):
@@ -643,6 +663,8 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
         :type auto_delete_on_idle: ~datetime.timedelta
         :rtype:  ~azure.servicebus.management.SubscriptionProperties
         """
+        self._validate_entity_name_type(topic_name, display_name='topic_name')
+
         subscription = SubscriptionProperties(
             name,
             lock_duration=kwargs.pop("lock_duration", None),
@@ -694,6 +716,7 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
          from `get_subscription`, `update_subscription` or `list_subscription` and has the updated properties.
         :rtype: None
         """
+        self._validate_entity_name_type(topic_name, display_name='topic_name')
 
         to_update = subscription._to_internal_entity()
 
@@ -725,6 +748,8 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
          be deleted.
         :rtype: None
         """
+        self._validate_topic_and_subscription_types(topic_name, subscription_name)
+
         self._impl.subscription.delete(topic_name, subscription_name, api_version=constants.API_VERSION, **kwargs)
 
     def list_subscriptions(self, topic_name, **kwargs):
@@ -735,6 +760,8 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
         :returns: An iterable (auto-paging) response of SubscriptionProperties.
         :rtype: ~azure.core.paging.ItemPaged[~azure.servicebus.management.SubscriptionProperties]
         """
+        self._validate_entity_name_type(topic_name)
+
         def entry_to_subscription(entry):
             subscription = SubscriptionProperties._from_internal_entity(
                 entry.title, entry.content.subscription_description)
@@ -757,6 +784,8 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
         :returns: An iterable (auto-paging) response of SubscriptionRuntimeProperties.
         :rtype: ~azure.core.paging.ItemPaged[~azure.servicebus.management.SubscriptionRuntimeProperties]
         """
+        self._validate_entity_name_type(topic_name)
+
         def entry_to_subscription(entry):
             subscription = SubscriptionRuntimeProperties._from_internal_entity(
                 entry.title, entry.content.subscription_description)
@@ -809,6 +838,8 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
 
         :rtype: ~azure.servicebus.management.RuleProperties
         """
+        self._validate_topic_and_subscription_types(topic_name, subscription_name)
+
         rule = RuleProperties(
             name,
             filter=kwargs.pop("filter", None),
@@ -849,6 +880,7 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
         `create_rule`, or `list_rules` and has the updated properties.
         :rtype: None
         """
+        self._validate_topic_and_subscription_types(topic_name, subscription_name)
 
         to_update = rule._to_internal_entity()
 
@@ -880,6 +912,8 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
         :param str rule_name: The to-be-deleted rule.
         :rtype: None
         """
+        self._validate_topic_subscription_and_rule_types(topic_name, subscription_name, rule_name)
+
         self._impl.rule.delete(topic_name, subscription_name, rule_name, api_version=constants.API_VERSION, **kwargs)
 
     def list_rules(self, topic_name, subscription_name, **kwargs):
@@ -892,6 +926,8 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
         :returns: An iterable (auto-paging) response of RuleProperties.
         :rtype: ~azure.core.paging.ItemPaged[~azure.servicebus.management.RuleProperties]
         """
+        self._validate_topic_and_subscription_types(topic_name, subscription_name)
+
         def entry_to_rule(ele, entry):
             """
             `ele` will be removed after https://github.com/Azure/autorest/issues/3535 is released.
