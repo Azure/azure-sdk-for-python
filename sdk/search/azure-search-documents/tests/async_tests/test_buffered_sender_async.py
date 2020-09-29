@@ -74,7 +74,7 @@ class TestSearchBatchingClientAsync(object):
                 assert len(client.actions) == 0
 
     async def test_callback_new(self):
-        on_new = mock.Mock()
+        on_new = mock.AsyncMock()
         async with SearchIndexingBufferedSender("endpoint", "index name", CREDENTIAL, auto_flush=False, on_new=on_new) as client:
             await client.upload_documents(["upload1"])
             assert on_new.called
@@ -90,7 +90,7 @@ class TestSearchBatchingClientAsync(object):
                 self.uploaded = self.uploaded + len(actions) - 1
                 return [result]
 
-        on_error = mock.Mock()
+        on_error = mock.AsyncMock()
         async with SearchIndexingBufferedSender("endpoint",
                                                "index name",
                                                CREDENTIAL,
@@ -112,8 +112,8 @@ class TestSearchBatchingClientAsync(object):
                 result.succeeded = True
                 return [result]
 
-        on_progress = mock.Mock()
-        on_remove = mock.Mock()
+        on_progress = mock.AsyncMock()
+        on_remove = mock.AsyncMock()
         async with SearchIndexingBufferedSender("endpoint",
                                                "index name",
                                                CREDENTIAL,
