@@ -80,13 +80,13 @@ class CreateDeleteTable(object):
             conn_str=self.connection_string,
             table_name=self.table_name
         )
-        try:
-            table_item = await table_client.create_table()
-            print("Created table {}!".format(table_item.table_name))
-        except ResourceExistsError:
-            print("Table already exists")
+        async with table_client:
+            try:
+                table_item = await table_client.create_table()
+                print("Created table {}!".format(table_item.table_name))
+            except ResourceExistsError:
+                print("Table already exists")
         # [END create_from_table_client]
-        await table_client.close()
 
     async def delete_from_table_client(self):
         from azure.data.table import TableClient
@@ -96,13 +96,13 @@ class CreateDeleteTable(object):
             conn_str=self.connection_string,
             table_name=self.table_name
         )
-        try:
-            await table_client.delete_table()
-            print("Deleted table {}!".format(self.table_name))
-        except ResourceExistsError:
-            print("Table already exists")
+        async with table_client:
+            try:
+                await table_client.delete_table()
+                print("Deleted table {}!".format(self.table_name))
+            except ResourceExistsError:
+                print("Table already exists")
         # [END delete_from_table_client]
-        await table_client.close()
 
 
 async def main():

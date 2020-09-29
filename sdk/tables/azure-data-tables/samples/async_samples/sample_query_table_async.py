@@ -43,17 +43,16 @@ class SampleTablesQuery(object):
         }
 
         table_client = TableClient.from_connection_string(self.connection_string, self.table_name)
-        await table_client.create_table()
+        async with table_client:
+            await table_client.create_table()
 
-        for i in range(10):
-            e = copy.deepcopy(entity_template)
-            e["RowKey"] += str(i)
-            e["Name"] = random.choice(names)
-            e["Brand"] = random.choice(brands)
-            e["Color"] = random.choice(colors)
-            await table_client.create_entity(entity=e)
-
-        await table_client.close()
+            for i in range(10):
+                e = copy.deepcopy(entity_template)
+                e["RowKey"] += str(i)
+                e["Name"] = random.choice(names)
+                e["Brand"] = random.choice(brands)
+                e["Color"] = random.choice(colors)
+                await table_client.create_entity(entity=e)
 
 
     async def sample_query_entities(self):
@@ -63,19 +62,19 @@ class SampleTablesQuery(object):
 
         table_client = TableClient.from_connection_string(self.connection_string, self.table_name)
         # [START query_entities]
-        try:
-            entity_name = "marker"
-            name_filter = "Name eq '{}'".format(entity_name)
+        async with table_client:
+            try:
+                entity_name = "marker"
+                name_filter = "Name eq '{}'".format(entity_name)
 
-            async for entity_chosen in table_client.query_entities(filter=name_filter, select=["Brand","Color"]):
-                print(entity_chosen)
+                async for entity_chosen in table_client.query_entities(filter=name_filter, select=["Brand","Color"]):
+                    print(entity_chosen)
 
-        except HttpResponseError as e:
-            pass
-        # [END query_entities]
-        finally:
-            await table_client.delete_table()
-        await table_client.close()
+            except HttpResponseError as e:
+                pass
+            # [END query_entities]
+            finally:
+                await table_client.delete_table()
 
 
 async def main():
