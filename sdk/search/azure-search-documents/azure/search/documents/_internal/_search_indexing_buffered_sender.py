@@ -35,7 +35,8 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
     :type credential: ~azure.core.credentials.AzureKeyCredential
     :keyword bool auto_flush: if the auto flush mode is on. Default to True.
     :keyword int auto_flush_interval: how many max seconds if between 2 flushes. This only takes effect
-        when auto_flush is on. Default to 60 seconds
+        when auto_flush is on. Default to 60 seconds. If a non-positive number is set, it will be default
+        to 86400s (1 day)
     :keyword callable on_new: If it is set, the client will call corresponding methods when there
         is a new IndexAction added.
     :keyword callable on_progress: If it is set, the client will call corresponding methods when there

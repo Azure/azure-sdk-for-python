@@ -18,7 +18,7 @@ class SearchIndexingBufferedSenderBase(HeadersMixin):
     """Base of search indexing buffered sender"""
     _ODATA_ACCEPT = "application/json;odata.metadata=none"  # type: str
     _DEFAULT_AUTO_FLUSH_INTERVAL = 60
-    _DEFAULT_BATCH_SIZE = 100
+    _DEFAULT_BATCH_SIZE = 500
     _DEFAULT_MAX_RETRY_COUNT = 3
 
     def __init__(self, endpoint, index_name, credential, **kwargs):
