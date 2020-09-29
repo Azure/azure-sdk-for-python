@@ -46,23 +46,3 @@ class SearchIndexingBufferedSenderBase(HeadersMixin):
     def batch_size(self):
         # type: () -> int
         return self._batch_size
-
-    def _succeed_callback(self, action):
-        # type: (IndexAction) -> None
-        if self._remove_callback:
-            self._remove_callback(action)
-        if self._progress_callback:
-            self._progress_callback(action)
-
-    def _fail_callback(self, action):
-        # type: (IndexAction) -> None
-        if self._remove_callback:
-            self._remove_callback(action)
-        if self._error_callback:
-            self._error_callback(action)
-
-    def _new_action_callback(self, actions):
-        # type: (List[IndexAction]) -> None
-        if self._new_callback:
-            for action in actions:
-                self._new_callback(action)

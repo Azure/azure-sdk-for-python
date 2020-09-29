@@ -140,12 +140,12 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
                 try:
                     action = next(x for x in actions if x.additional_properties.get(self._index_key) == result.key)
                     if result.succeeded:
-                        self._succeed_callback(action)
+                        await self._succeed_callback(action)
                     elif is_retryable_status_code(result.status_code):
                         await self._retry_action(action)
                         has_error = True
                     else:
-                        self._fail_callback(action)
+                        await self._fail_callback(action)
                         has_error = True
                 except StopIteration:
                     pass
@@ -191,7 +191,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         :type documents: List[dict]
         """
         actions = await self._index_documents_batch.add_upload_actions(documents)
-        self._new_action_callback(actions)
+        await self._new_action_callback(actions)
         await self._process_if_needed()
 
     @distributed_trace_async
@@ -202,7 +202,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         :type documents: List[dict]
         """
         actions = await self._index_documents_batch.add_delete_actions(documents)
-        self._new_action_callback(actions)
+        await self._new_action_callback(actions)
         await self._process_if_needed()
 
     @distributed_trace_async
@@ -213,7 +213,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         :type documents: List[dict]
         """
         actions = await self._index_documents_batch.add_merge_actions(documents)
-        self._new_action_callback(actions)
+        await self._new_action_callback(actions)
         await self._process_if_needed()
 
     @distributed_trace_async
@@ -224,7 +224,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         :type documents: List[dict]
         """
         actions = await self._index_documents_batch.add_merge_or_upload_actions(documents)
-        self._new_action_callback(actions)
+        await self._new_action_callback(actions)
         await self._process_if_needed()
 
     async def _index_documents_actions(self, actions, **kwargs):
@@ -283,7 +283,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
     async def _retry_action(self, action):
         # type: (IndexAction) -> None
         if not self._index_key:
-            self._fail_callback(action)
+            await self._fail_callback(action)
             return
         key = action.additional_properties.get(self._index_key)
         counter = self._retry_counter.get(key)
@@ -296,4 +296,24 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
             self._retry_counter[key] = counter + 1
             await self._index_documents_batch.enqueue_action(action)
         else:
-            self._fail_callback(action)
+            await self._fail_callback(action)
+
+    async def _succeed_callback(self, action):
+        # type: (IndexAction) -> None
+        if self._remove_callback:
+            await self._remove_callback(action)
+        if self._progress_callback:
+            await self._progress_callback(action)
+
+    async def _fail_callback(self, action):
+        # type: (IndexAction) -> None
+        if self._remove_callback:
+            await self._remove_callback(action)
+        if self._error_callback:
+            await self._error_callback(action)
+
+    async def _new_action_callback(self, actions):
+        # type: (List[IndexAction]) -> None
+        if self._new_callback:
+            for action in actions:
+                await self._new_callback(action)
