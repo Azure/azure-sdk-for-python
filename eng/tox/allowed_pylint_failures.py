@@ -47,5 +47,4 @@ PYLINT_ACCEPTABLE_FAILURES = [
     "azure-synapse-accesscontrol",
     "azure-synapse-nspkg",
     "azure-ai-anomalydetector",
-    "azure-ai-metricsadvisor",
 ]
