@@ -51,7 +51,7 @@ class StorageAccountPreparer(AzureMgmtPreparer):
         if self.is_live:
             self.client = self.create_mgmt_client(StorageManagementClient)
             group = self._get_resource_group(**kwargs)
-            storage_async_operation = self.client.storage_accounts.create(
+            storage_async_operation = self.client.storage_accounts.begin_create(
                 group.name,
                 name,
                 {
@@ -101,7 +101,7 @@ class StorageAccountPreparer(AzureMgmtPreparer):
     def remove_resource(self, name, **kwargs):
         if self.is_live:
             group = self._get_resource_group(**kwargs)
-            self.client.storage_accounts.delete(group.name, name, polling=False)
+            self.client.storage_accounts.delete(group.name, name)
 
     def _get_resource_group(self, **kwargs):
         try:
