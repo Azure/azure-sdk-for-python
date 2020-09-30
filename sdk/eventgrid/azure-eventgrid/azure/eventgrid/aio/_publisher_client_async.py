@@ -42,7 +42,7 @@ class EventGridPublisherClient(object):
         auth_policy = _get_authentication_policy(credential)
         self._client = EventGridPublisherClientAsync(authentication_policy=auth_policy, **kwargs)
         topic_hostname = _get_topic_hostname_only_fqdn(topic_hostname)
-        self._topic_hostname = _topic_hostname 
+        self._topic_hostname = topic_hostname 
         self._client._client._pipeline._impl_policies.append(
             CloudEventDistributedTracingPolicy
             )  # pylint: disable=protected-access
