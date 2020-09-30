@@ -29,6 +29,13 @@ from ._response_handlers import (
     healthcare_paged_result,
     analyze_paged_result
 )
+from ._models import (
+    EntitiesRecognitionTask,
+    PiiEntitiesRecognitionTask,
+    EntityLinkingTask,
+    KeyPhraseExtractionTask,
+    SentimentAnalysisTask
+)
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential, AzureKeyCredential
@@ -41,12 +48,7 @@ if TYPE_CHECKING:
         ExtractKeyPhrasesResult,
         AnalyzeSentimentResult,
         DocumentError,
-        RecognizePiiEntitiesResult,
-        EntitiesRecognitionTask,
-        PiiEntitiesRecognitionTask,
-        EntityLinkingTask,
-        KeyPhraseExtractionTask,
-        SentimentAnalysisTask
+        RecognizePiiEntitiesResult
     )
 
 
@@ -520,6 +522,28 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         except HttpResponseError as error:
             process_http_response_error(error)
 
+    def begin_cancel_health_job(
+        self,
+        poller,  # type: LROPoller[ItemPaged[RecognizeHealthcareEntitiesResult]]
+        **kwargs
+    ):
+        # type: (...) -> LROPoller["models.ErrorResponse"]
+        """
+        TODO: write docstring
+        """
+        initial_response = poller._polling_method._initial_response
+        operation_location = initial_response.http_response.headers["Operation-Location"]
+
+        from urllib.parse import urlparse
+        job_id = urlparse(operation_location).path.split("/")[-1]
+
+        try:
+            return self._client.begin_cancel_health_job(jobId)
+
+        except HttpResponseError as error:
+            process_http_response_error(error)
+
+
     @distributed_trace
     def extract_key_phrases(  # type: ignore
         self,
@@ -675,7 +699,11 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     def begin_analyze_text(  # type: ignore
         self,
         documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
-        tasks, # type: list[Union[~azure.ai.textanalytics.EntitiesRecognitionTask, ~azure.ai.textanalytics.PiiEntitiesRecognitionTask, ~azure.ai.textanalytics.EntityLinkingTask, ~azure.ai.textanalytics.KeyPhraseExtractionTask, ~azure.ai.textanalytics.SentimentAnalysisTask]]
+        entities_recognition_tasks=None,  # type: List[~azure.ai.textanalytics.EntitiesRecognitionTask]
+        pii_entities_recognition_tasks=None,  # type: List[~azure.ai.textanalytics.PiiEntitiesRecognitionTask]
+        entity_linking_tasks=None,  # type: List[~azure.ai.textanalytics.EntityLinkingTask]
+        key_phrase_extraction_tasks=None,  # type: List[~azure.ai.textanalytics.KeyPhraseExtractionTask]
+        sentiment_analysis_tasks=None,  # type: List[~azure.ai.textanalytics.SentimentAnalysisTask]
         **kwargs  # type: Any
     ):  # type: (...) -> LROPoller[TextAnalysisResult]):
         """Start a long-running operation to perform a variety of text analysis tasks over a batch of documents.
@@ -720,34 +748,28 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         display_name = kwargs.pop("display_name", None)
         language_arg = kwargs.pop("language", None)
         language = language_arg if language_arg is not None else self._default_language
-        docs = _validate_input(documents, "language", language)
+        docs = self._client.models(api_version="v3.2-preview.1").MultiLanguageBatchInput(documents=_validate_input(documents, "language", language))
         show_stats = kwargs.pop("show_stats", False)
         polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
         continuation_token = kwargs.pop("continuation_token", None)
 
         try:
-            from itertools import groupby
-
-            grouping_func = lambda x: x.__class__.__name__
-            sorted_tasks = sorted(tasks, key=grouping_func)
-            grouped_tasks = dict(groupby(sorted_tasks, grouping_func))
-
-            analyze_tasks = self._client.models.JobManifestTasks(
-                entity_recognition_tasks = [t.to_generated() for t in grouped_tasks[EntitiesRecognitionTask.__name__]],
-                entity_recognition_pii_tasks = [t.to_generated() for t in grouped_tasks[PiiEntitiesRecognitionTask.__name__]],
-                entity_linking_tasks = [t.to_generated() for t in grouped_tasks[EntityLinkingTask.__name__]],
-                key_phrase_tasks = [t.to_generated() for t in grouped_tasks[KeyPhraseExtractionTask.__name__]],
-                sentiment_tasks = [t.to_generated() for t in grouped_tasks[SentimentAnalysisTask.__name__]]
+            analyze_tasks = self._client.models(api_version='v3.2-preview.1').JobManifestTasks(
+                entity_recognition_tasks = [t.to_generated() for t in entities_recognition_tasks],
+                entity_recognition_pii_tasks = [t.to_generated() for t in pii_entities_recognition_tasks],
+                entity_linking_tasks = [t.to_generated() for t in entity_linking_tasks],
+                key_phrase_extraction_tasks = [t.to_generated() for t in key_phrase_extraction_tasks],
+                sentiment_analysis_tasks = [t.to_generated() for t in sentiment_analysis_tasks]
                 # TODO: add custom task types later
             )
-            analyze_body = self._client.models.AnalyzeBatchInput(
+            analyze_body = self._client.models(api_version='v3.2-preview.1').AnalyzeBatchInput(
                 display_name=display_name,
                 tasks=analyze_tasks,
-                analyze_input=docs
+                analysis_input=docs
             )
             return self._client.begin_analyze(
                 body=analyze_body,
-                cls=kwargs.pop("cls", analyze_result),
+                cls=kwargs.pop("cls", partial(analyze_paged_result, self._client.health_status)),
                 polling=LROBasePolling(timeout=polling_interval, **kwargs),
                 **kwargs
             )
@@ -757,12 +779,4 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         
         except HttpResponseError as error:
             process_http_response_error(error)
-
-    @distributed_trace
-    def begin_analyze():
-        pass
-
-    @distributed_trace
-    def analyze_status():
-        pass
 

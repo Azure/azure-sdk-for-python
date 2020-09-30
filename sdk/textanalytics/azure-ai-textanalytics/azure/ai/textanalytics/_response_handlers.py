@@ -33,7 +33,12 @@ from ._models import (
     RecognizeHealthcareEntitiesResult,
     HealthcareEntity,
     HealthcareRelation,
-    TextAnalysisResult
+    TextAnalysisResult,
+    EntitiesRecognitionTaskResult,
+    PiiEntitiesRecognitionTaskResult,
+    EntityLinkingTaskResult,
+    KeyPhraseExtractionTaskResult,
+    SentimentAnalysisTaskResult
 )
 
 class CSODataV4Format(ODataV4Format):
@@ -155,8 +160,47 @@ def healthcare_result(health_result):
     return RecognizeHealthcareEntitiesResult._from_generated(health_result)
 
 
+def analyze_result(response, obj, response_headers, tasks):
+    return TextAnalysisResult(
+        entities_recognition_results=[
+            EntitiesRecognitionTaskResult(
+                name=t.name, 
+                results=[entities_result(response, result, response_headers) for result in t.results]
+            ) for t in tasks.entity_recognition_tasks
+        ],
+        pii_entities_recognition_results=[
+            PiiEntitiesRecognitionTaskResult(
+                name=t.name,
+                results=[pii_entities_result(response, result, response_headers) for result in t.results]
+            ) for t in tasks.entity_recognition_pii_tasks
+        ],
+        entity_linking_results=[
+            EntityLinkingTaskResult(
+                name=t.name,
+                results=[linked_entities_result(response, result, response_headers) for result in t.results]
+            ) for t in tasks.entity_linking_tasks
+        ],
+        key_phrase_extraction_results=[
+            KeyPhraseExtractionTaskResult(
+                name=t.name,
+                results=[key_phrases_result(response, result, response_headers) for result in t.results]
+            ) for t in tasks.key_phrase_extraction_tasks
+        ],
+        sentiment_analysis_results=[
+            SentimentAnalysisTaskResult(
+                name=t.name,
+                results=[sentiment_result(response, result, response_headers) for result in t.results]
+            ) for t in tasks.sentiment_analysis_tasks
+        ]
+    )
+
+
 def healthcare_extract_page_data(response, obj, response_headers, health_job_state):
     return health_job_state.next_link, [healthcare_result(response, result, response_headers, lro=True) for result in health_job_state.results]
+
+
+def analyze_extract_page_data(response, obj, response_headers, analyze_job_state):
+    return analyze_job_state.next_link, [analyze_result(response, result, response_headers, analyze_job_state.tasks)]
 
 
 def lro_get_next_page(lro_status_callback, continuation_token):
@@ -170,5 +214,13 @@ def healthcare_paged_result(health_status_callback, response, obj, response_head
     return ItemPaged(
         functools.partial(lro_get_next_page, health_status_callback),
         functools.partial(healthcare_extract_page_data, response, obj, response_headers),
+        None
+    )
+
+
+def analyze_paged_result(analyze_status_callback, response, obj, response_headers):
+    return ItemPaged(
+        functools.partial(lro_get_next_page, analyze_status_callback),
+        functools.partial(analyze_extract_page_data, response, obj, response_headers),
         None
     )

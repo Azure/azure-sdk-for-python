@@ -126,11 +126,17 @@ class TextAnalyticsClientOperationsMixin(object):
         kwargs.pop('content_type', None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize('ErrorResponse', pipeline_response)
+            if pipeline_response.http_repsonse.response.status_code == 200:
+                deserialized = self._deserialize('AnalyzeJobState', pipeline_response)
+
+            if pipeline_response.http_repsonse.status_code == 404:
+                deserialized = self._deserialize('ErrorResponse', pipeline_response)
+
+            if pipeline_response.http_repsonse.status_code == 500:
+                deserialized = self._deserialize('ErrorResponse', pipeline_response)
 
             if cls:
                 return cls(pipeline_response, deserialized, {})
-            return deserialized
 
         if polling is True: polling_method = LROBasePolling(lro_delay,  **kwargs)
         elif polling is False: polling_method = NoPolling()

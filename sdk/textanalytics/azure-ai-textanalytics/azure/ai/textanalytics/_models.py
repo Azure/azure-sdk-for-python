@@ -1214,8 +1214,8 @@ class EntitiesRecognitionTask(DictMixin):
         self.string_index_type = kwargs.get("string_index_type", "TextElements_v8")
 
     def __repr__(self, **kwargs):
-        return "EntitiesRecognitionTask(name={}, model_version={}, string_index_type={})" \
-            .format(self.name, self.model_version, self.string_index_type)[:1024]
+        return "EntitiesRecognitionTask(model_version={}, string_index_type={})" \
+            .format(self.model_version, self.string_index_type)[:1024]
 
     def to_generated(self):
         return _v3_2_preview_1_models.EntitiesTask(
@@ -1262,8 +1262,8 @@ class PiiEntitiesRecognitionTask(DictMixin):
         self.domain = kwargs.get("domain", None)
 
     def __repr__(self, **kwargs):
-        return "PiiEntitiesRecognitionTask(name={}, model_version={}, string_index_type={}, domain={})" \
-            .format(self.name, self.model_version, self.string_index_type, self.domain)[:1024]
+        return "PiiEntitiesRecognitionTask(model_version={}, string_index_type={}, domain={})" \
+            .format(self.model_version, self.string_index_type, self.domain)[:1024]
 
     def to_generated(self):
         return _v3_2_preview_1_models.PiiTask(
@@ -1309,8 +1309,8 @@ class EntityLinkingTask(DictMixin):
         self.string_index_type = kwargs.get("string_index_type", "TextElements_v8")
 
     def __repr__(self, **kwargs):
-        return "EntityLinkingTask(name={}, model_version={}, string_index_type={})" \
-            .format(self.name, self.model_version, self.string_index_type)[:1024]
+        return "EntityLinkingTask(model_version={}, string_index_type={})" \
+            .format(self.model_version, self.string_index_type)[:1024]
 
     def to_generated(self):
         return _v3_2_preview_1_models.EntityLinkingTask(
@@ -1351,8 +1351,8 @@ class KeyPhraseExtractionTask(DictMixin):
         self.model_version = kwargs.get("model_version", "latest")
 
     def __repr__(self, **kwargs):
-        return "KeyPhraseExtractionTask(name={}, model_version={}, string_index_type={})" \
-            .format(self.name, self.model_version)[:1024]
+        return "KeyPhraseExtractionTask(model_version={})" \
+            .format(self.model_version)[:1024]
 
     def to_generated(self):
         return _v3_2_preview_1_models.KeyPhrasesTask(
@@ -1399,8 +1399,8 @@ class SentimentAnalysisTask(DictMixin):
         self.string_index_type = kwargs.get("string_index_type", "TextElements_v8")
 
     def __repr__(self, **kwargs):
-        return "SentimentAnalysisTask(name={}, model_version={}, string_index_type={}, enable_opinion_mining={})" \
-            .format(self.name, self.model_version, self.string_index_type, self.enable_opinion_mining)[:1024]
+        return "SentimentAnalysisTask(model_version={}, string_index_type={}, enable_opinion_mining={})" \
+            .format(self.model_version, self.string_index_type, self.enable_opinion_mining)[:1024]
 
     def to_generated(self):
         return _v3_2_preview_1_models.SentimentTask(
