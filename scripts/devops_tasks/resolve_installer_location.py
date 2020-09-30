@@ -7,18 +7,27 @@ from packaging.version import Version
 from packaging.version import parse
 import pdb
 
+# SOURCE OF THIS FILE: https://github.com/actions/python-versions
+# this is the official mapping file for gh-actions to retrieve python installers
 MANIFEST_LOCATION = "https://raw.githubusercontent.com/actions/python-versions/main/versions-manifest.json"
 
-
 def get_installer_url(requested_version, version_manifest):
+    current_plat = platform.system().tolower()
+
+    print("Current Platform Is {}".format(platform.platform()))
+
     if version_manifest[requested_version]:
         found_installers = version_manifest[requested_version].files
 
-        # filter anything that's not x64
+        # filter anything that's not x64. we don't care.
         x64_installers = [file_def for file_def in found_installers if file_def["arch"] == "x64"]
 
-        # if we're on linux, we should go after the one that aligns with our platform version.
-        
+        if current_plat == "windows":
+            return [windows_installer for installer in x64_installers if installer["platform"] == "win32"][0]
+        elif current_plat == "darwin":
+            return [windows_installer for installer in x64_installers if installer["platform"] == current_plat][0]
+        else:
+            pass
 
 
 if __name__ == "__main__":
