@@ -21,11 +21,13 @@ from .. import models
 class ServicesOperations(object):
     """ServicesOperations operations.
 
+    You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
+
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version to use for each request. The current version is 2015-08-19. Constant value: "2015-08-19".
+    :ivar api_version: The API version to use for each request. Constant value: "2020-08-01".
     """
 
     models = models
@@ -35,7 +37,7 @@ class ServicesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2015-08-19"
+        self.api_version = "2020-08-01"
 
         self.config = config
 
@@ -99,24 +101,24 @@ class ServicesOperations(object):
 
     def create_or_update(
             self, resource_group_name, search_service_name, service, search_management_request_options=None, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Creates or updates a Search service in the given resource group. If the
-        Search service already exists, all properties will be updated with the
+        """Creates or updates a search service in the given resource group. If the
+        search service already exists, all properties will be updated with the
         given values.
 
         :param resource_group_name: The name of the resource group within the
          current subscription. You can obtain this value from the Azure
          Resource Manager API or the portal.
         :type resource_group_name: str
-        :param search_service_name: The name of the Azure Search service to
-         create or update. Search service names must only contain lowercase
-         letters, digits or dashes, cannot use dash as the first two or last
-         one characters, cannot contain consecutive dashes, and must be between
-         2 and 60 characters in length. Search service names must be globally
-         unique since they are part of the service URI
+        :param search_service_name: The name of the Azure Cognitive Search
+         service to create or update. Search service names must only contain
+         lowercase letters, digits or dashes, cannot use dash as the first two
+         or last one characters, cannot contain consecutive dashes, and must be
+         between 2 and 60 characters in length. Search service names must be
+         globally unique since they are part of the service URI
          (https://<name>.search.windows.net). You cannot change the service
          name after the service is created.
         :type search_service_name: str
-        :param service: The definition of the Search service to create or
+        :param service: The definition of the search service to create or
          update.
         :type service: ~azure.mgmt.search.models.SearchService
         :param search_management_request_options: Additional parameters for
@@ -166,17 +168,17 @@ class ServicesOperations(object):
 
     def update(
             self, resource_group_name, search_service_name, service, search_management_request_options=None, custom_headers=None, raw=False, **operation_config):
-        """Updates an existing Search service in the given resource group.
+        """Updates an existing search service in the given resource group.
 
         :param resource_group_name: The name of the resource group within the
          current subscription. You can obtain this value from the Azure
          Resource Manager API or the portal.
         :type resource_group_name: str
-        :param search_service_name: The name of the Azure Search service to
-         update.
+        :param search_service_name: The name of the Azure Cognitive Search
+         service to update.
         :type search_service_name: str
-        :param service: The definition of the Search service to update.
-        :type service: ~azure.mgmt.search.models.SearchService
+        :param service: The definition of the search service to update.
+        :type service: ~azure.mgmt.search.models.SearchServiceUpdate
         :param search_management_request_options: Additional parameters for
          the operation
         :type search_management_request_options:
@@ -222,7 +224,7 @@ class ServicesOperations(object):
             header_parameters['x-ms-client-request-id'] = self._serialize.header("client_request_id", client_request_id, 'str')
 
         # Construct body
-        body_content = self._serialize.body(service, 'SearchService')
+        body_content = self._serialize.body(service, 'SearchServiceUpdate')
 
         # Construct and send request
         request = self._client.patch(url, query_parameters, header_parameters, body_content)
@@ -234,7 +236,6 @@ class ServicesOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('SearchService', response)
 
@@ -247,15 +248,15 @@ class ServicesOperations(object):
 
     def get(
             self, resource_group_name, search_service_name, search_management_request_options=None, custom_headers=None, raw=False, **operation_config):
-        """Gets the Search service with the given name in the given resource
+        """Gets the search service with the given name in the given resource
         group.
 
         :param resource_group_name: The name of the resource group within the
          current subscription. You can obtain this value from the Azure
          Resource Manager API or the portal.
         :type resource_group_name: str
-        :param search_service_name: The name of the Azure Search service
-         associated with the specified resource group.
+        :param search_service_name: The name of the Azure Cognitive Search
+         service associated with the specified resource group.
         :type search_service_name: str
         :param search_management_request_options: Additional parameters for
          the operation
@@ -310,7 +311,6 @@ class ServicesOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('SearchService', response)
 
@@ -323,15 +323,15 @@ class ServicesOperations(object):
 
     def delete(
             self, resource_group_name, search_service_name, search_management_request_options=None, custom_headers=None, raw=False, **operation_config):
-        """Deletes a Search service in the given resource group, along with its
+        """Deletes a search service in the given resource group, along with its
         associated resources.
 
         :param resource_group_name: The name of the resource group within the
          current subscription. You can obtain this value from the Azure
          Resource Manager API or the portal.
         :type resource_group_name: str
-        :param search_service_name: The name of the Azure Search service
-         associated with the specified resource group.
+        :param search_service_name: The name of the Azure Cognitive Search
+         service associated with the specified resource group.
         :type search_service_name: str
         :param search_management_request_options: Additional parameters for
          the operation
@@ -390,7 +390,7 @@ class ServicesOperations(object):
 
     def list_by_resource_group(
             self, resource_group_name, search_management_request_options=None, custom_headers=None, raw=False, **operation_config):
-        """Gets a list of all Search services in the given resource group.
+        """Gets a list of all search services in the given resource group.
 
         :param resource_group_name: The name of the resource group within the
          current subscription. You can obtain this value from the Azure
@@ -414,8 +414,7 @@ class ServicesOperations(object):
         if search_management_request_options is not None:
             client_request_id = search_management_request_options.client_request_id
 
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list_by_resource_group.metadata['url']
@@ -447,6 +446,11 @@ class ServicesOperations(object):
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
@@ -457,19 +461,17 @@ class ServicesOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.SearchServicePaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.SearchServicePaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.SearchServicePaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Search/searchServices'}
 
     def list_by_subscription(
             self, search_management_request_options=None, custom_headers=None, raw=False, **operation_config):
-        """Gets a list of all Search services in the given subscription.
+        """Gets a list of all search services in the given subscription.
 
         :param search_management_request_options: Additional parameters for
          the operation
@@ -489,8 +491,7 @@ class ServicesOperations(object):
         if search_management_request_options is not None:
             client_request_id = search_management_request_options.client_request_id
 
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list_by_subscription.metadata['url']
@@ -521,6 +522,11 @@ class ServicesOperations(object):
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
@@ -531,23 +537,21 @@ class ServicesOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.SearchServicePaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.SearchServicePaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.SearchServicePaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list_by_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Search/searchServices'}
 
     def check_name_availability(
             self, name, search_management_request_options=None, custom_headers=None, raw=False, **operation_config):
-        """Checks whether or not the given Search service name is available for
+        """Checks whether or not the given search service name is available for
         use. Search service names must be globally unique since they are part
         of the service URI (https://<name>.search.windows.net).
 
-        :param name: The Search service name to validate. Search service names
+        :param name: The search service name to validate. Search service names
          must only contain lowercase letters, digits or dashes, cannot use dash
          as the first two or last one characters, cannot contain consecutive
          dashes, and must be between 2 and 60 characters in length.
@@ -608,7 +612,6 @@ class ServicesOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('CheckNameAvailabilityOutput', response)
 

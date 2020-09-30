@@ -1,5 +1,24 @@
 # Release History
 
+## 3.0.0 (2019-09-28)
+
+**Features**
+
+  - Model SearchService has a new parameter shared_private_link_resources
+  - Model SearchService has a new parameter public_network_access
+  - Model SearchService has a new parameter private_endpoint_connections
+  - Model SearchService has a new parameter network_rule_set
+  - Added operation group PrivateEndpointConnectionsOperations
+  - Added operation group PrivateLinkResourcesOperations
+  - Added operation group SharedPrivateLinkResourcesOperations
+
+**Breaking changes**
+
+  - Parameter location of model SearchService is now required
+  - Model Resource no longer has parameter location
+  - Model Resource no longer has parameter identity
+  - Model Resource no longer has parameter tags
+
 ## 2.1.0 (2019-05-24)
 
 **Features**
