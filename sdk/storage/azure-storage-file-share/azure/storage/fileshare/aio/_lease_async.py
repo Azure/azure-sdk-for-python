@@ -60,8 +60,8 @@ class ShareLeaseClient(LeaseClientBase):
         await self.release()
 
     @distributed_trace_async
-    async def acquire(self, lease_duration=-1, **kwargs):
-        # type: (int, **Any) -> None
+    async def acquire(self, **kwargs):
+        # type: (**Any) -> None
         """Requests a new lease. This operation establishes and manages a lock on a
         file or share for write and delete operations. If the file or share does not have an active lease,
         the File or Share service creates a lease on the file or share. If the file has an active lease,
@@ -71,7 +71,7 @@ class ShareLeaseClient(LeaseClientBase):
         If the file or share does not have an active lease, the File or Share service creates a
         lease on the file and returns a new lease ID.
 
-        :param int lease_duration:
+        :keyword int lease_duration:
             Specifies the duration of the lease, in seconds, or negative one
             (-1) for a lease that never expires. File leases never expire. A non-infinite share lease can be
             between 15 and 60 seconds. A share lease duration cannot be changed
@@ -82,6 +82,7 @@ class ShareLeaseClient(LeaseClientBase):
         :rtype: None
         """
         try:
+            lease_duration = kwargs.pop('lease_duration', -1)
             if self._snapshot:
                 kwargs['sharesnapshot'] = self._snapshot
             response = await self._client.acquire_lease(
@@ -160,7 +161,7 @@ class ShareLeaseClient(LeaseClientBase):
         a new lease ID in x-ms-proposed-lease-id.
 
         :param str proposed_lease_id:
-            Proposed lease ID, in a GUID string format. The File or Share service returns 400
+            Proposed lease ID, in a GUID string format. The File or Share service raises an error 
             (Invalid request) if the proposed lease ID is not in the correct format.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
@@ -182,8 +183,8 @@ class ShareLeaseClient(LeaseClientBase):
         self.last_modified = response.get('last_modified')   # type: datetime
 
     @distributed_trace_async
-    async def break_lease(self, lease_break_period=None, **kwargs):
-        # type: (Optional[int], Any) -> int
+    async def break_lease(self, **kwargs):
+        # type: (Any) -> int
         """Force breaks the lease if the file or share has an active lease. Any authorized request can break the lease;
         the request is not required to specify a matching lease ID. An infinite lease breaks immediately.
 
@@ -192,7 +193,7 @@ class ShareLeaseClient(LeaseClientBase):
         When a lease is successfully broken, the response indicates the interval
         in seconds until a new lease can be acquired.
 
-        :param int lease_break_period:
+        :keyword int lease_break_period:
             This is the proposed duration of seconds that the share lease
             should continue before it is broken, between 0 and 60 seconds. This
             break period is only used if it is shorter than the time remaining
@@ -211,6 +212,7 @@ class ShareLeaseClient(LeaseClientBase):
         :rtype: int
         """
         try:
+            lease_break_period = kwargs.pop('lease_break_period', None)
             if self._snapshot:
                 kwargs['sharesnapshot'] = self._snapshot
             if isinstance(self._client, ShareOperations):
