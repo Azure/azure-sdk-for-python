@@ -35,7 +35,6 @@ try:
     from ._models_py3 import DocumentKeyPhrases
     from ._models_py3 import DocumentLanguage
     from ._models_py3 import DocumentLinkedEntities
-    from ._models_py3 import DocumentPiiEntities
     from ._models_py3 import DocumentSentiment
     from ._models_py3 import DocumentStatistics
     from ._models_py3 import EntitiesResult
@@ -67,7 +66,7 @@ try:
     from ._models_py3 import MultiLanguageBatchInput
     from ._models_py3 import MultiLanguageInput
     from ._models_py3 import Pagination
-    from ._models_py3 import PiiEntity
+    from ._models_py3 import PiiDocumentEntities
     from ._models_py3 import PiiResult
     from ._models_py3 import PiiTask
     from ._models_py3 import PiiTaskParameters
@@ -121,7 +120,6 @@ except (SyntaxError, ImportError):
     from ._models import DocumentKeyPhrases  # type: ignore
     from ._models import DocumentLanguage  # type: ignore
     from ._models import DocumentLinkedEntities  # type: ignore
-    from ._models import DocumentPiiEntities  # type: ignore
     from ._models import DocumentSentiment  # type: ignore
     from ._models import DocumentStatistics  # type: ignore
     from ._models import EntitiesResult  # type: ignore
@@ -153,7 +151,7 @@ except (SyntaxError, ImportError):
     from ._models import MultiLanguageBatchInput  # type: ignore
     from ._models import MultiLanguageInput  # type: ignore
     from ._models import Pagination  # type: ignore
-    from ._models import PiiEntity  # type: ignore
+    from ._models import PiiDocumentEntities  # type: ignore
     from ._models import PiiResult  # type: ignore
     from ._models import PiiTask  # type: ignore
     from ._models import PiiTaskParameters  # type: ignore
@@ -221,7 +219,6 @@ __all__ = [
     'DocumentKeyPhrases',
     'DocumentLanguage',
     'DocumentLinkedEntities',
-    'DocumentPiiEntities',
     'DocumentSentiment',
     'DocumentStatistics',
     'EntitiesResult',
@@ -253,7 +250,7 @@ __all__ = [
     'MultiLanguageBatchInput',
     'MultiLanguageInput',
     'Pagination',
-    'PiiEntity',
+    'PiiDocumentEntities',
     'PiiResult',
     'PiiTask',
     'PiiTaskParameters',

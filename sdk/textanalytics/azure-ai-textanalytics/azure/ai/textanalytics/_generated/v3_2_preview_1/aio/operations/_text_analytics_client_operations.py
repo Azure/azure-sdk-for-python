@@ -25,10 +25,14 @@ class TextAnalyticsClientOperationsMixin:
         self,
         body: Optional["models.AnalyzeBatchInput"] = None,
         **kwargs
-    ) -> Optional["models.ErrorResponse"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.ErrorResponse"]]
+    ) -> None:
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            400: lambda response: HttpResponseError(response=response, model=self._deserialize(models.ErrorResponse, response)),
+            500: lambda response: HttpResponseError(response=response, model=self._deserialize(models.ErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
         content_type = kwargs.pop("content_type", "application/json")
@@ -59,32 +63,23 @@ class TextAnalyticsClientOperationsMixin:
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [202, 400, 500]:
+        if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         response_headers = {}
-        deserialized = None
-        if response.status_code == 202:
-            response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
-
-        if response.status_code == 400:
-            deserialized = self._deserialize('ErrorResponse', pipeline_response)
-
-        if response.status_code == 500:
-            deserialized = self._deserialize('ErrorResponse', pipeline_response)
+        response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, None, response_headers)
 
-        return deserialized
     _analyze_initial.metadata = {'url': '/analyze'}  # type: ignore
 
     async def begin_analyze(
         self,
         body: Optional["models.AnalyzeBatchInput"] = None,
         **kwargs
-    ) -> AsyncLROPoller["models.ErrorResponse"]:
+    ) -> AsyncLROPoller[None]:
         """Submit analysis job.
 
         Submit a collection of text documents for analysis. Specify one or more unique tasks to be
@@ -103,7 +98,7 @@ class TextAnalyticsClientOperationsMixin:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', False)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ErrorResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -120,11 +115,8 @@ class TextAnalyticsClientOperationsMixin:
         kwargs.pop('content_type', None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize('ErrorResponse', pipeline_response)
-
             if cls:
-                return cls(pipeline_response, deserialized, {})
-            return deserialized
+                return cls(pipeline_response, None, {})
 
         if polling is True: polling_method = AsyncLROBasePolling(lro_delay,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
@@ -147,7 +139,7 @@ class TextAnalyticsClientOperationsMixin:
         top: Optional[int] = 20,
         skip: Optional[int] = 0,
         **kwargs
-    ) -> Union["models.AnalyzeJobState", "models.ErrorResponse"]:
+    ) -> "models.AnalyzeJobState":
         """Get analysis status and results.
 
         Get the status of an analysis job.  A job may consist of one or more tasks.  Once all tasks are
@@ -166,13 +158,16 @@ class TextAnalyticsClientOperationsMixin:
          and $skip are specified, $skip is applied first.
         :type skip: int
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: AnalyzeJobState or ErrorResponse, or the result of cls(response)
-        :rtype: ~azure.ai.textanalytics.v3_2_preview_1.models.AnalyzeJobState or ~azure.ai.textanalytics.v3_2_preview_1.models.ErrorResponse
+        :return: AnalyzeJobState, or the result of cls(response)
+        :rtype: ~azure.ai.textanalytics.v3_2_preview_1.models.AnalyzeJobState
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Union["models.AnalyzeJobState", "models.ErrorResponse"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.AnalyzeJobState"]
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            409: ResourceExistsError,
+            404: lambda response: ResourceNotFoundError(response=response, model=self._deserialize(models.ErrorResponse, response)),
+            500: lambda response: HttpResponseError(response=response, model=self._deserialize(models.ErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
         accept = "application/json, text/json"
@@ -202,18 +197,11 @@ class TextAnalyticsClientOperationsMixin:
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 404, 500]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('AnalyzeJobState', pipeline_response)
-
-        if response.status_code == 404:
-            deserialized = self._deserialize('ErrorResponse', pipeline_response)
-
-        if response.status_code == 500:
-            deserialized = self._deserialize('ErrorResponse', pipeline_response)
+        deserialized = self._deserialize('AnalyzeJobState', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -228,7 +216,7 @@ class TextAnalyticsClientOperationsMixin:
         skip: Optional[int] = 0,
         show_stats: Optional[bool] = None,
         **kwargs
-    ) -> Union["models.HealthcareJobState", "models.ErrorResponse"]:
+    ) -> "models.HealthcareJobState":
         """Get healthcare analysis job status and results.
 
         Get details of the healthcare prediction job specified by the jobId.
@@ -245,13 +233,16 @@ class TextAnalyticsClientOperationsMixin:
          statistics.
         :type show_stats: bool
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: HealthcareJobState or ErrorResponse, or the result of cls(response)
-        :rtype: ~azure.ai.textanalytics.v3_2_preview_1.models.HealthcareJobState or ~azure.ai.textanalytics.v3_2_preview_1.models.ErrorResponse
+        :return: HealthcareJobState, or the result of cls(response)
+        :rtype: ~azure.ai.textanalytics.v3_2_preview_1.models.HealthcareJobState
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Union["models.HealthcareJobState", "models.ErrorResponse"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.HealthcareJobState"]
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            409: ResourceExistsError,
+            404: lambda response: ResourceNotFoundError(response=response, model=self._deserialize(models.ErrorResponse, response)),
+            500: lambda response: HttpResponseError(response=response, model=self._deserialize(models.ErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
         accept = "application/json, text/json"
@@ -281,33 +272,29 @@ class TextAnalyticsClientOperationsMixin:
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 404, 500]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('HealthcareJobState', pipeline_response)
-
-        if response.status_code == 404:
-            deserialized = self._deserialize('ErrorResponse', pipeline_response)
-
-        if response.status_code == 500:
-            deserialized = self._deserialize('ErrorResponse', pipeline_response)
+        deserialized = self._deserialize('HealthcareJobState', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    health_status.metadata = {'url': '/entities/healthcare/jobs/{jobId}'}  # type: ignore
+    health_status.metadata = {'url': '/entities/health/jobs/{jobId}'}  # type: ignore
 
     async def _cancel_health_job_initial(
         self,
         job_id: str,
         **kwargs
-    ) -> Optional["models.ErrorResponse"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.ErrorResponse"]]
+    ) -> None:
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            409: ResourceExistsError,
+            404: lambda response: ResourceNotFoundError(response=response, model=self._deserialize(models.ErrorResponse, response)),
+            500: lambda response: HttpResponseError(response=response, model=self._deserialize(models.ErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
         accept = "application/json, text/json"
@@ -331,32 +318,23 @@ class TextAnalyticsClientOperationsMixin:
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [204, 404, 500]:
+        if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         response_headers = {}
-        deserialized = None
-        if response.status_code == 204:
-            response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
-
-        if response.status_code == 404:
-            deserialized = self._deserialize('ErrorResponse', pipeline_response)
-
-        if response.status_code == 500:
-            deserialized = self._deserialize('ErrorResponse', pipeline_response)
+        response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, None, response_headers)
 
-        return deserialized
-    _cancel_health_job_initial.metadata = {'url': '/entities/healthcare/jobs/{jobId}'}  # type: ignore
+    _cancel_health_job_initial.metadata = {'url': '/entities/health/jobs/{jobId}'}  # type: ignore
 
     async def begin_cancel_health_job(
         self,
         job_id: str,
         **kwargs
-    ) -> AsyncLROPoller["models.ErrorResponse"]:
+    ) -> AsyncLROPoller[None]:
         """Cancel healthcare prediction job.
 
         Cancel healthcare prediction job.
@@ -374,7 +352,7 @@ class TextAnalyticsClientOperationsMixin:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', False)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ErrorResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -391,11 +369,8 @@ class TextAnalyticsClientOperationsMixin:
         kwargs.pop('content_type', None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize('ErrorResponse', pipeline_response)
-
             if cls:
-                return cls(pipeline_response, deserialized, {})
-            return deserialized
+                return cls(pipeline_response, None, {})
 
         if polling is True: polling_method = AsyncLROBasePolling(lro_delay,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
@@ -409,7 +384,7 @@ class TextAnalyticsClientOperationsMixin:
             )
         else:
             return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_cancel_health_job.metadata = {'url': '/entities/healthcare/jobs/{jobId}'}  # type: ignore
+    begin_cancel_health_job.metadata = {'url': '/entities/health/jobs/{jobId}'}  # type: ignore
 
     async def _health_initial(
         self,
@@ -417,10 +392,14 @@ class TextAnalyticsClientOperationsMixin:
         model_version: Optional[str] = None,
         string_index_type: Optional[Union[str, "models.StringIndexType"]] = None,
         **kwargs
-    ) -> Optional["models.ErrorResponse"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.ErrorResponse"]]
+    ) -> None:
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            400: lambda response: HttpResponseError(response=response, model=self._deserialize(models.ErrorResponse, response)),
+            500: lambda response: HttpResponseError(response=response, model=self._deserialize(models.ErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
 
@@ -454,26 +433,17 @@ class TextAnalyticsClientOperationsMixin:
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [202, 400, 500]:
+        if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         response_headers = {}
-        deserialized = None
-        if response.status_code == 202:
-            response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
-
-        if response.status_code == 400:
-            deserialized = self._deserialize('ErrorResponse', pipeline_response)
-
-        if response.status_code == 500:
-            deserialized = self._deserialize('ErrorResponse', pipeline_response)
+        response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, None, response_headers)
 
-        return deserialized
-    _health_initial.metadata = {'url': '/entities/healthcare/jobs'}  # type: ignore
+    _health_initial.metadata = {'url': '/entities/health/jobs'}  # type: ignore
 
     async def begin_health(
         self,
@@ -481,7 +451,7 @@ class TextAnalyticsClientOperationsMixin:
         model_version: Optional[str] = None,
         string_index_type: Optional[Union[str, "models.StringIndexType"]] = None,
         **kwargs
-    ) -> AsyncLROPoller["models.ErrorResponse"]:
+    ) -> AsyncLROPoller[None]:
         """Submit healthcare analysis job.
 
         Start a healthcare analysis job to recognize healthcare related entities (drugs, conditions,
@@ -507,7 +477,7 @@ class TextAnalyticsClientOperationsMixin:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', False)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ErrorResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -526,11 +496,8 @@ class TextAnalyticsClientOperationsMixin:
         kwargs.pop('content_type', None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize('ErrorResponse', pipeline_response)
-
             if cls:
-                return cls(pipeline_response, deserialized, {})
-            return deserialized
+                return cls(pipeline_response, None, {})
 
         if polling is True: polling_method = AsyncLROBasePolling(lro_delay,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
@@ -544,7 +511,7 @@ class TextAnalyticsClientOperationsMixin:
             )
         else:
             return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_health.metadata = {'url': '/entities/healthcare/jobs'}  # type: ignore
+    begin_health.metadata = {'url': '/entities/health/jobs'}  # type: ignore
 
     async def entities_recognition_general(
         self,
@@ -553,7 +520,7 @@ class TextAnalyticsClientOperationsMixin:
         show_stats: Optional[bool] = None,
         string_index_type: Optional[Union[str, "models.StringIndexType"]] = None,
         **kwargs
-    ) -> Union["models.EntitiesResult", "models.ErrorResponse"]:
+    ) -> "models.EntitiesResult":
         """Named Entity Recognition.
 
         The API returns a list of general named entities in a given document. For the list of supported
@@ -574,13 +541,17 @@ class TextAnalyticsClientOperationsMixin:
          see https://aka.ms/text-analytics-offsets.
         :type string_index_type: str or ~azure.ai.textanalytics.v3_2_preview_1.models.StringIndexType
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: EntitiesResult or ErrorResponse, or the result of cls(response)
-        :rtype: ~azure.ai.textanalytics.v3_2_preview_1.models.EntitiesResult or ~azure.ai.textanalytics.v3_2_preview_1.models.ErrorResponse
+        :return: EntitiesResult, or the result of cls(response)
+        :rtype: ~azure.ai.textanalytics.v3_2_preview_1.models.EntitiesResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Union["models.EntitiesResult", "models.ErrorResponse"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.EntitiesResult"]
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            400: lambda response: HttpResponseError(response=response, model=self._deserialize(models.ErrorResponse, response)),
+            500: lambda response: HttpResponseError(response=response, model=self._deserialize(models.ErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
 
@@ -616,18 +587,11 @@ class TextAnalyticsClientOperationsMixin:
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 400, 500]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('EntitiesResult', pipeline_response)
-
-        if response.status_code == 400:
-            deserialized = self._deserialize('ErrorResponse', pipeline_response)
-
-        if response.status_code == 500:
-            deserialized = self._deserialize('ErrorResponse', pipeline_response)
+        deserialized = self._deserialize('EntitiesResult', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -643,7 +607,7 @@ class TextAnalyticsClientOperationsMixin:
         domain: Optional[str] = None,
         string_index_type: Optional[Union[str, "models.StringIndexType"]] = None,
         **kwargs
-    ) -> Union["models.PiiResult", "models.ErrorResponse"]:
+    ) -> "models.PiiResult":
         """Entities containing personal information.
 
         The API returns a list of entities with personal information (\"SSN\", \"Bank Account\" etc) in
@@ -668,13 +632,17 @@ class TextAnalyticsClientOperationsMixin:
          see https://aka.ms/text-analytics-offsets.
         :type string_index_type: str or ~azure.ai.textanalytics.v3_2_preview_1.models.StringIndexType
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: PiiResult or ErrorResponse, or the result of cls(response)
-        :rtype: ~azure.ai.textanalytics.v3_2_preview_1.models.PiiResult or ~azure.ai.textanalytics.v3_2_preview_1.models.ErrorResponse
+        :return: PiiResult, or the result of cls(response)
+        :rtype: ~azure.ai.textanalytics.v3_2_preview_1.models.PiiResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Union["models.PiiResult", "models.ErrorResponse"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.PiiResult"]
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            400: lambda response: HttpResponseError(response=response, model=self._deserialize(models.ErrorResponse, response)),
+            500: lambda response: HttpResponseError(response=response, model=self._deserialize(models.ErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
 
@@ -712,18 +680,11 @@ class TextAnalyticsClientOperationsMixin:
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 400, 500]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('PiiResult', pipeline_response)
-
-        if response.status_code == 400:
-            deserialized = self._deserialize('ErrorResponse', pipeline_response)
-
-        if response.status_code == 500:
-            deserialized = self._deserialize('ErrorResponse', pipeline_response)
+        deserialized = self._deserialize('PiiResult', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -738,7 +699,7 @@ class TextAnalyticsClientOperationsMixin:
         show_stats: Optional[bool] = None,
         string_index_type: Optional[Union[str, "models.StringIndexType"]] = None,
         **kwargs
-    ) -> Union["models.EntityLinkingResult", "models.ErrorResponse"]:
+    ) -> "models.EntityLinkingResult":
         """Linked entities from a well-known knowledge base.
 
         The API returns a list of recognized entities with links to a well-known knowledge base. See
@@ -758,13 +719,17 @@ class TextAnalyticsClientOperationsMixin:
          see https://aka.ms/text-analytics-offsets.
         :type string_index_type: str or ~azure.ai.textanalytics.v3_2_preview_1.models.StringIndexType
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: EntityLinkingResult or ErrorResponse, or the result of cls(response)
-        :rtype: ~azure.ai.textanalytics.v3_2_preview_1.models.EntityLinkingResult or ~azure.ai.textanalytics.v3_2_preview_1.models.ErrorResponse
+        :return: EntityLinkingResult, or the result of cls(response)
+        :rtype: ~azure.ai.textanalytics.v3_2_preview_1.models.EntityLinkingResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Union["models.EntityLinkingResult", "models.ErrorResponse"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.EntityLinkingResult"]
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            400: lambda response: HttpResponseError(response=response, model=self._deserialize(models.ErrorResponse, response)),
+            500: lambda response: HttpResponseError(response=response, model=self._deserialize(models.ErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
 
@@ -800,18 +765,11 @@ class TextAnalyticsClientOperationsMixin:
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 400, 500]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('EntityLinkingResult', pipeline_response)
-
-        if response.status_code == 400:
-            deserialized = self._deserialize('ErrorResponse', pipeline_response)
-
-        if response.status_code == 500:
-            deserialized = self._deserialize('ErrorResponse', pipeline_response)
+        deserialized = self._deserialize('EntityLinkingResult', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -825,7 +783,7 @@ class TextAnalyticsClientOperationsMixin:
         model_version: Optional[str] = None,
         show_stats: Optional[bool] = None,
         **kwargs
-    ) -> Union["models.KeyPhraseResult", "models.ErrorResponse"]:
+    ) -> "models.KeyPhraseResult":
         """Key Phrases.
 
         The API returns a list of strings denoting the key phrases in the input text. See the :code:`<a
@@ -841,13 +799,17 @@ class TextAnalyticsClientOperationsMixin:
          statistics.
         :type show_stats: bool
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: KeyPhraseResult or ErrorResponse, or the result of cls(response)
-        :rtype: ~azure.ai.textanalytics.v3_2_preview_1.models.KeyPhraseResult or ~azure.ai.textanalytics.v3_2_preview_1.models.ErrorResponse
+        :return: KeyPhraseResult, or the result of cls(response)
+        :rtype: ~azure.ai.textanalytics.v3_2_preview_1.models.KeyPhraseResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Union["models.KeyPhraseResult", "models.ErrorResponse"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.KeyPhraseResult"]
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            400: lambda response: HttpResponseError(response=response, model=self._deserialize(models.ErrorResponse, response)),
+            500: lambda response: HttpResponseError(response=response, model=self._deserialize(models.ErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
 
@@ -881,18 +843,11 @@ class TextAnalyticsClientOperationsMixin:
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 400, 500]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('KeyPhraseResult', pipeline_response)
-
-        if response.status_code == 400:
-            deserialized = self._deserialize('ErrorResponse', pipeline_response)
-
-        if response.status_code == 500:
-            deserialized = self._deserialize('ErrorResponse', pipeline_response)
+        deserialized = self._deserialize('KeyPhraseResult', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -906,7 +861,7 @@ class TextAnalyticsClientOperationsMixin:
         model_version: Optional[str] = None,
         show_stats: Optional[bool] = None,
         **kwargs
-    ) -> Union["models.LanguageResult", "models.ErrorResponse"]:
+    ) -> "models.LanguageResult":
         """Detect Language.
 
         The API returns the detected language and a numeric score between 0 and 1. Scores close to 1
@@ -923,13 +878,17 @@ class TextAnalyticsClientOperationsMixin:
          statistics.
         :type show_stats: bool
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: LanguageResult or ErrorResponse, or the result of cls(response)
-        :rtype: ~azure.ai.textanalytics.v3_2_preview_1.models.LanguageResult or ~azure.ai.textanalytics.v3_2_preview_1.models.ErrorResponse
+        :return: LanguageResult, or the result of cls(response)
+        :rtype: ~azure.ai.textanalytics.v3_2_preview_1.models.LanguageResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Union["models.LanguageResult", "models.ErrorResponse"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.LanguageResult"]
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            400: lambda response: HttpResponseError(response=response, model=self._deserialize(models.ErrorResponse, response)),
+            500: lambda response: HttpResponseError(response=response, model=self._deserialize(models.ErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
 
@@ -963,18 +922,11 @@ class TextAnalyticsClientOperationsMixin:
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 400, 500]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('LanguageResult', pipeline_response)
-
-        if response.status_code == 400:
-            deserialized = self._deserialize('ErrorResponse', pipeline_response)
-
-        if response.status_code == 500:
-            deserialized = self._deserialize('ErrorResponse', pipeline_response)
+        deserialized = self._deserialize('LanguageResult', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -990,7 +942,7 @@ class TextAnalyticsClientOperationsMixin:
         opinion_mining: Optional[bool] = None,
         string_index_type: Optional[Union[str, "models.StringIndexType"]] = None,
         **kwargs
-    ) -> Union["models.SentimentResponse", "models.ErrorResponse"]:
+    ) -> "models.SentimentResponse":
         """Sentiment.
 
         The API returns a detailed sentiment analysis for the input text. The analysis is done in
@@ -1013,13 +965,17 @@ class TextAnalyticsClientOperationsMixin:
          see https://aka.ms/text-analytics-offsets.
         :type string_index_type: str or ~azure.ai.textanalytics.v3_2_preview_1.models.StringIndexType
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: SentimentResponse or ErrorResponse, or the result of cls(response)
-        :rtype: ~azure.ai.textanalytics.v3_2_preview_1.models.SentimentResponse or ~azure.ai.textanalytics.v3_2_preview_1.models.ErrorResponse
+        :return: SentimentResponse, or the result of cls(response)
+        :rtype: ~azure.ai.textanalytics.v3_2_preview_1.models.SentimentResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Union["models.SentimentResponse", "models.ErrorResponse"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.SentimentResponse"]
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            400: lambda response: HttpResponseError(response=response, model=self._deserialize(models.ErrorResponse, response)),
+            500: lambda response: HttpResponseError(response=response, model=self._deserialize(models.ErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
 
@@ -1057,18 +1013,11 @@ class TextAnalyticsClientOperationsMixin:
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 400, 500]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('SentimentResponse', pipeline_response)
-
-        if response.status_code == 400:
-            deserialized = self._deserialize('ErrorResponse', pipeline_response)
-
-        if response.status_code == 500:
-            deserialized = self._deserialize('ErrorResponse', pipeline_response)
+        deserialized = self._deserialize('SentimentResponse', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
