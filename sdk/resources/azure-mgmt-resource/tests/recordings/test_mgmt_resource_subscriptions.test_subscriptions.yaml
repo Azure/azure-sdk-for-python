@@ -14,18 +14,17 @@ interactions:
     uri: https://management.azure.com/subscriptions?api-version=2019-11-01
   response:
     body:
-      string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000","authorizationSource":"RoleBased","managedByTenants":[],"subscriptionId":"00000000-0000-0000-0000-000000000000","tenantId":"00000000-0000-0000-0000-000000000000","displayName":"Visual
-        Studio China Jenkins DevINT with TTL = 7 Days","state":"Enabled","subscriptionPolicies":{"locationPlacementId":"Internal_2014-09-01","quotaId":"Internal_2014-09-01","spendingLimit":"Off"}},{"id":"/subscriptions/685ba005-af8d-4b04-8f16-a7bf38b2eb5a","authorizationSource":"RoleBased","managedByTenants":[{"tenantId":"b5ce0030-ec42-4a62-bc94-3025993e790c"},{"tenantId":"2f4a9838-26b7-47ee-be60-ccc1fdec5953"}],"subscriptionId":"685ba005-af8d-4b04-8f16-a7bf38b2eb5a","tenantId":"00000000-0000-0000-0000-000000000000","displayName":"Java
-        Tooling Tests with TTL = 7 Days","state":"Enabled","subscriptionPolicies":{"locationPlacementId":"Internal_2014-09-01","quotaId":"Internal_2014-09-01","spendingLimit":"Off"}}],"count":{"type":"Total","value":2}}'
+      string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000","authorizationSource":"RoleBased","managedByTenants":[{"tenantId":"2f4a9838-26b7-47ee-be60-ccc1fdec5953"}],"tags":{},"subscriptionId":"00000000-0000-0000-0000-000000000000","tenantId":"00000000-0000-0000-0000-000000000000","displayName":"Python
+        NodeJS Test with TTL = 7 days","state":"Enabled","subscriptionPolicies":{"locationPlacementId":"Internal_2014-09-01","quotaId":"Internal_2014-09-01","spendingLimit":"Off"}}],"count":{"type":"Total","value":1}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '999'
+      - '524'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 May 2020 17:18:28 GMT
+      - Thu, 17 Sep 2020 09:04:47 GMT
       expires:
       - '-1'
       pragma:
@@ -91,15 +90,19 @@ interactions:
         South","regionalDisplayName":"(South America) Brazil South","metadata":{"regionType":"Physical","regionCategory":"Recommended","geographyGroup":"South
         America","longitude":"-46.633","latitude":"-23.55","physicalLocation":"Sao
         Paulo State","pairedRegion":[{"name":"southcentralus","id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/southcentralus"}]}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/centralusstage","name":"centralusstage","displayName":"Central
-        US (Stage)","regionalDisplayName":"(US) Central US (Stage)","metadata":{"regionType":"Logical","regionCategory":"Other","geographyGroup":"US"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/eastus2stage","name":"eastus2stage","displayName":"East
+        US (Stage)","regionalDisplayName":"(US) Central US (Stage)","metadata":{"regionType":"Logical","regionCategory":"Other","geographyGroup":"US"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/eastusstage","name":"eastusstage","displayName":"East
+        US (Stage)","regionalDisplayName":"(US) East US (Stage)","metadata":{"regionType":"Logical","regionCategory":"Other","geographyGroup":"US"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/eastus2stage","name":"eastus2stage","displayName":"East
         US 2 (Stage)","regionalDisplayName":"(US) East US 2 (Stage)","metadata":{"regionType":"Logical","regionCategory":"Other","geographyGroup":"US"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/northcentralusstage","name":"northcentralusstage","displayName":"North
         Central US (Stage)","regionalDisplayName":"(US) North Central US (Stage)","metadata":{"regionType":"Logical","regionCategory":"Other","geographyGroup":"US"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/southcentralusstage","name":"southcentralusstage","displayName":"South
         Central US (Stage)","regionalDisplayName":"(US) South Central US (Stage)","metadata":{"regionType":"Logical","regionCategory":"Other","geographyGroup":"US"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/westusstage","name":"westusstage","displayName":"West
         US (Stage)","regionalDisplayName":"(US) West US (Stage)","metadata":{"regionType":"Logical","regionCategory":"Other","geographyGroup":"US"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/westus2stage","name":"westus2stage","displayName":"West
-        US 2 (Stage)","regionalDisplayName":"(US) West US 2 (Stage)","metadata":{"regionType":"Logical","regionCategory":"Other","geographyGroup":"US"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/asiapacific","name":"asiapacific","displayName":"Asia
-        Pacific","regionalDisplayName":"Asia Pacific","metadata":{"regionType":"Logical","regionCategory":"Other"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/australia","name":"australia","displayName":"Australia","regionalDisplayName":"Australia","metadata":{"regionType":"Logical","regionCategory":"Other"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/europe","name":"europe","displayName":"Europe","regionalDisplayName":"Europe","metadata":{"regionType":"Logical","regionCategory":"Other"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/global","name":"global","displayName":"Global","regionalDisplayName":"Global","metadata":{"regionType":"Logical","regionCategory":"Other"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/japan","name":"japan","displayName":"Japan","regionalDisplayName":"Japan","metadata":{"regionType":"Logical","regionCategory":"Other"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/uk","name":"uk","displayName":"UK","regionalDisplayName":"UK","metadata":{"regionType":"Logical","regionCategory":"Other"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/unitedstates","name":"unitedstates","displayName":"United
+        US 2 (Stage)","regionalDisplayName":"(US) West US 2 (Stage)","metadata":{"regionType":"Logical","regionCategory":"Other","geographyGroup":"US"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/asia","name":"asia","displayName":"Asia","regionalDisplayName":"Asia","metadata":{"regionType":"Logical","regionCategory":"Other"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/asiapacific","name":"asiapacific","displayName":"Asia
+        Pacific","regionalDisplayName":"Asia Pacific","metadata":{"regionType":"Logical","regionCategory":"Other"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/australia","name":"australia","displayName":"Australia","regionalDisplayName":"Australia","metadata":{"regionType":"Logical","regionCategory":"Other"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/brazil","name":"brazil","displayName":"Brazil","regionalDisplayName":"Brazil","metadata":{"regionType":"Logical","regionCategory":"Other"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/canada","name":"canada","displayName":"Canada","regionalDisplayName":"Canada","metadata":{"regionType":"Logical","regionCategory":"Other"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/europe","name":"europe","displayName":"Europe","regionalDisplayName":"Europe","metadata":{"regionType":"Logical","regionCategory":"Other"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/global","name":"global","displayName":"Global","regionalDisplayName":"Global","metadata":{"regionType":"Logical","regionCategory":"Other"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/india","name":"india","displayName":"India","regionalDisplayName":"India","metadata":{"regionType":"Logical","regionCategory":"Other"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/japan","name":"japan","displayName":"Japan","regionalDisplayName":"Japan","metadata":{"regionType":"Logical","regionCategory":"Other"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/uk","name":"uk","displayName":"United
+        Kingdom","regionalDisplayName":"United Kingdom","metadata":{"regionType":"Logical","regionCategory":"Other"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/unitedstates","name":"unitedstates","displayName":"United
         States","regionalDisplayName":"United States","metadata":{"regionType":"Logical","regionCategory":"Other"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/eastasiastage","name":"eastasiastage","displayName":"East
         Asia (Stage)","regionalDisplayName":"(Asia Pacific) East Asia (Stage)","metadata":{"regionType":"Logical","regionCategory":"Other","geographyGroup":"Asia
+        Pacific"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/southeastasiastage","name":"southeastasiastage","displayName":"Southeast
+        Asia (Stage)","regionalDisplayName":"(Asia Pacific) Southeast Asia (Stage)","metadata":{"regionType":"Logical","regionCategory":"Other","geographyGroup":"Asia
         Pacific"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/centraluseuap","name":"centraluseuap","displayName":"Central
         US EUAP","regionalDisplayName":"(US) Central US EUAP","metadata":{"regionType":"Physical","regionCategory":"Other","geographyGroup":"US","longitude":"-93.6208","latitude":"41.5908","pairedRegion":[{"name":"eastus2euap","id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/eastus2euap"}]}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/eastus2euap","name":"eastus2euap","displayName":"East
         US 2 EUAP","regionalDisplayName":"(US) East US 2 EUAP","metadata":{"regionType":"Physical","regionCategory":"Other","geographyGroup":"US","longitude":"-78.3889","latitude":"36.6681","pairedRegion":[{"name":"centraluseuap","id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/centraluseuap"}]}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/westcentralus","name":"westcentralus","displayName":"West
@@ -128,16 +131,18 @@ interactions:
         West","regionalDisplayName":"(Europe) UK West","metadata":{"regionType":"Physical","regionCategory":"Other","geographyGroup":"Europe","longitude":"-3.084","latitude":"53.427","physicalLocation":"Cardiff","pairedRegion":[{"name":"uksouth","id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/uksouth"}]}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/uaecentral","name":"uaecentral","displayName":"UAE
         Central","regionalDisplayName":"(Middle East) UAE Central","metadata":{"regionType":"Physical","regionCategory":"Other","geographyGroup":"Middle
         East","longitude":"54.366669","latitude":"24.466667","physicalLocation":"Abu
-        Dhabi","pairedRegion":[{"name":"uaenorth","id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/uaenorth"}]}}]}'
+        Dhabi","pairedRegion":[{"name":"uaenorth","id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/uaenorth"}]}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/brazilsoutheast","name":"brazilsoutheast","displayName":"Brazil
+        Southeast","regionalDisplayName":"(South America) Brazil Southeast","metadata":{"regionType":"Physical","regionCategory":"Other","geographyGroup":"South
+        America","longitude":"-43.2075","latitude":"-22.90278","physicalLocation":"Rio","pairedRegion":[{"name":"brazilsouth","id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/brazilsouth"}]}}]}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '23185'
+      - '25098'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 May 2020 17:18:29 GMT
+      - Thu, 17 Sep 2020 09:04:48 GMT
       expires:
       - '-1'
       pragma:
@@ -166,17 +171,17 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000?api-version=2019-11-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000","authorizationSource":"RoleBased","managedByTenants":[],"subscriptionId":"00000000-0000-0000-0000-000000000000","tenantId":"00000000-0000-0000-0000-000000000000","displayName":"Visual
-        Studio China Jenkins DevINT with TTL = 7 Days","state":"Enabled","subscriptionPolicies":{"locationPlacementId":"Internal_2014-09-01","quotaId":"Internal_2014-09-01","spendingLimit":"Off"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000","authorizationSource":"RoleBased","managedByTenants":[{"tenantId":"2f4a9838-26b7-47ee-be60-ccc1fdec5953"}],"tags":{},"subscriptionId":"00000000-0000-0000-0000-000000000000","tenantId":"00000000-0000-0000-0000-000000000000","displayName":"Python
+        NodeJS Test with TTL = 7 days","state":"Enabled","subscriptionPolicies":{"locationPlacementId":"Internal_2014-09-01","quotaId":"Internal_2014-09-01","spendingLimit":"Off"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '432'
+      - '477'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 19 May 2020 17:18:29 GMT
+      - Thu, 17 Sep 2020 09:04:48 GMT
       expires:
       - '-1'
       pragma:

@@ -13,9 +13,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-compute/17.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/proximityPlacementGroups/proximiityplacementgroupsb24517e6?api-version=2019-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/proximityPlacementGroups/proximiityplacementgroupsb24517e6?api-version=2020-06-01
   response:
     body:
       string: "{\r\n  \"name\": \"proximiityplacementgroupsb24517e6\",\r\n  \"id\"\
@@ -27,11 +27,11 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '437'
+      - '447'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 15:04:24 GMT
+      - Wed, 16 Sep 2020 05:36:42 GMT
       expires:
       - '-1'
       pragma:
@@ -46,7 +46,7 @@ interactions:
       x-ms-ratelimit-remaining-resource:
       - Microsoft.Compute/PutDeletePPG3Min;99,Microsoft.Compute/PutDeletePPG30Min;499
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1199'
+      - '1197'
     status:
       code: 201
       message: Created
@@ -60,9 +60,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-compute/17.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/proximityPlacementGroups/proximiityplacementgroupsb24517e6?api-version=2019-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/proximityPlacementGroups/proximiityplacementgroupsb24517e6?api-version=2020-06-01
   response:
     body:
       string: "{\r\n  \"name\": \"proximiityplacementgroupsb24517e6\",\r\n  \"id\"\
@@ -75,11 +75,11 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '530'
+      - '540'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 15:04:24 GMT
+      - Wed, 16 Sep 2020 05:36:43 GMT
       expires:
       - '-1'
       pragma:
@@ -96,7 +96,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-resource:
-      - Microsoft.Compute/HighCostGet3Min;138,Microsoft.Compute/HighCostGet30Min;692
+      - Microsoft.Compute/HighCostGet3Min;139,Microsoft.Compute/HighCostGet30Min;699
     status:
       code: 200
       message: OK
@@ -114,9 +114,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-compute/17.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PATCH
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/proximityPlacementGroups/proximiityplacementgroupsb24517e6?api-version=2019-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/proximityPlacementGroups/proximiityplacementgroupsb24517e6?api-version=2020-06-01
   response:
     body:
       string: "{\r\n  \"name\": \"proximiityplacementgroupsb24517e6\",\r\n  \"id\"\
@@ -128,11 +128,11 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '437'
+      - '447'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 18 May 2020 15:04:25 GMT
+      - Wed, 16 Sep 2020 05:36:43 GMT
       expires:
       - '-1'
       pragma:
@@ -151,7 +151,7 @@ interactions:
       x-ms-ratelimit-remaining-resource:
       - Microsoft.Compute/PutDeletePPG3Min;98,Microsoft.Compute/PutDeletePPG30Min;498
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1198'
+      - '1196'
     status:
       code: 200
       message: OK
@@ -167,9 +167,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-azure-mgmt-compute/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-compute/17.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/proximityPlacementGroups/proximiityplacementgroupsb24517e6?api-version=2019-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/proximityPlacementGroups/proximiityplacementgroupsb24517e6?api-version=2020-06-01
   response:
     body:
       string: ''
@@ -179,7 +179,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 18 May 2020 15:04:26 GMT
+      - Wed, 16 Sep 2020 05:36:46 GMT
       expires:
       - '-1'
       pragma:
@@ -194,7 +194,7 @@ interactions:
       x-ms-ratelimit-remaining-resource:
       - Microsoft.Compute/PutDeletePPG3Min;97,Microsoft.Compute/PutDeletePPG30Min;497
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14999'
+      - '14997'
     status:
       code: 200
       message: OK

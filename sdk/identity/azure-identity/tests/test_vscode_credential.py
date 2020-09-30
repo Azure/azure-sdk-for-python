@@ -159,3 +159,12 @@ def test_mac_keychain_error():
         credential = VisualStudioCodeCredential()
         with pytest.raises(CredentialUnavailableError):
             token = credential.get_token("scope")
+
+
+def test_adfs():
+    """The credential should raise CredentialUnavailableError when configured for ADFS"""
+
+    credential = VisualStudioCodeCredential(tenant_id="adfs")
+    with pytest.raises(CredentialUnavailableError) as ex:
+        credential.get_token("scope")
+    assert "adfs" in ex.value.message.lower()

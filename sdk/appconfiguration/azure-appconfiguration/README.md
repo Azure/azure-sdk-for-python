@@ -6,7 +6,7 @@ Modern programs, especially programs running in a cloud, generally have many com
 
 Use the client library for App Configuration to create and manage application configuration settings.
 
-[Source code]() | [Package (Pypi)][package] | [API reference documentation]() | [Product documentation][appconfig_docs]
+[Source code](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/appconfiguration/azure-appconfiguration) | [Package (Pypi)][package] | [API reference documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/appconfiguration/azure-appconfiguration) | [Product documentation][appconfig_docs]
 
 ## Getting started
 

@@ -5582,12 +5582,11 @@ class TunnelConnectionHealth(msrest.serialization.Model):
 class Usage(msrest.serialization.Model):
     """Describes network resource usage.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     All required parameters must be populated in order to send to Azure.
 
-    :ivar unit: Required. An enum describing the unit of measurement. Default value: "Count".
-    :vartype unit: str
+    :param unit: Required. An enum describing the unit of measurement. Possible values include:
+     "Count".
+    :type unit: str or ~azure.mgmt.network.v2016_09_01.models.UsageUnit
     :param current_value: Required. The current value of the usage.
     :type current_value: long
     :param limit: Required. The limit of usage.
@@ -5597,7 +5596,7 @@ class Usage(msrest.serialization.Model):
     """
 
     _validation = {
-        'unit': {'required': True, 'constant': True},
+        'unit': {'required': True},
         'current_value': {'required': True},
         'limit': {'required': True},
         'name': {'required': True},
@@ -5610,17 +5609,17 @@ class Usage(msrest.serialization.Model):
         'name': {'key': 'name', 'type': 'UsageName'},
     }
 
-    unit = "Count"
-
     def __init__(
         self,
         *,
+        unit: Union[str, "UsageUnit"],
         current_value: int,
         limit: int,
         name: "UsageName",
         **kwargs
     ):
         super(Usage, self).__init__(**kwargs)
+        self.unit = unit
         self.current_value = current_value
         self.limit = limit
         self.name = name

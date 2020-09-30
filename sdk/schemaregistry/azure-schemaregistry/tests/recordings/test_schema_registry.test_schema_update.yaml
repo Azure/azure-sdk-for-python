@@ -1,0 +1,140 @@
+interactions:
+- request:
+    body: '"{\"namespace\":\"example.avro\",\"type\":\"record\",\"name\":\"User\",\"fields\":[{\"name\":\"name\",\"type\":\"string\"},{\"name\":\"favorite_number\",\"type\":[\"int\",\"null\"]},{\"name\":\"favorite_color\",\"type\":[\"string\",\"null\"]}]}"'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '245'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-azureschemaregistry/1.0.0b1 Python/3.7.7 (Windows-10-10.0.19041-SP0)
+      X-Schema-Type:
+      - Avro
+    method: PUT
+    uri: https://sr-playground.servicebus.windows.net/$schemagroups/azsdk_python_test_group/schemas/test-schema-update423f1009?api-version=2017-04
+  response:
+    body:
+      string: '{"id":"c105c5cd1be740e38c05f35fb630f5ff"}'
+    headers:
+      content-type:
+      - application/json
+      date:
+      - Fri, 04 Sep 2020 22:02:16 GMT
+      location:
+      - https://sr-playground.servicebus.windows.net:443/$schemagroups/azsdk_python_test_group/schemas/test-schema-update423f1009/versions/5?api-version=2017-04
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000
+      transfer-encoding:
+      - chunked
+      x-schema-id:
+      - c105c5cd1be740e38c05f35fb630f5ff
+      x-schema-id-location:
+      - https://sr-playground.servicebus.windows.net:443/$schemagroups/getschemabyid/c105c5cd1be740e38c05f35fb630f5ff?api-version=2017-04
+      x-schema-type:
+      - Avro
+      x-schema-version:
+      - '5'
+      x-schema-versions-location:
+      - https://sr-playground.servicebus.windows.net:443/$schemagroups/azsdk_python_test_group/schemas/test-schema-update423f1009/versions?api-version=2017-04
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '"{\"namespace\":\"example.avro\",\"type\":\"record\",\"name\":\"User\",\"fields\":[{\"name\":\"name\",\"type\":\"string\"},{\"name\":\"favorite_number\",\"type\":[\"int\",\"null\"]},{\"name\":\"favorite_food\",\"type\":[\"string\",\"null\"]}]}"'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '244'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-azureschemaregistry/1.0.0b1 Python/3.7.7 (Windows-10-10.0.19041-SP0)
+      X-Schema-Type:
+      - Avro
+    method: PUT
+    uri: https://sr-playground.servicebus.windows.net/$schemagroups/azsdk_python_test_group/schemas/test-schema-update423f1009?api-version=2017-04
+  response:
+    body:
+      string: '{"id":"9f19901a6d2d4fd0bc79549d3a908764"}'
+    headers:
+      content-type:
+      - application/json
+      date:
+      - Fri, 04 Sep 2020 22:02:16 GMT
+      location:
+      - https://sr-playground.servicebus.windows.net:443/$schemagroups/azsdk_python_test_group/schemas/test-schema-update423f1009/versions/6?api-version=2017-04
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000
+      transfer-encoding:
+      - chunked
+      x-schema-id:
+      - 9f19901a6d2d4fd0bc79549d3a908764
+      x-schema-id-location:
+      - https://sr-playground.servicebus.windows.net:443/$schemagroups/getschemabyid/9f19901a6d2d4fd0bc79549d3a908764?api-version=2017-04
+      x-schema-type:
+      - Avro
+      x-schema-version:
+      - '6'
+      x-schema-versions-location:
+      - https://sr-playground.servicebus.windows.net:443/$schemagroups/azsdk_python_test_group/schemas/test-schema-update423f1009/versions?api-version=2017-04
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azureschemaregistry/1.0.0b1 Python/3.7.7 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://sr-playground.servicebus.windows.net/$schemagroups/getSchemaById/9f19901a6d2d4fd0bc79549d3a908764?api-version=2017-04
+  response:
+    body:
+      string: '"{\"namespace\":\"example.avro\",\"type\":\"record\",\"name\":\"User\",\"fields\":[{\"name\":\"name\",\"type\":\"string\"},{\"name\":\"favorite_number\",\"type\":[\"int\",\"null\"]},{\"name\":\"favorite_food\",\"type\":[\"string\",\"null\"]}]}"'
+    headers:
+      content-type:
+      - application/json
+      date:
+      - Fri, 04 Sep 2020 22:02:17 GMT
+      location:
+      - https://sr-playground.servicebus.windows.net:443/$schemagroups/azsdk_python_test_group/schemas/test-schema-update423f1009/versions/6?api-version=2017-04
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000
+      transfer-encoding:
+      - chunked
+      x-schema-id:
+      - 9f19901a6d2d4fd0bc79549d3a908764
+      x-schema-id-location:
+      - https://sr-playground.servicebus.windows.net:443/$schemagroups/getschemabyid/9f19901a6d2d4fd0bc79549d3a908764?api-version=2017-04
+      x-schema-type:
+      - Avro
+      x-schema-version:
+      - '6'
+      x-schema-versions-location:
+      - https://sr-playground.servicebus.windows.net:443/$schemagroups/azsdk_python_test_group/schemas/test-schema-update423f1009/versions?api-version=2017-04
+    status:
+      code: 200
+      message: OK
+version: 1

@@ -8,7 +8,7 @@
 from typing import TYPE_CHECKING
 import warnings
 
-from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
@@ -34,12 +34,15 @@ class NetworkManagementClientOperationsMixin(object):
         bsl_request,  # type: "models.BastionShareableLinkListRequest"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.BastionShareableLinkListResult"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.BastionShareableLinkListResult"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        # type: (...) -> Optional["models.BastionShareableLinkListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.BastionShareableLinkListResult"]]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-09-01"
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
 
         # Construct URL
         url = self._put_bastion_shareable_link_initial.metadata['url']  # type: ignore
@@ -57,14 +60,12 @@ class NetworkManagementClientOperationsMixin(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(bsl_request, 'BastionShareableLinkListRequest')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -89,7 +90,7 @@ class NetworkManagementClientOperationsMixin(object):
         bsl_request,  # type: "models.BastionShareableLinkListRequest"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller[ItemPaged["models.BastionShareableLinkListResult"]]
         """Creates a Bastion Shareable Links for all the VMs specified in the request.
 
         :param resource_group_name: The name of the resource group.
@@ -104,10 +105,70 @@ class NetworkManagementClientOperationsMixin(object):
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of LROPoller that returns either BastionShareableLinkListResult or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.network.v2019_09_01.models.BastionShareableLinkListResult]
+        :return: An instance of LROPoller that returns an iterator like instance of either BastionShareableLinkListResult or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[~azure.core.paging.ItemPaged[~azure.mgmt.network.v2019_09_01.models.BastionShareableLinkListResult]]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.BastionShareableLinkListResult"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2019-09-01"
+        content_type = "application/json"
+        accept = "application/json"
+
+        def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+            if not next_link:
+                # Construct URL
+                url = self.put_bastion_shareable_link.metadata['url']  # type: ignore
+                path_format_arguments = {
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'bastionHostName': self._serialize.url("bastion_host_name", bastion_host_name, 'str'),
+                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+                # Construct parameters
+                query_parameters = {}  # type: Dict[str, Any]
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+                body_content_kwargs = {}  # type: Dict[str, Any]
+                body_content = self._serialize.body(bsl_request, 'BastionShareableLinkListRequest')
+                body_content_kwargs['content'] = body_content
+                request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
+            else:
+                url = next_link
+                query_parameters = {}  # type: Dict[str, Any]
+                body_content_kwargs = {}  # type: Dict[str, Any]
+                body_content = self._serialize.body(bsl_request, 'BastionShareableLinkListRequest')
+                body_content_kwargs['content'] = body_content
+                request = self._client.get(url, query_parameters, header_parameters, **body_content_kwargs)
+            return request
+
+        def extract_data(pipeline_response):
+            deserialized = self._deserialize('BastionShareableLinkListResult', pipeline_response)
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)
+            return deserialized.next_link or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            request = prepare_request(next_link)
+
+            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["models.BastionShareableLinkListResult"]
         lro_delay = kwargs.pop(
@@ -126,14 +187,16 @@ class NetworkManagementClientOperationsMixin(object):
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
-
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize('BastionShareableLinkListResult', pipeline_response)
+            def internal_get_next(next_link=None):
+                if next_link is None:
+                    return pipeline_response
+                else:
+                    return get_next(next_link)
 
-            if cls:
-                return cls(pipeline_response, deserialized, {})
-            return deserialized
-
+            return ItemPaged(
+                internal_get_next, extract_data
+            )
         if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
@@ -157,10 +220,13 @@ class NetworkManagementClientOperationsMixin(object):
     ):
         # type: (...) -> None
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-09-01"
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
 
         # Construct URL
         url = self._delete_bastion_shareable_link_initial.metadata['url']  # type: ignore
@@ -178,13 +244,12 @@ class NetworkManagementClientOperationsMixin(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(bsl_request, 'BastionShareableLinkListRequest')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -204,7 +269,7 @@ class NetworkManagementClientOperationsMixin(object):
         bsl_request,  # type: "models.BastionShareableLinkListRequest"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller[None]
         """Deletes the Bastion Shareable Links for all the VMs specified in the request.
 
         :param resource_group_name: The name of the resource group.
@@ -282,12 +347,20 @@ class NetworkManagementClientOperationsMixin(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.BastionShareableLinkListResult"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-09-01"
         content_type = "application/json"
+        accept = "application/json"
 
         def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
             if not next_link:
                 # Construct URL
                 url = self.get_bastion_shareable_link.metadata['url']  # type: ignore
@@ -301,20 +374,17 @@ class NetworkManagementClientOperationsMixin(object):
                 query_parameters = {}  # type: Dict[str, Any]
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
+                body_content_kwargs = {}  # type: Dict[str, Any]
+                body_content = self._serialize.body(bsl_request, 'BastionShareableLinkListRequest')
+                body_content_kwargs['content'] = body_content
+                request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-            header_parameters['Accept'] = 'application/json'
-
-            # Construct and send request
-            body_content_kwargs = {}  # type: Dict[str, Any]
-            body_content = self._serialize.body(bsl_request, 'BastionShareableLinkListRequest')
-            body_content_kwargs['content'] = body_content
-            request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-
+                body_content_kwargs = {}  # type: Dict[str, Any]
+                body_content = self._serialize.body(bsl_request, 'BastionShareableLinkListRequest')
+                body_content_kwargs['content'] = body_content
+                request = self._client.get(url, query_parameters, header_parameters, **body_content_kwargs)
             return request
 
         def extract_data(pipeline_response):
@@ -347,11 +417,14 @@ class NetworkManagementClientOperationsMixin(object):
         bastion_host_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.BastionActiveSessionListResult"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.BastionActiveSessionListResult"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        # type: (...) -> Optional["models.BastionActiveSessionListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.BastionActiveSessionListResult"]]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-09-01"
+        accept = "application/json"
 
         # Construct URL
         url = self._get_active_sessions_initial.metadata['url']  # type: ignore
@@ -368,9 +441,8 @@ class NetworkManagementClientOperationsMixin(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
-        # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -395,7 +467,7 @@ class NetworkManagementClientOperationsMixin(object):
         bastion_host_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller[ItemPaged["models.BastionActiveSessionListResult"]]
         """Returns the list of currently active sessions on the Bastion.
 
         :param resource_group_name: The name of the resource group.
@@ -408,10 +480,62 @@ class NetworkManagementClientOperationsMixin(object):
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of LROPoller that returns either BastionActiveSessionListResult or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.network.v2019_09_01.models.BastionActiveSessionListResult]
+        :return: An instance of LROPoller that returns an iterator like instance of either BastionActiveSessionListResult or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[~azure.core.paging.ItemPaged[~azure.mgmt.network.v2019_09_01.models.BastionActiveSessionListResult]]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.BastionActiveSessionListResult"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2019-09-01"
+        accept = "application/json"
+
+        def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+            if not next_link:
+                # Construct URL
+                url = self.get_active_sessions.metadata['url']  # type: ignore
+                path_format_arguments = {
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'bastionHostName': self._serialize.url("bastion_host_name", bastion_host_name, 'str'),
+                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+                # Construct parameters
+                query_parameters = {}  # type: Dict[str, Any]
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+                request = self._client.post(url, query_parameters, header_parameters)
+            else:
+                url = next_link
+                query_parameters = {}  # type: Dict[str, Any]
+                request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def extract_data(pipeline_response):
+            deserialized = self._deserialize('BastionActiveSessionListResult', pipeline_response)
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)
+            return deserialized.next_link or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            request = prepare_request(next_link)
+
+            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["models.BastionActiveSessionListResult"]
         lro_delay = kwargs.pop(
@@ -429,14 +553,16 @@ class NetworkManagementClientOperationsMixin(object):
 
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
-
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize('BastionActiveSessionListResult', pipeline_response)
+            def internal_get_next(next_link=None):
+                if next_link is None:
+                    return pipeline_response
+                else:
+                    return get_next(next_link)
 
-            if cls:
-                return cls(pipeline_response, deserialized, {})
-            return deserialized
-
+            return ItemPaged(
+                internal_get_next, extract_data
+            )
         if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
@@ -473,12 +599,20 @@ class NetworkManagementClientOperationsMixin(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.BastionSessionDeleteResult"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-09-01"
         content_type = "application/json"
+        accept = "application/json"
 
         def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
             if not next_link:
                 # Construct URL
                 url = self.disconnect_active_sessions.metadata['url']  # type: ignore
@@ -492,20 +626,17 @@ class NetworkManagementClientOperationsMixin(object):
                 query_parameters = {}  # type: Dict[str, Any]
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
+                body_content_kwargs = {}  # type: Dict[str, Any]
+                body_content = self._serialize.body(session_ids, 'SessionIds')
+                body_content_kwargs['content'] = body_content
+                request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-            header_parameters['Accept'] = 'application/json'
-
-            # Construct and send request
-            body_content_kwargs = {}  # type: Dict[str, Any]
-            body_content = self._serialize.body(session_ids, 'SessionIds')
-            body_content_kwargs['content'] = body_content
-            request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-
+                body_content_kwargs = {}  # type: Dict[str, Any]
+                body_content = self._serialize.body(session_ids, 'SessionIds')
+                body_content_kwargs['content'] = body_content
+                request = self._client.get(url, query_parameters, header_parameters, **body_content_kwargs)
             return request
 
         def extract_data(pipeline_response):
@@ -552,9 +683,12 @@ class NetworkManagementClientOperationsMixin(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.DnsNameAvailabilityResult"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-09-01"
+        accept = "application/json"
 
         # Construct URL
         url = self.check_dns_name_availability.metadata['url']  # type: ignore
@@ -571,9 +705,8 @@ class NetworkManagementClientOperationsMixin(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
-        # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -610,9 +743,12 @@ class NetworkManagementClientOperationsMixin(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.VirtualWanSecurityProviders"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-09-01"
+        accept = "application/json"
 
         # Construct URL
         url = self.supported_security_providers.metadata['url']  # type: ignore
@@ -629,9 +765,8 @@ class NetworkManagementClientOperationsMixin(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
-        # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -655,12 +790,15 @@ class NetworkManagementClientOperationsMixin(object):
         vpn_client_params,  # type: "models.VirtualWanVpnProfileParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.VpnProfileResponse"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VpnProfileResponse"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        # type: (...) -> Optional["models.VpnProfileResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.VpnProfileResponse"]]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-09-01"
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
 
         # Construct URL
         url = self._generatevirtualwanvpnserverconfigurationvpnprofile_initial.metadata['url']  # type: ignore
@@ -678,14 +816,12 @@ class NetworkManagementClientOperationsMixin(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(vpn_client_params, 'VirtualWanVpnProfileParameters')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -710,17 +846,17 @@ class NetworkManagementClientOperationsMixin(object):
         vpn_client_params,  # type: "models.VirtualWanVpnProfileParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller["models.VpnProfileResponse"]
         """Generates a unique VPN profile for P2S clients for VirtualWan and associated
-    VpnServerConfiguration combination in the specified resource group.
+        VpnServerConfiguration combination in the specified resource group.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
         :param virtual_wan_name: The name of the VirtualWAN whose associated VpnServerConfigurations is
-     needed.
+         needed.
         :type virtual_wan_name: str
         :param vpn_client_params: Parameters supplied to the generate VirtualWan VPN profile generation
-     operation.
+         operation.
         :type vpn_client_params: ~azure.mgmt.network.v2019_09_01.models.VirtualWanVpnProfileParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.

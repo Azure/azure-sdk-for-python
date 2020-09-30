@@ -8,7 +8,7 @@
 from typing import TYPE_CHECKING
 import warnings
 
-from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
@@ -56,10 +56,13 @@ class SnapshotsOperations(object):
     ):
         # type: (...) -> "models.Snapshot"
         cls = kwargs.pop('cls', None)  # type: ClsType["models.Snapshot"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2017-03-30"
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
 
         # Construct URL
         url = self._create_or_update_initial.metadata['url']  # type: ignore
@@ -77,14 +80,12 @@ class SnapshotsOperations(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(snapshot, 'Snapshot')
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -92,7 +93,6 @@ class SnapshotsOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('Snapshot', pipeline_response)
 
@@ -112,14 +112,14 @@ class SnapshotsOperations(object):
         snapshot,  # type: "models.Snapshot"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller["models.Snapshot"]
         """Creates or updates a snapshot.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param snapshot_name: The name of the snapshot that is being created. The name can't be changed
-     after the snapshot is created. Supported characters for the name are a-z, A-Z, 0-9 and _. The
-     max name length is 80 characters.
+         after the snapshot is created. Supported characters for the name are a-z, A-Z, 0-9 and _. The
+         max name length is 80 characters.
         :type snapshot_name: str
         :param snapshot: Snapshot object supplied in the body of the Put disk operation.
         :type snapshot: ~azure.mgmt.compute.v2017_03_30.models.Snapshot
@@ -182,10 +182,13 @@ class SnapshotsOperations(object):
     ):
         # type: (...) -> "models.Snapshot"
         cls = kwargs.pop('cls', None)  # type: ClsType["models.Snapshot"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2017-03-30"
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
 
         # Construct URL
         url = self._update_initial.metadata['url']  # type: ignore
@@ -203,14 +206,12 @@ class SnapshotsOperations(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(snapshot, 'SnapshotUpdate')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -218,7 +219,6 @@ class SnapshotsOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('Snapshot', pipeline_response)
 
@@ -238,14 +238,14 @@ class SnapshotsOperations(object):
         snapshot,  # type: "models.SnapshotUpdate"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller["models.Snapshot"]
         """Updates (patches) a snapshot.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param snapshot_name: The name of the snapshot that is being created. The name can't be changed
-     after the snapshot is created. Supported characters for the name are a-z, A-Z, 0-9 and _. The
-     max name length is 80 characters.
+         after the snapshot is created. Supported characters for the name are a-z, A-Z, 0-9 and _. The
+         max name length is 80 characters.
         :type snapshot_name: str
         :param snapshot: Snapshot object supplied in the body of the Patch snapshot operation.
         :type snapshot: ~azure.mgmt.compute.v2017_03_30.models.SnapshotUpdate
@@ -320,9 +320,12 @@ class SnapshotsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.Snapshot"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2017-03-30"
+        accept = "application/json"
 
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
@@ -339,9 +342,8 @@ class SnapshotsOperations(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
-        # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -364,11 +366,14 @@ class SnapshotsOperations(object):
         snapshot_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.OperationStatusResponse"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.OperationStatusResponse"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        # type: (...) -> Optional["models.OperationStatusResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.OperationStatusResponse"]]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2017-03-30"
+        accept = "application/json"
 
         # Construct URL
         url = self._delete_initial.metadata['url']  # type: ignore
@@ -385,9 +390,8 @@ class SnapshotsOperations(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
-        # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -412,14 +416,14 @@ class SnapshotsOperations(object):
         snapshot_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller["models.OperationStatusResponse"]
         """Deletes a snapshot.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param snapshot_name: The name of the snapshot that is being created. The name can't be changed
-     after the snapshot is created. Supported characters for the name are a-z, A-Z, 0-9 and _. The
-     max name length is 80 characters.
+         after the snapshot is created. Supported characters for the name are a-z, A-Z, 0-9 and _. The
+         max name length is 80 characters.
         :type snapshot_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
@@ -486,11 +490,18 @@ class SnapshotsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SnapshotList"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2017-03-30"
+        accept = "application/json"
 
         def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
             if not next_link:
                 # Construct URL
                 url = self.list_by_resource_group.metadata['url']  # type: ignore
@@ -503,15 +514,11 @@ class SnapshotsOperations(object):
                 query_parameters = {}  # type: Dict[str, Any]
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
+                request = self._client.get(url, query_parameters, header_parameters)
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
+                request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         def extract_data(pipeline_response):
@@ -551,11 +558,18 @@ class SnapshotsOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SnapshotList"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2017-03-30"
+        accept = "application/json"
 
         def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']  # type: ignore
@@ -567,15 +581,11 @@ class SnapshotsOperations(object):
                 query_parameters = {}  # type: Dict[str, Any]
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
+                request = self._client.get(url, query_parameters, header_parameters)
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
+                request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         def extract_data(pipeline_response):
@@ -609,12 +619,15 @@ class SnapshotsOperations(object):
         grant_access_data,  # type: "models.GrantAccessData"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.AccessUri"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AccessUri"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        # type: (...) -> Optional["models.AccessUri"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.AccessUri"]]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2017-03-30"
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
 
         # Construct URL
         url = self._grant_access_initial.metadata['url']  # type: ignore
@@ -632,14 +645,12 @@ class SnapshotsOperations(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(grant_access_data, 'GrantAccessData')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -664,17 +675,17 @@ class SnapshotsOperations(object):
         grant_access_data,  # type: "models.GrantAccessData"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller["models.AccessUri"]
         """Grants access to a snapshot.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param snapshot_name: The name of the snapshot that is being created. The name can't be changed
-     after the snapshot is created. Supported characters for the name are a-z, A-Z, 0-9 and _. The
-     max name length is 80 characters.
+         after the snapshot is created. Supported characters for the name are a-z, A-Z, 0-9 and _. The
+         max name length is 80 characters.
         :type snapshot_name: str
         :param grant_access_data: Access data object supplied in the body of the get snapshot access
-     operation.
+         operation.
         :type grant_access_data: ~azure.mgmt.compute.v2017_03_30.models.GrantAccessData
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
@@ -732,11 +743,14 @@ class SnapshotsOperations(object):
         snapshot_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.OperationStatusResponse"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.OperationStatusResponse"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        # type: (...) -> Optional["models.OperationStatusResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.OperationStatusResponse"]]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2017-03-30"
+        accept = "application/json"
 
         # Construct URL
         url = self._revoke_access_initial.metadata['url']  # type: ignore
@@ -753,9 +767,8 @@ class SnapshotsOperations(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
-        # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -780,14 +793,14 @@ class SnapshotsOperations(object):
         snapshot_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller["models.OperationStatusResponse"]
         """Revokes access to a snapshot.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param snapshot_name: The name of the snapshot that is being created. The name can't be changed
-     after the snapshot is created. Supported characters for the name are a-z, A-Z, 0-9 and _. The
-     max name length is 80 characters.
+         after the snapshot is created. Supported characters for the name are a-z, A-Z, 0-9 and _. The
+         max name length is 80 characters.
         :type snapshot_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.

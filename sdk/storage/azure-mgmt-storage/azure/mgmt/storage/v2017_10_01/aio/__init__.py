@@ -6,5 +6,5 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._storage_management_async import StorageManagement
+from ._storage_management import StorageManagement
 __all__ = ['StorageManagement']

@@ -1,5 +1,14 @@
 # Release History
 
+## 0.0.18b3 (Unreleased)
+
+
+## 0.0.18b2 (2020-09-04)
+- Testing release tag version
+
+## 0.0.13b1 (2020-08-27)
+- Testing out some alpha and beta versioning
+
 ## 0.0.12 (Unreleased)
 - Test a successful Release
 

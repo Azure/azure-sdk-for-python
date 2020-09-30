@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+from enum import Enum
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -9,6 +10,14 @@ if TYPE_CHECKING:
 
 
 # pylint:disable=protected-access
+
+
+class KeyVaultRoleScope(str, Enum):
+    """Collection of well known role scopes. This list is not exhaustive"""
+
+    global_value = "/"  #: use this if you want role assignments to apply to everything on the resource
+
+    keys_value = "/keys"  #: use this if you want role assignments to apply to all keys
 
 
 class KeyVaultPermission(object):
@@ -165,3 +174,61 @@ class KeyVaultRoleDefinition(object):
             role_type=definition.role_type,
             type=definition.type,
         )
+
+
+class _Operation(object):
+    def __init__(self, **kwargs):
+        self.status = kwargs.get("status", None)
+        self.status_details = kwargs.get("status_details", None)
+        self.error = kwargs.get("error", None)
+        self.start_time = kwargs.get("start_time", None)
+        self.end_time = kwargs.get("end_time", None)
+        self.id = kwargs.get("job_id", None)
+
+    @classmethod
+    def _wrap_generated(cls, response, deserialized_operation, response_headers):  # pylint:disable=unused-argument
+        return cls(**deserialized_operation.__dict__)
+
+
+class BackupOperation(_Operation):
+    """A Key Vault full backup operation.
+
+    :ivar str status: status of the backup operation
+    :ivar str status_details: more details of the operation's status
+    :ivar error: Error encountered, if any, during the operation
+    :type error: ~key_vault_client.models.Error
+    :ivar datetime.datetime start_time: UTC start time of the operation
+    :ivar datetime.datetime end_time: UTC end time of the operation
+    :ivar str job_id: identifier for the operation
+    :ivar str azure_storage_blob_container_uri: URI of the Azure blob storage container which contains the backup
+    """
+
+    def __init__(self, **kwargs):
+        self.azure_storage_blob_container_uri = kwargs.pop("azure_storage_blob_container_uri", None)
+        super(BackupOperation, self).__init__(**kwargs)
+
+
+class RestoreOperation(_Operation):
+    """A Key Vault restore operation.
+
+    :ivar str status: status of the operation
+    :ivar str status_details: more details of the operation's status
+    :ivar error: Error encountered, if any, during the operation
+    :type error: ~key_vault_client.models.Error
+    :ivar datetime.datetime start_time: UTC start time of the operation
+    :ivar datetime.datetime end_time: UTC end time of the operation
+    :ivar str job_id: identifier for the operation
+    """
+
+
+class SelectiveKeyRestoreOperation(_Operation):
+    """A Key Vault operation restoring a single key.
+
+    :ivar str status: status of the operation
+    :ivar str status_details: more details of the operation's status
+    :ivar error: Error encountered, if any, during the operation
+    :type error: ~key_vault_client.models.Error
+    :ivar datetime.datetime start_time: UTC start time of the operation
+    :ivar datetime.datetime end_time: UTC end time of the operation
+    :ivar str job_id: identifier for the operation
+    """

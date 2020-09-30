@@ -8,13 +8,16 @@
 import unittest
 from datetime import datetime, timedelta
 
+import pytest
+
 from azure.core import MatchConditions
 
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, \
     ClientAuthenticationError, ResourceModifiedError
 from azure.storage.filedatalake import ContentSettings, generate_account_sas, generate_file_sas, \
     ResourceTypes, AccountSasPermissions, \
-    DataLakeFileClient, FileSystemClient, DataLakeDirectoryClient, FileSasPermissions
+    DataLakeFileClient, FileSystemClient, DataLakeDirectoryClient, FileSasPermissions, generate_file_system_sas, \
+    FileSystemSasPermissions
 from azure.storage.filedatalake import DataLakeServiceClient
 from azure.storage.filedatalake._generated.models import StorageErrorException
 from testcase import (
@@ -538,6 +541,49 @@ class FileTest(StorageTestCase):
         self.assertIsNotNone(response)
 
     @record
+    def test_set_access_control_recursive(self):
+        acl = 'user::rwx,group::r-x,other::rwx'
+        file_client = self._create_file_and_return_client()
+
+        summary = file_client.set_access_control_recursive(acl=acl)
+
+        # Assert
+        self.assertEqual(summary.counters.directories_successful, 0)
+        self.assertEqual(summary.counters.files_successful, 1)
+        self.assertEqual(summary.counters.failure_count, 0)
+        access_control = file_client.get_access_control()
+        self.assertIsNotNone(access_control)
+        self.assertEqual(acl, access_control['acl'])
+
+    @record
+    def test_update_access_control_recursive(self):
+        acl = 'user::rwx,group::r-x,other::rwx'
+        file_client = self._create_file_and_return_client()
+
+        summary = file_client.update_access_control_recursive(acl=acl)
+
+        # Assert
+        self.assertEqual(summary.counters.directories_successful, 0)
+        self.assertEqual(summary.counters.files_successful, 1)
+        self.assertEqual(summary.counters.failure_count, 0)
+        access_control = file_client.get_access_control()
+        self.assertIsNotNone(access_control)
+        self.assertEqual(acl, access_control['acl'])
+
+    @record
+    def test_remove_access_control_recursive(self):
+        acl = "mask," + "default:user,default:group," + \
+             "user:ec3595d6-2c17-4696-8caa-7e139758d24a,group:ec3595d6-2c17-4696-8caa-7e139758d24a," + \
+             "default:user:ec3595d6-2c17-4696-8caa-7e139758d24a,default:group:ec3595d6-2c17-4696-8caa-7e139758d24a"
+        file_client = self._create_file_and_return_client()
+        summary = file_client.remove_access_control_recursive(acl=acl)
+
+        # Assert
+        self.assertEqual(summary.counters.directories_successful, 0)
+        self.assertEqual(summary.counters.files_successful, 1)
+        self.assertEqual(summary.counters.failure_count, 0)
+
+    @record
     def test_get_properties(self):
         # Arrange
         directory_client = self._create_directory_and_return_client()
@@ -558,8 +604,106 @@ class FileTest(StorageTestCase):
         self.assertEqual(properties.content_settings.content_language, content_settings.content_language)
 
     @record
+    def test_set_expiry(self):
+        # Arrange
+        directory_client = self._create_directory_and_return_client()
+
+        metadata = {'hello': 'world', 'number': '42'}
+        content_settings = ContentSettings(
+            content_language='spanish',
+            content_disposition='inline')
+        expires_on = datetime.utcnow() + timedelta(hours=1)
+        file_client = directory_client.create_file("newfile", metadata=metadata, content_settings=content_settings)
+        file_client.set_file_expiry("Absolute", expires_on=expires_on)
+        properties = file_client.get_file_properties()
+
+        # Assert
+        self.assertTrue(properties)
+        self.assertIsNotNone(properties.expiry_time)
+
+    @record
     def test_rename_file_with_non_used_name(self):
         file_client = self._create_file_and_return_client()
+        data_bytes = b"abc"
+        file_client.append_data(data_bytes, 0, 3)
+        file_client.flush_data(3)
+        new_client = file_client.rename_file(file_client.file_system_name+'/'+'newname')
+
+        data = new_client.download_file().readall()
+        self.assertEqual(data, data_bytes)
+        self.assertEqual(new_client.path_name, "newname")
+
+    def test_rename_file_with_file_system_sas(self):
+        # sas token is calculated from storage key, so live only
+        if TestMode.need_recording_file(self.test_mode):
+            return
+        token = generate_file_system_sas(
+            self.dsc.account_name,
+            self.file_system_name,
+            self.dsc.credential.account_key,
+            FileSystemSasPermissions(write=True, read=True, delete=True),
+            datetime.utcnow() + timedelta(hours=1),
+        )
+
+        # read the created file which is under root directory
+        file_client = DataLakeFileClient(self.dsc.url, self.file_system_name, "oldfile", credential=token)
+        file_client.create_file()
+        data_bytes = b"abc"
+        file_client.append_data(data_bytes, 0, 3)
+        file_client.flush_data(3)
+        new_client = file_client.rename_file(file_client.file_system_name+'/'+'newname')
+
+        data = new_client.download_file().readall()
+        self.assertEqual(data, data_bytes)
+        self.assertEqual(new_client.path_name, "newname")
+
+    def test_rename_file_with_file_sas(self):
+        # SAS URL is calculated from storage key, so this test runs live only
+        if TestMode.need_recording_file(self.test_mode):
+            return
+        token = generate_file_sas(self.dsc.account_name,
+                                  self.file_system_name,
+                                  None,
+                                  "oldfile",
+                                  self.settings.STORAGE_DATA_LAKE_ACCOUNT_KEY,
+                                  permission=FileSasPermissions(read=True, create=True, write=True, delete=True),
+                                  expiry=datetime.utcnow() + timedelta(hours=1),
+                                  )
+
+        new_token = generate_file_sas(self.dsc.account_name,
+                                      self.file_system_name,
+                                      None,
+                                      "newname",
+                                      self.settings.STORAGE_DATA_LAKE_ACCOUNT_KEY,
+                                      permission=FileSasPermissions(read=True, create=True, write=True, delete=True),
+                                      expiry=datetime.utcnow() + timedelta(hours=1),
+                                      )
+
+        # read the created file which is under root directory
+        file_client = DataLakeFileClient(self.dsc.url, self.file_system_name, "oldfile", credential=token)
+        file_client.create_file()
+        data_bytes = b"abc"
+        file_client.append_data(data_bytes, 0, 3)
+        file_client.flush_data(3)
+        new_client = file_client.rename_file(file_client.file_system_name+'/'+'newname'+'?'+new_token)
+
+        data = new_client.download_file().readall()
+        self.assertEqual(data, data_bytes)
+        self.assertEqual(new_client.path_name, "newname")
+
+    def test_rename_file_with_account_sas(self):
+        pytest.skip("service bug")
+        token = generate_account_sas(
+            self.dsc.account_name,
+            self.dsc.credential.account_key,
+            ResourceTypes(object=True),
+            AccountSasPermissions(write=True, read=True, create=True, delete=True),
+            datetime.utcnow() + timedelta(hours=5),
+        )
+
+        # read the created file which is under root directory
+        file_client = DataLakeFileClient(self.dsc.url, self.file_system_name, "oldfile", credential=token)
+        file_client.create_file()
         data_bytes = b"abc"
         file_client.append_data(data_bytes, 0, 3)
         file_client.flush_data(3)

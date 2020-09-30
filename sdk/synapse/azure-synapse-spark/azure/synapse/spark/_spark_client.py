@@ -38,7 +38,6 @@ class SparkClient(object):
     :type spark_pool_name: str
     :param livy_api_version: Valid api-version for the request.
     :type livy_api_version: str
-    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
     def __init__(
@@ -56,6 +55,7 @@ class SparkClient(object):
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
+        self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
 
         self.spark_batch = SparkBatchOperations(

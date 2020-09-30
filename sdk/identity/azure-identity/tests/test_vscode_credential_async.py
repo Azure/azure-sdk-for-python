@@ -139,3 +139,13 @@ async def test_no_obtain_token_if_cached():
         credential = VisualStudioCodeCredential(_client=mock_client)
         token = await credential.get_token("scope")
         assert token_by_refresh_token.call_count == 0
+
+
+@pytest.mark.asyncio
+async def test_adfs():
+    """The credential should raise CredentialUnavailableError when configured for ADFS"""
+
+    credential = VisualStudioCodeCredential(tenant_id="adfs")
+    with pytest.raises(CredentialUnavailableError) as ex:
+        await credential.get_token("scope")
+    assert "adfs" in ex.value.message.lower()
