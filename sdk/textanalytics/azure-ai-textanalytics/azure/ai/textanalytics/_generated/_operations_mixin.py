@@ -51,8 +51,8 @@ class TextAnalyticsClientOperationsMixin(object):
          and $skip are specified, $skip is applied first.
         :type skip: int
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: AnalyzeJobState or ErrorResponse, or the result of cls(response)
-        :rtype: ~azure.ai.textanalytics.v3_2_preview_1.models.AnalyzeJobState or ~azure.ai.textanalytics.v3_2_preview_1.models.ErrorResponse
+        :return: AnalyzeJobState, or the result of cls(response)
+        :rtype: ~azure.ai.textanalytics.v3_2_preview_1.models.AnalyzeJobState
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('analyze_status')
@@ -182,6 +182,7 @@ class TextAnalyticsClientOperationsMixin(object):
         documents,  # type: List["models.MultiLanguageInput"]
         model_version=None,  # type: Optional[str]
         show_stats=None,  # type: Optional[bool]
+        string_index_type=None,  # type: Optional[Union[str, "models.StringIndexType"]]
         **kwargs  # type: Any
     ):
         """Linked entities from a well-known knowledge base.
@@ -191,26 +192,24 @@ class TextAnalyticsClientOperationsMixin(object):
         the list of enabled languages.
 
         :param documents: The set of documents to process as part of this batch.
-        :type documents: list[~azure.ai.textanalytics.v3_0.models.MultiLanguageInput]
+        :type documents: list[~azure.ai.textanalytics.v3_2_preview_1.models.MultiLanguageInput]
         :param model_version: (Optional) This value indicates which model will be used for scoring. If
          a model-version is not specified, the API should default to the latest, non-preview version.
         :type model_version: str
-        :param show_stats: (Optional) if set to true, response will contain input and document level
+        :param show_stats: (Optional) if set to true, response will contain request and document level
          statistics.
         :type show_stats: bool
+        :param string_index_type: (Optional) Specifies the method used to interpret string offsets.
+         Defaults to Text Elements (Graphemes) according to Unicode v8.0.0. For additional information
+         see https://aka.ms/text-analytics-offsets.
+        :type string_index_type: str or ~azure.ai.textanalytics.v3_2_preview_1.models.StringIndexType
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: EntityLinkingResult, or the result of cls(response)
-        :rtype: ~azure.ai.textanalytics.v3_0.models.EntityLinkingResult
+        :rtype: ~azure.ai.textanalytics.v3_2_preview_1.models.EntityLinkingResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('entities_linking')
-        if api_version == 'v3.0':
-            from .v3_0.operations import TextAnalyticsClientOperationsMixin as OperationClass
-        elif api_version == 'v3.1-preview.1':
-            from .v3_1_preview_1.operations import TextAnalyticsClientOperationsMixin as OperationClass
-        elif api_version == 'v3.1-preview.2':
-            from .v3_1_preview_2.operations import TextAnalyticsClientOperationsMixin as OperationClass
-        elif api_version == 'v3.2-preview.1':
+        if api_version == 'v3.2-preview.1':
             from .v3_2_preview_1.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'entities_linking'".format(api_version))
@@ -219,13 +218,14 @@ class TextAnalyticsClientOperationsMixin(object):
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
-        return mixin_instance.entities_linking(documents, model_version, show_stats, **kwargs)
+        return mixin_instance.entities_linking(documents, model_version, show_stats, string_index_type, **kwargs)
 
     def entities_recognition_general(
         self,
         documents,  # type: List["models.MultiLanguageInput"]
         model_version=None,  # type: Optional[str]
         show_stats=None,  # type: Optional[bool]
+        string_index_type=None,  # type: Optional[Union[str, "models.StringIndexType"]]
         **kwargs  # type: Any
     ):
         """Named Entity Recognition.
@@ -236,26 +236,24 @@ class TextAnalyticsClientOperationsMixin(object):
         Analytics API</a>` for the list of enabled languages.
 
         :param documents: The set of documents to process as part of this batch.
-        :type documents: list[~azure.ai.textanalytics.v3_0.models.MultiLanguageInput]
+        :type documents: list[~azure.ai.textanalytics.v3_2_preview_1.models.MultiLanguageInput]
         :param model_version: (Optional) This value indicates which model will be used for scoring. If
          a model-version is not specified, the API should default to the latest, non-preview version.
         :type model_version: str
-        :param show_stats: (Optional) if set to true, response will contain input and document level
+        :param show_stats: (Optional) if set to true, response will contain request and document level
          statistics.
         :type show_stats: bool
+        :param string_index_type: (Optional) Specifies the method used to interpret string offsets.
+         Defaults to Text Elements (Graphemes) according to Unicode v8.0.0. For additional information
+         see https://aka.ms/text-analytics-offsets.
+        :type string_index_type: str or ~azure.ai.textanalytics.v3_2_preview_1.models.StringIndexType
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: EntitiesResult, or the result of cls(response)
-        :rtype: ~azure.ai.textanalytics.v3_0.models.EntitiesResult
+        :rtype: ~azure.ai.textanalytics.v3_2_preview_1.models.EntitiesResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('entities_recognition_general')
-        if api_version == 'v3.0':
-            from .v3_0.operations import TextAnalyticsClientOperationsMixin as OperationClass
-        elif api_version == 'v3.1-preview.1':
-            from .v3_1_preview_1.operations import TextAnalyticsClientOperationsMixin as OperationClass
-        elif api_version == 'v3.1-preview.2':
-            from .v3_1_preview_2.operations import TextAnalyticsClientOperationsMixin as OperationClass
-        elif api_version == 'v3.2-preview.1':
+        if api_version == 'v3.2-preview.1':
             from .v3_2_preview_1.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'entities_recognition_general'".format(api_version))
@@ -264,7 +262,7 @@ class TextAnalyticsClientOperationsMixin(object):
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
-        return mixin_instance.entities_recognition_general(documents, model_version, show_stats, **kwargs)
+        return mixin_instance.entities_recognition_general(documents, model_version, show_stats, string_index_type, **kwargs)
 
     def entities_recognition_pii(
         self,
@@ -299,16 +297,12 @@ class TextAnalyticsClientOperationsMixin(object):
          see https://aka.ms/text-analytics-offsets.
         :type string_index_type: str or ~azure.ai.textanalytics.v3_2_preview_1.models.StringIndexType
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: PiiResult or ErrorResponse, or the result of cls(response)
-        :rtype: ~azure.ai.textanalytics.v3_2_preview_1.models.PiiResult or ~azure.ai.textanalytics.v3_2_preview_1.models.ErrorResponse
+        :return: PiiResult, or the result of cls(response)
+        :rtype: ~azure.ai.textanalytics.v3_2_preview_1.models.PiiResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('entities_recognition_pii')
-        if api_version == 'v3.1-preview.1':
-            from .v3_1_preview_1.operations import TextAnalyticsClientOperationsMixin as OperationClass
-        elif api_version == 'v3.1-preview.2':
-            from .v3_1_preview_2.operations import TextAnalyticsClientOperationsMixin as OperationClass
-        elif api_version == 'v3.2-preview.1':
+        if api_version == 'v3.2-preview.1':
             from .v3_2_preview_1.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'entities_recognition_pii'".format(api_version))
@@ -343,8 +337,8 @@ class TextAnalyticsClientOperationsMixin(object):
          statistics.
         :type show_stats: bool
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: HealthcareJobState or ErrorResponse, or the result of cls(response)
-        :rtype: ~azure.ai.textanalytics.v3_2_preview_1.models.HealthcareJobState or ~azure.ai.textanalytics.v3_2_preview_1.models.ErrorResponse
+        :return: HealthcareJobState, or the result of cls(response)
+        :rtype: ~azure.ai.textanalytics.v3_2_preview_1.models.HealthcareJobState
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('health_status')
@@ -373,26 +367,20 @@ class TextAnalyticsClientOperationsMixin(object):
         enabled languages.
 
         :param documents: The set of documents to process as part of this batch.
-        :type documents: list[~azure.ai.textanalytics.v3_0.models.MultiLanguageInput]
+        :type documents: list[~azure.ai.textanalytics.v3_2_preview_1.models.MultiLanguageInput]
         :param model_version: (Optional) This value indicates which model will be used for scoring. If
          a model-version is not specified, the API should default to the latest, non-preview version.
         :type model_version: str
-        :param show_stats: (Optional) if set to true, response will contain input and document level
+        :param show_stats: (Optional) if set to true, response will contain request and document level
          statistics.
         :type show_stats: bool
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: KeyPhraseResult, or the result of cls(response)
-        :rtype: ~azure.ai.textanalytics.v3_0.models.KeyPhraseResult
+        :rtype: ~azure.ai.textanalytics.v3_2_preview_1.models.KeyPhraseResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('key_phrases')
-        if api_version == 'v3.0':
-            from .v3_0.operations import TextAnalyticsClientOperationsMixin as OperationClass
-        elif api_version == 'v3.1-preview.1':
-            from .v3_1_preview_1.operations import TextAnalyticsClientOperationsMixin as OperationClass
-        elif api_version == 'v3.1-preview.2':
-            from .v3_1_preview_2.operations import TextAnalyticsClientOperationsMixin as OperationClass
-        elif api_version == 'v3.2-preview.1':
+        if api_version == 'v3.2-preview.1':
             from .v3_2_preview_1.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'key_phrases'".format(api_version))
@@ -418,26 +406,20 @@ class TextAnalyticsClientOperationsMixin(object):
         enabled languages.
 
         :param documents:
-        :type documents: list[~azure.ai.textanalytics.v3_0.models.LanguageInput]
+        :type documents: list[~azure.ai.textanalytics.v3_2_preview_1.models.LanguageInput]
         :param model_version: (Optional) This value indicates which model will be used for scoring. If
          a model-version is not specified, the API should default to the latest, non-preview version.
         :type model_version: str
-        :param show_stats: (Optional) if set to true, response will contain input and document level
+        :param show_stats: (Optional) if set to true, response will contain request and document level
          statistics.
         :type show_stats: bool
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: LanguageResult, or the result of cls(response)
-        :rtype: ~azure.ai.textanalytics.v3_0.models.LanguageResult
+        :rtype: ~azure.ai.textanalytics.v3_2_preview_1.models.LanguageResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('languages')
-        if api_version == 'v3.0':
-            from .v3_0.operations import TextAnalyticsClientOperationsMixin as OperationClass
-        elif api_version == 'v3.1-preview.1':
-            from .v3_1_preview_1.operations import TextAnalyticsClientOperationsMixin as OperationClass
-        elif api_version == 'v3.1-preview.2':
-            from .v3_1_preview_2.operations import TextAnalyticsClientOperationsMixin as OperationClass
-        elif api_version == 'v3.2-preview.1':
+        if api_version == 'v3.2-preview.1':
             from .v3_2_preview_1.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'languages'".format(api_version))
@@ -453,36 +435,38 @@ class TextAnalyticsClientOperationsMixin(object):
         documents,  # type: List["models.MultiLanguageInput"]
         model_version=None,  # type: Optional[str]
         show_stats=None,  # type: Optional[bool]
+        opinion_mining=None,  # type: Optional[bool]
+        string_index_type=None,  # type: Optional[Union[str, "models.StringIndexType"]]
         **kwargs  # type: Any
     ):
         """Sentiment.
 
-        The API returns a sentiment prediction, as well as sentiment scores for each sentiment class
-        (Positive, Negative, and Neutral) for the document and each sentence within it. See the
-        :code:`<a href="https://aka.ms/talangs">Supported languages in Text Analytics API</a>` for the
-        list of enabled languages.
+        The API returns a detailed sentiment analysis for the input text. The analysis is done in
+        multiple levels of granularity, start from the a document level, down to sentence and key terms
+        (aspects) and opinions.
 
         :param documents: The set of documents to process as part of this batch.
-        :type documents: list[~azure.ai.textanalytics.v3_0.models.MultiLanguageInput]
+        :type documents: list[~azure.ai.textanalytics.v3_2_preview_1.models.MultiLanguageInput]
         :param model_version: (Optional) This value indicates which model will be used for scoring. If
          a model-version is not specified, the API should default to the latest, non-preview version.
         :type model_version: str
-        :param show_stats: (Optional) if set to true, response will contain input and document level
+        :param show_stats: (Optional) if set to true, response will contain request and document level
          statistics.
         :type show_stats: bool
+        :param opinion_mining: (Optional) if set to true, response will contain input and document
+         level statistics including aspect-based sentiment analysis results.
+        :type opinion_mining: bool
+        :param string_index_type: (Optional) Specifies the method used to interpret string offsets.
+         Defaults to Text Elements (Graphemes) according to Unicode v8.0.0. For additional information
+         see https://aka.ms/text-analytics-offsets.
+        :type string_index_type: str or ~azure.ai.textanalytics.v3_2_preview_1.models.StringIndexType
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SentimentResponse, or the result of cls(response)
-        :rtype: ~azure.ai.textanalytics.v3_0.models.SentimentResponse
+        :rtype: ~azure.ai.textanalytics.v3_2_preview_1.models.SentimentResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('sentiment')
-        if api_version == 'v3.0':
-            from .v3_0.operations import TextAnalyticsClientOperationsMixin as OperationClass
-        elif api_version == 'v3.1-preview.1':
-            from .v3_1_preview_1.operations import TextAnalyticsClientOperationsMixin as OperationClass
-        elif api_version == 'v3.1-preview.2':
-            from .v3_1_preview_2.operations import TextAnalyticsClientOperationsMixin as OperationClass
-        elif api_version == 'v3.2-preview.1':
+        if api_version == 'v3.2-preview.1':
             from .v3_2_preview_1.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'sentiment'".format(api_version))
@@ -491,4 +475,4 @@ class TextAnalyticsClientOperationsMixin(object):
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
-        return mixin_instance.sentiment(documents, model_version, show_stats, **kwargs)
+        return mixin_instance.sentiment(documents, model_version, show_stats, opinion_mining, string_index_type, **kwargs)
