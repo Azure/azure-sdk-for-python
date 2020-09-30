@@ -3,12 +3,11 @@
 
 -------------------
 
-## 1.2.0 (2020-10-05)
+## 1.1.1 (2020-10-05)
 
 ### Features
 
-- Raise ValueError if Connection string secret has incorrect padding    #14140
-
+- Improve error message if Connection string secret has incorrect padding    #14140
 
 ## 1.1.0 (2020-09-08)
 
