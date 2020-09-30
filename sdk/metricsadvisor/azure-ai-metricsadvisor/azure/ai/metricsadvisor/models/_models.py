@@ -536,8 +536,8 @@ class MetricAlertConfiguration(object):
     :type detection_configuration_id: str
     :param alert_scope: Required. Anomaly scope.
     :type alert_scope: ~azure.ai.metricsadvisor.models.MetricAnomalyAlertScope
-    :keyword use_detection_result_to_filter_anomalies: Negation operation.
-    :paramtype use_detection_result_to_filter_anomalies: bool
+    :keyword negation_operation: Negation operation.
+    :paramtype negation_operation: bool
     :keyword alert_conditions:
     :paramtype alert_conditions: ~azure.ai.metricsadvisor.models.MetricAnomalyAlertConditions
     :keyword alert_snooze_condition:
@@ -547,7 +547,7 @@ class MetricAlertConfiguration(object):
         # type: (str, MetricAnomalyAlertScope, Any) -> None
         self.detection_configuration_id = detection_configuration_id
         self.alert_scope = alert_scope
-        self.use_detection_result_to_filter_anomalies = kwargs.get("use_detection_result_to_filter_anomalies", None)
+        self.negation_operation = kwargs.get("negation_operation", None)
         self.alert_conditions = kwargs.get("alert_conditions", None)
         self.alert_snooze_condition = kwargs.get("alert_snooze_condition", None)
 
@@ -556,7 +556,7 @@ class MetricAlertConfiguration(object):
         return cls(
             detection_configuration_id=config.anomaly_detection_configuration_id,
             alert_scope=MetricAnomalyAlertScope._from_generated(config),
-            use_detection_result_to_filter_anomalies=config.negation_operation,
+            negation_operation=config.negation_operation,
             alert_snooze_condition=MetricAnomalyAlertSnoozeCondition(
                 auto_snooze=config.snooze_filter.auto_snooze,
                 snooze_scope=config.snooze_filter.snooze_scope,
@@ -588,7 +588,7 @@ class MetricAlertConfiguration(object):
                 period=self.alert_scope.top_n_group_in_scope.period,
                 min_top_count=self.alert_scope.top_n_group_in_scope.min_top_count,
             ) if self.alert_scope.top_n_group_in_scope else None,
-            negation_operation=self.use_detection_result_to_filter_anomalies,
+            negation_operation=self.negation_operation,
             severity_filter=_SeverityCondition(
                 max_alert_severity=self.alert_conditions.severity_condition.max_alert_severity,
                 min_alert_severity=self.alert_conditions.severity_condition.min_alert_severity
