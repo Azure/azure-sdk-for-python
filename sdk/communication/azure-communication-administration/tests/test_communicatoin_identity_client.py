@@ -26,45 +26,51 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
     @pytest.mark.live_test_only
     @CommunicationResourceGroupPreparer(random_name_enabled=True)
     @CommunicationServicePreparer()
-    def test_create_user(self, api_key):
-        print(api_key)
-        #print(api_key)
-        #raise Exception("fuck this shit")
-        self.identity_client = CommunicationIdentityClient.from_connection_string(
-            self.connection_str)
-        user = self.identity_client.create_user()
+    def test_create_user(self, connection_string):
+        identity_client = CommunicationIdentityClient.from_connection_string(
+            connection_string)
+        user = identity_client.create_user()
 
         assert user.identifier is not None
 
-    # # @pytest.mark.live_test_only
-    # @pytest.mark.skip
-    # def test_issue_token(self):
-    #     user = self.identity_client.create_user()
+    @pytest.mark.live_test_only
+    @CommunicationResourceGroupPreparer(random_name_enabled=True)
+    @CommunicationServicePreparer()
+    def test_issue_token(self, connection_string):
+        identity_client = CommunicationIdentityClient.from_connection_string(
+            connection_string)
+        user = identity_client.create_user()
 
-    #     token_response = self.identity_client.issue_token(user, scopes=["chat"])
+        token_response = identity_client.issue_token(user, scopes=["chat"])
 
-    #     assert user.identifier is not None
-    #     assert token_response.token is not None
+        assert user.identifier is not None
+        assert token_response.token is not None
     
-    # # @pytest.mark.live_test_only
-    # @pytest.mark.skip
-    # def test_revoke_tokens(self):
-    #     user = self.identity_client.create_user()
+    @pytest.mark.live_test_only
+    @CommunicationResourceGroupPreparer(random_name_enabled=True)
+    @CommunicationServicePreparer()
+    def test_revoke_tokens(self, connection_string):
+        identity_client = CommunicationIdentityClient.from_connection_string(
+            connection_string)
+        user = identity_client.create_user()
 
-    #     token_response = self.identity_client.issue_token(user, scopes=["chat"])
-    #     self.identity_client.revoke_tokens(user)
+        token_response = identity_client.issue_token(user, scopes=["chat"])
+        identity_client.revoke_tokens(user)
 
-    #     assert user.identifier is not None
-    #     assert token_response.token is not None
+        assert user.identifier is not None
+        assert token_response.token is not None
     
-    # # @pytest.mark.live_test_only
-    # @pytest.mark.skip
-    # def test_delete_user(self):
-    #     user = self.identity_client.create_user()
+    @pytest.mark.live_test_only
+    @CommunicationResourceGroupPreparer(random_name_enabled=True)
+    @CommunicationServicePreparer()
+    def test_delete_user(self, connection_string):
+        identity_client = CommunicationIdentityClient.from_connection_string(
+            connection_string)
+        user = identity_client.create_user()
 
-    #     self.identity_client.delete_user(user)
+        identity_client.delete_user(user)
 
-    #     assert user.identifier is not None
+        assert user.identifier is not None
 
 if __name__ == "__main__":
     import unittest

@@ -4,23 +4,17 @@
 # ------------------------------------
 
 import datetime
-from os.path import dirname, realpath
-import time
 
-try:
-    from unittest.mock import Mock
-except ImportError:  # python < 3.3
-    from mock import Mock
-
-import json
-import requests
-
+from azure.mgmt.communication import CommunicationServiceManagementClient
+from azure.mgmt.communication.models import CommunicationServiceResource
 from devtools_testutils import AzureMgmtPreparer, ResourceGroupPreparer
 from devtools_testutils.resource_testcase import RESOURCE_GROUP_PARAM
 from azure_devtools.scenario_tests.exceptions import AzureTestError
-from azure.mgmt.communication import CommunicationServiceManagementClient
 
 class CommunicationResourceGroupPreparer(ResourceGroupPreparer):
+    """Communication Service Resource Group Preparer.
+       Creating and removing test resource groups on demand
+    """
     def create_resource(self, name, **kwargs):
         result = super(CommunicationResourceGroupPreparer, self).create_resource(name, **kwargs)
         if self.is_live and self._need_creation:
@@ -30,14 +24,16 @@ class CommunicationResourceGroupPreparer(ResourceGroupPreparer):
         return result
 
 class CommunicationServicePreparer(AzureMgmtPreparer):
+    """Communication Service Preparer.
+       Creating and destroying test resources on demand
+    """
     def __init__(
-        self,
-        schema=None,
-        name_prefix="communication",
-        resource_group_parameter_name=RESOURCE_GROUP_PARAM,
-        disable_recording=True,
-        playback_fake_resource=None,
-        client_kwargs=None,
+            self,
+            name_prefix="communication",
+            resource_group_parameter_name=RESOURCE_GROUP_PARAM,
+            disable_recording=True,
+            playback_fake_resource=None,
+            client_kwargs=None,
     ):
         super(CommunicationServicePreparer, self).__init__(
             name_prefix,
@@ -47,9 +43,8 @@ class CommunicationServicePreparer(AzureMgmtPreparer):
             client_kwargs=client_kwargs,
         )
         self.resource_group_parameter_name = resource_group_parameter_name
-        self.schema = schema
-        self.index_name = None
         self.service_name = "TEST-SERVICE-NAME"
+        self.mgmt_client = None
 
     def _get_resource_group(self, **kwargs):
         try:
@@ -62,30 +57,29 @@ class CommunicationServicePreparer(AzureMgmtPreparer):
             raise AzureTestError(template.format(ResourceGroupPreparer.__name__))
 
     def create_resource(self, name, **kwargs):
-        if self.schema:
-            schema = json.loads(self.schema)
-        else:
-            schema = None
         self.service_name = self.create_random_name()
-        self.endpoint = "https://{}.communication.azure.com".format(self.service_name)
 
         if not self.is_live:
             return {
-                "api_key": "api-key",
+                "connection_string": "connection_string",
             }
 
         group_name = self._get_resource_group(**kwargs).name
 
-        self.mgmt_client = self.create_mgmt_client(CommunicationServiceManagementClient, connection_verify=False)
+        self.mgmt_client = self.create_mgmt_client(CommunicationServiceManagementClient)
 
         resource = self.mgmt_client.communication_service.begin_create_or_update(
-            group_name, self.service_name
-        )
+            group_name,
+            self.service_name,
+            CommunicationServiceResource(location="global", data_location="UnitedStates")
+        ).result()
 
-        api_key = resource
+        primary_connection_string = self.mgmt_client.communication_service.list_keys(
+            group_name,
+            resource.name).primary_connection_string
 
         return {
-            "api_key": api_key,
+            "connection_string": primary_connection_string,
         }
 
     def remove_resource(self, name, **kwargs):
@@ -93,4 +87,4 @@ class CommunicationServicePreparer(AzureMgmtPreparer):
             return
 
         group_name = self._get_resource_group(**kwargs).name
-        self.mgmt_client.services.delete(group_name, self.service_name)
+        self.mgmt_client.communication_service.begin_delete(group_name, self.service_name).wait()
