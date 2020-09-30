@@ -12,7 +12,7 @@ except ImportError:
 
 import six
 
-from azure.core.exceptions import AzureError, ServiceRequestError
+from azure.core.exceptions import AzureError
 from azure.storage.blob import BlobClient
 from ._data_lake_lease import DataLakeLeaseClient
 from ._deserialize import process_storage_error
