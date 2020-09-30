@@ -86,6 +86,8 @@ Metrics Advisor lets you create and subscribe to real-time alerts. These alerts 
 
 ### Add a data feed from a sample or data source
 
+Metrics Monitor supports connecting different types of data sources. Here is a sample to ingest data from SQL Server.
+
 ```py
 from azure.ai.metricsadvisor import MetricsAdvisorKeyCredential, MetricsAdvisorAdministrationClient
 from azure.ai.metricsadvisor.models import (
@@ -147,6 +149,8 @@ return data_feed
 
 ### Check ingestion status
 
+After we start the data ingestion, we can check the ingestion status.
+
 ```py
 import datetime
 from azure.ai.metricsadvisor import MetricsAdvisorKeyCredential, MetricsAdvisorAdministrationClient
@@ -172,6 +176,9 @@ for status in ingestion_status:
 ```
 
 ### Configure anomaly detection configuration
+
+We need an anomaly detection configuration to determine whether a point in the time series is an anomaly.
+
 ```py
 from azure.ai.metricsadvisor import MetricsAdvisorKeyCredential, MetricsAdvisorAdministrationClient
 from azure.ai.metricsadvisor.models import (
@@ -235,6 +242,8 @@ return detection_config
 ```
 
 ### Configure alert configuration
+
+Then let's configure in which conditions an alert needs to be triggered.
 
 ```py
 from azure.ai.metricsadvisor import MetricsAdvisorKeyCredential, MetricsAdvisorAdministrationClient
@@ -305,6 +314,8 @@ return alert_config
 ```
 
 ### Query anomaly detection results
+
+We can query the alerts and anomalies.
 
 ```py
 import datetime
