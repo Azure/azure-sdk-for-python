@@ -8,6 +8,7 @@
 from typing import TYPE_CHECKING
 
 from ._models import CloudEvent, EventGridEvent, CustomEvent
+from ._policies import CloudEventDistributedTracingPolicy
 from ._helpers import _get_topic_hostname_only_fqdn, _get_authentication_policy, _is_cloud_event
 from ._generated._event_grid_publisher_client import EventGridPublisherClient as EventGridPublisherClientImpl
 
@@ -43,6 +44,10 @@ class EventGridPublisherClient(object):
         self._topic_hostname = topic_hostname
         auth_policy = _get_authentication_policy(credential)
         self._client = EventGridPublisherClientImpl(authentication_policy=auth_policy, **kwargs)
+        self._client._client._pipeline._impl_policies.append(
+            CloudEventDistributedTracingPolicy
+            )  # pylint: disable=protected-access
+
     def send(self, events, **kwargs):
         # type: (SendType, Any) -> None
         """Sends event data to topic hostname specified during client initialization.
