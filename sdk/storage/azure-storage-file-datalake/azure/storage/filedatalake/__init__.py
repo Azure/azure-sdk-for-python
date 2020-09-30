@@ -31,6 +31,7 @@ from ._models import (
     DelimitedTextDialect,
     DelimitedJsonDialect,
     DataLakeFileQueryError,
+    DataLakeAclChangeFailedError,
     AccessControlChangeResult,
     AccessControlChangeCounters,
     AccessControlChangeFailure,
@@ -83,5 +84,6 @@ __all__ = [
     'StorageStreamDownloader',
     'DelimitedTextDialect',
     'DelimitedJsonDialect',
-    'DataLakeFileQueryError'
+    'DataLakeFileQueryError',
+    'DataLakeAclChangeFailedError'
 ]

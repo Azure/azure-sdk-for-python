@@ -11,12 +11,12 @@ from datetime import datetime, timedelta
 from azure.core import MatchConditions
 
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, \
-    ResourceModifiedError
+    ResourceModifiedError, ServiceRequestError
 from azure.storage.filedatalake import ContentSettings, DirectorySasPermissions, DataLakeDirectoryClient, \
     generate_file_system_sas, FileSystemSasPermissions, DataLakeFileClient
 from azure.storage.filedatalake import DataLakeServiceClient, generate_directory_sas
 from azure.storage.filedatalake._models import AccessControlChangeResult, AccessControlChangeCounters, \
-    AccessControlChanges
+    AccessControlChanges, DataLakeAclChangeFailedError
 from testcase import (
     StorageTestCase,
     record,
@@ -298,6 +298,30 @@ class DirectoryTest(StorageTestCase):
         access_control = directory_client.get_access_control()
         self.assertIsNotNone(access_control)
         self.assertEqual(acl, access_control['acl'])
+
+    @record
+    def test_set_access_control_recursive_throws_exception_containing_continuation_token(self):
+        directory_name = self._get_directory_reference()
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        directory_client.create_directory()
+        num_sub_dirs = 5
+        num_file_per_sub_dir = 5
+        self._create_sub_directory_and_files(directory_client, num_sub_dirs, num_file_per_sub_dir)
+
+        response_list = list()
+
+        def callback(response):
+            response_list.append(response)
+            if len(response_list) == 2:
+                raise ServiceRequestError("network problem")
+        acl = 'user::rwx,group::r-x,other::rwx'
+
+        with self.assertRaises(DataLakeAclChangeFailedError) as acl_error:
+            directory_client.set_access_control_recursive(acl=acl, batch_size=2, max_batches=2,
+                                                          raw_response_hook=callback, retry_total=0)
+            self.assertIsNotNone(acl_error.exception.continuation)
+            self.assertEqual(acl_error.exception.message, "network problem")
+            self.assertIsInstance(acl_error.exception.error, ServiceRequestError)
 
     @record
     def test_set_access_control_recursive_in_batches(self):
