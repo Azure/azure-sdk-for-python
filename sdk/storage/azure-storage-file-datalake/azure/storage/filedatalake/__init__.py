@@ -18,7 +18,6 @@ from ._models import (
     DirectoryProperties,
     FileProperties,
     PathProperties,
-    PathPropertiesPaged,
     LeaseProperties,
     ContentSettings,
     AccountSasPermissions,
@@ -30,6 +29,8 @@ from ._models import (
     AccessPolicy,
     DelimitedTextDialect,
     DelimitedJsonDialect,
+    ArrowDialect,
+    ArrowType,
     DataLakeFileQueryError,
     DataLakeAclChangeFailedError,
     AccessControlChangeResult,
@@ -37,6 +38,7 @@ from ._models import (
     AccessControlChangeFailure,
     AccessControlChanges,
 )
+
 from ._shared_access_signature import generate_account_sas, generate_file_system_sas, generate_directory_sas, \
     generate_file_sas
 
@@ -65,7 +67,6 @@ __all__ = [
     'DirectoryProperties',
     'FileProperties',
     'PathProperties',
-    'PathPropertiesPaged',
     'LeaseProperties',
     'ContentSettings',
     'AccessControlChangeResult',
@@ -85,5 +86,8 @@ __all__ = [
     'DelimitedTextDialect',
     'DelimitedJsonDialect',
     'DataLakeFileQueryError',
-    'DataLakeAclChangeFailedError'
+    'DataLakeAclChangeFailedError',
+    'ArrowDialect',
+    'ArrowType',
+    'DataLakeFileQueryError'
 ]
