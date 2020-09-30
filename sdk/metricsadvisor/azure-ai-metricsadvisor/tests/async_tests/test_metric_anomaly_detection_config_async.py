@@ -22,7 +22,7 @@ from base_testcase_async import TestMetricsAdvisorAdministrationClientBaseAsync
 class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrationClientBaseAsync):
 
     @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
-    async def test_create_metric_anomaly_detection_configuration_whole_series_detection(self):
+    async def test_create_ad_config_whole_series_detection(self):
 
         data_feed = await self._create_data_feed("adconfigasync")
         async with self.admin_client:
@@ -103,7 +103,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 await self.admin_client.delete_data_feed(data_feed.id)
 
     @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
-    async def test_create_metric_anomaly_detection_config_with_series_and_group_conditions(self):
+    async def test_create_ad_config_with_series_and_group_conds(self):
         data_feed = await self._create_data_feed("adconfiggetasync")
         async with self.admin_client:
             try:
@@ -220,7 +220,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 await self.admin_client.delete_data_feed(data_feed.id)
 
     @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
-    async def test_create_detection_config_with_multiple_series_and_group_conditions(self):
+    async def test_create_ad_config_multiple_series_and_group_conds(self):
         data_feed = await self._create_data_feed("datafeedforconfigasync")
         async with self.admin_client:
             try:
