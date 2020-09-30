@@ -390,83 +390,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         self,
         documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
         **kwargs  # type: Any
-    ):  # type: (...) -> str
-        """Recognize healthcare entities and identify relationships between these entities in a batch of documents.
-
-        Entities are associated with references that can be found in existing knowledge bases, such as UMLS, CHV, MSH, etc.
-        Relations are comprised of a pair of entities and a directional relationship.
-
-        :param documents: The set of documents to process as part of this batch.
-            If you wish to specify the ID and language on a per-item basis you must
-            use as input a list[:class:`~azure.ai.textanalytics.TextDocumentInput`] or a list of
-            dict representations of :class:`~azure.ai.textanalytics.TextDocumentInput`, like
-            `{"id": "1", "language": "en", "text": "hello world"}`.
-        :type documents:
-            list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or
-            list[dict[str, str]]
-        :keyword str model_version: This value indicates which model will
-            be used for scoring, e.g. "latest", "2019-10-01". If a model-version
-            is not specified, the API will default to the latest, non-preview version.
-        :return: The unique ID for the Health job which can be used to query the status of the job.
-        :rtype: str
-        :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/sample_health.py
-                :start-after: [START health]
-                :end-before: [END health]
-                :language: python
-                :dedent: 8
-                :caption: Recognize healthcare entities in a batch of documents.
-        """
-
-        docs = docs = _validate_input(documents, "language", self._default_language)
-        model_version = kwargs.pop("model_version", None)
-
-        try:
-            response = self._client._health_initial(
-                docs,
-                model_version=model_version,
-                cls=lambda x,y,z: x,
-                **kwargs
-            )
-
-            return response.http_response.headers.get('Operation-Location').split("/")[-1]
-        
-        except HttpResponseError as error:
-            process_http_response_error(error)
-
-    @distributed_trace
-    def health_status(
-        self,
-        job_id,  # type: str
-        **kwargs  # type: Any
-    ):  # type: (...) -> Union[HealthcareJobState,ErrorResponse]
-        """Get the status of a Health job.
-        :param str job_id: The unique ID for the job.
-        :keyword bool show_stats: If set to true, response will contain document level statistics.
-        :return: An instance of HealthcareJobState, which represents the current status of the job.
-        :rtype: ~azure.ai.textanalytics.HealthcareJobState
-        :raises ~azure.core.exceptions.HttpResponseError
-        """
-
-        show_stats = kwargs.pop("show_stats", False)
-
-        try:
-            return self._client.health_status(
-                job_id, 
-                cls=kwargs.pop('cls', partial(healthcare_paged_result, self._client.health_status, show_stats=show_stats)),
-                **kwargs)
-
-        except HttpResponseError as error:
-            process_http_response_error(error)
-
-    @distributed_trace
-    def begin_recognize_health_entities(  # type: ignore
-        self,
-        documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
-        **kwargs  # type: Any
     ):  # type: (...) -> LROPoller[ItemPaged[RecognizeHealthcareEntitiesResult]]
         """Recognize healthcare entities and identify relationships between these entities in a batch of documents.
 
@@ -522,14 +445,18 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         except HttpResponseError as error:
             process_http_response_error(error)
 
-    def begin_cancel_health_job(
+    def begin_cancel_health_operation(
         self,
         poller,  # type: LROPoller[ItemPaged[RecognizeHealthcareEntitiesResult]]
         **kwargs
     ):
-        # type: (...) -> LROPoller["models.ErrorResponse"]
-        """
-        TODO: write docstring
+        # type: (...) -> LROPoller[None]
+        """Cancel an existing health operation.
+
+        :param poller: The LRO poller object associated with the health operation.
+        :return: An instance of an LROPoller that returns None.
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
         """
         initial_response = poller._polling_method._initial_response
         operation_location = initial_response.http_response.headers["Operation-Location"]
@@ -538,11 +465,10 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         job_id = urlparse(operation_location).path.split("/")[-1]
 
         try:
-            return self._client.begin_cancel_health_job(jobId)
+            return self._client.begin_cancel_health_job(job_id)
 
         except HttpResponseError as error:
             process_http_response_error(error)
-
 
     @distributed_trace
     def extract_key_phrases(  # type: ignore

@@ -7,15 +7,13 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_recognize_healthcare_entities.py
+FILE: sample_health_with_cancellation.py
 
 DESCRIPTION:
-    This sample demonstrates how to detect healthcare entities in a batch of documents.
-    Each entity found in the document will have a link associated with it from a
-    data source.  Relations between entities will also be included in the response.
+    This sample demonstrates how to cancel a Health job after it's been started.
 
 USAGE:
-    python sample_recognize_healthcare_entities.py
+    python sample_health_with_cancellation.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_TEXT_ANALYTICS_ENDPOINT - the endpoint to your Cognitive Services resource.
@@ -26,10 +24,10 @@ USAGE:
 import os
 
 
-class RecognizeHealthcareEntitiesSample(object):
+class HealthWithCancellationSample(object):
 
-    def recognize_healthcare_entities(self):
-        # [START recognize_healthcare_entities]
+    def health_with_cancellation(self):
+        # [START health_with_cancellation]
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.textanalytics import TextAnalyticsClient
 
@@ -58,34 +56,11 @@ class RecognizeHealthcareEntitiesSample(object):
         ]
 
         poller = text_analytics_client.begin_recognize_health_entities(documents)
-        result = poller.result()
-        docs = [doc for doc in result if not doc.is_error]
-
-        for idx, doc in enumerate(docs):
-            print("Document text: {}\n".format(documents[idx]))
-            for entity in doc.entities:
-                print("Entity: {}".format(entity.text))
-                print("...Category: {}".format(entity.category))
-                print("...Subcategory: {}".format(entity.subcategory))
-                print("...Offset: {}".format(entity.offset))
-                print("...Length: {}".format(entity.length))
-                print("...Confidence score: {}".format(entity.confidence_score))
-                if entity.links is not None:
-                    print("...Links:")
-                    for link in entity.links:
-                        print("......ID: {}".format(link.id))
-                        print("......Data source: {}".format(link.data_source))
-            for relation in doc.relations:
-                print("Relation:")
-                print("...Source: {}".format(relation.source.text))
-                print("...Target: {}".format(relation.target.text))
-                print("...Type: {}".format(relation.relation_type))
-                print("...Bidirectional: {}".format(relation.is_bidirectional))
-            print("------------------------------------------")
+        text_analytics_client.begin_cancel_health_operation(poller)
 
 
 if __name__ == "__main__":
-    sample = RecognizeHealthcareEntitiesSample()
-    sample.recognize_healthcare_entities()
+    sample = HealthWithCancellationSample()
+    sample.health_with_cancellation()
 
 
