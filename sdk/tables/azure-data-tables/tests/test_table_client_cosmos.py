@@ -13,7 +13,6 @@ from azure.data.tables._version import VERSION
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from _shared.testcase import (
     GlobalStorageAccountPreparer,
-    GlobalCosmosAccountPreparer,
     TableTestCase,
     RERUNS_DELAY,
     SLEEP_DELAY

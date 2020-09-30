@@ -98,9 +98,5 @@ class ResourceGroupPreparer(AzureMgmtPreparer):
             except Exception:
                 pass
 
-    def sleep(self, duration=15):
-        if self.is_live:
-            time.sleep(duration)
-
 RandomNameResourceGroupPreparer = functools.partial(ResourceGroupPreparer, random_name_enabled=True)
 CachedResourceGroupPreparer = functools.partial(ResourceGroupPreparer, use_cache=True, random_name_enabled=True)

@@ -34,7 +34,7 @@ class CosmosAccountPreparer(AzureMgmtPreparer):
         disable_recording=True,
         playback_fake_resource=None,
         client_kwargs=None,
-        random_name_enabled=False,
+        random_name_enabled=True,
         use_cache=False
     ):
         super(CosmosAccountPreparer, self).__init__(

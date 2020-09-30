@@ -40,7 +40,7 @@ class AbstractPreparer(object):
         self.live_test = not isinstance(test_class_instance, ReplayableTest)
         self.test_class_instance = test_class_instance
 
-        if self.live_test or test_class_instance.in_recording:
+        if (self.live_test or test_class_instance.in_recording) and not self._use_cache:
             if not self._use_cache:
                 resource_name = self.random_name
                 if not self.live_test and isinstance(self, RecordingProcessor):

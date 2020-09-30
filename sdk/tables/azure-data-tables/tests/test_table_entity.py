@@ -32,7 +32,6 @@ from azure.data.tables._models import TableSasPermissions, AccessPolicy, UpdateM
 
 from _shared.testcase import (
     GlobalStorageAccountPreparer,
-    GlobalCosmosAccountPreparer,
     TableTestCase,
     LogCaptured
 )

@@ -16,7 +16,6 @@ from devtools_testutils import (
 )
 from _shared.testcase import (
     GlobalStorageAccountPreparer,
-    GlobalCosmosAccountPreparer,
     TableTestCase
 )
 

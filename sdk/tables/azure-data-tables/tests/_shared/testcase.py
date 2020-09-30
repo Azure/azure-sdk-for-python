@@ -31,7 +31,6 @@ from devtools_testutils import (
     ResourceGroupPreparer,
     StorageAccountPreparer,
     FakeResource,
-    # CosmosAccountPreparer,
 )
 from .cosmos_testcase import CosmosAccountPreparer, CachedCosmosAccountPreparer
 from azure_devtools.scenario_tests import RecordingProcessor, AzureTestError, create_random_name
@@ -112,35 +111,6 @@ class GlobalStorageAccountPreparer(AzureMgmtPreparer):
             'storage_account': storage_account,
             'storage_account_key': TableTestCase._STORAGE_KEY,
             'storage_account_cs': TableTestCase._STORAGE_CONNECTION_STRING,
-        }
-
-
-class GlobalCosmosAccountPreparer(AzureMgmtPreparer):
-    def __init__(self, use_cache=False):
-        super(GlobalCosmosAccountPreparer, self).__init__(
-            name_prefix='',
-            random_name_length=42
-        )
-        self.use_cache = use_cache
-
-    def create_resource(self, name, **kwargs):
-        cosmos_account = TableTestCase._COSMOS_ACCOUNT
-        if self.is_live:
-            self.test_class_instance.scrubber.register_name_pair(
-                cosmos_account.name,
-                "cosmosname"
-            )
-        else:
-            name = "cosmosname"
-            cosmos_account.name = name
-            cosmos_account.primary_endpoints.table = 'https://{}.table.cosmos.azure.com:443/'.format(name)
-
-        return {
-            'location': 'westus',
-            'resource_group': TableTestCase._RESOURCE_GROUP,
-            'cosmos_account': cosmos_account,
-            'cosmos_account_key': TableTestCase._COSMOS_KEY,
-            'cosmos_account_cs': TableTestCase._COSMOS_CONNECTION_STRING,
         }
 
 

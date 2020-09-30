@@ -9,7 +9,7 @@ import pytest
 # from azure.data.tabless import TableServiceClient
 from azure.data.tables import TableServiceClient
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
-from _shared.testcase import GlobalResourceGroupPreparer, TableTestCase, GlobalCosmosAccountPreparer
+from _shared.testcase import GlobalResourceGroupPreparer, TableTestCase
 
 SERVICE_UNAVAILABLE_RESP_BODY = '<?xml version="1.0" encoding="utf-8"?><StorageServiceStats><GeoReplication><Status' \
                                 '>unavailable</Status><LastSyncTime></LastSyncTime></GeoReplication' \

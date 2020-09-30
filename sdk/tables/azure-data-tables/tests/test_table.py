@@ -111,7 +111,6 @@ class StorageTableTest(TableTestCase):
         ps = ts.get_service_properties()
         ts.delete_table(table_name)
 
-    # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_create_table(self, resource_group, location, storage_account, storage_account_key):
@@ -127,7 +126,6 @@ class StorageTableTest(TableTestCase):
         assert created.table_name == table_name
         ts.delete_table(table_name)
 
-    # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_create_table_fail_on_exist(self, resource_group, location, storage_account, storage_account_key):
@@ -199,7 +197,6 @@ class StorageTableTest(TableTestCase):
         assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.""" in str(
             excinfo)
 
-    # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_query_tables(self, resource_group, location, storage_account, storage_account_key):
@@ -219,7 +216,6 @@ class StorageTableTest(TableTestCase):
         self.assertIsNotNone(tables[0])
         ts.delete_table(t.table_name)
 
-    # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_query_tables_with_filter(self, resource_group, location, storage_account, storage_account_key):
@@ -239,7 +235,6 @@ class StorageTableTest(TableTestCase):
         self.assertEqual(len(tables), 1)
         ts.delete_table(t.table_name)
 
-    # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_query_tables_with_num_results(self, resource_group, location, storage_account, storage_account_key):
@@ -262,7 +257,6 @@ class StorageTableTest(TableTestCase):
         self.assertEqual(len(small_page), 3)
         self.assertGreaterEqual(len(big_page), 4)
 
-    # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_query_tables_with_marker(self, resource_group, location, storage_account, storage_account_key):
@@ -288,7 +282,6 @@ class StorageTableTest(TableTestCase):
         self.assertEqual(len(tables2), 2)
         self.assertNotEqual(tables1, tables2)
 
-    # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_delete_table_with_existing_table(self, resource_group, location, storage_account, storage_account_key):
@@ -304,7 +297,6 @@ class StorageTableTest(TableTestCase):
         self.assertIsNone(deleted)
         self.assertEqual(len(existing), 0)
 
-    # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_delete_table_with_non_existing_table_fail_not_exist(self, resource_group, location, storage_account,
@@ -337,7 +329,6 @@ class StorageTableTest(TableTestCase):
             assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.""" in str(
                 excinfo)
 
-    # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_get_table_acl(self, resource_group, location, storage_account, storage_account_key):
@@ -432,7 +423,6 @@ class StorageTableTest(TableTestCase):
         finally:
             ts.delete_table(table.table_name)
 
-    # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_set_table_acl_too_many_ids(self, resource_group, location, storage_account, storage_account_key):
