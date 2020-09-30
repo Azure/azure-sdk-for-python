@@ -24,7 +24,10 @@ steps:
       $installerFolder = "../_installer"
       $uri = "$(_PythonInstallerLocation)"
 
-      if ([Environment]::GetEnvironmentVariable("Agent.OS") == "Windows_NT") {
+      Write-Host $installerFolder
+      Write-Host $uri
+
+      if ([Environment]::GetEnvironmentVariable("Agent.OS") -eq "Windows_NT") {
         $outFile = "local.zip"
       }
       else {
@@ -40,7 +43,7 @@ steps:
       Push-Location $installerFolder
 
       # unzip and install
-      if ([Environment]::GetEnvironmentVariable("Agent.OS") == "Windows_NT") {
+      if ([Environment]::GetEnvironmentVariable("Agent.OS") -eq "Windows_NT") {
         Expand-Archive -Path "local.zip" -DestinationPath .
         ./setup.ps1
       }
