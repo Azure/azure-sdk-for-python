@@ -115,7 +115,7 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
 
         def callback(response, _, headers):
             raw_model = client._deserialize(Model, response)
-            custom_model = CustomFormModel._from_generated(raw_model)
+            custom_model = CustomFormModel._from_generated(raw_model, client.api_version)
             raw_response.append(raw_model)
             raw_response.append(custom_model)
 
@@ -138,7 +138,7 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
 
         def callback(response, _, headers):
             raw_model = client._deserialize(Model, response)
-            custom_model = CustomFormModel._from_generated(raw_model)
+            custom_model = CustomFormModel._from_generated(raw_model, client.api_version)
             raw_response.append(raw_model)
             raw_response.append(custom_model)
 
@@ -205,7 +205,7 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
 
         def callback(response, _, headers):
             raw_model = client._deserialize(Model, response)
-            custom_model = CustomFormModel._from_generated(raw_model)
+            custom_model = CustomFormModel._from_generated(raw_model, client.api_version)
             raw_response.append(raw_model)
             raw_response.append(custom_model)
 
@@ -225,7 +225,7 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
 
         def callback(response, _, headers):
             raw_model = client._deserialize(Model, response)
-            custom_model = CustomFormModel._from_generated(raw_model)
+            custom_model = CustomFormModel._from_generated(raw_model, client.api_version)
             raw_response.append(raw_model)
             raw_response.append(custom_model)
 

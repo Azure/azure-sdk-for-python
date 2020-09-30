@@ -157,7 +157,7 @@ class FormRecognizerTest(AzureTestCase):
                     for a in actual.train_result.fields:
                         self.assertEqual(model.submodels[0].fields[a.field_name].name, a.field_name)
                         self.assertEqual(model.submodels[0].fields[a.field_name].accuracy, a.accuracy)
-                    self.assertEqual(model.submodels[0].form_type, "form-"+model.model_id)
+                    self.assertEqual(model.submodels[0].form_type, "custom:"+model.model_id)
                     self.assertEqual(model.submodels[0].accuracy, actual.train_result.average_model_accuracy)
 
     def assertFormPagesTransformCorrect(self, pages, actual_read, page_result=None, **kwargs):
