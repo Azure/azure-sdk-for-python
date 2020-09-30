@@ -49,12 +49,11 @@ from .._generated.models import (
     DetectionAnomalyFilterCondition,
     DimensionGroupIdentity,
     DetectionIncidentFilterCondition,
-    DimensionGroupConfiguration,
-    SeriesConfiguration,
     EnrichmentStatus,
     MetricSeriesItem as MetricSeriesDefinition,
     IngestionStatus as DataFeedIngestionStatus,
-    SeriesIdentity
+    SeriesIdentity,
+    SeverityFilterCondition
 )
 
 from ._models import (
@@ -130,8 +129,6 @@ __all__ = (
     "Incident",
     "DetectionIncidentFilterCondition",
     "AnomalyDetectionConfiguration",
-    "DimensionGroupConfiguration",
-    "SeriesConfiguration",
     "MetricAnomalyAlertConfigurationsOperator",
     "DataFeedStatus",
     "DataFeedGranularity",
@@ -191,7 +188,6 @@ __all__ = (
     "ChangeThresholdCondition",
     "HardThresholdCondition",
     "SeriesIdentity",
-    "DataFeedIngestionStatus",
     "AzureDataLakeStorageGen2DataFeed",
     "ElasticsearchDataFeed",
     "AnomalyValue",
@@ -199,5 +195,6 @@ __all__ = (
     "PeriodType",
     "FeedbackType",
     "TimeMode",
-    "IncidentRootCause"
+    "IncidentRootCause",
+    "SeverityFilterCondition"
 )

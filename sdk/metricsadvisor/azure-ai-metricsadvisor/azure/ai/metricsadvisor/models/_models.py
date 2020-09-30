@@ -246,7 +246,7 @@ class DataFeedRollupSettings(object):
     :keyword str rollup_identification_value: The identification value for the row of calculated all-up value.
     :keyword rollup_type: Mark if the data feed needs rollup. Possible values include: "NoRollup",
         "AutoRollup", "AlreadyRollup". Default value: "AutoRollup".
-    :paramtype roll_up_type: str or ~azure.ai.metricsadvisor.models.DataFeedRollupType
+    :paramtype rollup_type: str or ~azure.ai.metricsadvisor.models.DataFeedRollupType
     :keyword list[str] auto_rollup_group_by_column_names: Roll up columns.
     :keyword rollup_method: Roll up method. Possible values include: "None", "Sum", "Max", "Min",
         "Avg", "Count".
@@ -677,6 +677,7 @@ class AnomalyDetectionConfiguration(object):
     :ivar str description: anomaly detection configuration description.
     :ivar str metric_id: Required. metric unique id.
     :ivar whole_series_detection_condition: Required.
+        Conditions to detect anomalies in all time series of a metric.
     :vartype whole_series_detection_condition: ~azure.ai.metricsadvisor.models.MetricDetectionCondition
     :ivar series_group_detection_conditions: detection configuration for series group.
     :vartype series_group_detection_conditions:
@@ -1840,31 +1841,24 @@ class Anomaly(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar metric_id: metric unique id
-
-     only return for alerting anomaly result.
+    :ivar metric_id: metric unique id. Only returned for alerting anomaly result.
     :vartype metric_id: str
-    :ivar detection_configuration_id: anomaly detection configuration unique id
-
-     only return for alerting anomaly result.
+    :ivar detection_configuration_id: anomaly detection configuration unique id.
+     Only returned for alerting anomaly result.
     :vartype detection_configuration_id: str
     :ivar timestamp: anomaly time.
     :vartype timestamp: ~datetime.datetime
-    :ivar created_time: created time
-
-     only return for alerting result.
+    :ivar created_time: created time. Only returned for alerting result.
     :vartype created_time: ~datetime.datetime
-    :ivar modified_time: modified time
-
-     only return for alerting result.
+    :ivar modified_time: modified time. Only returned for alerting result.
     :vartype modified_time: ~datetime.datetime
     :ivar dimension: dimension specified for series.
     :vartype dimension: dict[str, str]
     :ivar severity: anomaly severity. Possible values include: "Low", "Medium", "High".
     :vartype anomaly_severity: str or ~azure.ai.metricsadvisor.models.Severity
     :vartype severity: str
-    :ivar status: nomaly status. only return for alerting anomaly result. Possible
-    values include: "Active", "Resolved".
+    :ivar status: anomaly status. only returned for alerting anomaly result. Possible
+     values include: "Active", "Resolved".
     :vartype status: str
     """
 
@@ -1930,13 +1924,10 @@ class Incident(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar metric_id: metric unique id
-
-     only return for alerting incident result.
+    :ivar metric_id: metric unique id. Only returned for alerting incident result.
     :vartype metric_id: str
-    :ivar detection_configuration_id: anomaly detection configuration unique id
-
-     only return for alerting incident result.
+    :ivar detection_configuration_id: anomaly detection configuration unique id.
+     Only returned for alerting incident result.
     :vartype detection_configuration_id: str
     :ivar id: incident id.
     :vartype id: str
@@ -1949,7 +1940,7 @@ class Incident(msrest.serialization.Model):
     :ivar severity: max severity of latest anomalies in the incident. Possible values include:
      "Low", "Medium", "High".
     :vartype severity: str or ~azure.ai.metricsadvisor.models.Severity
-    :ivar incident_status: incident status
+    :ivar status: incident status
      only return for alerting incident result. Possible values include: "Active", "Resolved".
     :vartype status: str or ~azure.ai.metricsadvisor.models.IncidentPropertyIncidentStatus
     """
