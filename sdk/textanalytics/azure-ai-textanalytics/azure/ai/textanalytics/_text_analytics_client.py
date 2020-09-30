@@ -622,7 +622,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             process_http_response_error(error)
 
     @distributed_trace
-    def begin_analyze_text(  # type: ignore
+    def begin_analyze(  # type: ignore
         self,
         documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
         entities_recognition_tasks=None,  # type: List[~azure.ai.textanalytics.EntitiesRecognitionTask]

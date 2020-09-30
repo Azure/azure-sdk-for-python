@@ -29,7 +29,7 @@ import os
 class HealthSample(object):
 
     def health(self):
-        # [START recognize_healthcare_entities]
+        # [START health]
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.textanalytics import TextAnalyticsClient
 
@@ -83,6 +83,7 @@ class HealthSample(object):
                 print("...Bidirectional: {}".format(relation.is_bidirectional))
             print("------------------------------------------")
 
+        # [END health]
 
 if __name__ == "__main__":
     sample = HealthSample()

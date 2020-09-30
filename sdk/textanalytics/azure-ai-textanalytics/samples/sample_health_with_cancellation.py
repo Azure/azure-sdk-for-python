@@ -58,6 +58,8 @@ class HealthWithCancellationSample(object):
         poller = text_analytics_client.begin_recognize_health_entities(documents)
         text_analytics_client.begin_cancel_health_operation(poller)
 
+        # [END health_with_cancellation]
+
 
 if __name__ == "__main__":
     sample = HealthWithCancellationSample()
