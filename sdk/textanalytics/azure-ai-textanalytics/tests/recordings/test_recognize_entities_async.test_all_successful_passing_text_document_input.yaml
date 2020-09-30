@@ -13,7 +13,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b2 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
     uri: https://westcentralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.2/entities/recognition/general?model-version=2020-02-01&showStats=false&stringIndexType=UnicodeCodePoint
   response:
@@ -29,14 +29,14 @@ interactions:
         Gates","category":"Person","offset":37,"length":10,"confidenceScore":0.86},{"text":"Paul
         Allen","category":"Person","offset":52,"length":10,"confidenceScore":0.98}],"warnings":[]}],"errors":[],"modelVersion":"2020-02-01"}'
     headers:
-      apim-request-id: 3a74806b-c5fd-46ab-8cc6-101a63d4dc1d
+      apim-request-id: e9314125-856d-4e91-b81d-ec01c6312cc1
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Thu, 10 Sep 2020 15:25:39 GMT
+      date: Wed, 30 Sep 2020 16:02:48 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '61'
+      x-envoy-upstream-service-time: '92'
     status:
       code: 200
       message: OK

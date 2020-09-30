@@ -12,21 +12,21 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b2 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
     uri: https://westcentralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.2/sentiment?showStats=false&stringIndexType=UnicodeCodePoint
   response:
     body:
       string: '{"documents":[{"id":"1","sentiment":"neutral","confidenceScores":{"positive":0.06,"neutral":0.9,"negative":0.04},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.06,"neutral":0.9,"negative":0.04},"offset":0,"length":3,"text":"one"}],"warnings":[]},{"id":"2","sentiment":"neutral","confidenceScores":{"positive":0.01,"neutral":0.97,"negative":0.02},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.01,"neutral":0.97,"negative":0.02},"offset":0,"length":3,"text":"two"}],"warnings":[]},{"id":"3","sentiment":"neutral","confidenceScores":{"positive":0.05,"neutral":0.93,"negative":0.02},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.05,"neutral":0.93,"negative":0.02},"offset":0,"length":5,"text":"three"}],"warnings":[]},{"id":"4","sentiment":"neutral","confidenceScores":{"positive":0.03,"neutral":0.96,"negative":0.01},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.03,"neutral":0.96,"negative":0.01},"offset":0,"length":4,"text":"four"}],"warnings":[]},{"id":"5","sentiment":"neutral","confidenceScores":{"positive":0.05,"neutral":0.93,"negative":0.02},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.05,"neutral":0.93,"negative":0.02},"offset":0,"length":4,"text":"five"}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}'
     headers:
-      apim-request-id: cd710734-ac57-4cfb-8318-dca9116beee1
+      apim-request-id: cc354aaf-ab8b-43d0-90e7-7225951d3dcf
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=5
-      date: Thu, 10 Sep 2020 15:25:25 GMT
+      date: Wed, 30 Sep 2020 16:03:10 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '83'
+      x-envoy-upstream-service-time: '114'
     status:
       code: 200
       message: OK

@@ -24,8 +24,6 @@ from azure.ai.textanalytics import (
 # the first one
 TextAnalyticsClientPreparer = functools.partial(_TextAnalyticsClientPreparer, TextAnalyticsClient)
 
-# TODO: add back offset and length checks throughout this test once I add them
-
 class TestRecognizePIIEntities(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -56,8 +54,6 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
                 self.assertIsNotNone(entity.text)
                 self.assertIsNotNone(entity.category)
                 self.assertIsNotNone(entity.offset)
-                self.assertIsNotNone(entity.length)
-                self.assertNotEqual(entity.length, 0)
                 self.assertIsNotNone(entity.confidence_score)
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -83,8 +79,6 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
                 self.assertIsNotNone(entity.text)
                 self.assertIsNotNone(entity.category)
                 self.assertIsNotNone(entity.offset)
-                self.assertIsNotNone(entity.length)
-                self.assertNotEqual(entity.length, 0)
                 self.assertIsNotNone(entity.confidence_score)
 
     @GlobalTextAnalyticsAccountPreparer()
