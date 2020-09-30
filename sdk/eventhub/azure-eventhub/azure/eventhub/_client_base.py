@@ -20,6 +20,7 @@ except ImportError:
 
 from uamqp import AMQPClient, Message, authentication, constants, errors, compat, utils
 import six
+from azure.core.credentials import AccessToken
 
 from .exceptions import _handle_exception, ClientClosedError, ConnectError
 from ._configuration import Configuration
@@ -43,11 +44,13 @@ _AccessToken = collections.namedtuple("AccessToken", "token expires_on")
 
 
 def _parse_conn_str(conn_str, kwargs):
-    # type: (str, Dict[str, Any]) -> Tuple[str, str, str, str]
+    # type: (str, Dict[str, Any]) -> Tuple[str, Optional[str], Optional[str], str, Optional[str], Optional[int]]
     endpoint = None
     shared_access_key_name = None
     shared_access_key = None
     entity_path = None  # type: Optional[str]
+    shared_access_signature = None  # type: Optional[str]
+    shared_access_signature_expiry = None # type: Optional[int]
     eventhub_name = kwargs.pop("eventhub_name", None)  # type: Optional[str]
     for element in conn_str.split(";"):
         key, _, value = element.partition("=")
@@ -61,7 +64,16 @@ def _parse_conn_str(conn_str, kwargs):
             shared_access_key = value
         elif key.lower() == "entitypath":
             entity_path = value
-    if not all([endpoint, shared_access_key_name, shared_access_key]):
+        elif key.lower() == "sharedaccesssignature":
+            shared_access_signature = value
+            try:
+                # Expiry can be stored in the "se=<timestamp>" clause of the token. ('&'-separated key-value pairs)
+                # type: ignore
+                shared_access_signature_expiry = int(shared_access_signature.split('se=')[1].split('&')[0])
+            except (IndexError, TypeError, ValueError): # Fallback since technically expiry is optional.
+                # An arbitrary, absurdly large number, since you can't renew.
+                shared_access_signature_expiry = int(time.time() * 2)
+    if not (all((endpoint, shared_access_key_name, shared_access_key)) or all((endpoint, shared_access_signature))):
         raise ValueError(
             "Invalid connection string. Should be in the format: "
             "Endpoint=sb://<FQDN>/;SharedAccessKeyName=<KeyName>;SharedAccessKey=<KeyValue>"
@@ -72,7 +84,12 @@ def _parse_conn_str(conn_str, kwargs):
         host = cast(str, endpoint)[left_slash_pos + 2 :]
     else:
         host = str(endpoint)
-    return host, str(shared_access_key_name), str(shared_access_key), entity
+    return (host,
+            str(shared_access_key_name) if shared_access_key_name else None,
+            str(shared_access_key) if shared_access_key else None,
+            entity,
+            str(shared_access_signature) if shared_access_signature else None,
+            shared_access_signature_expiry)
 
 
 def _generate_sas_token(uri, policy, key, expiry=None):
@@ -124,6 +141,30 @@ class EventHubSharedKeyCredential(object):
         return _generate_sas_token(scopes[0], self.policy, self.key)
 
 
+class EventHubSASTokenCredential(object):
+    """The shared access token credential used for authentication.
+
+    :param str token: The shared access token string
+    :param int expiry: The epoch timestamp
+    """
+    def __init__(self, token, expiry):
+        # type: (str, int) -> None
+        """
+        :param str token: The shared access token string
+        :param float expiry: The epoch timestamp
+        """
+        self.token = token
+        self.expiry = expiry
+        self.token_type = b"servicebus.windows.net:sastoken"
+
+    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
+        # type: (str, Any) -> AccessToken
+        """
+        This method is automatically called when token is about to expire.
+        """
+        return AccessToken(self.token, self.expiry)
+
+
 class ClientBase(object):  # pylint:disable=too-many-instance-attributes
     def __init__(self, fully_qualified_namespace, eventhub_name, credential, **kwargs):
         # type: (str, str, TokenCredential, Any) -> None
@@ -148,10 +189,13 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
     @staticmethod
     def _from_connection_string(conn_str, **kwargs):
         # type: (str, Any) -> Dict[str, Any]
-        host, policy, key, entity = _parse_conn_str(conn_str, kwargs)
+        host, policy, key, entity, token, token_expiry = _parse_conn_str(conn_str, kwargs)
         kwargs["fully_qualified_namespace"] = host
         kwargs["eventhub_name"] = entity
-        kwargs["credential"] = EventHubSharedKeyCredential(policy, key)
+        if token and token_expiry:
+            kwargs["credential"] = EventHubSASTokenCredential(token, token_expiry)
+        elif policy and key:
+            kwargs["credential"] = EventHubSharedKeyCredential(policy, key)
         return kwargs
 
     def _create_auth(self):

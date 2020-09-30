@@ -11,13 +11,13 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 20 Aug 2020 20:17:28 GMT
+      - Wed, 16 Sep 2020 21:51:57 GMT
       User-Agent:
-      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 20 Aug 2020 20:17:28 GMT
+      - Wed, 16 Sep 2020 21:51:57 GMT
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     method: POST
     uri: https://storagename.table.core.windows.net/Tables
   response:
@@ -26,35 +26,39 @@ interactions:
     headers:
       cache-control: no-cache
       content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
-      date: Thu, 20 Aug 2020 20:17:28 GMT
+      date: Wed, 16 Sep 2020 21:51:57 GMT
       location: https://storagename.table.core.windows.net/Tables('uttablefde52085')
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-ms-version: '2019-07-07'
+      x-ms-version: '2019-02-02'
     status:
       code: 201
       message: Created
-    url: https://pyacrstoragewdjxux7eodqw.table.core.windows.net/Tables
+    url: https://pyacrstoragewrla36mtikyp.table.core.windows.net/Tables
 - request:
-    body: '{"PartitionKey": "pkfde52085", "RowKey": "rkfde52085", "age": "abc", "sex":
-      "female", "sign": "aquarius", "birthday": "1991-10-04T00:00:00Z", "birthday@odata.type":
+    body: '{"PartitionKey": "pkfde52085", "PartitionKey@odata.type": "Edm.String",
+      "RowKey": "rkfde52085", "RowKey@odata.type": "Edm.String", "age": "abc", "age@odata.type":
+      "Edm.String", "sex": "female", "sex@odata.type": "Edm.String", "sign": "aquarius",
+      "sign@odata.type": "Edm.String", "birthday": "1991-10-04T00:00:00Z", "birthday@odata.type":
       "Edm.DateTime"}'
     headers:
+      Accept:
+      - application/json
       Content-Length:
-      - '180'
+      - '353'
       Content-Type:
       - application/json
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 20 Aug 2020 20:17:28 GMT
+      - Wed, 16 Sep 2020 21:51:58 GMT
       User-Agent:
-      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 20 Aug 2020 20:17:28 GMT
+      - Wed, 16 Sep 2020 21:51:58 GMT
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     method: PUT
     uri: https://storagename.table.core.windows.net/uttablefde52085(PartitionKey='pkfde52085',RowKey='rkfde52085')
   response:
@@ -63,15 +67,15 @@ interactions:
     headers:
       cache-control: no-cache
       content-length: '0'
-      date: Thu, 20 Aug 2020 20:17:28 GMT
-      etag: W/"datetime'2020-08-20T20%3A17%3A28.871236Z'"
+      date: Wed, 16 Sep 2020 21:51:57 GMT
+      etag: W/"datetime'2020-09-16T21%3A51%3A58.1307231Z'"
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options: nosniff
-      x-ms-version: '2019-07-07'
+      x-ms-version: '2019-02-02'
     status:
       code: 204
       message: No Content
-    url: https://pyacrstoragewdjxux7eodqw.table.core.windows.net/uttablefde52085(PartitionKey='pkfde52085',RowKey='rkfde52085')
+    url: https://pyacrstoragewrla36mtikyp.table.core.windows.net/uttablefde52085(PartitionKey='pkfde52085',RowKey='rkfde52085')
 - request:
     body: null
     headers:
@@ -80,42 +84,44 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 20 Aug 2020 20:17:28 GMT
+      - Wed, 16 Sep 2020 21:51:58 GMT
       User-Agent:
-      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 20 Aug 2020 20:17:28 GMT
+      - Wed, 16 Sep 2020 21:51:58 GMT
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     method: GET
     uri: https://storagename.table.core.windows.net/uttablefde52085(PartitionKey='pkfde52085',RowKey='rkfde52085')
   response:
     body:
-      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#uttablefde52085/@Element","odata.etag":"W/\"datetime''2020-08-20T20%3A17%3A28.871236Z''\"","PartitionKey":"pkfde52085","RowKey":"rkfde52085","Timestamp":"2020-08-20T20:17:28.871236Z","age":"abc","birthday@odata.type":"Edm.DateTime","birthday":"1991-10-04T00:00:00Z","sex":"female","sign":"aquarius"}'
+      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#uttablefde52085/@Element","odata.etag":"W/\"datetime''2020-09-16T21%3A51%3A58.1307231Z''\"","PartitionKey":"pkfde52085","RowKey":"rkfde52085","Timestamp":"2020-09-16T21:51:58.1307231Z","age":"abc","birthday@odata.type":"Edm.DateTime","birthday":"1991-10-04T00:00:00Z","sex":"female","sign":"aquarius"}'
     headers:
       cache-control: no-cache
       content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
-      date: Thu, 20 Aug 2020 20:17:28 GMT
-      etag: W/"datetime'2020-08-20T20%3A17%3A28.871236Z'"
+      date: Wed, 16 Sep 2020 21:51:57 GMT
+      etag: W/"datetime'2020-09-16T21%3A51%3A58.1307231Z'"
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-ms-version: '2019-07-07'
+      x-ms-version: '2019-02-02'
     status:
       code: 200
       message: OK
-    url: https://pyacrstoragewdjxux7eodqw.table.core.windows.net/uttablefde52085(PartitionKey='pkfde52085',RowKey='rkfde52085')
+    url: https://pyacrstoragewrla36mtikyp.table.core.windows.net/uttablefde52085(PartitionKey='pkfde52085',RowKey='rkfde52085')
 - request:
     body: null
     headers:
+      Accept:
+      - application/json
       Date:
-      - Thu, 20 Aug 2020 20:17:28 GMT
+      - Wed, 16 Sep 2020 21:51:58 GMT
       User-Agent:
-      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 20 Aug 2020 20:17:28 GMT
+      - Wed, 16 Sep 2020 21:51:58 GMT
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     method: DELETE
     uri: https://storagename.table.core.windows.net/Tables('uttablefde52085')
   response:
@@ -124,12 +130,12 @@ interactions:
     headers:
       cache-control: no-cache
       content-length: '0'
-      date: Thu, 20 Aug 2020 20:17:28 GMT
+      date: Wed, 16 Sep 2020 21:51:57 GMT
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options: nosniff
-      x-ms-version: '2019-07-07'
+      x-ms-version: '2019-02-02'
     status:
       code: 204
       message: No Content
-    url: https://pyacrstoragewdjxux7eodqw.table.core.windows.net/Tables('uttablefde52085')
+    url: https://pyacrstoragewrla36mtikyp.table.core.windows.net/Tables('uttablefde52085')
 version: 1

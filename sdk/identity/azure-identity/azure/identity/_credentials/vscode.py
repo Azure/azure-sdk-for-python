@@ -19,7 +19,7 @@ else:
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any
+    from typing import Any, Iterable, Optional
     from azure.core.credentials import AccessToken
 
 
@@ -37,9 +37,9 @@ class VisualStudioCodeCredential(object):
         # type: (**Any) -> None
         self._refresh_token = None
         self._client = kwargs.pop("_client", None)
+        self._tenant_id = kwargs.pop("tenant_id", None) or "organizations"
         if not self._client:
-            tenant_id = kwargs.pop("tenant_id", None) or "organizations"
-            self._client = AadClient(tenant_id, AZURE_VSCODE_CLIENT_ID, **kwargs)
+            self._client = AadClient(self._tenant_id, AZURE_VSCODE_CLIENT_ID, **kwargs)
 
     @log_get_token("VisualStudioCodeCredential")
     def get_token(self, *scopes, **kwargs):
@@ -56,6 +56,11 @@ class VisualStudioCodeCredential(object):
         if not scopes:
             raise ValueError("'get_token' requires at least one scope")
 
+        if self._tenant_id.lower() == "adfs":
+            raise CredentialUnavailableError(
+                message="VisualStudioCodeCredential authentication unavailable. ADFS is not supported."
+            )
+
         token = self._client.get_cached_access_token(scopes)
 
         if not token:
@@ -68,7 +73,7 @@ class VisualStudioCodeCredential(object):
         return token
 
     def _redeem_refresh_token(self, scopes, **kwargs):
-        # type: (Sequence[str], **Any) -> Optional[AccessToken]
+        # type: (Iterable[str], **Any) -> Optional[AccessToken]
         if not self._refresh_token:
             self._refresh_token = get_credentials()
             if not self._refresh_token:

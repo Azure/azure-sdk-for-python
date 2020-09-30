@@ -18,6 +18,7 @@ from azure.eventhub import EventHubProducerClient
 from uamqp import ReceiveClient
 from uamqp.authentication import SASTokenAuth
 
+from devtools_testutils import get_region_override
 
 # Ignore async tests for Python < 3.5
 collect_ignore = []
@@ -32,7 +33,7 @@ RES_GROUP_PREFIX = "eh-res-group"
 NAMESPACE_PREFIX = "eh-ns"
 EVENTHUB_PREFIX = "eh"
 EVENTHUB_DEFAULT_AUTH_RULE_NAME = 'RootManageSharedAccessKey'
-LOCATION = "westus"
+LOCATION = get_region_override("westus")
 
 
 def pytest_addoption(parser):
@@ -224,3 +225,11 @@ def connstr_senders(live_eventhub):
     for s in senders:
         s.close()
     client.close()
+
+# Note: This is duplicated between here and the basic conftest, so that it does not throw warnings if you're
+# running locally to this SDK. (Everything works properly, pytest just makes a bit of noise.)
+def pytest_configure(config):
+    # register an additional marker
+    config.addinivalue_line(
+        "markers", "liveTest: mark test to be a live test only"
+    )

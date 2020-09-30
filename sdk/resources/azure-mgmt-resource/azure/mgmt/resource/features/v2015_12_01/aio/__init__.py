@@ -6,5 +6,5 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._feature_client_async import FeatureClient
+from ._feature_client import FeatureClient
 __all__ = ['FeatureClient']

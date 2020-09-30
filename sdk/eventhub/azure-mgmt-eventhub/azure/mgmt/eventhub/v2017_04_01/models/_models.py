@@ -966,24 +966,16 @@ class NetworkRuleSetListResult(msrest.serialization.Model):
 class NWRuleSetIpRules(msrest.serialization.Model):
     """Description of NetWorkRuleSet - IpRules resource.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     :param ip_mask: IP Mask.
     :type ip_mask: str
-    :ivar action: The IP Filter Action. Default value: "Allow".
-    :vartype action: str
+    :param action: The IP Filter Action. Possible values include: "Allow". Default value: "Allow".
+    :type action: str or ~azure.mgmt.eventhub.v2017_04_01.models.NetworkRuleIPAction
     """
-
-    _validation = {
-        'action': {'constant': True},
-    }
 
     _attribute_map = {
         'ip_mask': {'key': 'ipMask', 'type': 'str'},
         'action': {'key': 'action', 'type': 'str'},
     }
-
-    action = "Allow"
 
     def __init__(
         self,
@@ -991,6 +983,7 @@ class NWRuleSetIpRules(msrest.serialization.Model):
     ):
         super(NWRuleSetIpRules, self).__init__(**kwargs)
         self.ip_mask = kwargs.get('ip_mask', None)
+        self.action = kwargs.get('action', "Allow")
 
 
 class NWRuleSetVirtualNetworkRules(msrest.serialization.Model):

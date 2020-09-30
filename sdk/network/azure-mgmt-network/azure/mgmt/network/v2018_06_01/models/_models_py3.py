@@ -6049,19 +6049,13 @@ class GetVpnSitesConfigurationRequest(msrest.serialization.Model):
 class HTTPConfiguration(msrest.serialization.Model):
     """HTTP configuration of the connectivity check.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar method: HTTP method. Default value: "Get".
-    :vartype method: str
+    :param method: HTTP method. Possible values include: "Get".
+    :type method: str or ~azure.mgmt.network.v2018_06_01.models.HTTPMethod
     :param headers: List of HTTP headers.
     :type headers: list[~azure.mgmt.network.v2018_06_01.models.HTTPHeader]
     :param valid_status_codes: Valid status codes.
     :type valid_status_codes: list[int]
     """
-
-    _validation = {
-        'method': {'constant': True},
-    }
 
     _attribute_map = {
         'method': {'key': 'method', 'type': 'str'},
@@ -6069,16 +6063,16 @@ class HTTPConfiguration(msrest.serialization.Model):
         'valid_status_codes': {'key': 'validStatusCodes', 'type': '[int]'},
     }
 
-    method = "Get"
-
     def __init__(
         self,
         *,
+        method: Optional[Union[str, "HTTPMethod"]] = None,
         headers: Optional[List["HTTPHeader"]] = None,
         valid_status_codes: Optional[List[int]] = None,
         **kwargs
     ):
         super(HTTPConfiguration, self).__init__(**kwargs)
+        self.method = method
         self.headers = headers
         self.valid_status_codes = valid_status_codes
 
@@ -8845,9 +8839,9 @@ class PatchRouteFilterRule(SubResource):
     :param access: The access type of the rule. Valid values are: 'Allow', 'Deny'. Possible values
      include: "Allow", "Deny".
     :type access: str or ~azure.mgmt.network.v2018_06_01.models.Access
-    :ivar route_filter_rule_type: The rule type of the rule. Valid value is: 'Community'. Default
-     value: "Community".
-    :vartype route_filter_rule_type: str
+    :param route_filter_rule_type: The rule type of the rule. Valid value is: 'Community'. Possible
+     values include: "Community".
+    :type route_filter_rule_type: str or ~azure.mgmt.network.v2018_06_01.models.RouteFilterRuleType
     :param communities: The collection for bgp community values to filter on. e.g.
      ['12076:5010','12076:5020'].
     :type communities: list[str]
@@ -8859,7 +8853,6 @@ class PatchRouteFilterRule(SubResource):
     _validation = {
         'name': {'readonly': True},
         'etag': {'readonly': True},
-        'route_filter_rule_type': {'constant': True},
         'provisioning_state': {'readonly': True},
     }
 
@@ -8873,13 +8866,12 @@ class PatchRouteFilterRule(SubResource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    route_filter_rule_type = "Community"
-
     def __init__(
         self,
         *,
         id: Optional[str] = None,
         access: Optional[Union[str, "Access"]] = None,
+        route_filter_rule_type: Optional[Union[str, "RouteFilterRuleType"]] = None,
         communities: Optional[List[str]] = None,
         **kwargs
     ):
@@ -8887,6 +8879,7 @@ class PatchRouteFilterRule(SubResource):
         self.name = None
         self.etag = None
         self.access = access
+        self.route_filter_rule_type = route_filter_rule_type
         self.communities = communities
         self.provisioning_state = None
 
@@ -9475,9 +9468,9 @@ class RouteFilterRule(SubResource):
     :param access: The access type of the rule. Valid values are: 'Allow', 'Deny'. Possible values
      include: "Allow", "Deny".
     :type access: str or ~azure.mgmt.network.v2018_06_01.models.Access
-    :ivar route_filter_rule_type: The rule type of the rule. Valid value is: 'Community'. Default
-     value: "Community".
-    :vartype route_filter_rule_type: str
+    :param route_filter_rule_type: The rule type of the rule. Valid value is: 'Community'. Possible
+     values include: "Community".
+    :type route_filter_rule_type: str or ~azure.mgmt.network.v2018_06_01.models.RouteFilterRuleType
     :param communities: The collection for bgp community values to filter on. e.g.
      ['12076:5010','12076:5020'].
     :type communities: list[str]
@@ -9488,7 +9481,6 @@ class RouteFilterRule(SubResource):
 
     _validation = {
         'etag': {'readonly': True},
-        'route_filter_rule_type': {'constant': True},
         'provisioning_state': {'readonly': True},
     }
 
@@ -9503,8 +9495,6 @@ class RouteFilterRule(SubResource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    route_filter_rule_type = "Community"
-
     def __init__(
         self,
         *,
@@ -9512,6 +9502,7 @@ class RouteFilterRule(SubResource):
         name: Optional[str] = None,
         location: Optional[str] = None,
         access: Optional[Union[str, "Access"]] = None,
+        route_filter_rule_type: Optional[Union[str, "RouteFilterRuleType"]] = None,
         communities: Optional[List[str]] = None,
         **kwargs
     ):
@@ -9520,6 +9511,7 @@ class RouteFilterRule(SubResource):
         self.location = location
         self.etag = None
         self.access = access
+        self.route_filter_rule_type = route_filter_rule_type
         self.communities = communities
         self.provisioning_state = None
 
@@ -10606,8 +10598,9 @@ class Usage(msrest.serialization.Model):
 
     :ivar id: Resource identifier.
     :vartype id: str
-    :ivar unit: Required. An enum describing the unit of measurement. Default value: "Count".
-    :vartype unit: str
+    :param unit: Required. An enum describing the unit of measurement. Possible values include:
+     "Count".
+    :type unit: str or ~azure.mgmt.network.v2018_06_01.models.UsageUnit
     :param current_value: Required. The current value of the usage.
     :type current_value: long
     :param limit: Required. The limit of usage.
@@ -10618,7 +10611,7 @@ class Usage(msrest.serialization.Model):
 
     _validation = {
         'id': {'readonly': True},
-        'unit': {'required': True, 'constant': True},
+        'unit': {'required': True},
         'current_value': {'required': True},
         'limit': {'required': True},
         'name': {'required': True},
@@ -10632,11 +10625,10 @@ class Usage(msrest.serialization.Model):
         'name': {'key': 'name', 'type': 'UsageName'},
     }
 
-    unit = "Count"
-
     def __init__(
         self,
         *,
+        unit: Union[str, "UsageUnit"],
         current_value: int,
         limit: int,
         name: "UsageName",
@@ -10644,6 +10636,7 @@ class Usage(msrest.serialization.Model):
     ):
         super(Usage, self).__init__(**kwargs)
         self.id = None
+        self.unit = unit
         self.current_value = current_value
         self.limit = limit
         self.name = name

@@ -7,7 +7,6 @@
 # pylint: disable=super-init-not-called, too-many-lines
 from enum import Enum
 
-from azure.core.paging import PageIterator
 from azure.storage.blob import LeaseProperties as BlobLeaseProperties
 from azure.storage.blob import AccountSasPermissions as BlobAccountSasPermissions
 from azure.storage.blob import ResourceTypes as BlobResourceTypes
@@ -17,12 +16,9 @@ from azure.storage.blob import ContainerSasPermissions, BlobSasPermissions
 from azure.storage.blob import AccessPolicy as BlobAccessPolicy
 from azure.storage.blob import DelimitedTextDialect as BlobDelimitedTextDialect
 from azure.storage.blob import DelimitedJsonDialect as BlobDelimitedJSON
-from azure.storage.blob._generated.models import StorageErrorException  # pylint: disable=unused-import
+from azure.storage.blob import ArrowDialect as BlobArrowDialect
 from azure.storage.blob._models import ContainerPropertiesPaged
-from ._deserialize import return_headers_and_deserialized_path_list
-from ._generated.models import Path
 from ._shared.models import DictMixin
-from ._shared.response_handlers import process_storage_error
 
 
 class FileSystemProperties(object):
@@ -48,6 +44,7 @@ class FileSystemProperties(object):
     dictionary interface, for example: ``file_system_props["last_modified"]``.
     Additionally, the file system name is available as ``file_system_props["name"]``.
     """
+
     def __init__(self):
         self.name = None
         self.last_modified = None
@@ -130,34 +127,17 @@ class DirectoryProperties(DictMixin):
         before being permanently deleted by the service.
     :var ~azure.storage.filedatalake.ContentSettings content_settings:
     """
+
     def __init__(self, **kwargs):
-        super(DirectoryProperties, self).__init__(
-            **kwargs
-        )
-        self.name = None
-        self.etag = None
+        self.name = kwargs.get('name')
+        self.etag = kwargs.get('ETag')
         self.deleted = None
-        self.metadata = None
-        self.lease = None
-        self.last_modified = None
-        self.creation_time = None
+        self.metadata = kwargs.get('metadata')
+        self.lease = LeaseProperties(**kwargs)
+        self.last_modified = kwargs.get('Last-Modified')
+        self.creation_time = kwargs.get('x-ms-creation-time')
         self.deleted_time = None
         self.remaining_retention_days = None
-
-    @classmethod
-    def _from_blob_properties(cls, blob_properties):
-        directory_props = DirectoryProperties()
-        directory_props.name = blob_properties.name
-        directory_props.etag = blob_properties.etag
-        directory_props.deleted = blob_properties.deleted
-        directory_props.metadata = blob_properties.metadata
-        directory_props.lease = blob_properties.lease
-        directory_props.lease.__class__ = LeaseProperties
-        directory_props.last_modified = blob_properties.last_modified
-        directory_props.creation_time = blob_properties.creation_time
-        directory_props.deleted_time = blob_properties.deleted_time
-        directory_props.remaining_retention_days = blob_properties.remaining_retention_days
-        return directory_props
 
 
 class FileProperties(DictMixin):
@@ -178,38 +158,20 @@ class FileProperties(DictMixin):
         before being permanently deleted by the service.
     :var ~azure.storage.filedatalake.ContentSettings content_settings:
     """
-    def __init__(self, **kwargs):
-        super(FileProperties, self).__init__(
-            **kwargs
-        )
-        self.name = None
-        self.etag = None
-        self.deleted = None
-        self.metadata = None
-        self.lease = None
-        self.last_modified = None
-        self.creation_time = None
-        self.size = None
-        self.deleted_time = None
-        self.remaining_retention_days = None
-        self.content_settings = None
 
-    @classmethod
-    def _from_blob_properties(cls, blob_properties):
-        file_props = FileProperties()
-        file_props.name = blob_properties.name
-        file_props.etag = blob_properties.etag
-        file_props.deleted = blob_properties.deleted
-        file_props.metadata = blob_properties.metadata
-        file_props.lease = blob_properties.lease
-        file_props.lease.__class__ = LeaseProperties
-        file_props.last_modified = blob_properties.last_modified
-        file_props.creation_time = blob_properties.creation_time
-        file_props.size = blob_properties.size
-        file_props.deleted_time = blob_properties.deleted_time
-        file_props.remaining_retention_days = blob_properties.remaining_retention_days
-        file_props.content_settings = blob_properties.content_settings
-        return file_props
+    def __init__(self, **kwargs):
+        self.name = kwargs.get('name')
+        self.etag = kwargs.get('ETag')
+        self.deleted = None
+        self.metadata = kwargs.get('metadata')
+        self.lease = LeaseProperties(**kwargs)
+        self.last_modified = kwargs.get('Last-Modified')
+        self.creation_time = kwargs.get('x-ms-creation-time')
+        self.size = kwargs.get('Content-Length')
+        self.deleted_time = None
+        self.expiry_time = kwargs.get("x-ms-expiry-time")
+        self.remaining_retention_days = None
+        self.content_settings = ContentSettings(**kwargs)
 
 
 class PathProperties(object):
@@ -229,6 +191,7 @@ class PathProperties(object):
         conditionally.
     :ivar content_length: the size of file if the path is a file.
     """
+
     def __init__(self, **kwargs):
         super(PathProperties, self).__init__(
             **kwargs
@@ -256,68 +219,6 @@ class PathProperties(object):
         return path_prop
 
 
-class PathPropertiesPaged(PageIterator):
-    """An Iterable of Path properties.
-
-    :ivar str path: Filters the results to return only paths under the specified path.
-    :ivar int results_per_page: The maximum number of results retrieved per API call.
-    :ivar str continuation_token: The continuation token to retrieve the next page of results.
-    :ivar list(~azure.storage.filedatalake.PathProperties) current_page: The current page of listed results.
-
-    :param callable command: Function to retrieve the next page of items.
-    :param str path: Filters the results to return only paths under the specified path.
-    :param int max_results: The maximum number of psths to retrieve per
-        call.
-    :param str continuation_token: An opaque continuation token.
-    """
-    def __init__(
-            self, command,
-            recursive,
-            path=None,
-            max_results=None,
-            continuation_token=None,
-            upn=None):
-        super(PathPropertiesPaged, self).__init__(
-            get_next=self._get_next_cb,
-            extract_data=self._extract_data_cb,
-            continuation_token=continuation_token or ""
-        )
-        self._command = command
-        self.recursive = recursive
-        self.results_per_page = max_results
-        self.path = path
-        self.upn = upn
-        self.current_page = None
-        self.path_list = None
-
-    def _get_next_cb(self, continuation_token):
-        try:
-            return self._command(
-                self.recursive,
-                continuation=continuation_token or None,
-                path=self.path,
-                max_results=self.results_per_page,
-                upn=self.upn,
-                cls=return_headers_and_deserialized_path_list)
-        except StorageErrorException as error:
-            process_storage_error(error)
-
-    def _extract_data_cb(self, get_next_return):
-        self.path_list, self._response = get_next_return
-        self.current_page = [self._build_item(item) for item in self.path_list]
-
-        return self._response['continuation'] or None, self.current_page
-
-    @staticmethod
-    def _build_item(item):
-        if isinstance(item, PathProperties):
-            return item
-        if isinstance(item, Path):
-            path = PathProperties._from_generated(item)  # pylint: disable=protected-access
-            return path
-        return item
-
-
 class LeaseProperties(BlobLeaseProperties):
     """DataLake Lease Properties.
 
@@ -328,10 +229,6 @@ class LeaseProperties(BlobLeaseProperties):
     :ivar str duration:
         When a file is leased, specifies whether the lease is of infinite or fixed duration.
     """
-    def __init__(self):
-        self.status = None
-        self.state = None
-        self.duration = None
 
 
 class ContentSettings(BlobContentSettings):
@@ -380,6 +277,7 @@ class ContentSettings(BlobContentSettings):
         header is stored so that the client can check for message content
         integrity.
     """
+
     def __init__(
             self, **kwargs):
         super(ContentSettings, self).__init__(
@@ -409,6 +307,7 @@ class FileSystemSasPermissions(ContainerSasPermissions):
     :param bool list:
         List paths in the file system.
     """
+
     def __init__(self, read=False, write=False, delete=False, list=False  # pylint: disable=redefined-builtin
                  ):
         super(FileSystemSasPermissions, self).__init__(
@@ -429,6 +328,7 @@ class DirectorySasPermissions(BlobSasPermissions):
     :param bool delete:
         Delete the directory.
     """
+
     def __init__(self, read=False, create=False, write=False,
                  delete=False):
         super(DirectorySasPermissions, self).__init__(
@@ -451,6 +351,7 @@ class FileSasPermissions(BlobSasPermissions):
     :param bool delete:
         Delete the file.
     """
+
     def __init__(self, read=False, create=False, write=False,
                  delete=False):
         super(FileSasPermissions, self).__init__(
@@ -502,6 +403,7 @@ class AccessPolicy(BlobAccessPolicy):
         be UTC.
     :paramtype start: ~datetime.datetime or str
     """
+
     def __init__(self, permission=None, expiry=None, **kwargs):
         super(AccessPolicy, self).__init__(
             permission=permission, expiry=expiry, start=kwargs.pop('start', None)
@@ -521,6 +423,7 @@ class ResourceTypes(BlobResourceTypes):
         Access to object-level APIs for
         files(e.g. Create File, etc.)
     """
+
     def __init__(self, service=False, file_system=False, object=False  # pylint: disable=redefined-builtin
                  ):
         super(ResourceTypes, self).__init__(service=service, container=file_system, object=object)
@@ -549,6 +452,7 @@ class UserDelegationKey(BlobUserDelegationKey):
     :ivar str value:
         The user delegation key.
     """
+
     @classmethod
     def _from_generated(cls, generated):
         delegation_key = cls()
@@ -627,6 +531,28 @@ class DelimitedTextDialect(BlobDelimitedTextDialect):
     """
 
 
+class ArrowDialect(BlobArrowDialect):
+    """field of an arrow schema.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param str type: Required.
+    :keyword str name: The name of the field.
+    :keyword int precision: The precision of the field.
+    :keyword int scale: The scale of the field.
+    """
+
+
+class ArrowType(str, Enum):
+
+    INT64 = "int64"
+    BOOL = "bool"
+    TIMESTAMP_MS = "timestamp[ms]"
+    STRING = "string"
+    DOUBLE = "double"
+    DECIMAL = 'decimal'
+
+
 class DataLakeFileQueryError(object):
     """The error happened during quick query operation.
 
@@ -641,8 +567,84 @@ class DataLakeFileQueryError(object):
     :ivar int position:
         The blob offset at which the error occurred.
     """
+
     def __init__(self, error=None, is_fatal=False, description=None, position=None):
         self.error = error
         self.is_fatal = is_fatal
         self.description = description
         self.position = position
+
+
+class AccessControlChangeCounters(DictMixin):
+    """
+    AccessControlChangeCounters contains counts of operations that change Access Control Lists recursively.
+
+    :ivar int directories_successful:
+        Number of directories where Access Control List has been updated successfully.
+    :ivar int files_successful:
+        Number of files where Access Control List has been updated successfully.
+    :ivar int failure_count:
+        Number of paths where Access Control List update has failed.
+    """
+
+    def __init__(self, directories_successful, files_successful, failure_count):
+        self.directories_successful = directories_successful
+        self.files_successful = files_successful
+        self.failure_count = failure_count
+
+
+class AccessControlChangeResult(DictMixin):
+    """
+    AccessControlChangeResult contains result of operations that change Access Control Lists recursively.
+
+    :ivar ~azure.storage.filedatalake.AccessControlChangeCounters counters:
+        Contains counts of paths changed from start of the operation.
+    :ivar str continuation:
+        Optional continuation token.
+        Value is present when operation is split into multiple batches and can be used to resume progress.
+    """
+
+    def __init__(self, counters, continuation):
+        self.counters = counters
+        self.continuation = continuation
+
+
+class AccessControlChangeFailure(DictMixin):
+    """
+    Represents an entry that failed to update Access Control List.
+
+    :ivar str name:
+        Name of the entry.
+    :ivar bool is_directory:
+        Indicates whether the entry is a directory.
+    :ivar str error_message:
+        Indicates the reason why the entry failed to update.
+    """
+
+    def __init__(self, name, is_directory, error_message):
+        self.name = name
+        self.is_directory = is_directory
+        self.error_message = error_message
+
+
+class AccessControlChanges(DictMixin):
+    """
+    AccessControlChanges contains batch and cumulative counts of operations
+    that change Access Control Lists recursively.
+    Additionally it exposes path entries that failed to update while these operations progress.
+
+    :ivar ~azure.storage.filedatalake.AccessControlChangeCounters batch_counters:
+        Contains counts of paths changed within single batch.
+    :ivar ~azure.storage.filedatalake.AccessControlChangeCounters aggregate_counters:
+        Contains counts of paths changed from start of the operation.
+    :ivar list(~azure.storage.filedatalake.AccessControlChangeFailure) batch_failures:
+        List of path entries that failed to update Access Control List within single batch.
+    :ivar str continuation:
+        An opaque continuation token that may be used to resume the operations in case of failures.
+    """
+
+    def __init__(self, batch_counters, aggregate_counters, batch_failures, continuation):
+        self.batch_counters = batch_counters
+        self.aggregate_counters = aggregate_counters
+        self.batch_failures = batch_failures
+        self.continuation = continuation

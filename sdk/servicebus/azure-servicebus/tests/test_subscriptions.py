@@ -11,8 +11,10 @@ import pytest
 import time
 from datetime import datetime, timedelta
 
-from azure.servicebus import ServiceBusClient, Message, PeekMessage, ReceiveSettleMode, ServiceBusSharedKeyCredential
+from azure.servicebus import ServiceBusClient, Message, ReceiveMode
+from azure.servicebus._base_handler import ServiceBusSharedKeyCredential
 from azure.servicebus.exceptions import ServiceBusError
+from azure.servicebus._common.constants import SubQueue
 
 from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer, CachedResourceGroupPreparer
 from servicebus_preparer import (
@@ -125,8 +127,8 @@ class ServiceBusSubscriptionTests(AzureMgmtTestCase):
                 topic_name=servicebus_topic.name,
                 subscription_name=servicebus_subscription.name,
                 max_wait_time=5,
-                mode=ReceiveSettleMode.PeekLock,
-                prefetch=10
+                receive_mode=ReceiveMode.PeekLock,
+                prefetch_count=10
             ) as receiver:
 
                 with sb_client.get_topic_sender(servicebus_topic.name) as sender:
@@ -140,7 +142,7 @@ class ServiceBusSubscriptionTests(AzureMgmtTestCase):
                     for message in messages:
                         print_message(_logger, message)
                         count += 1
-                        message.dead_letter(reason="Testing reason", description="Testing description")
+                        message.dead_letter(reason="Testing reason", error_description="Testing description")
                     messages = receiver.receive_messages()
 
             assert count == 10
@@ -149,7 +151,7 @@ class ServiceBusSubscriptionTests(AzureMgmtTestCase):
                 topic_name=servicebus_topic.name,
                 subscription_name=servicebus_subscription.name,
                 max_wait_time=5,
-                mode=ReceiveSettleMode.PeekLock
+                receive_mode=ReceiveMode.PeekLock
             ) as receiver:
                 count = 0
                 for message in receiver:
@@ -158,11 +160,12 @@ class ServiceBusSubscriptionTests(AzureMgmtTestCase):
                     count += 1
             assert count == 0
 
-            with sb_client.get_subscription_deadletter_receiver(
+            with sb_client.get_subscription_receiver(
                 topic_name=servicebus_topic.name,
                 subscription_name=servicebus_subscription.name,
+                sub_queue = SubQueue.DeadLetter,
                 max_wait_time=5,
-                mode=ReceiveSettleMode.PeekLock
+                receive_mode=ReceiveMode.PeekLock
             ) as dl_receiver:
                 count = 0
                 for message in dl_receiver:

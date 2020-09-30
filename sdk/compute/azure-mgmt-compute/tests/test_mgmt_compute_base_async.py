@@ -31,7 +31,7 @@ class MgmtComputeTest(AzureMgmtAsyncTestCase):
 
     def create_virtual_network(self, group_name, location, network_name, subnet_name):
       
-        azure_operation_poller = self.network_client.virtual_networks.create_or_update(
+        azure_operation_poller = self.network_client.virtual_networks.begin_create_or_update(
             group_name,
             network_name,
             {
@@ -43,7 +43,7 @@ class MgmtComputeTest(AzureMgmtAsyncTestCase):
         )
         result_create = azure_operation_poller.result()
 
-        async_subnet_creation = self.network_client.subnets.create_or_update(
+        async_subnet_creation = self.network_client.subnets.begin_create_or_update(
             group_name,
             network_name,
             subnet_name,
@@ -55,7 +55,7 @@ class MgmtComputeTest(AzureMgmtAsyncTestCase):
 
     def create_network_interface(self, group_name, location, nic_name, subnet):
 
-        async_nic_creation = self.network_client.network_interfaces.create_or_update(
+        async_nic_creation = self.network_client.network_interfaces.begin_create_or_update(
             group_name,
             nic_name,
             {
