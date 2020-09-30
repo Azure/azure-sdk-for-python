@@ -11,26 +11,25 @@ USAGE:
     python cs4_consume_custom_events.py
 """
 import os
-import json
 from azure.eventgrid import EventGridConsumer
 
 consumer = EventGridConsumer()
 
-with open('./cs4_event_grid_event_custom_event.json', 'r') as f:
-    eg_event_received_message = json.loads(f)
-
 # returns List[DeserializedEvent]
-event = consumer.decode_eventgrid_event(eg_event_received_message)
+deserialized_events = consumer.decode_eventgrid_event(service_bus_received_message)
 
-# both allow access to raw properties as strings
-time_string = event.event_time
-time_string = event["event_time"]
+# EventGridEvent schema, with custom event type
+for event in deserialized_events:
 
-# model returns EventGridEvent object
-event_grid_event = event.model
+    # both allow access to raw properties as strings
+    time_string = event.event_time
+    time_string = event["event_time"]
 
-# returns { "itemSku": "Contoso Item SKU #1" }
-data_dict = event.data
+    # model returns EventGridEvent object
+    event_grid_event = event.model
 
-# custom event not pre-defined in system event registry, returns None
-returns_none = event.model.data
+    # returns { "itemSku": "Contoso Item SKU #1" }
+    data_dict = event.data
+
+    # custom event not pre-defined in system event registry, returns None
+    returns_none = event.model.data
