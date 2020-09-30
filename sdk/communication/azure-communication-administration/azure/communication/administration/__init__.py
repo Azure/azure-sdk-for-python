@@ -31,6 +31,7 @@ from ._phonenumber._generated.models import (
     ReleaseResponse,
     UpdateNumberCapabilitiesResponse,
     UpdatePhoneNumberCapabilitiesResponse,
+    CreateSearchOptions
 )
 
 from ._shared.models import (
@@ -66,6 +67,7 @@ __all__ = [
     'ReleaseResponse',
     'UpdateNumberCapabilitiesResponse',
     'UpdatePhoneNumberCapabilitiesResponse',
+    'CreateSearchOptions',
 
     # from _shared
     'CommunicationUser',
