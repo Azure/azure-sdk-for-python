@@ -6,485 +6,839 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum
+from enum import Enum, EnumMeta
+from six import with_metaclass
 
-class AvroCompressionCodec(str, Enum):
+class _CaseInsensitiveEnumMeta(EnumMeta):
+    def __getitem__(self, name):
+        return super().__getitem__(name.upper())
 
-    none = "none"
-    deflate = "deflate"
-    snappy = "snappy"
-    xz = "xz"
-    bzip2 = "bzip2"
+    def __getattr__(cls, name):
+        """Return the enum member matching `name`
+        We use __getattr__ instead of descriptors or inserting into the enum
+        class' __dict__ in order to support `name` and `value` being both
+        properties for enum members (which live in the class' __dict__) and
+        enum members themselves.
+        """
+        try:
+            return cls._member_map_[name.upper()]
+        except KeyError:
+            raise AttributeError(name)
 
-class AzureFunctionActivityMethod(str, Enum):
+
+class AvroCompressionCodec(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    NONE = "none"
+    DEFLATE = "deflate"
+    SNAPPY = "snappy"
+    XZ = "xz"
+    BZIP2 = "bzip2"
+
+class AzureFunctionActivityMethod(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The list of HTTP methods supported by a AzureFunctionActivity.
     """
 
-    get = "GET"
-    post = "POST"
-    put = "PUT"
-    delete = "DELETE"
-    options = "OPTIONS"
-    head = "HEAD"
-    trace = "TRACE"
+    GET = "GET"
+    POST = "POST"
+    PUT = "PUT"
+    DELETE = "DELETE"
+    OPTIONS = "OPTIONS"
+    HEAD = "HEAD"
+    TRACE = "TRACE"
 
-class CellOutputType(str, Enum):
+class AzureSearchIndexWriteBehaviorType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Specify the write behavior when upserting documents into Azure Search Index.
+    """
+
+    MERGE = "Merge"
+    UPLOAD = "Upload"
+
+class BigDataPoolReferenceType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Big data pool reference type.
+    """
+
+    BIG_DATA_POOL_REFERENCE = "BigDataPoolReference"
+
+class BlobEventTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    MICROSOFT_STORAGE_BLOB_CREATED = "Microsoft.Storage.BlobCreated"
+    MICROSOFT_STORAGE_BLOB_DELETED = "Microsoft.Storage.BlobDeleted"
+
+class CassandraSourceReadConsistencyLevels(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The consistency level specifies how many Cassandra servers must respond to a read request
+    before returning data to the client application. Cassandra checks the specified number of
+    Cassandra servers for data to satisfy the read request. Must be one of
+    cassandraSourceReadConsistencyLevels. The default value is 'ONE'. It is case-insensitive.
+    """
+
+    ALL = "ALL"
+    EACH_QUORUM = "EACH_QUORUM"
+    QUORUM = "QUORUM"
+    LOCAL_QUORUM = "LOCAL_QUORUM"
+    ONE = "ONE"
+    TWO = "TWO"
+    THREE = "THREE"
+    LOCAL_ONE = "LOCAL_ONE"
+    SERIAL = "SERIAL"
+    LOCAL_SERIAL = "LOCAL_SERIAL"
+
+class CellOutputType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Execution, display, or stream outputs.
     """
 
-    execute_result = "execute_result"
-    display_data = "display_data"
-    stream = "stream"
-    error = "error"
+    EXECUTE_RESULT = "execute_result"
+    DISPLAY_DATA = "display_data"
+    STREAM = "stream"
+    ERROR = "error"
 
-class DataFlowComputeType(str, Enum):
+class CopyBehaviorType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """All available types of copy behavior.
+    """
+
+    PRESERVE_HIERARCHY = "PreserveHierarchy"
+    FLATTEN_HIERARCHY = "FlattenHierarchy"
+    MERGE_FILES = "MergeFiles"
+
+class DataFlowComputeType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Compute type of the cluster which will execute data flow job.
     """
 
-    general = "General"
-    memory_optimized = "MemoryOptimized"
-    compute_optimized = "ComputeOptimized"
+    GENERAL = "General"
+    MEMORY_OPTIMIZED = "MemoryOptimized"
+    COMPUTE_OPTIMIZED = "ComputeOptimized"
 
-class DatasetCompressionLevel(str, Enum):
+class DataFlowReferenceType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Data flow reference type.
+    """
+
+    DATA_FLOW_REFERENCE = "DataFlowReference"
+
+class DatasetCompressionLevel(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """All available compression levels.
     """
 
-    optimal = "Optimal"
-    fastest = "Fastest"
+    OPTIMAL = "Optimal"
+    FASTEST = "Fastest"
 
-class DelimitedTextCompressionCodec(str, Enum):
+class DatasetReferenceType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Dataset reference type.
+    """
 
-    bzip2 = "bzip2"
-    gzip = "gzip"
-    deflate = "deflate"
-    zip_deflate = "zipDeflate"
-    snappy = "snappy"
-    lz4 = "lz4"
+    DATASET_REFERENCE = "DatasetReference"
 
-class DependencyCondition(str, Enum):
+class DayOfWeek(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
-    succeeded = "Succeeded"
-    failed = "Failed"
-    skipped = "Skipped"
-    completed = "Completed"
+    SUNDAY = "Sunday"
+    MONDAY = "Monday"
+    TUESDAY = "Tuesday"
+    WEDNESDAY = "Wednesday"
+    THURSDAY = "Thursday"
+    FRIDAY = "Friday"
+    SATURDAY = "Saturday"
 
-class DynamicsAuthenticationType(str, Enum):
+class Db2AuthenticationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """AuthenticationType to be used for connection.
+    """
+
+    BASIC = "Basic"
+
+class DelimitedTextCompressionCodec(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    BZIP2 = "bzip2"
+    GZIP = "gzip"
+    DEFLATE = "deflate"
+    ZIP_DEFLATE = "zipDeflate"
+    SNAPPY = "snappy"
+    LZ4 = "lz4"
+
+class DependencyCondition(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
+    SKIPPED = "Skipped"
+    COMPLETED = "Completed"
+
+class DynamicsAuthenticationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The authentication type to connect to Dynamics server. 'Office365' for online scenario, 'Ifd'
     for on-premises with Ifd scenario, 'AADServicePrincipal' for Server-To-Server authentication in
     online scenario. Type: string (or Expression with resultType string).
     """
 
-    office365 = "Office365"
-    ifd = "Ifd"
-    aad_service_principal = "AADServicePrincipal"
+    OFFICE365 = "Office365"
+    IFD = "Ifd"
+    AAD_SERVICE_PRINCIPAL = "AADServicePrincipal"
 
-class DynamicsDeploymentType(str, Enum):
+class DynamicsDeploymentType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The deployment type of the Dynamics instance. 'Online' for Dynamics Online and
     'OnPremisesWithIfd' for Dynamics on-premises with Ifd. Type: string (or Expression with
     resultType string).
     """
 
-    online = "Online"
-    on_premises_with_ifd = "OnPremisesWithIfd"
+    ONLINE = "Online"
+    ON_PREMISES_WITH_IFD = "OnPremisesWithIfd"
 
-class DynamicsServicePrincipalCredentialType(str, Enum):
+class DynamicsServicePrincipalCredentialType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The service principal credential type to use in Server-To-Server authentication.
     'ServicePrincipalKey' for key/secret, 'ServicePrincipalCert' for certificate. Type: string (or
     Expression with resultType string).
     """
 
-    service_principal_key = "ServicePrincipalKey"
-    service_principal_cert = "ServicePrincipalCert"
+    SERVICE_PRINCIPAL_KEY = "ServicePrincipalKey"
+    SERVICE_PRINCIPAL_CERT = "ServicePrincipalCert"
 
-class EventSubscriptionStatus(str, Enum):
+class DynamicsSinkWriteBehavior(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The write behavior for the operation.
+    """
+
+    UPSERT = "Upsert"
+
+class EventSubscriptionStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Event Subscription Status.
     """
 
-    enabled = "Enabled"
-    provisioning = "Provisioning"
-    deprovisioning = "Deprovisioning"
-    disabled = "Disabled"
-    unknown = "Unknown"
+    ENABLED = "Enabled"
+    PROVISIONING = "Provisioning"
+    DEPROVISIONING = "Deprovisioning"
+    DISABLED = "Disabled"
+    UNKNOWN = "Unknown"
 
-class FtpAuthenticationType(str, Enum):
+class ExpressionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Expression type.
+    """
+
+    EXPRESSION = "Expression"
+
+class FtpAuthenticationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The authentication type to be used to connect to the FTP server.
     """
 
-    basic = "Basic"
-    anonymous = "Anonymous"
+    BASIC = "Basic"
+    ANONYMOUS = "Anonymous"
 
-class GoogleAdWordsAuthenticationType(str, Enum):
+class GoogleAdWordsAuthenticationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The OAuth 2.0 authentication mechanism used for authentication. ServiceAuthentication can only
     be used on self-hosted IR.
     """
 
-    service_authentication = "ServiceAuthentication"
-    user_authentication = "UserAuthentication"
+    SERVICE_AUTHENTICATION = "ServiceAuthentication"
+    USER_AUTHENTICATION = "UserAuthentication"
 
-class GoogleBigQueryAuthenticationType(str, Enum):
+class GoogleBigQueryAuthenticationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The OAuth 2.0 authentication mechanism used for authentication. ServiceAuthentication can only
     be used on self-hosted IR.
     """
 
-    service_authentication = "ServiceAuthentication"
-    user_authentication = "UserAuthentication"
+    SERVICE_AUTHENTICATION = "ServiceAuthentication"
+    USER_AUTHENTICATION = "UserAuthentication"
 
-class HBaseAuthenticationType(str, Enum):
+class HBaseAuthenticationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The authentication mechanism to use to connect to the HBase server.
     """
 
-    anonymous = "Anonymous"
-    basic = "Basic"
+    ANONYMOUS = "Anonymous"
+    BASIC = "Basic"
 
-class HdiNodeTypes(str, Enum):
+class HdiNodeTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The node types on which the script action should be executed.
     """
 
-    headnode = "Headnode"
-    workernode = "Workernode"
-    zookeeper = "Zookeeper"
+    HEADNODE = "Headnode"
+    WORKERNODE = "Workernode"
+    ZOOKEEPER = "Zookeeper"
 
-class HDInsightActivityDebugInfoOption(str, Enum):
+class HDInsightActivityDebugInfoOption(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The HDInsightActivityDebugInfoOption settings to use.
     """
 
-    none = "None"
-    always = "Always"
-    failure = "Failure"
+    NONE = "None"
+    ALWAYS = "Always"
+    FAILURE = "Failure"
 
-class HiveAuthenticationType(str, Enum):
+class HiveAuthenticationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The authentication method used to access the Hive server.
     """
 
-    anonymous = "Anonymous"
-    username = "Username"
-    username_and_password = "UsernameAndPassword"
-    windows_azure_hd_insight_service = "WindowsAzureHDInsightService"
+    ANONYMOUS = "Anonymous"
+    USERNAME = "Username"
+    USERNAME_AND_PASSWORD = "UsernameAndPassword"
+    WINDOWS_AZURE_HD_INSIGHT_SERVICE = "WindowsAzureHDInsightService"
 
-class HiveServerType(str, Enum):
+class HiveServerType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The type of Hive server.
     """
 
-    hive_server1 = "HiveServer1"
-    hive_server2 = "HiveServer2"
-    hive_thrift_server = "HiveThriftServer"
+    HIVE_SERVER1 = "HiveServer1"
+    HIVE_SERVER2 = "HiveServer2"
+    HIVE_THRIFT_SERVER = "HiveThriftServer"
 
-class HiveThriftTransportProtocol(str, Enum):
+class HiveThriftTransportProtocol(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The transport protocol to use in the Thrift layer.
     """
 
-    binary = "Binary"
-    sasl = "SASL"
-    http = "HTTP "
+    BINARY = "Binary"
+    SASL = "SASL"
+    HTTP = "HTTP "
 
-class HttpAuthenticationType(str, Enum):
+class HttpAuthenticationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The authentication type to be used to connect to the HTTP server.
     """
 
-    basic = "Basic"
-    anonymous = "Anonymous"
-    digest = "Digest"
-    windows = "Windows"
-    client_certificate = "ClientCertificate"
+    BASIC = "Basic"
+    ANONYMOUS = "Anonymous"
+    DIGEST = "Digest"
+    WINDOWS = "Windows"
+    CLIENT_CERTIFICATE = "ClientCertificate"
 
-class ImpalaAuthenticationType(str, Enum):
+class ImpalaAuthenticationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The authentication type to use.
     """
 
-    anonymous = "Anonymous"
-    sasl_username = "SASLUsername"
-    username_and_password = "UsernameAndPassword"
+    ANONYMOUS = "Anonymous"
+    SASL_USERNAME = "SASLUsername"
+    USERNAME_AND_PASSWORD = "UsernameAndPassword"
 
-class MongoDbAuthenticationType(str, Enum):
+class IntegrationRuntimeEdition(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The edition for the SSIS Integration Runtime
+    """
+
+    STANDARD = "Standard"
+    ENTERPRISE = "Enterprise"
+
+class IntegrationRuntimeEntityReferenceType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of this referenced entity.
+    """
+
+    INTEGRATION_RUNTIME_REFERENCE = "IntegrationRuntimeReference"
+    LINKED_SERVICE_REFERENCE = "LinkedServiceReference"
+
+class IntegrationRuntimeLicenseType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """License type for bringing your own license scenario.
+    """
+
+    BASE_PRICE = "BasePrice"
+    LICENSE_INCLUDED = "LicenseIncluded"
+
+class IntegrationRuntimeReferenceType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Type of integration runtime.
+    """
+
+    INTEGRATION_RUNTIME_REFERENCE = "IntegrationRuntimeReference"
+
+class IntegrationRuntimeSsisCatalogPricingTier(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The pricing tier for the catalog database. The valid values could be found in
+    https://azure.microsoft.com/en-us/pricing/details/sql-database/
+    """
+
+    BASIC = "Basic"
+    STANDARD = "Standard"
+    PREMIUM = "Premium"
+    PREMIUM_RS = "PremiumRS"
+
+class IntegrationRuntimeState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The state of integration runtime.
+    """
+
+    INITIAL = "Initial"
+    STOPPED = "Stopped"
+    STARTED = "Started"
+    STARTING = "Starting"
+    STOPPING = "Stopping"
+    NEED_REGISTRATION = "NeedRegistration"
+    ONLINE = "Online"
+    LIMITED = "Limited"
+    OFFLINE = "Offline"
+    ACCESS_DENIED = "AccessDenied"
+
+class IntegrationRuntimeType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of integration runtime.
+    """
+
+    MANAGED = "Managed"
+    SELF_HOSTED = "SelfHosted"
+
+class JsonFormatFilePattern(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """JSON format file pattern. A property of JsonFormat.
+    """
+
+    SET_OF_OBJECTS = "setOfObjects"
+    ARRAY_OF_OBJECTS = "arrayOfObjects"
+
+class JsonWriteFilePattern(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """File pattern of JSON. This setting controls the way a collection of JSON objects will be
+    treated. The default value is 'setOfObjects'. It is case-sensitive.
+    """
+
+    SET_OF_OBJECTS = "setOfObjects"
+    ARRAY_OF_OBJECTS = "arrayOfObjects"
+
+class MongoDbAuthenticationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The authentication type to be used to connect to the MongoDB database.
     """
 
-    basic = "Basic"
-    anonymous = "Anonymous"
+    BASIC = "Basic"
+    ANONYMOUS = "Anonymous"
 
-class ODataAadServicePrincipalCredentialType(str, Enum):
+class NetezzaPartitionOption(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The partition mechanism that will be used for Netezza read in parallel.
+    """
+
+    NONE = "None"
+    DATA_SLICE = "DataSlice"
+    DYNAMIC_RANGE = "DynamicRange"
+
+class NodeSize(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The level of compute power that each node in the Big Data pool has.
+    """
+
+    NONE = "None"
+    SMALL = "Small"
+    MEDIUM = "Medium"
+    LARGE = "Large"
+    X_LARGE = "XLarge"
+    XX_LARGE = "XXLarge"
+
+class NodeSizeFamily(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The kind of nodes that the Big Data pool provides.
+    """
+
+    NONE = "None"
+    MEMORY_OPTIMIZED = "MemoryOptimized"
+
+class NotebookReferenceType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Synapse notebook reference type.
+    """
+
+    NOTEBOOK_REFERENCE = "NotebookReference"
+
+class ODataAadServicePrincipalCredentialType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Specify the credential type (key or cert) is used for service principal.
     """
 
-    service_principal_key = "ServicePrincipalKey"
-    service_principal_cert = "ServicePrincipalCert"
+    SERVICE_PRINCIPAL_KEY = "ServicePrincipalKey"
+    SERVICE_PRINCIPAL_CERT = "ServicePrincipalCert"
 
-class ODataAuthenticationType(str, Enum):
+class ODataAuthenticationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Type of authentication used to connect to the OData service.
     """
 
-    basic = "Basic"
-    anonymous = "Anonymous"
-    windows = "Windows"
-    aad_service_principal = "AadServicePrincipal"
-    managed_service_identity = "ManagedServiceIdentity"
+    BASIC = "Basic"
+    ANONYMOUS = "Anonymous"
+    WINDOWS = "Windows"
+    AAD_SERVICE_PRINCIPAL = "AadServicePrincipal"
+    MANAGED_SERVICE_IDENTITY = "ManagedServiceIdentity"
 
-class OrcCompressionCodec(str, Enum):
+class OraclePartitionOption(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The partition mechanism that will be used for Oracle read in parallel.
+    """
 
-    none = "none"
-    zlib = "zlib"
-    snappy = "snappy"
+    NONE = "None"
+    PHYSICAL_PARTITIONS_OF_TABLE = "PhysicalPartitionsOfTable"
+    DYNAMIC_RANGE = "DynamicRange"
 
-class ParameterType(str, Enum):
+class OrcCompressionCodec(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    NONE = "none"
+    ZLIB = "zlib"
+    SNAPPY = "snappy"
+
+class ParameterType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Parameter type.
     """
 
-    object = "Object"
-    string = "String"
-    int = "Int"
-    float = "Float"
-    bool = "Bool"
-    array = "Array"
-    secure_string = "SecureString"
+    OBJECT = "Object"
+    STRING = "String"
+    INT = "Int"
+    FLOAT = "Float"
+    BOOL = "Bool"
+    ARRAY = "Array"
+    SECURE_STRING = "SecureString"
 
-class ParquetCompressionCodec(str, Enum):
+class ParquetCompressionCodec(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
-    none = "none"
-    gzip = "gzip"
-    snappy = "snappy"
-    lzo = "lzo"
+    NONE = "none"
+    GZIP = "gzip"
+    SNAPPY = "snappy"
+    LZO = "lzo"
 
-class PhoenixAuthenticationType(str, Enum):
+class PhoenixAuthenticationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The authentication mechanism used to connect to the Phoenix server.
     """
 
-    anonymous = "Anonymous"
-    username_and_password = "UsernameAndPassword"
-    windows_azure_hd_insight_service = "WindowsAzureHDInsightService"
+    ANONYMOUS = "Anonymous"
+    USERNAME_AND_PASSWORD = "UsernameAndPassword"
+    WINDOWS_AZURE_HD_INSIGHT_SERVICE = "WindowsAzureHDInsightService"
 
-class PluginCurrentState(str, Enum):
+class PipelineReferenceType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Pipeline reference type.
+    """
 
-    preparation = "Preparation"
-    resource_acquisition = "ResourceAcquisition"
-    queued = "Queued"
-    submission = "Submission"
-    monitoring = "Monitoring"
-    cleanup = "Cleanup"
-    ended = "Ended"
+    PIPELINE_REFERENCE = "PipelineReference"
 
-class PrestoAuthenticationType(str, Enum):
+class PluginCurrentState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    PREPARATION = "Preparation"
+    RESOURCE_ACQUISITION = "ResourceAcquisition"
+    QUEUED = "Queued"
+    SUBMISSION = "Submission"
+    MONITORING = "Monitoring"
+    CLEANUP = "Cleanup"
+    ENDED = "Ended"
+
+class PolybaseSettingsRejectType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Indicates whether the RejectValue property is specified as a literal value or a percentage.
+    """
+
+    VALUE = "value"
+    PERCENTAGE = "percentage"
+
+class PrestoAuthenticationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The authentication mechanism used to connect to the Presto server.
     """
 
-    anonymous = "Anonymous"
-    ldap = "LDAP"
+    ANONYMOUS = "Anonymous"
+    LDAP = "LDAP"
 
-class RestServiceAuthenticationType(str, Enum):
+class PrivateLinkServiceConnectionStateStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The private link service connection status.
+    """
+
+    APPROVED = "Approved"
+    PENDING = "Pending"
+    REJECTED = "Rejected"
+    DISCONNECTED = "Disconnected"
+
+class RecurrenceFrequency(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Enumerates possible frequency option for the schedule trigger.
+    """
+
+    NOT_SPECIFIED = "NotSpecified"
+    MINUTE = "Minute"
+    HOUR = "Hour"
+    DAY = "Day"
+    WEEK = "Week"
+    MONTH = "Month"
+    YEAR = "Year"
+
+class ResourceIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of managed identity for the workspace
+    """
+
+    NONE = "None"
+    SYSTEM_ASSIGNED = "SystemAssigned"
+
+class RestServiceAuthenticationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Type of authentication used to connect to the REST service.
     """
 
-    anonymous = "Anonymous"
-    basic = "Basic"
-    aad_service_principal = "AadServicePrincipal"
-    managed_service_identity = "ManagedServiceIdentity"
+    ANONYMOUS = "Anonymous"
+    BASIC = "Basic"
+    AAD_SERVICE_PRINCIPAL = "AadServicePrincipal"
+    MANAGED_SERVICE_IDENTITY = "ManagedServiceIdentity"
 
-class RunQueryFilterOperand(str, Enum):
+class RunQueryFilterOperand(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Parameter name to be used for filter. The allowed operands to query pipeline runs are
     PipelineName, RunStart, RunEnd and Status; to query activity runs are ActivityName,
     ActivityRunStart, ActivityRunEnd, ActivityType and Status, and to query trigger runs are
     TriggerName, TriggerRunTimestamp and Status.
     """
 
-    pipeline_name = "PipelineName"
-    status = "Status"
-    run_start = "RunStart"
-    run_end = "RunEnd"
-    activity_name = "ActivityName"
-    activity_run_start = "ActivityRunStart"
-    activity_run_end = "ActivityRunEnd"
-    activity_type = "ActivityType"
-    trigger_name = "TriggerName"
-    trigger_run_timestamp = "TriggerRunTimestamp"
-    run_group_id = "RunGroupId"
-    latest_only = "LatestOnly"
+    PIPELINE_NAME = "PipelineName"
+    STATUS = "Status"
+    RUN_START = "RunStart"
+    RUN_END = "RunEnd"
+    ACTIVITY_NAME = "ActivityName"
+    ACTIVITY_RUN_START = "ActivityRunStart"
+    ACTIVITY_RUN_END = "ActivityRunEnd"
+    ACTIVITY_TYPE = "ActivityType"
+    TRIGGER_NAME = "TriggerName"
+    TRIGGER_RUN_TIMESTAMP = "TriggerRunTimestamp"
+    RUN_GROUP_ID = "RunGroupId"
+    LATEST_ONLY = "LatestOnly"
 
-class RunQueryFilterOperator(str, Enum):
+class RunQueryFilterOperator(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Operator to be used for filter.
     """
 
-    equals = "Equals"
-    not_equals = "NotEquals"
-    in_enum = "In"
-    not_in = "NotIn"
+    EQUALS = "Equals"
+    NOT_EQUALS = "NotEquals"
+    IN_ENUM = "In"
+    NOT_IN = "NotIn"
 
-class RunQueryOrder(str, Enum):
+class RunQueryOrder(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Sorting order of the parameter.
     """
 
-    asc = "ASC"
-    desc = "DESC"
+    ASC = "ASC"
+    DESC = "DESC"
 
-class RunQueryOrderByField(str, Enum):
+class RunQueryOrderByField(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Parameter name to be used for order by. The allowed parameters to order by for pipeline runs
     are PipelineName, RunStart, RunEnd and Status; for activity runs are ActivityName,
     ActivityRunStart, ActivityRunEnd and Status; for trigger runs are TriggerName,
     TriggerRunTimestamp and Status.
     """
 
-    run_start = "RunStart"
-    run_end = "RunEnd"
-    pipeline_name = "PipelineName"
-    status = "Status"
-    activity_name = "ActivityName"
-    activity_run_start = "ActivityRunStart"
-    activity_run_end = "ActivityRunEnd"
-    trigger_name = "TriggerName"
-    trigger_run_timestamp = "TriggerRunTimestamp"
+    RUN_START = "RunStart"
+    RUN_END = "RunEnd"
+    PIPELINE_NAME = "PipelineName"
+    STATUS = "Status"
+    ACTIVITY_NAME = "ActivityName"
+    ACTIVITY_RUN_START = "ActivityRunStart"
+    ACTIVITY_RUN_END = "ActivityRunEnd"
+    TRIGGER_NAME = "TriggerName"
+    TRIGGER_RUN_TIMESTAMP = "TriggerRunTimestamp"
 
-class SapHanaAuthenticationType(str, Enum):
+class SalesforceSinkWriteBehavior(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The write behavior for the operation. Default is Insert.
+    """
+
+    INSERT = "Insert"
+    UPSERT = "Upsert"
+
+class SalesforceSourceReadBehavior(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The read behavior for the operation. Default is Query.
+    """
+
+    QUERY = "Query"
+    QUERY_ALL = "QueryAll"
+
+class SapCloudForCustomerSinkWriteBehavior(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The write behavior for the operation. Default is 'Insert'.
+    """
+
+    INSERT = "Insert"
+    UPDATE = "Update"
+
+class SapHanaAuthenticationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The authentication type to be used to connect to the SAP HANA server.
     """
 
-    basic = "Basic"
-    windows = "Windows"
+    BASIC = "Basic"
+    WINDOWS = "Windows"
 
-class SchedulerCurrentState(str, Enum):
+class SapHanaPartitionOption(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The partition mechanism that will be used for SAP HANA read in parallel.
+    """
 
-    queued = "Queued"
-    scheduled = "Scheduled"
-    ended = "Ended"
+    NONE = "None"
+    PHYSICAL_PARTITIONS_OF_TABLE = "PhysicalPartitionsOfTable"
+    SAP_HANA_DYNAMIC_RANGE = "SapHanaDynamicRange"
 
-class ServiceNowAuthenticationType(str, Enum):
+class SapTablePartitionOption(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The partition mechanism that will be used for SAP table read in parallel.
+    """
+
+    NONE = "None"
+    PARTITION_ON_INT = "PartitionOnInt"
+    PARTITION_ON_CALENDAR_YEAR = "PartitionOnCalendarYear"
+    PARTITION_ON_CALENDAR_MONTH = "PartitionOnCalendarMonth"
+    PARTITION_ON_CALENDAR_DATE = "PartitionOnCalendarDate"
+    PARTITION_ON_TIME = "PartitionOnTime"
+
+class SchedulerCurrentState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    QUEUED = "Queued"
+    SCHEDULED = "Scheduled"
+    ENDED = "Ended"
+
+class ServiceNowAuthenticationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The authentication type to use.
     """
 
-    basic = "Basic"
-    o_auth2 = "OAuth2"
+    BASIC = "Basic"
+    O_AUTH2 = "OAuth2"
 
-class SftpAuthenticationType(str, Enum):
+class SftpAuthenticationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The authentication type to be used to connect to the FTP server.
     """
 
-    basic = "Basic"
-    ssh_public_key = "SshPublicKey"
+    BASIC = "Basic"
+    SSH_PUBLIC_KEY = "SshPublicKey"
 
-class SparkAuthenticationType(str, Enum):
+class SparkAuthenticationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The authentication method used to access the Spark server.
     """
 
-    anonymous = "Anonymous"
-    username = "Username"
-    username_and_password = "UsernameAndPassword"
-    windows_azure_hd_insight_service = "WindowsAzureHDInsightService"
+    ANONYMOUS = "Anonymous"
+    USERNAME = "Username"
+    USERNAME_AND_PASSWORD = "UsernameAndPassword"
+    WINDOWS_AZURE_HD_INSIGHT_SERVICE = "WindowsAzureHDInsightService"
 
-class SparkBatchJobResultType(str, Enum):
+class SparkBatchJobResultType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The Spark batch job result.
     """
 
-    uncertain = "Uncertain"
-    succeeded = "Succeeded"
-    failed = "Failed"
-    cancelled = "Cancelled"
+    UNCERTAIN = "Uncertain"
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
+    CANCELLED = "Cancelled"
 
-class SparkErrorSource(str, Enum):
+class SparkErrorSource(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
-    system = "System"
-    user = "User"
-    unknown = "Unknown"
-    dependency = "Dependency"
+    SYSTEM = "System"
+    USER = "User"
+    UNKNOWN = "Unknown"
+    DEPENDENCY = "Dependency"
 
-class SparkJobType(str, Enum):
+class SparkJobReferenceType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Synapse spark job reference type.
+    """
+
+    SPARK_JOB_DEFINITION_REFERENCE = "SparkJobDefinitionReference"
+
+class SparkJobType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The job type.
     """
 
-    spark_batch = "SparkBatch"
-    spark_session = "SparkSession"
+    SPARK_BATCH = "SparkBatch"
+    SPARK_SESSION = "SparkSession"
 
-class SparkServerType(str, Enum):
+class SparkServerType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The type of Spark server.
     """
 
-    shark_server = "SharkServer"
-    shark_server2 = "SharkServer2"
-    spark_thrift_server = "SparkThriftServer"
+    SHARK_SERVER = "SharkServer"
+    SHARK_SERVER2 = "SharkServer2"
+    SPARK_THRIFT_SERVER = "SparkThriftServer"
 
-class SparkThriftTransportProtocol(str, Enum):
+class SparkThriftTransportProtocol(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The transport protocol to use in the Thrift layer.
     """
 
-    binary = "Binary"
-    sasl = "SASL"
-    http = "HTTP "
+    BINARY = "Binary"
+    SASL = "SASL"
+    HTTP = "HTTP "
 
-class SqlConnectionType(str, Enum):
+class SqlConnectionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The type of the connection.
     """
 
-    sql_on_demand = "SqlOnDemand"
-    sql_pool = "SqlPool"
+    SQL_ON_DEMAND = "SqlOnDemand"
+    SQL_POOL = "SqlPool"
 
-class SsisPackageLocationType(str, Enum):
+class SqlPoolReferenceType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """SQL pool reference type.
+    """
+
+    SQL_POOL_REFERENCE = "SqlPoolReference"
+
+class SqlScriptType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of the SQL script.
+    """
+
+    SQL_QUERY = "SqlQuery"
+
+class SsisLogLocationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of SSIS log location.
+    """
+
+    FILE = "File"
+
+class SsisPackageLocationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The type of SSIS package location.
     """
 
-    ssisdb = "SSISDB"
-    file = "File"
-    inline_package = "InlinePackage"
+    SSISDB = "SSISDB"
+    FILE = "File"
+    INLINE_PACKAGE = "InlinePackage"
 
-class StoredProcedureParameterType(str, Enum):
+class StoredProcedureParameterType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Stored procedure parameter type.
     """
 
-    string = "String"
-    int = "Int"
-    int64 = "Int64"
-    decimal = "Decimal"
-    guid = "Guid"
-    boolean = "Boolean"
-    date = "Date"
+    STRING = "String"
+    INT = "Int"
+    INT64 = "Int64"
+    DECIMAL = "Decimal"
+    GUID = "Guid"
+    BOOLEAN = "Boolean"
+    DATE = "Date"
 
-class SybaseAuthenticationType(str, Enum):
+class SybaseAuthenticationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """AuthenticationType to be used for connection.
     """
 
-    basic = "Basic"
-    windows = "Windows"
+    BASIC = "Basic"
+    WINDOWS = "Windows"
 
-class TeradataAuthenticationType(str, Enum):
+class TeradataAuthenticationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """AuthenticationType to be used for connection.
     """
 
-    basic = "Basic"
-    windows = "Windows"
+    BASIC = "Basic"
+    WINDOWS = "Windows"
 
-class TriggerRunStatus(str, Enum):
+class TeradataPartitionOption(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The partition mechanism that will be used for teradata read in parallel.
+    """
+
+    NONE = "None"
+    HASH = "Hash"
+    DYNAMIC_RANGE = "DynamicRange"
+
+class TriggerReferenceType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Trigger reference type.
+    """
+
+    TRIGGER_REFERENCE = "TriggerReference"
+
+class TriggerRunStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Trigger run status.
     """
 
-    succeeded = "Succeeded"
-    failed = "Failed"
-    inprogress = "Inprogress"
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
+    INPROGRESS = "Inprogress"
 
-class TriggerRuntimeState(str, Enum):
+class TriggerRuntimeState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Enumerates possible state of Triggers.
     """
 
-    started = "Started"
-    stopped = "Stopped"
-    disabled = "Disabled"
+    STARTED = "Started"
+    STOPPED = "Stopped"
+    DISABLED = "Disabled"
 
-class VariableType(str, Enum):
+class TumblingWindowFrequency(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Enumerates possible frequency option for the tumbling window trigger.
+    """
+
+    MINUTE = "Minute"
+    HOUR = "Hour"
+
+class Type(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Linked service reference type.
+    """
+
+    LINKED_SERVICE_REFERENCE = "LinkedServiceReference"
+
+class VariableType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Variable type.
     """
 
-    string = "String"
-    bool = "Bool"
-    boolean = "Boolean"
-    array = "Array"
+    STRING = "String"
+    BOOL = "Bool"
+    BOOLEAN = "Boolean"
+    ARRAY = "Array"
 
-class WebActivityMethod(str, Enum):
+class WebActivityMethod(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The list of HTTP methods supported by a WebActivity.
     """
 
-    get = "GET"
-    post = "POST"
-    put = "PUT"
-    delete = "DELETE"
+    GET = "GET"
+    POST = "POST"
+    PUT = "PUT"
+    DELETE = "DELETE"
 
-class WebAuthenticationType(str, Enum):
+class WebAuthenticationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Type of authentication used to connect to the web table source.
     """
 
-    basic = "Basic"
-    anonymous = "Anonymous"
-    client_certificate = "ClientCertificate"
+    BASIC = "Basic"
+    ANONYMOUS = "Anonymous"
+    CLIENT_CERTIFICATE = "ClientCertificate"
+
+class WebHookActivityMethod(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The list of HTTP methods supported by a WebHook activity.
+    """
+
+    POST = "POST"

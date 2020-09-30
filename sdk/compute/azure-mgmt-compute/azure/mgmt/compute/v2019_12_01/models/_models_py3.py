@@ -1383,11 +1383,9 @@ class DiagnosticsProfile(msrest.serialization.Model):
 class DiffDiskSettings(msrest.serialization.Model):
     """Describes the parameters of ephemeral disk settings that can be specified for operating system disk. :code:`<br>`:code:`<br>` NOTE: The ephemeral disk settings can only be specified for managed disk.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar option: Specifies the ephemeral disk settings for operating system disk. Default value:
-     "Local".
-    :vartype option: str
+    :param option: Specifies the ephemeral disk settings for operating system disk. Possible values
+     include: "Local".
+    :type option: str or ~azure.mgmt.compute.v2019_12_01.models.DiffDiskOptions
     :param placement: Specifies the ephemeral disk placement for operating system
      disk.:code:`<br>`:code:`<br>` Possible values are: :code:`<br>`:code:`<br>` **CacheDisk**
      :code:`<br>`:code:`<br>` **ResourceDisk** :code:`<br>`:code:`<br>` Default: **CacheDisk** if
@@ -1399,24 +1397,20 @@ class DiffDiskSettings(msrest.serialization.Model):
     :type placement: str or ~azure.mgmt.compute.v2019_12_01.models.DiffDiskPlacement
     """
 
-    _validation = {
-        'option': {'constant': True},
-    }
-
     _attribute_map = {
         'option': {'key': 'option', 'type': 'str'},
         'placement': {'key': 'placement', 'type': 'str'},
     }
 
-    option = "Local"
-
     def __init__(
         self,
         *,
+        option: Optional[Union[str, "DiffDiskOptions"]] = None,
         placement: Optional[Union[str, "DiffDiskPlacement"]] = None,
         **kwargs
     ):
         super(DiffDiskSettings, self).__init__(**kwargs)
+        self.option = option
         self.placement = placement
 
 
@@ -3973,19 +3967,18 @@ class NetworkProfile(msrest.serialization.Model):
 class OrchestrationServiceStateInput(msrest.serialization.Model):
     """The input for OrchestrationServiceState.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     All required parameters must be populated in order to send to Azure.
 
-    :ivar service_name: Required. The name of the service. Default value: "AutomaticRepairs".
-    :vartype service_name: str
+    :param service_name: Required. The name of the service. Possible values include:
+     "AutomaticRepairs", "DummyOrchestrationServiceName".
+    :type service_name: str or ~azure.mgmt.compute.v2019_12_01.models.OrchestrationServiceNames
     :param action: Required. The action to be performed. Possible values include: "Resume",
      "Suspend".
     :type action: str or ~azure.mgmt.compute.v2019_12_01.models.OrchestrationServiceStateAction
     """
 
     _validation = {
-        'service_name': {'required': True, 'constant': True},
+        'service_name': {'required': True},
         'action': {'required': True},
     }
 
@@ -3994,15 +3987,15 @@ class OrchestrationServiceStateInput(msrest.serialization.Model):
         'action': {'key': 'action', 'type': 'str'},
     }
 
-    service_name = "AutomaticRepairs"
-
     def __init__(
         self,
         *,
+        service_name: Union[str, "OrchestrationServiceNames"],
         action: Union[str, "OrchestrationServiceStateAction"],
         **kwargs
     ):
         super(OrchestrationServiceStateInput, self).__init__(**kwargs)
+        self.service_name = service_name
         self.action = action
 
 
@@ -4011,15 +4004,16 @@ class OrchestrationServiceSummary(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar service_name: The name of the service. Default value: "AutomaticRepairs".
-    :vartype service_name: str
+    :ivar service_name: The name of the service. Possible values include: "AutomaticRepairs",
+     "DummyOrchestrationServiceName".
+    :vartype service_name: str or ~azure.mgmt.compute.v2019_12_01.models.OrchestrationServiceNames
     :ivar service_state: The current state of the service. Possible values include: "NotRunning",
      "Running", "Suspended".
     :vartype service_state: str or ~azure.mgmt.compute.v2019_12_01.models.OrchestrationServiceState
     """
 
     _validation = {
-        'service_name': {'readonly': True, 'constant': True},
+        'service_name': {'readonly': True},
         'service_state': {'readonly': True},
     }
 
@@ -4027,8 +4021,6 @@ class OrchestrationServiceSummary(msrest.serialization.Model):
         'service_name': {'key': 'serviceName', 'type': 'str'},
         'service_state': {'key': 'serviceState', 'type': 'str'},
     }
-
-    service_name = "AutomaticRepairs"
 
     def __init__(
         self,
@@ -6187,8 +6179,8 @@ class VirtualMachine(Resource):
      "Low", "Spot".
     :type priority: str or ~azure.mgmt.compute.v2019_12_01.models.VirtualMachinePriorityTypes
     :param eviction_policy: Specifies the eviction policy for the Azure Spot virtual machine and
-     Azure Spot scale set. :code:`<br>`:code:`<br>`For Azure Spot virtual machines, the only
-     supported value is 'Deallocate' and the minimum api-version is 2019-03-01.
+     Azure Spot scale set. :code:`<br>`:code:`<br>`For Azure Spot virtual machines, both
+     'Deallocate' and 'Delete' are supported and the minimum api-version is 2019-03-01.
      :code:`<br>`:code:`<br>`For Azure Spot scale sets, both 'Deallocate' and 'Delete' are supported
      and the minimum api-version is 2017-10-30-preview. Possible values include: "Deallocate",
      "Delete".
@@ -7679,12 +7671,12 @@ class VirtualMachineScaleSetIPConfiguration(SubResource):
     :type application_security_groups: list[~azure.mgmt.compute.v2019_12_01.models.SubResource]
     :param load_balancer_backend_address_pools: Specifies an array of references to backend address
      pools of load balancers. A scale set can reference backend address pools of one public and one
-     internal load balancer. Multiple scale sets cannot use the same load balancer.
+     internal load balancer. Multiple scale sets cannot use the same basic sku load balancer.
     :type load_balancer_backend_address_pools:
      list[~azure.mgmt.compute.v2019_12_01.models.SubResource]
     :param load_balancer_inbound_nat_pools: Specifies an array of references to inbound Nat pools
      of the load balancers. A scale set can reference inbound nat pools of one public and one
-     internal load balancer. Multiple scale sets cannot use the same load balancer.
+     internal load balancer. Multiple scale sets cannot use the same basic sku load balancer.
     :type load_balancer_inbound_nat_pools: list[~azure.mgmt.compute.v2019_12_01.models.SubResource]
     """
 
@@ -9341,8 +9333,8 @@ class VirtualMachineScaleSetVMProfile(msrest.serialization.Model):
      "Regular", "Low", "Spot".
     :type priority: str or ~azure.mgmt.compute.v2019_12_01.models.VirtualMachinePriorityTypes
     :param eviction_policy: Specifies the eviction policy for the Azure Spot virtual machine and
-     Azure Spot scale set. :code:`<br>`:code:`<br>`For Azure Spot virtual machines, the only
-     supported value is 'Deallocate' and the minimum api-version is 2019-03-01.
+     Azure Spot scale set. :code:`<br>`:code:`<br>`For Azure Spot virtual machines, both
+     'Deallocate' and 'Delete' are supported and the minimum api-version is 2019-03-01.
      :code:`<br>`:code:`<br>`For Azure Spot scale sets, both 'Deallocate' and 'Delete' are supported
      and the minimum api-version is 2017-10-30-preview. Possible values include: "Deallocate",
      "Delete".
@@ -9609,8 +9601,8 @@ class VirtualMachineUpdate(UpdateResource):
      "Low", "Spot".
     :type priority: str or ~azure.mgmt.compute.v2019_12_01.models.VirtualMachinePriorityTypes
     :param eviction_policy: Specifies the eviction policy for the Azure Spot virtual machine and
-     Azure Spot scale set. :code:`<br>`:code:`<br>`For Azure Spot virtual machines, the only
-     supported value is 'Deallocate' and the minimum api-version is 2019-03-01.
+     Azure Spot scale set. :code:`<br>`:code:`<br>`For Azure Spot virtual machines, both
+     'Deallocate' and 'Delete' are supported and the minimum api-version is 2019-03-01.
      :code:`<br>`:code:`<br>`For Azure Spot scale sets, both 'Deallocate' and 'Delete' are supported
      and the minimum api-version is 2017-10-30-preview. Possible values include: "Deallocate",
      "Delete".

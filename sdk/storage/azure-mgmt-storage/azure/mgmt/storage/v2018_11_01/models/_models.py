@@ -1390,8 +1390,6 @@ class ManagementPolicyFilter(msrest.serialization.Model):
 class ManagementPolicyRule(msrest.serialization.Model):
     """An object that wraps the Lifecycle rule. Each rule is uniquely defined by name.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     All required parameters must be populated in order to send to Azure.
 
     :param enabled: Rule is enabled if set to true.
@@ -1399,15 +1397,15 @@ class ManagementPolicyRule(msrest.serialization.Model):
     :param name: Required. A rule name can contain any combination of alpha numeric characters.
      Rule name is case-sensitive. It must be unique within a policy.
     :type name: str
-    :ivar type: Required. The valid value is Lifecycle. Default value: "Lifecycle".
-    :vartype type: str
+    :param type: Required. The valid value is Lifecycle. Possible values include: "Lifecycle".
+    :type type: str or ~azure.mgmt.storage.v2018_11_01.models.RuleType
     :param definition: Required. An object that defines the Lifecycle rule.
     :type definition: ~azure.mgmt.storage.v2018_11_01.models.ManagementPolicyDefinition
     """
 
     _validation = {
         'name': {'required': True},
-        'type': {'required': True, 'constant': True},
+        'type': {'required': True},
         'definition': {'required': True},
     }
 
@@ -1418,8 +1416,6 @@ class ManagementPolicyRule(msrest.serialization.Model):
         'definition': {'key': 'definition', 'type': 'ManagementPolicyDefinition'},
     }
 
-    type = "Lifecycle"
-
     def __init__(
         self,
         **kwargs
@@ -1427,6 +1423,7 @@ class ManagementPolicyRule(msrest.serialization.Model):
         super(ManagementPolicyRule, self).__init__(**kwargs)
         self.enabled = kwargs.get('enabled', None)
         self.name = kwargs['name']
+        self.type = kwargs['type']
         self.definition = kwargs['definition']
 
 

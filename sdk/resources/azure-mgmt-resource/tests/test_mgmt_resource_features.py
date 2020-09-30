@@ -42,10 +42,10 @@ class MgmtResourceFeaturesTest(AzureMgmtTestCase):
             one_feature.name.split('/')[1]
         )
 
-        self.features_client.features.register(
-            'Microsoft.Compute',
-            feature.name.split('/')[1]
-        )
+        # self.features_client.features.register(
+        #     'Microsoft.Compute',
+        #     feature.name.split('/')[1]
+        # )
 
     def test_feature_client(self):
         self.features_client.list_operations()

@@ -6,5 +6,5 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._key_vault_management_client_async import KeyVaultManagementClient
+from ._key_vault_management_client import KeyVaultManagementClient
 __all__ = ['KeyVaultManagementClient']

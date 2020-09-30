@@ -13,7 +13,8 @@ from datetime import datetime, timedelta
 
 from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer, CachedResourceGroupPreparer
 
-from azure.servicebus import ServiceBusClient, ServiceBusSharedKeyCredential
+from azure.servicebus import ServiceBusClient
+from azure.servicebus._base_handler import ServiceBusSharedKeyCredential
 from azure.servicebus._common.message import Message
 from servicebus_preparer import (
     ServiceBusNamespacePreparer,

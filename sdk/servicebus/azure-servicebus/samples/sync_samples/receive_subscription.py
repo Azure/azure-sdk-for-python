@@ -26,7 +26,7 @@ with servicebus_client:
         subscription_name=SUBSCRIPTION_NAME
     )
     with receiver:
-        received_msgs = receiver.receive_messages(max_batch_size=10, max_wait_time=5)
+        received_msgs = receiver.receive_messages(max_message_count=10, max_wait_time=5)
         for msg in received_msgs:
             print(str(msg))
             msg.complete()

@@ -21,6 +21,7 @@ try:
     from ._models_py3 import ClusterListResult
     from ._models_py3 import ClusterQuotaConfigurationProperties
     from ._models_py3 import ClusterSku
+    from ._models_py3 import ConnectionState
     from ._models_py3 import ConsumerGroup
     from ._models_py3 import ConsumerGroupListResult
     from ._models_py3 import Destination
@@ -45,6 +46,11 @@ try:
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
     from ._models_py3 import OperationListResult
+    from ._models_py3 import PrivateEndpoint
+    from ._models_py3 import PrivateEndpointConnection
+    from ._models_py3 import PrivateEndpointConnectionListResult
+    from ._models_py3 import PrivateLinkResource
+    from ._models_py3 import PrivateLinkResourcesListResult
     from ._models_py3 import RegenerateAccessKeyParameters
     from ._models_py3 import Resource
     from ._models_py3 import Sku
@@ -67,6 +73,7 @@ except (SyntaxError, ImportError):
     from ._models import ClusterListResult  # type: ignore
     from ._models import ClusterQuotaConfigurationProperties  # type: ignore
     from ._models import ClusterSku  # type: ignore
+    from ._models import ConnectionState  # type: ignore
     from ._models import ConsumerGroup  # type: ignore
     from ._models import ConsumerGroupListResult  # type: ignore
     from ._models import Destination  # type: ignore
@@ -91,6 +98,11 @@ except (SyntaxError, ImportError):
     from ._models import Operation  # type: ignore
     from ._models import OperationDisplay  # type: ignore
     from ._models import OperationListResult  # type: ignore
+    from ._models import PrivateEndpoint  # type: ignore
+    from ._models import PrivateEndpointConnection  # type: ignore
+    from ._models import PrivateEndpointConnectionListResult  # type: ignore
+    from ._models import PrivateLinkResource  # type: ignore
+    from ._models import PrivateLinkResourcesListResult  # type: ignore
     from ._models import RegenerateAccessKeyParameters  # type: ignore
     from ._models import Resource  # type: ignore
     from ._models import Sku  # type: ignore
@@ -101,11 +113,15 @@ except (SyntaxError, ImportError):
 
 from ._event_hub_management_client_enums import (
     AccessRights,
+    ClusterSkuName,
     DefaultAction,
     EncodingCaptureDescription,
+    EndPointProvisioningState,
     EntityStatus,
     IPAction,
     KeyType,
+    NetworkRuleIPAction,
+    PrivateLinkConnectionStatus,
     ProvisioningStateDR,
     RoleDisasterRecovery,
     SkuName,
@@ -128,6 +144,7 @@ __all__ = [
     'ClusterListResult',
     'ClusterQuotaConfigurationProperties',
     'ClusterSku',
+    'ConnectionState',
     'ConsumerGroup',
     'ConsumerGroupListResult',
     'Destination',
@@ -152,6 +169,11 @@ __all__ = [
     'Operation',
     'OperationDisplay',
     'OperationListResult',
+    'PrivateEndpoint',
+    'PrivateEndpointConnection',
+    'PrivateEndpointConnectionListResult',
+    'PrivateLinkResource',
+    'PrivateLinkResourcesListResult',
     'RegenerateAccessKeyParameters',
     'Resource',
     'Sku',
@@ -160,11 +182,15 @@ __all__ = [
     'VirtualNetworkRule',
     'VirtualNetworkRuleListResult',
     'AccessRights',
+    'ClusterSkuName',
     'DefaultAction',
     'EncodingCaptureDescription',
+    'EndPointProvisioningState',
     'EntityStatus',
     'IPAction',
     'KeyType',
+    'NetworkRuleIPAction',
+    'PrivateLinkConnectionStatus',
     'ProvisioningStateDR',
     'RoleDisasterRecovery',
     'SkuName',

@@ -38,7 +38,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
     
     def create_virtual_network(self, group_name, location, network_name, subnet_name):
       
-        azure_operation_poller = self.network_client.virtual_networks.create_or_update(
+        azure_operation_poller = self.network_client.virtual_networks.begin_create_or_update(
             group_name,
             network_name,
             {
@@ -50,7 +50,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
         )
         result_create = azure_operation_poller.result()
 
-        async_subnet_creation = self.network_client.subnets.create_or_update(
+        async_subnet_creation = self.network_client.subnets.begin_create_or_update(
             group_name,
             network_name,
             subnet_name,
@@ -71,7 +71,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
             "name": "Standard"
           }
         }
-        result = self.network_client.public_ip_addresses.create_or_update(group_name, public_ip_address_name, BODY)
+        result = self.network_client.public_ip_addresses.begin_create_or_update(group_name, public_ip_address_name, BODY)
         result = result.result()
 
     def create_load_balance_probe(self, group_name, location):
@@ -156,7 +156,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
             }
           ]
         }
-        result = self.network_client.load_balancers.create_or_update(resource_group_name=RESOURCE_GROUP, load_balancer_name=LOAD_BALANCER_NAME, parameters=BODY)
+        result = self.network_client.load_balancers.begin_create_or_update(resource_group_name=RESOURCE_GROUP, load_balancer_name=LOAD_BALANCER_NAME, parameters=BODY)
         result = result.result()
         return (
           "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/loadBalancers/" + LOAD_BALANCER_NAME + "/probes/myProbe",
@@ -828,8 +828,12 @@ class MgmtComputeTest(AzureMgmtTestCase):
         result = result.result()
 
         # Redeploy virtual machine scale set (TODO: need swagger file)
-        result = self.mgmt_client.virtual_machine_scale_sets.begin_redeploy(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME)
-        result = result.result()
+        try:
+            result = self.mgmt_client.virtual_machine_scale_sets.begin_redeploy(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME)
+            result = result.result()
+        except HttpResponseError as e:
+            if not str(e).startswith("(VMRedeploymentTimedOut)"):
+                raise e
 
         # Deallocate virtual machine scale set (TODO: need swagger file)
         result = self.mgmt_client.virtual_machine_scale_sets.begin_deallocate(resource_group.name, VIRTUAL_MACHINE_SCALE_SET_NAME)

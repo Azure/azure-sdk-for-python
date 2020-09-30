@@ -65,10 +65,15 @@ For example, `https://<my-custom-subdomain>.cognitiveservices.azure.com/`.
 Install the Azure Text Analytics client library for Python with [pip][pip]:
 
 ```bash
-pip install azure-ai-textanalytics
+pip install azure-ai-textanalytics --pre
 ```
+> This table shows the relationship between SDK versions and supported API versions of the service
+>| SDK version      | Supported API version of service |
+>| ----------- | ----------- |
+>| Latest GA release (can be installed by removing the `--pre` flag)      | 3.0       |
+>| Latest release (beta)   | 3.0, 3.1-preview        |
 
-> Note: This version of the client library supports the v3.0 version of the Text Analytics service
+
 
 ### Authenticate the client
 #### Get the endpoint
@@ -221,7 +226,7 @@ for doc in result:
 
 The returned response is a heterogeneous list of result and error objects: list[[AnalyzeSentimentResult][analyze_sentiment_result], [DocumentError][document_error]]
 
-Please refer to the service documentation for a conceptual discussion of [sentiment analysis][sentiment_analysis].
+Please refer to the service documentation for a conceptual discussion of [sentiment analysis][sentiment_analysis]. To see how to conduct more granular analysis into the opinions related to individual aspects (such as attributes of a product or service) in a text, see [here][opinion_mining_sample].
 
 ### Recognize entities
 [recognize_entities][recognize_entities] recognizes and categories entities in its input text as people, places, organizations, date/time, quantities, percentages, currencies, and more.
@@ -300,7 +305,7 @@ and [supported types][linked_entities_categories].
 
 ### Recognize PII entities
 [recognize_pii_entities][recognize_pii_entities] recognizes and categorizes Personally Identifiable Information (PII) entities in its input text, such as
-Social Security Numbers, bank account information, credit card numbers, and more. This endpoint is only available for v3.1-preview.1 and up.
+Social Security Numbers, bank account information, credit card numbers, and more. This endpoint is only available for v3.1-preview and up.
 
 ```python
 from azure.core.credentials import AzureKeyCredential
@@ -317,13 +322,15 @@ documents = [
 ]
 response = text_analytics_client.recognize_pii_entities(documents, language="en")
 result = [doc for doc in response if not doc.is_error]
-for doc in result:
+for idx, doc in enumerate(result):
+    print("Document text: {}".format(documents[idx]))
+    print("Redacted document text: {}".format(doc.redacted_text))
     for entity in doc.entities:
-        print("Entity: {}".format(entity.text))
-        print("...Category: {}".format(entity.category))
-        print("...Confidence Score: {}".format(entity.confidence_score))
-        print("...Offset: {}".format(entity.offset))
-        print("...Length: {}".format(entity.length))
+        print("...Entity: {}".format(entity.text))
+        print("......Category: {}".format(entity.category))
+        print("......Confidence Score: {}".format(entity.confidence_score))
+        print("......Offset: {}".format(entity.offset))
+        print("......Length: {}".format(entity.length))
 ```
 
 The returned response is a heterogeneous list of result and error objects: list[[RecognizePiiEntitiesResult][recognize_pii_entities_result], [DocumentError][document_error]]
@@ -449,13 +456,16 @@ with Text Analytics and require Python 3.5 or later.
 Authenticate the client with a Cognitive Services/Text Analytics API key or a token credential from [azure-identity][azure_identity]:
 * [sample_authentication.py][sample_authentication] ([async version][sample_authentication_async])
 
-In a batch of documents:
+Common scenarios
 * Analyze sentiment: [sample_analyze_sentiment.py][analyze_sentiment_sample] ([async version][analyze_sentiment_sample_async])
 * Recognize entities: [sample_recognize_entities.py][recognize_entities_sample] ([async version][recognize_entities_sample_async])
 * Recognize personally identifiable information: [sample_recognize_pii_entities.py][recognize_pii_entities_sample]([async version][recognize_pii_entities_sample_async])
 * Recognize linked entities: [sample_recognize_linked_entities.py][recognize_linked_entities_sample] ([async version][recognize_linked_entities_sample_async])
 * Extract key phrases: [sample_extract_key_phrases.py][extract_key_phrases_sample] ([async version][extract_key_phrases_sample_async])
 * Detect language: [sample_detect_language.py][detect_language_sample] ([async version][detect_language_sample_async])
+
+Advanced scenarios
+* Opinion Mining: [sample_analyze_sentiment_with_opinion_mining.py][opinion_mining_sample] ([async_version][opinion_mining_sample_async])
 
 ### Additional documentation
 For more extensive documentation on Azure Cognitive Services Text Analytics, see the [Text Analytics documentation][TA_product_documentation] on docs.microsoft.com.
@@ -542,6 +552,9 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [recognize_linked_entities_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_recognize_linked_entities_async.py
 [recognize_pii_entities_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/textanalytics/azure-ai-textanalytics/samples/sample_recognize_pii_entities.py
 [recognize_pii_entities_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_recognize_pii_entities_async.py
+
+[opinion_mining_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/textanalytics/azure-ai-textanalytics/samples/sample_analyze_sentiment_with_opinion_mining.py
+[opinion_mining_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_analyze_sentiment_with_opinion_mining_async.py
 
 [cla]: https://cla.microsoft.com
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/

@@ -6,57 +6,75 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum
+from enum import Enum, EnumMeta
+from six import with_metaclass
 
-class PluginCurrentState(str, Enum):
+class _CaseInsensitiveEnumMeta(EnumMeta):
+    def __getitem__(self, name):
+        return super().__getitem__(name.upper())
 
-    preparation = "Preparation"
-    resource_acquisition = "ResourceAcquisition"
-    queued = "Queued"
-    submission = "Submission"
-    monitoring = "Monitoring"
-    cleanup = "Cleanup"
-    ended = "Ended"
+    def __getattr__(cls, name):
+        """Return the enum member matching `name`
+        We use __getattr__ instead of descriptors or inserting into the enum
+        class' __dict__ in order to support `name` and `value` being both
+        properties for enum members (which live in the class' __dict__) and
+        enum members themselves.
+        """
+        try:
+            return cls._member_map_[name.upper()]
+        except KeyError:
+            raise AttributeError(name)
 
-class SchedulerCurrentState(str, Enum):
 
-    queued = "Queued"
-    scheduled = "Scheduled"
-    ended = "Ended"
+class PluginCurrentState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
-class SparkBatchJobResultType(str, Enum):
+    PREPARATION = "Preparation"
+    RESOURCE_ACQUISITION = "ResourceAcquisition"
+    QUEUED = "Queued"
+    SUBMISSION = "Submission"
+    MONITORING = "Monitoring"
+    CLEANUP = "Cleanup"
+    ENDED = "Ended"
+
+class SchedulerCurrentState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    QUEUED = "Queued"
+    SCHEDULED = "Scheduled"
+    ENDED = "Ended"
+
+class SparkBatchJobResultType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The Spark batch job result.
     """
 
-    uncertain = "Uncertain"
-    succeeded = "Succeeded"
-    failed = "Failed"
-    cancelled = "Cancelled"
+    UNCERTAIN = "Uncertain"
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
+    CANCELLED = "Cancelled"
 
-class SparkErrorSource(str, Enum):
+class SparkErrorSource(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
-    system = "System"
-    user = "User"
-    unknown = "Unknown"
-    dependency = "Dependency"
+    SYSTEM = "System"
+    USER = "User"
+    UNKNOWN = "Unknown"
+    DEPENDENCY = "Dependency"
 
-class SparkJobType(str, Enum):
+class SparkJobType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The job type.
     """
 
-    spark_batch = "SparkBatch"
-    spark_session = "SparkSession"
+    SPARK_BATCH = "SparkBatch"
+    SPARK_SESSION = "SparkSession"
 
-class SparkSessionResultType(str, Enum):
+class SparkSessionResultType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
-    uncertain = "Uncertain"
-    succeeded = "Succeeded"
-    failed = "Failed"
-    cancelled = "Cancelled"
+    UNCERTAIN = "Uncertain"
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
+    CANCELLED = "Cancelled"
 
-class SparkStatementLanguageType(str, Enum):
+class SparkStatementLanguageType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
-    spark = "spark"
-    pyspark = "pyspark"
-    dotnetspark = "dotnetspark"
-    sql = "sql"
+    SPARK = "spark"
+    PYSPARK = "pyspark"
+    DOTNETSPARK = "dotnetspark"
+    SQL = "sql"

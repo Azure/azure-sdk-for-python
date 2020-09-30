@@ -15,13 +15,13 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Mon, 22 Jun 2020 17:01:27 GMT
+      - Wed, 16 Sep 2020 21:51:21 GMT
       User-Agent:
-      - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Mon, 22 Jun 2020 17:01:27 GMT
+      - Wed, 16 Sep 2020 21:51:21 GMT
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     method: POST
     uri: https://storagename.table.core.windows.net/Tables
   response:
@@ -33,7 +33,7 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Mon, 22 Jun 2020 17:01:27 GMT
+      - Wed, 16 Sep 2020 21:51:21 GMT
       location:
       - https://storagename.table.core.windows.net/Tables('pytablesyncb9bd17bb')
       server:
@@ -43,7 +43,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -63,13 +63,13 @@ interactions:
       Content-Type:
       - application/xml
       Date:
-      - Mon, 22 Jun 2020 17:01:27 GMT
+      - Wed, 16 Sep 2020 21:51:21 GMT
       User-Agent:
-      - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Mon, 22 Jun 2020 17:01:27 GMT
+      - Wed, 16 Sep 2020 21:51:21 GMT
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     method: PUT
     uri: https://storagename.table.core.windows.net/pytablesyncb9bd17bb?comp=acl
   response:
@@ -79,11 +79,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 22 Jun 2020 17:01:27 GMT
+      - Wed, 16 Sep 2020 21:51:21 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     status:
       code: 204
       message: No Content
@@ -97,13 +97,13 @@ interactions:
       Connection:
       - keep-alive
       Date:
-      - Mon, 22 Jun 2020 17:01:27 GMT
+      - Wed, 16 Sep 2020 21:51:21 GMT
       User-Agent:
-      - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Mon, 22 Jun 2020 17:01:27 GMT
+      - Wed, 16 Sep 2020 21:51:21 GMT
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     method: GET
     uri: https://storagename.table.core.windows.net/pytablesyncb9bd17bb?comp=acl
   response:
@@ -113,13 +113,13 @@ interactions:
       content-type:
       - application/xml
       date:
-      - Mon, 22 Jun 2020 17:01:28 GMT
+      - Wed, 16 Sep 2020 21:51:21 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
       - chunked
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     status:
       code: 200
       message: OK
@@ -127,7 +127,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -135,13 +135,13 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Mon, 22 Jun 2020 17:01:28 GMT
+      - Wed, 16 Sep 2020 21:51:21 GMT
       User-Agent:
-      - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Mon, 22 Jun 2020 17:01:28 GMT
+      - Wed, 16 Sep 2020 21:51:21 GMT
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     method: DELETE
     uri: https://storagename.table.core.windows.net/Tables('pytablesyncb9bd17bb')
   response:
@@ -153,13 +153,13 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 22 Jun 2020 17:01:28 GMT
+      - Wed, 16 Sep 2020 21:51:21 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options:
       - nosniff
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     status:
       code: 204
       message: No Content
