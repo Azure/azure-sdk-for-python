@@ -12,7 +12,7 @@ import pdb
 MANIFEST_LOCATION = "https://raw.githubusercontent.com/actions/python-versions/main/versions-manifest.json"
 
 def get_installer_url(requested_version, version_manifest):
-    current_plat = platform.system().tolower()
+    current_plat = platform.system().lower()
 
     print("Current Platform Is {}".format(platform.platform()))
 
@@ -28,7 +28,6 @@ def get_installer_url(requested_version, version_manifest):
             return [windows_installer for installer in x64_installers if installer["platform"] == current_plat][0]
         else:
             return [windows_installer for installer in x64_installers if installer["platform"] == "linux" and installer["platform_version"] =="18.04" ][0]
-
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
