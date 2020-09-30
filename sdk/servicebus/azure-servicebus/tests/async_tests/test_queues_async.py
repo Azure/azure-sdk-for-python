@@ -58,9 +58,6 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 for i in range(10):
                     message = Message("Handler message no. {}".format(i))
                     await sender.send_messages(message, timeout=5)
-                    # This is checking the timeout config on the amqp sender, it doesn't imply the send success or failure
-                    # as there could be ~1ms gap before the code executes into setting the remaining time on the amqp sender
-                    assert 4990 <= sender._handler._msg_timeout <= 5000
 
             with pytest.raises(ServiceBusConnectionError):
                 await (sb_client.get_queue_session_receiver(servicebus_queue.name, session_id="test", max_wait_time=5))._open_with_retry()
