@@ -617,14 +617,16 @@ class CustomFormModel(object):
         self.properties = kwargs.get("properties", None)
 
     @classmethod
-    def _from_generated(cls, model):
+    def _from_generated(cls, model, api_version):
         return cls(
             model_id=model.model_info.model_id,
             status=model.model_info.status,
             training_started_on=model.model_info.created_date_time,
             training_completed_on=model.model_info.last_updated_date_time,
             submodels=CustomFormSubmodel._from_generated_unlabeled(model)
-            if model.keys else CustomFormSubmodel._from_generated_labeled(model),
+            if model.keys else CustomFormSubmodel._from_generated_labeled(
+                model, api_version, display_name=model.model_info.model_name
+            ),
             errors=FormRecognizerError._from_generated(model.train_result.errors)
             if model.train_result else None,
             training_documents=TrainingDocumentInfo._from_generated(model.train_result)
@@ -693,14 +695,21 @@ class CustomFormSubmodel(object):
         ]
 
     @classmethod
-    def _from_generated_labeled(cls, model):
+    def _from_generated_labeled(cls, model, api_version, display_name):
+        if api_version == "2.0":
+            form_type = "form-" + model.model_info.model_id
+        elif display_name:
+            form_type = "custom:" + display_name
+        else:
+            form_type = "custom:" + model.model_info.model_id
+
         return [
             cls(
                 model_id=model.model_info.model_id,
                 accuracy=model.train_result.average_model_accuracy,
                 fields={field.field_name: CustomFormModelField._from_generated_labeled(field)
                         for field in model.train_result.fields} if model.train_result.fields else None,
-                form_type="form-" + model.model_info.model_id  # FIXME: should match form_type in RecognizedForm
+                form_type=form_type
             )
         ] if model.train_result else None
 
@@ -711,7 +720,7 @@ class CustomFormSubmodel(object):
                 accuracy=train_result.average_model_accuracy,
                 fields={field.field_name: CustomFormModelField._from_generated_labeled(field)
                         for field in train_result.fields} if train_result.fields else None,
-                form_type="form-" + train_result.model_id,  # FIXME: should match form_type in RecognizedForm
+                form_type="custom:" + train_result.model_id,
                 model_id=train_result.model_id
             ) for train_result in model.composed_train_results
         ]

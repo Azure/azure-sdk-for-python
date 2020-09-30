@@ -145,11 +145,11 @@ class FormTrainingClient(object):
 
         def callback_v2_0(raw_response):
             model = self._deserialize(self._generated_models.Model, raw_response)
-            return CustomFormModel._from_generated(model)
+            return CustomFormModel._from_generated(model, api_version=self.api_version)
 
         def callback_v2_1(raw_response, _, headers):  # pylint: disable=unused-argument
             model = self._deserialize(self._generated_models.Model, raw_response)
-            return CustomFormModel._from_generated(model)
+            return CustomFormModel._from_generated(model, api_version=self.api_version)
 
         cls = kwargs.pop("cls", None)
         display_name = kwargs.pop("display_name", None)
@@ -309,7 +309,7 @@ class FormTrainingClient(object):
             raise ValueError("model_id cannot be None or empty.")
 
         response = self._client.get_custom_model(model_id=model_id, include_keys=True, error_map=error_map, **kwargs)
-        return CustomFormModel._from_generated(response)
+        return CustomFormModel._from_generated(response, api_version=self.api_version)
 
     @distributed_trace
     def get_copy_authorization(self, resource_id, resource_region, **kwargs):
