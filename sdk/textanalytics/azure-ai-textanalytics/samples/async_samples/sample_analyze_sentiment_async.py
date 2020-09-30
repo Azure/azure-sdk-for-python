@@ -60,7 +60,7 @@ class AnalyzeSentimentSampleAsync(object):
             for sentence in doc.sentences:
                 print("Sentence '{}' has sentiment: {}".format(sentence.text, sentence.sentiment))
                 print("...Sentence is {} characters from the start of the document and is {} characters long".format(
-                    sentence.offset, sentence.length
+                    sentence.offset, len(sentence.text)
                 ))
                 print("...Sentence confidence scores: positive={}; neutral={}; negative={}".format(
                     sentence.confidence_scores.positive,

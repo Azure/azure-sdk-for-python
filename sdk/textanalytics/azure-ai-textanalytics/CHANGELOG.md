@@ -1,5 +1,11 @@
 # Release History
 
+## 5.1.0b2 (unreleased)
+
+**Breaking changes**
+- Removed property `length` from `CategorizedEntity`, `SentenceSentiment`, `LinkedEntityMatch`, `AspectSentiment`, `OpinionSentiment`, and `PiiEntity`.
+To get the length of the text in these models, just call `len()` on the `text` property.
+
 ## 5.1.0b1 (2020-09-17)
 
 **New features**
