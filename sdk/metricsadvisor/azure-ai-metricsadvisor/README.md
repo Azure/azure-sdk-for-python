@@ -86,7 +86,7 @@ Metrics Advisor lets you create and subscribe to real-time alerts. These alerts 
 
 ### Add a data feed from a sample or data source
 
-Metrics Monitor supports connecting different types of data sources. Here is a sample to ingest data from SQL Server.
+Metrics Advisor supports connecting different types of data sources. Here is a sample to ingest data from SQL Server.
 
 ```py
 from azure.ai.metricsadvisor import MetricsAdvisorKeyCredential, MetricsAdvisorAdministrationClient
