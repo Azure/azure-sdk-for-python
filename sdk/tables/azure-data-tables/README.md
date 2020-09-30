@@ -317,7 +317,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][msft_oss_co
 <!-- LINKS -->
 [source_code]:https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables
 [Tables_pypi]:https://aka.ms/azsdk/python/tablespypi
-[Tables_ref_docs]:https://aka.ms/azsdk/python/tablesgitdocs
+[Tables_ref_docs]:https://docs.microsoft.com/en-us/python/api/overview/azure/data-tables-readme-pre?view=azure-python-preview
 [Tables_product_doc]:https://docs.microsoft.com/en-us/azure/cosmos-db/table-introduction
 [Tables_samples]:https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples
 
