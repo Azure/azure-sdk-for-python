@@ -5,6 +5,7 @@ import urllib
 from urllib.request import urlopen
 from packaging.version import Version
 from packaging.version import parse
+import sys
 import pdb
 
 # SOURCE OF THIS FILE: https://github.com/actions/python-versions
@@ -44,7 +45,13 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
     max_precached_version = Version('3.8.6')
-    version_from_spec = Version(args.versionSpec)
+    try:
+        version_from_spec = Version(args.versionSpec)
+    except InvalidVersion:
+        print("Invalid Version Spec. Skipping custom install.")
+        print("##vso[task.setvariable variable=_PythonNeedsInstall;]false")
+        exit(0)
+
 
     with urllib.request.urlopen(MANIFEST_LOCATION) as url:
         version_manifest = json.load(url)
