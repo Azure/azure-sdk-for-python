@@ -355,6 +355,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         :param str name: The name for the anomaly detection configuration
         :param str metric_id: Required. metric unique id.
         :param whole_series_detection_condition: Required.
+            Conditions to detect anomalies in all time series of a metric.
         :type whole_series_detection_condition: ~azure.ai.metricsadvisor.models.MetricDetectionCondition
         :keyword str description: anomaly detection configuration description.
         :keyword series_group_detection_conditions: detection configuration for series group.
@@ -408,7 +409,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         :param data_feed_id: The data feed unique id.
         :type data_feed_id: str
         :return: DataFeed
-        :rtype: azure.ai.metricsadvisor.models.DataFeed
+        :rtype: ~azure.ai.metricsadvisor.models.DataFeed
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -517,8 +518,8 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
 
         :param data_feed_id: The data feed unique id.
         :type data_feed_id: str
-        :return: DataFeedIngestionProgress, containing latest_success_timestamp
-            and latest_active_timestamp
+        :return: DataFeedIngestionProgress, containing `latest_success_timestamp`
+            and `latest_active_timestamp`
         :rtype: ~azure.ai.metricsadvisor.models.DataFeedIngestionProgress
         :raises ~azure.core.exceptions.HttpResponseError:
 
@@ -690,7 +691,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
             all-up value.
         :keyword rollup_type: Mark if the data feed needs rollup. Possible values include: "NoRollup",
             "AutoRollup", "AlreadyRollup". Default value: "AutoRollup".
-        :paramtype roll_up_type: str or ~azure.ai.metricsadvisor.models.DataFeedRollupType
+        :paramtype rollup_type: str or ~azure.ai.metricsadvisor.models.DataFeedRollupType
         :keyword list[str] auto_rollup_group_by_column_names: Roll up columns.
         :keyword rollup_method: Roll up method. Possible values include: "None", "Sum", "Max", "Min",
             "Avg", "Count".
@@ -851,6 +852,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         :keyword str name: The name for the anomaly detection configuration
         :keyword str metric_id: metric unique id.
         :keyword whole_series_detection_condition: Required.
+            Conditions to detect anomalies in all time series of a metric.
         :paramtype whole_series_detection_condition: ~azure.ai.metricsadvisor.models.MetricDetectionCondition
         :keyword str description: anomaly detection configuration description.
         :keyword series_group_detection_conditions: detection configuration for series group.
@@ -1096,7 +1098,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         :param detection_configuration_id: anomaly detection configuration unique id.
         :type detection_configuration_id: str
         :return: Pageable of AnomalyAlertConfiguration
-        :rtype: ItemPaged[AnomalyAlertConfiguration]
+        :rtype: ~azure.core.paging.ItemPaged[AnomalyAlertConfiguration]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -1128,7 +1130,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         :param metric_id: metric unique id.
         :type metric_id: str
         :return: Pageable of AnomalyDetectionConfiguration
-        :rtype: ItemPaged[AnomalyDetectionConfiguration]
+        :rtype: ~azure.core.paging.ItemPaged[AnomalyDetectionConfiguration]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:

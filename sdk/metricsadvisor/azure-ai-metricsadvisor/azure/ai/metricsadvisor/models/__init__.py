@@ -38,7 +38,8 @@ from .._generated.models._azure_cognitive_service_metrics_advisor_restapi_open_a
     AnomalyValue,
     ChangePointValue,
     PeriodType,
-    FeedbackType
+    FeedbackType,
+    TimeMode
 )
 
 from .._generated.models import (
@@ -48,12 +49,11 @@ from .._generated.models import (
     DetectionAnomalyFilterCondition,
     DimensionGroupIdentity,
     DetectionIncidentFilterCondition,
-    DimensionGroupConfiguration,
-    SeriesConfiguration,
     EnrichmentStatus,
     MetricSeriesItem as MetricSeriesDefinition,
     IngestionStatus as DataFeedIngestionStatus,
-    SeriesIdentity
+    SeriesIdentity,
+    SeverityFilterCondition
 )
 
 from ._models import (
@@ -110,7 +110,8 @@ from ._models import (
     AzureDataLakeStorageGen2DataFeed,
     ElasticsearchDataFeed,
     MetricAnomalyAlertScopeType,
-    DataFeedRollupType
+    DataFeedRollupType,
+    IncidentRootCause
 )
 
 
@@ -128,8 +129,6 @@ __all__ = (
     "Incident",
     "DetectionIncidentFilterCondition",
     "AnomalyDetectionConfiguration",
-    "DimensionGroupConfiguration",
-    "SeriesConfiguration",
     "MetricAnomalyAlertConfigurationsOperator",
     "DataFeedStatus",
     "DataFeedGranularity",
@@ -189,11 +188,13 @@ __all__ = (
     "ChangeThresholdCondition",
     "HardThresholdCondition",
     "SeriesIdentity",
-    "DataFeedIngestionStatus",
     "AzureDataLakeStorageGen2DataFeed",
     "ElasticsearchDataFeed",
     "AnomalyValue",
     "ChangePointValue",
     "PeriodType",
-    "FeedbackType"
+    "FeedbackType",
+    "TimeMode",
+    "IncidentRootCause",
+    "SeverityFilterCondition"
 )
