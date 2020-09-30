@@ -1,0 +1,60 @@
+parameters:
+  versionSpec: ''
+
+steps:
+  # use python 3.8 for tooling. packaging. platform.
+  - task: UsePythonVersion@0
+    displayName: "Use Python 3.8"
+    inputs:
+      versionSpec: 3.8
+
+  - pwsh: |
+      pip install packaging
+    displayName: Prep Environment
+
+  # select the appropriate version from manifest if present
+  - task: PythonScript@0
+    displayName: 'Check Version Spec Against Known Versions'
+    inputs:
+     scriptPath: 'scripts/devops_tasks/resolve_installer_location.py'
+     arguments: '${{ parameters.versionSpec }}'
+
+  # install from location discovered in manifest
+  - pwsh: |
+      $installerFolder = "../_installer"
+      $uri = $(_PythonInstallerLocation)
+
+      if ([Environment]::GetEnvironmentVariable("Agent.OS") == "Windows_NT") {
+        $outFile = "local.zip"
+      }
+      else {
+        $outFile = "local.tar.gz"
+      }
+
+      mkdir $installerFolder
+
+      Invoke-WebRequest -Method GET `
+        -Uri $uri `
+        -OutFile "$installerFolder/$outFile"
+
+      Push-Location $installerFolder
+
+      # unzip and install
+      if ([Environment]::GetEnvironmentVariable("Agent.OS") == "Windows_NT") {
+        Expand-Archive -Path "local.zip" -DestinationPath .
+        ./setup.ps1
+      }
+      else {
+        tar -xvf "local.tar.gz"
+        sh setup.sh
+      }
+
+      Pop-Location
+    displayName: 'Install Py ${{ parameters.versionSpec }}'
+    condition: eq($(_PythonNeedsInstall), 'true')
+
+  # use
+  - task: UsePythonVersion@0
+    displayName: "Use Python $(PythonVersion)"
+    inputs:
+      versionSpec: ${{ parameters.versionSpec }}
