@@ -56,8 +56,8 @@ if __name__ == "__main__":
         print("Requested version {} is newer than versions pre-cached on agent. Invoking.")
         print("##vso[task.setvariable variable=_PythonNeedsInstall;]true")
 
-        version_url = get_installer_url(args.versionSpec, version_dict)
-        print("##vso[task.setvariable variable=_PythonInstallerLocation;]{}".format(version_url))
+        install_file_details = get_installer_url(args.versionSpec, version_dict)
+        print("##vso[task.setvariable variable=_PythonInstallerLocation;]{}".format(install_file_details["download_url"]))
     else:
         print("##vso[task.setvariable variable=_PythonNeedsInstall;]false")
 
