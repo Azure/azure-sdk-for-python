@@ -12,7 +12,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b2 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
     uri: https://westcentralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.2/sentiment?showStats=false&stringIndexType=UnicodeCodePoint
   response:
@@ -32,14 +32,14 @@ interactions:
         :0.06},\"offset\":0,\"length\":4,\"text\":\"\u732B\u306F\u5E78\u305B\"}],\"\
         warnings\":[]}],\"errors\":[],\"modelVersion\":\"2020-04-01\"}"
     headers:
-      apim-request-id: 8fc4ad88-d52a-4eee-8a06-de3235568d35
+      apim-request-id: aa4f0143-ea60-4ed9-8f2f-746f970d460e
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Thu, 10 Sep 2020 15:25:24 GMT
+      date: Wed, 30 Sep 2020 16:02:28 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '126'
+      x-envoy-upstream-service-time: '141'
     status:
       code: 200
       message: OK
