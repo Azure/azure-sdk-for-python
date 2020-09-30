@@ -3,8 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-from requests.structures import CaseInsensitiveDict
 from binascii import Error as Base64Error
+from requests.structures import CaseInsensitiveDict
 from azure.core import MatchConditions
 from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.policies import (
