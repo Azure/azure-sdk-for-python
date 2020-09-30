@@ -150,7 +150,6 @@ deserialized_event = consumer.decode_eventgrid_event(eg_storage_dict)
 
 # both allow access to raw properties as strings
 time_string = deserialized_event.event_time
-time_string = deserialized_event["event_time"]
 ```
 
 ### Consume a Cloud Event
