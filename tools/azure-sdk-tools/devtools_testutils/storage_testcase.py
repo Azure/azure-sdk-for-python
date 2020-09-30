@@ -32,7 +32,7 @@ class StorageAccountPreparer(AzureMgmtPreparer):
                  resource_group_parameter_name=RESOURCE_GROUP_PARAM,
                  disable_recording=True, playback_fake_resource=None,
                  client_kwargs=None,
-                 random_name_enabled=False,
+                 random_name_enabled=True,
                  use_cache=False):
         super(StorageAccountPreparer, self).__init__(name_prefix, 24,
                                                      disable_recording=disable_recording,

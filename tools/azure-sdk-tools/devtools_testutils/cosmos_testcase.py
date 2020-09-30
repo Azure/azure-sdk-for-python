@@ -35,7 +35,7 @@ class CosmosAccountPreparer(AzureMgmtPreparer):
         disable_recording=True,
         playback_fake_resource=None,
         client_kwargs=None,
-        random_name_enabled=False,
+        random_name_enabled=True,
         use_cache=False
     ):
         super(CosmosAccountPreparer, self).__init__(
@@ -122,4 +122,4 @@ class CosmosAccountPreparer(AzureMgmtPreparer):
                        'decorator @{} in front of this cosmos account preparer.'
             raise AzureTestError(template.format(ResourceGroupPreparer.__name__))
 
-CachedCosmosAccountPreparer = functools.partial(CosmosAccountPreparer, use_cache=True, random_name_enabled=False)
+CachedCosmosAccountPreparer = functools.partial(CosmosAccountPreparer, use_cache=True, random_name_enabled=True)
