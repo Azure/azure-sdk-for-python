@@ -245,7 +245,7 @@ def serialize_rule_key_values(entry_ele, rule_descripiton):
 
 # Helper functions for common parameter validation errors in the client.
 def _validate_entity_name_type(entity_name, display_name='entity name'):
-    # type: (str, str) -> None 
+    # type: (str, str) -> None
     if not isinstance(entity_name, str):
         raise TypeError("{} must be a string, not {}".format(display_name, type(entity_name)))
 
