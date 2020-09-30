@@ -27,7 +27,7 @@ def get_installer_url(requested_version, version_manifest):
         elif current_plat == "darwin":
             return [windows_installer for installer in x64_installers if installer["platform"] == current_plat][0]
         else:
-            pass
+            return [windows_installer for installer in x64_installers if installer["platform"] == "linux" and installer["platform_version"] =="18.04" ][0]
 
 
 if __name__ == "__main__":
