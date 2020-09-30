@@ -51,7 +51,7 @@ steps:
 
       Pop-Location
     displayName: 'Install Py ${{ parameters.versionSpec }}'
-    condition: eq($(_PythonNeedsInstall), 'true')
+    condition: eq(variables['_PythonNeedsInstall'], 'true')
 
   # use
   - task: UsePythonVersion@0
