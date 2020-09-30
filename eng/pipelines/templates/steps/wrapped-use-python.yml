@@ -22,7 +22,7 @@ steps:
   # install from location discovered in manifest
   - pwsh: |
       $installerFolder = "../_installer"
-      $uri = $(_PythonInstallerLocation)
+      $uri = "$(_PythonInstallerLocation)"
 
       if ([Environment]::GetEnvironmentVariable("Agent.OS") == "Windows_NT") {
         $outFile = "local.zip"
