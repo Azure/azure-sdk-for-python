@@ -131,8 +131,12 @@ class ServiceBusSender(BaseHandler, SenderMixin):
 
     async def _send(self, message, timeout=None, last_exception=None):
         await self._open()
-        self._set_msg_timeout(timeout, last_exception)
-        await self._handler.send_message_async(message.message)
+        default_timeout = self._handler._msg_timeout  # pylint: disable=protected-access
+        try:
+            self._set_msg_timeout(timeout, last_exception)
+            await self._handler.send_message_async(message.message)
+        finally:  # reset the timeout of the handler back to the default value
+            self._set_msg_timeout(default_timeout, None)
 
     async def schedule_messages(self, messages, schedule_time_utc, **kwargs):
         # type: (Union[Message, List[Message]], datetime.datetime, Any) -> List[int]
@@ -142,7 +146,8 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         :type messages: ~azure.servicebus.Message or list[~azure.servicebus.Message]
         :param schedule_time_utc: The utc date and time to enqueue the messages.
         :type schedule_time_utc: ~datetime.datetime
-        :keyword float timeout: The total operation timeout in seconds including all the retries.
+        :keyword float timeout: The total operation timeout in seconds including all the retries. The value must be
+         greater than 0 if specified. The default value is None, meaning no timeout.
         :rtype: list[int]
 
         .. admonition:: Example:
@@ -155,8 +160,10 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 :caption: Schedule a message to be sent in future
         """
         # pylint: disable=protected-access
-        timeout = kwargs.pop("timeout", None)
         await self._open()
+        timeout = kwargs.pop("timeout", None)
+        if timeout is not None and timeout <= 0:
+            raise ValueError("The timeout must be greater than 0.")
         if isinstance(messages, Message):
             request_body = self._build_schedule_request(schedule_time_utc, messages)
         else:
@@ -175,7 +182,8 @@ class ServiceBusSender(BaseHandler, SenderMixin):
 
         :param sequence_numbers: The sequence numbers of the scheduled messages.
         :type sequence_numbers: int or list[int]
-        :keyword float timeout: The total operation timeout in seconds including all the retries.
+        :keyword float timeout: The total operation timeout in seconds including all the retries. The value must be
+         greater than 0 if specified. The default value is None, meaning no timeout.
         :rtype: None
         :raises: ~azure.servicebus.exceptions.ServiceBusError if messages cancellation failed due to message already
          cancelled or enqueued.
@@ -189,8 +197,10 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 :dedent: 4
                 :caption: Cancelling messages scheduled to be sent in future
         """
-        timeout = kwargs.pop("timeout", None)
         await self._open()
+        timeout = kwargs.pop("timeout", None)
+        if timeout is not None and timeout <= 0:
+            raise ValueError("The timeout must be greater than 0.")
         if isinstance(sequence_numbers, int):
             numbers = [types.AMQPLong(sequence_numbers)]
         else:
@@ -252,7 +262,8 @@ class ServiceBusSender(BaseHandler, SenderMixin):
 
         :param message: The ServiceBus message to be sent.
         :type message: ~azure.servicebus.Message or ~azure.servicebus.BatchMessage or list[~azure.servicebus.Message]
-        :keyword float timeout: The total operation timeout in seconds including all the retries.
+        :keyword float timeout: The total operation timeout in seconds including all the retries. The value must be
+         greater than 0 if specified. The default value is None, meaning no timeout.
         :rtype: None
         :raises:
                 :class: ~azure.servicebus.exceptions.OperationTimeoutError if sending times out.
@@ -274,6 +285,8 @@ class ServiceBusSender(BaseHandler, SenderMixin):
 
         """
         timeout = kwargs.pop("timeout", None)
+        if timeout is not None and timeout <= 0:
+            raise ValueError("The timeout must be greater than 0.")
         message = transform_messages_to_sendable_if_needed(message)
         try:
             batch = await self.create_batch()
@@ -290,7 +303,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             self._send,
             message=message,
             timeout=timeout,
-            require_timeout=True,
+            operation_requires_timeout=True,
             require_last_exception=True
         )
 

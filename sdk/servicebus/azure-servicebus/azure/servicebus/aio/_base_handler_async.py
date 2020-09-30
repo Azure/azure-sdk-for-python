@@ -9,6 +9,7 @@ import time
 from typing import TYPE_CHECKING, Any, Callable, Optional, Dict
 
 import uamqp
+from uamqp import compat
 from uamqp.message import MessageProperties
 
 from azure.core.credentials import AccessToken
@@ -23,6 +24,7 @@ from .._common.constants import (
     CONTAINER_PREFIX, MANAGEMENT_PATH_SUFFIX)
 from ..exceptions import (
     ServiceBusError,
+    OperationTimeoutError,
     _create_servicebus_exception
 )
 
@@ -90,7 +92,7 @@ class BaseHandler:
         self._container_id = CONTAINER_PREFIX + str(uuid.uuid4())[:8]
         self._config = Configuration(**kwargs)
         self._running = False
-        self._handler = None  # type: uamqp.AMQPClient
+        self._handler = None  # type: uamqp.AMQPClientAsync
         self._auth_uri = None
         self._properties = create_properties(self._config.user_agent)
 
@@ -150,16 +152,15 @@ class BaseHandler:
     async def _do_retryable_operation(self, operation, timeout=None, **kwargs):
         # type: (Callable, Optional[float], Any) -> Any
         require_last_exception = kwargs.pop("require_last_exception", False)
-        require_timeout = kwargs.pop("require_timeout", False)
+        operation_requires_timeout = kwargs.pop("operation_requires_timeout", False)
         retried_times = 0
-        last_exception = None
         max_retries = self._config.retry_total
 
-        abs_timeout_time = (time.time() + timeout) if (require_timeout and timeout) else None
+        abs_timeout_time = (time.time() + timeout) if (operation_requires_timeout and timeout) else None
 
         while retried_times <= max_retries:
             try:
-                if require_timeout and abs_timeout_time:
+                if operation_requires_timeout and abs_timeout_time:
                     remaining_timeout = abs_timeout_time - time.time()
                     kwargs["timeout"] = remaining_timeout
                 return await operation(**kwargs)
@@ -193,6 +194,21 @@ class BaseHandler:
         **kwargs
     ):
         # type: (bytes, uamqp.Message, Callable, bool, Optional[float], Any) -> uamqp.Message
+        """
+        Execute an amqp management operation.
+
+        :param bytes mgmt_operation: The type of operation to be performed. This value will
+         be service-specific, but common values include READ, CREATE and UPDATE.
+         This value will be added as an application property on the message.
+        :param message: The message to send in the management request.
+        :paramtype message: ~uamqp.message.Message
+        :param callback: The callback which is used to parse the returning message.
+        :paramtype callback: Callable[int, ~uamqp.message.Message, str]
+        :param keep_alive_associated_link: A boolean flag for keeping associated amqp sender/receiver link alive when
+         executing operation on mgmt links.
+        :param timeout: timeout in seconds for executing the mgmt operation.
+        :rtype: None
+        """
         await self._open()
 
         application_properties = {}
@@ -219,6 +235,8 @@ class BaseHandler:
                 timeout=timeout * 1000 if timeout else None,
                 callback=callback)
         except Exception as exp:  # pylint: disable=broad-except
+            if isinstance(exp, compat.TimeoutException):
+                raise OperationTimeoutError("Management operation timed out.", inner_exception=exp)
             raise ServiceBusError("Management request failed: {}".format(exp), exp)
 
     async def _mgmt_request_response_with_retry(self, mgmt_operation, message, callback, timeout=None, **kwargs):
@@ -229,7 +247,7 @@ class BaseHandler:
             message=message,
             callback=callback,
             timeout=timeout,
-            require_timeout=True,
+            operation_requires_timeout=True,
             **kwargs
         )
 

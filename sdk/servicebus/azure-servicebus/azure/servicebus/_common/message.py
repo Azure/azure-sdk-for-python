@@ -617,7 +617,6 @@ class PeekedMessage(Message):
             via_partition_key=self.via_partition_key
         )
 
-
     @property
     def dead_letter_error_description(self):
         # type: () -> Optional[str]
@@ -1059,7 +1058,8 @@ class ReceivedMessage(ReceivedMessageBase):
         Lock renewal can be performed as a background task by registering the message with an
         `azure.servicebus.AutoLockRenew` instance.
 
-        :keyword float timeout: The total operation timeout in seconds including all the retries.
+        :keyword float timeout: The total operation timeout in seconds including all the retries. The value must be
+         greater than 0 if specified. The default value is None, meaning no timeout.
         :returns: The utc datetime the lock is set to expire at.
         :rtype: datetime.datetime
         :raises: TypeError if the message is sessionful.
@@ -1077,6 +1077,9 @@ class ReceivedMessage(ReceivedMessageBase):
             raise ValueError("Unable to renew lock - no lock token found.")
 
         timeout = kwargs.pop("timeout", None)
+        if timeout is not None and timeout <= 0:
+            raise ValueError("The timeout must be greater than 0.")
+
         expiry = self._receiver._renew_locks(token, timeout=timeout)  # type: ignore
         self._expiry = utc_from_timestamp(expiry[MGMT_RESPONSE_MESSAGE_EXPIRATION][0]/1000.0)  # type: datetime.datetime
 

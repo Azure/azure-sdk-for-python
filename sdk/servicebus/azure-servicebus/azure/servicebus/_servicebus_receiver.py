@@ -415,7 +415,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             self._receive,
             max_message_count=max_message_count,
             timeout=max_wait_time,
-            require_timeout=True
+            operation_requires_timeout=True
         )
 
     def receive_deferred_messages(self, sequence_numbers, **kwargs):
@@ -427,7 +427,8 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
 
         :param Union[int,List[int]] sequence_numbers: A list of the sequence numbers of messages that have been
          deferred.
-        :keyword float timeout: The total operation timeout in seconds including all the retries.
+        :keyword float timeout: The total operation timeout in seconds including all the retries. The value must be
+         greater than 0 if specified. The default value is None, meaning no timeout.
         :rtype: List[~azure.servicebus.ReceivedMessage]
 
         .. admonition:: Example:
@@ -442,6 +443,8 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         """
         self._check_live()
         timeout = kwargs.pop("timeout", None)
+        if timeout is not None and timeout <= 0:
+            raise ValueError("The timeout must be greater than 0.")
         if isinstance(sequence_numbers, six.integer_types):
             sequence_numbers = [sequence_numbers]
         if not sequence_numbers:
@@ -467,8 +470,8 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         )
         return messages
 
-    def peek_messages(self, max_message_count=1, sequence_number=None, **kwargs):
-        # type: (int, Optional[int], Any) -> List[PeekedMessage]
+    def peek_messages(self, max_message_count=1, **kwargs):
+        # type: (int, Any) -> List[PeekedMessage]
         """Browse messages currently pending in the queue.
 
         Peeked messages are not removed from queue, nor are they locked. They cannot be completed,
@@ -476,8 +479,9 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
 
         :param int max_message_count: The maximum number of messages to try and peek. The default
          value is 1.
-        :param int sequence_number: A message sequence number from which to start browsing messages.
-        :keyword float timeout: The total operation timeout in seconds including all the retries.
+        :keyword int sequence_number: A message sequence number from which to start browsing messages.
+        :keyword float timeout: The total operation timeout in seconds including all the retries. The value must be
+         greater than 0 if specified. The default value is None, meaning no timeout.
 
         :rtype: List[~azure.servicebus.PeekedMessage]
 
@@ -492,7 +496,10 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
 
         """
         self._check_live()
+        sequence_number = kwargs.pop("sequence_number", 0)
         timeout = kwargs.pop("timeout", None)
+        if timeout is not None and timeout <= 0:
+            raise ValueError("The timeout must be greater than 0.")
         if not sequence_number:
             sequence_number = self._last_received_sequenced_number or 1
         if int(max_message_count) < 1:

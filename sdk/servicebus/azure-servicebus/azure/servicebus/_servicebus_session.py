@@ -97,7 +97,8 @@ class ServiceBusSession(BaseSession):
 
         Returns None if no state has been set.
 
-        :keyword float timeout: The total operation timeout in seconds including all the retries.
+        :keyword float timeout: The total operation timeout in seconds including all the retries. The value must be
+         greater than 0 if specified. The default value is None, meaning no timeout.
         :rtype: str
 
         .. admonition:: Example:
@@ -111,6 +112,8 @@ class ServiceBusSession(BaseSession):
         """
         self._check_live()
         timeout = kwargs.pop("timeout", None)
+        if timeout is not None and timeout <= 0:
+            raise ValueError("The timeout must be greater than 0.")
         response = self._receiver._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_GET_SESSION_STATE_OPERATION,
             {MGMT_REQUEST_SESSION_ID: self._session_id},
@@ -129,7 +132,8 @@ class ServiceBusSession(BaseSession):
 
         :param state: The state value.
         :type state: Union[str, bytes, bytearray]
-        :keyword float timeout: The total operation timeout in seconds including all the retries.
+        :keyword float timeout: The total operation timeout in seconds including all the retries. The value must be
+         greater than 0 if specified. The default value is None, meaning no timeout.
 
         .. admonition:: Example:
 
@@ -142,6 +146,8 @@ class ServiceBusSession(BaseSession):
         """
         self._check_live()
         timeout = kwargs.pop("timeout", None)
+        if timeout is not None and timeout <= 0:
+            raise ValueError("The timeout must be greater than 0.")
         state = state.encode(self._encoding) if isinstance(state, six.text_type) else state
         return self._receiver._mgmt_request_response_with_retry(  # type: ignore
             REQUEST_RESPONSE_SET_SESSION_STATE_OPERATION,
@@ -163,7 +169,8 @@ class ServiceBusSession(BaseSession):
         This operation can also be performed as a threaded background task by registering the session
         with an `azure.servicebus.AutoLockRenew` instance.
 
-        :keyword float timeout: The total operation timeout in seconds including all the retries.
+        :keyword float timeout: The total operation timeout in seconds including all the retries. The value must be
+         greater than 0 if specified. The default value is None, meaning no timeout.
         :returns: The utc datetime the lock is set to expire at.
         :rtype: datetime.datetime
 
@@ -178,6 +185,8 @@ class ServiceBusSession(BaseSession):
         """
         self._check_live()
         timeout = kwargs.pop("timeout", None)
+        if timeout is not None and timeout <= 0:
+            raise ValueError("The timeout must be greater than 0.")
         expiry = self._receiver._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_RENEW_SESSION_LOCK_OPERATION,
             {MGMT_REQUEST_SESSION_ID: self._session_id},

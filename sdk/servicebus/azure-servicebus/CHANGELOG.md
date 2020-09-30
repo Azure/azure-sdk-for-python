@@ -11,7 +11,13 @@
   - `ReceivedMessage`: `renew_lock`
 
 **Breaking Changes**
+
 * Passing any type other than `ReceiveMode` as parameter `receive_mode` now throws a `TypeError` instead of `AttributeError`.
+
+**BugFixes**
+
+* Updated uAMQP dependency to 1.2.11.
+  - Fixed bug where amqp message `footer` and `delivery_annotation` were not encoded into the outgoing payload.
 
 ## 7.0.0b6 (2020-09-10)
 
