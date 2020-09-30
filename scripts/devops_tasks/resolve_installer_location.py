@@ -6,7 +6,7 @@ from urllib.request import urlopen
 
 from packaging.version import Version
 from packaging.version import parse
-from pacakging.version import InvalidVersion
+from packaging.version import InvalidVersion
 
 import sys
 import pdb
