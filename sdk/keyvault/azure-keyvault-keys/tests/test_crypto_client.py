@@ -260,14 +260,13 @@ class CryptoClientTests(KeyVaultTestCase):
         valid_key = key_client.create_rsa_key("rsa-valid", not_before=the_year_3000, expires_on=the_year_3001)
         test_operations(valid_key, (str(the_year_3000), str(the_year_3001)), EncryptionAlgorithm, rsa_wrap_algorithms)
 
-    class _CustomHookPolicy(object):
+
+def test_custom_hook_policy():
+    class CustomHookPolicy(object):
         pass
 
-    @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer()
-    @CryptoClientPreparer(client_kwargs={"custom_hook_policy": _CustomHookPolicy()})
-    def test_custom_hook_policy(self, key_client, credential, **kwargs):
-        assert isinstance(key_client._client._config.custom_hook_policy, CryptoClientTests._CustomHookPolicy)
+    client = CryptographyClient("https://localhost/fake/key/version", object(), custom_hook_policy=CustomHookPolicy())
+    assert isinstance(client._client._config.custom_hook_policy, CustomHookPolicy)
 
 
 def test_initialization_given_key():
