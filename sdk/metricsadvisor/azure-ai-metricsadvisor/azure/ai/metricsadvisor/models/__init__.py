@@ -38,7 +38,8 @@ from .._generated.models._azure_cognitive_service_metrics_advisor_restapi_open_a
     AnomalyValue,
     ChangePointValue,
     PeriodType,
-    FeedbackType
+    FeedbackType,
+    TimeMode
 )
 
 from .._generated.models import (
@@ -110,7 +111,8 @@ from ._models import (
     AzureDataLakeStorageGen2DataFeed,
     ElasticsearchDataFeed,
     MetricAnomalyAlertScopeType,
-    DataFeedRollupType
+    DataFeedRollupType,
+    IncidentRootCause
 )
 
 
@@ -195,5 +197,7 @@ __all__ = (
     "AnomalyValue",
     "ChangePointValue",
     "PeriodType",
-    "FeedbackType"
+    "FeedbackType",
+    "TimeMode",
+    "IncidentRootCause"
 )

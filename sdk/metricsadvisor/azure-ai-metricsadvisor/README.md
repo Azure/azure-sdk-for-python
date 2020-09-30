@@ -22,8 +22,8 @@ pip install azure-ai-metricsadvisor --pre
 
 You will need two keys to authenticate the client:
 
-The subscription key to your Metrics Advisor resource. You can find this in the Keys and Endpoint section of your resource in the Azure portal.
-The API key for your Metrics Advisor instance. You can find this in the web portal for Metrics Advisor, in API keys on the left navigation menu.
+1) The subscription key to your Metrics Advisor resource. You can find this in the Keys and Endpoint section of your resource in the Azure portal.
+2) The API key for your Metrics Advisor instance. You can find this in the web portal for Metrics Advisor, in API keys on the left navigation menu.
 
 We can use the keys to create a new `MetricsAdvisorClient` or `MetricsAdvisorAdministrationClient`.
 
@@ -54,7 +54,7 @@ A `DataFeed` is what Metrics Advisor ingests from your data source, such as Cosm
 
 - timestamps
 - zero or more dimensions
-- one or more measures.
+- one or more measures
 
 ### Metric
 
@@ -313,6 +313,7 @@ from azure.ai.metricsadvisor import MetricsAdvisorKeyCredential, MetricsAdvisorC
 service_endpoint = os.getenv("METRICS_ADVISOR_ENDPOINT")
 subscription_key = os.getenv("METRICS_ADVISOR_SUBSCRIPTION_KEY")
 api_key = os.getenv("METRICS_ADVISOR_API_KEY")
+alert_id = os.getenv("METRICS_ADVISOR_ALERT_ID")
 
 client = MetricsAdvisorClient(service_endpoint,
     MetricsAdvisorKeyCredential(subscription_key, api_key)
@@ -327,15 +328,6 @@ results = client.list_alerts_for_alert_configuration(
 for result in results:
     print("Alert id: {}".format(result.id))
     print("Create on: {}".format(result.created_on))
-
-service_endpoint = os.getenv("METRICS_ADVISOR_ENDPOINT")
-subscription_key = os.getenv("METRICS_ADVISOR_SUBSCRIPTION_KEY")
-api_key = os.getenv("METRICS_ADVISOR_API_KEY")
-alert_id = os.getenv("METRICS_ADVISOR_ALERT_ID")
-
-client = MetricsAdvisorClient(service_endpoint,
-    MetricsAdvisorKeyCredential(subscription_key, api_key)
-)
 
 results = client.list_anomalies_for_alert(
     alert_configuration_id=alert_config_id,
@@ -433,6 +425,7 @@ additional questions or comments.
 [package]: https://aka.ms/azsdk/python/metricsadvisor/pypi
 [ma_service]: https://go.microsoft.com/fwlink/?linkid=2142156
 [python_logging]: https://docs.python.org/3.5/library/logging.html
+[azure_core]: https://aka.ms/azsdk/python/core/docs#module-azure.core.exceptions
 
 [cla]: https://cla.microsoft.com
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/

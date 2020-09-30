@@ -67,16 +67,18 @@ if TYPE_CHECKING:
 class MetricsAdvisorClient(object):
     """Represents an client that calls restful API of Azure Metrics Advisor service.
 
-        :param str endpoint: Url to the Azure Metrics Advisor service endpoint
-        :param credential: credential Used to authenticate requests to the service.
-        :type credential: azure.ai.metricsadvisor.MetricsAdvisorKeyCredential
-        :keyword Pipeline pipeline: If omitted, the standard pipeline is used.
-        :keyword HttpTransport transport: If omitted, the standard pipeline is used.
-        :keyword list[HTTPPolicy] policies: If omitted, the standard pipeline is used.
+    :param str endpoint: Supported Cognitive Services endpoints (protocol and hostname,
+        for example: https://:code:`<resource-name>`.cognitiveservices.azure.com).
+    :param credential: An instance of ~azure.ai.metricsadvisor.MetricsAdvisorKeyCredential.
+        Requires both subscription key and API key.
+    :type credential: ~azure.ai.metricsadvisor.MetricsAdvisorKeyCredential
+    :keyword Pipeline pipeline: If omitted, the standard pipeline is used.
+    :keyword HttpTransport transport: If omitted, the standard pipeline is used.
+    :keyword list[HTTPPolicy] policies: If omitted, the standard pipeline is used.
 
     """
     def __init__(self, endpoint, credential, **kwargs):
-        # type: (str, MetricsAdvisorKeyCredential, dict) -> None
+        # type: (str, MetricsAdvisorKeyCredential, Any) -> None
         try:
             if not endpoint.lower().startswith('http'):
                 endpoint = "https://" + endpoint
@@ -167,11 +169,11 @@ class MetricsAdvisorClient(object):
         """Create a new metric feedback.
 
         :param feedback: metric feedback.
-        :type feedback: ~azure.ai.metriscadvisor.models.AnomalyFeedback or
-            ~azure.ai.metriscadvisor.models.ChangePointFeedback or
-            ~azure.ai.metriscadvisor.models.CommentFeedback or
-            ~azure.ai.metriscadvisor.models.PeriodFeedback.
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :type feedback: ~azure.ai.metricsadvisor.models.AnomalyFeedback or
+            ~azure.ai.metricsadvisor.models.ChangePointFeedback or
+            ~azure.ai.metricsadvisor.models.CommentFeedback or
+            ~azure.ai.metricsadvisor.models.PeriodFeedback
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
@@ -195,11 +197,11 @@ class MetricsAdvisorClient(object):
 
         :param str feedback_id: the id of the feedback.
         :return: The feedback object
-        :rtype: ~azure.ai.metriscadvisor.models.AnomalyFeedback or
-            ~azure.ai.metriscadvisor.models.ChangePointFeedback or
-            ~azure.ai.metriscadvisor.models.CommentFeedback or
-            ~azure.ai.metriscadvisor.models.PeriodFeedback.
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :rtype: ~azure.ai.metricsadvisor.models.AnomalyFeedback or
+            ~azure.ai.metricsadvisor.models.ChangePointFeedback or
+            ~azure.ai.metricsadvisor.models.CommentFeedback or
+            ~azure.ai.metricsadvisor.models.PeriodFeedback
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
@@ -239,8 +241,9 @@ class MetricsAdvisorClient(object):
                 "FeedbackCreatedTime".
         :paramtype time_mode: str or ~azure.ai.metricsadvisor.models.FeedbackQueryTimeMode
         :return: Pageable list of MetricFeedback
-        :rtype: ~azure.core.paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.MetricFeedback]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[
+            Union[AnomalyFeedback, ChangePointFeedback, CommentFeedback, PeriodFeedback]]
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
@@ -289,8 +292,8 @@ class MetricsAdvisorClient(object):
         :param incident_id: incident id.
         :type incident_id: str
         :return: Pageable of root cause for incident
-        :rtype: AsyncItemPaged[~azure.ai.metriscadvisor.models.IncidentRootCause]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.IncidentRootCause]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
         return self._client.get_root_cause_of_incident_by_anomaly_detection_configuration(  # type: ignore
@@ -319,8 +322,8 @@ class MetricsAdvisorClient(object):
         :param ~datetime.datetime start_time: start time filter under chosen time mode.
         :param ~datetime.datetime end_time: end time filter under chosen time mode.
         :return: Pageable of SeriesResult
-        :rtype: AsyncItemPaged[~azure.ai.metricsadvisor.models.SeriesResult]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.SeriesResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
         series_list = [
@@ -355,8 +358,9 @@ class MetricsAdvisorClient(object):
         :type time_mode: str or ~azure.ai.metricsadvisor.models.TimeMode
         :keyword int skip:
         :return: Alerts under anomaly alert configuration.
-        :rtype: ~azure.core.paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.Alert]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.Alert]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/async_samples/sample_anomaly_alert_configuration_async.py
@@ -394,8 +398,9 @@ class MetricsAdvisorClient(object):
         :type alert_id: str
         :keyword int skip:
         :return: Anomalies under a specific alert.
-        :rtype: ~azure.core.paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.Anomaly]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.Anomaly]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/async_samples/sample_anomaly_alert_configuration_async.py
@@ -429,8 +434,8 @@ class MetricsAdvisorClient(object):
         :keyword filter:
         :paramtype filter: ~azure.ai.metricsadvisor.models.DetectionAnomalyFilterCondition
         :return: Anomalies under anomaly detection configuration.
-        :rtype: ~azure.core.paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.Anomaly]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.Anomaly]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
         skip = kwargs.pop('skip', None)
@@ -466,11 +471,11 @@ class MetricsAdvisorClient(object):
         :param ~datetime.datetime start_time: start time filter under chosen time mode.
         :param ~datetime.datetime end_time: end time filter under chosen time mode.
         :keyword int skip:
-        :keyword dimension_name: str
+        :keyword str dimension_name: The dimension name to query.
         :paramtype dimension_filter: ~azure.ai.metricsadvisor.models.DimensionGroupIdentity
         :return: Dimension values of anomalies.
-        :rtype: ~azure.core.paging.AsyncItemPaged[str]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[str]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
         skip = kwargs.pop('skip', None)
@@ -500,8 +505,8 @@ class MetricsAdvisorClient(object):
         :type alert_id: str
         :keyword int skip:
         :return: Incidents under a specific alert.
-        :rtype: ~azure.core.paging.AsyncItemPaged[~azure.ai.metriscadvisor.models.Incident]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.Incident]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
         skip = kwargs.pop('skip', None)
@@ -519,15 +524,15 @@ class MetricsAdvisorClient(object):
 
         """Query incidents under a specific alert.
 
-        :param detection_configuration_id: anomaly alerting configuration unique id.
+        :param detection_configuration_id: anomaly detection configuration unique id.
         :type detection_configuration_id: str
         :param ~datetime.datetime start_time: start time filter under chosen time mode.
         :param ~datetime.datetime end_time: end time filter under chosen time mode.
         :keyword filter:
         :paramtype filter: ~azure.ai.metricsadvisor.models.DetectionIncidentFilterCondition
         :return: Incidents under a specific alert.
-        :rtype: ~azure.core.paging.AsyncItemPaged[~azure.ai.metriscadvisor.models.Incident]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.Incident]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
         filter_condition = kwargs.pop('filter', None)
@@ -558,8 +563,8 @@ class MetricsAdvisorClient(object):
         :keyword dimension_value_filter: dimension value to be filtered.
         :paramtype dimension_value_filter: str
         :return: Dimension from certain metric.
-        :rtype: ~azure.core.paging.AsyncItemPaged[str]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[str]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
         skip = kwargs.pop('skip', None)
@@ -595,8 +600,8 @@ class MetricsAdvisorClient(object):
         :param series_to_filter: query specific series.
         :type series_to_filter: list[dict[str, str]]
         :return: Time series data from metric.
-        :rtype: AsyncItemPaged[~azure.ai.metriscadvisor.models.MetricSeriesData]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.MetricSeriesData]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
         metric_data_query_options = MetricDataQueryOptions(
@@ -628,8 +633,8 @@ class MetricsAdvisorClient(object):
         :keyword dimension_filter: filter specfic dimension name and values.
         :paramtype dimension_filter: dict[str, list[str]]
         :return: Series (dimension combinations) from metric.
-        :rtype: ~azure.core.paging.AsyncItemPaged[~azure.ai.metriscadvisor.models.MetricSeriesDefinition]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.MetricSeriesDefinition]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
         skip = kwargs.pop('skip', None)
@@ -658,8 +663,8 @@ class MetricsAdvisorClient(object):
         :param ~datetime.datetime end_time: end time filter under chosen time mode.
         :keyword int skip:
         :return: Anomaly detection status.
-        :rtype: ~azure.core.paging.AsyncItemPaged[~azure.ai.metriscadvisor.models.EnrichmentStatus]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.EnrichmentStatus]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
         skip = kwargs.pop('skip', None)
