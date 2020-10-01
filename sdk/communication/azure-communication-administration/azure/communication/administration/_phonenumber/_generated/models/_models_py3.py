@@ -993,8 +993,6 @@ class PstnConfiguration(msrest.serialization.Model):
     :type callback_url: str
     :param application_id: The application id of the application to which to configure.
     :type application_id: str
-    :param azure_pstn_target_id: Routable TargetId for the ACS Number.
-    :type azure_pstn_target_id: str
     """
 
     _validation = {
@@ -1004,7 +1002,6 @@ class PstnConfiguration(msrest.serialization.Model):
     _attribute_map = {
         'callback_url': {'key': 'callbackUrl', 'type': 'str'},
         'application_id': {'key': 'applicationId', 'type': 'str'},
-        'azure_pstn_target_id': {'key': 'azurePstnTargetId', 'type': 'str'},
     }
 
     def __init__(
@@ -1012,13 +1009,11 @@ class PstnConfiguration(msrest.serialization.Model):
         *,
         callback_url: str,
         application_id: Optional[str] = None,
-        azure_pstn_target_id: Optional[str] = None,
         **kwargs
     ):
         super(PstnConfiguration, self).__init__(**kwargs)
         self.callback_url = callback_url
         self.application_id = application_id
-        self.azure_pstn_target_id = azure_pstn_target_id
 
 
 class RateInformation(msrest.serialization.Model):
