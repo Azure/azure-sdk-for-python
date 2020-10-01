@@ -77,6 +77,16 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
             :caption: Authenticate MetricsAdvisorAdministrationClient with a MetricsAdvisorKeyCredential
     """
     def __init__(self, endpoint: str, credential: MetricsAdvisorKeyCredential, **kwargs: Any) -> None:
+        try:
+            if not endpoint.lower().startswith('http'):
+                endpoint = "https://" + endpoint
+        except AttributeError:
+            raise ValueError("Base URL must be a string.")
+
+        if not credential:
+            raise ValueError("Missing credential")
+
+        self._endpoint = endpoint
 
         self._client = _ClientAsync(
             endpoint=endpoint,
@@ -84,6 +94,12 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
             authentication_policy=MetricsAdvisorKeyCredentialPolicy(credential),
             **kwargs
         )
+
+    def __repr__(self):
+        # type: () -> str
+        return "<MetricsAdvisorAdministrationClient [endpoint={}]>".format(
+            repr(self._endpoint)
+        )[:1024]
 
     async def __aenter__(self) -> "MetricsAdvisorAdministrationClient":
         await self._client.__aenter__()
