@@ -161,7 +161,7 @@ class ShareLeaseClient(LeaseClientBase):
         a new lease ID in x-ms-proposed-lease-id.
 
         :param str proposed_lease_id:
-            Proposed lease ID, in a GUID string format. The File or Share service raises an error 
+            Proposed lease ID, in a GUID string format. The File or Share service raises an error
             (Invalid request) if the proposed lease ID is not in the correct format.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
