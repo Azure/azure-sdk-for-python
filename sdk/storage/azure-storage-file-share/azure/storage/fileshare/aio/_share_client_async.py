@@ -161,8 +161,9 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
                 :dedent: 8
                 :caption: Acquiring a lease on a share.
         """
+        kwargs['lease_duration'] = lease_duration
         lease = ShareLeaseClient(self, lease_id=lease_id)  # type: ignore
-        await lease.acquire(lease_duration, **kwargs)
+        await lease.acquire(**kwargs)
         return lease
 
     @distributed_trace_async

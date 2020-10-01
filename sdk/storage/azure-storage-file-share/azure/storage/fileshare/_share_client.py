@@ -290,8 +290,9 @@ class ShareClient(StorageAccountHostsMixin):
                 :dedent: 8
                 :caption: Acquiring a lease on a share.
         """
+        kwargs['lease_duration'] = lease_duration
         lease = ShareLeaseClient(self, lease_id=lease_id)  # type: ignore
-        lease.acquire(lease_duration, **kwargs)
+        lease.acquire(**kwargs)
         return lease
 
     @distributed_trace
