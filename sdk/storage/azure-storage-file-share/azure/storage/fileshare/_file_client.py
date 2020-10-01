@@ -266,7 +266,7 @@ class ShareFileClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def acquire_lease(self, lease_id=None, **kwargs):
-        # type: (int, Optional[str], **Any) -> BlobLeaseClient
+        # type: (Optional[str], **Any) -> ShareLeaseClient
         """Requests a new lease.
 
         If the file does not have an active lease, the File
@@ -283,13 +283,14 @@ class ShareFileClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/blob_samples_common.py
-                :start-after: [START acquire_lease_on_blob]
-                :end-before: [END acquire_lease_on_blob]
+            .. literalinclude:: ../samples/file_samples_client.py
+                :start-after: [START acquire_and_release_lease_on_file]
+                :end-before: [END acquire_and_release_lease_on_file]
                 :language: python
-                :dedent: 8
-                :caption: Acquiring a lease on a blob.
+                :dedent: 12
+                :caption: Acquiring a lease on a file.
         """
+        kwargs['lease_duration'] = -1
         lease = ShareLeaseClient(self, lease_id=lease_id)  # type: ignore
         lease.acquire(**kwargs)
         return lease

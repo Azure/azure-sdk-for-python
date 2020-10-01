@@ -141,7 +141,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
 
     @distributed_trace_async
     async def acquire_lease(self, lease_id=None, **kwargs):
-        # type: (int, Optional[str], **Any) -> BlobLeaseClient
+        # type: (Optional[str], **Any) -> ShareLeaseClient
         """Requests a new lease.
 
         If the file does not have an active lease, the File
@@ -165,6 +165,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
                 :dedent: 8
                 :caption: Acquiring a lease on a blob.
         """
+        kwargs['lease_duration'] = -1
         lease = ShareLeaseClient(self, lease_id=lease_id)  # type: ignore
         await lease.acquire(**kwargs)
         return lease

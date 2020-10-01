@@ -225,11 +225,11 @@ class LeaseProperties(DictMixin):
     """File Lease Properties.
 
     :ivar str status:
-        The lease status of the file. Possible values: locked|unlocked
+        The lease status of the file or share. Possible values: locked|unlocked
     :ivar str state:
-        Lease state of the file. Possible values: available|leased|expired|breaking|broken
+        Lease state of the file or share. Possible values: available|leased|expired|breaking|broken
     :ivar str duration:
-        When a file is leased, specifies whether the lease is of infinite or fixed duration.
+        When a file or share is leased, specifies whether the lease is of infinite or fixed duration.
     """
 
     def __init__(self, **kwargs):
@@ -341,6 +341,7 @@ class ShareProperties(DictMixin):
         self.provisioned_egress_mbps = kwargs.get('x-ms-share-provisioned-egress-mbps')
         self.provisioned_ingress_mbps = kwargs.get('x-ms-share-provisioned-ingress-mbps')
         self.provisioned_iops = kwargs.get('x-ms-share-provisioned-iops')
+        self.lease = LeaseProperties(**kwargs)
 
     @classmethod
     def _from_generated(cls, generated):
@@ -359,6 +360,7 @@ class ShareProperties(DictMixin):
         props.provisioned_egress_mbps = generated.properties.provisioned_egress_mbps
         props.provisioned_ingress_mbps = generated.properties.provisioned_ingress_mbps
         props.provisioned_iops = generated.properties.provisioned_iops
+        props.lease = LeaseProperties._from_generated(generated)  # pylint: disable=protected-access
         return props
 
 

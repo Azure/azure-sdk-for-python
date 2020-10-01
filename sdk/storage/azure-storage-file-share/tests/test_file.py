@@ -592,6 +592,17 @@ class StorageFileTest(StorageTestCase):
         self.assertFalse('up' in md)
 
     @GlobalStorageAccountPreparer()
+    def test_break_lease_with_broken_period_fails(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
+        file_client = self._create_file()
+        lease = file_client.acquire_lease()
+
+        # Assert
+        self.assertIsNotNone(lease)
+        with self.assertRaises(TypeError):
+            lease.break_lease(lease_break_period=5)
+
+    @GlobalStorageAccountPreparer()
     def test_set_file_metadata_with_broken_lease(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         metadata = {'hello': 'world', 'number': '42', 'UP': 'UPval'}
