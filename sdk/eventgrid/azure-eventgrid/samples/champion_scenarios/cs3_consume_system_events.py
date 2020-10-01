@@ -11,6 +11,7 @@ USAGE:
     python cs3_consume_system_events.py
 """
 import os
+import json
 from azure.eventgrid import EventGridConsumer
 
 consumer = EventGridConsumer()
