@@ -61,7 +61,7 @@ class CommunicationServicePreparer(AzureMgmtPreparer):
 
         if not self.is_live:
             return {
-                "connection_string": "connection_string",
+                "connection_string": "endpoint=https://communication27bb151c.communication.azure.com/;accesskey=fake===",
             }
 
         group_name = self._get_resource_group(**kwargs).name
