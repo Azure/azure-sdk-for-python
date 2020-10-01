@@ -71,6 +71,6 @@ class PhoneNumberPolling(PollingMethod):
         try:
             client = kwargs["client"]
         except KeyError:
-            raise ValueError("Need kwarg 'client' to be recreated from continuation_token")
+            raise ValueError("Kwarg 'client' needs to be specified")
         initial_response = pickle.loads(base64.b64decode(continuation_token))  # nosec
         return client, initial_response, None
