@@ -12,8 +12,6 @@ from _shared.testcase import (
     BodyReplacerProcessor
 )
 from communication_service_preparer import CommunicationServicePreparer, CommunicationResourceGroupPreparer
-from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
-
 
 class CommunicationIdentityClientTest(CommunicationTestCase):
 
