@@ -40,6 +40,10 @@ class AbstractPreparer(object):
         self.live_test = not isinstance(test_class_instance, ReplayableTest)
         self.test_class_instance = test_class_instance
 
+        # This latter conditional is to triage a specific failure mode:
+        # If the first cached test run does not have any http traffic, a recording will not have been
+        # generated, so in_recording will be True even if live_test is false, so a random name would be given.
+        # In cached mode we need to avoid this because then for tests with recordings, they would not have a moniker.
         if (self.live_test or test_class_instance.in_recording) \
                 and not (not self.live_test and test_class_instance.in_recording and self._use_cache):
             resource_name = self.random_name
