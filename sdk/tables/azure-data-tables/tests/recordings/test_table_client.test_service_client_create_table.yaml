@@ -1,0 +1,101 @@
+interactions:
+- request:
+    body: '{"TableName": "foo"}'
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '20'
+      Content-Type:
+      - application/json;odata=nometadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Tue, 25 Aug 2020 20:12:58 GMT
+      User-Agent:
+      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Tue, 25 Aug 2020 20:12:58 GMT
+      x-ms-version:
+      - '2019-07-07'
+    method: POST
+    uri: https://storagename.table.core.windows.net/Tables
+  response:
+    body:
+      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#Tables/@Element","TableName":"foo"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-type:
+      - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
+      date:
+      - Tue, 25 Aug 2020 20:12:59 GMT
+      location:
+      - https://storagename.table.core.windows.net/Tables('foo')
+      server:
+      - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-ms-version:
+      - '2019-07-07'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: '{"PartitionKey": "pk", "RowKey": "rk", "Value": "2", "Value@odata.type":
+      "Edm.Int64"}'
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '85'
+      Content-Type:
+      - application/json;odata=nometadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Tue, 25 Aug 2020 20:12:59 GMT
+      User-Agent:
+      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Tue, 25 Aug 2020 20:12:59 GMT
+      x-ms-version:
+      - '2019-07-07'
+    method: POST
+    uri: https://storagename.table.core.windows.net/foo
+  response:
+    body:
+      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#foo/@Element","odata.etag":"W/\"datetime''2020-08-25T20%3A12%3A59.6939685Z''\"","PartitionKey":"pk","RowKey":"rk","Timestamp":"2020-08-25T20:12:59.6939685Z","Value@odata.type":"Edm.Int64","Value":"2"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-type:
+      - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
+      date:
+      - Tue, 25 Aug 2020 20:12:59 GMT
+      etag:
+      - W/"datetime'2020-08-25T20%3A12%3A59.6939685Z'"
+      location:
+      - https://storagename.table.core.windows.net/foo(PartitionKey='pk',RowKey='rk')
+      server:
+      - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-ms-version:
+      - '2019-07-07'
+    status:
+      code: 201
+      message: Created
+version: 1
