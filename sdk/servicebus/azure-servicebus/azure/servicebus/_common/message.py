@@ -11,6 +11,7 @@ import functools
 import logging
 from typing import Optional, List, Union, Iterable, TYPE_CHECKING, Callable, Any
 
+import uamqp.errors
 import uamqp.message
 from uamqp.constants import MessageState
 
@@ -770,7 +771,7 @@ class ReceivedMessageBase(PeekedMessage):
     def _check_live(self, action):
         # pylint: disable=no-member
         if not self._receiver or not self._receiver._running:  # pylint: disable=protected-access
-            raise MessageSettleFailed(action, "Orphan message had no open connection.")
+            raise MessageSettleFailed(action, ServiceBusError("Orphan message had no open connection."))
         if self._settled:
             raise MessageAlreadySettled(action)
         try:
@@ -908,6 +909,9 @@ class ReceivedMessage(ReceivedMessageBase):
             dead_letter_error_description=None,
     ):
         # type: (str, Optional[str], Optional[str]) -> None
+        # TODO:
+        # current it's one time settle via receiver link, if failed, then x times retry settle via mgmt link
+        # should retry to be x times of try settle via receiver link, settle via mgmt link?
         try:
             if not self._is_deferred_message:
                 try:
@@ -926,6 +930,8 @@ class ReceivedMessage(ReceivedMessageBase):
                                        dead_letter_reason=dead_letter_reason,
                                        dead_letter_error_description=dead_letter_error_description)()
         except Exception as e:
+            # TODO: should we not wrap everything into MessageSettleFailed?
+            # but user could inspect the more concrete error detail by inner exception
             raise MessageSettleFailed(settle_operation, e)
 
     def complete(self):
@@ -1076,7 +1082,7 @@ class ReceivedMessage(ReceivedMessageBase):
             raise ValueError("Unable to renew lock - no lock token found.")
 
         expiry = self._receiver._renew_locks(token)  # type: ignore
-        self._expiry = utc_from_timestamp(expiry[MGMT_RESPONSE_MESSAGE_EXPIRATION][0]/1000.0) # type: datetime.datetime
+        self._expiry = utc_from_timestamp(expiry[MGMT_RESPONSE_MESSAGE_EXPIRATION][0]/1000.0)  # type: datetime.datetime
 
         return self._expiry
 

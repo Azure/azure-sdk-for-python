@@ -89,7 +89,7 @@ class BaseHandler:
         self._container_id = CONTAINER_PREFIX + str(uuid.uuid4())[:8]
         self._config = Configuration(**kwargs)
         self._running = False
-        self._handler = None  # type: uamqp.AMQPClient
+        self._handler = None  # type: uamqp.AMQPClientAsync
         self._auth_uri = None
         self._properties = create_properties(self._config.user_agent)
 
@@ -200,16 +200,13 @@ class BaseHandler:
                 encoding=self._config.encoding,
                 **kwargs),
             application_properties=application_properties)
-        try:
-            return await self._handler.mgmt_request_async(
-                mgmt_msg,
-                mgmt_operation,
-                op_type=MGMT_REQUEST_OP_TYPE_ENTITY_MGMT,
-                node=self._mgmt_target.encode(self._config.encoding),
-                timeout=5000,
-                callback=callback)
-        except Exception as exp:  # pylint: disable=broad-except
-            raise ServiceBusError("Management request failed: {}".format(exp), exp)
+        return await self._handler.mgmt_request_async(
+            mgmt_msg,
+            mgmt_operation,
+            op_type=MGMT_REQUEST_OP_TYPE_ENTITY_MGMT,
+            node=self._mgmt_target.encode(self._config.encoding),
+            timeout=5000,
+            callback=callback)
 
     async def _mgmt_request_response_with_retry(self, mgmt_operation, message, callback, **kwargs):
         return await self._do_retryable_operation(

@@ -68,15 +68,16 @@ def _create_servicebus_exception(logger, exception, handler):  # pylint: disable
     error_need_close_handler = True
     error_need_raise = False
     if isinstance(exception, errors.MessageAlreadySettled):
+        # TODO: consider removing the error handling for MessageAlreadySettled here, cause it respects actions
         logger.info("Message already settled (%r)", exception)
-        error = MessageAlreadySettled(exception)
+        error = MessageAlreadySettled(exception)  # TODO: MessageAlreadySettled takes action str, not an exception
         error_need_close_handler = False
         error_need_raise = True
     elif isinstance(exception, errors.MessageContentTooLarge) or \
             (isinstance(exception, errors.MessageException) and
              exception.condition == constants.ErrorCodes.LinkMessageSizeExceeded):
-        logger.info("Message content is too large (%r)", exception)
-        error = MessageContentTooLarge(exception)
+        logger.info("Message content is too large (%r).", exception)
+        error = MessageContentTooLarge("Message content is too large.", exception)
         error_need_close_handler = False
         error_need_raise = True
     elif isinstance(exception, errors.MessageException):

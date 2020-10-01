@@ -289,7 +289,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
                 )
 
     def _mgmt_request_response(self, mgmt_operation, message, callback, keep_alive_associated_link=True, **kwargs):
-        # type: (str, uamqp.Message, Callable, bool, Any) -> uamqp.Message
+        # type: (bytes, uamqp.Message, Callable, bool, Any) -> uamqp.Message
         self._open()
         application_properties = {}
         # Some mgmt calls do not support an associated link name (such as list_sessions).  Most do, so on by default.
@@ -308,17 +308,14 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
             ),
             application_properties=application_properties
         )
-        try:
-            return self._handler.mgmt_request(
-                mgmt_msg,
-                mgmt_operation,
-                op_type=MGMT_REQUEST_OP_TYPE_ENTITY_MGMT,
-                node=self._mgmt_target.encode(self._config.encoding),
-                timeout=5000,
-                callback=callback
-            )
-        except Exception as exp:  # pylint: disable=broad-except
-            raise ServiceBusError("Management request failed: {}".format(exp), exp)
+        return self._handler.mgmt_request(
+            mgmt_msg,
+            mgmt_operation,
+            op_type=MGMT_REQUEST_OP_TYPE_ENTITY_MGMT,
+            node=self._mgmt_target.encode(self._config.encoding),
+            timeout=5000,
+            callback=callback
+        )
 
     def _mgmt_request_response_with_retry(self, mgmt_operation, message, callback, **kwargs):
         # type: (bytes, Dict[str, Any], Callable, Any) -> Any
