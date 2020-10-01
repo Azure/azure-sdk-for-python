@@ -26,6 +26,7 @@ from .._models import CloudEvent, EventGridEvent, CustomEvent
 from .._helpers import _get_topic_hostname_only_fqdn, _get_authentication_policy, _is_cloud_event
 from .._generated.aio import EventGridPublisherClient as EventGridPublisherClientAsync
 from .._shared_access_signature_credential import EventGridSharedAccessSignatureCredential
+from .._version import VERSION
 
 SendType = Union[
         CloudEvent,
@@ -65,10 +66,11 @@ class EventGridPublisherClient():
         **kwargs: Any
         ) -> List[Any]:
         auth_policy = _get_authentication_policy(credential)
+        sdk_moniker = 'eventgridpublisherclient/{}'.format(VERSION)
         policies = [
             RequestIdPolicy(**kwargs),
             HeadersPolicy(**kwargs),
-            UserAgentPolicy(**kwargs),
+            UserAgentPolicy(sdk_moniker=sdk_moniker, **kwargs),
             ProxyPolicy(**kwargs),
             ContentDecodePolicy(**kwargs),
             AsyncRedirectPolicy(**kwargs),

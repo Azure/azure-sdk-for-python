@@ -25,6 +25,7 @@ from ._models import CloudEvent, EventGridEvent, CustomEvent
 from ._helpers import _get_topic_hostname_only_fqdn, _get_authentication_policy, _is_cloud_event
 from ._generated._event_grid_publisher_client import EventGridPublisherClient as EventGridPublisherClientImpl
 from ._policies import CloudEventDistributedTracingPolicy
+from ._version import VERSION
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -64,10 +65,11 @@ class EventGridPublisherClient(object):
     def _policies(credential, **kwargs):
         # type: (Union[AzureKeyCredential, EventGridSharedAccessSignatureCredential], Any) -> List[Any]
         auth_policy = _get_authentication_policy(credential)
+        sdk_moniker = 'eventgridpublisherclient/{}'.format(VERSION)
         policies = [
             RequestIdPolicy(**kwargs),
             HeadersPolicy(**kwargs),
-            UserAgentPolicy(**kwargs),
+            UserAgentPolicy(sdk_moniker=sdk_moniker, **kwargs),
             ProxyPolicy(**kwargs),
             ContentDecodePolicy(**kwargs),
             RedirectPolicy(**kwargs),

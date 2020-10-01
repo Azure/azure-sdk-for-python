@@ -4,16 +4,9 @@
 # license information.
 #--------------------------------------------------------------------------
 
-import logging
-import sys
-import os
 import pytest
 import json
-import base64
-import datetime as dt
 
-from devtools_testutils import AzureMgmtTestCase
-from msrest.serialization import UTC
 from azure.core.pipeline import (
     PipelineRequest,
     PipelineContext
