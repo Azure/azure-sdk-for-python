@@ -1109,14 +1109,14 @@ class AMQPMessage(object):
 
     @property
     def properties(self):
-        return uamqp.message.MessageProperties(message_id = self._message.properties.message_id,
-                                               user_id = self._message.properties.user_id,
-                                               to = self._message.properties.to,
-                                               subject = self._message.properties.subject,
-                                               reply_to = self._message.properties.reply_to,
-                                               correlation_id = self._message.properties.correlation_id,
-                                               content_type = self._message.properties.content_type,
-                                               content_encoding = self._message.properties.content_encoding
+        return uamqp.message.MessageProperties(message_id=self._message.properties.message_id,
+                                               user_id=self._message.properties.user_id,
+                                               to=self._message.properties.to,
+                                               subject=self._message.properties.subject,
+                                               reply_to=self._message.properties.reply_to,
+                                               correlation_id=self._message.properties.correlation_id,
+                                               content_type=self._message.properties.content_type,
+                                               content_encoding=self._message.properties.content_encoding
                                                )
 
     # NOTE: These are disabled pending arch. design and cross-sdk consensus on
