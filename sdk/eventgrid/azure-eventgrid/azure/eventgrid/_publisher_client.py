@@ -7,6 +7,7 @@
 
 from typing import TYPE_CHECKING
 
+from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline.policies import (
     RequestIdPolicy,
     HeadersPolicy,
@@ -83,6 +84,7 @@ class EventGridPublisherClient(object):
         ]
         return policies
 
+    @distributed_trace
     def send(self, events, **kwargs):
         # type: (SendType, Any) -> None
         """Sends event data to topic hostname specified during client initialization.

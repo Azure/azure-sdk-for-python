@@ -8,6 +8,7 @@
 
 from typing import Any, Union, List, Dict
 from azure.core.credentials import AzureKeyCredential
+from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.pipeline.policies import (
     RequestIdPolicy,
     HeadersPolicy,
@@ -84,6 +85,7 @@ class EventGridPublisherClient():
         ]
         return policies
 
+    @distributed_trace_async
     async def send(
         self,
         events: SendType,
