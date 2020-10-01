@@ -62,10 +62,10 @@ admin_client = MetricsAdvisorAdministrationClient(service_endpoint,
 
 `MetricsAdvisorAdministrationClient` allows you to
 
-- managing data feeds
-- configuring anomaly detection configurations
-- configuring anomaly alerting configurations
-- managing hooks
+- manage data feeds
+- configure anomaly detection configurations
+- configure anomaly alerting configurations
+- manage hooks
 
 ### DataFeed
 
