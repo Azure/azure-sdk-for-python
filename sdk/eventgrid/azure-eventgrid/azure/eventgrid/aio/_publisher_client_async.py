@@ -11,7 +11,6 @@ from azure.core.credentials import AzureKeyCredential
 
 from .._base_client_async import AsyncPublisherClientMixin
 from .._models import CloudEvent, EventGridEvent, CustomEvent
-from .._policies import CloudEventDistributedTracingPolicy
 from .._helpers import _get_topic_hostname_only_fqdn, _get_authentication_policy, _is_cloud_event
 from .._generated.aio import EventGridPublisherClient as EventGridPublisherClientAsync
 
@@ -44,7 +43,7 @@ class EventGridPublisherClient(AsyncPublisherClientMixin):
         auth_policy = _get_authentication_policy(credential)
         self._client = EventGridPublisherClientAsync(
             authentication_policy=auth_policy,
-            policies=self._policies,
+            policies=self.policies,
             **kwargs
             )
         topic_hostname = _get_topic_hostname_only_fqdn(topic_hostname)

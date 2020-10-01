@@ -34,9 +34,10 @@ if TYPE_CHECKING:
 class AsyncPublisherClientMixin(object):  # pylint: disable=too-many-instance-attributes
     def __init__(self, credential, **kwargs):
         # type: (Union[AzureKeyCredential, EventGridSharedAccessSignatureCredential], Any) -> None
-        self._policies = self._policies(credential, **kwargs)
+        self.policies = AsyncPublisherClientMixin._policies(credential, **kwargs)
 
-    def _policies(self, credential, **kwargs):
+    @staticmethod
+    def _policies(credential, **kwargs):
         # type: (Union[AzureKeyCredential, EventGridSharedAccessSignatureCredential], Any) -> List[Any]
         auth_policy = _get_authentication_policy(credential)
         policies = [

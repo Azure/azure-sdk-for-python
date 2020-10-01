@@ -9,7 +9,6 @@ from typing import TYPE_CHECKING
 
 from ._base_client import PublisherClientMixin
 from ._models import CloudEvent, EventGridEvent, CustomEvent
-from ._policies import CloudEventDistributedTracingPolicy
 from ._helpers import _get_topic_hostname_only_fqdn, _get_authentication_policy, _is_cloud_event
 from ._generated._event_grid_publisher_client import EventGridPublisherClient as EventGridPublisherClientImpl
 
@@ -46,7 +45,7 @@ class EventGridPublisherClient(PublisherClientMixin):
         auth_policy = _get_authentication_policy(credential)
         self._client = EventGridPublisherClientImpl(
             authentication_policy=auth_policy,
-            policies=self._policies,
+            policies=self.policies,
             **kwargs
             )
         print(self._client)
