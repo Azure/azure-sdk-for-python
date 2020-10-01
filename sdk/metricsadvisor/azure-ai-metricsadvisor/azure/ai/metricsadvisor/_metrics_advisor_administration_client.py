@@ -177,12 +177,20 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         if not credential:
             raise ValueError("Missing credential")
 
+        self._endpoint = endpoint
+
         self._client = _Client(
             endpoint=endpoint,
             sdk_moniker=SDK_MONIKER,
             authentication_policy=MetricsAdvisorKeyCredentialPolicy(credential),
             **kwargs
         )
+
+    def __repr__(self):
+        # type: () -> str
+        return "<MetricsAdvisorKeyCredential [endpoint={}]>".format(
+            repr(self._endpoint)
+        )[:1024]
 
     def close(self):
         # type: () -> None

@@ -88,6 +88,8 @@ class MetricsAdvisorClient(object):
         if not credential:
             raise ValueError("Missing credential")
 
+        self._endpoint = endpoint
+
         self._client = AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2(
             endpoint=endpoint,
             sdk_moniker=SDK_MONIKER,
