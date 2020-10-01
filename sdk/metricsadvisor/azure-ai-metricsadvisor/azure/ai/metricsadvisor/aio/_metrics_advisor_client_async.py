@@ -88,25 +88,13 @@ class MetricsAdvisorClient(object):
         if not credential:
             raise ValueError("Missing credential")
 
-        self._config = AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2Configuration(endpoint=endpoint, **kwargs)
         self._endpoint = endpoint
-        self._credential = credential
-        self._config.user_agent_policy = UserAgentPolicy(
-            base_user_agent=None, sdk_moniker=SDK_MONIKER, **kwargs
-        )
-
-        pipeline = kwargs.get("pipeline")
-
-        if pipeline is None:
-            aad_mode = not isinstance(credential, MetricsAdvisorKeyCredential)
-            pipeline = self._create_pipeline(
-                credential=credential,
-                aad_mode=aad_mode,
-                endpoint=endpoint,
-                **kwargs)
 
         self._client = AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2(
-            endpoint=endpoint, pipeline=pipeline
+            endpoint=endpoint,
+            sdk_moniker=SDK_MONIKER,
+            authentication_policy=MetricsAdvisorKeyCredentialPolicy(credential),
+            **kwargs
         )
 
     def __repr__(self):
