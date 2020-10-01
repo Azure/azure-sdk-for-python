@@ -413,15 +413,15 @@ class PhoneNumberAdministrationClient(object):
     ):
         # type: (...) -> LROPoller
         """Begins creating a phone number search.
+        Caller must provide either body, or continuation_token keywords to use the method.
+        If both body and continuation_token are specified, only continuation_token will be used to
+        restart a poller from a saved state, and keyword body will be ignored.
 
         :keyword azure.communication.administration.CreateSearchOptions body:
         A parameter for defining the search options.
-        The default is None.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        Caller must provide either body, or continuation_token keywords to use the method.
         :rtype: ~azure.core.polling.LROPoller[~azure.communication.administration.PhoneNumberSearch]
         """
-        polling_interval = kwargs.pop("_polling_interval", 5)
         cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
 
         search_polling = PhoneNumberPolling(
@@ -431,8 +431,7 @@ class PhoneNumberAdministrationClient(object):
                 SearchStatus.Success,
                 SearchStatus.Cancelled,
                 SearchStatus.Error
-            ],
-            interval=polling_interval
+            ]
         )
 
         if cont_token is not None:
@@ -441,6 +440,9 @@ class PhoneNumberAdministrationClient(object):
                 continuation_token=cont_token,
                 client=self._phone_number_administration_client.phone_number_administration
             )
+
+        if "body" not in kwargs:
+            raise ValueError("Either kwarg 'body' or 'continuation_token' needs to be specified")
 
         create_search_response = self._phone_number_administration_client.phone_number_administration.create_search(
             **kwargs
@@ -478,14 +480,14 @@ class PhoneNumberAdministrationClient(object):
     ):
         # type: (...) -> LROPoller
         """Begins the phone number search cancellation.
-
-        :keyword str search_id: The search id to be canceled.
-        :keyword str continuation_token: An optional continuation token to restart a poller from a saved state.
         Caller must provide either search_id, or continuation_token keywords to use the method.
+        If both body and continuation_token are specified, only continuation_token will be used to
+        restart a poller from a saved state, and keyword search_id will be ignored.
 
+        :keyword str search_id: The search id to be purchased.
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :rtype: ~azure.core.polling.LROPoller[~azure.communication.administration.PhoneNumberSearch]
         """
-        polling_interval = kwargs.pop("_polling_interval", 5)
         cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
 
         search_polling = PhoneNumberPolling(
@@ -493,8 +495,7 @@ class PhoneNumberAdministrationClient(object):
                 SearchStatus.Expired,
                 SearchStatus.Cancelled,
                 SearchStatus.Error
-            ],
-            interval=polling_interval
+            ]
         )
 
         if cont_token is not None:
@@ -504,7 +505,9 @@ class PhoneNumberAdministrationClient(object):
                 client=self._phone_number_administration_client.phone_number_administration
             )
 
-        search_id = kwargs.pop('search_id')  # type: str
+        search_id = kwargs.pop('search_id', None)  # type: str
+        if search_id is None:
+            raise ValueError("Either kwarg 'search_id' or 'continuation_token' needs to be specified")
 
         self._phone_number_administration_client.phone_number_administration.cancel_search(
             search_id,
@@ -525,14 +528,14 @@ class PhoneNumberAdministrationClient(object):
     ):
         # type: (...) -> LROPoller
         """Begins the phone number search purchase.
+        Caller must provide either search_id, or continuation_token keywords to use the method.
+        If both body and continuation_token are specified, only continuation_token will be used to
+        restart a poller from a saved state, and keyword search_id will be ignored.
 
         :keyword str search_id: The search id to be purchased.
-        :keyword str continuation_token: An optional continuation token to restart a poller from a saved state.
-        Caller must provide either search_id, or continuation_token keywords to use the method.
-
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :rtype: ~azure.core.polling.LROPoller[~azure.communication.administration.PhoneNumberSearch]
         """
-        polling_interval = kwargs.pop("_polling_interval", 5)
         cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
 
         search_polling = PhoneNumberPolling(
@@ -541,8 +544,7 @@ class PhoneNumberAdministrationClient(object):
                 SearchStatus.Expired,
                 SearchStatus.Cancelled,
                 SearchStatus.Error
-            ],
-            interval=polling_interval
+            ]
         )
 
         if cont_token is not None:

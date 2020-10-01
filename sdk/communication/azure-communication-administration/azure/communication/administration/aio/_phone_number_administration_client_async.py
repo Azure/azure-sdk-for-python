@@ -421,16 +421,16 @@ class PhoneNumberAdministrationClient(object):
             **kwargs  # type: Any
     ):
         # type: (...) -> AsyncLROPoller
-        """Begins a phone number search.
+        """Begins creating a phone number search.
+        Caller must provide either body, or continuation_token keywords to use the method.
+        If both body and continuation_token are specified, only continuation_token will be used to
+        restart a poller from a saved state, and keyword body will be ignored.
 
         :keyword azure.communication.administration.CreateSearchOptions body:
-        An optional parameter for defining the search options.
-        The default is None.
-        :keyword str continuation_token: An optional continuation token to restart a poller from a saved state.
-        Caller must provide one of the body, continuation_token keywords when calling this method.
+        A parameter for defining the search options.
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.communication.administration.PhoneNumberSearch]
         """
-        polling_interval = kwargs.pop("_polling_interval", 5)
         cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
 
         search_polling = PhoneNumberPollingAsync(
@@ -440,8 +440,7 @@ class PhoneNumberAdministrationClient(object):
                 SearchStatus.Success,
                 SearchStatus.Cancelled,
                 SearchStatus.Error
-            ],
-            interval=polling_interval
+            ]
         )
 
         if cont_token is not None:
@@ -451,10 +450,13 @@ class PhoneNumberAdministrationClient(object):
                 client=self._phone_number_administration_client.phone_number_administration
             )
 
+        if "body" not in kwargs:
+            raise ValueError("Either kwarg 'body' or 'continuation_token' needs to be specified")
+
         create_search_response = await self._phone_number_administration_client.\
             phone_number_administration.create_search(
-            **kwargs
-        )
+                **kwargs
+            )
         initial_state = await self._phone_number_administration_client.phone_number_administration.get_search_by_id(
             search_id=create_search_response.search_id
         )
@@ -487,14 +489,15 @@ class PhoneNumberAdministrationClient(object):
             **kwargs  # type: Any
     ):
         # type: (...) -> AsyncLROPoller
-        """Begins a phone number search cancellation.
-
-        :keyword str search_id: The search id to be canceled.
-        :keyword str continuation_token: An optional continuation token to restart a poller from a saved state.
+        """Begins the phone number search cancellation.
         Caller must provide either search_id, or continuation_token keywords to use the method.
+        If both body and continuation_token are specified, only continuation_token will be used to
+        restart a poller from a saved state, and keyword search_id will be ignored.
+
+        :keyword str search_id: The search id to be purchased.
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.communication.administration.PhoneNumberSearch]
         """
-        polling_interval = kwargs.pop("_polling_interval", 5)
         cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
 
         search_polling = PhoneNumberPollingAsync(
@@ -502,8 +505,7 @@ class PhoneNumberAdministrationClient(object):
                 SearchStatus.Expired,
                 SearchStatus.Cancelled,
                 SearchStatus.Error
-            ],
-            interval=polling_interval
+            ]
         )
 
         if cont_token is not None:
@@ -513,7 +515,10 @@ class PhoneNumberAdministrationClient(object):
                 client=self._phone_number_administration_client.phone_number_administration
             )
 
-        search_id = kwargs.pop('search_id')  # type: str
+        search_id = kwargs.pop('search_id', None)  # type: str
+        if search_id is None:
+            raise ValueError("Either kwarg 'search_id' or 'continuation_token' needs to be specified")
+
         await self._phone_number_administration_client.phone_number_administration.cancel_search(
             search_id,
             **kwargs
@@ -534,14 +539,14 @@ class PhoneNumberAdministrationClient(object):
 
         # type: (...) -> AsyncLROPoller
         """Begins the phone number search purchase.
+        Caller must provide either search_id, or continuation_token keywords to use the method.
+        If both body and continuation_token are specified, only continuation_token will be used to
+        restart a poller from a saved state, and keyword search_id will be ignored.
 
         :keyword str search_id: The search id to be purchased.
-        :keyword str continuation_token: An optional continuation token to restart a poller from a saved state.
-        Caller must provide either search_id, or continuation_token keywords to use the method.
-
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.communication.administration.PhoneNumberSearch]
         """
-        polling_interval = kwargs.pop("_polling_interval", 5)
         cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
 
         search_polling = PhoneNumberPollingAsync(
@@ -550,8 +555,7 @@ class PhoneNumberAdministrationClient(object):
                 SearchStatus.Expired,
                 SearchStatus.Cancelled,
                 SearchStatus.Error
-            ],
-            interval=polling_interval
+            ]
         )
 
         if cont_token is not None:
@@ -561,7 +565,10 @@ class PhoneNumberAdministrationClient(object):
                 client=self._phone_number_administration_client.phone_number_administration
             )
 
-        search_id = kwargs.pop('search_id')  # type: str
+        search_id = kwargs.pop('search_id', None)  # type: str
+        if search_id is None:
+            raise ValueError("Either kwarg 'search_id' or 'continuation_token' needs to be specified")
+
         await self._phone_number_administration_client.phone_number_administration.purchase_search(
             search_id,
             **kwargs
