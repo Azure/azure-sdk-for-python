@@ -246,7 +246,7 @@ class DataFeedRollupSettings(object):
     :keyword str rollup_identification_value: The identification value for the row of calculated all-up value.
     :keyword rollup_type: Mark if the data feed needs rollup. Possible values include: "NoRollup",
         "AutoRollup", "AlreadyRollup". Default value: "AutoRollup".
-    :paramtype roll_up_type: str or ~azure.ai.metricsadvisor.models.DataFeedRollupType
+    :paramtype rollup_type: str or ~azure.ai.metricsadvisor.models.DataFeedRollupType
     :keyword list[str] auto_rollup_group_by_column_names: Roll up columns.
     :keyword rollup_method: Roll up method. Possible values include: "None", "Sum", "Max", "Min",
         "Avg", "Count".
@@ -451,8 +451,8 @@ class TopNGroupScope(object):
     :type min_top_count: int
     """
 
-    def __init__(self, top, period, min_top_count):
-        # type: (int, int, int) -> None
+    def __init__(self, top, period, min_top_count, **kwargs):  # pylint: disable=unused-argument
+        # type: (int, int, int, Any) -> None
         self.top = top
         self.period = period
         self.min_top_count = min_top_count
@@ -469,8 +469,8 @@ class SeverityCondition(object):
     :type max_alert_severity: str or ~azure.ai.metricsadvisor.models.Severity
     """
 
-    def __init__(self, min_alert_severity, max_alert_severity):
-        # type: (Union[str, Severity], Union[str, Severity]) -> None
+    def __init__(self, min_alert_severity, max_alert_severity, **kwargs):  # pylint: disable=unused-argument
+        # type: (Union[str, Severity], Union[str, Severity], Any) -> None
         self.min_alert_severity = min_alert_severity
         self.max_alert_severity = max_alert_severity
 
@@ -486,8 +486,8 @@ class MetricAnomalyAlertSnoozeCondition(object):
     :type only_for_successive: bool
     """
 
-    def __init__(self, auto_snooze, snooze_scope, only_for_successive):
-        # type: (int, Union[str, SnoozeScope], bool) -> None
+    def __init__(self, auto_snooze, snooze_scope, only_for_successive, **kwargs):  # pylint: disable=unused-argument
+        # type: (int, Union[str, SnoozeScope], bool, Any) -> None
         self.auto_snooze = auto_snooze
         self.snooze_scope = snooze_scope
         self.only_for_successive = only_for_successive
@@ -536,8 +536,8 @@ class MetricAlertConfiguration(object):
     :type detection_configuration_id: str
     :param alert_scope: Required. Anomaly scope.
     :type alert_scope: ~azure.ai.metricsadvisor.models.MetricAnomalyAlertScope
-    :keyword use_detection_result_to_filter_anomalies: Negation operation.
-    :paramtype use_detection_result_to_filter_anomalies: bool
+    :keyword negation_operation: Negation operation.
+    :paramtype negation_operation: bool
     :keyword alert_conditions:
     :paramtype alert_conditions: ~azure.ai.metricsadvisor.models.MetricAnomalyAlertConditions
     :keyword alert_snooze_condition:
@@ -547,7 +547,7 @@ class MetricAlertConfiguration(object):
         # type: (str, MetricAnomalyAlertScope, Any) -> None
         self.detection_configuration_id = detection_configuration_id
         self.alert_scope = alert_scope
-        self.use_detection_result_to_filter_anomalies = kwargs.get("use_detection_result_to_filter_anomalies", None)
+        self.negation_operation = kwargs.get("negation_operation", None)
         self.alert_conditions = kwargs.get("alert_conditions", None)
         self.alert_snooze_condition = kwargs.get("alert_snooze_condition", None)
 
@@ -556,7 +556,7 @@ class MetricAlertConfiguration(object):
         return cls(
             detection_configuration_id=config.anomaly_detection_configuration_id,
             alert_scope=MetricAnomalyAlertScope._from_generated(config),
-            use_detection_result_to_filter_anomalies=config.negation_operation,
+            negation_operation=config.negation_operation,
             alert_snooze_condition=MetricAnomalyAlertSnoozeCondition(
                 auto_snooze=config.snooze_filter.auto_snooze,
                 snooze_scope=config.snooze_filter.snooze_scope,
@@ -588,7 +588,7 @@ class MetricAlertConfiguration(object):
                 period=self.alert_scope.top_n_group_in_scope.period,
                 min_top_count=self.alert_scope.top_n_group_in_scope.min_top_count,
             ) if self.alert_scope.top_n_group_in_scope else None,
-            negation_operation=self.use_detection_result_to_filter_anomalies,
+            negation_operation=self.negation_operation,
             severity_filter=_SeverityCondition(
                 max_alert_severity=self.alert_conditions.severity_condition.max_alert_severity,
                 min_alert_severity=self.alert_conditions.severity_condition.min_alert_severity
@@ -677,6 +677,7 @@ class AnomalyDetectionConfiguration(object):
     :ivar str description: anomaly detection configuration description.
     :ivar str metric_id: Required. metric unique id.
     :ivar whole_series_detection_condition: Required.
+        Conditions to detect anomalies in all time series of a metric.
     :vartype whole_series_detection_condition: ~azure.ai.metricsadvisor.models.MetricDetectionCondition
     :ivar series_group_detection_conditions: detection configuration for series group.
     :vartype series_group_detection_conditions:
@@ -751,8 +752,8 @@ class AzureApplicationInsightsDataFeed(object):
     :type query: str
     """
 
-    def __init__(self, azure_cloud, application_id, api_key, query):
-        # type: (str, str, str, str) -> None
+    def __init__(self, azure_cloud, application_id, api_key, query, **kwargs):  # pylint: disable=unused-argument
+        # type: (str, str, str, str, Any) -> None
         self.data_source_type = 'AzureApplicationInsights'  # type: str
         self.azure_cloud = azure_cloud
         self.application_id = application_id
@@ -788,8 +789,8 @@ class AzureBlobDataFeed(object):
     :type blob_template: str
     """
 
-    def __init__(self, connection_string, container, blob_template):
-        # type: (str, str, str) -> None
+    def __init__(self, connection_string, container, blob_template, **kwargs):  # pylint: disable=unused-argument
+        # type: (str, str, str, Any) -> None
         self.data_source_type = 'AzureBlob'  # type: str
         self.connection_string = connection_string
         self.container = container
@@ -824,8 +825,14 @@ class AzureCosmosDBDataFeed(object):
     :type collection_id: str
     """
 
-    def __init__(self, connection_string, sql_query, database, collection_id):
-        # type: (str, str, str, str) -> None
+    def __init__(
+        self, connection_string,
+        sql_query,
+        database,
+        collection_id,
+        **kwargs
+    ):  # pylint: disable=unused-argument
+        # type: (str, str, str, str, Any) -> None
         self.data_source_type = 'AzureCosmosDB'  # type: str
         self.connection_string = connection_string
         self.sql_query = sql_query
@@ -859,8 +866,8 @@ class AzureDataExplorerDataFeed(object):
     :type query: str
     """
 
-    def __init__(self, connection_string, query):
-        # type: (str, str) -> None
+    def __init__(self, connection_string, query, **kwargs):  # pylint: disable=unused-argument
+        # type: (str, str, Any) -> None
         self.data_source_type = 'AzureDataExplorer'  # type: str
         self.connection_string = connection_string
         self.query = query
@@ -890,8 +897,8 @@ class AzureTableDataFeed(object):
     :type table: str
     """
 
-    def __init__(self, connection_string, query, table):
-        # type: (str, str, str) -> None
+    def __init__(self, connection_string, query, table, **kwargs):  # pylint: disable=unused-argument
+        # type: (str, str, str, Any) -> None
         self.data_source_type = 'AzureTable'  # type: str
         self.connection_string = connection_string
         self.query = query
@@ -965,8 +972,15 @@ class InfluxDBDataFeed(object):
     :type query: str
     """
 
-    def __init__(self, connection_string, database, user_name, password, query):
-        # type: (str, str, str, str, str) -> None
+    def __init__(
+        self, connection_string,
+        database,
+        user_name,
+        password,
+        query,
+        **kwargs
+    ):  # pylint: disable=unused-argument
+        # type: (str, str, str, str, str, Any) -> None
         self.data_source_type = 'InfluxDB'  # type: str
         self.connection_string = connection_string
         self.database = database
@@ -1003,8 +1017,8 @@ class MySqlDataFeed(object):
     :type query: str
     """
 
-    def __init__(self, connection_string, query):
-        # type: (str, str) -> None
+    def __init__(self, connection_string, query, **kwargs):  # pylint: disable=unused-argument
+        # type: (str, str, Any) -> None
         self.data_source_type = 'MySql'  # type: str
         self.connection_string = connection_string
         self.query = query
@@ -1032,8 +1046,8 @@ class PostgreSqlDataFeed(object):
     :type query: str
     """
 
-    def __init__(self, connection_string, query):
-        # type: (str, str) -> None
+    def __init__(self, connection_string, query, **kwargs):  # pylint: disable=unused-argument
+        # type: (str, str, Any) -> None
         self.data_source_type = 'PostgreSql'  # type: str
         self.connection_string = connection_string
         self.query = query
@@ -1061,8 +1075,8 @@ class SQLServerDataFeed(object):
     :type query: str
     """
 
-    def __init__(self, connection_string, query):
-        # type: (str, str) -> None
+    def __init__(self, connection_string, query, **kwargs):  # pylint: disable=unused-argument
+        # type: (str, str, Any) -> None
         self.data_source_type = 'SqlServer'  # type: str
         self.connection_string = connection_string
         self.query = query
@@ -1102,9 +1116,10 @@ class AzureDataLakeStorageGen2DataFeed(object):
         account_key,
         file_system_name,
         directory_template,
-        file_template
-    ):
-        # type: (str, str, str, str, str) -> None
+        file_template,
+        **kwargs
+    ):  # pylint: disable=unused-argument
+        # type: (str, str, str, str, str, Any) -> None
         self.data_source_type = 'AzureDataLakeStorageGen2'  # type: str
         self.account_name = account_name
         self.account_key = account_key
@@ -1145,8 +1160,8 @@ class ElasticsearchDataFeed(object):
     :type query: str
     """
 
-    def __init__(self, host, port, auth_header, query):
-        # type: (str, str, str, str) -> None
+    def __init__(self, host, port, auth_header, query, **kwargs):  # pylint: disable=unused-argument
+        # type: (str, str, str, str, Any) -> None
         self.data_source_type = 'Elasticsearch'  # type: str
         self.host = host
         self.port = port
@@ -1182,8 +1197,8 @@ class MongoDBDataFeed(object):
     :type command: str
     """
 
-    def __init__(self, connection_string, database, command):
-        # type: (str, str, str) -> None
+    def __init__(self, connection_string, database, command, **kwargs):  # pylint: disable=unused-argument
+        # type: (str, str, str, Any) -> None
         self.data_source_type = 'MongoDB'  # type: str
         self.connection_string = connection_string
         self.database = database
@@ -1428,7 +1443,8 @@ class ChangeThresholdCondition(object):
             within_range,  # type: bool
             anomaly_detector_direction,  # type: Union[str, AnomalyDetectorDirection]
             suppress_condition,  # type: SuppressCondition
-    ):
+            **kwargs  # type: Any
+    ):  # pylint: disable=unused-argument
         # type: (...) -> None
         self.change_percentage = change_percentage
         self.shift_point = shift_point
@@ -1468,8 +1484,8 @@ class SuppressCondition(object):
     :type min_ratio: float
     """
 
-    def __init__(self, min_number, min_ratio):
-        # type: (int, float) -> None
+    def __init__(self, min_number, min_ratio, **kwargs):  # pylint: disable=unused-argument
+        # type: (int, float, Any) -> None
         self.min_number = min_number
         self.min_ratio = min_ratio
 
@@ -1494,8 +1510,13 @@ class SmartDetectionCondition(object):
     :type suppress_condition: ~azure.ai.metricsadvisor.models.SuppressCondition
     """
 
-    def __init__(self, sensitivity, anomaly_detector_direction, suppress_condition):
-        # type: (float, Union[str, AnomalyDetectorDirection], SuppressCondition) -> None
+    def __init__(
+        self, sensitivity,
+        anomaly_detector_direction,
+        suppress_condition,
+        **kwargs
+    ):  # pylint: disable=unused-argument
+        # type: (float, Union[str, AnomalyDetectorDirection], SuppressCondition, Any) -> None
         self.sensitivity = sensitivity
         self.anomaly_detector_direction = anomaly_detector_direction
         self.suppress_condition = suppress_condition
@@ -1820,31 +1841,24 @@ class Anomaly(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar metric_id: metric unique id
-
-     only return for alerting anomaly result.
+    :ivar metric_id: metric unique id. Only returned for alerting anomaly result.
     :vartype metric_id: str
-    :ivar detection_configuration_id: anomaly detection configuration unique id
-
-     only return for alerting anomaly result.
+    :ivar detection_configuration_id: anomaly detection configuration unique id.
+     Only returned for alerting anomaly result.
     :vartype detection_configuration_id: str
     :ivar timestamp: anomaly time.
     :vartype timestamp: ~datetime.datetime
-    :ivar created_time: created time
-
-     only return for alerting result.
+    :ivar created_time: created time. Only returned for alerting result.
     :vartype created_time: ~datetime.datetime
-    :ivar modified_time: modified time
-
-     only return for alerting result.
+    :ivar modified_time: modified time. Only returned for alerting result.
     :vartype modified_time: ~datetime.datetime
     :ivar dimension: dimension specified for series.
     :vartype dimension: dict[str, str]
     :ivar severity: anomaly severity. Possible values include: "Low", "Medium", "High".
     :vartype anomaly_severity: str or ~azure.ai.metricsadvisor.models.Severity
     :vartype severity: str
-    :ivar status: nomaly status. only return for alerting anomaly result. Possible
-    values include: "Active", "Resolved".
+    :ivar status: anomaly status. only returned for alerting anomaly result. Possible
+     values include: "Active", "Resolved".
     :vartype status: str
     """
 
@@ -1884,7 +1898,7 @@ class Anomaly(msrest.serialization.Model):
 
     @classmethod
     def _from_generated(cls, anomaly_result):
-        # type: (AnomalyResult) -> Anomaly
+        # type: (AnomalyResult) -> Union[Anomaly, None]
         if not anomaly_result:
             return None
         severity = None
@@ -1910,13 +1924,10 @@ class Incident(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar metric_id: metric unique id
-
-     only return for alerting incident result.
+    :ivar metric_id: metric unique id. Only returned for alerting incident result.
     :vartype metric_id: str
-    :ivar detection_configuration_id: anomaly detection configuration unique id
-
-     only return for alerting incident result.
+    :ivar detection_configuration_id: anomaly detection configuration unique id.
+     Only returned for alerting incident result.
     :vartype detection_configuration_id: str
     :ivar id: incident id.
     :vartype id: str
@@ -1929,7 +1940,7 @@ class Incident(msrest.serialization.Model):
     :ivar severity: max severity of latest anomalies in the incident. Possible values include:
      "Low", "Medium", "High".
     :vartype severity: str or ~azure.ai.metricsadvisor.models.Severity
-    :ivar incident_status: incident status
+    :ivar status: incident status
      only return for alerting incident result. Possible values include: "Active", "Resolved".
     :vartype status: str or ~azure.ai.metricsadvisor.models.IncidentPropertyIncidentStatus
     """
@@ -1969,7 +1980,7 @@ class Incident(msrest.serialization.Model):
 
     @classmethod
     def _from_generated(cls, incident_result):
-        # type: (IncidentResult) -> Incident
+        # type: (IncidentResult) -> Union[Incident, None]
         if not incident_result:
             return None
         dimension_key = incident_result.root_node.dimension if incident_result.root_node else None
@@ -2029,7 +2040,7 @@ class IncidentRootCause(msrest.serialization.Model):
 
     @classmethod
     def _from_generated(cls, root_cause):
-        # type: (RootCause) -> IncidentRootCause
+        # type: (RootCause) -> Union[IncidentRootCause, None]
         if not root_cause:
             return None
         dimension_key = root_cause.root_cause.dimension if root_cause.root_cause else None
@@ -2126,7 +2137,7 @@ class AnomalyFeedback(msrest.serialization.Model):  # pylint:disable=too-many-in
 
     @classmethod
     def _from_generated(cls, anomaly_feedback):
-        # type: (_AnomalyFeedback) -> AnomalyFeedback
+        # type: (_AnomalyFeedback) -> Union[AnomalyFeedback, None]
         if not anomaly_feedback:
             return None
         dimension_key = anomaly_feedback.dimension_filter.dimension
@@ -2236,7 +2247,7 @@ class ChangePointFeedback(msrest.serialization.Model):
 
     @classmethod
     def _from_generated(cls, change_point_feedback):
-        # type: (_ChangePointFeedback) -> ChangePointFeedback
+        # type: (_ChangePointFeedback) -> Union[ChangePointFeedback, None]
         if not change_point_feedback:
             return None
         dimension_key = change_point_feedback.dimension_filter.dimension
@@ -2340,7 +2351,7 @@ class CommentFeedback(msrest.serialization.Model):
 
     @classmethod
     def _from_generated(cls, comment_feedback):
-        # type: (_CommentFeedback) -> CommentFeedback
+        # type: (_CommentFeedback) -> Union[CommentFeedback, None]
         if not comment_feedback:
             return None
         dimension_key = comment_feedback.dimension_filter.dimension
@@ -2440,7 +2451,7 @@ class PeriodFeedback(msrest.serialization.Model):
 
     @classmethod
     def _from_generated(cls, period_feedback):
-        # type: (_PeriodFeedback) -> PeriodFeedback
+        # type: (_PeriodFeedback) -> Union[PeriodFeedback, None]
         if not period_feedback:
             return None
         dimension_key = period_feedback.dimension_filter.dimension
@@ -2460,7 +2471,7 @@ class PeriodFeedback(msrest.serialization.Model):
         # type: (PeriodFeedback) -> _PeriodFeedback
         dimension_filter = FeedbackDimensionFilter(dimension=self.dimension_key)
         value = PeriodFeedbackValue(period_type=self.period_type, period_value=self.value)
-        return _CommentFeedback(
+        return _PeriodFeedback(
             feedback_id=self.id,
             created_time=self.created_time,
             user_principal=self.user_principal,

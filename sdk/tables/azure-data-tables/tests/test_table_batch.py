@@ -22,7 +22,9 @@ from azure.core.exceptions import (
 )
 from azure.data.tables import EdmType, TableEntity, EntityProperty, UpdateMode
 
-from _shared.testcase import GlobalStorageAccountPreparer, TableTestCase, LogCaptured
+from _shared.testcase import TableTestCase, LogCaptured
+
+from devtools_testutils import CachedResourceGroupPreparer, CachedStorageAccountPreparer
 
 from azure.data.tables._models import PartialBatchErrorException
 from azure.data.tables import (
@@ -188,7 +190,8 @@ class StorageTableBatchTest(TableTestCase):
         self.assertEqual(entity.test8.type, EdmType.INT64)
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @GlobalStorageAccountPreparer()
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_batch_insert(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         self._set_up(storage_account, storage_account_key)
@@ -218,7 +221,8 @@ class StorageTableBatchTest(TableTestCase):
             self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @GlobalStorageAccountPreparer()
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_batch_single_update(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         self._set_up(storage_account, storage_account_key)
@@ -253,7 +257,8 @@ class StorageTableBatchTest(TableTestCase):
             self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @GlobalStorageAccountPreparer()
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_batch_update(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         self._set_up(storage_account, storage_account_key)
@@ -287,7 +292,8 @@ class StorageTableBatchTest(TableTestCase):
             self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @GlobalStorageAccountPreparer()
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_batch_merge(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         self._set_up(storage_account, storage_account_key)
@@ -325,7 +331,8 @@ class StorageTableBatchTest(TableTestCase):
             self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @GlobalStorageAccountPreparer()
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_batch_update_if_match(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         self._set_up(storage_account, storage_account_key)
@@ -353,7 +360,8 @@ class StorageTableBatchTest(TableTestCase):
             self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @GlobalStorageAccountPreparer()
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_batch_update_if_doesnt_match(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         self._set_up(storage_account, storage_account_key)
@@ -382,7 +390,8 @@ class StorageTableBatchTest(TableTestCase):
             self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @GlobalStorageAccountPreparer()
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_batch_insert_replace(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         self._set_up(storage_account, storage_account_key)
@@ -411,7 +420,8 @@ class StorageTableBatchTest(TableTestCase):
             self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @GlobalStorageAccountPreparer()
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_batch_insert_merge(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         self._set_up(storage_account, storage_account_key)
@@ -440,7 +450,8 @@ class StorageTableBatchTest(TableTestCase):
             self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @GlobalStorageAccountPreparer()
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_batch_delete(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         self._set_up(storage_account, storage_account_key)
@@ -469,7 +480,8 @@ class StorageTableBatchTest(TableTestCase):
             self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @GlobalStorageAccountPreparer()
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_batch_inserts(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         self._set_up(storage_account, storage_account_key)
@@ -499,7 +511,8 @@ class StorageTableBatchTest(TableTestCase):
             self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @GlobalStorageAccountPreparer()
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_batch_all_operations_together(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         self._set_up(storage_account, storage_account_key)
@@ -547,7 +560,8 @@ class StorageTableBatchTest(TableTestCase):
             self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
-    @GlobalStorageAccountPreparer()
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_batch_all_operations_together_context_manager(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         self._set_up(storage_account, storage_account_key)
@@ -592,8 +606,9 @@ class StorageTableBatchTest(TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("Not sure this is how the batching should operate, will consult w/ Anna")
-    @GlobalStorageAccountPreparer()
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_batch_reuse(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         self._set_up(storage_account, storage_account_key)
@@ -650,8 +665,9 @@ class StorageTableBatchTest(TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("This does not throw an error, but it should")
-    @GlobalStorageAccountPreparer()
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_batch_same_row_operations_fail(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         self._set_up(storage_account, storage_account_key)
@@ -675,7 +691,9 @@ class StorageTableBatchTest(TableTestCase):
         finally:
             self._tear_down()
 
-    @GlobalStorageAccountPreparer()
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_batch_different_partition_operations_fail(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         self._set_up(storage_account, storage_account_key)
@@ -700,7 +718,9 @@ class StorageTableBatchTest(TableTestCase):
         finally:
             self._tear_down()
 
-    @GlobalStorageAccountPreparer()
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_batch_too_many_ops(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         self._set_up(storage_account, storage_account_key)

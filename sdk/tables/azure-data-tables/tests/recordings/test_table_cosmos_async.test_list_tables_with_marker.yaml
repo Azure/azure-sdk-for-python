@@ -1,0 +1,138 @@
+interactions:
+- request:
+    body: '{"TableName": "listtable038de1577"}'
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Content-Length:
+      - '35'
+      Content-Type:
+      - application/json;odata=nometadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Thu, 17 Sep 2020 20:46:40 GMT
+      User-Agent:
+      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Thu, 17 Sep 2020 20:46:40 GMT
+      x-ms-version:
+      - '2019-07-07'
+    method: POST
+    uri: https://cosmostablescosmosname.table.cosmos.azure.com/Tables
+  response:
+    body:
+      string: "{\"odata.error\":{\"code\":\"TableAlreadyExists\",\"message\":{\"lang\":\"en-us\",\"value\":\"The
+        specified table already exists.\\nRequestID:e32fed6b-f926-11ea-aefe-58961df361d1\\n\"}}}\r\n"
+    headers:
+      content-type: application/json;odata=minimalmetadata
+      date: Thu, 17 Sep 2020 20:46:40 GMT
+      server: Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+    status:
+      code: 409
+      message: Conflict
+    url: https://cosmostableszkkfu2f3a4lp.table.cosmos.azure.com/Tables
+- request:
+    body: '{"TableName": "listtable138de1577"}'
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Content-Length:
+      - '35'
+      Content-Type:
+      - application/json;odata=nometadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Thu, 17 Sep 2020 20:46:40 GMT
+      User-Agent:
+      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Thu, 17 Sep 2020 20:46:40 GMT
+      x-ms-version:
+      - '2019-07-07'
+    method: POST
+    uri: https://cosmostablescosmosname.table.cosmos.azure.com/Tables
+  response:
+    body:
+      string: "{\"odata.error\":{\"code\":\"TableAlreadyExists\",\"message\":{\"lang\":\"en-us\",\"value\":\"The
+        specified table already exists.\\nRequestID:e3802fff-f926-11ea-8de5-58961df361d1\\n\"}}}\r\n"
+    headers:
+      content-type: application/json;odata=minimalmetadata
+      date: Thu, 17 Sep 2020 20:46:40 GMT
+      server: Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+    status:
+      code: 409
+      message: Conflict
+    url: https://cosmostableszkkfu2f3a4lp.table.cosmos.azure.com/Tables
+- request:
+    body: '{"TableName": "listtable238de1577"}'
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Content-Length:
+      - '35'
+      Content-Type:
+      - application/json;odata=nometadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Thu, 17 Sep 2020 20:46:40 GMT
+      User-Agent:
+      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Thu, 17 Sep 2020 20:46:40 GMT
+      x-ms-version:
+      - '2019-07-07'
+    method: POST
+    uri: https://cosmostablescosmosname.table.cosmos.azure.com/Tables
+  response:
+    body:
+      string: "{\"odata.error\":{\"code\":\"TableAlreadyExists\",\"message\":{\"lang\":\"en-us\",\"value\":\"The
+        specified table already exists.\\nRequestID:e38cbff9-f926-11ea-b1bb-58961df361d1\\n\"}}}\r\n"
+    headers:
+      content-type: application/json;odata=minimalmetadata
+      date: Thu, 17 Sep 2020 20:46:40 GMT
+      server: Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+    status:
+      code: 409
+      message: Conflict
+    url: https://cosmostableszkkfu2f3a4lp.table.cosmos.azure.com/Tables
+- request:
+    body: '{"TableName": "listtable338de1577"}'
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Content-Length:
+      - '35'
+      Content-Type:
+      - application/json;odata=nometadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Thu, 17 Sep 2020 20:46:41 GMT
+      User-Agent:
+      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Thu, 17 Sep 2020 20:46:41 GMT
+      x-ms-version:
+      - '2019-07-07'
+    method: POST
+    uri: https://cosmostablescosmosname.table.cosmos.azure.com/Tables
+  response:
+    body:
+      string: "{\"odata.error\":{\"code\":\"TableAlreadyExists\",\"message\":{\"lang\":\"en-us\",\"value\":\"The
+        specified table already exists.\\nRequestID:e39bd298-f926-11ea-a38d-58961df361d1\\n\"}}}\r\n"
+    headers:
+      content-type: application/json;odata=minimalmetadata
+      date: Thu, 17 Sep 2020 20:46:40 GMT
+      server: Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+    status:
+      code: 409
+      message: Conflict
+    url: https://cosmostableszkkfu2f3a4lp.table.cosmos.azure.com/Tables
+version: 1

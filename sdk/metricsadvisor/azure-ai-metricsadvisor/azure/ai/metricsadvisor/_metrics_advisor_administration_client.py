@@ -11,6 +11,7 @@ from typing import (
     Any,
     List,
     Union,
+    cast,
     TYPE_CHECKING
 )
 import datetime
@@ -18,34 +19,38 @@ import six
 from azure.core.tracing.decorator import distributed_trace
 from ._generated._azure_cognitive_service_metrics_advisor_restapi_open_ap_iv2 \
     import AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2 as _Client
-from ._generated.models import AnomalyAlertingConfiguration as _AnomalyAlertingConfiguration
-from ._generated.models import AzureApplicationInsightsDataFeed as _AzureApplicationInsightsDataFeed
-from ._generated.models import AzureBlobDataFeed as _AzureBlobDataFeed
-from ._generated.models import AzureCosmosDBDataFeed as _AzureCosmosDBDataFeed
-from ._generated.models import AzureDataExplorerDataFeed as _AzureDataExplorerDataFeed
-from ._generated.models import AzureTableDataFeed as _AzureTableDataFeed
-from ._generated.models import HttpRequestDataFeed as _HttpRequestDataFeed
-from ._generated.models import InfluxDBDataFeed as _InfluxDBDataFeed
-from ._generated.models import MySqlDataFeed as _MySqlDataFeed
-from ._generated.models import PostgreSqlDataFeed as _PostgreSqlDataFeed
-from ._generated.models import MongoDBDataFeed as _MongoDBDataFeed
-from ._generated.models import SQLServerDataFeed as _SQLServerDataFeed
-from ._generated.models import AzureDataLakeStorageGen2DataFeed as _AzureDataLakeStorageGen2DataFeed
-from ._generated.models import AzureDataLakeStorageGen2DataFeedPatch as _AzureDataLakeStorageGen2DataFeedPatch
-from ._generated.models import ElasticsearchDataFeed as _ElasticsearchDataFeed
-from ._generated.models import ElasticsearchDataFeedPatch as _ElasticsearchDataFeedPatch
-from ._generated.models import AzureApplicationInsightsDataFeedPatch as _AzureApplicationInsightsDataFeedPatch
-from ._generated.models import AzureBlobDataFeedPatch as _AzureBlobDataFeedPatch
-from ._generated.models import AzureCosmosDBDataFeedPatch as _AzureCosmosDBDataFeedPatch
-from ._generated.models import AzureDataExplorerDataFeedPatch as _AzureDataExplorerDataFeedPatch
-from ._generated.models import AzureTableDataFeedPatch as _AzureTableDataFeedPatch
-from ._generated.models import HttpRequestDataFeedPatch as _HttpRequestDataFeedPatch
-from ._generated.models import InfluxDBDataFeedPatch as _InfluxDBDataFeedPatch
-from ._generated.models import MySqlDataFeedPatch as _MySqlDataFeedPatch
-from ._generated.models import PostgreSqlDataFeedPatch as _PostgreSqlDataFeedPatch
-from ._generated.models import MongoDBDataFeedPatch as _MongoDBDataFeedPatch
-from ._generated.models import SQLServerDataFeedPatch as _SQLServerDataFeedPatch
-from ._generated.models import AnomalyDetectionConfiguration as _AnomalyDetectionConfiguration
+from ._generated.models import (
+    AnomalyAlertingConfiguration as _AnomalyAlertingConfiguration,
+    AzureApplicationInsightsDataFeed as _AzureApplicationInsightsDataFeed,
+    AzureBlobDataFeed as _AzureBlobDataFeed,
+    AzureCosmosDBDataFeed as _AzureCosmosDBDataFeed,
+    AzureDataExplorerDataFeed as _AzureDataExplorerDataFeed,
+    AzureTableDataFeed as _AzureTableDataFeed,
+    HttpRequestDataFeed as _HttpRequestDataFeed,
+    InfluxDBDataFeed as _InfluxDBDataFeed,
+    MySqlDataFeed as _MySqlDataFeed,
+    PostgreSqlDataFeed as _PostgreSqlDataFeed,
+    MongoDBDataFeed as _MongoDBDataFeed,
+    SQLServerDataFeed as _SQLServerDataFeed,
+    AzureDataLakeStorageGen2DataFeed as _AzureDataLakeStorageGen2DataFeed,
+    AzureDataLakeStorageGen2DataFeedPatch as _AzureDataLakeStorageGen2DataFeedPatch,
+    ElasticsearchDataFeed as _ElasticsearchDataFeed,
+    ElasticsearchDataFeedPatch as _ElasticsearchDataFeedPatch,
+    AzureApplicationInsightsDataFeedPatch as _AzureApplicationInsightsDataFeedPatch,
+    AzureBlobDataFeedPatch as _AzureBlobDataFeedPatch,
+    AzureCosmosDBDataFeedPatch as _AzureCosmosDBDataFeedPatch,
+    AzureDataExplorerDataFeedPatch as _AzureDataExplorerDataFeedPatch,
+    AzureTableDataFeedPatch as _AzureTableDataFeedPatch,
+    HttpRequestDataFeedPatch as _HttpRequestDataFeedPatch,
+    InfluxDBDataFeedPatch as _InfluxDBDataFeedPatch,
+    MySqlDataFeedPatch as _MySqlDataFeedPatch,
+    PostgreSqlDataFeedPatch as _PostgreSqlDataFeedPatch,
+    MongoDBDataFeedPatch as _MongoDBDataFeedPatch,
+    SQLServerDataFeedPatch as _SQLServerDataFeedPatch,
+    AnomalyDetectionConfiguration as _AnomalyDetectionConfiguration,
+    IngestionProgressResetOptions as _IngestionProgressResetOptions,
+    IngestionStatusQueryOptions as _IngestionStatusQueryOptions,
+)
 from ._version import SDK_MONIKER
 from ._metrics_advisor_key_credential_policy import MetricsAdvisorKeyCredentialPolicy
 from ._helpers import (
@@ -163,12 +168,29 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
     def __init__(self, endpoint, credential, **kwargs):
         # type: (str, MetricsAdvisorKeyCredential, Any) -> None
 
+        try:
+            if not endpoint.lower().startswith('http'):
+                endpoint = "https://" + endpoint
+        except AttributeError:
+            raise ValueError("Base URL must be a string.")
+
+        if not credential:
+            raise ValueError("Missing credential")
+
+        self._endpoint = endpoint
+
         self._client = _Client(
             endpoint=endpoint,
             sdk_moniker=SDK_MONIKER,
             authentication_policy=MetricsAdvisorKeyCredentialPolicy(credential),
             **kwargs
         )
+
+    def __repr__(self):
+        # type: () -> str
+        return "<MetricsAdvisorKeyCredential [endpoint={}]>".format(
+            repr(self._endpoint)
+        )[:1024]
 
     def close(self):
         # type: () -> None
@@ -218,7 +240,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         """
 
         cross_metrics_operator = kwargs.pop("cross_metrics_operator", None)
-        response_headers = self._client.create_anomaly_alerting_configuration(
+        response_headers = self._client.create_anomaly_alerting_configuration(  # type: ignore
             _AnomalyAlertingConfiguration(
                 name=name,
                 metric_alerting_configurations=[
@@ -289,7 +311,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
             options=options
         )
 
-        response_headers = self._client.create_data_feed(
+        response_headers = self._client.create_data_feed(  # type: ignore
             data_feed_detail,
             cls=lambda pipeline_response, _, response_headers: response_headers,
             **kwargs
@@ -330,8 +352,8 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         if hook.hook_type == "Webhook":
             hook_request = hook._to_generated(name)
 
-        response_headers = self._client.create_hook(
-            hook_request,
+        response_headers = self._client.create_hook(  # type: ignore
+            hook_request,  # type: ignore
             cls=lambda pipeline_response, _, response_headers: response_headers,
             **kwargs
         )
@@ -350,6 +372,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         :param str name: The name for the anomaly detection configuration
         :param str metric_id: Required. metric unique id.
         :param whole_series_detection_condition: Required.
+            Conditions to detect anomalies in all time series of a metric.
         :type whole_series_detection_condition: ~azure.ai.metricsadvisor.models.MetricDetectionCondition
         :keyword str description: anomaly detection configuration description.
         :keyword series_group_detection_conditions: detection configuration for series group.
@@ -387,7 +410,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
             if series_detection_conditions else None,
         )
 
-        response_headers = self._client.create_anomaly_detection_configuration(
+        response_headers = self._client.create_anomaly_detection_configuration(  # type: ignore
             config,
             cls=lambda pipeline_response, _, response_headers: response_headers,
             **kwargs
@@ -403,7 +426,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         :param data_feed_id: The data feed unique id.
         :type data_feed_id: str
         :return: DataFeed
-        :rtype: azure.ai.metricsadvisor.models.DataFeed
+        :rtype: ~azure.ai.metricsadvisor.models.DataFeed
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -512,8 +535,8 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
 
         :param data_feed_id: The data feed unique id.
         :type data_feed_id: str
-        :return: DataFeedIngestionProgress, containing latest_success_timestamp
-            and latest_active_timestamp
+        :return: DataFeedIngestionProgress, containing `latest_success_timestamp`
+            and `latest_active_timestamp`
         :rtype: ~azure.ai.metricsadvisor.models.DataFeedIngestionProgress
         :raises ~azure.core.exceptions.HttpResponseError:
 
@@ -561,10 +584,10 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         """
         self._client.reset_data_feed_ingestion_status(
             data_feed_id,
-            body={
-                "start_time": start_time,
-                "end_time": end_time
-            },
+            body=_IngestionProgressResetOptions(
+                start_time=start_time,
+                end_time=end_time
+            ),
             **kwargs
         )
 
@@ -685,7 +708,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
             all-up value.
         :keyword rollup_type: Mark if the data feed needs rollup. Possible values include: "NoRollup",
             "AutoRollup", "AlreadyRollup". Default value: "AutoRollup".
-        :paramtype roll_up_type: str or ~azure.ai.metricsadvisor.models.DataFeedRollupType
+        :paramtype rollup_type: str or ~azure.ai.metricsadvisor.models.DataFeedRollupType
         :keyword list[str] auto_rollup_group_by_column_names: Roll up columns.
         :keyword rollup_method: Roll up method. Possible values include: "None", "Sum", "Max", "Min",
             "Avg", "Count".
@@ -846,6 +869,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         :keyword str name: The name for the anomaly detection configuration
         :keyword str metric_id: metric unique id.
         :keyword whole_series_detection_condition: Required.
+            Conditions to detect anomalies in all time series of a metric.
         :paramtype whole_series_detection_condition: ~azure.ai.metricsadvisor.models.MetricDetectionCondition
         :keyword str description: anomaly detection configuration description.
         :keyword series_group_detection_conditions: detection configuration for series group.
@@ -963,6 +987,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         else:
             hook_id = hook.id
             if hook.hook_type == "Email":
+                hook = cast(EmailHook, hook)
                 hook_patch = hook._to_generated_patch(
                     name=update.pop("hookName", None),
                     description=update.pop("description", None),
@@ -971,6 +996,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                 )
 
             elif hook.hook_type == "Webhook":
+                hook = cast(WebHook, hook)
                 hook_patch = hook._to_generated_patch(
                     name=update.pop("hookName", None),
                     description=update.pop("description", None),
@@ -1021,7 +1047,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                 return EmailHook._from_generated(hook)
             return WebHook._from_generated(hook)
 
-        return self._client.list_hooks(
+        return self._client.list_hooks(  # type: ignore
             hook_name=hook_name,
             skip=skip,
             cls=kwargs.pop("cls", lambda hooks: [_convert_to_hook_type(hook) for hook in hooks]),
@@ -1066,7 +1092,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         creator = kwargs.pop("creator", None)
         skip = kwargs.pop("skip", None)
 
-        return self._client.list_data_feeds(
+        return self._client.list_data_feeds(  # type: ignore
             data_feed_name=data_feed_name,
             data_source_type=data_source_type,
             granularity_name=granularity_type,
@@ -1089,7 +1115,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         :param detection_configuration_id: anomaly detection configuration unique id.
         :type detection_configuration_id: str
         :return: Pageable of AnomalyAlertConfiguration
-        :rtype: ItemPaged[AnomalyAlertConfiguration]
+        :rtype: ~azure.core.paging.ItemPaged[AnomalyAlertConfiguration]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -1101,7 +1127,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                 :dedent: 4
                 :caption: List all anomaly alert configurations for specific anomaly detection configuration
         """
-        return self._client.get_anomaly_alerting_configurations_by_anomaly_detection_configuration(
+        return self._client.get_anomaly_alerting_configurations_by_anomaly_detection_configuration(  # type: ignore
             detection_configuration_id,
             cls=kwargs.pop("cls", lambda confs: [
                 AnomalyAlertConfiguration._from_generated(conf) for conf in confs
@@ -1121,7 +1147,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         :param metric_id: metric unique id.
         :type metric_id: str
         :return: Pageable of AnomalyDetectionConfiguration
-        :rtype: ItemPaged[AnomalyDetectionConfiguration]
+        :rtype: ~azure.core.paging.ItemPaged[AnomalyDetectionConfiguration]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -1133,7 +1159,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                 :dedent: 4
                 :caption: List all anomaly detection configurations for a specific metric
         """
-        return self._client.get_anomaly_detection_configurations_by_metric(
+        return self._client.get_anomaly_detection_configurations_by_metric(  # type: ignore
             metric_id,
             cls=kwargs.pop("cls", lambda confs: [
                 AnomalyDetectionConfiguration._from_generated(conf) for conf in confs
@@ -1174,12 +1200,12 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
 
         skip = kwargs.pop("skip", None)
 
-        return self._client.get_data_feed_ingestion_status(
+        return self._client.get_data_feed_ingestion_status(  # type: ignore
             data_feed_id=data_feed_id,
-            body={
-                "start_time": start_time,
-                "end_time": end_time
-            },
+            body=_IngestionStatusQueryOptions(
+                start_time=start_time,
+                end_time=end_time
+            ),
             skip=skip,
             **kwargs
         )

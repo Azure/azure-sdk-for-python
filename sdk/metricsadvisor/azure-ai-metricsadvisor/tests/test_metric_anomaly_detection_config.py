@@ -22,7 +22,7 @@ from base_testcase import TestMetricsAdvisorAdministrationClientBase
 
 class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationClientBase):
 
-    def test_create_metric_anomaly_detection_configuration_whole_series_detection(self):
+    def test_create_ad_config_whole_series_detection(self):
 
         data_feed = self._create_data_feed("adconfig")
         try:
@@ -101,7 +101,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
         finally:
             self.admin_client.delete_data_feed(data_feed.id)
 
-    def test_create_metric_anomaly_detection_config_with_series_and_group_conditions(self):
+    def test_create_ad_config_with_series_and_group_conds(self):
         data_feed = self._create_data_feed("adconfigget")
         try:
             detection_config_name = self.create_random_name("testdetectionconfiget")
@@ -216,7 +216,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
         finally:
             self.admin_client.delete_data_feed(data_feed.id)
 
-    def test_create_detection_config_with_multiple_series_and_group_conditions(self):
+    def test_create_ad_config_multiple_series_and_group_conds(self):
         data_feed = self._create_data_feed("datafeedforconfig")
         try:
             detection_config_name = self.create_random_name("multipledetectionconfigs")

@@ -57,7 +57,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             self.assertIsNotNone(alert_config.name)
             self.assertEqual(len(alert_config.metric_alert_configurations), 1)
             self.assertIsNotNone(alert_config.metric_alert_configurations[0].detection_configuration_id)
-            self.assertFalse(alert_config.metric_alert_configurations[0].use_detection_result_to_filter_anomalies)
+            self.assertFalse(alert_config.metric_alert_configurations[0].negation_operation)
             self.assertEqual(alert_config.metric_alert_configurations[0].alert_scope.scope_type, "TopN")
             self.assertEqual(
                 alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.min_top_count, 9)
@@ -117,7 +117,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             self.assertIsNotNone(alert_config.name)
             self.assertEqual(len(alert_config.metric_alert_configurations), 1)
             self.assertIsNotNone(alert_config.metric_alert_configurations[0].detection_configuration_id)
-            self.assertFalse(alert_config.metric_alert_configurations[0].use_detection_result_to_filter_anomalies)
+            self.assertFalse(alert_config.metric_alert_configurations[0].negation_operation)
             self.assertEqual(alert_config.metric_alert_configurations[0].alert_scope.scope_type, "TopN")
             self.assertEqual(
                 alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.min_top_count, 9)
@@ -177,7 +177,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             self.assertIsNotNone(alert_config.name)
             self.assertEqual(len(alert_config.metric_alert_configurations), 1)
             self.assertIsNotNone(alert_config.metric_alert_configurations[0].detection_configuration_id)
-            self.assertFalse(alert_config.metric_alert_configurations[0].use_detection_result_to_filter_anomalies)
+            self.assertFalse(alert_config.metric_alert_configurations[0].negation_operation)
             self.assertEqual(alert_config.metric_alert_configurations[0].alert_scope.scope_type, "TopN")
             self.assertEqual(
                 alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.min_top_count, 9)
@@ -236,7 +236,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             self.assertIsNotNone(alert_config.name)
             self.assertEqual(len(alert_config.metric_alert_configurations), 1)
             self.assertIsNotNone(alert_config.metric_alert_configurations[0].detection_configuration_id)
-            self.assertFalse(alert_config.metric_alert_configurations[0].use_detection_result_to_filter_anomalies)
+            self.assertFalse(alert_config.metric_alert_configurations[0].negation_operation)
             self.assertEqual(alert_config.metric_alert_configurations[0].alert_scope.scope_type, "TopN")
             self.assertEqual(
                 alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.min_top_count, 9)
@@ -288,7 +288,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             self.assertIsNotNone(alert_config.name)
             self.assertEqual(len(alert_config.metric_alert_configurations), 1)
             self.assertIsNotNone(alert_config.metric_alert_configurations[0].detection_configuration_id)
-            self.assertFalse(alert_config.metric_alert_configurations[0].use_detection_result_to_filter_anomalies)
+            self.assertFalse(alert_config.metric_alert_configurations[0].negation_operation)
             self.assertEqual(alert_config.metric_alert_configurations[0].alert_scope.scope_type, "TopN")
             self.assertEqual(
                 alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.min_top_count, 9)
@@ -339,7 +339,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             self.assertIsNotNone(alert_config.name)
             self.assertEqual(len(alert_config.metric_alert_configurations), 1)
             self.assertIsNotNone(alert_config.metric_alert_configurations[0].detection_configuration_id)
-            self.assertFalse(alert_config.metric_alert_configurations[0].use_detection_result_to_filter_anomalies)
+            self.assertFalse(alert_config.metric_alert_configurations[0].negation_operation)
             self.assertEqual(alert_config.metric_alert_configurations[0].alert_scope.scope_type, "WholeSeries")
             self.assertIsNotNone(
                 alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.companion_metric_id)
@@ -390,7 +390,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             self.assertIsNotNone(alert_config.name)
             self.assertEqual(len(alert_config.metric_alert_configurations), 1)
             self.assertIsNotNone(alert_config.metric_alert_configurations[0].detection_configuration_id)
-            self.assertFalse(alert_config.metric_alert_configurations[0].use_detection_result_to_filter_anomalies)
+            self.assertFalse(alert_config.metric_alert_configurations[0].negation_operation)
             self.assertEqual(alert_config.metric_alert_configurations[0].alert_scope.scope_type, "WholeSeries")
             self.assertIsNotNone(
                 alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.companion_metric_id)
@@ -441,7 +441,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             self.assertIsNotNone(alert_config.name)
             self.assertEqual(len(alert_config.metric_alert_configurations), 1)
             self.assertIsNotNone(alert_config.metric_alert_configurations[0].detection_configuration_id)
-            self.assertFalse(alert_config.metric_alert_configurations[0].use_detection_result_to_filter_anomalies)
+            self.assertFalse(alert_config.metric_alert_configurations[0].negation_operation)
             self.assertEqual(alert_config.metric_alert_configurations[0].alert_scope.scope_type, "WholeSeries")
             self.assertIsNotNone(
                 alert_config.metric_alert_configurations[0].alert_conditions.metric_boundary_condition.companion_metric_id)
@@ -491,7 +491,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             self.assertIsNotNone(alert_config.name)
             self.assertEqual(len(alert_config.metric_alert_configurations), 1)
             self.assertIsNotNone(alert_config.metric_alert_configurations[0].detection_configuration_id)
-            self.assertFalse(alert_config.metric_alert_configurations[0].use_detection_result_to_filter_anomalies)
+            self.assertFalse(alert_config.metric_alert_configurations[0].negation_operation)
             self.assertEqual(alert_config.metric_alert_configurations[0].alert_scope.scope_type, "WholeSeries")
             self.assertEqual(
                 alert_config.metric_alert_configurations[0].alert_conditions.severity_condition.min_alert_severity, "Low")
@@ -538,7 +538,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             self.assertIsNotNone(alert_config.name)
             self.assertEqual(len(alert_config.metric_alert_configurations), 1)
             self.assertIsNotNone(alert_config.metric_alert_configurations[0].detection_configuration_id)
-            self.assertFalse(alert_config.metric_alert_configurations[0].use_detection_result_to_filter_anomalies)
+            self.assertFalse(alert_config.metric_alert_configurations[0].negation_operation)
             self.assertEqual(alert_config.metric_alert_configurations[0].alert_scope.scope_type, "SeriesGroup")
             self.assertEqual(alert_config.metric_alert_configurations[0].alert_scope.series_group_in_scope, {'city': 'Shenzhen'})
             self.assertIsNotNone(
@@ -591,7 +591,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             self.assertIsNotNone(alert_config.name)
             self.assertEqual(len(alert_config.metric_alert_configurations), 1)
             self.assertIsNotNone(alert_config.metric_alert_configurations[0].detection_configuration_id)
-            self.assertFalse(alert_config.metric_alert_configurations[0].use_detection_result_to_filter_anomalies)
+            self.assertFalse(alert_config.metric_alert_configurations[0].negation_operation)
             self.assertEqual(alert_config.metric_alert_configurations[0].alert_scope.scope_type, "SeriesGroup")
             self.assertEqual(alert_config.metric_alert_configurations[0].alert_scope.series_group_in_scope, {'city': 'Shenzhen'})
             self.assertIsNotNone(
@@ -644,7 +644,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             self.assertIsNotNone(alert_config.name)
             self.assertEqual(len(alert_config.metric_alert_configurations), 1)
             self.assertIsNotNone(alert_config.metric_alert_configurations[0].detection_configuration_id)
-            self.assertFalse(alert_config.metric_alert_configurations[0].use_detection_result_to_filter_anomalies)
+            self.assertFalse(alert_config.metric_alert_configurations[0].negation_operation)
             self.assertEqual(alert_config.metric_alert_configurations[0].alert_scope.scope_type, "SeriesGroup")
             self.assertEqual(alert_config.metric_alert_configurations[0].alert_scope.series_group_in_scope, {'city': 'Shenzhen'})
             self.assertIsNotNone(
@@ -696,7 +696,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             self.assertIsNotNone(alert_config.name)
             self.assertEqual(len(alert_config.metric_alert_configurations), 1)
             self.assertIsNotNone(alert_config.metric_alert_configurations[0].detection_configuration_id)
-            self.assertFalse(alert_config.metric_alert_configurations[0].use_detection_result_to_filter_anomalies)
+            self.assertFalse(alert_config.metric_alert_configurations[0].negation_operation)
             self.assertEqual(alert_config.metric_alert_configurations[0].alert_scope.scope_type, "SeriesGroup")
             self.assertEqual(alert_config.metric_alert_configurations[0].alert_scope.series_group_in_scope, {'city': 'Shenzhen'})
             self.assertEqual(
@@ -774,7 +774,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             self.assertIsNotNone(alert_config.name)
             self.assertEqual(len(alert_config.metric_alert_configurations), 3)
             self.assertIsNotNone(alert_config.metric_alert_configurations[0].detection_configuration_id)
-            self.assertFalse(alert_config.metric_alert_configurations[0].use_detection_result_to_filter_anomalies)
+            self.assertFalse(alert_config.metric_alert_configurations[0].negation_operation)
             self.assertEqual(alert_config.metric_alert_configurations[0].alert_scope.scope_type, "TopN")
             self.assertEqual(
                 alert_config.metric_alert_configurations[0].alert_scope.top_n_group_in_scope.min_top_count, 9)

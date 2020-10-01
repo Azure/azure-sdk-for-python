@@ -10,7 +10,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b2 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
     uri: https://westcentralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.2/sentiment?showStats=false&stringIndexType=UnicodeCodePoint
   response:
@@ -18,14 +18,14 @@ interactions:
       string: '{"documents":[{"id":"0","sentiment":"neutral","confidenceScores":{"positive":0.32,"neutral":0.65,"negative":0.03},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.32,"neutral":0.65,"negative":0.03},"offset":0,"length":28,"text":"Test
         passing cls to endpoint"}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}'
     headers:
-      apim-request-id: c9eda74f-6ee4-4fee-8fe6-81b869de7098
+      apim-request-id: 5bea01ea-1b1e-4b91-b634-90ec55bc3d71
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=1
-      date: Thu, 10 Sep 2020 15:25:27 GMT
+      date: Wed, 30 Sep 2020 16:02:37 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '76'
+      x-envoy-upstream-service-time: '106'
     status:
       code: 200
       message: OK

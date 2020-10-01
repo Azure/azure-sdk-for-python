@@ -4,11 +4,13 @@
 # license information.
 # --------------------------------------------------------------------------
 
+from typing import Any
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from ._metrics_advisor_key_credential import MetricsAdvisorKeyCredential
 
 _API_KEY_HEADER_NAME = "Ocp-Apim-Subscription-Key"
 _X_API_KEY_HEADER_NAME = "x-api-key"
+
 
 class MetricsAdvisorKeyCredentialPolicy(SansIOHTTPPolicy):
     """Adds a key header for the provided credential.
