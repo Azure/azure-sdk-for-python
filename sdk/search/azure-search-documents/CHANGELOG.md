@@ -1,6 +1,6 @@
 # Release History
 
-## 11.1.0b3 (Unreleased)
+## 11.1.0b3 (2020-10-06)
 
 **Breaking Changes**
 
