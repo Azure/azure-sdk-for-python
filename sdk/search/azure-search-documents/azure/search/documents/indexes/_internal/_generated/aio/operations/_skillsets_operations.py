@@ -8,7 +8,7 @@
 from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
 import warnings
 
-from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 
@@ -17,8 +17,8 @@ from ... import models
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class SynonymMapsOperations:
-    """SynonymMapsOperations async operations.
+class SkillsetsOperations:
+    """SkillsetsOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -41,19 +41,20 @@ class SynonymMapsOperations:
 
     async def create_or_update(
         self,
-        synonym_map_name: str,
-        synonym_map: "models.SynonymMap",
+        skillset_name: str,
+        skillset: "models.SearchIndexerSkillset",
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
         request_options: Optional["models.RequestOptions"] = None,
         **kwargs
-    ) -> "models.SynonymMap":
-        """Creates a new synonym map or updates a synonym map if it already exists.
+    ) -> "models.SearchIndexerSkillset":
+        """Creates a new skillset in a search service or updates the skillset if it already exists.
 
-        :param synonym_map_name: The name of the synonym map to create or update.
-        :type synonym_map_name: str
-        :param synonym_map: The definition of the synonym map to create or update.
-        :type synonym_map: ~azure.search.documents.indexes.models.SynonymMap
+        :param skillset_name: The name of the skillset to create or update.
+        :type skillset_name: str
+        :param skillset: The skillset containing one or more skills to create or update in a search
+         service.
+        :type skillset: ~azure.search.documents.indexes.models.SearchIndexerSkillset
         :param if_match: Defines the If-Match condition. The operation will be performed only if the
          ETag on the server matches this value.
         :type if_match: str
@@ -63,12 +64,14 @@ class SynonymMapsOperations:
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: SynonymMap, or the result of cls(response)
-        :rtype: ~azure.search.documents.indexes.models.SynonymMap
+        :return: SearchIndexerSkillset, or the result of cls(response)
+        :rtype: ~azure.search.documents.indexes.models.SearchIndexerSkillset
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SynonymMap"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.SearchIndexerSkillset"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         
         _x_ms_client_request_id = None
@@ -77,12 +80,13 @@ class SynonymMapsOperations:
         prefer = "return=representation"
         api_version = "2020-06-30"
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
 
         # Construct URL
         url = self.create_or_update.metadata['url']  # type: ignore
         path_format_arguments = {
             'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'synonymMapName': self._serialize.url("synonym_map_name", synonym_map_name, 'str'),
+            'skillsetName': self._serialize.url("skillset_name", skillset_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -100,13 +104,12 @@ class SynonymMapsOperations:
             header_parameters['If-None-Match'] = self._serialize.header("if_none_match", if_none_match, 'str')
         header_parameters['Prefer'] = self._serialize.header("prefer", prefer, 'str')
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(synonym_map, 'SynonymMap')
+        body_content = self._serialize.body(skillset, 'SearchIndexerSkillset')
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -116,29 +119,29 @@ class SynonymMapsOperations:
             raise HttpResponseError(response=response, model=error)
 
         if response.status_code == 200:
-            deserialized = self._deserialize('SynonymMap', pipeline_response)
+            deserialized = self._deserialize('SearchIndexerSkillset', pipeline_response)
 
         if response.status_code == 201:
-            deserialized = self._deserialize('SynonymMap', pipeline_response)
+            deserialized = self._deserialize('SearchIndexerSkillset', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    create_or_update.metadata = {'url': '/synonymmaps(\'{synonymMapName}\')'}  # type: ignore
+    create_or_update.metadata = {'url': '/skillsets(\'{skillsetName}\')'}  # type: ignore
 
     async def delete(
         self,
-        synonym_map_name: str,
+        skillset_name: str,
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
         request_options: Optional["models.RequestOptions"] = None,
         **kwargs
     ) -> None:
-        """Deletes a synonym map.
+        """Deletes a skillset in a search service.
 
-        :param synonym_map_name: The name of the synonym map to delete.
-        :type synonym_map_name: str
+        :param skillset_name: The name of the skillset to delete.
+        :type skillset_name: str
         :param if_match: Defines the If-Match condition. The operation will be performed only if the
          ETag on the server matches this value.
         :type if_match: str
@@ -153,19 +156,22 @@ class SynonymMapsOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
         api_version = "2020-06-30"
+        accept = "application/json"
 
         # Construct URL
         url = self.delete.metadata['url']  # type: ignore
         path_format_arguments = {
             'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'synonymMapName': self._serialize.url("synonym_map_name", synonym_map_name, 'str'),
+            'skillsetName': self._serialize.url("skillset_name", skillset_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -181,6 +187,7 @@ class SynonymMapsOperations:
             header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
         if if_none_match is not None:
             header_parameters['If-None-Match'] = self._serialize.header("if_none_match", if_none_match, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -194,39 +201,42 @@ class SynonymMapsOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete.metadata = {'url': '/synonymmaps(\'{synonymMapName}\')'}  # type: ignore
+    delete.metadata = {'url': '/skillsets(\'{skillsetName}\')'}  # type: ignore
 
     async def get(
         self,
-        synonym_map_name: str,
+        skillset_name: str,
         request_options: Optional["models.RequestOptions"] = None,
         **kwargs
-    ) -> "models.SynonymMap":
-        """Retrieves a synonym map definition.
+    ) -> "models.SearchIndexerSkillset":
+        """Retrieves a skillset in a search service.
 
-        :param synonym_map_name: The name of the synonym map to retrieve.
-        :type synonym_map_name: str
+        :param skillset_name: The name of the skillset to retrieve.
+        :type skillset_name: str
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: SynonymMap, or the result of cls(response)
-        :rtype: ~azure.search.documents.indexes.models.SynonymMap
+        :return: SearchIndexerSkillset, or the result of cls(response)
+        :rtype: ~azure.search.documents.indexes.models.SearchIndexerSkillset
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SynonymMap"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.SearchIndexerSkillset"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
         api_version = "2020-06-30"
+        accept = "application/json"
 
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
             'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'synonymMapName': self._serialize.url("synonym_map_name", synonym_map_name, 'str'),
+            'skillsetName': self._serialize.url("skillset_name", skillset_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -238,7 +248,7 @@ class SynonymMapsOperations:
         header_parameters = {}  # type: Dict[str, Any]
         if _x_ms_client_request_id is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("x_ms_client_request_id", _x_ms_client_request_id, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -249,41 +259,44 @@ class SynonymMapsOperations:
             error = self._deserialize(models.SearchError, response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('SynonymMap', pipeline_response)
+        deserialized = self._deserialize('SearchIndexerSkillset', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get.metadata = {'url': '/synonymmaps(\'{synonymMapName}\')'}  # type: ignore
+    get.metadata = {'url': '/skillsets(\'{skillsetName}\')'}  # type: ignore
 
     async def list(
         self,
         select: Optional[str] = None,
         request_options: Optional["models.RequestOptions"] = None,
         **kwargs
-    ) -> "models.ListSynonymMapsResult":
-        """Lists all synonym maps available for a search service.
+    ) -> "models.ListSkillsetsResult":
+        """List all skillsets in a search service.
 
-        :param select: Selects which top-level properties of the synonym maps to retrieve. Specified as
-         a comma-separated list of JSON property names, or '*' for all properties. The default is all
+        :param select: Selects which top-level properties of the skillsets to retrieve. Specified as a
+         comma-separated list of JSON property names, or '*' for all properties. The default is all
          properties.
         :type select: str
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ListSynonymMapsResult, or the result of cls(response)
-        :rtype: ~azure.search.documents.indexes.models.ListSynonymMapsResult
+        :return: ListSkillsetsResult, or the result of cls(response)
+        :rtype: ~azure.search.documents.indexes.models.ListSkillsetsResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ListSynonymMapsResult"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.ListSkillsetsResult"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
         api_version = "2020-06-30"
+        accept = "application/json"
 
         # Construct URL
         url = self.list.metadata['url']  # type: ignore
@@ -302,7 +315,7 @@ class SynonymMapsOperations:
         header_parameters = {}  # type: Dict[str, Any]
         if _x_ms_client_request_id is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("x_ms_client_request_id", _x_ms_client_request_id, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -313,33 +326,35 @@ class SynonymMapsOperations:
             error = self._deserialize(models.SearchError, response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('ListSynonymMapsResult', pipeline_response)
+        deserialized = self._deserialize('ListSkillsetsResult', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    list.metadata = {'url': '/synonymmaps'}  # type: ignore
+    list.metadata = {'url': '/skillsets'}  # type: ignore
 
     async def create(
         self,
-        synonym_map: "models.SynonymMap",
+        skillset: "models.SearchIndexerSkillset",
         request_options: Optional["models.RequestOptions"] = None,
         **kwargs
-    ) -> "models.SynonymMap":
-        """Creates a new synonym map.
+    ) -> "models.SearchIndexerSkillset":
+        """Creates a new skillset in a search service.
 
-        :param synonym_map: The definition of the synonym map to create.
-        :type synonym_map: ~azure.search.documents.indexes.models.SynonymMap
+        :param skillset: The skillset containing one or more skills to create in a search service.
+        :type skillset: ~azure.search.documents.indexes.models.SearchIndexerSkillset
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: SynonymMap, or the result of cls(response)
-        :rtype: ~azure.search.documents.indexes.models.SynonymMap
+        :return: SearchIndexerSkillset, or the result of cls(response)
+        :rtype: ~azure.search.documents.indexes.models.SearchIndexerSkillset
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SynonymMap"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.SearchIndexerSkillset"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         
         _x_ms_client_request_id = None
@@ -347,6 +362,7 @@ class SynonymMapsOperations:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
         api_version = "2020-06-30"
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
 
         # Construct URL
         url = self.create.metadata['url']  # type: ignore
@@ -364,13 +380,12 @@ class SynonymMapsOperations:
         if _x_ms_client_request_id is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("x_ms_client_request_id", _x_ms_client_request_id, 'str')
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(synonym_map, 'SynonymMap')
+        body_content = self._serialize.body(skillset, 'SearchIndexerSkillset')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -379,10 +394,10 @@ class SynonymMapsOperations:
             error = self._deserialize(models.SearchError, response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('SynonymMap', pipeline_response)
+        deserialized = self._deserialize('SearchIndexerSkillset', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    create.metadata = {'url': '/synonymmaps'}  # type: ignore
+    create.metadata = {'url': '/skillsets'}  # type: ignore

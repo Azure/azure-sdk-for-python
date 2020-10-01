@@ -11,13 +11,13 @@ from typing import Any
 from azure.core import AsyncPipelineClient
 from msrest import Deserializer, Serializer
 
-from ._configuration_async import SearchServiceClientConfiguration
-from .operations_async import DataSourcesOperations
-from .operations_async import IndexersOperations
-from .operations_async import SkillsetsOperations
-from .operations_async import SynonymMapsOperations
-from .operations_async import IndexesOperations
-from .operations_async import SearchServiceClientOperationsMixin
+from ._configuration import SearchServiceClientConfiguration
+from .operations import DataSourcesOperations
+from .operations import IndexersOperations
+from .operations import SkillsetsOperations
+from .operations import SynonymMapsOperations
+from .operations import IndexesOperations
+from .operations import SearchServiceClientOperationsMixin
 from .. import models
 
 
@@ -25,18 +25,17 @@ class SearchServiceClient(SearchServiceClientOperationsMixin):
     """Client that can be used to manage and query indexes and documents, as well as manage other resources, on a search service.
 
     :ivar data_sources: DataSourcesOperations operations
-    :vartype data_sources: azure.search.documents.indexes.aio.operations_async.DataSourcesOperations
+    :vartype data_sources: azure.search.documents.indexes.aio.operations.DataSourcesOperations
     :ivar indexers: IndexersOperations operations
-    :vartype indexers: azure.search.documents.indexes.aio.operations_async.IndexersOperations
+    :vartype indexers: azure.search.documents.indexes.aio.operations.IndexersOperations
     :ivar skillsets: SkillsetsOperations operations
-    :vartype skillsets: azure.search.documents.indexes.aio.operations_async.SkillsetsOperations
+    :vartype skillsets: azure.search.documents.indexes.aio.operations.SkillsetsOperations
     :ivar synonym_maps: SynonymMapsOperations operations
-    :vartype synonym_maps: azure.search.documents.indexes.aio.operations_async.SynonymMapsOperations
+    :vartype synonym_maps: azure.search.documents.indexes.aio.operations.SynonymMapsOperations
     :ivar indexes: IndexesOperations operations
-    :vartype indexes: azure.search.documents.indexes.aio.operations_async.IndexesOperations
+    :vartype indexes: azure.search.documents.indexes.aio.operations.IndexesOperations
     :param endpoint: The endpoint URL of the search service.
     :type endpoint: str
-    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
     def __init__(
@@ -50,6 +49,7 @@ class SearchServiceClient(SearchServiceClientOperationsMixin):
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
+        self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
 
         self.data_sources = DataSourcesOperations(

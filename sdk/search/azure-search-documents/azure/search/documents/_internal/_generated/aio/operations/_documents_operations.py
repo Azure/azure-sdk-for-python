@@ -8,7 +8,7 @@
 from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union
 import warnings
 
-from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 
@@ -54,13 +54,16 @@ class DocumentsOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[int]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
         api_version = "2020-06-30"
+        accept = "application/json"
 
         # Construct URL
         url = self.count.metadata['url']  # type: ignore
@@ -78,7 +81,7 @@ class DocumentsOperations:
         header_parameters = {}  # type: Dict[str, Any]
         if _x_ms_client_request_id is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("x_ms_client_request_id", _x_ms_client_request_id, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -119,7 +122,9 @@ class DocumentsOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SearchDocumentsResult"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         
         _include_total_result_count = None
@@ -135,6 +140,8 @@ class DocumentsOperations:
         _scoring_profile = None
         _search_fields = None
         _search_mode = None
+        _scoring_statistics = None
+        _session_id = None
         _select = None
         _skip = None
         _top = None
@@ -155,10 +162,13 @@ class DocumentsOperations:
             _scoring_profile = search_options.scoring_profile
             _search_fields = search_options.search_fields
             _search_mode = search_options.search_mode
+            _scoring_statistics = search_options.scoring_statistics
+            _session_id = search_options.session_id
             _select = search_options.select
             _skip = search_options.skip
             _top = search_options.top
         api_version = "2020-06-30"
+        accept = "application/json"
 
         # Construct URL
         url = self.search_get.metadata['url']  # type: ignore
@@ -175,11 +185,11 @@ class DocumentsOperations:
         if _include_total_result_count is not None:
             query_parameters['$count'] = self._serialize.query("include_total_result_count", _include_total_result_count, 'bool')
         if _facets is not None:
-            query_parameters['facet'] = self._serialize.query("facets", _facets, '[str]', div=',')
+            query_parameters['facet'] = [self._serialize.query("facets", q, 'str') if q is not None else '' for q in _facets]
         if _filter is not None:
             query_parameters['$filter'] = self._serialize.query("filter", _filter, 'str')
         if _highlight_fields is not None:
-            query_parameters['highlight'] = self._serialize.query("highlight_fields", _highlight_fields, '[str]')
+            query_parameters['highlight'] = self._serialize.query("highlight_fields", _highlight_fields, '[str]', div=',')
         if _highlight_post_tag is not None:
             query_parameters['highlightPostTag'] = self._serialize.query("highlight_post_tag", _highlight_post_tag, 'str')
         if _highlight_pre_tag is not None:
@@ -187,19 +197,23 @@ class DocumentsOperations:
         if _minimum_coverage is not None:
             query_parameters['minimumCoverage'] = self._serialize.query("minimum_coverage", _minimum_coverage, 'float')
         if _order_by is not None:
-            query_parameters['$orderby'] = self._serialize.query("order_by", _order_by, '[str]')
+            query_parameters['$orderby'] = self._serialize.query("order_by", _order_by, '[str]', div=',')
         if _query_type is not None:
             query_parameters['queryType'] = self._serialize.query("query_type", _query_type, 'str')
         if _scoring_parameters is not None:
-            query_parameters['scoringParameter'] = self._serialize.query("scoring_parameters", _scoring_parameters, '[str]', div=',')
+            query_parameters['scoringParameter'] = [self._serialize.query("scoring_parameters", q, 'str') if q is not None else '' for q in _scoring_parameters]
         if _scoring_profile is not None:
             query_parameters['scoringProfile'] = self._serialize.query("scoring_profile", _scoring_profile, 'str')
         if _search_fields is not None:
-            query_parameters['searchFields'] = self._serialize.query("search_fields", _search_fields, '[str]')
+            query_parameters['searchFields'] = self._serialize.query("search_fields", _search_fields, '[str]', div=',')
         if _search_mode is not None:
             query_parameters['searchMode'] = self._serialize.query("search_mode", _search_mode, 'str')
+        if _scoring_statistics is not None:
+            query_parameters['scoringStatistics'] = self._serialize.query("scoring_statistics", _scoring_statistics, 'str')
+        if _session_id is not None:
+            query_parameters['sessionId'] = self._serialize.query("session_id", _session_id, 'str')
         if _select is not None:
-            query_parameters['$select'] = self._serialize.query("select", _select, '[str]')
+            query_parameters['$select'] = self._serialize.query("select", _select, '[str]', div=',')
         if _skip is not None:
             query_parameters['$skip'] = self._serialize.query("skip", _skip, 'int')
         if _top is not None:
@@ -210,7 +224,7 @@ class DocumentsOperations:
         header_parameters = {}  # type: Dict[str, Any]
         if _x_ms_client_request_id is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("x_ms_client_request_id", _x_ms_client_request_id, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -247,7 +261,9 @@ class DocumentsOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SearchDocumentsResult"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         
         _x_ms_client_request_id = None
@@ -255,6 +271,7 @@ class DocumentsOperations:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
         api_version = "2020-06-30"
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
 
         # Construct URL
         url = self.search_post.metadata['url']  # type: ignore
@@ -273,13 +290,12 @@ class DocumentsOperations:
         if _x_ms_client_request_id is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("x_ms_client_request_id", _x_ms_client_request_id, 'str')
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(search_request, 'SearchRequest')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -318,13 +334,16 @@ class DocumentsOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[object]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
         api_version = "2020-06-30"
+        accept = "application/json"
 
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
@@ -338,14 +357,14 @@ class DocumentsOperations:
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
         if selected_fields is not None:
-            query_parameters['$select'] = self._serialize.query("selected_fields", selected_fields, '[str]')
+            query_parameters['$select'] = self._serialize.query("selected_fields", selected_fields, '[str]', div=',')
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         if _x_ms_client_request_id is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("x_ms_client_request_id", _x_ms_client_request_id, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -390,7 +409,9 @@ class DocumentsOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SuggestDocumentsResult"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         
         _filter = None
@@ -416,6 +437,7 @@ class DocumentsOperations:
             _select = suggest_options.select
             _top = suggest_options.top
         api_version = "2020-06-30"
+        accept = "application/json"
 
         # Construct URL
         url = self.suggest_get.metadata['url']  # type: ignore
@@ -440,11 +462,11 @@ class DocumentsOperations:
         if _minimum_coverage is not None:
             query_parameters['minimumCoverage'] = self._serialize.query("minimum_coverage", _minimum_coverage, 'float')
         if _order_by is not None:
-            query_parameters['$orderby'] = self._serialize.query("order_by", _order_by, '[str]')
+            query_parameters['$orderby'] = self._serialize.query("order_by", _order_by, '[str]', div=',')
         if _search_fields is not None:
-            query_parameters['searchFields'] = self._serialize.query("search_fields", _search_fields, '[str]')
+            query_parameters['searchFields'] = self._serialize.query("search_fields", _search_fields, '[str]', div=',')
         if _select is not None:
-            query_parameters['$select'] = self._serialize.query("select", _select, '[str]')
+            query_parameters['$select'] = self._serialize.query("select", _select, '[str]', div=',')
         if _top is not None:
             query_parameters['$top'] = self._serialize.query("top", _top, 'int')
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
@@ -453,7 +475,7 @@ class DocumentsOperations:
         header_parameters = {}  # type: Dict[str, Any]
         if _x_ms_client_request_id is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("x_ms_client_request_id", _x_ms_client_request_id, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -490,7 +512,9 @@ class DocumentsOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SuggestDocumentsResult"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         
         _x_ms_client_request_id = None
@@ -498,6 +522,7 @@ class DocumentsOperations:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
         api_version = "2020-06-30"
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
 
         # Construct URL
         url = self.suggest_post.metadata['url']  # type: ignore
@@ -516,13 +541,12 @@ class DocumentsOperations:
         if _x_ms_client_request_id is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("x_ms_client_request_id", _x_ms_client_request_id, 'str')
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(suggest_request, 'SuggestRequest')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -557,7 +581,9 @@ class DocumentsOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.IndexDocumentsResult"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         
         _x_ms_client_request_id = None
@@ -565,6 +591,7 @@ class DocumentsOperations:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
         api_version = "2020-06-30"
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
 
         # Construct URL
         url = self.index.metadata['url']  # type: ignore
@@ -583,13 +610,12 @@ class DocumentsOperations:
         if _x_ms_client_request_id is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("x_ms_client_request_id", _x_ms_client_request_id, 'str')
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(batch, 'IndexBatch')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -635,7 +661,9 @@ class DocumentsOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.AutocompleteResult"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         
         _x_ms_client_request_id = None
@@ -659,6 +687,7 @@ class DocumentsOperations:
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
         api_version = "2020-06-30"
+        accept = "application/json"
 
         # Construct URL
         url = self.autocomplete_get.metadata['url']  # type: ignore
@@ -686,7 +715,7 @@ class DocumentsOperations:
         if _minimum_coverage is not None:
             query_parameters['minimumCoverage'] = self._serialize.query("minimum_coverage", _minimum_coverage, 'float')
         if _search_fields is not None:
-            query_parameters['searchFields'] = self._serialize.query("search_fields", _search_fields, '[str]')
+            query_parameters['searchFields'] = self._serialize.query("search_fields", _search_fields, '[str]', div=',')
         if _top is not None:
             query_parameters['$top'] = self._serialize.query("top", _top, 'int')
 
@@ -694,7 +723,7 @@ class DocumentsOperations:
         header_parameters = {}  # type: Dict[str, Any]
         if _x_ms_client_request_id is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("x_ms_client_request_id", _x_ms_client_request_id, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -731,7 +760,9 @@ class DocumentsOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.AutocompleteResult"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         
         _x_ms_client_request_id = None
@@ -739,6 +770,7 @@ class DocumentsOperations:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
         api_version = "2020-06-30"
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
 
         # Construct URL
         url = self.autocomplete_post.metadata['url']  # type: ignore
@@ -757,13 +789,12 @@ class DocumentsOperations:
         if _x_ms_client_request_id is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("x_ms_client_request_id", _x_ms_client_request_id, 'str')
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(autocomplete_request, 'AutocompleteRequest')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 

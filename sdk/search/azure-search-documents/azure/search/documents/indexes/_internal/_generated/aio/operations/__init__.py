@@ -6,12 +6,12 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._data_sources_operations_async import DataSourcesOperations
-from ._indexers_operations_async import IndexersOperations
-from ._skillsets_operations_async import SkillsetsOperations
-from ._synonym_maps_operations_async import SynonymMapsOperations
-from ._indexes_operations_async import IndexesOperations
-from ._search_service_client_operations_async import SearchServiceClientOperationsMixin
+from ._data_sources_operations import DataSourcesOperations
+from ._indexers_operations import IndexersOperations
+from ._skillsets_operations import SkillsetsOperations
+from ._synonym_maps_operations import SynonymMapsOperations
+from ._indexes_operations import IndexesOperations
+from ._search_service_client_operations import SearchServiceClientOperationsMixin
 
 __all__ = [
     'DataSourcesOperations',
