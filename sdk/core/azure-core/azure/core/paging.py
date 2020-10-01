@@ -23,6 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+import abc
 import itertools
 from typing import (  # pylint: disable=unused-import
     Callable,
@@ -33,6 +34,12 @@ from typing import (  # pylint: disable=unused-import
     Tuple,
 )
 import logging
+from .paging_operation import PagingOperation, PagingOperationWithSeparateNextOperation
+
+try:
+    ABC = abc.ABC
+except AttributeError:  # Python 2.7, abc exists, but not ABC
+    ABC = abc.ABCMeta("ABC", (object,), {"__slots__": ()})  # type: ignore
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -40,13 +47,62 @@ _LOGGER = logging.getLogger(__name__)
 ReturnType = TypeVar("ReturnType")
 ResponseType = TypeVar("ResponseType")
 
+class BadStatus(Exception):
+    pass
 
-class PageIterator(Iterator[Iterator[ReturnType]]):
+
+class BadResponse(Exception):
+    pass
+
+
+class OperationFailed(Exception):
+    pass
+
+def _raise_if_bad_http_status_and_method(response):
+    # type: (ResponseType) -> None
+    """Check response status code is valid.
+
+    Must be 200, 201, 202, or 204.
+
+    :raises: BadStatus if invalid status.
+    """
+    code = response.status_code
+    if code in {200, 201, 202, 204}:
+        return
+    raise BadStatus(
+        "Invalid return status {!r} for {!r} operation".format(
+            code, response.request.method
+        )
+    )
+
+class PageIteratorABC(ABC):
+
+    def initialize(
+        self, client, initial_request, extract_data, format_next_link
+    ):
+        raise NotImplementedError("This method needs to be implemented")
+
+    def get_next_page(self):
+        raise NotImplementedError("This method needs to be implemented")
+
+    def finished(self):
+        raise NotImplementedError("This method needs to be implemented")
+
+    def __iter__(self):
+        raise NotImplementedError("This method needs to be implemented")
+
+    def __next__(self):
+        raise NotImplementedError("This method needs to be implemented")
+
+
+
+class PageIterator(PageIteratorABC):
     def __init__(
         self,
-        get_next,  # type: Callable[[Optional[str]], ResponseType]
-        extract_data,  # type: Callable[[ResponseType], Tuple[str, Iterable[ReturnType]]]
+        get_next=None,  # type: Callable[[Optional[str]], ResponseType]
+        extract_data=None,  # type: Callable[[ResponseType], Tuple[str, Iterable[ReturnType]]]
         continuation_token=None,  # type: Optional[str]
+        **operation_config
     ):
         """Return an iterator of pages.
 
@@ -55,26 +111,83 @@ class PageIterator(Iterator[Iterator[ReturnType]]):
          list of ReturnType
         :param str continuation_token: The continuation token needed by get_next
         """
-        self._get_next = get_next
-        self._extract_data = extract_data
-        self.continuation_token = continuation_token
+        self._paging_algorithms = paging_algorithms or [
+            PagingOperationWithSeparateNextOperation(), PagingOperation()
+        ]
+        self._client = None
+        self._initial_request = None
         self._did_a_call_already = False
         self._response = None  # type: Optional[ResponseType]
         self._current_page = None  # type: Optional[Iterable[ReturnType]]
+        self._operation_config = operation_config
+
+        # these are for back-compat
+        self._get_next = get_next
+        self._extract_data = extract_data
+
+
+    def initialize(
+        self, client, initial_request, extract_data, format_next_link
+    ):
+        self._client = client
+        self._extract_data = extract_data
+        self._initial_request = initial_request
+        self._format_next_link = format_next_link
+
+        # TODO: how to pass in next_link_operation_url
+        for operation in self._paging_algorithms:
+            if operation.can_page(next_link_operation_url):
+                self._operation = operation
+                break
+        else:
+            raise BadResponse("Unable to find way to retrieve next link.")
+
+    def get_next_page(self, next_link):
+        request = self._client.get(next_link)
+        return self._client._pipeline.run(
+            request, stream=False, **self._operation_config
+        )
+
+    def finished(self):
+        if self._operation.next_link is None and self._did_a_call_already:
+            return True
+        return False
 
     def __iter__(self):
         """Return 'self'."""
         return self
 
+    def _make_initial_call(self):
+        self._initial_pipeline_response = self._client._pipeline.run(
+            self._initial_request, **kwargs
+        )
+
+        try:
+            _raise_if_bad_http_status_and_method(initial_pipeline_response.http_response)
+        except BadStatus as err:
+            raise HttpResponseError(response=initial_pipeline_response.http_response, error=err)
+        except BadResponse as err:
+            raise HttpResponseError(
+                response=initial_pipeline_response.http_response, message=str(err), error=err
+            )
+        except OperationFailed as err:
+            raise HttpResponseError(response=initial_pipeline_response.http_response, error=err)
+
     def __next__(self):
         # type: () -> Iterator[ReturnType]
-        if self.continuation_token is None and self._did_a_call_already:
+        if self.finished():
             raise StopIteration("End of paging")
 
-        self._response = self._get_next(self.continuation_token)
-        self._did_a_call_already = True
+        if not self._did_a_call_already:
+            response = self._make_initial_call()
+            self._operation.set_initial_state(response)
+        else:
+            next_link = self._operation.get_next_link(self._format_next_link)
+            response = self.get_next_page(next_link)
 
-        self.continuation_token, self._current_page = self._extract_data(self._response)
+        self._did_a_call_already = True
+        next_link, self._current_page = self._extract_data(response)
+        self._operation.next_link = next_link
 
         return iter(self._current_page)
 
@@ -88,12 +201,18 @@ class ItemPaged(Iterator[ReturnType]):
         args and kwargs will be passed to the PageIterator constructor directly,
         except page_iterator_class
         """
+        # with the newest version, I want to take in the client, initial request,
+        # cb to extract data, and cb to format next link
         self._args = args
         self._kwargs = kwargs
-        self._page_iterator = None
-        self._page_iterator_class = self._kwargs.pop(
-            "page_iterator_class", PageIterator
-        )
+        self._internal_page_iterator = None
+        self._page_iterator = self._kwargs.pop("page_iterator", None)
+        if not self._page_iterator:
+            self._page_iterator_class = self._kwargs.pop(
+                "page_iterator_class", PageIterator
+            )
+        else:
+            self._page_iterator_class = None
 
     def by_page(self, continuation_token=None):
         # type: (Optional[str]) -> Iterator[Iterator[ReturnType]]
@@ -105,6 +224,8 @@ class ItemPaged(Iterator[ReturnType]):
             this generator will begin returning results from this point.
         :returns: An iterator of pages (themselves iterator of objects)
         """
+        if self._page_iterator:
+            return self._page_iterator.initialize(*self._args, **self._kwargs)
         return self._page_iterator_class(
             continuation_token=continuation_token, *self._args, **self._kwargs
         )
@@ -117,8 +238,8 @@ class ItemPaged(Iterator[ReturnType]):
         return self
 
     def __next__(self):
-        if self._page_iterator is None:
-            self._page_iterator = itertools.chain.from_iterable(self.by_page())
-        return next(self._page_iterator)
+        if self._internal_page_iterator is None:
+            self._internal_page_iterator = itertools.chain.from_iterable(self.by_page())
+        return next(self._internal_page_iterator)
 
     next = __next__  # Python 2 compatibility.
