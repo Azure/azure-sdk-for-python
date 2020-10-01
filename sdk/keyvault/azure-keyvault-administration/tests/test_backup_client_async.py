@@ -16,6 +16,7 @@ import pytest
 from _shared.helpers_async import get_completed_future
 from _shared.test_case_async import KeyVaultTestCase
 from blob_container_preparer import BlobContainerPreparer
+from test_backup_client import assert_in_progress_operation
 from test_backup_client import assert_successful_operation
 
 
@@ -46,14 +47,28 @@ class BackupClientTests(KeyVaultTestCase):
         # backup the vault
         backup_client = KeyVaultBackupClient(self.managed_hsm["url"], self.credential)
         backup_poller = await backup_client.begin_full_backup(container_uri, sas_token)
+
+        # check backup status and result
+        job_id = backup_poller.polling_method().resource().id
+        backup_status = await backup_client.full_backup_status(job_id)
+        assert_in_progress_operation(backup_status)
         backup_operation = await backup_poller.result()
         assert_successful_operation(backup_operation)
+        backup_status = await backup_client.full_backup_status(job_id)
+        assert_successful_operation(backup_status)
 
         # restore the backup
         folder_name = backup_operation.azure_storage_blob_container_uri.split("/")[-1]
         restore_poller = await backup_client.begin_full_restore(container_uri, sas_token, folder_name)
+
+        # check restore status and result
+        job_id = restore_poller.polling_method().resource().id
+        restore_status = await backup_client.restore_status(job_id)
+        assert_in_progress_operation(restore_status)
         restore_operation = await restore_poller.result()
         assert_successful_operation(restore_operation)
+        restore_status = await backup_client.restore_status(job_id)
+        assert_successful_operation(restore_status)
 
     @ResourceGroupPreparer(random_name_enabled=True, use_cache=True)
     @StorageAccountPreparer(random_name_enabled=True)
@@ -67,14 +82,28 @@ class BackupClientTests(KeyVaultTestCase):
         # backup the vault
         backup_client = KeyVaultBackupClient(self.managed_hsm["url"], self.credential)
         backup_poller = await backup_client.begin_full_backup(container_uri, sas_token)
+
+        # check backup status and result
+        job_id = backup_poller.polling_method().resource().id
+        backup_status = await backup_client.full_backup_status(job_id)
+        assert_in_progress_operation(backup_status)
         backup_operation = await backup_poller.result()
         assert_successful_operation(backup_operation)
+        backup_status = await backup_client.full_backup_status(job_id)
+        assert_successful_operation(backup_status)
 
         # restore the key
         folder_name = backup_operation.azure_storage_blob_container_uri.split("/")[-1]
         restore_poller = await backup_client.begin_selective_restore(container_uri, sas_token, folder_name, key_name)
+
+        # check restore status and result
+        job_id = restore_poller.polling_method().resource().id
+        restore_status = await backup_client.restore_status(job_id)
+        assert_in_progress_operation(restore_status)
         restore_operation = await restore_poller.result()
         assert_successful_operation(restore_operation)
+        restore_status = await backup_client.restore_status(job_id)
+        assert_successful_operation(restore_status)
 
         await key_client.delete_key(key_name)
         await key_client.purge_deleted_key(key_name)
