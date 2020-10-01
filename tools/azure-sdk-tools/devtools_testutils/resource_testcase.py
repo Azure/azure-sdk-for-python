@@ -11,7 +11,6 @@ from functools import partial
 
 from azure_devtools.scenario_tests import AzureTestError, ReservedResourceNameError
 
-from azure.common.exceptions import CloudError
 from azure.mgmt.resource import ResourceManagementClient
 
 from . import AzureMgmtPreparer
@@ -95,7 +94,7 @@ class ResourceGroupPreparer(AzureMgmtPreparer):
                     raise AzureTestError('Timed out waiting for resource group to be deleted.')
                 else:
                     self.client.resource_groups.delete(name, polling=False)
-            except CloudError:
+            except Exception:
                 pass
 
 RandomNameResourceGroupPreparer = partial(ResourceGroupPreparer, random_name_enabled=True)

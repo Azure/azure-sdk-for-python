@@ -50,7 +50,6 @@ class RecognizeEntitiesSample(object):
                 print("...Category: {}".format(entity.category))
                 print("...Confidence Score: {}".format(entity.confidence_score))
                 print("...Offset: {}".format(entity.offset))
-                print("...Length: {}".format(entity.length))
         # [END recognize_entities]
 
 

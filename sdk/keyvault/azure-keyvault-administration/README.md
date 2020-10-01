@@ -146,7 +146,7 @@ List the role definitions available for assignment.
 
 ```python
 from azure.identity import DefaultAzureCredential
-from azure.keyvault.administration import KeyVaultAccessControlClient
+from azure.keyvault.administration import KeyVaultAccessControlClient, KeyVaultRoleScope
 
 credential = DefaultAzureCredential()
 
@@ -166,7 +166,7 @@ Before creating a new role assignment in the [next snippet](#create-get-and-dele
 
 ```python
 from azure.identity import DefaultAzureCredential
-from azure.keyvault.administration import KeyVaultAccessControlClient
+from azure.keyvault.administration import KeyVaultAccessControlClient, KeyVaultRoleScope
 
 credential = DefaultAzureCredential()
 
@@ -314,10 +314,10 @@ you need to provide a CLA and decorate the PR appropriately (e.g., label,
 comment). Simply follow the instructions provided by the bot. You will only
 need to do this once across all repos using our CLA.
 
-This project has adopted the
-[Microsoft Open Source Code of Conduct][code_of_conduct]. For more information,
-see the Code of Conduct FAQ or contact opencode@microsoft.com with any
-additional questions or comments.
+This project has adopted the [Microsoft Open Source Code of Conduct][code_of_conduct].
+For more information, see the
+[Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
+contact opencode@microsoft.com with any additional questions or comments.
 
 <!-- LINKS -->
 [azure_cloud_shell]: https://shell.azure.com/bash

@@ -1,5 +1,58 @@
 # Release History
 
+## 17.0.0 (2020-09-16)
+
+**Features**
+
+  - Model VirtualMachineExtensionUpdate has a new parameter enable_automatic_upgrade
+  - Model VirtualMachineScaleSetExtensionUpdate has a new parameter enable_automatic_upgrade
+  - Model DedicatedHostGroup has a new parameter instance_view
+  - Model DedicatedHostGroup has a new parameter support_automatic_placement
+  - Model VirtualMachineScaleSetExtension has a new parameter enable_automatic_upgrade
+  - Model VirtualMachineScaleSetVM has a new parameter security_profile
+  - Model VirtualMachineImage has a new parameter disallowed
+  - Model VirtualMachine has a new parameter security_profile
+  - Model VirtualMachine has a new parameter extensions_time_budget
+  - Model VirtualMachine has a new parameter host_group
+  - Model VirtualMachineInstanceView has a new parameter vm_health
+  - Model VirtualMachineInstanceView has a new parameter patch_status
+  - Model VirtualMachineInstanceView has a new parameter assigned_host
+  - Model DiskEncryptionSet has a new parameter encryption_type
+  - Model Snapshot has a new parameter disk_state
+  - Model Snapshot has a new parameter disk_access_id
+  - Model Snapshot has a new parameter network_access_policy
+  - Model CreationData has a new parameter logical_sector_size
+  - Model DiskEncryptionSetUpdate has a new parameter encryption_type
+  - Model VirtualMachineScaleSetVMInstanceView has a new parameter assigned_host
+  - Model WindowsConfiguration has a new parameter patch_settings
+  - Model DiskUpdate has a new parameter disk_access_id
+  - Model DiskUpdate has a new parameter network_access_policy
+  - Model DiskUpdate has a new parameter tier
+  - Model VirtualMachineScaleSetUpdateVMProfile has a new parameter security_profile
+  - Model VirtualMachineScaleSetVMProfile has a new parameter security_profile
+  - Model VirtualMachineUpdate has a new parameter security_profile
+  - Model VirtualMachineUpdate has a new parameter extensions_time_budget
+  - Model VirtualMachineUpdate has a new parameter host_group
+  - Model Disk has a new parameter disk_access_id
+  - Model Disk has a new parameter network_access_policy
+  - Model Disk has a new parameter tier
+  - Model VirtualMachineExtension has a new parameter enable_automatic_upgrade
+  - Model VirtualMachineScaleSet has a new parameter host_group
+  - Model DedicatedHostGroupUpdate has a new parameter instance_view
+  - Model DedicatedHostGroupUpdate has a new parameter support_automatic_placement
+  - Model SnapshotUpdate has a new parameter disk_access_id
+  - Model SnapshotUpdate has a new parameter network_access_policy
+  - Model VirtualMachineScaleSetExtensionProfile has a new parameter extensions_time_budget
+  - Added operation VirtualMachineScaleSetVMsOperations.retrieve_boot_diagnostics_data
+  - Added operation VirtualMachinesOperations.retrieve_boot_diagnostics_data
+  - Added operation VirtualMachinesOperations.begin_assess_patches
+  - Added operation DiskEncryptionSetsOperations.list_associated_resources
+  - Added operation group DiskAccessesOperations
+
+**Breaking changes**
+
+  - Operation DedicatedHostGroupsOperations.get has a new signature
+
 ## 17.0.0b1 (2020-06-17)
 
 This is beta preview version.

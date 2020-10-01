@@ -4,7 +4,7 @@ interactions:
       false}, "useLabelFile": true}\'''''
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -14,27 +14,27 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/custom/models
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - 16b198cc-b6c7-487b-aa17-43834afdd0fd
+      - e853f11b-1001-49cc-a05a-28a63e9d53b7
       content-length:
       - '0'
       date:
-      - Fri, 10 Jul 2020 18:57:50 GMT
+      - Mon, 14 Sep 2020 21:01:29 GMT
       location:
-      - https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/custom/models/22cc53a1-ce73-47ee-be21-be945f2df481
+      - https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/312488f5-3a88-4f14-9bd0-ebbf6cd1ab02
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '71'
+      - '38'
     status:
       code: 201
       message: Created
@@ -48,37 +48,38 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/custom/models/22cc53a1-ce73-47ee-be21-be945f2df481?includeKeys=true
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/312488f5-3a88-4f14-9bd0-ebbf6cd1ab02?includeKeys=true
   response:
     body:
-      string: '{"modelInfo": {"modelId": "22cc53a1-ce73-47ee-be21-be945f2df481", "status":
-        "ready", "createdDateTime": "2020-07-10T18:57:50Z", "lastUpdatedDateTime":
-        "2020-07-10T18:57:54Z"}, "trainResult": {"averageModelAccuracy": 0.889, "trainingDocuments":
-        [{"documentName": "multipage_invoice1.pdf", "pages": 3, "status": "succeeded"},
-        {"documentName": "multipage_invoice2.pdf", "pages": 3, "status": "succeeded"},
-        {"documentName": "multipage_invoice3.pdf", "pages": 3, "status": "succeeded"},
-        {"documentName": "multipage_invoice4.pdf", "pages": 3, "status": "succeeded"},
-        {"documentName": "multipage_invoice5.pdf", "pages": 3, "status": "succeeded"}],
-        "fields": [{"fieldName": "Customer2", "accuracy": 1.0}, {"fieldName": "CustomerAddress",
-        "accuracy": 1.0}, {"fieldName": "CustomerName", "accuracy": 1.0}, {"fieldName":
-        "CustomerPhoneNumber", "accuracy": 1.0}, {"fieldName": "FirstItem", "accuracy":
-        1.0}, {"fieldName": "FirstPrice", "accuracy": 1.0}, {"fieldName": "FirstQuantity",
-        "accuracy": 1.0}, {"fieldName": "Merchant", "accuracy": 0.0}, {"fieldName":
-        "Merchant2", "accuracy": 0.0}, {"fieldName": "MerchantAddress", "accuracy":
-        1.0}, {"fieldName": "MerchantPhoneNumber", "accuracy": 1.0}, {"fieldName":
-        "Signature", "accuracy": 1.0}, {"fieldName": "Signature2", "accuracy": 1.0},
-        {"fieldName": "Subtotal", "accuracy": 1.0}, {"fieldName": "Tax", "accuracy":
-        1.0}, {"fieldName": "Tip", "accuracy": 1.0}, {"fieldName": "Total", "accuracy":
-        1.0}, {"fieldName": "Total2", "accuracy": 1.0}], "errors": []}}'
+      string: '{"modelInfo": {"modelId": "312488f5-3a88-4f14-9bd0-ebbf6cd1ab02", "attributes":
+        {"isComposed": false}, "status": "ready", "createdDateTime": "2020-09-14T21:01:30Z",
+        "lastUpdatedDateTime": "2020-09-14T21:01:32Z"}, "trainResult": {"averageModelAccuracy":
+        0.889, "trainingDocuments": [{"documentName": "multipage_invoice1.pdf", "pages":
+        3, "status": "succeeded"}, {"documentName": "multipage_invoice2.pdf", "pages":
+        3, "status": "succeeded"}, {"documentName": "multipage_invoice3.pdf", "pages":
+        3, "status": "succeeded"}, {"documentName": "multipage_invoice4.pdf", "pages":
+        3, "status": "succeeded"}, {"documentName": "multipage_invoice5.pdf", "pages":
+        3, "status": "succeeded"}], "fields": [{"fieldName": "Customer2", "accuracy":
+        1.0}, {"fieldName": "CustomerAddress", "accuracy": 1.0}, {"fieldName": "CustomerName",
+        "accuracy": 1.0}, {"fieldName": "CustomerPhoneNumber", "accuracy": 1.0}, {"fieldName":
+        "FirstItem", "accuracy": 1.0}, {"fieldName": "FirstPrice", "accuracy": 1.0},
+        {"fieldName": "FirstQuantity", "accuracy": 1.0}, {"fieldName": "Merchant",
+        "accuracy": 0.0}, {"fieldName": "Merchant2", "accuracy": 0.0}, {"fieldName":
+        "MerchantAddress", "accuracy": 1.0}, {"fieldName": "MerchantPhoneNumber",
+        "accuracy": 1.0}, {"fieldName": "Signature", "accuracy": 1.0}, {"fieldName":
+        "Signature2", "accuracy": 1.0}, {"fieldName": "Subtotal", "accuracy": 1.0},
+        {"fieldName": "Tax", "accuracy": 1.0}, {"fieldName": "Tip", "accuracy": 1.0},
+        {"fieldName": "Total", "accuracy": 1.0}, {"fieldName": "Total2", "accuracy":
+        1.0}], "errors": []}}'
     headers:
       apim-request-id:
-      - 99320637-70eb-44fc-8c1b-85824ef099fc
+      - 5ca5912c-56c5-4ef7-b56f-0237ba0b42b3
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 10 Jul 2020 18:57:55 GMT
+      - Mon, 14 Sep 2020 21:01:35 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -86,7 +87,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '18'
+      - '16'
     status:
       code: 200
       message: OK

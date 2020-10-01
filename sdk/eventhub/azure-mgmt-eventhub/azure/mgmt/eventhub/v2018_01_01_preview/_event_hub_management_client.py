@@ -20,6 +20,8 @@ if TYPE_CHECKING:
 from ._configuration import EventHubManagementClientConfiguration
 from .operations import ClustersOperations
 from .operations import NamespacesOperations
+from .operations import PrivateEndpointConnectionsOperations
+from .operations import PrivateLinkResourcesOperations
 from .operations import ConfigurationOperations
 from .operations import DisasterRecoveryConfigsOperations
 from .operations import EventHubsOperations
@@ -36,6 +38,10 @@ class EventHubManagementClient(object):
     :vartype clusters: azure.mgmt.eventhub.v2018_01_01_preview.operations.ClustersOperations
     :ivar namespaces: NamespacesOperations operations
     :vartype namespaces: azure.mgmt.eventhub.v2018_01_01_preview.operations.NamespacesOperations
+    :ivar private_endpoint_connections: PrivateEndpointConnectionsOperations operations
+    :vartype private_endpoint_connections: azure.mgmt.eventhub.v2018_01_01_preview.operations.PrivateEndpointConnectionsOperations
+    :ivar private_link_resources: PrivateLinkResourcesOperations operations
+    :vartype private_link_resources: azure.mgmt.eventhub.v2018_01_01_preview.operations.PrivateLinkResourcesOperations
     :ivar configuration: ConfigurationOperations operations
     :vartype configuration: azure.mgmt.eventhub.v2018_01_01_preview.operations.ConfigurationOperations
     :ivar disaster_recovery_configs: DisasterRecoveryConfigsOperations operations
@@ -71,11 +77,16 @@ class EventHubManagementClient(object):
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
+        self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
 
         self.clusters = ClustersOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.namespaces = NamespacesOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.private_link_resources = PrivateLinkResourcesOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.configuration = ConfigurationOperations(
             self._client, self._config, self._serialize, self._deserialize)

@@ -10,7 +10,7 @@ from ._storage_management_client import StorageManagementClient
 __all__ = ['StorageManagementClient']
 
 try:
-    from ._patch import patch_sdk
+    from ._patch import patch_sdk  # type: ignore
     patch_sdk()
 except ImportError:
     pass

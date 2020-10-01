@@ -11,7 +11,7 @@ libraries
 
 For users new to the Python SDK for resource management libraries,
 please see the `quickstart
-guide <http://aka.ms/azure-sdk-python-mgmt>`__
+guide <http://aka.ms/azsdk/python/mgmt>`__
 
 Table of contents
 -----------------
@@ -32,21 +32,23 @@ Prerequisites
 Updated Python Packages
 -----------------------
 
-Currently, all next-generation Python SDK management client libraries
-are in Public Preview. The preview version SDK will be contain a ``b``
-in its version to number to indicate that it's a beta release (e.g.
-``17.0.0b1``). The versioning information can be found on the release
-history page of each Azure service on pypi.org. Take Azure Compute
-service for example, the release history can be found at
-`https://pypi.org/project/azure-mgmt-compute/17.0.0b1/history <https://pypi.org/project/azure-mgmt-compute/17.0.0b1/#history>`__
-
-You can also refer to the `this
+You can refer to the `this
 site <https://azure.github.io/azure-sdk/releases/latest/mgmt/python.html>`__
-to see all the latest Python packages.
+to see all the new Python packages.
 
-Please install the package based on the beta version number, for
-example, to install the latest preview package for Compute, please use:
-``pip install azure-mgmt-compute==17.0.0b1``
+For packages that are already generally available (GA), you can directly install the package using pip. Take Azure Compute
+service for example, simply do:
+``pip install azure-mgmt-compute``
+
+The release history for azure-mgmt-compute can be found at `https://pypi.org/project/azure-mgmt-compute/#history <https://pypi.org/project/azure-mgmt-compute/#history>`__
+
+You will notice that there was a beta release in release history, and the changelog for this version mentioned that "this version uses a next-generation code generator that introduces important breaking changes". This indicates the package is based on the new generator.
+
+In addition, some next-generation Python SDK management client libraries might still in Public Preview. The preview version SDK will be contain a ``b`` in its version to number to indicate that it's a beta release (e.g.``10.0.0b1``). 
+
+For those beta releases, please install the package based on the beta version number, for
+example, to install the latest preview package for BetaServiceExample, please use:
+``pip install azure-mgmt-beta-service-example==10.0.0b1``
 
 General Changes
 ---------------
@@ -100,14 +102,14 @@ To the show the code snippets for the change:
     from azure.identity import ClientSecretCredential
 
     credential = ClientSecretCredential(
-        tenant_id=tenant_id,
+        client_secret=client_secret,
         client_id=client_id,
         tenant_id=tenant_id
     )
     compute_client = azure.mgmt.compute.ComputeManagementClient(credential=credential, subscription_id=self.subscription_id)
 
 For detailed information on the benefits of using the new authentication
-classes, please refer to `this
+classes as well as all available authentication options, please refer to `this
 page <https://docs.microsoft.com/azure/developer/python/azure-sdk-authenticate?view=azure-python&tabs=cmd>`__
 
 Client API Changes
@@ -154,7 +156,7 @@ Additional Samples
 
 More samples can be found at : 
 
-- `Quickstart for new version of SDK <http://aka.ms/azure-sdk-python-mgmt>`__ 
+- `Quickstart for new version of SDK <http://aka.ms/azsdk/python/mgmt>`__ 
 - `Code Samples for Resource Management Libraries <https://docs.microsoft.com/samples/browse/?languages=python&term=Getting%20started%20-%20Managing>`__
 - `Authentication Documentation <https://docs.microsoft.com/azure/developer/python/azure-sdk-authenticate?view=azure-python&tabs=cmd>`__
 
@@ -165,3 +167,4 @@ If you have encountered an issue during migration, please file an issue
 via `Github
 Issues <https://github.com/Azure/azure-sdk-for-python/issues>`__ and
 make sure you add the "Preview" label to the issue
+

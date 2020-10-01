@@ -5,24 +5,19 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/custom/models?op=summary
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models?op=summary
   response:
     body:
       string: '{"error": {"code": "401", "message": "Access denied due to invalid
         subscription key or wrong API endpoint. Make sure to provide a valid key for
         an active subscription and use a correct regional API endpoint for your resource."}}'
     headers:
-      apim-request-id: da1a6c76-6c1d-49bc-837c-50022da0cf64
-      content-length: '225'
-      content-type: application/json
-      date: Fri, 10 Jul 2020 18:50:54 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      www-authenticate: AzureApiManagementKey realm="https://centraluseuap.api.cognitive.microsoft.com/formrecognizer",name="Ocp-Apim-Subscription-Key",type="header"
-      x-content-type-options: nosniff
+      content-length: '224'
+      date: Mon, 14 Sep 2020 20:39:03 GMT
     status:
       code: 401
-      message: Access Denied
-    url: https://centraluseuap.api.cognitive.microsoft.com//formrecognizer/v2.0/custom/models?op=summary
+      message: PermissionDenied
+    url: https://centraluseuap.api.cognitive.microsoft.com//formrecognizer/v2.1-preview.1/custom/models?op=summary
 version: 1

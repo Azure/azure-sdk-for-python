@@ -1,5 +1,17 @@
 # Release History
 
+## 16.0.0 (2020-09-15)
+
+**Features**
+
+  - Model RestorePolicyProperties has a new parameter min_restore_time
+
+**Breaking changes**
+
+  - Operation ManagementPoliciesOperations.create_or_update has a new signature
+  - Operation ManagementPoliciesOperations.delete has a new signature
+  - Operation ManagementPoliciesOperations.get has a new signature
+
 ## 16.0.0b2 (2020-06-29)
 
 This is beta preview version.

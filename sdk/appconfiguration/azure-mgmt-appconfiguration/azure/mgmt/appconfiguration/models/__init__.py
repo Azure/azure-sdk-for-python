@@ -65,6 +65,7 @@ except (SyntaxError, ImportError):
 
 from ._app_configuration_management_client_enums import (
     ActionsRequired,
+    ConfigurationResourceType,
     ConnectionStatus,
     IdentityType,
     ProvisioningState,
@@ -100,6 +101,7 @@ __all__ = [
     'Sku',
     'UserIdentity',
     'ActionsRequired',
+    'ConfigurationResourceType',
     'ConnectionStatus',
     'IdentityType',
     'ProvisioningState',

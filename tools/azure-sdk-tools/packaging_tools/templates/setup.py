@@ -90,7 +90,7 @@ setup(
         'azure-core>=1.6.0,<2.0.0',
         {%- endif %}
         {%- if need_azuremgmtcore %}
-        'azure-mgmt-core>=1.0.0,<2.0.0',
+        'azure-mgmt-core>=1.2.0,<2.0.0',
         {%- endif %}
     ],
     extras_require={

@@ -6,14 +6,32 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum
+from enum import Enum, EnumMeta
+from six import with_metaclass
 
-class LockLevel(str, Enum):
+class _CaseInsensitiveEnumMeta(EnumMeta):
+    def __getitem__(self, name):
+        return super().__getitem__(name.upper())
+
+    def __getattr__(cls, name):
+        """Return the enum member matching `name`
+        We use __getattr__ instead of descriptors or inserting into the enum
+        class' __dict__ in order to support `name` and `value` being both
+        properties for enum members (which live in the class' __dict__) and
+        enum members themselves.
+        """
+        try:
+            return cls._member_map_[name.upper()]
+        except KeyError:
+            raise AttributeError(name)
+
+
+class LockLevel(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The level of the lock. Possible values are: NotSpecified, CanNotDelete, ReadOnly. CanNotDelete
     means authorized users are able to read and modify the resources, but not delete. ReadOnly
     means authorized users can only read from a resource, but they can't modify or delete it.
     """
 
-    not_specified = "NotSpecified"
-    can_not_delete = "CanNotDelete"
-    read_only = "ReadOnly"
+    NOT_SPECIFIED = "NotSpecified"
+    CAN_NOT_DELETE = "CanNotDelete"
+    READ_ONLY = "ReadOnly"

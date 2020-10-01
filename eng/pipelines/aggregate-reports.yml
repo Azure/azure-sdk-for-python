@@ -20,6 +20,7 @@ jobs:
   - template: ../common/pipelines/templates/steps/verify-links.yml
     parameters:
       Directory: ""
+      CheckLinkGuidance: $true
 
   - template: /eng/pipelines/templates/steps/analyze_dependency.yml
 

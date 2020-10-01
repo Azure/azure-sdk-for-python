@@ -6,78 +6,104 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum
+from enum import Enum, EnumMeta
+from six import with_metaclass
 
-class ComparisonOperationType(str, Enum):
+class _CaseInsensitiveEnumMeta(EnumMeta):
+    def __getitem__(self, name):
+        return super().__getitem__(name.upper())
+
+    def __getattr__(cls, name):
+        """Return the enum member matching `name`
+        We use __getattr__ instead of descriptors or inserting into the enum
+        class' __dict__ in order to support `name` and `value` being both
+        properties for enum members (which live in the class' __dict__) and
+        enum members themselves.
+        """
+        try:
+            return cls._member_map_[name.upper()]
+        except KeyError:
+            raise AttributeError(name)
+
+
+class ComparisonOperationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """the operator that is used to compare the metric data and the threshold.
     """
 
-    equals = "Equals"
-    not_equals = "NotEquals"
-    greater_than = "GreaterThan"
-    greater_than_or_equal = "GreaterThanOrEqual"
-    less_than = "LessThan"
-    less_than_or_equal = "LessThanOrEqual"
+    EQUALS = "Equals"
+    NOT_EQUALS = "NotEquals"
+    GREATER_THAN = "GreaterThan"
+    GREATER_THAN_OR_EQUAL = "GreaterThanOrEqual"
+    LESS_THAN = "LessThan"
+    LESS_THAN_OR_EQUAL = "LessThanOrEqual"
 
-class EventLevel(str, Enum):
+class EventLevel(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """the event level
     """
 
-    critical = "Critical"
-    error = "Error"
-    warning = "Warning"
-    informational = "Informational"
-    verbose = "Verbose"
+    CRITICAL = "Critical"
+    ERROR = "Error"
+    WARNING = "Warning"
+    INFORMATIONAL = "Informational"
+    VERBOSE = "Verbose"
 
-class MetricStatisticType(str, Enum):
+class MetricStatisticType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """the metric statistic type. How the metrics from multiple instances are combined.
     """
 
-    average = "Average"
-    min = "Min"
-    max = "Max"
-    sum = "Sum"
+    AVERAGE = "Average"
+    MIN = "Min"
+    MAX = "Max"
+    SUM = "Sum"
 
-class RecurrenceFrequency(str, Enum):
+class RecurrenceFrequency(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """the recurrence frequency. How often the schedule profile should take effect. This value must be
     Week, meaning each week will have the same set of profiles. For example, to set a daily
     schedule, set **schedule** to every day of the week. The frequency property specifies that the
     schedule is repeated weekly.
     """
 
-    none = "None"
-    second = "Second"
-    minute = "Minute"
-    hour = "Hour"
-    day = "Day"
-    week = "Week"
-    month = "Month"
-    year = "Year"
+    NONE = "None"
+    SECOND = "Second"
+    MINUTE = "Minute"
+    HOUR = "Hour"
+    DAY = "Day"
+    WEEK = "Week"
+    MONTH = "Month"
+    YEAR = "Year"
 
-class ScaleDirection(str, Enum):
+class ScaleDirection(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """the scale direction. Whether the scaling action increases or decreases the number of instances.
     """
 
-    none = "None"
-    increase = "Increase"
-    decrease = "Decrease"
+    NONE = "None"
+    INCREASE = "Increase"
+    DECREASE = "Decrease"
 
-class ScaleType(str, Enum):
+class ScaleRuleMetricDimensionOperationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """the dimension operator. Only 'Equals' and 'NotEquals' are supported. 'Equals' being equal to
+    any of the values. 'NotEquals' being not equal to all of the values
+    """
+
+    EQUALS = "Equals"
+    NOT_EQUALS = "NotEquals"
+
+class ScaleType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """the type of action that should occur when the scale rule fires.
     """
 
-    change_count = "ChangeCount"
-    percent_change_count = "PercentChangeCount"
-    exact_count = "ExactCount"
+    CHANGE_COUNT = "ChangeCount"
+    PERCENT_CHANGE_COUNT = "PercentChangeCount"
+    EXACT_COUNT = "ExactCount"
 
-class TimeAggregationType(str, Enum):
+class TimeAggregationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """time aggregation type. How the data that is collected should be combined over time. The default
     value is Average.
     """
 
-    average = "Average"
-    minimum = "Minimum"
-    maximum = "Maximum"
-    total = "Total"
-    count = "Count"
-    last = "Last"
+    AVERAGE = "Average"
+    MINIMUM = "Minimum"
+    MAXIMUM = "Maximum"
+    TOTAL = "Total"
+    COUNT = "Count"
+    LAST = "Last"
