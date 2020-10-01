@@ -48,6 +48,25 @@ admin_client = MetricsAdvisorAdministrationClient(service_endpoint,
 
 ## Key concepts
 
+### MetricsAdvisorClient
+
+`MetricsAdvisorClient` helps with:
+
+- listing incidents
+- listing root causes of incidents
+- retrieving original time series data and time series data enriched by the service.
+- listing alerts
+- adding feedback to tune your model
+
+### MetricsAdvisorAdministrationClient
+
+`MetricsAdvisorAdministrationClient` allows you to
+
+- managing data feeds
+- configuring anomaly detection configurations
+- configuring anomaly alerting configurations
+- managing hooks
+
 ### DataFeed
 
 A `DataFeed` is what Metrics Advisor ingests from your data source, such as Cosmos DB or a SQL server. A data feed contains rows of:
@@ -83,6 +102,7 @@ Metrics Advisor lets you create and subscribe to real-time alerts. These alerts 
 * [Configure anomaly detection configuration](#configure-anomaly-detection-configuration "Configure anomaly detection configuration")
 * [Configure alert configuration](#configure-alert-configuration "Configure alert configuration")
 * [Query anomaly detection results](#query-anomaly-detection-results "Query anomaly detection results")
+* [Add hooks for receiving anomaly alerts](#add-hooks-for-receiving-anomaly-alerts "Add hooks for receiving anomaly alerts")
 
 ### Add a data feed from a sample or data source
 
@@ -177,7 +197,7 @@ for status in ingestion_status:
 
 ### Configure anomaly detection configuration
 
-We need an anomaly detection configuration to determine whether a point in the time series is an anomaly.
+While a default detection configuration is automatically applied to each metric, we can tune the detection modes used on our data by creating a customized anomaly detection configuration.
 
 ```py
 from azure.ai.metricsadvisor import MetricsAdvisorKeyCredential, MetricsAdvisorAdministrationClient
@@ -348,6 +368,31 @@ for result in results:
     print("Create on: {}".format(result.created_on))
     print("Severity: {}".format(result.severity))
     print("Status: {}".format(result.status))
+```
+
+### Add hooks for receiving anomaly alerts
+
+We can add some hooks so when an alert is triggered, we can get call back.
+
+```py
+from azure.ai.metricsadvisor import MetricsAdvisorKeyCredential, MetricsAdvisorAdministrationClient
+from azure.ai.metricsadvisor.models import EmailHook
+
+service_endpoint = os.getenv("METRICS_ADVISOR_ENDPOINT")
+subscription_key = os.getenv("METRICS_ADVISOR_SUBSCRIPTION_KEY")
+api_key = os.getenv("METRICS_ADVISOR_API_KEY")
+
+client = MetricsAdvisorAdministrationClient(service_endpoint,
+    MetricsAdvisorKeyCredential(subscription_key, api_key))
+
+hook = client.create_hook(
+    name="email hook",
+    hook=EmailHook(
+        description="my email hook",
+        emails_to_alert=["alertme@alertme.com"],
+        external_link="https://adwiki.azurewebsites.net/articles/howto/alerts/create-hooks.html"
+    )
+)
 ```
 
 ### Async APIs
