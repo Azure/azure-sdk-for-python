@@ -7,10 +7,24 @@
 
 from typing import TYPE_CHECKING
 
-from ._base_client import PublisherClientMixin
+from azure.core.pipeline.policies import (
+    RequestIdPolicy,
+    HeadersPolicy,
+    RedirectPolicy,
+    RetryPolicy,
+    ContentDecodePolicy,
+    CustomHookPolicy,
+    NetworkTraceLoggingPolicy,
+    ProxyPolicy,
+    DistributedTracingPolicy,
+    HttpLoggingPolicy,
+    UserAgentPolicy
+)
+
 from ._models import CloudEvent, EventGridEvent, CustomEvent
 from ._helpers import _get_topic_hostname_only_fqdn, _get_authentication_policy, _is_cloud_event
 from ._generated._event_grid_publisher_client import EventGridPublisherClient as EventGridPublisherClientImpl
+from ._policies import CloudEventDistributedTracingPolicy
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -27,7 +41,7 @@ if TYPE_CHECKING:
     ]
 
 
-class EventGridPublisherClient(PublisherClientMixin):
+class EventGridPublisherClient(object):
     """EventGrid Python Publisher Client.
 
     :param str topic_hostname: The topic endpoint to send the events to.
@@ -38,17 +52,34 @@ class EventGridPublisherClient(PublisherClientMixin):
 
     def __init__(self, topic_hostname, credential, **kwargs):
         # type: (str, Union[AzureKeyCredential, EventGridSharedAccessSignatureCredential], Any) -> None
-        super(EventGridPublisherClient, self).__init__(credential, **kwargs)
         topic_hostname = _get_topic_hostname_only_fqdn(topic_hostname)
 
         self._topic_hostname = topic_hostname
-        auth_policy = _get_authentication_policy(credential)
         self._client = EventGridPublisherClientImpl(
-            authentication_policy=auth_policy,
-            policies=self.policies,
+            policies=EventGridPublisherClient._policies(credential, **kwargs),
             **kwargs
             )
-        print(self._client)
+
+    @staticmethod
+    def _policies(credential, **kwargs):
+        # type: (Union[AzureKeyCredential, EventGridSharedAccessSignatureCredential], Any) -> List[Any]
+        auth_policy = _get_authentication_policy(credential)
+        policies = [
+            RequestIdPolicy(**kwargs),
+            HeadersPolicy(**kwargs),
+            UserAgentPolicy(**kwargs),
+            ProxyPolicy(**kwargs),
+            ContentDecodePolicy(**kwargs),
+            RedirectPolicy(**kwargs),
+            RetryPolicy(**kwargs),
+            auth_policy,
+            CustomHookPolicy(**kwargs),
+            NetworkTraceLoggingPolicy(**kwargs),
+            DistributedTracingPolicy(**kwargs),
+            CloudEventDistributedTracingPolicy(**kwargs),
+            HttpLoggingPolicy(**kwargs)
+        ]
+        return policies
 
     def send(self, events, **kwargs):
         # type: (SendType, Any) -> None

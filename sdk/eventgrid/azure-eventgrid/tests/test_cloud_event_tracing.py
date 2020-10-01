@@ -30,7 +30,7 @@ _traceparent_value = "00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01"
 _tracestate_value = "rojo=00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01,congo=lZWRzIHRoNhcm5hbCBwbGVhc3VyZS4"
 
 
-class EventGridSerializationTests(AzureMgmtTestCase):
+class EventGridSerializationTests(object):
 
     def test_cloud_event_policy_copies(self):
         policy = CloudEventDistributedTracingPolicy()

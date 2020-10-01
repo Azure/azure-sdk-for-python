@@ -28,8 +28,7 @@ class CloudEventDistributedTracingPolicy(SansIOHTTPPolicy):
             traceparent = request.http_request.headers['traceparent']
             tracestate = request.http_request.headers['tracestate']
         except KeyError:
-            traceparent = None
-            tracestate = None
+            return
 
         if (request.http_request.headers['content-type'] == CloudEventDistributedTracingPolicy._CONTENT_TYPE
             and traceparent is not None
