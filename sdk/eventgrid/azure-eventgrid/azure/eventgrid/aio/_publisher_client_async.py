@@ -9,6 +9,7 @@
 from typing import Any, TYPE_CHECKING
 from azure.core.credentials import AzureKeyCredential
 
+from .._base_client_async import AsyncPublisherClientMixin
 from .._models import CloudEvent, EventGridEvent, CustomEvent
 from .._policies import CloudEventDistributedTracingPolicy
 from .._helpers import _get_topic_hostname_only_fqdn, _get_authentication_policy, _is_cloud_event
@@ -28,7 +29,7 @@ if TYPE_CHECKING:
         List[Dict]
     ]
 
-class EventGridPublisherClient(object):
+class EventGridPublisherClient(AsyncPublisherClientMixin):
     """Asynchronous EventGrid Python Publisher Client.
 
     :param str topic_hostname: The topic endpoint to send the events to.
@@ -39,14 +40,15 @@ class EventGridPublisherClient(object):
 
     def __init__(self, topic_hostname, credential, **kwargs):
         # type: (str, Union[AzureKeyCredential, EventGridSharedAccessSignatureCredential], Any) -> None
+        super().__init__(credential, **kwargs)
         auth_policy = _get_authentication_policy(credential)
-        self._client = EventGridPublisherClientAsync(authentication_policy=auth_policy, **kwargs)
+        self._client = EventGridPublisherClientAsync(
+            authentication_policy=auth_policy,
+            policies=self._policies,
+            **kwargs
+            )
         topic_hostname = _get_topic_hostname_only_fqdn(topic_hostname)
         self._topic_hostname = topic_hostname
-        self._client._client._pipeline._impl_policies.append(
-            CloudEventDistributedTracingPolicy
-            )  # pylint: disable=protected-access
-
 
     async def send(self, events, **kwargs):
         # type: (SendType) -> None

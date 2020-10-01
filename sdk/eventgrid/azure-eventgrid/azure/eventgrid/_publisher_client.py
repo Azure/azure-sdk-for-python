@@ -7,6 +7,7 @@
 
 from typing import TYPE_CHECKING
 
+from ._base_client import PublisherClientMixin
 from ._models import CloudEvent, EventGridEvent, CustomEvent
 from ._policies import CloudEventDistributedTracingPolicy
 from ._helpers import _get_topic_hostname_only_fqdn, _get_authentication_policy, _is_cloud_event
@@ -27,7 +28,7 @@ if TYPE_CHECKING:
     ]
 
 
-class EventGridPublisherClient(object):
+class EventGridPublisherClient(PublisherClientMixin):
     """EventGrid Python Publisher Client.
 
     :param str topic_hostname: The topic endpoint to send the events to.
@@ -38,15 +39,17 @@ class EventGridPublisherClient(object):
 
     def __init__(self, topic_hostname, credential, **kwargs):
         # type: (str, Union[AzureKeyCredential, EventGridSharedAccessSignatureCredential], Any) -> None
-
+        super(EventGridPublisherClient, self).__init__(credential, **kwargs)
         topic_hostname = _get_topic_hostname_only_fqdn(topic_hostname)
 
         self._topic_hostname = topic_hostname
         auth_policy = _get_authentication_policy(credential)
-        self._client = EventGridPublisherClientImpl(authentication_policy=auth_policy, **kwargs)
-        self._client._client._pipeline._impl_policies.append(
-            CloudEventDistributedTracingPolicy
-            )  # pylint: disable=protected-access
+        self._client = EventGridPublisherClientImpl(
+            authentication_policy=auth_policy,
+            policies=self._policies,
+            **kwargs
+            )
+        print(self._client)
 
     def send(self, events, **kwargs):
         # type: (SendType, Any) -> None

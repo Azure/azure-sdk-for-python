@@ -20,27 +20,25 @@ class CloudEventDistributedTracingPolicy(SansIOHTTPPolicy):
     See https://github.com/cloudevents/spec/blob/master/extensions/distributed-tracing.md
     for more information on distributed tracing and cloud events.
     """
+    _CONTENT_TYPE = "application/cloudevents-batch+json; charset=utf-8"
+
     def on_request(self, request):
         # type: (PipelineRequest) -> None
-        traceparent = request.http_request.headers['traceparent']
-        tracestate = request.http_request.headers['tracestate']
-        content_type = "application/cloudevents-batch+json; charset=utf-8"
+        try:
+            traceparent = request.http_request.headers['traceparent']
+            tracestate = request.http_request.headers['tracestate']
+        except KeyError:
+            traceparent = None
+            tracestate = None
 
-        if (request.http_request.headers['content-type'] == content_type
+        if (request.http_request.headers['content-type'] == CloudEventDistributedTracingPolicy._CONTENT_TYPE
             and traceparent is not None
-            and getattr(request.http_request, 'body') is not None
             ):
 
-            try:
-                body = json.loads(request.http_request.body)
+            body = json.loads(request.http_request.body)
+            for item in body:
+                if 'traceparent' not in item:
+                    item['traceparent'] = traceparent
+                    item['tracestate'] = tracestate
 
-                for item in body:
-                    if 'traceparent' not in item:
-                        item['traceparent'] = traceparent
-
-                    if tracestate:
-                        item['tracestate'] = tracestate
-
-                request.http_request.body = json.dumps(body)
-            except Exception as err:  # pylint: disable=broad-except
-                _LOGGER.warning("Unable to add traceparent: %s", err)
+            request.http_request.body = json.dumps(body)
