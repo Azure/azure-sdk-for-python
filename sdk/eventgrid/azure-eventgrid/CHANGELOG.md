@@ -4,7 +4,7 @@
 
   **Feature**
   - Added support for Keyvault Event Types
-  - Added distributed tracing support for ClouEvents
+  - Added distributed tracing support for CloudEvents
 
 ## 2.0.0b2 (2020-09-24)
 
