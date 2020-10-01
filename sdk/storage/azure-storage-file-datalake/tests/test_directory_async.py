@@ -15,10 +15,11 @@ from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
 
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, \
-    ResourceModifiedError
+    ResourceModifiedError, ServiceRequestError
 from azure.storage.filedatalake import ContentSettings, DirectorySasPermissions, generate_file_system_sas, \
     FileSystemSasPermissions
 from azure.storage.filedatalake import generate_directory_sas
+from azure.storage.filedatalake._models import DataLakeAclChangeFailedError
 from azure.storage.filedatalake.aio import DataLakeServiceClient, DataLakeDirectoryClient
 from azure.storage.filedatalake import AccessControlChangeResult, AccessControlChangeCounters
 
@@ -381,6 +382,34 @@ class DirectoryTest(StorageTestCase):
         access_control = await directory_client.get_access_control()
         self.assertIsNotNone(access_control)
         self.assertEqual(acl, access_control['acl'])
+
+    @record
+    def test_set_access_control_recursive_throws_exception_containing_continuation_token_async(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_set_access_control_recursive_throws_exception_containing_continuation_token())
+
+    async def _test_set_access_control_recursive_throws_exception_containing_continuation_token(self):
+        directory_name = self._get_directory_reference()
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        await directory_client.create_directory()
+        num_sub_dirs = 5
+        num_file_per_sub_dir = 5
+        await self._create_sub_directory_and_files(directory_client, num_sub_dirs, num_file_per_sub_dir)
+
+        response_list = list()
+
+        def callback(response):
+            response_list.append(response)
+            if len(response_list) == 2:
+                raise ServiceRequestError("network problem")
+        acl = 'user::rwx,group::r-x,other::rwx'
+
+        with self.assertRaises(DataLakeAclChangeFailedError) as acl_error:
+            await directory_client.set_access_control_recursive(acl=acl, batch_size=2, max_batches=2,
+                                                                raw_response_hook=callback, retry_total=0)
+            self.assertIsNotNone(acl_error.exception.continuation)
+            self.assertEqual(acl_error.exception.message, "network problem")
+            self.assertIsInstance(acl_error.exception.error, ServiceRequestError)
 
     @record
     def test_set_access_control_recursive_in_batches_async(self):

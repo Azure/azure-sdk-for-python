@@ -12,13 +12,14 @@ except ImportError:
 
 import six
 
+from azure.core.exceptions import AzureError
 from azure.storage.blob import BlobClient
 from ._data_lake_lease import DataLakeLeaseClient
 from ._deserialize import process_storage_error
 from ._generated import DataLakeStorageClient
 from ._generated.models import StorageErrorException
 from ._models import LocationMode, DirectoryProperties, AccessControlChangeResult, AccessControlChanges, \
-    AccessControlChangeCounters, AccessControlChangeFailure
+    AccessControlChangeCounters, AccessControlChangeFailure, DataLakeAclChangeFailedError
 from ._serialize import convert_dfs_url_to_blob_url, get_mod_conditions, \
     get_path_http_headers, add_metadata_headers, get_lease_id, get_source_mod_conditions, get_access_conditions
 from ._shared.base_client import StorageAccountHostsMixin, parse_query
@@ -612,8 +613,8 @@ class PathClient(StorageAccountHostsMixin):
                 failure_count=total_failure_count),
                 continuation=last_continuation_token
                 if total_failure_count > 0 and not continue_on_failure else current_continuation_token)
-        except StorageErrorException as error:
-            process_storage_error(error)
+        except AzureError as error:
+            raise DataLakeAclChangeFailedError(error, error.message, last_continuation_token)
 
     def _rename_path_options(self, rename_source, content_settings=None, metadata=None, **kwargs):
         # type: (Optional[ContentSettings], Optional[Dict[str, str]], **Any) -> Dict[str, Any]

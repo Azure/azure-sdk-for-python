@@ -4,11 +4,12 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=invalid-overridden-method
+from azure.core.exceptions import AzureError
 from azure.storage.blob.aio import BlobClient
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 from .._path_client import PathClient as PathClientBase
 from .._models import DirectoryProperties, AccessControlChangeResult, AccessControlChangeFailure, \
-    AccessControlChangeCounters, AccessControlChanges
+    AccessControlChangeCounters, AccessControlChanges, DataLakeAclChangeFailedError
 from .._generated.aio import DataLakeStorageClient
 from ._data_lake_lease_async import DataLakeLeaseClient
 from .._generated.models import StorageErrorException
@@ -474,8 +475,8 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
                 failure_count=total_failure_count),
                 continuation=last_continuation_token
                 if total_failure_count > 0 and not continue_on_failure else current_continuation_token)
-        except StorageErrorException as error:
-            process_storage_error(error)
+        except AzureError as error:
+            raise DataLakeAclChangeFailedError(error, error.message, last_continuation_token)
 
     async def _rename_path(self, rename_source,
                            **kwargs):
