@@ -127,6 +127,19 @@ class LargeResponseBodyReplacer(RecordingProcessor):
         return response
 
 
+class AuthenticationMetadataFilter(RecordingProcessor):
+    """Remove authority and tenant discovery requests and responses from recordings.
+
+    MSAL sends these requests to obtain non-secret metadata about the token authority. Recording them is unnecessary
+    because tests use fake credentials during playback that don't invoke MSAL.
+    """
+
+    def process_request(self, request):
+        if "/.well-known/openid-configuration" in request.uri or "/common/discovery/instance" in request.uri:
+            return None
+        return request
+
+
 class OAuthRequestResponsesFilter(RecordingProcessor):
     """Remove oauth authentication requests and responses from recording."""
 

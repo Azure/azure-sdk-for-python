@@ -13,6 +13,7 @@ from typing import (
 import datetime
 import six
 from msrest import Serializer
+from azure.core.exceptions import HttpResponseError
 from .models import (
     DataFeedGranularityType,
     DataFeedGranularity,
@@ -178,11 +179,11 @@ def convert_to_generated_data_feed_type(
 def convert_to_sub_feedback(feedback):
     # type: (MetricFeedback) -> Union[AnomalyFeedback, ChangePointFeedback, CommentFeedback, PeriodFeedback]
     if feedback.feedback_type == "Anomaly":
-        return AnomalyFeedback._from_generated(feedback)
+        return AnomalyFeedback._from_generated(feedback)  # type: ignore
     if feedback.feedback_type == "ChangePoint":
-        return ChangePointFeedback._from_generated(feedback)
+        return ChangePointFeedback._from_generated(feedback)  # type: ignore
     if feedback.feedback_type == "Comment":
-        return CommentFeedback._from_generated(feedback)
+        return CommentFeedback._from_generated(feedback)  # type: ignore
     if feedback.feedback_type == "Period":
-        return PeriodFeedback._from_generated(feedback)
-    return None
+        return PeriodFeedback._from_generated(feedback)  # type: ignore
+    raise HttpResponseError("Invalid feedback type returned in the response.")

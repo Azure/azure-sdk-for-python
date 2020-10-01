@@ -22,8 +22,8 @@ pip install azure-ai-metricsadvisor --pre
 
 You will need two keys to authenticate the client:
 
-The subscription key to your Metrics Advisor resource. You can find this in the Keys and Endpoint section of your resource in the Azure portal.
-The API key for your Metrics Advisor instance. You can find this in the web portal for Metrics Advisor, in API keys on the left navigation menu.
+1) The subscription key to your Metrics Advisor resource. You can find this in the Keys and Endpoint section of your resource in the Azure portal.
+2) The API key for your Metrics Advisor instance. You can find this in the web portal for Metrics Advisor, in API keys on the left navigation menu.
 
 We can use the keys to create a new `MetricsAdvisorClient` or `MetricsAdvisorAdministrationClient`.
 
@@ -54,7 +54,7 @@ A `DataFeed` is what Metrics Advisor ingests from your data source, such as Cosm
 
 - timestamps
 - zero or more dimensions
-- one or more measures.
+- one or more measures
 
 ### Metric
 
@@ -85,6 +85,8 @@ Metrics Advisor lets you create and subscribe to real-time alerts. These alerts 
 * [Query anomaly detection results](#query-anomaly-detection-results "Query anomaly detection results")
 
 ### Add a data feed from a sample or data source
+
+Metrics Advisor supports connecting different types of data sources. Here is a sample to ingest data from SQL Server.
 
 ```py
 from azure.ai.metricsadvisor import MetricsAdvisorKeyCredential, MetricsAdvisorAdministrationClient
@@ -147,6 +149,8 @@ return data_feed
 
 ### Check ingestion status
 
+After we start the data ingestion, we can check the ingestion status.
+
 ```py
 import datetime
 from azure.ai.metricsadvisor import MetricsAdvisorKeyCredential, MetricsAdvisorAdministrationClient
@@ -172,6 +176,9 @@ for status in ingestion_status:
 ```
 
 ### Configure anomaly detection configuration
+
+We need an anomaly detection configuration to determine whether a point in the time series is an anomaly.
+
 ```py
 from azure.ai.metricsadvisor import MetricsAdvisorKeyCredential, MetricsAdvisorAdministrationClient
 from azure.ai.metricsadvisor.models import (
@@ -235,6 +242,8 @@ return detection_config
 ```
 
 ### Configure alert configuration
+
+Then let's configure in which conditions an alert needs to be triggered.
 
 ```py
 from azure.ai.metricsadvisor import MetricsAdvisorKeyCredential, MetricsAdvisorAdministrationClient
@@ -306,6 +315,8 @@ return alert_config
 
 ### Query anomaly detection results
 
+We can query the alerts and anomalies.
+
 ```py
 import datetime
 from azure.ai.metricsadvisor import MetricsAdvisorKeyCredential, MetricsAdvisorClient
@@ -313,6 +324,7 @@ from azure.ai.metricsadvisor import MetricsAdvisorKeyCredential, MetricsAdvisorC
 service_endpoint = os.getenv("METRICS_ADVISOR_ENDPOINT")
 subscription_key = os.getenv("METRICS_ADVISOR_SUBSCRIPTION_KEY")
 api_key = os.getenv("METRICS_ADVISOR_API_KEY")
+alert_id = os.getenv("METRICS_ADVISOR_ALERT_ID")
 
 client = MetricsAdvisorClient(service_endpoint,
     MetricsAdvisorKeyCredential(subscription_key, api_key)
@@ -327,15 +339,6 @@ results = client.list_alerts_for_alert_configuration(
 for result in results:
     print("Alert id: {}".format(result.id))
     print("Create on: {}".format(result.created_on))
-
-service_endpoint = os.getenv("METRICS_ADVISOR_ENDPOINT")
-subscription_key = os.getenv("METRICS_ADVISOR_SUBSCRIPTION_KEY")
-api_key = os.getenv("METRICS_ADVISOR_API_KEY")
-alert_id = os.getenv("METRICS_ADVISOR_ALERT_ID")
-
-client = MetricsAdvisorClient(service_endpoint,
-    MetricsAdvisorKeyCredential(subscription_key, api_key)
-)
 
 results = client.list_anomalies_for_alert(
     alert_configuration_id=alert_config_id,
@@ -427,12 +430,13 @@ additional questions or comments.
 <!-- LINKS -->
 [src_code]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/metricsadvisor/azure-ai-metricsadvisor
 [reference_documentation]: https://aka.ms/azsdk/python/metricsadvisor/docs
-[ma_docs]: https://aka.ms/azsdk/python/metricsadvisor/docs
+[ma_docs]: https://docs.microsoft.com/azure/cognitive-services/metrics-advisor/overview
 [azure_cli]: https://docs.microsoft.com/cli/azure
 [azure_sub]: https://azure.microsoft.com/free/
 [package]: https://aka.ms/azsdk/python/metricsadvisor/pypi
 [ma_service]: https://go.microsoft.com/fwlink/?linkid=2142156
 [python_logging]: https://docs.python.org/3.5/library/logging.html
+[azure_core]: https://aka.ms/azsdk/python/core/docs#module-azure.core.exceptions
 
 [cla]: https://cla.microsoft.com
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/

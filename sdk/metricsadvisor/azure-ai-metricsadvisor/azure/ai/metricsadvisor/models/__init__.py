@@ -38,6 +38,8 @@ from .._generated.models._azure_cognitive_service_metrics_advisor_restapi_open_a
     AnomalyValue,
     ChangePointValue,
     PeriodType,
+    FeedbackType,
+    TimeMode
 )
 
 from .._generated.models import (
@@ -47,13 +49,11 @@ from .._generated.models import (
     DetectionAnomalyFilterCondition,
     DimensionGroupIdentity,
     DetectionIncidentFilterCondition,
-    AnomalyDetectionConfiguration,
-    DimensionGroupConfiguration,
-    SeriesConfiguration,
     EnrichmentStatus,
     MetricSeriesItem as MetricSeriesDefinition,
     IngestionStatus as DataFeedIngestionStatus,
-    SeriesIdentity
+    SeriesIdentity,
+    SeverityFilterCondition
 )
 
 from ._models import (
@@ -110,7 +110,8 @@ from ._models import (
     AzureDataLakeStorageGen2DataFeed,
     ElasticsearchDataFeed,
     MetricAnomalyAlertScopeType,
-    DataFeedRollupType
+    DataFeedRollupType,
+    IncidentRootCause
 )
 
 
@@ -128,8 +129,6 @@ __all__ = (
     "Incident",
     "DetectionIncidentFilterCondition",
     "AnomalyDetectionConfiguration",
-    "DimensionGroupConfiguration",
-    "SeriesConfiguration",
     "MetricAnomalyAlertConfigurationsOperator",
     "DataFeedStatus",
     "DataFeedGranularity",
@@ -171,7 +170,6 @@ __all__ = (
     "WebHook",
     "DataFeedIngestionProgress",
     "DetectionConditionsOperator",
-    "AnomalyDetectionConfiguration",
     "MetricAnomalyAlertConditions",
     "EnrichmentStatus",
     "DataFeedGranularityType",
@@ -190,10 +188,13 @@ __all__ = (
     "ChangeThresholdCondition",
     "HardThresholdCondition",
     "SeriesIdentity",
-    "DataFeedIngestionStatus",
     "AzureDataLakeStorageGen2DataFeed",
     "ElasticsearchDataFeed",
     "AnomalyValue",
     "ChangePointValue",
     "PeriodType",
+    "FeedbackType",
+    "TimeMode",
+    "IncidentRootCause",
+    "SeverityFilterCondition"
 )

@@ -608,7 +608,6 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
                 self.assertEqual(0.0, aspect.confidence_scores.neutral)
                 self.validateConfidenceScores(aspect.confidence_scores)
                 self.assertEqual(32, aspect.offset)
-                self.assertEqual(6, aspect.length)
 
                 sleek_opinion = mined_opinion.opinions[0]
                 self.assertEqual('sleek', sleek_opinion.text)
@@ -616,7 +615,6 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
                 self.assertEqual(0.0, sleek_opinion.confidence_scores.neutral)
                 self.validateConfidenceScores(sleek_opinion.confidence_scores)
                 self.assertEqual(9, sleek_opinion.offset)
-                self.assertEqual(5, sleek_opinion.length)
                 self.assertFalse(sleek_opinion.is_negated)
 
                 premium_opinion = mined_opinion.opinions[1]
@@ -625,7 +623,6 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
                 self.assertEqual(0.0, premium_opinion.confidence_scores.neutral)
                 self.validateConfidenceScores(premium_opinion.confidence_scores)
                 self.assertEqual(15, premium_opinion.offset)
-                self.assertEqual(7, premium_opinion.length)
                 self.assertFalse(premium_opinion.is_negated)
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -646,14 +643,12 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
             self.assertEqual(0.0, food_aspect.confidence_scores.neutral)
             self.validateConfidenceScores(food_aspect.confidence_scores)
             self.assertEqual(4, food_aspect.offset)
-            self.assertEqual(4, food_aspect.length)
 
             self.assertEqual('service', service_aspect.text)
             self.assertEqual('negative', service_aspect.sentiment)
             self.assertEqual(0.0, service_aspect.confidence_scores.neutral)
             self.validateConfidenceScores(service_aspect.confidence_scores)
             self.assertEqual(13, service_aspect.offset)
-            self.assertEqual(7, service_aspect.length)
 
             food_opinion = sentence.mined_opinions[0].opinions[0]
             service_opinion = sentence.mined_opinions[1].opinions[0]
@@ -664,7 +659,6 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
             self.assertEqual(0.0, food_opinion.confidence_scores.neutral)
             self.validateConfidenceScores(food_opinion.confidence_scores)
             self.assertEqual(28, food_opinion.offset)
-            self.assertEqual(4, food_opinion.length)
             self.assertTrue(food_opinion.is_negated)
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -718,23 +712,19 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
-    async def test_offset_length(self, client):
+    async def test_offset(self, client):
         result = await client.analyze_sentiment(["I like nature. I do not like being inside"])
         sentences = result[0].sentences
         self.assertEqual(sentences[0].offset, 0)
-        self.assertEqual(sentences[0].length, 14)
         self.assertEqual(sentences[1].offset, 15)
-        self.assertEqual(sentences[1].length, 26)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_0})
-    async def test_no_offset_length_v3_sentence_sentiment(self, client):
+    async def test_no_offset_v3_sentence_sentiment(self, client):
         result = await client.analyze_sentiment(["I like nature. I do not like being inside"])
         sentences = result[0].sentences
         self.assertIsNone(sentences[0].offset)
-        self.assertIsNone(sentences[0].length)
         self.assertIsNone(sentences[1].offset)
-        self.assertIsNone(sentences[1].length)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_0})
