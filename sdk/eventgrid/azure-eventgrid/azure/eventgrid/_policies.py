@@ -37,7 +37,7 @@ class CloudEventDistributedTracingPolicy(SansIOHTTPPolicy):
 
             body = json.loads(request.http_request.body)
             for item in body:
-                if 'traceparent' not in item:
+                if 'traceparent' not in item and 'tracestate' not in item:
                     item['traceparent'] = traceparent
                     item['tracestate'] = tracestate
 
