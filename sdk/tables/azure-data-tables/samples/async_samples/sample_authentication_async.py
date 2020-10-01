@@ -59,8 +59,6 @@ class TableAuthSamples(object):
         # Instantiate a TableServiceClient using a connection string
         # [START auth_by_sas]
         from azure.data.tables.aio import TableServiceClient
-        async with TableServiceClient.from_connection_string(conn_str=self.connection_string) as table_service:
-            print(self.account_name)
 
         # Create a SAS token to use for authentication of a client
         from azure.data.tables import generate_account_sas, ResourceTypes, AccountSasPermissions

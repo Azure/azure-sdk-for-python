@@ -59,11 +59,11 @@ class QueryTables(object):
     async def delete_tables(self):
         from azure.data.tables.aio import TableServiceClient
         ts = TableServiceClient.from_connection_string(conn_str=self.connection_string)
-        async with table_service:
+        async with ts:
             tables = ["mytable1", "mytable2"]
             for table in tables:
                 try:
-                    await table_service.delete_table(table_name=table)
+                    await ts.delete_table(table_name=table)
                 except:
                     pass
 
