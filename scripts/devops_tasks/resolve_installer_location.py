@@ -2,18 +2,82 @@ import platform
 import json
 import argparse
 import urllib
-from urllib.request import urlopen
+import urllib.request
+from subprocess import check_call, CalledProcessError
+import sys
+import os
+import zipfile
+import tarfile
+import time
 
 from packaging.version import Version
 from packaging.version import parse
 from packaging.version import InvalidVersion
 
-import sys
 import pdb
 
 # SOURCE OF THIS FILE: https://github.com/actions/python-versions
 # this is the official mapping file for gh-actions to retrieve python installers
 MANIFEST_LOCATION = "https://raw.githubusercontent.com/actions/python-versions/main/versions-manifest.json"
+
+MAX_INSTALLER_RETRY = 3
+CURRENT_UBUNTU_VERSION = "18.04"  # full title is ubuntu-18.04
+
+UNIX_INSTALL_ARRAY = ["sh", "setup.sh"]
+WIN_INSTALL_ARRAY = ["pwsh", "setup.ps1"]
+
+
+def download_installer(remote_path, local_path):
+    retries = 0
+
+    while True:
+        try:
+            urllib.request.urlretrieve(remote_path, local_path)
+            break
+        except Exception as e:
+            print(e)
+            retries += 1
+
+            if retries >= MAX_INSTALLER_RETRY:
+                print(
+                    "Unable to recover after attempting to download {} {} times".format(
+                        remote_path, retries
+                    )
+                )
+                exit(1)
+            time.sleep(10)
+
+
+def install_selected_python_version(installer_url, installer_folder):
+    current_plat = platform.system().lower()
+
+    installer_folder = os.path.normpath(os.path.abspath(installer_folder))
+    if not os.path.exists(installer_folder):
+        os.mkdir(installer_folder)
+    local_installer_ref = os.path.join(
+        installer_folder,
+        "local" + (".zip" if installer_folder.endswith("zip") else ".tar.gz"),
+    )
+
+    download_installer(installer_url, local_installer_ref)
+
+    if current_plat == "windows":
+        with zipfile.ZipFile(local_installer_ref, "r") as zip_file:
+            zip_file.extractall(installer_folder)
+        try:
+            check_call(WIN_INSTALL_ARRAY, cwd=installer_folder)
+        except CalledProcessError as err:
+            print(err)
+            exit(1)
+
+    else:
+        with tarfile.open(local_installer_ref) as tar_file:
+            tar_file.extractall(installer_folder)
+        try:
+            check_call(UNIX_INSTALL_ARRAY, cwd=installer_folder)
+        except CalledProcessError as err:
+            print(err)
+            exit(1)
 
 
 def get_installer_url(requested_version, version_manifest):
@@ -46,7 +110,7 @@ def get_installer_url(requested_version, version_manifest):
                 installer
                 for installer in x64_installers
                 if installer["platform"] == "linux"
-                and installer["platform_version"] == "18.04"
+                and installer["platform_version"] == CURRENT_UBUNTU_VERSION
             ][0]
 
 
@@ -61,13 +125,20 @@ if __name__ == "__main__":
         help=("The version specifier passed in to the UsePythonVersion extended task."),
     )
 
+    parser.add_argument(
+        "--installer_folder",
+        dest="installer_folder",
+        help=(
+            "The folder where the found installer will be extracted into and run from."
+        ),
+    )
+
     args = parser.parse_args()
     max_precached_version = Version("3.8.6")
     try:
         version_from_spec = Version(args.version_spec)
     except InvalidVersion:
         print("Invalid Version Spec. Skipping custom install.")
-        print("##vso[task.setvariable variable=_PythonNeedsInstall;]false")
         exit(0)
 
     with urllib.request.urlopen(MANIFEST_LOCATION) as url:
@@ -81,13 +152,7 @@ if __name__ == "__main__":
                 args.version_spec
             )
         )
-        print("##vso[task.setvariable variable=_PythonNeedsInstall;]true")
-
         install_file_details = get_installer_url(args.version_spec, version_dict)
-        print(
-            "##vso[task.setvariable variable=_PythonInstallerLocation;]{}".format(
-                install_file_details["download_url"]
-            )
+        install_selected_python_version(
+            install_file_details["download_url"], args.installer_folder
         )
-    else:
-        print("##vso[task.setvariable variable=_PythonNeedsInstall;]false")

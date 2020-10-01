@@ -17,44 +17,7 @@ steps:
     displayName: 'Check Version Spec Against Known Versions'
     inputs:
      scriptPath: 'scripts/devops_tasks/resolve_installer_location.py'
-     arguments: '${{ parameters.versionSpec }}'
-
-  # install from location discovered in manifest
-  - pwsh: |
-      $installerFolder = "../_installer"
-      $uri = "$(_PythonInstallerLocation)"
-
-      Write-Host $installerFolder
-      Write-Host $uri
-
-      if ([Environment]::GetEnvironmentVariable("Agent.OS") -eq "Windows_NT") {
-        $outFile = "local.zip"
-      }
-      else {
-        $outFile = "local.tar.gz"
-      }
-
-      mkdir $installerFolder
-
-      Invoke-WebRequest -Method GET `
-        -Uri $uri `
-        -OutFile "$installerFolder/$outFile"
-
-      Push-Location $installerFolder
-
-      # unzip and install
-      if ([Environment]::GetEnvironmentVariable("Agent.OS") -eq "Windows_NT") {
-        Expand-Archive -Path "local.zip" -DestinationPath .
-        ./setup.ps1
-      }
-      else {
-        tar -xvf "local.tar.gz"
-        sh setup.sh
-      }
-
-      Pop-Location
-    displayName: 'Install Py ${{ parameters.versionSpec }}'
-    condition: eq(variables['_PythonNeedsInstall'], 'true')
+     arguments: '${{ parameters.versionSpec }} --installer_folder="../_pyinstaller'
 
   # use
   - task: UsePythonVersion@0
