@@ -88,25 +88,11 @@ class MetricsAdvisorClient(object):
         if not credential:
             raise ValueError("Missing credential")
 
-        self._config = AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2Configuration(endpoint=endpoint, **kwargs)
-        self._endpoint = endpoint
-        self._credential = credential
-        self._config.user_agent_policy = UserAgentPolicy(
-            base_user_agent=None, sdk_moniker=SDK_MONIKER, **kwargs
-        )
-
-        pipeline = kwargs.get("pipeline")
-
-        if pipeline is None:
-            aad_mode = not isinstance(credential, MetricsAdvisorKeyCredential)
-            pipeline = self._create_pipeline(
-                credential=credential,
-                aad_mode=aad_mode,
-                endpoint=endpoint,
-                **kwargs)
-
         self._client = AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2(
-            endpoint=endpoint, pipeline=pipeline
+            endpoint=endpoint,
+            sdk_moniker=SDK_MONIKER,
+            authentication_policy=MetricsAdvisorKeyCredentialPolicy(credential),
+            **kwargs
         )
 
     def __repr__(self):
@@ -129,39 +115,6 @@ class MetricsAdvisorClient(object):
         """Close the :class:`~azure.ai.metricsadvisor.MetricsAdvisorClient` session.
         """
         return self._client.close()
-
-    def _create_pipeline(self, credential, endpoint=None, aad_mode=False, **kwargs):
-        transport = kwargs.get('transport')
-        policies = kwargs.get('policies')
-
-        if policies is None:  # [] is a valid policy list
-            if aad_mode:
-                scope = endpoint.strip("/") + "/.default"
-                if hasattr(credential, "get_token"):
-                    credential_policy = BearerTokenCredentialPolicy(credential, scope)
-                else:
-                    raise TypeError("Please provide an instance from azure-identity "
-                                    "or a class that implement the 'get_token protocol")
-            else:
-                credential_policy = MetricsAdvisorKeyCredentialPolicy(credential)
-            policies = [
-                RequestIdPolicy(**kwargs),
-                self._config.headers_policy,
-                self._config.user_agent_policy,
-                self._config.proxy_policy,
-                ContentDecodePolicy(**kwargs),
-                self._config.redirect_policy,
-                self._config.retry_policy,
-                credential_policy,
-                self._config.logging_policy,  # HTTP request/response log
-                DistributedTracingPolicy(**kwargs),
-                self._config.http_logging_policy or HttpLoggingPolicy(**kwargs)
-            ]
-
-        if not transport:
-            transport = RequestsTransport(**kwargs)
-
-        return Pipeline(transport, policies)
 
     @distributed_trace
     def add_feedback(self, feedback, **kwargs):
