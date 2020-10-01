@@ -11,7 +11,7 @@ FILE: phone_number_capabilities_sample.py
 DESCRIPTION:
     This sample demonstrates how to get number capabilities via a connection string, capabilities update id and phone number for capabilities.
 USAGE:
-    phone_number_capabilities_sample.py
+    python phone_number_capabilities_sample.py
     Set the environment variables with your own values before running the sample:
     1) AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING - The endpoint of your Azure Communication Service
     2) AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_CAPABILITIES_ID - The capabilities id you want to get

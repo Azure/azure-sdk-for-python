@@ -11,7 +11,7 @@ FILE: phone_number_supported_countries_sample.py
 DESCRIPTION:
     This sample demonstrates how to get supported countries via a connection string
 USAGE:
-    phone_number_supported_countries_sample.py
+    python phone_number_supported_countries_sample.py
     Set the environment variables with your own values before running the sample:
     1) AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING - The endpoint of your Azure Communication Service
 """

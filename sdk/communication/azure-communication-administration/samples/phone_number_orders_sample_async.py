@@ -11,7 +11,7 @@ FILE: phone_number_orders_sample_async.py
 DESCRIPTION:
     This sample demonstrates how to list, acquire and cancel phone number orders via a connection string, search id, phone plan id and and area code
 USAGE:
-    phone_number_orders_sample_async.py
+    python phone_number_orders_sample_async.py
     Set the environment variables with your own values before running the sample:
     1) AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING - The endpoint of your Azure Communication Service
     2) AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_RELEASE_ID - The release id you want to get info from
@@ -83,11 +83,11 @@ async def create_search():
         quantity=1
     )
     async with phone_number_administration_client:
-        search_response = await phone_number_administration_client.create_search(
+        search_response = await phone_number_administration_client.begin_create_search(
             body=searchOptions
         )
-        print('search_response:')
-        print(search_response)
+        print('search_response status:')
+        print(search_response.status())
     # [END create_search]
 
 
@@ -95,7 +95,7 @@ async def cancel_search():
     # [START cancel_search]
     phone_number_administration_client = PhoneNumberAdministrationClient.from_connection_string(connection_str)
     async with phone_number_administration_client:
-        await phone_number_administration_client.cancel_search(
+        await phone_number_administration_client.begin_cancel_search(
             search_id=search_id_to_cancel
         )
     # [END cancel_search]
@@ -105,7 +105,7 @@ async def purchase_search():
     # [START purchase_search]
     phone_number_administration_client = PhoneNumberAdministrationClient.from_connection_string(connection_str)
     async with phone_number_administration_client:
-        await phone_number_administration_client.purchase_search(
+        await phone_number_administration_client.begin_purchase_search(
             search_id=search_id_to_purchase
         )
     # [END purchase_search]

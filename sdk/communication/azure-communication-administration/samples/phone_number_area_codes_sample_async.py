@@ -11,7 +11,7 @@ FILE: phone_number_area_codes_sample_async.py
 DESCRIPTION:
     This sample demonstrates how to get all area codes via a connection string, country code and phone plan id.
 USAGE:
-    phone_number_area_codes_sample_async.py
+    python phone_number_area_codes_sample_async.py
     Set the environment variables with your own values before running the sample:
     1) AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING - The endpoint of your Azure Communication Service
     2) AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_COUNTRY_CODE - The country code you want to get area codes from

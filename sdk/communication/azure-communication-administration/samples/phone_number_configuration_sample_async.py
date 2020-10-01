@@ -11,7 +11,7 @@ FILE: phone_number_configuration_sample_async.py
 DESCRIPTION:
     This sample demonstrates how to configure phone numbers and get phone number configuration via a connection string and phone number to configure
 USAGE:
-    phone_number_configuration_sample_async.py
+    python phone_number_configuration_sample_async.py
     Set the environment variables with your own values before running the sample:
     1) AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING - The endpoint of your Azure Communication Service
     2) AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_PHONENUMBER_TO_CONFIGURE - The phone number you want to configure
@@ -44,8 +44,7 @@ async def configure_number():
     phone_number_administration_client = PhoneNumberAdministrationClient.from_connection_string(connection_str)
     pstn_config = PstnConfiguration(
         callback_url="https://callbackurl",
-        application_id="ApplicationId",
-        azure_pstn_target_id="AzurePstnTargetId"
+        application_id="ApplicationId"
     )
     async with phone_number_administration_client:
         await phone_number_administration_client.configure_number(

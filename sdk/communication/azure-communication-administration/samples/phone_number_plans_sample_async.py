@@ -11,7 +11,7 @@ FILE: phone_number_plans_sample_async.py
 DESCRIPTION:
     This sample demonstrates how to list phone plans via a connection string, country code, phone plan id and phone plan group id
 USAGE:
-    phone_number_plans_sample_async.py
+    python phone_number_plans_sample_async.py
     Set the environment variables with your own values before running the sample:
     1) AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING - The endpoint of your Azure Communication Service
     2) AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_COUNTRY_CODE - The country code
