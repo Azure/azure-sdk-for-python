@@ -6,6 +6,7 @@
 
 from ._communication_identity_client import CommunicationIdentityClient
 from ._phone_number_administration_client import PhoneNumberAdministrationClient
+from ._polling import PhoneNumberPolling
 
 from ._identity._generated.models import (
     CommunicationTokenRequest,
@@ -16,6 +17,7 @@ from ._phonenumber._generated.models import (
     AcquiredPhoneNumber,
     AcquiredPhoneNumbers,
     AreaCodes,
+    CreateSearchOptions,
     CreateSearchResponse,
     LocationOptionsQuery,
     LocationOptionsResponse,
@@ -31,7 +33,7 @@ from ._phonenumber._generated.models import (
     ReleaseResponse,
     UpdateNumberCapabilitiesResponse,
     UpdatePhoneNumberCapabilitiesResponse,
-    CreateSearchOptions
+    SearchStatus
 )
 
 from ._shared.models import (
@@ -43,6 +45,7 @@ from ._shared.models import (
 __all__ = [
     'CommunicationIdentityClient',
     'PhoneNumberAdministrationClient',
+    'PhoneNumberPolling',
 
     # from _identity
     'CommunicationTokenRequest',
@@ -52,6 +55,7 @@ __all__ = [
     'AcquiredPhoneNumber',
     'AcquiredPhoneNumbers',
     'AreaCodes',
+    'CreateSearchOptions',
     'CreateSearchResponse',
     'LocationOptionsQuery',
     'LocationOptionsResponse',
@@ -59,15 +63,15 @@ __all__ = [
     'NumberUpdateCapabilities',
     'PhoneNumberCountries',
     'PhoneNumberEntities',
-    'PhoneNumberRelease',
     'PhoneNumberSearch',
+    'PhoneNumberRelease',
     'PhonePlanGroups',
     'PhonePlansResponse',
     'PstnConfiguration',
     'ReleaseResponse',
+    'SearchStatus',
     'UpdateNumberCapabilitiesResponse',
     'UpdatePhoneNumberCapabilitiesResponse',
-    'CreateSearchOptions',
 
     # from _shared
     'CommunicationUser',
