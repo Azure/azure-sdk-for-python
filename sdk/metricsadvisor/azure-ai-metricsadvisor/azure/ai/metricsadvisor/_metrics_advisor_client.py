@@ -10,19 +10,8 @@ from typing import List, Union, Dict, Any, cast, TYPE_CHECKING
 import datetime  # pylint:disable=unused-import
 
 from azure.core.tracing.decorator import distributed_trace
-from azure.core.pipeline import Pipeline
-from azure.core.pipeline.policies import (
-    UserAgentPolicy,
-    BearerTokenCredentialPolicy,
-    DistributedTracingPolicy,
-    RequestIdPolicy,
-    ContentDecodePolicy,
-    HttpLoggingPolicy,
-)
-from azure.core.pipeline.transport import RequestsTransport
 from ._metrics_advisor_key_credential import MetricsAdvisorKeyCredential
 from ._metrics_advisor_key_credential_policy import MetricsAdvisorKeyCredentialPolicy
-from ._generated._configuration import AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2Configuration
 from ._generated.models import (
     MetricFeedbackFilter,
     DetectionSeriesQuery,

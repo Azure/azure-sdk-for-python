@@ -11,19 +11,8 @@ import datetime
 
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
-from azure.core.pipeline import AsyncPipeline
-from azure.core.pipeline.policies import (
-    UserAgentPolicy,
-    AsyncBearerTokenCredentialPolicy,
-    DistributedTracingPolicy,
-    RequestIdPolicy,
-    ContentDecodePolicy,
-    HttpLoggingPolicy,
-)
-from azure.core.pipeline.transport import AioHttpTransport
 from .._metrics_advisor_key_credential import MetricsAdvisorKeyCredential
 from .._metrics_advisor_key_credential_policy import MetricsAdvisorKeyCredentialPolicy
-from .._generated.aio._configuration import AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2Configuration
 from .._generated.models import (
     MetricFeedbackFilter,
     DetectionSeriesQuery,
@@ -116,39 +105,6 @@ class MetricsAdvisorClient(object):
         """Close the :class:`~azure.ai.metricsadvisor.aio.MetricsAdvisorClient` session.
         """
         await self._client.__aexit__()
-
-    def _create_pipeline(self, credential, endpoint=None, aad_mode=False, **kwargs):
-        transport = kwargs.get('transport')
-        policies = kwargs.get('policies')
-
-        if policies is None:  # [] is a valid policy list
-            if aad_mode:
-                scope = endpoint.strip("/") + "/.default"
-                if hasattr(credential, "get_token"):
-                    credential_policy = AsyncBearerTokenCredentialPolicy(credential, scope)
-                else:
-                    raise TypeError("Please provide an instance from azure-identity "
-                                    "or a class that implement the 'get_token protocol")
-            else:
-                credential_policy = MetricsAdvisorKeyCredentialPolicy(credential)
-            policies = [
-                RequestIdPolicy(**kwargs),
-                self._config.headers_policy,
-                self._config.user_agent_policy,
-                self._config.proxy_policy,
-                ContentDecodePolicy(**kwargs),
-                self._config.redirect_policy,
-                self._config.retry_policy,
-                credential_policy,
-                self._config.logging_policy,  # HTTP request/response log
-                DistributedTracingPolicy(**kwargs),
-                self._config.http_logging_policy or HttpLoggingPolicy(**kwargs)
-            ]
-
-        if not transport:
-            transport = AioHttpTransport(**kwargs)
-
-        return AsyncPipeline(transport, policies)
 
     @distributed_trace_async
     async def add_feedback(self, feedback, **kwargs):

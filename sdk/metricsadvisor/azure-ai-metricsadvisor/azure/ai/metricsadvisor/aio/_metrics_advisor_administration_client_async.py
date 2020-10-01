@@ -86,6 +86,8 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         if not credential:
             raise ValueError("Missing credential")
 
+        self._endpoint = endpoint
+
         self._client = _ClientAsync(
             endpoint=endpoint,
             sdk_moniker=SDK_MONIKER,
