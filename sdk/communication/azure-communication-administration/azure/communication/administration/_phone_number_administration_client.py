@@ -484,7 +484,7 @@ class PhoneNumberAdministrationClient(object):
         If both body and continuation_token are specified, only continuation_token will be used to
         restart a poller from a saved state, and keyword search_id will be ignored.
 
-        :keyword str search_id: The search id to be purchased.
+        :keyword str search_id: The search id to be canceled.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :rtype: ~azure.core.polling.LROPoller[~azure.communication.administration.PhoneNumberSearch]
         """
