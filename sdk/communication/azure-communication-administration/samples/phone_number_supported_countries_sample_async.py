@@ -7,36 +7,36 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: phone_number_supported_countries_sample_async.py
+FILE: phone_number_supported_countries_sample.py
 DESCRIPTION:
-    These samples demonstrate supported countries samples.
-
-    ///getting supported countries via a connection string
+    This sample demonstrates how to get supported countries via a connection string
 USAGE:
-    python phone_number_supported_countries_sample_async.py
+    phone_number_supported_countries_sample.py
+    Set the environment variables with your own values before running the sample:
+    1) AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING - The endpoint of your Azure Communication Service
 """
+
+
 import os
 import asyncio
 from azure.communication.administration.aio import PhoneNumberAdministrationClient
 
-class CommunicationSupportedCountriesSamplesAsync(object):
+connection_str = os.getenv('AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING')
 
-    def __init__(self):
-        self.connection_str = os.getenv('AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING')
 
-    async def list_all_supported_countries(self):
-        self._phone_number_administration_client = PhoneNumberAdministrationClient.from_connection_string(
-            self.connection_str)
-        async with self._phone_number_administration_client:
-            supported_countries = self._phone_number_administration_client.list_all_supported_countries()
-            print('supported_countries:')
-            async for supported_country in supported_countries:
-                print(supported_country)
+async def list_all_supported_countries():
+    # [START list_all_supported_countries]
+    phone_number_administration_client = PhoneNumberAdministrationClient.from_connection_string(connection_str)
+    async with phone_number_administration_client:
+        supported_countries = phone_number_administration_client.list_all_supported_countries()
+        print('supported_countries:')
+        async for supported_country in supported_countries:
+            print(supported_country)
+    # [END list_all_supported_countries]
 
 
 async def main():
-    sample = CommunicationSupportedCountriesSamplesAsync()
-    await sample.list_all_supported_countries()
+    await list_all_supported_countries()
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
