@@ -3,7 +3,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -11,24 +11,24 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Mon, 28 Sep 2020 17:25:22 GMT
+      - Thu, 01 Oct 2020 01:03:12 GMT
       User-Agent:
-      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Mon, 28 Sep 2020 17:25:22 GMT
+      - Thu, 01 Oct 2020 01:03:12 GMT
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     method: DELETE
     uri: https://tablestestcosmosname.table.cosmos.azure.com/Tables('pytablesync71e81e6f')
   response:
     body:
       string: "{\"odata.error\":{\"code\":\"ResourceNotFound\",\"message\":{\"lang\":\"en-us\",\"value\":\"The
-        specified resource does not exist.\\nRequestID:96a6d3db-01af-11eb-afc0-58961df361d1\\n\"}}}\r\n"
+        specified resource does not exist.\\nRequestID:e0e020d5-0381-11eb-847f-58961df361d1\\n\"}}}\r\n"
     headers:
       content-type:
       - application/json;odata=fullmetadata
       date:
-      - Mon, 28 Sep 2020 17:25:21 GMT
+      - Thu, 01 Oct 2020 01:03:12 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       transfer-encoding:

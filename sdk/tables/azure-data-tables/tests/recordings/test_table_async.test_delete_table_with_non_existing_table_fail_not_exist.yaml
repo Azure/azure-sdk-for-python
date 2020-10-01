@@ -5,11 +5,11 @@ interactions:
       Accept:
       - application/json
       Date:
-      - Tue, 29 Sep 2020 17:05:43 GMT
+      - Thu, 01 Oct 2020 00:38:08 GMT
       User-Agent:
       - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 29 Sep 2020 17:05:43 GMT
+      - Thu, 01 Oct 2020 00:38:08 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
@@ -17,11 +17,11 @@ interactions:
   response:
     body:
       string: '{"odata.error":{"code":"ResourceNotFound","message":{"lang":"en-US","value":"The
-        specified resource does not exist.\nRequestId:5eb0afa1-e002-0083-4882-96aa31000000\nTime:2020-09-29T17:05:43.8555721Z"}}}'
+        specified resource does not exist.\nRequestId:2df07111-8002-0044-598b-97020d000000\nTime:2020-10-01T00:38:08.7654805Z"}}}'
     headers:
       cache-control: no-cache
       content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
-      date: Tue, 29 Sep 2020 17:05:43 GMT
+      date: Thu, 01 Oct 2020 00:38:08 GMT
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-content-type-options: nosniff

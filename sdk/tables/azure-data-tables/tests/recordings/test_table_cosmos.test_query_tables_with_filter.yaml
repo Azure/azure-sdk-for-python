@@ -15,13 +15,13 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Mon, 28 Sep 2020 17:26:11 GMT
+      - Thu, 01 Oct 2020 01:03:44 GMT
       User-Agent:
-      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Mon, 28 Sep 2020 17:26:11 GMT
+      - Thu, 01 Oct 2020 01:03:44 GMT
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     method: POST
     uri: https://tablestestcosmosname.table.cosmos.azure.com/Tables
   response:
@@ -31,9 +31,9 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata
       date:
-      - Mon, 28 Sep 2020 17:26:12 GMT
+      - Thu, 01 Oct 2020 01:03:46 GMT
       etag:
-      - W/"datetime'2020-09-28T17%3A26%3A12.0646663Z'"
+      - W/"datetime'2020-10-01T01%3A03%3A45.6963591Z'"
       location:
       - https://tablestestcosmosname.table.cosmos.azure.com/Tables('pytablesyncd2361378')
       server:
@@ -55,13 +55,13 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Mon, 28 Sep 2020 17:26:12 GMT
+      - Thu, 01 Oct 2020 01:03:45 GMT
       User-Agent:
-      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Mon, 28 Sep 2020 17:26:12 GMT
+      - Thu, 01 Oct 2020 01:03:45 GMT
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     method: GET
     uri: https://tablestestcosmosname.table.cosmos.azure.com/Tables?$filter=TableName%20eq%20%27pytablesyncd2361378%27
   response:
@@ -71,7 +71,7 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata
       date:
-      - Mon, 28 Sep 2020 17:26:12 GMT
+      - Thu, 01 Oct 2020 01:03:46 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -83,7 +83,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -91,13 +91,13 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Mon, 28 Sep 2020 17:26:12 GMT
+      - Thu, 01 Oct 2020 01:03:45 GMT
       User-Agent:
-      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Mon, 28 Sep 2020 17:26:12 GMT
+      - Thu, 01 Oct 2020 01:03:45 GMT
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     method: DELETE
     uri: https://tablestestcosmosname.table.cosmos.azure.com/Tables('pytablesyncd2361378')
   response:
@@ -107,7 +107,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 28 Sep 2020 17:26:12 GMT
+      - Thu, 01 Oct 2020 01:03:46 GMT
       server:
       - Microsoft-HTTPAPI/2.0
     status:

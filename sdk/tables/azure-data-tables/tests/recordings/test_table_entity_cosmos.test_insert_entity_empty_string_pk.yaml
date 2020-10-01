@@ -15,11 +15,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Tue, 29 Sep 2020 18:33:53 GMT
+      - Thu, 01 Oct 2020 01:11:42 GMT
       User-Agent:
       - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 29 Sep 2020 18:33:53 GMT
+      - Thu, 01 Oct 2020 01:11:42 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
@@ -31,9 +31,9 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata
       date:
-      - Tue, 29 Sep 2020 18:33:53 GMT
+      - Thu, 01 Oct 2020 01:11:43 GMT
       etag:
-      - W/"datetime'2020-09-29T18%3A33%3A54.2877191Z'"
+      - W/"datetime'2020-10-01T01%3A11%3A42.8426759Z'"
       location:
       - https://tablestestcosmosname.table.cosmos.azure.com/Tables('uttablee1c518b3')
       server:
@@ -60,11 +60,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Tue, 29 Sep 2020 18:33:54 GMT
+      - Thu, 01 Oct 2020 01:11:43 GMT
       User-Agent:
       - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 29 Sep 2020 18:33:54 GMT
+      - Thu, 01 Oct 2020 01:11:43 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
@@ -72,13 +72,13 @@ interactions:
   response:
     body:
       string: "{\"odata.error\":{\"code\":\"PropertiesNeedValue\",\"message\":{\"lang\":\"en-us\",\"value\":\"PartitionKey/RowKey
-        cannot be empty\\r\\nActivityId: 5424502c-0282-11eb-8acb-58961df361d1, documentdb-dotnet-sdk/2.11.0
-        Host/64-bit MicrosoftWindowsNT/6.2.9200.0\\nRequestID:5424502c-0282-11eb-8acb-58961df361d1\\n\"}}}\r\n"
+        cannot be empty\\r\\nActivityId: 114ba081-0383-11eb-97b2-58961df361d1, documentdb-dotnet-sdk/2.11.0
+        Host/64-bit MicrosoftWindowsNT/6.2.9200.0\\nRequestID:114ba081-0383-11eb-97b2-58961df361d1\\n\"}}}\r\n"
     headers:
       content-type:
       - application/json;odata=fullmetadata
       date:
-      - Tue, 29 Sep 2020 18:33:53 GMT
+      - Thu, 01 Oct 2020 01:11:43 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -98,11 +98,11 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Tue, 29 Sep 2020 18:33:54 GMT
+      - Thu, 01 Oct 2020 01:11:43 GMT
       User-Agent:
       - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 29 Sep 2020 18:33:54 GMT
+      - Thu, 01 Oct 2020 01:11:43 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
@@ -114,7 +114,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 29 Sep 2020 18:33:54 GMT
+      - Thu, 01 Oct 2020 01:11:43 GMT
       server:
       - Microsoft-HTTPAPI/2.0
     status:
@@ -132,23 +132,23 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Tue, 29 Sep 2020 18:33:54 GMT
+      - Thu, 01 Oct 2020 01:11:43 GMT
       User-Agent:
       - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 29 Sep 2020 18:33:54 GMT
+      - Thu, 01 Oct 2020 01:11:43 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
     uri: https://tablestestcosmosname.table.cosmos.azure.com/Tables
   response:
     body:
-      string: '{"value":[],"odata.metadata":"https://tablestestcosmosname.table.cosmos.azure.com/$metadata#Tables"}'
+      string: '{"value":[{"TableName":"listtable33a8d15b3"},{"TableName":"listtable13a8d15b3"},{"TableName":"listtable0d2351374"},{"TableName":"pytableasync52bb107b"},{"TableName":"listtable23a8d15b3"},{"TableName":"listtable2d2351374"},{"TableName":"listtable03a8d15b3"},{"TableName":"listtable3d2351374"},{"TableName":"listtable1d2351374"}],"odata.metadata":"https://tablestestcosmosname.table.cosmos.azure.com/$metadata#Tables"}'
     headers:
       content-type:
       - application/json;odata=minimalmetadata
       date:
-      - Tue, 29 Sep 2020 18:33:54 GMT
+      - Thu, 01 Oct 2020 01:11:43 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       transfer-encoding:
