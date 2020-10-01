@@ -17,7 +17,6 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.polling import LROPoller
 from azure.core.polling.base_polling import LROBasePolling
 from azure.core.pipeline import Pipeline
-from ._generated._form_recognizer_client import FormRecognizerClient as FormRecognizer
 from ._generated.models import (
     TrainRequest,
     TrainSourceFilter,
@@ -25,7 +24,8 @@ from ._generated.models import (
     CopyAuthorizationResult
 )
 from ._helpers import (
-    error_map, get_authentication_policy, POLLING_INTERVAL, TransportWrapper, _get_deserialize
+    error_map,
+    TransportWrapper
 )
 from ._models import (
     CustomFormModelInfo,
@@ -33,9 +33,8 @@ from ._models import (
     CustomFormModel,
 )
 from ._polling import TrainingPolling, CopyPolling
-from ._user_agent import USER_AGENT
 from ._form_recognizer_client import FormRecognizerClient
-from ._api_versions import FormRecognizerApiVersion, validate_api_version
+from ._form_base_client import FormRecognizerClientBase
 if TYPE_CHECKING:
     from azure.core.credentials import AzureKeyCredential, TokenCredential
     from azure.core.pipeline import PipelineResponse
@@ -44,7 +43,7 @@ if TYPE_CHECKING:
     PipelineResponseType = HttpResponse
 
 
-class FormTrainingClient(object):
+class FormTrainingClient(FormRecognizerClientBase):
     """FormTrainingClient is the Form Recognizer interface to use for creating,
     and managing custom models. It provides methods for training models on the forms
     you provide, as well as methods for viewing and deleting models, accessing
@@ -78,26 +77,6 @@ class FormTrainingClient(object):
             :dedent: 8
             :caption: Creating the FormTrainingClient with a token credential.
     """
-
-    def __init__(self, endpoint, credential, **kwargs):
-        # type: (str, Union[AzureKeyCredential, TokenCredential], Any) -> None
-        self._endpoint = endpoint
-        self._credential = credential
-        authentication_policy = get_authentication_policy(credential)
-        polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
-        self.api_version = kwargs.pop('api_version', FormRecognizerApiVersion.V2_1_PREVIEW_1)
-        validate_api_version(self.api_version)
-        self._client = FormRecognizer(
-            endpoint=self._endpoint,
-            credential=self._credential,  # type: ignore
-            api_version=self.api_version,
-            sdk_moniker=USER_AGENT,
-            authentication_policy=authentication_policy,
-            polling_interval=polling_interval,
-            **kwargs
-        )
-        self._deserialize = _get_deserialize()
-        self._generated_models = self._client.models(self.api_version)
 
     @distributed_trace
     def begin_training(self, training_files_url, use_training_labels, **kwargs):
