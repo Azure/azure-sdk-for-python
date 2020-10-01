@@ -4,6 +4,7 @@ jobs:
   - template: ../../eng/pipelines/templates/jobs/archetype-sdk-tests.yml
     parameters:
       ServiceDirectory: servicebus
+      InjectedPackages: $(WheelLocationsList)
       TestTimeoutInMinutes: 300
       BuildTargetingString: azure-servicebus*
       EnvVars:
