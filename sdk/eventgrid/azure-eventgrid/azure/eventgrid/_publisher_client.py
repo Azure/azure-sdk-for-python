@@ -65,7 +65,7 @@ class EventGridPublisherClient(object):
     def _policies(credential, **kwargs):
         # type: (Union[AzureKeyCredential, EventGridSharedAccessSignatureCredential], Any) -> List[Any]
         auth_policy = _get_authentication_policy(credential)
-        sdk_moniker = 'eventgridpublisherclient/{}'.format(VERSION)
+        sdk_moniker = 'eventgrid/{}'.format(VERSION)
         policies = [
             RequestIdPolicy(**kwargs),
             HeadersPolicy(**kwargs),
