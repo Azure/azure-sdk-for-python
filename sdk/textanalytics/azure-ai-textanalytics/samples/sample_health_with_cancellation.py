@@ -55,7 +55,7 @@ class HealthWithCancellationSample(object):
             for revascularization with open heart surgery."
         ]
 
-        poller = text_analytics_client.begin_recognize_health_entities(documents)
+        poller = text_analytics_client.begin_health(documents)
         text_analytics_client.begin_cancel_health_operation(poller)
 
         # [END health_with_cancellation]
