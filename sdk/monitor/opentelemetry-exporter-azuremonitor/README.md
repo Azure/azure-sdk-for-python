@@ -1,4 +1,4 @@
-# Azure Monitor Opentelemtry Exporter
+# Azure Opentelemetry Exporter for Monitor
 
 ## Getting started
 
