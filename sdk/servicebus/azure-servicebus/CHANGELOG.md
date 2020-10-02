@@ -4,7 +4,7 @@
 
 **Breaking Changes**
 * Passing any type other than `ReceiveMode` as parameter `receive_mode` now throws a `TypeError` instead of `AttributeError`.
-* `AMQPMessage` (`Message.amqp_message`) properties are now read-only (will not be reflected in the underlying message) pending cross-language sdk design consensus.
+* `AMQPMessage` (`Message.amqp_message`) properties are now read-only, changes of these properties would not be reflected in the underlying message.  This may be subject to change before GA.
 
 ## 7.0.0b6 (2020-09-10)
 
