@@ -882,7 +882,7 @@ class ServiceBusAdministrationClient:  #pylint:disable=too-many-public-methods
         :param str topic_name: The topic that owns the subscription.
         :param str subscription_name: The subscription that
          owns the topic.
-        :param str rule: The to-be-deleted rule.
+        :param str rule_name: The to-be-deleted rule.
         :rtype: None
         """
         _validate_topic_subscription_and_rule_types(topic_name, subscription_name, rule_name)
