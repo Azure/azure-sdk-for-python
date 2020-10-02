@@ -256,7 +256,8 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         return config, Pipeline(config.transport, policies=policies)
 
     def _batch_send(
-        self, *reqs,  # type: List[HttpRequest]
+        self, entities, # type: List[TableEntity]
+        *reqs,  # type: List[HttpRequest]
         **kwargs
     ):
         # (...) -> List[HttpResponse]
@@ -295,7 +296,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             if response.status_code not in [202]:
                 raise HttpResponseError(response=response)
             parts = response.parts()
-            transaction_result = BatchTransactionResult(reqs, parts)
+            transaction_result = BatchTransactionResult(reqs, parts, entities)
             if raise_on_any_failure:
                 if any(p for p in parts if not 200 <= p.status_code < 300):
                     error = BatchErrorException(

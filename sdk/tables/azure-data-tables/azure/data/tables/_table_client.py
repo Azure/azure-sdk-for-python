@@ -617,4 +617,4 @@ class TableClient(TableClientBase):
         rtype: ~azure.data.tables.TableBatchOperations
         :raises: None
         """
-        return self._batch_send(*batch._requests, **kwargs) # pylint:disable=protected-access
+        return self._batch_send(batch._entities, *batch._requests, **kwargs) # pylint:disable=protected-access

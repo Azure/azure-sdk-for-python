@@ -103,7 +103,8 @@ class AsyncStorageAccountHostsMixin(object):
         return config, AsyncPipeline(config.transport, policies=policies)
 
     async def _batch_send(
-        self, *reqs: 'HttpRequest',
+        self, entities, # type: List[TableEntity]
+        *reqs: 'HttpRequest',
         **kwargs
     ):
         """Given a series of request, do a Storage batch call.
@@ -142,6 +143,7 @@ class AsyncStorageAccountHostsMixin(object):
             if response.status_code not in [202]:
                 raise HttpResponseError(response=response)
             parts = response.parts() # Return an AsyncIterator
+            transaction_result = BatchTransactionResult(reqs, parts, entities)
             if raise_on_any_failure:
                 parts_list = []
                 async for part in parts:
@@ -152,8 +154,7 @@ class AsyncStorageAccountHostsMixin(object):
                         response=response, parts=parts_list
                     )
                     raise error
-                return AsyncList(parts_list)
-            return parts
+            return transaction_result
         except HttpResponseError as error:
             _process_table_error(error)
 

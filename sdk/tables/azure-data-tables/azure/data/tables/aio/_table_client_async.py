@@ -623,4 +623,4 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         rtype: ~azure.data.tables.TableBatchOperations
         :raises: None
         """
-        return await self._batch_send(*batch._requests, **kwargs) # pylint:disable=protected-access
+        return await self._batch_send(batch._entities, *batch._requests, **kwargs) # pylint:disable=protected-access

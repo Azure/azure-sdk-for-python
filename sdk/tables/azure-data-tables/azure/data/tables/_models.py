@@ -538,22 +538,27 @@ class BatchTransactionResult(object):
     :param List[HttpResponse] results: The HTTP response of each request
     """
 
-    def __init__(self, requests, results):
+    def __init__(self, requests, results, entities):
         self.requests = requests
         self.results = results
+        self.entities = entities
 
     def get_entity(self, row_key):
-        for request in self.requests:
-            temp_entity = _convert_to_entity(request.body)
-            if temp_entity['RowKey'] == row_key:
-                return temp_entity
+        for i, entity in enumerate(self.entites):
+            if entity['RowKey'] == row_key:
+                return entity
         return None
 
     def get_request(self, row_key):
-        for request in self.requests:
-            temp_entity = _convert_to_entity(request.body)
-            if temp_entity['RowKey'] == row_key:
-                return request
+        for i, entity in enumerate(self.entites):
+            if entity['RowKey'] == row_key:
+                return self.requests[i]
+        return None
+
+    def get_result(self, row_key):
+        for i, entity in enumerate(self.entites):
+            if entity['RowKey'] == row_key:
+                return self.results[i]
         return None
 
 

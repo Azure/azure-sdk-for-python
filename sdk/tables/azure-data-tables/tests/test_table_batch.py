@@ -208,15 +208,21 @@ class StorageTableBatchTest(TableTestCase):
 
             batch = self.table.create_batch()
             batch.create_entity(entity)
-            resp = self.table.send_batch(batch)
+            transaction_result = self.table.send_batch(batch)
 
             # Assert
-            self.assertIsNotNone(resp)
+            self.assertIsNotNone(transaction_result)
+            sent_entity = transaction_result.get_entity(entity.RowKey)
+            self.assertIsNotNone(sent_entity)
             e = self.table.get_entity(row_key=entity.RowKey, partition_key=entity.PartitionKey)
             self.assertEqual(e.test, entity.test.value)
             self.assertEqual(e.test2.value, entity.test2)
             self.assertEqual(e.test3.value, entity.test3)
             self.assertEqual(e.test4.value, entity.test4.value)
+            self.assertEqual(sent_entity.test, entity.test.value)
+            self.assertEqual(sent_entity.test2.value, entity.test2)
+            self.assertEqual(sent_entity.test3.value, entity.test3)
+            self.assertEqual(sent_entity.test4.value, entity.test4.value)
         finally:
             self._tear_down()
 
@@ -685,7 +691,7 @@ class StorageTableBatchTest(TableTestCase):
                 '001', 'batch_negative_1')
             batch.update_entity(entity, mode=UpdateMode.MERGE)
             # Assert
-            with self.assertRaises(HttpResponseError):
+            with self.assertRaises(BatchErrorException):
                 self.table.send_batch(batch)
 
         finally:
