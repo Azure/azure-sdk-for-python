@@ -6,6 +6,7 @@
 # --------------------------------------------------------------------------
 
 import logging
+import pytest
 from azure.ai.formrecognizer import FormRecognizerClient, FormTrainingClient
 from azure.core.credentials import AzureKeyCredential
 from testcase import FormRecognizerTest, GlobalFormRecognizerAccountPreparer
@@ -22,6 +23,7 @@ class MockHandler(logging.Handler):
 class TestLogging(FormRecognizerTest):
 
     @GlobalFormRecognizerAccountPreparer()
+    @pytest.mark.live_test_only
     def test_logging_info_fr_client(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
         mock_handler = MockHandler()
@@ -42,6 +44,7 @@ class TestLogging(FormRecognizerTest):
                     assert message.message.find("REDACTED") == -1
 
     @GlobalFormRecognizerAccountPreparer()
+    @pytest.mark.live_test_only
     def test_logging_info_ft_client(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         client = FormTrainingClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
         mock_handler = MockHandler()
