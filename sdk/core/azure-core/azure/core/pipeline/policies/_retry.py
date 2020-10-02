@@ -52,6 +52,7 @@ _LOGGER = logging.getLogger(__name__)
 class RetryMode(str, Enum):
     Exponential = 'exponential'
     Fixed = 'fixed'
+    Linear = 'linear'
 
 class RetryPolicy(HTTPPolicy):
     """A retry policy.
@@ -80,7 +81,7 @@ class RetryPolicy(HTTPPolicy):
 
     :keyword int retry_backoff_max: The maximum back off time. Default value is 120 seconds (2 minutes).
 
-    :keyword RetryMode retry_mode: Fixed or exponential delay between attemps, default is exponential.
+    :keyword RetryMode retry_mode: Fixed, linear or exponential delay between attemps, default is exponential.
 
     :keyword int timeout: Timeout setting for the operation in seconds, default is 604800s (7 days).
 
@@ -157,6 +158,8 @@ class RetryPolicy(HTTPPolicy):
 
         if self.retry_mode == RetryMode.Fixed:
             backoff_value = settings['backoff']
+        elif self.retry_mode == RetryMode.Linear:
+            backoff_value = settings['backoff'] * (consecutive_errors_len - 1)
         else:
             backoff_value = settings['backoff'] * (2 ** (consecutive_errors_len - 1))
         return min(settings['max_backoff'], backoff_value)
