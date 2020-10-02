@@ -386,6 +386,8 @@ class DirectoryTest(StorageTestCase):
 
     @record
     def test_set_access_control_recursive_with_failures(self):
+        if not self.is_playback():
+            return
         root_directory_client = self.dsc.get_file_system_client(self.file_system_name)._get_root_directory_client()
         root_directory_client.set_access_control(acl="user::--x,group::--x,other::--x")
 
@@ -425,6 +427,8 @@ class DirectoryTest(StorageTestCase):
 
     @record
     def test_set_access_control_recursive_stop_on_failures(self):
+        if not self.is_playback():
+            return
         root_directory_client = self.dsc.get_file_system_client(self.file_system_name)._get_root_directory_client()
         root_directory_client.set_access_control(acl="user::--x,group::--x,other::--x")
 
@@ -465,6 +469,8 @@ class DirectoryTest(StorageTestCase):
 
     @record
     def test_set_access_control_recursive_continue_on_failures(self):
+        if not self.is_playback():
+            return
         root_directory_client = self.dsc.get_file_system_client(self.file_system_name)._get_root_directory_client()
         root_directory_client.set_access_control(acl="user::--x,group::--x,other::--x")
 
@@ -638,6 +644,8 @@ class DirectoryTest(StorageTestCase):
 
     @record
     def test_update_access_control_recursive_with_failures(self):
+        if not self.is_playback():
+            return
         root_directory_client = self.dsc.get_file_system_client(self.file_system_name)._get_root_directory_client()
         root_directory_client.set_access_control(acl="user::--x,group::--x,other::--x")
 
@@ -745,6 +753,8 @@ class DirectoryTest(StorageTestCase):
 
     @record
     def test_remove_access_control_recursive_with_failures(self):
+        if not self.is_playback():
+            return
         root_directory_client = self.dsc.get_file_system_client(self.file_system_name)._get_root_directory_client()
         root_directory_client.set_access_control(acl="user::--x,group::--x,other::--x")
 

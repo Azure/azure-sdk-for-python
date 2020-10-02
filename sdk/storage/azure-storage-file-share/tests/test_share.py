@@ -638,6 +638,7 @@ class StorageShareTest(StorageTestCase):
         lease.release()
         self._delete_shares()
 
+    @pytest.mark.playback_test_only
     @GlobalStorageAccountPreparer()
     def test_list_shares_with_snapshot(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
@@ -658,7 +659,7 @@ class StorageShareTest(StorageTestCase):
         share.delete_share(delete_snapshots=True)
         self._delete_shares()
 
-
+    @pytest.mark.playback_test_only
     @GlobalStorageAccountPreparer()
     def test_list_shares_with_prefix(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
