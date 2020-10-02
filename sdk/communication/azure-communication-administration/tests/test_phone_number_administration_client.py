@@ -33,21 +33,22 @@ class PhoneNumberAdministrationClientTest(CommunicationTestCase):
         self._phone_number_administration_client = PhoneNumberAdministrationClient.from_connection_string(
             self.connection_str)
         if self.is_live:
-            self.country_code = os.getenv('AZURE_COMMUNICATION_SERVICE_TNM_COUNTRY_CODE')
-            self.locale = os.getenv('AZURE_COMMUNICATION_SERVICE_TNM_LOCALE')
-            self.phone_plan_group_id = os.getenv('AZURE_COMMUNICATION_SERVICE_TNM_PHONE_PLAN_GROUP_ID')
-            self.phone_plan_id = os.getenv('AZURE_COMMUNICATION_SERVICE_TNM_PHONE_PLAN_ID')
-            self.phone_plan_id_area_codes = os.getenv('AZURE_COMMUNICATION_SERVICE_TNM_PHONE_PLAN_ID_AREA_CODES')
-            self.area_code_for_search = os.getenv('AZURE_COMMUNICATION_SERVICE_TNM_AREA_CODE_FOR_SEARCH')
-            self.search_id = os.getenv('AZURE_COMMUNICATION_SERVICE_TNM_SEARCH_ID')
-            self.search_id_to_purchase = os.getenv('AZURE_COMMUNICATION_SERVICE_TNM_SEARCH_ID_TO_PURCHASE')
-            self.search_id_to_cancel = os.getenv('AZURE_COMMUNICATION_SERVICE_TNM_SEARCH_ID_TO_CANCEL')
-            self.phonenumber_to_configure = os.getenv('AZURE_COMMUNICATION_SERVICE_TNM_PHONENUMBER_TO_CONFIGURE')
-            self.phonenumber_to_get_config = os.getenv('AZURE_COMMUNICATION_SERVICE_TNM_PHONENUMBER_TO_GET_CONFIG')
-            self.phonenumber_to_unconfigure = os.getenv('AZURE_COMMUNICATION_SERVICE_TNM_PHONENUMBER_TO_UNCONFIGURE')
-            self.phonenumber_for_capabilities = os.getenv('AZURE_COMMUNICATION_SERVICE_TNM_PHONENUMBER_FOR_CAPABILITIES')
-            self.capabilities_id = os.getenv('AZURE_COMMUNICATION_SERVICE_TNM_CAPABILITIES_ID')
-            self.release_id = os.getenv('AZURE_COMMUNICATION_SERVICE_TNM_RELEASE_ID')
+            self.country_code = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_COUNTRY_CODE')
+            self.locale = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_LOCALE')
+            self.phone_plan_group_id = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_PHONE_PLAN_GROUP_ID')
+            self.phone_plan_id = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_PHONE_PLAN_ID')
+            self.phone_plan_id_area_codes = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_PHONE_PLAN_ID_AREA_CODES')
+            self.area_code_for_search = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_AREA_CODE_FOR_SEARCH')
+            self.search_id = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_SEARCH_ID')
+            self.search_id_to_purchase = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_SEARCH_ID_TO_PURCHASE')
+            self.search_id_to_cancel = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_SEARCH_ID_TO_CANCEL')
+            self.phonenumber_to_configure = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_PHONENUMBER_TO_CONFIGURE')
+            self.phonenumber_to_get_config = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_PHONENUMBER_TO_GET_CONFIG')
+            self.phonenumber_to_unconfigure = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_PHONENUMBER_TO_UNCONFIGURE')
+            self.phonenumber_for_capabilities = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_PHONENUMBER_FOR_CAPABILITIES')
+            self.phonenumber_to_release = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_PHONENUMBER_TO_RELEASE')
+            self.capabilities_id = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_CAPABILITIES_ID')
+            self.release_id = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_RELEASE_ID')
             self.scrubber.register_name_pair(
                 self.phone_plan_group_id,
                 "phone_plan_group_id"
@@ -93,6 +94,10 @@ class PhoneNumberAdministrationClientTest(CommunicationTestCase):
                 "phonenumber_for_capabilities"
             )
             self.scrubber.register_name_pair(
+                self.phonenumber_to_release,
+                "phonenumber_to_release"
+            )
+            self.scrubber.register_name_pair(
                 self.capabilities_id,
                 "capabilities_id"
             )
@@ -115,6 +120,7 @@ class PhoneNumberAdministrationClientTest(CommunicationTestCase):
             self.phonenumber_to_get_config = "phonenumber_to_get_config"
             self.phonenumber_to_unconfigure = "phonenumber_to_unconfigure"
             self.phonenumber_for_capabilities = "phonenumber_for_capabilities"
+            self.phonenumber_to_release = "phonenumber_to_release"
             self.capabilities_id = "capabilities_id"
             self.release_id = "release_id"
 
@@ -211,6 +217,13 @@ class PhoneNumberAdministrationClientTest(CommunicationTestCase):
     def test_list_all_releases(self):
         releases_response = self._phone_number_administration_client.list_all_releases()
         assert releases_response.next().id
+
+    @pytest.mark.live_test_only
+    def test_release_phone_numbers(self):
+        releases_response = self._phone_number_administration_client.release_phone_numbers(
+            [self.phonenumber_to_release]
+        )
+        assert releases_response.release_id
 
     @pytest.mark.live_test_only
     def test_get_search_by_id(self):
