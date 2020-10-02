@@ -23,6 +23,7 @@ from ._models import (
     LocationMode,
     ResourceTypes,
     AccountSasPermissions,
+    BatchTransactionResult,
 )
 from ._policies import ExponentialRetry, LinearRetry
 from ._version import VERSION
@@ -53,5 +54,6 @@ __all__ = [
     'EdmType',
     'RetentionPolicy',
     'generate_table_sas',
-    'SASProtocol'
+    'SASProtocol',
+    'BatchTransactionResult'
 ]

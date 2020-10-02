@@ -12,7 +12,6 @@ import logging
 from uuid import uuid4
 
 from azure.core.pipeline import AsyncPipeline
-from azure.core.async_paging import AsyncList
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline.policies import (
     ContentDecodePolicy,
@@ -143,11 +142,11 @@ class AsyncStorageAccountHostsMixin(object):
             if response.status_code not in [202]:
                 raise HttpResponseError(response=response)
             parts = response.parts() # Return an AsyncIterator
-            transaction_result = BatchTransactionResult(reqs, parts, entities)
+            parts_list = []
+            async for part in parts:
+                parts_list.append(part)
+            transaction_result = BatchTransactionResult(reqs, parts_list, entities)
             if raise_on_any_failure:
-                parts_list = []
-                async for part in parts:
-                    parts_list.append(part)
                 if any(p for p in parts_list if not 200 <= p.status_code < 300):
                     error = BatchErrorException(
                         message="There is a partial failure in the batch operation.",

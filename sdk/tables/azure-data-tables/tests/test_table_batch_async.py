@@ -26,7 +26,8 @@ from azure.data.tables import (
     TableEntity,
     UpdateMode,
     EntityProperty,
-    EdmType
+    EdmType,
+    BatchTransactionResult
 )
 
 from _shared.testcase import TableTestCase, LogCaptured
@@ -50,16 +51,16 @@ class StorageTableBatchTest(TableTestCase):
 
         self.test_tables = []
 
-    def _tear_down(self):
+    async def _tear_down(self):
         if self.is_live:
             try:
-                self.ts.delete_table(self.table_name)
+                await self.ts.delete_table(self.table_name)
             except:
                 pass
 
             for table_name in self.test_tables:
                 try:
-                    self.ts.delete_table(table_name)
+                    await self.ts.delete_table(table_name)
                 except:
                     pass
 
@@ -116,9 +117,9 @@ class StorageTableBatchTest(TableTestCase):
         return {
             'PartitionKey': partition,
             'RowKey': row,
-            'age': 'abc',
-            'sex': 'female',
-            'sign': 'aquarius',
+            'age': u'abc',
+            'sex': u'female',
+            'sign': u'aquarius',
             'birthday': datetime(1991, 10, 4, tzinfo=tzutc())
         }
 
@@ -162,6 +163,13 @@ class StorageTableBatchTest(TableTestCase):
         self.assertFalse(hasattr(entity, "clsid"))
         self.assertIsNotNone(entity['_metadata']['etag'])
 
+    def _assert_valid_batch_transaction(self, transaction):
+        self.assertIsInstance(transaction, BatchTransactionResult)
+        length = len(transaction.entities)
+        self.assertEqual(length, len(transaction.entities))
+        self.assertEqual(length, len(transaction.results))
+        self.assertEqual(length, len(transaction.requests))
+
     #--Test cases for batch ---------------------------------------------
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
@@ -182,17 +190,23 @@ class StorageTableBatchTest(TableTestCase):
 
             batch = self.table.create_batch()
             batch.create_entity(entity)
-            resp = await self.table.send_batch(batch)
+            transaction_result = await self.table.send_batch(batch)
 
             # Assert
-            self.assertIsNotNone(resp)
+            self._assert_valid_batch_transaction(transaction_result)
+            sent_entity = transaction_result.get_entity(entity.RowKey)
+            self.assertIsNotNone(sent_entity)
             e = await self.table.get_entity(row_key=entity.RowKey, partition_key=entity.PartitionKey)
             self.assertEqual(e.test, entity.test.value)
             self.assertEqual(e.test2.value, entity.test2)
             self.assertEqual(e.test3.value, entity.test3)
             self.assertEqual(e.test4.value, entity.test4.value)
+            self.assertEqual(sent_entity['test'], entity.test.value)
+            self.assertEqual(sent_entity['test2'], entity.test2)
+            self.assertEqual(sent_entity['test3'], entity.test3)
+            self.assertEqual(sent_entity['test4'], entity.test4.value)
         finally:
-            self._tear_down()
+            await self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
@@ -219,16 +233,17 @@ class StorageTableBatchTest(TableTestCase):
 
             batch = self.table.create_batch()
             batch.update_entity(entity, mode=UpdateMode.MERGE)
-            await self.table.send_batch(batch)
+            transaction_result = await self.table.send_batch(batch)
 
             # Assert
-            self.assertIsNotNone(resp)
+            self._assert_valid_batch_transaction(transaction_result)
+            self.assertIsNotNone(transaction_result.get_entity(entity.RowKey))
             result = await self.table.get_entity(row_key=entity.RowKey, partition_key=entity.PartitionKey)
             self.assertEqual(result.PartitionKey, u'001')
             self.assertEqual(result.RowKey, u'batch_insert')
             self.assertEqual(result.test3.value, 5)
         finally:
-            self._tear_down()
+            await self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
@@ -254,16 +269,17 @@ class StorageTableBatchTest(TableTestCase):
 
             batch = self.table.create_batch()
             batch.update_entity(entity)
-            resp = await self.table.send_batch(batch)
+            transaction_result = await self.table.send_batch(batch)
 
             # Assert
-            self.assertIsNotNone(resp)
+            self._assert_valid_batch_transaction(transaction_result)
+            self.assertIsNotNone(transaction_result.get_entity(entity.RowKey))
             result = await self.table.get_entity('001', 'batch_update')
             self.assertEqual('value1', result.test2.value)
             self.assertEqual(entity.PartitionKey, u'001')
             self.assertEqual(entity.RowKey, u'batch_update')
         finally:
-            self._tear_down()
+            await self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
@@ -292,17 +308,19 @@ class StorageTableBatchTest(TableTestCase):
 
             batch = self.table.create_batch()
             batch.update_entity(entity, mode=UpdateMode.MERGE)
-            resp = await self.table.send_batch(batch)
+            transaction_result = await self.table.send_batch(batch)
 
             # Assert
-            self.assertIsNotNone(resp)
+            self._assert_valid_batch_transaction(transaction_result)
+            self.assertIsNotNone(transaction_result.get_entity(entity.RowKey))
+
             resp_entity = await self.table.get_entity(partition_key=u'001', row_key=u'batch_merge')
             self.assertEqual(entity.test2, resp_entity.test2.value)
             self.assertEqual(1234567890, resp_entity.test4.value)
             self.assertEqual(entity.PartitionKey, resp_entity.PartitionKey)
             self.assertEqual(entity.RowKey, resp_entity.RowKey)
         finally:
-            self._tear_down()
+            await self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
 
@@ -325,14 +343,16 @@ class StorageTableBatchTest(TableTestCase):
                 match_condition=MatchConditions.IfNotModified,
                 mode=UpdateMode.REPLACE
             )
-            resp = await self.table.send_batch(batch)
+            transaction_result = await self.table.send_batch(batch)
 
             # Assert
-            self.assertIsNotNone(resp)
+            self._assert_valid_batch_transaction(transaction_result)
+            self.assertIsNotNone(transaction_result.get_entity(sent_entity['RowKey']))
+
             entity = await self.table.get_entity(partition_key=entity['PartitionKey'], row_key=entity['RowKey'])
             self._assert_updated_entity(entity)
         finally:
-            self._tear_down()
+            await self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
@@ -355,7 +375,6 @@ class StorageTableBatchTest(TableTestCase):
                 match_condition=MatchConditions.IfNotModified
             )
 
-            # TODO: This should be a BatchErrorException
             with self.assertRaises(HttpResponseError):
                 await self.table.send_batch(batch)
 
@@ -363,7 +382,7 @@ class StorageTableBatchTest(TableTestCase):
             received_entity = await self.table.get_entity(entity['PartitionKey'], entity['RowKey'])
             self._assert_default_entity(received_entity)
         finally:
-            self._tear_down()
+            await self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
@@ -384,16 +403,18 @@ class StorageTableBatchTest(TableTestCase):
 
             batch = self.table.create_batch()
             batch.upsert_entity(entity)
-            resp = await self.table.send_batch(batch)
+            transaction_result = await self.table.send_batch(batch)
 
             # Assert
-            self.assertIsNotNone(resp)
+            self._assert_valid_batch_transaction(transaction_result)
+            self.assertIsNotNone(transaction_result.get_entity(entity.RowKey))
+
             entity = await self.table.get_entity('001', 'batch_insert_replace')
             self.assertIsNotNone(entity)
             self.assertEqual('value', entity.test2.value)
             self.assertEqual(1234567890, entity.test4.value)
         finally:
-            self._tear_down()
+            await self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
@@ -414,16 +435,17 @@ class StorageTableBatchTest(TableTestCase):
 
             batch = self.table.create_batch()
             batch.upsert_entity(entity, mode=UpdateMode.MERGE)
-            resp = await self.table.send_batch(batch)
+            transaction_result = await self.table.send_batch(batch)
 
             # Assert
-            self.assertIsNotNone(resp)
+            self._assert_valid_batch_transaction(transaction_result)
+            self.assertIsNotNone(transaction_result.get_entity(entity.RowKey))
             entity = await self.table.get_entity('001', 'batch_insert_merge')
             self.assertIsNotNone(entity)
             self.assertEqual('value', entity.test2.value)
             self.assertEqual(1234567890, entity.test4.value)
         finally:
-            self._tear_down()
+            await self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
@@ -448,12 +470,16 @@ class StorageTableBatchTest(TableTestCase):
 
             batch = self.table.create_batch()
             batch.delete_entity(partition_key=entity.PartitionKey, row_key=entity.RowKey)
-            await self.table.send_batch(batch)
+            transaction_result = await self.table.send_batch(batch)
+
+            # Assert
+            self._assert_valid_batch_transaction(transaction_result)
+            self.assertIsNotNone(transaction_result.get_entity(entity.RowKey))
 
             with self.assertRaises(ResourceNotFoundError):
                 entity = await self.table.get_entity(partition_key=entity.PartitionKey, row_key=entity.RowKey)
         finally:
-            self._tear_down()
+            await self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
@@ -474,7 +500,11 @@ class StorageTableBatchTest(TableTestCase):
             for i in range(100):
                 entity.RowKey = str(i)
                 batch.create_entity(entity)
-            await self.table.send_batch(batch)
+            transaction_result = await self.table.send_batch(batch)
+
+            # Assert
+            self._assert_valid_batch_transaction(transaction_result)
+            self.assertIsNotNone(transaction_result.get_entity(entity.RowKey))
 
             entities = self.table.query_entities("PartitionKey eq 'batch_inserts'")
 
@@ -486,7 +516,7 @@ class StorageTableBatchTest(TableTestCase):
             self.assertIsNotNone(entities)
             self.assertEqual(100, length)
         finally:
-            self._tear_down()
+            await self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
@@ -528,17 +558,24 @@ class StorageTableBatchTest(TableTestCase):
             batch.upsert_entity(entity)
             entity.RowKey = 'batch_all_operations_together-5'
             batch.upsert_entity(entity, mode=UpdateMode.MERGE)
-            resp = await self.table.send_batch(batch)
+            transaction_result = await self.table.send_batch(batch)
 
             # Assert
-            self.assertIsNotNone(resp)
+            self._assert_valid_batch_transaction(transaction_result)
+            self.assertIsNotNone(transaction_result.get_entity('batch_all_operations_together'))
+            self.assertIsNotNone(transaction_result.get_entity('batch_all_operations_together-1'))
+            self.assertIsNotNone(transaction_result.get_entity('batch_all_operations_together-2'))
+            self.assertIsNotNone(transaction_result.get_entity('batch_all_operations_together-3'))
+            self.assertIsNotNone(transaction_result.get_entity('batch_all_operations_together-4'))
+            self.assertIsNotNone(transaction_result.get_entity('batch_all_operations_together-5'))
+
             entities = self.table.query_entities("PartitionKey eq '003'")
             length = 0
             async for e in entities:
                 length += 1
             self.assertEqual(5, length)
         finally:
-            self._tear_down()
+            await self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
@@ -564,7 +601,7 @@ class StorageTableBatchTest(TableTestCase):
             entity.RowKey = 'batch_all_operations_together-4'
             await self.table.create_entity(entity)
 
-            with self.table.create_batch() as batch:
+            async with self.table.create_batch() as batch:
                 entity.RowKey = 'batch_all_operations_together'
                 batch.create_entity(entity)
                 entity.RowKey = 'batch_all_operations_together-1'
@@ -588,7 +625,7 @@ class StorageTableBatchTest(TableTestCase):
                 length += 1
             self.assertEqual(4, length)
         finally:
-            self._tear_down()
+            await self._tear_down()
 
     @pytest.mark.skip("Not sure this is how the batching should operate, will consult w/ Anna")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
@@ -620,27 +657,8 @@ class StorageTableBatchTest(TableTestCase):
             batch.create_entity(entity)
 
             await self.table.send_batch(batch)
-            table2.send_batch(batch)
-
-            batch = TableBatchClient()
-            entity.RowKey = 'batch_all_operations_together'
-            batch.create_entity(entity)
-            entity.RowKey = 'batch_all_operations_together-1'
-            batch.delete_entity(entity.PartitionKey, entity.RowKey)
-            entity.RowKey = 'batch_all_operations_together-2'
-            entity.test3 = 10
-            batch.update_entity(entity)
-            entity.RowKey = 'batch_all_operations_together-3'
-            entity.test3 = 100
-            batch.update_entity(entity, mode=UpdateMode.MERGE)
-            entity.RowKey = 'batch_all_operations_together-4'
-            entity.test3 = 10
-            batch.upsert_entity(entity)
-            entity.RowKey = 'batch_all_operations_together-5'
-            batch.upsert_entity(entity, mode=UpdateMode.MERGE)
-
-            await self.table.send_batch(batch)
-            resp = table2.send_batch(batch)
+            with self.assertRaises(HttpResponseError):
+                resp = await table2.send_batch(batch)
 
             # Assert
             entities = self.table.query_entities("PartitionKey eq '003'")
@@ -649,7 +667,7 @@ class StorageTableBatchTest(TableTestCase):
                 length += 1
             self.assertEqual(5, length)
         finally:
-            self._tear_down()
+            await self._tear_down()
 
     @pytest.mark.skip("This does not throw an error, but it should")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
@@ -674,7 +692,7 @@ class StorageTableBatchTest(TableTestCase):
             with self.assertRaises(HttpResponseError):
                 batch.update_entity(entity, mode=UpdateMode.MERGE)
         finally:
-            self._tear_down()
+            await self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
@@ -700,7 +718,7 @@ class StorageTableBatchTest(TableTestCase):
             with self.assertRaises(ValueError):
                 batch.create_entity(entity)
         finally:
-            self._tear_down()
+            await self._tear_down()
 
     @pytest.mark.skip("This does not throw an error, but it should")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
@@ -723,7 +741,7 @@ class StorageTableBatchTest(TableTestCase):
 
             # Assert
         finally:
-            self._tear_down()
+            await self._tear_down()
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':

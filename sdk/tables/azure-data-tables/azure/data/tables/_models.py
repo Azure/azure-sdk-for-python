@@ -544,19 +544,19 @@ class BatchTransactionResult(object):
         self.entities = entities
 
     def get_entity(self, row_key):
-        for i, entity in enumerate(self.entites):
+        for entity in self.entities:
             if entity['RowKey'] == row_key:
                 return entity
         return None
 
     def get_request(self, row_key):
-        for i, entity in enumerate(self.entites):
+        for i, entity in enumerate(self.entities):
             if entity['RowKey'] == row_key:
                 return self.requests[i]
         return None
 
     def get_result(self, row_key):
-        for i, entity in enumerate(self.entites):
+        for i, entity in enumerate(self.entities):
             if entity['RowKey'] == row_key:
                 return self.results[i]
         return None

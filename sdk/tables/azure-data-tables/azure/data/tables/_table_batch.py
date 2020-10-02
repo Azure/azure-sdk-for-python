@@ -10,11 +10,7 @@ from typing import (
 )
 from uuid import uuid4
 
-from azure.core.exceptions import (
-    ResourceExistsError,
-    ResourceNotFoundError,
-    HttpResponseError
-)
+from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest
 
@@ -22,9 +18,6 @@ from ._error import _process_table_error
 from ._models import PartialBatchErrorException, UpdateMode, BatchTransactionResult
 from ._policies import StorageHeadersPolicy
 from ._serialize import _get_match_headers, _add_entity_properties
-from ._generated.models import (
-    QueryOptions
-)
 
 class TableBatchOperations(object):
     '''
@@ -457,7 +450,6 @@ class TableBatchOperations(object):
         timeout=None,  # type: Optional[int]
         request_id_parameter=None,  # type: Optional[str]
         query_options=None,  # type: Optional["models.QueryOptions"]
-        **kwargs  # type: Any
     ):
         # type: (...) -> None
         """Deletes the specified entity in a table.
@@ -617,7 +609,7 @@ class TableBatchOperations(object):
             if response.status_code not in [202]:
                 raise HttpResponseError(response=response)
             parts = response.parts()
-            transaction_result = BatchTransactionResult(self._requests, parts)
+            transaction_result = BatchTransactionResult(self._requests, parts, self._entities)
             if raise_on_any_failure:
                 parts = list(response.parts())
                 if any(p for p in parts if not 200 <= p.status_code < 300):

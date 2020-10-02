@@ -9,16 +9,21 @@ from typing import (
     Optional,
     Union
 )
+from uuid import uuid4
 import msrest
 
 from azure.core.pipeline import PipelineResponse
 from azure.core.exceptions import (  # pylint:disable=unused-import
     ClientAuthenticationError,
     ResourceNotFoundError,
-    ResourceExistsError
+    ResourceExistsError,
+    HttpResponseError
 )
+from azure.core.pipeline.transport import HttpRequest
 
-from .._models import PartialBatchErrorException, UpdateMode
+from .._error import _process_table_error
+from .._policies import StorageHeadersPolicy
+from .._models import PartialBatchErrorException, UpdateMode, BatchTransactionResult
 from .._serialize import _get_match_headers, _add_entity_properties  # pylint:disable=unused-import
 from .._generated.models import (  # pylint:disable=unused-import
     QueryOptions
@@ -455,8 +460,7 @@ class TableBatchOperations(object):
         if_match: str,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
-        query_options: Optional["models.QueryOptions"] = None,
-        **kwargs
+        query_options: Optional["models.QueryOptions"] = None
     ) -> None:
         """Deletes the specified entity in a table.
 
@@ -589,14 +593,14 @@ class TableBatchOperations(object):
 
         changeset = HttpRequest('POST', None)
         changeset.set_multipart_mixed(
-            *reqs,
+            *self._requests,
             policies=policies,
             boundary="changeset_{}".format(uuid4())
         )
         request = self._client._client.post(  # pylint: disable=protected-access
-            url='https://{}/$batch'.format(self._primary_hostname),
+            url='https://{}/$batch'.format(self._table_client._primary_hostname),  # pylint: disable=protected-access
             headers={
-                'x-ms-version': self.api_version,
+                'x-ms-version': self._table_client.api_version,
                 'DataServiceVersion': '3.0',
                 'MaxDataServiceVersion': '3.0;NetFx',
             }
@@ -608,7 +612,7 @@ class TableBatchOperations(object):
             boundary="batch_{}".format(uuid4())
         )
 
-        pipeline_response = await self._table_client._pipeline.run(
+        pipeline_response = await self._table_client._pipeline.run(  # pylint: disable=protected-access
             request, **kwargs
         )
         response = pipeline_response.http_response
@@ -617,7 +621,7 @@ class TableBatchOperations(object):
             if response.status_code not in [202]:
                 raise HttpResponseError(response=response)
             parts = response.parts()
-            transaction_result = BatchTransactionResult(self._requests, parts)
+            transaction_result = BatchTransactionResult(self._requests, parts, self._entities)
             if raise_on_any_failure:
                 parts_list = []
                 async for part in parts:
@@ -633,14 +637,14 @@ class TableBatchOperations(object):
             _process_table_error(error)
 
 
-    def __enter__(self):
+    async def __aenter__(self):
         # type: (...) -> TableBatchOperations
         return self
 
 
-    def __exit__(
+    async def __aexit__(
             self, *args, # type: Any
             **kwargs # type: Any
     ):
         # (...) -> None
-        self._table_client._batch_send(*self._requests, **kwargs)
+        await self._table_client._batch_send(*self._requests, **kwargs)
