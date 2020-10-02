@@ -1085,23 +1085,6 @@ class ReceivedMessage(ReceivedMessageBase):
 class AMQPMessage(object):
     """
     The internal AMQP message that this ServiceBusMessage represents.  Is read-only.
-
-    :param properties: Properties to add to the message.
-    :type properties: ~uamqp.message.MessageProperties
-    :param application_properties: Service specific application properties.
-    :type application_properties: dict
-    :param annotations: Service specific message annotations. Keys in the dictionary
-     must be `uamqp.types.AMQPSymbol` or `uamqp.types.AMQPuLong`.
-    :type annotations: dict
-    :param delivery_annotations: Delivery-specific non-standard properties at the head of the message.
-     Delivery annotations convey information from the sending peer to the receiving peer.
-     Keys in the dictionary must be `uamqp.types.AMQPSymbol` or `uamqp.types.AMQPuLong`.
-    :type delivery_annotations: dict
-    :param header: The message header.
-    :type header: ~uamqp.message.MessageHeader
-    :param footer: The message footer.
-    :type footer: dict
-
     """
     def __init__(self, message):
         # type: (uamqp.Message) -> None
@@ -1109,6 +1092,12 @@ class AMQPMessage(object):
 
     @property
     def properties(self):
+        # type: () -> uamqp.message.MessageProperties
+        """
+        Properties to add to the message.
+
+        :rtype: ~uamqp.message.MessageProperties
+        """
         return uamqp.message.MessageProperties(message_id=self._message.properties.message_id,
                                                user_id=self._message.properties.user_id,
                                                to=self._message.properties.to,
@@ -1128,6 +1117,12 @@ class AMQPMessage(object):
 
     @property
     def application_properties(self):
+        # type: () -> dict
+        """
+        Service specific application properties.
+
+        :rtype: dict
+        """
         return copy.deepcopy(self._message.application_properties)
 
     #@application_properties.setter
@@ -1136,6 +1131,13 @@ class AMQPMessage(object):
 
     @property
     def annotations(self):
+        # type: () -> dict
+        """
+        Service specific message annotations. Keys in the dictionary
+        must be `uamqp.types.AMQPSymbol` or `uamqp.types.AMQPuLong`.
+
+        :rtype: dict
+        """
         return copy.deepcopy(self._message.annotations)
 
     #@annotations.setter
@@ -1144,6 +1146,14 @@ class AMQPMessage(object):
 
     @property
     def delivery_annotations(self):
+        # type: () -> dict
+        """
+        Delivery-specific non-standard properties at the head of the message.
+        Delivery annotations convey information from the sending peer to the receiving peer.
+        Keys in the dictionary must be `uamqp.types.AMQPSymbol` or `uamqp.types.AMQPuLong`.
+
+        :rtype: dict
+        """
         return copy.deepcopy(self._message.delivery_annotations)
 
     #@delivery_annotations.setter
@@ -1152,6 +1162,12 @@ class AMQPMessage(object):
 
     @property
     def header(self):
+        # type: () -> uamqp.message.MessageHeader
+        """
+        The message header.
+
+        :rtype: ~uamqp.message.MessageHeader
+        """
         return uamqp.message.MessageHeader(header=self._message.header)
 
     #@header.setter
@@ -1160,6 +1176,12 @@ class AMQPMessage(object):
 
     @property
     def footer(self):
+        # type: () -> dict
+        """
+        The message footer.
+
+        :rtype: dict
+        """
         return copy.deepcopy(self._message.footer)
 
     #@footer.setter
