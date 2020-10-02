@@ -305,6 +305,19 @@ class FileSystemSasPermissions(object):
         Delete the file system.
     :param bool list:
         List paths in the file system.
+    :keyword bool move:
+        Move any file in the directory to a new location.
+        Note the move operation can optionally be restricted to the child file or directory owner or
+        the parent directory owner if the saoid parameter is included in the token and the sticky bit is set
+        on the parent directory.
+    :keyword bool execute:
+        Get the status (system defined properties) and ACL of any file in the directory.
+        If the caller is the owner, set access control on any file in the directory.
+    :keyword bool manage_ownership:
+        Allows the user to set owner, owning group, or act as the owner when renaming or deleting a file or directory
+        within a folder that has the sticky bit set.
+    :keyword bool manage_access_control:
+         Allows the user to set permissions and POSIX ACLs on files and directories.
     """
 
     def __init__(self, read=False, write=False, delete=False, list=False,  # pylint: disable=redefined-builtin
