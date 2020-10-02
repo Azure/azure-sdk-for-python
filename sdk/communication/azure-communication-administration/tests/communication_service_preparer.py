@@ -18,7 +18,7 @@ class CommunicationResourceGroupPreparer(ResourceGroupPreparer):
     def create_resource(self, name, **kwargs):
         result = super(CommunicationResourceGroupPreparer, self).create_resource(name, **kwargs)
         if self.is_live and self._need_creation:
-            expiry = datetime.datetime.now() + datetime.timedelta(days=1)
+            expiry = datetime.datetime.now() + datetime.timedelta(hours=2)
             resource_group_params = dict(tags={'DeleteAfter': expiry.isoformat()}, location=self.location)
             self.client.resource_groups.create_or_update(name, resource_group_params)
         return result
