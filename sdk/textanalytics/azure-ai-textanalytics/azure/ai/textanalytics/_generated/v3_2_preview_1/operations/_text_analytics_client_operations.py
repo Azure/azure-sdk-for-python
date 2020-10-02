@@ -120,9 +120,12 @@ class TextAnalyticsClientOperationsMixin(object):
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
 
+        # Updated by hand to enable deserialization of the response to AnalyzeJobState.
         def get_long_running_output(pipeline_response):
+            deserialized = self._deserialize('AnalyzeJobState', pipeline_response)
+
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, deserialized, {})
 
         if polling is True: polling_method = LROBasePolling(lro_delay,  **kwargs)
         elif polling is False: polling_method = NoPolling()
@@ -262,6 +265,7 @@ class TextAnalyticsClientOperationsMixin(object):
             'jobId': self._serialize.url("job_id", job_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
+        print("status url: " + url)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
@@ -504,12 +508,16 @@ class TextAnalyticsClientOperationsMixin(object):
                 **kwargs
             )
 
+        raw_result.http_response.headers['Operation-Location'] = "https://cognitiveusw2dev.azure-api.net/text/analytics/v3.2-preview.1/entities/health/jobs/%s" % raw_result.http_response.headers.get('Operation-Location').split("/")[-1]
         kwargs.pop('error_map', None)
         kwargs.pop('content_type', None)
 
+        # Updated this by hand to enable deserialization of the output into HealthcareJobState
         def get_long_running_output(pipeline_response):
+            deserialized = self._deserialize('HealthcareJobState', pipeline_response)
+
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, deserialized, {})
 
         if polling is True: polling_method = LROBasePolling(lro_delay,  **kwargs)
         elif polling is False: polling_method = NoPolling()

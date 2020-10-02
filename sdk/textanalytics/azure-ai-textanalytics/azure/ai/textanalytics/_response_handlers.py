@@ -156,7 +156,7 @@ def pii_entities_result(entity, results):  # pylint: disable=unused-argument
 
 
 @prepare_result
-def healthcare_result(health_result):
+def healthcare_result(health_result, results):
     return RecognizeHealthcareEntitiesResult._from_generated(health_result)
 
 
@@ -196,31 +196,39 @@ def analyze_result(response, obj, response_headers, tasks):
 
 
 def healthcare_extract_page_data(response, obj, response_headers, health_job_state):
-    return health_job_state.next_link, [healthcare_result(response, result, response_headers, lro=True) for result in health_job_state.results]
+    return health_job_state.next_link, healthcare_result(response, health_job_state.results, response_headers, lro=True)
 
 
 def analyze_extract_page_data(response, obj, response_headers, analyze_job_state):
-    return analyze_job_state.next_link, [analyze_result(response, result, response_headers, analyze_job_state.tasks)]
+    return analyze_job_state.next_link, analyze_result(response, obj, response_headers, analyze_job_state.tasks)
 
 
-def lro_get_next_page(lro_status_callback, continuation_token):
+def lro_get_next_page(lro_status_callback, first_page, continuation_token):
+    if continuation_token is None:
+        return first_page
+
+    try:
+        continuation_token = continuation_token.decode("utf-8")
+
+    except AttributeError:
+        pass 
+
     parsed_url = urlparse(continuation_token)
     job_id = parsed_url.path.split("/")[-1]
     query_params = dict(parse_qsl(parsed_url.query.replace("$", "")))
+
     return lro_status_callback(job_id, **query_params)
     
 
-def healthcare_paged_result(health_status_callback, response, obj, response_headers):
+def healthcare_paged_result(health_status_callback, response, obj, response_headers, show_stats=False):
     return ItemPaged(
-        functools.partial(lro_get_next_page, health_status_callback),
-        functools.partial(healthcare_extract_page_data, response, obj, response_headers),
-        None
+        functools.partial(lro_get_next_page, health_status_callback, obj),
+        functools.partial(healthcare_extract_page_data, response, obj, response_headers)
     )
 
 
 def analyze_paged_result(analyze_status_callback, response, obj, response_headers):
     return ItemPaged(
-        functools.partial(lro_get_next_page, analyze_status_callback),
-        functools.partial(analyze_extract_page_data, response, obj, response_headers),
-        None
+        functools.partial(lro_get_next_page, analyze_status_callback, obj),
+        functools.partial(analyze_extract_page_data, response, obj, response_headers)
     )
