@@ -457,6 +457,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         """Download the contents of this blob.
 
         This operation is blocking until all data is downloaded.
+
         :rtype: bytes or str
         """
         stream = BytesIO()
