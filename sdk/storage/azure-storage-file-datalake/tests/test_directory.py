@@ -1041,7 +1041,6 @@ class DirectoryTest(StorageTestCase):
         response = directory_client.create_directory()
         self.assertIsNotNone(response)
 
-    @record
     def test_using_directory_sas_to_create_file(self):
         # SAS URL is calculated from storage key, so this test runs live only
         if TestMode.need_recording_file(self.test_mode):

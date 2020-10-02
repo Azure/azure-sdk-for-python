@@ -369,7 +369,6 @@ class FileTest(StorageTestCase):
         downloaded_data = new_file_client.download_file().readall()
         self.assertEqual(data, downloaded_data)
 
-    @record
     def test_set_acl_with_user_delegation_key(self):
         # SAS URL is calculated from storage key, so this test runs live only
         if TestMode.need_recording_file(self.test_mode):
@@ -410,7 +409,6 @@ class FileTest(StorageTestCase):
         self.assertEqual(acl, access_control['acl'])
         self.assertEqual(owner, access_control['owner'])
 
-    @record
     def test_preauthorize_user_with_user_delegation_key(self):
         # SAS URL is calculated from storage key, so this test runs live only
         if TestMode.need_recording_file(self.test_mode):

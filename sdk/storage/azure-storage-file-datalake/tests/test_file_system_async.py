@@ -8,6 +8,9 @@
 import unittest
 import asyncio
 from datetime import datetime, timedelta
+
+import pytest
+
 from azure.core.exceptions import ResourceNotFoundError
 
 from azure.core import MatchConditions
@@ -452,9 +455,9 @@ class FileSystemTest(StorageTestCase):
         directory_client_name = self.get_resource_name("dir")
         directory_client = (await dsc.create_file_system(file_system_name)).get_directory_client(directory_client_name)
         await directory_client.create_directory()
-        acl = await directory_client.get_access_control()
+        await directory_client.get_access_control()
 
-        await directory_client.set_access_control(permissions='0777')
+        await directory_client.set_access_control(owner='c4f48289-bb84-4086-b250-6f94a8f64cee', permissions='0777')
 
         delegation_key = await dsc.get_user_delegation_key(datetime.utcnow(),
                                                            datetime.utcnow() + timedelta(hours=1))
@@ -474,7 +477,6 @@ class FileSystemTest(StorageTestCase):
 
         self.assertIsNotNone(access_control)
 
-    @record
     def test_get_access_control_using_delegation_sas_async(self):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_access_control_using_delegation_sas_async())
@@ -488,7 +490,7 @@ class FileSystemTest(StorageTestCase):
         directory_client = (await dsc.create_file_system(file_system_name)).get_directory_client(directory_client_name)
         await directory_client.create_directory()
 
-        await directory_client.set_access_control(permissions='0777')
+        await directory_client.set_access_control(owner='c4f48289-bb84-4086-b250-6f94a8f64cee',permissions='0777')
 
         delegation_key = await dsc.get_user_delegation_key(datetime.utcnow(),
                                                            datetime.utcnow() + timedelta(hours=1))
@@ -509,7 +511,6 @@ class FileSystemTest(StorageTestCase):
 
         self.assertNotEqual(0, len(paths))
 
-    @record
     def test_list_paths_using_file_sys_delegation_sas_async(self):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_list_paths_using_file_sys_delegation_sas_async())

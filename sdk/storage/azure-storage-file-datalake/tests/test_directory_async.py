@@ -704,6 +704,8 @@ class DirectoryTest(StorageTestCase):
         loop.run_until_complete(self._test_update_access_control_recursive_continue_on_failures_async())
 
     async def _test_update_access_control_recursive_continue_on_failures_async(self):
+        if not self.is_playback():
+            return
         root_directory_client = self.dsc.get_file_system_client(self.file_system_name)._get_root_directory_client()
         await root_directory_client.set_access_control(acl="user::--x,group::--x,other::--x")
 
@@ -827,6 +829,8 @@ class DirectoryTest(StorageTestCase):
         loop.run_until_complete(self._test_remove_access_control_recursive_with_failures_async())
 
     async def _test_remove_access_control_recursive_with_failures_async(self):
+        if not self.is_playback():
+            return
         root_directory_client = self.dsc.get_file_system_client(self.file_system_name)._get_root_directory_client()
         await root_directory_client.set_access_control(acl="user::--x,group::--x,other::--x")
 
