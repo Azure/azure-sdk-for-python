@@ -190,8 +190,7 @@ class PhoneNumberAdministrationClientTestAsync(AsyncCommunicationTestCase):
     async def test_configure_number(self):
         pstnConfig = PstnConfiguration(
             callback_url="https://callbackurl",
-            application_id="ApplicationId",
-            azure_pstn_target_id="AzurePstnTargetId"
+            application_id="ApplicationId"
         )
         async with self._phone_number_administration_client:
             configure_number_response = await self._phone_number_administration_client.configure_number(

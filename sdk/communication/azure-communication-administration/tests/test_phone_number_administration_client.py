@@ -160,7 +160,7 @@ class PhoneNumberAdministrationClientTest(CommunicationTestCase):
     @pytest.mark.live_test_only
     def test_get_number_configuration(self):
         phone_number_response = self._phone_number_administration_client.get_number_configuration(
-            phone_number=self.phonenumber_to_unconfigure
+            phone_number=self.phonenumber_to_get_config
         )
         assert phone_number_response.pstn_configuration
 
@@ -168,12 +168,11 @@ class PhoneNumberAdministrationClientTest(CommunicationTestCase):
     def test_configure_number(self):
         pstnConfig = PstnConfiguration(
             callback_url="https://callbackurl",
-            application_id="ApplicationId",
-            azure_pstn_target_id="AzurePstnTargetId"
+            application_id="ApplicationId"
         )
         configure_number_response = self._phone_number_administration_client.configure_number(
             pstn_configuration=pstnConfig,
-            phone_number=self.phonenumber_to_unconfigure
+            phone_number=self.phonenumber_to_configure
         )
         assert not configure_number_response
 
