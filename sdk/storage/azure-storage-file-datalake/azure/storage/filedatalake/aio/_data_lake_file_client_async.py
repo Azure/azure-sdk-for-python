@@ -528,7 +528,7 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
         """
         new_name = new_name.strip('/')
         new_file_system = new_name.split('/')[0]
-        new_path_and_token = new_name[len(new_file_system):].split('?')
+        new_path_and_token = new_name[len(new_file_system):].strip('/').split('?')
         new_path = new_path_and_token[0]
         try:
             new_file_sas = new_path_and_token[1] or self._query_str.strip('?')

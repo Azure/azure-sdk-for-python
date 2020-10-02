@@ -7,6 +7,8 @@
 # --------------------------------------------------------------------------
 import unittest
 
+import pytest
+
 from azure.core.exceptions import HttpResponseError
 
 from azure.storage.fileshare import (
@@ -74,6 +76,7 @@ class FileServicePropertiesTest(StorageTestCase):
         self.assertEqual(ret1.days, ret2.days)
 
     # --Test cases per service ---------------------------------------
+    @pytest.mark.playback_test_only
     @GlobalStorageAccountPreparer()
     def test_file_service_properties(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)

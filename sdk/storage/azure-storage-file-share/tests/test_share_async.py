@@ -696,6 +696,7 @@ class StorageShareTest(AsyncStorageTestCase):
         await lease.release()
         await self._delete_shares()
 
+    @pytest.mark.playback_test_only
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_list_shares_with_snapshot_async(self, resource_group, location, storage_account, storage_account_key):
@@ -719,6 +720,7 @@ class StorageShareTest(AsyncStorageTestCase):
         self.assertNamedItemInContainer(all_shares, snapshot2['snapshot'])
         await self._delete_shares(share.share_name)
 
+    @pytest.mark.playback_test_only
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_list_shares_with_prefix_async(self, resource_group, location, storage_account, storage_account_key):

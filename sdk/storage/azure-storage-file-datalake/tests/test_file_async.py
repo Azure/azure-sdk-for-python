@@ -805,7 +805,7 @@ class FileTest(StorageTestCase):
                                   None,
                                   "oldfile",
                                   self.settings.STORAGE_DATA_LAKE_ACCOUNT_KEY,
-                                  permission=FileSasPermissions(read=True, create=True, write=True, delete=True),
+                                  permission=FileSasPermissions(read=True, create=True, write=True, delete=True, move=True),
                                   expiry=datetime.utcnow() + timedelta(hours=1),
                                   )
 

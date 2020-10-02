@@ -621,6 +621,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
+    @pytest.mark.playback_test_only
     @GlobalStorageAccountPreparer()
     def test_get_properties_last_access_time(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key,

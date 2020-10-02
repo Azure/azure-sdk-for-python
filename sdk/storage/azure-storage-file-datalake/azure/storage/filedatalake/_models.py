@@ -12,7 +12,6 @@ from azure.storage.blob import AccountSasPermissions as BlobAccountSasPermission
 from azure.storage.blob import ResourceTypes as BlobResourceTypes
 from azure.storage.blob import UserDelegationKey as BlobUserDelegationKey
 from azure.storage.blob import ContentSettings as BlobContentSettings
-from azure.storage.blob import ContainerSasPermissions, BlobSasPermissions
 from azure.storage.blob import AccessPolicy as BlobAccessPolicy
 from azure.storage.blob import DelimitedTextDialect as BlobDelimitedTextDialect
 from azure.storage.blob import DelimitedJsonDialect as BlobDelimitedJSON
@@ -294,7 +293,7 @@ class AccountSasPermissions(BlobAccountSasPermissions):
         )
 
 
-class FileSystemSasPermissions(ContainerSasPermissions):
+class FileSystemSasPermissions(object):
     """FileSystemSasPermissions class to be used with the
     :func:`~azure.storage.filedatalake.generate_file_system_sas` function.
 
@@ -308,14 +307,57 @@ class FileSystemSasPermissions(ContainerSasPermissions):
         List paths in the file system.
     """
 
-    def __init__(self, read=False, write=False, delete=False, list=False  # pylint: disable=redefined-builtin
-                 ):
-        super(FileSystemSasPermissions, self).__init__(
-            read=read, write=write, delete=delete, list=list
-        )
+    def __init__(self, read=False, write=False, delete=False, list=False,  # pylint: disable=redefined-builtin
+                 **kwargs):
+        self.read = read
+        self.write = write
+        self.delete = delete
+        self.list = list
+        self.move = kwargs.pop('move', None)
+        self.execute = kwargs.pop('execute', None)
+        self.manage_ownership = kwargs.pop('manage_ownership', None)
+        self.manage_access_control = kwargs.pop('manage_access_control', None)
+        self._str = (('r' if self.read else '') +
+                     ('w' if self.write else '') +
+                     ('d' if self.delete else '') +
+                     ('l' if self.list else '') +
+                     ('m' if self.move else '') +
+                     ('e' if self.execute else '') +
+                     ('o' if self.manage_ownership else '') +
+                     ('p' if self.manage_access_control else ''))
+
+    def __str__(self):
+        return self._str
+
+    @classmethod
+    def from_string(cls, permission):
+        """Create a FileSystemSasPermissions from a string.
+
+        To specify read, write, or delete permissions you need only to
+        include the first letter of the word in the string. E.g. For read and
+        write permissions, you would provide a string "rw".
+
+        :param str permission: The string which dictates the read, add, create,
+            write, or delete permissions.
+        :return: A FileSystemSasPermissions object
+        :rtype: ~azure.storage.fildatalake.FileSystemSasPermissions
+        """
+        p_read = 'r' in permission
+        p_write = 'w' in permission
+        p_delete = 'd' in permission
+        p_list = 'l' in permission
+        p_move = 'm' in permission
+        p_execute = 'e' in permission
+        p_manage_ownership = 'o' in permission
+        p_manage_access_control = 'p' in permission
+
+        parsed = cls(read=p_read, write=p_write, delete=p_delete,
+                     list=p_list, move=p_move, execute=p_execute, manage_ownership=p_manage_ownership,
+                     manage_access_control=p_manage_access_control)
+        return parsed
 
 
-class DirectorySasPermissions(BlobSasPermissions):
+class DirectorySasPermissions(object):
     """DirectorySasPermissions class to be used with the
     :func:`~azure.storage.filedatalake.generate_directory_sas` function.
 
@@ -327,17 +369,77 @@ class DirectorySasPermissions(BlobSasPermissions):
         Create or write content, properties, metadata. Lease the directory.
     :param bool delete:
         Delete the directory.
+    :keyword bool list:
+        List any files in the directory. Implies Execute.
+    :keyword bool move:
+        Move any file in the directory to a new location.
+        Note the move operation can optionally be restricted to the child file or directory owner or
+        the parent directory owner if the saoid parameter is included in the token and the sticky bit is set
+        on the parent directory.
+    :keyword bool execute:
+        Get the status (system defined properties) and ACL of any file in the directory.
+        If the caller is the owner, set access control on any file in the directory.
+    :keyword bool manage_ownership:
+        Allows the user to set owner, owning group, or act as the owner when renaming or deleting a file or directory
+        within a folder that has the sticky bit set.
+    :keyword bool manage_access_control:
+         Allows the user to set permissions and POSIX ACLs on files and directories.
     """
 
     def __init__(self, read=False, create=False, write=False,
-                 delete=False):
-        super(DirectorySasPermissions, self).__init__(
-            read=read, create=create, write=write,
-            delete=delete
-        )
+                 delete=False, **kwargs):
+        self.read = read
+        self.create = create
+        self.write = write
+        self.delete = delete
+        self.list = kwargs.pop('list', None)
+        self.move = kwargs.pop('move', None)
+        self.execute = kwargs.pop('execute', None)
+        self.manage_ownership = kwargs.pop('manage_ownership', None)
+        self.manage_access_control = kwargs.pop('manage_access_control', None)
+        self._str = (('r' if self.read else '') +
+                     ('c' if self.create else '') +
+                     ('w' if self.write else '') +
+                     ('d' if self.delete else '') +
+                     ('l' if self.list else '') +
+                     ('m' if self.move else '') +
+                     ('e' if self.execute else '') +
+                     ('o' if self.manage_ownership else '') +
+                     ('p' if self.manage_access_control else ''))
+
+    def __str__(self):
+        return self._str
+
+    @classmethod
+    def from_string(cls, permission):
+        """Create a DirectorySasPermissions from a string.
+
+        To specify read, create, write, or delete permissions you need only to
+        include the first letter of the word in the string. E.g. For read and
+        write permissions, you would provide a string "rw".
+
+        :param str permission: The string which dictates the read, add, create,
+            write, or delete permissions.
+        :return: A DirectorySasPermissions object
+        :rtype: ~azure.storage.filedatalake.DirectorySasPermissions
+        """
+        p_read = 'r' in permission
+        p_create = 'c' in permission
+        p_write = 'w' in permission
+        p_delete = 'd' in permission
+        p_list = 'l' in permission
+        p_move = 'm' in permission
+        p_execute = 'e' in permission
+        p_manage_ownership = 'o' in permission
+        p_manage_access_control = 'p' in permission
+
+        parsed = cls(read=p_read, create=p_create, write=p_write, delete=p_delete,
+                     list=p_list, move=p_move, execute=p_execute, manage_ownership=p_manage_ownership,
+                     manage_access_control=p_manage_access_control)
+        return parsed
 
 
-class FileSasPermissions(BlobSasPermissions):
+class FileSasPermissions(object):
     """FileSasPermissions class to be used with the
     :func:`~azure.storage.filedatalake.generate_file_sas` function.
 
@@ -350,14 +452,69 @@ class FileSasPermissions(BlobSasPermissions):
         Create or write content, properties, metadata. Lease the file.
     :param bool delete:
         Delete the file.
+    :keyword bool move:
+        Move any file in the directory to a new location.
+        Note the move operation can optionally be restricted to the child file or directory owner or
+        the parent directory owner if the saoid parameter is included in the token and the sticky bit is set
+        on the parent directory.
+    :keyword bool execute:
+        Get the status (system defined properties) and ACL of any file in the directory.
+        If the caller is the owner, set access control on any file in the directory.
+    :keyword bool manage_ownership:
+        Allows the user to set owner, owning group, or act as the owner when renaming or deleting a file or directory
+        within a folder that has the sticky bit set.
+    :keyword bool manage_access_control:
+         Allows the user to set permissions and POSIX ACLs on files and directories.
     """
 
-    def __init__(self, read=False, create=False, write=False,
-                 delete=False):
-        super(FileSasPermissions, self).__init__(
-            read=read, create=create, write=write,
-            delete=delete
-        )
+    def __init__(self, read=False, create=False, write=False, delete=False, **kwargs):
+        self.read = read
+        self.create = create
+        self.write = write
+        self.delete = delete
+        self.list = list
+        self.move = kwargs.pop('move', None)
+        self.execute = kwargs.pop('execute', None)
+        self.manage_ownership = kwargs.pop('manage_ownership', None)
+        self.manage_access_control = kwargs.pop('manage_access_control', None)
+        self._str = (('r' if self.read else '') +
+                     ('c' if self.create else '') +
+                     ('w' if self.write else '') +
+                     ('d' if self.delete else '') +
+                     ('m' if self.move else '') +
+                     ('e' if self.execute else '') +
+                     ('o' if self.manage_ownership else '') +
+                     ('p' if self.manage_access_control else ''))
+
+    def __str__(self):
+        return self._str
+
+    @classmethod
+    def from_string(cls, permission):
+        """Create a FileSasPermissions from a string.
+
+        To specify read, write, or delete permissions you need only to
+        include the first letter of the word in the string. E.g. For read and
+        write permissions, you would provide a string "rw".
+
+        :param str permission: The string which dictates the read, add, create,
+            write, or delete permissions.
+        :return: A FileSasPermissions object
+        :rtype: ~azure.storage.fildatalake.FileSasPermissions
+        """
+        p_read = 'r' in permission
+        p_create = 'c' in permission
+        p_write = 'w' in permission
+        p_delete = 'd' in permission
+        p_move = 'm' in permission
+        p_execute = 'e' in permission
+        p_manage_ownership = 'o' in permission
+        p_manage_access_control = 'p' in permission
+
+        parsed = cls(read=p_read, create=p_create, write=p_write, delete=p_delete,
+                     move=p_move, execute=p_execute, manage_ownership=p_manage_ownership,
+                     manage_access_control=p_manage_access_control)
+        return parsed
 
 
 class AccessPolicy(BlobAccessPolicy):
