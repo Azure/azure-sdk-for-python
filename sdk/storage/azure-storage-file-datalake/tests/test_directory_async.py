@@ -1106,6 +1106,8 @@ class DirectoryTest(StorageTestCase):
         loop.run_until_complete(self._test_rename_dir_with_file_system_sas())
 
     async def _test_rename_dir_with_file_sas(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
         token = generate_directory_sas(self.dsc.account_name,
                                        self.file_system_name,
                                        "olddir",

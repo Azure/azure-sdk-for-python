@@ -24,7 +24,7 @@ from azure.storage.filedatalake import PublicAccess
 from testcase import (
     StorageTestCase,
     record,
-)
+    TestMode)
 
 # ------------------------------------------------------------------------------
 from azure.storage.filedatalake import FileSystemSasPermissions
@@ -448,6 +448,8 @@ class FileSystemTest(StorageTestCase):
         loop.run_until_complete(self._test_get_root_directory_client())
 
     async def _test_get_access_control_using_delegation_sas_async(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
         url = self._get_account_url()
         token_credential = self.generate_async_oauth_token()
         dsc = DataLakeServiceClient(url, token_credential)
@@ -482,6 +484,8 @@ class FileSystemTest(StorageTestCase):
         loop.run_until_complete(self._test_get_access_control_using_delegation_sas_async())
 
     async def _test_list_paths_using_file_sys_delegation_sas_async(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
         url = self._get_account_url()
         token_credential = self.generate_async_oauth_token()
         dsc = DataLakeServiceClient(url, token_credential)
