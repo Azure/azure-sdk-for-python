@@ -17,18 +17,13 @@ from azure.eventgrid import EventGridConsumer
 consumer = EventGridConsumer()
 
 with open('./cs6_cloud_event_system_event.json', 'r') as f:
-    cloud_event_received_message = json.loads(f)
+    cloud_event_received_message = json.loads(f.read())
 
 # returns List[DeserializedEvent]
 event = consumer.decode_cloud_event(cloud_event_received_message)
 
-# both allow access to raw properties as strings
-time_string = event.time
-time_string = event["time"]
+datetime_object = event.time
+print(datetime_object)
 
-# model returns CloudEvent object
-cloud_event = event.model
-
-# all model properties are strongly typed
-datetime_object = event.model.time
-storage_blobcreated_object = event.model.data
+storage_blobcreated_object = event.data
+print(storage_blobcreated_object)

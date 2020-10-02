@@ -14,6 +14,7 @@ USAGE:
     2) CLOUD_TOPIC_HOSTNAME - The topic hostname. Typically it exists in the format
     "<YOUR-TOPIC-NAME>.<REGION-NAME>.eventgrid.azure.net".
 """
+import os
 from azure.eventgrid import EventGridPublisherClient, CloudEvent
 from azure.core.credentials import AzureKeyCredential
 
