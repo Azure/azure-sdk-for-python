@@ -51,7 +51,7 @@ class PhoneNumberAdministrationOperations:
 
         Gets the list of the acquired phone numbers.
 
-        :param locale: A language-locale pairing which will be used to localise the names of countries.
+        :param locale: A language-locale pairing which will be used to localize the names of countries.
         :type locale: str
         :param skip: An optional parameter for how many entries to skip, for pagination purposes.
         :type skip: int
@@ -331,7 +331,7 @@ class PhoneNumberAdministrationOperations:
 
         Gets a list of supported countries.
 
-        :param locale: A language-locale pairing which will be used to localise the names of countries.
+        :param locale: A language-locale pairing which will be used to localize the names of countries.
         :type locale: str
         :param skip: An optional parameter for how many entries to skip, for pagination purposes.
         :type skip: int
@@ -607,7 +607,7 @@ class PhoneNumberAdministrationOperations:
 
         :param country_code: The ISO 3166-2 country code.
         :type country_code: str
-        :param locale: A language-locale pairing which will be used to localise the names of countries.
+        :param locale: A language-locale pairing which will be used to localize the names of countries.
         :type locale: str
         :param include_rate_information:
         :type include_rate_information: bool
@@ -704,7 +704,7 @@ class PhoneNumberAdministrationOperations:
         :type country_code: str
         :param phone_plan_group_id:
         :type phone_plan_group_id: str
-        :param locale: A language-locale pairing which will be used to localise the names of countries.
+        :param locale: A language-locale pairing which will be used to localize the names of countries.
         :type locale: str
         :param skip: An optional parameter for how many entries to skip, for pagination purposes.
         :type skip: int
@@ -800,7 +800,7 @@ class PhoneNumberAdministrationOperations:
         :type phone_plan_group_id: str
         :param phone_plan_id:
         :type phone_plan_id: str
-        :param locale: A language-locale pairing which will be used to localise the names of countries.
+        :param locale: A language-locale pairing which will be used to localize the names of countries.
         :type locale: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: LocationOptionsResponse, or the result of cls(response)
