@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class AssetFiltersOperations(object):
-    """AssetFiltersOperations operations.
+class PrivateEndpointConnectionsOperations(object):
+    """PrivateEndpointConnectionsOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -39,116 +39,34 @@ class AssetFiltersOperations(object):
         self.config = config
 
     def list(
-            self, resource_group_name, account_name, asset_name, custom_headers=None, raw=False, **operation_config):
-        """List Asset Filters.
+            self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
+        """Get all private endpoint connections.
 
-        List Asset Filters associated with the specified Asset.
-
-        :param resource_group_name: The name of the resource group within the
-         Azure subscription.
-        :type resource_group_name: str
-        :param account_name: The Media Services account name.
-        :type account_name: str
-        :param asset_name: The Asset name.
-        :type asset_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of AssetFilter
-        :rtype:
-         ~azure.mgmt.media.models.AssetFilterPaged[~azure.mgmt.media.models.AssetFilter]
-        :raises:
-         :class:`ApiErrorException<azure.mgmt.media.models.ApiErrorException>`
-        """
-        def prepare_request(next_link=None):
-            if not next_link:
-                # Construct URL
-                url = self.list.metadata['url']
-                path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-                    'accountName': self._serialize.url("account_name", account_name, 'str'),
-                    'assetName': self._serialize.url("asset_name", asset_name, 'str')
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-
-                # Construct parameters
-                query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-            else:
-                url = next_link
-                query_parameters = {}
-
-            # Construct headers
-            header_parameters = {}
-            header_parameters['Accept'] = 'application/json'
-            if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
-            return request
-
-        def internal_paging(next_link=None):
-            request = prepare_request(next_link)
-
-            response = self._client.send(request, stream=False, **operation_config)
-
-            if response.status_code not in [200]:
-                raise models.ApiErrorException(self._deserialize, response)
-
-            return response
-
-        # Deserialize response
-        header_dict = None
-        if raw:
-            header_dict = {}
-        deserialized = models.AssetFilterPaged(internal_paging, self._deserialize.dependencies, header_dict)
-
-        return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/mediaServices/{accountName}/assets/{assetName}/assetFilters'}
-
-    def get(
-            self, resource_group_name, account_name, asset_name, filter_name, custom_headers=None, raw=False, **operation_config):
-        """Get an Asset Filter.
-
-        Get the details of an Asset Filter associated with the specified Asset.
+        Get all private endpoint connections.
 
         :param resource_group_name: The name of the resource group within the
          Azure subscription.
         :type resource_group_name: str
         :param account_name: The Media Services account name.
         :type account_name: str
-        :param asset_name: The Asset name.
-        :type asset_name: str
-        :param filter_name: The Asset Filter name
-        :type filter_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: AssetFilter or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.media.models.AssetFilter or
-         ~msrest.pipeline.ClientRawResponse
+        :return: PrivateEndpointConnectionListResult or ClientRawResponse if
+         raw=true
+        :rtype: ~azure.mgmt.media.models.PrivateEndpointConnectionListResult
+         or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ApiErrorException<azure.mgmt.media.models.ApiErrorException>`
         """
         # Construct URL
-        url = self.get.metadata['url']
+        url = self.list.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'accountName': self._serialize.url("account_name", account_name, 'str'),
-            'assetName': self._serialize.url("asset_name", asset_name, 'str'),
-            'filterName': self._serialize.url("filter_name", filter_name, 'str')
+            'accountName': self._serialize.url("account_name", account_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -170,44 +88,108 @@ class AssetFiltersOperations(object):
         request = self._client.get(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 404]:
+        if response.status_code not in [200]:
             raise models.ApiErrorException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('AssetFilter', response)
+            deserialized = self._deserialize('PrivateEndpointConnectionListResult', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/mediaServices/{accountName}/assets/{assetName}/assetFilters/{filterName}'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/mediaservices/{accountName}/privateEndpointConnections'}
 
-    def create_or_update(
-            self, resource_group_name, account_name, asset_name, filter_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Create or update an Asset Filter.
+    def get(
+            self, resource_group_name, account_name, name, custom_headers=None, raw=False, **operation_config):
+        """Get private endpoint connection.
 
-        Creates or updates an Asset Filter associated with the specified Asset.
+        Get private endpoint connection.
 
         :param resource_group_name: The name of the resource group within the
          Azure subscription.
         :type resource_group_name: str
         :param account_name: The Media Services account name.
         :type account_name: str
-        :param asset_name: The Asset name.
-        :type asset_name: str
-        :param filter_name: The Asset Filter name
-        :type filter_name: str
-        :param parameters: The request parameters
-        :type parameters: ~azure.mgmt.media.models.AssetFilter
+        :param name:
+        :type name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: AssetFilter or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.media.models.AssetFilter or
+        :return: PrivateEndpointConnection or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.media.models.PrivateEndpointConnection or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ApiErrorException<azure.mgmt.media.models.ApiErrorException>`
+        """
+        # Construct URL
+        url = self.get.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'accountName': self._serialize.url("account_name", account_name, 'str'),
+            'name': self._serialize.url("name", name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.ApiErrorException(self._deserialize, response)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('PrivateEndpointConnection', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/mediaservices/{accountName}/privateEndpointConnections/{name}'}
+
+    def create_or_update(
+            self, resource_group_name, account_name, name, parameters, custom_headers=None, raw=False, **operation_config):
+        """Update private endpoint connection.
+
+        Update private endpoint connection.
+
+        :param resource_group_name: The name of the resource group within the
+         Azure subscription.
+        :type resource_group_name: str
+        :param account_name: The Media Services account name.
+        :type account_name: str
+        :param name:
+        :type name: str
+        :param parameters: The request parameters
+        :type parameters: ~azure.mgmt.media.models.PrivateEndpointConnection
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: PrivateEndpointConnection or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.media.models.PrivateEndpointConnection or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ApiErrorException<azure.mgmt.media.models.ApiErrorException>`
@@ -218,8 +200,7 @@ class AssetFiltersOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'accountName': self._serialize.url("account_name", account_name, 'str'),
-            'assetName': self._serialize.url("asset_name", asset_name, 'str'),
-            'filterName': self._serialize.url("filter_name", filter_name, 'str')
+            'name': self._serialize.url("name", name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -239,43 +220,39 @@ class AssetFiltersOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'AssetFilter')
+        body_content = self._serialize.body(parameters, 'PrivateEndpointConnection')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 201]:
+        if response.status_code not in [200]:
             raise models.ApiErrorException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('AssetFilter', response)
-        if response.status_code == 201:
-            deserialized = self._deserialize('AssetFilter', response)
+            deserialized = self._deserialize('PrivateEndpointConnection', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/mediaServices/{accountName}/assets/{assetName}/assetFilters/{filterName}'}
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/mediaservices/{accountName}/privateEndpointConnections/{name}'}
 
     def delete(
-            self, resource_group_name, account_name, asset_name, filter_name, custom_headers=None, raw=False, **operation_config):
-        """Delete an Asset Filter.
+            self, resource_group_name, account_name, name, custom_headers=None, raw=False, **operation_config):
+        """Delete private endpoint connection.
 
-        Deletes an Asset Filter associated with the specified Asset.
+        Delete private endpoint connection.
 
         :param resource_group_name: The name of the resource group within the
          Azure subscription.
         :type resource_group_name: str
         :param account_name: The Media Services account name.
         :type account_name: str
-        :param asset_name: The Asset name.
-        :type asset_name: str
-        :param filter_name: The Asset Filter name
-        :type filter_name: str
+        :param name:
+        :type name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -292,8 +269,7 @@ class AssetFiltersOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'accountName': self._serialize.url("account_name", account_name, 'str'),
-            'assetName': self._serialize.url("asset_name", asset_name, 'str'),
-            'filterName': self._serialize.url("filter_name", filter_name, 'str')
+            'name': self._serialize.url("name", name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -314,85 +290,10 @@ class AssetFiltersOperations(object):
         request = self._client.delete(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 204]:
+        if response.status_code not in [200]:
             raise models.ApiErrorException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/mediaServices/{accountName}/assets/{assetName}/assetFilters/{filterName}'}
-
-    def update(
-            self, resource_group_name, account_name, asset_name, filter_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Update an Asset Filter.
-
-        Updates an existing Asset Filter associated with the specified Asset.
-
-        :param resource_group_name: The name of the resource group within the
-         Azure subscription.
-        :type resource_group_name: str
-        :param account_name: The Media Services account name.
-        :type account_name: str
-        :param asset_name: The Asset name.
-        :type asset_name: str
-        :param filter_name: The Asset Filter name
-        :type filter_name: str
-        :param parameters: The request parameters
-        :type parameters: ~azure.mgmt.media.models.AssetFilter
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: AssetFilter or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.media.models.AssetFilter or
-         ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ApiErrorException<azure.mgmt.media.models.ApiErrorException>`
-        """
-        # Construct URL
-        url = self.update.metadata['url']
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'accountName': self._serialize.url("account_name", account_name, 'str'),
-            'assetName': self._serialize.url("asset_name", asset_name, 'str'),
-            'filterName': self._serialize.url("filter_name", filter_name, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct body
-        body_content = self._serialize.body(parameters, 'AssetFilter')
-
-        # Construct and send request
-        request = self._client.patch(url, query_parameters, header_parameters, body_content)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            raise models.ApiErrorException(self._deserialize, response)
-
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('AssetFilter', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/mediaServices/{accountName}/assets/{assetName}/assetFilters/{filterName}'}
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/mediaservices/{accountName}/privateEndpointConnections/{name}'}
