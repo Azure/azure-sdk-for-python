@@ -6,30 +6,55 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum
+from enum import Enum, EnumMeta
+from six import with_metaclass
 
-class SpendingLimit(str, Enum):
+class _CaseInsensitiveEnumMeta(EnumMeta):
+    def __getitem__(self, name):
+        return super().__getitem__(name.upper())
+
+    def __getattr__(cls, name):
+        """Return the enum member matching `name`
+        We use __getattr__ instead of descriptors or inserting into the enum
+        class' __dict__ in order to support `name` and `value` being both
+        properties for enum members (which live in the class' __dict__) and
+        enum members themselves.
+        """
+        try:
+            return cls._member_map_[name.upper()]
+        except KeyError:
+            raise AttributeError(name)
+
+
+class ResourceNameStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Is the resource name Allowed or Reserved
+    """
+
+    ALLOWED = "Allowed"
+    RESERVED = "Reserved"
+
+class SpendingLimit(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The subscription spending limit.
     """
 
-    on = "On"
-    off = "Off"
-    current_period_off = "CurrentPeriodOff"
+    ON = "On"
+    OFF = "Off"
+    CURRENT_PERIOD_OFF = "CurrentPeriodOff"
 
-class SubscriptionState(str, Enum):
+class SubscriptionState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The subscription state. Possible values are Enabled, Warned, PastDue, Disabled, and Deleted.
     """
 
-    enabled = "Enabled"
-    warned = "Warned"
-    past_due = "PastDue"
-    disabled = "Disabled"
-    deleted = "Deleted"
+    ENABLED = "Enabled"
+    WARNED = "Warned"
+    PAST_DUE = "PastDue"
+    DISABLED = "Disabled"
+    DELETED = "Deleted"
 
-class TenantCategory(str, Enum):
+class TenantCategory(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The tenant category.
     """
 
-    home = "Home"
-    projected_by = "ProjectedBy"
-    managed_by = "ManagedBy"
+    HOME = "Home"
+    PROJECTED_BY = "ProjectedBy"
+    MANAGED_BY = "ManagedBy"

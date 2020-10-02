@@ -314,6 +314,7 @@ except (SyntaxError, ImportError):
 from ._compute_management_client_enums import (
     AvailabilitySetSkuTypes,
     CachingTypes,
+    DiffDiskOptions,
     DiskCreateOptionTypes,
     IPVersion,
     IntervalInMins,
@@ -491,6 +492,7 @@ __all__ = [
     'WindowsConfiguration',
     'AvailabilitySetSkuTypes',
     'CachingTypes',
+    'DiffDiskOptions',
     'DiskCreateOptionTypes',
     'IPVersion',
     'IntervalInMins',

@@ -10,20 +10,18 @@ import platform
 from azure.data.tables import TableServiceClient, TableClient
 from azure.data.tables._version import VERSION
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
-# from azure.data.tabless import (
-#     VERSION,
-#     TableServiceClient,
-#     TableClient,
-# )
-from _shared.testcase import GlobalStorageAccountPreparer, TableTestCase
+from _shared.testcase import (
+    GlobalStorageAccountPreparer,
+    TableTestCase
+)
+
+from devtools_testutils import CachedResourceGroupPreparer, CachedStorageAccountPreparer
 
 from azure.core.exceptions import HttpResponseError
 # ------------------------------------------------------------------------------
 SERVICES = {
     TableServiceClient: 'table',
     TableClient: 'table',
-    # TableServiceClient: 'cosmos',
-    # TableClient: 'cosmos',
 }
 
 _CONNECTION_ENDPOINTS = {'table': 'TableEndpoint', 'cosmos': 'TableEndpoint'}
@@ -45,13 +43,10 @@ class StorageTableClientTest(TableTestCase):
         self.assertTrue(
             ('{}.{}'.format(account_name, 'table.core.windows.net') in service.url) or
             ('{}.{}'.format(account_name, 'table.cosmos.azure.com') in service.url))
-        # self.assertTrue(
-        #     ('{}-secondary.{}'.format(account_name, 'table.core.windows.net') in service.secondary_endpoint) or
-        #     ('{}-secondary.{}'.format(account_name, 'table.cosmos.azure.com') in service.secondary_endpoint))
 
     # --Direct Parameters Test Cases --------------------------------------------
-    #@pytest.mark.skip("pending")
-    @GlobalStorageAccountPreparer()
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_create_service_with_key(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
 
@@ -64,8 +59,8 @@ class StorageTableClientTest(TableTestCase):
             self.validate_standard_account_endpoints(service, storage_account.name, storage_account_key)
             self.assertEqual(service.scheme, 'https')
 
-    #@pytest.mark.skip("pending")
-    @GlobalStorageAccountPreparer()
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_create_service_with_connection_string(self, resource_group, location, storage_account, storage_account_key):
 
         for service_type in SERVICES.items():
@@ -77,8 +72,8 @@ class StorageTableClientTest(TableTestCase):
             self.validate_standard_account_endpoints(service, storage_account.name, storage_account_key)
             self.assertEqual(service.scheme, 'https')
 
-    #@pytest.mark.skip("pending")
-    @GlobalStorageAccountPreparer()
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_create_service_with_sas(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         url = self.account_url(storage_account, "table")
@@ -97,8 +92,8 @@ class StorageTableClientTest(TableTestCase):
             self.assertTrue(service.url.endswith(self.sas_token))
             self.assertIsNone(service.credential)
 
-    #@pytest.mark.skip("pending")
-    @GlobalStorageAccountPreparer()
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_create_service_with_token(self, resource_group, location, storage_account, storage_account_key):
         url = self.account_url(storage_account, "table")
         suffix = '.table.core.windows.net'
@@ -116,8 +111,8 @@ class StorageTableClientTest(TableTestCase):
             self.assertFalse(hasattr(service.credential, 'account_key'))
             self.assertTrue(hasattr(service.credential, 'get_token'))
 
-    #@pytest.mark.skip("pending")
-    @GlobalStorageAccountPreparer()
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_create_service_with_token_and_http(self, resource_group, location, storage_account, storage_account_key):
         for service_type in SERVICES:
             # Act
@@ -125,8 +120,8 @@ class StorageTableClientTest(TableTestCase):
                 url = self.account_url(storage_account, "table").replace('https', 'http')
                 service_type(url, credential=self.token_credential, table_name='foo')
 
-    #@pytest.mark.skip("pending")
-    @GlobalStorageAccountPreparer()
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_create_service_china(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         # TODO: Confirm regional cloud cosmos URLs
@@ -145,11 +140,9 @@ class StorageTableClientTest(TableTestCase):
             self.assertEqual(service.credential.account_key, storage_account_key)
             self.assertTrue(service._primary_endpoint.startswith(
                 'https://{}.{}.core.chinacloudapi.cn'.format(storage_account.name, "table")))
-            # self.assertTrue(service.secondary_endpoint.startswith(
-            #     'https://{}-secondary.{}.core.chinacloudapi.cn'.format(storage_account.name, "table")))
 
-    #@pytest.mark.skip("pending")
-    @GlobalStorageAccountPreparer()
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_create_service_protocol(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
 
@@ -163,8 +156,8 @@ class StorageTableClientTest(TableTestCase):
             self.validate_standard_account_endpoints(service, storage_account.name, storage_account_key)
             self.assertEqual(service.scheme, 'http')
 
-    #@pytest.mark.skip("pending")
-    @GlobalStorageAccountPreparer()
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_create_service_empty_key(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         TABLE_SERVICES = [TableServiceClient, TableClient]
@@ -174,11 +167,15 @@ class StorageTableClientTest(TableTestCase):
             with self.assertRaises(ValueError) as e:
                 test_service = service_type('testaccount', credential='', table_name='foo')
 
+            # test non-string account URL
+            with self.assertRaises(ValueError):
+                test_service = service_type(account_url=123456, credential=storage_account_key, table_name='foo')
+
             self.assertEqual(
                 str(e.exception), "You need to provide either a SAS token or an account shared key to authenticate.")
 
-    #@pytest.mark.skip("pending")
-    @GlobalStorageAccountPreparer()
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_create_service_with_socket_timeout(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
 
@@ -196,8 +193,8 @@ class StorageTableClientTest(TableTestCase):
             assert default_service._client._client._pipeline._transport.connection_config.timeout in [20, (20, 2000)]
 
     # --Connection String Test Cases --------------------------------------------
-    #@pytest.mark.skip("pending")
-    @GlobalStorageAccountPreparer()
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_create_service_with_connection_string_key(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         conn_string = 'AccountName={};AccountKey={};'.format(storage_account.name, storage_account_key)
@@ -210,8 +207,8 @@ class StorageTableClientTest(TableTestCase):
             self.validate_standard_account_endpoints(service, storage_account.name, storage_account_key)
             self.assertEqual(service.scheme, 'https')
 
-    #@pytest.mark.skip("pending")
-    @GlobalStorageAccountPreparer()
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_create_service_with_connection_string_sas(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         conn_string = 'AccountName={};SharedAccessSignature={};'.format(storage_account.name, self.sas_token)
@@ -227,8 +224,8 @@ class StorageTableClientTest(TableTestCase):
             self.assertTrue(service.url.endswith(self.sas_token))
             self.assertIsNone(service.credential)
 
-    #@pytest.mark.skip("pending")
-    @GlobalStorageAccountPreparer()  # TODO: Prepare Cosmos tables account
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_create_service_with_connection_string_cosmos(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         conn_string = 'DefaultEndpointsProtocol=https;AccountName={0};AccountKey={1};TableEndpoint=https://{0}.table.cosmos.azure.com:443/;'.format(
@@ -245,11 +242,10 @@ class StorageTableClientTest(TableTestCase):
             self.assertEqual(service.credential.account_name, storage_account.name)
             self.assertEqual(service.credential.account_key, storage_account_key)
             self.assertTrue(service._primary_endpoint.startswith('https://' + storage_account.name + '.table.cosmos.azure.com'))
-            # self.assertTrue(service.secondary_endpoint.startswith('https://' + storage_account.name + '-secondary.table.cosmos.azure.com'))
             self.assertEqual(service.scheme, 'https')
 
-    #@pytest.mark.skip("pending")
-    @GlobalStorageAccountPreparer()
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_create_service_with_connection_string_endpoint_protocol(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         conn_string = 'AccountName={};AccountKey={};DefaultEndpointsProtocol=http;EndpointSuffix=core.chinacloudapi.cn;'.format(
@@ -267,13 +263,10 @@ class StorageTableClientTest(TableTestCase):
             self.assertTrue(
                 service._primary_endpoint.startswith(
                     'http://{}.{}.core.chinacloudapi.cn'.format(storage_account.name, "table")))
-            # self.assertTrue(
-            #     service.secondary_endpoint.startswith(
-            #         'http://{}-secondary.{}.core.chinacloudapi.cn'.format(storage_account.name, "table")))
             self.assertEqual(service.scheme, 'http')
 
-    #@pytest.mark.skip("pending")
-    @GlobalStorageAccountPreparer()
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_create_service_with_connection_string_emulated(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         for service_type in SERVICES.items():
@@ -283,8 +276,8 @@ class StorageTableClientTest(TableTestCase):
             with self.assertRaises(ValueError):
                 service = service_type[0].from_connection_string(conn_string, table_name="foo")
 
-    #@pytest.mark.skip("pending")
-    @GlobalStorageAccountPreparer()
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_create_service_with_connection_string_custom_domain(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         for service_type in SERVICES.items():
@@ -300,10 +293,9 @@ class StorageTableClientTest(TableTestCase):
             self.assertEqual(service.credential.account_name, storage_account.name)
             self.assertEqual(service.credential.account_key, storage_account_key)
             self.assertTrue(service._primary_endpoint.startswith('https://www.mydomain.com'))
-            # self.assertTrue(service.secondary_endpoint.startswith('https://' + storage_account.name + '-secondary.table.core.windows.net'))
 
-    #@pytest.mark.skip("pending")
-    @GlobalStorageAccountPreparer()
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_create_service_with_conn_str_custom_domain_trailing_slash(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         for service_type in SERVICES.items():
@@ -319,10 +311,9 @@ class StorageTableClientTest(TableTestCase):
             self.assertEqual(service.credential.account_name, storage_account.name)
             self.assertEqual(service.credential.account_key, storage_account_key)
             self.assertTrue(service._primary_endpoint.startswith('https://www.mydomain.com'))
-            # self.assertTrue(service.secondary_endpoint.startswith('https://' + storage_account.name + '-secondary.table.core.windows.net'))
 
-    #@pytest.mark.skip("pending")
-    @GlobalStorageAccountPreparer()
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_create_service_with_conn_str_custom_domain_sec_override(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         for service_type in SERVICES.items():
@@ -339,10 +330,9 @@ class StorageTableClientTest(TableTestCase):
             self.assertEqual(service.credential.account_name, storage_account.name)
             self.assertEqual(service.credential.account_key, storage_account_key)
             self.assertTrue(service._primary_endpoint.startswith('https://www.mydomain.com'))
-            # self.assertTrue(service.secondary_endpoint.startswith('https://www-sec.mydomain.com'))
 
-    #@pytest.mark.skip("pending")
-    @GlobalStorageAccountPreparer()
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_create_service_with_conn_str_fails_if_sec_without_primary(self, resource_group, location, storage_account, storage_account_key):
         for service_type in SERVICES.items():
             # Arrange
@@ -356,8 +346,8 @@ class StorageTableClientTest(TableTestCase):
             with self.assertRaises(ValueError):
                 service = service_type[0].from_connection_string(conn_string, table_name="foo")
 
-    #@pytest.mark.skip("pending")
-    @GlobalStorageAccountPreparer()
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_create_service_with_conn_str_succeeds_if_sec_with_primary(self, resource_group, location, storage_account, storage_account_key):
         for service_type in SERVICES.items():
             # Arrange
@@ -376,10 +366,9 @@ class StorageTableClientTest(TableTestCase):
             self.assertEqual(service.credential.account_name, storage_account.name)
             self.assertEqual(service.credential.account_key, storage_account_key)
             self.assertTrue(service._primary_endpoint.startswith('https://www.mydomain.com'))
-            # self.assertTrue(service.secondary_endpoint.startswith('https://www-sec.mydomain.com'))
 
-    # @pytest.mark.skip("pending")
-    @GlobalStorageAccountPreparer()
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_create_service_with_custom_account_endpoint_path(self, resource_group, location, storage_account, storage_account_key):
         custom_account_url = "http://local-machine:11002/custom/account/path/" + self.sas_token
         for service_type in SERVICES.items():
@@ -399,7 +388,6 @@ class StorageTableClientTest(TableTestCase):
         self.assertEqual(service.account_name, None)
         self.assertEqual(service.credential, None)
         self.assertEqual(service._primary_hostname, 'local-machine:11002/custom/account/path')
-        # mine doesnt have a question mark at the end
         self.assertTrue(service.url.startswith('http://local-machine:11002/custom/account/path'))
 
         service = TableClient(account_url=custom_account_url, table_name="foo")
@@ -417,24 +405,25 @@ class StorageTableClientTest(TableTestCase):
         self.assertTrue(service.url.startswith('http://local-machine:11002/custom/account/path'))
 
     @pytest.mark.skip("pending")
-    @GlobalStorageAccountPreparer()
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_user_agent_default(self, resource_group, location, storage_account, storage_account_key):
         service = TableServiceClient(self.account_url(storage_account, "table"), credential=storage_account_key)
 
         def callback(response):
             self.assertTrue('User-Agent' in response.http_request.headers)
-            self.assertEqual(
-                response.http_request.headers['User-Agent'],
-                "azsdk-python-storage-table/{} Python/{} ({})".format(
-                    VERSION,
-                    platform.python_version(),
-                    platform.platform()))
+            self.assertIn("azsdk-python-data-tables/{} Python/{} ({})".format(
+                VERSION,
+                platform.python_version(),
+                platform.platform()),
+                response.http_request.headers['User-Agent'])
 
         tables = list(service.list_tables(raw_response_hook=callback))
         self.assertIsInstance(tables, list)
 
     @pytest.mark.skip("pending")
-    @GlobalStorageAccountPreparer()
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_user_agent_custom(self, resource_group, location, storage_account, storage_account_key):
         custom_app = "TestApp/v1.0"
         service = TableServiceClient(
@@ -466,63 +455,59 @@ class StorageTableClientTest(TableTestCase):
         tables = list(service.list_tables(raw_response_hook=callback, user_agent="TestApp/v2.0"))
         self.assertIsInstance(tables, list)
 
-    @pytest.mark.skip("pending")
-    @GlobalStorageAccountPreparer()
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_user_agent_append(self, resource_group, location, storage_account, storage_account_key):
         service = TableServiceClient(self.account_url(storage_account, "table"), credential=storage_account_key)
 
         def callback(response):
             self.assertTrue('User-Agent' in response.http_request.headers)
-            self.assertEqual(
+            self.assertIn(
                 response.http_request.headers['User-Agent'],
-                "azsdk-python-storage-table/{} Python/{} ({}) customer_user_agent".format(
+                "azsdk-python-data-tables/{} Python/{} ({}) customer_user_agent".format(
                     VERSION,
                     platform.python_version(),
                     platform.platform())
 )
 
         custom_headers = {'User-Agent': 'customer_user_agent'}
-        tables = list(service.list_tables(raw_response_hook=callback, headers=custom_headers))
-        self.assertIsInstance(tables, list)
+        tables = service.list_tables(raw_response_hook=callback, headers=custom_headers)
 
-    #@pytest.mark.skip("pending")
-    @GlobalStorageAccountPreparer()
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_create_table_client_with_complete_table_url(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         table_url = self.account_url(storage_account, "table") + "/foo"
         service = TableClient(table_url, table_name='bar', credential=storage_account_key)
 
-            # Assert
+        # Assert
         self.assertEqual(service.scheme, 'https')
         self.assertEqual(service.table_name, 'bar')
+        self.assertEqual(service.account_name, storage_account.name)
 
-    # @pytest.mark.skip("pending")
-    @GlobalStorageAccountPreparer()
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_create_table_client_with_complete_url(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         table_url = "https://{}.table.core.windows.net:443/foo".format(storage_account.name)
         service = TableClient(account_url=table_url, table_name='bar', credential=storage_account_key)
 
-            # Assert
+        # Assert
         self.assertEqual(service.scheme, 'https')
         self.assertEqual(service.table_name, 'bar')
         self.assertEqual(service.account_name, storage_account.name)
 
-    # @pytest.mark.skip("pending")
-    @GlobalStorageAccountPreparer()
-    def test_create_table_client_with_invalid_name(self, resource_group, location, storage_account, storage_account_key):
+    def test_create_table_client_with_invalid_name(self):
         # Arrange
-        table_url = "https://{}.table.core.windows.net:443/foo".format(storage_account.name)
+        table_url = "https://{}.table.core.windows.net:443/foo".format("test")
         invalid_table_name = "my_table"
 
         # Assert
         with pytest.raises(ValueError) as excinfo:
-            service = TableClient(account_url=table_url, table_name=invalid_table_name, credential=storage_account_key)
+            service = TableClient(account_url=table_url, table_name=invalid_table_name, credential="storage_account_key")
 
-        assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.""" in str(excinfo)
+        assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long." in str(excinfo)
 
-
-    #@pytest.mark.skip("pending")
     def test_error_with_malformed_conn_str(self):
         # Arrange
 
@@ -539,8 +524,8 @@ class StorageTableClientTest(TableTestCase):
                     self.assertEqual(
                         str(e.exception), "Connection string missing required connection details.")
 
-    #@pytest.mark.skip("pending")
-    @GlobalStorageAccountPreparer()
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_closing_pipeline_client(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         for client, url in SERVICES.items():
@@ -553,8 +538,8 @@ class StorageTableClientTest(TableTestCase):
                 assert hasattr(service, 'close')
                 service.close()
 
-    #@pytest.mark.skip("pending")
-    @GlobalStorageAccountPreparer()
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_closing_pipeline_client_simple(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         for client, url in SERVICES.items():
@@ -562,6 +547,7 @@ class StorageTableClientTest(TableTestCase):
             service = client(
                 self.account_url(storage_account, "table"), credential=storage_account_key, table_name='table')
             service.close()
+
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
     unittest.main()

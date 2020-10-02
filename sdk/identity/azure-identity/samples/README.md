@@ -13,10 +13,10 @@ urlFragment: identity-samples
 ## Prerequisites
 
 You must have an [Azure subscription](https://azure.microsoft.com/free) and an
-[Azure Key Vault](https://azure.microsoft.com/en-us/services/key-vault/) to run
+[Azure Key Vault](https://azure.microsoft.com/services/key-vault/) to run
 these samples. You can create a Key Vault in the
 [Azure Portal](https://portal.azure.com/#create/Microsoft.KeyVault) or with the
-[Azure CLI](https://docs.microsoft.com/en-us/azure/key-vault/secrets/quick-create-cli).
+[Azure CLI](https://docs.microsoft.com/azure/key-vault/secrets/quick-create-cli).
 
 Azure Key Vault is used only to demonstrate authentication. Azure Identity has
 the same API for all compatible client libraries.
@@ -34,4 +34,5 @@ pip install azure-identity azure-keyvault-secrets
 | File | Description |
 |-------------|-------------|
 | control_interactive_prompts.py | demonstrates controlling when interactive credentials prompt for user interaction |
+| custom_credentials.py | demonstrates custom credential implementation |
 | user_authentication.py | demonstrates user authentication API for applications |

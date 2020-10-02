@@ -113,7 +113,7 @@ class TestCopyModel(FormRecognizerTest):
         raw_response = []
 
         def callback(response, _, headers):
-            copy_result = client._client._deserialize(CopyOperationResult, response)
+            copy_result = client._deserialize(CopyOperationResult, response)
             model_info = CustomFormModelInfo._from_generated(copy_result, target["modelId"])
             raw_response.append(copy_result)
             raw_response.append(model_info)

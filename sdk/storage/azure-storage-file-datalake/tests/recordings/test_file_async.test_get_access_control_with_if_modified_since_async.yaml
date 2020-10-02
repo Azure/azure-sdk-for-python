@@ -3,11 +3,11 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-dfs/12.0.1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-dfs/12.0.2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-client-request-id:
-      - e94f481e-7926-11ea-9833-001a7dda7113
+      - 078b13e8-af4c-11ea-a5e2-001a7dda7113
       x-ms-date:
-      - Tue, 07 Apr 2020 23:24:21 GMT
+      - Mon, 15 Jun 2020 21:06:06 GMT
       x-ms-properties:
       - ''
       x-ms-version:
@@ -18,43 +18,26 @@ interactions:
     body:
       string: ''
     headers:
-      ? !!python/object/new:multidict._multidict.istr
-      - Content-Length
-      : '0'
-      ? !!python/object/new:multidict._multidict.istr
-      - Date
-      : Tue, 07 Apr 2020 23:24:21 GMT
-      ? !!python/object/new:multidict._multidict.istr
-      - Etag
-      : '"0x8D7DB4ACD96D2DE"'
-      ? !!python/object/new:multidict._multidict.istr
-      - Last-Modified
-      : Tue, 07 Apr 2020 23:24:21 GMT
-      ? !!python/object/new:multidict._multidict.istr
-      - Server
-      : Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 27572bcb-501f-002d-0133-0dfee7000000
+      Content-Length: '0'
+      Date: Mon, 15 Jun 2020 21:06:05 GMT
+      Etag: '"0x8D8116FEBCFC4B6"'
+      Last-Modified: Mon, 15 Jun 2020 21:06:06 GMT
+      Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id: d588511b-501f-004f-3858-433cc0000000
       x-ms-version: '2019-02-02'
     status:
       code: 201
       message: Created
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - xiafuhns.dfs.core.windows.net
-        - /filesystembf461bd2/filebf461bd2
-        - resource=file
-        - ''
+    url: https://xiafuhns.dfs.core.windows.net/filesystembf461bd2/filebf461bd2?resource=file
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-dfs/12.0.1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-dfs/12.0.2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-client-request-id:
-      - e96db69c-7926-11ea-a4e4-001a7dda7113
+      - 07aaf024-af4c-11ea-b0b7-001a7dda7113
       x-ms-date:
-      - Tue, 07 Apr 2020 23:24:22 GMT
+      - Mon, 15 Jun 2020 21:06:06 GMT
       x-ms-permissions:
       - '0777'
       x-ms-version:
@@ -65,104 +48,66 @@ interactions:
     body:
       string: ''
     headers:
-      ? !!python/object/new:multidict._multidict.istr
-      - Content-Length
-      : '0'
-      ? !!python/object/new:multidict._multidict.istr
-      - Date
-      : Tue, 07 Apr 2020 23:24:21 GMT
-      ? !!python/object/new:multidict._multidict.istr
-      - Etag
-      : '"0x8D7DB4ACD96D2DE"'
-      ? !!python/object/new:multidict._multidict.istr
-      - Last-Modified
-      : Tue, 07 Apr 2020 23:24:21 GMT
-      ? !!python/object/new:multidict._multidict.istr
-      - Server
-      : Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      Content-Length: '0'
+      Date: Mon, 15 Jun 2020 21:06:05 GMT
+      Etag: '"0x8D8116FEBCFC4B6"'
+      Last-Modified: Mon, 15 Jun 2020 21:06:06 GMT
+      Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
       x-ms-namespace-enabled: 'true'
-      x-ms-request-id: 27572bcc-501f-002d-0233-0dfee7000000
+      x-ms-request-id: d588511c-501f-004f-3958-433cc0000000
       x-ms-version: '2019-02-02'
     status:
       code: 200
       message: OK
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - xiafuhns.dfs.core.windows.net
-        - /filesystembf461bd2/filebf461bd2
-        - action=setAccessControl
-        - ''
+    url: https://xiafuhns.dfs.core.windows.net/filesystembf461bd2/filebf461bd2?action=setAccessControl
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-dfs/12.0.1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-dfs/12.0.2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-client-request-id:
-      - e9757978-7926-11ea-8bd4-001a7dda7113
+      - 07b31762-af4c-11ea-ad42-001a7dda7113
       x-ms-date:
-      - Tue, 07 Apr 2020 23:24:22 GMT
+      - Mon, 15 Jun 2020 21:06:06 GMT
       x-ms-version:
       - '2019-07-07'
     method: HEAD
-    uri: https://storagename.blob.core.windows.net/filesystembf461bd2//filebf461bd2
+    uri: https://storagename.blob.core.windows.net/filesystembf461bd2/filebf461bd2
   response:
     body:
       string: ''
     headers:
-      ? !!python/object/new:multidict._multidict.istr
-      - Accept-Ranges
-      : bytes
-      ? !!python/object/new:multidict._multidict.istr
-      - Content-Length
-      : '0'
-      ? !!python/object/new:multidict._multidict.istr
-      - Content-Type
-      : application/octet-stream
-      ? !!python/object/new:multidict._multidict.istr
-      - Date
-      : Tue, 07 Apr 2020 23:24:21 GMT
-      ? !!python/object/new:multidict._multidict.istr
-      - Etag
-      : '"0x8D7DB4ACD96D2DE"'
-      ? !!python/object/new:multidict._multidict.istr
-      - Last-Modified
-      : Tue, 07 Apr 2020 23:24:21 GMT
-      ? !!python/object/new:multidict._multidict.istr
-      - Server
-      : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      Accept-Ranges: bytes
+      Content-Length: '0'
+      Content-Type: application/octet-stream
+      Date: Mon, 15 Jun 2020 21:06:06 GMT
+      Etag: '"0x8D8116FEBCFC4B6"'
+      Last-Modified: Mon, 15 Jun 2020 21:06:06 GMT
+      Server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-access-tier: Hot
       x-ms-access-tier-inferred: 'true'
       x-ms-blob-type: BlockBlob
-      x-ms-creation-time: Tue, 07 Apr 2020 23:24:21 GMT
+      x-ms-creation-time: Mon, 15 Jun 2020 21:06:06 GMT
       x-ms-lease-state: available
       x-ms-lease-status: unlocked
-      x-ms-request-id: ea28736f-c01e-004d-6633-0d8278000000
+      x-ms-request-id: 9b57cb1a-801e-002e-7c58-431f83000000
       x-ms-server-encrypted: 'true'
       x-ms-version: '2019-07-07'
     status:
       code: 200
       message: OK
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - xiafuhns.blob.core.windows.net
-        - /filesystembf461bd2//filebf461bd2
-        - ''
-        - ''
+    url: https://xiafuhns.blob.core.windows.net/filesystembf461bd2/filebf461bd2
 - request:
     body: null
     headers:
       If-Modified-Since:
-      - Tue, 07 Apr 2020 23:09:21 GMT
+      - Mon, 15 Jun 2020 20:51:06 GMT
       User-Agent:
-      - azsdk-python-storage-dfs/12.0.1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-dfs/12.0.2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-client-request-id:
-      - e986f9e6-7926-11ea-84bd-001a7dda7113
+      - 07bd9470-af4c-11ea-a7d5-001a7dda7113
       x-ms-date:
-      - Tue, 07 Apr 2020 23:24:22 GMT
+      - Mon, 15 Jun 2020 21:06:07 GMT
       x-ms-version:
       - '2019-02-02'
     method: HEAD
@@ -171,79 +116,18 @@ interactions:
     body:
       string: ''
     headers:
-      ? !!python/object/new:multidict._multidict.istr
-      - Date
-      : Tue, 07 Apr 2020 23:24:21 GMT
-      ? !!python/object/new:multidict._multidict.istr
-      - Etag
-      : '"0x8D7DB4ACD96D2DE"'
-      ? !!python/object/new:multidict._multidict.istr
-      - Last-Modified
-      : Tue, 07 Apr 2020 23:24:21 GMT
-      ? !!python/object/new:multidict._multidict.istr
-      - Server
-      : Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      Date: Mon, 15 Jun 2020 21:06:06 GMT
+      Etag: '"0x8D8116FEBCFC4B6"'
+      Last-Modified: Mon, 15 Jun 2020 21:06:06 GMT
+      Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
       x-ms-acl: user::rwx,group::rwx,other::rwx
       x-ms-group: $superuser
       x-ms-owner: $superuser
       x-ms-permissions: rwxrwxrwx
-      x-ms-request-id: 27572bcd-501f-002d-0333-0dfee7000000
+      x-ms-request-id: d588511d-501f-004f-3a58-433cc0000000
       x-ms-version: '2019-02-02'
     status:
       code: 200
       message: OK
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - xiafuhns.dfs.core.windows.net
-        - /filesystembf461bd2/filebf461bd2
-        - action=getAccessControl&upn=false
-        - ''
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-storage-dfs/12.0.1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-      x-ms-client-request-id:
-      - f1bf9b6e-7926-11ea-bca8-001a7dda7113
-      x-ms-date:
-      - Tue, 07 Apr 2020 23:24:35 GMT
-      x-ms-properties:
-      - ''
-      x-ms-version:
-      - '2019-02-02'
-    method: PUT
-    uri: https://storagename.dfs.core.windows.net/filesystembf461bd2/filebf461bd2?resource=file
-  response:
-    body:
-      string: '{"error":{"code":"FilesystemNotFound","message":"The specified filesystem
-        does not exist.\nRequestId:6dd78224-801f-0011-3833-0dd720000000\nTime:2020-04-07T23:24:36.0996012Z"}}'
-    headers:
-      ? !!python/object/new:multidict._multidict.istr
-      - Content-Length
-      : '175'
-      ? !!python/object/new:multidict._multidict.istr
-      - Content-Type
-      : application/json;charset=utf-8
-      ? !!python/object/new:multidict._multidict.istr
-      - Date
-      : Tue, 07 Apr 2020 23:24:35 GMT
-      ? !!python/object/new:multidict._multidict.istr
-      - Server
-      : Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-error-code: FilesystemNotFound
-      x-ms-request-id: 6dd78224-801f-0011-3833-0dd720000000
-      x-ms-version: '2019-02-02'
-    status:
-      code: 404
-      message: The specified filesystem does not exist.
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - xiafuhns.dfs.core.windows.net
-        - /filesystembf461bd2/filebf461bd2
-        - resource=file
-        - ''
+    url: https://xiafuhns.dfs.core.windows.net/filesystembf461bd2/filebf461bd2?action=getAccessControl&upn=false
 version: 1

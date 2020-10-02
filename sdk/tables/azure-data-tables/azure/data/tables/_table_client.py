@@ -21,7 +21,7 @@ from ._deserialize import _convert_to_entity, _trim_service_metadata
 from ._entity import TableEntity
 from ._generated import AzureTable
 from ._generated.models import (
-    AccessPolicy,
+    # AccessPolicy,
     SignedIdentifier,
     TableProperties,
     QueryOptions
@@ -32,7 +32,7 @@ from ._table_client_base import TableClientBase
 from ._serialize import serialize_iso
 from ._deserialize import _return_headers_and_deserialized
 from ._error import _process_table_error
-from ._models import TableEntityPropertiesPaged, UpdateMode
+from ._models import TableEntityPropertiesPaged, UpdateMode, AccessPolicy
 
 
 class TableClient(TableClientBase):
@@ -80,6 +80,15 @@ class TableClient(TableClientBase):
         :type table_name: str
         :returns: A table client.
         :rtype: ~azure.data.tables.TableClient
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_create_client.py
+                :start-after: [START create_table_client]
+                :end-before: [END create_table_client]
+                :language: python
+                :dedent: 8
+                :caption: Authenticating a TableServiceClient from a connection_string
         """
         account_url, credential = parse_connection_str(
             conn_str=conn_str, credential=None, service='table', keyword_args=kwargs)
@@ -146,7 +155,7 @@ class TableClient(TableClientBase):
                 **kwargs)
         except HttpResponseError as error:
             _process_table_error(error)
-        return {s.id: s.access_policy or AccessPolicy() for s in identifiers}  # pylint: disable=E1125
+        return {s.id: s.access_policy or AccessPolicy() for s in identifiers}
 
     @distributed_trace
     def set_table_access_policy(
@@ -189,6 +198,15 @@ class TableClient(TableClientBase):
         :return: Dictionary of operation metadata returned from service
         :rtype: dict[str,str]
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_create_delete_table.py
+                :start-after: [START create_table_from_table_client]
+                :end-before: [END create_table_from_table_client]
+                :language: python
+                :dedent: 8
+                :caption: Creating a table from the TableClient object
         """
         table_properties = TableProperties(table_name=self.table_name, **kwargs)
         try:
@@ -209,6 +227,15 @@ class TableClient(TableClientBase):
 
         :return: None
         :rtype: None
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_create_delete_table.py
+                :start-after: [START delete_table_from_table_client]
+                :end-before: [END delete_table_from_table_client]
+                :language: python
+                :dedent: 8
+                :caption: Deleting a table from the TableClient object
         """
         try:
             self._client.table.delete(table=self.table_name, **kwargs)
@@ -234,6 +261,15 @@ class TableClient(TableClientBase):
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_insert_delete_entities.py
+                :start-after: [START delete_entity]
+                :end-before: [END delete_entity]
+                :language: python
+                :dedent: 8
+                :caption: Deleting an entity to a Table
         """
 
         if_match, _ = _get_match_headers(kwargs=dict(kwargs, etag=kwargs.pop('etag', None),
@@ -264,6 +300,15 @@ class TableClient(TableClientBase):
         :return: Dictionary mapping operation metadata returned from the service
         :rtype: dict[str,str]
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_insert_delete_entities.py
+                :start-after: [START create_entity]
+                :end-before: [END create_entity]
+                :language: python
+                :dedent: 8
+                :caption: Creating and adding an entity to a Table
         """
 
         if "PartitionKey" in entity and "RowKey" in entity:
@@ -301,6 +346,15 @@ class TableClient(TableClientBase):
         :return: Dictionary mapping operation metadata returned from the service
         :rtype: dict[str,str]
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_update_upsert_merge_entities.py
+                :start-after: [START update_entity]
+                :end-before: [END update_entity]
+                :language: python
+                :dedent: 8
+                :caption: Updating an already exiting entity in a Table
         """
 
         if_match, _ = _get_match_headers(kwargs=dict(kwargs, etag=kwargs.pop('etag', None),
@@ -349,6 +403,15 @@ class TableClient(TableClientBase):
         :return: Query of table entities
         :rtype: ItemPaged[TableEntity]
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_update_upsert_merge_entities.py
+                :start-after: [START query_entities]
+                :end-before: [END query_entities]
+                :language: python
+                :dedent: 8
+                :caption: List all entities held within a table
         """
         user_select = kwargs.pop('select', None)
         if user_select and not isinstance(user_select, str):
@@ -380,6 +443,15 @@ class TableClient(TableClientBase):
         :return: Query of table entities
         :rtype: ItemPaged[TableEntity]
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_query_table.py
+                :start-after: [START query_entities]
+                :end-before: [END query_entities]
+                :language: python
+                :dedent: 8
+                :caption: Query entities held within a table
         """
         parameters = kwargs.pop('parameters', None)
         filter = self._parameter_filter_substitution(parameters, filter)  # pylint: disable = W0622
@@ -446,12 +518,20 @@ class TableClient(TableClientBase):
         :return: Dictionary mapping operation metadata returned from the service
         :rtype: dict[str,str]
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_update_upsert_merge_entities.py
+                :start-after: [START upsert_entity]
+                :end-before: [END upsert_entity]
+                :language: python
+                :dedent: 8
+                :caption: Update/merge or insert an entity into a table
         """
 
         partition_key = entity['PartitionKey']
         row_key = entity['RowKey']
         entity = _add_entity_properties(entity)
-
         try:
             metadata = None
             if mode is UpdateMode.MERGE:
@@ -475,10 +555,5 @@ class TableClient(TableClientBase):
                 raise ValueError("""Update mode {} is not supported.
                     For a list of supported modes see the UpdateMode enum""".format(mode))
             return _trim_service_metadata(metadata)
-        except ResourceNotFoundError:
-            return self.create_entity(
-                partition_key=partition_key,
-                row_key=row_key,
-                table_entity_properties=entity,
-                **kwargs
-            )
+        except HttpResponseError as error:
+            _process_table_error(error)

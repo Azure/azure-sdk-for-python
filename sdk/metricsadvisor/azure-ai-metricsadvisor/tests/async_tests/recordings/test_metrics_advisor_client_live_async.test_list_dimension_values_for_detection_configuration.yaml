@@ -1,0 +1,37 @@
+interactions:
+- request:
+    body: '{"startTime": "2020-01-01T00:00:00.000Z", "endTime": "2020-09-09T00:00:00.000Z",
+      "dimensionName": "dimension_name"}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '105'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-metricsadvisor/1.0.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/enrichment/anomalyDetection/configurations/anomaly_detection_configuration_id/anomalies/dimension/query
+  response:
+    body:
+      string: '{"value":["Common Lime","Cherry Laurel","Cabbage Palm","Blackthorn","Blue
+        Atlas Cedar","Cider gum","Common Walnut","Almond","Chinese red-barked birch","Bastard
+        Service Tree","Black Birch (River Birch)","Caucasian Fir","Common Beech","Cherry","Caucasian
+        Lime","Birch","Algerian Fir","Black Poplar","Cockspur Thorn","Common Alder","Common
+        Ash","Austrian Pine","Common Hazel","Box elder","Common Juniper","Aspen","Common
+        Yew"],"@nextLink":null}'
+    headers:
+      apim-request-id: 4e250a80-2b37-4615-b2ff-a07bc700d865
+      content-length: '441'
+      content-type: application/json; charset=utf-8
+      date: Mon, 21 Sep 2020 16:55:04 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '843'
+      x-request-id: 4e250a80-2b37-4615-b2ff-a07bc700d865
+    status:
+      code: 200
+      message: OK
+    url: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/enrichment/anomalyDetection/configurations/c0f2539f-b804-4ab9-a70f-0da0c89c76d8/anomalies/dimension/query
+version: 1

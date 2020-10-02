@@ -83,7 +83,7 @@ function Get-python-PackageInfoFromPackageFile ($pkg, $workingDirectory) {
 }
 
 # Stage and Upload Docs to blob Storage
-function Publish-python-GithubIODocs ()
+function Publish-python-GithubIODocs ($DocLocation, $PublicArtifactLocation)
 {
   $PublishedDocs = Get-ChildItem "$DocLocation" | Where-Object -FilterScript {$_.Name.EndsWith(".zip")}
 
@@ -101,7 +101,7 @@ function Publish-python-GithubIODocs ()
     Write-Host "Discovered Package Name: $PkgName"
     Write-Host "Discovered Package Version: $Version"
     Write-Host "Directory for Upload: $UnzippedDocumentationPath"
-
-    Upload-Blobs -DocDir $UnzippedDocumentationPath -PkgName $PkgName -DocVersion $Version
+    $releaseTag = RetrieveReleaseTag "PyPI" $PublicArtifactLocation
+    Upload-Blobs -DocDir $UnzippedDocumentationPath -PkgName $PkgName -DocVersion $Version -ReleaseTag $releaseTag
   }
 }

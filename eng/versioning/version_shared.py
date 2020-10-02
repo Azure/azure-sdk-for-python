@@ -34,7 +34,7 @@ DEV_STATUS_REGEX = r'(classifiers=\[(\s)*)(["\']Development Status :: .*["\'])'
 logging.getLogger().setLevel(logging.INFO)
 
 def path_excluded(path):
-    return "-nspkg" in path or "tests" in path or "mgmt" in path or is_metapackage(path)
+    return "-nspkg" in path or "tests" in path or is_metapackage(path)
 
 # Metapackages do not have an 'azure' folder within them
 def is_metapackage(package_path):
@@ -59,6 +59,7 @@ def get_packages(args, package_name = ""):
         target_dir = root_dir
 
     paths = get_setup_py_paths(args.glob_string, target_dir)
+
     # Check if package is excluded if a package name param is passed
     if package_name and not any(filter(lambda x: package_name == os.path.basename(os.path.dirname(x)), paths)):
         logging.info("Package {} is excluded from version update tool".format(package_name))

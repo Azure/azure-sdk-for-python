@@ -3,7 +3,7 @@ parameters:
   ArtifactName: 'not-specified'
   DependsOn: Build
   DocArtifact: 'documentation'
-  DevFeedName: public/azure-sdk-for-python
+  DevFeedName: 'public/azure-sdk-for-python'
   TargetDocRepoOwner: ''
   TargetDocRepoName: ''
 
@@ -28,6 +28,13 @@ stages:
                 deploy:
                   steps:
                     - checkout: self
+                    - task: PowerShell@2
+                      displayName: Prep template pipeline for release
+                      condition: and(succeeded(),eq(variables['TestPipeline'],'true'))
+                      inputs:
+                        pwsh: true
+                        workingDirectory: $(Build.SourcesDirectory)
+                        filePath: eng/scripts/SetTestPipelineVersion.ps1
                     - template: /eng/pipelines/templates/steps/stage-filtered-artifacts.yml
                       parameters:
                         SourceFolder: ${{parameters.ArtifactName}} 
@@ -45,7 +52,7 @@ stages:
                         RepoId: Azure/azure-sdk-for-python
                         WorkingDirectory: $(System.DefaultWorkingDirectory)
 
-          - ${{if ne(artifact.options.skipPublishPackage, 'true')}}:
+          - ${{if ne(artifact.skipPublishPackage, 'true')}}:
             - deployment: PublishPackage
               displayName: "Publish to PyPI"
               condition: and(succeeded(), ne(variables['Skip.PublishPackage'], 'true'))
@@ -103,7 +110,7 @@ stages:
                           echo "Uploaded sdist to devops feed"
                         displayName: 'Publish package to feed: ${{parameters.DevFeedName}}'
 
-          - ${{if ne(artifact.options.skipPublishDocs, 'true')}}:
+          - ${{if ne(artifact.skipPublishDocs, 'true')}}:
             - deployment: PublishGitHubIODocs
               displayName: Publish Docs to GitHubIO Blob Storage
               condition: and(succeeded(), ne(variables['Skip.PublishDocs'], 'true'))
@@ -134,10 +141,11 @@ stages:
                           BlobSASKey: '$(azure-sdk-docs-prod-sas)'
                           BlobName: '$(azure-sdk-docs-prod-blob-name)'
                           TargetLanguage: 'python'
+                          ArtifactLocation: '$(Pipeline.Workspace)/${{parameters.ArtifactName}}'
                           # we override the regular script path because we have cloned the build tools repo as a separate artifact.
                           ScriptPath: 'eng/common/scripts/copy-docs-to-blobstorage.ps1'
 
-          - ${{if ne(artifact.options.skipPublishDocs, 'true')}}:
+          - ${{if ne(artifact.skipPublishDocGithubIo, 'true')}}:
             - deployment: PublishDocs
               displayName: "Docs.MS Release"
               condition: and(succeeded(), ne(variables['Skip.PublishDocs'], 'true'))
@@ -186,7 +194,7 @@ stages:
                           GHReviewersVariable: 'OwningGHUser'
                           CIConfigs: $(CIConfigs)
 
-          - ${{if ne(artifact.options.skipUpdatePackageVersion, 'true')}}:
+          - ${{if ne(artifact.skipPublishDocGithubIo, 'true')}}:
             - deployment: UpdatePackageVersion
               displayName: "Update Package Version"
               condition: and(succeeded(), ne(variables['Skip.UpdatePackageVersion'], 'true'))
@@ -236,41 +244,29 @@ stages:
           pip install twine
         displayName: Install Twine
 
-      - pwsh: |
-          # For safety default to publishing to the private feed.
-          # Publish to https://dev.azure.com/azure-sdk/internal/_packaging?_a=feed&feed=azure-sdk-for-python-pr
-          $devopsFeedName = 'internal/azure-sdk-for-python-pr'
-          if ('$(Build.Repository.Name)' -eq 'Azure/azure-sdk-for-python') {
-            # Publish to https://dev.azure.com/azure-sdk/public/_packaging?_a=feed&feed=azure-sdk-for-python
-            $devopsFeedName = '${{ parameters.DevFeedName }}'
-          }
-          echo "##vso[task.setvariable variable=DevFeedName]$devopsFeedName"
-          echo "Using DevopsFeed = $devopsFeedName"
-        displayName: Setup DevOpsFeedName
-
-      - task: TwineAuthenticate@0
-        displayName: 'Authenticate to feed'
-        inputs:
-          artifactFeeds: $(DevFeedName)
+      - template: ../steps/auth-dev-feed.yml
+        parameters:
+          DevFeedName: ${{ parameters.DevFeedName }}
 
       - ${{ each artifact in parameters.Artifacts }}:
-        - pwsh: |
-            Get-ChildItem $(Pipeline.Workspace)/${{parameters.ArtifactName}}
-            New-Item -Type Directory -Name ${{artifact.safeName}} -Path $(Pipeline.Workspace)
-            $underscorePrefix = "${{artifact.name}}"
-            $dashPrefix = "${{artifact.name}}".Replace("_", "-")
-            Copy-Item $(Pipeline.Workspace)/${{parameters.ArtifactName}}/$dashPrefix-[0-9]*.[0-9]*.[0-9]*a[0-9]* $(Pipeline.Workspace)/${{artifact.safeName}}
-            Copy-Item $(Pipeline.Workspace)/${{parameters.ArtifactName}}/$underscorePrefix-[0-9]*.[0-9]*.[0-9]*a[0-9]* $(Pipeline.Workspace)/${{artifact.safeName}}
-            Get-ChildItem $(Pipeline.Workspace)/${{artifact.safeName}}
+        - ${{if ne(artifact.skipPublishDevFeed, 'true')}}:
+          - pwsh: |
+              Get-ChildItem $(Pipeline.Workspace)/${{parameters.ArtifactName}}
+              New-Item -Type Directory -Name ${{artifact.safeName}} -Path $(Pipeline.Workspace)
+              $underscorePrefix = "${{artifact.name}}"
+              $dashPrefix = "${{artifact.name}}".Replace("_", "-")
+              Copy-Item $(Pipeline.Workspace)/${{parameters.ArtifactName}}/$dashPrefix-[0-9]*.[0-9]*.[0-9]*a[0-9]* $(Pipeline.Workspace)/${{artifact.safeName}}
+              Copy-Item $(Pipeline.Workspace)/${{parameters.ArtifactName}}/$underscorePrefix-[0-9]*.[0-9]*.[0-9]*a[0-9]* $(Pipeline.Workspace)/${{artifact.safeName}}
+              Get-ChildItem $(Pipeline.Workspace)/${{artifact.safeName}}
 
-            $fileCount = (Get-ChildItem $(Pipeline.Workspace)/${{artifact.safeName}} | Measure-Object).Count
-            if ($fileCount -eq 0) { 
-              Write-Host "No alpha packages for ${{artifact.safeName}} to publish."
-              exit 0
-            }
+              $fileCount = (Get-ChildItem $(Pipeline.Workspace)/${{artifact.safeName}} | Measure-Object).Count
+              if ($fileCount -eq 0) { 
+                Write-Host "No alpha packages for ${{artifact.safeName}} to publish."
+                exit 0
+              }
 
-            twine upload --repository $(DevFeedName) --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/${{artifact.safeName}}/*a*.whl
-            echo "Uploaded whl to devops feed $(DevFeedName)"
-            twine upload --repository $(DevFeedName) --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/${{artifact.safeName}}/*a*.zip
-            echo "Uploaded sdist to devops feed $(DevFeedName)"
-          displayName: 'Publish ${{artifact.name}} alpha package'
+              twine upload --repository $(DevFeedName) --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/${{artifact.safeName}}/*a*.whl
+              echo "Uploaded whl to devops feed $(DevFeedName)"
+              twine upload --repository $(DevFeedName) --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/${{artifact.safeName}}/*a*.zip
+              echo "Uploaded sdist to devops feed $(DevFeedName)"
+            displayName: 'Publish ${{artifact.name}} alpha package'       

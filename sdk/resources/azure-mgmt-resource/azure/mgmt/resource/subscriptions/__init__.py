@@ -10,7 +10,7 @@ from ._subscription_client import SubscriptionClient
 __all__ = ['SubscriptionClient']
 
 try:
-    from ._patch import patch_sdk
+    from ._patch import patch_sdk  # type: ignore
     patch_sdk()
 except ImportError:
     pass

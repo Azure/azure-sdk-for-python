@@ -15,29 +15,33 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any
 
+    from azure.core.credentials import TokenCredential
+
 from ._configuration import AzureSchemaRegistryConfiguration
 from .operations import SchemaOperations
 from . import models
 
 
 class AzureSchemaRegistry(object):
-    """AzureSchemaRegistry.
+    """Azure Schema Registry is as a central schema repository for enterprise-level data infrastructure, complete with support for versioning and management.
 
     :ivar schema: SchemaOperations operations
     :vartype schema: azure.schemaregistry._generated.operations.SchemaOperations
+    :param credential: Credential needed for the client to connect to Azure.
+    :type credential: ~azure.core.credentials.TokenCredential
     :param endpoint: The Schema Registry service endpoint, for example my-namespace.servicebus.windows.net.
     :type endpoint: str
-    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
     def __init__(
         self,
+        credential,  # type: "TokenCredential"
         endpoint,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        base_url = 'https://{endpoint}/$schemagroups'
-        self._config = AzureSchemaRegistryConfiguration(endpoint, **kwargs)
+        base_url = 'https://{endpoint}'
+        self._config = AzureSchemaRegistryConfiguration(credential, endpoint, **kwargs)
         self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}

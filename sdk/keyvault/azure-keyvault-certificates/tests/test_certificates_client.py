@@ -6,6 +6,7 @@ import functools
 import json
 import logging
 import time
+import pytest
 
 from azure_devtools.scenario_tests import RecordingProcessor, RequestUrlNormalizer
 
@@ -23,6 +24,7 @@ from azure.keyvault.certificates import (
     LifetimeAction,
     CertificateIssuer,
     IssuerProperties,
+    ApiVersion,
 )
 from azure.keyvault.certificates._shared import parse_vault_id
 from devtools_testutils import ResourceGroupPreparer, KeyVaultPreparer
@@ -639,19 +641,6 @@ class CertificateClientTests(KeyVaultTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
     @KeyVaultClientPreparer()
-    def test_allowed_headers_passed_to_http_logging_policy(self, client, **kwargs):
-        passed_in_allowed_headers = {
-            "x-ms-keyvault-network-info",
-            "x-ms-keyvault-region",
-            "x-ms-keyvault-service-version"
-        }
-        assert passed_in_allowed_headers.issubset(
-            client._client._config.http_logging_policy.allowed_header_names
-        )
-
-    @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer()
-    @KeyVaultClientPreparer()
     def test_get_certificate_version(self, client, **kwargs):
         cert_name = self.get_resource_name("cert")
         for _ in range(self.list_test_size):
@@ -675,11 +664,39 @@ class CertificateClientTests(KeyVaultTestCase):
             assert version_properties.version == cert.properties.version
             assert version_properties.x509_thumbprint == cert.properties.x509_thumbprint
 
-    class _CustomHookPolicy(object):
-        pass
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @KeyVaultPreparer()
+    @KeyVaultClientPreparer(client_kwargs={"api_version": ApiVersion.V2016_10_01})
+    def test_list_properties_of_certificates_2016_10_01(self, client, **kwargs):
+        [_ for _ in client.list_properties_of_certificates()]
+
+        with pytest.raises(NotImplementedError) as excinfo:
+            [_ for _ in client.list_properties_of_certificates(include_pending=True)]
+
+        assert "The 'include_pending' parameter to `list_properties_of_certificates` is only available for API versions v7.0 and up" in str(excinfo.value)
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
-    @KeyVaultClientPreparer(client_kwargs={"custom_hook_policy": _CustomHookPolicy()})
-    def test_custom_hook_policy(self, client, **kwargs):
-        assert isinstance(client._client._config.custom_hook_policy, CertificateClientTests._CustomHookPolicy)
+    @KeyVaultClientPreparer(client_kwargs={"api_version": ApiVersion.V2016_10_01})
+    def test_list_deleted_certificates_2016_10_01(self, client, **kwargs):
+
+        [_ for _ in client.list_deleted_certificates()]
+
+        with pytest.raises(NotImplementedError) as excinfo:
+            [_ for _ in client.list_deleted_certificates(include_pending=True)]
+
+        assert "The 'include_pending' parameter to `list_deleted_certificates` is only available for API versions v7.0 and up" in str(excinfo.value)
+
+
+def test_service_headers_allowed_in_logs():
+    service_headers = {"x-ms-keyvault-network-info", "x-ms-keyvault-region", "x-ms-keyvault-service-version"}
+    client = CertificateClient("...", object())
+    assert service_headers.issubset(client._client._config.http_logging_policy.allowed_header_names)
+
+
+def test_custom_hook_policy():
+    class CustomHookPolicy(object):
+        pass
+
+    client = CertificateClient("...", object(), custom_hook_policy=CustomHookPolicy())
+    assert isinstance(client._client._config.custom_hook_policy, CustomHookPolicy)

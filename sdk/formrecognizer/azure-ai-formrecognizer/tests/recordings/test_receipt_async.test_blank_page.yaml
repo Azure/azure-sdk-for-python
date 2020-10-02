@@ -453,51 +453,53 @@ interactions:
       OUJBMDhFRkVFNjYyMDE+XSAvUHJldiAyNDg2OC9YUmVmU3RtIDI0NTg2Pj4NCnN0YXJ0eHJlZg0K
       MjU0ODQNCiUlRU9G
     headers:
+      Accept:
+      - application/json
       Content-Type:
       - application/pdf
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/prebuilt/receipt/analyze?includeTextDetails=false
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/prebuilt/receipt/analyze?includeTextDetails=false
   response:
     body:
       string: ''
     headers:
-      apim-request-id: e772b958-7d61-4f3e-bfe7-90cee21fd448
+      apim-request-id: 36c14985-102c-4bdc-a0a7-0c3cc5ced483
       content-length: '0'
-      date: Fri, 10 Jul 2020 18:52:40 GMT
-      operation-location: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/prebuilt/receipt/analyzeResults/e772b958-7d61-4f3e-bfe7-90cee21fd448
+      date: Mon, 14 Sep 2020 22:41:44 GMT
+      operation-location: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/prebuilt/receipt/analyzeResults/36c14985-102c-4bdc-a0a7-0c3cc5ced483
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '92'
+      x-envoy-upstream-service-time: '58'
     status:
       code: 202
       message: Accepted
-    url: https://centraluseuap.api.cognitive.microsoft.com//formrecognizer/v2.0/prebuilt/receipt/analyze?includeTextDetails=false
+    url: https://centraluseuap.api.cognitive.microsoft.com//formrecognizer/v2.1-preview.1/prebuilt/receipt/analyze?includeTextDetails=false
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/prebuilt/receipt/analyzeResults/e772b958-7d61-4f3e-bfe7-90cee21fd448
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/prebuilt/receipt/analyzeResults/36c14985-102c-4bdc-a0a7-0c3cc5ced483
   response:
     body:
-      string: '{"status": "succeeded", "createdDateTime": "2020-07-10T18:52:41Z",
-        "lastUpdatedDateTime": "2020-07-10T18:52:44Z", "analyzeResult": {"version":
-        "2.0.0", "readResults": [{"page": 1, "angle": 0, "width": 8.4967, "height":
-        10.9967, "unit": "inch", "language": "en"}], "documentResults": [{"docType":
-        "prebuilt:receipt", "pageRange": [1, 1], "fields": {}}]}}'
+      string: '{"status": "succeeded", "createdDateTime": "2020-09-14T22:41:45Z",
+        "lastUpdatedDateTime": "2020-09-14T22:41:47Z", "analyzeResult": {"version":
+        "2.1.0", "readResults": [{"page": 1, "angle": 0, "width": 8.4967, "height":
+        10.9967, "unit": "inch"}], "documentResults": [{"docType": "prebuilt:receipt",
+        "pageRange": [1, 1], "fields": {}}]}}'
     headers:
-      apim-request-id: 21576b77-f611-4e77-b920-b38a795c6afe
+      apim-request-id: 77470b95-b273-4331-b901-fb9d1d00484e
+      content-length: '308'
       content-type: application/json; charset=utf-8
-      date: Fri, 10 Jul 2020 18:52:46 GMT
+      date: Mon, 14 Sep 2020 22:41:49 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '15'
+      x-envoy-upstream-service-time: '56'
     status:
       code: 200
       message: OK
-    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/prebuilt/receipt/analyzeResults/e772b958-7d61-4f3e-bfe7-90cee21fd448
+    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/prebuilt/receipt/analyzeResults/36c14985-102c-4bdc-a0a7-0c3cc5ced483
 version: 1

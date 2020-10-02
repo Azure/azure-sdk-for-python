@@ -58,6 +58,7 @@ try:
     from ._models_py3 import ResourceReference
     from ._models_py3 import ResourcesMoveInfo
     from ._models_py3 import ScopedDeployment
+    from ._models_py3 import ScopedDeploymentWhatIf
     from ._models_py3 import Sku
     from ._models_py3 import SubResource
     from ._models_py3 import TagCount
@@ -125,6 +126,7 @@ except (SyntaxError, ImportError):
     from ._models import ResourceReference  # type: ignore
     from ._models import ResourcesMoveInfo  # type: ignore
     from ._models import ScopedDeployment  # type: ignore
+    from ._models import ScopedDeploymentWhatIf  # type: ignore
     from ._models import Sku  # type: ignore
     from ._models import SubResource  # type: ignore
     from ._models import TagCount  # type: ignore
@@ -150,7 +152,7 @@ from ._resource_management_client_enums import (
     PropertyChangeType,
     ProvisioningOperation,
     ResourceIdentityType,
-    TagsPatchResourceOperation,
+    TagsPatchOperation,
     WhatIfResultFormat,
 )
 
@@ -206,6 +208,7 @@ __all__ = [
     'ResourceReference',
     'ResourcesMoveInfo',
     'ScopedDeployment',
+    'ScopedDeploymentWhatIf',
     'Sku',
     'SubResource',
     'TagCount',
@@ -229,6 +232,6 @@ __all__ = [
     'PropertyChangeType',
     'ProvisioningOperation',
     'ResourceIdentityType',
-    'TagsPatchResourceOperation',
+    'TagsPatchOperation',
     'WhatIfResultFormat',
 ]

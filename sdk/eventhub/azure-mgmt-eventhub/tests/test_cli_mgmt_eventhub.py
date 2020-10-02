@@ -33,7 +33,7 @@ import azure.mgmt.eventhub
 # import azure.mgmt.network.models
 # import azure.mgmt.storage
 # import azure.mgmt.storage.models
-from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer
+from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer, RandomNameResourceGroupPreparer
 
 AZURE_LOCATION = 'eastus'
 
@@ -303,14 +303,14 @@ class MgmtEventHubTest(AzureMgmtTestCase):
         result = self.mgmt_client.namespaces.begin_delete(resource_group.name, NAMESPACE_NAME)
         result = result.result()
    
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_disaster_recovery_configs(self, resource_group):
         RESOURCE_GROUP = resource_group.name
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
-        NAMESPACE_NAME = self.get_resource_name("namespace2test")
-        NAMESPACE_NAME_2 = self.get_resource_name("namespacetest")
+        NAMESPACE_NAME = self.get_resource_name("namesp2test")
+        NAMESPACE_NAME_2 = self.get_resource_name("namesptest")
         AUTHORIZATION_RULE_NAME = self.get_resource_name("authorizationrule")
-        DISASTER_RECOVERY_CONFIG_NAME = self.get_resource_name("disasterdecoveryconfigtest")
+        DISASTER_RECOVERY_CONFIG_NAME = self.get_resource_name("disasterdecoveryconfig")
 
         # NamespaceCreate[put]
         BODY = {
@@ -327,22 +327,13 @@ class MgmtEventHubTest(AzureMgmtTestCase):
         result = self.mgmt_client.namespaces.begin_create_or_update(resource_group.name, NAMESPACE_NAME, BODY)
         primery_namespace = result.result()
 
-        # NameSpaceAuthorizationRuleCreate[put]
-        BODY = {
-          "rights": [
-            "Listen",
-            "Send"
-          ]
-        }
-        result = self.mgmt_client.namespaces.create_or_update_authorization_rule(resource_group.name, NAMESPACE_NAME, AUTHORIZATION_RULE_NAME, BODY)
-
         # Second namespace [put]
         BODY = {
           "sku": {
             "name": "Standard",
             "tier": "Standard"
           },
-          "location": "eastus",
+          "location": "NorthCentralUS",
           "tags": {
             "tag1": "value1",
             "tag2": "value2"
@@ -350,6 +341,15 @@ class MgmtEventHubTest(AzureMgmtTestCase):
         }
         result = self.mgmt_client.namespaces.begin_create_or_update(resource_group.name, NAMESPACE_NAME_2, BODY)
         second_namespace = result.result()
+
+        # NameSpaceAuthorizationRuleCreate[put]
+        BODY = {
+          "rights": [
+            # "Listen",
+            "Send"
+          ]
+        }
+        result = self.mgmt_client.namespaces.create_or_update_authorization_rule(resource_group.name, NAMESPACE_NAME, AUTHORIZATION_RULE_NAME, BODY)
 
         # DRCCheckNameAvailability[post]
         BODY = {

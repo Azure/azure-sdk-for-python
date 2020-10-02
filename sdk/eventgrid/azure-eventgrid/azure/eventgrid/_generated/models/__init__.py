@@ -7,22 +7,26 @@
 # --------------------------------------------------------------------------
 
 try:
+    from ._models_py3 import ACSChatEventBaseProperties
+    from ._models_py3 import ACSChatMemberAddedToThreadWithUserEventData
+    from ._models_py3 import ACSChatMemberRemovedFromThreadWithUserEventData
+    from ._models_py3 import ACSChatMessageDeletedEventData
+    from ._models_py3 import ACSChatMessageEditedEventData
+    from ._models_py3 import ACSChatMessageEventBaseProperties
+    from ._models_py3 import ACSChatMessageReceivedEventData
+    from ._models_py3 import ACSChatThreadCreatedWithUserEventData
+    from ._models_py3 import ACSChatThreadEventBaseProperties
+    from ._models_py3 import ACSChatThreadMemberProperties
+    from ._models_py3 import ACSChatThreadPropertiesUpdatedPerUserEventData
+    from ._models_py3 import ACSChatThreadWithUserDeletedEventData
+    from ._models_py3 import ACSSMSDeliveryAttemptProperties
+    from ._models_py3 import ACSSMSDeliveryReportReceivedEventData
+    from ._models_py3 import ACSSMSEventBaseProperties
+    from ._models_py3 import ACSSMSReceivedEventData
     from ._models_py3 import AppConfigurationKeyValueDeletedEventData
     from ._models_py3 import AppConfigurationKeyValueModifiedEventData
     from ._models_py3 import AppEventTypeDetail
     from ._models_py3 import AppServicePlanEventTypeDetail
-    from ._models_py3 import ChatEventBaseProperties
-    from ._models_py3 import ChatMemberAddedToThreadWithUserEventData
-    from ._models_py3 import ChatMemberRemovedFromThreadForWithUserEventData
-    from ._models_py3 import ChatMessageDeletedEventData
-    from ._models_py3 import ChatMessageEditedEventData
-    from ._models_py3 import ChatMessageEventBaseProperties
-    from ._models_py3 import ChatMessageReceivedEventData
-    from ._models_py3 import ChatThreadCreatedWithUserEventData
-    from ._models_py3 import ChatThreadEventBaseProperties
-    from ._models_py3 import ChatThreadMemberProperties
-    from ._models_py3 import ChatThreadPropertiesUpdatedPerUserEventData
-    from ._models_py3 import ChatThreadWithUserDeletedEventData
     from ._models_py3 import CloudEvent
     from ._models_py3 import ContainerRegistryArtifactEventData
     from ._models_py3 import ContainerRegistryArtifactEventTarget
@@ -51,6 +55,7 @@ try:
     from ._models_py3 import IotHubDeviceDeletedEventData
     from ._models_py3 import IotHubDeviceDisconnectedEventData
     from ._models_py3 import IotHubDeviceTelemetryEventData
+    from ._models_py3 import KeyVaultAccessPolicyChangedEventData
     from ._models_py3 import KeyVaultCertificateExpiredEventData
     from ._models_py3 import KeyVaultCertificateNearExpiryEventData
     from ._models_py3 import KeyVaultCertificateNewVersionCreatedEventData
@@ -111,10 +116,6 @@ try:
     from ._models_py3 import ResourceWriteCancelData
     from ._models_py3 import ResourceWriteFailureData
     from ._models_py3 import ResourceWriteSuccessData
-    from ._models_py3 import SMSDeliveryAttemptProperties
-    from ._models_py3 import SMSDeliveryReportReceivedEventData
-    from ._models_py3 import SMSEventBaseProperties
-    from ._models_py3 import SMSReceivedEventData
     from ._models_py3 import ServiceBusActiveMessagesAvailableWithNoListenersEventData
     from ._models_py3 import ServiceBusDeadletterMessagesAvailableWithNoListenersEventData
     from ._models_py3 import SignalRServiceClientConnectionConnectedEventData
@@ -145,22 +146,26 @@ try:
     from ._models_py3 import WebSlotSwapWithPreviewCancelledEventData
     from ._models_py3 import WebSlotSwapWithPreviewStartedEventData
 except (SyntaxError, ImportError):
+    from ._models import ACSChatEventBaseProperties  # type: ignore
+    from ._models import ACSChatMemberAddedToThreadWithUserEventData  # type: ignore
+    from ._models import ACSChatMemberRemovedFromThreadWithUserEventData  # type: ignore
+    from ._models import ACSChatMessageDeletedEventData  # type: ignore
+    from ._models import ACSChatMessageEditedEventData  # type: ignore
+    from ._models import ACSChatMessageEventBaseProperties  # type: ignore
+    from ._models import ACSChatMessageReceivedEventData  # type: ignore
+    from ._models import ACSChatThreadCreatedWithUserEventData  # type: ignore
+    from ._models import ACSChatThreadEventBaseProperties  # type: ignore
+    from ._models import ACSChatThreadMemberProperties  # type: ignore
+    from ._models import ACSChatThreadPropertiesUpdatedPerUserEventData  # type: ignore
+    from ._models import ACSChatThreadWithUserDeletedEventData  # type: ignore
+    from ._models import ACSSMSDeliveryAttemptProperties  # type: ignore
+    from ._models import ACSSMSDeliveryReportReceivedEventData  # type: ignore
+    from ._models import ACSSMSEventBaseProperties  # type: ignore
+    from ._models import ACSSMSReceivedEventData  # type: ignore
     from ._models import AppConfigurationKeyValueDeletedEventData  # type: ignore
     from ._models import AppConfigurationKeyValueModifiedEventData  # type: ignore
     from ._models import AppEventTypeDetail  # type: ignore
     from ._models import AppServicePlanEventTypeDetail  # type: ignore
-    from ._models import ChatEventBaseProperties  # type: ignore
-    from ._models import ChatMemberAddedToThreadWithUserEventData  # type: ignore
-    from ._models import ChatMemberRemovedFromThreadForWithUserEventData  # type: ignore
-    from ._models import ChatMessageDeletedEventData  # type: ignore
-    from ._models import ChatMessageEditedEventData  # type: ignore
-    from ._models import ChatMessageEventBaseProperties  # type: ignore
-    from ._models import ChatMessageReceivedEventData  # type: ignore
-    from ._models import ChatThreadCreatedWithUserEventData  # type: ignore
-    from ._models import ChatThreadEventBaseProperties  # type: ignore
-    from ._models import ChatThreadMemberProperties  # type: ignore
-    from ._models import ChatThreadPropertiesUpdatedPerUserEventData  # type: ignore
-    from ._models import ChatThreadWithUserDeletedEventData  # type: ignore
     from ._models import CloudEvent  # type: ignore
     from ._models import ContainerRegistryArtifactEventData  # type: ignore
     from ._models import ContainerRegistryArtifactEventTarget  # type: ignore
@@ -189,6 +194,7 @@ except (SyntaxError, ImportError):
     from ._models import IotHubDeviceDeletedEventData  # type: ignore
     from ._models import IotHubDeviceDisconnectedEventData  # type: ignore
     from ._models import IotHubDeviceTelemetryEventData  # type: ignore
+    from ._models import KeyVaultAccessPolicyChangedEventData  # type: ignore
     from ._models import KeyVaultCertificateExpiredEventData  # type: ignore
     from ._models import KeyVaultCertificateNearExpiryEventData  # type: ignore
     from ._models import KeyVaultCertificateNewVersionCreatedEventData  # type: ignore
@@ -249,10 +255,6 @@ except (SyntaxError, ImportError):
     from ._models import ResourceWriteCancelData  # type: ignore
     from ._models import ResourceWriteFailureData  # type: ignore
     from ._models import ResourceWriteSuccessData  # type: ignore
-    from ._models import SMSDeliveryAttemptProperties  # type: ignore
-    from ._models import SMSDeliveryReportReceivedEventData  # type: ignore
-    from ._models import SMSEventBaseProperties  # type: ignore
-    from ._models import SMSReceivedEventData  # type: ignore
     from ._models import ServiceBusActiveMessagesAvailableWithNoListenersEventData  # type: ignore
     from ._models import ServiceBusDeadletterMessagesAvailableWithNoListenersEventData  # type: ignore
     from ._models import SignalRServiceClientConnectionConnectedEventData  # type: ignore
@@ -295,22 +297,26 @@ from ._event_grid_publisher_client_enums import (
 )
 
 __all__ = [
+    'ACSChatEventBaseProperties',
+    'ACSChatMemberAddedToThreadWithUserEventData',
+    'ACSChatMemberRemovedFromThreadWithUserEventData',
+    'ACSChatMessageDeletedEventData',
+    'ACSChatMessageEditedEventData',
+    'ACSChatMessageEventBaseProperties',
+    'ACSChatMessageReceivedEventData',
+    'ACSChatThreadCreatedWithUserEventData',
+    'ACSChatThreadEventBaseProperties',
+    'ACSChatThreadMemberProperties',
+    'ACSChatThreadPropertiesUpdatedPerUserEventData',
+    'ACSChatThreadWithUserDeletedEventData',
+    'ACSSMSDeliveryAttemptProperties',
+    'ACSSMSDeliveryReportReceivedEventData',
+    'ACSSMSEventBaseProperties',
+    'ACSSMSReceivedEventData',
     'AppConfigurationKeyValueDeletedEventData',
     'AppConfigurationKeyValueModifiedEventData',
     'AppEventTypeDetail',
     'AppServicePlanEventTypeDetail',
-    'ChatEventBaseProperties',
-    'ChatMemberAddedToThreadWithUserEventData',
-    'ChatMemberRemovedFromThreadForWithUserEventData',
-    'ChatMessageDeletedEventData',
-    'ChatMessageEditedEventData',
-    'ChatMessageEventBaseProperties',
-    'ChatMessageReceivedEventData',
-    'ChatThreadCreatedWithUserEventData',
-    'ChatThreadEventBaseProperties',
-    'ChatThreadMemberProperties',
-    'ChatThreadPropertiesUpdatedPerUserEventData',
-    'ChatThreadWithUserDeletedEventData',
     'CloudEvent',
     'ContainerRegistryArtifactEventData',
     'ContainerRegistryArtifactEventTarget',
@@ -339,6 +345,7 @@ __all__ = [
     'IotHubDeviceDeletedEventData',
     'IotHubDeviceDisconnectedEventData',
     'IotHubDeviceTelemetryEventData',
+    'KeyVaultAccessPolicyChangedEventData',
     'KeyVaultCertificateExpiredEventData',
     'KeyVaultCertificateNearExpiryEventData',
     'KeyVaultCertificateNewVersionCreatedEventData',
@@ -399,10 +406,6 @@ __all__ = [
     'ResourceWriteCancelData',
     'ResourceWriteFailureData',
     'ResourceWriteSuccessData',
-    'SMSDeliveryAttemptProperties',
-    'SMSDeliveryReportReceivedEventData',
-    'SMSEventBaseProperties',
-    'SMSReceivedEventData',
     'ServiceBusActiveMessagesAvailableWithNoListenersEventData',
     'ServiceBusDeadletterMessagesAvailableWithNoListenersEventData',
     'SignalRServiceClientConnectionConnectedEventData',

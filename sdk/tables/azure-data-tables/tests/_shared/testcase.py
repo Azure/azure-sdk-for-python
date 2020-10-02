@@ -32,6 +32,7 @@ from devtools_testutils import (
     StorageAccountPreparer,
     FakeResource,
 )
+from .cosmos_testcase import CosmosAccountPreparer, CachedCosmosAccountPreparer
 from azure_devtools.scenario_tests import RecordingProcessor, AzureTestError, create_random_name
 try:
     from cStringIO import StringIO      # Python 2
@@ -40,6 +41,8 @@ except ImportError:
 
 from azure.core.credentials import AccessToken
 from azure.mgmt.storage.models import StorageAccount, Endpoints
+
+from azure.mgmt.cosmosdb import CosmosDBManagementClient
 from azure.data.tables import generate_account_sas, AccountSasPermissions, ResourceTypes
 
 try:
@@ -51,6 +54,10 @@ import pytest
 
 
 LOGGING_FORMAT = '%(asctime)s %(name)-20s %(levelname)-5s %(message)s'
+
+RERUNS_DELAY = 60
+
+SLEEP_DELAY = 15
 
 class FakeTokenCredential(object):
     """Protocol for classes able to provide OAuth tokens.
@@ -106,6 +113,7 @@ class GlobalStorageAccountPreparer(AzureMgmtPreparer):
             'storage_account_cs': TableTestCase._STORAGE_CONNECTION_STRING,
         }
 
+
 class GlobalResourceGroupPreparer(AzureMgmtPreparer):
     def __init__(self):
         super(GlobalResourceGroupPreparer, self).__init__(
@@ -137,6 +145,7 @@ class TableTestCase(AzureMgmtTestCase):
     def __init__(self, *args, **kwargs):
         super(TableTestCase, self).__init__(*args, **kwargs)
         self.replay_processors.append(XMSRequestIDBody())
+        self._RESOURCE_GROUP = None,
 
     def connection_string(self, account, key):
         return "DefaultEndpointsProtocol=https;AccountName=" + account.name + ";AccountKey=" + str(key) + ";EndpointSuffix=core.windows.net"
@@ -145,7 +154,7 @@ class TableTestCase(AzureMgmtTestCase):
         """Return an url of storage account.
 
         :param str storage_account: Storage account name
-        :param str storage_type: The Storage type part of the URL. Should be "blob", or "queue", etc.
+        :param str storage_type: The Storage type part of the URL. Should be "table", or "cosmos", etc.
         """
         try:
             if endpoint_type == "table":
@@ -335,6 +344,7 @@ def storage_account():
     test_case = AzureMgmtTestCase("__init__")
     rg_preparer = ResourceGroupPreparer(random_name_enabled=True, name_prefix='pystorage')
     storage_preparer = StorageAccountPreparer(random_name_enabled=True, name_prefix='pyacrstorage')
+    cosmos_preparer = CosmosAccountPreparer(random_name_enabled=True, name_prefix='pycosmos')
 
     # Create
     subscription_id = os.environ.get("AZURE_SUBSCRIPTION_ID", None)
@@ -344,9 +354,13 @@ def storage_account():
     existing_storage_name = os.environ.get("AZURE_STORAGE_ACCOUNT_NAME")
     existing_storage_key = os.environ.get("AZURE_STORAGE_ACCOUNT_KEY")
     storage_connection_string = os.environ.get("AZURE_STORAGE_CONNECTION_STRING")
+    cosmos_connection_string = os.environ.get("AZURE_COSMOS_CONNECTION_STRING")
+    existing_cosmos_name = os.environ.get("AZURE_COSMOS_ACCOUNT_URL")
+    existing_cosmos_key = os.environ.get("AZURE_COSMOS_ACCOUNT_KEY")
 
     i_need_to_create_rg = not (existing_rg_name or existing_storage_name or storage_connection_string)
     got_storage_info_from_env = existing_storage_name or storage_connection_string
+    got_cosmos_info_from_env = existing_cosmos_name or cosmos_connection_string
 
     storage_name = None
     rg_kwargs = {}
@@ -426,17 +440,84 @@ def storage_account():
                 storage_key = storage_kwargs['storage_account_key']
                 storage_connection_string = storage_kwargs['storage_account_cs']
 
+            if cosmos_connection_string:
+                cosmos_connection_string_parts = dict([
+                    part.split('=', 1)
+                    for part in cosmos_connection_string.split(';')
+                ])
+
+            if got_cosmos_info_from_env:
+
+                if cosmos_connection_string:
+                    cosmos_connection_string_parts = dict([
+                        part.split('=', 1)
+                        for part in storage_connection_string.split(";")
+                    ])
+
+                cosmos_account = None
+                if existing_cosmos_name:
+                    cosmos_name = existing_cosmos_name
+                    cosmos_account.name = cosmos_name
+                    cosmos_account.id = cosmos_name
+                    cosmos_acount.primary_endpoints = Endpoints()
+                    cosmos_account.primary_endpoints.table = "https://{}.table.cosmos.azure.com".format(cosmos_name)
+                    cosmos_key = existing_cosmos_key
+
+                if not cosmos_connection_string:
+                    # I have received a cosmos name from env
+                    cosmos_connection_string=";".join([
+                        "DefaultEndpointsProtocol=https",
+                        "AccountName={}".format(cosmos_name),
+                        "AccountKey={}".format(cosmos_key),
+                        "TableEndpoint={}".format(cosmos_account.primary_endpoints.table),
+                    ])
+
+                if not cosmos_account:
+                    cosmos_name = cosmos_connection_string_parts["AccountName"]
+
+                    def build_service_endpoint(service):
+                        try:
+                            suffix = cosmos_connection_string_parts["EndpointSuffix"]
+                        except KeyError:
+                            suffix = "cosmos.azure.com"
+                        return "{}://{}.{}.{}".format(
+                            cosmos_connection_string_parts.get("DefaultEndpointsProtocol", "https"),
+                            cosmos_connection_string_parts["AccountName"],
+                            service,
+                            suffix
+                        )
+
+                    cosmos_account.name = cosmos_name
+                    cosmos_account.id = cosmos_name
+                    cosmos_account.primary_endpoints=Endpoints()
+                    cosmos_account.primary_endpoints.table = cosmos_connection_string_parts.get("TableEndpoint", build_service_endpoint("table"))
+                    cosmos_account.secondary_endpoints=Endpoints()
+                    cosmos_account.secondary_endpoints.table = cosmos_connection_string_parts.get("TableSecondaryEndpoint", build_service_endpoint("table"))
+                    cosmos_key = cosmos_connection_string_parts["AccountKey"]
+
+            else:
+                cosmos_name, cosmos_kwargs = cosmos_preparer._prepare_create_resource(test_case, **rg_kwargs)
+                cosmos_account = cosmos_kwargs['cosmos_account']
+                cosmos_key = cosmos_kwargs['cosmos_account_key']
+                cosmos_connection_string = cosmos_kwargs['cosmos_account_cs']
+
             TableTestCase._STORAGE_ACCOUNT = storage_account
             TableTestCase._STORAGE_KEY = storage_key
             TableTestCase._STORAGE_CONNECTION_STRING = storage_connection_string
+            TableTestCase._COSMOS_ACCOUNT = cosmos_account
+            TableTestCase._COSMOS_KEY = cosmos_key
+            TableTestCase._COSMOS_CONNECTION_STRING = cosmos_connection_string
             yield
         finally:
-            if storage_name is not None:
-                if not got_storage_info_from_env:
-                    storage_preparer.remove_resource(
-                        storage_name,
-                        resource_group=rg
-                    )
+            if not got_storage_info_from_env:
+                storage_preparer.remove_resource(
+                    storage_name,
+                    resource_group=rg
+                )
+                cosmos_preparer.remove_resource(
+                    cosmos_name,
+                    resource_group=rg
+                )
     finally:
         if i_need_to_create_rg:
             rg_preparer.remove_resource(rg_name)

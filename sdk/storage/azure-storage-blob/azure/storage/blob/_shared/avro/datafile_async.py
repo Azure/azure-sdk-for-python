@@ -26,7 +26,7 @@ logger = logging.getLogger(__name__)
 VALID_CODECS = frozenset(['null'])
 
 
-class AsyncDataFileReader(object):
+class AsyncDataFileReader(object):  # pylint: disable=too-many-instance-attributes
     """Read files written by DataFileWriter."""
 
     def __init__(self, reader, datum_reader, **kwargs):
@@ -45,6 +45,7 @@ class AsyncDataFileReader(object):
         self._datum_reader = datum_reader
         self.codec = "null"
         self._block_count = 0
+        self._cur_object_index = 0
         self._meta = None
         self._sync_marker = None
 
@@ -68,13 +69,16 @@ class AsyncDataFileReader(object):
         # get ready to read
         self._block_count = 0
 
+        # object_position is to support reading from current position in the future read,
+        # no need to downloading from the beginning of avro.
+        if hasattr(self._reader, 'object_position'):
+            self.reader.track_object_position()
+
         # header_reader indicates reader only has partial content. The reader doesn't have block header,
         # so we read use the block count stored last time.
         # Also ChangeFeed only has codec==null, so use _raw_decoder is good.
         if self._header_reader is not None:
-            self._block_count = self._reader.block_count
             self._datum_decoder = self._raw_decoder
-
         self.datum_reader.writer_schema = (
             schema.parse(self.get_meta(SCHEMA_KEY).decode('utf-8')))
         return self
@@ -176,16 +180,29 @@ class AsyncDataFileReader(object):
         """Return the next datum in the file."""
         if self.block_count == 0:
             await self._skip_sync()
+
+            # object_position is to support reading from current position in the future read,
+            # no need to downloading from the beginning of avro file with this attr.
+            if hasattr(self._reader, 'object_position'):
+                await self.reader.track_object_position()
+            self._cur_object_index = 0
+
             await self._read_block_header()
 
         datum = await self.datum_reader.read(self.datum_decoder)
         self._block_count -= 1
+        self._cur_object_index += 1
 
-        # event_position and block_count are to support reading from current position in the future read,
-        # no need to downloading from the beginning of avro file with these two attr.
-        if hasattr(self._reader, 'event_position'):
-            self.reader.block_count = self.block_count
-            await self.reader.track_event_position()
+        # object_position is to support reading from current position in the future read,
+        # This will track the index of the next item to be read.
+        # This will also track the offset before the next sync marker.
+        if hasattr(self._reader, 'object_position'):
+            if self.block_count == 0:
+                # the next event to be read is at index 0 in the new chunk of blocks,
+                await self.reader.track_object_position()
+                await self.reader.set_object_index(0)
+            else:
+                await self.reader.set_object_index(self._cur_object_index)
 
         return datum
 

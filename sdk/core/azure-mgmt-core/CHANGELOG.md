@@ -1,6 +1,12 @@
 
 # Release History
 
+## 1.2.1 (2020-10-05)
+
+### Bug Fixes
+
+- Fixed bug to allow polling in the case of parameterized endpoints with relative polling urls  #14097
+
 ## 1.2.0 (2020-07-06)
 
 ### Bug Fixes

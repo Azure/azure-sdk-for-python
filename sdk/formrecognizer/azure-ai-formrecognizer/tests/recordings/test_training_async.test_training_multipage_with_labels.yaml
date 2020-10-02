@@ -3,67 +3,70 @@ interactions:
     body: 'b''b\''{"source": "containersasurl", "sourceFilter": {"prefix": "", "includeSubFolders":
       false}, "useLabelFile": true}\'''''
     headers:
+      Accept:
+      - application/json
       Content-Length:
       - '300'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/custom/models
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models
   response:
     body:
       string: ''
     headers:
-      apim-request-id: 0065a544-c0c1-4b18-88c0-b4773cd1b412
+      apim-request-id: 30e53574-e2d5-44e8-ac9f-3fa37a1a8b98
       content-length: '0'
-      date: Fri, 10 Jul 2020 19:00:25 GMT
-      location: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/custom/models/912674ba-d5f0-40d7-912b-471871d3b8f7
+      date: Mon, 14 Sep 2020 22:21:31 GMT
+      location: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/ab571bf5-34af-42c3-8da4-91f261a43b9e
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '912'
+      x-envoy-upstream-service-time: '39'
     status:
       code: 201
       message: Created
-    url: https://centraluseuap.api.cognitive.microsoft.com//formrecognizer/v2.0/custom/models
+    url: https://centraluseuap.api.cognitive.microsoft.com//formrecognizer/v2.1-preview.1/custom/models
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/custom/models/912674ba-d5f0-40d7-912b-471871d3b8f7?includeKeys=true
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/ab571bf5-34af-42c3-8da4-91f261a43b9e?includeKeys=true
   response:
     body:
-      string: '{"modelInfo": {"modelId": "912674ba-d5f0-40d7-912b-471871d3b8f7", "status":
-        "ready", "createdDateTime": "2020-07-10T19:00:24Z", "lastUpdatedDateTime":
-        "2020-07-10T19:00:28Z"}, "trainResult": {"averageModelAccuracy": 0.889, "trainingDocuments":
-        [{"documentName": "multipage_invoice1.pdf", "pages": 3, "status": "succeeded"},
-        {"documentName": "multipage_invoice2.pdf", "pages": 3, "status": "succeeded"},
-        {"documentName": "multipage_invoice3.pdf", "pages": 3, "status": "succeeded"},
-        {"documentName": "multipage_invoice4.pdf", "pages": 3, "status": "succeeded"},
-        {"documentName": "multipage_invoice5.pdf", "pages": 3, "status": "succeeded"}],
-        "fields": [{"fieldName": "Customer2", "accuracy": 1.0}, {"fieldName": "CustomerAddress",
-        "accuracy": 1.0}, {"fieldName": "CustomerName", "accuracy": 1.0}, {"fieldName":
-        "CustomerPhoneNumber", "accuracy": 1.0}, {"fieldName": "FirstItem", "accuracy":
-        1.0}, {"fieldName": "FirstPrice", "accuracy": 1.0}, {"fieldName": "FirstQuantity",
-        "accuracy": 1.0}, {"fieldName": "Merchant", "accuracy": 0.0}, {"fieldName":
-        "Merchant2", "accuracy": 0.0}, {"fieldName": "MerchantAddress", "accuracy":
-        1.0}, {"fieldName": "MerchantPhoneNumber", "accuracy": 1.0}, {"fieldName":
-        "Signature", "accuracy": 1.0}, {"fieldName": "Signature2", "accuracy": 1.0},
-        {"fieldName": "Subtotal", "accuracy": 1.0}, {"fieldName": "Tax", "accuracy":
-        1.0}, {"fieldName": "Tip", "accuracy": 1.0}, {"fieldName": "Total", "accuracy":
-        1.0}, {"fieldName": "Total2", "accuracy": 1.0}], "errors": []}}'
+      string: '{"modelInfo": {"modelId": "ab571bf5-34af-42c3-8da4-91f261a43b9e", "attributes":
+        {"isComposed": false}, "status": "ready", "createdDateTime": "2020-09-14T22:21:31Z",
+        "lastUpdatedDateTime": "2020-09-14T22:21:33Z"}, "trainResult": {"averageModelAccuracy":
+        0.889, "trainingDocuments": [{"documentName": "multipage_invoice1.pdf", "pages":
+        3, "status": "succeeded"}, {"documentName": "multipage_invoice2.pdf", "pages":
+        3, "status": "succeeded"}, {"documentName": "multipage_invoice3.pdf", "pages":
+        3, "status": "succeeded"}, {"documentName": "multipage_invoice4.pdf", "pages":
+        3, "status": "succeeded"}, {"documentName": "multipage_invoice5.pdf", "pages":
+        3, "status": "succeeded"}], "fields": [{"fieldName": "Customer2", "accuracy":
+        1.0}, {"fieldName": "CustomerAddress", "accuracy": 1.0}, {"fieldName": "CustomerName",
+        "accuracy": 1.0}, {"fieldName": "CustomerPhoneNumber", "accuracy": 1.0}, {"fieldName":
+        "FirstItem", "accuracy": 1.0}, {"fieldName": "FirstPrice", "accuracy": 1.0},
+        {"fieldName": "FirstQuantity", "accuracy": 1.0}, {"fieldName": "Merchant",
+        "accuracy": 0.0}, {"fieldName": "Merchant2", "accuracy": 0.0}, {"fieldName":
+        "MerchantAddress", "accuracy": 1.0}, {"fieldName": "MerchantPhoneNumber",
+        "accuracy": 1.0}, {"fieldName": "Signature", "accuracy": 1.0}, {"fieldName":
+        "Signature2", "accuracy": 1.0}, {"fieldName": "Subtotal", "accuracy": 1.0},
+        {"fieldName": "Tax", "accuracy": 1.0}, {"fieldName": "Tip", "accuracy": 1.0},
+        {"fieldName": "Total", "accuracy": 1.0}, {"fieldName": "Total2", "accuracy":
+        1.0}], "errors": []}}'
     headers:
-      apim-request-id: 1792f338-debf-4bb0-a8a8-235c92ff17c5
+      apim-request-id: 01b1cbc0-f2ae-441c-9946-98d1fe2c11cd
       content-type: application/json; charset=utf-8
-      date: Fri, 10 Jul 2020 19:00:30 GMT
+      date: Mon, 14 Sep 2020 22:21:36 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '17'
+      x-envoy-upstream-service-time: '15'
     status:
       code: 200
       message: OK
-    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/custom/models/912674ba-d5f0-40d7-912b-471871d3b8f7?includeKeys=true
+    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/ab571bf5-34af-42c3-8da4-91f261a43b9e?includeKeys=true
 version: 1

@@ -10,7 +10,7 @@ from ._resource_management_client import ResourceManagementClient
 __all__ = ['ResourceManagementClient']
 
 try:
-    from ._patch import patch_sdk
+    from ._patch import patch_sdk  # type: ignore
     patch_sdk()
 except ImportError:
     pass

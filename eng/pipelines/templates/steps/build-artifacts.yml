@@ -5,6 +5,14 @@ parameters:
   BuildDocs: true
 
 steps:
+  - task: PowerShell@2
+    displayName: Prep template pipeline for release
+    condition: and(succeeded(),eq(variables['TestPipeline'],'true'))
+    inputs:
+      pwsh: true
+      workingDirectory: $(Build.SourcesDirectory)
+      filePath: eng/scripts/SetTestPipelineVersion.ps1
+
   - script: |
       echo "##vso[build.addbuildtag]Scheduled"
     displayName: 'Tag scheduled builds'
@@ -18,13 +26,6 @@ steps:
   - script: |
       pip install -r eng/ci_tools.txt
     displayName: 'Prep Py2 Environment'
-    
-  - template: /eng/common/pipelines/templates/steps/replace-relative-links.yml
-    parameters:
-      TargetFolder: $(Build.SourcesDirectory)
-      RootFolder: $(Build.SourcesDirectory)
-      BuildSHA: $(Build.SourceVersion)
-      RepoId: 'Azure/azure-sdk-for-python'
 
   - task: PythonScript@0
     displayName: 'Generate Python2 Applicable Namespace Packages'

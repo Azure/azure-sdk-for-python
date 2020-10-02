@@ -15,12 +15,13 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.0.1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b2 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.1/entities/recognition/pii?showStats=false&stringIndexType=UnicodeCodePoint
+    uri: https://westcentralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.2/entities/recognition/pii?showStats=false&stringIndexType=UnicodeCodePoint
   response:
     body:
-      string: '{"documents":[{"id":"3","entities":[{"text":"998.214.865-68","category":"Brazil
+      string: '{"documents":[{"redactedText":"Is ************** your Brazilian CPF
+        number?","id":"3","entities":[{"text":"998.214.865-68","category":"Brazil
         CPF Number","offset":3,"length":14,"confidenceScore":0.85}],"warnings":[]}],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
         Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
         language code. Supported languages: en"}}},{"id":"2","error":{"code":"InvalidArgument","message":"Invalid
@@ -28,13 +29,13 @@ interactions:
         text is empty."}}}],"modelVersion":"2020-07-01"}'
     headers:
       apim-request-id:
-      - 120bc6cc-6db4-41ef-928e-66bf40ee61ed
+      - 05e5ceca-6761-4316-994e-595a8711e092
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=1
       date:
-      - Thu, 27 Aug 2020 19:32:20 GMT
+      - Wed, 30 Sep 2020 16:03:02 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -42,7 +43,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '75'
+      - '72'
     status:
       code: 200
       message: OK

@@ -17,6 +17,8 @@ from devtools_testutils import (
 from devtools_testutils.cognitiveservices_testcase import CognitiveServicesAccountPreparer
 from azure_devtools.scenario_tests import ReplayableTest
 
+REGION = 'westcentralus'
+
 
 class FakeTokenCredential(object):
     """Protocol for classes able to provide OAuth tokens.
@@ -58,7 +60,6 @@ class TextAnalyticsTest(AzureTestCase):
         self.assertEqual(opinion_one.confidence_scores.negative, opinion_two.confidence_scores.negative)
         self.validateConfidenceScores(opinion_one.confidence_scores)
         self.assertEqual(opinion_one.offset, opinion_two.offset)
-        self.assertEqual(opinion_one.length, opinion_two.length)
         self.assertEqual(opinion_one.text, opinion_two.text)
         self.assertEqual(opinion_one.is_negated, opinion_two.is_negated)
 
@@ -92,7 +93,7 @@ class GlobalResourceGroupPreparer(AzureMgmtPreparer):
             )
 
         return {
-            'location': 'westus',
+            'location': REGION,
             'resource_group': rg,
         }
 
@@ -108,7 +109,7 @@ class GlobalTextAnalyticsAccountPreparer(AzureMgmtPreparer):
         text_analytics_account = TextAnalyticsTest._TEXT_ANALYTICS_ACCOUNT
 
         return {
-            'location': 'westus2',
+            'location': REGION,
             'resource_group': TextAnalyticsTest._RESOURCE_GROUP,
             'text_analytics_account': text_analytics_account,
             'text_analytics_account_key': TextAnalyticsTest._TEXT_ANALYTICS_KEY,
@@ -147,7 +148,9 @@ class TextAnalyticsClientPreparer(AzureMgmtPreparer):
 def text_analytics_account():
     test_case = AzureTestCase("__init__")
     rg_preparer = ResourceGroupPreparer(random_name_enabled=True, name_prefix='pycog')
-    text_analytics_preparer = CognitiveServicesAccountPreparer(random_name_enabled=True, name_prefix='pycog')
+    text_analytics_preparer = CognitiveServicesAccountPreparer(
+        random_name_enabled=True, name_prefix='pycog', location=REGION
+    )
 
     try:
         rg_name, rg_kwargs = rg_preparer._prepare_create_resource(test_case)

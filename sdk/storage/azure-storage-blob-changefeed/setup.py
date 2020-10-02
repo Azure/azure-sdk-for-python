@@ -72,7 +72,7 @@ setup(
     author_email='ascl@microsoft.com',
     url='https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob-changefeed',
     classifiers=[
-        'Development Status :: 4 - Beta',
+        "Development Status :: 4 - Beta",
         'Programming Language :: Python',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
@@ -88,7 +88,7 @@ setup(
         'azure.storage.blob.changefeed',
     ],
     install_requires=[
-        "azure-storage-blob~=12.4.0b1",
+        "azure-storage-blob>=12.5.0,<13.0.0"
     ],
     extras_require={
         ":python_version<'3.0'": ['futures', 'azure-storage-nspkg<4.0.0,>=3.0.0'],
