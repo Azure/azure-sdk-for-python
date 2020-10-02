@@ -26,9 +26,8 @@
 /sdk/storage/                                                        @amishra-dev @zezha-msft @annatisch @rakshith91 @xiafu-msft @tasherif-msft @kasobol-msft
 
 # PRLabel: %App Configuration
-/sdk/appconfiguration/                     							             @xiangyan99
+/sdk/appconfiguration/                                               @xiangyan99
 
-/sdk/applicationinsights/                                            @alexeldeib
 /sdk/applicationinsights/azure-applicationinsights/                  @divya-jay @geneh @alongafni
 /sdk/loganalytics/azure-loganalytics/                                @divya-jay @geneh @alongafni
 
