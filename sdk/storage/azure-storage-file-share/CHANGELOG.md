@@ -4,7 +4,7 @@
 **New features**
 - Added support for enabling SMB Multichannel for the share service.
 - Added support for leasing a share.
-- Added support for getting the range diff between current the file and a snapshot and the diff between two snapshots.
+- Added support for getting the range diff between current file and a snapshot as well as getting the diff between two file snapshots.
 
 
 ## 12.2.0 (2020-08-13)
