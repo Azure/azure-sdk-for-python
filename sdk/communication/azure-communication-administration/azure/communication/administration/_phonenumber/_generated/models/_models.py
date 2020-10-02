@@ -281,7 +281,7 @@ class LocationOptions(msrest.serialization.Model):
 
 
 class LocationOptionsDetails(msrest.serialization.Model):
-    """Represents location options deatils.
+    """Represents location options details.
 
     :param name: The name of the location options.
     :type name: str
@@ -527,7 +527,7 @@ class PhoneNumberCountry(msrest.serialization.Model):
 
 
 class PhoneNumberEntities(msrest.serialization.Model):
-    """Represents a list of searchs or releases, as part of the response when fetching all searches or releases.
+    """Represents a list of searches or releases, as part of the response when fetching all searches or releases.
 
     :param entities: The underlying list of entities.
     :type entities: list[~azure.communication.administration.models.PhoneNumberEntity]
@@ -552,7 +552,7 @@ class PhoneNumberEntities(msrest.serialization.Model):
 class PhoneNumberEntity(msrest.serialization.Model):
     """Represents a phone number entity, as part of the response when calling get all searches or releases.
 
-    :param id: The id of the entity. It is the search id of a searc. It is the release id of a
+    :param id: The id of the entity. It is the search id of a search. It is the release id of a
      release.
     :type id: str
     :param created_at: Date and time the entity is created.
@@ -1025,7 +1025,7 @@ class UpdateNumberCapabilitiesResponse(msrest.serialization.Model):
 class UpdatePhoneNumberCapabilitiesResponse(msrest.serialization.Model):
     """Response for getting a phone number update capabilities.
 
-    :param capabilities_update_id: The id of the phone number capabilties update.
+    :param capabilities_update_id: The id of the phone number capabilities update.
     :type capabilities_update_id: str
     :param created_at: The time the capabilities update was created.
     :type created_at: ~datetime.datetime
