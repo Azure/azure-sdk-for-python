@@ -24,7 +24,7 @@ BATCH = json.load(open(join(CWD, "..", "hotel_small.json"), encoding='utf-8'))
 
 from azure.core.exceptions import HttpResponseError
 from azure.core.credentials import AzureKeyCredential
-from azure.search.documents.aio import SearchClient, SearchIndexDocumentBatchingClient
+from azure.search.documents.aio import SearchClient, SearchIndexingBufferedSender
 
 TIME_TO_SLEEP = 3
 
@@ -51,7 +51,7 @@ class SearchClientTestAsync(AzureMgmtTestCase):
         client = SearchClient(
             endpoint, index_name, AzureKeyCredential(api_key)
         )
-        batch_client = SearchIndexDocumentBatchingClient(
+        batch_client = SearchIndexingBufferedSender(
             endpoint, index_name, AzureKeyCredential(api_key)
         )
         batch_client._batch_size = 2
@@ -61,7 +61,7 @@ class SearchClientTestAsync(AzureMgmtTestCase):
         ]
 
         async with batch_client:
-            await batch_client.add_upload_actions(DOCUMENTS)
+            await batch_client.upload_documents(DOCUMENTS)
 
         # There can be some lag before a document is searchable
         if self.is_live:
@@ -84,7 +84,7 @@ class SearchClientTestAsync(AzureMgmtTestCase):
         client = SearchClient(
             endpoint, index_name, AzureKeyCredential(api_key)
         )
-        batch_client = SearchIndexDocumentBatchingClient(
+        batch_client = SearchIndexingBufferedSender(
             endpoint, index_name, AzureKeyCredential(api_key)
         )
         batch_client._batch_size = 2
@@ -93,7 +93,7 @@ class SearchClientTestAsync(AzureMgmtTestCase):
             {"hotelId": "3", "rating": 4, "rooms": [], "hotelName": "Redmond Hotel"},
         ]
         async with batch_client:
-            await batch_client.add_upload_actions(DOCUMENTS)
+            await batch_client.upload_documents(DOCUMENTS)
 
         # There can be some lag before a document is searchable
         if self.is_live:
@@ -110,12 +110,12 @@ class SearchClientTestAsync(AzureMgmtTestCase):
         client = SearchClient(
             endpoint, index_name, AzureKeyCredential(api_key)
         )
-        batch_client = SearchIndexDocumentBatchingClient(
+        batch_client = SearchIndexingBufferedSender(
             endpoint, index_name, AzureKeyCredential(api_key)
         )
         batch_client._batch_size = 2
         async with batch_client:
-            await batch_client.add_delete_actions(
+            await batch_client.delete_documents(
                 [{"hotelId": "3"}, {"hotelId": "4"}]
             )
 
@@ -140,12 +140,12 @@ class SearchClientTestAsync(AzureMgmtTestCase):
         client = SearchClient(
             endpoint, index_name, AzureKeyCredential(api_key)
         )
-        batch_client = SearchIndexDocumentBatchingClient(
+        batch_client = SearchIndexingBufferedSender(
             endpoint, index_name, AzureKeyCredential(api_key)
         )
         batch_client._batch_size = 2
         async with batch_client:
-            await batch_client.add_delete_actions(
+            await batch_client.delete_documents(
                 [{"hotelId": "1000"}, {"hotelId": "4"}]
             )
 
@@ -170,12 +170,12 @@ class SearchClientTestAsync(AzureMgmtTestCase):
         client = SearchClient(
             endpoint, index_name, AzureKeyCredential(api_key)
         )
-        batch_client = SearchIndexDocumentBatchingClient(
+        batch_client = SearchIndexingBufferedSender(
             endpoint, index_name, AzureKeyCredential(api_key)
         )
         batch_client._batch_size = 2
         async with batch_client:
-            await batch_client.add_merge_actions(
+            await batch_client.merge_documents(
                 [{"hotelId": "3", "rating": 1}, {"hotelId": "4", "rating": 2}]
             )
 
@@ -200,12 +200,12 @@ class SearchClientTestAsync(AzureMgmtTestCase):
         client = SearchClient(
             endpoint, index_name, AzureKeyCredential(api_key)
         )
-        batch_client = SearchIndexDocumentBatchingClient(
+        batch_client = SearchIndexingBufferedSender(
             endpoint, index_name, AzureKeyCredential(api_key)
         )
         batch_client._batch_size = 2
         async with batch_client:
-            await batch_client.add_merge_actions(
+            await batch_client.merge_documents(
                 [{"hotelId": "1000", "rating": 1}, {"hotelId": "4", "rating": 2}]
             )
 
@@ -230,12 +230,12 @@ class SearchClientTestAsync(AzureMgmtTestCase):
         client = SearchClient(
             endpoint, index_name, AzureKeyCredential(api_key)
         )
-        batch_client = SearchIndexDocumentBatchingClient(
+        batch_client = SearchIndexingBufferedSender(
             endpoint, index_name, AzureKeyCredential(api_key)
         )
         batch_client._batch_size = 2
         async with batch_client:
-            await batch_client.add_merge_or_upload_actions(
+            await batch_client.merge_or_upload_documents(
                 [{"hotelId": "1000", "rating": 1}, {"hotelId": "4", "rating": 2}]
             )
 
