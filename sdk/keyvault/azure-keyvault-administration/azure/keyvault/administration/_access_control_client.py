@@ -11,6 +11,7 @@ from ._models import KeyVaultRoleAssignment, KeyVaultRoleDefinition
 from ._internal import KeyVaultClientBase
 
 if TYPE_CHECKING:
+    # pylint:disable=ungrouped-imports
     from typing import Any, Union
     from uuid import UUID
     from azure.core.paging import ItemPaged
