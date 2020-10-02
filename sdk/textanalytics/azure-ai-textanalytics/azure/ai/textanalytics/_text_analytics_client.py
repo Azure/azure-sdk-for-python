@@ -29,6 +29,7 @@ from ._response_handlers import (
     healthcare_paged_result,
     analyze_paged_result
 )
+from ._helpers import _get_deserialize
 from ._models import (
     EntitiesRecognitionTask,
     PiiEntitiesRecognitionTask,
@@ -105,6 +106,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         self._default_language = kwargs.pop("default_language", "en")
         self._default_country_hint = kwargs.pop("default_country_hint", "US")
         self._string_code_unit = None if kwargs.get("api_version") == "v3.0" else "UnicodeCodePoint"
+        self._deserialize = _get_deserialize()
 
     @distributed_trace
     def detect_language(  # type: ignore
@@ -385,6 +387,10 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         except HttpResponseError as error:
             process_http_response_error(error)
 
+    def _healthcare_result_callback(self, raw_response, _, headers, show_stats=False):
+        healthcare_result = self._deserialize(self._client.models().HealthcareJobState, raw_response)
+        return healthcare_paged_result(self._client.health_status, raw_response, healthcare_result, headers, show_stats=show_stats)
+
     @distributed_trace
     def begin_health(  # type: ignore
         self,
@@ -436,7 +442,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 docs,
                 model_version=model_version,
                 string_index_type=self._string_code_unit,
-                cls=kwargs.pop("cls", partial(healthcare_paged_result, self._client.health_status, show_stats=show_stats)),
+                cls=kwargs.pop("cls", partial(self._healthcare_result_callback, show_stats=show_stats)),
                 polling=LROBasePolling(timeout=polling_interval, **kwargs),
                 continuation_token=continuation_token,
                 **kwargs
@@ -621,6 +627,10 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         except HttpResponseError as error:
             process_http_response_error(error)
 
+    def _analyze_result_callback(self, raw_response, _, headers):
+        analyze_result = self._deserialize(self._client.models().AnalyzeJobState, raw_response)
+        return analyze_paged_result(self._client.analyze_status, raw_response, analyze_result, headers)
+
     @distributed_trace
     def begin_analyze(  # type: ignore
         self,
@@ -695,7 +705,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             )
             return self._client.begin_analyze(
                 body=analyze_body,
-                cls=kwargs.pop("cls", partial(analyze_paged_result, self._client.health_status)),
+                cls=kwargs.pop("cls", self._analyze_result_callback),
                 polling=LROBasePolling(timeout=polling_interval, **kwargs),
                 **kwargs
             )
