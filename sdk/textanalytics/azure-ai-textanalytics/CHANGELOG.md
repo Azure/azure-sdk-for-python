@@ -5,6 +5,7 @@
 **Breaking changes**
 - Removed property `length` from `CategorizedEntity`, `SentenceSentiment`, `LinkedEntityMatch`, `AspectSentiment`, `OpinionSentiment`, and `PiiEntity`.
 To get the length of the text in these models, just call `len()` on the `text` property.
+- When a parameter or endpoint is not compatible with the API version you specify, we will now return a `ValueError` instead of a `NotImplementedError`.
 
 ## 5.1.0b1 (2020-09-17)
 
