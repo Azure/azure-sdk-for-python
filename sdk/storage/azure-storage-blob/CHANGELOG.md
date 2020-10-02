@@ -1,5 +1,8 @@
 # Release History
 
+## 12.6.0b2 (Unreleased)
+
+
 ## 12.6.0b1 (2020-10-02)
 **New features***
 - Added support for Arrow format (`ArrowType`) output serialization using `quick_query()`.
