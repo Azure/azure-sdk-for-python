@@ -77,17 +77,17 @@ def create_search():
         phone_plan_ids=[phone_plan_id],
         quantity=1
     )
-    search_response = phone_number_administration_client.begin_create_search(
+    search_response = phone_number_administration_client.create_search(
         body=searchOptions
     )
     # [END create_search]
-    print('search_response status:')
-    print(search_response.status())
+    print('search_response:')
+    print(search_response)
 
 
 def cancel_search():
     # [START cancel_search]
-    phone_number_administration_client.begin_cancel_search(
+    phone_number_administration_client.cancel_search(
         search_id=search_id_to_cancel
     )
     # [START cancel_search]
@@ -95,7 +95,7 @@ def cancel_search():
 
 def purchase_search():
     # [START cancel_search]
-    phone_number_administration_client.begin_purchase_search(
+    phone_number_administration_client.purchase_search(
         search_id=search_id_to_purchase
     )
     # [END cancel_search]

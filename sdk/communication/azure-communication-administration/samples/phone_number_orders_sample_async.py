@@ -83,11 +83,11 @@ async def create_search():
         quantity=1
     )
     async with phone_number_administration_client:
-        search_response = await phone_number_administration_client.begin_create_search(
+        search_response = await phone_number_administration_client.create_search(
             body=searchOptions
         )
-        print('search_response status:')
-        print(search_response.status())
+        print('search_response:')
+        print(search_response)
     # [END create_search]
 
 
@@ -95,7 +95,7 @@ async def cancel_search():
     # [START cancel_search]
     phone_number_administration_client = PhoneNumberAdministrationClient.from_connection_string(connection_str)
     async with phone_number_administration_client:
-        await phone_number_administration_client.begin_cancel_search(
+        await phone_number_administration_client.cancel_search(
             search_id=search_id_to_cancel
         )
     # [END cancel_search]
@@ -105,7 +105,7 @@ async def purchase_search():
     # [START purchase_search]
     phone_number_administration_client = PhoneNumberAdministrationClient.from_connection_string(connection_str)
     async with phone_number_administration_client:
-        await phone_number_administration_client.begin_purchase_search(
+        await phone_number_administration_client.purchase_search(
             search_id=search_id_to_purchase
         )
     # [END purchase_search]
