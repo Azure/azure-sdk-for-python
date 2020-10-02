@@ -8,6 +8,8 @@
 import unittest
 import asyncio
 
+import pytest
+
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
@@ -84,6 +86,7 @@ class FileServicePropertiesTest(AsyncStorageTestCase):
         self.assertEqual(ret1.days, ret2.days)
 
     # --Test cases per service ---------------------------------------
+    @pytest.mark.playback_test_only
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_file_service_properties_async(self, resource_group, location, storage_account, storage_account_key):

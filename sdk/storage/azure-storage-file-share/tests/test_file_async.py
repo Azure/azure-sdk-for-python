@@ -988,6 +988,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         self.assertIsNotNone(ranges)
         self.assertEqual(len(ranges), 0)
 
+    @pytest.mark.playback_test_only
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_list_ranges_diff(self, resource_group, location, storage_account, storage_account_key):

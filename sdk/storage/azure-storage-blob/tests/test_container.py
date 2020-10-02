@@ -827,6 +827,7 @@ class StorageContainerTest(StorageTestCase):
 
         self.assertEqual(blobs, ['blob1', 'blob2'])
 
+    @pytest.mark.playback_test_only
     @GlobalStorageAccountPreparer()
     def test_list_blobs_contains_last_access_time(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
