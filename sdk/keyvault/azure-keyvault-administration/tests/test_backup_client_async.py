@@ -7,6 +7,7 @@ import time
 from unittest import mock
 
 from azure.core.credentials import AccessToken
+from azure.core.exceptions import ResourceExistsError
 from azure.identity.aio import DefaultAzureCredential
 from azure.keyvault.keys.aio import KeyClient
 from azure.keyvault.administration.aio import KeyVaultBackupClient
@@ -50,11 +51,11 @@ class BackupClientTests(KeyVaultTestCase):
 
         # check backup status and result
         job_id = backup_poller.polling_method().resource().id
-        backup_status = await backup_client.full_backup_status(job_id)
+        backup_status = await backup_client.get_backup_status(job_id)
         assert_in_progress_operation(backup_status)
         backup_operation = await backup_poller.result()
         assert_successful_operation(backup_operation)
-        backup_status = await backup_client.full_backup_status(job_id)
+        backup_status = await backup_client.get_backup_status(job_id)
         assert_successful_operation(backup_status)
 
         # restore the backup
@@ -63,11 +64,11 @@ class BackupClientTests(KeyVaultTestCase):
 
         # check restore status and result
         job_id = restore_poller.polling_method().resource().id
-        restore_status = await backup_client.restore_status(job_id)
+        restore_status = await backup_client.get_restore_status(job_id)
         assert_in_progress_operation(restore_status)
         restore_operation = await restore_poller.result()
         assert_successful_operation(restore_operation)
-        restore_status = await backup_client.restore_status(job_id)
+        restore_status = await backup_client.get_restore_status(job_id)
         assert_successful_operation(restore_status)
 
     @ResourceGroupPreparer(random_name_enabled=True, use_cache=True)
@@ -85,11 +86,11 @@ class BackupClientTests(KeyVaultTestCase):
 
         # check backup status and result
         job_id = backup_poller.polling_method().resource().id
-        backup_status = await backup_client.full_backup_status(job_id)
+        backup_status = await backup_client.get_backup_status(job_id)
         assert_in_progress_operation(backup_status)
         backup_operation = await backup_poller.result()
         assert_successful_operation(backup_operation)
-        backup_status = await backup_client.full_backup_status(job_id)
+        backup_status = await backup_client.get_backup_status(job_id)
         assert_successful_operation(backup_status)
 
         # restore the key
@@ -98,14 +99,15 @@ class BackupClientTests(KeyVaultTestCase):
 
         # check restore status and result
         job_id = restore_poller.polling_method().resource().id
-        restore_status = await backup_client.restore_status(job_id)
+        restore_status = await backup_client.get_restore_status(job_id)
         assert_in_progress_operation(restore_status)
         restore_operation = await restore_poller.result()
         assert_successful_operation(restore_operation)
-        restore_status = await backup_client.restore_status(job_id)
+        restore_status = await backup_client.get_restore_status(job_id)
         assert_successful_operation(restore_status)
 
-        await key_client.delete_key(key_name)
+        # delete the key
+        await self._poll_until_no_exception(key_client.delete_key, key_name, expected_exception=ResourceExistsError)
         await key_client.purge_deleted_key(key_name)
 
 

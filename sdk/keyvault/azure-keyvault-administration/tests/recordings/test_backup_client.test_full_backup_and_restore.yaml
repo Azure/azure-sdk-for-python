@@ -43,103 +43,8 @@ interactions:
       code: 401
       message: Unauthorized
 - request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-identity/1.5.0b2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/v2.0/.well-known/openid-configuration
-  response:
-    body:
-      string: '{"token_endpoint":"https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token","token_endpoint_auth_methods_supported":["client_secret_post","private_key_jwt","client_secret_basic"],"jwks_uri":"https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/discovery/v2.0/keys","response_modes_supported":["query","fragment","form_post"],"subject_types_supported":["pairwise"],"id_token_signing_alg_values_supported":["RS256"],"response_types_supported":["code","id_token","code
-        id_token","id_token token"],"scopes_supported":["openid","profile","email","offline_access"],"issuer":"https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/v2.0","request_uri_parameter_supported":false,"userinfo_endpoint":"https://graph.microsoft.com/oidc/userinfo","authorization_endpoint":"https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/authorize","device_authorization_endpoint":"https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/devicecode","http_logout_supported":true,"frontchannel_logout_supported":true,"end_session_endpoint":"https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/logout","claims_supported":["sub","iss","cloud_instance_name","cloud_instance_host_name","cloud_graph_host_name","msgraph_host","aud","exp","iat","auth_time","acr","nonce","preferred_username","name","tid","ver","at_hash","c_hash","email"],"tenant_region_scope":"WW","cloud_instance_name":"microsoftonline.com","cloud_graph_host_name":"graph.windows.net","msgraph_host":"graph.microsoft.com","rbac_url":"https://pas.windows.net"}'
-    headers:
-      access-control-allow-methods:
-      - GET, OPTIONS
-      access-control-allow-origin:
-      - '*'
-      cache-control:
-      - max-age=86400, private
-      content-length:
-      - '1651'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Wed, 30 Sep 2020 23:58:33 GMT
-      p3p:
-      - CP="DSP CUR OTPi IND OTRi ONL FIN"
-      set-cookie:
-      - fpc=Atj-layKrThAm590nA75tDs; expires=Fri, 30-Oct-2020 23:58:33 GMT; path=/;
-        secure; HttpOnly; SameSite=None
-      - esctx=AQABAAAAAAB2UyzwtQEKR7-rWbgdcBZIdrHBkgdKkmA9xgym0OWrPyxdi56FsVdjQcA61oJCWHjUIZmIJOt9ADM8WOgSunmiUSJuJ-Qx3VDN-EnMVIbR9ccjx2duAvzPrPtizadgUN6zVZEE1EX7bAmkv3xsjIiz_1l9iEwAuVRhQkXWFTq6_TCfTWTFLjanPiks1cHq_gQgAA;
-        domain=.login.microsoftonline.com; path=/; secure; HttpOnly; SameSite=None
-      - x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly
-      - stsservicecookie=estsfd; path=/; secure; samesite=none; httponly
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      x-content-type-options:
-      - nosniff
-      x-ms-ests-server:
-      - 2.1.11086.7 - SCUS ProdSlices
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Cookie:
-      - stsservicecookie=estsfd; x-ms-gateway-slice=estsfd; fpc=Atj-layKrThAm590nA75tDs;
-        esctx=AQABAAAAAAB2UyzwtQEKR7-rWbgdcBZIdrHBkgdKkmA9xgym0OWrPyxdi56FsVdjQcA61oJCWHjUIZmIJOt9ADM8WOgSunmiUSJuJ-Qx3VDN-EnMVIbR9ccjx2duAvzPrPtizadgUN6zVZEE1EX7bAmkv3xsjIiz_1l9iEwAuVRhQkXWFTq6_TCfTWTFLjanPiks1cHq_gQgAA
-      User-Agent:
-      - azsdk-python-identity/1.5.0b2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://login.microsoftonline.com/common/discovery/instance?api-version=1.1&authorization_endpoint=https://login.microsoftonline.com/common/oauth2/authorize
-  response:
-    body:
-      string: '{"tenant_discovery_endpoint":"https://login.microsoftonline.com/common/.well-known/openid-configuration","api-version":"1.1","metadata":[{"preferred_network":"login.microsoftonline.com","preferred_cache":"login.windows.net","aliases":["login.microsoftonline.com","login.windows.net","login.microsoft.com","sts.windows.net"]},{"preferred_network":"login.partner.microsoftonline.cn","preferred_cache":"login.partner.microsoftonline.cn","aliases":["login.partner.microsoftonline.cn","login.chinacloudapi.cn"]},{"preferred_network":"login.microsoftonline.de","preferred_cache":"login.microsoftonline.de","aliases":["login.microsoftonline.de"]},{"preferred_network":"login.microsoftonline.us","preferred_cache":"login.microsoftonline.us","aliases":["login.microsoftonline.us","login.usgovcloudapi.net"]},{"preferred_network":"login-us.microsoftonline.com","preferred_cache":"login-us.microsoftonline.com","aliases":["login-us.microsoftonline.com"]}]}'
-    headers:
-      access-control-allow-methods:
-      - GET, OPTIONS
-      access-control-allow-origin:
-      - '*'
-      cache-control:
-      - max-age=86400, private
-      content-length:
-      - '945'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Wed, 30 Sep 2020 23:58:33 GMT
-      p3p:
-      - CP="DSP CUR OTPi IND OTRi ONL FIN"
-      set-cookie:
-      - fpc=Atj-layKrThAm590nA75tDs; expires=Fri, 30-Oct-2020 23:58:33 GMT; path=/;
-        secure; HttpOnly; SameSite=None
-      - x-ms-gateway-slice=prod; path=/; secure; samesite=none; httponly
-      - stsservicecookie=estsfd; path=/; secure; samesite=none; httponly
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      x-content-type-options:
-      - nosniff
-      x-ms-ests-server:
-      - 2.1.11086.7 - WUS2 ProdSlices
-    status:
-      code: 200
-      message: OK
-- request:
-    body: 'b''b\''b\\\''{"token": "redacted", "storageResourceUri": "https://storname.blob.core.windows.net/containerhl7ndvhj2hhrguq"}\\\''\'''''
+    body: '{"storageResourceUri": "https://storname.blob.core.windows.net/containertzdnut7zi4qw3kp",
+      "token": "redacted"}'
     headers:
       Accept:
       - application/json
@@ -148,7 +53,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '233'
+      - '235'
       Content-Type:
       - application/json
       User-Agent:
@@ -157,10 +62,10 @@ interactions:
     uri: https://managedhsm/backup?api-version=7.2-preview
   response:
     body:
-      string: '{"status":"InProgress","statusDetails":null,"error":{"code":null,"message":null,"innererror":null},"startTime":1601510314,"endTime":null,"jobId":"12e2c7c86b1c4ac0b41428a3ff67429f","azureStorageBlobContainerUri":null}'
+      string: '{"status":"InProgress","statusDetails":null,"error":{"code":null,"message":null,"innererror":null},"startTime":1601598856,"endTime":null,"jobId":"9f79064b49724b1c9896ebcd5222477d","azureStorageBlobContainerUri":null}'
     headers:
       azure-asyncoperation:
-      - https://managedhsm/backup/12e2c7c86b1c4ac0b41428a3ff67429f/pending
+      - https://managedhsm/backup/9f79064b49724b1c9896ebcd5222477d/pending
       cache-control:
       - no-cache
       content-length:
@@ -170,7 +75,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 30 Sep 2020 23:58:33 GMT
+      - Fri, 02 Oct 2020 00:34:16 GMT
       server:
       - Kestrel
       strict-transport-security:
@@ -184,7 +89,7 @@ interactions:
       x-ms-keyvault-region:
       - eastus2
       x-ms-server-latency:
-      - '661'
+      - '2444'
     status:
       code: 202
       message: ''
@@ -200,10 +105,10 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-administration/4.0.0b2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://managedhsm/backup/12e2c7c86b1c4ac0b41428a3ff67429f/pending?api-version=7.2-preview
+    uri: https://managedhsm/backup/9f79064b49724b1c9896ebcd5222477d/pending?api-version=7.2-preview
   response:
     body:
-      string: '{"azureStorageBlobContainerUri":null,"endTime":null,"error":{"code":null,"innererror":null,"message":null},"jobId":"12e2c7c86b1c4ac0b41428a3ff67429f","startTime":1601510314,"status":"InProgress","statusDetails":null}'
+      string: '{"azureStorageBlobContainerUri":null,"endTime":null,"error":{"code":null,"innererror":null,"message":null},"jobId":"9f79064b49724b1c9896ebcd5222477d","startTime":1601598856,"status":"InProgress","statusDetails":null}'
     headers:
       cache-control:
       - no-cache
@@ -214,7 +119,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 30 Sep 2020 23:58:34 GMT
+      - Fri, 02 Oct 2020 00:34:17 GMT
       server:
       - Kestrel
       strict-transport-security:
@@ -230,7 +135,7 @@ interactions:
       x-ms-keyvault-region:
       - eastus2
       x-ms-server-latency:
-      - '476'
+      - '1117'
     status:
       code: 200
       message: OK
@@ -246,10 +151,10 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-administration/4.0.0b2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://managedhsm/backup/12e2c7c86b1c4ac0b41428a3ff67429f/pending
+    uri: https://managedhsm/backup/9f79064b49724b1c9896ebcd5222477d/pending
   response:
     body:
-      string: '{"azureStorageBlobContainerUri":"https://storname.blob.core.windows.net/containerhl7ndvhj2hhrguq/mhsm-chlowehsm-2020093023583440","endTime":1601510323,"error":null,"jobId":"12e2c7c86b1c4ac0b41428a3ff67429f","startTime":1601510314,"status":"Succeeded","statusDetails":null}'
+      string: '{"azureStorageBlobContainerUri":"https://storname.blob.core.windows.net/containertzdnut7zi4qw3kp/mhsm-chlowehsm-2020100200341740","endTime":1601598867,"error":null,"jobId":"9f79064b49724b1c9896ebcd5222477d","startTime":1601598856,"status":"Succeeded","statusDetails":null}'
     headers:
       cache-control:
       - no-cache
@@ -260,7 +165,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 30 Sep 2020 23:58:44 GMT
+      - Fri, 02 Oct 2020 00:34:27 GMT
       server:
       - Kestrel
       strict-transport-security:
@@ -276,7 +181,7 @@ interactions:
       x-ms-keyvault-region:
       - eastus2
       x-ms-server-latency:
-      - '477'
+      - '1084'
     status:
       code: 200
       message: OK
@@ -292,10 +197,10 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-administration/4.0.0b2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://managedhsm/backup/12e2c7c86b1c4ac0b41428a3ff67429f/pending?api-version=7.2-preview
+    uri: https://managedhsm/backup/9f79064b49724b1c9896ebcd5222477d/pending?api-version=7.2-preview
   response:
     body:
-      string: '{"azureStorageBlobContainerUri":"https://storname.blob.core.windows.net/containerhl7ndvhj2hhrguq/mhsm-chlowehsm-2020093023583440","endTime":1601510323,"error":null,"jobId":"12e2c7c86b1c4ac0b41428a3ff67429f","startTime":1601510314,"status":"Succeeded","statusDetails":null}'
+      string: '{"azureStorageBlobContainerUri":"https://storname.blob.core.windows.net/containertzdnut7zi4qw3kp/mhsm-chlowehsm-2020100200341740","endTime":1601598867,"error":null,"jobId":"9f79064b49724b1c9896ebcd5222477d","startTime":1601598856,"status":"Succeeded","statusDetails":null}'
     headers:
       cache-control:
       - no-cache
@@ -306,7 +211,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 30 Sep 2020 23:58:45 GMT
+      - Fri, 02 Oct 2020 00:34:28 GMT
       server:
       - Kestrel
       strict-transport-security:
@@ -322,13 +227,14 @@ interactions:
       x-ms-keyvault-region:
       - eastus2
       x-ms-server-latency:
-      - '469'
+      - '515'
     status:
       code: 200
       message: OK
 - request:
-    body: 'b''b\''b\\\''{"folderToRestore": "mhsm-chlowehsm-2020093023583440", "sasTokenParameters":
-      {"token": "redacted", "storageResourceUri": "https://storname.blob.core.windows.net/containerhl7ndvhj2hhrguq"}}\\\''\'''''
+    body: '{"folderToRestore": "mhsm-chlowehsm-2020100200341740", "sasTokenParameters":
+      {"storageResourceUri": "https://storname.blob.core.windows.net/containertzdnut7zi4qw3kp",
+      "token": "redacted"}}'
     headers:
       Accept:
       - application/json
@@ -337,7 +243,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '311'
+      - '313'
       Content-Type:
       - application/json
       User-Agent:
@@ -346,10 +252,10 @@ interactions:
     uri: https://managedhsm/restore?api-version=7.2-preview
   response:
     body:
-      string: '{"endTime":null,"error":{"code":null,"innererror":null,"message":null},"jobId":"90e115e27fc44f08ae7e689232a92b26","startTime":1601510326,"status":"InProgress","statusDetails":null}'
+      string: '{"endTime":null,"error":{"code":null,"innererror":null,"message":null},"jobId":"08089b7944ef471ca45e77921ff1f5df","startTime":1601598870,"status":"InProgress","statusDetails":null}'
     headers:
       azure-asyncoperation:
-      - https://managedhsm/restore/90e115e27fc44f08ae7e689232a92b26/pending
+      - https://managedhsm/restore/08089b7944ef471ca45e77921ff1f5df/pending
       cache-control:
       - no-cache
       content-length:
@@ -359,7 +265,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 30 Sep 2020 23:58:45 GMT
+      - Fri, 02 Oct 2020 00:34:29 GMT
       server:
       - Kestrel
       strict-transport-security:
@@ -373,7 +279,7 @@ interactions:
       x-ms-keyvault-region:
       - eastus2
       x-ms-server-latency:
-      - '711'
+      - '1388'
     status:
       code: 202
       message: ''
@@ -389,10 +295,10 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-administration/4.0.0b2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://managedhsm/restore/90e115e27fc44f08ae7e689232a92b26/pending?api-version=7.2-preview
+    uri: https://managedhsm/restore/08089b7944ef471ca45e77921ff1f5df/pending?api-version=7.2-preview
   response:
     body:
-      string: '{"endTime":null,"error":{"code":null,"innererror":null,"message":null},"jobId":"90e115e27fc44f08ae7e689232a92b26","startTime":1601510326,"status":"InProgress","statusDetails":null}'
+      string: '{"endTime":null,"error":{"code":null,"innererror":null,"message":null},"jobId":"08089b7944ef471ca45e77921ff1f5df","startTime":1601598870,"status":"InProgress","statusDetails":null}'
     headers:
       cache-control:
       - no-cache
@@ -403,7 +309,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 30 Sep 2020 23:58:46 GMT
+      - Fri, 02 Oct 2020 00:34:30 GMT
       server:
       - Kestrel
       strict-transport-security:
@@ -419,7 +325,7 @@ interactions:
       x-ms-keyvault-region:
       - eastus2
       x-ms-server-latency:
-      - '468'
+      - '985'
     status:
       code: 200
       message: OK
@@ -435,10 +341,10 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-administration/4.0.0b2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://managedhsm/restore/90e115e27fc44f08ae7e689232a92b26/pending
+    uri: https://managedhsm/restore/08089b7944ef471ca45e77921ff1f5df/pending
   response:
     body:
-      string: '{"endTime":null,"error":{"code":null,"innererror":null,"message":null},"jobId":"90e115e27fc44f08ae7e689232a92b26","startTime":1601510326,"status":"InProgress","statusDetails":null}'
+      string: '{"endTime":null,"error":{"code":null,"innererror":null,"message":null},"jobId":"08089b7944ef471ca45e77921ff1f5df","startTime":1601598870,"status":"InProgress","statusDetails":null}'
     headers:
       cache-control:
       - no-cache
@@ -449,7 +355,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 30 Sep 2020 23:58:57 GMT
+      - Fri, 02 Oct 2020 00:34:40 GMT
       server:
       - Kestrel
       strict-transport-security:
@@ -465,7 +371,7 @@ interactions:
       x-ms-keyvault-region:
       - eastus2
       x-ms-server-latency:
-      - '558'
+      - '497'
     status:
       code: 200
       message: OK
@@ -481,10 +387,56 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-administration/4.0.0b2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://managedhsm/restore/90e115e27fc44f08ae7e689232a92b26/pending
+    uri: https://managedhsm/restore/08089b7944ef471ca45e77921ff1f5df/pending
   response:
     body:
-      string: '{"endTime":1601510337,"error":null,"jobId":"90e115e27fc44f08ae7e689232a92b26","startTime":1601510326,"status":"Succeeded","statusDetails":null}'
+      string: '{"endTime":null,"error":{"code":null,"innererror":null,"message":null},"jobId":"08089b7944ef471ca45e77921ff1f5df","startTime":1601598870,"status":"InProgress","statusDetails":null}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '180'
+      content-security-policy:
+      - default-src 'self'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 02 Oct 2020 00:34:45 GMT
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-frame-options:
+      - SAMEORIGIN
+      x-ms-build-version:
+      - 1.0.20200917-2-1617fc9c-develop
+      x-ms-keyvault-network-info:
+      - addr=162.211.216.102
+      x-ms-keyvault-region:
+      - eastus2
+      x-ms-server-latency:
+      - '506'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-keyvault-administration/4.0.0b2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://managedhsm/restore/08089b7944ef471ca45e77921ff1f5df/pending
+  response:
+    body:
+      string: '{"endTime":1601598887,"error":null,"jobId":"08089b7944ef471ca45e77921ff1f5df","startTime":1601598870,"status":"Succeeded","statusDetails":null}'
     headers:
       cache-control:
       - no-cache
@@ -495,7 +447,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 30 Sep 2020 23:59:03 GMT
+      - Fri, 02 Oct 2020 00:34:51 GMT
       server:
       - Kestrel
       strict-transport-security:
@@ -511,7 +463,7 @@ interactions:
       x-ms-keyvault-region:
       - eastus2
       x-ms-server-latency:
-      - '1045'
+      - '472'
     status:
       code: 200
       message: OK
@@ -527,10 +479,10 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-administration/4.0.0b2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://managedhsm/restore/90e115e27fc44f08ae7e689232a92b26/pending?api-version=7.2-preview
+    uri: https://managedhsm/restore/08089b7944ef471ca45e77921ff1f5df/pending?api-version=7.2-preview
   response:
     body:
-      string: '{"endTime":1601510337,"error":null,"jobId":"90e115e27fc44f08ae7e689232a92b26","startTime":1601510326,"status":"Succeeded","statusDetails":null}'
+      string: '{"endTime":1601598887,"error":null,"jobId":"08089b7944ef471ca45e77921ff1f5df","startTime":1601598870,"status":"Succeeded","statusDetails":null}'
     headers:
       cache-control:
       - no-cache
@@ -541,7 +493,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 30 Sep 2020 23:59:04 GMT
+      - Fri, 02 Oct 2020 00:34:52 GMT
       server:
       - Kestrel
       strict-transport-security:
@@ -557,7 +509,7 @@ interactions:
       x-ms-keyvault-region:
       - eastus2
       x-ms-server-latency:
-      - '749'
+      - '487'
     status:
       code: 200
       message: OK

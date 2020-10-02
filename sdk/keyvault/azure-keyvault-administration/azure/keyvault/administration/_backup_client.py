@@ -94,7 +94,7 @@ class KeyVaultBackupClient(KeyVaultClientBase):
             **kwargs
         )
 
-    def full_backup_status(self, job_id, **kwargs):
+    def get_backup_status(self, job_id, **kwargs):
         # type: (str, **Any) -> BackupOperation
         """Returns the status of a full backup operation.
 
@@ -110,7 +110,7 @@ class KeyVaultBackupClient(KeyVaultClientBase):
             **kwargs
         )
 
-    def restore_status(self, job_id, **kwargs):
+    def get_restore_status(self, job_id, **kwargs):
         # type: (str, **Any) -> RestoreOperation
         """Returns the status of a restore operation.
 

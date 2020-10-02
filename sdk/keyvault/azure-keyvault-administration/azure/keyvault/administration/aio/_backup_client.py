@@ -103,7 +103,7 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
             **kwargs
         )
 
-    async def full_backup_status(
+    async def get_backup_status(
         self, job_id: str, **kwargs: "Any"
     ) -> "BackupOperation":
         """Returns the status of a full backup operation.
@@ -119,7 +119,7 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
             **kwargs
         )
 
-    async def restore_status(
+    async def get_restore_status(
         self, job_id: str, **kwargs: "Any"
     ) -> "RestoreOperation":
         """Returns the status of a restore operation.
