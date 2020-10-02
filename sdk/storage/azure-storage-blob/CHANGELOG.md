@@ -1,6 +1,10 @@
 # Release History
 
-## 12.6.0b1 (Unreleased)
+## 12.6.0b1 (2020-10-02)
+**New features***
+- Added support for Arrow format (`ArrowType`) output serialization using `quick_query()`.
+- Added support for undeleting a container.
+- Added support for `LastAccessTime` property on a blob, which could be the last time a blob was written or read.
 
 
 ## 12.5.0 (2020-09-10)
