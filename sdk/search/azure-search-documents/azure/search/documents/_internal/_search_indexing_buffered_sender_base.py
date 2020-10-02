@@ -36,10 +36,10 @@ class SearchIndexingBufferedSenderBase(HeadersMixin):
         self._index_name = index_name  # type: str
         self._index_key = None
         self._credential = credential  # type: AzureKeyCredential
-        self._new_callback = kwargs.pop('on_new', None)
-        self._progress_callback = kwargs.pop('on_progress', None)
-        self._error_callback = kwargs.pop('on_error', None)
-        self._remove_callback = kwargs.pop('on_remove', None)
+        self._on_new = kwargs.pop('on_new', None)
+        self._on_progress = kwargs.pop('on_progress', None)
+        self._on_error = kwargs.pop('on_error', None)
+        self._on_remove = kwargs.pop('on_remove', None)
         self._retry_counter = {}
 
     @property

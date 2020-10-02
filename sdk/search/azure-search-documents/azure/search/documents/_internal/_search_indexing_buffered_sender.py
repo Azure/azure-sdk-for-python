@@ -142,12 +142,12 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
                 try:
                     action = next(x for x in actions if x.additional_properties.get(self._index_key) == result.key)
                     if result.succeeded:
-                        self._succeed_callback(action)
+                        self._callback_succeed(action)
                     elif is_retryable_status_code(result.status_code):
                         self._retry_action(action)
                         has_error = True
                     else:
-                        self._fail_callback(action)
+                        self._callback_fail(action)
                         has_error = True
                 except StopIteration:
                     pass
@@ -193,7 +193,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         :type documents: List[dict]
         """
         actions = self._index_documents_batch.add_upload_actions(documents)
-        self._new_action_callback(actions)
+        self._callback_new(actions)
         self._process_if_needed()
 
     @distributed_trace
@@ -205,7 +205,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         :type documents: List[dict]
         """
         actions = self._index_documents_batch.add_delete_actions(documents)
-        self._new_action_callback(actions)
+        self._callback_new(actions)
         self._process_if_needed()
 
     @distributed_trace
@@ -217,7 +217,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         :type documents: List[dict]
         """
         actions = self._index_documents_batch.add_merge_actions(documents)
-        self._new_action_callback(actions)
+        self._callback_new(actions)
         self._process_if_needed()
 
     @distributed_trace
@@ -229,7 +229,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         :type documents: List[dict]
         """
         actions = self._index_documents_batch.add_merge_or_upload_actions(documents)
-        self._new_action_callback(actions)
+        self._callback_new(actions)
         self._process_if_needed()
 
     @distributed_trace
@@ -302,7 +302,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
     def _retry_action(self, action):
         # type: (IndexAction) -> None
         if not self._index_key:
-            self._fail_callback(action)
+            self._callback_fail(action)
             return
         key = action.additional_properties.get(self._index_key)
         counter = self._retry_counter.get(key)
@@ -315,24 +315,24 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
             self._retry_counter[key] = counter + 1
             self._index_documents_batch.enqueue_action(action)
         else:
-            self._fail_callback(action)
+            self._callback_fail(action)
 
-    def _succeed_callback(self, action):
+    def _callback_succeed(self, action):
         # type: (IndexAction) -> None
-        if self._remove_callback:
-            self._remove_callback(action)
-        if self._progress_callback:
-            self._progress_callback(action)
+        if self._on_remove:
+            self._on_remove(action)
+        if self._on_progress:
+            self._on_progress(action)
 
-    def _fail_callback(self, action):
+    def _callback_fail(self, action):
         # type: (IndexAction) -> None
-        if self._remove_callback:
-            self._remove_callback(action)
-        if self._error_callback:
-            self._error_callback(action)
+        if self._on_remove:
+            self._on_remove(action)
+        if self._on_error:
+            self._on_error(action)
 
-    def _new_action_callback(self, actions):
+    def _callback_new(self, actions):
         # type: (List[IndexAction]) -> None
-        if self._new_callback:
+        if self._on_new:
             for action in actions:
-                self._new_callback(action)
+                self._on_new(action)

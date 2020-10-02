@@ -10,7 +10,7 @@
 - Renamed `SearchIndexDocumentBatchingClient.add_merge_actions` to `SearchIndexingBufferedSender.merge_documents`
 - Renamed `SearchIndexDocumentBatchingClient.add_merge_or_upload_actions` to `SearchIndexingBufferedSender.merge_or_upload_documents`
 - Stopped supporting `window` kwargs for `SearchIndexingBufferedSender`
-- Splitted kwarg `hook` into `new_callback`, `progress_callback`, `error_callback`, `remove_callback` for `SearchIndexDocumentBatchingClient`
+- Splitted kwarg `hook` into `on_new`, `on_progress`, `on_error`, `on_remove` for `SearchIndexingBufferedSender`
 
 **Features**
 
