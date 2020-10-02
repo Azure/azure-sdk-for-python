@@ -36,7 +36,6 @@ from azure.core.pipeline.policies import (
 
 from _shared.testcase import (
     TableTestCase,
-    GlobalStorageAccountPreparer,
     RERUNS_DELAY,
     SLEEP_DELAY
 )

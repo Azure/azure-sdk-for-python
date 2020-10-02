@@ -29,7 +29,7 @@ from azure.data.tables import (
     EdmType
 )
 
-from _shared.testcase import GlobalStorageAccountPreparer, TableTestCase, LogCaptured
+from _shared.testcase import TableTestCase, LogCaptured
 from devtools_testutils import CachedResourceGroupPreparer, CachedStorageAccountPreparer
 
 #------------------------------------------------------------------------------
@@ -676,7 +676,7 @@ class StorageTableBatchTest(TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("This does not throw an error, but it should")
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     async def test_batch_different_partition_operations_fail(self, resource_group, location, storage_account, storage_account_key):
@@ -695,7 +695,6 @@ class StorageTableBatchTest(TableTestCase):
 
             entity = self._create_random_entity_dict(
                 '002', 'batch_negative_1')
-            batch.create_entity(entity)
 
             # Assert
             with self.assertRaises(ValueError):

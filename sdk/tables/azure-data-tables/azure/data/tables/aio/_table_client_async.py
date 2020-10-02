@@ -33,11 +33,11 @@ from .._error import _process_table_error
 from .._models import UpdateMode
 from .._deserialize import _convert_to_entity, _trim_service_metadata
 from .._serialize import _add_entity_properties, _get_match_headers
-from .._table_batch import TableBatchOperations
 from .._table_client_base import TableClientBase
 from ._base_client_async import AsyncStorageAccountHostsMixin
 from ._models import TableEntityPropertiesPaged
 from ._policies_async import ExponentialRetry
+from ._table_batch_async import TableBatchOperations
 
 
 class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
@@ -624,57 +624,3 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         :raises: None
         """
         return await self._batch_send(*batch._requests, **kwargs) # pylint:disable=protected-access
-
-    # async def _batch_send(
-    #     self, *reqs: List[HttpRequest],
-    #     **kwargs: Dict[str, Any]
-    # ): # -> List[HttpResponse]:
-    #     """Given a series of request, do a Storage batch call.
-    #     """
-    #     # Pop it here, so requests doesn't feel bad about additional kwarg
-    #     raise_on_any_failure = kwargs.pop("raise_on_any_failure", True)
-    #     policies = [StorageHeadersPolicy()]
-
-    #     changeset = HttpRequest('POST', None)
-    #     changeset.set_multipart_mixed(
-    #         *reqs,
-    #         policies=policies,
-    #         boundary="changeset_{}".format(uuid4())
-    #     )
-    #     request = self._client._client.post(  # pylint: disable=protected-access
-    #         url='https://{}/$batch'.format(self._primary_hostname),
-    #         headers={
-    #             'x-ms-version': self.api_version,
-    #             'DataServiceVersion': '3.0',
-    #             'MaxDataServiceVersion': '3.0;NetFx',
-    #         }
-    #     )
-    #     request.set_multipart_mixed(
-    #         changeset,
-    #         policies=policies,
-    #         enforce_https=False,
-    #         boundary="batch_{}".format(uuid4())
-    #     )
-
-    #     pipeline_response = await self._client.table._client._pipeline.run(
-    #         request, **kwargs
-    #     )
-    #     response = pipeline_response.http_response
-
-    #     try:
-    #         if response.status_code not in [202]:
-    #             raise HttpResponseError(response=response)
-    #         parts = response.parts()
-    #         if raise_on_any_failure:
-    #             parts = response.parts()
-    #             async for p in parts:
-    #                 if not 200 <= p.status_code < 300:
-    #                     error = PartialBatchErrorException(
-    #                         message="There is a partial failure in the batch operation.",
-    #                         response=response, parts=parts
-    #                     )
-    #                     raise error
-    #             return parts
-    #         return parts
-    #     except HttpResponseError as error:
-    #         _process_table_error(error)

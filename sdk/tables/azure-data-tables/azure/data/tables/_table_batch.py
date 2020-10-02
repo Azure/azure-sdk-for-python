@@ -19,7 +19,6 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest
 
 from ._error import _process_table_error
-from ._deserialize import _return_headers_and_deserialized
 from ._models import PartialBatchErrorException, UpdateMode, BatchTransactionResult
 from ._policies import StorageHeadersPolicy
 from ._serialize import _get_match_headers, _add_entity_properties
@@ -59,6 +58,7 @@ class TableBatchOperations(object):
 
         self._partition_key = kwargs.pop('partition_key', None)
         self._requests = []
+        self._entities = []
 
 
     def _verify_partition_key(
@@ -69,7 +69,7 @@ class TableBatchOperations(object):
             self._partition_key = entity['PartitionKey']
         elif 'PartitionKey' in entity:
             if entity['PartitionKey'] != self._partition_key:
-                raise PartialBatchErrorException("Partition Keys must all be the same", None, None)
+                raise ValueError("Partition Keys must all be the same")
 
 
     def create_entity(
@@ -105,24 +105,7 @@ class TableBatchOperations(object):
             table=self.table_name,
             entity=entity,
             **kwargs)
-
-
-    def _parameter_filter_substitution( # pylint:disable=no-self-use
-            self,
-            parameters,  # type: dict[str,str]
-            filter  # type: str # pylint:disable=redefined-builtin
-    ):
-        """Replace user defined parameter in filter
-        :param parameters: User defined parameters
-        :param filter: Filter for querying
-        """
-        if parameters:
-            filter_start = filter.split('@')[0]
-            selected = filter.split('@')[1]
-            for key, value in parameters.items():
-                if key == selected:
-                    filter = filter_start.replace('@', value)
-        return filter
+        self._entities.append(entity)
 
 
     def _batch_create_entity(
@@ -151,15 +134,6 @@ class TableBatchOperations(object):
             Must contain a PartitionKey and a RowKey.
         :type: entity: dict or :class:`~azure.data.tables.models.Entity`
         '''
-        self._verify_partition_key(entity)
-        if "PartitionKey" in entity and "RowKey" in entity:
-            entity = _add_entity_properties(entity)
-        else:
-            raise ValueError('PartitionKey and RowKey were not provided in entity')
-
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop('error_map', {}))
-
         _format = None
         if query_options is not None:
             _format = query_options.format
@@ -241,6 +215,7 @@ class TableBatchOperations(object):
                 if_match=if_match or "*",
                 table_entity_properties=entity,
                 **kwargs)
+        self._entities.append(entity)
 
 
     def _batch_update_entity(
@@ -449,7 +424,11 @@ class TableBatchOperations(object):
                 :dedent: 8
                 :caption: Deleting an entity to a Table
         """
-        self._verify_partition_key(entity)
+        if self._partition_key:
+            if partition_key != self._partition_key:
+                raise ValueError("Partition Keys must all be the same")
+        else:
+            self._partition_key = partition_key
 
         if_match, _ = _get_match_headers(kwargs=dict(kwargs, etag=kwargs.pop('etag', None),
                                                                 match_condition=kwargs.pop('match_condition', None)),
@@ -461,6 +440,12 @@ class TableBatchOperations(object):
             row_key=row_key,
             if_match=if_match or '*',
             **kwargs)
+
+        temp_entity = {
+            "PartitionKey": partition_key,
+            "RowKey": row_key
+        }
+        self._entities.append(_add_entity_properties(temp_entity))
 
 
     def _batch_delete_entity(
@@ -585,6 +570,7 @@ class TableBatchOperations(object):
                 row_key=row_key,
                 table_entity_properties=entity,
                 **kwargs)
+        self._entities.append(entity)
 
 
     def send_batch(self, **kwargs):
@@ -647,8 +633,6 @@ class TableBatchOperations(object):
 
     def __enter__(self):
         # type: (...) -> TableBatchOperations
-        # self._client.__enter__()
-        # self.__enter__()
         return self
 
 

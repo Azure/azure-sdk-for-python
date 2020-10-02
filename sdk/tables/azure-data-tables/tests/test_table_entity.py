@@ -30,11 +30,7 @@ from azure.core.exceptions import (
 from azure.data.tables._entity import TableEntity, EntityProperty, EdmType
 from azure.data.tables._models import TableSasPermissions, AccessPolicy, UpdateMode
 
-from _shared.testcase import (
-    GlobalStorageAccountPreparer,
-    TableTestCase,
-    LogCaptured
-)
+from _shared.testcase import TableTestCase, LogCaptured
 
 from devtools_testutils import CachedResourceGroupPreparer, CachedStorageAccountPreparer
 

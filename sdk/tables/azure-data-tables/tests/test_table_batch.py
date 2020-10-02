@@ -192,7 +192,7 @@ class StorageTableBatchTest(TableTestCase):
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
-    def test_batch_insert(self, resource_group, location, storage_account, storage_account_key):
+    def test_batch_single_insert(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         self._set_up(storage_account, storage_account_key)
         try:
@@ -742,7 +742,9 @@ class StorageTableBatchTest(TableTestCase):
         finally:
             self._tear_down()
 
-    @GlobalStorageAccountPreparer()
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_batch_different_partition_keys(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         self._set_up(storage_account, storage_account_key)
@@ -752,7 +754,7 @@ class StorageTableBatchTest(TableTestCase):
 
             batch = self.table.create_batch()
             batch.create_entity(entity)
-            with self.assertRaises(PartialBatchErrorException):
+            with self.assertRaises(ValueError):
                 batch.create_entity(entity2)
 
             # Assert

@@ -7,7 +7,6 @@ import pytest
 from devtools_testutils import CachedResourceGroupPreparer, CachedStorageAccountPreparer
 from azure.core.exceptions import ResourceNotFoundError, ResourceExistsError, HttpResponseError
 from _shared.asynctestcase import AsyncTableTestCase
-from _shared.testcase import GlobalStorageAccountPreparer
 from azure.data.tables import (
     AccessPolicy,
     TableAnalyticsLogging,

@@ -203,10 +203,3 @@ class TableErrorCode(str, Enum):
     x_method_incorrect_count = "XMethodIncorrectCount"
     x_method_incorrect_value = "XMethodIncorrectValue"
     x_method_not_using_post = "XMethodNotUsingPost"
-
-
-class BatchErrorException(Exception):
-
-    def __init__(self): # pylint: disable=super-init-not-called
-        self.results = None
-        self.requests = None

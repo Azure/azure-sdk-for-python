@@ -569,7 +569,6 @@ class TableClient(TableClientBase):
 
         :return: Object containing requests and responses
         :rtype: TableBatchOperations
-        :raises: ~azure.core.exceptions.HttpResponseError
 
         .. admonition:: Example:
             # TODO:
