@@ -33,7 +33,7 @@
 /sdk/cognitiveservices/azure-cognitiveservices-vision-customvision/  @areddish
 
 # PRLabel: %Communication
-/sdk/communication/                                                  @RezaJooyandeh @turalf
+/sdk/communication/                                                  @RezaJooyandeh @turalf @ankitarorabit @Azure/azure-sdk-communication-code-reviewers
 
 # PRLabel: %KeyVault
 /sdk/keyvault/                                                       @schaabs @chlowell @iscai-msft
