@@ -613,12 +613,12 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         .. admonition:: Example:
             # TODO:
 
-            .. literalinclude:: ../samples/.py
-                :start-after: [START abcd]
-                :end-before: [END abcd]
+            .. literalinclude:: ../samples/async_samples/sample_batching_async.py
+                :start-after: [START batching]
+                :end-before: [END batching]
                 :language: python
                 :dedent: 8
-                :caption: abcd
+                :caption: Using batches to send multiple requests at once
         return: Table batch operation for inserting new operations
         rtype: ~azure.data.tables.TableBatchOperations
         :raises: None

@@ -47,7 +47,7 @@ class TableBatchOperations(object):
         config: AzureTableConfiguration,
         table_name: str,
         table_client, # type: TableClient,
-        **kwargs: Dict[str, Any],
+        **kwargs: Dict[str, Any]
     ) -> None:
         self._client = client
         self._serialize = serializer

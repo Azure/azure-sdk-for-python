@@ -571,14 +571,13 @@ class TableClient(TableClientBase):
         :rtype: TableBatchOperations
 
         .. admonition:: Example:
-            # TODO:
 
-            .. literalinclude:: ../samples/.py
-                :start-after: [START abcd]
-                :end-before: [END abcd]
+            .. literalinclude:: ../samples/sample_batching.py
+                :start-after: [START batching]
+                :end-before: [END batching]
                 :language: python
                 :dedent: 8
-                :caption: abcd
+                :caption: Using batches to send multiple requests at once
         return: Table batch operation for inserting new operations
         rtype: ~azure.data.tables.TableBatchOperations
         :raises: None
