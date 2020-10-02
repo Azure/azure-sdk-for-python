@@ -75,42 +75,51 @@ class StorageTableEntityTest(TableTestCase):
         is set to a unique counter value starting at 1 (as a string).
         """
         table_name = self.get_resource_name('querytable')
-        try:
-            table = self.ts.create_table(table_name)
-        except ResourceExistsError:
-            self.ts.delete_table(table_name)
-            self.ts.create_table(table_name)
+        table = self.ts.create_table(table_name)
         self.query_tables.append(table_name)
         client = self.ts.get_table_client(table_name)
         entity = self._create_random_entity_dict()
         for i in range(1, entity_count + 1):
             entity['RowKey'] = entity['RowKey'] + str(i)
             client.create_entity(entity)
+        # with self.ts.batch(table_name) as batch:
+        #    for i in range(1, entity_count + 1):
+        #        entity['RowKey'] = entity['RowKey'] + str(i)
+        #        batch.create_entity(entity)
         return client
 
     def _create_random_base_entity_dict(self):
         """
         Creates a dict-based entity with only pk and rk.
         """
-        partition = self.get_resource_name('pk')
-        row = self.get_resource_name('rk')
+        # partition = self.get_resource_name('pk')
+        # row = self.get_resource_name('rk')
+        partition, row = self._create_pk_rk(None, None)
         return {
             'PartitionKey': partition,
             'RowKey': row,
         }
+
+    def _create_pk_rk(self, pk, rk):
+        try:
+            pk = pk if pk is not None else self.get_resource_name('pk').decode('utf-8')
+            rk = rk if rk is not None else self.get_resource_name('rk').decode('utf-8')
+        except AttributeError:
+            pk = pk if pk is not None else self.get_resource_name('pk')
+            rk = rk if rk is not None else self.get_resource_name('rk')
+        return pk, rk
 
     def _create_random_entity_dict(self, pk=None, rk=None):
         """
         Creates a dictionary-based entity with fixed values, using all
         of the supported data types.
         """
-        partition = pk if pk is not None else self.get_resource_name('pk')
-        row = rk if rk is not None else self.get_resource_name('rk')
+        partition, row = self._create_pk_rk(pk, rk)
         properties = {
             'PartitionKey': partition,
             'RowKey': row,
             'age': 39,
-            'sex': 'male',
+            'sex': u'male',
             'married': True,
             'deceased': False,
             'optional': None,
@@ -140,9 +149,9 @@ class StorageTableEntityTest(TableTestCase):
         return {
             'PartitionKey': partition,
             'RowKey': row,
-            'age': 'abc',
-            'sex': 'female',
-            'sign': 'aquarius',
+            'age': u'abc',
+            'sex': u'female',
+            'sign': u'aquarius',
             'birthday': datetime(1991, 10, 4, tzinfo=tzutc())
         }
 
@@ -197,7 +206,6 @@ class StorageTableEntityTest(TableTestCase):
         # self.assertTrue('type' in entity.odata)
         # self.assertTrue('etag' in entity.odata)
         # self.assertTrue('editLink' in entity.odata)
-
 
     def _assert_default_entity_json_no_metadata(self, entity, headers=None):
         '''
@@ -272,7 +280,7 @@ class StorageTableEntityTest(TableTestCase):
         self.assertEqual(len(keys), 3)
 
     # --Test cases for entities ------------------------------------------
-    @pytest.mark.skip("Merge operation fails from Tables SDK")
+    @pytest.mark.skip("Merge operation fails from Tables SDK, issue #13844")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_insert_etag(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -742,6 +750,7 @@ class StorageTableEntityTest(TableTestCase):
             self._tear_down()
             self.sleep(SLEEP_DELAY)
 
+    @pytest.mark.skip("Merge operation fails from Tables SDK, issue #13844")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_update_entity(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -829,7 +838,7 @@ class StorageTableEntityTest(TableTestCase):
             self._tear_down()
             self.sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("Merge operation fails from Tables SDK")
+    @pytest.mark.skip("Merge operation fails from Tables SDK, issue #13844")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_insert_or_merge_entity_with_existing_entity(self, resource_group, location, cosmos_account,
@@ -851,7 +860,7 @@ class StorageTableEntityTest(TableTestCase):
             self._tear_down()
             self.sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("Merge operation fails from Tables SDK")
+    @pytest.mark.skip("Merge operation fails from Tables SDK, issue #13844")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_insert_or_merge_entity_with_non_existing_entity(self, resource_group, location, cosmos_account,
@@ -874,7 +883,7 @@ class StorageTableEntityTest(TableTestCase):
             self._tear_down()
             self.sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("Merge operation fails from Tables SDK")
+    @pytest.mark.skip("Merge operation fails from Tables SDK, issue #13844")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_insert_or_replace_entity_with_existing_entity(self, resource_group, location, cosmos_account,
@@ -896,7 +905,7 @@ class StorageTableEntityTest(TableTestCase):
             self._tear_down()
             self.sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("Merge operation fails from Tables SDK")
+    @pytest.mark.skip("Merge operation fails from Tables SDK, issue #13844")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_insert_or_replace_entity_with_non_existing_entity(self, resource_group, location, cosmos_account,
@@ -919,7 +928,7 @@ class StorageTableEntityTest(TableTestCase):
             self._tear_down()
             self.sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("Merge operation fails from Tables SDK")
+    @pytest.mark.skip("Merge operation fails from Tables SDK, issue #13844")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_merge_entity(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -940,7 +949,7 @@ class StorageTableEntityTest(TableTestCase):
             self._tear_down()
             self.sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("Merge operation fails from Tables SDK")
+    @pytest.mark.skip("Merge operation fails from Tables SDK, issue #13844")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_merge_entity_not_existing(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -959,7 +968,7 @@ class StorageTableEntityTest(TableTestCase):
             self._tear_down()
             self.sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("Merge operation fails from Tables SDK")
+    @pytest.mark.skip("Merge operation fails from Tables SDK, issue #13844")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_merge_entity_with_if_matches(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -984,7 +993,7 @@ class StorageTableEntityTest(TableTestCase):
             self._tear_down()
             self.sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("Merge operation fails from Tables SDK")
+    @pytest.mark.skip("Merge operation fails from Tables SDK, issue #13844")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_merge_entity_with_if_doesnt_match(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -1085,15 +1094,14 @@ class StorageTableEntityTest(TableTestCase):
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_unicode_property_value(self, resource_group, location, cosmos_account, cosmos_account_key):
-        ''' regression test for github issue #57'''
         # Arrange
         self._set_up(cosmos_account, cosmos_account_key)
         try:
             entity = self._create_random_base_entity_dict()
             entity1 = entity.copy()
-            entity1.update({'Description': u'ꀕ'})
+            entity1.update({u'Description': u'ꀕ'})
             entity2 = entity.copy()
-            entity2.update({'RowKey': u'test2', 'Description': u'ꀕ'})
+            entity2.update({u'RowKey': u'test2', 'Description': u'ꀕ'})
 
             # Act
             self.table.create_entity(entity=entity1)
@@ -1185,15 +1193,15 @@ class StorageTableEntityTest(TableTestCase):
         try:
             entity = self._create_random_base_entity_dict()
             entity.update({
-                'EmptyByte': '',
+                'EmptyByte': b'',
                 'EmptyUnicode': u'',
-                'SpacesOnlyByte': '   ',
+                'SpacesOnlyByte': b'   ',
                 'SpacesOnlyUnicode': u'   ',
-                'SpacesBeforeByte': '   Text',
+                'SpacesBeforeByte': b'   Text',
                 'SpacesBeforeUnicode': u'   Text',
-                'SpacesAfterByte': 'Text   ',
+                'SpacesAfterByte': b'Text   ',
                 'SpacesAfterUnicode': u'Text   ',
-                'SpacesBeforeAndAfterByte': '   Text   ',
+                'SpacesBeforeAndAfterByte': b'   Text   ',
                 'SpacesBeforeAndAfterUnicode': u'   Text   ',
             })
 
@@ -1203,15 +1211,15 @@ class StorageTableEntityTest(TableTestCase):
 
             # Assert
             self.assertIsNotNone(resp)
-            self.assertEqual(resp.EmptyByte.value, '')
+            self.assertEqual(resp.EmptyByte.value, b'')
             self.assertEqual(resp.EmptyUnicode.value, u'')
-            self.assertEqual(resp.SpacesOnlyByte.value, '   ')
+            self.assertEqual(resp.SpacesOnlyByte.value, b'   ')
             self.assertEqual(resp.SpacesOnlyUnicode.value, u'   ')
-            self.assertEqual(resp.SpacesBeforeByte.value, '   Text')
+            self.assertEqual(resp.SpacesBeforeByte.value, b'   Text')
             self.assertEqual(resp.SpacesBeforeUnicode.value, u'   Text')
-            self.assertEqual(resp.SpacesAfterByte.value, 'Text   ')
+            self.assertEqual(resp.SpacesAfterByte.value, b'Text   ')
             self.assertEqual(resp.SpacesAfterUnicode.value, u'Text   ')
-            self.assertEqual(resp.SpacesBeforeAndAfterByte.value, '   Text   ')
+            self.assertEqual(resp.SpacesBeforeAndAfterByte.value, b'   Text   ')
             self.assertEqual(resp.SpacesBeforeAndAfterUnicode.value, u'   Text   ')
         finally:
             self._tear_down()
@@ -1245,7 +1253,7 @@ class StorageTableEntityTest(TableTestCase):
         try:
             binary_data = b'\x01\x02\x03\x04\x05\x06\x07\x08\t\n'
             entity = self._create_random_base_entity_dict()
-            entity.update({'binary': b'\x01\x02\x03\x04\x05\x06\x07\x08\t\n'})
+            entity.update({u'binary': b'\x01\x02\x03\x04\x05\x06\x07\x08\t\n'})
 
             # Act
             self.table.create_entity(entity=entity)
@@ -1428,7 +1436,7 @@ class StorageTableEntityTest(TableTestCase):
             for entity in entities:
                 self.assertIsInstance(entities, TableEntity)
                 self.assertEqual(entity.age, 39)
-                self.assertEqual(entity.sex, 'male')
+                self.assertEqual(entity.sex, u'male')
                 self.assertFalse(hasattr(entity, "birthday"))
                 self.assertFalse(hasattr(entity, "married"))
                 self.assertFalse(hasattr(entity, "deceased"))
