@@ -66,7 +66,7 @@ class StorageFileTest(StorageTestCase):
 
         remote_url = self.account_url(rmt_account, "file")
         remote_credential = rmt_key
-        
+
         if rmt_account:
             self.fsc2 = ShareServiceClient(remote_url, credential=remote_credential)
             self.remote_share_name = None
@@ -592,6 +592,17 @@ class StorageFileTest(StorageTestCase):
         self.assertFalse('up' in md)
 
     @GlobalStorageAccountPreparer()
+    def test_break_lease_with_broken_period_fails(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
+        file_client = self._create_file()
+        lease = file_client.acquire_lease()
+
+        # Assert
+        self.assertIsNotNone(lease)
+        with self.assertRaises(TypeError):
+            lease.break_lease(lease_break_period=5)
+
+    @GlobalStorageAccountPreparer()
     def test_set_file_metadata_with_broken_lease(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         metadata = {'hello': 'world', 'number': '42', 'UP': 'UPval'}
@@ -906,6 +917,50 @@ class StorageFileTest(StorageTestCase):
         # Assert
         self.assertIsNotNone(ranges)
         self.assertEqual(len(ranges), 0)
+
+    @pytest.mark.playback_test_only
+    @GlobalStorageAccountPreparer()
+    def test_list_ranges_diff(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
+        file_name = self._get_file_reference()
+        file_client = ShareFileClient(
+            self.account_url(storage_account, "file"),
+            share_name=self.share_name,
+            file_path=file_name,
+            credential=storage_account_key)
+
+        file_client.create_file(2048)
+        share_client = self.fsc.get_share_client(self.share_name)
+        snapshot1 = share_client.create_snapshot()
+
+        data = self.get_random_bytes(1536)
+        file_client.upload_range(data, offset=0, length=1536)
+        snapshot2 = share_client.create_snapshot()
+        file_client.clear_range(offset=512, length=512)
+
+        ranges1, cleared1 = file_client.get_ranges_diff(previous_sharesnapshot=snapshot1)
+        ranges2, cleared2 = file_client.get_ranges_diff(previous_sharesnapshot=snapshot2['snapshot'])
+
+        # Assert
+        self.assertIsNotNone(ranges1)
+        self.assertIsInstance(ranges1, list)
+        self.assertEqual(len(ranges1), 2)
+        self.assertIsInstance(cleared1, list)
+        self.assertEqual(len(cleared1), 1)
+        self.assertEqual(ranges1[0]['start'], 0)
+        self.assertEqual(ranges1[0]['end'], 511)
+        self.assertEqual(cleared1[0]['start'], 512)
+        self.assertEqual(cleared1[0]['end'], 1023)
+        self.assertEqual(ranges1[1]['start'], 1024)
+        self.assertEqual(ranges1[1]['end'], 1535)
+
+        self.assertIsNotNone(ranges2)
+        self.assertIsInstance(ranges2, list)
+        self.assertEqual(len(ranges2), 0)
+        self.assertIsInstance(cleared2, list)
+        self.assertEqual(len(cleared2), 1)
+        self.assertEqual(cleared2[0]['start'], 512)
+        self.assertEqual(cleared2[0]['end'], 1023)
 
     @GlobalStorageAccountPreparer()
     def test_list_ranges_2(self, resource_group, location, storage_account, storage_account_key):

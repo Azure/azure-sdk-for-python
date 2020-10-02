@@ -13,7 +13,8 @@ except ImportError:
 from ._download_async import StorageStreamDownloader
 from ._path_client_async import PathClient
 from .._data_lake_file_client import DataLakeFileClient as DataLakeFileClientBase
-from .._deserialize import process_storage_error
+from .._serialize import convert_datetime_to_rfc1123
+from .._deserialize import process_storage_error, deserialize_file_properties
 from .._generated.models import StorageErrorException
 from .._models import FileProperties
 from ..aio._upload_helper import upload_datalake_file
@@ -207,8 +208,30 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
                 :dedent: 4
                 :caption: Getting the properties for a file.
         """
-        blob_properties = await self._get_path_properties(**kwargs)
-        return FileProperties._from_blob_properties(blob_properties)  # pylint: disable=protected-access
+        return await self._get_path_properties(cls=deserialize_file_properties, **kwargs)  # pylint: disable=protected-access
+
+    async def set_file_expiry(self, expiry_options,  # type: str
+                              expires_on=None,  # type: Optional[Union[datetime, int]]
+                              **kwargs):
+        # type: (str, Optional[Union[datetime, int]], **Any) -> None
+        """Sets the time a file will expire and be deleted.
+
+        :param str expiry_options:
+            Required. Indicates mode of the expiry time.
+            Possible values include: 'NeverExpire', 'RelativeToCreation', 'RelativeToNow', 'Absolute'
+        :param datetime or int expires_on:
+            The time to set the file to expiry.
+            When expiry_options is RelativeTo*, expires_on should be an int in milliseconds
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :rtype: None
+        """
+        try:
+            expires_on = convert_datetime_to_rfc1123(expires_on)
+        except AttributeError:
+            expires_on = str(expires_on)
+        await self._datalake_client_for_blob_operation.path.set_expiry(expiry_options, expires_on=expires_on,
+                                                                       **kwargs)  # pylint: disable=protected-access
 
     async def upload_data(self, data,  # type: Union[AnyStr, Iterable[AnyStr], IO[AnyStr]]
                           length=None,  # type: Optional[int]
@@ -505,7 +528,7 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
         """
         new_name = new_name.strip('/')
         new_file_system = new_name.split('/')[0]
-        new_path_and_token = new_name[len(new_file_system):].split('?')
+        new_path_and_token = new_name[len(new_file_system):].strip('/').split('?')
         new_path = new_path_and_token[0]
         try:
             new_file_sas = new_path_and_token[1] or self._query_str.strip('?')

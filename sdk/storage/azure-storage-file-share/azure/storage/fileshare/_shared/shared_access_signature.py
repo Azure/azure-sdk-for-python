@@ -39,6 +39,12 @@ class QueryStringConstants(object):
     SIGNED_KEY_SERVICE = 'sks'
     SIGNED_KEY_VERSION = 'skv'
 
+    # for ADLS
+    SIGNED_AUTHORIZED_OID = 'saoid'
+    SIGNED_UNAUTHORIZED_OID = 'suoid'
+    SIGNED_CORRELATION_ID = 'scid'
+    SIGNED_DIRECTORY_DEPTH = 'sdd'
+
     @staticmethod
     def to_list():
         return [
@@ -68,6 +74,11 @@ class QueryStringConstants(object):
             QueryStringConstants.SIGNED_KEY_EXPIRY,
             QueryStringConstants.SIGNED_KEY_SERVICE,
             QueryStringConstants.SIGNED_KEY_VERSION,
+            # for ADLS
+            QueryStringConstants.SIGNED_AUTHORIZED_OID,
+            QueryStringConstants.SIGNED_UNAUTHORIZED_OID,
+            QueryStringConstants.SIGNED_CORRELATION_ID,
+            QueryStringConstants.SIGNED_DIRECTORY_DEPTH,
         ]
 
 

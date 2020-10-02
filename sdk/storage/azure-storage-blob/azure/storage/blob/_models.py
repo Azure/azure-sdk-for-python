@@ -9,7 +9,7 @@
 from enum import Enum
 
 from azure.core.paging import PageIterator
-from azure.storage.blob._generated.models import FilterBlobItem
+from azure.storage.blob._generated.models import FilterBlobItem, ArrowField
 
 from ._shared import decode_base64_to_text
 from ._shared.response_handlers import return_context_and_deserialized, process_storage_error
@@ -502,6 +502,11 @@ class BlobProperties(DictMixin):
 
         .. versionadded:: 12.4.0
 
+    :ivar ~datetime.datetime last_accessed_on:
+        Indicates when the last Read/Write operation was performed on a Blob.
+
+        .. versionadded:: 12.6.0
+
     :ivar int tag_count:
         Tags count on this blob.
 
@@ -548,6 +553,7 @@ class BlobProperties(DictMixin):
         self.request_server_encrypted = kwargs.get('x-ms-server-encrypted')
         self.object_replication_source_properties = kwargs.get('object_replication_source_properties')
         self.object_replication_destination_policy = kwargs.get('x-ms-or-policy-id')
+        self.last_accessed_on = kwargs.get('x-ms-last-access-time')
         self.tag_count = kwargs.get('x-ms-tag-count')
         self.tags = None
 
@@ -1091,6 +1097,30 @@ class DelimitedTextDialect(object):
         self.lineterminator = kwargs.pop('lineterminator', '\n')
         self.escapechar = kwargs.pop('escapechar', "")
         self.has_header = kwargs.pop('has_header', False)
+
+
+class ArrowDialect(ArrowField):
+    """field of an arrow schema.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param ~azure.storage.blob.ArrowType type: Arrow field type.
+    :keyword str name: The name of the field.
+    :keyword int precision: The precision of the field.
+    :keyword int scale: The scale of the field.
+    """
+    def __init__(self, type, **kwargs):   # pylint: disable=redefined-builtin
+        super(ArrowDialect, self).__init__(type=type, **kwargs)
+
+
+class ArrowType(str, Enum):
+
+    INT64 = "int64"
+    BOOL = "bool"
+    TIMESTAMP_MS = "timestamp[ms]"
+    STRING = "string"
+    DOUBLE = "double"
+    DECIMAL = 'decimal'
 
 
 class ObjectReplicationPolicy(DictMixin):
