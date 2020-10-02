@@ -3,6 +3,7 @@
 **New Features**
 - Added support for recursive set/update/remove Access Control on a path and sub-paths.
 - Added support for setting an expiry on files where the file gets deleted once it expires.
+- Added support to generate directory SAS and added support to specify additional user ids and correlation ids for user delegation SAS.
 
 ## 12.1.2 (2020-09-10)
 **Fixes**
