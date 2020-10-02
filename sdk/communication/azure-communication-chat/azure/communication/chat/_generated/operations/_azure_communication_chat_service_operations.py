@@ -9,7 +9,7 @@ import datetime
 from typing import TYPE_CHECKING
 import warnings
 
-from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
@@ -46,7 +46,7 @@ class AzureCommunicationChatServiceOperationsMixin(object):
         error_map = {
             404: ResourceNotFoundError,
             409: ResourceExistsError,
-            401: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
+            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(models.Error, response)),
             403: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
             429: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
             503: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
@@ -132,7 +132,7 @@ class AzureCommunicationChatServiceOperationsMixin(object):
         error_map = {
             404: ResourceNotFoundError,
             409: ResourceExistsError,
-            401: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
+            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(models.Error, response)),
             403: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
             429: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
             503: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
@@ -199,7 +199,7 @@ class AzureCommunicationChatServiceOperationsMixin(object):
         error_map = {
             404: ResourceNotFoundError,
             409: ResourceExistsError,
-            401: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
+            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(models.Error, response)),
             403: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
             429: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
             503: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
@@ -273,7 +273,7 @@ class AzureCommunicationChatServiceOperationsMixin(object):
         error_map = {
             404: ResourceNotFoundError,
             409: ResourceExistsError,
-            401: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
+            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(models.Error, response)),
             403: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
             429: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
             503: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
@@ -363,7 +363,7 @@ class AzureCommunicationChatServiceOperationsMixin(object):
         error_map = {
             404: ResourceNotFoundError,
             409: ResourceExistsError,
-            401: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
+            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(models.Error, response)),
             403: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
             429: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
             503: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
@@ -432,7 +432,7 @@ class AzureCommunicationChatServiceOperationsMixin(object):
         error_map = {
             404: ResourceNotFoundError,
             409: ResourceExistsError,
-            401: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
+            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(models.Error, response)),
             403: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
             429: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
             503: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
@@ -500,7 +500,7 @@ class AzureCommunicationChatServiceOperationsMixin(object):
         error_map = {
             404: ResourceNotFoundError,
             409: ResourceExistsError,
-            401: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
+            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(models.Error, response)),
             403: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
             429: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
             503: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
@@ -560,7 +560,7 @@ class AzureCommunicationChatServiceOperationsMixin(object):
         error_map = {
             404: ResourceNotFoundError,
             409: ResourceExistsError,
-            401: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
+            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(models.Error, response)),
             403: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
             429: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
             503: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
@@ -619,7 +619,7 @@ class AzureCommunicationChatServiceOperationsMixin(object):
         error_map = {
             404: ResourceNotFoundError,
             409: ResourceExistsError,
-            401: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
+            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(models.Error, response)),
             403: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
             429: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
             503: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
@@ -705,7 +705,7 @@ class AzureCommunicationChatServiceOperationsMixin(object):
         error_map = {
             404: ResourceNotFoundError,
             409: ResourceExistsError,
-            401: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
+            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(models.Error, response)),
             403: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
             429: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
             503: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
@@ -772,7 +772,7 @@ class AzureCommunicationChatServiceOperationsMixin(object):
         error_map = {
             404: ResourceNotFoundError,
             409: ResourceExistsError,
-            401: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
+            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(models.Error, response)),
             403: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
             429: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
             503: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
@@ -832,7 +832,7 @@ class AzureCommunicationChatServiceOperationsMixin(object):
         error_map = {
             404: ResourceNotFoundError,
             409: ResourceExistsError,
-            401: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
+            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(models.Error, response)),
             403: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
             429: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
             503: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
@@ -902,7 +902,7 @@ class AzureCommunicationChatServiceOperationsMixin(object):
         error_map = {
             404: ResourceNotFoundError,
             409: ResourceExistsError,
-            401: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
+            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(models.Error, response)),
             403: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
             429: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
             503: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
@@ -990,7 +990,7 @@ class AzureCommunicationChatServiceOperationsMixin(object):
         error_map = {
             404: ResourceNotFoundError,
             409: ResourceExistsError,
-            401: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
+            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(models.Error, response)),
             403: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
             429: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
             503: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
@@ -1054,7 +1054,7 @@ class AzureCommunicationChatServiceOperationsMixin(object):
         error_map = {
             404: ResourceNotFoundError,
             409: ResourceExistsError,
-            401: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
+            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(models.Error, response)),
             403: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
             429: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
             503: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
@@ -1116,7 +1116,7 @@ class AzureCommunicationChatServiceOperationsMixin(object):
         error_map = {
             404: ResourceNotFoundError,
             409: ResourceExistsError,
-            401: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
+            401: lambda response: ClientAuthenticationError(response=response, model=self._deserialize(models.Error, response)),
             403: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
             429: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
             503: lambda response: HttpResponseError(response=response, model=self._deserialize(models.Error, response)),
