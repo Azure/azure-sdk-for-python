@@ -28,7 +28,9 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
     # pylint:disable=protected-access
 
     @distributed_trace
-    def create_role_assignment(self, role_scope, role_definition_id, principal_id, **kwargs):
+    def create_role_assignment(
+        self, role_scope, role_definition_id, principal_id, **kwargs
+    ):
         # type: (Union[str, KeyVaultRoleScope], str, str, **Any) -> KeyVaultRoleAssignment
         """Create a role assignment.
 
@@ -50,7 +52,7 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
         assignment = self._client.role_assignments.create(
             vault_base_url=self._vault_url,
             scope=role_scope,
-            role_assignment_name=kwargs.pop("role_assignment_name", uuid4()),
+            role_assignment_name=kwargs.pop("role_assignment_name", None) or uuid4(),
             parameters=create_parameters,
             **kwargs
         )
@@ -70,7 +72,10 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
         :rtype: KeyVaultRoleAssignment
         """
         assignment = self._client.role_assignments.delete(
-            vault_base_url=self._vault_url, scope=role_scope, role_assignment_name=str(role_assignment_name), **kwargs
+            vault_base_url=self._vault_url,
+            scope=role_scope,
+            role_assignment_name=str(role_assignment_name),
+            **kwargs
         )
         return KeyVaultRoleAssignment._from_generated(assignment)
 
@@ -87,7 +92,10 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
         :rtype: KeyVaultRoleAssignment
         """
         assignment = self._client.role_assignments.get(
-            vault_base_url=self._vault_url, scope=role_scope, role_assignment_name=str(role_assignment_name), **kwargs
+            vault_base_url=self._vault_url,
+            scope=role_scope,
+            role_assignment_name=str(role_assignment_name),
+            **kwargs
         )
         return KeyVaultRoleAssignment._from_generated(assignment)
 
@@ -104,7 +112,9 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
         return self._client.role_assignments.list_for_scope(
             self._vault_url,
             role_scope,
-            cls=lambda result: [KeyVaultRoleAssignment._from_generated(a) for a in result],
+            cls=lambda result: [
+                KeyVaultRoleAssignment._from_generated(a) for a in result
+            ],
             **kwargs
         )
 
@@ -121,6 +131,8 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
         return self._client.role_definitions.list(
             self._vault_url,
             role_scope,
-            cls=lambda result: [KeyVaultRoleDefinition._from_generated(d) for d in result],
+            cls=lambda result: [
+                KeyVaultRoleDefinition._from_generated(d) for d in result
+            ],
             **kwargs
         )

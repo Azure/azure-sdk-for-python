@@ -56,7 +56,7 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
         assignment = await self._client.role_assignments.create(
             vault_base_url=self._vault_url,
             scope=role_scope,
-            role_assignment_name=kwargs.pop("role_assignment_name", uuid4),
+            role_assignment_name=kwargs.pop("role_assignment_name", None) or uuid4(),
             parameters=create_parameters,
             **kwargs
         )
@@ -64,7 +64,10 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def delete_role_assignment(
-        self, role_scope: "Union[str, KeyVaultRoleScope]", role_assignment_name: "Union[str, UUID]", **kwargs: "Any"
+        self,
+        role_scope: "Union[str, KeyVaultRoleScope]",
+        role_assignment_name: "Union[str, UUID]",
+        **kwargs: "Any"
     ) -> KeyVaultRoleAssignment:
         """Delete a role assignment.
 
@@ -77,13 +80,19 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
         :rtype: KeyVaultRoleAssignment
         """
         assignment = await self._client.role_assignments.delete(
-            vault_base_url=self._vault_url, scope=role_scope, role_assignment_name=str(role_assignment_name), **kwargs
+            vault_base_url=self._vault_url,
+            scope=role_scope,
+            role_assignment_name=str(role_assignment_name),
+            **kwargs
         )
         return KeyVaultRoleAssignment._from_generated(assignment)
 
     @distributed_trace_async
     async def get_role_assignment(
-        self, role_scope: "Union[str, KeyVaultRoleScope]", role_assignment_name: "Union[str, UUID]", **kwargs: "Any"
+        self,
+        role_scope: "Union[str, KeyVaultRoleScope]",
+        role_assignment_name: "Union[str, UUID]",
+        **kwargs: "Any"
     ) -> KeyVaultRoleAssignment:
         """Get a role assignment.
 
@@ -95,7 +104,10 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
         :rtype: KeyVaultRoleAssignment
         """
         assignment = await self._client.role_assignments.get(
-            vault_base_url=self._vault_url, scope=role_scope, role_assignment_name=str(role_assignment_name), **kwargs
+            vault_base_url=self._vault_url,
+            scope=role_scope,
+            role_assignment_name=str(role_assignment_name),
+            **kwargs
         )
         return KeyVaultRoleAssignment._from_generated(assignment)
 
@@ -113,7 +125,9 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
         return self._client.role_assignments.list_for_scope(
             self._vault_url,
             role_scope,
-            cls=lambda result: [KeyVaultRoleAssignment._from_generated(a) for a in result],
+            cls=lambda result: [
+                KeyVaultRoleAssignment._from_generated(a) for a in result
+            ],
             **kwargs
         )
 
@@ -131,6 +145,8 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
         return self._client.role_definitions.list(
             self._vault_url,
             role_scope,
-            cls=lambda result: [KeyVaultRoleDefinition._from_generated(d) for d in result],
+            cls=lambda result: [
+                KeyVaultRoleDefinition._from_generated(d) for d in result
+            ],
             **kwargs
         )
