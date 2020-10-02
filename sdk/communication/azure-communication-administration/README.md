@@ -55,16 +55,15 @@ The following section provides several code snippets covering some of the most c
 
 [Create/revoke scoped user access tokens][identitysamples]
 
-##Communication Phone number
+## Communication Phone number
 ### Get Countries
 
 ```python
-def list_all_supported_countries():
-    phone_number_administration_client = PhoneNumberAdministrationClient.from_connection_string(connection_str)
-    
-    supported_countries = phone_number_administration_client.list_all_supported_countries()
-    for supported_country in supported_countries:
-        print(supported_country)
+phone_number_administration_client = PhoneNumberAdministrationClient.from_connection_string(connection_str)
+
+supported_countries = phone_number_administration_client.list_all_supported_countries()
+for supported_country in supported_countries:
+    print(supported_country)
 ```
 
 ### Get Phone Plan Groups
@@ -72,15 +71,13 @@ def list_all_supported_countries():
 Phone plan groups come in two types, Geographic and Toll-Free.
 
 ```python
-def list_phone_plan_groups():
-    phone_number_administration_client = PhoneNumberAdministrationClient.from_connection_string(connection_str)
-    country_code = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_COUNTRY_CODE', "US")
+phone_number_administration_client = PhoneNumberAdministrationClient.from_connection_string(connection_str)
 
-    phone_plan_groups_response = phone_number_administration_client.list_phone_plan_groups(
-        country_code=country_code
-    )
-    for phone_plan_group in phone_plan_groups_response:
-        print(phone_plan_group)
+phone_plan_groups_response = phone_number_administration_client.list_phone_plan_groups(
+    country_code='<country code>'
+)
+for phone_plan_group in phone_plan_groups_response:
+    print(phone_plan_group)
 ```
 
 ### Get Phone Plans
@@ -88,17 +85,14 @@ def list_phone_plan_groups():
 Unlike Toll-Free phone plans, area codes for Geographic Phone Plans are empty. Area codes are found in the Area Codes API.
 
 ```python
-def list_phone_plans():
-    phone_number_administration_client = PhoneNumberAdministrationClient.from_connection_string(connection_str)
-    country_code = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_COUNTRY_CODE', "US")
-    phone_plan_group_id = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_PHONE_PLAN_GROUP_ID', "phone-plan-group-id")
-   
-    phone_plans_response = phone_number_administration_client.list_phone_plans(
-        country_code=country_code,
-        phone_plan_group_id=phone_plan_group_id
-    )
-    for phone_plan in phone_plans_response:
-        print(phone_plan)
+phone_number_administration_client = PhoneNumberAdministrationClient.from_connection_string(connection_str)
+
+phone_plans_response = phone_number_administration_client.list_phone_plans(
+    country_code='<country code>',
+    phone_plan_group_id='<phone plan group id>'
+)
+for phone_plan in phone_plans_response:
+    print(phone_plan)
 ```
 
 ### Get Location Options
@@ -106,18 +100,14 @@ def list_phone_plans():
 For Geographic phone plans, you can query the available geographic locations. The locations options are structured like the geographic hierarchy of a country. For example, the US has states and within each state are cities.
 
 ```python
-def get_phone_plan_location_options():
-    phone_number_administration_client = PhoneNumberAdministrationClient.from_connection_string(connection_str)
-    country_code = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_COUNTRY_CODE', "US")
-    phone_plan_group_id = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_PHONE_PLAN_GROUP_ID', "phone-plan-group-id")
-    phone_plan_id = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_PHONE_PLAN_ID', "phone-plan-id")
+phone_number_administration_client = PhoneNumberAdministrationClient.from_connection_string(connection_str)
 
-    location_options_response = phone_number_administration_client.get_phone_plan_location_options(
-        country_code=country_code,
-        phone_plan_group_id=phone_plan_group_id,
-        phone_plan_id=phone_plan_id
-    )
-    print(location_options_response)
+location_options_response = phone_number_administration_client.get_phone_plan_location_options(
+    country_code='<country code>',
+    phone_plan_group_id='<phone plan group id>',
+    phone_plan_id='<phone plan id>'
+)
+print(location_options_response)
 ```
 
 ### Get Area Codes
@@ -125,63 +115,53 @@ def get_phone_plan_location_options():
 Fetching area codes for geographic phone plans will require the the location options queries set. You must include the chain of geographic locations traversing down the location options object returned by the GetLocationOptions API.
 
 ```python
-def get_all_area_codes():
-    phone_number_administration_client = PhoneNumberAdministrationClient.from_connection_string(connection_str)
-    country_code = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_COUNTRY_CODE', "US")
-    phone_plan_id_area_codes = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_PHONE_PLAN_ID_AREA_CODES', "phone-plan-id")
+phone_number_administration_client = PhoneNumberAdministrationClient.from_connection_string(connection_str)
 
-    all_area_codes = phone_number_administration_client.get_all_area_codes(
-        location_type="NotRequired",
-        country_code=country_code,
-        phone_plan_id=phone_plan_id_area_codes
-    )
-    print(all_area_codes)
+all_area_codes = phone_number_administration_client.get_all_area_codes(
+    location_type="NotRequired",
+    country_code='<country code>',
+    phone_plan_id='<phone plan id>'
+)
+print(all_area_codes)
 ```
 
 ### Create Search
 
 ```python
-def create_search():
-    from azure.communication.administration import CreateSearchOptions
-    phone_number_administration_client = PhoneNumberAdministrationClient.from_connection_string(connection_str)
-    phone_plan_id = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_PHONE_PLAN_ID', "phone-plan-id")
-    area_code_for_search = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_AREA_CODE_FOR_SEARCH', "area-code")
+from azure.communication.administration import CreateSearchOptions
+phone_number_administration_client = PhoneNumberAdministrationClient.from_connection_string(connection_str)
 
-    searchOptions = CreateSearchOptions(
-        area_code=area_code_for_search,
-        description="testsearch20200014",
-        display_name="testsearch20200014",
-        phone_plan_ids=[phone_plan_id],
-        quantity=1
-    )
-    search_response = phone_number_administration_client.begin_create_search(
-        body=searchOptions
-    )
-    print(search_response.status())
+searchOptions = CreateSearchOptions(
+    area_code='<area code>',
+    description="testsearch20200014",
+    display_name="testsearch20200014",
+    phone_plan_ids=['<phone plan id>'],
+    quantity=1
+)
+search_response = phone_number_administration_client.create_search(
+    body=searchOptions
+)
+print(search_response)
 ```
 
 ### Get search by id
 ```python
-def get_search_by_id():
-    phone_number_administration_client = PhoneNumberAdministrationClient.from_connection_string(connection_str)
-    search_id = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_SEARCH_ID', "search-id")
+phone_number_administration_client = PhoneNumberAdministrationClient.from_connection_string(connection_str)
 
-    phone_number_search_response = phone_number_administration_client.get_search_by_id(
-        search_id=search_id
-    )
-    print(phone_number_search_response)
+phone_number_search_response = phone_number_administration_client.get_search_by_id(
+    search_id='<search id>'
+)
+print(phone_number_search_response)
 ```
 
 ### Purchase Search
 
 ```python
-def purchase_search():
-    phone_number_administration_client = PhoneNumberAdministrationClient.from_connection_string(connection_str)
-    search_id_to_purchase = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_SEARCH_ID_TO_PURCHASE', "search-id")
+phone_number_administration_client = PhoneNumberAdministrationClient.from_connection_string(connection_str)
 
-    phone_number_administration_client.begin_purchase_search(
-        search_id=search_id_to_purchase
-    )
+phone_number_administration_client.purchase_search(
+    search_id='<search id to purchase>'
+)
 ```
 
 # Troubleshooting
