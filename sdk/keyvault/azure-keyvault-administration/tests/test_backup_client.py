@@ -131,6 +131,7 @@ def assert_in_progress_operation(operation):
         assert operation.azure_storage_blob_container_uri is None
     assert operation.status == "InProgress"
     assert operation.end_time is None
+    assert isinstance(operation.start_time, datetime)
 
 
 def assert_successful_operation(operation):
