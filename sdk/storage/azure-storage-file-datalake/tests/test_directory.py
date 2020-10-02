@@ -1031,7 +1031,31 @@ class DirectoryTest(StorageTestCase):
         response = directory_client.create_directory()
         self.assertIsNotNone(response)
 
+    @record
+    def test_using_directory_sas_to_create_file(self):
+        # SAS URL is calculated from storage key, so this test runs live only
+        if TestMode.need_recording_file(self.test_mode):
+            return
 
+        client = self._create_directory_and_get_directory_client()
+        directory_name = client.path_name
+
+        # generate a token with directory level read permission
+        token = generate_directory_sas(
+            self.dsc.account_name,
+            self.file_system_name,
+            directory_name,
+            self.dsc.credential.account_key,
+            permission=DirectorySasPermissions(create=True),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+        )
+
+        directory_client = DataLakeDirectoryClient(self.dsc.url, self.file_system_name, directory_name,
+                                                   credential=token)
+        directory_client.create_sub_directory("subdir")
+
+        with self.assertRaises(HttpResponseError):
+            directory_client.delete_directory()
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
     unittest.main()
