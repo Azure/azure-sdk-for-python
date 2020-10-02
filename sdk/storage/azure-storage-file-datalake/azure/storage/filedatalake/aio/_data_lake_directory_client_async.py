@@ -11,6 +11,7 @@ except ImportError:
 from ._data_lake_file_client_async import DataLakeFileClient
 from .._data_lake_directory_client import DataLakeDirectoryClient as DataLakeDirectoryClientBase
 from .._models import DirectoryProperties
+from .._deserialize import deserialize_dir_properties
 from ._path_client_async import PathClient
 
 
@@ -203,8 +204,7 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
                 :dedent: 4
                 :caption: Getting the properties for a file/directory.
         """
-        blob_properties = await self._get_path_properties(**kwargs)
-        return DirectoryProperties._from_blob_properties(blob_properties)  # pylint: disable=protected-access
+        return await self._get_path_properties(cls=deserialize_dir_properties, **kwargs)  # pylint: disable=protected-access
 
     async def rename_directory(self, new_name,  # type: str
                                **kwargs):
@@ -273,7 +273,7 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
         """
         new_name = new_name.strip('/')
         new_file_system = new_name.split('/')[0]
-        new_path_and_token = new_name[len(new_file_system):].split('?')
+        new_path_and_token = new_name[len(new_file_system):].strip('/').split('?')
         new_path = new_path_and_token[0]
         try:
             new_dir_sas = new_path_and_token[1] or self._query_str.strip('?')
