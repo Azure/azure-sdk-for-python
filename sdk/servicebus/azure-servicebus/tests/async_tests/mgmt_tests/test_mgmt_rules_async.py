@@ -122,7 +122,7 @@ class ServiceBusAdministrationClientRuleAsyncTests(AzureMgmtTestCase):
 
         try:
             topic_description = await mgmt_service.create_topic(topic_name)
-            subscription_description = await mgmt_service.create_subscription(topic_description, subscription_name)
+            subscription_description = await mgmt_service.create_subscription(topic_description.name, subscription_name)
             await mgmt_service.create_rule(topic_name, subscription_name, rule_name, filter=sql_filter)
 
             rule_desc = await mgmt_service.get_rule(topic_name, subscription_name, rule_name)
@@ -135,7 +135,7 @@ class ServiceBusAdministrationClientRuleAsyncTests(AzureMgmtTestCase):
 
             rule_desc.filter = correlation_fitler
             rule_desc.action = sql_rule_action
-            await mgmt_service.update_rule(topic_description, subscription_description, rule_desc)
+            await mgmt_service.update_rule(topic_description.name, subscription_description.name, rule_desc)
 
             rule_desc = await mgmt_service.get_rule(topic_name, subscription_name, rule_name)
             assert type(rule_desc.filter) == CorrelationRuleFilter
@@ -175,13 +175,13 @@ class ServiceBusAdministrationClientRuleAsyncTests(AzureMgmtTestCase):
             # change the name to a topic that doesn't exist; should fail.
             rule_desc.name = "iewdm"
             with pytest.raises(HttpResponseError):
-                await mgmt_service.update_rule(topic_name, subscription_description, rule_desc)
+                await mgmt_service.update_rule(topic_name, subscription_description.name, rule_desc)
             rule_desc.name = rule_name
 
             # change the name to a topic with an invalid name exist; should fail.
             rule_desc.name = ''
             with pytest.raises(msrest.exceptions.ValidationError):
-                await mgmt_service.update_rule(topic_name, subscription_description, rule_desc)
+                await mgmt_service.update_rule(topic_name, subscription_description.name, rule_desc)
             rule_desc.name = rule_name
 
         finally:

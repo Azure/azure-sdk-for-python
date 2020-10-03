@@ -4,6 +4,7 @@
 
 **Breaking Changes**
 * Passing any type other than `ReceiveMode` as parameter `receive_mode` now throws a `TypeError` instead of `AttributeError`.
+* Administration Client calls now take only entity names, not `<Entity>Descriptions` as well to reduce ambiguity in which entity was being acted on. TypeError will now be thrown on improper parameter types (non-string).
 
 ## 7.0.0b6 (2020-09-10)
 

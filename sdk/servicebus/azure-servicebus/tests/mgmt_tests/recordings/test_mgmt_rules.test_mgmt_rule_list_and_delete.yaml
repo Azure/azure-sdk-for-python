@@ -14,13 +14,13 @@ interactions:
     uri: https://servicebustestsbname.servicebus.windows.net/$Resources/topics?$skip=0&$top=100&api-version=2017-04
   response:
     body:
-      string: <feed xmlns="http://www.w3.org/2005/Atom"><title type="text">Topics</title><id>https://servicebustest32ip2wgoaa.servicebus.windows.net/$Resources/topics?$skip=0&amp;$top=100&amp;api-version=2017-04</id><updated>2020-08-17T08:07:15Z</updated><link
-        rel="self" href="https://servicebustest32ip2wgoaa.servicebus.windows.net/$Resources/topics?$skip=0&amp;$top=100&amp;api-version=2017-04"/></feed>
+      string: <feed xmlns="http://www.w3.org/2005/Atom"><title type="text">Topics</title><id>https://servicebustestrm7a5oi5hk.servicebus.windows.net/$Resources/topics?$skip=0&amp;$top=100&amp;api-version=2017-04</id><updated>2020-09-29T08:36:10Z</updated><link
+        rel="self" href="https://servicebustestrm7a5oi5hk.servicebus.windows.net/$Resources/topics?$skip=0&amp;$top=100&amp;api-version=2017-04"/></feed>
     headers:
       content-type:
       - application/atom+xml;type=feed;charset=utf-8
       date:
-      - Mon, 17 Aug 2020 08:07:14 GMT
+      - Tue, 29 Sep 2020 08:36:10 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -50,16 +50,16 @@ interactions:
     uri: https://servicebustestsbname.servicebus.windows.net/topic_testaddf?api-version=2017-04
   response:
     body:
-      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustest32ip2wgoaa.servicebus.windows.net/topic_testaddf?api-version=2017-04</id><title
-        type="text">topic_testaddf</title><published>2020-08-17T08:07:15Z</published><updated>2020-08-17T08:07:15Z</updated><author><name>servicebustest32ip2wgoaa</name></author><link
-        rel="self" href="https://servicebustest32ip2wgoaa.servicebus.windows.net/topic_testaddf?api-version=2017-04"/><content
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestrm7a5oi5hk.servicebus.windows.net/topic_testaddf?api-version=2017-04</id><title
+        type="text">topic_testaddf</title><published>2020-09-29T08:36:10Z</published><updated>2020-09-29T08:36:10Z</updated><author><name>servicebustestrm7a5oi5hk</name></author><link
+        rel="self" href="https://servicebustestrm7a5oi5hk.servicebus.windows.net/topic_testaddf?api-version=2017-04"/><content
         type="application/xml"><TopicDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><FilteringMessagesBeforePublishing>false</FilteringMessagesBeforePublishing><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2020-08-17T08:07:15.607Z</CreatedAt><UpdatedAt>2020-08-17T08:07:15.64Z</UpdatedAt><SupportOrdering>true</SupportOrdering><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EnablePartitioning>false</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableSubscriptionPartitioning>false</EnableSubscriptionPartitioning><EnableExpress>false</EnableExpress></TopicDescription></content></entry>
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><FilteringMessagesBeforePublishing>false</FilteringMessagesBeforePublishing><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2020-09-29T08:36:10.78Z</CreatedAt><UpdatedAt>2020-09-29T08:36:10.827Z</UpdatedAt><SupportOrdering>true</SupportOrdering><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EnablePartitioning>false</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableSubscriptionPartitioning>false</EnableSubscriptionPartitioning><EnableExpress>false</EnableExpress></TopicDescription></content></entry>
     headers:
       content-type:
       - application/atom+xml;type=entry;charset=utf-8
       date:
-      - Mon, 17 Aug 2020 08:07:15 GMT
+      - Tue, 29 Sep 2020 08:36:11 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -91,18 +91,18 @@ interactions:
     uri: https://servicebustestsbname.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk?api-version=2017-04
   response:
     body:
-      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustest32ip2wgoaa.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk?api-version=2017-04</id><title
-        type="text">sub_testkkk</title><published>2020-08-17T08:07:16Z</published><updated>2020-08-17T08:07:16Z</updated><link
-        rel="self" href="https://servicebustest32ip2wgoaa.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk?api-version=2017-04"/><content
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestrm7a5oi5hk.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk?api-version=2017-04</id><title
+        type="text">sub_testkkk</title><published>2020-09-29T08:36:11Z</published><updated>2020-09-29T08:36:11Z</updated><link
+        rel="self" href="https://servicebustestrm7a5oi5hk.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk?api-version=2017-04"/><content
         type="application/xml"><SubscriptionDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT1M</LockDuration><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DeadLetteringOnFilterEvaluationExceptions>true</DeadLetteringOnFilterEvaluationExceptions><MessageCount>0</MessageCount><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><Status>Active</Status><CreatedAt>2020-08-17T08:07:16.2422848Z</CreatedAt><UpdatedAt>2020-08-17T08:07:16.2422848Z</UpdatedAt><AccessedAt>0001-01-01T00:00:00</AccessedAt><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EntityAvailabilityStatus>Available</EntityAvailabilityStatus></SubscriptionDescription></content></entry>
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT1M</LockDuration><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DeadLetteringOnFilterEvaluationExceptions>true</DeadLetteringOnFilterEvaluationExceptions><MessageCount>0</MessageCount><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><Status>Active</Status><CreatedAt>2020-09-29T08:36:11.3662292Z</CreatedAt><UpdatedAt>2020-09-29T08:36:11.3662292Z</UpdatedAt><AccessedAt>0001-01-01T00:00:00</AccessedAt><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EntityAvailabilityStatus>Available</EntityAvailabilityStatus></SubscriptionDescription></content></entry>
     headers:
       content-type:
       - application/atom+xml;type=entry;charset=utf-8
       date:
-      - Mon, 17 Aug 2020 08:07:16 GMT
+      - Tue, 29 Sep 2020 08:36:11 GMT
       etag:
-      - '637332484356400000'
+      - '637369653708270000'
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -127,21 +127,21 @@ interactions:
     uri: https://servicebustestsbname.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules?$skip=0&$top=100&api-version=2017-04
   response:
     body:
-      string: <feed xmlns="http://www.w3.org/2005/Atom"><title type="text">Rules</title><id>https://servicebustest32ip2wgoaa.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules?$skip=0&amp;$top=100&amp;api-version=2017-04</id><updated>2020-08-17T08:07:16Z</updated><link
-        rel="self" href="https://servicebustest32ip2wgoaa.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules?$skip=0&amp;$top=100&amp;api-version=2017-04"/><entry
-        xml:base="https://servicebustest32ip2wgoaa.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules?$skip=0&amp;$top=100&amp;api-version=2017-04"><id>https://servicebustest32ip2wgoaa.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules/$Default?api-version=2017-04</id><title
-        type="text">$Default</title><published>2020-08-17T08:07:16Z</published><updated>2020-08-17T08:07:16Z</updated><link
+      string: <feed xmlns="http://www.w3.org/2005/Atom"><title type="text">Rules</title><id>https://servicebustestrm7a5oi5hk.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules?$skip=0&amp;$top=100&amp;api-version=2017-04</id><updated>2020-09-29T08:36:11Z</updated><link
+        rel="self" href="https://servicebustestrm7a5oi5hk.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules?$skip=0&amp;$top=100&amp;api-version=2017-04"/><entry
+        xml:base="https://servicebustestrm7a5oi5hk.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules?$skip=0&amp;$top=100&amp;api-version=2017-04"><id>https://servicebustestrm7a5oi5hk.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules/$Default?api-version=2017-04</id><title
+        type="text">$Default</title><published>2020-09-29T08:36:11Z</published><updated>2020-09-29T08:36:11Z</updated><link
         rel="self" href="rules/$Default?api-version=2017-04"/><content type="application/xml"><RuleDescription
         xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
         xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><Filter i:type="TrueFilter"><SqlExpression>1=1</SqlExpression><CompatibilityLevel>20</CompatibilityLevel></Filter><Action
-        i:type="EmptyRuleAction"/><CreatedAt>2020-08-17T08:07:16.2440316Z</CreatedAt><Name>$Default</Name></RuleDescription></content></entry></feed>
+        i:type="EmptyRuleAction"/><CreatedAt>2020-09-29T08:36:11.3692415Z</CreatedAt><Name>$Default</Name></RuleDescription></content></entry></feed>
     headers:
       content-type:
       - application/atom+xml;type=feed;charset=utf-8
       date:
-      - Mon, 17 Aug 2020 08:07:16 GMT
+      - Tue, 29 Sep 2020 08:36:11 GMT
       etag:
-      - '637332484356400000'
+      - '637369653708270000'
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -156,7 +156,7 @@ interactions:
 
       <ns0:entry xmlns:ns0="http://www.w3.org/2005/Atom" xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><ns0:content type="application/xml"><RuleDescription><Filter
-      xsi:type="SqlFilter"><SqlExpression>Priority = ''low''</SqlExpression><CompatibilityLevel>20</CompatibilityLevel></Filter><Action
+      xsi:type="SqlFilter"><SqlExpression>Priority = ''low''</SqlExpression><CompatibilityLevel>20</CompatibilityLevel><RequiresPreprocessing>true</RequiresPreprocessing></Filter><Action
       xsi:type="EmptyRuleAction" /><Name>test_rule_1</Name></RuleDescription></ns0:content></ns0:entry>'
     headers:
       Accept:
@@ -166,7 +166,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '506'
+      - '557'
       Content-Type:
       - application/atom+xml
       User-Agent:
@@ -175,20 +175,20 @@ interactions:
     uri: https://servicebustestsbname.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules/test_rule_1?api-version=2017-04
   response:
     body:
-      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustest32ip2wgoaa.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules/test_rule_1?api-version=2017-04</id><title
-        type="text">test_rule_1</title><published>2020-08-17T08:07:17Z</published><updated>2020-08-17T08:07:17Z</updated><link
-        rel="self" href="https://servicebustest32ip2wgoaa.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules/test_rule_1?api-version=2017-04"/><content
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestrm7a5oi5hk.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules/test_rule_1?api-version=2017-04</id><title
+        type="text">test_rule_1</title><published>2020-09-29T08:36:11Z</published><updated>2020-09-29T08:36:11Z</updated><link
+        rel="self" href="https://servicebustestrm7a5oi5hk.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules/test_rule_1?api-version=2017-04"/><content
         type="application/xml"><RuleDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
         xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><Filter i:type="SqlFilter"><SqlExpression>Priority
-        = 'low'</SqlExpression><CompatibilityLevel>20</CompatibilityLevel></Filter><Action
-        i:type="EmptyRuleAction"/><CreatedAt>2020-08-17T08:07:17.1798057Z</CreatedAt><Name>test_rule_1</Name></RuleDescription></content></entry>
+        = 'low'</SqlExpression><CompatibilityLevel>20</CompatibilityLevel><RequiresPreprocessing>true</RequiresPreprocessing></Filter><Action
+        i:type="EmptyRuleAction"/><CreatedAt>2020-09-29T08:36:11.6474939Z</CreatedAt><Name>test_rule_1</Name></RuleDescription></content></entry>
     headers:
       content-type:
       - application/atom+xml;type=entry;charset=utf-8
       date:
-      - Mon, 17 Aug 2020 08:07:16 GMT
+      - Tue, 29 Sep 2020 08:36:11 GMT
       etag:
-      - '637332484356400000'
+      - '637369653708270000'
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -203,7 +203,7 @@ interactions:
 
       <ns0:entry xmlns:ns0="http://www.w3.org/2005/Atom" xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><ns0:content type="application/xml"><RuleDescription><Filter
-      xsi:type="SqlFilter"><SqlExpression>Priority = ''middle''</SqlExpression><CompatibilityLevel>20</CompatibilityLevel></Filter><Action
+      xsi:type="SqlFilter"><SqlExpression>Priority = ''middle''</SqlExpression><CompatibilityLevel>20</CompatibilityLevel><RequiresPreprocessing>true</RequiresPreprocessing></Filter><Action
       xsi:type="EmptyRuleAction" /><Name>test_rule_2</Name></RuleDescription></ns0:content></ns0:entry>'
     headers:
       Accept:
@@ -213,7 +213,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '509'
+      - '560'
       Content-Type:
       - application/atom+xml
       User-Agent:
@@ -222,20 +222,20 @@ interactions:
     uri: https://servicebustestsbname.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules/test_rule_2?api-version=2017-04
   response:
     body:
-      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustest32ip2wgoaa.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules/test_rule_2?api-version=2017-04</id><title
-        type="text">test_rule_2</title><published>2020-08-17T08:07:17Z</published><updated>2020-08-17T08:07:17Z</updated><link
-        rel="self" href="https://servicebustest32ip2wgoaa.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules/test_rule_2?api-version=2017-04"/><content
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestrm7a5oi5hk.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules/test_rule_2?api-version=2017-04</id><title
+        type="text">test_rule_2</title><published>2020-09-29T08:36:11Z</published><updated>2020-09-29T08:36:11Z</updated><link
+        rel="self" href="https://servicebustestrm7a5oi5hk.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules/test_rule_2?api-version=2017-04"/><content
         type="application/xml"><RuleDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
         xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><Filter i:type="SqlFilter"><SqlExpression>Priority
-        = 'middle'</SqlExpression><CompatibilityLevel>20</CompatibilityLevel></Filter><Action
-        i:type="EmptyRuleAction"/><CreatedAt>2020-08-17T08:07:17.3048342Z</CreatedAt><Name>test_rule_2</Name></RuleDescription></content></entry>
+        = 'middle'</SqlExpression><CompatibilityLevel>20</CompatibilityLevel><RequiresPreprocessing>true</RequiresPreprocessing></Filter><Action
+        i:type="EmptyRuleAction"/><CreatedAt>2020-09-29T08:36:11.7568947Z</CreatedAt><Name>test_rule_2</Name></RuleDescription></content></entry>
     headers:
       content-type:
       - application/atom+xml;type=entry;charset=utf-8
       date:
-      - Mon, 17 Aug 2020 08:07:17 GMT
+      - Tue, 29 Sep 2020 08:36:11 GMT
       etag:
-      - '637332484356400000'
+      - '637369653708270000'
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -250,7 +250,7 @@ interactions:
 
       <ns0:entry xmlns:ns0="http://www.w3.org/2005/Atom" xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><ns0:content type="application/xml"><RuleDescription><Filter
-      xsi:type="SqlFilter"><SqlExpression>Priority = ''high''</SqlExpression><CompatibilityLevel>20</CompatibilityLevel></Filter><Action
+      xsi:type="SqlFilter"><SqlExpression>Priority = ''high''</SqlExpression><CompatibilityLevel>20</CompatibilityLevel><RequiresPreprocessing>true</RequiresPreprocessing></Filter><Action
       xsi:type="EmptyRuleAction" /><Name>test_rule_3</Name></RuleDescription></ns0:content></ns0:entry>'
     headers:
       Accept:
@@ -260,7 +260,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '507'
+      - '558'
       Content-Type:
       - application/atom+xml
       User-Agent:
@@ -269,20 +269,20 @@ interactions:
     uri: https://servicebustestsbname.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules/test_rule_3?api-version=2017-04
   response:
     body:
-      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustest32ip2wgoaa.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules/test_rule_3?api-version=2017-04</id><title
-        type="text">test_rule_3</title><published>2020-08-17T08:07:17Z</published><updated>2020-08-17T08:07:17Z</updated><link
-        rel="self" href="https://servicebustest32ip2wgoaa.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules/test_rule_3?api-version=2017-04"/><content
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestrm7a5oi5hk.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules/test_rule_3?api-version=2017-04</id><title
+        type="text">test_rule_3</title><published>2020-09-29T08:36:11Z</published><updated>2020-09-29T08:36:11Z</updated><link
+        rel="self" href="https://servicebustestrm7a5oi5hk.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules/test_rule_3?api-version=2017-04"/><content
         type="application/xml"><RuleDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
         xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><Filter i:type="SqlFilter"><SqlExpression>Priority
-        = 'high'</SqlExpression><CompatibilityLevel>20</CompatibilityLevel></Filter><Action
-        i:type="EmptyRuleAction"/><CreatedAt>2020-08-17T08:07:17.4923372Z</CreatedAt><Name>test_rule_3</Name></RuleDescription></content></entry>
+        = 'high'</SqlExpression><CompatibilityLevel>20</CompatibilityLevel><RequiresPreprocessing>true</RequiresPreprocessing></Filter><Action
+        i:type="EmptyRuleAction"/><CreatedAt>2020-09-29T08:36:11.9443601Z</CreatedAt><Name>test_rule_3</Name></RuleDescription></content></entry>
     headers:
       content-type:
       - application/atom+xml;type=entry;charset=utf-8
       date:
-      - Mon, 17 Aug 2020 08:07:17 GMT
+      - Tue, 29 Sep 2020 08:36:11 GMT
       etag:
-      - '637332484356400000'
+      - '637369653708270000'
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -307,42 +307,42 @@ interactions:
     uri: https://servicebustestsbname.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules?$skip=0&$top=100&api-version=2017-04
   response:
     body:
-      string: <feed xmlns="http://www.w3.org/2005/Atom"><title type="text">Rules</title><id>https://servicebustest32ip2wgoaa.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules?$skip=0&amp;$top=100&amp;api-version=2017-04</id><updated>2020-08-17T08:07:17Z</updated><link
-        rel="self" href="https://servicebustest32ip2wgoaa.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules?$skip=0&amp;$top=100&amp;api-version=2017-04"/><entry
-        xml:base="https://servicebustest32ip2wgoaa.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules?$skip=0&amp;$top=100&amp;api-version=2017-04"><id>https://servicebustest32ip2wgoaa.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules/$Default?api-version=2017-04</id><title
-        type="text">$Default</title><published>2020-08-17T08:07:16Z</published><updated>2020-08-17T08:07:16Z</updated><link
+      string: <feed xmlns="http://www.w3.org/2005/Atom"><title type="text">Rules</title><id>https://servicebustestrm7a5oi5hk.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules?$skip=0&amp;$top=100&amp;api-version=2017-04</id><updated>2020-09-29T08:36:12Z</updated><link
+        rel="self" href="https://servicebustestrm7a5oi5hk.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules?$skip=0&amp;$top=100&amp;api-version=2017-04"/><entry
+        xml:base="https://servicebustestrm7a5oi5hk.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules?$skip=0&amp;$top=100&amp;api-version=2017-04"><id>https://servicebustestrm7a5oi5hk.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules/$Default?api-version=2017-04</id><title
+        type="text">$Default</title><published>2020-09-29T08:36:11Z</published><updated>2020-09-29T08:36:11Z</updated><link
         rel="self" href="rules/$Default?api-version=2017-04"/><content type="application/xml"><RuleDescription
         xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
         xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><Filter i:type="TrueFilter"><SqlExpression>1=1</SqlExpression><CompatibilityLevel>20</CompatibilityLevel></Filter><Action
-        i:type="EmptyRuleAction"/><CreatedAt>2020-08-17T08:07:16.2440316Z</CreatedAt><Name>$Default</Name></RuleDescription></content></entry><entry
-        xml:base="https://servicebustest32ip2wgoaa.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules?$skip=0&amp;$top=100&amp;api-version=2017-04"><id>https://servicebustest32ip2wgoaa.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules/test_rule_1?api-version=2017-04</id><title
-        type="text">test_rule_1</title><published>2020-08-17T08:07:17Z</published><updated>2020-08-17T08:07:17Z</updated><link
+        i:type="EmptyRuleAction"/><CreatedAt>2020-09-29T08:36:11.3692415Z</CreatedAt><Name>$Default</Name></RuleDescription></content></entry><entry
+        xml:base="https://servicebustestrm7a5oi5hk.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules?$skip=0&amp;$top=100&amp;api-version=2017-04"><id>https://servicebustestrm7a5oi5hk.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules/test_rule_1?api-version=2017-04</id><title
+        type="text">test_rule_1</title><published>2020-09-29T08:36:11Z</published><updated>2020-09-29T08:36:11Z</updated><link
         rel="self" href="rules/test_rule_1?api-version=2017-04"/><content type="application/xml"><RuleDescription
         xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
         xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><Filter i:type="SqlFilter"><SqlExpression>Priority
-        = 'low'</SqlExpression><CompatibilityLevel>20</CompatibilityLevel><Parameters/></Filter><Action
-        i:type="EmptyRuleAction"/><CreatedAt>2020-08-17T08:07:17.1822982Z</CreatedAt><Name>test_rule_1</Name></RuleDescription></content></entry><entry
-        xml:base="https://servicebustest32ip2wgoaa.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules?$skip=0&amp;$top=100&amp;api-version=2017-04"><id>https://servicebustest32ip2wgoaa.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules/test_rule_2?api-version=2017-04</id><title
-        type="text">test_rule_2</title><published>2020-08-17T08:07:17Z</published><updated>2020-08-17T08:07:17Z</updated><link
+        = 'low'</SqlExpression><CompatibilityLevel>20</CompatibilityLevel><RequiresPreprocessing>true</RequiresPreprocessing><Parameters/></Filter><Action
+        i:type="EmptyRuleAction"/><CreatedAt>2020-09-29T08:36:11.6505251Z</CreatedAt><Name>test_rule_1</Name></RuleDescription></content></entry><entry
+        xml:base="https://servicebustestrm7a5oi5hk.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules?$skip=0&amp;$top=100&amp;api-version=2017-04"><id>https://servicebustestrm7a5oi5hk.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules/test_rule_2?api-version=2017-04</id><title
+        type="text">test_rule_2</title><published>2020-09-29T08:36:11Z</published><updated>2020-09-29T08:36:11Z</updated><link
         rel="self" href="rules/test_rule_2?api-version=2017-04"/><content type="application/xml"><RuleDescription
         xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
         xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><Filter i:type="SqlFilter"><SqlExpression>Priority
-        = 'middle'</SqlExpression><CompatibilityLevel>20</CompatibilityLevel><Parameters/></Filter><Action
-        i:type="EmptyRuleAction"/><CreatedAt>2020-08-17T08:07:17.3073575Z</CreatedAt><Name>test_rule_2</Name></RuleDescription></content></entry><entry
-        xml:base="https://servicebustest32ip2wgoaa.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules?$skip=0&amp;$top=100&amp;api-version=2017-04"><id>https://servicebustest32ip2wgoaa.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules/test_rule_3?api-version=2017-04</id><title
-        type="text">test_rule_3</title><published>2020-08-17T08:07:17Z</published><updated>2020-08-17T08:07:17Z</updated><link
+        = 'middle'</SqlExpression><CompatibilityLevel>20</CompatibilityLevel><RequiresPreprocessing>true</RequiresPreprocessing><Parameters/></Filter><Action
+        i:type="EmptyRuleAction"/><CreatedAt>2020-09-29T08:36:11.7599024Z</CreatedAt><Name>test_rule_2</Name></RuleDescription></content></entry><entry
+        xml:base="https://servicebustestrm7a5oi5hk.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules?$skip=0&amp;$top=100&amp;api-version=2017-04"><id>https://servicebustestrm7a5oi5hk.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules/test_rule_3?api-version=2017-04</id><title
+        type="text">test_rule_3</title><published>2020-09-29T08:36:11Z</published><updated>2020-09-29T08:36:11Z</updated><link
         rel="self" href="rules/test_rule_3?api-version=2017-04"/><content type="application/xml"><RuleDescription
         xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
         xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><Filter i:type="SqlFilter"><SqlExpression>Priority
-        = 'high'</SqlExpression><CompatibilityLevel>20</CompatibilityLevel><Parameters/></Filter><Action
-        i:type="EmptyRuleAction"/><CreatedAt>2020-08-17T08:07:17.4948299Z</CreatedAt><Name>test_rule_3</Name></RuleDescription></content></entry></feed>
+        = 'high'</SqlExpression><CompatibilityLevel>20</CompatibilityLevel><RequiresPreprocessing>true</RequiresPreprocessing><Parameters/></Filter><Action
+        i:type="EmptyRuleAction"/><CreatedAt>2020-09-29T08:36:11.9474045Z</CreatedAt><Name>test_rule_3</Name></RuleDescription></content></entry></feed>
     headers:
       content-type:
       - application/atom+xml;type=feed;charset=utf-8
       date:
-      - Mon, 17 Aug 2020 08:07:17 GMT
+      - Tue, 29 Sep 2020 08:36:11 GMT
       etag:
-      - '637332484356400000'
+      - '637369653708270000'
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -374,9 +374,9 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 17 Aug 2020 08:07:17 GMT
+      - Tue, 29 Sep 2020 08:36:11 GMT
       etag:
-      - '637332484356400000'
+      - '637369653708270000'
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -399,35 +399,35 @@ interactions:
     uri: https://servicebustestsbname.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules?$skip=0&$top=100&api-version=2017-04
   response:
     body:
-      string: <feed xmlns="http://www.w3.org/2005/Atom"><title type="text">Rules</title><id>https://servicebustest32ip2wgoaa.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules?$skip=0&amp;$top=100&amp;api-version=2017-04</id><updated>2020-08-17T08:07:18Z</updated><link
-        rel="self" href="https://servicebustest32ip2wgoaa.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules?$skip=0&amp;$top=100&amp;api-version=2017-04"/><entry
-        xml:base="https://servicebustest32ip2wgoaa.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules?$skip=0&amp;$top=100&amp;api-version=2017-04"><id>https://servicebustest32ip2wgoaa.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules/$Default?api-version=2017-04</id><title
-        type="text">$Default</title><published>2020-08-17T08:07:16Z</published><updated>2020-08-17T08:07:16Z</updated><link
+      string: <feed xmlns="http://www.w3.org/2005/Atom"><title type="text">Rules</title><id>https://servicebustestrm7a5oi5hk.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules?$skip=0&amp;$top=100&amp;api-version=2017-04</id><updated>2020-09-29T08:36:12Z</updated><link
+        rel="self" href="https://servicebustestrm7a5oi5hk.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules?$skip=0&amp;$top=100&amp;api-version=2017-04"/><entry
+        xml:base="https://servicebustestrm7a5oi5hk.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules?$skip=0&amp;$top=100&amp;api-version=2017-04"><id>https://servicebustestrm7a5oi5hk.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules/$Default?api-version=2017-04</id><title
+        type="text">$Default</title><published>2020-09-29T08:36:11Z</published><updated>2020-09-29T08:36:11Z</updated><link
         rel="self" href="rules/$Default?api-version=2017-04"/><content type="application/xml"><RuleDescription
         xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
         xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><Filter i:type="TrueFilter"><SqlExpression>1=1</SqlExpression><CompatibilityLevel>20</CompatibilityLevel></Filter><Action
-        i:type="EmptyRuleAction"/><CreatedAt>2020-08-17T08:07:16.2440316Z</CreatedAt><Name>$Default</Name></RuleDescription></content></entry><entry
-        xml:base="https://servicebustest32ip2wgoaa.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules?$skip=0&amp;$top=100&amp;api-version=2017-04"><id>https://servicebustest32ip2wgoaa.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules/test_rule_1?api-version=2017-04</id><title
-        type="text">test_rule_1</title><published>2020-08-17T08:07:17Z</published><updated>2020-08-17T08:07:17Z</updated><link
+        i:type="EmptyRuleAction"/><CreatedAt>2020-09-29T08:36:11.3692415Z</CreatedAt><Name>$Default</Name></RuleDescription></content></entry><entry
+        xml:base="https://servicebustestrm7a5oi5hk.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules?$skip=0&amp;$top=100&amp;api-version=2017-04"><id>https://servicebustestrm7a5oi5hk.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules/test_rule_1?api-version=2017-04</id><title
+        type="text">test_rule_1</title><published>2020-09-29T08:36:11Z</published><updated>2020-09-29T08:36:11Z</updated><link
         rel="self" href="rules/test_rule_1?api-version=2017-04"/><content type="application/xml"><RuleDescription
         xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
         xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><Filter i:type="SqlFilter"><SqlExpression>Priority
-        = 'low'</SqlExpression><CompatibilityLevel>20</CompatibilityLevel><Parameters/></Filter><Action
-        i:type="EmptyRuleAction"/><CreatedAt>2020-08-17T08:07:17.1822982Z</CreatedAt><Name>test_rule_1</Name></RuleDescription></content></entry><entry
-        xml:base="https://servicebustest32ip2wgoaa.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules?$skip=0&amp;$top=100&amp;api-version=2017-04"><id>https://servicebustest32ip2wgoaa.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules/test_rule_3?api-version=2017-04</id><title
-        type="text">test_rule_3</title><published>2020-08-17T08:07:17Z</published><updated>2020-08-17T08:07:17Z</updated><link
+        = 'low'</SqlExpression><CompatibilityLevel>20</CompatibilityLevel><RequiresPreprocessing>true</RequiresPreprocessing><Parameters/></Filter><Action
+        i:type="EmptyRuleAction"/><CreatedAt>2020-09-29T08:36:11.6505251Z</CreatedAt><Name>test_rule_1</Name></RuleDescription></content></entry><entry
+        xml:base="https://servicebustestrm7a5oi5hk.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules?$skip=0&amp;$top=100&amp;api-version=2017-04"><id>https://servicebustestrm7a5oi5hk.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules/test_rule_3?api-version=2017-04</id><title
+        type="text">test_rule_3</title><published>2020-09-29T08:36:11Z</published><updated>2020-09-29T08:36:11Z</updated><link
         rel="self" href="rules/test_rule_3?api-version=2017-04"/><content type="application/xml"><RuleDescription
         xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
         xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><Filter i:type="SqlFilter"><SqlExpression>Priority
-        = 'high'</SqlExpression><CompatibilityLevel>20</CompatibilityLevel><Parameters/></Filter><Action
-        i:type="EmptyRuleAction"/><CreatedAt>2020-08-17T08:07:17.4948299Z</CreatedAt><Name>test_rule_3</Name></RuleDescription></content></entry></feed>
+        = 'high'</SqlExpression><CompatibilityLevel>20</CompatibilityLevel><RequiresPreprocessing>true</RequiresPreprocessing><Parameters/></Filter><Action
+        i:type="EmptyRuleAction"/><CreatedAt>2020-09-29T08:36:11.9474045Z</CreatedAt><Name>test_rule_3</Name></RuleDescription></content></entry></feed>
     headers:
       content-type:
       - application/atom+xml;type=feed;charset=utf-8
       date:
-      - Mon, 17 Aug 2020 08:07:17 GMT
+      - Tue, 29 Sep 2020 08:36:12 GMT
       etag:
-      - '637332484356400000'
+      - '637369653708270000'
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -459,9 +459,9 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 17 Aug 2020 08:07:17 GMT
+      - Tue, 29 Sep 2020 08:36:12 GMT
       etag:
-      - '637332484356400000'
+      - '637369653708270000'
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -491,9 +491,9 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 17 Aug 2020 08:07:18 GMT
+      - Tue, 29 Sep 2020 08:36:12 GMT
       etag:
-      - '637332484356400000'
+      - '637369653708270000'
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -516,21 +516,21 @@ interactions:
     uri: https://servicebustestsbname.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules?$skip=0&$top=100&api-version=2017-04
   response:
     body:
-      string: <feed xmlns="http://www.w3.org/2005/Atom"><title type="text">Rules</title><id>https://servicebustest32ip2wgoaa.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules?$skip=0&amp;$top=100&amp;api-version=2017-04</id><updated>2020-08-17T08:07:18Z</updated><link
-        rel="self" href="https://servicebustest32ip2wgoaa.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules?$skip=0&amp;$top=100&amp;api-version=2017-04"/><entry
-        xml:base="https://servicebustest32ip2wgoaa.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules?$skip=0&amp;$top=100&amp;api-version=2017-04"><id>https://servicebustest32ip2wgoaa.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules/$Default?api-version=2017-04</id><title
-        type="text">$Default</title><published>2020-08-17T08:07:16Z</published><updated>2020-08-17T08:07:16Z</updated><link
+      string: <feed xmlns="http://www.w3.org/2005/Atom"><title type="text">Rules</title><id>https://servicebustestrm7a5oi5hk.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules?$skip=0&amp;$top=100&amp;api-version=2017-04</id><updated>2020-09-29T08:36:13Z</updated><link
+        rel="self" href="https://servicebustestrm7a5oi5hk.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules?$skip=0&amp;$top=100&amp;api-version=2017-04"/><entry
+        xml:base="https://servicebustestrm7a5oi5hk.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules?$skip=0&amp;$top=100&amp;api-version=2017-04"><id>https://servicebustestrm7a5oi5hk.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules/$Default?api-version=2017-04</id><title
+        type="text">$Default</title><published>2020-09-29T08:36:11Z</published><updated>2020-09-29T08:36:11Z</updated><link
         rel="self" href="rules/$Default?api-version=2017-04"/><content type="application/xml"><RuleDescription
         xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
         xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><Filter i:type="TrueFilter"><SqlExpression>1=1</SqlExpression><CompatibilityLevel>20</CompatibilityLevel></Filter><Action
-        i:type="EmptyRuleAction"/><CreatedAt>2020-08-17T08:07:16.2440316Z</CreatedAt><Name>$Default</Name></RuleDescription></content></entry></feed>
+        i:type="EmptyRuleAction"/><CreatedAt>2020-09-29T08:36:11.3692415Z</CreatedAt><Name>$Default</Name></RuleDescription></content></entry></feed>
     headers:
       content-type:
       - application/atom+xml;type=feed;charset=utf-8
       date:
-      - Mon, 17 Aug 2020 08:07:18 GMT
+      - Tue, 29 Sep 2020 08:36:12 GMT
       etag:
-      - '637332484356400000'
+      - '637369653708270000'
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -562,9 +562,9 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 17 Aug 2020 08:07:18 GMT
+      - Tue, 29 Sep 2020 08:36:12 GMT
       etag:
-      - '637332484356400000'
+      - '637369653708270000'
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -594,9 +594,9 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 17 Aug 2020 08:07:19 GMT
+      - Tue, 29 Sep 2020 08:36:13 GMT
       etag:
-      - '637332484356400000'
+      - '637369653708270000'
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
