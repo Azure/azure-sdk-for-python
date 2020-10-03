@@ -65,7 +65,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
 
         with sb_client.get_queue_sender(servicebus_queue.name) as sender:
             for i in range(5):
-                sender.send_messages(Message("Message {}".format(i)), timeout=5)
+                sender.send_messages(Message("Message {}".format(i)))
 
         with sb_client.get_queue_receiver(servicebus_queue.name, 
                                           receive_mode=ReceiveMode.ReceiveAndDelete, 
@@ -123,7 +123,6 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     message.to = 'to'
                     message.reply_to = 'reply_to'
                     sender.send_messages(message)
-                    assert sender._handler._msg_timeout == 0
 
             receiver = sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5)
             count = 0
@@ -427,7 +426,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     message.defer()
     
                 assert count == 10
-                deferred = receiver.receive_deferred_messages(deferred_messages, timeout=5)
+                deferred = receiver.receive_deferred_messages(deferred_messages)
                 assert len(deferred) == 10
                 for message in deferred:
                     assert isinstance(message, ReceivedMessage)
@@ -468,8 +467,6 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             with sb_client.get_queue_receiver(servicebus_queue.name, 
                                            max_wait_time=5, 
                                            receive_mode=ReceiveMode.PeekLock) as receiver:
-                with pytest.raises(ValueError):
-                    receiver.receive_deferred_messages(deferred_messages, timeout=0)
                 deferred = receiver.receive_deferred_messages(deferred_messages)
                 assert len(deferred) == 10
                 for message in deferred:
@@ -489,7 +486,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
         with ServiceBusClient.from_connection_string(
             servicebus_namespace_connection_string, logging_enable=False) as sb_client:
 
-
+    
             with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 deferred_messages = []
                 for i in range(10):
@@ -510,7 +507,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     
             with sb_client.get_queue_receiver(servicebus_queue.name, 
                                         max_wait_time=5) as receiver:
-                deferred = receiver.receive_deferred_messages(deferred_messages, timeout=None)
+                deferred = receiver.receive_deferred_messages(deferred_messages)
                 assert len(deferred) == 10
                 for message in deferred:
                     assert isinstance(message, ReceivedMessage)
@@ -739,7 +736,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     sender.send_messages(message)
     
             with sb_client.get_queue_receiver(servicebus_queue.name) as receiver:
-                messages = receiver.peek_messages(5, timeout=5)
+                messages = receiver.peek_messages(5)
                 assert len(messages) == 5
                 assert all(isinstance(m, PeekedMessage) for m in messages)
                 for message in messages:
@@ -831,7 +828,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                                                  max_wait_time=5, 
                                                  receive_mode=ReceiveMode.PeekLock, 
                                                  prefetch_count=10) as receiver:
-                messages = receiver.peek_messages(10, timeout=None)
+                messages = receiver.peek_messages(10)
                 assert len(messages) == 0
     
 
@@ -887,7 +884,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                         assert not m._lock_expired
                         time.sleep(5)
                         initial_expiry = m.locked_until_utc
-                        m.renew_lock(timeout=5)
+                        m.renew_lock()
                         assert (m.locked_until_utc - initial_expiry) >= timedelta(seconds=5)
                 finally:
                     messages[0].complete()
@@ -1277,7 +1274,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     received_messages.append(message)
                     message.complete()
 
-                tokens = sender.schedule_messages(received_messages, scheduled_enqueue_time, timeout=5)
+                tokens = sender.schedule_messages(received_messages, scheduled_enqueue_time)
                 assert len(tokens) == 2
     
                 messages = receiver.receive_messages(max_wait_time=120)
@@ -1328,7 +1325,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     tokens = sender.schedule_messages([message_a, message_b], enqueue_time)
                     assert len(tokens) == 2
     
-                    sender.cancel_scheduled_messages(tokens, timeout=None)
+                    sender.cancel_scheduled_messages(tokens)
     
                 messages = receiver.receive_messages(max_wait_time=120)
                 try:
@@ -1880,20 +1877,21 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
         
         message = Message("body")
 
-        with pytest.raises(TypeError):
+        with pytest.raises(AttributeError): # Note: If this is made read-writeable, this would be TypeError
             message.amqp_message.properties = {"properties":1}
-        message.amqp_message.properties.subject = "subject"
-
-        message.amqp_message.application_properties = {b"application_properties":1}
-
-        message.amqp_message.annotations = {b"annotations":2}
-        message.amqp_message.delivery_annotations = {b"delivery_annotations":3}
-
-        with pytest.raises(TypeError):
-            message.amqp_message.header = {"header":4}
-        message.amqp_message.header.priority = 5
-
-        message.amqp_message.footer = {b"footer":6}
+        # NOTE: These are disabled pending cross-language-sdk consensus on sendability/writeability.
+        # message.amqp_message.properties.subject = "subject"
+        # 
+        # message.amqp_message.application_properties = {b"application_properties":1}
+        # 
+        # message.amqp_message.annotations = {b"annotations":2}
+        # message.amqp_message.delivery_annotations = {b"delivery_annotations":3}
+        # 
+        # with pytest.raises(TypeError):
+        #     message.amqp_message.header = {"header":4}
+        # message.amqp_message.header.priority = 5
+        # 
+        # message.amqp_message.footer = {b"footer":6}
 
         with ServiceBusClient.from_connection_string(
             servicebus_namespace_connection_string, logging_enable=False) as sb_client:
@@ -1902,12 +1900,21 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 sender.send_messages(message)
                 with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5) as receiver:
                     message = receiver.receive_messages()[0]
-                    assert message.amqp_message.properties.subject == b"subject"
-                    assert message.amqp_message.application_properties[b"application_properties"] == 1
-                    assert message.amqp_message.annotations[b"annotations"] == 2
-                    assert message.amqp_message.delivery_annotations[b"delivery_annotations"] == 3
-                    assert message.amqp_message.header.priority == 5
-                    assert message.amqp_message.footer[b"footer"] == 6
+                    assert message.amqp_message.application_properties == None \
+                        and message.amqp_message.annotations != None \
+                        and message.amqp_message.delivery_annotations != None \
+                        and message.amqp_message.footer == None \
+                        and message.amqp_message.properties != None \
+                        and message.amqp_message.header != None
+                    # NOTE: These are disabled pending cross-language-sdk consensus on sendability/writeability.
+                    #
+                    # assert message.amqp_message.properties.subject == b"subject"
+                    # assert message.amqp_message.application_properties[b"application_properties"] == 1
+                    # assert message.amqp_message.annotations[b"annotations"] == 2
+                    # # delivery_annotations and footer disabled pending uamqp bug https://github.com/Azure/azure-uamqp-python/issues/169
+                    # #assert message.amqp_message.delivery_annotations[b"delivery_annotations"] == 3
+                    # assert message.amqp_message.header.priority == 5
+                    # #assert message.amqp_message.footer[b"footer"] == 6
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
