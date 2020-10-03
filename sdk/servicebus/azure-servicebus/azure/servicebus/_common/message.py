@@ -9,6 +9,7 @@ import datetime
 import uuid
 import functools
 import logging
+import copy
 from typing import Optional, List, Union, Iterable, TYPE_CHECKING, Callable, Any
 
 import uamqp.message
@@ -127,7 +128,7 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
             self.partition_key = kwargs.pop("partition_key", None)
             self.via_partition_key = kwargs.pop("via_partition_key", None)
         # If message is the full message, amqp_message is the "public facing interface" for what we expose.
-        self.amqp_message = AMQPMessage(self.message)
+        self.amqp_message = AMQPMessage(self.message) # type: AMQPMessage
 
     def __str__(self):
         return str(self.message)
@@ -1083,24 +1084,7 @@ class ReceivedMessage(ReceivedMessageBase):
 
 class AMQPMessage(object):
     """
-    The internal AMQP message that this ServiceBusMessage represents.
-
-    :param properties: Properties to add to the message.
-    :type properties: ~uamqp.message.MessageProperties
-    :param application_properties: Service specific application properties.
-    :type application_properties: dict
-    :param annotations: Service specific message annotations. Keys in the dictionary
-     must be `uamqp.types.AMQPSymbol` or `uamqp.types.AMQPuLong`.
-    :type annotations: dict
-    :param delivery_annotations: Delivery-specific non-standard properties at the head of the message.
-     Delivery annotations convey information from the sending peer to the receiving peer.
-     Keys in the dictionary must be `uamqp.types.AMQPSymbol` or `uamqp.types.AMQPuLong`.
-    :type delivery_annotations: dict
-    :param header: The message header.
-    :type header: ~uamqp.message.MessageHeader
-    :param footer: The message footer.
-    :type footer: dict
-
+    The internal AMQP message that this ServiceBusMessage represents.  Is read-only.
     """
     def __init__(self, message):
         # type: (uamqp.Message) -> None
@@ -1108,48 +1092,98 @@ class AMQPMessage(object):
 
     @property
     def properties(self):
-        return self._message.properties
+        # type: () -> uamqp.message.MessageProperties
+        """
+        Properties to add to the message.
 
-    @properties.setter
-    def properties(self, value):
-        self._message.properties = value
+        :rtype: ~uamqp.message.MessageProperties
+        """
+        return uamqp.message.MessageProperties(message_id=self._message.properties.message_id,
+                                               user_id=self._message.properties.user_id,
+                                               to=self._message.properties.to,
+                                               subject=self._message.properties.subject,
+                                               reply_to=self._message.properties.reply_to,
+                                               correlation_id=self._message.properties.correlation_id,
+                                               content_type=self._message.properties.content_type,
+                                               content_encoding=self._message.properties.content_encoding
+                                               )
+
+    # NOTE: These are disabled pending arch. design and cross-sdk consensus on
+    # how we will expose sendability of amqp focused messages. To undo, uncomment and remove deepcopies/workarounds.
+    #
+    #@properties.setter
+    #def properties(self, value):
+    #    self._message.properties = value
 
     @property
     def application_properties(self):
-        return self._message.application_properties
+        # type: () -> dict
+        """
+        Service specific application properties.
 
-    @application_properties.setter
-    def application_properties(self, value):
-        self._message.application_properties = value
+        :rtype: dict
+        """
+        return copy.deepcopy(self._message.application_properties)
+
+    #@application_properties.setter
+    #def application_properties(self, value):
+    #    self._message.application_properties = value
 
     @property
     def annotations(self):
-        return self._message.annotations
+        # type: () -> dict
+        """
+        Service specific message annotations. Keys in the dictionary
+        must be `uamqp.types.AMQPSymbol` or `uamqp.types.AMQPuLong`.
 
-    @annotations.setter
-    def annotations(self, value):
-        self._message.annotations = value
+        :rtype: dict
+        """
+        return copy.deepcopy(self._message.annotations)
+
+    #@annotations.setter
+    #def annotations(self, value):
+    #    self._message.annotations = value
 
     @property
     def delivery_annotations(self):
-        return self._message.delivery_annotations
+        # type: () -> dict
+        """
+        Delivery-specific non-standard properties at the head of the message.
+        Delivery annotations convey information from the sending peer to the receiving peer.
+        Keys in the dictionary must be `uamqp.types.AMQPSymbol` or `uamqp.types.AMQPuLong`.
 
-    @delivery_annotations.setter
-    def delivery_annotations(self, value):
-        self._message.delivery_annotations = value
+        :rtype: dict
+        """
+        return copy.deepcopy(self._message.delivery_annotations)
+
+    #@delivery_annotations.setter
+    #def delivery_annotations(self, value):
+    #    self._message.delivery_annotations = value
 
     @property
     def header(self):
-        return self._message.header
+        # type: () -> uamqp.message.MessageHeader
+        """
+        The message header.
 
-    @header.setter
-    def header(self, value):
-        self._message.header = value
+        :rtype: ~uamqp.message.MessageHeader
+        """
+        return uamqp.message.MessageHeader(header=self._message.header)
+
+    #@header.setter
+    #def header(self, value):
+    #    self._message.header = value
 
     @property
     def footer(self):
-        return self._message.footer
+        # type: () -> dict
+        """
+        The message footer.
 
-    @footer.setter
-    def footer(self, value):
-        self._message.footer = value
+        :rtype: dict
+        """
+        return copy.deepcopy(self._message.footer)
+
+    #@footer.setter
+    #def footer(self, value):
+    #    self._message.footer = value
