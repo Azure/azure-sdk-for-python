@@ -6,29 +6,52 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum
+from enum import Enum, EnumMeta
+from six import with_metaclass
 
-class AutocompleteMode(str, Enum):
+class _CaseInsensitiveEnumMeta(EnumMeta):
+    def __getitem__(self, name):
+        return super().__getitem__(name.upper())
 
-    one_term = "oneTerm"  #: Only one term is suggested. If the query has two terms, only the last term is completed. For example, if the input is 'washington medic', the suggested terms could include 'medicaid', 'medicare', and 'medicine'.
-    two_terms = "twoTerms"  #: Matching two-term phrases in the index will be suggested. For example, if the input is 'medic', the suggested terms could include 'medicare coverage' and 'medical assistant'.
-    one_term_with_context = "oneTermWithContext"  #: Completes the last term in a query with two or more terms, where the last two terms are a phrase that exists in the index. For example, if the input is 'washington medic', the suggested terms could include 'washington medicaid' and 'washington medical'.
+    def __getattr__(cls, name):
+        """Return the enum member matching `name`
+        We use __getattr__ instead of descriptors or inserting into the enum
+        class' __dict__ in order to support `name` and `value` being both
+        properties for enum members (which live in the class' __dict__) and
+        enum members themselves.
+        """
+        try:
+            return cls._member_map_[name.upper()]
+        except KeyError:
+            raise AttributeError(name)
 
-class IndexActionType(str, Enum):
+
+class AutocompleteMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    ONE_TERM = "oneTerm"  #: Only one term is suggested. If the query has two terms, only the last term is completed. For example, if the input is 'washington medic', the suggested terms could include 'medicaid', 'medicare', and 'medicine'.
+    TWO_TERMS = "twoTerms"  #: Matching two-term phrases in the index will be suggested. For example, if the input is 'medic', the suggested terms could include 'medicare coverage' and 'medical assistant'.
+    ONE_TERM_WITH_CONTEXT = "oneTermWithContext"  #: Completes the last term in a query with two or more terms, where the last two terms are a phrase that exists in the index. For example, if the input is 'washington medic', the suggested terms could include 'washington medicaid' and 'washington medical'.
+
+class IndexActionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The operation to perform on a document in an indexing batch.
     """
 
-    upload = "upload"  #: Inserts the document into the index if it is new and updates it if it exists. All fields are replaced in the update case.
-    merge = "merge"  #: Merges the specified field values with an existing document. If the document does not exist, the merge will fail. Any field you specify in a merge will replace the existing field in the document. This also applies to collections of primitive and complex types.
-    merge_or_upload = "mergeOrUpload"  #: Behaves like merge if a document with the given key already exists in the index. If the document does not exist, it behaves like upload with a new document.
-    delete = "delete"  #: Removes the specified document from the index. Any field you specify in a delete operation other than the key field will be ignored. If you want to remove an individual field from a document, use merge instead and set the field explicitly to null.
+    UPLOAD = "upload"  #: Inserts the document into the index if it is new and updates it if it exists. All fields are replaced in the update case.
+    MERGE = "merge"  #: Merges the specified field values with an existing document. If the document does not exist, the merge will fail. Any field you specify in a merge will replace the existing field in the document. This also applies to collections of primitive and complex types.
+    MERGE_OR_UPLOAD = "mergeOrUpload"  #: Behaves like merge if a document with the given key already exists in the index. If the document does not exist, it behaves like upload with a new document.
+    DELETE = "delete"  #: Removes the specified document from the index. Any field you specify in a delete operation other than the key field will be ignored. If you want to remove an individual field from a document, use merge instead and set the field explicitly to null.
 
-class QueryType(str, Enum):
+class QueryType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
-    simple = "simple"  #: Uses the simple query syntax for searches. Search text is interpreted using a simple query language that allows for symbols such as +, * and "". Queries are evaluated across all searchable fields by default, unless the searchFields parameter is specified.
-    full = "full"  #: Uses the full Lucene query syntax for searches. Search text is interpreted using the Lucene query language which allows field-specific and weighted searches, as well as other advanced features.
+    SIMPLE = "simple"  #: Uses the simple query syntax for searches. Search text is interpreted using a simple query language that allows for symbols such as +, * and "". Queries are evaluated across all searchable fields by default, unless the searchFields parameter is specified.
+    FULL = "full"  #: Uses the full Lucene query syntax for searches. Search text is interpreted using the Lucene query language which allows field-specific and weighted searches, as well as other advanced features.
 
-class SearchMode(str, Enum):
+class ScoringStatistics(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
-    any = "any"  #: Any of the search terms must be matched in order to count the document as a match.
-    all = "all"  #: All of the search terms must be matched in order to count the document as a match.
+    LOCAL = "local"  #: The scoring statistics will be calculated locally for lower latency.
+    GLOBAL_ENUM = "global"  #: The scoring statistics will be calculated globally for more consistent scoring.
+
+class SearchMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    ANY = "any"  #: Any of the search terms must be matched in order to count the document as a match.
+    ALL = "all"  #: All of the search terms must be matched in order to count the document as a match.

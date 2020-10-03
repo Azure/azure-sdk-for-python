@@ -16,21 +16,21 @@ interactions:
       Content-Type:
       - application/xml
       Date:
-      - Fri, 04 Sep 2020 23:56:23 GMT
+      - Thu, 01 Oct 2020 01:31:19 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 04 Sep 2020 23:56:23 GMT
+      - Thu, 01 Oct 2020 01:31:19 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://storagename.table.core.windows.net/?restype=service&comp=properties
+    uri: https://tablesteststorname.table.core.windows.net/?restype=service&comp=properties
   response:
     body:
       string: ''
     headers:
       date:
-      - Fri, 04 Sep 2020 23:56:23 GMT
+      - Thu, 01 Oct 2020 01:31:20 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -50,15 +50,15 @@ interactions:
       Connection:
       - keep-alive
       Date:
-      - Fri, 04 Sep 2020 23:56:54 GMT
+      - Thu, 01 Oct 2020 01:31:50 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 04 Sep 2020 23:56:54 GMT
+      - Thu, 01 Oct 2020 01:31:50 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://storagename.table.core.windows.net/?restype=service&comp=properties
+    uri: https://tablesteststorname.table.core.windows.net/?restype=service&comp=properties
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><StorageServiceProperties><Logging><Version>1.0</Version><Read>false</Read><Write>false</Write><Delete>false</Delete><RetentionPolicy><Enabled>false</Enabled></RetentionPolicy></Logging><HourMetrics><Version>1.0</Version><Enabled>false</Enabled><RetentionPolicy><Enabled>false</Enabled></RetentionPolicy></HourMetrics><MinuteMetrics><Version>1.0</Version><Enabled>false</Enabled><RetentionPolicy><Enabled>false</Enabled></RetentionPolicy></MinuteMetrics><Cors
@@ -67,7 +67,7 @@ interactions:
       content-type:
       - application/xml
       date:
-      - Fri, 04 Sep 2020 23:56:53 GMT
+      - Thu, 01 Oct 2020 01:31:50 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:

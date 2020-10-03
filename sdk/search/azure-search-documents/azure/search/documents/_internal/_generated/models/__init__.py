@@ -51,6 +51,7 @@ from ._search_index_client_enums import (
     AutocompleteMode,
     IndexActionType,
     QueryType,
+    ScoringStatistics,
     SearchMode,
 )
 
@@ -77,5 +78,6 @@ __all__ = [
     'AutocompleteMode',
     'IndexActionType',
     'QueryType',
+    'ScoringStatistics',
     'SearchMode',
 ]

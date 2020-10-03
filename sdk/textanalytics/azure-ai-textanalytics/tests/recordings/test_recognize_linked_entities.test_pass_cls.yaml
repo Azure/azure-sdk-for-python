@@ -14,7 +14,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b2 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
     uri: https://westcentralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.2/entities/linking?showStats=false&stringIndexType=UnicodeCodePoint
   response:
@@ -22,13 +22,13 @@ interactions:
       string: '{"documents":[{"id":"0","entities":[{"bingId":"9d84a0ad-fb96-8089-b2e7-9bdb0ee2551e","name":".test","matches":[{"text":"Test","offset":0,"length":4,"confidenceScore":0.02}],"language":"en","id":".test","url":"https://en.wikipedia.org/wiki/.test","dataSource":"Wikipedia"}],"warnings":[]}],"errors":[],"modelVersion":"2020-02-01"}'
     headers:
       apim-request-id:
-      - 6eeb15a0-0328-4d72-872c-57736836d8e3
+      - 4cd6c44c-9e26-4673-a686-a0c110a43675
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=1
       date:
-      - Thu, 10 Sep 2020 15:25:39 GMT
+      - Wed, 30 Sep 2020 16:02:54 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -36,7 +36,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '29'
+      - '22'
     status:
       code: 200
       message: OK

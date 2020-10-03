@@ -15,27 +15,27 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Sat, 05 Sep 2020 00:17:55 GMT
+      - Thu, 01 Oct 2020 01:06:44 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Sat, 05 Sep 2020 00:17:55 GMT
+      - Thu, 01 Oct 2020 01:06:44 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
-    uri: https://storagename.table.core.windows.net/Tables
+    uri: https://tablesteststorname.table.core.windows.net/Tables
   response:
     body:
-      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#Tables/@Element","TableName":"uttablef9b6145a"}'
+      string: '{"odata.metadata":"https://tablesteststorname.table.core.windows.net/$metadata#Tables/@Element","TableName":"uttablef9b6145a"}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Sat, 05 Sep 2020 00:17:55 GMT
+      - Thu, 01 Oct 2020 01:06:44 GMT
       location:
-      - https://storagename.table.core.windows.net/Tables('uttablef9b6145a')
+      - https://tablesteststorname.table.core.windows.net/Tables('uttablef9b6145a')
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -61,28 +61,28 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Sat, 05 Sep 2020 00:17:55 GMT
+      - Thu, 01 Oct 2020 01:06:44 GMT
       If-Match:
       - '*'
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Sat, 05 Sep 2020 00:17:55 GMT
+      - Thu, 01 Oct 2020 01:06:44 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
-    uri: https://storagename.table.core.windows.net/uttablef9b6145a(PartitionKey='pkf9b6145a',RowKey='rkf9b6145a')
+    uri: https://tablesteststorname.table.core.windows.net/uttablef9b6145a(PartitionKey='pkf9b6145a',RowKey='rkf9b6145a')
   response:
     body:
       string: '{"odata.error":{"code":"ResourceNotFound","message":{"lang":"en-US","value":"The
-        specified resource does not exist.\nRequestId:77a6c8bf-5002-006c-6b1a-832de4000000\nTime:2020-09-05T00:17:55.8617229Z"}}}'
+        specified resource does not exist.\nRequestId:9e59b5c2-5002-0009-1f8f-97c4ef000000\nTime:2020-10-01T01:06:45.1011694Z"}}}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Sat, 05 Sep 2020 00:17:55 GMT
+      - Thu, 01 Oct 2020 01:06:44 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -106,15 +106,15 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Sat, 05 Sep 2020 00:17:55 GMT
+      - Thu, 01 Oct 2020 01:06:44 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Sat, 05 Sep 2020 00:17:55 GMT
+      - Thu, 01 Oct 2020 01:06:44 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
-    uri: https://storagename.table.core.windows.net/Tables('uttablef9b6145a')
+    uri: https://tablesteststorname.table.core.windows.net/Tables('uttablef9b6145a')
   response:
     body:
       string: ''
@@ -124,7 +124,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Sat, 05 Sep 2020 00:17:55 GMT
+      - Thu, 01 Oct 2020 01:06:44 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options:

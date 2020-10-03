@@ -1,9 +1,12 @@
 # Release History
 
-## 4.2.1 (Unreleased)
+## 4.3.0 (2020-10-06)
+### Changed
+- `CryptographyClient` can perform decrypt and sign operations locally
+  ([#9754](https://github.com/Azure/azure-sdk-for-python/issues/9754))
+
 ### Fixed
 - Correct typing for async paging methods
-
 
 ## 4.2.0 (2020-08-11)
 ### Fixed

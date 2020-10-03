@@ -15,27 +15,27 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Sat, 05 Sep 2020 00:18:13 GMT
+      - Thu, 01 Oct 2020 01:07:07 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Sat, 05 Sep 2020 00:18:13 GMT
+      - Thu, 01 Oct 2020 01:07:07 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
-    uri: https://storagename.table.core.windows.net/Tables
+    uri: https://tablesteststorname.table.core.windows.net/Tables
   response:
     body:
-      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#Tables/@Element","TableName":"uttable973c1208"}'
+      string: '{"odata.metadata":"https://tablesteststorname.table.core.windows.net/$metadata#Tables/@Element","TableName":"uttable973c1208"}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Sat, 05 Sep 2020 00:18:13 GMT
+      - Thu, 01 Oct 2020 01:07:07 GMT
       location:
-      - https://storagename.table.core.windows.net/Tables('uttable973c1208')
+      - https://tablesteststorname.table.core.windows.net/Tables('uttable973c1208')
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -69,26 +69,26 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Sat, 05 Sep 2020 00:18:13 GMT
+      - Thu, 01 Oct 2020 01:07:08 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Sat, 05 Sep 2020 00:18:13 GMT
+      - Thu, 01 Oct 2020 01:07:08 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
-    uri: https://storagename.table.core.windows.net/uttable973c1208?se=2020-09-05T01%3A18%3A13Z&sp=a&sv=2019-02-02&tn=uttable973c1208&spk=test&srk=test1&epk=test&erk=test1&sig=If2P5bKKSTLb%2BjiR6dV%2F%2B%2F6RCV%2FlpG5j1b2ByI1%2F8IU%3D
+    uri: https://tablesteststorname.table.core.windows.net/uttable973c1208?se=2020-10-01T02%3A07%3A08Z&sp=a&sv=2019-02-02&tn=uttable973c1208&spk=test&srk=test1&epk=test&erk=test1&sig=n0n3Khw4tSPOyjSdwcqljiMVhs2l4vp8haok403iMzs%3D
   response:
     body:
       string: '{"odata.error":{"code":"AuthorizationFailure","message":{"lang":"en-US","value":"This
-        request is not authorized to perform this operation.\nRequestId:ecb03e07-f002-0043-571a-83acde000000\nTime:2020-09-05T00:18:13.5133218Z"}}}'
+        request is not authorized to perform this operation.\nRequestId:51fc4397-7002-0037-4f8f-9772ce000000\nTime:2020-10-01T01:07:08.4344827Z"}}}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Sat, 05 Sep 2020 00:18:13 GMT
+      - Thu, 01 Oct 2020 01:07:08 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -112,15 +112,15 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Sat, 05 Sep 2020 00:18:13 GMT
+      - Thu, 01 Oct 2020 01:07:08 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Sat, 05 Sep 2020 00:18:13 GMT
+      - Thu, 01 Oct 2020 01:07:08 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
-    uri: https://storagename.table.core.windows.net/Tables('uttable973c1208')
+    uri: https://tablesteststorname.table.core.windows.net/Tables('uttable973c1208')
   response:
     body:
       string: ''
@@ -130,7 +130,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Sat, 05 Sep 2020 00:18:13 GMT
+      - Thu, 01 Oct 2020 01:07:07 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options:

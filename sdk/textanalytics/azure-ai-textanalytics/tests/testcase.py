@@ -60,7 +60,6 @@ class TextAnalyticsTest(AzureTestCase):
         self.assertEqual(opinion_one.confidence_scores.negative, opinion_two.confidence_scores.negative)
         self.validateConfidenceScores(opinion_one.confidence_scores)
         self.assertEqual(opinion_one.offset, opinion_two.offset)
-        self.assertEqual(opinion_one.length, opinion_two.length)
         self.assertEqual(opinion_one.text, opinion_two.text)
         self.assertEqual(opinion_one.is_negated, opinion_two.is_negated)
 

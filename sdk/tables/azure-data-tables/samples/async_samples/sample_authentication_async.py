@@ -41,29 +41,27 @@ class TableAuthSamples(object):
         # Instantiate a TableServiceClient using a connection string
         # [START auth_from_connection_string]
         from azure.data.tables.aio import TableServiceClient
-        table_service = TableServiceClient.from_connection_string(conn_str=self.connection_string)
-        properties = await table_service.get_service_properties()
-        print("Connection String: {}".format(properties))
+        async with TableServiceClient.from_connection_string(conn_str=self.connection_string) as table_service:
+            properties = await table_service.get_service_properties()
+            print("Connection String: {}".format(properties))
         # [END auth_from_connection_string]
 
     async def authentication_by_shared_key(self):
         # Instantiate a TableServiceClient using a shared access key
         # [START auth_from_shared_key]
         from azure.data.tables.aio import TableServiceClient
-        table_service = TableServiceClient(account_url=self.account_url, credential=self.access_key)
-        properties = await table_service.get_service_properties()
-        print("Shared Key: {}".format(properties))
+        async with TableServiceClient.from_connection_string(conn_str=self.connection_string) as table_service:
+            properties = await table_service.get_service_properties()
+            print("Shared Key: {}".format(properties))
         # [END auth_from_shared_key]
 
     async def authentication_by_shared_access_signature(self):
         # Instantiate a TableServiceClient using a connection string
         # [START auth_by_sas]
         from azure.data.tables.aio import TableServiceClient
-        table_service = TableServiceClient.from_connection_string(conn_str=self.connection_string)
 
         # Create a SAS token to use for authentication of a client
         from azure.data.tables import generate_account_sas, ResourceTypes, AccountSasPermissions
-        print(self.account_name)
         sas_token = generate_account_sas(
             self.account_name,
             self.access_key,
@@ -72,11 +70,10 @@ class TableAuthSamples(object):
             expiry=datetime.utcnow() + timedelta(hours=1)
         )
 
-        token_auth_table_service = TableServiceClient(account_url=self.account_url, credential=sas_token)
+        async with TableServiceClient(account_url=self.account_url, credential=sas_token) as token_auth_table_service:
+            properties = await table_service.get_service_properties()
+            print("Shared Access Signature: {}".format(properties))
         # [END auth_by_sas]
-
-        properties = await table_service.get_service_properties()
-        print("Shared Access Signature: {}".format(properties))
 
 
 async def main():

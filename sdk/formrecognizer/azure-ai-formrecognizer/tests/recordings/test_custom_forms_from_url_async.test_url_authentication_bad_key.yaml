@@ -2,29 +2,26 @@ interactions:
 - request:
     body: 'b''{"source": "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/Form_1.jpg"}'''
     headers:
+      Accept:
+      - application/json
       Content-Length:
       - '160'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/custom/models/xx/analyze?includeTextDetails=false
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/xx/analyze?includeTextDetails=false
   response:
     body:
       string: '{"error": {"code": "401", "message": "Access denied due to invalid
         subscription key or wrong API endpoint. Make sure to provide a valid key for
         an active subscription and use a correct regional API endpoint for your resource."}}'
     headers:
-      apim-request-id: be03547c-5098-42d5-93bc-8653838ed73a
-      content-length: '225'
-      content-type: application/json
-      date: Fri, 10 Jul 2020 18:50:17 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      www-authenticate: AzureApiManagementKey realm="https://centraluseuap.api.cognitive.microsoft.com/formrecognizer",name="Ocp-Apim-Subscription-Key",type="header"
-      x-content-type-options: nosniff
+      content-length: '224'
+      date: Mon, 14 Sep 2020 20:23:29 GMT
     status:
       code: 401
-      message: Access Denied
-    url: https://centraluseuap.api.cognitive.microsoft.com//formrecognizer/v2.0/custom/models/xx/analyze?includeTextDetails=false
+      message: PermissionDenied
+    url: https://centraluseuap.api.cognitive.microsoft.com//formrecognizer/v2.1-preview.1/custom/models/xx/analyze?includeTextDetails=false
 version: 1

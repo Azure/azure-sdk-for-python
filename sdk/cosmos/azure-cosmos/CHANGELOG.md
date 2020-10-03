@@ -2,7 +2,10 @@
 
 **Bug fixes**
 - Fixed bug where continuation token is not honored when query_iterable is used to get results by page. Issue #13265.
+- Fixed bug where resource tokens not being honored for document reads and deletes. Issue #13634.
 
+**New features**
+- Added support for passing partitionKey while querying changefeed. Issue #11689.
 
 ## 4.1.0 (2020-08-10)
 

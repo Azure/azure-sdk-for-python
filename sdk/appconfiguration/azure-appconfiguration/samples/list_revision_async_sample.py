@@ -36,7 +36,7 @@ async def main():
     returned_config_setting.content_type = "new content type"
     await client.set_configuration_setting(config_setting)
 
-    items = client.list_revisions(keys=["MyKey"])
+    items = client.list_revisions(key_filter="MyKey")
     async for item in items:
         print_configuration_setting(item)
         print("")

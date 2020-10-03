@@ -106,8 +106,8 @@ class TestTraining(FormRecognizerTest):
 
         raw_response = []
 
-        def callback(response):
-            raw_model = client._client._deserialize(Model, response)
+        def callback(response, _, headers):
+            raw_model = client._deserialize(Model, response)
             custom_model = CustomFormModel._from_generated(raw_model)
             raw_response.append(raw_model)
             raw_response.append(custom_model)
@@ -125,8 +125,8 @@ class TestTraining(FormRecognizerTest):
 
         raw_response = []
 
-        def callback(response):
-            raw_model = client._client._deserialize(Model, response)
+        def callback(response, _, headers):
+            raw_model = client._deserialize(Model, response)
             custom_model = CustomFormModel._from_generated(raw_model)
             raw_response.append(raw_model)
             raw_response.append(custom_model)
@@ -192,8 +192,8 @@ class TestTraining(FormRecognizerTest):
 
         raw_response = []
 
-        def callback(response):
-            raw_model = client._client._deserialize(Model, response)
+        def callback(response, _, headers):
+            raw_model = client._deserialize(Model, response)
             custom_model = CustomFormModel._from_generated(raw_model)
             raw_response.append(raw_model)
             raw_response.append(custom_model)
@@ -211,8 +211,8 @@ class TestTraining(FormRecognizerTest):
 
         raw_response = []
 
-        def callback(response):
-            raw_model = client._client._deserialize(Model, response)
+        def callback(response, _, headers):
+            raw_model = client._deserialize(Model, response)
             custom_model = CustomFormModel._from_generated(raw_model)
             raw_response.append(raw_model)
             raw_response.append(custom_model)
