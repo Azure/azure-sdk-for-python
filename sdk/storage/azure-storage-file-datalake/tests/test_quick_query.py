@@ -5,14 +5,15 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import base64
 
 import pytest
 
 from azure.storage.filedatalake import (
     DelimitedTextDialect,
     DelimitedJsonDialect,
-    DataLakeFileQueryError
-)
+    DataLakeFileQueryError,
+    ArrowDialect, ArrowType)
 
 from testcase import (
     StorageTestCase,
@@ -798,5 +799,50 @@ class StorageQuickQueryTest(StorageTestCase):
         self.assertEqual(len(errors), 0)
         self.assertEqual(len(resp), len(data))
         self.assertEqual(query_result, b'{"name":"owner"}\n{}\n{"name":"owner"}\n')
+
+    @record
+    def test_quick_query_output_in_arrow_format(self):
+        # Arrange
+        data = b'100,200,300,400\n300,400,500,600\n'
+
+        # upload the json file
+        file_name = self._get_file_reference()
+        file_client = self.dsc.get_file_client(self.filesystem_name, file_name)
+        file_client.upload_data(data, overwrite=True)
+
+        errors = []
+        def on_error(error):
+            errors.append(error)
+
+        output_format = [ArrowDialect(ArrowType.DECIMAL, name="abc", precision=4, scale=2)]
+
+        expected_result = b"/////3gAAAAQAAAAAAAKAAwABgAFAAgACgAAAAABAwAMAAAACAAIAAAABAAIAAAABAAAAAEAAAAUAAAAEAAUAAgABgAHAAwAAAAQABAAAAAAAAEHJAAAABQAAAAEAAAAAAAAAAgADAAEAAgACAAAAAQAAAACAAAAAwAAAGFiYwD/////cAAAABAAAAAAAAoADgAGAAUACAAKAAAAAAMDABAAAAAAAAoADAAAAAQACAAKAAAAMAAAAAQAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAD/////iAAAABQAAAAAAAAADAAWAAYABQAIAAwADAAAAAADAwAYAAAAEAAAAAAAAAAAAAoAGAAMAAQACAAKAAAAPAAAABAAAAABAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAQAAAAEAAAAAAAAAAAAAAAAAAACQAQAAAAAAAAAAAAAAAAAA"
+
+        resp = file_client.query_file(
+            "SELECT _2 from BlobStorage WHERE _1 > 250",
+            on_error=on_error,
+            output_format=output_format)
+        query_result = base64.b64encode(resp.readall())
+
+        self.assertEqual(len(errors), 0)
+        self.assertEqual(query_result, expected_result)
+
+    @record
+    def test_quick_query_input_in_arrow_format(self):
+        # Arrange
+        file_name = self._get_file_reference()
+        file_client = self.dsc.get_file_client(self.filesystem_name, file_name)
+
+        errors = []
+        def on_error(error):
+            errors.append(error)
+
+        input_format = [ArrowDialect(ArrowType.DECIMAL, name="abc", precision=4, scale=2)]
+
+        with self.assertRaises(ValueError):
+            file_client.query_file(
+                "SELECT _2 from BlobStorage WHERE _1 > 250",
+                on_error=on_error,
+                file_format=input_format)
 
 # ------------------------------------------------------------------------------

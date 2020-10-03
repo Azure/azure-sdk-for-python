@@ -1,0 +1,46 @@
+interactions:
+- request:
+    body: '{"metricId": "metric_id"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '52'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-metricsadvisor/1.0.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/feedback/metric/query
+  response:
+    body:
+      string: '{"value":[{"feedbackId":"feedback_id","createdTime":"2020-09-22T00:24:18.629Z","userPrincipal":"xiangyan@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Amphibian"}},"feedbackType":"Anomaly","startTime":"2020-08-30T00:00:00Z","endTime":"2020-08-30T00:00:00Z","value":{"anomalyValue":"NotAnomaly"},"anomalyDetectionConfigurationId":"2fe9e687-4c9e-4e1b-8ec8-6541553db969","anomalyDetectionConfigurationSnapshot":{"anomalyDetectionConfigurationId":"2fe9e687-4c9e-4e1b-8ec8-6541553db969","name":"new
+        Name","description":"new description","metricId":"metric_id","wholeMetricConfiguration":{"conditionOperator":"OR","hardThresholdCondition":{"upperBound":500.0,"anomalyDetectorDirection":"Up","suppressCondition":{"minAlertNumber":5,"minAlertRatio":5.0}},"changeThresholdCondition":{"changePercentage":44.0,"shiftPoint":2,"anomalyDetectorDirection":"Both","withinRange":true,"suppressCondition":{"minAlertNumber":4,"minAlertRatio":4.0}}},"dimensionGroupOverrideConfigurations":[{"group":{"seriesGroupConfigurationId":"51242ee0b8c72df4e537ffdfe0e8af69","tagSet":{"dimension_name":"Common
+        Lime"}},"conditionOperator":"AND","hardThresholdCondition":{"upperBound":400.0,"anomalyDetectorDirection":"Up","suppressCondition":{"minAlertNumber":2,"minAlertRatio":2.0}}}],"seriesOverrideConfigurations":[{"series":{"seriesConfigurationId":"54bdef99c03c71c764fd3ea671cd1260","tagSet":{"dimension_name":"Common
+        Beech","Dim2":"Ant"}},"conditionOperator":"OR","changeThresholdCondition":{"changePercentage":33.0,"shiftPoint":1,"anomalyDetectorDirection":"Both","withinRange":true,"suppressCondition":{"minAlertNumber":2,"minAlertRatio":2.0}}}],"favoriteSeries":[],"disabledSeries":[]}}],"@nextLink":null}'
+    headers:
+      apim-request-id:
+      - fe27fe9b-33ba-40c1-992f-055d1d41008c
+      content-length:
+      - '1794'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 22 Sep 2020 00:35:51 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '224'
+      x-request-id:
+      - fe27fe9b-33ba-40c1-992f-055d1d41008c
+    status:
+      code: 200
+      message: OK
+version: 1

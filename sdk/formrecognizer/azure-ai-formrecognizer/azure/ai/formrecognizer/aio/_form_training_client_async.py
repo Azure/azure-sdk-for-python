@@ -21,29 +21,25 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.async_paging import AsyncItemPaged
 from ._form_recognizer_client_async import FormRecognizerClient
 from ._helpers_async import AsyncTransportWrapper
-from .._generated.aio._form_recognizer_client import FormRecognizerClient as FormRecognizer
 from .._generated.models import (
     TrainRequest,
     TrainSourceFilter,
     CopyRequest,
     CopyAuthorizationResult
 )
-from .._helpers import _get_deserialize, error_map, get_authentication_policy, POLLING_INTERVAL
+from .._helpers import error_map
 from .._models import (
     CustomFormModelInfo,
     AccountProperties,
     CustomFormModel
 )
-from .._user_agent import USER_AGENT
-from .._api_versions import validate_api_version, FormRecognizerApiVersion
+from ._form_base_client_async import FormRecognizerClientBaseAsync
 from .._polling import TrainingPolling, CopyPolling
 if TYPE_CHECKING:
     from azure.core.pipeline import PipelineResponse
-    from azure.core.credentials import AzureKeyCredential
-    from azure.core.credentials_async import AsyncTokenCredential
 
 
-class FormTrainingClient(object):
+class FormTrainingClient(FormRecognizerClientBaseAsync):
     """FormTrainingClient is the Form Recognizer interface to use for creating,
     and managing custom models. It provides methods for training models on the forms
     you provide, as well as methods for viewing and deleting models, accessing
@@ -77,30 +73,6 @@ class FormTrainingClient(object):
             :dedent: 8
             :caption: Creating the FormTrainingClient with a token credential.
     """
-
-    def __init__(
-            self,
-            endpoint: str,
-            credential: Union["AzureKeyCredential", "AsyncTokenCredential"],
-            **kwargs: Any
-    ) -> None:
-        self._endpoint = endpoint
-        self._credential = credential
-        authentication_policy = get_authentication_policy(credential)
-        polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
-        self.api_version = kwargs.pop('api_version', FormRecognizerApiVersion.V2_1_PREVIEW_1)
-        validate_api_version(self.api_version)
-        self._client = FormRecognizer(
-            endpoint=self._endpoint,
-            credential=self._credential,  # type: ignore
-            api_version=self.api_version,
-            sdk_moniker=USER_AGENT,
-            authentication_policy=authentication_policy,
-            polling_interval=polling_interval,
-            **kwargs
-        )
-        self._deserialize = _get_deserialize()
-        self._generated_models = self._client.models(self.api_version)
 
     @distributed_trace_async
     async def begin_training(

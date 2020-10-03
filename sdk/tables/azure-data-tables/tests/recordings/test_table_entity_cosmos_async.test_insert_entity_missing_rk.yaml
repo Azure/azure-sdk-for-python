@@ -1,0 +1,63 @@
+interactions:
+- request:
+    body: '{"TableName": "uttablef9e71907"}'
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Content-Length:
+      - '32'
+      Content-Type:
+      - application/json;odata=nometadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Thu, 01 Oct 2020 01:24:05 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Thu, 01 Oct 2020 01:24:05 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: POST
+    uri: https://tablestestcosmosname.table.cosmos.azure.com/Tables
+  response:
+    body:
+      string: '{"TableName":"uttablef9e71907","odata.metadata":"https://tablestestcosmosname.table.cosmos.azure.com/$metadata#Tables/@Element"}'
+    headers:
+      content-type: application/json;odata=minimalmetadata
+      date: Thu, 01 Oct 2020 01:24:06 GMT
+      etag: W/"datetime'2020-10-01T01%3A24%3A06.3381511Z'"
+      location: https://tablestestcosmosname.table.cosmos.azure.com/Tables('uttablef9e71907')
+      server: Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+    status:
+      code: 201
+      message: Ok
+    url: https://tablestestcosmosname.table.cosmos.azure.com/Tables
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Date:
+      - Thu, 01 Oct 2020 01:24:06 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Thu, 01 Oct 2020 01:24:06 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: DELETE
+    uri: https://tablestestcosmosname.table.cosmos.azure.com/Tables('uttablef9e71907')
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Thu, 01 Oct 2020 01:24:06 GMT
+      server: Microsoft-HTTPAPI/2.0
+    status:
+      code: 204
+      message: No Content
+    url: https://tablestestcosmosname.table.cosmos.azure.com/Tables('uttablef9e71907')
+version: 1

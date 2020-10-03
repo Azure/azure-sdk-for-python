@@ -23,6 +23,7 @@ class PathOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
+    :ivar comp: . Constant value: "expiry".
     """
 
     models = models
@@ -34,6 +35,7 @@ class PathOperations(object):
         self._deserialize = deserializer
 
         self._config = config
+        self.comp = "expiry"
 
     def create(self, resource=None, continuation=None, mode=None, rename_source=None, source_lease_id=None, properties=None, permissions=None, umask=None, request_id=None, timeout=None, path_http_headers=None, lease_access_conditions=None, modified_access_conditions=None, source_modified_access_conditions=None, cls=None, **kwargs):
         """Create File | Create Directory | Rename File | Rename Directory.
@@ -73,8 +75,7 @@ class PathOperations(object):
          character set.
         :type rename_source: str
         :param source_lease_id: A lease ID for the source path. If specified,
-         the source path must have an active lease and the leaase ID must
-         match.
+         the source path must have an active lease and the lease ID must match.
         :type source_lease_id: str
         :param properties: Optional. User-defined properties to be stored with
          the filesystem, in the format of a comma-separated list of name and
@@ -264,7 +265,7 @@ class PathOperations(object):
             return cls(response, None, response_headers)
     create.metadata = {'url': '/{filesystem}/{path}'}
 
-    def update(self, action, body, mode=None, max_records=None, continuation=None, position=None, retain_uncommitted_data=None, close=None, content_length=None, properties=None, owner=None, group=None, permissions=None, acl=None, request_id=None, timeout=None, path_http_headers=None, lease_access_conditions=None, modified_access_conditions=None, cls=None, **kwargs):
+    def update(self, action, mode, body, max_records=None, continuation=None, force_flag=None, position=None, retain_uncommitted_data=None, close=None, content_length=None, properties=None, owner=None, group=None, permissions=None, acl=None, request_id=None, timeout=None, path_http_headers=None, lease_access_conditions=None, modified_access_conditions=None, cls=None, **kwargs):
         """Append Data | Flush Data | Set Properties | Set Access Control.
 
         Uploads data to be appended to a file, flushes (writes) previously
@@ -288,17 +289,15 @@ class PathOperations(object):
          'setAccessControl', 'setAccessControlRecursive'
         :type action: str or
          ~azure.storage.filedatalake.models.PathUpdateAction
-        :param body: Initial data
-        :type body: Generator
-        :param mode: Optional. Valid and Required for
-         "SetAccessControlRecursive" operation.  Mode "set" sets POSIX access
-         control rights on files and directories, "modify" modifies one or more
-         POSIX access control rights  that pre-exist on files and directories,
-         "remove" removes one or more POSIX access control rights  that were
-         present earlier on files and directories. Possible values include:
-         'set', 'modify', 'remove'
+        :param mode: Mode "set" sets POSIX access control rights on files and
+         directories, "modify" modifies one or more POSIX access control rights
+         that pre-exist on files and directories, "remove" removes one or more
+         POSIX access control rights  that were present earlier on files and
+         directories. Possible values include: 'set', 'modify', 'remove'
         :type mode: str or
          ~azure.storage.filedatalake.models.PathSetAccessControlRecursiveMode
+        :param body: Initial data
+        :type body: Generator
         :param max_records: Optional. Valid for "SetAccessControlRecursive"
          operation. It specifies the maximum number of files or directories on
          which the acl change will be applied. If omitted or greater than
@@ -311,6 +310,14 @@ class PathOperations(object):
          response, it must be percent-encoded and specified in a subsequent
          invocation of setAcessControlRecursive operation.
         :type continuation: str
+        :param force_flag: Optional. Valid for "SetAccessControlRecursive"
+         operation. If set to false, the operation will terminate quickly on
+         encountering user errors (4XX). If true, the operation will ignore
+         user errors and proceed with the operation on other sub-entities of
+         the directory. Continuation token will only be returned when forceFlag
+         is true in case of user errors. If not set the default value is false
+         for this.
+        :type force_flag: bool
         :param position: This parameter allows the caller to upload data in
          parallel and control the order in which it is appended to the file.
          It is required when uploading data to be appended to the file and when
@@ -451,12 +458,13 @@ class PathOperations(object):
         # Construct parameters
         query_parameters = {}
         query_parameters['action'] = self._serialize.query("action", action, 'PathUpdateAction')
-        if mode is not None:
-            query_parameters['mode'] = self._serialize.query("mode", mode, 'PathSetAccessControlRecursiveMode')
         if max_records is not None:
             query_parameters['maxRecords'] = self._serialize.query("max_records", max_records, 'int', minimum=1)
         if continuation is not None:
             query_parameters['continuation'] = self._serialize.query("continuation", continuation, 'str')
+        query_parameters['mode'] = self._serialize.query("mode", mode, 'PathSetAccessControlRecursiveMode')
+        if force_flag is not None:
+            query_parameters['forceFlag'] = self._serialize.query("force_flag", force_flag, 'bool')
         if position is not None:
             query_parameters['position'] = self._serialize.query("position", position, 'long')
         if retain_uncommitted_data is not None:
@@ -1218,7 +1226,7 @@ class PathOperations(object):
             return cls(response, None, response_headers)
     set_access_control.metadata = {'url': '/{filesystem}/{path}'}
 
-    def set_access_control_recursive(self, mode, timeout=None, continuation=None, max_records=None, acl=None, request_id=None, cls=None, **kwargs):
+    def set_access_control_recursive(self, mode, timeout=None, continuation=None, force_flag=None, max_records=None, acl=None, request_id=None, cls=None, **kwargs):
         """Set the access control list for a path and subpaths.
 
         :param mode: Mode "set" sets POSIX access control rights on files and
@@ -1240,6 +1248,14 @@ class PathOperations(object):
          returned in the response, it must be specified in a subsequent
          invocation of the delete operation to continue deleting the directory.
         :type continuation: str
+        :param force_flag: Optional. Valid for "SetAccessControlRecursive"
+         operation. If set to false, the operation will terminate quickly on
+         encountering user errors (4XX). If true, the operation will ignore
+         user errors and proceed with the operation on other sub-entities of
+         the directory. Continuation token will only be returned when forceFlag
+         is true in case of user errors. If not set the default value is false
+         for this.
+        :type force_flag: bool
         :param max_records: Optional. It specifies the maximum number of files
          or directories on which the acl change will be applied. If omitted or
          greater than 2,000, the request will process up to 2,000 items
@@ -1280,6 +1296,8 @@ class PathOperations(object):
         if continuation is not None:
             query_parameters['continuation'] = self._serialize.query("continuation", continuation, 'str')
         query_parameters['mode'] = self._serialize.query("mode", mode, 'PathSetAccessControlRecursiveMode')
+        if force_flag is not None:
+            query_parameters['forceFlag'] = self._serialize.query("force_flag", force_flag, 'bool')
         if max_records is not None:
             query_parameters['maxRecords'] = self._serialize.query("max_records", max_records, 'int', minimum=1)
         query_parameters['action'] = self._serialize.query("action", action, 'str')
@@ -1496,7 +1514,7 @@ class PathOperations(object):
             return cls(response, None, response_headers)
     flush_data.metadata = {'url': '/{filesystem}/{path}'}
 
-    def append_data(self, body, position=None, timeout=None, content_length=None, request_id=None, path_http_headers=None, lease_access_conditions=None, cls=None, **kwargs):
+    def append_data(self, body, position=None, timeout=None, content_length=None, transactional_content_crc64=None, request_id=None, path_http_headers=None, lease_access_conditions=None, cls=None, **kwargs):
         """Append data to the file.
 
         :param body: Initial data
@@ -1521,6 +1539,9 @@ class PathOperations(object):
          Must be 0 for "Flush Data".  Must be the length of the request content
          in bytes for "Append Data".
         :type content_length: long
+        :param transactional_content_crc64: Specify the transactional crc64
+         for the body, to be validated by the service.
+        :type transactional_content_crc64: bytearray
         :param request_id: Provides a client-generated, opaque value with a 1
          KB character limit that is recorded in the analytics logs when storage
          analytics logging is enabled.
@@ -1569,6 +1590,8 @@ class PathOperations(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if content_length is not None:
             header_parameters['Content-Length'] = self._serialize.header("content_length", content_length, 'long', minimum=0)
+        if transactional_content_crc64 is not None:
+            header_parameters['x-ms-content-crc64'] = self._serialize.header("transactional_content_crc64", transactional_content_crc64, 'bytearray')
         if request_id is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
@@ -1594,6 +1617,81 @@ class PathOperations(object):
                 'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
                 'x-ms-client-request-id': self._deserialize('str', response.headers.get('x-ms-client-request-id')),
                 'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
+                'ETag': self._deserialize('str', response.headers.get('ETag')),
+                'Content-MD5': self._deserialize('bytearray', response.headers.get('Content-MD5')),
+                'x-ms-content-crc64': self._deserialize('bytearray', response.headers.get('x-ms-content-crc64')),
+                'x-ms-request-server-encrypted': self._deserialize('bool', response.headers.get('x-ms-request-server-encrypted')),
             }
             return cls(response, None, response_headers)
     append_data.metadata = {'url': '/{filesystem}/{path}'}
+
+    def set_expiry(self, expiry_options, timeout=None, request_id=None, expires_on=None, cls=None, **kwargs):
+        """Sets the time a blob will expire and be deleted.
+
+        :param expiry_options: Required. Indicates mode of the expiry time.
+         Possible values include: 'NeverExpire', 'RelativeToCreation',
+         'RelativeToNow', 'Absolute'
+        :type expiry_options: str or
+         ~azure.storage.filedatalake.models.PathExpiryOptions
+        :param timeout: The timeout parameter is expressed in seconds. For
+         more information, see <a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>
+        :type timeout: int
+        :param request_id: Provides a client-generated, opaque value with a 1
+         KB character limit that is recorded in the analytics logs when storage
+         analytics logging is enabled.
+        :type request_id: str
+        :param expires_on: The time to set the blob to expiry
+        :type expires_on: str
+        :param callable cls: A custom type or function that will be passed the
+         direct response
+        :return: None or the result of cls(response)
+        :rtype: None
+        :raises:
+         :class:`StorageErrorException<azure.storage.filedatalake.models.StorageErrorException>`
+        """
+        error_map = kwargs.pop('error_map', None)
+        # Construct URL
+        url = self.set_expiry.metadata['url']
+        path_format_arguments = {
+            'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
+        query_parameters['comp'] = self._serialize.query("self.comp", self.comp, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
+        if request_id is not None:
+            header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')
+        header_parameters['x-ms-expiry-option'] = self._serialize.header("expiry_options", expiry_options, 'str')
+        if expires_on is not None:
+            header_parameters['x-ms-expiry-time'] = self._serialize.header("expires_on", expires_on, 'str')
+
+        # Construct and send request
+        request = self._client.put(url, query_parameters, header_parameters)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise models.StorageErrorException(response, self._deserialize)
+
+        if cls:
+            response_headers = {
+                'ETag': self._deserialize('str', response.headers.get('ETag')),
+                'Last-Modified': self._deserialize('rfc-1123', response.headers.get('Last-Modified')),
+                'x-ms-client-request-id': self._deserialize('str', response.headers.get('x-ms-client-request-id')),
+                'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
+                'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
+                'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
+                'x-ms-error-code': self._deserialize('str', response.headers.get('x-ms-error-code')),
+            }
+            return cls(response, None, response_headers)
+    set_expiry.metadata = {'url': '/{filesystem}/{path}'}

@@ -255,7 +255,6 @@ for doc in result:
         print("...Category: {}".format(entity.category))
         print("...Confidence Score: {}".format(entity.confidence_score))
         print("...Offset: {}".format(entity.offset))
-        print("...Length: {}".format(entity.length))
 ```
 
 The returned response is a heterogeneous list of result and error objects: list[[RecognizeEntitiesResult][recognize_entities_result], [DocumentError][document_error]]
@@ -295,7 +294,6 @@ for doc in result:
             print("......Entity match text: {}".format(match.text))
             print("......Confidence Score: {}".format(match.confidence_score))
             print("......Offset: {}".format(match.offset))
-            print("......Length: {}".format(match.length))
 ```
 
 The returned response is a heterogeneous list of result and error objects: list[[RecognizeLinkedEntitiesResult][recognize_linked_entities_result], [DocumentError][document_error]]
@@ -330,7 +328,6 @@ for idx, doc in enumerate(result):
         print("......Category: {}".format(entity.category))
         print("......Confidence Score: {}".format(entity.confidence_score))
         print("......Offset: {}".format(entity.offset))
-        print("......Length: {}".format(entity.length))
 ```
 
 The returned response is a heterogeneous list of result and error objects: list[[RecognizePiiEntitiesResult][recognize_pii_entities_result], [DocumentError][document_error]]

@@ -4,7 +4,7 @@
 # ------------------------------------
 
 _SUPPORTED_API_VERSIONS = [
-    "2019-05-06-Preview",
+    "2020-06-30",
 ]
 
 def validate_api_version(api_version):

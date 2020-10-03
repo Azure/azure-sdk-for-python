@@ -177,13 +177,13 @@ class ServiceBusAdministrationClientTopicAsyncTests(AzureMgmtTestCase):
         assert len(topics) == 2
 
         description = await mgmt_service.get_topic('test_topic')
-        await mgmt_service.delete_topic(description)
+        await mgmt_service.delete_topic(description.name)
 
         topics = await async_pageable_to_list(mgmt_service.list_topics())
         assert len(topics) == 1 and topics[0].name == 'txt/.-_123'
 
         description = await mgmt_service.get_topic('txt/.-_123')
-        await mgmt_service.delete_topic(description)
+        await mgmt_service.delete_topic(description.name)
 
         topics = await async_pageable_to_list(mgmt_service.list_topics())
         assert len(topics) == 0

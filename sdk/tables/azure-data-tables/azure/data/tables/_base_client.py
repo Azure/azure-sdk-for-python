@@ -85,6 +85,8 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             raise ValueError("Invalid service: {}".format(service))
         service_name = service.split('-')[0]
         account = parsed_url.netloc.split(".{}.core.".format(service_name))
+        if 'cosmos' in parsed_url.netloc:
+            account = parsed_url.netloc.split(".{}.cosmos.".format(service_name))
         self.account_name = account[0] if len(account) > 1 else None
         secondary_hostname = None
 
