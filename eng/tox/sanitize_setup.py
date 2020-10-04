@@ -16,7 +16,6 @@ from packaging.specifiers import SpecifierSet
 from packaging.version import Version
 from pkg_resources import Requirement
 from pypi_tools.pypi import PyPIClient
-import re
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
 setup_parser_path = os.path.abspath(os.path.join(root_dir, "eng", "versioning"))
@@ -93,7 +92,7 @@ def process_requires(setup_py_path):
             old_req = str(req)
             version = get_version(pkg_name)
             logging.info("Updating version {0} in requirement {1} to dev build version".format(version, old_req))
-            new_req = re.sub('{}[a]*'.format(version), "{}{}".format(version, DEV_BUILD_IDENTIFIER), old_req)
+            new_req = old_req.replace(version, "{}{}".format(version, DEV_BUILD_IDENTIFIER))
             logging.info("New requirement for package {0}: {1}".format(pkg_name, new_req))
             requirement_to_update[old_req] = new_req
 
