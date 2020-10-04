@@ -32,10 +32,9 @@ try:
     # Query digital twins
     query = {'query': 'SELECT * FROM digitaltwins'}
     query_result = service_client.query_twins(query)
-
-    for i in range(len(query_result.items)):
-        print(query_result.items[i])
-        print()
+    print('DigitalTwins:')
+    for twin in query_result:
+        print("    -: {}".format(twin["$dtId"]))
 
 except HttpResponseError as e:
     print("\nThis sample has caught an error. {0}".format(e.message))

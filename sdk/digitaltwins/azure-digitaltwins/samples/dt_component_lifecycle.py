@@ -116,7 +116,7 @@ try:
     service_client.delete_digital_twin(digital_twin_id)
 
     # Decomission model
-    service_client.decommission_model(model_id, "")
+    service_client.decommission_model(model_id)
 
     # Delete model
     service_client.delete_model(model_id)

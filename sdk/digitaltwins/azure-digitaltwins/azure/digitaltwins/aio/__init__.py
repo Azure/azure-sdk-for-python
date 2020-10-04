@@ -7,8 +7,5 @@
 # --------------------------------------------------------------------------
 
 from ._digitaltwins_client_async import DigitalTwinsClient
-from .._generated.models._models import ModelData
-from .._generated.models._models import QueryResult
-from .._generated.models._models import PagedModelDataCollection
 
-__all__ = ['DigitalTwinsClient', 'ModelData', 'QueryResult', 'PagedModelDataCollection']
+__all__ = ['DigitalTwinsClient']
