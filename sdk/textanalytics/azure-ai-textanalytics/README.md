@@ -83,7 +83,7 @@ or [Azure CLI][azure_cli_endpoint_lookup]:
 
 ```bash
 # Get the endpoint for the text analytics resource
-az cognitiveservices account show --name "resource-name" --resource-group "resource-group-name" --query "endpoint"
+az cognitiveservices account show --name "resource-name" --resource-group "resource-group-name" --query "properties.endpoint"
 ```
 
 #### Get the API Key

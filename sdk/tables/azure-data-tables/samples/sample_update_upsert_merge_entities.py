@@ -78,7 +78,7 @@ class TableEntitySamples(object):
             # Query the entities in the table
             entities = list(table.list_entities())
 
-            for entity, i in enumerate(entities):
+            for i, entity in enumerate(entities):
                 print("Entity #{}: {}".format(entity, i))
             # [END query_entities]
 

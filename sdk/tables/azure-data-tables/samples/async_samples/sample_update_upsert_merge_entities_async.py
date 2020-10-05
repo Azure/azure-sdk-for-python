@@ -78,7 +78,7 @@ class TableEntitySamples(object):
                 async for e in table.list_entities():
                     entities.append(e)
 
-                for entity, i in enumerate(entities):
+                for i, entity in enumerate(entities):
                     print("Entity #{}: {}".format(entity, i))
                 # [END list_entities]
 

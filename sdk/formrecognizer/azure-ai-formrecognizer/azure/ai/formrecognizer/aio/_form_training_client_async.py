@@ -27,7 +27,6 @@ from .._generated.models import (
     CopyRequest,
     CopyAuthorizationResult
 )
-from .._helpers import error_map
 from .._models import (
     CustomFormModelInfo,
     AccountProperties,
@@ -154,7 +153,6 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
                     )
                 ),
                 cls=lambda pipeline_response, _, response_headers: pipeline_response,
-                error_map=error_map,
                 **kwargs
             )
 
@@ -182,7 +180,6 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
             cls=deserialization_callback,
             continuation_token=continuation_token,
             polling=AsyncLROBasePolling(timeout=polling_interval, lro_algorithms=[TrainingPolling()], **kwargs),
-            error_map=error_map,
             **kwargs
         )
 
@@ -209,11 +206,7 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
         if not model_id:
             raise ValueError("model_id cannot be None or empty.")
 
-        return await self._client.delete_custom_model(
-            model_id=model_id,
-            error_map=error_map,
-            **kwargs
-        )
+        return await self._client.delete_custom_model(model_id=model_id, **kwargs)
 
     @distributed_trace
     def list_custom_models(self, **kwargs: Any) -> AsyncItemPaged[CustomFormModelInfo]:
@@ -235,7 +228,6 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
         """
         return self._client.list_custom_models(  # type: ignore
             cls=kwargs.pop("cls", lambda objs: [CustomFormModelInfo._from_generated(x) for x in objs]),
-            error_map=error_map,
             **kwargs
         )
 
@@ -257,7 +249,7 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
                 :dedent: 8
                 :caption: Get properties for the form recognizer account.
         """
-        response = await self._client.get_custom_models(error_map=error_map, **kwargs)
+        response = await self._client.get_custom_models(**kwargs)
         return AccountProperties._from_generated(response.summary)
 
     @distributed_trace_async
@@ -284,10 +276,7 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
             raise ValueError("model_id cannot be None or empty.")
 
         response = await self._client.get_custom_model(
-            model_id=model_id,
-            include_keys=True,
-            error_map=error_map,
-            **kwargs
+            model_id=model_id, include_keys=True, **kwargs
         )
         return CustomFormModel._from_generated(response)
 
@@ -325,7 +314,6 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
 
         response = await self._client.generate_model_copy_authorization(  # type: ignore
             cls=lambda pipeline_response, deserialized, response_headers: pipeline_response,
-            error_map=error_map,
             **kwargs
         )  # type: PipelineResponse
         target = json.loads(response.http_response.text())
@@ -369,8 +357,6 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
 
         if not model_id:
             raise ValueError("model_id cannot be None or empty.")
-
-        continuation_token = kwargs.pop("continuation_token", None)
         polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
 
         def _copy_callback(raw_response, _, headers):  # pylint: disable=unused-argument
@@ -394,8 +380,6 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
                 lro_algorithms=[CopyPolling()],
                 **kwargs
             ),
-            error_map=error_map,
-            continuation_token=continuation_token,
             **kwargs
         )
 
