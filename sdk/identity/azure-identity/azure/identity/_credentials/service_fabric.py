@@ -48,6 +48,8 @@ class ServiceFabricCredential(GetTokenMixin):
 
 def _get_client_args(**kwargs):
     # type: (**Any) -> Optional[dict]
+    identity_config = kwargs.pop("identity_config", None) or {}
+
     url = os.environ.get(EnvironmentVariables.IDENTITY_ENDPOINT)
     secret = os.environ.get(EnvironmentVariables.IDENTITY_HEADER)
     thumbprint = os.environ.get(EnvironmentVariables.IDENTITY_SERVER_THUMBPRINT)
@@ -55,20 +57,23 @@ def _get_client_args(**kwargs):
         version = "2019-07-01-preview"
         base_headers = {"Secret": secret}
         connection_verify = False
+        if kwargs.get("client_id"):
+            identity_config["clientid"] = kwargs.pop("client_id")
     else:
         # Service Fabric managed identity isn't available in this environment
         return None
 
     return dict(
         kwargs,
+        _identity_config=identity_config,
         base_headers=base_headers,
         connection_verify=connection_verify,
         request_factory=functools.partial(_get_request, url, version),
     )
 
 
-def _get_request(url, version, scope):
-    # type: (str, str, str) -> HttpRequest
+def _get_request(url, version, scope, identity_config):
+    # type: (str, str, str, dict) -> HttpRequest
     request = HttpRequest("GET", url)
-    request.format_parameters({"api-version": version, "resource": scope})
+    request.format_parameters(dict({"api-version": version, "resource": scope}, **identity_config))
     return request
