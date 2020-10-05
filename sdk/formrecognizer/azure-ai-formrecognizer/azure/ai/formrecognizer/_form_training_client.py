@@ -403,14 +403,11 @@ class FormTrainingClient(FormRecognizerClientBase):
 
         display_name = kwargs.pop("display_name", None)
         polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
-        continuation_token = kwargs.pop("continuation_token", None)
 
         return self._client.begin_compose_custom_models_async(
             {"model_ids": model_ids, "model_name": display_name},
             cls=kwargs.pop("cls", _compose_callback),
             polling=LROBasePolling(timeout=polling_interval, lro_algorithms=[TrainingPolling()], **kwargs),
-            error_map=error_map,
-            continuation_token=continuation_token,
             **kwargs
         )
 
