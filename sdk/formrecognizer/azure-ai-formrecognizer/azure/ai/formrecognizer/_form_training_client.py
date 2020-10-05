@@ -349,9 +349,7 @@ class FormTrainingClient(FormRecognizerClientBase):
 
         if not model_id:
             raise ValueError("model_id cannot be None or empty.")
-
         polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
-        continuation_token = kwargs.pop("continuation_token", None)
 
         def _copy_callback(raw_response, _, headers):  # pylint: disable=unused-argument
             copy_result = self._deserialize(self._generated_models.CopyOperationResult, raw_response)
@@ -370,7 +368,6 @@ class FormTrainingClient(FormRecognizerClientBase):
             ),
             cls=kwargs.pop("cls", _copy_callback),
             polling=LROBasePolling(timeout=polling_interval, lro_algorithms=[CopyPolling()], **kwargs),
-            continuation_token=continuation_token,
             **kwargs
         )
 
