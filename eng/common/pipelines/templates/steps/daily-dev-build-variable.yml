@@ -5,7 +5,7 @@ steps:
 - pwsh: |
     $setDailyDevBuild = "false"
     if (('$(Build.Reason)' -eq 'Schedule') -and ('$(System.TeamProject)' -eq 'internal')) {
-      $setDailyDevBuild = "True"
+      $setDailyDevBuild = "true"
     }
     echo "##vso[task.setvariable variable=SetDevVersion]$setDailyDevBuild"
   displayName: "Setup Versioning Properties"

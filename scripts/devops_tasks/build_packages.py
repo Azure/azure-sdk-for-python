@@ -22,7 +22,17 @@ tox_path = os.path.abspath(os.path.join(root_dir, "eng", "tox"))
 sys.path.append(tox_path)
 from sanitize_setup import process_requires
 
-def build_packages(targeted_packages, distribution_directory, is_dev_build = False):
+
+def str_to_bool(input_string):
+    if isinstance(input_string, bool):
+        return input_string
+    if input_string.lower() in ("true", "t", "1"):
+        return True
+    elif input_string.lower() in ("false", "f", "0"):
+        return False
+
+
+def build_packages(targeted_packages, distribution_directory, is_dev_build=False):
     # run the build and distribution
     for package_root in targeted_packages:
         print(package_root)
@@ -93,7 +103,6 @@ if __name__ == "__main__":
         ),
     )
 
-
     args = parser.parse_args()
 
     # We need to support both CI builds of everything and individual service
@@ -104,5 +113,9 @@ if __name__ == "__main__":
     else:
         target_dir = root_dir
 
-    targeted_packages = process_glob_string(args.glob_string, target_dir, args.package_filter_string)
-    build_packages(targeted_packages, args.distribution_directory, args.is_dev_build)
+    targeted_packages = process_glob_string(
+        args.glob_string, target_dir, args.package_filter_string
+    )
+    build_packages(
+        targeted_packages, args.distribution_directory, str_to_bool(args.is_dev_build)
+    )
