@@ -17,9 +17,9 @@ PACKAGE_NAME = "azure-training-appconfiguration"
 PACKAGE_PPRINT_NAME = "App Configuration Data Training SDK"
 
 # a-b-c => a/b/c
-package_folder_path = PACKAGE_NAME.replace('-', '/')
+package_folder_path = "azure/appconfiguration"
 # a-b-c => a.b.c
-namespace_name = PACKAGE_NAME.replace('-', '.')
+namespace_name = "azure.appconfiguration"
 
 # azure v0.x is not compatible with this package
 # azure v0.x used to have a __version__ attribute (newer versions don't)
