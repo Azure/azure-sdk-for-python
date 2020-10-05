@@ -22,6 +22,7 @@ MANIFEST_LOCATION = "https://raw.githubusercontent.com/actions/python-versions/m
 
 MAX_INSTALLER_RETRY = 3
 CURRENT_UBUNTU_VERSION = "18.04"  # full title is ubuntu-18.04
+MAX_PRECACHED_VERSION = "3.9.0"
 
 UNIX_INSTALL_ARRAY = ["sh", "setup.sh"]
 WIN_INSTALL_ARRAY = ["pwsh", "setup.ps1"]
@@ -116,7 +117,7 @@ def get_installer_url(requested_version, version_manifest):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="Takes the incoming request and attempts to resolve the version spec."
+        description="This python script ensures that a requested python version is present in the hostedtoolcache on azure devops agents. It does this by retrieving new versions of python from the gh-actions python manifest."
     )
 
     parser.add_argument(
@@ -134,7 +135,7 @@ if __name__ == "__main__":
     )
 
     args = parser.parse_args()
-    max_precached_version = Version("3.8.6")
+    max_precached_version = Version(MAX_PRECACHED_VERSION)
     try:
         version_from_spec = Version(args.version_spec)
     except InvalidVersion:

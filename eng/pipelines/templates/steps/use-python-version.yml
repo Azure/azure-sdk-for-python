@@ -14,9 +14,9 @@ steps:
 
   # select the appropriate version from manifest if present
   - task: PythonScript@0
-    displayName: 'Check Version Spec Against Known Versions'
+    displayName: 'Install ${{ parameters.versionSpec }} from Python Manifest If Necessary'
     inputs:
-     scriptPath: 'scripts/devops_tasks/resolve_installer_location.py'
+     scriptPath: 'scripts/devops_tasks/install_python_version.py'
      arguments: '${{ parameters.versionSpec }} --installer_folder="../_pyinstaller'
 
   # use
