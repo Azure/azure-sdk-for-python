@@ -20,7 +20,7 @@ from .._response_handlers import (
     prepare_content_result,
     prepare_form_result
 )
-from .._helpers import get_content_type, error_map
+from .._helpers import get_content_type
 from .._polling import AnalyzePolling
 from ._form_base_client_async import FormRecognizerClientBaseAsync
 from .._models import FormPage, RecognizedForm
@@ -129,7 +129,6 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
             include_text_details=include_field_elements,
             cls=cls,
             polling=polling,
-            error_map=error_map,
             continuation_token=continuation_token,
             **kwargs
         )
@@ -186,7 +185,6 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
             include_text_details=include_field_elements,
             cls=cls,
             polling=polling,
-            error_map=error_map,
             continuation_token=continuation_token,
             **kwargs
         )
@@ -246,7 +244,6 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
                 timeout=polling_interval,
                 **kwargs
             ),
-            error_map=error_map,
             continuation_token=continuation_token,
             **kwargs
         )
@@ -276,7 +273,6 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
                 timeout=polling_interval,
                 **kwargs
             ),
-            error_map=error_map,
             continuation_token=continuation_token,
             **kwargs
         )
@@ -351,7 +347,6 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
                 lro_algorithms=[AnalyzePolling()],
                 **kwargs
             ),
-            error_map=error_map,
             continuation_token=continuation_token,
             **kwargs
         )
@@ -404,7 +399,6 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
                 lro_algorithms=[AnalyzePolling()],
                 **kwargs
             ),
-            error_map=error_map,
             continuation_token=continuation_token,
             **kwargs
         )

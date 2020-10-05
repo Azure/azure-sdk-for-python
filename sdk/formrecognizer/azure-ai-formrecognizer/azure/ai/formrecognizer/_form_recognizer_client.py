@@ -21,7 +21,7 @@ from ._response_handlers import (
     prepare_content_result,
     prepare_form_result
 )
-from ._helpers import get_content_type, error_map
+from ._helpers import get_content_type
 from ._form_base_client import FormRecognizerClientBase
 from ._polling import AnalyzePolling
 if TYPE_CHECKING:
@@ -124,7 +124,6 @@ class FormRecognizerClient(FormRecognizerClientBase):
             include_text_details=include_field_elements,
             cls=cls,
             polling=polling,
-            error_map=error_map,
             continuation_token=continuation_token,
             **kwargs
         )
@@ -173,7 +172,6 @@ class FormRecognizerClient(FormRecognizerClientBase):
             include_text_details=include_field_elements,
             cls=cls,
             polling=polling,
-            error_map=error_map,
             continuation_token=continuation_token,
             **kwargs
         )
@@ -227,7 +225,6 @@ class FormRecognizerClient(FormRecognizerClientBase):
             content_type=content_type,
             cls=kwargs.pop("cls", self._content_callback),
             polling=LROBasePolling(timeout=polling_interval, **kwargs),
-            error_map=error_map,
             continuation_token=continuation_token,
             **kwargs
         )
@@ -256,7 +253,6 @@ class FormRecognizerClient(FormRecognizerClientBase):
             file_stream={"source": form_url},
             cls=kwargs.pop("cls", self._content_callback),
             polling=LROBasePolling(timeout=polling_interval, **kwargs),
-            error_map=error_map,
             continuation_token=continuation_token,
             **kwargs
         )
@@ -322,7 +318,6 @@ class FormRecognizerClient(FormRecognizerClientBase):
             content_type=content_type,
             cls=deserialization_callback,
             polling=LROBasePolling(timeout=polling_interval, lro_algorithms=[AnalyzePolling()], **kwargs),
-            error_map=error_map,
             continuation_token=continuation_token,
             **kwargs
         )
@@ -367,7 +362,6 @@ class FormRecognizerClient(FormRecognizerClientBase):
             include_text_details=include_field_elements,
             cls=deserialization_callback,
             polling=LROBasePolling(timeout=polling_interval, lro_algorithms=[AnalyzePolling()], **kwargs),
-            error_map=error_map,
             continuation_token=continuation_token,
             **kwargs
         )
