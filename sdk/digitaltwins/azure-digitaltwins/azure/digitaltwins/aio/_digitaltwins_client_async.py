@@ -20,12 +20,11 @@ from azure.core.exceptions import (
     ResourceNotModifiedError
 )
 
-from ._utils import (
+from .._utils import (
     prep_if_match,
 )
 
-from ._generated import models
-from ._generated.models import ErrorException
+from .._generated import models
 from .._generated.aio._azure_digital_twins_api_async import AzureDigitalTwinsAPI
 
 class DigitalTwinsClient(object):
@@ -83,8 +82,8 @@ class DigitalTwinsClient(object):
             )
         except ResourceNotFoundError:
             return None
-        except ErrorException as error:
-            raise HttpResponseError(message=error.message, response=error.response)
+        except HttpResponseError:
+            return None
 
     @distributed_trace_async
     async def upsert_digital_twin(self, digital_twin_id, digital_twin, **kwargs):
@@ -117,8 +116,8 @@ class DigitalTwinsClient(object):
             return None
         except ResourceExistsError:
             return None
-        except ErrorException as error:
-            raise HttpResponseError(message=error.message, response=error.response)
+        except HttpResponseError:
+            return None
 
     @distributed_trace_async
     async def update_digital_twin(
@@ -172,8 +171,8 @@ class DigitalTwinsClient(object):
             return None
         except ResourceNotFoundError:
             return None
-        except ErrorException as error:
-            raise HttpResponseError(message=error.message, response=error.response)
+        except HttpResponseError:
+            return None
 
     @distributed_trace_async
     async def delete_digital_twin(
@@ -222,8 +221,8 @@ class DigitalTwinsClient(object):
             return None
         except ResourceNotFoundError:
             return None
-        except ErrorException as error:
-            raise HttpResponseError(message=error.message, response=error.response)
+        except HttpResponseError:
+            return None
 
     @distributed_trace_async
     async def get_component(self, digital_twin_id, component_path, **kwargs):
@@ -251,8 +250,8 @@ class DigitalTwinsClient(object):
             )
         except ResourceNotFoundError:
             return None
-        except ErrorException as error:
-            raise HttpResponseError(message=error.message, response=error.response)
+        except HttpResponseError:
+            return None
 
     @distributed_trace_async
     async def update_component(
@@ -306,8 +305,8 @@ class DigitalTwinsClient(object):
             return None
         except ResourceNotFoundError:
             return None
-        except ErrorException as error:
-            raise HttpResponseError(message=error.message, response=error.response)
+        except HttpResponseError:
+            return None
 
     @distributed_trace_async
     async def get_relationship(self, digital_twin_id, relationship_id, **kwargs):
@@ -335,8 +334,8 @@ class DigitalTwinsClient(object):
             )
         except ResourceNotFoundError:
             return None
-        except ErrorException as error:
-            raise HttpResponseError(message=error.message, response=error.response)
+        except HttpResponseError:
+            return None
 
     @distributed_trace_async
     async def upsert_relationship(self, digital_twin_id, relationship_id, relationship=None, **kwargs):
@@ -370,8 +369,8 @@ class DigitalTwinsClient(object):
             return None
         except ResourceNotFoundError:
             return None
-        except ErrorException as error:
-            raise HttpResponseError(message=error.message, response=error.response)
+        except HttpResponseError:
+            return None
 
     @distributed_trace_async
     async def update_relationship(
@@ -426,8 +425,8 @@ class DigitalTwinsClient(object):
             return None
         except ResourceNotFoundError:
             return None
-        except ErrorException as error:
-            raise HttpResponseError(message=error.message, response=error.response)
+        except HttpResponseError:
+            return None
 
     @distributed_trace_async
     async def delete_relationship(
@@ -474,8 +473,8 @@ class DigitalTwinsClient(object):
             )
         except ResourceNotFoundError:
             return None
-        except ErrorException as error:
-            raise HttpResponseError(message=error.message, response=error.response)
+        except HttpResponseError:
+            return None
 
     @distributed_trace_async
     async def list_relationships(self, digital_twin_id, relationship_id=None, **kwargs):
@@ -508,8 +507,8 @@ class DigitalTwinsClient(object):
             return None
         except ResourceNotFoundError:
             return None
-        except ErrorException as error:
-            raise HttpResponseError(message=error.message, response=error.response)
+        except HttpResponseError:
+            return None
 
     @distributed_trace_async
     async def list_incoming_relationships(self, digital_twin_id, **kwargs):
@@ -539,8 +538,8 @@ class DigitalTwinsClient(object):
             return None
         except ResourceNotFoundError:
             return None
-        except ErrorException as error:
-            raise HttpResponseError(message=error.message, response=error.response)
+        except HttpResponseError:
+            return None
 
     @distributed_trace_async
     async def publish_telemetry(self, digital_twin_id, payload, message_id=None, **kwargs):
@@ -579,8 +578,8 @@ class DigitalTwinsClient(object):
             return None
         except ResourceNotFoundError:
             return None
-        except ErrorException as error:
-            raise HttpResponseError(message=error.message, response=error.response)
+        except HttpResponseError:
+            return None
 
     @distributed_trace_async
     async def publish_component_telemetry(
@@ -629,8 +628,8 @@ class DigitalTwinsClient(object):
             return None
         except ResourceNotFoundError:
             return None
-        except ErrorException as error:
-            raise HttpResponseError(message=error.message, response=error.response)
+        except HttpResponseError:
+            return None
 
     @distributed_trace_async
     async def get_model(self, model_id, include_model_definition=False, **kwargs):
@@ -658,8 +657,8 @@ class DigitalTwinsClient(object):
             )
         except ResourceNotFoundError:
             return None
-        except ErrorException as error:
-            raise HttpResponseError(message=error.message, response=error.response)
+        except HttpResponseError:
+            return None
 
     @distributed_trace_async
     async def list_models(self, dependencies_for, **kwargs):
@@ -697,8 +696,8 @@ class DigitalTwinsClient(object):
             )
         except ServiceRequestError:
             return None
-        except ErrorException as error:
-            raise HttpResponseError(message=error.message, response=error.response)
+        except HttpResponseError:
+            return None
 
     @distributed_trace_async
     async def create_models(self, models=None, **kwargs):
@@ -727,8 +726,8 @@ class DigitalTwinsClient(object):
             return None
         except ResourceExistsError:
             return None
-        except ErrorException as error:
-            raise HttpResponseError(message=error.message, response=error.response)
+        except HttpResponseError:
+            return None
 
     @distributed_trace_async
     async def decommission_model(self, model_id, **kwargs):
@@ -759,8 +758,8 @@ class DigitalTwinsClient(object):
             return None
         except ResourceNotFoundError:
             return None
-        except ErrorException as error:
-            raise HttpResponseError(message=error.message, response=error.response)
+        except HttpResponseError:
+            return None
 
     @distributed_trace_async
     async def delete_model(self, model_id, **kwargs):
@@ -794,8 +793,8 @@ class DigitalTwinsClient(object):
             return None
         except ResourceExistsError:
             return None
-        except ErrorException as error:
-            raise HttpResponseError(message=error.message, response=error.response)
+        except HttpResponseError:
+            return None
 
     @distributed_trace_async
     async def get_event_route(self, event_route_id, **kwargs):
@@ -820,8 +819,8 @@ class DigitalTwinsClient(object):
             )
         except ResourceNotFoundError:
             return None
-        except ErrorException as error:
-            raise HttpResponseError(message=error.message, response=error.response)
+        except HttpResponseError:
+            return None
 
     @distributed_trace_async
     async def list_event_routes(self, max_item_count=-1, **kwargs):
@@ -850,8 +849,8 @@ class DigitalTwinsClient(object):
             )
         except ServiceRequestError:
             return None
-        except ErrorException as error:
-            raise HttpResponseError(message=error.message, response=error.response)
+        except HttpResponseError:
+            return None
 
     @distributed_trace_async
     async def upsert_event_route(self, event_route_id, event_route, **kwargs):
@@ -876,8 +875,8 @@ class DigitalTwinsClient(object):
             )
         except ServiceRequestError:
             return None
-        except ErrorException as error:
-            raise HttpResponseError(message=error.message, response=error.response)
+        except HttpResponseError:
+            return None
 
     @distributed_trace_async
     async def delete_event_route(self, event_route_id, **kwargs):
@@ -902,8 +901,8 @@ class DigitalTwinsClient(object):
             )
         except ResourceNotFoundError:
             return None
-        except ErrorException as error:
-            raise HttpResponseError(message=error.message, response=error.response)
+        except HttpResponseError:
+            return None
 
     @distributed_trace_async
     async def query_twins(self, query_specification, **kwargs):
@@ -923,7 +922,7 @@ class DigitalTwinsClient(object):
             list_of_elem = deserialized.items
             return deserialized.continuation_token or None, iter(list_of_elem)
 
-        def get_next(continuation_token=None):
+        async def get_next(continuation_token=None):
             query_spec = self._serialize.serialize_dict(
                 {'query': query, 'continuation_token': continuation_token}, 
                 'QuerySpecification'

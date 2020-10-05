@@ -105,7 +105,7 @@ service_client.delete_model(model_id)
 
 ### Create digital twins
 
-For Creating Twin you will need to provide Id of a digital Twin and the application/json digital twin based on the model created earlier. You can look at sample application/json [here](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/digitaltwins/azure-digital/samples/dtdl/digital_twins "buildingTwin").
+For Creating Twin you will need to provide Id of a digital Twin and the application/json digital twin based on the model created earlier. You can look at the buildingTwins.json sample application/json in the samples/dtdl/digital_twins folder.
 
 ```Python Snippet:dt_digitaltwins_lifecycle.py
 digital_twin_id = 'digitalTwin-' + uuid.UUID
@@ -175,7 +175,7 @@ print(get_component)
 
 ### Create digital twin relationships
 
-`upsert_relationship` creates a relationship on a digital twin provided with Id of a digital twin, name of relationship such as "contains", Id of an relationship such as "FloorContainsRoom" and an application/json relationship to be created. Must contain property with key "\$targetId" to specify the target of the relationship. Sample payloads for relationships can be found [here](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/digitaltwins/azure-digital/samples/dtdl/relationships/hospitalRelationships..json "RelationshipExamples").
+`upsert_relationship` creates a relationship on a digital twin provided with Id of a digital twin, name of relationship such as "contains", Id of an relationship such as "FloorContainsRoom" and an application/json relationship to be created. Must contain property with key "\$targetId" to specify the target of the relationship. Sample payloads for relationships can be found in the samples/dtdl/relationships folder.
 
 ```Python Snippet:dt_scenario.py
 with open(r"dtdl\relationships\hospitalRelationships.json") as f:

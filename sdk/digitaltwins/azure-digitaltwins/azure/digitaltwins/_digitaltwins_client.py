@@ -20,12 +20,11 @@ from azure.core.exceptions import (
     ResourceNotModifiedError
 )
 
-from _utils import (
+from ._utils import (
     prep_if_match,
 )
 
 from ._generated import models
-from ._generated.models import ErrorException
 from ._generated import AzureDigitalTwinsAPI
 
 class DigitalTwinsClient(object):
@@ -73,8 +72,8 @@ class DigitalTwinsClient(object):
             )
         except ResourceNotFoundError:
             return None
-        except ErrorException as error:
-            raise HttpResponseError(message=error.message, response=error.response)
+        except HttpResponseError:
+            return None
 
     @distributed_trace
     def upsert_digital_twin(self, digital_twin_id, digital_twin, **kwargs):
@@ -107,8 +106,8 @@ class DigitalTwinsClient(object):
             return None
         except ResourceExistsError:
             return None
-        except ErrorException as error:
-            raise HttpResponseError(message=error.message, response=error.response)
+        except HttpResponseError:
+            return None
 
     @distributed_trace
     def update_digital_twin(
@@ -119,7 +118,7 @@ class DigitalTwinsClient(object):
         match_condition=MatchConditions.Unconditionally,
         **kwargs
     ):
-        # type: (str, object, Optional[str], Optional[MatchConditions], dict) -> object
+        # type: (str, object, Optional[str], Optional[MatchConditions], dict) -> None
         """Update a digital twin using a json patch.
 
         :param str digital_twin_id: The Id of the digital twin.
@@ -162,8 +161,8 @@ class DigitalTwinsClient(object):
             return None
         except ResourceNotFoundError:
             return None
-        except ErrorException as error:
-            raise HttpResponseError(message=error.message, response=error.response)
+        except HttpResponseError:
+            return None
 
     @distributed_trace
     def delete_digital_twin(
@@ -173,7 +172,7 @@ class DigitalTwinsClient(object):
         match_condition=MatchConditions.Unconditionally,
         **kwargs
     ):
-        # type: (str, Optional[str], Optional[MatchConditions], dict) -> object
+        # type: (str, Optional[str], Optional[MatchConditions], dict) -> None
         """Delete a digital twin.
 
         :param str digital_twin_id: The Id of the digital twin.
@@ -212,8 +211,8 @@ class DigitalTwinsClient(object):
             return None
         except ResourceNotFoundError:
             return None
-        except ErrorException as error:
-            raise HttpResponseError(message=error.message, response=error.response)
+        except HttpResponseError:
+            return None
 
     @distributed_trace
     def get_component(self, digital_twin_id, component_path, **kwargs):
@@ -241,8 +240,8 @@ class DigitalTwinsClient(object):
             )
         except ResourceNotFoundError:
             return None
-        except ErrorException as error:
-            raise HttpResponseError(message=error.message, response=error.response)
+        except HttpResponseError:
+            return None
 
     @distributed_trace
     def update_component(
@@ -254,7 +253,7 @@ class DigitalTwinsClient(object):
         match_condition=MatchConditions.Unconditionally,
         **kwargs
     ):
-        # type: (str, str, List[object],  Optional[str], Optional[MatchConditions], dict) -> object
+        # type: (str, str, List[object],  Optional[str], Optional[MatchConditions], dict) -> None
         """Update properties of a component on a digital twin using a JSON patch.
 
         :param str digital_twin_id: The Id of the digital twin.
@@ -296,8 +295,8 @@ class DigitalTwinsClient(object):
             return None
         except ResourceNotFoundError:
             return None
-        except ErrorException as error:
-            raise HttpResponseError(message=error.message, response=error.response)
+        except HttpResponseError:
+            return None
 
     @distributed_trace
     def get_relationship(self, digital_twin_id, relationship_id, **kwargs):
@@ -325,8 +324,8 @@ class DigitalTwinsClient(object):
             )
         except ResourceNotFoundError:
             return None
-        except ErrorException as error:
-            raise HttpResponseError(message=error.message, response=error.response)
+        except HttpResponseError:
+            return None
 
     @distributed_trace
     def upsert_relationship(self, digital_twin_id, relationship_id, relationship=None, **kwargs):
@@ -360,8 +359,8 @@ class DigitalTwinsClient(object):
             return None
         except ResourceNotFoundError:
             return None
-        except ErrorException as error:
-            raise HttpResponseError(message=error.message, response=error.response)
+        except HttpResponseError:
+            return None
 
     @distributed_trace
     def update_relationship(
@@ -373,7 +372,7 @@ class DigitalTwinsClient(object):
         match_condition=MatchConditions.Unconditionally,
         **kwargs
     ):
-        # type: (str, str, List[object], Optional[str], Optional[MatchConditions], dict) -> object
+        # type: (str, str, List[object], Optional[str], Optional[MatchConditions], dict) -> None
         """Updates the properties of a relationship on a digital twin using a JSON patch.
 
         :param str digital_twin_id: The Id of the digital twin.
@@ -416,8 +415,8 @@ class DigitalTwinsClient(object):
             return None
         except ResourceNotFoundError:
             return None
-        except ErrorException as error:
-            raise HttpResponseError(message=error.message, response=error.response)
+        except HttpResponseError:
+            return None
 
     @distributed_trace
     def delete_relationship(
@@ -428,7 +427,7 @@ class DigitalTwinsClient(object):
         match_condition=MatchConditions.Unconditionally,
         **kwargs
     ):
-        # type: (str, str, Optional[str], Optional[MatchConditions], dict) -> object
+        # type: (str, str, Optional[str], Optional[MatchConditions], dict) -> None
         """Delete a digital twin.
 
         :param str digital_twin_id: The Id of the digital twin.
@@ -464,12 +463,12 @@ class DigitalTwinsClient(object):
             )
         except ResourceNotFoundError:
             return None
-        except ErrorException as error:
-            raise HttpResponseError(message=error.message, response=error.response)
+        except HttpResponseError:
+            return None
 
     @distributed_trace
     def list_relationships(self, digital_twin_id, relationship_id=None, **kwargs):
-        # type: (str, Optional[str], dict) -> ItemPaged[Relationship]
+        # type: (str, Optional[str], dict) -> ~azure.core.paging.ItemPaged[~azure.digitaltwins.models.Relationship]
         """Retrieve relationships for a digital twin.
 
         :param str digital_twin_id: The Id of the digital twin.
@@ -498,12 +497,12 @@ class DigitalTwinsClient(object):
             return None
         except ResourceNotFoundError:
             return None
-        except ErrorException as error:
-            raise HttpResponseError(message=error.message, response=error.response)
+        except HttpResponseError:
+            return None
 
     @distributed_trace
     def list_incoming_relationships(self, digital_twin_id, **kwargs):
-        # type: (str, str, dict) -> ItemPaged[IncomingRelationship]
+        # type: (str, str, dict) -> ~azure.core.paging.ItemPaged[~azure.digitaltwins.models.IncomingRelationship]
         """Retrieve all incoming relationships for a digital twin.
 
         :param str digital_twin_id: The Id of the digital twin.
@@ -529,8 +528,8 @@ class DigitalTwinsClient(object):
             return None
         except ResourceNotFoundError:
             return None
-        except ErrorException as error:
-            raise HttpResponseError(message=error.message, response=error.response)
+        except HttpResponseError:
+            return None
 
     @distributed_trace
     def publish_telemetry(self, digital_twin_id, payload, message_id=None, **kwargs):
@@ -569,8 +568,8 @@ class DigitalTwinsClient(object):
             return None
         except ResourceNotFoundError:
             return None
-        except ErrorException as error:
-            raise HttpResponseError(message=error.message, response=error.response)
+        except HttpResponseError:
+            return None
 
     @distributed_trace
     def publish_component_telemetry(
@@ -619,12 +618,12 @@ class DigitalTwinsClient(object):
             return None
         except ResourceNotFoundError:
             return None
-        except ErrorException as error:
-            raise HttpResponseError(message=error.message, response=error.response)
+        except HttpResponseError:
+            return None
 
     @distributed_trace
     def get_model(self, model_id, include_model_definition=False, **kwargs):
-        # type: (str, Optional[bool], dict) -> "models.ModelData"
+        # type: (str, Optional[bool], dict) -> ~azure.digitaltwins.models.ModelData
         """Get a model, including the model metadata and the model definition.
 
         :param str model_id: The Id of the model.
@@ -648,12 +647,12 @@ class DigitalTwinsClient(object):
             )
         except ResourceNotFoundError:
             return None
-        except ErrorException as error:
-            raise HttpResponseError(message=error.message, response=error.response)
+        except HttpResponseError:
+            return None
 
     @distributed_trace
     def list_models(self, dependencies_for, **kwargs):
-        # type: (str, bool, int, dict) -> ItemPaged[ModelData]
+        # type: (str, bool, int, dict) -> ~azure.core.paging.ItemPaged[~azure.digitaltwins.models.ModelData]
         """Get the list of models.
 
         :param List[str] dependencies_for: The model Ids to have dependencies retrieved.
@@ -687,15 +686,15 @@ class DigitalTwinsClient(object):
             )
         except ServiceRequestError:
             return None
-        except ErrorException as error:
-            raise HttpResponseError(message=error.message, response=error.response)
+        except HttpResponseError:
+            return None
 
     @distributed_trace
-    def create_models(self, models=None, **kwargs):
-        # type: (Optional[List[object]], dict) -> List["models.ModelData"]
+    def create_models(self, model_list=None, **kwargs):
+        # type: (Optional[List[object]], dict) -> List[~azure.digitaltwins.models.ModelData]
         """Create one or more models. When any error occurs, no models are uploaded.
 
-        :param List[object] models: The set of models to create. Each string corresponds to exactly one model.
+        :param List[object] model_list: The set of models to create. Each string corresponds to exactly one model.
         :returns: The list of ModelData
         :rtype: List[~azure.digitaltwins.models.ModelData]
         :raises :class: `~azure.core.exceptions.HttpResponseError`
@@ -709,7 +708,7 @@ class DigitalTwinsClient(object):
         }
         try:
             return self._client.digital_twin_models.add(
-                models,
+                model_list,
                 error_map=error_map,
                 **kwargs
             )
@@ -717,12 +716,12 @@ class DigitalTwinsClient(object):
             return None
         except ResourceExistsError:
             return None
-        except ErrorException as error:
-            raise HttpResponseError(message=error.message, response=error.response)
+        except HttpResponseError:
+            return None
 
     @distributed_trace
     def decommission_model(self, model_id, **kwargs):
-        # type: (str, List[object], dict) -> List["models.ModelData"]
+        # type: (str, dict) -> None
         """Decommissions a model.
 
         :param str model_id: The id for the model. The id is globally unique and case sensitive.
@@ -749,8 +748,8 @@ class DigitalTwinsClient(object):
             return None
         except ResourceNotFoundError:
             return None
-        except ErrorException as error:
-            raise HttpResponseError(message=error.message, response=error.response)
+        except HttpResponseError:
+            return None
 
     @distributed_trace
     def delete_model(self, model_id, **kwargs):
@@ -784,17 +783,17 @@ class DigitalTwinsClient(object):
             return None
         except ResourceExistsError:
             return None
-        except ErrorException as error:
-            raise HttpResponseError(message=error.message, response=error.response)
+        except HttpResponseError:
+            return None
 
     @distributed_trace
     def get_event_route(self, event_route_id, **kwargs):
-        # type: (str, dict) -> "models.EventRoute"
+        # type: (str, dict) -> ~azure.digitaltwins.models.EventRoute
         """Get an event route.
 
         :param str event_route_id: The Id of the event route.
         :returns: The EventRoute object.
-        :rtype: object
+        :rtype: ~azure.digitaltwins.models.EventRoute
         :raises :class: `~azure.core.exceptions.HttpResponseError`
         :raises :class: `~azure.core.exceptions.ResourceNotFoundError`: There is no
             event route with the provided id.
@@ -810,12 +809,12 @@ class DigitalTwinsClient(object):
             )
         except ResourceNotFoundError:
             return None
-        except ErrorException as error:
-            raise HttpResponseError(message=error.message, response=error.response)
+        except HttpResponseError:
+            return None
 
     @distributed_trace
     def list_event_routes(self, max_item_count=-1, **kwargs):
-        # type: (int, dict) -> ItemPaged[EventRoute]
+        # type: (int, dict) -> ~azure.core.paging.ItemPaged[~azure.digitaltwins.models.EventRoute]
         """Retrieves all event routes.
 
         :param str max_item_count: The maximum number of items to retrieve per request.
@@ -840,12 +839,12 @@ class DigitalTwinsClient(object):
             )
         except ServiceRequestError:
             return None
-        except ErrorException as error:
-            raise HttpResponseError(message=error.message, response=error.response)
+        except HttpResponseError:
+            return None
 
     @distributed_trace
     def upsert_event_route(self, event_route_id, event_route, **kwargs):
-        # type: (str, "models.EventRoute", dict) -> object
+        # type: (str, "models.EventRoute", dict) -> None
         """Create or update an event route.
 
         :param str event_route_id: The Id of the event route to create or update.
@@ -866,12 +865,12 @@ class DigitalTwinsClient(object):
             )
         except ServiceRequestError:
             return None
-        except ErrorException as error:
-            raise HttpResponseError(message=error.message, response=error.response)
+        except HttpResponseError:
+            return None
 
     @distributed_trace
     def delete_event_route(self, event_route_id, **kwargs):
-        # type: (str, dict) -> object
+        # type: (str, dict) -> None
         """Delete an event route.
 
         :param str event_route_id: The Id of the event route to delete.
@@ -892,12 +891,12 @@ class DigitalTwinsClient(object):
             )
         except ResourceNotFoundError:
             return None
-        except ErrorException as error:
-            raise HttpResponseError(message=error.message, response=error.response)
+        except HttpResponseError:
+            return None
 
     @distributed_trace
     def query_twins(self, query_specification, **kwargs):
-        # type: (models.QuerySpecification, dict) -> ItemPaged[QueryResult]
+        # type: (models.QuerySpecification, dict) -> ~azure.core.async_paging.ItemPaged[~azure.digitaltwins.models.QueryResult]
         """Query for digital twins.
 
         :param ~azure.digitaltwins.models.QuerySpecification query_specification:
