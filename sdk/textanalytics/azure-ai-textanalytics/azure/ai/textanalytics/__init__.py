@@ -37,7 +37,8 @@ from ._models import (
     PiiEntitiesRecognitionTask,
     EntityLinkingTask,
     KeyPhraseExtractionTask,
-    SentimentAnalysisTask
+    SentimentAnalysisTask,
+    TextAnalysisResult
 )
 
 __all__ = [
@@ -67,6 +68,13 @@ __all__ = [
     'RecognizePiiEntitiesResult',
     'PiiEntity',
     'PiiEntityDomainType',
+    'RecognizeHealthcareEntitiesResult',
+    'EntitiesRecognitionTask',
+    'PiiEntitiesRecognitionTask',
+    'EntityLinkingTask',
+    'KeyPhraseExtractionTask',
+    'SentimentAnalysisTask',
+    'TextAnalysisResult'
 ]
 
 __version__ = VERSION
