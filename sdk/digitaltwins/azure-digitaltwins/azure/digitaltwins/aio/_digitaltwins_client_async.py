@@ -128,7 +128,7 @@ class DigitalTwinsClient(object):
         match_condition=MatchConditions.Unconditionally,
         **kwargs
     ):
-        # type: (str, object, Optional[str], Optional[MatchConditions], dict) -> object
+        # type: (str, object, Optional[str], Optional[MatchConditions], dict) -> None
         """Update a digital twin using a json patch.
 
         :param str digital_twin_id: The Id of the digital twin.
@@ -182,7 +182,7 @@ class DigitalTwinsClient(object):
         match_condition=MatchConditions.Unconditionally,
         **kwargs
     ):
-        # type: (str, Optional[str], Optional[MatchConditions], dict) -> object
+        # type: (str, Optional[str], Optional[MatchConditions], dict) -> None
         """Delete a digital twin.
 
         :param str digital_twin_id: The Id of the digital twin.
@@ -263,7 +263,7 @@ class DigitalTwinsClient(object):
         match_condition=MatchConditions.Unconditionally,
         **kwargs
     ):
-        # type: (str, str, List[object],  Optional[str], Optional[MatchConditions], dict) -> object
+        # type: (str, str, List[object],  Optional[str], Optional[MatchConditions], dict) -> None
         """Update properties of a component on a digital twin using a JSON patch.
 
         :param str digital_twin_id: The Id of the digital twin.
@@ -382,7 +382,7 @@ class DigitalTwinsClient(object):
         match_condition=MatchConditions.Unconditionally,
         **kwargs
     ):
-        # type: (str, str, List[object], Optional[str], Optional[MatchConditions], dict) -> object
+        # type: (str, str, List[object], Optional[str], Optional[MatchConditions], dict) -> None
         """Updates the properties of a relationship on a digital twin using a JSON patch.
 
         :param str digital_twin_id: The Id of the digital twin.
@@ -437,7 +437,7 @@ class DigitalTwinsClient(object):
         match_condition=MatchConditions.Unconditionally,
         **kwargs
     ):
-        # type: (str, str, Optional[str], Optional[MatchConditions], dict) -> object
+        # type: (str, str, Optional[str], Optional[MatchConditions], dict) -> None
         """Delete a digital twin.
 
         :param str digital_twin_id: The Id of the digital twin.
@@ -478,7 +478,7 @@ class DigitalTwinsClient(object):
 
     @distributed_trace_async
     async def list_relationships(self, digital_twin_id, relationship_id=None, **kwargs):
-        # type: (str, Optional[str], dict) -> AsyncItemPaged[Relationship]
+        # type: (str, Optional[str], dict) -> ~azure.core.paging.ItemPaged[~azure.digitaltwins.models.Relationship]
         """Retrieve relationships for a digital twin.
 
         :param str digital_twin_id: The Id of the digital twin.
@@ -512,7 +512,7 @@ class DigitalTwinsClient(object):
 
     @distributed_trace_async
     async def list_incoming_relationships(self, digital_twin_id, **kwargs):
-        # type: (str, str, dict) -> AsyncItemPaged[IncomingRelationship]
+        # type: (str, str, dict) -> ~azure.core.paging.ItemPaged[~azure.digitaltwins.models.IncomingRelationship]
         """Retrieve all incoming relationships for a digital twin.
 
         :param str digital_twin_id: The Id of the digital twin.
@@ -633,7 +633,7 @@ class DigitalTwinsClient(object):
 
     @distributed_trace_async
     async def get_model(self, model_id, include_model_definition=False, **kwargs):
-        # type: (str, Optional[bool], dict) -> "models.ModelData"
+        # type: (str, Optional[bool], dict) -> ~azure.digitaltwins.models.ModelData
         """Get a model, including the model metadata and the model definition.
 
         :param str model_id: The Id of the model.
@@ -662,7 +662,7 @@ class DigitalTwinsClient(object):
 
     @distributed_trace_async
     async def list_models(self, dependencies_for, **kwargs):
-        # type: (str, bool, int, dict) -> AsyncItemPaged[ModelData]
+        # type: (str, bool, int, dict) -> ~azure.core.paging.ItemPaged[~azure.digitaltwins.models.ModelData]
         """Get the list of models.
 
         :param List[str] dependencies_for: The model Ids to have dependencies retrieved.
@@ -701,7 +701,7 @@ class DigitalTwinsClient(object):
 
     @distributed_trace_async
     async def create_models(self, models=None, **kwargs):
-        # type: (Optional[List[object]], dict) -> List["models.ModelData"]
+        # type: (Optional[List[object]], dict) -> List[~azure.digitaltwins.models.ModelData]
         """Create one or more models. When any error occurs, no models are uploaded.
 
         :param List[object] models: The set of models to create. Each string corresponds to exactly one model.
@@ -824,7 +824,7 @@ class DigitalTwinsClient(object):
 
     @distributed_trace_async
     async def list_event_routes(self, max_item_count=-1, **kwargs):
-        # type: (int, dict) -> AsyncItemPaged[EventRoute]
+        # type: (int, dict) -> ~azure.core.paging.ItemPaged[~azure.digitaltwins.models.EventRoute]
         """Retrieves all event routes.
 
         :param str max_item_count: The maximum number of items to retrieve per request.
@@ -906,7 +906,7 @@ class DigitalTwinsClient(object):
 
     @distributed_trace_async
     async def query_twins(self, query_specification, **kwargs):
-        # type: ("models.QuerySpecification", dict) -> AsyncItemPaged[QueryResult]
+        # type: (models.QuerySpecification, dict) -> ~azure.core.async_paging.ItemPaged[~azure.digitaltwins.models.QueryResult]
         """Query for digital twins.
 
         :param ~azure.digitaltwins.models.QuerySpecification query_specification:
