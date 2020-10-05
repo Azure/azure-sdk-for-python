@@ -71,7 +71,7 @@ class TableAuthSamples(object):
         )
 
         async with TableServiceClient(account_url=self.account_url, credential=sas_token) as token_auth_table_service:
-            properties = await table_service.get_service_properties()
+            properties = await token_auth_table_service.get_service_properties()
             print("Shared Access Signature: {}".format(properties))
         # [END auth_by_sas]
 
