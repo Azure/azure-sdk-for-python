@@ -318,6 +318,25 @@ class StorageBlobAccessConditionsAsyncTest(AsyncStorageTestCase):
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
+    async def test_multi_put_blob_contains_headers(self, resource_group, location, storage_account, storage_account_key):
+        def _validate_headers(request):
+            header = request.http_request.headers.get('x-ms-meta-customheader')
+            self.assertEqual(header, 'test_value')
+
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
+        import io
+        self._setup()
+        data = io.BytesIO(bytearray(1024*1024*100))
+        await self._create_container(self.container_name, bsc)
+        blob = bsc.get_blob_client(self.container_name, "blob1")
+        await blob.upload_blob(
+            data,
+            metadata={'customheader': 'test_value'},
+            raw_request_hook=_validate_headers
+        )
+
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
     async def test_put_blob_with_if_modified(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024, transport=AiohttpTestTransport())
         self._setup()
