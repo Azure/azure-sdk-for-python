@@ -14,8 +14,6 @@ from packaging.version import Version
 from packaging.version import parse
 from packaging.version import InvalidVersion
 
-import pdb
-
 # SOURCE OF THIS FILE: https://github.com/actions/python-versions
 # this is the official mapping file for gh-actions to retrieve python installers
 MANIFEST_LOCATION = "https://raw.githubusercontent.com/actions/python-versions/main/versions-manifest.json"
