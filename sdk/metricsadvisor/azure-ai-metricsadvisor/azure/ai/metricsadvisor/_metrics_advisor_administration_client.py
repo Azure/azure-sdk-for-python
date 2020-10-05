@@ -188,7 +188,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
 
     def __repr__(self):
         # type: () -> str
-        return "<MetricsAdvisorKeyCredential [endpoint={}]>".format(
+        return "<MetricsAdvisorAdministrationClient [endpoint={}]>".format(
             repr(self._endpoint)
         )[:1024]
 
