@@ -15,6 +15,11 @@ steps:
       artifactName: 'artifacts' 
       targetPath: $(Build.ArtifactStagingDirectory)
 
+  - template: ../steps/set-dev-build.yml
+    parameters:
+      ServiceDirectory: ${{ parameters.ServiceDirectory }}
+      BuildTargetingString: ${{ parameters.BuildTargetingString }}
+
   - ${{if eq(variables['System.TeamProject'], 'internal') }}:
     - template: ../steps/auth-dev-feed.yml
       parameters:
