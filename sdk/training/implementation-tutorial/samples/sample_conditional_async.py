@@ -8,16 +8,19 @@
 
 import asyncio
 import os
-import colorama
+from colorama import init, Style
+init()
 
+from azure.identity.aio import DefaultAzureCredential
 from azure.appconfiguration.aio import AppConfigurationClient
 from azure.core.exceptions import ResourceNotFoundError, ResourceNotModifiedError
 from azure.core import MatchConditions
 
 
 async def main():
-    connection_string = os.environ.get('APP_CONFIG_CONN_STR')
-    client = AppConfigurationClient.from_connection_string(connection_string)
+    url = os.environ.get('APP_CONFIG_URL')
+    credential = DefaultAzureCredential()
+    client = AppConfigurationClient(account_url=url, credential=credential)
 
     # Retrieve initial color value
     try:
@@ -35,7 +38,7 @@ async def main():
     except ResourceNotModifiedError:
         new_color = first_color
 
-    print(f'{new_color.value}Hello!{colorama.Style.RESET_ALL}')
+    print(f'{new_color.value}Hello!{Style.RESET_ALL}')
 
 
 if __name__ == "__main__":

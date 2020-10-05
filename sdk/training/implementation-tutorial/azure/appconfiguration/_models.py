@@ -62,16 +62,16 @@ class DictMixin(object):
 class ConfigurationSetting(DictMixin):
     """A configuration value.
 
-    :ivar str etag: Entity tag (etag) of the setting.
     :param str key: The key name of the setting.
-    :param str label: The setting label.
-    :param str content_type: The content type of the setting value.
     :param str value: The value of the setting.
+    :keyword str label: The setting label.
+    :ivar str etag: Entity tag (etag) of the setting.
     :ivar  ~datetime.datetime last_modified: The time the setting was last modified.
     :ivar bool read_only: Whether the setting is read-only.
-    :param dict[str, str] tags: User tags added to the setting.
+    :ivar str content_type: The content type of the setting value.
+    :ivar dict[str, str] tags: User tags added to the setting.
     """
 
-    def __init__(self, **kwargs):
-        # type: (Any) -> None
+    def __init__(self, key, value, **kwargs):
+        # type: (str, str, Any) -> None
         pass    

@@ -6,14 +6,4 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._azure_app_configuration import AzureAppConfiguration
-from ._version import VERSION
-
-__version__ = VERSION
-__all__ = ['AzureAppConfiguration']
-
-try:
-    from ._patch import patch_sdk  # type: ignore
-    patch_sdk()
-except ImportError:
-    pass
+VERSION = "1.0"

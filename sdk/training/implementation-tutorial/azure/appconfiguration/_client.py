@@ -34,6 +34,9 @@ class AppConfigurationClient(object):
 
         :param str key: The key name of the setting.
         :param str label: The label of the setting.
+        :keyword datetime.datetime accept_datetime: The last modified date filter.
+        :keyword select: The specific properties of the setting that should be returned.
+        :paramtype select: List[Union[str, ~azure.appconfiguration.SettingFields]]
         :raises ~azure.core.exceptions.ResourceNotFoundError: If no matching configuration setting exists.
         """
         pass
