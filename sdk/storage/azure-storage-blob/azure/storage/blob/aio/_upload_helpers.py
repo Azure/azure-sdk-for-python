@@ -86,9 +86,6 @@ async def upload_block_blob(  # pylint: disable=too-many-locals
             hasattr(stream, 'seekable') and not stream.seekable() or \
             not hasattr(stream, 'seek') or not hasattr(stream, 'tell')
 
-        def add_headers_to_request(request):
-            request.http_request.headers.update(headers)
-
         if use_original_upload_path:
             if encryption_options.get('key'):
                 cek, iv, encryption_data = generate_blob_encryption_data(encryption_options['key'])
@@ -104,7 +101,7 @@ async def upload_block_blob(  # pylint: disable=too-many-locals
                 stream=stream,
                 validate_content=validate_content,
                 encryption_options=encryption_options,
-                raw_request_hook=add_headers_to_request,
+                headers=headers,
                 **kwargs
             )
         else:
@@ -116,7 +113,7 @@ async def upload_block_blob(  # pylint: disable=too-many-locals
                 max_concurrency=max_concurrency,
                 stream=stream,
                 validate_content=validate_content,
-                raw_request_hook=add_headers_to_request,
+                headers=headers,
                 **kwargs
             )
 
@@ -191,6 +188,7 @@ async def upload_page_blob(
             max_concurrency=max_concurrency,
             validate_content=validate_content,
             encryption_options=encryption_options,
+            headers=headers,
             **kwargs)
 
     except StorageErrorException as error:
