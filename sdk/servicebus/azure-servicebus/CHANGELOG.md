@@ -2,9 +2,6 @@
 
 ## 7.0.0b8 (Unreleased)
 
-
-## 7.0.0b7 (2020-10-05)
-
 **New Features**
 
 * Added support for `timeout` parameter on the following operations:
@@ -12,6 +9,8 @@
   - `ServiceBusReceiver`: `receive_deferred_messages` and `peek_messages`
   - `ServiceBusSession`: `get_state`, `set_state` and `renew_lock`
   - `ReceivedMessage`: `renew_lock`
+
+## 7.0.0b7 (2020-10-05)
 
 **Breaking Changes**
 
