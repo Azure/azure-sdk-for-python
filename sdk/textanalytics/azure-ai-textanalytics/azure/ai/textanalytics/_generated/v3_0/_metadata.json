@@ -9,32 +9,32 @@
         "custom_base_url": "\u0027{Endpoint}/text/analytics/v3.0\u0027",
         "azure_arm": false,
         "has_lro_operations": false,
-        "client_side_validation": false
+        "client_side_validation": true
     },
     "global_parameters": {
-        "sync": {
+        "sync_method": {
             "credential": {
-                "signature": "credential,  # type: \"TokenCredential\"",
+                "method_signature": "credential,  # type: \"TokenCredential\"",
                 "description": "Credential needed for the client to connect to Azure.",
                 "docstring_type": "~azure.core.credentials.TokenCredential",
                 "required": true
             },
             "endpoint": {
-                "signature": "endpoint,  # type: str",
+                "method_signature": "endpoint,  # type: str",
                 "description": "Supported Cognitive Services endpoints (protocol and hostname, for example: https://westus.api.cognitive.microsoft.com).",
                 "docstring_type": "str",
                 "required": true
             }
         },
-        "async": {
+        "async_method": {
             "credential": {
-                "signature": "credential,  # type: \"AsyncTokenCredential\"",
+                "method_signature": "credential,  # type: \"AsyncTokenCredential\"",
                 "description": "Credential needed for the client to connect to Azure.",
                 "docstring_type": "~azure.core.credentials_async.AsyncTokenCredential",
                 "required": true
             },
             "endpoint": {
-                "signature": "endpoint,  # type: str",
+                "method_signature": "endpoint,  # type: str",
                 "description": "Supported Cognitive Services endpoints (protocol and hostname, for example: https://westus.api.cognitive.microsoft.com).",
                 "docstring_type": "str",
                 "required": true
