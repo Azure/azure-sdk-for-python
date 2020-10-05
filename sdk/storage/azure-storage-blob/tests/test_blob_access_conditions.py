@@ -291,10 +291,10 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
             header = request.http_request.headers.get('x-ms-meta-customheader')
             self.assertEqual(header, 'test_value')
 
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
-        import io
+        bsc = BlobServiceClient(
+            self.account_url(storage_account, "blob"), storage_account_key, max_single_put_size=100)
         self._setup()
-        data = io.BytesIO(bytearray(1024*1024*100))
+        data = self.get_random_bytes(2 * 100)
         self._create_container(self.container_name, bsc)
         blob = bsc.get_blob_client(self.container_name, "blob1")
         blob.upload_blob(
