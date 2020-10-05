@@ -12,7 +12,6 @@ init()
 
 from azure.identity import DefaultAzureCredential
 from azure.appconfiguration import AppConfigurationClient
-from azure.core.exceptions import ResourceNotFoundError
 
 def main():
     url = os.environ.get('APP_CONFIG_URL')
@@ -21,10 +20,10 @@ def main():
 
     try:
         color_setting = client.get_configuration_setting('FontColor')
-        color = color_setting.value
+        color = color_setting.value.replace('\\0', '\0')
         text_setting = client.get_configuration_setting('Greeting')
         greeting = text_setting.value
-    except ResourceNotFoundError:
+    except:
         color = '\033[31m'
         greeting = 'Default greeting'
 

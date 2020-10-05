@@ -38,7 +38,8 @@ async def main():
     except ResourceNotModifiedError:
         new_color = first_color
 
-    print(f'{new_color.value}Hello!{Style.RESET_ALL}')
+    color = new_color.value.replace('\\0', '\0')
+    print(f'{color}Hello!{Style.RESET_ALL}')
 
 
 if __name__ == "__main__":
