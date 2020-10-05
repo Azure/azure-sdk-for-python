@@ -15,6 +15,10 @@ steps:
       artifactName: 'artifacts' 
       targetPath: $(Build.ArtifactStagingDirectory)
 
+  - script: |
+      pip install -r eng/ci_tools.txt
+    displayName: 'Prep Environment'
+
   - template: ../steps/set-dev-build.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
@@ -24,10 +28,6 @@ steps:
     - template: ../steps/auth-dev-feed.yml
       parameters:
         DevFeedName: ${{ parameters.DevFeedName }}
-
-  - script: |
-      pip install -r eng/ci_tools.txt
-    displayName: 'Prep Environment'
 
   - task: PythonScript@0
     displayName: 'Test Latest Released Dependents'
