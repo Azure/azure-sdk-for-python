@@ -23,8 +23,8 @@ class ProvisioningState(str, Enum):
 
 class Status(str, Enum):
 
-    never_connected = "NeverConnected"
+    not_yet_registered = "NotYetRegistered"
     connected_recently = "ConnectedRecently"
     not_connected_recently = "NotConnectedRecently"
-    expired = "Expired"
+    disconnected = "Disconnected"
     error = "Error"

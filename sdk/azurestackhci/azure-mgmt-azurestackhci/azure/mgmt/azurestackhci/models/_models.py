@@ -13,6 +13,28 @@ from msrest.serialization import Model
 from msrest.exceptions import HttpOperationError
 
 
+class AvailableOperations(Model):
+    """Available operations of the service.
+
+    :param value: Collection of available operation details
+    :type value: list[~azure.mgmt.azurestackhci.models.OperationDetail]
+    :param next_link: URL client should use to fetch the next page (per server
+     side paging).
+     It's null for now, added for future use.
+    :type next_link: str
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[OperationDetail]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(AvailableOperations, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+        self.next_link = kwargs.get('next_link', None)
+
+
 class Resource(Model):
     """Resource.
 
@@ -162,8 +184,8 @@ class Cluster(TrackedResource):
     :vartype provisioning_state: str or
      ~azure.mgmt.azurestackhci.models.ProvisioningState
     :ivar status: Status of the cluster agent. Possible values include:
-     'NeverConnected', 'ConnectedRecently', 'NotConnectedRecently', 'Expired',
-     'Error'
+     'NotYetRegistered', 'ConnectedRecently', 'NotConnectedRecently',
+     'Disconnected', 'Error'
     :vartype status: str or ~azure.mgmt.azurestackhci.models.Status
     :ivar cloud_id: Unique, immutable resource id.
     :vartype cloud_id: str
@@ -178,6 +200,12 @@ class Cluster(TrackedResource):
     :vartype trial_days_remaining: float
     :ivar billing_model: Type of billing applied to the resource.
     :vartype billing_model: str
+    :ivar registration_timestamp: First cluster sync timestamp.
+    :vartype registration_timestamp: datetime
+    :ivar last_sync_timestamp: Most recent cluster sync timestamp.
+    :vartype last_sync_timestamp: datetime
+    :ivar last_billing_timestamp: Most recent billing meter timestamp.
+    :vartype last_billing_timestamp: datetime
     """
 
     _validation = {
@@ -192,6 +220,9 @@ class Cluster(TrackedResource):
         'aad_tenant_id': {'required': True},
         'trial_days_remaining': {'readonly': True},
         'billing_model': {'readonly': True},
+        'registration_timestamp': {'readonly': True},
+        'last_sync_timestamp': {'readonly': True},
+        'last_billing_timestamp': {'readonly': True},
     }
 
     _attribute_map = {
@@ -208,6 +239,9 @@ class Cluster(TrackedResource):
         'reported_properties': {'key': 'properties.reportedProperties', 'type': 'ClusterReportedProperties'},
         'trial_days_remaining': {'key': 'properties.trialDaysRemaining', 'type': 'float'},
         'billing_model': {'key': 'properties.billingModel', 'type': 'str'},
+        'registration_timestamp': {'key': 'properties.registrationTimestamp', 'type': 'iso-8601'},
+        'last_sync_timestamp': {'key': 'properties.lastSyncTimestamp', 'type': 'iso-8601'},
+        'last_billing_timestamp': {'key': 'properties.lastBillingTimestamp', 'type': 'iso-8601'},
     }
 
     def __init__(self, **kwargs):
@@ -220,6 +254,9 @@ class Cluster(TrackedResource):
         self.reported_properties = kwargs.get('reported_properties', None)
         self.trial_days_remaining = None
         self.billing_model = None
+        self.registration_timestamp = None
+        self.last_sync_timestamp = None
+        self.last_billing_timestamp = None
 
 
 class ClusterNode(Model):
@@ -446,43 +483,48 @@ class ErrorResponseError(Model):
         self.additional_info = None
 
 
-class Operation(Model):
-    """Operation details.
+class OperationDetail(Model):
+    """Operation detail payload.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar name: Name of the operation.
-    :vartype name: str
-    :param display: Operation properties.
+    :param name: Name of the operation
+    :type name: str
+    :param is_data_action: Indicates whether the operation is a data action
+    :type is_data_action: bool
+    :param display: Display of the operation
     :type display: ~azure.mgmt.azurestackhci.models.OperationDisplay
+    :param origin: Origin of the operation
+    :type origin: str
+    :param properties: Properties of the operation
+    :type properties: object
     """
-
-    _validation = {
-        'name': {'readonly': True},
-    }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
+        'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
         'display': {'key': 'display', 'type': 'OperationDisplay'},
+        'origin': {'key': 'origin', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
-        super(Operation, self).__init__(**kwargs)
-        self.name = None
+        super(OperationDetail, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.is_data_action = kwargs.get('is_data_action', None)
         self.display = kwargs.get('display', None)
+        self.origin = kwargs.get('origin', None)
+        self.properties = kwargs.get('properties', None)
 
 
 class OperationDisplay(Model):
-    """Operation properties.
+    """Operation display payload.
 
-    :param provider: Resource provider name.
+    :param provider: Resource provider of the operation
     :type provider: str
-    :param resource: Resource type name.
+    :param resource: Resource of the operation
     :type resource: str
-    :param operation: Operation name.
+    :param operation: Localized friendly name for the operation
     :type operation: str
-    :param description: Operation description.
+    :param description: Localized friendly description for the operation
     :type description: str
     """
 
@@ -499,33 +541,6 @@ class OperationDisplay(Model):
         self.resource = kwargs.get('resource', None)
         self.operation = kwargs.get('operation', None)
         self.description = kwargs.get('description', None)
-
-
-class OperationList(Model):
-    """List of available operations.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :param value: List of operations.
-    :type value: list[~azure.mgmt.azurestackhci.models.Operation]
-    :ivar next_link: Link to the next set of results.
-    :vartype next_link: str
-    """
-
-    _validation = {
-        'next_link': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': '[Operation]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(OperationList, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self.next_link = None
 
 
 class ProxyResource(Resource):
