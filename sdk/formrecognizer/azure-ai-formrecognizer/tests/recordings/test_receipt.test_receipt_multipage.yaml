@@ -1915,7 +1915,7 @@ interactions:
       Mg0KJSVFT0Y=
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -1925,27 +1925,27 @@ interactions:
       Content-Type:
       - application/pdf
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/prebuilt/receipt/analyze?includeTextDetails=true
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/prebuilt/receipt/analyze?includeTextDetails=true
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - cfa17093-fd43-4b53-a8aa-36d07ec099f4
+      - 444ca959-81e5-48b0-9e8d-c67627f1f5a4
       content-length:
       - '0'
       date:
-      - Fri, 10 Jul 2020 18:51:58 GMT
+      - Mon, 14 Sep 2020 22:40:38 GMT
       operation-location:
-      - https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/prebuilt/receipt/analyzeResults/cfa17093-fd43-4b53-a8aa-36d07ec099f4
+      - https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/prebuilt/receipt/analyzeResults/444ca959-81e5-48b0-9e8d-c67627f1f5a4
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '327'
+      - '120'
     status:
       code: 202
       message: Accepted
@@ -1959,21 +1959,21 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/prebuilt/receipt/analyzeResults/cfa17093-fd43-4b53-a8aa-36d07ec099f4
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/prebuilt/receipt/analyzeResults/444ca959-81e5-48b0-9e8d-c67627f1f5a4
   response:
     body:
-      string: '{"status": "succeeded", "createdDateTime": "2020-07-10T18:51:58Z",
-        "lastUpdatedDateTime": "2020-07-10T18:52:01Z", "analyzeResult": {"version":
-        "2.0.0", "readResults": [{"page": 1, "angle": 0, "width": 8.5, "height": 11,
-        "unit": "inch", "language": "en", "lines": [{"text": "Company A Invoice",
-        "boundingBox": [0.8861, 1.1217, 2.3783, 1.1217, 2.3783, 1.2812, 0.8861, 1.2812],
-        "words": [{"text": "Company", "boundingBox": [0.8861, 1.1232, 1.6203, 1.1232,
-        1.6203, 1.2812, 0.8861, 1.2812], "confidence": 1}, {"text": "A", "boundingBox":
-        [1.6696, 1.1242, 1.7749, 1.1242, 1.7749, 1.2473, 1.6696, 1.2473], "confidence":
-        1}, {"text": "Invoice", "boundingBox": [1.8389, 1.1217, 2.3783, 1.1217, 2.3783,
-        1.2485, 1.8389, 1.2485], "confidence": 1}]}, {"text": "Invoice For:", "boundingBox":
+      string: '{"status": "succeeded", "createdDateTime": "2020-09-14T22:40:38Z",
+        "lastUpdatedDateTime": "2020-09-14T22:40:42Z", "analyzeResult": {"version":
+        "2.1.0", "readResults": [{"page": 1, "angle": 0, "width": 8.5, "height": 11,
+        "unit": "inch", "lines": [{"text": "Company A Invoice", "boundingBox": [0.8861,
+        1.1217, 2.3783, 1.1217, 2.3783, 1.2812, 0.8861, 1.2812], "words": [{"text":
+        "Company", "boundingBox": [0.8861, 1.1232, 1.6203, 1.1232, 1.6203, 1.2812,
+        0.8861, 1.2812], "confidence": 1}, {"text": "A", "boundingBox": [1.6696, 1.1242,
+        1.7749, 1.1242, 1.7749, 1.2473, 1.6696, 1.2473], "confidence": 1}, {"text":
+        "Invoice", "boundingBox": [1.8389, 1.1217, 2.3783, 1.1217, 2.3783, 1.2485,
+        1.8389, 1.2485], "confidence": 1}]}, {"text": "Invoice For:", "boundingBox":
         [6.0211, 1.0656, 7.0357, 1.0656, 7.0357, 1.2121, 6.0211, 1.2121], "words":
         [{"text": "Invoice", "boundingBox": [6.0211, 1.0656, 6.6362, 1.0656, 6.6362,
         1.2121, 6.0211, 1.2121], "confidence": 1}, {"text": "For:", "boundingBox":
@@ -2105,88 +2105,87 @@ interactions:
         [1.747, 6.6553, 2.4278, 6.6553, 2.4278, 6.7981, 1.747, 6.7981], "confidence":
         1}, {"text": "Baggins__________", "boundingBox": [2.4823, 6.6581, 3.8342,
         6.6581, 3.8342, 6.7981, 2.4823, 6.7981], "confidence": 1}]}]}, {"page": 2,
-        "angle": 0, "width": 8.4967, "height": 10.9967, "unit": "inch", "language":
-        "en"}, {"page": 3, "angle": 0, "width": 8.5, "height": 11, "unit": "inch",
-        "language": "en", "lines": [{"text": "Company B Invoice", "boundingBox": [0.8861,
-        1.1217, 2.3734, 1.1217, 2.3734, 1.2812, 0.8861, 1.2812], "words": [{"text":
-        "Company", "boundingBox": [0.8861, 1.1232, 1.6203, 1.1232, 1.6203, 1.2812,
-        0.8861, 1.2812], "confidence": 1}, {"text": "B", "boundingBox": [1.6836, 1.1248,
-        1.764, 1.1248, 1.764, 1.2469, 1.6836, 1.2469], "confidence": 1}, {"text":
-        "Invoice", "boundingBox": [1.8336, 1.1217, 2.3734, 1.1217, 2.3734, 1.2485,
-        1.8336, 1.2485], "confidence": 1}]}, {"text": "Invoice For:", "boundingBox":
-        [6.0211, 1.0656, 7.0357, 1.0656, 7.0357, 1.2121, 6.0211, 1.2121], "words":
-        [{"text": "Invoice", "boundingBox": [6.0211, 1.0656, 6.6362, 1.0656, 6.6362,
-        1.2121, 6.0211, 1.2121], "confidence": 1}, {"text": "For:", "boundingBox":
-        [6.7147, 1.0691, 7.0357, 1.0691, 7.0357, 1.2121, 6.7147, 1.2121], "confidence":
-        1}]}, {"text": "Address:", "boundingBox": [0.8791, 1.4825, 1.5657, 1.4825,
-        1.5657, 1.6155, 0.8791, 1.6155], "words": [{"text": "Address:", "boundingBox":
-        [0.8791, 1.4825, 1.5657, 1.4825, 1.5657, 1.6155, 0.8791, 1.6155], "confidence":
-        1}]}, {"text": "Frodo Baggins", "boundingBox": [6.0164, 1.4506, 6.9506, 1.4506,
-        6.9506, 1.5931, 6.0164, 1.5931], "words": [{"text": "Frodo", "boundingBox":
-        [6.0164, 1.4506, 6.3895, 1.4506, 6.3895, 1.5649, 6.0164, 1.5649], "confidence":
-        1}, {"text": "Baggins", "boundingBox": [6.45, 1.4556, 6.9506, 1.4556, 6.9506,
-        1.5931, 6.45, 1.5931], "confidence": 1}]}, {"text": "123 Hobbit Lane", "boundingBox":
-        [6.0165, 1.6707, 7.1006, 1.6707, 7.1006, 1.7854, 6.0165, 1.7854], "words":
-        [{"text": "123", "boundingBox": [6.0165, 1.6772, 6.2434, 1.6772, 6.2434, 1.7854,
-        6.0165, 1.7854], "confidence": 1}, {"text": "Hobbit", "boundingBox": [6.3033,
-        1.6707, 6.7463, 1.6707, 6.7463, 1.7854, 6.3033, 1.7854], "confidence": 1},
-        {"text": "Lane", "boundingBox": [6.803, 1.6782, 7.1006, 1.6782, 7.1006, 1.7854,
-        6.803, 1.7854], "confidence": 1}]}, {"text": "567 Main St.", "boundingBox":
-        [0.8852, 1.846, 1.713, 1.846, 1.713, 1.9554, 0.8852, 1.9554], "words": [{"text":
-        "567", "boundingBox": [0.8852, 1.8472, 1.1203, 1.8472, 1.1203, 1.9554, 0.8852,
-        1.9554], "confidence": 1}, {"text": "Main", "boundingBox": [1.1777, 1.846,
-        1.5022, 1.846, 1.5022, 1.9554, 1.1777, 1.9554], "confidence": 1}, {"text":
-        "St.", "boundingBox": [1.5558, 1.8472, 1.713, 1.8472, 1.713, 1.9554, 1.5558,
-        1.9554], "confidence": 1}]}, {"text": "Redmond, WA", "boundingBox": [6.0164,
-        1.891, 6.9793, 1.891, 6.9793, 2.0275, 6.0164, 2.0275], "words": [{"text":
-        "Redmond,", "boundingBox": [6.0164, 1.891, 6.6861, 1.891, 6.6861, 2.0275,
-        6.0164, 2.0275], "confidence": 1}, {"text": "WA", "boundingBox": [6.7408,
-        1.8982, 6.9793, 1.8982, 6.9793, 2.0044, 6.7408, 2.0044], "confidence": 1}]},
-        {"text": "Redmond, WA", "boundingBox": [0.891, 2.061, 1.8537, 2.061, 1.8537,
-        2.1975, 0.891, 2.1975], "words": [{"text": "Redmond,", "boundingBox": [0.891,
-        2.061, 1.5605, 2.061, 1.5605, 2.1975, 0.891, 2.1975], "confidence": 1}, {"text":
-        "WA", "boundingBox": [1.6152, 2.0682, 1.8537, 2.0682, 1.8537, 2.1744, 1.6152,
-        2.1744], "confidence": 1}]}, {"text": "555-555-5555", "boundingBox": [6.0105,
-        2.1187, 6.9371, 2.1187, 6.9371, 2.2254, 6.0105, 2.2254], "words": [{"text":
-        "555-555-5555", "boundingBox": [6.0105, 2.1187, 6.9371, 2.1187, 6.9371, 2.2254,
-        6.0105, 2.2254], "confidence": 1}]}, {"text": "555-555-5555", "boundingBox":
-        [0.8852, 2.2887, 1.8119, 2.2887, 1.8119, 2.3954, 0.8852, 2.3954], "words":
-        [{"text": "555-555-5555", "boundingBox": [0.8852, 2.2887, 1.8119, 2.2887,
-        1.8119, 2.3954, 0.8852, 2.3954], "confidence": 1}]}, {"text": "Item", "boundingBox":
-        [1.0943, 3.0018, 1.3842, 3.0018, 1.3842, 3.109, 1.0943, 3.109], "words": [{"text":
-        "Item", "boundingBox": [1.0943, 3.0018, 1.3842, 3.0018, 1.3842, 3.109, 1.0943,
-        3.109], "confidence": 1}]}, {"text": "Quantity", "boundingBox": [3.2527, 2.9996,
-        3.8367, 2.9996, 3.8367, 3.1371, 3.2527, 3.1371], "words": [{"text": "Quantity",
-        "boundingBox": [3.2527, 2.9996, 3.8367, 2.9996, 3.8367, 3.1371, 3.2527, 3.1371],
-        "confidence": 1}]}, {"text": "Price", "boundingBox": [5.423, 2.9996, 5.7372,
-        2.9996, 5.7372, 3.109, 5.423, 3.109], "words": [{"text": "Price", "boundingBox":
-        [5.423, 2.9996, 5.7372, 2.9996, 5.7372, 3.109, 5.423, 3.109], "confidence":
-        1}]}, {"text": "A", "boundingBox": [1.0832, 3.2118, 1.174, 3.2118, 1.174,
-        3.318, 1.0832, 3.318], "words": [{"text": "A", "boundingBox": [1.0832, 3.2118,
-        1.174, 3.2118, 1.174, 3.318, 1.0832, 3.318], "confidence": 1}]}, {"text":
-        "10", "boundingBox": [3.2589, 3.2108, 3.4067, 3.2108, 3.4067, 3.319, 3.2589,
-        3.319], "words": [{"text": "10", "boundingBox": [3.2589, 3.2108, 3.4067, 3.2108,
-        3.4067, 3.319, 3.2589, 3.319], "confidence": 1}]}, {"text": "100.99", "boundingBox":
-        [5.4232, 3.2108, 5.8617, 3.2108, 5.8617, 3.319, 5.4232, 3.319], "words": [{"text":
+        "angle": 0, "width": 8.4967, "height": 10.9967, "unit": "inch"}, {"page":
+        3, "angle": 0, "width": 8.5, "height": 11, "unit": "inch", "lines": [{"text":
+        "Company B Invoice", "boundingBox": [0.8861, 1.1217, 2.3734, 1.1217, 2.3734,
+        1.2812, 0.8861, 1.2812], "words": [{"text": "Company", "boundingBox": [0.8861,
+        1.1232, 1.6203, 1.1232, 1.6203, 1.2812, 0.8861, 1.2812], "confidence": 1},
+        {"text": "B", "boundingBox": [1.6836, 1.1248, 1.764, 1.1248, 1.764, 1.2469,
+        1.6836, 1.2469], "confidence": 1}, {"text": "Invoice", "boundingBox": [1.8336,
+        1.1217, 2.3734, 1.1217, 2.3734, 1.2485, 1.8336, 1.2485], "confidence": 1}]},
+        {"text": "Invoice For:", "boundingBox": [6.0211, 1.0656, 7.0357, 1.0656, 7.0357,
+        1.2121, 6.0211, 1.2121], "words": [{"text": "Invoice", "boundingBox": [6.0211,
+        1.0656, 6.6362, 1.0656, 6.6362, 1.2121, 6.0211, 1.2121], "confidence": 1},
+        {"text": "For:", "boundingBox": [6.7147, 1.0691, 7.0357, 1.0691, 7.0357, 1.2121,
+        6.7147, 1.2121], "confidence": 1}]}, {"text": "Address:", "boundingBox": [0.8791,
+        1.4825, 1.5657, 1.4825, 1.5657, 1.6155, 0.8791, 1.6155], "words": [{"text":
+        "Address:", "boundingBox": [0.8791, 1.4825, 1.5657, 1.4825, 1.5657, 1.6155,
+        0.8791, 1.6155], "confidence": 1}]}, {"text": "Frodo Baggins", "boundingBox":
+        [6.0164, 1.4506, 6.9506, 1.4506, 6.9506, 1.5931, 6.0164, 1.5931], "words":
+        [{"text": "Frodo", "boundingBox": [6.0164, 1.4506, 6.3895, 1.4506, 6.3895,
+        1.5649, 6.0164, 1.5649], "confidence": 1}, {"text": "Baggins", "boundingBox":
+        [6.45, 1.4556, 6.9506, 1.4556, 6.9506, 1.5931, 6.45, 1.5931], "confidence":
+        1}]}, {"text": "123 Hobbit Lane", "boundingBox": [6.0165, 1.6707, 7.1006,
+        1.6707, 7.1006, 1.7854, 6.0165, 1.7854], "words": [{"text": "123", "boundingBox":
+        [6.0165, 1.6772, 6.2434, 1.6772, 6.2434, 1.7854, 6.0165, 1.7854], "confidence":
+        1}, {"text": "Hobbit", "boundingBox": [6.3033, 1.6707, 6.7463, 1.6707, 6.7463,
+        1.7854, 6.3033, 1.7854], "confidence": 1}, {"text": "Lane", "boundingBox":
+        [6.803, 1.6782, 7.1006, 1.6782, 7.1006, 1.7854, 6.803, 1.7854], "confidence":
+        1}]}, {"text": "567 Main St.", "boundingBox": [0.8852, 1.846, 1.713, 1.846,
+        1.713, 1.9554, 0.8852, 1.9554], "words": [{"text": "567", "boundingBox": [0.8852,
+        1.8472, 1.1203, 1.8472, 1.1203, 1.9554, 0.8852, 1.9554], "confidence": 1},
+        {"text": "Main", "boundingBox": [1.1777, 1.846, 1.5022, 1.846, 1.5022, 1.9554,
+        1.1777, 1.9554], "confidence": 1}, {"text": "St.", "boundingBox": [1.5558,
+        1.8472, 1.713, 1.8472, 1.713, 1.9554, 1.5558, 1.9554], "confidence": 1}]},
+        {"text": "Redmond, WA", "boundingBox": [6.0164, 1.891, 6.9793, 1.891, 6.9793,
+        2.0275, 6.0164, 2.0275], "words": [{"text": "Redmond,", "boundingBox": [6.0164,
+        1.891, 6.6861, 1.891, 6.6861, 2.0275, 6.0164, 2.0275], "confidence": 1}, {"text":
+        "WA", "boundingBox": [6.7408, 1.8982, 6.9793, 1.8982, 6.9793, 2.0044, 6.7408,
+        2.0044], "confidence": 1}]}, {"text": "Redmond, WA", "boundingBox": [0.891,
+        2.061, 1.8537, 2.061, 1.8537, 2.1975, 0.891, 2.1975], "words": [{"text": "Redmond,",
+        "boundingBox": [0.891, 2.061, 1.5605, 2.061, 1.5605, 2.1975, 0.891, 2.1975],
+        "confidence": 1}, {"text": "WA", "boundingBox": [1.6152, 2.0682, 1.8537, 2.0682,
+        1.8537, 2.1744, 1.6152, 2.1744], "confidence": 1}]}, {"text": "555-555-5555",
+        "boundingBox": [6.0105, 2.1187, 6.9371, 2.1187, 6.9371, 2.2254, 6.0105, 2.2254],
+        "words": [{"text": "555-555-5555", "boundingBox": [6.0105, 2.1187, 6.9371,
+        2.1187, 6.9371, 2.2254, 6.0105, 2.2254], "confidence": 1}]}, {"text": "555-555-5555",
+        "boundingBox": [0.8852, 2.2887, 1.8119, 2.2887, 1.8119, 2.3954, 0.8852, 2.3954],
+        "words": [{"text": "555-555-5555", "boundingBox": [0.8852, 2.2887, 1.8119,
+        2.2887, 1.8119, 2.3954, 0.8852, 2.3954], "confidence": 1}]}, {"text": "Item",
+        "boundingBox": [1.0943, 3.0018, 1.3842, 3.0018, 1.3842, 3.109, 1.0943, 3.109],
+        "words": [{"text": "Item", "boundingBox": [1.0943, 3.0018, 1.3842, 3.0018,
+        1.3842, 3.109, 1.0943, 3.109], "confidence": 1}]}, {"text": "Quantity", "boundingBox":
+        [3.2527, 2.9996, 3.8367, 2.9996, 3.8367, 3.1371, 3.2527, 3.1371], "words":
+        [{"text": "Quantity", "boundingBox": [3.2527, 2.9996, 3.8367, 2.9996, 3.8367,
+        3.1371, 3.2527, 3.1371], "confidence": 1}]}, {"text": "Price", "boundingBox":
+        [5.423, 2.9996, 5.7372, 2.9996, 5.7372, 3.109, 5.423, 3.109], "words": [{"text":
+        "Price", "boundingBox": [5.423, 2.9996, 5.7372, 2.9996, 5.7372, 3.109, 5.423,
+        3.109], "confidence": 1}]}, {"text": "A", "boundingBox": [1.0832, 3.2118,
+        1.174, 3.2118, 1.174, 3.318, 1.0832, 3.318], "words": [{"text": "A", "boundingBox":
+        [1.0832, 3.2118, 1.174, 3.2118, 1.174, 3.318, 1.0832, 3.318], "confidence":
+        1}]}, {"text": "10", "boundingBox": [3.2589, 3.2108, 3.4067, 3.2108, 3.4067,
+        3.319, 3.2589, 3.319], "words": [{"text": "10", "boundingBox": [3.2589, 3.2108,
+        3.4067, 3.2108, 3.4067, 3.319, 3.2589, 3.319], "confidence": 1}]}, {"text":
         "100.99", "boundingBox": [5.4232, 3.2108, 5.8617, 3.2108, 5.8617, 3.319, 5.4232,
-        3.319], "confidence": 1}]}, {"text": "B", "boundingBox": [1.0943, 3.4256,
-        1.1637, 3.4256, 1.1637, 3.531, 1.0943, 3.531], "words": [{"text": "B", "boundingBox":
-        [1.0943, 3.4256, 1.1637, 3.4256, 1.1637, 3.531, 1.0943, 3.531], "confidence":
-        1}]}, {"text": "20", "boundingBox": [3.2541, 3.4241, 3.4067, 3.4241, 3.4067,
-        3.5323, 3.2541, 3.5323], "words": [{"text": "20", "boundingBox": [3.2541,
-        3.4241, 3.4067, 3.4241, 3.4067, 3.5323, 3.2541, 3.5323], "confidence": 1}]},
-        {"text": "140.67", "boundingBox": [5.4232, 3.4241, 5.8622, 3.4241, 5.8622,
-        3.5323, 5.4232, 3.5323], "words": [{"text": "140.67", "boundingBox": [5.4232,
-        3.4241, 5.8622, 3.4241, 5.8622, 3.5323, 5.4232, 3.5323], "confidence": 1}]},
-        {"text": "C", "boundingBox": [1.0882, 3.6343, 1.1647, 3.6343, 1.1647, 3.7421,
-        1.0882, 3.7421], "words": [{"text": "C", "boundingBox": [1.0882, 3.6343, 1.1647,
-        3.6343, 1.1647, 3.7421, 1.0882, 3.7421], "confidence": 1}]}, {"text": "40",
-        "boundingBox": [3.2486, 3.6341, 3.4067, 3.6341, 3.4067, 3.7423, 3.2486, 3.7423],
-        "words": [{"text": "40", "boundingBox": [3.2486, 3.6341, 3.4067, 3.6341, 3.4067,
-        3.7423, 3.2486, 3.7423], "confidence": 1}]}, {"text": "150.66", "boundingBox":
-        [5.4232, 3.6341, 5.8634, 3.6341, 5.8634, 3.7423, 5.4232, 3.7423], "words":
-        [{"text": "150.66", "boundingBox": [5.4232, 3.6341, 5.8634, 3.6341, 5.8634,
-        3.7423, 5.4232, 3.7423], "confidence": 1}]}, {"text": "D", "boundingBox":
+        3.319], "words": [{"text": "100.99", "boundingBox": [5.4232, 3.2108, 5.8617,
+        3.2108, 5.8617, 3.319, 5.4232, 3.319], "confidence": 1}]}, {"text": "B", "boundingBox":
+        [1.0943, 3.4256, 1.1637, 3.4256, 1.1637, 3.531, 1.0943, 3.531], "words": [{"text":
+        "B", "boundingBox": [1.0943, 3.4256, 1.1637, 3.4256, 1.1637, 3.531, 1.0943,
+        3.531], "confidence": 1}]}, {"text": "20", "boundingBox": [3.2541, 3.4241,
+        3.4067, 3.4241, 3.4067, 3.5323, 3.2541, 3.5323], "words": [{"text": "20",
+        "boundingBox": [3.2541, 3.4241, 3.4067, 3.4241, 3.4067, 3.5323, 3.2541, 3.5323],
+        "confidence": 1}]}, {"text": "140.67", "boundingBox": [5.4232, 3.4241, 5.8622,
+        3.4241, 5.8622, 3.5323, 5.4232, 3.5323], "words": [{"text": "140.67", "boundingBox":
+        [5.4232, 3.4241, 5.8622, 3.4241, 5.8622, 3.5323, 5.4232, 3.5323], "confidence":
+        1}]}, {"text": "C", "boundingBox": [1.0882, 3.6343, 1.1647, 3.6343, 1.1647,
+        3.7421, 1.0882, 3.7421], "words": [{"text": "C", "boundingBox": [1.0882, 3.6343,
+        1.1647, 3.6343, 1.1647, 3.7421, 1.0882, 3.7421], "confidence": 1}]}, {"text":
+        "40", "boundingBox": [3.2486, 3.6341, 3.4067, 3.6341, 3.4067, 3.7423, 3.2486,
+        3.7423], "words": [{"text": "40", "boundingBox": [3.2486, 3.6341, 3.4067,
+        3.6341, 3.4067, 3.7423, 3.2486, 3.7423], "confidence": 1}]}, {"text": "150.66",
+        "boundingBox": [5.4232, 3.6341, 5.8634, 3.6341, 5.8634, 3.7423, 5.4232, 3.7423],
+        "words": [{"text": "150.66", "boundingBox": [5.4232, 3.6341, 5.8634, 3.6341,
+        5.8634, 3.7423, 5.4232, 3.7423], "confidence": 1}]}, {"text": "D", "boundingBox":
         [1.0943, 3.8456, 1.1753, 3.8456, 1.1753, 3.951, 1.0943, 3.951], "words": [{"text":
         "D", "boundingBox": [1.0943, 3.8456, 1.1753, 3.8456, 1.1753, 3.951, 1.0943,
         3.951], "confidence": 1}]}, {"text": "10", "boundingBox": [3.2589, 3.8441,
@@ -2298,14 +2297,15 @@ interactions:
         {"Name": {"type": "string", "valueString": "E", "text": "E", "boundingBox":
         [1.0943, 4.0561, 1.153, 4.0561, 1.153, 4.1614, 1.0943, 4.1614], "page": 3,
         "confidence": 0.935, "elements": ["#/readResults/2/lines/25/words/0"]}, "Quantity":
-        {"type": "number", "text": "40", "boundingBox": [3.2486, 4.0546, 3.4067, 4.0546,
-        3.4067, 4.1627, 3.2486, 4.1627], "page": 3, "confidence": 0, "elements": ["#/readResults/2/lines/26/words/0"]},
-        "TotalPrice": {"type": "number", "valueNumber": 100, "text": "100.00", "boundingBox":
-        [5.4232, 4.0546, 5.8644, 4.0546, 5.8644, 4.1627, 5.4232, 4.1627], "page":
-        3, "confidence": 0.721, "elements": ["#/readResults/2/lines/27/words/0"]}}},
-        {"type": "object", "valueObject": {"Name": {"type": "string", "valueString":
-        "F", "text": "F", "boundingBox": [1.0943, 4.2661, 1.1497, 4.2661, 1.1497,
-        4.3717, 1.0943, 4.3717], "page": 3, "confidence": 0.912, "elements": ["#/readResults/2/lines/28/words/0"]},
+        {"type": "number", "valueNumber": 40, "text": "40", "boundingBox": [3.2486,
+        4.0546, 3.4067, 4.0546, 3.4067, 4.1627, 3.2486, 4.1627], "page": 3, "confidence":
+        0, "elements": ["#/readResults/2/lines/26/words/0"]}, "TotalPrice": {"type":
+        "number", "valueNumber": 100, "text": "100.00", "boundingBox": [5.4232, 4.0546,
+        5.8644, 4.0546, 5.8644, 4.1627, 5.4232, 4.1627], "page": 3, "confidence":
+        0.721, "elements": ["#/readResults/2/lines/27/words/0"]}}}, {"type": "object",
+        "valueObject": {"Name": {"type": "string", "valueString": "F", "text": "F",
+        "boundingBox": [1.0943, 4.2661, 1.1497, 4.2661, 1.1497, 4.3717, 1.0943, 4.3717],
+        "page": 3, "confidence": 0.912, "elements": ["#/readResults/2/lines/28/words/0"]},
         "TotalPrice": {"type": "number", "valueNumber": 120, "text": "120.00", "boundingBox":
         [5.4232, 4.2646, 5.8642, 4.2646, 5.8642, 4.3727, 5.4232, 4.3727], "page":
         3, "confidence": 0.967, "elements": ["#/readResults/2/lines/30/words/0"]}}},
@@ -2323,19 +2323,19 @@ interactions:
         "confidence": 0.985, "elements": ["#/readResults/2/lines/36/words/1"]}}}]}}'
     headers:
       apim-request-id:
-      - 27257c21-7e16-4650-874e-6fa571b12297
+      - fbfde09e-4ae3-4253-8b83-d7f859fef2f3
+      content-length:
+      - '25281'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 10 Jul 2020 18:52:03 GMT
+      - Mon, 14 Sep 2020 22:40:43 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '24'
+      - '29'
     status:
       code: 200
       message: OK

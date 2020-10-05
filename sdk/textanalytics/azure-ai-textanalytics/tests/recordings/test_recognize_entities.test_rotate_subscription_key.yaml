@@ -24,13 +24,13 @@ interactions:
       string: '{"documents":[{"id":"1","entities":[{"text":"park","category":"Location","offset":17,"length":4,"confidenceScore":0.83}],"warnings":[]},{"id":"2","entities":[{"text":"hotel","category":"Location","offset":19,"length":5,"confidenceScore":0.76}],"warnings":[]},{"id":"3","entities":[{"text":"restaurant","category":"Location","subcategory":"Structural","offset":4,"length":10,"confidenceScore":0.7}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}'
     headers:
       apim-request-id:
-      - 54f01162-3fe6-47a1-bfa5-fd18e7186fc6
+      - 5af4725c-3517-4b13-9156-e102ab1583b5
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=3
       date:
-      - Thu, 10 Sep 2020 15:25:37 GMT
+      - Wed, 30 Sep 2020 16:45:54 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -38,7 +38,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '68'
+      - '63'
     status:
       code: 200
       message: OK
@@ -71,7 +71,7 @@ interactions:
       content-length:
       - '224'
       date:
-      - Thu, 10 Sep 2020 15:25:37 GMT
+      - Wed, 30 Sep 2020 16:45:55 GMT
     status:
       code: 401
       message: PermissionDenied
@@ -100,13 +100,13 @@ interactions:
       string: '{"documents":[{"id":"1","entities":[{"text":"park","category":"Location","offset":17,"length":4,"confidenceScore":0.83}],"warnings":[]},{"id":"2","entities":[{"text":"hotel","category":"Location","offset":19,"length":5,"confidenceScore":0.76}],"warnings":[]},{"id":"3","entities":[{"text":"restaurant","category":"Location","subcategory":"Structural","offset":4,"length":10,"confidenceScore":0.7}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}'
     headers:
       apim-request-id:
-      - 6f3d7c49-bee9-4b85-92b8-78e03a5f6375
+      - b91b1be7-b463-4922-8df4-a5da3b366ead
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=3
       date:
-      - Thu, 10 Sep 2020 15:25:37 GMT
+      - Wed, 30 Sep 2020 16:45:55 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:

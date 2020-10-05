@@ -1,0 +1,33 @@
+interactions:
+- request:
+    body: '{"startTime": "2020-01-01T00:00:00.000Z", "endTime": "2020-09-09T00:00:00.000Z",
+      "series": [{"city": "Mumbai", "category": "Shoes Handbags & Sunglasses"}]}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '155'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-metricsadvisor/1.0.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/data/query
+  response:
+    body:
+      string: '{"value":[{"id":{"metricId":"metric_id","dimension":{"city":"Mumbai","category":"Shoes
+        Handbags & Sunglasses"}},"timestampList":[],"valueList":[]}]}'
+    headers:
+      apim-request-id: 6f6023a8-9b7d-4c1c-8bab-490028dc0bb8
+      content-length: '175'
+      content-type: application/json; charset=utf-8
+      date: Mon, 21 Sep 2020 16:55:14 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '434'
+      x-request-id: 6f6023a8-9b7d-4c1c-8bab-490028dc0bb8
+    status:
+      code: 200
+      message: OK
+    url: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/3d48ed3e-6e6e-4391-b78f-b00dfee1e6f5/data/query
+version: 1

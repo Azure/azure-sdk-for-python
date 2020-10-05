@@ -1,0 +1,27 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-metricsadvisor/1.0.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/data_feed_id/ingestionProgress
+  response:
+    body:
+      string: '{"latestSuccessTimestamp":"2020-01-26T00:00:00Z","latestActiveTimestamp":"2020-02-01T00:00:00Z"}'
+    headers:
+      apim-request-id: e3e15f44-cbb2-465e-8907-d015618f8cdc
+      content-length: '96'
+      content-type: application/json; charset=utf-8
+      date: Tue, 22 Sep 2020 01:48:52 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '5527'
+      x-request-id: e3e15f44-cbb2-465e-8907-d015618f8cdc
+    status:
+      code: 200
+      message: OK
+    url: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com//metricsadvisor/v1.0/dataFeeds/4957a2f7-a0f4-4fc0-b8d7-d866c1df0f4c/ingestionProgress
+version: 1

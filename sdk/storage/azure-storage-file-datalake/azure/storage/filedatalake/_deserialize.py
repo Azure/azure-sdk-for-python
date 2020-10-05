@@ -12,6 +12,7 @@ from typing import (  # pylint: disable=unused-import
 from azure.core.pipeline.policies import ContentDecodePolicy
 from azure.core.exceptions import HttpResponseError, DecodeError, ResourceModifiedError, ClientAuthenticationError, \
     ResourceNotFoundError, ResourceExistsError
+from ._models import FileProperties, DirectoryProperties, LeaseProperties
 from ._shared.models import StorageErrorCode
 
 if TYPE_CHECKING:
@@ -19,6 +20,45 @@ if TYPE_CHECKING:
 
 _LOGGER = logging.getLogger(__name__)
 
+
+def deserialize_dir_properties(response, obj, headers):
+    metadata = deserialize_metadata(response, obj, headers)
+    dir_properties = DirectoryProperties(
+        metadata=metadata,
+        **headers
+    )
+    return dir_properties
+
+
+def deserialize_file_properties(response, obj, headers):
+    metadata = deserialize_metadata(response, obj, headers)
+    file_properties = FileProperties(
+        metadata=metadata,
+        **headers
+    )
+    if 'Content-Range' in headers:
+        if 'x-ms-blob-content-md5' in headers:
+            file_properties.content_settings.content_md5 = headers['x-ms-blob-content-md5']
+        else:
+            file_properties.content_settings.content_md5 = None
+    return file_properties
+
+
+def from_blob_properties(blob_properties):
+    file_props = FileProperties()
+    file_props.name = blob_properties.name
+    file_props.etag = blob_properties.etag
+    file_props.deleted = blob_properties.deleted
+    file_props.metadata = blob_properties.metadata
+    file_props.lease = blob_properties.lease
+    file_props.lease.__class__ = LeaseProperties
+    file_props.last_modified = blob_properties.last_modified
+    file_props.creation_time = blob_properties.creation_time
+    file_props.size = blob_properties.size
+    file_props.deleted_time = blob_properties.deleted_time
+    file_props.remaining_retention_days = blob_properties.remaining_retention_days
+    file_props.content_settings = blob_properties.content_settings
+    return file_props
 
 def normalize_headers(headers):
     normalized = {}

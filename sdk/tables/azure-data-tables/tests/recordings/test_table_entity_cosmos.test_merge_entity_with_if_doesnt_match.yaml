@@ -1,0 +1,212 @@
+interactions:
+- request:
+    body: '{"TableName": "uttable43a01a11"}'
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '32'
+      Content-Type:
+      - application/json;odata=nometadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Thu, 17 Sep 2020 17:07:18 GMT
+      User-Agent:
+      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Thu, 17 Sep 2020 17:07:18 GMT
+      x-ms-version:
+      - '2019-07-07'
+    method: POST
+    uri: https://seankanecosmos.table.cosmos.azure.com/Tables
+  response:
+    body:
+      string: '{"TableName":"uttable43a01a11","odata.metadata":"https://seankanecosmos.table.cosmos.azure.com/$metadata#Tables/@Element"}'
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      date:
+      - Thu, 17 Sep 2020 17:07:18 GMT
+      etag:
+      - W/"datetime'2020-09-17T17%3A07%3A19.1714823Z'"
+      location:
+      - https://seankanecosmos.table.cosmos.azure.com/Tables('uttable43a01a11')
+      server:
+      - Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+    status:
+      code: 201
+      message: Ok
+- request:
+    body: '{"PartitionKey": "pk43a01a11", "RowKey": "rk43a01a11", "age": "39", "age@odata.type":
+      "Edm.Int64", "sex": "male", "married": true, "deceased": false, "ratio": 3.1,
+      "evenratio": 3.0, "large": "933311100", "large@odata.type": "Edm.Int64", "Birthday":
+      "1973-10-04T00:00:00Z", "Birthday@odata.type": "Edm.DateTime", "birthday": "1970-10-04T00:00:00Z",
+      "birthday@odata.type": "Edm.DateTime", "binary": "YmluYXJ5", "binary@odata.type":
+      "Edm.Binary", "other": 20, "clsid": "c9da6455-213d-42c9-9a79-3e9149a57833",
+      "clsid@odata.type": "Edm.Guid"}'
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '537'
+      Content-Type:
+      - application/json;odata=nometadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Thu, 17 Sep 2020 17:07:19 GMT
+      User-Agent:
+      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Thu, 17 Sep 2020 17:07:19 GMT
+      x-ms-version:
+      - '2019-07-07'
+    method: POST
+    uri: https://seankanecosmos.table.cosmos.azure.com/uttable43a01a11
+  response:
+    body:
+      string: '{"odata.metadata":"https://seankanecosmos.table.cosmos.azure.com/uttable43a01a11/$metadata#uttable43a01a11/@Element","odata.etag":"W/\"datetime''2020-09-17T17%3A07%3A19.5898887Z''\"","PartitionKey":"pk43a01a11","RowKey":"rk43a01a11","age@odata.type":"Edm.Int64","age":"39","sex":"male","married":true,"deceased":false,"ratio":3.1,"evenratio":3.0,"large@odata.type":"Edm.Int64","large":"933311100","Birthday@odata.type":"Edm.DateTime","Birthday":"1973-10-04T00:00:00.0000000Z","birthday@odata.type":"Edm.DateTime","birthday":"1970-10-04T00:00:00.0000000Z","binary@odata.type":"Edm.Binary","binary":"YmluYXJ5","other":20,"clsid@odata.type":"Edm.Guid","clsid":"c9da6455-213d-42c9-9a79-3e9149a57833","Timestamp":"2020-09-17T17:07:19.5898887Z"}'
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      date:
+      - Thu, 17 Sep 2020 17:07:18 GMT
+      etag:
+      - W/"datetime'2020-09-17T17%3A07%3A19.5898887Z'"
+      location:
+      - https://seankanecosmos.table.cosmos.azure.com/uttable43a01a11(PartitionKey='pk43a01a11',RowKey='rk43a01a11')
+      server:
+      - Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+    status:
+      code: 201
+      message: Created
+- request:
+    body: '{"PartitionKey": "pk43a01a11", "RowKey": "rk43a01a11", "age": "abc", "sex":
+      "female", "sign": "aquarius", "birthday": "1991-10-04T00:00:00Z", "birthday@odata.type":
+      "Edm.DateTime"}'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '180'
+      Content-Type:
+      - application/json
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Thu, 17 Sep 2020 17:07:19 GMT
+      If-Match:
+      - W/"datetime'2012-06-15T22%3A51%3A44.9662825Z'"
+      User-Agent:
+      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Thu, 17 Sep 2020 17:07:19 GMT
+      x-ms-version:
+      - '2019-07-07'
+    method: PATCH
+    uri: https://seankanecosmos.table.cosmos.azure.com/uttable43a01a11(PartitionKey='pk43a01a11',RowKey='rk43a01a11')
+  response:
+    body:
+      string: "{\"odata.error\":{\"code\":\"InvalidInput\",\"message\":{\"lang\":\"en-us\",\"value\":\"One
+        of the input values is invalid.\\r\\nActivityId: 3eaee268-f908-11ea-bfef-58961df361d1,
+        documentdb-dotnet-sdk/2.11.0 Host/64-bit MicrosoftWindowsNT/6.2.9200.0\\nRequestID:3eaee268-f908-11ea-bfef-58961df361d1\\n\"}}}\r\n"
+    headers:
+      content-type:
+      - application/json;odata=fullmetadata
+      date:
+      - Thu, 17 Sep 2020 17:07:18 GMT
+      server:
+      - Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+    status:
+      code: 400
+      message: Bad Request
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Date:
+      - Thu, 17 Sep 2020 17:07:19 GMT
+      User-Agent:
+      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Thu, 17 Sep 2020 17:07:19 GMT
+      x-ms-version:
+      - '2019-07-07'
+    method: DELETE
+    uri: https://seankanecosmos.table.cosmos.azure.com/Tables('uttable43a01a11')
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Thu, 17 Sep 2020 17:07:19 GMT
+      server:
+      - Microsoft-HTTPAPI/2.0
+    status:
+      code: 204
+      message: No Content
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Thu, 17 Sep 2020 17:07:19 GMT
+      User-Agent:
+      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Thu, 17 Sep 2020 17:07:19 GMT
+      x-ms-version:
+      - '2019-07-07'
+    method: GET
+    uri: https://seankanecosmos.table.cosmos.azure.com/Tables
+  response:
+    body:
+      string: '{"value":[{"TableName":"querytable5436162b"},{"TableName":"querytablefe63147d"},{"TableName":"querytable2da719db"},{"TableName":"uttable659c10f9"},{"TableName":"querytable981b173a"},{"TableName":"querytable9c05125e"},{"TableName":"querytablec80b1810"},{"TableName":"querytable98d81758"}],"odata.metadata":"https://seankanecosmos.table.cosmos.azure.com/$metadata#Tables"}'
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      date:
+      - Thu, 17 Sep 2020 17:07:19 GMT
+      server:
+      - Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: Ok
+version: 1

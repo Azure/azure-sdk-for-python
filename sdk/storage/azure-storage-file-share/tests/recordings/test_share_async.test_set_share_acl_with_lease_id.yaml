@@ -1,0 +1,121 @@
+interactions:
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.18362-SP0)
+      x-ms-date:
+      - Fri, 11 Sep 2020 13:54:34 GMT
+      x-ms-version:
+      - '2020-02-10'
+    method: PUT
+    uri: https://storagename.file.core.windows.net/testf69713fa?restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Fri, 11 Sep 2020 13:54:34 GMT
+      etag: '"0x8D8565A37CEB610"'
+      last-modified: Fri, 11 Sep 2020 13:54:35 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2020-02-10'
+    status:
+      code: 201
+      message: Created
+    url: https://seanmcccanary3.file.core.windows.net/testf69713fa?restype=share
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.18362-SP0)
+      x-ms-date:
+      - Fri, 11 Sep 2020 13:54:35 GMT
+      x-ms-lease-action:
+      - acquire
+      x-ms-lease-duration:
+      - '-1'
+      x-ms-proposed-lease-id:
+      - d08a53dd-18f6-405f-bbc7-b2de9373eb87
+      x-ms-version:
+      - '2020-02-10'
+    method: PUT
+    uri: https://storagename.file.core.windows.net/testf69713fa?comp=lease&restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Fri, 11 Sep 2020 13:54:35 GMT
+      etag: '"0x8D8565A37CEB610"'
+      last-modified: Fri, 11 Sep 2020 13:54:35 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-lease-id: d08a53dd-18f6-405f-bbc7-b2de9373eb87
+      x-ms-version: '2020-02-10'
+    status:
+      code: 201
+      message: Created
+    url: https://seanmcccanary3.file.core.windows.net/testf69713fa?comp=lease&restype=share
+- request:
+    body: '<?xml version=''1.0'' encoding=''utf-8''?>
+
+      <SignedIdentifiers><SignedIdentifier><Id>testid</Id><AccessPolicy><Start>2020-09-11T13:54:35Z</Start><Expiry>2020-09-11T14:54:35Z</Expiry><Permission>r</Permission></AccessPolicy></SignedIdentifier></SignedIdentifiers>'
+    headers:
+      Content-Length:
+      - '257'
+      Content-Type:
+      - application/xml; charset=utf-8
+      User-Agent:
+      - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.18362-SP0)
+      x-ms-date:
+      - Fri, 11 Sep 2020 13:54:35 GMT
+      x-ms-lease-id:
+      - d08a53dd-18f6-405f-bbc7-b2de9373eb87
+      x-ms-version:
+      - '2020-02-10'
+    method: PUT
+    uri: https://storagename.file.core.windows.net/testf69713fa?restype=share&comp=acl
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Fri, 11 Sep 2020 13:54:35 GMT
+      etag: '"0x8D8565A3813B91A"'
+      last-modified: Fri, 11 Sep 2020 13:54:36 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2020-02-10'
+    status:
+      code: 200
+      message: OK
+    url: https://seanmcccanary3.file.core.windows.net/testf69713fa?restype=share&comp=acl
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.18362-SP0)
+      x-ms-date:
+      - Fri, 11 Sep 2020 13:54:35 GMT
+      x-ms-version:
+      - '2020-02-10'
+    method: GET
+    uri: https://storagename.file.core.windows.net/testf69713fa?restype=share&comp=acl
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><SignedIdentifiers><SignedIdentifier><Id>testid</Id><AccessPolicy><Start>2020-09-11T13:54:35.0000000Z</Start><Expiry>2020-09-11T14:54:35.0000000Z</Expiry><Permission>r</Permission></AccessPolicy></SignedIdentifier></SignedIdentifiers>"
+    headers:
+      access-control-allow-origin: '*'
+      content-type: application/xml
+      date: Fri, 11 Sep 2020 13:54:35 GMT
+      etag: '"0x8D8565A3813B91A"'
+      last-modified: Fri, 11 Sep 2020 13:54:36 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-ms-version: '2020-02-10'
+    status:
+      code: 200
+      message: OK
+    url: https://seanmcccanary3.file.core.windows.net/testf69713fa?restype=share&comp=acl
+version: 1

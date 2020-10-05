@@ -1,0 +1,80 @@
+interactions:
+- request:
+    body: '{"TableName": "pytablesync2a40e43"}'
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '35'
+      Content-Type:
+      - application/json;odata=nometadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Sat, 26 Sep 2020 01:05:31 GMT
+      User-Agent:
+      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Sat, 26 Sep 2020 01:05:31 GMT
+      x-ms-version:
+      - '2019-07-07'
+    method: POST
+    uri: https://cosmostablescosmosname.table.cosmos.azure.com/Tables
+  response:
+    body:
+      string: '{"TableName":"pytablesync2a40e43","odata.metadata":"https://cosmostablescosmosname.table.cosmos.azure.com/$metadata#Tables/@Element"}'
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      date:
+      - Sat, 26 Sep 2020 01:05:33 GMT
+      etag:
+      - W/"datetime'2020-09-26T01%3A05%3A32.7777799Z'"
+      location:
+      - https://cosmostablescosmosname.table.cosmos.azure.com/Tables('pytablesync2a40e43')
+      server:
+      - Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+    status:
+      code: 201
+      message: Ok
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Date:
+      - Sat, 26 Sep 2020 01:05:33 GMT
+      User-Agent:
+      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Sat, 26 Sep 2020 01:05:33 GMT
+      x-ms-version:
+      - '2019-07-07'
+    method: DELETE
+    uri: https://cosmostablescosmosname.table.cosmos.azure.com/Tables('pytablesync2a40e43')
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Sat, 26 Sep 2020 01:05:33 GMT
+      server:
+      - Microsoft-HTTPAPI/2.0
+    status:
+      code: 204
+      message: No Content
+version: 1

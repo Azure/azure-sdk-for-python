@@ -93,7 +93,7 @@ class AnalyzeRequest(msrest.serialization.Model):
     :type token_filters: list[str or ~azure.search.documents.indexes.models.TokenFilterName]
     :param char_filters: An optional list of character filters to use when breaking the given text.
      This parameter can only be set when using the tokenizer parameter.
-    :type char_filters: list[str]
+    :type char_filters: list[str or ~azure.search.documents.indexes.models.CharFilterName]
     """
 
     _validation = {
@@ -834,7 +834,7 @@ class CustomAnalyzer(LexicalAnalyzer):
     :param char_filters: A list of character filters used to prepare input text before it is
      processed by the tokenizer. For instance, they can replace certain characters or symbols. The
      filters are run in the order in which they are listed.
-    :type char_filters: list[str]
+    :type char_filters: list[str or ~azure.search.documents.indexes.models.CharFilterName]
     """
 
     _validation = {
@@ -1764,14 +1764,14 @@ class IndexingParameters(msrest.serialization.Model):
     :type max_failed_items_per_batch: int
     :param configuration: A dictionary of indexer-specific configuration properties. Each name is
      the name of a specific property. Each value must be of a primitive type.
-    :type configuration: dict[str, object]
+    :type configuration: ~azure.search.documents.indexes.models.IndexingParametersConfiguration
     """
 
     _attribute_map = {
         'batch_size': {'key': 'batchSize', 'type': 'int'},
         'max_failed_items': {'key': 'maxFailedItems', 'type': 'int'},
         'max_failed_items_per_batch': {'key': 'maxFailedItemsPerBatch', 'type': 'int'},
-        'configuration': {'key': 'configuration', 'type': '{object}'},
+        'configuration': {'key': 'configuration', 'type': 'IndexingParametersConfiguration'},
     }
 
     def __init__(
@@ -1783,6 +1783,121 @@ class IndexingParameters(msrest.serialization.Model):
         self.max_failed_items = kwargs.get('max_failed_items', 0)
         self.max_failed_items_per_batch = kwargs.get('max_failed_items_per_batch', 0)
         self.configuration = kwargs.get('configuration', None)
+
+
+class IndexingParametersConfiguration(msrest.serialization.Model):
+    """A dictionary of indexer-specific configuration properties. Each name is the name of a specific property. Each value must be of a primitive type.
+
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
+    :param parsing_mode: Represents the parsing mode for indexing from an Azure blob data source.
+     Possible values include: "default", "text", "delimitedText", "json", "jsonArray", "jsonLines".
+     Default value: "default".
+    :type parsing_mode: str or ~azure.search.documents.indexes.models.BlobIndexerParsingMode
+    :param excluded_file_name_extensions: Comma-delimited list of filename extensions to ignore
+     when processing from Azure blob storage.  For example, you could exclude ".png, .mp4" to skip
+     over those files during indexing.
+    :type excluded_file_name_extensions: str
+    :param indexed_file_name_extensions: Comma-delimited list of filename extensions to select when
+     processing from Azure blob storage.  For example, you could focus indexing on specific
+     application files ".docx, .pptx, .msg" to specifically include those file types.
+    :type indexed_file_name_extensions: str
+    :param fail_on_unsupported_content_type: For Azure blobs, set to false if you want to continue
+     indexing when an unsupported content type is encountered, and you don't know all the content
+     types (file extensions) in advance.
+    :type fail_on_unsupported_content_type: bool
+    :param fail_on_unprocessable_document: For Azure blobs, set to false if you want to continue
+     indexing if a document fails indexing.
+    :type fail_on_unprocessable_document: bool
+    :param index_storage_metadata_only_for_oversized_documents: For Azure blobs, set this property
+     to true to still index storage metadata for blob content that is too large to process.
+     Oversized blobs are treated as errors by default. For limits on blob size, see
+     https://docs.microsoft.com/azure/search/search-limits-quotas-capacity.
+    :type index_storage_metadata_only_for_oversized_documents: bool
+    :param delimited_text_headers: For CSV blobs, specifies a comma-delimited list of column
+     headers, useful for mapping source fields to destination fields in an index.
+    :type delimited_text_headers: str
+    :param delimited_text_delimiter: For CSV blobs, specifies the end-of-line single-character
+     delimiter for CSV files where each line starts a new document (for example, "|").
+    :type delimited_text_delimiter: str
+    :param first_line_contains_headers: For CSV blobs, indicates that the first (non-blank) line of
+     each blob contains headers.
+    :type first_line_contains_headers: bool
+    :param document_root: For JSON arrays, given a structured or semi-structured document, you can
+     specify a path to the array using this property.
+    :type document_root: str
+    :param data_to_extract: Specifies the data to extract from Azure blob storage and tells the
+     indexer which data to extract from image content when "imageAction" is set to a value other
+     than "none".  This applies to embedded image content in a .PDF or other application, or image
+     files such as .jpg and .png, in Azure blobs. Possible values include: "storageMetadata",
+     "allMetadata", "contentAndMetadata". Default value: "contentAndMetadata".
+    :type data_to_extract: str or ~azure.search.documents.indexes.models.BlobIndexerDataToExtract
+    :param image_action: Determines how to process embedded images and image files in Azure blob
+     storage.  Setting the "imageAction" configuration to any value other than "none" requires that
+     a skillset also be attached to that indexer. Possible values include: "none",
+     "generateNormalizedImages", "generateNormalizedImagePerPage". Default value: "none".
+    :type image_action: str or ~azure.search.documents.indexes.models.BlobIndexerImageAction
+    :param allow_skillset_to_read_file_data: If true, will create a path //document//file_data that
+     is an object representing the original file data downloaded from your blob data source.  This
+     allows you to pass the original file data to a custom skill for processing within the
+     enrichment pipeline, or to the Document Extraction skill.
+    :type allow_skillset_to_read_file_data: bool
+    :param pdf_text_rotation_algorithm: Determines algorithm for text extraction from PDF files in
+     Azure blob storage. Possible values include: "none", "detectAngles". Default value: "none".
+    :type pdf_text_rotation_algorithm: str or
+     ~azure.search.documents.indexes.models.BlobIndexerPDFTextRotationAlgorithm
+    :param execution_environment: Specifies the environment in which the indexer should execute.
+     Possible values include: "standard", "private". Default value: "standard".
+    :type execution_environment: str or
+     ~azure.search.documents.indexes.models.IndexerExecutionEnvironment
+    :param query_timeout: Increases the timeout beyond the 5-minute default for Azure SQL database
+     data sources, specified in the format "hh:mm:ss".
+    :type query_timeout: str
+    """
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'parsing_mode': {'key': 'parsingMode', 'type': 'str'},
+        'excluded_file_name_extensions': {'key': 'excludedFileNameExtensions', 'type': 'str'},
+        'indexed_file_name_extensions': {'key': 'indexedFileNameExtensions', 'type': 'str'},
+        'fail_on_unsupported_content_type': {'key': 'failOnUnsupportedContentType', 'type': 'bool'},
+        'fail_on_unprocessable_document': {'key': 'failOnUnprocessableDocument', 'type': 'bool'},
+        'index_storage_metadata_only_for_oversized_documents': {'key': 'indexStorageMetadataOnlyForOversizedDocuments', 'type': 'bool'},
+        'delimited_text_headers': {'key': 'delimitedTextHeaders', 'type': 'str'},
+        'delimited_text_delimiter': {'key': 'delimitedTextDelimiter', 'type': 'str'},
+        'first_line_contains_headers': {'key': 'firstLineContainsHeaders', 'type': 'bool'},
+        'document_root': {'key': 'documentRoot', 'type': 'str'},
+        'data_to_extract': {'key': 'dataToExtract', 'type': 'str'},
+        'image_action': {'key': 'imageAction', 'type': 'str'},
+        'allow_skillset_to_read_file_data': {'key': 'allowSkillsetToReadFileData', 'type': 'bool'},
+        'pdf_text_rotation_algorithm': {'key': 'pdfTextRotationAlgorithm', 'type': 'str'},
+        'execution_environment': {'key': 'executionEnvironment', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(IndexingParametersConfiguration, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.parsing_mode = kwargs.get('parsing_mode', "default")
+        self.excluded_file_name_extensions = kwargs.get('excluded_file_name_extensions', "")
+        self.indexed_file_name_extensions = kwargs.get('indexed_file_name_extensions', "")
+        self.fail_on_unsupported_content_type = kwargs.get('fail_on_unsupported_content_type', False)
+        self.fail_on_unprocessable_document = kwargs.get('fail_on_unprocessable_document', False)
+        self.index_storage_metadata_only_for_oversized_documents = kwargs.get('index_storage_metadata_only_for_oversized_documents', False)
+        self.delimited_text_headers = kwargs.get('delimited_text_headers', None)
+        self.delimited_text_delimiter = kwargs.get('delimited_text_delimiter', None)
+        self.first_line_contains_headers = kwargs.get('first_line_contains_headers', True)
+        self.document_root = kwargs.get('document_root', None)
+        self.data_to_extract = kwargs.get('data_to_extract', "contentAndMetadata")
+        self.image_action = kwargs.get('image_action', "none")
+        self.allow_skillset_to_read_file_data = kwargs.get('allow_skillset_to_read_file_data', False)
+        self.pdf_text_rotation_algorithm = kwargs.get('pdf_text_rotation_algorithm', "none")
+        self.execution_environment = kwargs.get('execution_environment', "standard")
+        self.query_timeout = kwargs.get('query_timeout', "00:05:00")
 
 
 class IndexingSchedule(msrest.serialization.Model):
@@ -4190,8 +4305,6 @@ class ServiceCounters(msrest.serialization.Model):
     :type storage_size_counter: ~azure.search.documents.indexes.models.ResourceCounter
     :param synonym_map_counter: Required. Total number of synonym maps.
     :type synonym_map_counter: ~azure.search.documents.indexes.models.ResourceCounter
-    :param skillset_counter: Total number of skillsets.
-    :type skillset_counter: ~azure.search.documents.indexes.models.ResourceCounter
     """
 
     _validation = {
@@ -4210,7 +4323,6 @@ class ServiceCounters(msrest.serialization.Model):
         'data_source_counter': {'key': 'dataSourcesCount', 'type': 'ResourceCounter'},
         'storage_size_counter': {'key': 'storageSize', 'type': 'ResourceCounter'},
         'synonym_map_counter': {'key': 'synonymMaps', 'type': 'ResourceCounter'},
-        'skillset_counter': {'key': 'skillsetCount', 'type': 'ResourceCounter'},
     }
 
     def __init__(
@@ -4224,7 +4336,6 @@ class ServiceCounters(msrest.serialization.Model):
         self.data_source_counter = kwargs['data_source_counter']
         self.storage_size_counter = kwargs['storage_size_counter']
         self.synonym_map_counter = kwargs['synonym_map_counter']
-        self.skillset_counter = kwargs.get('skillset_counter', None)
 
 
 class ServiceLimits(msrest.serialization.Model):

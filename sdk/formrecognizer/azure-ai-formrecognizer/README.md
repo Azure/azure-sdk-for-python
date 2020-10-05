@@ -65,7 +65,7 @@ or [Azure CLI][azure_cli_endpoint_lookup]:
 
 ```bash
 # Get the endpoint for the form recognizer resource
-az cognitiveservices account show --name "resource-name" --resource-group "resource-group-name" --query "endpoint"
+az cognitiveservices account show --name "resource-name" --resource-group "resource-group-name" --query "properties.endpoint"
 ```
 
 #### Get the API key
@@ -357,37 +357,13 @@ Form Recognizer client library will raise exceptions defined in [Azure Core][azu
 ### Logging
 This library uses the standard
 [logging][python_logging] library for logging.
-Basic information about HTTP sessions (URLs, headers, etc.) is logged at INFO
-level.
 
-Detailed DEBUG level logging, including request/response bodies and unredacted
-headers, can be enabled on a client with the `logging_enable` keyword argument:
-```python
-import sys
-import logging
-from azure.ai.formrecognizer import FormRecognizerClient
-from azure.core.credentials import AzureKeyCredential
+Basic information about HTTP sessions (URLs, headers, etc.) is logged at `INFO` level.
 
-# Create a logger for the 'azure' SDK
-logger = logging.getLogger('azure')
-logger.setLevel(logging.DEBUG)
+Detailed `DEBUG` level logging, including request/response bodies and **unredacted**
+headers, can be enabled on the client or per-operation with the `logging_enable` keyword argument.
 
-# Configure a console output
-handler = logging.StreamHandler(stream=sys.stdout)
-logger.addHandler(handler)
-
-endpoint = "https://<my-custom-subdomain>.cognitiveservices.azure.com/"
-credential = AzureKeyCredential("<api_key>")
-
-# This client will log detailed information about its HTTP sessions, at DEBUG level
-form_recognizer_client = FormRecognizerClient(endpoint, credential, logging_enable=True)
-```
-
-Similarly, `logging_enable` can enable detailed logging for a single operation,
-even when it isn't enabled for the client:
-```python
-poller = form_recognizer_client.begin_recognize_receipts(receipt, logging_enable=True)
-```
+See full SDK logging documentation with examples [here][sdk_logging_docs].
 
 ### Optional Configuration
 
@@ -474,6 +450,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [azure_identity]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity
 [default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity#defaultazurecredential
 [service_recognize_receipt]: https://aka.ms/formrecognizer/receiptfields
+[sdk_logging_docs]: https://docs.microsoft.com/azure/developer/python/azure-sdk-logging
 
 [cla]: https://cla.microsoft.com
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/

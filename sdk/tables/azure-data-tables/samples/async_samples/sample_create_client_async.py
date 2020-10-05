@@ -43,11 +43,8 @@ class CreateClients(object):
         # Instantiate a TableServiceClient using a connection string
         # [START create_table_client]
         from azure.data.tables.aio import TableClient
-        table_client = TableClient.from_connection_string(
-            conn_str=self.connection_string,
-            table_name="tableName"
-        )
-        print("Table name: {}".format(table_client.table_name))
+        async with TableClient.from_connection_string(conn_str=self.connection_string, table_name="tableName") as table_client:
+            print("Table name: {}".format(table_client.table_name))
         # [END create_table_client]
 
 

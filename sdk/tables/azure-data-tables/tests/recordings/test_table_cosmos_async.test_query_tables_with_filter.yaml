@@ -1,0 +1,92 @@
+interactions:
+- request:
+    body: '{"TableName": "pytableasync502215f5"}'
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Content-Length:
+      - '37'
+      Content-Type:
+      - application/json;odata=nometadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Thu, 01 Oct 2020 01:06:27 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Thu, 01 Oct 2020 01:06:27 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: POST
+    uri: https://tablestestcosmosname.table.cosmos.azure.com/Tables
+  response:
+    body:
+      string: '{"TableName":"pytableasync502215f5","odata.metadata":"https://tablestestcosmosname.table.cosmos.azure.com/$metadata#Tables/@Element"}'
+    headers:
+      content-type: application/json;odata=minimalmetadata
+      date: Thu, 01 Oct 2020 01:06:27 GMT
+      etag: W/"datetime'2020-10-01T01%3A06%3A28.0888327Z'"
+      location: https://tablestestcosmosname.table.cosmos.azure.com/Tables('pytableasync502215f5')
+      server: Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+    status:
+      code: 201
+      message: Ok
+    url: https://tablestestcosmosname.table.cosmos.azure.com/Tables
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Thu, 01 Oct 2020 01:06:28 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Thu, 01 Oct 2020 01:06:28 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://tablestestcosmosname.table.cosmos.azure.com/Tables?$filter=TableName%20eq%20'pytableasync502215f5'
+  response:
+    body:
+      string: '{"value":[{"TableName":"pytableasync502215f5"}],"odata.metadata":"https://tablestestcosmosname.table.cosmos.azure.com/$metadata#Tables"}'
+    headers:
+      content-type: application/json;odata=minimalmetadata
+      date: Thu, 01 Oct 2020 01:06:27 GMT
+      server: Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+    status:
+      code: 200
+      message: Ok
+    url: https://tablestestcosmosname.table.cosmos.azure.com/Tables?$filter=TableName%20eq%20'pytableasync502215f5'
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Date:
+      - Thu, 01 Oct 2020 01:06:28 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Thu, 01 Oct 2020 01:06:28 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: DELETE
+    uri: https://tablestestcosmosname.table.cosmos.azure.com/Tables('pytableasync502215f5')
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Thu, 01 Oct 2020 01:06:28 GMT
+      server: Microsoft-HTTPAPI/2.0
+    status:
+      code: 204
+      message: No Content
+    url: https://tablestestcosmosname.table.cosmos.azure.com/Tables('pytableasync502215f5')
+version: 1

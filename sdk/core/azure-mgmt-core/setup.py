@@ -67,7 +67,7 @@ setup(
         'pytyped': ['py.typed'],
     },
     install_requires=[
-        "azure-core<2.0.0,>=1.7.0",
+        "azure-core<2.0.0,>=1.8.2",
     ],
     extras_require={
         ":python_version<'3.0'": ['azure-mgmt-nspkg'],

@@ -34,7 +34,7 @@ def main():
     returned_config_setting.content_type = "new content type"
     client.set_configuration_setting(config_setting)
 
-    items = client.list_revisions(keys=["MyKey"])
+    items = client.list_revisions(key_filter="MyKey")
     for item in items:
         print_configuration_setting(item)
         print("")

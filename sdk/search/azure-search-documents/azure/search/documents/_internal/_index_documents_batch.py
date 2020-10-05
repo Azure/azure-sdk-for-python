@@ -54,7 +54,7 @@ class IndexDocumentsBatch(object):
         """
         return self._extend_batch(_flatten_args(documents), "upload")
 
-    def add_delete_actions(self, *documents):
+    def add_delete_actions(self, *documents, **kwargs):  # pylint: disable=unused-argument
         # type (Union[List[dict], List[List[dict]]]) -> List[IndexAction]
         """Add documents to delete to the Azure search index.
 
@@ -75,7 +75,7 @@ class IndexDocumentsBatch(object):
         """
         return self._extend_batch(_flatten_args(documents), "delete")
 
-    def add_merge_actions(self, *documents):
+    def add_merge_actions(self, *documents, **kwargs):  # pylint: disable=unused-argument
         # type (Union[List[dict], List[List[dict]]]) -> List[IndexAction]
         """Add documents to merge in to existing documets in the Azure search
         index.
@@ -93,7 +93,7 @@ class IndexDocumentsBatch(object):
         """
         return self._extend_batch(_flatten_args(documents), "merge")
 
-    def add_merge_or_upload_actions(self, *documents):
+    def add_merge_or_upload_actions(self, *documents, **kwargs):  # pylint: disable=unused-argument
         # type (Union[List[dict], List[List[dict]]]) -> List[IndexAction]
         """Add documents to merge in to existing documets in the Azure search
         index, or upload if they do not yet exist.
@@ -120,7 +120,7 @@ class IndexDocumentsBatch(object):
         """
         return list(self._actions)
 
-    def dequeue_actions(self):
+    def dequeue_actions(self, **kwargs):  # pylint: disable=unused-argument
         # type: () -> List[IndexAction]
         """Get the list of currently configured index actions and clear it.
 
@@ -131,14 +131,14 @@ class IndexDocumentsBatch(object):
             self._actions = []
         return result
 
-    def enqueue_actions(self, new_actions):
+    def enqueue_actions(self, new_actions, **kwargs):  # pylint: disable=unused-argument
         # type: (List[IndexAction]) -> None
         """Enqueue a list of index actions to index.
         """
         with self._lock:
             self._actions.extend(new_actions)
 
-    def enqueue_action(self, new_action):
+    def enqueue_action(self, new_action, **kwargs):  # pylint: disable=unused-argument
         # type: (IndexAction) -> None
         """Enqueue a single index action
         """

@@ -1,0 +1,199 @@
+interactions:
+- request:
+    body: !!python/unicode '{"TableName": "uttablefd871474"}'
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '32'
+      Content-Type:
+      - application/json;odata=nometadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Fri, 02 Oct 2020 20:05:20 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b2 Python/2.7.18 (Windows-10-10.0.19041)
+      x-ms-date:
+      - Fri, 02 Oct 2020 20:05:20 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: POST
+    uri: https://tablestestcosmosname.table.cosmos.azure.com/Tables
+  response:
+    body:
+      string: !!python/unicode '{"TableName":"uttablefd871474","odata.metadata":"https://tablestestcosmosname.table.cosmos.azure.com/$metadata#Tables/@Element"}'
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      date:
+      - Fri, 02 Oct 2020 20:05:21 GMT
+      etag:
+      - W/"datetime'2020-10-02T20%3A05%3A21.2126215Z'"
+      location:
+      - https://tablestestcosmosname.table.cosmos.azure.com/Tables('uttablefd871474')
+      server:
+      - Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+    status:
+      code: 201
+      message: Ok
+- request:
+    body: !!python/unicode '{"PartitionKey@odata.type": "Edm.String", "PartitionKey":
+      "pkfd871474", "RowKey@odata.type": "Edm.String", "RowKey": "rkfd871474"}'
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '130'
+      Content-Type:
+      - application/json;odata=nometadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Fri, 02 Oct 2020 20:05:21 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b2 Python/2.7.18 (Windows-10-10.0.19041)
+      x-ms-date:
+      - Fri, 02 Oct 2020 20:05:21 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: POST
+    uri: https://tablestestcosmosname.table.cosmos.azure.com/uttablefd871474
+  response:
+    body:
+      string: !!python/unicode '{"odata.metadata":"https://tablestestcosmosname.table.cosmos.azure.com/uttablefd871474/$metadata#uttablefd871474/@Element","odata.etag":"W/\"datetime''2020-10-02T20%3A05%3A21.6302087Z''\"","PartitionKey":"pkfd871474","RowKey":"rkfd871474","Timestamp":"2020-10-02T20:05:21.6302087Z"}'
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      date:
+      - Fri, 02 Oct 2020 20:05:21 GMT
+      etag:
+      - W/"datetime'2020-10-02T20%3A05%3A21.6302087Z'"
+      location:
+      - https://tablestestcosmosname.table.cosmos.azure.com/uttablefd871474(PartitionKey='pkfd871474',RowKey='rkfd871474')
+      server:
+      - Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Fri, 02 Oct 2020 20:05:21 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b2 Python/2.7.18 (Windows-10-10.0.19041)
+      x-ms-date:
+      - Fri, 02 Oct 2020 20:05:21 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://tablestestcosmosname.table.cosmos.azure.com/uttablefd871474(PartitionKey='pkfd871474',RowKey='rkfd871474')
+  response:
+    body:
+      string: !!python/unicode '{"odata.metadata":"https://tablestestcosmosname.table.cosmos.azure.com/uttablefd871474/$metadata#uttablefd871474/@Element","odata.etag":"W/\"datetime''2020-10-02T20%3A05%3A21.6302087Z''\"","PartitionKey":"pkfd871474","RowKey":"rkfd871474","Timestamp":"2020-10-02T20:05:21.6302087Z"}'
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      date:
+      - Fri, 02 Oct 2020 20:05:21 GMT
+      etag:
+      - W/"datetime'2020-10-02T20%3A05%3A21.6302087Z'"
+      server:
+      - Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: Ok
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Date:
+      - Fri, 02 Oct 2020 20:05:21 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b2 Python/2.7.18 (Windows-10-10.0.19041)
+      x-ms-date:
+      - Fri, 02 Oct 2020 20:05:21 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: DELETE
+    uri: https://tablestestcosmosname.table.cosmos.azure.com/Tables('uttablefd871474')
+  response:
+    body:
+      string: !!python/unicode 
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Fri, 02 Oct 2020 20:05:21 GMT
+      server:
+      - Microsoft-HTTPAPI/2.0
+    status:
+      code: 204
+      message: No Content
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Fri, 02 Oct 2020 20:05:21 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b2 Python/2.7.18 (Windows-10-10.0.19041)
+      x-ms-date:
+      - Fri, 02 Oct 2020 20:05:21 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://tablestestcosmosname.table.cosmos.azure.com/Tables
+  response:
+    body:
+      string: !!python/unicode '{"value":[],"odata.metadata":"https://tablestestcosmosname.table.cosmos.azure.com/$metadata#Tables"}'
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      date:
+      - Fri, 02 Oct 2020 20:05:21 GMT
+      server:
+      - Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: Ok
+version: 1

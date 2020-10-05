@@ -56,7 +56,6 @@ class RecognizeLinkedEntitiesSample(object):
                     print("......Entity match text: {}".format(match.text))
                     print("......Confidence Score: {}".format(match.confidence_score))
                     print("......Offset: {}".format(match.offset))
-                    print("......Length: {}".format(match.length))
             print("------------------------------------------")
         # [END recognize_linked_entities]
 

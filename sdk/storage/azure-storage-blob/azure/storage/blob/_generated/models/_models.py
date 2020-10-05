@@ -72,6 +72,68 @@ class AppendPositionAccessConditions(Model):
         self.append_position = kwargs.get('append_position', None)
 
 
+class ArrowConfiguration(Model):
+    """arrow configuration.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param schema: Required.
+    :type schema: list[~azure.storage.blob.models.ArrowField]
+    """
+
+    _validation = {
+        'schema': {'required': True},
+    }
+
+    _attribute_map = {
+        'schema': {'key': 'Schema', 'type': '[ArrowField]', 'xml': {'name': 'Schema', 'itemsName': 'Schema', 'wrapped': True}},
+    }
+    _xml_map = {
+        'name': 'ArrowConfiguration'
+    }
+
+    def __init__(self, **kwargs):
+        super(ArrowConfiguration, self).__init__(**kwargs)
+        self.schema = kwargs.get('schema', None)
+
+
+class ArrowField(Model):
+    """field of an arrow schema.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required.
+    :type type: str
+    :param name:
+    :type name: str
+    :param precision:
+    :type precision: int
+    :param scale:
+    :type scale: int
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'Type', 'type': 'str', 'xml': {'name': 'Type'}},
+        'name': {'key': 'Name', 'type': 'str', 'xml': {'name': 'Name'}},
+        'precision': {'key': 'Precision', 'type': 'int', 'xml': {'name': 'Precision'}},
+        'scale': {'key': 'Scale', 'type': 'int', 'xml': {'name': 'Scale'}},
+    }
+    _xml_map = {
+        'name': 'Field'
+    }
+
+    def __init__(self, **kwargs):
+        super(ArrowField, self).__init__(**kwargs)
+        self.type = kwargs.get('type', None)
+        self.name = kwargs.get('name', None)
+        self.precision = kwargs.get('precision', None)
+        self.scale = kwargs.get('scale', None)
+
+
 class BlobFlatListSegment(Model):
     """BlobFlatListSegment.
 
@@ -367,6 +429,8 @@ class BlobPropertiesInternal(Model):
     :param rehydrate_priority: Possible values include: 'High', 'Standard'
     :type rehydrate_priority: str or
      ~azure.storage.blob.models.RehydratePriority
+    :param last_accessed_on:
+    :type last_accessed_on: datetime
     """
 
     _validation = {
@@ -411,6 +475,7 @@ class BlobPropertiesInternal(Model):
         'expires_on': {'key': 'Expiry-Time', 'type': 'rfc-1123', 'xml': {'name': 'Expiry-Time'}},
         'is_sealed': {'key': 'Sealed', 'type': 'bool', 'xml': {'name': 'Sealed'}},
         'rehydrate_priority': {'key': 'RehydratePriority', 'type': 'str', 'xml': {'name': 'RehydratePriority'}},
+        'last_accessed_on': {'key': 'LastAccessTime', 'type': 'rfc-1123', 'xml': {'name': 'LastAccessTime'}},
     }
     _xml_map = {
         'name': 'Properties'
@@ -454,6 +519,7 @@ class BlobPropertiesInternal(Model):
         self.expires_on = kwargs.get('expires_on', None)
         self.is_sealed = kwargs.get('is_sealed', None)
         self.rehydrate_priority = kwargs.get('rehydrate_priority', None)
+        self.last_accessed_on = kwargs.get('last_accessed_on', None)
 
 
 class BlobTag(Model):
@@ -1523,7 +1589,7 @@ class PageRange(Model):
 class QueryFormat(Model):
     """QueryFormat.
 
-    :param type: Possible values include: 'delimited', 'json'
+    :param type: Possible values include: 'delimited', 'json', 'arrow'
     :type type: str or ~azure.storage.blob.models.QueryFormatType
     :param delimited_text_configuration:
     :type delimited_text_configuration:
@@ -1531,12 +1597,15 @@ class QueryFormat(Model):
     :param json_text_configuration:
     :type json_text_configuration:
      ~azure.storage.blob.models.JsonTextConfiguration
+    :param arrow_configuration:
+    :type arrow_configuration: ~azure.storage.blob.models.ArrowConfiguration
     """
 
     _attribute_map = {
         'type': {'key': 'Type', 'type': 'QueryFormatType', 'xml': {'name': 'Type'}},
         'delimited_text_configuration': {'key': 'DelimitedTextConfiguration', 'type': 'DelimitedTextConfiguration', 'xml': {'name': 'DelimitedTextConfiguration'}},
         'json_text_configuration': {'key': 'JsonTextConfiguration', 'type': 'JsonTextConfiguration', 'xml': {'name': 'JsonTextConfiguration'}},
+        'arrow_configuration': {'key': 'ArrowConfiguration', 'type': 'ArrowConfiguration', 'xml': {'name': 'ArrowConfiguration'}},
     }
     _xml_map = {
     }
@@ -1546,6 +1615,7 @@ class QueryFormat(Model):
         self.type = kwargs.get('type', None)
         self.delimited_text_configuration = kwargs.get('delimited_text_configuration', None)
         self.json_text_configuration = kwargs.get('json_text_configuration', None)
+        self.arrow_configuration = kwargs.get('arrow_configuration', None)
 
 
 class QueryRequest(Model):

@@ -12,7 +12,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b2 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
     uri: https://westcentralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.2/entities/linking?showStats=false&stringIndexType=UnicodeCodePoint
   response:
@@ -21,14 +21,14 @@ interactions:
         document in request.","innererror":{"code":"InvalidDocument","message":"Document
         text is empty."}}}],"modelVersion":"2020-02-01"}'
     headers:
-      apim-request-id: bc1eac6b-a372-4523-8c42-045018d39a78
+      apim-request-id: f867c64b-5348-4c2f-89ad-74158402628b
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=4
-      date: Thu, 10 Sep 2020 15:25:41 GMT
+      date: Wed, 30 Sep 2020 16:02:59 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '17'
+      x-envoy-upstream-service-time: '19'
     status:
       code: 200
       message: OK

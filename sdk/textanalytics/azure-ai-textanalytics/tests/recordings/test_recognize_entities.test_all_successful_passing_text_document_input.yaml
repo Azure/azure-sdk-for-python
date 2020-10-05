@@ -34,13 +34,13 @@ interactions:
         Allen","category":"Person","offset":52,"length":10,"confidenceScore":0.98}],"warnings":[]}],"errors":[],"modelVersion":"2020-02-01"}'
     headers:
       apim-request-id:
-      - 998d7625-deb8-4d19-a162-b4afaa587dbc
+      - d25ac209-7300-40a4-ad27-6d6c07eed937
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=3
       date:
-      - Thu, 10 Sep 2020 15:25:33 GMT
+      - Wed, 30 Sep 2020 16:45:40 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -48,7 +48,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '68'
+      - '60'
     status:
       code: 200
       message: OK

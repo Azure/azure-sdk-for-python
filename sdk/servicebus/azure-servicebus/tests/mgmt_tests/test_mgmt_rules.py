@@ -137,7 +137,7 @@ class ServiceBusAdministrationClientRuleTests(AzureMgmtTestCase):
 
         try:
             topic_description = mgmt_service.create_topic(topic_name)
-            subscription_description = mgmt_service.create_subscription(topic_description, subscription_name)
+            subscription_description = mgmt_service.create_subscription(topic_description.name, subscription_name)
             mgmt_service.create_rule(topic_name, subscription_name, rule_name, filter=sql_filter)
 
             rule_desc = mgmt_service.get_rule(topic_name, subscription_name, rule_name)
@@ -150,7 +150,7 @@ class ServiceBusAdministrationClientRuleTests(AzureMgmtTestCase):
 
             rule_desc.filter = correlation_fitler
             rule_desc.action = sql_rule_action
-            mgmt_service.update_rule(topic_description, subscription_description, rule_desc)
+            mgmt_service.update_rule(topic_description.name, subscription_description.name, rule_desc)
 
             rule_desc = mgmt_service.get_rule(topic_name, subscription_name, rule_name)
             assert type(rule_desc.filter) == CorrelationRuleFilter
@@ -190,13 +190,13 @@ class ServiceBusAdministrationClientRuleTests(AzureMgmtTestCase):
             # change the name to a topic that doesn't exist; should fail.
             rule_desc.name = "iewdm"
             with pytest.raises(HttpResponseError):
-                mgmt_service.update_rule(topic_name, subscription_description, rule_desc)
+                mgmt_service.update_rule(topic_name, subscription_description.name, rule_desc)
             rule_desc.name = rule_name
 
             # change the name to a topic with an invalid name exist; should fail.
             rule_desc.name = ''
             with pytest.raises(msrest.exceptions.ValidationError):
-                mgmt_service.update_rule(topic_name, subscription_description, rule_desc)
+                mgmt_service.update_rule(topic_name, subscription_description.name, rule_desc)
             rule_desc.name = rule_name
 
         finally:

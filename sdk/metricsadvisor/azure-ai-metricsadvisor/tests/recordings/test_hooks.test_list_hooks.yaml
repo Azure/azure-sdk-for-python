@@ -1,0 +1,40 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-metricsadvisor/1.0.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks
+  response:
+    body:
+      string: '{"value":[{"hookId":"d25286fb-98b6-48b8-9a05-712871c0d4e1","hookName":"emailhook","hookType":"Email","externalLink":"","description":"","admins":["krpratic@microsoft.com"],"hookParameter":{"toList":["krpratic@microsoft.com"],"ccList":null,"bccList":null}},{"hookId":"3af3e00f-adf4-40eb-b01f-4cc12f58db45","hookName":"updatedWebHook1","hookType":"Webhook","externalLink":"my
+        external link","description":"","admins":["krpratic@microsoft.com"],"hookParameter":{"endpoint":"https://httpbin.org/post","username":"sdfsd","password":"","headers":{},"certificateKey":"","certificatePassword":""}},{"hookId":"b1befa30-37a6-4f4e-b195-c91788d2af9d","hookName":"web_hook","hookType":"Webhook","externalLink":"my
+        external link","description":"jadg","admins":["krpratic@microsoft.com"],"hookParameter":{"endpoint":"https://httpbin.org/post","username":"fsdgsd","password":"","headers":{},"certificateKey":"","certificatePassword":""}}],"@nextLink":null}'
+    headers:
+      apim-request-id:
+      - 4d72120a-d7f1-47e9-970f-b2c5ec98dcca
+      content-length:
+      - '940'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 22 Sep 2020 01:42:38 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '251'
+      x-request-id:
+      - 4d72120a-d7f1-47e9-970f-b2c5ec98dcca
+    status:
+      code: 200
+      message: OK
+version: 1
