@@ -4,7 +4,14 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------
 
+from datetime import datetime
+from msrest import Serializer
+
+from azure.core.tracing.decorator import distributed_trace
+
+from ._version import VERSION
 from ._models import ConfigurationSetting
+from ._generated import AzureAppConfiguration
 
 
 class AppConfigurationClient(object):
@@ -16,7 +23,22 @@ class AppConfigurationClient(object):
 
     def __init__(self, account_url, credential, **kwargs):
         # type: (str, TokenCredential) -> None
-        pass
+        try:
+            if not account_url.lower().startswith('http'):
+                full_url = "https://" + account_url
+            else:
+                full_url = account_url
+        except AttributeError:
+            raise ValueError("Base URL must be a string.")
+
+        user_agent_moniker = "appconfiguration/{}".format(VERSION)
+        scopes = self._setup_credential(account_url, credential, kwargs)
+        self._client = AzureAppConfiguration(
+            credential=credential,
+            endpoint=full_url,
+            credential_scopes=scopes,
+            sdk_moniker=user_agent_moniker,
+            **kwargs)
 
     @classmethod
     def from_connection_string(cls, connection_string, **kwargs):
@@ -27,7 +49,14 @@ class AppConfigurationClient(object):
          from the Azure portal.
         """
         pass
-    
+
+    def _setup_credential(self, account_url, credential, kwargs):
+        if not credential:
+            raise ValueError("Missing credential")
+
+        return [account_url.strip("/") + "/.default"]
+
+    @distributed_trace
     def get_configuration_setting(self, key, label=None, **kwargs):
         # type: (str, Optional[str]) -> ConfigurationSetting
         """Get the value of a particular configuration settings.
@@ -36,4 +65,21 @@ class AppConfigurationClient(object):
         :param str label: The label of the setting.
         :raises ~azure.core.exceptions.ResourceNotFoundError: If no matching configuration setting exists.
         """
-        pass
+        accept_datetime = kwargs.pop('accept_datetime', None)
+        if isinstance(accept_datetime, datetime):
+            accept_datetime = Serializer.serialize_rfc(accept_datetime)
+        result = self._client.get_key_value(
+            key=key,
+            label=label,
+            accept_datetime=accept_datetime,
+            **kwargs)
+        return ConfigurationSetting(
+            key=result.key,
+            label=result.label,
+            value=result.value,
+            etag=result.etag,
+            last_modified=result.last_modified,
+            read_only=result.locked,
+            content_type=result.content_type,
+            tags=result.tags
+        )

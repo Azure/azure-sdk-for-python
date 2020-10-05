@@ -8,34 +8,39 @@
 
 import asyncio
 import os
-import colorama
+from colorama import init, Style
+init()
 
+from azure.identity.aio import DefaultAzureCredential
 from azure.appconfiguration.aio import AppConfigurationClient
 from azure.core.exceptions import ResourceNotFoundError, ResourceNotModifiedError
 from azure.core import MatchConditions
 
 
 async def main():
-    connection_string = os.environ.get('APP_CONFIG_CONN_STR')
-    client = AppConfigurationClient.from_connection_string(connection_string)
+    url = os.environ.get('APP_CONFIG_HOSTNAME')
+    credential = DefaultAzureCredential()
+    async with AppConfigurationClient(account_url=url, credential=credential) as client:
 
-    # Retrieve initial color value
-    try:
-        first_color = await client.get_configuration_setting('FontColor')
-    except ResourceNotFoundError:
-        raise
-    
-    # Get latest color value, only if it has changed
-    try:
-        new_color = await client.get_configuration_setting(
-            key='FontColor',
-            match_condition=MatchConditions.IfModified,
-            etag=first_color.etag
-        )
-    except ResourceNotModifiedError:
-        new_color = first_color
+        # Retrieve initial color value
+        try:
+            first_color = await client.get_configuration_setting('FontColor')
+        except ResourceNotFoundError:
+            raise
+        
+        # Get latest color value, only if it has changed
+        try:
+            new_color = await client.get_configuration_setting(
+                key='FontColor',
+                match_condition=MatchConditions.IfModified,
+                etag=first_color.etag
+            )
+        except ResourceNotModifiedError:
+            new_color = first_color
 
-    print(f'{new_color.value}Hello!{colorama.Style.RESET_ALL}')
+        color = new_color.value.replace('\\0', '\0')
+        greeting = 'Hello!'
+        print(f'{color}{greeting}{Style.RESET_ALL}')
 
 
 if __name__ == "__main__":

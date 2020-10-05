@@ -13,7 +13,7 @@ from io import open
 from setuptools import find_packages, setup
 
 # Change the PACKAGE_NAME only to change folder and different name
-PACKAGE_NAME = "azure-appconfiguration"
+PACKAGE_NAME = "azure-training-appconfiguration"
 PACKAGE_PPRINT_NAME = "App Configuration Data Training SDK"
 
 # a-b-c => a/b/c
