@@ -1937,6 +1937,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
         with ServiceBusClient.from_connection_string(
                 servicebus_namespace_connection_string, logging_enable=False) as sb_client:
             with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+                # this one doesn't need to reset the method, as it's hacking the method on the instance
                 sender._handler._client_run = types.MethodType(_hack_amqp_sender_run, sender._handler)
                 with pytest.raises(OperationTimeoutError):
                     sender.send_messages(Message("body"), timeout=5)
@@ -1964,6 +1965,8 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             response = self._responses.pop(operation_id)
             return response
 
+        original_execute_method = uamqp.mgmt_operation.MgmtOperation.execute
+        # hack the mgmt method on the class, not on an instance, so it needs reset
         uamqp.mgmt_operation.MgmtOperation.execute = hack_mgmt_execute
         with ServiceBusClient.from_connection_string(
                 servicebus_namespace_connection_string, logging_enable=False) as sb_client:
@@ -1971,3 +1974,6 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 with pytest.raises(OperationTimeoutError):
                     scheduled_time_utc = utc_now() + timedelta(seconds=30)
                     sender.schedule_messages(Message("Message to be scheduled"), scheduled_time_utc, timeout=5)
+
+        # must reset the mgmt execute method, otherwise other test cases would use the hacked execute method, leading to timeout error
+        uamqp.mgmt_operation.MgmtOperation.execute = original_execute_method
