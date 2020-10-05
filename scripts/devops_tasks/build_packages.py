@@ -26,11 +26,12 @@ from sanitize_setup import process_requires
 def str_to_bool(input_string):
     if isinstance(input_string, bool):
         return input_string
-    if input_string.lower() in ("true", "t", "1"):
+    elif input_string.lower() in ("true", "t", "1"):
         return True
     elif input_string.lower() in ("false", "f", "0"):
         return False
-
+    else:
+        return False
 
 def build_packages(targeted_packages, distribution_directory, is_dev_build=False):
     # run the build and distribution
