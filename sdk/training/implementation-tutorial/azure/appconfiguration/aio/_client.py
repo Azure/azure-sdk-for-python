@@ -4,7 +4,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------
 
-import datetime
+from datetime import datetime
 from typing import Optional, List, Union
 
 from azure.core import MatchConditions
@@ -29,7 +29,7 @@ class AppConfigurationClient(object):
         label: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         etag: Optional[str] = None,
-        accept_datetime: Optional[datetime.datetime] = None,
+        accept_datetime: Optional[datetime] = None,
         select: Optional[List[Union[str, SettingFields]]] = None,
         **kwargs
     ) -> ConfigurationSetting:
@@ -39,7 +39,7 @@ class AppConfigurationClient(object):
         :keyword str label: The label of the setting.
         :keyword ~azure.core.MatchConditions match_condition: A condition under which the operation should be completed.
         :keyword str etag: The etag by which the match condition should be assessed.
-        :keyword datetime.datetime accept_datetime: The last modified date filter.
+        :keyword datetime accept_datetime: The last modified date filter.
         :keyword select: The specific properties of the setting that should be returned.
         :paramtype select: List[Union[str, ~azure.appconfiguration.SettingFields]]
         :raises ~azure.core.exceptions.ResourceNotFoundError: If no matching configuration setting exists.
