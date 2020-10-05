@@ -18,28 +18,29 @@ from azure.core import MatchConditions
 
 
 async def main():
-    url = os.environ.get('APP_CONFIG_URL')
+    url = os.environ.get('APP_CONFIG_HOSTNAME')
     credential = DefaultAzureCredential()
-    client = AppConfigurationClient(account_url=url, credential=credential)
+    async with AppConfigurationClient(account_url=url, credential=credential) as client:
 
-    # Retrieve initial color value
-    try:
-        first_color = await client.get_configuration_setting('FontColor')
-    except ResourceNotFoundError:
-        raise
-    
-    # Get latest color value, only if it has changed
-    try:
-        new_color = await client.get_configuration_setting(
-            key='FontColor',
-            match_condition=MatchConditions.IfModified,
-            etag=first_color.etag
-        )
-    except ResourceNotModifiedError:
-        new_color = first_color
+        # Retrieve initial color value
+        try:
+            first_color = await client.get_configuration_setting('FontColor')
+        except ResourceNotFoundError:
+            raise
+        
+        # Get latest color value, only if it has changed
+        try:
+            new_color = await client.get_configuration_setting(
+                key='FontColor',
+                match_condition=MatchConditions.IfModified,
+                etag=first_color.etag
+            )
+        except ResourceNotModifiedError:
+            new_color = first_color
 
-    color = new_color.value.replace('\\0', '\0')
-    print(f'{color}Hello!{Style.RESET_ALL}')
+        color = new_color.value.replace('\\0', '\0')
+        greeting = 'Hello!'
+        print(f'{color}{greeting}{Style.RESET_ALL}')
 
 
 if __name__ == "__main__":
