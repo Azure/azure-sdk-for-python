@@ -730,7 +730,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                 count = 0
                 while not messages and count < 12:
                     messages = receiver.receive_messages(max_wait_time=10)
-                    receiver.session.renew_lock(timeout=0)
+                    receiver.session.renew_lock(timeout=None)
                     count += 1
 
                 data = str(messages[0])
@@ -769,7 +769,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                 messages = []
                 count = 0
                 while len(messages) < 2 and count < 12:
-                    receiver.session.renew_lock(timeout=0)
+                    receiver.session.renew_lock(timeout=None)
                     messages = receiver.receive_messages(max_wait_time=15)
                     time.sleep(5)
                     count += 1
