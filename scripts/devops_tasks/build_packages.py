@@ -105,4 +105,4 @@ if __name__ == "__main__":
         target_dir = root_dir
 
     targeted_packages = process_glob_string(args.glob_string, target_dir, args.package_filter_string)
-    build_packages(targeted_packages, args.distribution_directory, args.is_dev_build)
+    build_packages(targeted_packages, args.distribution_directory, bool(args.is_dev_build))
