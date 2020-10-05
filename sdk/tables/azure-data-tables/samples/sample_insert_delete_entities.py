@@ -24,6 +24,8 @@ import os
 
 class InsertDeleteEntity(object):
     connection_string = os.getenv("AZURE_TABLES_CONNECTION_STRING")
+    access_key = os.getenv("AZURE_TABLES_KEY")
+    account_url = os.getenv("AZURE_TABLES_ACCOUNT_KEY")
     table_name = "OfficeSupplies"
 
     entity = {

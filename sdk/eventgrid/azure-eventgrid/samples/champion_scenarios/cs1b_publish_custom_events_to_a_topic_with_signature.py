@@ -14,13 +14,14 @@ USAGE:
     2) EG_TOPIC_HOSTNAME - The topic hostname. Typically it exists in the format
     "<YOUR-TOPIC-NAME>.<REGION-NAME>.eventgrid.azure.net".
 """
-
-from azure.eventgrid import EventGridPublisherClient, EventGridEvent, CloudEvent, generate_shared_access_signature, EventGridSharedAccessSignatureCredential
+import os
+from azure.eventgrid import EventGridPublisherClient, EventGridEvent, generate_shared_access_signature, EventGridSharedAccessSignatureCredential
 from azure.core.credentials import AzureKeyCredential
+from datetime import datetime, timedelta
 
 topic_key = os.environ["EG_ACCESS_KEY"]
 topic_hostname = os.environ["EG_TOPIC_HOSTNAME"]
-expiration_date_utc = dt.datetime.now(tzutc()) + timedelta(hours=1)
+expiration_date_utc = datetime.utcnow() + timedelta(hours=1)
 
 signature = generate_shared_access_signature(topic_hostname, topic_key, expiration_date_utc)
 credential = EventGridSharedAccessSignatureCredential(signature)

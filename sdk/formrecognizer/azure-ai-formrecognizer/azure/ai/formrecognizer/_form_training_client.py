@@ -18,25 +18,22 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.polling import LROPoller
 from azure.core.polling.base_polling import LROBasePolling
 from azure.core.pipeline import Pipeline
-from ._generated._form_recognizer_client import FormRecognizerClient as FormRecognizer
 from ._generated.models import (
     TrainRequest,
     TrainSourceFilter,
     CopyRequest,
     CopyAuthorizationResult
 )
-from ._helpers import (
-    error_map, get_authentication_policy, POLLING_INTERVAL, TransportWrapper, _get_deserialize
-)
+from ._helpers import TransportWrapper
+
 from ._models import (
     CustomFormModelInfo,
     AccountProperties,
     CustomFormModel,
 )
 from ._polling import TrainingPolling, CopyPolling
-from ._user_agent import USER_AGENT
 from ._form_recognizer_client import FormRecognizerClient
-from ._api_versions import FormRecognizerApiVersion, validate_api_version
+from ._form_base_client import FormRecognizerClientBase
 if TYPE_CHECKING:
     from azure.core.credentials import AzureKeyCredential, TokenCredential
     from azure.core.pipeline import PipelineResponse
@@ -45,7 +42,7 @@ if TYPE_CHECKING:
     PipelineResponseType = HttpResponse
 
 
-class FormTrainingClient(object):
+class FormTrainingClient(FormRecognizerClientBase):
     """FormTrainingClient is the Form Recognizer interface to use for creating,
     and managing custom models. It provides methods for training models on the forms
     you provide, as well as methods for viewing and deleting models, accessing
@@ -79,26 +76,6 @@ class FormTrainingClient(object):
             :dedent: 8
             :caption: Creating the FormTrainingClient with a token credential.
     """
-
-    def __init__(self, endpoint, credential, **kwargs):
-        # type: (str, Union[AzureKeyCredential, TokenCredential], Any) -> None
-        self._endpoint = endpoint
-        self._credential = credential
-        authentication_policy = get_authentication_policy(credential)
-        polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
-        self.api_version = kwargs.pop('api_version', FormRecognizerApiVersion.V2_1_PREVIEW_1)
-        validate_api_version(self.api_version)
-        self._client = FormRecognizer(
-            endpoint=self._endpoint,
-            credential=self._credential,  # type: ignore
-            api_version=self.api_version,
-            sdk_moniker=USER_AGENT,
-            authentication_policy=authentication_policy,
-            polling_interval=polling_interval,
-            **kwargs
-        )
-        self._deserialize = _get_deserialize()
-        self._generated_models = self._client.models(self.api_version)
 
     @distributed_trace
     def begin_training(self, training_files_url, use_training_labels, **kwargs):
@@ -178,7 +155,6 @@ class FormTrainingClient(object):
                     )
                 ),
                 cls=lambda pipeline_response, _, response_headers: pipeline_response,
-                error_map=error_map,
                 **kwargs
             )  # type: PipelineResponseType
 
@@ -203,7 +179,6 @@ class FormTrainingClient(object):
             cls=deserialization_callback,
             continuation_token=continuation_token,
             polling=LROBasePolling(timeout=polling_interval, lro_algorithms=[TrainingPolling()], **kwargs),
-            error_map=error_map,
             **kwargs
         )
 
@@ -231,11 +206,7 @@ class FormTrainingClient(object):
         if not model_id:
             raise ValueError("model_id cannot be None or empty.")
 
-        self._client.delete_custom_model(
-            model_id=model_id,
-            error_map=error_map,
-            **kwargs
-        )
+        self._client.delete_custom_model(model_id=model_id, **kwargs)
 
     @distributed_trace
     def list_custom_models(self, **kwargs):
@@ -258,7 +229,6 @@ class FormTrainingClient(object):
         """
         return self._client.list_custom_models(  # type: ignore
             cls=kwargs.pop("cls", lambda objs: [CustomFormModelInfo._from_generated(x) for x in objs]),
-            error_map=error_map,
             **kwargs
         )
 
@@ -281,7 +251,7 @@ class FormTrainingClient(object):
                 :dedent: 8
                 :caption: Get properties for the form recognizer account.
         """
-        response = self._client.get_custom_models(error_map=error_map, **kwargs)
+        response = self._client.get_custom_models(**kwargs)
         return AccountProperties._from_generated(response.summary)
 
     @distributed_trace
@@ -308,7 +278,7 @@ class FormTrainingClient(object):
         if not model_id:
             raise ValueError("model_id cannot be None or empty.")
 
-        response = self._client.get_custom_model(model_id=model_id, include_keys=True, error_map=error_map, **kwargs)
+        response = self._client.get_custom_model(model_id=model_id, include_keys=True, **kwargs)
         return CustomFormModel._from_generated(response, api_version=self.api_version)
 
     @distributed_trace
@@ -341,7 +311,6 @@ class FormTrainingClient(object):
 
         response = self._client.generate_model_copy_authorization(  # type: ignore
             cls=lambda pipeline_response, deserialized, response_headers: pipeline_response,
-            error_map=error_map,
             **kwargs
         )  # type: PipelineResponse
         target = json.loads(response.http_response.text())
@@ -386,9 +355,7 @@ class FormTrainingClient(object):
 
         if not model_id:
             raise ValueError("model_id cannot be None or empty.")
-
         polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
-        continuation_token = kwargs.pop("continuation_token", None)
 
         def _copy_callback(raw_response, _, headers):  # pylint: disable=unused-argument
             copy_result = self._deserialize(self._generated_models.CopyOperationResult, raw_response)
@@ -407,8 +374,6 @@ class FormTrainingClient(object):
             ),
             cls=kwargs.pop("cls", _copy_callback),
             polling=LROBasePolling(timeout=polling_interval, lro_algorithms=[CopyPolling()], **kwargs),
-            error_map=error_map,
-            continuation_token=continuation_token,
             **kwargs
         )
 

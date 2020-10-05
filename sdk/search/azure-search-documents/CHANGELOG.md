@@ -1,7 +1,20 @@
 # Release History
 
-## 11.1.0b3 (Unreleased)
+## 11.1.0b3 (2020-10-06)
 
+**Breaking Changes**
+
+- Renamed `SearchIndexDocumentBatchingClient` to `SearchIndexingBufferedSender`
+- Renamed `SearchIndexDocumentBatchingClient.add_upload_actions` to `SearchIndexingBufferedSender.upload_documents`
+- Renamed `SearchIndexDocumentBatchingClient.add_delete_actions` to `SearchIndexingBufferedSender.delete_documents`
+- Renamed `SearchIndexDocumentBatchingClient.add_merge_actions` to `SearchIndexingBufferedSender.merge_documents`
+- Renamed `SearchIndexDocumentBatchingClient.add_merge_or_upload_actions` to `SearchIndexingBufferedSender.merge_or_upload_documents`
+- Stopped supporting `window` kwargs for `SearchIndexingBufferedSender`
+- Splitted kwarg `hook` into `on_new`, `on_progress`, `on_error`, `on_remove` for `SearchIndexingBufferedSender`
+
+**Features**
+
+- Added `auto_flush_interval` support for `SearchIndexingBufferedSender`
 
 ## 11.1.0b2 (2020-09-08)
 

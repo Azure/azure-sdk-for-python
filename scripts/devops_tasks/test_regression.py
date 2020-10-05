@@ -40,7 +40,6 @@ TEMP_FOLDER_NAME = ".tmp_code_path"
 
 logging.getLogger().setLevel(logging.INFO)
 
-
 class CustomVirtualEnv:
     def __init__(self, path):
         self.path = os.path.join(path, VENV_NAME)

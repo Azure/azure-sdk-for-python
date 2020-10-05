@@ -6,17 +6,30 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, TYPE_CHECKING
+from typing import Any, Union, List, Dict
 from azure.core.credentials import AzureKeyCredential
-
+from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.pipeline.policies import (
+    RequestIdPolicy,
+    HeadersPolicy,
+    AsyncRedirectPolicy,
+    AsyncRetryPolicy,
+    ContentDecodePolicy,
+    CustomHookPolicy,
+    NetworkTraceLoggingPolicy,
+    ProxyPolicy,
+    DistributedTracingPolicy,
+    HttpLoggingPolicy,
+    UserAgentPolicy
+)
+from .._policies import CloudEventDistributedTracingPolicy
 from .._models import CloudEvent, EventGridEvent, CustomEvent
 from .._helpers import _get_topic_hostname_only_fqdn, _get_authentication_policy, _is_cloud_event
 from .._generated.aio import EventGridPublisherClient as EventGridPublisherClientAsync
+from .._shared_access_signature_credential import EventGridSharedAccessSignatureCredential
+from .._version import VERSION
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Union, Dict, List
-    SendType = Union[
+SendType = Union[
         CloudEvent,
         EventGridEvent,
         CustomEvent,
@@ -27,7 +40,7 @@ if TYPE_CHECKING:
         List[Dict]
     ]
 
-class EventGridPublisherClient(object):
+class EventGridPublisherClient():
     """Asynchronous EventGrid Python Publisher Client.
 
     :param str topic_hostname: The topic endpoint to send the events to.
@@ -36,16 +49,47 @@ class EventGridPublisherClient(object):
     :type credential: ~azure.core.credentials.AzureKeyCredential or EventGridSharedAccessSignatureCredential
     """
 
-    def __init__(self, topic_hostname, credential, **kwargs):
-        # type: (str, Union[AzureKeyCredential, EventGridSharedAccessSignatureCredential], Any) -> None
-        auth_policy = _get_authentication_policy(credential)
-        self._client = EventGridPublisherClientAsync(authentication_policy=auth_policy, **kwargs)
+    def __init__(
+        self,
+        topic_hostname: str,
+        credential: Union[AzureKeyCredential, EventGridSharedAccessSignatureCredential],
+        **kwargs: Any) -> None:
+        self._client = EventGridPublisherClientAsync(
+            policies=EventGridPublisherClient._policies(credential, **kwargs),
+            **kwargs
+            )
         topic_hostname = _get_topic_hostname_only_fqdn(topic_hostname)
         self._topic_hostname = topic_hostname
 
+    @staticmethod
+    def _policies(
+        credential: Union[AzureKeyCredential, EventGridSharedAccessSignatureCredential],
+        **kwargs: Any
+        ) -> List[Any]:
+        auth_policy = _get_authentication_policy(credential)
+        sdk_moniker = 'eventgridpublisherclient/{}'.format(VERSION)
+        policies = [
+            RequestIdPolicy(**kwargs),
+            HeadersPolicy(**kwargs),
+            UserAgentPolicy(sdk_moniker=sdk_moniker, **kwargs),
+            ProxyPolicy(**kwargs),
+            ContentDecodePolicy(**kwargs),
+            AsyncRedirectPolicy(**kwargs),
+            AsyncRetryPolicy(**kwargs),
+            auth_policy,
+            CustomHookPolicy(**kwargs),
+            NetworkTraceLoggingPolicy(**kwargs),
+            DistributedTracingPolicy(**kwargs),
+            CloudEventDistributedTracingPolicy(),
+            HttpLoggingPolicy(**kwargs)
+        ]
+        return policies
 
-    async def send(self, events, **kwargs):
-        # type: (SendType) -> None
+    @distributed_trace_async
+    async def send(
+        self,
+        events: SendType,
+        **kwargs: Any) -> None:
         """Sends event data to topic hostname specified during client initialization.
 
         :param  events: A list or an instance of CloudEvent/EventGridEvent/CustomEvent to be sent.

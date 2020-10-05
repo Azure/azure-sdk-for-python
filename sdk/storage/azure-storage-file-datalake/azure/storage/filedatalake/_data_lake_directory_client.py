@@ -3,12 +3,11 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
 try:
     from urllib.parse import quote, unquote
 except ImportError:
     from urllib2 import quote, unquote # type: ignore
-
+from ._deserialize import deserialize_dir_properties
 from ._shared.base_client import parse_connection_str
 from ._data_lake_file_client import DataLakeFileClient
 from ._models import DirectoryProperties
@@ -236,8 +235,7 @@ class DataLakeDirectoryClient(PathClient):
                 :dedent: 4
                 :caption: Getting the properties for a file/directory.
         """
-        blob_properties = self._get_path_properties(**kwargs)
-        return DirectoryProperties._from_blob_properties(blob_properties)  # pylint: disable=protected-access
+        return self._get_path_properties(cls=deserialize_dir_properties, **kwargs)  # pylint: disable=protected-access
 
     def rename_directory(self, new_name,  # type: str
                          **kwargs):
@@ -306,7 +304,7 @@ class DataLakeDirectoryClient(PathClient):
         """
         new_name = new_name.strip('/')
         new_file_system = new_name.split('/')[0]
-        new_path_and_token = new_name[len(new_file_system):].split('?')
+        new_path_and_token = new_name[len(new_file_system):].strip('/').split('?')
         new_path = new_path_and_token[0]
         try:
             new_dir_sas = new_path_and_token[1] or self._query_str.strip('?')

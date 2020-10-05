@@ -1,0 +1,44 @@
+interactions:
+- request:
+    body: '{"feedbackType": "Anomaly", "metricId": "metric_id", "dimensionFilter":
+      {"dimension": {"dimension_name": "Common Lime"}}, "startTime": "2020-08-05T00:00:00.000Z",
+      "endTime": "2020-08-07T00:00:00.000Z", "value": {"anomalyValue": "NotAnomaly"}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '259'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-metricsadvisor/1.0.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/feedback/metric
+  response:
+    body:
+      string: ''
+    headers:
+      apim-request-id:
+      - f9af4b73-266e-4a66-953e-649942dae2de
+      content-length:
+      - '0'
+      date:
+      - Tue, 22 Sep 2020 20:37:33 GMT
+      location:
+      - https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/feedback/metric/82c6ee69-0d99-45a5-9674-67833b126da7
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '291'
+      x-request-id:
+      - f9af4b73-266e-4a66-953e-649942dae2de
+    status:
+      code: 201
+      message: Created
+version: 1

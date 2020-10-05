@@ -1,7 +1,7 @@
 interactions:
 - request:
-    body: '[{"id": "13ae3fbd-e54d-4e18-87d7-3a84e8b8927f", "source": "http://samplesource.dev",
-      "data_base64": "Y2xvdWRldmVudA==", "type": "Sample.Cloud.Event", "time": "2020-09-04T17:09:37.664287Z",
+    body: '[{"id": "d03db097-fda5-45b5-9738-e8014ef2593d", "source": "http://samplesource.dev",
+      "data_base64": "Y2xvdWRldmVudA==", "type": "Sample.Cloud.Event", "time": "2020-10-01T23:05:33.816292Z",
       "specversion": "1.0"}]'
     headers:
       Content-Length:
@@ -9,7 +9,7 @@ interactions:
       Content-Type:
       - application/cloudevents-batch+json; charset=utf-8
       User-Agent:
-      - azsdk-python-eventgridpublisherclient/unknown Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-eventgridpublisherclient/2.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: POST
     uri: https://cloudeventgridtestegtopic.westus-1.eventgrid.azure.net/api/events?api-version=2018-01-01
   response:
@@ -18,11 +18,11 @@ interactions:
     headers:
       api-supported-versions: '2018-01-01'
       content-length: '0'
-      date: Fri, 04 Sep 2020 17:09:35 GMT
+      date: Thu, 01 Oct 2020 23:05:33 GMT
       server: Microsoft-HTTPAPI/2.0
       strict-transport-security: max-age=31536000; includeSubDomains
     status:
       code: 200
       message: OK
-    url: https://cloudeventgridtestdfyfhi.westus-1.eventgrid.azure.net/api/events?api-version=2018-01-01
+    url: https://cloudeventgridtestv2tnop.westus-1.eventgrid.azure.net/api/events?api-version=2018-01-01
 version: 1

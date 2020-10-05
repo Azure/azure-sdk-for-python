@@ -25,14 +25,18 @@
 # PRLabel: %Storage
 /sdk/storage/                                                        @amishra-dev @zezha-msft @annatisch @rakshith91 @xiafu-msft @tasherif-msft @kasobol-msft
 
-/sdk/applicationinsights/                                            @alexeldeib
+# PRLabel: %App Configuration
+/sdk/appconfiguration/                                               @xiangyan99
+
+/sdk/applicationinsights/azure-applicationinsights/                  @divya-jay @geneh @alongafni
+/sdk/loganalytics/azure-loganalytics/                                @divya-jay @geneh @alongafni
 
 # PRLabel: %Batch
 /sdk/batch/                                                          @bgklein @xingwu1
 /sdk/cognitiveservices/azure-cognitiveservices-vision-customvision/  @areddish
 
 # PRLabel: %Communication
-/sdk/communication/                                                  @RezaJooyandeh @turalf
+/sdk/communication/                                                  @RezaJooyandeh @turalf @ankitarorabit @Azure/azure-sdk-communication-code-reviewers
 
 # PRLabel: %KeyVault
 /sdk/keyvault/                                                       @schaabs @chlowell @iscai-msft
@@ -96,6 +100,9 @@
 
 # PRLabel: %Cognitive - Form Recognizer
 /sdk/formrecognizer/                                                 @kristapratico @iscai-msft @rakshith91
+
+# PRLabel: %Cognitive - Metrics Advisor
+/sdk/metricsadvisor/                                                 @xiangyan99 @kristapratico
 
 # PRLabel: %Tables
 /sdk/tables/                                                         @seankane-msft
