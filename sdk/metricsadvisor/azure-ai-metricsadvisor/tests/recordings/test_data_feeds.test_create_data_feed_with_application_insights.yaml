@@ -1,0 +1,125 @@
+interactions:
+- request:
+    body: 'b''{"dataSourceType": "AzureApplicationInsights", "dataFeedName": "applicationinsights2d9119a3",
+      "granularityName": "Daily", "metrics": [{"metricName": "cost"}, {"metricName":
+      "revenue"}], "dimension": [{"dimensionName": "category"}, {"dimensionName":
+      "city"}], "dataStartFrom": "2020-07-01T00:00:00.000Z", "startOffsetInSeconds":
+      0, "maxConcurrency": -1, "minRetryIntervalInSeconds": -1, "stopRetryAfterInSeconds":
+      -1, "dataSourceParameter": {"azureCloud": "Azure", "applicationId": "3706fe8b-98f1-47c7-bf69-b73b6e53274d",
+      "apiKey": "connectionstring", "query": "let gran=60m; let starttime=datetime(@StartTime);
+      let endtime=starttime + gran; requests |\\u202fwhere\\u202ftimestamp\\u202f>=\\u202fstarttime\\u202fand\\u202ftimestamp\\u202f<\\u202fendtime
+      |\\u202fsummarize\\u202frequest_count\\u202f=\\u202fcount(),\\u202fduration_avg_ms\\u202f=\\u202favg(duration),\\u202fduration_95th_ms\\u202f=\\u202fpercentile(duration,\\u202f95),\\u202fduration_max_ms\\u202f=\\u202fmax(duration)\\u202fby\\u202fresultCode"}}'''
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '1012'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-metricsadvisor/1.0.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds
+  response:
+    body:
+      string: ''
+    headers:
+      apim-request-id:
+      - 66588659-d8af-42a4-aea5-70a7bfec0c23
+      content-length:
+      - '0'
+      date:
+      - Tue, 15 Sep 2020 16:05:35 GMT
+      location:
+      - https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/6172f626-946d-4457-b425-fbcfdcda9f79
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '5752'
+      x-request-id:
+      - 66588659-d8af-42a4-aea5-70a7bfec0c23
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-metricsadvisor/1.0.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/6172f626-946d-4457-b425-fbcfdcda9f79
+  response:
+    body:
+      string: "{\"dataFeedId\":\"6172f626-946d-4457-b425-fbcfdcda9f79\",\"dataFeedName\":\"applicationinsights2d9119a3\",\"metrics\":[{\"metricId\":\"e4a9137a-d1b4-4588-bee6-fa5e63433547\",\"metricName\":\"cost\",\"metricDisplayName\":\"cost\",\"metricDescription\":\"\"},{\"metricId\":\"a30f71ac-e17c-4f0b-ae3d-b36c989e51bc\",\"metricName\":\"revenue\",\"metricDisplayName\":\"revenue\",\"metricDescription\":\"\"}],\"dimension\":[{\"dimensionName\":\"category\",\"dimensionDisplayName\":\"category\"},{\"dimensionName\":\"city\",\"dimensionDisplayName\":\"city\"}],\"dataStartFrom\":\"2020-07-01T00:00:00Z\",\"dataSourceType\":\"AzureApplicationInsights\",\"timestampColumn\":\"\",\"startOffsetInSeconds\":0,\"maxQueryPerMinute\":30.0,\"granularityName\":\"Daily\",\"granularityAmount\":null,\"allUpIdentification\":null,\"needRollup\":\"NoRollup\",\"fillMissingPointType\":\"PreviousValue\",\"fillMissingPointValue\":0.0,\"rollUpMethod\":\"None\",\"rollUpColumns\":[],\"dataFeedDescription\":\"\",\"stopRetryAfterInSeconds\":-1,\"minRetryIntervalInSeconds\":-1,\"maxConcurrency\":-1,\"viewMode\":\"Private\",\"admins\":[\"krpratic@microsoft.com\"],\"viewers\":[],\"creator\":\"krpratic@microsoft.com\",\"status\":\"Active\",\"createdTime\":\"2020-09-15T16:05:36Z\",\"isAdmin\":true,\"actionLinkTemplate\":\"\",\"dataSourceParameter\":{\"apiKey\":\"connectionstring\",\"query\":\"let
+        gran=60m; let starttime=datetime(@StartTime); let endtime=starttime + gran;
+        requests |\u202Fwhere\u202Ftimestamp\u202F>=\u202Fstarttime\u202Fand\u202Ftimestamp\u202F<\u202Fendtime
+        |\u202Fsummarize\u202Frequest_count\u202F=\u202Fcount(),\u202Fduration_avg_ms\u202F=\u202Favg(duration),\u202Fduration_95th_ms\u202F=\u202Fpercentile(duration,\u202F95),\u202Fduration_max_ms\u202F=\u202Fmax(duration)\u202Fby\u202FresultCode\",\"azureCloud\":\"Azure\",\"applicationId\":\"3706fe8b-98f1-47c7-bf69-b73b6e53274d\"}}"
+    headers:
+      apim-request-id:
+      - c46b4522-8e76-444e-a412-8156710e1929
+      content-length:
+      - '1675'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 15 Sep 2020 16:05:36 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '298'
+      x-request-id:
+      - c46b4522-8e76-444e-a412-8156710e1929
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-ai-metricsadvisor/1.0.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+    method: DELETE
+    uri: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/6172f626-946d-4457-b425-fbcfdcda9f79
+  response:
+    body:
+      string: ''
+    headers:
+      apim-request-id:
+      - cc02cfe4-271b-44f7-9143-97d6ea2b5a96
+      content-length:
+      - '0'
+      date:
+      - Tue, 15 Sep 2020 16:05:42 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '5494'
+      x-request-id:
+      - cc02cfe4-271b-44f7-9143-97d6ea2b5a96
+    status:
+      code: 204
+      message: No Content
+version: 1

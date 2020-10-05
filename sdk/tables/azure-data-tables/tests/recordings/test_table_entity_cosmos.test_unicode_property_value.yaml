@@ -1,0 +1,244 @@
+interactions:
+- request:
+    body: !!python/unicode '{"TableName": "uttable3c8f15ab"}'
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '32'
+      Content-Type:
+      - application/json;odata=nometadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Fri, 02 Oct 2020 20:08:12 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b2 Python/2.7.18 (Windows-10-10.0.19041)
+      x-ms-date:
+      - Fri, 02 Oct 2020 20:08:12 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: POST
+    uri: https://tablestestcosmosname.table.cosmos.azure.com/Tables
+  response:
+    body:
+      string: !!python/unicode '{"TableName":"uttable3c8f15ab","odata.metadata":"https://tablestestcosmosname.table.cosmos.azure.com/$metadata#Tables/@Element"}'
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      date:
+      - Fri, 02 Oct 2020 20:08:13 GMT
+      etag:
+      - W/"datetime'2020-10-02T20%3A08%3A13.5412743Z'"
+      location:
+      - https://tablestestcosmosname.table.cosmos.azure.com/Tables('uttable3c8f15ab')
+      server:
+      - Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+    status:
+      code: 201
+      message: Ok
+- request:
+    body: !!python/unicode '{"Description": "\ua015", "PartitionKey@odata.type": "Edm.String",
+      "PartitionKey": "pk3c8f15ab", "RowKey": "rk3c8f15ab", "Description@odata.type":
+      "Edm.String", "RowKey@odata.type": "Edm.String"}'
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '195'
+      Content-Type:
+      - application/json;odata=nometadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Fri, 02 Oct 2020 20:08:13 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b2 Python/2.7.18 (Windows-10-10.0.19041)
+      x-ms-date:
+      - Fri, 02 Oct 2020 20:08:13 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: POST
+    uri: https://tablestestcosmosname.table.cosmos.azure.com/uttable3c8f15ab
+  response:
+    body:
+      string: "{\"odata.metadata\":\"https://tablestestcosmosname.table.cosmos.azure.com/uttable3c8f15ab/$metadata#uttable3c8f15ab/@Element\",\"odata.etag\":\"W/\\\"datetime'2020-10-02T20%3A08%3A14.0327943Z'\\\"\",\"Description\":\"\uA015\",\"PartitionKey\":\"pk3c8f15ab\",\"RowKey\":\"rk3c8f15ab\",\"Timestamp\":\"2020-10-02T20:08:14.0327943Z\"}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      date:
+      - Fri, 02 Oct 2020 20:08:13 GMT
+      etag:
+      - W/"datetime'2020-10-02T20%3A08%3A14.0327943Z'"
+      location:
+      - https://tablestestcosmosname.table.cosmos.azure.com/uttable3c8f15ab(PartitionKey='pk3c8f15ab',RowKey='rk3c8f15ab')
+      server:
+      - Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+    status:
+      code: 201
+      message: Created
+- request:
+    body: !!python/unicode '{"Description": "\ua015", "PartitionKey@odata.type": "Edm.String",
+      "PartitionKey": "pk3c8f15ab", "RowKey": "test2", "Description@odata.type": "Edm.String",
+      "RowKey@odata.type": "Edm.String"}'
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '190'
+      Content-Type:
+      - application/json;odata=nometadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Fri, 02 Oct 2020 20:08:13 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b2 Python/2.7.18 (Windows-10-10.0.19041)
+      x-ms-date:
+      - Fri, 02 Oct 2020 20:08:13 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: POST
+    uri: https://tablestestcosmosname.table.cosmos.azure.com/uttable3c8f15ab
+  response:
+    body:
+      string: "{\"odata.metadata\":\"https://tablestestcosmosname.table.cosmos.azure.com/uttable3c8f15ab/$metadata#uttable3c8f15ab/@Element\",\"odata.etag\":\"W/\\\"datetime'2020-10-02T20%3A08%3A14.1216775Z'\\\"\",\"Description\":\"\uA015\",\"PartitionKey\":\"pk3c8f15ab\",\"RowKey\":\"test2\",\"Timestamp\":\"2020-10-02T20:08:14.1216775Z\"}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      date:
+      - Fri, 02 Oct 2020 20:08:13 GMT
+      etag:
+      - W/"datetime'2020-10-02T20%3A08%3A14.1216775Z'"
+      location:
+      - https://tablestestcosmosname.table.cosmos.azure.com/uttable3c8f15ab(PartitionKey='pk3c8f15ab',RowKey='test2')
+      server:
+      - Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Fri, 02 Oct 2020 20:08:13 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b2 Python/2.7.18 (Windows-10-10.0.19041)
+      x-ms-date:
+      - Fri, 02 Oct 2020 20:08:13 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://tablestestcosmosname.table.cosmos.azure.com/uttable3c8f15ab()
+  response:
+    body:
+      string: "{\"value\":[{\"odata.etag\":\"W/\\\"datetime'2020-10-02T20%3A08%3A14.0327943Z'\\\"\",\"Description\":\"\uA015\",\"PartitionKey\":\"pk3c8f15ab\",\"RowKey\":\"rk3c8f15ab\",\"Timestamp\":\"2020-10-02T20:08:14.0327943Z\"},{\"odata.etag\":\"W/\\\"datetime'2020-10-02T20%3A08%3A14.1216775Z'\\\"\",\"Description\":\"\uA015\",\"PartitionKey\":\"pk3c8f15ab\",\"RowKey\":\"test2\",\"Timestamp\":\"2020-10-02T20:08:14.1216775Z\"}],\"odata.metadata\":\"https://tablestestcosmosname.table.cosmos.azure.com/$metadata#uttable3c8f15ab\"}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      date:
+      - Fri, 02 Oct 2020 20:08:13 GMT
+      server:
+      - Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: Ok
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Date:
+      - Fri, 02 Oct 2020 20:08:13 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b2 Python/2.7.18 (Windows-10-10.0.19041)
+      x-ms-date:
+      - Fri, 02 Oct 2020 20:08:13 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: DELETE
+    uri: https://tablestestcosmosname.table.cosmos.azure.com/Tables('uttable3c8f15ab')
+  response:
+    body:
+      string: !!python/unicode 
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Fri, 02 Oct 2020 20:08:13 GMT
+      server:
+      - Microsoft-HTTPAPI/2.0
+    status:
+      code: 204
+      message: No Content
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Fri, 02 Oct 2020 20:08:14 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b2 Python/2.7.18 (Windows-10-10.0.19041)
+      x-ms-date:
+      - Fri, 02 Oct 2020 20:08:14 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://tablestestcosmosname.table.cosmos.azure.com/Tables
+  response:
+    body:
+      string: !!python/unicode '{"value":[{"TableName":"querytablefe63147d"},{"TableName":"querytablec80b1810"},{"TableName":"querytable5436162b"},{"TableName":"querytable2da719db"},{"TableName":"querytable9c05125e"},{"TableName":"querytable981b173a"}],"odata.metadata":"https://tablestestcosmosname.table.cosmos.azure.com/$metadata#Tables"}'
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      date:
+      - Fri, 02 Oct 2020 20:08:13 GMT
+      server:
+      - Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: Ok
+version: 1

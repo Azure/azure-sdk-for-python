@@ -221,6 +221,7 @@ class BlobOperations:
                 'x-ms-blob-content-md5': self._deserialize('bytearray', response.headers.get('x-ms-blob-content-md5')),
                 'x-ms-tag-count': self._deserialize('long', response.headers.get('x-ms-tag-count')),
                 'x-ms-blob-sealed': self._deserialize('bool', response.headers.get('x-ms-blob-sealed')),
+                'x-ms-last-access-time': self._deserialize('rfc-1123', response.headers.get('x-ms-last-access-time')),
                 'x-ms-content-crc64': self._deserialize('bytearray', response.headers.get('x-ms-content-crc64')),
                 'x-ms-error-code': self._deserialize('str', response.headers.get('x-ms-error-code')),
             }
@@ -264,6 +265,7 @@ class BlobOperations:
                 'x-ms-blob-content-md5': self._deserialize('bytearray', response.headers.get('x-ms-blob-content-md5')),
                 'x-ms-tag-count': self._deserialize('long', response.headers.get('x-ms-tag-count')),
                 'x-ms-blob-sealed': self._deserialize('bool', response.headers.get('x-ms-blob-sealed')),
+                'x-ms-last-access-time': self._deserialize('rfc-1123', response.headers.get('x-ms-last-access-time')),
                 'x-ms-content-crc64': self._deserialize('bytearray', response.headers.get('x-ms-content-crc64')),
                 'x-ms-error-code': self._deserialize('str', response.headers.get('x-ms-error-code')),
             }
@@ -440,6 +442,7 @@ class BlobOperations:
                 'x-ms-expiry-time': self._deserialize('rfc-1123', response.headers.get('x-ms-expiry-time')),
                 'x-ms-blob-sealed': self._deserialize('bool', response.headers.get('x-ms-blob-sealed')),
                 'x-ms-rehydrate-priority': self._deserialize('str', response.headers.get('x-ms-rehydrate-priority')),
+                'x-ms-last-access-time': self._deserialize('rfc-1123', response.headers.get('x-ms-last-access-time')),
                 'x-ms-error-code': self._deserialize('str', response.headers.get('x-ms-error-code')),
             }
             return cls(response, None, response_headers)
@@ -1116,7 +1119,7 @@ class BlobOperations:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')
         header_parameters['x-ms-expiry-option'] = self._serialize.header("expiry_options", expiry_options, 'str')
         if expires_on is not None:
-            header_parameters['x-ms-expiry-time'] = self._serialize.header("expires_on", expires_on, 'str')
+            header_parameters['x-ms-expiry-time'] = self._serialize.header("expires_on", expires_on, 'rfc-1123')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters)

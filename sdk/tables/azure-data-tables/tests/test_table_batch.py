@@ -18,7 +18,9 @@ from azure.core.exceptions import (
     ResourceExistsError)
 from azure.data.tables import EdmType, TableEntity, EntityProperty
 
-from _shared.testcase import GlobalStorageAccountPreparer, TableTestCase, LogCaptured
+from _shared.testcase import TableTestCase, LogCaptured
+
+from devtools_testutils import CachedResourceGroupPreparer, CachedStorageAccountPreparer
 
 #------------------------------------------------------------------------------
 TEST_TABLE_PREFIX = 'table'
@@ -175,7 +177,8 @@ class StorageTableBatchTest(TableTestCase):
         self.assertEqual(entity.test8.type, EdmType.INT64)
 
     @pytest.mark.skip("pending")
-    @GlobalStorageAccountPreparer()
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_batch_insert(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         self._set_up(storage_account, storage_account_key)
@@ -202,7 +205,8 @@ class StorageTableBatchTest(TableTestCase):
             self._tear_down()
 
     @pytest.mark.skip("pending")
-    @GlobalStorageAccountPreparer()
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_batch_update(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         self._set_up(storage_account, storage_account_key)
@@ -235,7 +239,8 @@ class StorageTableBatchTest(TableTestCase):
             self._tear_down()
 
     @pytest.mark.skip("pending")
-    @GlobalStorageAccountPreparer()
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_batch_merge(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         self._set_up(storage_account, storage_account_key)
@@ -272,7 +277,8 @@ class StorageTableBatchTest(TableTestCase):
             self._tear_down()
 
     @pytest.mark.skip("pending")
-    @GlobalStorageAccountPreparer()
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_batch_update_if_match(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         self._set_up(storage_account, storage_account_key)
@@ -295,7 +301,8 @@ class StorageTableBatchTest(TableTestCase):
             self._tear_down()
 
     @pytest.mark.skip("pending")
-    @GlobalStorageAccountPreparer()
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_batch_update_if_doesnt_match(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         self._set_up(storage_account, storage_account_key)
@@ -327,7 +334,8 @@ class StorageTableBatchTest(TableTestCase):
             self._tear_down()
 
     @pytest.mark.skip("pending")
-    @GlobalStorageAccountPreparer()
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_batch_insert_replace(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         self._set_up(storage_account, storage_account_key)
@@ -357,7 +365,8 @@ class StorageTableBatchTest(TableTestCase):
             self._tear_down()
 
     @pytest.mark.skip("pending")
-    @GlobalStorageAccountPreparer()
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_batch_insert_merge(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         self._set_up(storage_account, storage_account_key)
@@ -387,7 +396,8 @@ class StorageTableBatchTest(TableTestCase):
             self._tear_down()
 
     @pytest.mark.skip("pending")
-    @GlobalStorageAccountPreparer()
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_batch_delete(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         self._set_up(storage_account, storage_account_key)
@@ -417,7 +427,8 @@ class StorageTableBatchTest(TableTestCase):
             self._tear_down()
 
     @pytest.mark.skip("pending")
-    @GlobalStorageAccountPreparer()
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_batch_inserts(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         self._set_up(storage_account, storage_account_key)
@@ -445,7 +456,8 @@ class StorageTableBatchTest(TableTestCase):
             self._tear_down()
 
     @pytest.mark.skip("pending")
-    @GlobalStorageAccountPreparer()
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_batch_all_operations_together(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         self._set_up(storage_account, storage_account_key)
@@ -493,7 +505,8 @@ class StorageTableBatchTest(TableTestCase):
             self._tear_down()
 
     @pytest.mark.skip("pending")
-    @GlobalStorageAccountPreparer()
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_batch_all_operations_together_context_manager(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         self._set_up(storage_account, storage_account_key)
@@ -539,7 +552,8 @@ class StorageTableBatchTest(TableTestCase):
             self._tear_down()
 
     @pytest.mark.skip("pending")
-    @GlobalStorageAccountPreparer()
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_batch_reuse(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         self._set_up(storage_account, storage_account_key)
@@ -597,7 +611,8 @@ class StorageTableBatchTest(TableTestCase):
             self._tear_down()
 
     @pytest.mark.skip("pending")
-    @GlobalStorageAccountPreparer()
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_batch_same_row_operations_fail(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         self._set_up(storage_account, storage_account_key)
@@ -621,7 +636,8 @@ class StorageTableBatchTest(TableTestCase):
             self._tear_down()
 
     @pytest.mark.skip("pending")
-    @GlobalStorageAccountPreparer()
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_batch_different_partition_operations_fail(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         self._set_up(storage_account, storage_account_key)
@@ -646,7 +662,8 @@ class StorageTableBatchTest(TableTestCase):
             self._tear_down()
 
     @pytest.mark.skip("pending")
-    @GlobalStorageAccountPreparer()
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_batch_too_many_ops(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         self._set_up(storage_account, storage_account_key)

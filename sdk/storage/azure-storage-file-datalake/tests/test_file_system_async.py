@@ -7,20 +7,25 @@
 # --------------------------------------------------------------------------
 import unittest
 import asyncio
+import uuid
 from datetime import datetime, timedelta
+
+import pytest
+
 from azure.core.exceptions import ResourceNotFoundError
 
 from azure.core import MatchConditions
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
 
-from azure.storage.filedatalake import AccessPolicy
-from azure.storage.filedatalake.aio import DataLakeServiceClient
+from azure.storage.filedatalake import AccessPolicy, generate_directory_sas, DirectorySasPermissions, \
+    generate_file_system_sas
+from azure.storage.filedatalake.aio import DataLakeServiceClient, DataLakeDirectoryClient, FileSystemClient
 from azure.storage.filedatalake import PublicAccess
 from testcase import (
     StorageTestCase,
     record,
-)
+    TestMode)
 
 # ------------------------------------------------------------------------------
 from azure.storage.filedatalake import FileSystemSasPermissions
@@ -442,6 +447,80 @@ class FileSystemTest(StorageTestCase):
     def test_get_root_directory_client_async(self):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_root_directory_client())
+
+    async def _test_get_access_control_using_delegation_sas_async(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
+
+        url = self._get_account_url()
+        token_credential = self.generate_async_oauth_token()
+        dsc = DataLakeServiceClient(url, token_credential)
+        file_system_name = self._get_file_system_reference()
+        directory_client_name = '/'
+        (await dsc.create_file_system(file_system_name)).get_directory_client(directory_client_name)
+
+        directory_client = self.dsc.get_directory_client(file_system_name, directory_client_name)
+        random_guid = uuid.uuid4()
+        await directory_client.set_access_control(owner=random_guid,
+                                                  permissions='0777')
+        acl = await directory_client.get_access_control()
+
+        delegation_key = await dsc.get_user_delegation_key(datetime.utcnow(),
+                                                           datetime.utcnow() + timedelta(hours=1))
+
+        token = generate_file_system_sas(
+            dsc.account_name,
+            file_system_name,
+            delegation_key,
+            permission=FileSystemSasPermissions(read=True, execute=True, manage_access_control=True, manage_ownership=True),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+            agent_object_id=random_guid
+        )
+        sas_directory_client = DataLakeDirectoryClient(self.dsc.url, file_system_name, directory_client_name,
+                                                       credential=token)
+        access_control = await sas_directory_client.get_access_control()
+
+        self.assertIsNotNone(access_control)
+
+    def test_get_access_control_using_delegation_sas_async(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_get_access_control_using_delegation_sas_async())
+
+    async def _test_list_paths_using_file_sys_delegation_sas_async(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
+        url = self._get_account_url()
+        token_credential = self.generate_async_oauth_token()
+        dsc = DataLakeServiceClient(url, token_credential)
+        file_system_name = self._get_file_system_reference()
+        directory_client_name = '/'
+        directory_client = (await dsc.create_file_system(file_system_name)).get_directory_client(directory_client_name)
+
+        random_guid = uuid.uuid4()
+        await directory_client.set_access_control(owner=random_guid, permissions='0777')
+
+        delegation_key = await dsc.get_user_delegation_key(datetime.utcnow(),
+                                                           datetime.utcnow() + timedelta(hours=1))
+
+        token = generate_file_system_sas(
+            dsc.account_name,
+            file_system_name,
+            delegation_key,
+            permission=DirectorySasPermissions(list=True),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+            agent_object_id=random_guid
+        )
+        sas_directory_client = FileSystemClient(self.dsc.url, file_system_name,
+                                                credential=token)
+        paths = list()
+        async for path in sas_directory_client.get_paths():
+            paths.append(path)
+
+        self.assertEqual(0, 0)
+
+    def test_list_paths_using_file_sys_delegation_sas_async(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_list_paths_using_file_sys_delegation_sas_async())
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':

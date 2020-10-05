@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 from collections import namedtuple
 import os
+import functools
 
 from azure.mgmt.storage import StorageManagementClient
 from azure.mgmt.storage.models import StorageAccount, Endpoints
@@ -31,7 +32,8 @@ class StorageAccountPreparer(AzureMgmtPreparer):
                  resource_group_parameter_name=RESOURCE_GROUP_PARAM,
                  disable_recording=True, playback_fake_resource=None,
                  client_kwargs=None,
-                 random_name_enabled=False):
+                 random_name_enabled=False,
+                 use_cache=False):
         super(StorageAccountPreparer, self).__init__(name_prefix, 24,
                                                      disable_recording=disable_recording,
                                                      playback_fake_resource=playback_fake_resource,
@@ -44,6 +46,7 @@ class StorageAccountPreparer(AzureMgmtPreparer):
         self.parameter_name = parameter_name
         self.storage_key = ''
         self.resource_moniker = self.name_prefix
+        self.set_cache(use_cache, sku, location, name_prefix)
         if random_name_enabled:
             self.resource_moniker += "storname"
 
@@ -51,7 +54,7 @@ class StorageAccountPreparer(AzureMgmtPreparer):
         if self.is_live:
             self.client = self.create_mgmt_client(StorageManagementClient)
             group = self._get_resource_group(**kwargs)
-            storage_async_operation = self.client.storage_accounts.create(
+            storage_async_operation = self.client.storage_accounts.begin_create(
                 group.name,
                 name,
                 {
@@ -101,7 +104,7 @@ class StorageAccountPreparer(AzureMgmtPreparer):
     def remove_resource(self, name, **kwargs):
         if self.is_live:
             group = self._get_resource_group(**kwargs)
-            self.client.storage_accounts.delete(group.name, name, polling=False)
+            self.client.storage_accounts.delete(group.name, name)
 
     def _get_resource_group(self, **kwargs):
         try:
@@ -110,3 +113,5 @@ class StorageAccountPreparer(AzureMgmtPreparer):
             template = 'To create a storage account a resource group is required. Please add ' \
                        'decorator @{} in front of this storage account preparer.'
             raise AzureTestError(template.format(ResourceGroupPreparer.__name__))
+
+CachedStorageAccountPreparer = functools.partial(StorageAccountPreparer, use_cache=True, random_name_enabled=True)

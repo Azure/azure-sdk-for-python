@@ -621,6 +621,24 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
+    @pytest.mark.playback_test_only
+    @GlobalStorageAccountPreparer()
+    def test_get_properties_last_access_time(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key,
+                                connection_data_block_size=4 * 1024)
+        self._setup()
+        self._create_container_and_block_blob(self.container_name, 'blob1', b'hello world', bsc)
+        blob = bsc.get_blob_client(self.container_name, 'blob1')
+        # Assert
+        lat = blob.get_blob_properties().last_accessed_on
+        blob.stage_block(block_id='1', data="this is test content")
+        blob.commit_block_list(['1'])
+        new_lat = blob.get_blob_properties().last_accessed_on
+        self.assertIsInstance(lat, datetime)
+        self.assertIsInstance(new_lat, datetime)
+        self.assertGreater(new_lat, lat)
+        self.assertIsInstance(blob.download_blob().properties.last_accessed_on, datetime)
+
     @GlobalStorageAccountPreparer()
     def test_set_blob_properties_with_if_match(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)

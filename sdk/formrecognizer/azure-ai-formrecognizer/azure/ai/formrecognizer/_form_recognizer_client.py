@@ -16,22 +16,19 @@ from typing import (
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.polling import LROPoller
 from azure.core.polling.base_polling import LROBasePolling
-from ._generated._form_recognizer_client import FormRecognizerClient as FormRecognizer
 from ._response_handlers import (
     prepare_receipt,
     prepare_content_result,
     prepare_form_result
 )
-from ._api_versions import FormRecognizerApiVersion, validate_api_version
-from ._helpers import _get_deserialize, get_content_type, get_authentication_policy, error_map, POLLING_INTERVAL
-from ._user_agent import USER_AGENT
+from ._helpers import get_content_type, error_map
+from ._form_base_client import FormRecognizerClientBase
 from ._polling import AnalyzePolling
 if TYPE_CHECKING:
-    from azure.core.credentials import AzureKeyCredential, TokenCredential
     from ._models import FormPage, RecognizedForm
 
 
-class FormRecognizerClient(object):
+class FormRecognizerClient(FormRecognizerClientBase):
     """FormRecognizerClient extracts information from forms and images into structured data.
     It is the interface to use for analyzing receipts, recognizing content/layout from
     forms, and analyzing custom forms from trained models. It provides different methods
@@ -65,25 +62,6 @@ class FormRecognizerClient(object):
             :dedent: 8
             :caption: Creating the FormRecognizerClient with a token credential.
     """
-
-    def __init__(self, endpoint, credential, **kwargs):
-        # type: (str, Union[AzureKeyCredential, TokenCredential], Any) -> None
-
-        authentication_policy = get_authentication_policy(credential)
-        polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
-        self.api_version = kwargs.pop('api_version', FormRecognizerApiVersion.V2_1_PREVIEW_1)
-        validate_api_version(self.api_version)
-        self._client = FormRecognizer(
-            endpoint=endpoint,
-            credential=credential,  # type: ignore
-            api_version=self.api_version,
-            sdk_moniker=USER_AGENT,
-            authentication_policy=authentication_policy,
-            polling_interval=polling_interval,
-            **kwargs
-        )
-        self._deserialize = _get_deserialize()
-        self._generated_models = self._client.models(self.api_version)
 
     def _receipt_callback(self, raw_response, _, headers):  # pylint: disable=unused-argument
         analyze_result = self._deserialize(self._generated_models.AnalyzeOperationResult, raw_response)

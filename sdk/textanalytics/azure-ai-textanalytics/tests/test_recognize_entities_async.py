@@ -62,8 +62,6 @@ class TestRecognizeEntities(AsyncTextAnalyticsTest):
                 self.assertIsNotNone(entity.text)
                 self.assertIsNotNone(entity.category)
                 self.assertIsNotNone(entity.offset)
-                self.assertIsNotNone(entity.length)
-                self.assertNotEqual(entity.length, 0)
                 self.assertIsNotNone(entity.confidence_score)
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -82,8 +80,6 @@ class TestRecognizeEntities(AsyncTextAnalyticsTest):
                 self.assertIsNotNone(entity.text)
                 self.assertIsNotNone(entity.category)
                 self.assertIsNotNone(entity.offset)
-                self.assertIsNotNone(entity.length)
-                self.assertNotEqual(entity.length, 0)
                 self.assertIsNotNone(entity.confidence_score)
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -566,31 +562,25 @@ class TestRecognizeEntities(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
-    async def test_offset_length(self, client):
+    async def test_offset(self, client):
         result = await client.recognize_entities(["Microsoft was founded by Bill Gates and Paul Allen"])
         entities = result[0].entities
 
         self.assertEqual(entities[0].offset, 0)
-        self.assertEqual(entities[0].length, 9)
 
         self.assertEqual(entities[1].offset, 25)
-        self.assertEqual(entities[1].length, 10)
 
         self.assertEqual(entities[2].offset, 40)
-        self.assertEqual(entities[2].length, 10)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_0})
-    async def test_no_offset_length_v3_categorized_entities(self, client):
+    async def test_no_offset_v3_categorized_entities(self, client):
         result = await client.recognize_entities(["Microsoft was founded by Bill Gates and Paul Allen"])
         entities = result[0].entities
 
         self.assertIsNone(entities[0].offset)
-        self.assertIsNone(entities[0].length)
         self.assertIsNone(entities[1].offset)
-        self.assertIsNone(entities[1].length)
         self.assertIsNone(entities[2].offset)
-        self.assertIsNone(entities[2].length)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_0})

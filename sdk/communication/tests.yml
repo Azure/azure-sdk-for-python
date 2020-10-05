@@ -9,4 +9,3 @@ jobs:
       EnvVars:
         AZURE_TEST_RUN_LIVE: 'true'
         AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING: $(python-communication-connection-string)
-        PHONE_NUMBER: $(python-communication-phone-number)
