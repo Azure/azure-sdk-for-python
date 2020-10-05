@@ -1,5 +1,10 @@
 # Azure Metrics Advisor client library for Python
-Metrics Advisor is a scalable real-time time series monitoring, alerting, and root cause analysis platform.
+Metrics Advisor is a scalable real-time time series monitoring, alerting, and root cause analysis platform. Use Metrics Advisor to:
+
+- Analyze multi-dimensional data from multiple data sources
+- Identify and correlate anomalies
+- Configure and fine-tune the anomaly detection model used on your data
+- Diagnose anomalies and help with root cause analysis
 
 [Source code][src_code] | [Package (Pypi)][package] | [API reference documentation][reference_documentation] | [Product documentation][ma_docs]
 
@@ -400,7 +405,7 @@ hook = client.create_hook(
 This library includes a complete async API supported on Python 3.5+. To use it, you must
 first install an async transport, such as [aiohttp](https://pypi.org/project/aiohttp/).
 See
-[azure-core documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md#transport)
+[azure-core documentation][azure_core_docs]
 for more information.
 
 
@@ -426,39 +431,21 @@ admin_client = MetricsAdvisorAdministrationClient(
 The Azure Metrics Advisor clients will raise exceptions defined in [Azure Core][azure_core].
 
 ### Logging
+This library uses the standard
+[logging][python_logging] library for logging.
 
-This library uses the standard [logging][python_logging] library for logging.
-Basic information about HTTP sessions (URLs, headers, etc.) is logged at INFO
-level.
+Basic information about HTTP sessions (URLs, headers, etc.) is logged at `INFO` level.
 
-Detailed DEBUG level logging, including request/response bodies and unredacted
-headers, can be enabled on a client with the `logging_enable` keyword argument:
-```python
-import sys
-import logging
-from azure.ai.metricsadvisor import MetricsAdvisorKeyCredential, MetricsAdvisorClient
+Detailed `DEBUG` level logging, including request/response bodies and **unredacted**
+headers, can be enabled on the client or per-operation with the `logging_enable` keyword argument.
 
-# Create a logger for the 'azure' SDK
-logger = logging.getLogger('azure')
-logger.setLevel(logging.DEBUG)
-
-# Configure a console output
-handler = logging.StreamHandler(stream=sys.stdout)
-logger.addHandler(handler)
-
-# This client will log detailed information about its HTTP sessions, at DEBUG level
-client = MetricsAdvisorClient(service_endpoint,
-    MetricsAdvisorKeyCredential(subscription_key, api_key),
-    logging_enable=True
-)
-
-```
+See full SDK logging documentation with examples [here][sdk_logging_docs].
 
 ## Next steps
 
 ### More sample code
 
- For more details see the [samples README](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/metricsadvisor/azure-ai-metricsadvisor/samples/README.md).
+ For more details see the [samples README][samples_readme].
 
 ## Contributing
 
@@ -482,6 +469,9 @@ additional questions or comments.
 [ma_service]: https://go.microsoft.com/fwlink/?linkid=2142156
 [python_logging]: https://docs.python.org/3.5/library/logging.html
 [azure_core]: https://aka.ms/azsdk/python/core/docs#module-azure.core.exceptions
+[azure_core_docs]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md#transport
+[sdk_logging_docs]: https://docs.microsoft.com/azure/developer/python/azure-sdk-logging
+[samples_readme]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/metricsadvisor/azure-ai-metricsadvisor/samples/README.md
 
 [cla]: https://cla.microsoft.com
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
