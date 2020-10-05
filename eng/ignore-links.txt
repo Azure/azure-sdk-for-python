@@ -1,1 +1,2 @@
 https://docs.microsoft.com/python/api/overview/azure/{{package_doc_id}}
+https://pypi.org/project/azure-servicebus/{{package_version}}/
