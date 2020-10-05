@@ -65,8 +65,9 @@ def get_version(pkg_name):
         # strip dev build number so we can check if package exists in PyPI and replace
         
         version_obj = Version(version)
-        if version_obj.pre[0] == DEV_BUILD_IDENTIFIER:
-            version = version_obj.base_version
+        if version_obj.pre:
+            if version_obj.pre[0] == DEV_BUILD_IDENTIFIER:
+                version = version_obj.base_version
 
         return version
     else:
