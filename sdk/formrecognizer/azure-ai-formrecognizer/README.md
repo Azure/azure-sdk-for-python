@@ -25,6 +25,14 @@ pip install azure-ai-formrecognizer --pre
 
 > Note: This version of the client library defaults to the v2.1-preview version of the service
 
+This table shows the relationship between SDK versions and supported API versions of the service
+
+|SDK version|Supported API version of service
+|-|-
+|3.0.0 - Latest GA release (can be installed by removing the `--pre` flag)| 2.0
+|3.1.0b1 - Latest release (beta)| 2.0, 2.1-preview
+
+
 #### Create a Form Recognizer resource
 Form Recognizer supports both [multi-service and single-service access][multi_and_single_service].
 Create a Cognitive Services resource if you plan to access multiple cognitive services under a single endpoint/key. For Form Recognizer access only, create a Form Recognizer resource.
