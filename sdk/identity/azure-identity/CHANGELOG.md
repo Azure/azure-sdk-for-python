@@ -1,7 +1,9 @@
 # Release History
 
-## 1.5.0b2 (Unreleased)
-
+## 1.5.0b2 (2020-10-06)
+### Changed
+- Adopted msal-extensions 0.3.0
+([#13107](https://github.com/Azure/azure-sdk-for-python/issues/13107)) 
 
 ## 1.5.0b1 (2020-09-08)
 ### Added

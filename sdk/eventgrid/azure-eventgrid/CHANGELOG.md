@@ -1,6 +1,6 @@
 # Release History
 
-## 2.0.0b3 (Unreleased)
+## 2.0.0b3 (2020-10-05)
 
   **Feature**
   - Added support for Keyvault Event Types
