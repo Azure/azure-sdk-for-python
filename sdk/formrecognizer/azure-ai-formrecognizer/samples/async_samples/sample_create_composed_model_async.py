@@ -8,6 +8,7 @@
 
 """
 FILE: sample_create_composed_model_async.py
+
 DESCRIPTION:
     Model compose allows multiple models to be composed and called with a single model ID.
     This is useful when you have trained different models and want to aggregate a group of
@@ -15,11 +16,13 @@ DESCRIPTION:
     so, you can let the service decide which model more accurately represents the form to
     recognize, instead of manually trying each trained model against the form and selecting
     the most accurate one.
+
     In our case, we will be writing an application that collects the expenses a company is making.
     There are 4 main areas where we get purchase orders from (office supplies, office equipment,
     furniture, and cleaning supplies). Because each area has its own form with its own structure,
     we need to train a model per form. Note that you can substitute your own models or container
     SAS URLs for this sample.
+
 USAGE:
     python sample_create_composed_model_async.py
     Set the environment variables with your own values before running the sample:

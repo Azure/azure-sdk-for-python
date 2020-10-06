@@ -12,6 +12,7 @@ FILE: sample_recognize_content.py
 DESCRIPTION:
     This sample demonstrates how to extract text and content information from a document
     given through a file.
+
 USAGE:
     python sample_recognize_content.py
 
@@ -62,7 +63,7 @@ class RecognizeContentSample(object):
                         cell.text,
                         format_bounding_box(cell.bounding_box)
                     ))
-                    # [END recognize_content]
+
             for line_idx, line in enumerate(content.lines):
                 print("Line # {} has word count '{}' and text '{}' within bounding box '{}'".format(
                     line_idx,
@@ -80,6 +81,8 @@ class RecognizeContentSample(object):
                     selection_mark.confidence
                 ))
             print("----------------------------------------")
+
+        # [END recognize_content]
 
 
 if __name__ == '__main__':
