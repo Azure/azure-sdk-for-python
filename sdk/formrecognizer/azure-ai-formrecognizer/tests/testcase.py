@@ -403,6 +403,39 @@ class FormRecognizerTest(AzureTestCase):
         for word in elements:
             self.assertFormWordHasValues(word, page_number)
 
+    def assertComposedModelHasValues(self, composed, model_1, model_2):
+        self.assertIsNotNone(composed.model_id)
+        self.assertIsNone(composed.errors)
+        self.assertTrue(composed.properties.is_composed_model)
+        self.assertIsNotNone(composed.status)
+        self.assertIsNotNone(composed.training_started_on)
+        self.assertIsNotNone(composed.training_completed_on)
+
+        all_training_documents = model_1.training_documents + model_2.training_documents
+        for doc, composed_doc in zip(all_training_documents, composed.training_documents):
+            self.assertEqual(doc.name, composed_doc.name)
+            self.assertEqual(doc.status, composed_doc.status)
+            self.assertEqual(doc.page_count, composed_doc.page_count)
+            self.assertEqual(doc.errors, composed_doc.errors)
+
+        for model in model_1.submodels:
+            if not model_1.display_name:
+                self.assertEqual(model.form_type, composed.submodels[0].form_type)
+            self.assertEqual(model.accuracy, composed.submodels[0].accuracy)
+            self.assertEqual(model.model_id, composed.submodels[0].model_id)
+            for field, value in model.fields.items():
+                self.assertEqual(value.name, composed.submodels[0].fields[field].name)
+                self.assertEqual(value.accuracy, composed.submodels[0].fields[field].accuracy)
+
+        for model in model_2.submodels:
+            if not model_2.display_name:
+                self.assertEqual(model.form_type, composed.submodels[0].form_type)
+            self.assertEqual(model.accuracy, composed.submodels[1].accuracy)
+            self.assertEqual(model.model_id, composed.submodels[1].model_id)
+            for field, value in model.fields.items():
+                self.assertEqual(value.name, composed.submodels[0].fields[field].name)
+                self.assertEqual(value.accuracy, composed.submodels[0].fields[field].accuracy)
+
 
 class GlobalResourceGroupPreparer(AzureMgmtPreparer):
     def __init__(self):

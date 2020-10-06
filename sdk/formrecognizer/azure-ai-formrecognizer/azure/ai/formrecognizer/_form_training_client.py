@@ -384,7 +384,7 @@ class FormTrainingClient(FormRecognizerClientBase):
         **kwargs
     ):
         # type: (List[str], Any) -> LROPoller[CustomFormModel]
-        """Begin create composed model
+        """Creates a composed model from a collection of existing trained models with labels.
 
         :param list[str] model_ids: List of model IDs that were trained with labels.
         :keyword str display_name: Optional model display name.
@@ -403,11 +403,13 @@ class FormTrainingClient(FormRecognizerClientBase):
 
         display_name = kwargs.pop("display_name", None)
         polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
+        continuation_token = kwargs.pop("continuation_token", None)
 
         return self._client.begin_compose_custom_models_async(
             {"model_ids": model_ids, "model_name": display_name},
             cls=kwargs.pop("cls", _compose_callback),
             polling=LROBasePolling(timeout=polling_interval, lro_algorithms=[TrainingPolling()], **kwargs),
+            continuation_token=continuation_token,
             **kwargs
         )
 
