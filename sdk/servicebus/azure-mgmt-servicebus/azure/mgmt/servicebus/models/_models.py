@@ -1352,6 +1352,8 @@ class SBNamespace(TrackedResource):
     :type tags: dict[str, str]
     :param sku: Properties of SKU
     :type sku: ~azure.mgmt.servicebus.models.SBSku
+    :param identity: Properties of BYOK Identity description
+    :type identity: ~azure.mgmt.servicebus.models.Identity
     :ivar provisioning_state: Provisioning state of the namespace.
     :vartype provisioning_state: str
     :ivar created_at: The time the namespace was created
@@ -1389,6 +1391,7 @@ class SBNamespace(TrackedResource):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'sku': {'key': 'sku', 'type': 'SBSku'},
+        'identity': {'key': 'identity', 'type': 'Identity'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'created_at': {'key': 'properties.createdAt', 'type': 'iso-8601'},
         'updated_at': {'key': 'properties.updatedAt', 'type': 'iso-8601'},
@@ -1401,6 +1404,7 @@ class SBNamespace(TrackedResource):
     def __init__(self, **kwargs):
         super(SBNamespace, self).__init__(**kwargs)
         self.sku = kwargs.get('sku', None)
+        self.identity = kwargs.get('identity', None)
         self.provisioning_state = None
         self.created_at = None
         self.updated_at = None
