@@ -512,7 +512,7 @@ class CookiesMatchConditionParameters(Model):
     :ivar odatatype: Required.  Default value:
      "#Microsoft.Azure.Cdn.Models.DeliveryRuleCookiesConditionParameters" .
     :vartype odatatype: str
-    :param selector: Required. Name of Cookies to be matched
+    :param selector: Name of Cookies to be matched
     :type selector: str
     :param operator: Required. Describes operator to be matched. Possible
      values include: 'Any', 'Equal', 'Contains', 'BeginsWith', 'EndsWith',
@@ -520,8 +520,8 @@ class CookiesMatchConditionParameters(Model):
     :type operator: str or ~azure.mgmt.cdn.models.CookiesOperator
     :param negate_condition: Describes if this is negate condition or not
     :type negate_condition: bool
-    :param match_values: Required. The match value for the condition of the
-     delivery rule
+    :param match_values: The match value for the condition of the delivery
+     rule
     :type match_values: list[str]
     :param transforms: List of transforms
     :type transforms: list[str or ~azure.mgmt.cdn.models.Transform]
@@ -529,9 +529,7 @@ class CookiesMatchConditionParameters(Model):
 
     _validation = {
         'odatatype': {'required': True, 'constant': True},
-        'selector': {'required': True},
         'operator': {'required': True},
-        'match_values': {'required': True},
     }
 
     _attribute_map = {
@@ -2043,15 +2041,14 @@ class HttpVersionMatchConditionParameters(Model):
     :vartype operator: str
     :param negate_condition: Describes if this is negate condition or not
     :type negate_condition: bool
-    :param match_values: Required. The match value for the condition of the
-     delivery rule
+    :param match_values: The match value for the condition of the delivery
+     rule
     :type match_values: list[str]
     """
 
     _validation = {
         'odatatype': {'required': True, 'constant': True},
         'operator': {'required': True, 'constant': True},
-        'match_values': {'required': True},
     }
 
     _attribute_map = {
@@ -2111,8 +2108,8 @@ class IsDeviceMatchConditionParameters(Model):
     :vartype operator: str
     :param negate_condition: Describes if this is negate condition or not
     :type negate_condition: bool
-    :param match_values: Required. The match value for the condition of the
-     delivery rule
+    :param match_values: The match value for the condition of the delivery
+     rule
     :type match_values: list[str]
     :param transforms: List of transforms
     :type transforms: list[str or ~azure.mgmt.cdn.models.Transform]
@@ -2121,7 +2118,6 @@ class IsDeviceMatchConditionParameters(Model):
     _validation = {
         'odatatype': {'required': True, 'constant': True},
         'operator': {'required': True, 'constant': True},
-        'match_values': {'required': True},
     }
 
     _attribute_map = {
@@ -2167,8 +2163,7 @@ class KeyVaultCertificateSourceParameters(Model):
     :param secret_name: Required. The name of Key Vault Secret (representing
      the full certificate PFX) in Key Vault.
     :type secret_name: str
-    :param secret_version: Required. The version(GUID) of Key Vault Secret in
-     Key Vault.
+    :param secret_version: The version(GUID) of Key Vault Secret in Key Vault.
     :type secret_version: str
     :ivar update_rule: Required. Describes the action that shall be taken when
      the certificate is updated in Key Vault. Default value: "NoAction" .
@@ -2184,7 +2179,6 @@ class KeyVaultCertificateSourceParameters(Model):
         'resource_group_name': {'required': True},
         'vault_name': {'required': True},
         'secret_name': {'required': True},
-        'secret_version': {'required': True},
         'update_rule': {'required': True, 'constant': True},
         'delete_rule': {'required': True, 'constant': True},
     }
@@ -2995,7 +2989,7 @@ class PostArgsMatchConditionParameters(Model):
     :ivar odatatype: Required.  Default value:
      "#Microsoft.Azure.Cdn.Models.DeliveryRulePostArgsConditionParameters" .
     :vartype odatatype: str
-    :param selector: Required. Name of PostArg to be matched
+    :param selector: Name of PostArg to be matched
     :type selector: str
     :param operator: Required. Describes operator to be matched. Possible
      values include: 'Any', 'Equal', 'Contains', 'BeginsWith', 'EndsWith',
@@ -3003,8 +2997,8 @@ class PostArgsMatchConditionParameters(Model):
     :type operator: str or ~azure.mgmt.cdn.models.PostArgsOperator
     :param negate_condition: Describes if this is negate condition or not
     :type negate_condition: bool
-    :param match_values: Required. The match value for the condition of the
-     delivery rule
+    :param match_values: The match value for the condition of the delivery
+     rule
     :type match_values: list[str]
     :param transforms: List of transforms
     :type transforms: list[str or ~azure.mgmt.cdn.models.Transform]
@@ -3012,9 +3006,7 @@ class PostArgsMatchConditionParameters(Model):
 
     _validation = {
         'odatatype': {'required': True, 'constant': True},
-        'selector': {'required': True},
         'operator': {'required': True},
-        'match_values': {'required': True},
     }
 
     _attribute_map = {
@@ -3151,8 +3143,8 @@ class QueryStringMatchConditionParameters(Model):
     :type operator: str or ~azure.mgmt.cdn.models.QueryStringOperator
     :param negate_condition: Describes if this is negate condition or not
     :type negate_condition: bool
-    :param match_values: Required. The match value for the condition of the
-     delivery rule
+    :param match_values: The match value for the condition of the delivery
+     rule
     :type match_values: list[str]
     :param transforms: List of transforms
     :type transforms: list[str or ~azure.mgmt.cdn.models.Transform]
@@ -3161,7 +3153,6 @@ class QueryStringMatchConditionParameters(Model):
     _validation = {
         'odatatype': {'required': True, 'constant': True},
         'operator': {'required': True},
-        'match_values': {'required': True},
     }
 
     _attribute_map = {
@@ -3266,9 +3257,9 @@ class RemoteAddressMatchConditionParameters(Model):
     :type operator: str or ~azure.mgmt.cdn.models.RemoteAddressOperator
     :param negate_condition: Describes if this is negate condition or not
     :type negate_condition: bool
-    :param match_values: Required. Match values to match against. The operator
-     will apply to each value in here with OR semantics. If any of them match
-     the variable with the given operator this match condition is considered a
+    :param match_values: Match values to match against. The operator will
+     apply to each value in here with OR semantics. If any of them match the
+     variable with the given operator this match condition is considered a
      match.
     :type match_values: list[str]
     :param transforms: List of transforms
@@ -3278,7 +3269,6 @@ class RemoteAddressMatchConditionParameters(Model):
     _validation = {
         'odatatype': {'required': True, 'constant': True},
         'operator': {'required': True},
-        'match_values': {'required': True},
     }
 
     _attribute_map = {
@@ -3316,8 +3306,8 @@ class RequestBodyMatchConditionParameters(Model):
     :type operator: str or ~azure.mgmt.cdn.models.RequestBodyOperator
     :param negate_condition: Describes if this is negate condition or not
     :type negate_condition: bool
-    :param match_values: Required. The match value for the condition of the
-     delivery rule
+    :param match_values: The match value for the condition of the delivery
+     rule
     :type match_values: list[str]
     :param transforms: List of transforms
     :type transforms: list[str or ~azure.mgmt.cdn.models.Transform]
@@ -3326,7 +3316,6 @@ class RequestBodyMatchConditionParameters(Model):
     _validation = {
         'odatatype': {'required': True, 'constant': True},
         'operator': {'required': True},
-        'match_values': {'required': True},
     }
 
     _attribute_map = {
@@ -3359,7 +3348,7 @@ class RequestHeaderMatchConditionParameters(Model):
      "#Microsoft.Azure.Cdn.Models.DeliveryRuleRequestHeaderConditionParameters"
      .
     :vartype odatatype: str
-    :param selector: Required. Name of Header to be matched
+    :param selector: Name of Header to be matched
     :type selector: str
     :param operator: Required. Describes operator to be matched. Possible
      values include: 'Any', 'Equal', 'Contains', 'BeginsWith', 'EndsWith',
@@ -3367,8 +3356,8 @@ class RequestHeaderMatchConditionParameters(Model):
     :type operator: str or ~azure.mgmt.cdn.models.RequestHeaderOperator
     :param negate_condition: Describes if this is negate condition or not
     :type negate_condition: bool
-    :param match_values: Required. The match value for the condition of the
-     delivery rule
+    :param match_values: The match value for the condition of the delivery
+     rule
     :type match_values: list[str]
     :param transforms: List of transforms
     :type transforms: list[str or ~azure.mgmt.cdn.models.Transform]
@@ -3376,9 +3365,7 @@ class RequestHeaderMatchConditionParameters(Model):
 
     _validation = {
         'odatatype': {'required': True, 'constant': True},
-        'selector': {'required': True},
         'operator': {'required': True},
-        'match_values': {'required': True},
     }
 
     _attribute_map = {
@@ -3418,15 +3405,14 @@ class RequestMethodMatchConditionParameters(Model):
     :vartype operator: str
     :param negate_condition: Describes if this is negate condition or not
     :type negate_condition: bool
-    :param match_values: Required. The match value for the condition of the
-     delivery rule
+    :param match_values: The match value for the condition of the delivery
+     rule
     :type match_values: list[str]
     """
 
     _validation = {
         'odatatype': {'required': True, 'constant': True},
         'operator': {'required': True, 'constant': True},
-        'match_values': {'required': True},
     }
 
     _attribute_map = {
@@ -3463,15 +3449,14 @@ class RequestSchemeMatchConditionParameters(Model):
     :vartype operator: str
     :param negate_condition: Describes if this is negate condition or not
     :type negate_condition: bool
-    :param match_values: Required. The match value for the condition of the
-     delivery rule
+    :param match_values: The match value for the condition of the delivery
+     rule
     :type match_values: list[str]
     """
 
     _validation = {
         'odatatype': {'required': True, 'constant': True},
         'operator': {'required': True, 'constant': True},
-        'match_values': {'required': True},
     }
 
     _attribute_map = {
@@ -3508,8 +3493,8 @@ class RequestUriMatchConditionParameters(Model):
     :type operator: str or ~azure.mgmt.cdn.models.RequestUriOperator
     :param negate_condition: Describes if this is negate condition or not
     :type negate_condition: bool
-    :param match_values: Required. The match value for the condition of the
-     delivery rule
+    :param match_values: The match value for the condition of the delivery
+     rule
     :type match_values: list[str]
     :param transforms: List of transforms
     :type transforms: list[str or ~azure.mgmt.cdn.models.Transform]
@@ -3518,7 +3503,6 @@ class RequestUriMatchConditionParameters(Model):
     _validation = {
         'odatatype': {'required': True, 'constant': True},
         'operator': {'required': True},
-        'match_values': {'required': True},
     }
 
     _attribute_map = {
@@ -3714,8 +3698,8 @@ class UrlFileExtensionMatchConditionParameters(Model):
     :type operator: str or ~azure.mgmt.cdn.models.UrlFileExtensionOperator
     :param negate_condition: Describes if this is negate condition or not
     :type negate_condition: bool
-    :param match_values: Required. The match value for the condition of the
-     delivery rule
+    :param match_values: The match value for the condition of the delivery
+     rule
     :type match_values: list[str]
     :param transforms: List of transforms
     :type transforms: list[str or ~azure.mgmt.cdn.models.Transform]
@@ -3724,7 +3708,6 @@ class UrlFileExtensionMatchConditionParameters(Model):
     _validation = {
         'odatatype': {'required': True, 'constant': True},
         'operator': {'required': True},
-        'match_values': {'required': True},
     }
 
     _attribute_map = {
@@ -3762,8 +3745,8 @@ class UrlFileNameMatchConditionParameters(Model):
     :type operator: str or ~azure.mgmt.cdn.models.UrlFileNameOperator
     :param negate_condition: Describes if this is negate condition or not
     :type negate_condition: bool
-    :param match_values: Required. The match value for the condition of the
-     delivery rule
+    :param match_values: The match value for the condition of the delivery
+     rule
     :type match_values: list[str]
     :param transforms: List of transforms
     :type transforms: list[str or ~azure.mgmt.cdn.models.Transform]
@@ -3772,7 +3755,6 @@ class UrlFileNameMatchConditionParameters(Model):
     _validation = {
         'odatatype': {'required': True, 'constant': True},
         'operator': {'required': True},
-        'match_values': {'required': True},
     }
 
     _attribute_map = {
@@ -3812,8 +3794,8 @@ class UrlPathMatchConditionParameters(Model):
     :type operator: str or ~azure.mgmt.cdn.models.UrlPathOperator
     :param negate_condition: Describes if this is negate condition or not
     :type negate_condition: bool
-    :param match_values: Required. The match value for the condition of the
-     delivery rule
+    :param match_values: The match value for the condition of the delivery
+     rule
     :type match_values: list[str]
     :param transforms: List of transforms
     :type transforms: list[str or ~azure.mgmt.cdn.models.Transform]
@@ -3822,7 +3804,6 @@ class UrlPathMatchConditionParameters(Model):
     _validation = {
         'odatatype': {'required': True, 'constant': True},
         'operator': {'required': True},
-        'match_values': {'required': True},
     }
 
     _attribute_map = {
