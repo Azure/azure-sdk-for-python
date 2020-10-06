@@ -19,3 +19,9 @@ class AppConfigurationClientTest(AppConfigTestCase):
         url = os.environ.get('APP_CONFIG_URL')
         credential = DefaultAzureCredential()
         client = AppConfigurationClient(account_url=url, credential=credential)
+
+    def test_create_client_invalid_url(self):
+        url = os.environ.get('APP_CONFIG_URL_DOES_NOT_EXIST')
+        credential = DefaultAzureCredential()
+        with self.assertRaises(ValueError):
+            client = AppConfigurationClient(account_url=url, credential=credential)
