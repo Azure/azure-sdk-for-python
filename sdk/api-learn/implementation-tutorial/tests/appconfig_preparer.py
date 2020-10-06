@@ -10,7 +10,7 @@ import datetime
 import time
 from functools import partial
 
-from azure_devtools import AzureMgmtPreparer, FakeResource
+from devtools_testutils import AzureMgmtPreparer, FakeResource
 from azure.mgmt.appconfiguration import AppConfigurationManagementClient
 
 class AppConfigPreparer(AzureMgmtPreparer):

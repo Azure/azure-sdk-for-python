@@ -1,4 +1,5 @@
 import os
+import pytest
 
 from _shared.testcase import AppConfigTestCase
 from devtools_testutils import CachedResourceGroupPreparer
@@ -9,10 +10,10 @@ from azure.identity import DefaultAzureCredential
 class AppConfigurationClientTest(AppConfigTestCase):
     def __init__(self, *args, **kwargs):
         super(AppConfigurationClientTest, self).__init__(*args, **kwargs)
-        if self.is_playback():
-            self.connection_str = "Endpoint=https://fake_app_config.azconfig-test.io;Id=0-l4-s0:h5htBaY5Z1LwFz50bIQv;Secret=bgyvBgwsQIw0s8myrqJJI3nLrj81M/kzSgSuP4BBoVg="
-        else:
-            self.connection_str = os.getenv('LEARN_APPCONFIG_CONNECTION')
+    #     if self.is_playback():
+    #         self.connection_str = "Endpoint=https://fake_app_config.azconfig-test.io;Id=0-l4-s0:h5htBaY5Z1LwFz50bIQv;Secret=bgyvBgwsQIw0s8myrqJJI3nLrj81M/kzSgSuP4BBoVg="
+    #     else:
+    #         self.connection_str = os.getenv('LEARN_APPCONFIG_CONNECTION')
 
     def setUp(self):
         super(AppConfigurationClientTest, self).setUp()
@@ -28,9 +29,11 @@ class AppConfigurationClientTest(AppConfigTestCase):
         with self.assertRaises(ValueError):
             client = AppConfigurationClient(account_url=url, credential=credential)
 
+    @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="appconfigtest")
     @CachedAppConfigPreparer(name_prefix="appconfigtest")
     def test_get_key_value(self, resource_group, app_config_url, app_config_conn_str):
         print(resource_group)
         print(app_config_url)
         print(app_config_conn_str)
+        self.assertEqual(1, 1)
