@@ -1501,13 +1501,14 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
 
         original_execute_method = uamqp.async_ops.mgmt_operation_async.MgmtOperationAsync.execute_async
         # hack the mgmt method on the class, not on an instance, so it needs reset
-        uamqp.async_ops.mgmt_operation_async.MgmtOperationAsync.execute_async = hack_mgmt_execute_async
-        async with ServiceBusClient.from_connection_string(
-                servicebus_namespace_connection_string, logging_enable=False) as sb_client:
-            async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
-                with pytest.raises(OperationTimeoutError):
-                    scheduled_time_utc = utc_now() + timedelta(seconds=30)
-                    await sender.schedule_messages(Message("Message to be scheduled"), scheduled_time_utc, timeout=5)
-
-        # must reset the mgmt execute method, otherwise other test cases would use the hacked execute method, leading to timeout error
-        uamqp.async_ops.mgmt_operation_async.MgmtOperationAsync.execute_async = original_execute_method
+        try:
+            uamqp.async_ops.mgmt_operation_async.MgmtOperationAsync.execute_async = hack_mgmt_execute_async
+            async with ServiceBusClient.from_connection_string(
+                    servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+                async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+                    with pytest.raises(OperationTimeoutError):
+                        scheduled_time_utc = utc_now() + timedelta(seconds=30)
+                        await sender.schedule_messages(Message("Message to be scheduled"), scheduled_time_utc, timeout=5)
+        finally:
+            # must reset the mgmt execute method, otherwise other test cases would use the hacked execute method, leading to timeout error
+            uamqp.async_ops.mgmt_operation_async.MgmtOperationAsync.execute_async = original_execute_method
