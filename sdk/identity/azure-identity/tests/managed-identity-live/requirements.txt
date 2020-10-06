@@ -2,5 +2,5 @@
 ../..
 ../../../../keyvault/azure-keyvault-secrets
 pytest
-pytest-asyncio;python_full_version>="3.5.3"
-aiohttp;python_full_version>="3.5.3"
+pytest-asyncio;python_version>="3.5"
+aiohttp>=3.0; python_version >= '3.5'

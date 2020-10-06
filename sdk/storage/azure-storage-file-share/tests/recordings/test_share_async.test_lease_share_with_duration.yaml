@@ -1,0 +1,123 @@
+interactions:
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.18362-SP0)
+      x-ms-date:
+      - Fri, 11 Sep 2020 13:46:51 GMT
+      x-ms-version:
+      - '2020-02-10'
+    method: PUT
+    uri: https://storagename.file.core.windows.net/testcf0d1359?restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Fri, 11 Sep 2020 13:46:52 GMT
+      etag: '"0x8D856592431D1AA"'
+      last-modified: Fri, 11 Sep 2020 13:46:53 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2020-02-10'
+    status:
+      code: 201
+      message: Created
+    url: https://seanmcccanary3.file.core.windows.net/testcf0d1359?restype=share
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.18362-SP0)
+      x-ms-date:
+      - Fri, 11 Sep 2020 13:46:52 GMT
+      x-ms-lease-action:
+      - acquire
+      x-ms-lease-duration:
+      - '15'
+      x-ms-proposed-lease-id:
+      - 7425fc1a-b197-42a4-9063-809c00caaf55
+      x-ms-version:
+      - '2020-02-10'
+    method: PUT
+    uri: https://storagename.file.core.windows.net/testcf0d1359?comp=lease&restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Fri, 11 Sep 2020 13:46:52 GMT
+      etag: '"0x8D856592431D1AA"'
+      last-modified: Fri, 11 Sep 2020 13:46:53 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-lease-id: 7425fc1a-b197-42a4-9063-809c00caaf55
+      x-ms-version: '2020-02-10'
+    status:
+      code: 201
+      message: Created
+    url: https://seanmcccanary3.file.core.windows.net/testcf0d1359?comp=lease&restype=share
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.18362-SP0)
+      x-ms-date:
+      - Fri, 11 Sep 2020 13:46:52 GMT
+      x-ms-lease-action:
+      - acquire
+      x-ms-lease-duration:
+      - '-1'
+      x-ms-proposed-lease-id:
+      - 5f638806-4b5f-4010-9bec-fb82e55b225c
+      x-ms-version:
+      - '2020-02-10'
+    method: PUT
+    uri: https://storagename.file.core.windows.net/testcf0d1359?comp=lease&restype=share
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseAlreadyPresent</Code><Message>There
+        is already a lease present.\nRequestId:1673faec-101a-0038-0f42-887e02000000\nTime:2020-09-11T13:46:53.5670394Z</Message></Error>"
+    headers:
+      content-length: '221'
+      content-type: application/xml
+      date: Fri, 11 Sep 2020 13:46:52 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code: LeaseAlreadyPresent
+      x-ms-version: '2020-02-10'
+    status:
+      code: 409
+      message: There is already a lease present.
+    url: https://seanmcccanary3.file.core.windows.net/testcf0d1359?comp=lease&restype=share
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.18362-SP0)
+      x-ms-date:
+      - Fri, 11 Sep 2020 13:47:08 GMT
+      x-ms-lease-action:
+      - acquire
+      x-ms-lease-duration:
+      - '-1'
+      x-ms-proposed-lease-id:
+      - 3af188b6-f122-4db7-8ee1-06a32a13c3ba
+      x-ms-version:
+      - '2020-02-10'
+    method: PUT
+    uri: https://storagename.file.core.windows.net/testcf0d1359?comp=lease&restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Fri, 11 Sep 2020 13:47:08 GMT
+      etag: '"0x8D856592431D1AA"'
+      last-modified: Fri, 11 Sep 2020 13:46:53 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-lease-id: 3af188b6-f122-4db7-8ee1-06a32a13c3ba
+      x-ms-version: '2020-02-10'
+    status:
+      code: 201
+      message: Created
+    url: https://seanmcccanary3.file.core.windows.net/testcf0d1359?comp=lease&restype=share
+version: 1

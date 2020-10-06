@@ -51,7 +51,7 @@ class DataLakeStorageClientConfiguration(Configuration):
         self.file_system = file_system
         self.path1 = path1
         self.resource = "filesystem"
-        self.version = "2019-12-12"
+        self.version = "2020-02-10"
 
     def _configure(self, **kwargs):
         self.user_agent_policy = kwargs.get('user_agent_policy') or policies.UserAgentPolicy(**kwargs)
