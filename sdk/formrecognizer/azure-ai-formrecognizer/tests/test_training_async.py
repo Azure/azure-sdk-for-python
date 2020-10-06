@@ -65,10 +65,12 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
         async with client:
             poller = await client.begin_training(
                 training_files_url=container_sas_url,
-                use_training_labels=False)
+                use_training_labels=False,
+                display_name="my unlabeled model")
             model = await poller.result()
 
         self.assertIsNotNone(model.model_id)
+        # self.assertEqual(model.display_name, "my unlabeled model")  # bug in service
         self.assertIsNotNone(model.training_started_on)
         self.assertIsNotNone(model.training_completed_on)
         self.assertEqual(model.errors, [])
@@ -154,10 +156,11 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
     @GlobalClientPreparer(training=True)
     async def test_training_with_labels(self, client, container_sas_url):
         async with client:
-            poller = await client.begin_training(training_files_url=container_sas_url, use_training_labels=True)
+            poller = await client.begin_training(training_files_url=container_sas_url, use_training_labels=True, display_name="my labeled model")
             model = await poller.result()
 
         self.assertIsNotNone(model.model_id)
+        self.assertEqual(model.display_name, "my labeled model")
         self.assertIsNotNone(model.training_started_on)
         self.assertIsNotNone(model.training_completed_on)
         self.assertEqual(model.errors, [])
