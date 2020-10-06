@@ -81,7 +81,7 @@ class GetBoundingBoxesSample(object):
                         ))
                         # field_elements is only populated if you set include_field_elements to True in your call
                         # to begin_recognize_custom_forms
-                        # It is a heterogeneous list of FormWord and FormLine.
+                        # It is a heterogeneous list of FormWord, FormLine, and FormSelectionMark
                         for element in cell.field_elements:
                             if element.kind == "word":
                                 print("......Word '{}' within bounding box '{}' has a confidence of {}".format(
@@ -100,11 +100,6 @@ class GetBoundingBoxesSample(object):
                                         format_bounding_box(word.bounding_box),
                                         word.confidence
                                     ))
-                            elif element.kind == "selectionMark":
-                                print("Selection mark is '{}' and within bounding box '{}'".format(
-                                    element.state,
-                                    format_bounding_box(element.bounding_box)
-                                ))
                             elif element.kind == "selectionMark":
                                 print(".........Selection mark is '{}' within bounding box '{}' "
                                       "and has a confidence of {}".format(
