@@ -395,6 +395,15 @@ class FormTrainingClient(FormRecognizerClientBase):
             object to return a :class:`~azure.ai.formrecognizer.CustomFormModel`.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.formrecognizer.CustomFormModel]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_create_composed_model.py
+                :start-after: [START begin_create_composed_model]
+                :end-before: [END begin_create_composed_model]
+                :language: python
+                :dedent: 8
+                :caption: Create a composed model
         """
 
         def _compose_callback(raw_response, _, headers):  # pylint: disable=unused-argument
