@@ -73,9 +73,10 @@ class RecognizeContentSample(object):
                 for word in line.words:
                     print("...Word '{}' has a confidence of {}".format(word.text, word.confidence))
             for selection_mark in content.selection_marks:
-                print("Selection mark is '{}' and within bounding box '{}'".format(
+                print("Selection mark is '{}' within bounding box '{}' and has a confidence of {}".format(
                     selection_mark.state,
-                    format_bounding_box(selection_mark.bounding_box)
+                    format_bounding_box(selection_mark.bounding_box),
+                    selection_mark.confidence
                 ))
             print("----------------------------------------")
 

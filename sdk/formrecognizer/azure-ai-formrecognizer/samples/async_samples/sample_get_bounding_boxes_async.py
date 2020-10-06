@@ -104,9 +104,11 @@ class GetBoundingBoxesSampleAsync(object):
                                             word.confidence
                                         ))
                                 elif element.kind == "selectionMark":
-                                    print("Selection mark is '{}' and within bounding box '{}'".format(
+                                    print(".........Selection mark is '{}' within bounding box '{}' "
+                                          "and has a confidence of {}".format(
                                         element.state,
-                                        format_bounding_box(element.bounding_box)
+                                        format_bounding_box(element.bounding_box),
+                                        element.confidence
                                     ))
 
                     print("---------------------------------------------------")
