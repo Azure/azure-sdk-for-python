@@ -10,7 +10,7 @@
 FILE: sample_create_composed_model.py
 
 DESCRIPTION:
-    This sample demonstrates how to create a composite model using existing custom models that
+    This sample demonstrates how to create a composed model using existing custom models that
     were trained with labels.
 
 USAGE:
@@ -44,7 +44,7 @@ class ComposedModelSample(object):
         # Custom model information
         print("Model ID: {}".format(model.model_id))
         print("Model display name: {}".format(model.display_name))
-        print("Is this a composite model?: {}".format(model.properties.is_composed_model))
+        print("Is this a composed model?: {}".format(model.properties.is_composed_model))
         print("Status: {}".format(model.status))
         print("Composed model creation started on: {}".format(model.training_started_on))
         print("Creation completed on: {}".format(model.training_completed_on))

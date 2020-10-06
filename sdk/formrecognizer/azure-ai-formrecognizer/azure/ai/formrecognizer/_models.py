@@ -676,6 +676,8 @@ class CustomFormSubmodel(object):
         is generated for each field.
     :vartype fields: dict[str, ~azure.ai.formrecognizer.CustomFormModelField]
     :ivar str form_type: Type of form this submodel recognizes.
+    .. versionadded:: v2.1-preview
+        The *model_id* property
     """
     def __init__(self, **kwargs):
         self.model_id = kwargs.get("model_id", None)
@@ -788,6 +790,8 @@ class TrainingDocumentInfo(object):
         List of any errors for document.
     :ivar str model_id:
         The model ID that used the document to train.
+    .. versionadded:: v2.1-preview
+        The *model_id* property
     """
 
     def __init__(self, **kwargs):
