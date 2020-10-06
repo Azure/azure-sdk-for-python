@@ -23,7 +23,8 @@ from common_tasks import (
     find_packages_missing_on_pypi,
     find_whl,
     find_tools_packages,
-    get_installed_packages
+    get_installed_packages,
+    extend_dev_requirements
 )
 from git_helper import get_release_tag, git_checkout_tag, git_checkout_branch, clone_repo
 
@@ -114,6 +115,7 @@ class RegressionTest:
             logging.info("Dependent packages for [{0}]: {1}".format(pkg_name, dep_packages))
             for dep_pkg_path in dep_packages:
                 dep_pkg_name, _, _, _ = parse_setup(dep_pkg_path)
+
                 logging.info(
                     "Starting regression test of {0} against released {1}".format(
                         pkg_name, dep_pkg_name
@@ -234,6 +236,13 @@ class RegressionTest:
         filtered_dev_req_path = filter_dev_requirements(
             dependent_pkg_path, list_to_exclude, dependent_pkg_path
         )
+
+        # early versions of azure-sdk-tools had an unpinned version of azure-mgmt packages. 
+        # that unpinned version hits an a code path in azure-sdk-tools that hits this error.
+        if filtered_dev_req_path and not self.context.is_latest_depend_test:
+            extended_dev_req = extend_dev_requirements(
+                filtered_dev_req_path, ['msrestazure']
+            )
 
         if filtered_dev_req_path:
             logging.info(
