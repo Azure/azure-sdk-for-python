@@ -12,11 +12,12 @@ from functools import partial
 
 from devtools_testutils import AzureMgmtPreparer, FakeResource
 from azure.mgmt.appconfiguration import AppConfigurationManagementClient
+from azure.mgmt.network import NetworkManagementClient
 
 class AppConfigPreparer(AzureMgmtPreparer):
     def __init__(self, name_prefix='',
                     use_cache=False,
-                    random_name_length=75,
+                    random_name_length=50,
                     sku='Standard_LRS',
                     location='westus',
                     parameter_name='appconfig_account',
@@ -53,6 +54,32 @@ class AppConfigPreparer(AzureMgmtPreparer):
             self.client = self.create_mgmt_client(AppConfigurationManagementClient)
             group = self._get_resource_group(**kwargs)
 
+            BODY = {
+                'location': self.location,
+                'sku': {
+                    'name': 'Standard',
+                }
+            }
+            result = self.client.configuration_stores.begin_create(
+                group.name,
+                name,
+                BODY
+            )
+
+            conf_store = result.result()
+
+            self.appconfig_url = conf_store.endpoint
+            self.id = conf_store.id
+            self.keys = list(self.client.configuration_stores.list_keys(group.name, name))
+            self.access_key = self.keys[0].id
+            self.secret = self.keys[0].value
+
+            self.appconfig_conn_str = ";".join([
+                "Endpoint={}".format(self.appconfig_url),
+                "Id={}".format(self.access_key),
+                "Secret={}".format(self.secret)
+            ])
+
             self.test_class_instance.scrubber.register_name_pair(
                 name,
                 self.resource_moniker
@@ -64,8 +91,8 @@ class AppConfigPreparer(AzureMgmtPreparer):
 
         return {
             self.parameter_name: self.resource,
-            'app_config_url': self.appconfig_url,
-            'app_config_conn_str': self.appconfig_conn_str
+            'appconfig_url': self.appconfig_url,
+            'appconfig_conn_str': self.appconfig_conn_str
         }
 
     def remove_resource(self, name, **kwargs):

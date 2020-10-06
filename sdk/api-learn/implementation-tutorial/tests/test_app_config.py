@@ -29,11 +29,8 @@ class AppConfigurationClientTest(AppConfigTestCase):
         with self.assertRaises(ValueError):
             client = AppConfigurationClient(account_url=url, credential=credential)
 
-    @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="appconfigtest")
     @CachedAppConfigPreparer(name_prefix="appconfigtest")
-    def test_get_key_value(self, resource_group, app_config_url, app_config_conn_str):
-        print(resource_group)
-        print(app_config_url)
-        print(app_config_conn_str)
-        self.assertEqual(1, 1)
+    def test_get_key_value(self, resource_group, appconfig_url, appconfig_conn_str):
+        credential = DefaultAzureCredential()
+        client = AppConfigurationClient(app_config_url, credential)
