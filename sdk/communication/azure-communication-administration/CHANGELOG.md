@@ -4,4 +4,4 @@
 - Added support for phone number administration.
 
 ## 1.0.0b1 (2020-09-22)
-- Preview release of the package
+- Preview release of the package.
