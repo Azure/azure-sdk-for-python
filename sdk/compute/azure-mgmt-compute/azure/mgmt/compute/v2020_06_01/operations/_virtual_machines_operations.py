@@ -427,7 +427,7 @@ class VirtualMachinesOperations(object):
 
 
     def _delete_initial(
-            self, resource_group_name, vm_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, vm_name, force_deletion=None, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
@@ -439,6 +439,8 @@ class VirtualMachinesOperations(object):
 
         # Construct parameters
         query_parameters = {}
+        if force_deletion is not None:
+            query_parameters['forceDeletion'] = self._serialize.query("force_deletion", force_deletion, 'bool')
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
@@ -464,13 +466,16 @@ class VirtualMachinesOperations(object):
             return client_raw_response
 
     def delete(
-            self, resource_group_name, vm_name, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, vm_name, force_deletion=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """The operation to delete a virtual machine.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param vm_name: The name of the virtual machine.
         :type vm_name: str
+        :param force_deletion: Optional parameter to force delete virtual
+         machines.
+        :type force_deletion: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -485,6 +490,7 @@ class VirtualMachinesOperations(object):
         raw_result = self._delete_initial(
             resource_group_name=resource_group_name,
             vm_name=vm_name,
+            force_deletion=force_deletion,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
