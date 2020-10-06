@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_create_composed_model.py
+FILE: sample_create_composed_model_async.py
 DESCRIPTION:
     Model compose allows multiple models to be composed and called with a single model ID.
     This is useful when you have trained different models and want to aggregate a group of
@@ -21,7 +21,7 @@ DESCRIPTION:
     we need to train a model per form. Note that you can substitute your own models or container
     SAS URLs for this sample.
 USAGE:
-    python sample_create_composed_model.py
+    python sample_create_composed_model_async.py
     Set the environment variables with your own values before running the sample:
     1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Cognitive Services resource.
     2) AZURE_FORM_RECOGNIZER_KEY - your Form Recognizer API key
@@ -32,14 +32,15 @@ USAGE:
 """
 
 import os
+import asyncio
 
 
-class ComposedModelSample(object):
+class ComposedModelSampleAsync(object):
 
-    def create_composed_model(self):
-        # [START begin_create_composed_model]
+    async def create_composed_model_async(self):
+        # [START begin_create_composed_model_async]
         from azure.core.credentials import AzureKeyCredential
-        from azure.ai.formrecognizer import FormTrainingClient
+        from azure.ai.formrecognizer.aio import FormTrainingClient
 
         endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
         key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
@@ -49,22 +50,22 @@ class ComposedModelSample(object):
         po_cleaning_supplies = os.environ['PURCHASE_ORDER_OFFICE_CLEANING_SUPPLIES_SAS_URL']
 
         form_training_client = FormTrainingClient(endpoint=endpoint, credential=AzureKeyCredential(key))
-        supplies_poller = form_training_client.begin_training(
+        supplies_poller = await form_training_client.begin_training(
             po_supplies, use_training_labels=True, display_name="Purchase order - Office supplies"
         )
-        equipment_poller = form_training_client.begin_training(
+        equipment_poller = await form_training_client.begin_training(
             po_equipment, use_training_labels=True, display_name="Purchase order - Office Equipment"
         )
-        furniture_poller = form_training_client.begin_training(
+        furniture_poller = await form_training_client.begin_training(
             po_furniture, use_training_labels=True, display_name="Purchase order - Furniture"
         )
-        cleaning_supplies_poller = form_training_client.begin_training(
+        cleaning_supplies_poller = await form_training_client.begin_training(
             po_cleaning_supplies, use_training_labels=True, display_name="Purchase order - Cleaning Supplies"
         )
-        supplies_model = supplies_poller.result()
-        equipment_model = equipment_poller.result()
-        furniture_model = furniture_poller.result()
-        cleaning_supplies_model = cleaning_supplies_poller.result()
+        supplies_model = await supplies_poller.result()
+        equipment_model = await equipment_poller.result()
+        furniture_model = await furniture_poller.result()
+        cleaning_supplies_model = await cleaning_supplies_poller.result()
 
         models_trained_with_labels = [
             supplies_model.model_id,
@@ -73,10 +74,10 @@ class ComposedModelSample(object):
             cleaning_supplies_model.model_id
         ]
 
-        poller = form_training_client.begin_create_composed_model(
+        poller = await form_training_client.begin_create_composed_model(
             models_trained_with_labels, display_name="Office Supplies Composed Model"
         )
-        model = poller.result()
+        model = await poller.result()
 
         print("Purchase Order Model Info:")
         print("Model ID: {}".format(model.model_id))
@@ -86,7 +87,7 @@ class ComposedModelSample(object):
         print("Composed model creation started on: {}".format(model.training_started_on))
         print("Creation completed on: {}".format(model.training_completed_on))
 
-        # [END begin_create_composed_model]
+        # [END begin_create_composed_model_async]
 
         print("Recognized fields:")
         for submodel in model.submodels:
@@ -108,6 +109,11 @@ class ComposedModelSample(object):
             print("Document errors: {}".format(doc.errors))
 
 
+async def main():
+    sample = ComposedModelSampleAsync()
+    await sample.create_composed_model_async()
+
+
 if __name__ == '__main__':
-    sample = ComposedModelSample()
-    sample.create_composed_model()
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())

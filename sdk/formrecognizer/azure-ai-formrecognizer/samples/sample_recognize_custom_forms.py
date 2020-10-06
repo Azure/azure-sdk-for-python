@@ -57,16 +57,14 @@ class RecognizeCustomForms(object):
             print("Form has form type confidence {}".format(form.form_type_confidence))
             print("Form was analyzed with model with ID {}".format(form.model_id))
             for name, field in form.fields.items():
-                # each field is of type FormField
-                # label_data is populated if you are using a model trained without labels,
-                # since the service needs to make predictions for labels if not explicitly given to it.
+
                 if field.label_data:
                     print("...Field '{}' has label '{}' with a confidence score of {}".format(
                         name,
                         field.label_data.text,
                         field.confidence
                     ))
-                # The value of the field can also be a Dict[str, FormField], or a List[FormField] - in our sample, it is not.
+
                 print("...Label '{}' has value '{}' with a confidence score of {}".format(
                     field.label_data.text if field.label_data else name, field.value, field.confidence
                 ))

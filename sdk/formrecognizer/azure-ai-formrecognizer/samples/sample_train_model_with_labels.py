@@ -57,7 +57,7 @@ class TrainModelWithLabelsSample(object):
         print("Model ID: {}".format(model.model_id))
         print("Status: {}".format(model.status))
         print("Model display name: {}".format(model.display_name))
-        print("Is this a composite model?: {}".format(model.properties.is_composed_model))
+        print("Is this a composed model?: {}".format(model.properties.is_composed_model))
         print("Training started on: {}".format(model.training_started_on))
         print("Training completed on: {}".format(model.training_completed_on))
 
@@ -65,7 +65,7 @@ class TrainModelWithLabelsSample(object):
         # looping through the submodels, which contains the fields they were trained on
         # The labels are based on the ones you gave the training document.
         for submodel in model.submodels:
-            print("The submodel has model ID: {}".format(submodel.model_id))
+            print("...The submodel has model ID: {}".format(submodel.model_id))
             print("...The submodel with form type {} has an average accuracy '{}'".format(
                 submodel.form_type, submodel.accuracy
             ))
