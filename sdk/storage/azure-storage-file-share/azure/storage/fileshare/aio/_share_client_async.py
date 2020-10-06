@@ -371,7 +371,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         timeout = kwargs.pop('timeout', None)
         try:
-            return await self._client.share.set_quota( # type: ignore
+            return await self._client.share.set_properties( # type: ignore
                 timeout=timeout,
                 quota=quota,
                 cls=return_response_headers,
