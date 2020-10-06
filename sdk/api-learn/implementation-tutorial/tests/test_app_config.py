@@ -1,6 +1,8 @@
 import os
 
 from _shared.testcase import AppConfigTestCase
+from devtools_testutils import CachedResourceGroupPreparer
+from appconfig_preparer import CachedAppConfigPreparer
 from azure.appconfiguration import AppConfigurationClient
 from azure.identity import DefaultAzureCredential
 
@@ -25,3 +27,10 @@ class AppConfigurationClientTest(AppConfigTestCase):
         credential = DefaultAzureCredential()
         with self.assertRaises(ValueError):
             client = AppConfigurationClient(account_url=url, credential=credential)
+
+    @CachedResourceGroupPreparer(name_prefix="appconfigtest")
+    @CachedAppConfigPreparer(name_prefix="appconfigtest")
+    def test_get_key_value(self, resource_group, app_config_url, app_config_conn_str):
+        print(resource_group)
+        print(app_config_url)
+        print(app_config_conn_str)

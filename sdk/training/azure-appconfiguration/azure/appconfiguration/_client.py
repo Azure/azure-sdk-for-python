@@ -1,17 +1,14 @@
-# coding=utf-8
-# --------------------------------------------------------------------------
-# Copyright (c) Microsoft Corporation. All rights reserved.
-# Licensed under the MIT License. See License.txt in the project root for license information.
-# --------------------------------------------------------------------------
-
-from datetime import datetime
-
 from azure.core.pipeline.policies import BearerTokenCredentialPolicy
 from azure.core.tracing.decorator import distributed_trace
 
-from ._models import ConfigurationSetting
-from ._generated import AzureAppConfiguration
+from datetime import datetime
+from msrest import Serializer
+
 from ._version import VERSION
+from ._utils import parse_connection_string
+from ._authentication import AppConfigRequestsCredentialsPolicy
+
+import six
 
 
 class AppConfigurationClient(object):
@@ -32,32 +29,14 @@ class AppConfigurationClient(object):
             raise ValueError("Base URL must be a string.")
 
         user_agent_moniker = "appconfiguration/{}".format(VERSION)
-        scopes = self._setup_credential(account_url, credential, kwargs)
+        scopes, policy = self._setup_credential(account_url, credential, kwargs)
         self._client = AzureAppConfiguration(
             credential=credential,
             endpoint=full_url,
             credential_scopes=scopes,
+            authentication_policy=policy,
             sdk_moniker=user_agent_moniker,
             **kwargs)
-
-    def close(self):
-        # type: () -> None
-        self._client.close()
-
-    def __enter__(self):
-        # type: () -> AppConfigurationClient
-        self._client.__enter__()
-        return self
-
-    def __exit__(self, *exc_details):
-        # type: (Any) -> None
-        self._client.__exit__(*exc_details)
-
-    def _setup_credential(self, account_url, credential, kwargs):
-        if not credential:
-            raise ValueError("Missing credential")
-
-        return [account_url.strip("/") + "/.default"]
 
     @classmethod
     def from_connection_string(cls, connection_string, **kwargs):
@@ -67,7 +46,20 @@ class AppConfigurationClient(object):
         :param str connection_string: A connection string, as retrieved
          from the Azure portal.
         """
-        pass
+        account_url, credential, secret = parse_connection_string(connection_string)
+        return cls(account_url, credential, secret=secret, **kwargs)
+
+    def _setup_credential(self, account_url, credential, kwargs):
+        if not credential:
+            raise ValueError("Missing credential")
+        policy = None
+        if isinstance(credential, six.string_types):
+            policy = AppConfigRequestsCredentialsPolicy(
+                host=account_url,
+                credential=credential,
+                secret=kwargs.pop('secret')
+            )
+        return [account_url.strip("/") + "/.default"], policy
 
     @distributed_trace
     def get_configuration_setting(self, key, label=None, **kwargs):
@@ -76,9 +68,6 @@ class AppConfigurationClient(object):
 
         :param str key: The key name of the setting.
         :param str label: The label of the setting.
-        :keyword datetime accept_datetime: The last modified date filter.
-        :keyword select: The specific properties of the setting that should be returned.
-        :paramtype select: List[Union[str, ~azure.appconfiguration.SettingFields]]
         :raises ~azure.core.exceptions.ResourceNotFoundError: If no matching configuration setting exists.
         """
         accept_datetime = kwargs.pop('accept_datetime', None)

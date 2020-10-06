@@ -18,7 +18,7 @@ from azure.core import MatchConditions
 
 
 async def main():
-    url = os.environ.get('APP_CONFIG_HOSTNAME')
+    url = os.environ.get('APP_CONFIG_URL')
     credential = DefaultAzureCredential()
     async with AppConfigurationClient(account_url=url, credential=credential) as client:
 
@@ -27,7 +27,7 @@ async def main():
             first_color = await client.get_configuration_setting('FontColor')
         except ResourceNotFoundError:
             raise
-        
+
         # Get latest color value, only if it has changed
         try:
             new_color = await client.get_configuration_setting(
