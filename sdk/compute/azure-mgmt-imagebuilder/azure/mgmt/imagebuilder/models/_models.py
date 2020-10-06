@@ -351,8 +351,9 @@ class ImageTemplateFileCustomizer(ImageTemplateCustomizer):
 class ImageTemplateIdentity(Model):
     """Identity for the image template.
 
-    :param type: The type of identity used for the image template. Possible
-     values include: 'UserAssigned'
+    :param type: The type of identity used for the image template. The type
+     'None' will remove any identities from the image template. Possible values
+     include: 'UserAssigned', 'None'
     :type type: str or ~azure.mgmt.imagebuilder.models.ResourceIdentityType
     :param user_assigned_identities: The list of user identities associated
      with the image template. The user identity dictionary key references will
@@ -608,6 +609,10 @@ class ImageTemplatePowerShellCustomizer(ImageTemplateCustomizer):
     :param run_elevated: If specified, the PowerShell script will be run with
      elevated privileges
     :type run_elevated: bool
+    :param run_as_system: If specified, the PowerShell script will be run with
+     elevated privileges using the Local System user. Can only be true when the
+     runElevated field above is set to true.
+    :type run_as_system: bool
     :param valid_exit_codes: Valid exit codes for the PowerShell script.
      [Default: 0]
     :type valid_exit_codes: list[int]
@@ -624,6 +629,7 @@ class ImageTemplatePowerShellCustomizer(ImageTemplateCustomizer):
         'sha256_checksum': {'key': 'sha256Checksum', 'type': 'str'},
         'inline': {'key': 'inline', 'type': '[str]'},
         'run_elevated': {'key': 'runElevated', 'type': 'bool'},
+        'run_as_system': {'key': 'runAsSystem', 'type': 'bool'},
         'valid_exit_codes': {'key': 'validExitCodes', 'type': '[int]'},
     }
 
@@ -633,6 +639,7 @@ class ImageTemplatePowerShellCustomizer(ImageTemplateCustomizer):
         self.sha256_checksum = kwargs.get('sha256_checksum', None)
         self.inline = kwargs.get('inline', None)
         self.run_elevated = kwargs.get('run_elevated', None)
+        self.run_as_system = kwargs.get('run_as_system', None)
         self.valid_exit_codes = kwargs.get('valid_exit_codes', None)
         self.type = 'PowerShell'
 
