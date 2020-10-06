@@ -33,7 +33,7 @@ class ComputerVisionClientConfiguration(Configuration):
             raise ValueError("Parameter 'endpoint' must not be None.")
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
-        base_url = '{Endpoint}/vision/v3.0'
+        base_url = '{Endpoint}/vision/v3.1'
 
         super(ComputerVisionClientConfiguration, self).__init__(base_url)
 
