@@ -1,6 +1,9 @@
 # Release History
 
-## 7.0.0b7 (Unreleased)
+## 7.0.0b8 (Unreleased)
+
+
+## 7.0.0b7 (2020-10-05)
 
 **Breaking Changes**
 * Passing any type other than `ReceiveMode` as parameter `receive_mode` now throws a `TypeError` instead of `AttributeError`.

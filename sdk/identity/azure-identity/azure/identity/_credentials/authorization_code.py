@@ -44,7 +44,7 @@ class AuthorizationCodeCredential(object):
         # type: (*str, **Any) -> AccessToken
         """Request an access token for `scopes`.
 
-        .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
+        This method is called automatically by Azure SDK clients.
 
         The first time this method is called, the credential will redeem its authorization code. On subsequent calls
         the credential will return a cached access token or redeem a refresh token, if it acquired a refresh token upon

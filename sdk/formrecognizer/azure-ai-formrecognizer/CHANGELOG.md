@@ -6,6 +6,8 @@ This version of the SDK defaults to the latest supported API version, which curr
 
 **New features**
 
+- Recognize receipt methods now take keyword argument `locale` to optionally indicate the locale of the receipt for
+improved results
 - Added ability to create a composed model from the `FormTrainingClient` by calling method `begin_create_composed_model()`
 - Added the properties `display_name` and `properties` to types `CustomFormModel` and `CustomFormModelInfo`
 - Added keyword argument `display_name` to `begin_training()` and `begin_create_composed_model()`
