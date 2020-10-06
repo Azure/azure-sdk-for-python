@@ -130,6 +130,8 @@ class FormTrainingClient(FormRecognizerClientBase):
 
         cls = kwargs.pop("cls", None)
         display_name = kwargs.pop("display_name", None)
+        if display_name and self.api_version == "2.0":
+            raise ValueError("'display_name' is only available for API version v2.1-preview and up")
         continuation_token = kwargs.pop("continuation_token", None)
         polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
 

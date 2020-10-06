@@ -257,3 +257,11 @@ class TestTraining(FormRecognizerTest):
         result = poller.result()
         self.assertIsNotNone(result)
         initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer(training=True, client_kwargs={"api_version": "2.0"})
+    def test_training_with_display_name_bad_api_version(self, client, container_sas_url):
+        with pytest.raises(ValueError) as excinfo:
+            poller = client.begin_training(training_files_url="url", use_training_labels=True, display_name="not supported in v2.0")
+            result = poller.result()
+        assert "'display_name' is only available for API version v2.1-preview and up" in str(excinfo.value)

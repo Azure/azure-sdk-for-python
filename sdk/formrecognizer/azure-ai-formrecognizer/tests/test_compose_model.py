@@ -18,7 +18,7 @@ class TestTraining(FormRecognizerTest):
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalClientPreparer(training=True)
-    def test_compose_model(self, client, container_sas_url):
+    def test_compose_model_with_display_name(self, client, container_sas_url):
 
         poller = client.begin_training(container_sas_url, use_training_labels=True)
         model_1 = poller.result()
@@ -30,6 +30,22 @@ class TestTraining(FormRecognizerTest):
 
         composed_model = poller.result()
         self.assertEqual(composed_model.display_name, "my composed model")
+        self.assertComposedModelHasValues(composed_model, model_1, model_2)
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer(training=True)
+    def test_compose_model_no_display_name(self, client, container_sas_url):
+
+        poller = client.begin_training(container_sas_url, use_training_labels=True)
+        model_1 = poller.result()
+
+        poller = client.begin_training(container_sas_url, use_training_labels=True)
+        model_2 = poller.result()
+
+        poller = client.begin_create_composed_model([model_1.model_id, model_2.model_id])
+
+        composed_model = poller.result()
+        self.assertIsNone(composed_model.display_name)
         self.assertComposedModelHasValues(composed_model, model_1, model_2)
 
     @GlobalFormRecognizerAccountPreparer()
@@ -77,3 +93,11 @@ class TestTraining(FormRecognizerTest):
         self.assertIsNotNone(result)
 
         initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer(training=True, client_kwargs={"api_version": "2.0"})
+    def test_compose_model_bad_api_version(self, client, container_sas_url):
+        with pytest.raises(ValueError) as excinfo:
+            poller = client.begin_create_composed_model(["00000000-0000-0000-0000-000000000000", "00000000-0000-0000-0000-000000000000"])
+            result = poller.result()
+        assert "API version 2.0 does not have operation 'begin_compose_custom_models_async'" in str(excinfo.value)
