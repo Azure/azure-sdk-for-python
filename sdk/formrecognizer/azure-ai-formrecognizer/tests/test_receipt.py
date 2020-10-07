@@ -421,3 +421,32 @@ class TestReceiptFromStream(FormRecognizerTest):
         result = poller.result()
         self.assertIsNotNone(result)
         initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer()
+    def test_receipt_locale_default(self, client):
+        def _get_locale_in_call(pipeline_response, _, headers):
+            assert 'en-US' == pipeline_response.http_response.request.query['locale']
+        with open(self.receipt_jpg, "rb") as fd:
+            receipt = fd.read()
+        poller = client.begin_recognize_receipts(receipt, cls=_get_locale_in_call)
+        poller.wait()
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer()
+    def test_receipt_locale_specified(self, client):
+        def _get_locale_in_call(pipeline_response, _, headers):
+            assert 'en-IN' == pipeline_response.http_response.request.query['locale']
+        with open(self.receipt_jpg, "rb") as fd:
+            receipt = fd.read()
+        poller = client.begin_recognize_receipts(receipt, locale="en-IN", cls=_get_locale_in_call)
+        poller.wait()
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer()
+    def test_receipt_locale_error(self, client):
+        with open(self.receipt_jpg, "rb") as fd:
+            receipt = fd.read()
+        with pytest.raises(HttpResponseError) as e:
+            client.begin_recognize_receipts(receipt, locale="not a locale")
+        assert "locale" in e.value.error.message
