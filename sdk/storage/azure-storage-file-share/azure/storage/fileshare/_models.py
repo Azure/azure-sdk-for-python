@@ -142,7 +142,7 @@ class ShareSmbSettings(GeneratedShareSmbSettings):
 
     :param SmbMultichannel multichannel: Required. Sets the multichannel settings.
     """
-    def __init__(self, multichannel):
+    def __init__(self, multichannel, **kwargs):
         self.multichannel = multichannel
 
 
@@ -162,7 +162,7 @@ class ShareProtocolSettings(GeneratedShareProtocolSettings):
 
     :param SmbSettings smb: Required. Sets SMB settings.
     """
-    def __init__(self, smb):
+    def __init__(self, smb, **kwargs):
         self.smb = smb
 
     @classmethod
