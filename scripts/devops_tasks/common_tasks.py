@@ -399,7 +399,7 @@ def extend_dev_requirements(dev_req_path, packages_to_include):
     # include any package given in included list. omit duplicate
     for requirement in packages_to_include:
         if requirement not in requirements:
-            requirements.append(requirement)
+            requirements.insert(0, requirement.rstrip() + '\n')
 
     logging.info("Extending dev requirements. New result:: {}".format(requirements))
     # create new dev requirements file with different name for filtered requirements
