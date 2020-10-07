@@ -12,7 +12,7 @@ from azure.core.exceptions import ClientAuthenticationError, ServiceRequestError
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer._generated.models import AnalyzeOperationResult
 from azure.ai.formrecognizer._response_handlers import prepare_receipt
-from azure.ai.formrecognizer import FormRecognizerClient, FormContentType
+from azure.ai.formrecognizer import FormRecognizerClient, FormContentType, FormRecognizerApiVersion
 from testcase import FormRecognizerTest, GlobalFormRecognizerAccountPreparer
 from testcase import GlobalClientPreparer as _GlobalClientPreparer
 
@@ -270,3 +270,10 @@ class TestBusinessCardFromUrl(FormRecognizerTest):
         result = poller.result()
         self.assertIsNotNone(result)
         initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
+    def test_business_card_v2(self, client):
+        with pytest.raises(ValueError) as e:
+            client.begin_recognize_business_cards_from_url(self.business_card_url_jpg)
+        assert "Method 'begin_recognize_business_cards_from_url' is only available for API version V2_1_PREVIEW and up" in str(e.value)

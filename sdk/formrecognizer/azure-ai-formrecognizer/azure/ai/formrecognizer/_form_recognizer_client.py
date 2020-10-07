@@ -210,14 +210,20 @@ class FormRecognizerClient(FormRecognizerClientBase):
         if content_type is None:
             content_type = get_content_type(business_card)
 
-        return self._client.begin_analyze_business_card_async(  # type: ignore
-            file_stream=business_card,
-            content_type=content_type,
-            include_text_details=include_field_elements,
-            cls=kwargs.pop("cls", self._receipt_callback),
-            polling=True,
-            **kwargs
-        )
+        try:
+            return self._client.begin_analyze_business_card_async(  # type: ignore
+                file_stream=business_card,
+                content_type=content_type,
+                include_text_details=include_field_elements,
+                cls=kwargs.pop("cls", self._receipt_callback),
+                polling=True,
+                **kwargs
+            )
+        except ValueError as e:
+            if "begin_analyze_business_card_async" in str(e):
+                raise ValueError(
+                    "Method 'begin_recognize_business_cards' is only available for API version V2_1_PREVIEW and up"
+                )
 
     @distributed_trace
     def begin_recognize_business_cards_from_url(
@@ -249,13 +255,19 @@ class FormRecognizerClient(FormRecognizerClientBase):
 
         include_field_elements = kwargs.pop("include_field_elements", False)
 
-        return self._client.begin_analyze_business_card_async(  # type: ignore
-            file_stream={"source": business_card_url},
-            include_text_details=include_field_elements,
-            cls=kwargs.pop("cls", self._receipt_callback),
-            polling=True,
-            **kwargs
-        )
+        try:
+            return self._client.begin_analyze_business_card_async(  # type: ignore
+                file_stream={"source": business_card_url},
+                include_text_details=include_field_elements,
+                cls=kwargs.pop("cls", self._receipt_callback),
+                polling=True,
+                **kwargs
+            )
+        except ValueError as e:
+            if "begin_analyze_business_card_async" in str(e):
+                raise ValueError(
+                    "Method 'begin_recognize_business_cards_from_url' is only available for API version V2_1_PREVIEW and up"
+                )
 
     def _content_callback(self, raw_response, _, headers):  # pylint: disable=unused-argument
         analyze_result = self._deserialize(self._generated_models.AnalyzeOperationResult, raw_response)
