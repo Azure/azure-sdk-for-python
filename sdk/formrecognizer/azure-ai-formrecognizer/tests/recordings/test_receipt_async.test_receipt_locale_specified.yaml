@@ -2725,13 +2725,13 @@ interactions:
     body:
       string: ''
     headers:
-      apim-request-id: a1ecb960-824b-4529-b84d-742d2a01637a
+      apim-request-id: 65b811c4-cba8-40a3-a636-ab4b023e0a6c
       content-length: '0'
-      date: Wed, 07 Oct 2020 17:00:07 GMT
-      operation-location: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/prebuilt/receipt/analyzeResults/a1ecb960-824b-4529-b84d-742d2a01637a
+      date: Wed, 07 Oct 2020 18:21:14 GMT
+      operation-location: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/prebuilt/receipt/analyzeResults/65b811c4-cba8-40a3-a636-ab4b023e0a6c
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '187'
+      x-envoy-upstream-service-time: '2509'
     status:
       code: 202
       message: Accepted
@@ -2742,11 +2742,11 @@ interactions:
       User-Agent:
       - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/prebuilt/receipt/analyzeResults/a1ecb960-824b-4529-b84d-742d2a01637a
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/prebuilt/receipt/analyzeResults/65b811c4-cba8-40a3-a636-ab4b023e0a6c
   response:
     body:
-      string: '{"status": "succeeded", "createdDateTime": "2020-10-07T17:00:08Z",
-        "lastUpdatedDateTime": "2020-10-07T17:00:11Z", "analyzeResult": {"version":
+      string: '{"status": "succeeded", "createdDateTime": "2020-10-07T18:21:12Z",
+        "lastUpdatedDateTime": "2020-10-07T18:21:17Z", "analyzeResult": {"version":
         "2.1.0", "readResults": [{"page": 1, "angle": 0.1273, "width": 1688, "height":
         3000, "unit": "pixel"}], "documentResults": [{"docType": "prebuilt:receipt",
         "pageRange": [1, 1], "fields": {"ReceiptType": {"type": "string", "valueString":
@@ -2785,15 +2785,15 @@ interactions:
         11.7, "text": "11.70", "boundingBox": [1139, 2228, 1309, 2228, 1308, 2313,
         1138, 2313], "page": 1, "confidence": 0.269}}}]}}'
     headers:
-      apim-request-id: bf331cf5-6628-4f63-9486-8ed31036eac5
+      apim-request-id: bc8ffe06-9b1c-416f-9a1f-e01f68d7949a
       content-length: '2711'
       content-type: application/json; charset=utf-8
-      date: Wed, 07 Oct 2020 17:00:13 GMT
+      date: Wed, 07 Oct 2020 18:21:19 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '21'
+      x-envoy-upstream-service-time: '18'
     status:
       code: 200
       message: OK
-    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/prebuilt/receipt/analyzeResults/a1ecb960-824b-4529-b84d-742d2a01637a
+    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/prebuilt/receipt/analyzeResults/65b811c4-cba8-40a3-a636-ab4b023e0a6c
 version: 1

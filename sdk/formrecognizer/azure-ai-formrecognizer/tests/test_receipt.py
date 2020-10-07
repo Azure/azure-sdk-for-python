@@ -424,22 +424,11 @@ class TestReceiptFromStream(FormRecognizerTest):
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalClientPreparer()
-    def test_receipt_locale_default(self, client):
-        def _get_locale_in_call(pipeline_response, _, headers):
-            assert 'en-US' == pipeline_response.http_response.request.query['locale']
-        with open(self.receipt_jpg, "rb") as fd:
-            receipt = fd.read()
-        poller = client.begin_recognize_receipts(receipt, cls=_get_locale_in_call)
-        poller.wait()
-
-    @GlobalFormRecognizerAccountPreparer()
-    @GlobalClientPreparer()
     def test_receipt_locale_specified(self, client):
-        def _get_locale_in_call(pipeline_response, _, headers):
-            assert 'en-IN' == pipeline_response.http_response.request.query['locale']
         with open(self.receipt_jpg, "rb") as fd:
             receipt = fd.read()
-        poller = client.begin_recognize_receipts(receipt, locale="en-IN", cls=_get_locale_in_call)
+        poller = client.begin_recognize_receipts(receipt, locale="en-IN")
+        assert 'en-IN' == poller._polling_method._initial_response.http_response.request.query['locale']
         poller.wait()
 
     @GlobalFormRecognizerAccountPreparer()

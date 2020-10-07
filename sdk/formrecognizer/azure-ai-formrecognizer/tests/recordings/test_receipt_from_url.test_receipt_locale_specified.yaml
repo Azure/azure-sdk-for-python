@@ -21,19 +21,19 @@ interactions:
       string: ''
     headers:
       apim-request-id:
-      - 67f19eed-6343-43b5-8efa-f177cd9ab43e
+      - c488f61a-c341-4156-a22e-088945bfb87d
       content-length:
       - '0'
       date:
-      - Wed, 07 Oct 2020 17:00:14 GMT
+      - Wed, 07 Oct 2020 18:21:20 GMT
       operation-location:
-      - https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/prebuilt/receipt/analyzeResults/67f19eed-6343-43b5-8efa-f177cd9ab43e
+      - https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/prebuilt/receipt/analyzeResults/c488f61a-c341-4156-a22e-088945bfb87d
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '198'
+      - '458'
     status:
       code: 202
       message: Accepted
@@ -49,11 +49,11 @@ interactions:
       User-Agent:
       - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/prebuilt/receipt/analyzeResults/67f19eed-6343-43b5-8efa-f177cd9ab43e
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/prebuilt/receipt/analyzeResults/c488f61a-c341-4156-a22e-088945bfb87d
   response:
     body:
-      string: '{"status": "succeeded", "createdDateTime": "2020-10-07T17:00:14Z",
-        "lastUpdatedDateTime": "2020-10-07T17:00:16Z", "analyzeResult": {"version":
+      string: '{"status": "succeeded", "createdDateTime": "2020-10-07T18:21:21Z",
+        "lastUpdatedDateTime": "2020-10-07T18:21:24Z", "analyzeResult": {"version":
         "2.1.0", "readResults": [{"page": 1, "angle": 0.1273, "width": 1688, "height":
         3000, "unit": "pixel"}], "documentResults": [{"docType": "prebuilt:receipt",
         "pageRange": [1, 1], "fields": {"ReceiptType": {"type": "string", "valueString":
@@ -93,19 +93,19 @@ interactions:
         1138, 2313], "page": 1, "confidence": 0.269}}}]}}'
     headers:
       apim-request-id:
-      - d660b6b3-9212-4dd7-a43c-3535f171d577
+      - 67697a5f-f252-4214-a878-d7c0631a8894
       content-length:
       - '2711'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Oct 2020 17:00:19 GMT
+      - Wed, 07 Oct 2020 18:21:26 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '22'
+      - '19'
     status:
       code: 200
       message: OK
