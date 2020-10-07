@@ -5,15 +5,13 @@
 import os
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
-from azure.digitaltwins import DigitalTwinsClient
+from azure.digitaltwins.core import DigitalTwinsClient
 
 # Simple example of how to:
 # - create a DigitalTwins Service Client using the DigitalTwinsClient constructor
-# - publish telemetry message
 #
 # Preconditions:
 # - Environment variables have to be set
-# - DigitalTwins enabled device must exist on the ADT hub
 try:
     # DefaultAzureCredential supports different authentication mechanisms and determines
     # the appropriate credential type based of the environment it is executing in.
@@ -29,13 +27,7 @@ try:
     credential = DefaultAzureCredential()
     service_client = DigitalTwinsClient(url, credential)
 
-    # Publish telemetry message
-    digita_twin_id = "<DIGITAL TWIN ID>"
-    telemetry_payload = '{"Telemetry1": 5}'
-    service_client.publish_telemetry(
-        digita_twin_id,
-        telemetry_payload
-    )
+    print(service_client)
 
 except HttpResponseError as e:
     print("\nThis sample has caught an error. {0}".format(e.message))

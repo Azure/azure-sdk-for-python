@@ -7,7 +7,7 @@ import json
 import uuid
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
-from azure.digitaltwins import DigitalTwinsClient
+from azure.digitaltwins.core import DigitalTwinsClient
 
 # Scenario example of how to:
 # - create a DigitalTwins Service Client using the DigitalTwinsClient constructor

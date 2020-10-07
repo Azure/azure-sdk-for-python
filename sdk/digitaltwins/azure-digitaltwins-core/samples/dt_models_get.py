@@ -3,15 +3,20 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import os
+import sys
+import logging
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
-from azure.digitaltwins import DigitalTwinsClient
+from azure.digitaltwins.core import DigitalTwinsClient
 
 # Simple example of how to:
 # - create a DigitalTwins Service Client using the DigitalTwinsClient constructor
+# - get model
+# - enable logging for per-operation level
 #
 # Preconditions:
 # - Environment variables have to be set
+# - DigitalTwins enabled device must exist on the ADT hub
 try:
     # DefaultAzureCredential supports different authentication mechanisms and determines
     # the appropriate credential type based of the environment it is executing in.
@@ -27,7 +32,22 @@ try:
     credential = DefaultAzureCredential()
     service_client = DigitalTwinsClient(url, credential)
 
-    print(service_client)
+    # ModelId from the samples:
+    #   dtmi:samples:Room1
+    #   dtmi:samples:Wifi1
+    #   dtmi:samples:Floor1
+    #   dtmi:samples:Building1
+    model_id = "<MODEL_ID>"
+
+    # Create logger
+    logger = logging.getLogger('azure')
+    logger.setLevel(logging.DEBUG)
+    handler = logging.StreamHandler(stream=sys.stdout)
+    logger.addHandler(handler)
+
+    # Get model with logging enabled
+    model = service_client.get_model(model_id, logging_enable=True)
+    print(model)
 
 except HttpResponseError as e:
     print("\nThis sample has caught an error. {0}".format(e.message))

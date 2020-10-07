@@ -30,5 +30,5 @@ extends:
     Artifacts:
     - name: azure_mgmt_digitaltwins
       safeName: azuremgmtdigitaltwins
-    - name: azure_digitaltwins
-      safeName: azuredigitaltwins
+    - name: azure_digitaltwins_core
+      safeName: azuredigitaltwinscore

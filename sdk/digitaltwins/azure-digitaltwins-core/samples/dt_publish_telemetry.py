@@ -5,11 +5,11 @@
 import os
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
-from azure.digitaltwins import DigitalTwinsClient
+from azure.digitaltwins.core import DigitalTwinsClient
 
 # Simple example of how to:
 # - create a DigitalTwins Service Client using the DigitalTwinsClient constructor
-# - list all models using the paginated API
+# - publish telemetry message
 #
 # Preconditions:
 # - Environment variables have to be set
@@ -29,12 +29,13 @@ try:
     credential = DefaultAzureCredential()
     service_client = DigitalTwinsClient(url, credential)
 
-    # List models
-    # from the samples: dtmi:samples:Room1, dtmi:samples:Wifi1, dtmi:samples:Floor1, dtmi:samples:Building1
-    dependecies_for = ["<MODEL_ID>"]
-    models = service_client.list_models(dependecies_for)
-    for model in models:
-        print(model + '\n')
+    # Publish telemetry message
+    digita_twin_id = "<DIGITAL TWIN ID>"
+    telemetry_payload = '{"Telemetry1": 5}'
+    service_client.publish_telemetry(
+        digita_twin_id,
+        telemetry_payload
+    )
 
 except HttpResponseError as e:
     print("\nThis sample has caught an error. {0}".format(e.message))

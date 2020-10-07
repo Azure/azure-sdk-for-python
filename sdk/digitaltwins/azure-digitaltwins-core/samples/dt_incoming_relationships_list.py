@@ -5,11 +5,11 @@
 import os
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
-from azure.digitaltwins import DigitalTwinsClient
+from azure.digitaltwins.core import DigitalTwinsClient
 
 # Simple example of how to:
 # - create a DigitalTwins Service Client using the DigitalTwinsClient constructor
-# - list all relationships using the paginated API
+# - list all incoming relationships using the paginated API
 #
 # Preconditions:
 # - Environment variables have to be set
@@ -29,11 +29,11 @@ try:
     credential = DefaultAzureCredential()
     service_client = DigitalTwinsClient(url, credential)
 
-    # List relationships
-    digital_twint_id = "<DIGITAL_TWIN_ID>" # from the samples: BuildingTwin, FloorTwin, HVACTwin, RoomTwin
-    relationships = service_client.list_relationships(digital_twint_id)
-    for relationship in relationships:
-        print(relationship + '\n')
+    # List incoming relationships
+    digital_twin_id = "<DIGITAL_TWIN_ID>" # from the samples: BuildingTwin, FloorTwin, HVACTwin, RoomTwin
+    incoming_relationships = service_client.list_incoming_relationships(digital_twin_id)
+    for incoming_relationship in incoming_relationships:
+        print(incoming_relationship + '\n')
 
 except HttpResponseError as e:
     print("\nThis sample has caught an error. {0}".format(e.message))

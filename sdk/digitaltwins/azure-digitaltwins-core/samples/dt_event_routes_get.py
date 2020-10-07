@@ -5,11 +5,11 @@
 import os
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
-from azure.digitaltwins import DigitalTwinsClient
+from azure.digitaltwins.core import DigitalTwinsClient
 
 # Simple example of how to:
 # - create a DigitalTwins Service Client using the DigitalTwinsClient constructor
-# - publish telemetry message to component
+# - get eventRoute
 #
 # Preconditions:
 # - Environment variables have to be set
@@ -29,15 +29,11 @@ try:
     credential = DefaultAzureCredential()
     service_client = DigitalTwinsClient(url, credential)
 
-    # Publish telemetry message
-    digita_twin_id = "<DIGITAL TWIN ID>"
-    component_path = "<COMPONENT_PATH>"
-    telemetry_payload = '{"Telemetry1": 5}'
-    service_client.publish_component_telemetry(
-        digita_twin_id,
-        component_path,
-        telemetry_payload
-    )
+    # Get event route
+    event_route_id = "<EVENT_ROUTE_ID>"
+    event_route = service_client.get_event_route(event_route_id)
+    print('EventRoute:')
+    print(event_route)
 
 except HttpResponseError as e:
     print("\nThis sample has caught an error. {0}".format(e.message))

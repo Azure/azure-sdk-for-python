@@ -7,7 +7,7 @@ import json
 import uuid
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
-from azure.digitaltwins import DigitalTwinsClient
+from azure.digitaltwins.core import DigitalTwinsClient
 
 # <summary>
 # This sample creates all the models in \DTDL\Models folder in the ADT service instance

@@ -57,7 +57,7 @@ It provides an opportunity to override default behavior including:
 ### Create models
 
 Let's create models using the code below. You need to pass in `any[]` containing list of json models.
-Check out sample models [here](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/digitaltwins/azure-digitaltwins/samples/dtdl/models).
+Check out sample models [here](https://github.com/zolvarga/azure-sdk-for-python/tree/digitaltwins/sdk/digitaltwins/azure-digitaltwins/samples/dtdl/models).
 
 ```Python Snippet:dt_models_lifecycle.py
 new_models = [temporary_component, temporary_model]
@@ -129,7 +129,7 @@ print(get_twin)
 
 ### Query digital twins
 
-Query the Azure Digital Twins instance for digital twins using the [Azure Digital Twins Query Store lanaguage](https://review.docs.microsoft.com/en-us/azure/digital-twins-v2/concepts-query-language?branch=pr-en-us-114648). Query calls support paging. Here's an example of how to query for digital twins and how to iterate over the results.
+Query the Azure Digital Twins instance for digital twins using the Azure Digital Twins Query Store language. Query calls support paging. Here's an example of how to query for digital twins and how to iterate over the results.
 
 ```Python Snippet:dt_digitaltwins_query.py
 query = "SELECT * FROM digitaltwins"

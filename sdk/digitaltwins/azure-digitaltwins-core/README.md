@@ -8,14 +8,14 @@ For an introduction on how to program against the Azure Digital Twins service, v
 The guides mentioned above can help you get started with key elements of Azure Digital Twins, such as creating Azure Digital Twins instances, models, twin graphs, etc. Use this samples guide below to familiarize yourself with the various APIs that help you program against Azure Digital Twins.
 
 # Install packages
-Install [azure-digitaltwins][pypi_package_keys] and
+Install [azure-digitaltwins-core][pypi_package_keys] and
 [azure-identity][azure_identity_pypi] with [pip][pip]:
 ```Bash
-pip install azure-digitaltiwns azure-identity
+pip install azure-digitaltiwns-core azure-identity
 ```
 [azure-identity][azure_identity] is used for Azure Active Directory
 authentication as demonstrated below.
-
+ 
 # Digital Twins Samples
 
 You can explore the digital twins APIs (using the client library) using the samples project.
@@ -102,7 +102,6 @@ Optional keyword arguments can be passed in at the client and per-operation leve
 [azure_identity_pypi]: https://pypi.org/project/azure-identity/
 [default_cred_ref]: https://aka.ms/azsdk/python/identity/docs#azure.identity.DefaultAzureCredential
 [pip]: https://pypi.org/project/pip/
-[pypi_package_digitaltwins]: https://pypi.org/project/azure-digitaltwins/
 
 
 

@@ -5,15 +5,15 @@
 import os
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
-from azure.digitaltwins import DigitalTwinsClient
+from azure.digitaltwins.core import DigitalTwinsClient
 
-# Simple example of how to:
-# - create a DigitalTwins Service Client using the DigitalTwinsClient constructor
-# - get relationship
-#
-# Preconditions:
-# - Environment variables have to be set
-# - DigitalTwins enabled device must exist on the ADT hub
+# # Simple example of how to:
+# # - create a DigitalTwins Service Client using the DigitalTwinsClient constructor
+# # - list all eventRoutes using the paginated API
+# #
+# # Preconditions:
+# # - Environment variables have to be set
+# # - DigitalTwins enabled device must exist on the ADT hub
 try:
     # DefaultAzureCredential supports different authentication mechanisms and determines
     # the appropriate credential type based of the environment it is executing in.
@@ -29,14 +29,10 @@ try:
     credential = DefaultAzureCredential()
     service_client = DigitalTwinsClient(url, credential)
 
-    # Get incoming relationship
-    # from the samples: BuildingTwin, FloorTwin, HVACTwin, RoomTwin
-    digital_twin_id = "<DIGITAL_TWIN_ID>"
-    # from the samples: BuildingHasFloor, BuildingIsEquippedWithHVAC, HVACCoolsFloor, FloorContainsRoom
-    relationship_id = "<RELATIONSHIP_ID>"
-    relationship = service_client.get_relationship(digital_twin_id, relationship_id)
-    print('Relationship:')
-    print(relationship)
+    # List event routes
+    event_routes = service_client.list_event_routes()
+    for event_route in event_routes:
+        print(event_route + '\n')
 
 except HttpResponseError as e:
     print("\nThis sample has caught an error. {0}".format(e.message))

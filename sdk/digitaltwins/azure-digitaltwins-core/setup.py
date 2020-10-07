@@ -12,8 +12,8 @@ from io import open
 from setuptools import find_packages, setup
 
 # Change the PACKAGE_NAME only to change folder and different name
-PACKAGE_NAME = "azure-digitaltwins"
-PACKAGE_PPRINT_NAME = "Azure-DigitalTwins"
+PACKAGE_NAME = "azure-digitaltwins-core"
+PACKAGE_PPRINT_NAME = "Azure DigitalTwins Core"
 
 # a-b-c => a/b/c
 PACKAGE_FOLDER_PATH = PACKAGE_NAME.replace("-", "/")
@@ -55,8 +55,8 @@ setup(
     long_description_content_type="text/markdown",
     license="MIT License",
     author="Microsoft Corporation",
-    author_email="azuredigitaltwins@microsoft.com",
-    url="https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/digitaltwins/azure-digitaltwins",
+    author_email="azure-digitaltwins-core@microsoft.com",
+    url="https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/digitaltwins/azure-digitaltwins-core",
     classifiers=[
         "Development Status :: 4 - Beta",
         "Programming Language :: Python",
