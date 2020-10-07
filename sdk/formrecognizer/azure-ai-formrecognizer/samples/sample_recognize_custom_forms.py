@@ -65,7 +65,7 @@ class RecognizeCustomForms(object):
                         field.confidence
                     ))
 
-                print("...Label '{}' has value '{}' with a confidence score of {}".format(
+                print("...Field '{}' has value '{}' with a confidence score of {}".format(
                     field.label_data.text if field.label_data else name, field.value, field.confidence
                 ))
 
