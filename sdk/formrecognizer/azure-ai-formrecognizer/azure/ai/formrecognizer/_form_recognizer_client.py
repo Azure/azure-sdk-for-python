@@ -113,7 +113,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
         include_field_elements = kwargs.pop("include_field_elements", False)
         if content_type == "application/json":
             raise TypeError("Call begin_recognize_receipts_from_url() to analyze a receipt from a URL.")
-        callback = kwargs.pop("cls", self._receipt_callback)
+        cls = kwargs.pop("cls", self._receipt_callback)
         if content_type is None:
             content_type = get_content_type(receipt)
 
@@ -129,7 +129,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
             file_stream=receipt,
             content_type=content_type,
             include_text_details=include_field_elements,
-            cls=callback,
+            cls=cls,
             polling=True,
             **kwargs
         )
