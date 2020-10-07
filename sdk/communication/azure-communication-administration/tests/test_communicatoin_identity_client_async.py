@@ -7,10 +7,10 @@
 import pytest
 from azure.communication.administration.aio import CommunicationIdentityClient
 from azure_devtools.scenario_tests import RecordingProcessor
-from helper import URIIdentityReplacer
+from _shared.helper import URIIdentityReplacer
 from _shared.asynctestcase  import AsyncCommunicationTestCase
 from _shared.testcase import BodyReplacerProcessor
-from communication_service_preparer import CommunicationServicePreparer, CommunicationResourceGroupPreparer
+from _shared.communication_service_preparer import CommunicationServicePreparer, CommunicationResourceGroupPreparer
 
 class CommunicationIdentityClientTestAsync(AsyncCommunicationTestCase):
     def setUp(self):
@@ -19,58 +19,49 @@ class CommunicationIdentityClientTestAsync(AsyncCommunicationTestCase):
             BodyReplacerProcessor(keys=["id", "token"]),
             URIIdentityReplacer()])
 
-    @AsyncCommunicationTestCase.await_prepared_test
     @CommunicationResourceGroupPreparer(random_name_enabled=True)
     @CommunicationServicePreparer()
     @pytest.mark.live_test_only
     @pytest.mark.asyncio
-    async def test_create_user(self, connection_str):
-        identity_client = CommunicationIdentityClient.from_connection_string(connection_str)
+    async def test_create_user(self, connection_string):
+        identity_client = CommunicationIdentityClient.from_connection_string(connection_string)
         async with identity_client:
             user = await identity_client.create_user()
 
         assert user.identifier is not None
 
-    # @AsyncCommunicationTestCase.await_prepared_test
-    # @pytest.mark.live_test_only
-    # @CommunicationResourceGroupPreparer(random_name_enabled=True)
-    # @CommunicationServicePreparer()
-    # async def test_issue_token(self, connection_str):
-    #     identity_client = CommunicationIdentityClient.from_connection_string(connection_str)
-    #     async with identity_client:
-    #         user = await identity_client.create_user()
-    #         token_response = await identity_client.issue_token(user, scopes=["chat"])
+    @pytest.mark.live_test_only
+    @CommunicationResourceGroupPreparer(random_name_enabled=True)
+    @CommunicationServicePreparer()
+    async def test_issue_token(self, connection_string):
+        identity_client = CommunicationIdentityClient.from_connection_string(connection_string)
+        async with identity_client:
+            user = await identity_client.create_user()
+            token_response = await identity_client.issue_token(user, scopes=["chat"])
 
-    #     assert user.identifier is not None
-    #     assert token_response.token is not None
+        assert user.identifier is not None
+        assert token_response.token is not None
 
-    # @AsyncCommunicationTestCase.await_prepared_test
-    # @pytest.mark.live_test_only
-    # @CommunicationResourceGroupPreparer(random_name_enabled=True)
-    # @CommunicationServicePreparer()
-    # async def test_revoke_tokens(self, connection_str):
-    #     identity_client = CommunicationIdentityClient.from_connection_string(connection_str)
-    #     async with identity_client:
-    #         user = await identity_client.create_user()
-    #         token_response = await identity_client.issue_token(user, scopes=["chat"])
-    #         await identity_client.revoke_tokens(user)
+    @pytest.mark.live_test_only
+    @CommunicationResourceGroupPreparer(random_name_enabled=True)
+    @CommunicationServicePreparer()
+    async def test_revoke_tokens(self, connection_string):
+        identity_client = CommunicationIdentityClient.from_connection_string(connection_string)
+        async with identity_client:
+            user = await identity_client.create_user()
+            token_response = await identity_client.issue_token(user, scopes=["chat"])
+            await identity_client.revoke_tokens(user)
 
-    #     assert user.identifier is not None
-    #     assert token_response.token is not None
+        assert user.identifier is not None
+        assert token_response.token is not None
 
-    # @AsyncCommunicationTestCase.await_prepared_test
-    # @pytest.mark.live_test_only
-    # @CommunicationResourceGroupPreparer(random_name_enabled=True)
-    # @CommunicationServicePreparer()
-    # async def test_delete_user(self, connection_str):
-    #     identity_client = CommunicationIdentityClient.from_connection_string(connection_str)
-    #     async with identity_client:
-    #         user = await identity_client.create_user()
-    #         await identity_client.delete_user(user)
+    @pytest.mark.live_test_only
+    @CommunicationResourceGroupPreparer(random_name_enabled=True)
+    @CommunicationServicePreparer()
+    async def test_delete_user(self, connection_string):
+        identity_client = CommunicationIdentityClient.from_connection_string(connection_string)
+        async with identity_client:
+            user = await identity_client.create_user()
+            await identity_client.delete_user(user)
 
-    #     assert user.identifier is not None
-
-
-if __name__ == "__main__":
-    import unittest
-    unittest.main()
+        assert user.identifier is not None
