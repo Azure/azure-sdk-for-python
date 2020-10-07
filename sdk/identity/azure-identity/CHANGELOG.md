@@ -1,5 +1,11 @@
 # Release History
 
+## 1.4.1 (2020-10-07)
+### Fixed
+- `AzureCliCredential.get_token` correctly sets token expiration time,
+  preventing clients from using expired tokens
+  ([#14331](https://github.com/Azure/azure-sdk-for-python/pull/14331))
+
 ## 1.4.0 (2020-08-10)
 ### Added
 - `DefaultAzureCredential` uses the value of environment variable
