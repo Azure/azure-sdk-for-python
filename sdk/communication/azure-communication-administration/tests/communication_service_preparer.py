@@ -15,6 +15,10 @@ class CommunicationResourceGroupPreparer(ResourceGroupPreparer):
     """Communication Service Resource Group Preparer.
        Creating and removing test resource groups on demand
     """
+    def __init__(self, **kwargs):
+        super(CommunicationResourceGroupPreparer, self).__init__(**kwargs)
+        self.set_cache(True) 
+
     def create_resource(self, name, **kwargs):
         result = super(CommunicationResourceGroupPreparer, self).create_resource(name, **kwargs)
         if self.is_live and self._need_creation:
@@ -45,6 +49,7 @@ class CommunicationServicePreparer(AzureMgmtPreparer):
         self.resource_group_parameter_name = resource_group_parameter_name
         self.service_name = "TEST-SERVICE-NAME"
         self.mgmt_client = None
+        self.set_cache(True)
 
     def _get_resource_group(self, **kwargs):
         try:
