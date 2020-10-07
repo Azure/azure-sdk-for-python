@@ -81,6 +81,8 @@ class FormRecognizerTest(AzureTestCase):
         # URL samples
         self.receipt_url_jpg = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/receipt/contoso-allinone.jpg"
         self.receipt_url_png = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/receipt/contoso-receipt.png"
+        self.business_card_url_jpg = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/business_cards/business-card-english.jpg"
+        self.business_card_url_png = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/business_cards/business-card-english.png"
         self.invoice_url_pdf = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/Invoice_1.pdf"
         self.form_url_jpg = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/Form_1.jpg"
         self.multipage_url_pdf = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/multipage_invoice1.pdf"
@@ -89,6 +91,8 @@ class FormRecognizerTest(AzureTestCase):
         # file stream samples
         self.receipt_jpg = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/receipt/contoso-allinone.jpg"))
         self.receipt_png = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/receipt/contoso-receipt.png"))
+        self.business_card_jpg = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/business_cards/business-card-english.jpg"))
+        self.business_card_png = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/business_cards/business-card-english.png"))
         self.invoice_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/Invoice_1.pdf"))
         self.invoice_tiff = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/Invoice_1.tiff"))
         self.form_jpg = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/Form_1.jpg"))
@@ -222,7 +226,7 @@ class FormRecognizerTest(AzureTestCase):
         b = form_fields
         for label, a in actual_fields.items():
             self.assertEqual(label, b[label].name)
-            self.assertEqual(a.confidence, b[label].confidence if a.confidence is not None else 1.0)
+            self.assertEqual(a.confidence if a.confidence is not None else 1.0, b[label].confidence)
             self.assertBoundingBoxTransformCorrect(b[label].value_data.bounding_box, a.bounding_box)
             self.assertEqual(a.text, b[label].value_data.text)
             field_type = a.type
@@ -268,23 +272,26 @@ class FormRecognizerTest(AzureTestCase):
                     read_results
                 )
 
-    def assertFormFieldTransformCorrect(self, receipt_field, actual_field, read_results=None):
-        if actual_field is None:
-            return
+    def _assertFormFieldTransformCorrectHelper(self, receipt_field, actual_field, read_results=None):
         field_type = actual_field.type
         self.assertEqual(adjust_value_type(field_type), receipt_field.value_type)
         if field_type == "string":
             self.assertEqual(receipt_field.value, actual_field.value_string)
-        if field_type == "number":
+        elif field_type == "number":
             self.assertEqual(receipt_field.value, actual_field.value_number)
-        if field_type == "integer":
+        elif field_type == "integer":
             self.assertEqual(receipt_field.value, actual_field.value_integer)
-        if field_type == "date":
+        elif field_type == "date":
             self.assertEqual(receipt_field.value, actual_field.value_date)
-        if field_type == "phoneNumber":
+        elif field_type == "phoneNumber":
             self.assertEqual(receipt_field.value, actual_field.value_phone_number)
-        if field_type == "time":
+        elif field_type == "time":
             self.assertEqual(receipt_field.value, actual_field.value_time)
+        elif field_type == "object":
+            self.assertLabeledFormFieldDictTransformCorrect(receipt_field.value, actual_field.value_object)
+        else:
+            raise ValueError('field type {} not valid'.format(field_type))
+
 
         self.assertBoundingBoxTransformCorrect(receipt_field.value_data.bounding_box, actual_field.bounding_box)
         self.assertEqual(receipt_field.value_data.text, actual_field.text)
@@ -295,6 +302,17 @@ class FormRecognizerTest(AzureTestCase):
                 actual_field.elements,
                 read_results
             )
+
+    def assertFormFieldTransformCorrect(self, receipt_field, actual_field, read_results=None):
+        if actual_field is None:
+            return
+        field_type = actual_field.type
+        if field_type == "array":
+            for i in range(len(actual_field.value_array)):
+                self._assertFormFieldTransformCorrectHelper(receipt_field.value[i], actual_field.value_array[i], read_results)
+        else:
+            self._assertFormFieldTransformCorrectHelper(receipt_field, actual_field, read_results)
+
 
     def assertReceiptItemsTransformCorrect(self, items, actual_items, read_results=None):
         actual = actual_items.value_array
