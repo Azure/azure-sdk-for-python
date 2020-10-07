@@ -773,6 +773,12 @@ class ShareProperties(Model):
     :type deleted_time: datetime
     :param remaining_retention_days:
     :type remaining_retention_days: int
+    :param access_tier:
+    :type access_tier: str
+    :param access_tier_change_time:
+    :type access_tier_change_time: datetime
+    :param access_tier_transition_state:
+    :type access_tier_transition_state: str
     :param lease_status: Possible values include: 'locked', 'unlocked'
     :type lease_status: str or ~azure.storage.fileshare.models.LeaseStatusType
     :param lease_state: Possible values include: 'available', 'leased',
@@ -799,6 +805,9 @@ class ShareProperties(Model):
         'next_allowed_quota_downgrade_time': {'key': 'NextAllowedQuotaDowngradeTime', 'type': 'rfc-1123', 'xml': {'name': 'NextAllowedQuotaDowngradeTime'}},
         'deleted_time': {'key': 'DeletedTime', 'type': 'rfc-1123', 'xml': {'name': 'DeletedTime'}},
         'remaining_retention_days': {'key': 'RemainingRetentionDays', 'type': 'int', 'xml': {'name': 'RemainingRetentionDays'}},
+        'access_tier': {'key': 'AccessTier', 'type': 'str', 'xml': {'name': 'AccessTier'}},
+        'access_tier_change_time': {'key': 'AccessTierChangeTime', 'type': 'rfc-1123', 'xml': {'name': 'AccessTierChangeTime'}},
+        'access_tier_transition_state': {'key': 'AccessTierTransitionState', 'type': 'str', 'xml': {'name': 'AccessTierTransitionState'}},
         'lease_status': {'key': 'LeaseStatus', 'type': 'LeaseStatusType', 'xml': {'name': 'LeaseStatus'}},
         'lease_state': {'key': 'LeaseState', 'type': 'LeaseStateType', 'xml': {'name': 'LeaseState'}},
         'lease_duration': {'key': 'LeaseDuration', 'type': 'LeaseDurationType', 'xml': {'name': 'LeaseDuration'}},
@@ -817,6 +826,9 @@ class ShareProperties(Model):
         self.next_allowed_quota_downgrade_time = kwargs.get('next_allowed_quota_downgrade_time', None)
         self.deleted_time = kwargs.get('deleted_time', None)
         self.remaining_retention_days = kwargs.get('remaining_retention_days', None)
+        self.access_tier = kwargs.get('access_tier', None)
+        self.access_tier_change_time = kwargs.get('access_tier_change_time', None)
+        self.access_tier_transition_state = kwargs.get('access_tier_transition_state', None)
         self.lease_status = kwargs.get('lease_status', None)
         self.lease_state = kwargs.get('lease_state', None)
         self.lease_duration = kwargs.get('lease_duration', None)
