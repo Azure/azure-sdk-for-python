@@ -140,19 +140,19 @@ class CorsRule(GeneratedCorsRule):
 class ShareSmbSettings(GeneratedShareSmbSettings):
     """ Settings for the SMB protocol.
 
-    :param SmbMultichannel multichannel: Required. Sets the multichannel settings.
+    :keyword SmbMultichannel multichannel: Sets the multichannel settings.
     """
-    def __init__(self, multichannel, **kwargs):
-        self.multichannel = multichannel
+    def __init__(self, **kwargs):
+        self.multichannel = kwargs.get('multichannel')
 
 
 class SmbMultichannel(GeneratedSmbMultichannel):
     """ Settings for Multichannel.
 
-    :param bool enabled: Required. If SMB Multichannel is enabled.
+    :keyword bool enabled: If SMB Multichannel is enabled.
     """
-    def __init__(self, enabled, **kwargs):
-        self.enabled = enabled
+    def __init__(self, **kwargs):
+        self.enabled = kwargs.get('enabled')
 
 
 class ShareProtocolSettings(GeneratedShareProtocolSettings):
@@ -160,10 +160,10 @@ class ShareProtocolSettings(GeneratedShareProtocolSettings):
 
     Contains protocol properties of the share service such as the SMB setting of the share service.
 
-    :param SmbSettings smb: Required. Sets SMB settings.
+    :keyword SmbSettings smb: Sets SMB settings.
     """
-    def __init__(self, smb, **kwargs):
-        self.smb = smb
+    def __init__(self, **kwargs):
+        self.smb = kwargs.get('smb')
 
     @classmethod
     def _from_generated(cls, generated):
