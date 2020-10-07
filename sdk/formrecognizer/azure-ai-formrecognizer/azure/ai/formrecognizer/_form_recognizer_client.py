@@ -224,6 +224,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
                 raise ValueError(
                     "Method 'begin_recognize_business_cards' is only available for API version V2_1_PREVIEW and up"
                 )
+            raise e
 
     @distributed_trace
     def begin_recognize_business_cards_from_url(
@@ -266,8 +267,10 @@ class FormRecognizerClient(FormRecognizerClientBase):
         except ValueError as e:
             if "begin_analyze_business_card_async" in str(e):
                 raise ValueError(
-                    "Method 'begin_recognize_business_cards_from_url' is only available for API version V2_1_PREVIEW and up"
+                    "Method 'begin_recognize_business_cards_from_url' is "
+                    "only available for API version V2_1_PREVIEW and up"
                 )
+            raise e
 
     def _content_callback(self, raw_response, _, headers):  # pylint: disable=unused-argument
         analyze_result = self._deserialize(self._generated_models.AnalyzeOperationResult, raw_response)
