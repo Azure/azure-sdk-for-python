@@ -11,6 +11,7 @@ try:
     from ._models_py3 import AutomaticResolutionProperties
     from ._models_py3 import AvailabilitySetResourceSettings
     from ._models_py3 import AzureResourceReference
+    from ._models_py3 import BulkRemoveRequest
     from ._models_py3 import CloudErrorBody
     from ._models_py3 import CommitRequest
     from ._models_py3 import DiscardRequest
@@ -70,6 +71,7 @@ except (SyntaxError, ImportError):
     from ._models import AutomaticResolutionProperties  # type: ignore
     from ._models import AvailabilitySetResourceSettings  # type: ignore
     from ._models import AzureResourceReference  # type: ignore
+    from ._models import BulkRemoveRequest  # type: ignore
     from ._models import CloudErrorBody  # type: ignore
     from ._models import CommitRequest  # type: ignore
     from ._models import DiscardRequest  # type: ignore
@@ -127,6 +129,7 @@ except (SyntaxError, ImportError):
 
 from ._resource_mover_service_api_enums import (
     DependencyType,
+    JobName,
     MoveResourceInputType,
     MoveState,
     ProvisioningState,
@@ -141,6 +144,7 @@ __all__ = [
     'AutomaticResolutionProperties',
     'AvailabilitySetResourceSettings',
     'AzureResourceReference',
+    'BulkRemoveRequest',
     'CloudErrorBody',
     'CommitRequest',
     'DiscardRequest',
@@ -196,6 +200,7 @@ __all__ = [
     'VirtualMachineResourceSettings',
     'VirtualNetworkResourceSettings',
     'DependencyType',
+    'JobName',
     'MoveResourceInputType',
     'MoveState',
     'ProvisioningState',
