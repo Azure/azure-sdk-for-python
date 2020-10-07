@@ -172,7 +172,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
         locale = kwargs.pop("locale", None)
         include_field_elements = kwargs.pop("include_field_elements", False)
         cls = kwargs.pop("cls", self._receipt_callback)
-        
+
         # FIXME: part of this code will be removed once autorest can handle diff mixin
         # signatures across API versions
         if locale:
