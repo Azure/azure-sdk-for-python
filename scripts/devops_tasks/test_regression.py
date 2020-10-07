@@ -241,7 +241,7 @@ class RegressionTest:
 
         # early versions of azure-sdk-tools had an unpinned version of azure-mgmt packages. 
         # that unpinned version hits an a code path in azure-sdk-tools that hits this error.
-        if filtered_dev_req_path and (not self.context.is_latest_depend_test):
+        if filtered_dev_req_path and self.context.is_latest_depend_test == False:
             logging.info(
                 "Extending dev requirements with {}".format(OLDEST_EXTENSION_PKGS)
             )
