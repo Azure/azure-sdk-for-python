@@ -29,15 +29,15 @@ steps:
       parameters:
         DevFeedName: ${{ parameters.DevFeedName }}
 
-  # - task: PythonScript@0
-  #   displayName: 'Test Latest Released Dependents'
-  #   inputs:
-  #     scriptPath: 'scripts/devops_tasks/test_regression.py'
-  #     arguments: >-
-  #       "${{ parameters.BuildTargetingString }}"
-  #       --service="${{ parameters.ServiceDirectory }}"
-  #       --whl-dir="${{ parameters.BuildStagingDirectory }}"
-  #       --mark-arg="not cosmosEmulator"
+  - task: PythonScript@0
+    displayName: 'Test Latest Released Dependents'
+    inputs:
+      scriptPath: 'scripts/devops_tasks/test_regression.py'
+      arguments: >-
+        "${{ parameters.BuildTargetingString }}"
+        --service="${{ parameters.ServiceDirectory }}"
+        --whl-dir="${{ parameters.BuildStagingDirectory }}"
+        --mark-arg="not cosmosEmulator"
 
   - task: PythonScript@0
     displayName: 'Test Oldest Released Dependents'
