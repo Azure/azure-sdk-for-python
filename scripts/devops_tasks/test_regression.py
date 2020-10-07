@@ -23,7 +23,9 @@ from common_tasks import (
     find_packages_missing_on_pypi,
     find_whl,
     find_tools_packages,
-    get_installed_packages
+    get_installed_packages,
+    extend_dev_requirements,
+    str_to_bool
 )
 from git_helper import get_release_tag, git_checkout_tag, git_checkout_branch, clone_repo
 
@@ -37,6 +39,8 @@ GIT_MASTER_BRANCH = "master"
 VENV_NAME = "regressionenv"
 AZURE_SDK_FOR_PYTHON_GIT_URL = "https://github.com/Azure/azure-sdk-for-python.git"
 TEMP_FOLDER_NAME = ".tmp_code_path"
+
+OLDEST_EXTENSION_PKGS = ['msrestazure','adal']
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -114,6 +118,7 @@ class RegressionTest:
             logging.info("Dependent packages for [{0}]: {1}".format(pkg_name, dep_packages))
             for dep_pkg_path in dep_packages:
                 dep_pkg_name, _, _, _ = parse_setup(dep_pkg_path)
+
                 logging.info(
                     "Starting regression test of {0} against released {1}".format(
                         pkg_name, dep_pkg_name
@@ -235,6 +240,18 @@ class RegressionTest:
             dependent_pkg_path, list_to_exclude, dependent_pkg_path
         )
 
+        # early versions of azure-sdk-tools had an unpinned version of azure-mgmt packages. 
+        # that unpinned version hits an a code path in azure-sdk-tools that hits this error.
+        if filtered_dev_req_path and self.context.is_latest_depend_test == False:
+            logging.info(
+                "Extending dev requirements with {}".format(OLDEST_EXTENSION_PKGS)
+            )
+            extend_dev_requirements(
+                filtered_dev_req_path, OLDEST_EXTENSION_PKGS
+            )
+        else:
+            logging.info("Not extending dev requirements {} {}".format(filtered_dev_req_path, self.context.is_latest_depend_test))
+
         if filtered_dev_req_path:
             logging.info(
                 "Installing filtered dev requirements from {}".format(filtered_dev_req_path)
@@ -289,7 +306,6 @@ def find_package_dependency(glob_string, repo_root_dir):
 
 # This is the main function which identifies packages to test, find dependency matrix and trigger test
 def run_main(args):
-
     temp_dir = ""
     if args.temp_dir:
         temp_dir = args.temp_dir
@@ -318,7 +334,7 @@ def run_main(args):
     if len(targeted_packages) == 0:
         exit(0)
 
-    # clone code repo only if it doesn't exists
+    # clone code repo only if it doesn't exist
     if not os.path.exists(code_repo_root):
         clone_repo(temp_dir, AZURE_SDK_FOR_PYTHON_GIT_URL)
     else:
@@ -333,7 +349,7 @@ def run_main(args):
 
     # Create regression text context. One context object will be reused for all packages
     context = RegressionContext(
-        args.whl_dir, temp_dir, args.verify_latest, args.mark_arg
+        args.whl_dir, temp_dir, str_to_bool(args.verify_latest), args.mark_arg
     )
 
     for pkg_path in targeted_packages:
