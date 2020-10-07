@@ -361,7 +361,7 @@ class StatusCheckPolling(LongRunningOperation):
         return None
 
 
-class LROBasePolling(PollingMethod):
+class LROBasePolling(PollingMethod):  # pylint: disable=too-many-instance-attributes
     """A base LRO poller.
 
     This assumes a basic flow:
@@ -373,7 +373,12 @@ class LROBasePolling(PollingMethod):
     """
 
     def __init__(
-        self, timeout=30, lro_algorithms=None, lro_options=None, **operation_config
+        self,
+        timeout=30,
+        lro_algorithms=None,
+        lro_options=None,
+        path_format_arguments=None,
+        **operation_config
     ):
         self._lro_algorithms = lro_algorithms or [
             OperationResourcePolling(),
@@ -389,6 +394,7 @@ class LROBasePolling(PollingMethod):
         self._deserialization_callback = None  # Will hold the deserialization callback
         self._operation_config = operation_config
         self._lro_options = lro_options
+        self._path_format_arguments = path_format_arguments
         self._status = None
 
     def status(self):
@@ -564,6 +570,8 @@ class LROBasePolling(PollingMethod):
 
         :rtype: azure.core.pipeline.PipelineResponse
         """
+        if self._path_format_arguments:
+            status_link = self._client.format_url(status_link, **self._path_format_arguments)
         request = self._client.get(status_link)
         # Re-inject 'x-ms-client-request-id' while polling
         if "request_id" not in self._operation_config:

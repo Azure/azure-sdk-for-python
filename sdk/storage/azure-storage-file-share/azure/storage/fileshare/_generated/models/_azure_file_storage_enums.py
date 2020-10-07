@@ -82,6 +82,34 @@ class StorageErrorCode(str, Enum):
     feature_version_mismatch = "FeatureVersionMismatch"
 
 
+class LeaseDurationType(str, Enum):
+
+    infinite = "infinite"
+    fixed = "fixed"
+
+
+class LeaseStateType(str, Enum):
+
+    available = "available"
+    leased = "leased"
+    expired = "expired"
+    breaking = "breaking"
+    broken = "broken"
+
+
+class LeaseStatusType(str, Enum):
+
+    locked = "locked"
+    unlocked = "unlocked"
+
+
+class ShareAccessTier(str, Enum):
+
+    transaction_optimized = "TransactionOptimized"
+    hot = "Hot"
+    cool = "Cool"
+
+
 class PermissionCopyModeType(str, Enum):
 
     source = "source"
@@ -106,27 +134,6 @@ class CopyStatusType(str, Enum):
     success = "success"
     aborted = "aborted"
     failed = "failed"
-
-
-class LeaseDurationType(str, Enum):
-
-    infinite = "infinite"
-    fixed = "fixed"
-
-
-class LeaseStateType(str, Enum):
-
-    available = "available"
-    leased = "leased"
-    expired = "expired"
-    breaking = "breaking"
-    broken = "broken"
-
-
-class LeaseStatusType(str, Enum):
-
-    locked = "locked"
-    unlocked = "unlocked"
 
 
 class FileRangeWriteType(str, Enum):

@@ -595,7 +595,7 @@ class DirectoryOperations(object):
         """Closes all handles open for given directory.
 
         :param handle_id: Specifies handle ID opened on the file or directory
-         to be closed. Asterix (‘*’) is a wildcard that specifies all handles.
+         to be closed. Asterisk (‘*’) is a wildcard that specifies all handles.
         :type handle_id: str
         :param timeout: The timeout parameter is expressed in seconds. For
          more information, see <a

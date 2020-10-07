@@ -3,12 +3,12 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines, too-many-public-methods
 import functools
 import time
 from io import BytesIO
 from typing import ( # pylint: disable=unused-import
-    Optional, Union, IO, List, Dict, Any, Iterable,
+    Optional, Union, IO, List, Dict, Any, Iterable, Tuple,
     TYPE_CHECKING
 )
 
@@ -33,7 +33,7 @@ from ._shared.parser import _str
 from ._parser import _get_file_permission, _datetime_to_str
 from ._lease import ShareLeaseClient
 from ._serialize import get_source_conditions, get_access_conditions, get_smb_properties, get_api_version
-from ._deserialize import deserialize_file_properties, deserialize_file_stream
+from ._deserialize import deserialize_file_properties, deserialize_file_stream, get_file_ranges_result
 from ._models import HandlesPaged, NTFSAttributes  # pylint: disable=unused-import
 from ._download import StorageStreamDownloader
 
@@ -266,7 +266,7 @@ class ShareFileClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def acquire_lease(self, lease_id=None, **kwargs):
-        # type: (int, Optional[str], **Any) -> BlobLeaseClient
+        # type: (Optional[str], **Any) -> ShareLeaseClient
         """Requests a new lease.
 
         If the file does not have an active lease, the File
@@ -283,13 +283,14 @@ class ShareFileClient(StorageAccountHostsMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/blob_samples_common.py
-                :start-after: [START acquire_lease_on_blob]
-                :end-before: [END acquire_lease_on_blob]
+            .. literalinclude:: ../samples/file_samples_client.py
+                :start-after: [START acquire_and_release_lease_on_file]
+                :end-before: [END acquire_and_release_lease_on_file]
                 :language: python
-                :dedent: 8
-                :caption: Acquiring a lease on a blob.
+                :dedent: 12
+                :caption: Acquiring a lease on a file.
         """
+        kwargs['lease_duration'] = -1
         lease = ShareLeaseClient(self, lease_id=lease_id)  # type: ignore
         lease.acquire(**kwargs)
         return lease
@@ -1093,6 +1094,40 @@ class ShareFileClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    def _get_ranges_options( # type: ignore
+            self, offset=None, # type: Optional[int]
+            length=None, # type: Optional[int]
+            previous_sharesnapshot=None,  # type: Optional[Union[str, Dict[str, Any]]]
+            **kwargs
+        ):
+        # type: (...) -> Dict[str, Any]
+        if self.require_encryption or (self.key_encryption_key is not None):
+            raise ValueError("Unsupported method for encryption.")
+        access_conditions = get_access_conditions(kwargs.pop('lease', None))
+
+        content_range = None
+        if offset is not None:
+            if length is not None:
+                end_range = offset + length - 1  # Reformat to an inclusive range index
+                content_range = 'bytes={0}-{1}'.format(offset, end_range)
+            else:
+                content_range = 'bytes={0}-'.format(offset)
+        options = {
+            'sharesnapshot': self.snapshot,
+            'lease_access_conditions': access_conditions,
+            'timeout': kwargs.pop('timeout', None),
+            'range': content_range}
+        if previous_sharesnapshot:
+            try:
+                options['prevsharesnapshot'] = previous_sharesnapshot.snapshot # type: ignore
+            except AttributeError:
+                try:
+                    options['prevsharesnapshot'] = previous_sharesnapshot['snapshot'] # type: ignore
+                except TypeError:
+                    options['prevsharesnapshot'] = previous_sharesnapshot
+        options.update(kwargs)
+        return options
+
     @distributed_trace
     def get_ranges(  # type: ignore
             self, offset=None,  # type: Optional[int]
@@ -1100,7 +1135,8 @@ class ShareFileClient(StorageAccountHostsMixin):
             **kwargs  # type: Any
         ):
         # type: (...) -> List[Dict[str, int]]
-        """Returns the list of valid ranges of a file.
+        """Returns the list of valid page ranges for a file or snapshot
+        of a file.
 
         :param int offset:
             Specifies the start offset of bytes over which to get ranges.
@@ -1115,31 +1151,62 @@ class ShareFileClient(StorageAccountHostsMixin):
         :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :returns: A list of valid ranges.
+        :returns:
+            A list of valid ranges.
         :rtype: List[dict[str, int]]
         """
-        timeout = kwargs.pop('timeout', None)
-        if self.require_encryption or (self.key_encryption_key is not None):
-            raise ValueError("Unsupported method for encryption.")
-        access_conditions = get_access_conditions(kwargs.pop('lease', None))
-
-        content_range = None
-        if offset is not None:
-            if length is not None:
-                end_range = offset + length - 1  # Reformat to an inclusive range index
-                content_range = 'bytes={0}-{1}'.format(offset, end_range)
-            else:
-                content_range = 'bytes={0}-'.format(offset)
+        options = self._get_ranges_options(
+            offset=offset,
+            length=length,
+            **kwargs)
         try:
-            ranges = self._client.file.get_range_list(
-                range=content_range,
-                sharesnapshot=self.snapshot,
-                lease_access_conditions=access_conditions,
-                timeout=timeout,
-                **kwargs)
+            ranges = self._client.file.get_range_list(**options)
         except StorageErrorException as error:
             process_storage_error(error)
-        return [{'start': b.start, 'end': b.end} for b in ranges]
+        return [{'start': file_range.start, 'end': file_range.end} for file_range in ranges.ranges]
+
+    def get_ranges_diff(  # type: ignore
+            self,
+            previous_sharesnapshot,  # type: Union[str, Dict[str, Any]]
+            offset=None,  # type: Optional[int]
+            length=None,  # type: Optional[int]
+            **kwargs  # type: Any
+            ):
+        # type: (...) -> Tuple[List[Dict[str, int]], List[Dict[str, int]]]
+        """Returns the list of valid page ranges for a file or snapshot
+        of a file.
+
+        .. versionadded:: 12.6.0
+
+        :param int offset:
+            Specifies the start offset of bytes over which to get ranges.
+        :param int length:
+           Number of bytes to use over which to get ranges.
+        :param str previous_sharesnapshot:
+            The snapshot diff parameter that contains an opaque DateTime value that
+            specifies a previous file snapshot to be compared
+            against a more recent snapshot or the current file.
+        :keyword lease:
+            Required if the file has an active lease. Value can be a ShareLeaseClient object
+            or the lease ID as a string.
+        :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns:
+            A tuple of two lists of file ranges as dictionaries with 'start' and 'end' keys.
+            The first element are filled file ranges, the 2nd element is cleared file ranges.
+        :rtype: tuple(list(dict(str, str), list(dict(str, str))
+        """
+        options = self._get_ranges_options(
+            offset=offset,
+            length=length,
+            previous_sharesnapshot=previous_sharesnapshot,
+            **kwargs)
+        try:
+            ranges = self._client.file.get_range_list(**options)
+        except StorageErrorException as error:
+            process_storage_error(error)
+        return get_file_ranges_result(ranges)
 
     @distributed_trace
     def clear_range( # type: ignore

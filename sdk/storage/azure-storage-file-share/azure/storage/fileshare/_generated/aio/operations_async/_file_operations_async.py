@@ -44,7 +44,7 @@ class FileOperations:
         file with no content.
 
         :param file_content_length: Specifies the maximum size for the file,
-         up to 1 TB.
+         up to 4 TB.
         :type file_content_length: long
         :param file_attributes: If specified, the provided file attributes
          shall be set. Default value: ‘Archive’ for file and ‘Directory’ for
@@ -1223,12 +1223,15 @@ class FileOperations:
             return cls(response, None, response_headers)
     upload_range_from_url.metadata = {'url': '/{shareName}/{directory}/{fileName}'}
 
-    async def get_range_list(self, sharesnapshot=None, timeout=None, range=None, lease_access_conditions=None, *, cls=None, **kwargs):
+    async def get_range_list(self, sharesnapshot=None, prevsharesnapshot=None, timeout=None, range=None, lease_access_conditions=None, *, cls=None, **kwargs):
         """Returns the list of valid ranges for a file.
 
         :param sharesnapshot: The snapshot parameter is an opaque DateTime
          value that, when present, specifies the share snapshot to query.
         :type sharesnapshot: str
+        :param prevsharesnapshot: The previous snapshot parameter is an opaque
+         DateTime value that, when present, specifies the previous snapshot.
+        :type prevsharesnapshot: str
         :param timeout: The timeout parameter is expressed in seconds. For
          more information, see <a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
@@ -1243,8 +1246,8 @@ class FileOperations:
          ~azure.storage.fileshare.models.LeaseAccessConditions
         :param callable cls: A custom type or function that will be passed the
          direct response
-        :return: list or the result of cls(response)
-        :rtype: list[~azure.storage.fileshare.models.Range]
+        :return: ShareFileRangeList or the result of cls(response)
+        :rtype: ~azure.storage.fileshare.models.ShareFileRangeList
         :raises:
          :class:`StorageErrorException<azure.storage.fileshare.models.StorageErrorException>`
         """
@@ -1266,6 +1269,8 @@ class FileOperations:
         query_parameters = {}
         if sharesnapshot is not None:
             query_parameters['sharesnapshot'] = self._serialize.query("sharesnapshot", sharesnapshot, 'str')
+        if prevsharesnapshot is not None:
+            query_parameters['prevsharesnapshot'] = self._serialize.query("prevsharesnapshot", prevsharesnapshot, 'str')
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
         query_parameters['comp'] = self._serialize.query("comp", comp, 'str')
@@ -1291,7 +1296,7 @@ class FileOperations:
         header_dict = {}
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('[Range]', response)
+            deserialized = self._deserialize('ShareFileRangeList', response)
             header_dict = {
                 'Last-Modified': self._deserialize('rfc-1123', response.headers.get('Last-Modified')),
                 'ETag': self._deserialize('str', response.headers.get('ETag')),
@@ -1594,7 +1599,7 @@ class FileOperations:
         """Closes all handles open for given file.
 
         :param handle_id: Specifies handle ID opened on the file or directory
-         to be closed. Asterix (‘*’) is a wildcard that specifies all handles.
+         to be closed. Asterisk (‘*’) is a wildcard that specifies all handles.
         :type handle_id: str
         :param timeout: The timeout parameter is expressed in seconds. For
          more information, see <a

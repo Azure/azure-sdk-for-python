@@ -152,7 +152,7 @@ with ServiceBusClient.from_connection_string(connstr) as client:
 
 > **NOTE:** Any message received with `mode=PeekLock` (this is the default, with the alternative ReceiveAndDelete removing the message from the queue immediately on receipt)
 > has a lock that must be renewed via `message.renew_lock()` before it expires if processing would take longer than the lock duration.  
-> See [AutoLockRenewer](#autolockrenew) for a helper to perform this in the background automatically.
+> See [AutoLockRenewer](#automatically-renew-message-or-session-locks) for a helper to perform this in the background automatically.
 > Lock duration is set in Azure on the queue or topic itself.
 
 #### [Receive messages from a queue through ServiceBusReceiver.receive_messages()][receive_reference]
@@ -243,7 +243,7 @@ When receiving from a queue, you have multiple actions you can take on the messa
 If the message has a lock as mentioned above, settlement will fail if the message lock has expired.  
 If processing would take longer than the lock duration, it must be maintained via `message.renew_lock()` before it expires.  
 Lock duration is set in Azure on the queue or topic itself.
-See [AutoLockRenewer](#autolockrenew) for a helper to perform this in the background automatically.
+See [AutoLockRenewer](#automatically-renew-message-or-session-locks) for a helper to perform this in the background automatically.
 
 #### [Complete][complete_reference]
 
@@ -410,7 +410,7 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 [cloud_shell]: https://docs.microsoft.com/azure/cloud-shell/overview
 [cloud_shell_bash]: https://shell.azure.com/bash
 [pip]: https://pypi.org/project/pip/
-[pypi]: https://pypi.org/project/azure-servicebus/7.0.0b6/
+[pypi]: https://pypi.org/project/azure-servicebus/7.0.0b7/
 [python]: https://www.python.org/downloads/
 [venv]: https://docs.python.org/3/library/venv.html
 [virtualenv]: https://virtualenv.pypa.io

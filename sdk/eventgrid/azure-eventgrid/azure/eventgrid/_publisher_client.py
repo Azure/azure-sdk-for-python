@@ -7,9 +7,26 @@
 
 from typing import TYPE_CHECKING
 
+from azure.core.tracing.decorator import distributed_trace
+from azure.core.pipeline.policies import (
+    RequestIdPolicy,
+    HeadersPolicy,
+    RedirectPolicy,
+    RetryPolicy,
+    ContentDecodePolicy,
+    CustomHookPolicy,
+    NetworkTraceLoggingPolicy,
+    ProxyPolicy,
+    DistributedTracingPolicy,
+    HttpLoggingPolicy,
+    UserAgentPolicy
+)
+
 from ._models import CloudEvent, EventGridEvent, CustomEvent
 from ._helpers import _get_topic_hostname_only_fqdn, _get_authentication_policy, _is_cloud_event
 from ._generated._event_grid_publisher_client import EventGridPublisherClient as EventGridPublisherClientImpl
+from ._policies import CloudEventDistributedTracingPolicy
+from ._version import VERSION
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,12 +54,37 @@ class EventGridPublisherClient(object):
 
     def __init__(self, topic_hostname, credential, **kwargs):
         # type: (str, Union[AzureKeyCredential, EventGridSharedAccessSignatureCredential], Any) -> None
-
         topic_hostname = _get_topic_hostname_only_fqdn(topic_hostname)
 
         self._topic_hostname = topic_hostname
+        self._client = EventGridPublisherClientImpl(
+            policies=EventGridPublisherClient._policies(credential, **kwargs),
+            **kwargs
+            )
+
+    @staticmethod
+    def _policies(credential, **kwargs):
+        # type: (Union[AzureKeyCredential, EventGridSharedAccessSignatureCredential], Any) -> List[Any]
         auth_policy = _get_authentication_policy(credential)
-        self._client = EventGridPublisherClientImpl(authentication_policy=auth_policy, **kwargs)
+        sdk_moniker = 'eventgrid/{}'.format(VERSION)
+        policies = [
+            RequestIdPolicy(**kwargs),
+            HeadersPolicy(**kwargs),
+            UserAgentPolicy(sdk_moniker=sdk_moniker, **kwargs),
+            ProxyPolicy(**kwargs),
+            ContentDecodePolicy(**kwargs),
+            RedirectPolicy(**kwargs),
+            RetryPolicy(**kwargs),
+            auth_policy,
+            CustomHookPolicy(**kwargs),
+            NetworkTraceLoggingPolicy(**kwargs),
+            DistributedTracingPolicy(**kwargs),
+            CloudEventDistributedTracingPolicy(**kwargs),
+            HttpLoggingPolicy(**kwargs)
+        ]
+        return policies
+
+    @distributed_trace
     def send(self, events, **kwargs):
         # type: (SendType, Any) -> None
         """Sends event data to topic hostname specified during client initialization.

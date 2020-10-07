@@ -1,0 +1,205 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.18362-SP0)
+      x-ms-date:
+      - Fri, 11 Sep 2020 01:36:00 GMT
+      x-ms-version:
+      - '2020-02-10'
+    method: PUT
+    uri: https://storagename.file.core.windows.net/teste5000d7c?restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Fri, 11 Sep 2020 01:36:01 GMT
+      etag:
+      - '"0x8D855F30A798EAA"'
+      last-modified:
+      - Fri, 11 Sep 2020 01:36:01 GMT
+      server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version:
+      - '2020-02-10'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.18362-SP0)
+      x-ms-date:
+      - Fri, 11 Sep 2020 01:36:00 GMT
+      x-ms-lease-action:
+      - acquire
+      x-ms-lease-duration:
+      - '15'
+      x-ms-proposed-lease-id:
+      - 7cd92f71-8e6c-4efa-8b16-47fa75cd82cc
+      x-ms-version:
+      - '2020-02-10'
+    method: PUT
+    uri: https://storagename.file.core.windows.net/teste5000d7c?comp=lease&restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Fri, 11 Sep 2020 01:36:01 GMT
+      etag:
+      - '"0x8D855F30A798EAA"'
+      last-modified:
+      - Fri, 11 Sep 2020 01:36:01 GMT
+      server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-lease-id:
+      - 7cd92f71-8e6c-4efa-8b16-47fa75cd82cc
+      x-ms-version:
+      - '2020-02-10'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.18362-SP0)
+      x-ms-date:
+      - Fri, 11 Sep 2020 01:36:11 GMT
+      x-ms-lease-action:
+      - renew
+      x-ms-lease-id:
+      - 7cd92f71-8e6c-4efa-8b16-47fa75cd82cc
+      x-ms-version:
+      - '2020-02-10'
+    method: PUT
+    uri: https://storagename.file.core.windows.net/teste5000d7c?comp=lease&restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Fri, 11 Sep 2020 01:36:11 GMT
+      etag:
+      - '"0x8D855F30A798EAA"'
+      last-modified:
+      - Fri, 11 Sep 2020 01:36:01 GMT
+      server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-lease-id:
+      - 7cd92f71-8e6c-4efa-8b16-47fa75cd82cc
+      x-ms-version:
+      - '2020-02-10'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.18362-SP0)
+      x-ms-date:
+      - Fri, 11 Sep 2020 01:36:16 GMT
+      x-ms-version:
+      - '2020-02-10'
+    method: DELETE
+    uri: https://storagename.file.core.windows.net/teste5000d7c?restype=share
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMissing</Code><Message>There
+        is currently a lease on the file share and no lease ID was specified in the
+        request.\nRequestId:b32790a3-701a-003e-47db-874dbd000000\nTime:2020-09-11T01:36:16.8688480Z</Message></Error>"
+    headers:
+      content-length:
+      - '273'
+      content-type:
+      - application/xml
+      date:
+      - Fri, 11 Sep 2020 01:36:16 GMT
+      server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code:
+      - LeaseIdMissing
+      x-ms-version:
+      - '2020-02-10'
+    status:
+      code: 412
+      message: There is currently a lease on the file share and no lease ID was specified
+        in the request.
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.18362-SP0)
+      x-ms-date:
+      - Fri, 11 Sep 2020 01:36:26 GMT
+      x-ms-version:
+      - '2020-02-10'
+    method: DELETE
+    uri: https://storagename.file.core.windows.net/teste5000d7c?restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Fri, 11 Sep 2020 01:36:26 GMT
+      server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version:
+      - '2020-02-10'
+    status:
+      code: 202
+      message: Accepted
+version: 1

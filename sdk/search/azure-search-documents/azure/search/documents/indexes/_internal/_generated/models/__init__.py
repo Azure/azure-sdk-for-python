@@ -44,6 +44,7 @@ try:
     from ._models_py3 import ImageAnalysisSkill
     from ._models_py3 import IndexerExecutionResult
     from ._models_py3 import IndexingParameters
+    from ._models_py3 import IndexingParametersConfiguration
     from ._models_py3 import IndexingSchedule
     from ._models_py3 import InputFieldMappingEntry
     from ._models_py3 import KeepTokenFilter
@@ -165,6 +166,7 @@ except (SyntaxError, ImportError):
     from ._models import ImageAnalysisSkill  # type: ignore
     from ._models import IndexerExecutionResult  # type: ignore
     from ._models import IndexingParameters  # type: ignore
+    from ._models import IndexingParametersConfiguration  # type: ignore
     from ._models import IndexingSchedule  # type: ignore
     from ._models import InputFieldMappingEntry  # type: ignore
     from ._models import KeepTokenFilter  # type: ignore
@@ -250,12 +252,18 @@ except (SyntaxError, ImportError):
     from ._models import WordDelimiterTokenFilter  # type: ignore
 
 from ._search_service_client_enums import (
+    BlobIndexerDataToExtract,
+    BlobIndexerImageAction,
+    BlobIndexerPDFTextRotationAlgorithm,
+    BlobIndexerParsingMode,
+    CharFilterName,
     CjkBigramTokenFilterScripts,
     EdgeNGramTokenFilterSide,
     EntityCategory,
     EntityRecognitionSkillLanguage,
     ImageAnalysisSkillLanguage,
     ImageDetail,
+    IndexerExecutionEnvironment,
     IndexerExecutionStatus,
     IndexerStatus,
     KeyPhraseExtractionSkillLanguage,
@@ -320,6 +328,7 @@ __all__ = [
     'ImageAnalysisSkill',
     'IndexerExecutionResult',
     'IndexingParameters',
+    'IndexingParametersConfiguration',
     'IndexingSchedule',
     'InputFieldMappingEntry',
     'KeepTokenFilter',
@@ -403,12 +412,18 @@ __all__ = [
     'UniqueTokenFilter',
     'WebApiSkill',
     'WordDelimiterTokenFilter',
+    'BlobIndexerDataToExtract',
+    'BlobIndexerImageAction',
+    'BlobIndexerPDFTextRotationAlgorithm',
+    'BlobIndexerParsingMode',
+    'CharFilterName',
     'CjkBigramTokenFilterScripts',
     'EdgeNGramTokenFilterSide',
     'EntityCategory',
     'EntityRecognitionSkillLanguage',
     'ImageAnalysisSkillLanguage',
     'ImageDetail',
+    'IndexerExecutionEnvironment',
     'IndexerExecutionStatus',
     'IndexerStatus',
     'KeyPhraseExtractionSkillLanguage',

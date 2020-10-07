@@ -102,3 +102,35 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
             ),
             **kwargs
         )
+
+    async def get_backup_status(
+        self, job_id: str, **kwargs: "Any"
+    ) -> "BackupOperation":
+        """Returns the status of a full backup operation.
+
+        :param str job_id: The job ID returned as part of the backup request
+        :returns: The full backup operation status as a :class:`BackupOperation`
+        :rtype: BackupOperation
+        """
+        return await self._client.full_backup_status(
+            vault_base_url=self._vault_url,
+            job_id=job_id,
+            cls=BackupOperation._wrap_generated,
+            **kwargs
+        )
+
+    async def get_restore_status(
+        self, job_id: str, **kwargs: "Any"
+    ) -> "RestoreOperation":
+        """Returns the status of a restore operation.
+
+        :param str job_id: The ID returned as part of the restore request
+        :returns: The restore operation status as a :class:`RestoreOperation`
+        :rtype: RestoreOperation
+        """
+        return await self._client.restore_status(
+            vault_base_url=self._vault_url,
+            job_id=job_id,
+            cls=RestoreOperation._wrap_generated,
+            **kwargs
+        )

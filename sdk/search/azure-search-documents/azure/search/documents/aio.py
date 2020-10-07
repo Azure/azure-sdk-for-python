@@ -25,10 +25,10 @@
 # --------------------------------------------------------------------------
 
 from ._internal.aio._search_client_async import AsyncSearchItemPaged, SearchClient
-from ._internal.aio._search_index_document_batching_client_async import SearchIndexDocumentBatchingClient
+from ._internal.aio._search_indexing_buffered_sender_async import SearchIndexingBufferedSender
 
 __all__ = (
     "AsyncSearchItemPaged",
     "SearchClient",
-    "SearchIndexDocumentBatchingClient",
+    "SearchIndexingBufferedSender",
 )

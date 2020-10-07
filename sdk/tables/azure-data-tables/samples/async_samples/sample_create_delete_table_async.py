@@ -42,21 +42,21 @@ class CreateDeleteTable(object):
         from azure.core.exceptions import ResourceExistsError
 
         # [START create_table]
-        table_service_client = TableServiceClient.from_connection_string(self.connection_string)
-        try:
-            table_item = await table_service_client.create_table(table_name=self.table_name)
-            print("Created table {}!".format(table_item.table_name))
-        except ResourceExistsError:
-            print("Table already exists")
+        async with TableServiceClient.from_connection_string(self.connection_string) as table_service_client:
+            try:
+                table_item = await table_service_client.create_table(table_name=self.table_name)
+                print("Created table {}!".format(table_item.table_name))
+            except ResourceExistsError:
+                print("Table already exists")
         # [END create_table]
 
     async def create_if_not_exists(self):
         from azure.data.tables.aio import TableServiceClient
 
         # [START create_if_not_exists]
-        table_service_client = TableServiceClient.from_connection_string(self.connection_string)
-        table_item = TableServiceClient.create_table_if_not_exists(table_name=self.table_name)
-        print("Table name: {}".format(table_item.table_name))
+        async with TableServiceClient.from_connection_string(self.connection_string) as table_service_client:
+            table_item = TableServiceClient.create_table_if_not_exists(table_name=self.table_name)
+            print("Table name: {}".format(table_item.table_name))
         # [END create_if_not_exists]
 
     async def delete_table(self):
@@ -64,42 +64,36 @@ class CreateDeleteTable(object):
         from azure.core.exceptions import ResourceNotFoundError
 
         # [START delete_table]
-        table_service_client = TableServiceClient.from_connection_string(self.connection_string)
-        try:
-            await table_service_client.delete_table(table_name=self.table_name)
-            print("Deleted table {}!".format(self.table_name))
-        except ResourceNotFoundError:
-            print("Table could not be found")
+        async with TableServiceClient.from_connection_string(self.connection_string) as table_service_client:
+            try:
+                await table_service_client.delete_table(table_name=self.table_name)
+                print("Deleted table {}!".format(self.table_name))
+            except ResourceNotFoundError:
+                print("Table could not be found")
         # [END delete_table]
 
     async def create_from_table_client(self):
         from azure.data.table import TableClient
 
         # [START create_from_table_client]
-        table_client = TableClient.from_connection_string(
-            conn_str=self.connection_string,
-            table_name=self.table_name
-        )
-        try:
-            table_item = await table_client.create_table()
-            print("Created table {}!".format(table_item.table_name))
-        except ResourceExistsError:
-            print("Table already exists")
+        async with TableClient.from_connection_string(conn_str=self.connection_string, table_name=self.table_name) as table_client:
+            try:
+                table_item = await table_client.create_table()
+                print("Created table {}!".format(table_item.table_name))
+            except ResourceExistsError:
+                print("Table already exists")
         # [END create_from_table_client]
 
     async def delete_from_table_client(self):
         from azure.data.table import TableClient
 
         # [START delete_from_table_client]
-        table_client = TableClient.from_connection_string(
-            conn_str=self.connection_string,
-            table_name=self.table_name
-        )
-        try:
-            await table_client.delete_table()
-            print("Deleted table {}!".format(self.table_name))
-        except ResourceExistsError:
-            print("Table already exists")
+        async with TableClient.from_connection_string(conn_str=self.connection_string, table_name=self.table_name) as table_client:
+            try:
+                await table_client.delete_table()
+                print("Deleted table {}!".format(self.table_name))
+            except ResourceExistsError:
+                print("Table already exists")
         # [END delete_from_table_client]
 
 

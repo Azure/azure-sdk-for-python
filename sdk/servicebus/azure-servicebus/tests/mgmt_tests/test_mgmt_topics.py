@@ -177,13 +177,13 @@ class ServiceBusAdministrationClientTopicTests(AzureMgmtTestCase):
         assert len(topics) == 2
 
         description = mgmt_service.get_topic('test_topic')
-        mgmt_service.delete_topic(description)
+        mgmt_service.delete_topic(description.name)
 
         topics = list(mgmt_service.list_topics())
         assert len(topics) == 1 and topics[0].name == 'txt/.-_123'
 
         description = mgmt_service.get_topic('txt/.-_123')
-        mgmt_service.delete_topic(description)
+        mgmt_service.delete_topic(description.name)
 
         topics = list(mgmt_service.list_topics())
         assert len(topics) == 0
