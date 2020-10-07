@@ -27,7 +27,7 @@ class RecognizeBusinessCardSample(object):
 
     def recognize_business_card(self):
         path_to_sample_forms = os.path.abspath(os.path.join(os.path.abspath(__file__),
-                                                            "..", "./sample_forms/forms/business-card-english.jpg"))
+                                                            "..", "./sample_forms/business_cards/business-card-english.jpg"))
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer import FormRecognizerClient
 

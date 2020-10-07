@@ -28,7 +28,7 @@ class RecognizeBusinessCardSampleAsync(object):
 
     async def recognize_business_card_async(self):
         path_to_sample_forms = os.path.abspath(os.path.join(os.path.abspath(__file__),
-                                                            "..", "..", "./sample_forms/forms/business-card-english.jpg"))
+                                                            "..", "..", "./sample_forms/business_cards/business-card-english.jpg"))
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer.aio import FormRecognizerClient
 
