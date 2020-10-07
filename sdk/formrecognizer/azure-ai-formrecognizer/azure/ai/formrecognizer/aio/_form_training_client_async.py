@@ -132,7 +132,7 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
         cls = kwargs.pop("cls", None)
         display_name = kwargs.pop("display_name", None)
         if display_name and self.api_version == "2.0":
-            raise ValueError("'display_name' is only available for API version v2.1-preview and up")
+            raise ValueError("'display_name' is only available for API version V2_1_PREVIEW and up")
         continuation_token = kwargs.pop("continuation_token", None)
         polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
 
@@ -429,13 +429,18 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
         polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
         continuation_token = kwargs.pop("continuation_token", None)
 
-        return await self._client.begin_compose_custom_models_async(  # type: ignore
-            {"model_ids": model_ids, "model_name": display_name},
-            cls=kwargs.pop("cls", _compose_callback),
-            polling=AsyncLROBasePolling(timeout=polling_interval, lro_algorithms=[TrainingPolling()], **kwargs),
-            continuation_token=continuation_token,
-            **kwargs
-        )
+        try:
+            return await self._client.begin_compose_custom_models_async(  # type: ignore
+                {"model_ids": model_ids, "model_name": display_name},
+                cls=kwargs.pop("cls", _compose_callback),
+                polling=AsyncLROBasePolling(timeout=polling_interval, lro_algorithms=[TrainingPolling()], **kwargs),
+                continuation_token=continuation_token,
+                **kwargs
+            )
+        except ValueError:
+            raise ValueError(
+                "Method 'begin_create_composed_model' is only available for API version V2_1_PREVIEW and up"
+            )
 
     def get_form_recognizer_client(self, **kwargs: Any) -> FormRecognizerClient:
         """Get an instance of a FormRecognizerClient from FormTrainingClient.

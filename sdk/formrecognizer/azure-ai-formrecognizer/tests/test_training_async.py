@@ -278,4 +278,4 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
         with pytest.raises(ValueError) as excinfo:
             poller = await client.begin_training(training_files_url="url", use_training_labels=True, display_name="not supported in v2.0")
             result = await poller.result()
-        assert "'display_name' is only available for API version v2.1-preview and up" in str(excinfo.value)
+        assert "'display_name' is only available for API version V2_1_PREVIEW and up" in str(excinfo.value)
