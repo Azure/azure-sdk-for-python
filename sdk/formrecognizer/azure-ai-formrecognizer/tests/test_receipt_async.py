@@ -469,7 +469,7 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
         with pytest.raises(HttpResponseError) as e:
             async with client:
                 await client.begin_recognize_receipts(receipt, locale="not a locale")
-        assert "locale" in e.value.error.message
+        assert "UnsupportedLocale" == e.value.error.code
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
