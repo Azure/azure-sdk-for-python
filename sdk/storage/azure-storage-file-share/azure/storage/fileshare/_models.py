@@ -151,7 +151,7 @@ class SmbMultichannel(GeneratedSmbMultichannel):
 
     :param bool enabled: Required. If SMB Multichannel is enabled.
     """
-    def __init__(self, enabled):
+    def __init__(self, enabled, **kwargs):
         self.enabled = enabled
 
 
