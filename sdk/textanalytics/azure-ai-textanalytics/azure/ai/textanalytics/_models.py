@@ -419,7 +419,7 @@ class HealthcareEntity(DictMixin):
             self.length,
             self.confidence_score,
             repr(self.links)
-        )
+        )[:1024]
 
 
 class HealthcareRelation(DictMixin):
@@ -457,7 +457,7 @@ class HealthcareRelation(DictMixin):
             self.is_bidirectional,
             repr(self.source),
             repr(self.target)
-        )
+        )[:1024]
 
 
 class HealthcareEntityLink(DictMixin):
@@ -473,7 +473,7 @@ class HealthcareEntityLink(DictMixin):
         self.data_source = kwargs.get("data_source", None)
 
     def __repr__(self):
-        return "HealthcareEntityLink(id={}, data_source={})".format(self.id, self.data_source)
+        return "HealthcareEntityLink(id={}, data_source={})".format(self.id, self.data_source)[:1024]
 
 
 class TextAnalyticsError(DictMixin):
@@ -1167,7 +1167,6 @@ class SentimentConfidenceScores(DictMixin):
 class EntitiesRecognitionTask(DictMixin):
     """EntitiesRecognitionTask encapsulates the parameters for starting a long-running Entities Recognition operation.
 
-    :ivar str name: An optional descriptive name for the task.
     :ivar str model_version: The model version to use for the analysis.
     :ivar str string_index_type: An optional string for specifying the method used to interpret string offsets.  
         Defaults to Text Elements (Graphemes) according to Unicode v8.0.0. For additional information see 
@@ -1213,7 +1212,6 @@ class EntitiesRecognitionTaskResult(DictMixin):
 class PiiEntitiesRecognitionTask(DictMixin):
     """PiiEntitiesRecognitionTask encapsulates the parameters for starting a long-running PII Entities Recognition operation.
 
-    :ivar str name: An optional descriptive name for the task.
     :ivar str model_version: The model version to use for the analysis.
     :ivar str string_index_type: An optional string for specifying the method used to interpret string offsets.  
         Defaults to Text Elements (Graphemes) according to Unicode v8.0.0. For additional information see 
@@ -1262,7 +1260,6 @@ class PiiEntitiesRecognitionTaskResult(DictMixin):
 class EntityLinkingTask(DictMixin):
     """EntityLinkingTask encapsulates the parameters for starting a long-running Entity Linking operation.
 
-    :ivar str name: An optional descriptive name for the task.
     :ivar str model_version: The model version to use for the analysis.
     :ivar str string_index_type: An optional string for specifying the method used to interpret string offsets.  
         Defaults to Text Elements (Graphemes) according to Unicode v8.0.0. For additional information see 
@@ -1308,7 +1305,6 @@ class EntityLinkingTaskResult(DictMixin):
 class KeyPhraseExtractionTask(DictMixin):
     """KeyPhraseExtractionTask encapsulates the parameters for starting a long-running Key Phrase Extraction operation.
 
-    :ivar str name: An optional descriptive name for the task.
     :ivar str model_version: The model version to use for the analysis.
     """
 
@@ -1349,7 +1345,6 @@ class KeyPhraseExtractionTaskResult(DictMixin):
 class SentimentAnalysisTask(DictMixin):
     """SentimentAnalysisTask encapsulates the parameters for starting a long-running Sentiment Analysis operation.
 
-    :ivar str name: An optional descriptive name for the task.
     :ivar str model_version: The model version to use for the analysis.
     :ivar bool enable_opinion_mining: A boolean value indicating whether or not to enable opinion mining for
         the analysis.
