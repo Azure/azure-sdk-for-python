@@ -11,7 +11,7 @@ from azure.core.exceptions import HttpResponseError, ServiceRequestError, Client
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer._generated.models import AnalyzeOperationResult
 from azure.ai.formrecognizer._response_handlers import prepare_receipt
-from azure.ai.formrecognizer import FormRecognizerClient
+from azure.ai.formrecognizer import FormRecognizerClient, FormRecognizerApiVersion
 from testcase import FormRecognizerTest, GlobalFormRecognizerAccountPreparer
 from testcase import GlobalClientPreparer as _GlobalClientPreparer
 
@@ -376,3 +376,10 @@ class TestReceiptFromUrl(FormRecognizerTest):
         with pytest.raises(HttpResponseError) as e:
             client.begin_recognize_receipts_from_url(self.receipt_url_jpg, locale="not a locale")
         assert "locale" in e.value.error.message
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
+    def test_receipt_locale_v2(self, client):
+        with pytest.raises(ValueError) as e:
+            client.begin_recognize_receipts_from_url(self.receipt_url_jpg, locale="en-US")
+        assert "'locale' is only available for API version V2_1_PREVIEW and up" in str(e.value)
