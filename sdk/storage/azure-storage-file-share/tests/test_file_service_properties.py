@@ -81,8 +81,8 @@ class FileServicePropertiesTest(StorageTestCase):
     def test_file_service_properties(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
 
-        protocol_properties1 = ShareProtocolSettings(ShareSmbSettings(SmbMultichannel(enabled=False)))
-        protocol_properties2 = ShareProtocolSettings(ShareSmbSettings(SmbMultichannel(enabled=True)))
+        protocol_properties1 = ShareProtocolSettings(smb=ShareSmbSettings(multichannel=SmbMultichannel(enabled=False)))
+        protocol_properties2 = ShareProtocolSettings(smb=ShareSmbSettings(multichannel=SmbMultichannel(enabled=True)))
         # Act
         resp = self.fsc.set_service_properties(
             hour_metrics=Metrics(), minute_metrics=Metrics(), cors=list(), protocol=protocol_properties1)
