@@ -4,16 +4,14 @@ import pytest
 from _shared.testcase import AppConfigTestCase
 from devtools_testutils import CachedResourceGroupPreparer
 from appconfig_preparer import CachedAppConfigPreparer
+
 from azure.appconfiguration import AppConfigurationClient
 from azure.identity import DefaultAzureCredential
+from azure.core.exceptions import ResourceNotFoundError
 
 class AppConfigurationClientTest(AppConfigTestCase):
     def __init__(self, *args, **kwargs):
         super(AppConfigurationClientTest, self).__init__(*args, **kwargs)
-    #     if self.is_playback():
-    #         self.connection_str = "Endpoint=https://fake_app_config.azconfig-test.io;Id=0-l4-s0:h5htBaY5Z1LwFz50bIQv;Secret=bgyvBgwsQIw0s8myrqJJI3nLrj81M/kzSgSuP4BBoVg="
-    #     else:
-    #         self.connection_str = os.getenv('LEARN_APPCONFIG_CONNECTION')
 
     def setUp(self):
         super(AppConfigurationClientTest, self).setUp()
@@ -32,5 +30,9 @@ class AppConfigurationClientTest(AppConfigTestCase):
     @CachedResourceGroupPreparer(name_prefix="appconfigtest")
     @CachedAppConfigPreparer(name_prefix="appconfigtest")
     def test_get_key_value(self, resource_group, appconfig_url, appconfig_conn_str):
-        credential = DefaultAzureCredential()
-        client = AppConfigurationClient(app_config_url, credential)
+        client = AppConfigurationClient.from_connection_string(appconfig_conn_str)
+
+        self.assertIsNotNone(client)
+        # Confirm by doing a single get, which should throw an error
+        with self.assertRaises(ResourceNotFoundError):
+            color_setting = client.get_configuration_setting('FontColor')
