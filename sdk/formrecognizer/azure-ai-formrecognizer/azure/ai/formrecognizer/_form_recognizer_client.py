@@ -193,7 +193,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
 
         :param business_card: JPEG, PNG, PDF and TIFF type file stream or bytes.
         :type business_card: bytes or IO[bytes]
-        :param str locale: Locale of the business card. Default locale is en-US. Other supported locales include: en-AU,
+        :keyword str locale: Locale of the business card. Default locale is en-US. Other supported locales include: en-AU,
             en-CA, en-GB, and en-IN.
         :keyword bool include_field_elements:
             Whether or not to include field elements such as lines and words in addition to form fields.
@@ -249,7 +249,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
 
         :param str business_card_url: The URL of the business card to analyze. The input must be a valid, encoded URL
             of one of the supported formats: JPEG, PNG, PDF and TIFF.
-        :param str locale: Locale of the business card. Default locale is en-US. Other supported locales include: en-AU,
+        :keyword str locale: Locale of the business card. Default locale is en-US. Other supported locales include: en-AU,
             en-CA, en-GB, and en-IN.
         :keyword bool include_field_elements:
             Whether or not to include field elements such as lines and words in addition to form fields.
