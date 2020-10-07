@@ -12,8 +12,10 @@ from typing import (  # pylint: disable=unused-import
     Dict,
     TYPE_CHECKING
 )
+from functools import partial
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.exceptions import HttpResponseError
+from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from ._base_client_async import AsyncTextAnalyticsClientBase
 from .._request_handlers import _validate_input
 from .._response_handlers import (
@@ -23,7 +25,11 @@ from .._response_handlers import (
     key_phrases_result,
     sentiment_result,
     language_result,
-    pii_entities_result,
+    pii_entities_result
+)
+from .._response_handlers_async import (
+    healthcare_paged_result_async,
+    analyze_paged_result_async,
 )
 from .._models import (
     DetectLanguageInput,
@@ -523,5 +529,183 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                     "'show_opinion_mining' is only available for API version v3.1-preview and up"
                 )
             raise error
+        except HttpResponseError as error:
+            process_http_response_error(error)
+
+    async def _healthcare_result_callback_async(self, raw_response, _, headers, show_stats=False):
+        healthcare_result = self._deserialize(self._client.models().HealthcareJobState, raw_response)
+        return await healthcare_paged_result_async(self._client.health_status, raw_response, healthcare_result, headers, show_stats=show_stats)
+
+    @distributed_trace
+    async def begin_health(  # type: ignore
+        self,
+        documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
+        **kwargs  # type: Any
+    ):  # type: (...) -> AsyncLROPoller[AsyncItemPaged[RecognizeHealthcareEntitiesResult]]
+        """Analyze healthcare entities and identify relationships between these entities in a batch of documents.
+
+        Entities are associated with references that can be found in existing knowledge bases, such as UMLS, CHV, MSH, etc.
+        Relations are comprised of a pair of entities and a directional relationship.
+
+        :param documents: The set of documents to process as part of this batch.
+            If you wish to specify the ID and language on a per-item basis you must
+            use as input a list[:class:`~azure.ai.textanalytics.TextDocumentInput`] or a list of
+            dict representations of :class:`~azure.ai.textanalytics.TextDocumentInput`, like
+            `{"id": "1", "language": "en", "text": "hello world"}`.
+        :type documents:
+            list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or
+            list[dict[str, str]]
+        :keyword str model_version: This value indicates which model will
+            be used for scoring, e.g. "latest", "2019-10-01". If a model-version
+            is not specified, the API will default to the latest, non-preview version.
+        :keyword bool show_stats: If set to true, response will contain document level statistics.
+        :keyword int polling_interval: Waiting time between two polls for LRO operations
+            if no Retry-After header is present. Defaults to 30 seconds.
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :return: An instance of an AsyncLROPoller. Call `result()` on the poller
+            object to return a list[:class:`~azure.ai.textanalytics.RecognizeHealthcareEntitiesResult`].
+        :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_health.py
+                :start-after: [START health]
+                :end-before: [END health]
+                :language: python
+                :dedent: 8
+                :caption: Analyze healthcare entities in a batch of documents.
+        """
+
+        docs = _validate_input(documents, "language", self._default_language)
+        model_version = kwargs.pop("model_version", None)
+        show_stats = kwargs.pop("show_stats", False)
+        polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
+        continuation_token = kwargs.pop("continuation_token", None)
+
+        try:
+            return await self._client.begin_health(
+                docs,
+                model_version=model_version,
+                string_index_type=self._string_code_unit,
+                cls=kwargs.pop("cls", partial(self._healthcare_result_callback_async, show_stats=show_stats)),
+                polling=AsyncLROBasePolling(timeout=polling_interval, **kwargs),
+                continuation_token=continuation_token,
+                **kwargs
+            )
+        
+        except HttpResponseError as error:
+            process_http_response_error(error)
+
+    async def begin_cancel_health_operation(
+        self,
+        poller,  # type: AsyncLROPoller[None]
+        **kwargs
+    ):
+        # type: (...) -> AsyncLROPoller[None]
+        """Cancel an existing health operation.
+
+        :param poller: The LRO poller object associated with the health operation.
+        :return: An instance of an LROPoller that returns None.
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
+        """
+        initial_response = poller._polling_method._initial_response
+        operation_location = initial_response.http_response.headers["Operation-Location"]
+
+        from urllib.parse import urlparse
+        job_id = urlparse(operation_location).path.split("/")[-1]
+
+        try:
+            return await self._client.begin_cancel_health_job(job_id)
+
+        except HttpResponseError as error:
+            process_http_response_error(error)
+
+    async def _analyze_result_callback_async(self, raw_response, _, headers):
+        analyze_result = self._deserialize(self._client.models().AnalyzeJobState, raw_response)
+        return await analyze_paged_result_async(self._client.analyze_status, raw_response, analyze_result, headers)
+
+    @distributed_trace
+    async def begin_analyze(  # type: ignore
+        self,
+        documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
+        entities_recognition_tasks=None,  # type: List[~azure.ai.textanalytics.EntitiesRecognitionTask]
+        pii_entities_recognition_tasks=None,  # type: List[~azure.ai.textanalytics.PiiEntitiesRecognitionTask]
+        entity_linking_tasks=None,  # type: List[~azure.ai.textanalytics.EntityLinkingTask]
+        key_phrase_extraction_tasks=None,  # type: List[~azure.ai.textanalytics.KeyPhraseExtractionTask]
+        sentiment_analysis_tasks=None,  # type: List[~azure.ai.textanalytics.SentimentAnalysisTask]
+        **kwargs  # type: Any
+    ):  # type: (...) -> AsyncLROPoller[AsyncItemPaged[TextAnalysisResult]]):
+        """Start a long-running operation to perform a variety of text analysis tasks over a batch of documents.
+
+        :param documents: The set of documents to process as part of this batch.
+            If you wish to specify the ID and language on a per-item basis you must
+            use as input a list[:class:`~azure.ai.textanalytics.TextDocumentInput`] or a list of
+            dict representations of :class:`~azure.ai.textanalytics.TextDocumentInput`, like
+            `{"id": "1", "language": "en", "text": "hello world"}`.
+        :type documents:
+            list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or
+            list[dict[str, str]]
+        :param tasks: A list of tasks to include in the analysis.  Each task object encapsulates the parameters
+            used for the particular task type.
+        :type tasks: list[Union[~azure.ai.textanalytics.EntitiesRecognitionTask, 
+            ~azure.ai.textanalytics.PiiEntitiesRecognitionTask, ~azure.ai.textanalytics.EntityLinkingTask,
+            ~azure.ai.textanalytics.KeyPhraseExtractionTask, ~azure.ai.textanalytics.SentimentAnalysisTask]]
+        :keyword str display_name: An optional display name to set for the requested analysis.
+        :keyword str language: The 2 letter ISO 639-1 representation of language for the
+            entire batch. For example, use "en" for English; "es" for Spanish etc.
+            If not set, uses "en" for English as default. Per-document language will
+            take precedence over whole batch language. See https://aka.ms/talangs for
+            supported languages in Text Analytics API.
+        :keyword bool show_stats: If set to true, response will contain document level statistics.
+        :keyword int polling_interval: Waiting time between two polls for LRO operations
+            if no Retry-After header is present. Defaults to 30 seconds.
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :return: An instance of an AsyncLROPoller. Call `result()` on the poller
+            object to return an instance of TextAnalysisResult.
+        :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_analyze_text.py
+                :start-after: [START analyze_text]
+                :end-before: [END analyze_text]
+                :language: python
+                :dedent: 8
+                :caption: Start a long-running operation to perform a variety of text analysis tasks over a batch of documents.
+        """
+
+        display_name = kwargs.pop("display_name", None)
+        language_arg = kwargs.pop("language", None)
+        language = language_arg if language_arg is not None else self._default_language
+        docs = self._client.models(api_version="v3.2-preview.1").MultiLanguageBatchInput(documents=_validate_input(documents, "language", language))
+        show_stats = kwargs.pop("show_stats", False)
+        polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
+        continuation_token = kwargs.pop("continuation_token", None)
+
+        try:
+            analyze_tasks = self._client.models(api_version='v3.2-preview.1').JobManifestTasks(
+                entity_recognition_tasks = [t.to_generated() for t in entities_recognition_tasks],
+                entity_recognition_pii_tasks = [t.to_generated() for t in pii_entities_recognition_tasks],
+                entity_linking_tasks = [t.to_generated() for t in entity_linking_tasks],
+                key_phrase_extraction_tasks = [t.to_generated() for t in key_phrase_extraction_tasks],
+                sentiment_analysis_tasks = [t.to_generated() for t in sentiment_analysis_tasks]
+                # TODO: add custom task types later
+            )
+            analyze_body = self._client.models(api_version='v3.2-preview.1').AnalyzeBatchInput(
+                display_name=display_name,
+                tasks=analyze_tasks,
+                analysis_input=docs
+            )
+            return await self._client.begin_analyze(
+                body=analyze_body,
+                cls=kwargs.pop("cls", self._analyze_result_callback),
+                polling=AsyncLROBasePolling(timeout=polling_interval, **kwargs),
+                **kwargs
+            )
+
+        except NameError:
+            raise NotImplementedError("Service method 'begin_analyze_text' is only available for API versions v3.2-preview.1 and up.")
+        
         except HttpResponseError as error:
             process_http_response_error(error)
