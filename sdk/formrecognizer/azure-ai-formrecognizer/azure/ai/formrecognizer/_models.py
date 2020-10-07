@@ -598,7 +598,7 @@ class CustomFormModel(object):
         List of any training errors.
     :ivar list[~azure.ai.formrecognizer.TrainingDocumentInfo] training_documents:
          Metadata about each of the documents used to train the model.
-    :ivar str display_name: Optional user defined model name (max length: 1024).
+    :ivar str display_name: Optional user defined model name.
     :ivar properties: Optional model properties.
     :vartype properties: ~azure.ai.formrecognizer.CustomFormModelProperties
     .. versionadded:: v2.1-preview
@@ -872,7 +872,7 @@ class CustomFormModelInfo(object):
         Date and time (UTC) when model training was started.
     :ivar ~datetime.datetime training_completed_on:
         Date and time (UTC) when model training completed.
-    :ivar display_name: Optional user defined model name (max length: 1024).
+    :ivar display_name: Optional user defined model name.
     :vartype display_name: str
     :ivar properties: Optional model properties.
     :vartype properties: ~azure.ai.formrecognizer.CustomFormModelProperties

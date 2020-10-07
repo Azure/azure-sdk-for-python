@@ -82,7 +82,7 @@ class ComposedModelSample(object):
         )
         model = poller.result()
 
-        print("Purchase Order Model Info:")
+        print("Office Supplies Composed Model Info:")
         print("Model ID: {}".format(model.model_id))
         print("Model display name: {}".format(model.display_name))
         print("Is this a composed model?: {}".format(model.properties.is_composed_model))

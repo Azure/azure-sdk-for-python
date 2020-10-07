@@ -401,7 +401,7 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
     ) -> AsyncLROPoller[CustomFormModel]:
         """Creates a composed model from a collection of existing trained models with labels.
 
-        :param list[str] model_ids: List of model IDs that were trained with labels.
+        :param list[str] model_ids: List of model IDs to use in the composed model.
         :keyword str display_name: Optional model display name.
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if
             no Retry-After header is present.
