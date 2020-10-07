@@ -119,6 +119,15 @@ def clean_coverage(coverage_dir):
         else:
             raise
 
+def str_to_bool(input_string):
+    if isinstance(input_string, bool):
+        return input_string
+    elif input_string.lower() in ("true", "t", "1"):
+        return True
+    elif input_string.lower() in ("false", "f", "0"):
+        return False
+    else:
+        return False
 
 def parse_setup(setup_path):
     setup_filename = os.path.join(setup_path, "setup.py")

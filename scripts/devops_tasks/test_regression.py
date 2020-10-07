@@ -24,7 +24,8 @@ from common_tasks import (
     find_whl,
     find_tools_packages,
     get_installed_packages,
-    extend_dev_requirements
+    extend_dev_requirements,
+    str_to_bool
 )
 from git_helper import get_release_tag, git_checkout_tag, git_checkout_branch, clone_repo
 
@@ -348,7 +349,7 @@ def run_main(args):
 
     # Create regression text context. One context object will be reused for all packages
     context = RegressionContext(
-        args.whl_dir, temp_dir, args.verify_latest, args.mark_arg
+        args.whl_dir, temp_dir, str_to_bool(args.verify_latest), args.mark_arg
     )
 
     for pkg_path in targeted_packages:
