@@ -119,6 +119,15 @@ def clean_coverage(coverage_dir):
         else:
             raise
 
+def str_to_bool(input_string):
+    if isinstance(input_string, bool):
+        return input_string
+    elif input_string.lower() in ("true", "t", "1"):
+        return True
+    elif input_string.lower() in ("false", "f", "0"):
+        return False
+    else:
+        return False
 
 def parse_setup(setup_path):
     setup_filename = os.path.join(setup_path, "setup.py")
@@ -390,6 +399,21 @@ def filter_dev_requirements(pkg_root_path, packages_to_exclude, dest_dir):
         dev_req_file.writelines(requirements)
 
     return new_dev_req_path
+
+def extend_dev_requirements(dev_req_path, packages_to_include):
+    requirements = []
+    with open(dev_req_path, "r") as dev_req_file:
+        requirements = dev_req_file.readlines()
+
+    # include any package given in included list. omit duplicate
+    for requirement in packages_to_include:
+        if requirement not in requirements:
+            requirements.insert(0, requirement.rstrip() + '\n')
+
+    logging.info("Extending dev requirements. New result:: {}".format(requirements))
+    # create new dev requirements file with different name for filtered requirements
+    with open(dev_req_path, "w") as dev_req_file:
+        dev_req_file.writelines(requirements)
 
 def is_required_version_on_pypi(package_name, spec):
     from pypi_tools.pypi import PyPIClient

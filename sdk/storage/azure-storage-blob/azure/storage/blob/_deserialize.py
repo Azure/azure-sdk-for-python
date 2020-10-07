@@ -144,6 +144,7 @@ def get_blob_properties_from_generated_code(generated):
     blob.tag_count = generated.properties.tag_count
     blob.tags = parse_tags(generated.blob_tags)  # pylint: disable=protected-access
     blob.object_replication_source_properties = deserialize_ors_policies(generated.object_replication_metadata)
+    blob.last_accessed_on = generated.properties.last_accessed_on
     return blob
 
 

@@ -48,6 +48,7 @@ from azure.core.pipeline.transport import AsyncioRequestsTransportResponse, Asyn
 from azure.core.polling.base_polling import (
     LongRunningOperation,
     BadStatus,
+    LocationPolling
 )
 from azure.mgmt.core.polling.async_arm_polling import (
     AsyncARMPolling,
@@ -603,3 +604,14 @@ async def test_long_running_negative():
     LOCATION_BODY = json.dumps({ 'name': TEST_NAME })
     POLLING_STATUS = 200
 
+def test_polling_with_path_format_arguments():
+    method = AsyncARMPolling(
+        timeout=0,
+        path_format_arguments={"host": "host:3000", "accountName": "local"}
+    )
+    client = AsyncPipelineClient(base_url="http://{accountName}{host}")
+
+    method._operation = LocationPolling()
+    method._operation._location_url = "/results/1"
+    method._client = client
+    assert "http://localhost:3000/results/1" == method._client.format_url(method._operation.get_polling_url(), **method._path_format_arguments)

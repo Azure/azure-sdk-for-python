@@ -3,9 +3,11 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from datetime import datetime
+from functools import partial
 import time
 
 from azure.core.credentials import AccessToken
+from azure.core.exceptions import ResourceExistsError
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.keys import KeyClient
 from azure.keyvault.administration import KeyVaultBackupClient, BackupOperation
@@ -40,14 +42,28 @@ class BackupClientTests(KeyVaultTestCase):
         # backup the vault
         backup_client = KeyVaultBackupClient(self.managed_hsm["url"], self.credential)
         backup_poller = backup_client.begin_full_backup(container_uri, sas_token)
+
+        # check backup status and result
+        job_id = backup_poller.polling_method().resource().id
+        backup_status = backup_client.get_backup_status(job_id)
+        assert_in_progress_operation(backup_status)
         backup_operation = backup_poller.result()
         assert_successful_operation(backup_operation)
+        backup_status = backup_client.get_backup_status(job_id)
+        assert_successful_operation(backup_status)
 
         # restore the backup
         folder_name = backup_operation.azure_storage_blob_container_uri.split("/")[-1]
         restore_poller = backup_client.begin_full_restore(container_uri, sas_token, folder_name)
+
+        # check restore status and result
+        job_id = restore_poller.polling_method().resource().id
+        restore_status = backup_client.get_restore_status(job_id)
+        assert_in_progress_operation(restore_status)
         restore_operation = restore_poller.result()
         assert_successful_operation(restore_operation)
+        restore_status = backup_client.get_restore_status(job_id)
+        assert_successful_operation(restore_status)
 
     @ResourceGroupPreparer(random_name_enabled=True, use_cache=True)
     @StorageAccountPreparer(random_name_enabled=True)
@@ -61,16 +77,33 @@ class BackupClientTests(KeyVaultTestCase):
         # backup the vault
         backup_client = KeyVaultBackupClient(self.managed_hsm["url"], self.credential)
         backup_poller = backup_client.begin_full_backup(container_uri, sas_token)
+
+        # check backup status and result
+        job_id = backup_poller.polling_method().resource().id
+        backup_status = backup_client.get_backup_status(job_id)
+        assert_in_progress_operation(backup_status)
         backup_operation = backup_poller.result()
         assert_successful_operation(backup_operation)
+        backup_status = backup_client.get_backup_status(job_id)
+        assert_successful_operation(backup_status)
 
         # restore the key
         folder_name = backup_operation.azure_storage_blob_container_uri.split("/")[-1]
         restore_poller = backup_client.begin_selective_restore(container_uri, sas_token, folder_name, key_name)
+
+        # check restore status and result
+        job_id = restore_poller.polling_method().resource().id
+        restore_status = backup_client.get_restore_status(job_id)
+        assert_in_progress_operation(restore_status)
         restore_operation = restore_poller.result()
         assert_successful_operation(restore_operation)
+        restore_status = backup_client.get_restore_status(job_id)
+        assert_successful_operation(restore_status)
 
-        key_client.begin_delete_key(key_name).wait()
+        # delete the key
+        delete_function = partial(key_client.begin_delete_key, key_name)
+        delete_poller = self._poll_until_no_exception(delete_function, ResourceExistsError)
+        delete_poller.wait()
         key_client.purge_deleted_key(key_name)
 
 
@@ -91,6 +124,14 @@ def test_continuation_token():
         assert mock_method.call_count == 1
         _, kwargs = mock_method.call_args
         assert kwargs["continuation_token"] == expected_token
+
+
+def assert_in_progress_operation(operation):
+    if isinstance(operation, BackupOperation):
+        assert operation.azure_storage_blob_container_uri is None
+    assert operation.status == "InProgress"
+    assert operation.end_time is None
+    assert isinstance(operation.start_time, datetime)
 
 
 def assert_successful_operation(operation):

@@ -46,7 +46,7 @@ class RecognizeReceiptsSampleAsync(object):
         ) as form_recognizer_client:
 
             with open(path_to_sample_forms, "rb") as f:
-                poller = await form_recognizer_client.begin_recognize_receipts(receipt=f)
+                poller = await form_recognizer_client.begin_recognize_receipts(receipt=f, locale="en-US")
 
             receipts = await poller.result()
 

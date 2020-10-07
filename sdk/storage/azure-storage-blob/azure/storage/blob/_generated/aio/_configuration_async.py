@@ -41,7 +41,7 @@ class AzureBlobStorageConfiguration(Configuration):
         self.accept_language = None
 
         self.url = url
-        self.version = "2019-12-12"
+        self.version = "2020-02-10"
 
     def _configure(self, **kwargs):
         self.user_agent_policy = kwargs.get('user_agent_policy') or policies.UserAgentPolicy(**kwargs)

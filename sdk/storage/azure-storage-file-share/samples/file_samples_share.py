@@ -111,6 +111,21 @@ class ShareSamples(object):
         # Get the file client to interact with a specific file
         my_file = share.get_file_client("dir1/myfile")
 
+    def acquire_share_lease(self):
+        # Instantiate the ShareClient from a connection string
+        from azure.storage.fileshare import ShareClient
+        share = ShareClient.from_connection_string(self.connection_string, "sharesamples")
+
+        # Create the share
+        share.create_share()
+
+        # [START acquire_and_release_lease_on_share]
+        share.create_directory("mydir")
+        lease = share.acquire_lease()
+        share.get_share_properties(lease=lease)
+        share.delete_share(lease=lease)
+        # [END acquire_and_release_lease_on_share]
+
 
 if __name__ == '__main__':
     sample = ShareSamples()
@@ -118,3 +133,4 @@ if __name__ == '__main__':
     sample.set_share_quota_and_metadata()
     sample.list_directories_and_files()
     sample.get_directory_or_file_client()
+    sample.acquire_share_lease()

@@ -726,14 +726,14 @@ class ComputerVisionClientOperationsMixin(object):
 
         :param url: Publicly reachable URL of an image.
         :type url: str
-        :param language: The BCP-47 language code of the text to be detected
-         in the image. In future versions, when language parameter is not
-         passed, language detection will be used to determine the language.
-         However, in the current version, missing language parameter will cause
-         English to be used. To ensure that your document is always parsed in
-         English without the use of language detection in the future, pass “en”
-         in the language parameter. Possible values include: 'en', 'es', 'fr',
-         'de', 'it', 'nl', 'pt'
+        :param language: The BCP-47 language code of the text in the document.
+         Currently, only English ('en'), Dutch (‘nl’), French (‘fr’), German
+         (‘de’), Italian (‘it’), Portuguese (‘pt), and Spanish ('es') are
+         supported. Read supports auto language identification and
+         multi-language documents, so only provide a language code if you would
+         like to force the documented to be processed as that specific
+         language. Possible values include: 'en', 'es', 'fr', 'de', 'it', 'nl',
+         'pt'
         :type language: str or
          ~azure.cognitiveservices.vision.computervision.models.OcrDetectionLanguage
         :param dict custom_headers: headers that will be added to the request
@@ -1513,14 +1513,14 @@ class ComputerVisionClientOperationsMixin(object):
 
         :param image: An image stream.
         :type image: Generator
-        :param language: The BCP-47 language code of the text to be detected
-         in the image. In future versions, when language parameter is not
-         passed, language detection will be used to determine the language.
-         However, in the current version, missing language parameter will cause
-         English to be used. To ensure that your document is always parsed in
-         English without the use of language detection in the future, pass “en”
-         in the language parameter. Possible values include: 'en', 'es', 'fr',
-         'de', 'it', 'nl', 'pt'
+        :param language: The BCP-47 language code of the text in the document.
+         Currently, only English ('en'), Dutch (‘nl’), French (‘fr’), German
+         (‘de’), Italian (‘it’), Portuguese (‘pt), and Spanish ('es') are
+         supported. Read supports auto language identification and
+         multi-language documents, so only provide a language code if you would
+         like to force the documented to be processed as that specific
+         language. Possible values include: 'en', 'es', 'fr', 'de', 'it', 'nl',
+         'pt'
         :type language: str or
          ~azure.cognitiveservices.vision.computervision.models.OcrDetectionLanguage
         :param dict custom_headers: headers that will be added to the request

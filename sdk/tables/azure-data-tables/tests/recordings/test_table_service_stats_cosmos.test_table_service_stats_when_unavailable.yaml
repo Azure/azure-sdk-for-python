@@ -1,0 +1,38 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Date:
+      - Thu, 17 Sep 2020 18:22:18 GMT
+      User-Agent:
+      - azsdk-python-data-tables/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Thu, 17 Sep 2020 18:22:18 GMT
+      x-ms-version:
+      - '2019-07-07'
+    method: GET
+    uri: https://cosmostablescosmosname-secondary.table.cosmos.azure.com/?restype=service&comp=stats
+  response:
+    body:
+      string: "{\"odata.error\":{\"code\":\"NotImplemented\",\"message\":{\"lang\":\"en-us\",\"value\":\"The
+        requested operation is not supported.\\r\\nActivityId: b86ffa83-f912-11ea-941b-58961df361d1,
+        documentdb-dotnet-sdk/2.11.0 Host/64-bit MicrosoftWindowsNT/6.2.9200.0\\nRequestID:b86ffa83-f912-11ea-941b-58961df361d1\\n\"}}}\r\n"
+    headers:
+      content-type:
+      - application/json;odata=fullmetadata
+      date:
+      - Thu, 17 Sep 2020 18:22:18 GMT
+      server:
+      - Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+    status:
+      code: 501
+      message: Not Implemented
+version: 1

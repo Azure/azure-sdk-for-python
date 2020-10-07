@@ -11,7 +11,7 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Thu, 17 Sep 2020 21:13:25 GMT
+      - Tue, 29 Sep 2020 17:47:50 GMT
       User-Agent:
       - azsdk-python-communication-administration/1.0.0b1 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
@@ -26,15 +26,15 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 17 Sep 2020 21:13:25 GMT
+      - Tue, 29 Sep 2020 17:47:50 GMT
       ms-cv:
-      - LDtutiVFNU2pjSvJZfJmJQ.0
+      - CoE2LmTaiE+T/aECFj99Zg.0
       strict-transport-security:
       - max-age=2592000
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 72ms
+      - 16ms
     status:
       code: 200
       message: OK

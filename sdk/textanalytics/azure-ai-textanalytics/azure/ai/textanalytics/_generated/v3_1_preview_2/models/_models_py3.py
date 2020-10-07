@@ -998,7 +998,7 @@ class PiiDocumentEntities(msrest.serialization.Model):
     :param statistics: if showStats=true was specified in the request this field will contain
      information about the document payload.
     :type statistics: ~azure.ai.textanalytics.v3_1_preview_2.models.DocumentStatistics
-    :param redacted_text: Returns redacted text.
+    :param redacted_text: Required. Returns redacted text.
     :type redacted_text: str
     """
 
@@ -1006,6 +1006,7 @@ class PiiDocumentEntities(msrest.serialization.Model):
         'id': {'required': True},
         'entities': {'required': True},
         'warnings': {'required': True},
+        'redacted_text': {'required': True},
     }
 
     _attribute_map = {
@@ -1022,8 +1023,8 @@ class PiiDocumentEntities(msrest.serialization.Model):
         id: str,
         entities: List["Entity"],
         warnings: List["TextAnalyticsWarning"],
+        redacted_text: str,
         statistics: Optional["DocumentStatistics"] = None,
-        redacted_text: Optional[str] = None,
         **kwargs
     ):
         super(PiiDocumentEntities, self).__init__(**kwargs)
