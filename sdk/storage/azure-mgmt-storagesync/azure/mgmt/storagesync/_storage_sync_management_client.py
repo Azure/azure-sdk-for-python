@@ -15,6 +15,8 @@ from msrest import Serializer, Deserializer
 from ._configuration import StorageSyncManagementClientConfiguration
 from .operations import Operations
 from .operations import StorageSyncServicesOperations
+from .operations import PrivateLinkResourcesOperations
+from .operations import PrivateEndpointConnectionsOperations
 from .operations import SyncGroupsOperations
 from .operations import CloudEndpointsOperations
 from .operations import ServerEndpointsOperations
@@ -34,6 +36,10 @@ class StorageSyncManagementClient(SDKClient):
     :vartype operations: azure.mgmt.storagesync.operations.Operations
     :ivar storage_sync_services: StorageSyncServices operations
     :vartype storage_sync_services: azure.mgmt.storagesync.operations.StorageSyncServicesOperations
+    :ivar private_link_resources: PrivateLinkResources operations
+    :vartype private_link_resources: azure.mgmt.storagesync.operations.PrivateLinkResourcesOperations
+    :ivar private_endpoint_connections: PrivateEndpointConnections operations
+    :vartype private_endpoint_connections: azure.mgmt.storagesync.operations.PrivateEndpointConnectionsOperations
     :ivar sync_groups: SyncGroups operations
     :vartype sync_groups: azure.mgmt.storagesync.operations.SyncGroupsOperations
     :ivar cloud_endpoints: CloudEndpoints operations
@@ -62,13 +68,17 @@ class StorageSyncManagementClient(SDKClient):
         super(StorageSyncManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2019-06-01'
+        self.api_version = '2020-09-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
         self.storage_sync_services = StorageSyncServicesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.private_link_resources = PrivateLinkResourcesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.sync_groups = SyncGroupsOperations(
             self._client, self.config, self._serialize, self._deserialize)

@@ -12,6 +12,8 @@
 import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
+from msrest.polling import LROPoller, NoPolling
+from msrestazure.polling.arm_polling import ARMPolling
 
 from .. import models
 
@@ -25,7 +27,7 @@ class StorageSyncServicesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version to use for this operation. Constant value: "2019-06-01".
+    :ivar api_version: The API version to use for this operation. Constant value: "2020-09-01".
     """
 
     models = models
@@ -35,7 +37,7 @@ class StorageSyncServicesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-06-01"
+        self.api_version = "2020-09-01"
 
         self.config = config
 
@@ -105,30 +107,9 @@ class StorageSyncServicesOperations(object):
         return deserialized
     check_name_availability.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.StorageSync/locations/{locationName}/checkNameAvailability'}
 
-    def create(
-            self, resource_group_name, storage_sync_service_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Create a new StorageSyncService.
 
-        :param resource_group_name: The name of the resource group. The name
-         is case insensitive.
-        :type resource_group_name: str
-        :param storage_sync_service_name: Name of Storage Sync Service
-         resource.
-        :type storage_sync_service_name: str
-        :param parameters: Storage Sync Service resource name.
-        :type parameters:
-         ~azure.mgmt.storagesync.models.StorageSyncServiceCreateParameters
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: StorageSyncService or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.storagesync.models.StorageSyncService or
-         ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`StorageSyncErrorException<azure.mgmt.storagesync.models.StorageSyncErrorException>`
-        """
+    def _create_initial(
+            self, resource_group_name, storage_sync_service_name, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.create.metadata['url']
         path_format_arguments = {
@@ -160,18 +141,89 @@ class StorageSyncServicesOperations(object):
         request = self._client.put(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 202]:
             raise models.StorageSyncErrorException(self._deserialize, response)
 
         deserialized = None
+        header_dict = {}
+
         if response.status_code == 200:
             deserialized = self._deserialize('StorageSyncService', response)
+            header_dict = {
+                'Azure-AsyncOperation': 'str',
+                'Location': 'str',
+                'Retry-After': 'str',
+                'x-ms-request-id': 'str',
+                'x-ms-correlation-request-id': 'str',
+            }
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
+            client_raw_response.add_headers(header_dict)
             return client_raw_response
 
         return deserialized
+
+    def create(
+            self, resource_group_name, storage_sync_service_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Create a new StorageSyncService.
+
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
+        :type resource_group_name: str
+        :param storage_sync_service_name: Name of Storage Sync Service
+         resource.
+        :type storage_sync_service_name: str
+        :param parameters: Storage Sync Service resource name.
+        :type parameters:
+         ~azure.mgmt.storagesync.models.StorageSyncServiceCreateParameters
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns StorageSyncService or
+         ClientRawResponse<StorageSyncService> if raw==True
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.storagesync.models.StorageSyncService]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.storagesync.models.StorageSyncService]]
+        :raises:
+         :class:`StorageSyncErrorException<azure.mgmt.storagesync.models.StorageSyncErrorException>`
+        """
+        raw_result = self._create_initial(
+            resource_group_name=resource_group_name,
+            storage_sync_service_name=storage_sync_service_name,
+            parameters=parameters,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            header_dict = {
+                'Azure-AsyncOperation': 'str',
+                'Location': 'str',
+                'Retry-After': 'str',
+                'x-ms-request-id': 'str',
+                'x-ms-correlation-request-id': 'str',
+            }
+            deserialized = self._deserialize('StorageSyncService', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                client_raw_response.add_headers(header_dict)
+                return client_raw_response
+
+            return deserialized
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StorageSync/storageSyncServices/{storageSyncServiceName}'}
 
     def get(
@@ -242,35 +294,12 @@ class StorageSyncServicesOperations(object):
         return deserialized
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StorageSync/storageSyncServices/{storageSyncServiceName}'}
 
-    def update(
-            self, resource_group_name, storage_sync_service_name, tags=None, properties=None, custom_headers=None, raw=False, **operation_config):
-        """Patch a given StorageSyncService.
 
-        :param resource_group_name: The name of the resource group. The name
-         is case insensitive.
-        :type resource_group_name: str
-        :param storage_sync_service_name: Name of Storage Sync Service
-         resource.
-        :type storage_sync_service_name: str
-        :param tags: The user-specified tags associated with the storage sync
-         service.
-        :type tags: dict[str, str]
-        :param properties: The properties of the storage sync service.
-        :type properties: object
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: StorageSyncService or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.storagesync.models.StorageSyncService or
-         ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`StorageSyncErrorException<azure.mgmt.storagesync.models.StorageSyncErrorException>`
-        """
+    def _update_initial(
+            self, resource_group_name, storage_sync_service_name, tags=None, incoming_traffic_policy=None, custom_headers=None, raw=False, **operation_config):
         parameters = None
-        if tags is not None or properties is not None:
-            parameters = models.StorageSyncServiceUpdateParameters(tags=tags, properties=properties)
+        if tags is not None or incoming_traffic_policy is not None:
+            parameters = models.StorageSyncServiceUpdateParameters(tags=tags, incoming_traffic_policy=incoming_traffic_policy)
 
         # Construct URL
         url = self.update.metadata['url']
@@ -306,16 +335,20 @@ class StorageSyncServicesOperations(object):
         request = self._client.patch(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 202]:
             raise models.StorageSyncErrorException(self._deserialize, response)
 
-        header_dict = {}
         deserialized = None
+        header_dict = {}
+
         if response.status_code == 200:
             deserialized = self._deserialize('StorageSyncService', response)
             header_dict = {
                 'x-ms-request-id': 'str',
                 'x-ms-correlation-request-id': 'str',
+                'Azure-AsyncOperation': 'str',
+                'Location': 'str',
+                'Retry-After': 'str',
             }
 
         if raw:
@@ -324,11 +357,10 @@ class StorageSyncServicesOperations(object):
             return client_raw_response
 
         return deserialized
-    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StorageSync/storageSyncServices/{storageSyncServiceName}'}
 
-    def delete(
-            self, resource_group_name, storage_sync_service_name, custom_headers=None, raw=False, **operation_config):
-        """Delete a given StorageSyncService.
+    def update(
+            self, resource_group_name, storage_sync_service_name, tags=None, incoming_traffic_policy=None, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Patch a given StorageSyncService.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
@@ -336,16 +368,66 @@ class StorageSyncServicesOperations(object):
         :param storage_sync_service_name: Name of Storage Sync Service
          resource.
         :type storage_sync_service_name: str
+        :param tags: The user-specified tags associated with the storage sync
+         service.
+        :type tags: dict[str, str]
+        :param incoming_traffic_policy: Incoming Traffic Policy. Possible
+         values include: 'AllowAllTraffic', 'AllowVirtualNetworksOnly'
+        :type incoming_traffic_policy: str or
+         ~azure.mgmt.storagesync.models.IncomingTrafficPolicy
         :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns StorageSyncService or
+         ClientRawResponse<StorageSyncService> if raw==True
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.storagesync.models.StorageSyncService]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.storagesync.models.StorageSyncService]]
         :raises:
          :class:`StorageSyncErrorException<azure.mgmt.storagesync.models.StorageSyncErrorException>`
         """
+        raw_result = self._update_initial(
+            resource_group_name=resource_group_name,
+            storage_sync_service_name=storage_sync_service_name,
+            tags=tags,
+            incoming_traffic_policy=incoming_traffic_policy,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            header_dict = {
+                'x-ms-request-id': 'str',
+                'x-ms-correlation-request-id': 'str',
+                'Azure-AsyncOperation': 'str',
+                'Location': 'str',
+                'Retry-After': 'str',
+            }
+            deserialized = self._deserialize('StorageSyncService', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                client_raw_response.add_headers(header_dict)
+                return client_raw_response
+
+            return deserialized
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StorageSync/storageSyncServices/{storageSyncServiceName}'}
+
+
+    def _delete_initial(
+            self, resource_group_name, storage_sync_service_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
@@ -372,16 +454,70 @@ class StorageSyncServicesOperations(object):
         request = self._client.delete(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 204]:
+        if response.status_code not in [200, 202, 204]:
             raise models.StorageSyncErrorException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
-            client_raw_response.add_headers({
+            header_dict = {
                 'x-ms-request-id': 'str',
                 'x-ms-correlation-request-id': 'str',
-            })
+                'Azure-AsyncOperation': 'str',
+                'Location': 'str',
+                'Retry-After': 'str',
+            }
+            client_raw_response.add_headers(header_dict)
             return client_raw_response
+
+    def delete(
+            self, resource_group_name, storage_sync_service_name, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Delete a given StorageSyncService.
+
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
+        :type resource_group_name: str
+        :param storage_sync_service_name: Name of Storage Sync Service
+         resource.
+        :type storage_sync_service_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns None or
+         ClientRawResponse<None> if raw==True
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
+        :raises:
+         :class:`StorageSyncErrorException<azure.mgmt.storagesync.models.StorageSyncErrorException>`
+        """
+        raw_result = self._delete_initial(
+            resource_group_name=resource_group_name,
+            storage_sync_service_name=storage_sync_service_name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            if raw:
+                client_raw_response = ClientRawResponse(None, response)
+                client_raw_response.add_headers({
+                    'x-ms-request-id': 'str',
+                    'x-ms-correlation-request-id': 'str',
+                    'Azure-AsyncOperation': 'str',
+                    'Location': 'str',
+                    'Retry-After': 'str',
+                })
+                return client_raw_response
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StorageSync/storageSyncServices/{storageSyncServiceName}'}
 
     def list_by_resource_group(
