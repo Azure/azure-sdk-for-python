@@ -54,7 +54,7 @@ class DigitalTwinsClient(object):
         """Get a digital twin.
 
         :param str digital_twin_id: The Id of the digital twin.
-        :returns: The twin object.
+        :return: The twin object.
         :rtype: object
         :raises :class: `~azure.core.exceptions.HttpResponseError`
         :raises :class: `~azure.core.exceptions.ResourceNotFoundError`:
@@ -82,7 +82,7 @@ class DigitalTwinsClient(object):
 
         :param str digital_twin_id: The Id of the digital twin.
         :param object digital_twin: The twin object to create or update.
-        :returns: The created or updated twin object.
+        :return: The created or updated twin object.
         :rtype: object
         :raises :class: `~azure.core.exceptions.HttpResponseError`
         :raises :class: `~azure.core.exceptions.ServiceRequestError`:
@@ -113,22 +113,21 @@ class DigitalTwinsClient(object):
     def update_digital_twin(
         self,
         digital_twin_id,
-        twin_patch,
-        etag=None,
-        match_condition=MatchConditions.Unconditionally,
+        json_patch,
         **kwargs
     ):
-        # type: (str, object, Optional[str], Optional[MatchConditions], dict) -> None
+        # type: (str, object, dict) -> None
         """Update a digital twin using a json patch.
 
         :param str digital_twin_id: The Id of the digital twin.
-        :param str twin_patch: An update specification described by JSON Patch.
+        :param str json_patch: An update specification described by JSON Patch.
             Updates to property values and $model elements may happen in the same request.
             Operations are limited to add, replace and remove.
-        :param str etag: Only perform the operation if the entity's etag matches one of
+        :keyword str etag: Only perform the operation if the entity's etag matches one of
             the etags provided or * is provided.
-        :param ~azure.core.MatchConditions match_condition: the match condition to use upon the etag
-        :returns: None
+        :keyword ~azure.core.MatchConditions match_condition:
+            The match condition to use upon the etag
+        :return: None
         :rtype: None
         :raises :class: `~azure.core.exceptions.HttpResponseError`
         :raises :class: `~azure.core.exceptions.ServiceRequestError`:
@@ -140,6 +139,9 @@ class DigitalTwinsClient(object):
             400: ServiceRequestError,
             404: ResourceNotFoundError
         }
+
+        etag = kwargs.get("etag", None)
+        match_condition = kwargs.get("match_condition", MatchConditions.Unconditionally)
         if match_condition == MatchConditions.IfNotModified:
             error_map[412] = ResourceModifiedError
         if match_condition == MatchConditions.IfModified:
@@ -152,7 +154,7 @@ class DigitalTwinsClient(object):
         try:
             return self._client.digital_twins.update(
                 digital_twin_id, 
-                twin_patch, 
+                json_patch, 
                 if_match=prep_if_match(etag, match_condition),
                 error_map=error_map,
                 **kwargs
@@ -168,18 +170,16 @@ class DigitalTwinsClient(object):
     def delete_digital_twin(
         self,
         digital_twin_id,
-        etag=None,
-        match_condition=MatchConditions.Unconditionally,
         **kwargs
     ):
-        # type: (str, Optional[str], Optional[MatchConditions], dict) -> None
+        # type: (str, dict) -> None
         """Delete a digital twin.
 
         :param str digital_twin_id: The Id of the digital twin.
-        :param str etag: Only perform the operation if the entity's etag matches one of
+        :keyword str etag: Only perform the operation if the entity's etag matches one of
             the etags provided or * is provided.
-        :param ~azure.core.MatchConditions match_condition: the match condition to use upon the etag
-        :returns: None
+        :keyword ~azure.core.MatchConditions match_condition: the match condition to use upon the etag
+        :return: None
         :rtype: None
         :raises :class: `~azure.core.exceptions.HttpResponseError`
         :raises :class: `~azure.core.exceptions.ServiceRequestError`:
@@ -191,6 +191,9 @@ class DigitalTwinsClient(object):
             400: ServiceRequestError,
             404: ResourceNotFoundError
         }
+
+        etag = kwargs.get("etag", None)
+        match_condition = kwargs.get("match_condition", MatchConditions.Unconditionally)
         if match_condition == MatchConditions.IfNotModified:
             error_map[412] = ResourceModifiedError
         if match_condition == MatchConditions.IfModified:
@@ -221,7 +224,7 @@ class DigitalTwinsClient(object):
 
         :param str digital_twin_id: The Id of the digital twin.
         :param str component_path: The component being retrieved.
-        :returns: The component object.
+        :return: The component object.
         :rtype: object
         :raises :class: `~azure.core.exceptions.HttpResponseError`
         :raises :class: `~azure.core.exceptions.ResourceNotFoundError`: If there is either no
@@ -248,21 +251,19 @@ class DigitalTwinsClient(object):
         self,
         digital_twin_id,
         component_path,
-        component_patch,
-        etag=None,
-        match_condition=MatchConditions.Unconditionally,
+        json_patch,
         **kwargs
     ):
-        # type: (str, str, List[object],  Optional[str], Optional[MatchConditions], dict) -> None
+        # type: (str, str, List[object], dict) -> None
         """Update properties of a component on a digital twin using a JSON patch.
 
         :param str digital_twin_id: The Id of the digital twin.
         :param str component_path: The component being updated.
-        :param List[object] component_patch: An update specification described by JSON Patch.
-        :param str etag: Only perform the operation if the entity's etag matches one of
+        :param List[object] json_patch: An update specification described by JSON Patch.
+        :keyword str etag: Only perform the operation if the entity's etag matches one of
             the etags provided or * is provided.
-        :param ~azure.core.MatchConditions match_condition: the match condition to use upon the etag
-        :returns: None
+        :keyword ~azure.core.MatchConditions match_condition: the match condition to use upon the etag
+        :return: None
         :rtype: None
         :raises :class: `~azure.core.exceptions.HttpResponseError`
         :raises :class: `~azure.core.exceptions.ServiceRequestError`: If the request is invalid.
@@ -273,6 +274,9 @@ class DigitalTwinsClient(object):
             400: ServiceRequestError,
             404: ResourceNotFoundError
         }
+
+        etag = kwargs.get("etag", None)
+        match_condition = kwargs.get("match_condition", MatchConditions.Unconditionally)
         if match_condition == MatchConditions.IfNotModified:
             error_map[412] = ResourceModifiedError
         if match_condition == MatchConditions.IfModified:
@@ -286,7 +290,7 @@ class DigitalTwinsClient(object):
             return self._client.digital_twins.update_component(
                 digital_twin_id,
                 component_path,
-                patch_document=component_patch,
+                patch_document=json_patch,
                 if_match=prep_if_match(etag, match_condition),
                 error_map=error_map,
                 **kwargs
@@ -305,7 +309,7 @@ class DigitalTwinsClient(object):
 
         :param str digital_twin_id: The Id of the digital twin.
         :param str relationship_id: The Id of the relationship to retrieve.
-        :returns: The relationship object.
+        :return: The relationship object.
         :rtype: object
         :raises :class: `~azure.core.exceptions.HttpResponseError`
         :raises :class: `~azure.core.exceptions.ResourceNotFoundError`: If there is either no
@@ -335,7 +339,7 @@ class DigitalTwinsClient(object):
         :param str digital_twin_id: The Id of the digital twin.
         :param str relationship_id: The Id of the relationship to retrieve.
         :param object relationship: The relationship object.
-        :returns: The created or updated relationship object.
+        :return: The created or updated relationship object.
         :rtype: object
         :raises :class: `~azure.core.exceptions.HttpResponseError`
         :raises :class: `~azure.core.exceptions.ServiceRequestError`: If the request is invalid.
@@ -367,22 +371,20 @@ class DigitalTwinsClient(object):
         self,
         digital_twin_id,
         relationship_id,
-        relationship_patch=None,
-        etag=None,
-        match_condition=MatchConditions.Unconditionally,
+        json_patch=None,
         **kwargs
     ):
-        # type: (str, str, List[object], Optional[str], Optional[MatchConditions], dict) -> None
+        # type: (str, str, List[object], dict) -> None
         """Updates the properties of a relationship on a digital twin using a JSON patch.
 
         :param str digital_twin_id: The Id of the digital twin.
         :param str relationship_id: The Id of the relationship to retrieve.
-        :param List[object] relationship_patch: JSON Patch description of the update
+        :param List[object] json_patch: JSON Patch description of the update
             to the relationship properties.
-        :param str etag: Only perform the operation if the entity's etag matches one of
+        :keyword str etag: Only perform the operation if the entity's etag matches one of
             the etags provided or * is provided.
-        :param ~azure.core.MatchConditions match_condition: the match condition to use upon the etag
-        :returns: None
+        :keyword ~azure.core.MatchConditions match_condition: the match condition to use upon the etag
+        :return: None
         :rtype: None
         :raises :class: `~azure.core.exceptions.HttpResponseError`
         :raises :class: `~azure.core.exceptions.ServiceRequestError`: If the request is invalid.
@@ -393,6 +395,9 @@ class DigitalTwinsClient(object):
             400: ServiceRequestError,
             404: ResourceNotFoundError
         }
+
+        etag = kwargs.get("etag", None)
+        match_condition = kwargs.get("match_condition", MatchConditions.Unconditionally)
         if match_condition == MatchConditions.IfNotModified:
             error_map[412] = ResourceModifiedError
         if match_condition == MatchConditions.IfModified:
@@ -406,7 +411,7 @@ class DigitalTwinsClient(object):
             return self._client.digital_twins.update_relationship(
                 id=digital_twin_id,
                 relationship_id=relationship_id,
-                relationship_patch=relationship_patch,
+                json_patch=json_patch,
                 if_match=prep_if_match(etag, match_condition),
                 error_map=error_map,
                 **kwargs
@@ -423,19 +428,17 @@ class DigitalTwinsClient(object):
         self,
         digital_twin_id,
         relationship_id,
-        etag=None,
-        match_condition=MatchConditions.Unconditionally,
         **kwargs
     ):
-        # type: (str, str, Optional[str], Optional[MatchConditions], dict) -> None
+        # type: (str, str, dict) -> None
         """Delete a digital twin.
 
         :param str digital_twin_id: The Id of the digital twin.
         :param str relationship_id: The Id of the relationship to delete.
-        :param str etag: Only perform the operation if the entity's etag matches one of
+        :keyword str etag: Only perform the operation if the entity's etag matches one of
             the etags provided or * is provided.
-        :param ~azure.core.MatchConditions match_condition: the match condition to use upon the etag
-        :returns: None
+        :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
+        :return: None
         :rtype: None
         :raises :class: `~azure.core.exceptions.HttpResponseError`
         :raises :class: `~azure.core.exceptions.ResourceNotFoundError`: If there is either no
@@ -444,6 +447,9 @@ class DigitalTwinsClient(object):
         error_map = {
             404: ResourceNotFoundError
         }
+
+        etag = kwargs.get("etag", None)
+        match_condition = kwargs.get("match_condition", MatchConditions.Unconditionally)
         if match_condition == MatchConditions.IfNotModified:
             error_map[412] = ResourceModifiedError
         if match_condition == MatchConditions.IfModified:
@@ -629,7 +635,7 @@ class DigitalTwinsClient(object):
         :param str model_id: The Id of the model.
         :param bool include_model_definition: When true the model definition
             will be returned as part of the result.
-        :returns: The ModelDate object.
+        :return: The ModelDate object.
         :rtype: ~azure.digitaltwins.models.ModelData
         :raises :class: `~azure.core.exceptions.HttpResponseError`
         :raises :class: `~azure.core.exceptions.ResourceNotFoundError`: If there is no
@@ -661,7 +667,7 @@ class DigitalTwinsClient(object):
             will be returned as part of the result.
         :keyword int max_item_count: The maximum number of items to retrieve per request.
             The server may choose to return less than the requested max.
-        :returns: An iterator instance of list of ModelData.
+        :return: An iterator instance of list of ModelData.
         :rtype: ~azure.core.paging.ItemPaged[~azure.digitaltwins.models.ModelData]
         :raises :class: `~azure.core.exceptions.HttpResponseError`
         :raises :class: `~azure.core.exceptions.ServiceRequestError`: If the request is invalid.
@@ -695,7 +701,7 @@ class DigitalTwinsClient(object):
         """Create one or more models. When any error occurs, no models are uploaded.
 
         :param List[object] model_list: The set of models to create. Each string corresponds to exactly one model.
-        :returns: The list of ModelData
+        :return: The list of ModelData
         :rtype: List[~azure.digitaltwins.models.ModelData]
         :raises :class: `~azure.core.exceptions.HttpResponseError`
         :raises :class: `~azure.core.exceptions.ServiceRequestError`: If the request is invalid.
@@ -725,14 +731,14 @@ class DigitalTwinsClient(object):
         """Decommissions a model.
 
         :param str model_id: The id for the model. The id is globally unique and case sensitive.
-        :returns: None
+        :return: None
         :rtype: None
         :raises :class: `~azure.core.exceptions.HttpResponseError`
         :raises :class: `~azure.core.exceptions.ServiceRequestError`: If the request is invalid.
         :raises :class: `~azure.core.exceptions.ResourceNotFoundError`: There is no model
             with the provided id.
         """
-        decommission_patch = "{ 'op': 'replace', 'path': '/decommissioned', 'value': true }"
+        json_patch = "{ 'op': 'replace', 'path': '/decommissioned', 'value': true }"
         error_map = {
             400: ServiceRequestError,
             404: ResourceNotFoundError
@@ -740,7 +746,7 @@ class DigitalTwinsClient(object):
         try:
             return self._client.digital_twin_models.update(
                 model_id,
-                decommission_patch ,
+                json_patch ,
                 error_map=error_map,
                 **kwargs
             )
@@ -757,7 +763,7 @@ class DigitalTwinsClient(object):
         """Decommission a model using a json patch.
 
         :param str model_id: The Id of the model to decommission.
-        :returns: None
+        :return: None
         :rtype: None
         :raises :class: `~azure.core.exceptions.HttpResponseError`
         :raises :class: `~azure.core.exceptions.ServiceRequestError`: If the request is invalid.
@@ -792,7 +798,7 @@ class DigitalTwinsClient(object):
         """Get an event route.
 
         :param str event_route_id: The Id of the event route.
-        :returns: The EventRoute object.
+        :return: The EventRoute object.
         :rtype: ~azure.digitaltwins.models.EventRoute
         :raises :class: `~azure.core.exceptions.HttpResponseError`
         :raises :class: `~azure.core.exceptions.ResourceNotFoundError`: There is no
@@ -819,7 +825,7 @@ class DigitalTwinsClient(object):
 
         :param str max_item_count: The maximum number of items to retrieve per request.
             The server may choose to return less than the requested max.
-        :returns: An iterator instance of list of EventRoute.
+        :return: An iterator instance of list of EventRoute.
         :rtype: ~azure.core.paging.ItemPaged[~azure.digitaltwins.models.EventRoute]
         :raises :class: `~azure.core.exceptions.HttpResponseError`
         :raises :class: `~azure.core.exceptions.ServiceRequestError`: The request is invalid.
@@ -849,7 +855,7 @@ class DigitalTwinsClient(object):
 
         :param str event_route_id: The Id of the event route to create or update.
         :param ~azure.digitaltwins.models.EventRoute event_route: The event route data.
-        :returns: None
+        :return: None
         :rtype: None
         :raises :class: `~azure.core.exceptions.HttpResponseError`
         :raises :class: `~azure.core.exceptions.ServiceRequestError`: The request is invalid.
@@ -874,7 +880,7 @@ class DigitalTwinsClient(object):
         """Delete an event route.
 
         :param str event_route_id: The Id of the event route to delete.
-        :returns: None
+        :return: None
         :rtype: None
         :raises :class: `~azure.core.exceptions.HttpResponseError`
         :raises :class: `~azure.core.exceptions.ResourceNotFoundError`: There is no
@@ -901,7 +907,7 @@ class DigitalTwinsClient(object):
 
         :param ~azure.digitaltwins.models.QuerySpecification query_specification:
             The query specification to execute.
-        :returns: The QueryResult object.
+        :return: The QueryResult object.
         :rtype: ~azure.core.async_paging.ItemPaged[~azure.digitaltwins.models.QueryResult]
         :raises :class: `~azure.core.exceptions.HttpResponseError`
         """
