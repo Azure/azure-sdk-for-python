@@ -2,6 +2,10 @@
 
 ## 3.1.0b1 (Unreleased)
 
+**New features**
+
+- New methods `begin_recognize_business_cards` and `beging_recognize_business_cards_from_url` introduced to the SDK. Use these
+methods to recognize data from business cards.
 
 ## 3.0.0 (2020-08-20)
 
@@ -46,13 +50,13 @@ Previously `value_data` returned a `FieldData` with all its attributes set to `N
 CustomFormModel` and `CustomFormModelInfo`
 - `FieldText` has been renamed to `FieldData`
 - `FormContent` has been renamed to `FormElement`
-- Parameter `include_text_content` has been renamed to `include_field_elements` for 
+- Parameter `include_text_content` has been renamed to `include_field_elements` for
 `begin_recognize_receipts`, `begin_recognize_receipts_from_url`, `begin_recognize_custom_forms`, and `begin_recognize_custom_forms_from_url`
 - `text_content` has been renamed to `field_elements` on `FieldData` and `FormTableCell`
 
 **Fixes and improvements**
 
-- Fixes a bug where `text_angle` was being returned out of the specified interval (-180, 180] 
+- Fixes a bug where `text_angle` was being returned out of the specified interval (-180, 180]
 
 ## 1.0.0b3 (2020-06-10)
 
