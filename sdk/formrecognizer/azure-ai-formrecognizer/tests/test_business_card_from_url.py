@@ -277,3 +277,26 @@ class TestBusinessCardFromUrl(FormRecognizerTest):
         with pytest.raises(ValueError) as e:
             client.begin_recognize_business_cards_from_url(self.business_card_url_jpg)
         assert "Method 'begin_recognize_business_cards_from_url' is only available for API version V2_1_PREVIEW and up" in str(e.value)
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer()
+    def test_business_card_locale_default(self, client):
+        def _get_locale_in_call(pipeline_response, _, headers):
+            assert 'en-US' == pipeline_response.http_response.request.query['locale']
+        poller = client.begin_recognize_business_cards_from_url(self.business_card_url_jpg, cls=_get_locale_in_call)
+        poller.wait()
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer()
+    def test_business_card_locale_specified(self, client):
+        def _get_locale_in_call(pipeline_response, _, headers):
+            assert 'en-IN' == pipeline_response.http_response.request.query['locale']
+        poller = client.begin_recognize_business_cards_from_url(self.business_card_url_jpg, locale="en-IN", cls=_get_locale_in_call)
+        poller.wait()
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer()
+    def test_business_card_locale_error(self, client):
+        with pytest.raises(HttpResponseError) as e:
+            client.begin_recognize_business_cards_from_url(self.business_card_url_jpg, locale="not a locale")
+        assert "locale" in e.value.error.message

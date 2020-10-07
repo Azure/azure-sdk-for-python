@@ -356,3 +356,36 @@ class TestBusinessCard(FormRecognizerTest):
         with pytest.raises(ValueError) as e:
             client.begin_recognize_business_cards(business_card)
         assert "Method 'begin_recognize_business_cards' is only available for API version V2_1_PREVIEW and up" in str(e.value)
+
+
+    def _get_locale_in_call(pipeline_response, _, headers):
+        return pipeline_response.http_response.request.query['locale']
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer()
+    def test_business_card_locale_default(self, client):
+        def _get_locale_in_call(pipeline_response, _, headers):
+            assert 'en-US' == pipeline_response.http_response.request.query['locale']
+        with open(self.business_card_jpg, "rb") as fd:
+            business_card = fd.read()
+        poller = client.begin_recognize_business_cards(business_card, cls=_get_locale_in_call)
+        poller.wait()
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer()
+    def test_business_card_locale_specified(self, client):
+        def _get_locale_in_call(pipeline_response, _, headers):
+            assert 'en-IN' == pipeline_response.http_response.request.query['locale']
+        with open(self.business_card_jpg, "rb") as fd:
+            business_card = fd.read()
+        poller = client.begin_recognize_business_cards(business_card, locale="en-IN", cls=_get_locale_in_call)
+        poller.wait()
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer()
+    def test_business_card_locale_error(self, client):
+        with open(self.business_card_jpg, "rb") as fd:
+            business_card = fd.read()
+        with pytest.raises(HttpResponseError) as e:
+            client.begin_recognize_business_cards(business_card, locale="not a locale")
+        assert "locale" in e.value.error.message
