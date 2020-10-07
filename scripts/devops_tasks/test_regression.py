@@ -39,6 +39,8 @@ VENV_NAME = "regressionenv"
 AZURE_SDK_FOR_PYTHON_GIT_URL = "https://github.com/Azure/azure-sdk-for-python.git"
 TEMP_FOLDER_NAME = ".tmp_code_path"
 
+OLDEST_EXTENSION_PKGS = ['msrestazure','adal']
+
 logging.getLogger().setLevel(logging.INFO)
 
 class CustomVirtualEnv:
@@ -240,8 +242,11 @@ class RegressionTest:
         # early versions of azure-sdk-tools had an unpinned version of azure-mgmt packages. 
         # that unpinned version hits an a code path in azure-sdk-tools that hits this error.
         if filtered_dev_req_path and not self.context.is_latest_depend_test:
+            logging.info(
+                "Extending dev requirements with {}".format(OLDEST_EXTENSION_PKGS)
+            )
             extended_dev_req = extend_dev_requirements(
-                filtered_dev_req_path, ['msrestazure','adal']
+                filtered_dev_req_path, OLDEST_EXTENSION_PKGS
             )
 
         if filtered_dev_req_path:
@@ -298,7 +303,6 @@ def find_package_dependency(glob_string, repo_root_dir):
 
 # This is the main function which identifies packages to test, find dependency matrix and trigger test
 def run_main(args):
-
     temp_dir = ""
     if args.temp_dir:
         temp_dir = args.temp_dir
@@ -327,7 +331,7 @@ def run_main(args):
     if len(targeted_packages) == 0:
         exit(0)
 
-    # clone code repo only if it doesn't exists
+    # clone code repo only if it doesn't exist
     if not os.path.exists(code_repo_root):
         clone_repo(temp_dir, AZURE_SDK_FOR_PYTHON_GIT_URL)
     else:
