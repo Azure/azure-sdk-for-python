@@ -6,6 +6,8 @@
 
 - New methods `begin_recognize_business_cards` and `beging_recognize_business_cards_from_url` introduced to the SDK. Use these
 methods to recognize data from business cards.
+- Recognize receipt methods now take keyword argument `locale` to optionally indicate the locale of the receipt for
+improved results
 
 ## 3.0.0 (2020-08-20)
 

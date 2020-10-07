@@ -50,7 +50,7 @@ class VisualStudioCodeCredential(AsyncContextManager):
         # type: (*str, **Any) -> AccessToken
         """Request an access token for `scopes` as the user currently signed in to Visual Studio Code.
 
-        .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
+        This method is called automatically by Azure SDK clients.
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
         :rtype: :class:`azure.core.credentials.AccessToken`

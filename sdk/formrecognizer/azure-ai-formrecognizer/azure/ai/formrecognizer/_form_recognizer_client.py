@@ -90,10 +90,14 @@ class FormRecognizerClient(FormRecognizerClientBase):
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword str locale: Locale of the receipt. Defaults to en-US. Supported locales include:
+            en-US, en-AU, en-CA, en-GB, and en-IN.
         :return: An instance of an LROPoller. Call `result()` on the poller
             object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`].
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
         :raises ~azure.core.exceptions.HttpResponseError:
+        .. versionadded:: v2.1-preview
+            The *locale* keyword argument
 
         .. admonition:: Example:
 
@@ -142,10 +146,14 @@ class FormRecognizerClient(FormRecognizerClientBase):
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword str locale: Locale of the receipt. Defaults to en-US. Supported locales include:
+            en-US, en-AU, en-CA, en-GB, and en-IN.
         :return: An instance of an LROPoller. Call `result()` on the poller
             object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`].
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
         :raises ~azure.core.exceptions.HttpResponseError:
+        .. versionadded:: v2.1-preview
+            The *locale* keyword argument
 
         .. admonition:: Example:
 
@@ -384,7 +392,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
             raise ValueError("model_id cannot be None or empty.")
 
         polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
-
+        continuation_token = kwargs.pop("continuation_token", None)
         content_type = kwargs.pop("content_type", None)
         if content_type == "application/json":
             raise TypeError("Call begin_recognize_custom_forms_from_url() to analyze a document from a URL.")
@@ -404,6 +412,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
             content_type=content_type,
             cls=kwargs.pop("cls", analyze_callback),
             polling=LROBasePolling(timeout=polling_interval, lro_algorithms=[AnalyzePolling()], **kwargs),
+            continuation_token=continuation_token,
             **kwargs
         )
 
@@ -432,7 +441,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
             raise ValueError("model_id cannot be None or empty.")
 
         polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
-
+        continuation_token = kwargs.pop("continuation_token", None)
         include_field_elements = kwargs.pop("include_field_elements", False)
 
         def analyze_callback(raw_response, _, headers):  # pylint: disable=unused-argument
@@ -445,6 +454,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
             include_text_details=include_field_elements,
             cls=kwargs.pop("cls", analyze_callback),
             polling=LROBasePolling(timeout=polling_interval, lro_algorithms=[AnalyzePolling()], **kwargs),
+            continuation_token=continuation_token,
             **kwargs
         )
 
