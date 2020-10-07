@@ -241,7 +241,7 @@ class RegressionTest:
         # that unpinned version hits an a code path in azure-sdk-tools that hits this error.
         if filtered_dev_req_path and not self.context.is_latest_depend_test:
             extended_dev_req = extend_dev_requirements(
-                filtered_dev_req_path, ['msrestazure']
+                filtered_dev_req_path, ['msrestazure','adal']
             )
 
         if filtered_dev_req_path:
