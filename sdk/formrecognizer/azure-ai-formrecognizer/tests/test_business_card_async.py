@@ -380,24 +380,12 @@ class TestBusinessCardAsync(AsyncFormRecognizerTest):
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalClientPreparer()
-    async def test_business_card_locale_default(self, client):
-        def _get_locale_in_call(pipeline_response, _, headers):
-            assert 'en-US' == pipeline_response.http_response.request.query['locale']
-        with open(self.business_card_jpg, "rb") as fd:
-            business_card = fd.read()
-        async with client:
-            poller = await client.begin_recognize_business_cards(business_card, cls=_get_locale_in_call)
-            await poller.wait()
-
-    @GlobalFormRecognizerAccountPreparer()
-    @GlobalClientPreparer()
     async def test_business_card_locale_specified(self, client):
-        def _get_locale_in_call(pipeline_response, _, headers):
-            assert 'en-IN' == pipeline_response.http_response.request.query['locale']
         with open(self.business_card_jpg, "rb") as fd:
             business_card = fd.read()
         async with client:
-            poller = await client.begin_recognize_business_cards(business_card, locale="en-IN", cls=_get_locale_in_call)
+            poller = await client.begin_recognize_business_cards(business_card, locale="en-IN")
+            assert 'en-IN' == poller._polling_method._initial_response.http_response.request.query['locale']
             await poller.wait()
 
     @GlobalFormRecognizerAccountPreparer()
