@@ -132,6 +132,8 @@ your program when receiving events.
 In V5, `EventHubConsumerClient` allows you to do the same with the `receive()` method if you
 pass a `CheckpointStore` to the constructor.
 
+> **Note:** V1 checkpoints are not compatible with V5 checkpoints.  If pointed at the same blob, consumption will begin at the first message.  Checkpoint json in the respective blobs can be manually converted (per-partition) if needed.
+
 So in V1:
 ```python
 import logging
