@@ -17,7 +17,7 @@ class CommunicationResourceGroupPreparer(ResourceGroupPreparer):
     """
     def __init__(self, **kwargs):
         super(CommunicationResourceGroupPreparer, self).__init__(**kwargs)
-        self.set_cache(True) 
+        # self.set_cache(True) 
 
     def create_resource(self, name, **kwargs):
         result = super(CommunicationResourceGroupPreparer, self).create_resource(name, **kwargs)
@@ -49,7 +49,7 @@ class CommunicationServicePreparer(AzureMgmtPreparer):
         self.resource_group_parameter_name = resource_group_parameter_name
         self.service_name = "TEST-SERVICE-NAME"
         self.mgmt_client = None
-        self.set_cache(True)
+        # self.set_cache(True)
 
     def _get_resource_group(self, **kwargs):
         try:
