@@ -1,5 +1,8 @@
 # Release History
 
+## 12.0.0b3 (Unreleased)
+
+
 ## 12.0.0b2 (Unreleased)
 * Adds support for Enumerable types by converting the Enum to a string before sending to the service
 

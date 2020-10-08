@@ -103,6 +103,13 @@ class LeaseStatusType(str, Enum):
     unlocked = "unlocked"
 
 
+class ShareAccessTier(str, Enum):
+
+    transaction_optimized = "TransactionOptimized"
+    hot = "Hot"
+    cool = "Cool"
+
+
 class PermissionCopyModeType(str, Enum):
 
     source = "source"

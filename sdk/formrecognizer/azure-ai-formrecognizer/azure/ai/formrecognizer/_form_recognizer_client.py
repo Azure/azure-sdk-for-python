@@ -90,10 +90,14 @@ class FormRecognizerClient(FormRecognizerClientBase):
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword str locale: Locale of the receipt. Defaults to en-US. Supported locales include:
+            en-US, en-AU, en-CA, en-GB, and en-IN.
         :return: An instance of an LROPoller. Call `result()` on the poller
             object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`].
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
         :raises ~azure.core.exceptions.HttpResponseError:
+        .. versionadded:: v2.1-preview
+            The *locale* keyword argument
 
         .. admonition:: Example:
 
@@ -142,10 +146,14 @@ class FormRecognizerClient(FormRecognizerClientBase):
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword str locale: Locale of the receipt. Defaults to en-US. Supported locales include:
+            en-US, en-AU, en-CA, en-GB, and en-IN.
         :return: An instance of an LROPoller. Call `result()` on the poller
             object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`].
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
         :raises ~azure.core.exceptions.HttpResponseError:
+        .. versionadded:: v2.1-preview
+            The *locale* keyword argument
 
         .. admonition:: Example:
 
