@@ -536,7 +536,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         healthcare_result = self._deserialize(self._client.models().HealthcareJobState, raw_response)
         return await healthcare_paged_result_async(self._client.health_status, raw_response, healthcare_result, headers, show_stats=show_stats)
 
-    @distributed_trace
+    @distributed_trace_async
     async def begin_health(  # type: ignore
         self,
         documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
@@ -625,7 +625,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         analyze_result = self._deserialize(self._client.models().AnalyzeJobState, raw_response)
         return await analyze_paged_result_async(self._client.analyze_status, raw_response, analyze_result, headers)
 
-    @distributed_trace
+    @distributed_trace_async
     async def begin_analyze(  # type: ignore
         self,
         documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]

@@ -1,6 +1,6 @@
 import functools
 from urllib.parse import urlparse, parse_qsl
-from azure.core.paging import AsyncItemPaged
+from azure.core.async_paging import AsyncItemPaged
 from ._response_handlers import healthcare_result, analyze_result
 
 async def healthcare_extract_page_data_async(response, obj, response_headers, health_job_state):
