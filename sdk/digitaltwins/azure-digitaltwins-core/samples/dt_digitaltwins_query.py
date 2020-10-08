@@ -30,8 +30,8 @@ try:
     service_client = DigitalTwinsClient(url, credential)
 
     # Query digital twins
-    query = {'query': 'SELECT * FROM digitaltwins'}
-    query_result = service_client.query_twins(query)
+    query_expression = 'SELECT * FROM digitaltwins'
+    query_result = service_client.query_twins(query_expression)
     print('DigitalTwins:')
     for twin in query_result:
         print("    -: {}".format(twin["$dtId"]))

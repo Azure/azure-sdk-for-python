@@ -50,12 +50,12 @@ class DigitalTwinsClient(object):
 
     @distributed_trace
     def get_digital_twin(self, digital_twin_id, **kwargs):
-        # type: (str, dict) -> object
+        # type: (str, dict) -> dict
         """Get a digital twin.
 
         :param str digital_twin_id: The Id of the digital twin.
-        :return: The twin object.
-        :rtype: object
+        :return: Dictionary containing the twin.
+        :rtype: dict
         :raises :class: `~azure.core.exceptions.HttpResponseError`
         :raises :class: `~azure.core.exceptions.ResourceNotFoundError`:
             If the digital twin doesn't exist.
@@ -77,13 +77,13 @@ class DigitalTwinsClient(object):
 
     @distributed_trace
     def upsert_digital_twin(self, digital_twin_id, digital_twin, **kwargs):
-        # type: (str, object, dict) -> object
+        # type: (str, dict, dict) -> dict
         """Create or update a digital twin.
 
         :param str digital_twin_id: The Id of the digital twin.
-        :param object digital_twin: The twin object to create or update.
-        :return: The created or updated twin object.
-        :rtype: object
+        :param dict digital_twin: Dictionary of the twin to create or update.
+        :return: Dictionary containing the created or updated twin.
+        :rtype: dict
         :raises :class: `~azure.core.exceptions.HttpResponseError`
         :raises :class: `~azure.core.exceptions.ServiceRequestError`:
             If the request is invalid.
@@ -116,11 +116,11 @@ class DigitalTwinsClient(object):
         json_patch,
         **kwargs
     ):
-        # type: (str, object, dict) -> None
+        # type: (str, dict, dict) -> None
         """Update a digital twin using a json patch.
 
         :param str digital_twin_id: The Id of the digital twin.
-        :param str json_patch: An update specification described by JSON Patch.
+        :param dict json_patch: An update specification described by JSON Patch.
             Updates to property values and $model elements may happen in the same request.
             Operations are limited to add, replace and remove.
         :keyword str etag: Only perform the operation if the entity's etag matches one of
@@ -217,13 +217,13 @@ class DigitalTwinsClient(object):
 
     @distributed_trace
     def get_component(self, digital_twin_id, component_path, **kwargs):
-        # type: (str, str, dict) -> object
+        # type: (str, str, dict) -> dict
         """Get a component on a digital twin.
 
         :param str digital_twin_id: The Id of the digital twin.
         :param str component_path: The component being retrieved.
-        :return: The component object.
-        :rtype: object
+        :return: Dictionary containing the component.
+        :rtype: dict
         :raises :class: `~azure.core.exceptions.HttpResponseError`
         :raises :class: `~azure.core.exceptions.ResourceNotFoundError`: If there is either no
             digital twin with the provided id or the component path is invalid.
@@ -252,12 +252,12 @@ class DigitalTwinsClient(object):
         json_patch,
         **kwargs
     ):
-        # type: (str, str, List[object], dict) -> None
+        # type: (str, str, dict, dict) -> None
         """Update properties of a component on a digital twin using a JSON patch.
 
         :param str digital_twin_id: The Id of the digital twin.
         :param str component_path: The component being updated.
-        :param List[object] json_patch: An update specification described by JSON Patch.
+        :param dict json_patch: An update specification described by JSON Patch.
         :keyword str etag: Only perform the operation if the entity's etag matches one of
             the etags provided or * is provided.
         :keyword ~azure.core.MatchConditions match_condition: the match condition to use upon the etag
@@ -301,13 +301,13 @@ class DigitalTwinsClient(object):
 
     @distributed_trace
     def get_relationship(self, digital_twin_id, relationship_id, **kwargs):
-        # type: (str, str, dict) -> object
+        # type: (str, str, dict) -> dict
         """Get a relationship on a digital twin.
 
         :param str digital_twin_id: The Id of the digital twin.
         :param str relationship_id: The Id of the relationship to retrieve.
-        :return: The relationship object.
-        :rtype: object
+        :return: Dictionary containing the relationship.
+        :rtype: dict
         :raises :class: `~azure.core.exceptions.HttpResponseError`
         :raises :class: `~azure.core.exceptions.ResourceNotFoundError`: If there is either no
             digital twin or relationship with the provided id.
@@ -330,14 +330,14 @@ class DigitalTwinsClient(object):
 
     @distributed_trace
     def upsert_relationship(self, digital_twin_id, relationship_id, relationship=None, **kwargs):
-        # type: (str, str, Optional[object], dict) -> object
+        # type: (str, str, Optional[dict], dict) -> dict
         """Create or update a relationship on a digital twin.
 
         :param str digital_twin_id: The Id of the digital twin.
         :param str relationship_id: The Id of the relationship to retrieve.
-        :param object relationship: The relationship object.
-        :return: The created or updated relationship object.
-        :rtype: object
+        :param dict relationship: Dictionary containing the relationship.
+        :return: The created or updated relationship.
+        :rtype: dict
         :raises :class: `~azure.core.exceptions.HttpResponseError`
         :raises :class: `~azure.core.exceptions.ServiceRequestError`: If the request is invalid.
         :raises :class: `~azure.core.exceptions.ResourceNotFoundError`: If there is either no
@@ -371,12 +371,12 @@ class DigitalTwinsClient(object):
         json_patch=None,
         **kwargs
     ):
-        # type: (str, str, List[object], dict) -> None
+        # type: (str, str, dict, dict) -> None
         """Updates the properties of a relationship on a digital twin using a JSON patch.
 
         :param str digital_twin_id: The Id of the digital twin.
         :param str relationship_id: The Id of the relationship to retrieve.
-        :param List[object] json_patch: JSON Patch description of the update
+        :param dict json_patch: JSON Patch description of the update
             to the relationship properties.
         :keyword str etag: Only perform the operation if the entity's etag matches one of
             the etags provided or * is provided.
@@ -904,18 +904,15 @@ class DigitalTwinsClient(object):
             return None
 
     @distributed_trace
-    def query_twins(self, query_specification, **kwargs):
-        # type: (models.QuerySpecification, dict) -> ~azure.core.async_paging.ItemPaged[~azure.digitaltwins.models.QueryResult]
+    def query_twins(self, query_expression, **kwargs):
+        # type: (str, dict) -> ~azure.core.async_paging.ItemPaged[~azure.digitaltwins.models.QueryResult]
         """Query for digital twins.
 
-        :param ~azure.digitaltwins.models.QuerySpecification query_specification:
-            The query specification to execute.
+        :param str query_expression: The query expression to execute.
         :return: The QueryResult object.
         :rtype: ~azure.core.async_paging.ItemPaged[~azure.digitaltwins.models.QueryResult]
         :raises :class: `~azure.core.exceptions.HttpResponseError`
         """
-        query = query_specification['query']
-
         def extract_data(pipeline_response):
             deserialized = self._deserialize('QueryResult', pipeline_response)
             list_of_elem = deserialized.items
@@ -923,7 +920,7 @@ class DigitalTwinsClient(object):
 
         def get_next(continuation_token=None):
             query_spec = self._serialize.serialize_dict(
-                {'query': query, 'continuation_token': continuation_token},
+                {'query': query_expression, 'continuation_token': continuation_token},
                 'QuerySpecification'
             )
             pipeline_response = self._client.query.query_twins(query_spec, **kwargs)
