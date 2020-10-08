@@ -157,7 +157,7 @@ class FormRecognizerTest(AzureTestCase):
                     for a in actual.train_result.fields:
                         self.assertEqual(model.submodels[0].fields[a.field_name].name, a.field_name)
                         self.assertEqual(model.submodels[0].fields[a.field_name].accuracy, a.accuracy)
-                    self.assertEqual(model.submodels[0].form_type, "form-"+model.model_id)
+                    self.assertEqual(model.submodels[0].form_type, "custom:"+model.model_id)
                     self.assertEqual(model.submodels[0].accuracy, actual.train_result.average_model_accuracy)
 
     def assertFormPagesTransformCorrect(self, pages, actual_read, page_result=None, **kwargs):
@@ -402,6 +402,66 @@ class FormRecognizerTest(AzureTestCase):
             return
         for word in elements:
             self.assertFormWordHasValues(word, page_number)
+
+    def assertComposedModelHasValues(self, composed, model_1, model_2):
+        self.assertIsNotNone(composed.model_id)
+        self.assertIsNone(composed.errors)
+        self.assertTrue(composed.properties.is_composed_model)
+        self.assertIsNotNone(composed.status)
+        self.assertIsNotNone(composed.training_started_on)
+        self.assertIsNotNone(composed.training_completed_on)
+
+        all_training_documents = model_1.training_documents + model_2.training_documents
+        for doc, composed_doc in zip(all_training_documents, composed.training_documents):
+            self.assertEqual(doc.name, composed_doc.name)
+            self.assertEqual(doc.status, composed_doc.status)
+            self.assertEqual(doc.page_count, composed_doc.page_count)
+            self.assertEqual(doc.errors, composed_doc.errors)
+
+        for model in model_1.submodels:
+            composed_model = composed.submodels[0]
+            if model.model_id != composed_model.model_id:  # order not guaranteed from service
+                composed_model = composed.submodels[1]
+            if model_1.display_name is None:
+                self.assertEqual(model.form_type, composed_model.form_type)
+            self.assertEqual(model.accuracy, composed_model.accuracy)
+            self.assertEqual(model.model_id, composed_model.model_id)
+            for field, value in model.fields.items():
+                self.assertEqual(value.name, composed_model.fields[field].name)
+                self.assertEqual(value.accuracy, composed_model.fields[field].accuracy)
+
+        for model in model_2.submodels:
+            composed_model = composed.submodels[1]
+            if model.model_id != composed_model.model_id:  # order not guaranteed from service
+                composed_model = composed.submodels[0]
+            if model_2.display_name is None:
+                self.assertEqual(model.form_type, composed_model.form_type)
+            self.assertEqual(model.accuracy, composed_model.accuracy)
+            self.assertEqual(model.model_id, composed_model.model_id)
+            for field, value in model.fields.items():
+                self.assertEqual(value.name, composed_model.fields[field].name)
+                self.assertEqual(value.accuracy, composed_model.fields[field].accuracy)
+
+    def assertUnlabeledRecognizedFormHasValues(self, form, model):
+        self.assertIsNone(form.form_type_confidence)
+        self.assertEqual(form.model_id, model.model_id)
+        self.assertFormPagesHasValues(form.pages)
+        for label, field in form.fields.items():
+            self.assertIsNotNone(field.confidence)
+            self.assertIsNotNone(field.name)
+            self.assertIsNotNone(field.value)
+            self.assertIsNotNone(field.value_data.text)
+            self.assertIsNotNone(field.label_data.text)
+
+    def assertLabeledRecognizedFormHasValues(self, form, model):
+        self.assertEqual(form.form_type_confidence, 1.0)
+        self.assertEqual(form.model_id, model.model_id)
+        self.assertFormPagesHasValues(form.pages)
+        for label, field in form.fields.items():
+            self.assertIsNotNone(field.confidence)
+            self.assertIsNotNone(field.name)
+            self.assertIsNotNone(field.value_data.text)
+            self.assertIsNotNone(field.value_data.bounding_box)
 
 
 class GlobalResourceGroupPreparer(AzureMgmtPreparer):
