@@ -6,13 +6,13 @@
 # --------------------------------------------------------------------------
 import pytest
 from azure.communication.administration import CommunicationIdentityClient
-from _shared.helper import URIIdentityReplacer
-from _shared.testcase import (
+from .._shared.helper import URIIdentityReplacer
+from .._shared.testcase import (
     CommunicationTestCase,
     BodyReplacerProcessor
 )
 from devtools_testutils import ResourceGroupPreparer
-from _shared.communication_service_preparer import CommunicationServicePreparer 
+from .._shared.communication_service_preparer import CommunicationServicePreparer 
 
 class CommunicationIdentityClientTest(CommunicationTestCase):
     def setUp(self):

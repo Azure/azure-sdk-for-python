@@ -8,10 +8,10 @@ import pytest
 from azure.communication.administration.aio import CommunicationIdentityClient
 from azure_devtools.scenario_tests import RecordingProcessor
 from devtools_testutils import ResourceGroupPreparer
-from _shared.helper import URIIdentityReplacer
-from _shared.asynctestcase  import AsyncCommunicationTestCase
-from _shared.testcase import BodyReplacerProcessor
-from _shared.communication_service_preparer import CommunicationServicePreparer
+from .._shared.helper import URIIdentityReplacer
+from .._shared.asynctestcase  import AsyncCommunicationTestCase
+from .._shared.testcase import BodyReplacerProcessor
+from .._shared.communication_service_preparer import CommunicationServicePreparer
 
 class CommunicationIdentityClientTestAsync(AsyncCommunicationTestCase):
     def setUp(self):
