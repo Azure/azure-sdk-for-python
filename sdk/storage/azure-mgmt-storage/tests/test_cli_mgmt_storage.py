@@ -122,8 +122,8 @@ class MgmtStorageTest(AzureMgmtTestCase):
 
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
         RESOURCE_GROUP = resource_group.name
-        STORAGE_ACCOUNT_NAME = "storageaccountxxyyzzn"  # TODO: need change a random name, if need run live test again.
-        DEST_STORAGE_ACCOUNT_NAME = "storageaccountxxyyzznnx"
+        STORAGE_ACCOUNT_NAME = "storageaccountxxyyzzccc"  # TODO: need change a random name, if need run live test again.
+        DEST_STORAGE_ACCOUNT_NAME = "storageaccountxxyyzznnccc"
         FILE_SERVICE_NAME = "fileservicexxyyzz"
         SHARE_NAME = "filesharenamexxyyzz"
         BLOB_SERVICE_NAME = "blobservicexxyyzz"
@@ -387,7 +387,7 @@ class MgmtStorageTest(AzureMgmtTestCase):
             ]
           }
         }
-        result = self.mgmt_client.management_policies.create_or_update(resource_group.name, STORAGE_ACCOUNT_NAME, BODY)
+        result = self.mgmt_client.management_policies.create_or_update(resource_group.name, STORAGE_ACCOUNT_NAME, "default", BODY)
 
         # PutShares[put]
         result = self.mgmt_client.file_shares.create(resource_group.name, STORAGE_ACCOUNT_NAME, SHARE_NAME, {})
@@ -454,7 +454,7 @@ class MgmtStorageTest(AzureMgmtTestCase):
         result = self.mgmt_client.file_shares.get(resource_group.name, STORAGE_ACCOUNT_NAME, SHARE_NAME)
 
         # StorageAccountGetManagementPolicies[get]
-        result = self.mgmt_client.management_policies.get(resource_group.name, STORAGE_ACCOUNT_NAME)
+        result = self.mgmt_client.management_policies.get(resource_group.name, STORAGE_ACCOUNT_NAME, "default")
 
         # ListContainers[get]
         result = self.mgmt_client.blob_containers.list(resource_group.name, STORAGE_ACCOUNT_NAME)
@@ -717,7 +717,7 @@ class MgmtStorageTest(AzureMgmtTestCase):
         result = self.mgmt_client.file_shares.delete(resource_group.name, STORAGE_ACCOUNT_NAME, SHARE_NAME)
 
         # StorageAccountDeleteManagementPolicies[delete]
-        result = self.mgmt_client.management_policies.delete(resource_group.name, STORAGE_ACCOUNT_NAME)
+        result = self.mgmt_client.management_policies.delete(resource_group.name, STORAGE_ACCOUNT_NAME, "default")
 
         # TODO: [Kaihui] feature is unavailable
         # Delete object replication policy

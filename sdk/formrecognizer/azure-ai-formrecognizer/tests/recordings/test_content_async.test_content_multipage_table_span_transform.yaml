@@ -11409,46 +11409,71 @@ interactions:
       MDAwMDY0OTIxNiAwMDAwMCBuDQp0cmFpbGVyCjw8Ci9JbmZvIDMzIDAgUgovUm9vdCAxIDAgUgov
       U2l6ZSAzNAo+PgpzdGFydHhyZWYKNjQ5NDE0CiUlRU9GCg==
     headers:
+      Accept:
+      - application/json
       Content-Type:
       - application/pdf
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/layout/analyze
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/layout/analyze
   response:
     body:
       string: ''
     headers:
-      apim-request-id: 7c4728b3-6eef-47fb-97ed-15d9b59800ba
+      apim-request-id: beec7135-f47b-4ab0-80c4-e32187a25dd9
       content-length: '0'
-      date: Fri, 10 Jul 2020 18:40:37 GMT
-      operation-location: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/layout/analyzeResults/7c4728b3-6eef-47fb-97ed-15d9b59800ba
+      date: Mon, 14 Sep 2020 19:25:19 GMT
+      operation-location: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/layout/analyzeResults/beec7135-f47b-4ab0-80c4-e32187a25dd9
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '215'
+      x-envoy-upstream-service-time: '159'
     status:
       code: 202
       message: Accepted
-    url: https://centraluseuap.api.cognitive.microsoft.com//formrecognizer/v2.0/layout/analyze
+    url: https://centraluseuap.api.cognitive.microsoft.com//formrecognizer/v2.1-preview.1/layout/analyze
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/layout/analyzeResults/7c4728b3-6eef-47fb-97ed-15d9b59800ba
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/layout/analyzeResults/beec7135-f47b-4ab0-80c4-e32187a25dd9
   response:
     body:
-      string: '{"status": "succeeded", "createdDateTime": "2020-07-10T18:40:38Z",
-        "lastUpdatedDateTime": "2020-07-10T18:40:42Z", "analyzeResult": {"version":
-        "2.0.0", "readResults": [{"page": 1, "language": "en", "angle": 0, "width":
-        8.5, "height": 11, "unit": "inch", "lines": [{"boundingBox": [1.0119, 1.6855,
-        3.9147, 1.6855, 3.9147, 1.8775, 1.0119, 1.8775], "text": "Quarterly Sales
-        Update: Q3 2019", "words": [{"boundingBox": [1.0119, 1.6855, 1.8461, 1.6855,
-        1.8461, 1.8775, 1.0119, 1.8775], "text": "Quarterly", "confidence": 1}, {"boundingBox":
-        [1.9087, 1.6855, 2.3384, 1.6855, 2.3384, 1.8399, 1.9087, 1.8399], "text":
-        "Sales", "confidence": 1}, {"boundingBox": [2.4171, 1.6861, 3.0984, 1.6861,
-        3.0984, 1.8775, 2.4171, 1.8775], "text": "Update:", "confidence": 1}, {"boundingBox":
+      string: '{"status": "running", "createdDateTime": "2020-09-14T19:25:20Z", "lastUpdatedDateTime":
+        "2020-09-14T19:25:20Z"}'
+    headers:
+      apim-request-id: f6297526-5193-4d79-acce-2e697a2261ae
+      content-length: '106'
+      content-type: application/json; charset=utf-8
+      date: Mon, 14 Sep 2020 19:25:24 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '49'
+    status:
+      code: 200
+      message: OK
+    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/layout/analyzeResults/beec7135-f47b-4ab0-80c4-e32187a25dd9
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/layout/analyzeResults/beec7135-f47b-4ab0-80c4-e32187a25dd9
+  response:
+    body:
+      string: '{"status": "succeeded", "createdDateTime": "2020-09-14T19:25:20Z",
+        "lastUpdatedDateTime": "2020-09-14T19:25:25Z", "analyzeResult": {"version":
+        "2.1.0", "readResults": [{"page": 1, "angle": 0, "width": 8.5, "height": 11,
+        "unit": "inch", "lines": [{"boundingBox": [1.0119, 1.6855, 3.9147, 1.6855,
+        3.9147, 1.8775, 1.0119, 1.8775], "text": "Quarterly Sales Update: Q3 2019",
+        "words": [{"boundingBox": [1.0119, 1.6855, 1.8461, 1.6855, 1.8461, 1.8775,
+        1.0119, 1.8775], "text": "Quarterly", "confidence": 1}, {"boundingBox": [1.9087,
+        1.6855, 2.3384, 1.6855, 2.3384, 1.8399, 1.9087, 1.8399], "text": "Sales",
+        "confidence": 1}, {"boundingBox": [2.4171, 1.6861, 3.0984, 1.6861, 3.0984,
+        1.8775, 2.4171, 1.8775], "text": "Update:", "confidence": 1}, {"boundingBox":
         [3.1785, 1.6945, 3.4106, 1.6945, 3.4106, 1.8563, 3.1785, 1.8563], "text":
         "Q3", "confidence": 1}, {"boundingBox": [3.49, 1.6945, 3.9147, 1.6945, 3.9147,
         1.8399, 3.49, 1.8399], "text": "2019", "confidence": 1}]}, {"boundingBox":
@@ -11926,32 +11951,31 @@ interactions:
         {"boundingBox": [7.4627, 9.8142, 7.7628, 9.8142, 7.7628, 9.8988, 7.4627, 9.8988],
         "text": "7.00%", "words": [{"boundingBox": [7.4627, 9.8142, 7.7628, 9.8142,
         7.7628, 9.8988, 7.4627, 9.8988], "text": "7.00%", "confidence": 1}]}]}, {"page":
-        2, "language": "en", "angle": 0, "width": 8.5, "height": 11, "unit": "inch",
-        "lines": [{"boundingBox": [3.3371, 1.0463, 3.4282, 1.0463, 3.4282, 1.1269,
-        3.3371, 1.1269], "text": "IN", "words": [{"boundingBox": [3.3371, 1.0463,
-        3.4282, 1.0463, 3.4282, 1.1269, 3.3371, 1.1269], "text": "IN", "confidence":
-        1}]}, {"boundingBox": [6.8227, 1.0538, 6.9997, 1.0538, 6.9997, 1.136, 6.8227,
-        1.136], "text": "781", "words": [{"boundingBox": [6.8227, 1.0538, 6.9997,
-        1.0538, 6.9997, 1.136, 6.8227, 1.136], "text": "781", "confidence": 1}]},
-        {"boundingBox": [7.3994, 1.0525, 7.7624, 1.0525, 7.7624, 1.1371, 7.3994, 1.1371],
-        "text": "34.20%", "words": [{"boundingBox": [7.3994, 1.0525, 7.7624, 1.0525,
-        7.7624, 1.1371, 7.3994, 1.1371], "text": "34.20%", "confidence": 1}]}, {"boundingBox":
-        [3.3371, 1.223, 3.4537, 1.223, 3.4537, 1.3036, 3.3371, 1.3036], "text": "MI",
-        "words": [{"boundingBox": [3.3371, 1.223, 3.4537, 1.223, 3.4537, 1.3036, 3.3371,
-        1.3036], "text": "MI", "confidence": 1}]}, {"boundingBox": [6.7639, 1.2329,
-        7.0027, 1.2329, 7.0027, 1.3136, 6.7639, 1.3136], "text": "1114", "words":
-        [{"boundingBox": [6.7639, 1.2329, 7.0027, 1.2329, 7.0027, 1.3136, 6.7639,
-        1.3136], "text": "1114", "confidence": 1}]}, {"boundingBox": [7.4036, 1.2309,
-        7.7623, 1.2309, 7.7623, 1.3155, 7.4036, 1.3155], "text": "19.90%", "words":
-        [{"boundingBox": [7.4036, 1.2309, 7.7623, 1.2309, 7.7623, 1.3155, 7.4036,
-        1.3155], "text": "19.90%", "confidence": 1}]}, {"boundingBox": [3.3327, 1.4004,
-        3.4775, 1.4004, 3.4775, 1.4827, 3.3327, 1.4827], "text": "OH", "words": [{"boundingBox":
+        2, "angle": 0, "width": 8.5, "height": 11, "unit": "inch", "lines": [{"boundingBox":
+        [3.3371, 1.0463, 3.4282, 1.0463, 3.4282, 1.1269, 3.3371, 1.1269], "text":
+        "IN", "words": [{"boundingBox": [3.3371, 1.0463, 3.4282, 1.0463, 3.4282, 1.1269,
+        3.3371, 1.1269], "text": "IN", "confidence": 1}]}, {"boundingBox": [6.8227,
+        1.0538, 6.9997, 1.0538, 6.9997, 1.136, 6.8227, 1.136], "text": "781", "words":
+        [{"boundingBox": [6.8227, 1.0538, 6.9997, 1.0538, 6.9997, 1.136, 6.8227, 1.136],
+        "text": "781", "confidence": 1}]}, {"boundingBox": [7.3994, 1.0525, 7.7624,
+        1.0525, 7.7624, 1.1371, 7.3994, 1.1371], "text": "34.20%", "words": [{"boundingBox":
+        [7.3994, 1.0525, 7.7624, 1.0525, 7.7624, 1.1371, 7.3994, 1.1371], "text":
+        "34.20%", "confidence": 1}]}, {"boundingBox": [3.3371, 1.223, 3.4537, 1.223,
+        3.4537, 1.3036, 3.3371, 1.3036], "text": "MI", "words": [{"boundingBox": [3.3371,
+        1.223, 3.4537, 1.223, 3.4537, 1.3036, 3.3371, 1.3036], "text": "MI", "confidence":
+        1}]}, {"boundingBox": [6.7639, 1.2329, 7.0027, 1.2329, 7.0027, 1.3136, 6.7639,
+        1.3136], "text": "1114", "words": [{"boundingBox": [6.7639, 1.2329, 7.0027,
+        1.2329, 7.0027, 1.3136, 6.7639, 1.3136], "text": "1114", "confidence": 1}]},
+        {"boundingBox": [7.4036, 1.2309, 7.7623, 1.2309, 7.7623, 1.3155, 7.4036, 1.3155],
+        "text": "19.90%", "words": [{"boundingBox": [7.4036, 1.2309, 7.7623, 1.2309,
+        7.7623, 1.3155, 7.4036, 1.3155], "text": "19.90%", "confidence": 1}]}, {"boundingBox":
         [3.3327, 1.4004, 3.4775, 1.4004, 3.4775, 1.4827, 3.3327, 1.4827], "text":
-        "OH", "confidence": 1}]}, {"boundingBox": [6.7639, 1.4104, 7.0012, 1.4104,
-        7.0012, 1.4927, 6.7639, 1.4927], "text": "1098", "words": [{"boundingBox":
-        [6.7639, 1.4104, 7.0012, 1.4104, 7.0012, 1.4927, 6.7639, 1.4927], "text":
-        "1098", "confidence": 1}]}, {"boundingBox": [7.4, 1.4092, 7.7623, 1.4092,
-        7.7623, 1.4938, 7.4, 1.4938], "text": "27.70%", "words": [{"boundingBox":
+        "OH", "words": [{"boundingBox": [3.3327, 1.4004, 3.4775, 1.4004, 3.4775, 1.4827,
+        3.3327, 1.4827], "text": "OH", "confidence": 1}]}, {"boundingBox": [6.7639,
+        1.4104, 7.0012, 1.4104, 7.0012, 1.4927, 6.7639, 1.4927], "text": "1098", "words":
+        [{"boundingBox": [6.7639, 1.4104, 7.0012, 1.4104, 7.0012, 1.4927, 6.7639,
+        1.4927], "text": "1098", "confidence": 1}]}, {"boundingBox": [7.4, 1.4092,
+        7.7623, 1.4092, 7.7623, 1.4938, 7.4, 1.4938], "text": "27.70%", "words": [{"boundingBox":
         [7.4, 1.4092, 7.7623, 1.4092, 7.7623, 1.4938, 7.4, 1.4938], "text": "27.70%",
         "confidence": 1}]}, {"boundingBox": [3.3304, 1.5797, 3.4599, 1.5797, 3.4599,
         1.6602, 3.3304, 1.6602], "text": "WI", "words": [{"boundingBox": [3.3304,
@@ -12207,14 +12231,15 @@ interactions:
         "confidence": 1}]}, {"boundingBox": [7.3177, 5.1391, 7.765, 5.1391, 7.765,
         5.2424, 7.3177, 5.2424], "text": "17.49%", "words": [{"boundingBox": [7.3177,
         5.1391, 7.765, 5.1391, 7.765, 5.2424, 7.3177, 5.2424], "text": "17.49%", "confidence":
-        1}]}]}], "pageResults": [{"page": 1, "tables": [{"rows": 30, "columns": 5,
-        "cells": [{"rowIndex": 0, "columnIndex": 0, "text": "Region", "boundingBox":
-        [1.0042, 2.235, 1.8517, 2.235, 1.8517, 2.4117, 1.0042, 2.4117], "elements":
-        ["#/readResults/0/lines/1/words/0"]}, {"rowIndex": 0, "columnIndex": 1, "text":
-        "Division", "boundingBox": [1.8517, 2.235, 3.2833, 2.235, 3.2833, 2.4117,
-        1.8517, 2.4117], "elements": ["#/readResults/0/lines/2/words/0"]}, {"rowIndex":
-        0, "columnIndex": 2, "text": "Sales Team", "boundingBox": [3.2833, 2.235,
-        5.2292, 2.235, 5.2292, 2.4117, 3.2833, 2.4117], "elements": ["#/readResults/0/lines/3/words/0",
+        1}]}], "selectionMarks": [{"boundingBox": [3.3441, 3.3522, 3.4183, 3.3522,
+        3.4183, 3.4269, 3.3441, 3.4269], "confidence": 0.553, "state": "selected"}]}],
+        "pageResults": [{"page": 1, "tables": [{"rows": 30, "columns": 5, "cells":
+        [{"rowIndex": 0, "columnIndex": 0, "text": "Region", "boundingBox": [1.0042,
+        2.235, 1.8517, 2.235, 1.8517, 2.4117, 1.0042, 2.4117], "elements": ["#/readResults/0/lines/1/words/0"]},
+        {"rowIndex": 0, "columnIndex": 1, "text": "Division", "boundingBox": [1.8517,
+        2.235, 3.2833, 2.235, 3.2833, 2.4117, 1.8517, 2.4117], "elements": ["#/readResults/0/lines/2/words/0"]},
+        {"rowIndex": 0, "columnIndex": 2, "text": "Sales Team", "boundingBox": [3.2833,
+        2.235, 5.2292, 2.235, 5.2292, 2.4117, 3.2833, 2.4117], "elements": ["#/readResults/0/lines/3/words/0",
         "#/readResults/0/lines/3/words/1"]}, {"rowIndex": 0, "columnIndex": 3, "text":
         "Units Shipped (Thousands)", "boundingBox": [5.2292, 2.235, 7.1667, 2.235,
         7.1667, 2.4117, 5.2292, 2.4117], "elements": ["#/readResults/0/lines/4/words/0",
@@ -12704,15 +12729,15 @@ interactions:
         {"rowIndex": 23, "columnIndex": 4, "text": "17.49%", "boundingBox": [7.0817,
         5.0925, 7.8425, 5.0925, 7.8425, 5.285, 7.0817, 5.285], "elements": ["#/readResults/1/lines/79/words/0"]}]}]}]}}'
     headers:
-      apim-request-id: 9abd6856-19f7-4aeb-8b64-9c7d6f5cf412
+      apim-request-id: b93f1dfe-6c48-493e-9e0b-021b01357e63
+      content-length: '92389'
       content-type: application/json; charset=utf-8
-      date: Fri, 10 Jul 2020 18:40:43 GMT
+      date: Mon, 14 Sep 2020 19:25:29 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '38'
+      x-envoy-upstream-service-time: '65'
     status:
       code: 200
       message: OK
-    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/layout/analyzeResults/7c4728b3-6eef-47fb-97ed-15d9b59800ba
+    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/layout/analyzeResults/beec7135-f47b-4ab0-80c4-e32187a25dd9
 version: 1

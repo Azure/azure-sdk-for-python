@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
+import binascii
 from requests.structures import CaseInsensitiveDict
 from azure.core import MatchConditions
 from azure.core.pipeline import Pipeline
@@ -206,6 +207,8 @@ class AzureAppConfigurationClient:
             )
         except ErrorException as error:
             raise HttpResponseError(message=error.message, response=error.response)
+        except binascii.Error:
+            raise binascii.Error("Connection string secret has incorrect padding")
 
     @distributed_trace
     def get_configuration_setting(
@@ -263,6 +266,8 @@ class AzureAppConfigurationClient:
             return None
         except ErrorException as error:
             raise HttpResponseError(message=error.message, response=error.response)
+        except binascii.Error:
+            raise binascii.Error("Connection string secret has incorrect padding")
 
     @distributed_trace
     def add_configuration_setting(self, configuration_setting, **kwargs):
@@ -314,6 +319,8 @@ class AzureAppConfigurationClient:
             return ConfigurationSetting._from_key_value(key_value_added)
         except ErrorException as error:
             raise HttpResponseError(message=error.message, response=error.response)
+        except binascii.Error:
+            raise binascii.Error("Connection string secret has incorrect padding")
 
     @distributed_trace
     def set_configuration_setting(
@@ -382,6 +389,8 @@ class AzureAppConfigurationClient:
             return ConfigurationSetting._from_key_value(key_value_set)
         except ErrorException as error:
             raise HttpResponseError(message=error.message, response=error.response)
+        except binascii.Error:
+            raise binascii.Error("Connection string secret has incorrect padding")
 
     @distributed_trace
     def delete_configuration_setting(
@@ -438,6 +447,8 @@ class AzureAppConfigurationClient:
             return ConfigurationSetting._from_key_value(key_value_deleted)
         except ErrorException as error:
             raise HttpResponseError(message=error.message, response=error.response)
+        except binascii.Error:
+            raise binascii.Error("Connection string secret has incorrect padding")
 
     @distributed_trace
     def list_revisions(
@@ -496,6 +507,8 @@ class AzureAppConfigurationClient:
             )
         except ErrorException as error:
             raise HttpResponseError(message=error.message, response=error.response)
+        except binascii.Error:
+            raise binascii.Error("Connection string secret has incorrect padding")
 
     @distributed_trace
     def set_read_only(
@@ -508,6 +521,7 @@ class AzureAppConfigurationClient:
         :type configuration_setting: :class:`ConfigurationSetting`
         :param read_only: set the read only setting if true, else clear the read only setting
         :type read_only: bool
+        :keyword ~azure.core.MatchConditions match_condition: the match condition to use upon the etag
         :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request header
         :return: The ConfigurationSetting returned from the service
         :rtype: :class:`ConfigurationSetting`
@@ -529,11 +543,23 @@ class AzureAppConfigurationClient:
             404: ResourceNotFoundError
         }
 
+        match_condition = kwargs.pop("match_condition", MatchConditions.Unconditionally)
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        if match_condition == MatchConditions.IfModified:
+            error_map[412] = ResourceNotModifiedError
+        if match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        if match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+
         try:
             if read_only:
                 key_value = self._impl.put_lock(
                     key=configuration_setting.key,
                     label=configuration_setting.label,
+                    if_match=prep_if_match(configuration_setting.etag, match_condition),
+                    if_none_match=prep_if_none_match(configuration_setting.etag, match_condition),
                     error_map=error_map,
                     **kwargs
                 )
@@ -541,9 +567,13 @@ class AzureAppConfigurationClient:
                 key_value = self._impl.delete_lock(
                     key=configuration_setting.key,
                     label=configuration_setting.label,
+                    if_match=prep_if_match(configuration_setting.etag, match_condition),
+                    if_none_match=prep_if_none_match(configuration_setting.etag, match_condition),
                     error_map=error_map,
                     **kwargs
                 )
             return ConfigurationSetting._from_key_value(key_value)
         except ErrorException as error:
             raise HttpResponseError(message=error.message, response=error.response)
+        except binascii.Error:
+            raise binascii.Error("Connection string secret has incorrect padding")

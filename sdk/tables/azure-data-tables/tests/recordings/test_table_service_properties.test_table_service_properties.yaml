@@ -6,7 +6,7 @@ interactions:
       /></StorageServiceProperties>'
     headers:
       Accept:
-      - '*/*'
+      - application/xml
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -16,27 +16,27 @@ interactions:
       Content-Type:
       - application/xml
       Date:
-      - Wed, 19 Aug 2020 21:21:42 GMT
+      - Thu, 01 Oct 2020 01:31:19 GMT
       User-Agent:
-      - azsdk-python-storage-table/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 19 Aug 2020 21:21:42 GMT
+      - Thu, 01 Oct 2020 01:31:19 GMT
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     method: PUT
-    uri: https://storagename.table.core.windows.net/?restype=service&comp=properties
+    uri: https://tablesteststorname.table.core.windows.net/?restype=service&comp=properties
   response:
     body:
       string: ''
     headers:
       date:
-      - Wed, 19 Aug 2020 21:21:42 GMT
+      - Thu, 01 Oct 2020 01:31:20 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
       - chunked
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     status:
       code: 202
       message: Accepted
@@ -50,15 +50,15 @@ interactions:
       Connection:
       - keep-alive
       Date:
-      - Wed, 19 Aug 2020 21:22:12 GMT
+      - Thu, 01 Oct 2020 01:31:50 GMT
       User-Agent:
-      - azsdk-python-storage-table/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 19 Aug 2020 21:22:12 GMT
+      - Thu, 01 Oct 2020 01:31:50 GMT
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     method: GET
-    uri: https://storagename.table.core.windows.net/?restype=service&comp=properties
+    uri: https://tablesteststorname.table.core.windows.net/?restype=service&comp=properties
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><StorageServiceProperties><Logging><Version>1.0</Version><Read>false</Read><Write>false</Write><Delete>false</Delete><RetentionPolicy><Enabled>false</Enabled></RetentionPolicy></Logging><HourMetrics><Version>1.0</Version><Enabled>false</Enabled><RetentionPolicy><Enabled>false</Enabled></RetentionPolicy></HourMetrics><MinuteMetrics><Version>1.0</Version><Enabled>false</Enabled><RetentionPolicy><Enabled>false</Enabled></RetentionPolicy></MinuteMetrics><Cors
@@ -67,13 +67,13 @@ interactions:
       content-type:
       - application/xml
       date:
-      - Wed, 19 Aug 2020 21:22:12 GMT
+      - Thu, 01 Oct 2020 01:31:50 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
       - chunked
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     status:
       code: 200
       message: OK

@@ -1,5 +1,15 @@
 # Release History
 
+## 12.3.0b2 (Unreleased)
+
+
+## 12.3.0b1 (2020-10-02)
+**New features**
+- Added support for enabling SMB Multichannel for the share service.
+- Added support for leasing a share.
+- Added support for getting the range diff between current file and a snapshot as well as getting the diff between two file snapshots.
+
+
 ## 12.2.0 (2020-08-13)
 **Stable release of preview features**
 - Preview feature `undelete_share` on FileShareServiceClient.

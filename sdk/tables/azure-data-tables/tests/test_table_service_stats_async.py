@@ -8,8 +8,8 @@ import pytest
 
 # from azure.data.tabless import TableServiceClient
 from azure.data.tables.aio import TableServiceClient
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
-from _shared.testcase import GlobalResourceGroupPreparer, TableTestCase, GlobalStorageAccountPreparer
+from devtools_testutils import CachedResourceGroupPreparer, CachedStorageAccountPreparer
+from _shared.testcase import TableTestCase
 
 SERVICE_UNAVAILABLE_RESP_BODY = '<?xml version="1.0" encoding="utf-8"?><StorageServiceStats><GeoReplication><Status' \
                                 '>unavailable</Status><LastSyncTime></LastSyncTime></GeoReplication' \
@@ -48,9 +48,9 @@ class TableServiceStatsTest(TableTestCase):
 
     # --Test cases per service ---------------------------------------
 
-    @GlobalResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', sku='Standard_RAGRS', random_name_enabled=True)
-    async def test_table_service_stats_f_async(self, resource_group, location, storage_account, storage_account_key):
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest", sku='Standard_RAGRS')
+    async def test_table_service_stats_f(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         tsc = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
 
@@ -59,9 +59,10 @@ class TableServiceStatsTest(TableTestCase):
         # Assert
         self._assert_stats_default(stats)
 
-    @GlobalResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', sku='Standard_RAGRS', random_name_enabled=True)
-    async def test_table_service_stats_when_unavailable_async(self, resource_group, location, storage_account, storage_account_key):
+
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest", sku='Standard_RAGRS')
+    async def test_table_service_stats_when_unavailable(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         tsc = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
 

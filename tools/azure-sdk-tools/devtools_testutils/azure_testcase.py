@@ -17,7 +17,7 @@ import pytest
 from azure_devtools.scenario_tests import (
     ReplayableTest, AzureTestError,
     GeneralNameReplacer, RequestUrlNormalizer,
-    OAuthRequestResponsesFilter
+    AuthenticationMetadataFilter, OAuthRequestResponsesFilter
 )
 from azure_devtools.scenario_tests.config import TestConfig
 
@@ -63,6 +63,13 @@ def is_live():
             config_file = None
         is_live._cache = TestConfig(config_file=config_file).record_mode
     return is_live._cache
+
+
+def get_region_override(default='westus'):
+    region = os.environ.get('RESOURCE_REGION', None) or default
+    if not region:
+        raise ValueError('Region should not be None; set a non-empty-string region to either the RESOURCE_REGION environment variable or the default parameter to this function.')
+    return region
 
 
 def _is_autorest_v3(client_class):
@@ -118,6 +125,7 @@ class AzureTestCase(ReplayableTest):
     def _get_recording_processors(self):
         return [
             self.scrubber,
+            AuthenticationMetadataFilter(),
             OAuthRequestResponsesFilter(),
             RequestUrlNormalizer()
         ]

@@ -1,0 +1,448 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '0'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.2.1 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://managedhsm/keys/selective-restore-test-key20e5150d/create?api-version=7.1
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control: no-cache
+      content-length: '0'
+      content-security-policy: default-src 'self'
+      content-type: application/json; charset=utf-8
+      strict-transport-security: max-age=31536000; includeSubDomains
+      www-authenticate: Bearer authorization="https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47",
+        resource="https://managedhsm.azure.net"
+      x-content-type-options: nosniff
+      x-frame-options: SAMEORIGIN
+      x-ms-server-latency: '1'
+    status:
+      code: 401
+      message: Unauthorized
+    url: https://chlowehsm.managedhsm.azure.net/keys/selective-restore-test-key20e5150d/create?api-version=7.1
+- request:
+    body: '{"kty": "RSA"}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '14'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.2.1 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://managedhsm/keys/selective-restore-test-key20e5150d/create?api-version=7.1
+  response:
+    body:
+      string: '{"attributes":{"created":1601591665,"enabled":true,"exportable":false,"recoverableDays":90,"recoveryLevel":"Recoverable+Purgeable","updated":1601591665},"key":{"e":"AQAB","key_ops":["wrapKey","decrypt","encrypt","unwrapKey","sign","verify"],"kid":"https://managedhsm/keys/selective-restore-test-key20e5150d/5cfeb43beec2485f1e716e7f905f9125","kty":"RSA-HSM","n":"rUiCMBpOm5LvgUekk5uws7D3MKrb6UWDLIwd1jxg9ntpPVbU-nVvGVwg4XwTPx7q5H_cTSaNnf3v1jIzA4kvqYPa21Lr4TRve9AeUcySCDz67N4hrVPncYWMQgQeAVgvkIiN2050-BpwQ6xI988HMwXX_8HTSRyvWw-ftavPFSvQwgAPbmpmLTdfq-zY8fW0tCps_xJnKyRk8kwcG8PMCuxnD_Mq6al3z_zcnjG5c6KSXxIc0_y9p2yHDJBSUYEspTNAxlz5ROU2XPxzrx7LvFA_yO-MJX2hIJoOxNBdNM4Qkjy16pgWcHQ1Dh6t5hX_GqCQGrWX0kCCCkDXeVPGPQ"}}'
+    headers:
+      cache-control: no-cache
+      content-length: '727'
+      content-security-policy: default-src 'self'
+      content-type: application/json; charset=utf-8
+      strict-transport-security: max-age=31536000; includeSubDomains
+      x-content-type-options: nosniff
+      x-frame-options: SAMEORIGIN
+      x-ms-keyvault-network-info: addr=162.211.216.102
+      x-ms-keyvault-region: eastus2
+      x-ms-server-latency: '280'
+    status:
+      code: 200
+      message: OK
+    url: https://chlowehsm.managedhsm.azure.net/keys/selective-restore-test-key20e5150d/create?api-version=7.1
+- request:
+    body: '{"storageResourceUri": "https://storname.blob.core.windows.net/containerst5uppuukrzgyab",
+      "token": "redacted"}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '233'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-administration/4.0.0b2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://managedhsm/backup?api-version=7.2-preview
+  response:
+    body:
+      string: '{"status":"InProgress","statusDetails":null,"error":{"code":null,"message":null,"innererror":null},"startTime":1601591667,"endTime":null,"jobId":"089db62f03fc4f90b16b6ec1b0994fce","azureStorageBlobContainerUri":null}'
+    headers:
+      azure-asyncoperation: https://managedhsm/backup/089db62f03fc4f90b16b6ec1b0994fce/pending
+      cache-control: no-cache
+      content-length: '216'
+      content-security-policy: default-src 'self'
+      content-type: application/json; charset=utf-8
+      date: Thu, 01 Oct 2020 22:34:26 GMT
+      server: Kestrel
+      strict-transport-security: max-age=31536000; includeSubDomains
+      x-content-type-options: nosniff
+      x-frame-options: SAMEORIGIN
+      x-ms-keyvault-network-info: addr=162.211.216.102
+      x-ms-keyvault-region: eastus2
+      x-ms-server-latency: '615'
+    status:
+      code: 202
+      message: ''
+    url: https://chlowehsm.managedhsm.azure.net/backup?api-version=7.2-preview
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-administration/4.0.0b2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://managedhsm/backup/089db62f03fc4f90b16b6ec1b0994fce/pending?api-version=7.2-preview
+  response:
+    body:
+      string: '{"azureStorageBlobContainerUri":null,"endTime":null,"error":{"code":null,"innererror":null,"message":null},"jobId":"089db62f03fc4f90b16b6ec1b0994fce","startTime":1601591667,"status":"InProgress","statusDetails":null}'
+    headers:
+      cache-control: no-cache
+      content-length: '216'
+      content-security-policy: default-src 'self'
+      content-type: application/json; charset=utf-8
+      date: Thu, 01 Oct 2020 22:34:27 GMT
+      server: Kestrel
+      strict-transport-security: max-age=31536000; includeSubDomains
+      x-content-type-options: nosniff
+      x-frame-options: SAMEORIGIN
+      x-ms-build-version: 1.0.20200917-2-1617fc9c-develop
+      x-ms-keyvault-network-info: addr=162.211.216.102
+      x-ms-keyvault-region: eastus2
+      x-ms-server-latency: '457'
+    status:
+      code: 200
+      message: OK
+    url: https://chlowehsm.managedhsm.azure.net/backup/089db62f03fc4f90b16b6ec1b0994fce/pending?api-version=7.2-preview
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-keyvault-administration/4.0.0b2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://managedhsm/backup/089db62f03fc4f90b16b6ec1b0994fce/pending
+  response:
+    body:
+      string: '{"azureStorageBlobContainerUri":"https://storname.blob.core.windows.net/containerst5uppuukrzgyab/mhsm-chlowehsm-2020100122342733","endTime":1601591676,"error":null,"jobId":"089db62f03fc4f90b16b6ec1b0994fce","startTime":1601591667,"status":"Succeeded","statusDetails":null}'
+    headers:
+      cache-control: no-cache
+      content-length: '288'
+      content-security-policy: default-src 'self'
+      content-type: application/json; charset=utf-8
+      date: Thu, 01 Oct 2020 22:34:37 GMT
+      server: Kestrel
+      strict-transport-security: max-age=31536000; includeSubDomains
+      x-content-type-options: nosniff
+      x-frame-options: SAMEORIGIN
+      x-ms-build-version: 1.0.20200917-2-1617fc9c-develop
+      x-ms-keyvault-network-info: addr=162.211.216.102
+      x-ms-keyvault-region: eastus2
+      x-ms-server-latency: '483'
+    status:
+      code: 200
+      message: OK
+    url: https://chlowehsm.managedhsm.azure.net/backup/089db62f03fc4f90b16b6ec1b0994fce/pending
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-administration/4.0.0b2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://managedhsm/backup/089db62f03fc4f90b16b6ec1b0994fce/pending?api-version=7.2-preview
+  response:
+    body:
+      string: '{"azureStorageBlobContainerUri":"https://storname.blob.core.windows.net/containerst5uppuukrzgyab/mhsm-chlowehsm-2020100122342733","endTime":1601591676,"error":null,"jobId":"089db62f03fc4f90b16b6ec1b0994fce","startTime":1601591667,"status":"Succeeded","statusDetails":null}'
+    headers:
+      cache-control: no-cache
+      content-length: '288'
+      content-security-policy: default-src 'self'
+      content-type: application/json; charset=utf-8
+      date: Thu, 01 Oct 2020 22:34:38 GMT
+      server: Kestrel
+      strict-transport-security: max-age=31536000; includeSubDomains
+      x-content-type-options: nosniff
+      x-frame-options: SAMEORIGIN
+      x-ms-build-version: 1.0.20200917-2-1617fc9c-develop
+      x-ms-keyvault-network-info: addr=162.211.216.102
+      x-ms-keyvault-region: eastus2
+      x-ms-server-latency: '491'
+    status:
+      code: 200
+      message: OK
+    url: https://chlowehsm.managedhsm.azure.net/backup/089db62f03fc4f90b16b6ec1b0994fce/pending?api-version=7.2-preview
+- request:
+    body: '{"sasTokenParameters": {"storageResourceUri": "https://storname.blob.core.windows.net/containerst5uppuukrzgyab",
+      "token": "redacted"}, "folder": "mhsm-chlowehsm-2020100122342733"}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '302'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-administration/4.0.0b2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+    method: PUT
+    uri: https://managedhsm/keys/selective-restore-test-key20e5150d/restore?api-version=7.2-preview
+  response:
+    body:
+      string: '{"endTime":null,"error":{"code":null,"innererror":null,"message":null},"jobId":"689318b514cc47dc93f41325ed3c15ac","startTime":1601591679,"status":"InProgress","statusDetails":null}'
+    headers:
+      azure-asyncoperation: https://managedhsm/restore/689318b514cc47dc93f41325ed3c15ac/pending
+      cache-control: no-cache
+      content-length: '180'
+      content-security-policy: default-src 'self'
+      content-type: application/json; charset=utf-8
+      date: Thu, 01 Oct 2020 22:34:39 GMT
+      server: Kestrel
+      strict-transport-security: max-age=31536000; includeSubDomains
+      x-content-type-options: nosniff
+      x-frame-options: SAMEORIGIN
+      x-ms-keyvault-network-info: addr=162.211.216.102
+      x-ms-keyvault-region: eastus2
+      x-ms-server-latency: '638'
+    status:
+      code: 202
+      message: ''
+    url: https://chlowehsm.managedhsm.azure.net/keys/selective-restore-test-key20e5150d/restore?api-version=7.2-preview
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-administration/4.0.0b2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://managedhsm/restore/689318b514cc47dc93f41325ed3c15ac/pending?api-version=7.2-preview
+  response:
+    body:
+      string: '{"endTime":null,"error":{"code":null,"innererror":null,"message":null},"jobId":"689318b514cc47dc93f41325ed3c15ac","startTime":1601591679,"status":"InProgress","statusDetails":null}'
+    headers:
+      cache-control: no-cache
+      content-length: '180'
+      content-security-policy: default-src 'self'
+      content-type: application/json; charset=utf-8
+      date: Thu, 01 Oct 2020 22:34:39 GMT
+      server: Kestrel
+      strict-transport-security: max-age=31536000; includeSubDomains
+      x-content-type-options: nosniff
+      x-frame-options: SAMEORIGIN
+      x-ms-build-version: 1.0.20200917-2-1617fc9c-develop
+      x-ms-keyvault-network-info: addr=162.211.216.102
+      x-ms-keyvault-region: eastus2
+      x-ms-server-latency: '472'
+    status:
+      code: 200
+      message: OK
+    url: https://chlowehsm.managedhsm.azure.net/restore/689318b514cc47dc93f41325ed3c15ac/pending?api-version=7.2-preview
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-keyvault-administration/4.0.0b2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://managedhsm/restore/689318b514cc47dc93f41325ed3c15ac/pending
+  response:
+    body:
+      string: '{"endTime":null,"error":{"code":null,"innererror":null,"message":null},"jobId":"689318b514cc47dc93f41325ed3c15ac","startTime":1601591679,"status":"InProgress","statusDetails":null}'
+    headers:
+      cache-control: no-cache
+      content-length: '180'
+      content-security-policy: default-src 'self'
+      content-type: application/json; charset=utf-8
+      date: Thu, 01 Oct 2020 22:34:50 GMT
+      server: Kestrel
+      strict-transport-security: max-age=31536000; includeSubDomains
+      x-content-type-options: nosniff
+      x-frame-options: SAMEORIGIN
+      x-ms-build-version: 1.0.20200917-2-1617fc9c-develop
+      x-ms-keyvault-network-info: addr=162.211.216.102
+      x-ms-keyvault-region: eastus2
+      x-ms-server-latency: '443'
+    status:
+      code: 200
+      message: OK
+    url: https://chlowehsm.managedhsm.azure.net/restore/689318b514cc47dc93f41325ed3c15ac/pending
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-keyvault-administration/4.0.0b2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://managedhsm/restore/689318b514cc47dc93f41325ed3c15ac/pending
+  response:
+    body:
+      string: '{"endTime":1601591696,"error":null,"jobId":"689318b514cc47dc93f41325ed3c15ac","startTime":1601591679,"status":"Succeeded","statusDetails":"Number
+        of successful key versions restored: 0, Number of key versions could not overwrite:
+        3"}'
+    headers:
+      cache-control: no-cache
+      content-length: '233'
+      content-security-policy: default-src 'self'
+      content-type: application/json; charset=utf-8
+      date: Thu, 01 Oct 2020 22:34:56 GMT
+      server: Kestrel
+      strict-transport-security: max-age=31536000; includeSubDomains
+      x-content-type-options: nosniff
+      x-frame-options: SAMEORIGIN
+      x-ms-build-version: 1.0.20200917-2-1617fc9c-develop
+      x-ms-keyvault-network-info: addr=162.211.216.102
+      x-ms-keyvault-region: eastus2
+      x-ms-server-latency: '924'
+    status:
+      code: 200
+      message: OK
+    url: https://chlowehsm.managedhsm.azure.net/restore/689318b514cc47dc93f41325ed3c15ac/pending
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-administration/4.0.0b2 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://managedhsm/restore/689318b514cc47dc93f41325ed3c15ac/pending?api-version=7.2-preview
+  response:
+    body:
+      string: '{"endTime":1601591696,"error":null,"jobId":"689318b514cc47dc93f41325ed3c15ac","startTime":1601591679,"status":"Succeeded","statusDetails":"Number
+        of successful key versions restored: 0, Number of key versions could not overwrite:
+        3"}'
+    headers:
+      cache-control: no-cache
+      content-length: '233'
+      content-security-policy: default-src 'self'
+      content-type: application/json; charset=utf-8
+      date: Thu, 01 Oct 2020 22:34:57 GMT
+      server: Kestrel
+      strict-transport-security: max-age=31536000; includeSubDomains
+      x-content-type-options: nosniff
+      x-frame-options: SAMEORIGIN
+      x-ms-build-version: 1.0.20200917-2-1617fc9c-develop
+      x-ms-keyvault-network-info: addr=162.211.216.102
+      x-ms-keyvault-region: eastus2
+      x-ms-server-latency: '711'
+    status:
+      code: 200
+      message: OK
+    url: https://chlowehsm.managedhsm.azure.net/restore/689318b514cc47dc93f41325ed3c15ac/pending?api-version=7.2-preview
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.2.1 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+    method: DELETE
+    uri: https://managedhsm/keys/selective-restore-test-key20e5150d?api-version=7.1
+  response:
+    body:
+      string: '{"error":{"code":"Conflict","message":"User triggered Restore operation
+        is in progress. Retry after the restore operation (Activity ID: d9c5d3c6-0335-11eb-b520-0242ac120008)"}}'
+    headers:
+      cache-control: no-cache
+      content-length: '176'
+      content-security-policy: default-src 'self'
+      content-type: application/json; charset=utf-8
+      strict-transport-security: max-age=31536000; includeSubDomains
+      x-content-type-options: nosniff
+      x-frame-options: SAMEORIGIN
+      x-ms-server-latency: '1'
+    status:
+      code: 409
+      message: ''
+    url: https://chlowehsm.managedhsm.azure.net/keys/selective-restore-test-key20e5150d?api-version=7.1
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.2.1 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+    method: DELETE
+    uri: https://managedhsm/keys/selective-restore-test-key20e5150d?api-version=7.1
+  response:
+    body:
+      string: '{"attributes":{"created":1601591665,"enabled":true,"exportable":false,"recoverableDays":90,"recoveryLevel":"Recoverable+Purgeable","updated":1601591665},"deletedDate":1601591701,"key":{"e":"AQAB","key_ops":["wrapKey","verify","sign","unwrapKey","decrypt","encrypt"],"kid":"https://managedhsm/keys/selective-restore-test-key20e5150d/5cfeb43beec2485f1e716e7f905f9125","kty":"RSA-HSM","n":"rUiCMBpOm5LvgUekk5uws7D3MKrb6UWDLIwd1jxg9ntpPVbU-nVvGVwg4XwTPx7q5H_cTSaNnf3v1jIzA4kvqYPa21Lr4TRve9AeUcySCDz67N4hrVPncYWMQgQeAVgvkIiN2050-BpwQ6xI988HMwXX_8HTSRyvWw-ftavPFSvQwgAPbmpmLTdfq-zY8fW0tCps_xJnKyRk8kwcG8PMCuxnD_Mq6al3z_zcnjG5c6KSXxIc0_y9p2yHDJBSUYEspTNAxlz5ROU2XPxzrx7LvFA_yO-MJX2hIJoOxNBdNM4Qkjy16pgWcHQ1Dh6t5hX_GqCQGrWX0kCCCkDXeVPGPQ"},"recoveryId":"https://managedhsm/deletedkeys/selective-restore-test-key20e5150d","scheduledPurgeDate":1609367701}'
+    headers:
+      cache-control: no-cache
+      content-length: '885'
+      content-security-policy: default-src 'self'
+      content-type: application/json; charset=utf-8
+      strict-transport-security: max-age=31536000; includeSubDomains
+      x-content-type-options: nosniff
+      x-frame-options: SAMEORIGIN
+      x-ms-keyvault-network-info: addr=162.211.216.102
+      x-ms-keyvault-region: eastus2
+      x-ms-server-latency: '194'
+    status:
+      code: 200
+      message: OK
+    url: https://chlowehsm.managedhsm.azure.net/keys/selective-restore-test-key20e5150d?api-version=7.1
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.2.1 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://managedhsm/deletedkeys/selective-restore-test-key20e5150d?api-version=7.1
+  response:
+    body:
+      string: '{"attributes":{"created":1601591665,"enabled":true,"exportable":false,"recoverableDays":90,"recoveryLevel":"Recoverable+Purgeable","updated":1601591665},"deletedDate":1601591701,"key":{"e":"AQAB","key_ops":["encrypt","decrypt","unwrapKey","sign","verify","wrapKey"],"kid":"https://managedhsm/keys/selective-restore-test-key20e5150d/5cfeb43beec2485f1e716e7f905f9125","kty":"RSA-HSM","n":"rUiCMBpOm5LvgUekk5uws7D3MKrb6UWDLIwd1jxg9ntpPVbU-nVvGVwg4XwTPx7q5H_cTSaNnf3v1jIzA4kvqYPa21Lr4TRve9AeUcySCDz67N4hrVPncYWMQgQeAVgvkIiN2050-BpwQ6xI988HMwXX_8HTSRyvWw-ftavPFSvQwgAPbmpmLTdfq-zY8fW0tCps_xJnKyRk8kwcG8PMCuxnD_Mq6al3z_zcnjG5c6KSXxIc0_y9p2yHDJBSUYEspTNAxlz5ROU2XPxzrx7LvFA_yO-MJX2hIJoOxNBdNM4Qkjy16pgWcHQ1Dh6t5hX_GqCQGrWX0kCCCkDXeVPGPQ"},"recoveryId":"https://managedhsm/deletedkeys/selective-restore-test-key20e5150d","scheduledPurgeDate":1609367701}'
+    headers:
+      cache-control: no-cache
+      content-length: '885'
+      content-security-policy: default-src 'self'
+      content-type: application/json; charset=utf-8
+      strict-transport-security: max-age=31536000; includeSubDomains
+      x-content-type-options: nosniff
+      x-frame-options: SAMEORIGIN
+      x-ms-build-version: 1.0.20200917-2-1617fc9c-develop
+      x-ms-keyvault-network-info: addr=162.211.216.102
+      x-ms-keyvault-region: eastus2
+      x-ms-server-latency: '65'
+    status:
+      code: 200
+      message: OK
+    url: https://chlowehsm.managedhsm.azure.net/deletedkeys/selective-restore-test-key20e5150d?api-version=7.1
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.2.1 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+    method: DELETE
+    uri: https://managedhsm/deletedkeys/selective-restore-test-key20e5150d?api-version=7.1
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control: no-cache
+      content-length: '0'
+      content-security-policy: default-src 'self'
+      content-type: application/json; charset=utf-8
+      strict-transport-security: max-age=31536000; includeSubDomains
+      x-content-type-options: nosniff
+      x-frame-options: SAMEORIGIN
+      x-ms-keyvault-network-info: addr=162.211.216.102
+      x-ms-keyvault-region: eastus2
+      x-ms-server-latency: '238'
+    status:
+      code: 204
+      message: ''
+    url: https://chlowehsm.managedhsm.azure.net/deletedkeys/selective-restore-test-key20e5150d?api-version=7.1
+version: 1

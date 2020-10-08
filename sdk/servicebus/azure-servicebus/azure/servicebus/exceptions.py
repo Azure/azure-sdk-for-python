@@ -4,6 +4,8 @@
 # license information.
 # -------------------------------------------------------------------------
 
+from typing import Optional
+
 from uamqp import errors, constants
 
 from ._common.constants import SESSION_LOCK_LOST, SESSION_LOCK_TIMEOUT
@@ -79,7 +81,10 @@ def _create_servicebus_exception(logger, exception, handler):  # pylint: disable
         error_need_raise = True
     elif isinstance(exception, errors.MessageException):
         logger.info("Message send failed (%r)", exception)
-        error = MessageSendFailed(exception)
+        if exception.condition == constants.ErrorCodes.ClientError and 'timed out' in str(exception):
+            error = OperationTimeoutError("Send operation timed out", inner_exception=exception)
+        else:
+            error = MessageSendFailed(exception)
         error_need_raise = False
     elif isinstance(exception, errors.LinkDetach) and exception.condition == SESSION_LOCK_LOST:
         try:
@@ -115,7 +120,7 @@ def _create_servicebus_exception(logger, exception, handler):  # pylint: disable
         logger.info("Unexpected error occurred (%r). Shutting down.", exception)
         error = exception
         if not isinstance(exception, ServiceBusError):
-            error = ServiceBusError("Handler failed: {}.".format(exception))
+            error = ServiceBusError("Handler failed: {}.".format(exception), exception)
 
     try:
         err_condition = exception.condition
@@ -158,6 +163,7 @@ class ServiceBusError(Exception):
     """
 
     def __init__(self, message, inner_exception=None):
+        # type: (Optional[str], Optional[Exception]) -> None
         self.inner_exception = inner_exception
         super(ServiceBusError, self).__init__(message)
 
@@ -205,6 +211,7 @@ class MessageAlreadySettled(MessageError):
     """
 
     def __init__(self, action):
+        # type: (str) -> None
         message = "Unable to {} message as it has already been settled".format(action)
         super(MessageAlreadySettled, self).__init__(message)
 
@@ -213,6 +220,7 @@ class MessageSettleFailed(ServiceBusError):
     """Attempt to settle a message failed."""
 
     def __init__(self, action, inner_exception):
+        # type: (str, Exception) -> None
         message = "Failed to {} message. Error: {}".format(action, inner_exception)
         self.inner_exception = inner_exception
         super(MessageSettleFailed, self).__init__(message, inner_exception)
@@ -222,12 +230,13 @@ class MessageSendFailed(ServiceBusError):
     """A message failed to send to the Service Bus entity."""
 
     def __init__(self, inner_exception):
+        # type: (Exception) -> None
         message = "Message failed to send. Error: {}".format(inner_exception)
         self.condition = None
         self.description = None
         if hasattr(inner_exception, 'condition'):
-            self.condition = inner_exception.condition
-            self.description = inner_exception.description
+            self.condition = inner_exception.condition      # type: ignore
+            self.description = inner_exception.description  # type: ignore
         self.inner_exception = inner_exception
         super(MessageSendFailed, self).__init__(message, inner_exception)
 
@@ -240,6 +249,7 @@ class MessageLockExpired(ServiceBusError):
     """
 
     def __init__(self, message=None, inner_exception=None):
+        # type: (Optional[str], Optional[Exception]) -> None
         message = message or "Message lock expired"
         super(MessageLockExpired, self).__init__(message, inner_exception=inner_exception)
 
@@ -252,6 +262,7 @@ class SessionLockExpired(ServiceBusError):
     """
 
     def __init__(self, message=None, inner_exception=None):
+        # type: (Optional[str], Optional[Exception]) -> None
         message = message or "Session lock expired"
         super(SessionLockExpired, self).__init__(message, inner_exception=inner_exception)
 

@@ -1,0 +1,38 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-metricsadvisor/1.0.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds?status=Paused
+  response:
+    body:
+      string: '{"value":[],"@nextLink":null}'
+    headers:
+      apim-request-id:
+      - 9d6c992f-6701-4a07-96df-15e72b6a8262
+      content-length:
+      - '29'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 22 Sep 2020 01:44:04 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '185'
+      x-request-id:
+      - 9d6c992f-6701-4a07-96df-15e72b6a8262
+    status:
+      code: 200
+      message: OK
+version: 1

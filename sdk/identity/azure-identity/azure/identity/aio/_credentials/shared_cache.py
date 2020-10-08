@@ -29,8 +29,6 @@ class SharedTokenCacheCredential(SharedTokenCacheBase, AsyncContextManager):
         defines authorities for other clouds.
     :keyword str tenant_id: an Azure Active Directory tenant ID. Used to select an account when the cache contains
         tokens for multiple identities.
-    :keyword AuthenticationRecord authentication_record: an authentication record returned by a user credential such as
-        :class:`DeviceCodeCredential` or :class:`InteractiveBrowserCredential`
     :keyword bool allow_unencrypted_cache: if True, the credential will fall back to a plaintext cache when encryption
         is unavailable. Defaults to False.
     """
@@ -52,7 +50,7 @@ class SharedTokenCacheCredential(SharedTokenCacheBase, AsyncContextManager):
 
         If no access token is cached, attempt to acquire one using a cached refresh token.
 
-        .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
+        This method is called automatically by Azure SDK clients.
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
         :rtype: :class:`azure.core.credentials.AccessToken`

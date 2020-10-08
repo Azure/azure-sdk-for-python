@@ -15,27 +15,27 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Wed, 19 Aug 2020 21:18:56 GMT
+      - Thu, 01 Oct 2020 01:07:12 GMT
       User-Agent:
-      - azsdk-python-storage-table/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 19 Aug 2020 21:18:56 GMT
+      - Thu, 01 Oct 2020 01:07:12 GMT
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     method: POST
-    uri: https://storagename.table.core.windows.net/Tables
+    uri: https://tablesteststorname.table.core.windows.net/Tables
   response:
     body:
-      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#Tables/@Element","TableName":"uttablefb67146a"}'
+      string: '{"odata.metadata":"https://tablesteststorname.table.core.windows.net/$metadata#Tables/@Element","TableName":"uttablefb67146a"}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Wed, 19 Aug 2020 21:18:56 GMT
+      - Thu, 01 Oct 2020 01:07:12 GMT
       location:
-      - https://storagename.table.core.windows.net/Tables('uttablefb67146a')
+      - https://tablesteststorname.table.core.windows.net/Tables('uttablefb67146a')
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -43,54 +43,52 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
 - request:
-    body: '{"PartitionKey": "pkfb67146a", "RowKey": "rkfb67146a", "age": "abc", "sex":
-      "female", "sign": "aquarius", "birthday": "1991-10-04T00:00:00Z", "birthday@odata.type":
+    body: '{"PartitionKey": "pkfb67146a", "PartitionKey@odata.type": "Edm.String",
+      "RowKey": "rkfb67146a", "RowKey@odata.type": "Edm.String", "age": "abc", "age@odata.type":
+      "Edm.String", "sex": "female", "sex@odata.type": "Edm.String", "sign": "aquarius",
+      "sign@odata.type": "Edm.String", "birthday": "1991-10-04T00:00:00Z", "birthday@odata.type":
       "Edm.DateTime"}'
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
-      - '180'
+      - '353'
       Content-Type:
       - application/json
       DataServiceVersion:
       - '3.0'
       Date:
-      - Wed, 19 Aug 2020 21:18:56 GMT
+      - Thu, 01 Oct 2020 01:07:12 GMT
       If-Match:
       - '*'
       User-Agent:
-      - azsdk-python-storage-table/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 19 Aug 2020 21:18:56 GMT
+      - Thu, 01 Oct 2020 01:07:12 GMT
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     method: PUT
-    uri: https://storagename.table.core.windows.net/uttablefb67146a(PartitionKey='pkfb67146a',RowKey='rkfb67146a')
+    uri: https://tablesteststorname.table.core.windows.net/uttablefb67146a(PartitionKey='pkfb67146a',RowKey='rkfb67146a')
   response:
     body:
-      string: '<?xml version="1.0" encoding="utf-8"?><error xmlns="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"><code>ResourceNotFound</code><message
-        xml:lang="en-US">The specified resource does not exist.
-
-        RequestId:2a2a10af-7002-00ab-436e-76e671000000
-
-        Time:2020-08-19T21:18:57.1249036Z</message></error>'
+      string: '{"odata.error":{"code":"ResourceNotFound","message":{"lang":"en-US","value":"The
+        specified resource does not exist.\nRequestId:90bb3419-0002-0055-218f-973516000000\nTime:2020-10-01T01:07:12.5415449Z"}}}'
     headers:
       cache-control:
       - no-cache
       content-type:
-      - application/xml;charset=utf-8
+      - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Wed, 19 Aug 2020 21:18:56 GMT
+      - Thu, 01 Oct 2020 01:07:12 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -98,7 +96,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     status:
       code: 404
       message: Not Found
@@ -106,7 +104,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -114,15 +112,15 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Wed, 19 Aug 2020 21:18:57 GMT
+      - Thu, 01 Oct 2020 01:07:12 GMT
       User-Agent:
-      - azsdk-python-storage-table/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 19 Aug 2020 21:18:57 GMT
+      - Thu, 01 Oct 2020 01:07:12 GMT
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     method: DELETE
-    uri: https://storagename.table.core.windows.net/Tables('uttablefb67146a')
+    uri: https://tablesteststorname.table.core.windows.net/Tables('uttablefb67146a')
   response:
     body:
       string: ''
@@ -132,13 +130,13 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 19 Aug 2020 21:18:56 GMT
+      - Thu, 01 Oct 2020 01:07:12 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options:
       - nosniff
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     status:
       code: 204
       message: No Content

@@ -10,24 +10,22 @@ interactions:
       - keep-alive
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-      api-key:
-      - 5BD7FEBA926CF3DD1BF5D9F4F8224EBF
     method: GET
     uri: https://searcha71e1781.search.windows.net/servicestats?api-version=2020-06-30
   response:
     body:
-      string: '{"@odata.context":"https://searcha71e1781.search.windows.net/$metadata#Microsoft.Azure.Search.V2020_06_30.ServiceStatistics","counters":{"documentCount":{"usage":0,"quota":null},"indexesCount":{"usage":0,"quota":3},"indexersCount":{"usage":0,"quota":3},"dataSourcesCount":{"usage":0,"quota":3},"storageSize":{"usage":0,"quota":52428800},"synonymMaps":{"usage":0,"quota":3}},"limits":{"maxFieldsPerIndex":1000,"maxFieldNestingDepthPerIndex":10,"maxComplexCollectionFieldsPerIndex":40,"maxComplexObjectsInCollectionsPerDocument":3000}}'
+      string: '{"@odata.context":"https://searcha71e1781.search.windows.net/$metadata#Microsoft.Azure.Search.V2020_06_30.ServiceStatistics","counters":{"documentCount":{"usage":0,"quota":null},"indexesCount":{"usage":0,"quota":3},"indexersCount":{"usage":0,"quota":3},"dataSourcesCount":{"usage":0,"quota":3},"storageSize":{"usage":0,"quota":52428800},"synonymMaps":{"usage":0,"quota":3},"skillsetCount":{"usage":0,"quota":3}},"limits":{"maxFieldsPerIndex":1000,"maxFieldNestingDepthPerIndex":10,"maxComplexCollectionFieldsPerIndex":40,"maxComplexObjectsInCollectionsPerDocument":3000}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '533'
+      - '571'
       content-type:
       - application/json; odata.metadata=minimal
       date:
-      - Thu, 13 Aug 2020 00:04:09 GMT
+      - Fri, 28 Aug 2020 19:33:55 GMT
       elapsed-time:
-      - '65'
+      - '87'
       expires:
       - '-1'
       odata-version:
@@ -37,7 +35,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - 82d87fa6-dcf8-11ea-8a5a-5cf37071153c
+      - 68cc3da4-e965-11ea-a4bb-5cf37071153c
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:

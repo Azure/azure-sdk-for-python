@@ -16,7 +16,8 @@ from azure.ai.textanalytics.aio import TextAnalyticsClient
 from azure.ai.textanalytics import (
     VERSION,
     DetectLanguageInput,
-    TextDocumentInput
+    TextDocumentInput,
+    TextAnalyticsApiVersion,
 )
 
 from testcase import GlobalTextAnalyticsAccountPreparer
@@ -61,8 +62,6 @@ class TestRecognizeEntities(AsyncTextAnalyticsTest):
                 self.assertIsNotNone(entity.text)
                 self.assertIsNotNone(entity.category)
                 self.assertIsNotNone(entity.offset)
-                self.assertIsNotNone(entity.length)
-                self.assertNotEqual(entity.length, 0)
                 self.assertIsNotNone(entity.confidence_score)
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -81,8 +80,6 @@ class TestRecognizeEntities(AsyncTextAnalyticsTest):
                 self.assertIsNotNone(entity.text)
                 self.assertIsNotNone(entity.category)
                 self.assertIsNotNone(entity.offset)
-                self.assertIsNotNone(entity.length)
-                self.assertNotEqual(entity.length, 0)
                 self.assertIsNotNone(entity.confidence_score)
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -562,3 +559,32 @@ class TestRecognizeEntities(AsyncTextAnalyticsTest):
             cls=callback
         )
         assert res == "cls result"
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    async def test_offset(self, client):
+        result = await client.recognize_entities(["Microsoft was founded by Bill Gates and Paul Allen"])
+        entities = result[0].entities
+
+        self.assertEqual(entities[0].offset, 0)
+
+        self.assertEqual(entities[1].offset, 25)
+
+        self.assertEqual(entities[2].offset, 40)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_0})
+    async def test_no_offset_v3_categorized_entities(self, client):
+        result = await client.recognize_entities(["Microsoft was founded by Bill Gates and Paul Allen"])
+        entities = result[0].entities
+
+        self.assertIsNone(entities[0].offset)
+        self.assertIsNone(entities[1].offset)
+        self.assertIsNone(entities[2].offset)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_0})
+    async def test_string_index_type_not_fail_v3(self, client):
+        # make sure that the addition of the string_index_type kwarg for v3.1-preview doesn't
+        # cause v3.0 calls to fail
+        await client.recognize_entities(["please don't fail"])

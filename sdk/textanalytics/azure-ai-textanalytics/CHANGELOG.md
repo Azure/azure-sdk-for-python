@@ -1,16 +1,29 @@
 # Release History
 
-## 5.0.1 (Unreleased)
+## 5.1.0b3 (Unreleased)
+
+
+## 5.1.0b2 (2020-10-06)
+
+**Breaking changes**
+- Removed property `length` from `CategorizedEntity`, `SentenceSentiment`, `LinkedEntityMatch`, `AspectSentiment`, `OpinionSentiment`, and `PiiEntity`.
+To get the length of the text in these models, just call `len()` on the `text` property.
+- When a parameter or endpoint is not compatible with the API version you specify, we will now return a `ValueError` instead of a `NotImplementedError`.
+- Client side validation of input is now disabled by default. This means there will be no `ValidationError`s thrown by the client SDK in the case of malformed input. The error will now be thrown by the service through an `HttpResponseError`.
+
+## 5.1.0b1 (2020-09-17)
 
 **New features**
-- We are now targeting the service's v3.1-preview.1 API as the default. If you would like to still use version v3.0 of the service,
+- We are now targeting the service's v3.1-preview API as the default. If you would like to still use version v3.0 of the service,
 pass in `v3.0` to the kwarg `api_version` when creating your TextAnalyticsClient
-- We have added an API `recognize_pii_entities` which returns entities containing personal information for a batch of documents. Only available for API version v3.1-preview.1 and up.
-- Added `offset` and `length` properties for `CategorizedEntity`, `SentenceSentiment`, and `LinkedEntityMatch`.
+- We have added an API `recognize_pii_entities` which returns entities containing personally identifiable information for a batch of documents. Only available for API version v3.1-preview and up.
+- Added `offset` and `length` properties for `CategorizedEntity`, `SentenceSentiment`, and `LinkedEntityMatch`. These properties are only available for API versions v3.1-preview and up.
   - `length` is the number of characters in the text of these models
   - `offset` is the offset of the text from the start of the document
 - We now have added support for opinion mining. To use this feature, you need to make sure you are using the service's
-v3.1-preview.1 API. To get this support pass `show_opinion_mining` as True when calling the `analyze_sentiment` endpoint
+v3.1-preview API. To get this support pass `show_opinion_mining` as True when calling the `analyze_sentiment` endpoint
+- Add property `bing_entity_search_api_id` to the `LinkedEntity` class. This property is only available for v3.1-preview and up, and it is to be
+used in conjunction with the Bing Entity Search API to fetch additional relevant information about the returned entity.
 
 ## 5.0.0 (2020-07-27)
 

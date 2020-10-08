@@ -12,13 +12,13 @@ from msrest import Serializer, Deserializer
 from typing import TYPE_CHECKING
 import warnings
 
-from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar
+    from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union
 
 
 class TextAnalyticsClientOperationsMixin(object):
@@ -52,14 +52,15 @@ class TextAnalyticsClientOperationsMixin(object):
         api_version = self._get_api_version('entities_linking')
         if api_version == 'v3.0':
             from .v3_0.operations import TextAnalyticsClientOperationsMixin as OperationClass
-        elif api_version == 'v3.1-preview.1':
-            from .v3_1_preview_1.operations import TextAnalyticsClientOperationsMixin as OperationClass
+        elif api_version == 'v3.1-preview.2':
+            from .v3_1_preview_2.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+            raise ValueError("API version {} does not have operation 'entities_linking'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.entities_linking(documents, model_version, show_stats, **kwargs)
 
@@ -93,14 +94,15 @@ class TextAnalyticsClientOperationsMixin(object):
         api_version = self._get_api_version('entities_recognition_general')
         if api_version == 'v3.0':
             from .v3_0.operations import TextAnalyticsClientOperationsMixin as OperationClass
-        elif api_version == 'v3.1-preview.1':
-            from .v3_1_preview_1.operations import TextAnalyticsClientOperationsMixin as OperationClass
+        elif api_version == 'v3.1-preview.2':
+            from .v3_1_preview_2.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+            raise ValueError("API version {} does not have operation 'entities_recognition_general'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.entities_recognition_general(documents, model_version, show_stats, **kwargs)
 
@@ -110,6 +112,7 @@ class TextAnalyticsClientOperationsMixin(object):
         model_version=None,  # type: Optional[str]
         show_stats=None,  # type: Optional[bool]
         domain=None,  # type: Optional[str]
+        string_index_type="TextElements_v8",  # type: Optional[Union[str, "models.StringIndexType"]]
         **kwargs  # type: Any
     ):
         """Entities containing personal information.
@@ -121,31 +124,36 @@ class TextAnalyticsClientOperationsMixin(object):
         list of enabled languages.
 
         :param documents: The set of documents to process as part of this batch.
-        :type documents: list[~azure.ai.textanalytics.v3_1_preview_1.models.MultiLanguageInput]
+        :type documents: list[~azure.ai.textanalytics.v3_1_preview_2.models.MultiLanguageInput]
         :param model_version: (Optional) This value indicates which model will be used for scoring. If
          a model-version is not specified, the API should default to the latest, non-preview version.
         :type model_version: str
-        :param show_stats: (Optional) if set to true, response will contain input and document level
+        :param show_stats: (Optional) if set to true, response will contain request and document level
          statistics.
         :type show_stats: bool
         :param domain: (Optional) if set to 'PHI', response will contain only PHI entities.
         :type domain: str
+        :param string_index_type: (Optional) Specifies the method used to interpret string offsets.
+         Defaults to Text Elements (Graphemes) according to Unicode v8.0.0. For additional information
+         see https://aka.ms/text-analytics-offsets.
+        :type string_index_type: str or ~azure.ai.textanalytics.v3_1_preview_2.models.StringIndexType
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: EntitiesResult, or the result of cls(response)
-        :rtype: ~azure.ai.textanalytics.v3_1_preview_1.models.EntitiesResult
+        :return: PiiEntitiesResult, or the result of cls(response)
+        :rtype: ~azure.ai.textanalytics.v3_1_preview_2.models.PiiEntitiesResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('entities_recognition_pii')
-        if api_version == 'v3.1-preview.1':
-            from .v3_1_preview_1.operations import TextAnalyticsClientOperationsMixin as OperationClass
+        if api_version == 'v3.1-preview.2':
+            from .v3_1_preview_2.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+            raise ValueError("API version {} does not have operation 'entities_recognition_pii'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
-        return mixin_instance.entities_recognition_pii(documents, model_version, show_stats, domain, **kwargs)
+        return mixin_instance.entities_recognition_pii(documents, model_version, show_stats, domain, string_index_type, **kwargs)
 
     def key_phrases(
         self,
@@ -176,14 +184,15 @@ class TextAnalyticsClientOperationsMixin(object):
         api_version = self._get_api_version('key_phrases')
         if api_version == 'v3.0':
             from .v3_0.operations import TextAnalyticsClientOperationsMixin as OperationClass
-        elif api_version == 'v3.1-preview.1':
-            from .v3_1_preview_1.operations import TextAnalyticsClientOperationsMixin as OperationClass
+        elif api_version == 'v3.1-preview.2':
+            from .v3_1_preview_2.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+            raise ValueError("API version {} does not have operation 'key_phrases'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.key_phrases(documents, model_version, show_stats, **kwargs)
 
@@ -217,14 +226,15 @@ class TextAnalyticsClientOperationsMixin(object):
         api_version = self._get_api_version('languages')
         if api_version == 'v3.0':
             from .v3_0.operations import TextAnalyticsClientOperationsMixin as OperationClass
-        elif api_version == 'v3.1-preview.1':
-            from .v3_1_preview_1.operations import TextAnalyticsClientOperationsMixin as OperationClass
+        elif api_version == 'v3.1-preview.2':
+            from .v3_1_preview_2.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+            raise ValueError("API version {} does not have operation 'languages'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.languages(documents, model_version, show_stats, **kwargs)
 
@@ -258,13 +268,14 @@ class TextAnalyticsClientOperationsMixin(object):
         api_version = self._get_api_version('sentiment')
         if api_version == 'v3.0':
             from .v3_0.operations import TextAnalyticsClientOperationsMixin as OperationClass
-        elif api_version == 'v3.1-preview.1':
-            from .v3_1_preview_1.operations import TextAnalyticsClientOperationsMixin as OperationClass
+        elif api_version == 'v3.1-preview.2':
+            from .v3_1_preview_2.operations import TextAnalyticsClientOperationsMixin as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+            raise ValueError("API version {} does not have operation 'sentiment'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.sentiment(documents, model_version, show_stats, **kwargs)

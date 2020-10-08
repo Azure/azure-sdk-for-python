@@ -11,31 +11,31 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Wed, 19 Aug 2020 21:19:05 GMT
+      - Thu, 01 Oct 2020 01:07:16 GMT
       User-Agent:
-      - azsdk-python-storage-table/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 19 Aug 2020 21:19:05 GMT
+      - Thu, 01 Oct 2020 01:07:16 GMT
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     method: POST
-    uri: https://storagename.table.core.windows.net/Tables
+    uri: https://tablesteststorname.table.core.windows.net/Tables
   response:
     body:
-      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#Tables/@Element","TableName":"uttable3b0215a4"}'
+      string: '{"odata.metadata":"https://tablesteststorname.table.core.windows.net/$metadata#Tables/@Element","TableName":"uttable3b0215a4"}'
     headers:
       cache-control: no-cache
       content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
-      date: Wed, 19 Aug 2020 21:19:04 GMT
-      location: https://storagename.table.core.windows.net/Tables('uttable3b0215a4')
+      date: Thu, 01 Oct 2020 01:07:16 GMT
+      location: https://tablesteststorname.table.core.windows.net/Tables('uttable3b0215a4')
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-ms-version: '2019-07-07'
+      x-ms-version: '2019-02-02'
     status:
       code: 201
       message: Created
-    url: https://pyacrstorageuwjvfxhidgpv.table.core.windows.net/Tables
+    url: https://tablesteststorname.table.core.windows.net/Tables
 - request:
     body: null
     headers:
@@ -44,56 +44,58 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Wed, 19 Aug 2020 21:19:05 GMT
+      - Thu, 01 Oct 2020 01:07:17 GMT
       User-Agent:
-      - azsdk-python-storage-table/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 19 Aug 2020 21:19:05 GMT
+      - Thu, 01 Oct 2020 01:07:17 GMT
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     method: GET
-    uri: https://storagename.table.core.windows.net/uttable3b0215a4(PartitionKey='pk3b0215a4',RowKey='rk3b0215a4')
+    uri: https://tablesteststorname.table.core.windows.net/uttable3b0215a4(PartitionKey='pk3b0215a4',RowKey='rk3b0215a4')
   response:
     body:
       string: '{"odata.error":{"code":"ResourceNotFound","message":{"lang":"en-US","value":"The
-        specified resource does not exist.\nRequestId:de26c2d2-7002-012c-346e-76f50b000000\nTime:2020-08-19T21:19:05.7232216Z"}}}'
+        specified resource does not exist.\nRequestId:32005fbc-8002-004f-488f-971a79000000\nTime:2020-10-01T01:07:17.2553255Z"}}}'
     headers:
       cache-control: no-cache
       content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
-      date: Wed, 19 Aug 2020 21:19:05 GMT
+      date: Thu, 01 Oct 2020 01:07:16 GMT
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-ms-version: '2019-07-07'
+      x-ms-version: '2019-02-02'
     status:
       code: 404
       message: Not Found
-    url: https://pyacrstorageuwjvfxhidgpv.table.core.windows.net/uttable3b0215a4(PartitionKey='pk3b0215a4',RowKey='rk3b0215a4')
+    url: https://tablesteststorname.table.core.windows.net/uttable3b0215a4(PartitionKey='pk3b0215a4',RowKey='rk3b0215a4')
 - request:
     body: null
     headers:
+      Accept:
+      - application/json
       Date:
-      - Wed, 19 Aug 2020 21:19:05 GMT
+      - Thu, 01 Oct 2020 01:07:17 GMT
       User-Agent:
-      - azsdk-python-storage-table/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 19 Aug 2020 21:19:05 GMT
+      - Thu, 01 Oct 2020 01:07:17 GMT
       x-ms-version:
-      - '2019-07-07'
+      - '2019-02-02'
     method: DELETE
-    uri: https://storagename.table.core.windows.net/Tables('uttable3b0215a4')
+    uri: https://tablesteststorname.table.core.windows.net/Tables('uttable3b0215a4')
   response:
     body:
       string: ''
     headers:
       cache-control: no-cache
       content-length: '0'
-      date: Wed, 19 Aug 2020 21:19:05 GMT
+      date: Thu, 01 Oct 2020 01:07:16 GMT
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options: nosniff
-      x-ms-version: '2019-07-07'
+      x-ms-version: '2019-02-02'
     status:
       code: 204
       message: No Content
-    url: https://pyacrstorageuwjvfxhidgpv.table.core.windows.net/Tables('uttable3b0215a4')
+    url: https://tablesteststorname.table.core.windows.net/Tables('uttable3b0215a4')
 version: 1

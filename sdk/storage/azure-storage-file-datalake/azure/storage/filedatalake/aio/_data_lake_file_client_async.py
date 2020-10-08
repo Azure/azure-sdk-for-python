@@ -5,10 +5,16 @@
 # --------------------------------------------------------------------------
 # pylint: disable=invalid-overridden-method
 
+try:
+    from urllib.parse import quote, unquote
+except ImportError:
+    from urllib2 import quote, unquote # type: ignore
+
 from ._download_async import StorageStreamDownloader
 from ._path_client_async import PathClient
 from .._data_lake_file_client import DataLakeFileClient as DataLakeFileClientBase
-from .._deserialize import process_storage_error
+from .._serialize import convert_datetime_to_rfc1123
+from .._deserialize import process_storage_error, deserialize_file_properties
 from .._generated.models import StorageErrorException
 from .._models import FileProperties
 from ..aio._upload_helper import upload_datalake_file
@@ -202,8 +208,30 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
                 :dedent: 4
                 :caption: Getting the properties for a file.
         """
-        blob_properties = await self._get_path_properties(**kwargs)
-        return FileProperties._from_blob_properties(blob_properties)  # pylint: disable=protected-access
+        return await self._get_path_properties(cls=deserialize_file_properties, **kwargs)  # pylint: disable=protected-access
+
+    async def set_file_expiry(self, expiry_options,  # type: str
+                              expires_on=None,  # type: Optional[Union[datetime, int]]
+                              **kwargs):
+        # type: (str, Optional[Union[datetime, int]], **Any) -> None
+        """Sets the time a file will expire and be deleted.
+
+        :param str expiry_options:
+            Required. Indicates mode of the expiry time.
+            Possible values include: 'NeverExpire', 'RelativeToCreation', 'RelativeToNow', 'Absolute'
+        :param datetime or int expires_on:
+            The time to set the file to expiry.
+            When expiry_options is RelativeTo*, expires_on should be an int in milliseconds
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :rtype: None
+        """
+        try:
+            expires_on = convert_datetime_to_rfc1123(expires_on)
+        except AttributeError:
+            expires_on = str(expires_on)
+        await self._datalake_client_for_blob_operation.path.set_expiry(expiry_options, expires_on=expires_on,
+                                                                       **kwargs)  # pylint: disable=protected-access
 
     async def upload_data(self, data,  # type: Union[AnyStr, Iterable[AnyStr], IO[AnyStr]]
                           length=None,  # type: Optional[int]
@@ -500,14 +528,26 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
         """
         new_name = new_name.strip('/')
         new_file_system = new_name.split('/')[0]
-        path = new_name[len(new_file_system):]
+        new_path_and_token = new_name[len(new_file_system):].strip('/').split('?')
+        new_path = new_path_and_token[0]
+        try:
+            new_file_sas = new_path_and_token[1] or self._query_str.strip('?')
+        except IndexError:
+            if not self._raw_credential and new_file_system != self.file_system_name:
+                raise ValueError("please provide the sas token for the new file")
+            if not self._raw_credential and new_file_system == self.file_system_name:
+                new_file_sas = self._query_str.strip('?')
 
-        new_directory_client = DataLakeFileClient(
-            self.url, new_file_system, file_path=path, credential=self._raw_credential,
+        new_file_client = DataLakeFileClient(
+            "{}://{}".format(self.scheme, self.primary_hostname), new_file_system, file_path=new_path,
+            credential=self._raw_credential or new_file_sas,
             _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
             _location_mode=self._location_mode, require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,
             key_resolver_function=self.key_resolver_function)
-        await new_directory_client._rename_path('/' + self.file_system_name + '/' + self.path_name, # pylint: disable=protected-access
-                                                **kwargs)
-        return new_directory_client
+        await new_file_client._rename_path(  # pylint: disable=protected-access
+            '/{}/{}{}'.format(quote(unquote(self.file_system_name)),
+                              quote(unquote(self.path_name)),
+                              self._query_str),
+            **kwargs)
+        return new_file_client

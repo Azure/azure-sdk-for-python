@@ -21,6 +21,13 @@ from azure.mgmt.keyvault.models import (
     VaultCreateOrUpdateParameters,
 )
 
+try:
+    from azure.mgmt.keyvault.models import (
+        SkuFamily
+    )
+except ImportError:
+    pass
+
 from azure_devtools.scenario_tests.exceptions import(
     AzureTestError, NameInUseError, ReservedResourceNameError
 )
@@ -87,7 +94,7 @@ class KeyVaultPreparer(AzureMgmtPreparer):
             ]
             properties = VaultProperties(
                 tenant_id=self.test_class_instance.get_settings_value("TENANT_ID"),
-                sku=Sku(name=self.sku),
+                sku=Sku(name=self.sku, family=SkuFamily.A) if SkuFamily else Sku(name=self.sku),
                 access_policies=access_policies,
                 vault_uri=None,
                 enabled_for_deployment=self.enabled_for_deployment,

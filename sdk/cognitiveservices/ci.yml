@@ -30,8 +30,6 @@ extends:
     Artifacts:
     - name: azure_cognitiveservices_anomalydetector
       safeName: azurecognitiveservicesanomalydetector
-    - name: azure_cognitiveservices_formrecognizer
-      safeName: azurecognitiveservicesformrecognizer
     - name: azure_cognitiveservices_knowledge_nspkg
       safeName: azurecognitiveservicesknowledgenspkg
     - name: azure_cognitiveservices_knowledge_qnamaker

@@ -3,7 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 import logging
-from typing import TYPE_CHECKING, Union, Optional
+import datetime
+from typing import TYPE_CHECKING, Union, Optional, Any
 import six
 
 from ._common.utils import utc_from_timestamp, utc_now
@@ -20,7 +21,6 @@ from .exceptions import SessionLockExpired
 from ._common import mgmt_handlers
 
 if TYPE_CHECKING:
-    import datetime
     from ._servicebus_session_receiver import ServiceBusSessionReceiver
     from .aio._servicebus_session_receiver_async import ServiceBusSessionReceiver as ServiceBusSessionReceiverAsync
 
@@ -90,12 +90,15 @@ class ServiceBusSession(BaseSession):
             :caption: Get session from a receiver
     """
 
-    def get_session_state(self):
-        # type: () -> str
+    def get_state(self, **kwargs):
+        # type: (Any) -> str
+        # pylint: disable=protected-access
         """Get the session state.
 
         Returns None if no state has been set.
 
+        :keyword float timeout: The total operation timeout in seconds including all the retries. The value must be
+         greater than 0 if specified. The default value is None, meaning no timeout.
         :rtype: str
 
         .. admonition:: Example:
@@ -108,22 +111,29 @@ class ServiceBusSession(BaseSession):
                 :caption: Get the session state
         """
         self._check_live()
-        response = self._receiver._mgmt_request_response_with_retry(  # pylint: disable=protected-access
+        timeout = kwargs.pop("timeout", None)
+        if timeout is not None and timeout <= 0:
+            raise ValueError("The timeout must be greater than 0.")
+        response = self._receiver._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_GET_SESSION_STATE_OPERATION,
-            {MGMT_REQUEST_SESSION_ID: self.session_id},
-            mgmt_handlers.default
+            {MGMT_REQUEST_SESSION_ID: self._session_id},
+            mgmt_handlers.default,
+            timeout=timeout
         )
-        session_state = response.get(MGMT_RESPONSE_SESSION_STATE)
+        session_state = response.get(MGMT_RESPONSE_SESSION_STATE)  # type: ignore
         if isinstance(session_state, six.binary_type):
-            session_state = session_state.decode('UTF-8')
+            session_state = session_state.decode(self._encoding)
         return session_state
 
-    def set_session_state(self, state):
-        # type: (Union[str, bytes, bytearray]) -> None
+    def set_state(self, state, **kwargs):
+        # type: (Union[str, bytes, bytearray], Any) -> None
+        # pylint: disable=protected-access
         """Set the session state.
 
         :param state: The state value.
-        :type state: str, bytes or bytearray
+        :type state: Union[str, bytes, bytearray]
+        :keyword float timeout: The total operation timeout in seconds including all the retries. The value must be
+         greater than 0 if specified. The default value is None, meaning no timeout.
 
         .. admonition:: Example:
 
@@ -135,15 +145,20 @@ class ServiceBusSession(BaseSession):
                 :caption: Set the session state
         """
         self._check_live()
+        timeout = kwargs.pop("timeout", None)
+        if timeout is not None and timeout <= 0:
+            raise ValueError("The timeout must be greater than 0.")
         state = state.encode(self._encoding) if isinstance(state, six.text_type) else state
-        return self._receiver._mgmt_request_response_with_retry(  # pylint: disable=protected-access
+        return self._receiver._mgmt_request_response_with_retry(  # type: ignore
             REQUEST_RESPONSE_SET_SESSION_STATE_OPERATION,
-            {MGMT_REQUEST_SESSION_ID: self.session_id, MGMT_REQUEST_SESSION_STATE: bytearray(state)},
-            mgmt_handlers.default
+            {MGMT_REQUEST_SESSION_ID: self._session_id, MGMT_REQUEST_SESSION_STATE: bytearray(state)},
+            mgmt_handlers.default,
+            timeout=timeout
         )
 
-    def renew_lock(self):
-        # type: () -> None
+    def renew_lock(self, **kwargs):
+        # type: (Any) -> datetime.datetime
+        # pylint: disable=protected-access
         """Renew the session lock.
 
         This operation must be performed periodically in order to retain a lock on the
@@ -153,6 +168,11 @@ class ServiceBusSession(BaseSession):
 
         This operation can also be performed as a threaded background task by registering the session
         with an `azure.servicebus.AutoLockRenew` instance.
+
+        :keyword float timeout: The total operation timeout in seconds including all the retries. The value must be
+         greater than 0 if specified. The default value is None, meaning no timeout.
+        :returns: The utc datetime the lock is set to expire at.
+        :rtype: datetime.datetime
 
         .. admonition:: Example:
 
@@ -164,9 +184,16 @@ class ServiceBusSession(BaseSession):
                 :caption: Renew the session lock before it expires
         """
         self._check_live()
-        expiry = self._receiver._mgmt_request_response_with_retry(  # pylint: disable=protected-access
+        timeout = kwargs.pop("timeout", None)
+        if timeout is not None and timeout <= 0:
+            raise ValueError("The timeout must be greater than 0.")
+        expiry = self._receiver._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_RENEW_SESSION_LOCK_OPERATION,
-            {MGMT_REQUEST_SESSION_ID: self.session_id},
-            mgmt_handlers.default
+            {MGMT_REQUEST_SESSION_ID: self._session_id},
+            mgmt_handlers.default,
+            timeout=timeout
         )
-        self._locked_until_utc = utc_from_timestamp(expiry[MGMT_RESPONSE_RECEIVER_EXPIRATION]/1000.0)
+        expiry_timestamp = expiry[MGMT_RESPONSE_RECEIVER_EXPIRATION]/1000.0  # type: ignore
+        self._locked_until_utc = utc_from_timestamp(expiry_timestamp)  # type: datetime.datetime
+
+        return self._locked_until_utc

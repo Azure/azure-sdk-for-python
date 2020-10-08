@@ -11,8 +11,6 @@ interactions:
       - application/json
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.17763-SP0)
-      api-key:
-      - 7249924270B36D2B8D2CB30BD19258AA
     method: POST
     uri: https://search640d163e.search.windows.net/datasources?api-version=2020-06-30
   response:
@@ -55,8 +53,6 @@ interactions:
       - application/json
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.17763-SP0)
-      api-key:
-      - 7249924270B36D2B8D2CB30BD19258AA
     method: POST
     uri: https://search640d163e.search.windows.net/indexes?api-version=2020-06-30
   response:
@@ -99,8 +95,6 @@ interactions:
       - application/json
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.17763-SP0)
-      api-key:
-      - 7249924270B36D2B8D2CB30BD19258AA
     method: POST
     uri: https://search640d163e.search.windows.net/indexers?api-version=2020-06-30
   response:
@@ -138,8 +132,6 @@ interactions:
       - application/json;odata.metadata=minimal
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.17763-SP0)
-      api-key:
-      - 7249924270B36D2B8D2CB30BD19258AA
     method: GET
     uri: https://search640d163e.search.windows.net/indexers?api-version=2020-06-30
   response:
@@ -177,8 +169,6 @@ interactions:
       - application/json;odata.metadata=minimal
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.17763-SP0)
-      api-key:
-      - 7249924270B36D2B8D2CB30BD19258AA
     method: POST
     uri: https://search640d163e.search.windows.net/indexers('sample-indexer')/search.run?api-version=2020-06-30
   response:
@@ -211,8 +201,6 @@ interactions:
       - application/json;odata.metadata=minimal
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.17763-SP0)
-      api-key:
-      - 7249924270B36D2B8D2CB30BD19258AA
     method: GET
     uri: https://search640d163e.search.windows.net/indexers('sample-indexer')/search.status?api-version=2020-06-30
   response:

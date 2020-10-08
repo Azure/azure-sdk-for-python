@@ -6,9 +6,27 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum
+from enum import Enum, EnumMeta
+from six import with_metaclass
 
-class DeploymentMode(str, Enum):
+class _CaseInsensitiveEnumMeta(EnumMeta):
+    def __getitem__(self, name):
+        return super().__getitem__(name.upper())
+
+    def __getattr__(cls, name):
+        """Return the enum member matching `name`
+        We use __getattr__ instead of descriptors or inserting into the enum
+        class' __dict__ in order to support `name` and `value` being both
+        properties for enum members (which live in the class' __dict__) and
+        enum members themselves.
+        """
+        try:
+            return cls._member_map_[name.upper()]
+        except KeyError:
+            raise AttributeError(name)
+
+
+class DeploymentMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The mode that is used to deploy resources. This value can be either Incremental or Complete. In
     Incremental mode, resources are deployed without deleting existing resources that are not
     included in the template. In Complete mode, resources are deployed and existing resources in
@@ -16,22 +34,22 @@ class DeploymentMode(str, Enum):
     Complete mode as you may unintentionally delete resources.
     """
 
-    incremental = "Incremental"
-    complete = "Complete"
+    INCREMENTAL = "Incremental"
+    COMPLETE = "Complete"
 
-class OnErrorDeploymentType(str, Enum):
+class OnErrorDeploymentType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The deployment on error behavior type. Possible values are LastSuccessful and
     SpecificDeployment.
     """
 
-    last_successful = "LastSuccessful"
-    specific_deployment = "SpecificDeployment"
+    LAST_SUCCESSFUL = "LastSuccessful"
+    SPECIFIC_DEPLOYMENT = "SpecificDeployment"
 
-class ResourceIdentityType(str, Enum):
+class ResourceIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The identity type.
     """
 
-    system_assigned = "SystemAssigned"
-    user_assigned = "UserAssigned"
-    system_assigned_user_assigned = "SystemAssigned, UserAssigned"
-    none = "None"
+    SYSTEM_ASSIGNED = "SystemAssigned"
+    USER_ASSIGNED = "UserAssigned"
+    SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned, UserAssigned"
+    NONE = "None"

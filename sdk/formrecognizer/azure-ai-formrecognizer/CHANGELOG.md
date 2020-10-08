@@ -1,7 +1,11 @@
 # Release History
 
-## 3.0.1 (Unreleased)
+## 3.1.0b1 (Unreleased)
 
+**New features**
+
+- Recognize receipt methods now take keyword argument `locale` to optionally indicate the locale of the receipt for
+improved results
 
 ## 3.0.0 (2020-08-20)
 

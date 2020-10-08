@@ -3,7 +3,7 @@ interactions:
     body: 'b''{"source": "<_io.BufferedReader name=\''C:\\\\\\\\Users\\\\\\\\krpratic\\\\\\\\azure-sdk-for-python\\\\\\\\sdk\\\\\\\\formrecognizer\\\\\\\\azure-ai-formrecognizer\\\\\\\\tests\\\\\\\\conftest.py\''>"}'''
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -13,20 +13,20 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/custom/models/xxx/analyze?includeTextDetails=false
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/xxx/analyze?includeTextDetails=false
   response:
     body:
       string: '{"error": {"code": "1001", "message": "Specified model not found or
         not ready, Model Id: xxx"}}'
     headers:
       apim-request-id:
-      - db8ecc9f-94cf-48ec-8ec1-629e4cb7fa10
+      - c9e814f7-93f8-4875-b351-0cf8a2629463
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 10 Jul 2020 18:48:34 GMT
+      - Mon, 14 Sep 2020 20:14:41 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:

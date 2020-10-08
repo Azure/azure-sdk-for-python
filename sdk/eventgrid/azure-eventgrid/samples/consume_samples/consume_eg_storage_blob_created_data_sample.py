@@ -1,5 +1,19 @@
+# --------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# --------------------------------------------------------------------------
+"""
+FILE: consume_eg_storage_blob_created_data_sample.py
+DESCRIPTION:
+    These samples demonstrate consuming custom eventgrid event data.
+USAGE:
+    python consume_eg_storage_blob_created_data_sample.py
+    Set the environment variables with your own values before running the sample:
+"""
 import json
-from azure.eventgrid import EventGridConsumer, EventGridEvent, StorageBlobCreatedEventData
+from azure.eventgrid import EventGridConsumer, EventGridEvent
+from azure.eventgrid.models import StorageBlobCreatedEventData
 
 # all types of EventGridEvents below produce same DeserializedEvent
 eg_storage_dict = {
@@ -28,10 +42,11 @@ eg_storage_string = json.dumps(eg_storage_dict)
 eg_storage_bytes = bytes(eg_storage_string, "utf-8")
 
 client = EventGridConsumer()
-deserialized_dict_event = client.deserialize_event(eg_storage_dict)
-deserialized_str_event = client.deserialize_event(eg_storage_string)
-deserialized_bytes_event = client.deserialize_event(eg_storage_bytes)
+deserialized_dict_event = client.decode_eventgrid_event(eg_storage_dict)
+print(deserialized_dict_event)
 
-print(deserialized_bytes_event.model == deserialized_str_event.model)
-print(deserialized_bytes_event.model == deserialized_dict_event.model)
-print(deserialized_str_event.model.data.__class__ == StorageBlobCreatedEventData)
+deserialized_str_event = client.decode_eventgrid_event(eg_storage_string)
+print(deserialized_str_event)
+
+deserialized_bytes_event = client.decode_eventgrid_event(eg_storage_bytes)
+print(deserialized_bytes_event)

@@ -1,5 +1,92 @@
 # Release History
 
+## 16.0.0 (2020-09-15)
+
+**Features**
+
+  - Model VirtualNetworkPeering has a new parameter remote_bgp_communities
+  - Model VirtualHub has a new parameter virtual_router_asn
+  - Model VirtualHub has a new parameter routing_state
+  - Model VirtualHub has a new parameter ip_configurations
+  - Model VirtualHub has a new parameter virtual_router_ips
+  - Model VirtualHub has a new parameter enable_virtual_router_route_propogation
+  - Model VirtualHub has a new parameter bgp_connections
+  - Model FirewallPolicyRule has a new parameter description
+  - Model ExpressRouteLinkMacSecConfig has a new parameter sci_state
+  - Model VpnGateway has a new parameter ip_configurations
+  - Model P2SConnectionConfiguration has a new parameter enable_internet_security
+  - Model ConnectionMonitorEndpoint has a new parameter type
+  - Model ConnectionMonitorEndpoint has a new parameter coverage_level
+  - Model ConnectionMonitorEndpoint has a new parameter scope
+  - Model FirewallPolicy has a new parameter rule_collection_groups
+  - Model FirewallPolicy has a new parameter dns_settings
+  - Model NetworkInterface has a new parameter dscp_configuration
+  - Model NetworkVirtualAppliance has a new parameter address_prefix
+  - Model NetworkVirtualAppliance has a new parameter cloud_init_configuration_blobs
+  - Model NetworkVirtualAppliance has a new parameter boot_strap_configuration_blobs
+  - Model NetworkVirtualAppliance has a new parameter cloud_init_configuration
+  - Model NetworkVirtualAppliance has a new parameter inbound_security_rules
+  - Model NetworkVirtualAppliance has a new parameter nva_sku
+  - Model NetworkVirtualAppliance has a new parameter virtual_appliance_sites
+  - Model ConnectionMonitorTcpConfiguration has a new parameter destination_port_behavior
+  - Model ApplicationGatewayHttpListener has a new parameter ssl_profile
+  - Model P2SVpnGateway has a new parameter custom_dns_servers
+  - Model ApplicationGateway has a new parameter private_link_configurations
+  - Model ApplicationGateway has a new parameter trusted_client_certificates
+  - Model ApplicationGateway has a new parameter private_endpoint_connections
+  - Model ApplicationGateway has a new parameter ssl_profiles
+  - Model HubIPAddresses has a new parameter public_i_ps
+  - Model PublicIPPrefix has a new parameter custom_ip_prefix
+  - Model ApplicationGatewayFrontendIPConfiguration has a new parameter private_link_configuration
+  - Model VpnSite has a new parameter o365_policy
+  - Model ConnectivityHop has a new parameter previous_links
+  - Model ConnectivityHop has a new parameter previous_hop_ids
+  - Model ConnectivityHop has a new parameter links
+  - Added operation ExpressRoutePortsOperations.generate_loa
+  - Added operation FlowLogsOperations.update_tags
+  - Added operation HubVirtualNetworkConnectionsOperations.begin_create_or_update
+  - Added operation HubVirtualNetworkConnectionsOperations.begin_delete
+  - Added operation VpnGatewaysOperations.begin_stop_packet_capture
+  - Added operation VpnGatewaysOperations.begin_start_packet_capture
+  - Added operation VpnGatewaysOperations.begin_update_tags
+  - Added operation VpnConnectionsOperations.begin_stop_packet_capture
+  - Added operation VpnConnectionsOperations.begin_start_packet_capture
+  - Added operation PrivateLinkServicesOperations.begin_check_private_link_service_visibility_by_resource_group
+  - Added operation PrivateLinkServicesOperations.begin_check_private_link_service_visibility
+  - Added operation VirtualHubsOperations.begin_get_effective_virtual_hub_routes
+  - Added operation P2SVpnGatewaysOperations.begin_reset
+  - Added operation P2SVpnGatewaysOperations.begin_update_tags
+  - Added operation group CustomIPPrefixesOperations
+  - Added operation group VirtualApplianceSitesOperations
+  - Added operation group DscpConfigurationOperations
+  - Added operation group VirtualHubIpConfigurationOperations
+  - Added operation group VirtualHubBgpConnectionOperations
+  - Added operation group InboundSecurityRuleOperations
+  - Added operation group VirtualApplianceSkusOperations
+  - Added operation group ApplicationGatewayPrivateLinkResourcesOperations
+  - Added operation group ApplicationGatewayPrivateEndpointConnectionsOperations
+  - Added operation group FirewallPolicyRuleCollectionGroupsOperations
+  - Added operation group VirtualHubBgpConnectionsOperations
+
+**Breaking changes**
+
+  - Model VirtualHub no longer has parameter virtual_network_connections
+  - Model FirewallPolicyRule no longer has parameter priority
+  - Model FirewallPolicy no longer has parameter transport_security
+  - Model FirewallPolicy no longer has parameter rule_groups
+  - Model FirewallPolicy no longer has parameter intrusion_system_mode
+  - Model FirewallPolicy no longer has parameter identity
+  - Model NetworkVirtualAppliance no longer has parameter boot_strap_configuration_blob
+  - Model NetworkVirtualAppliance no longer has parameter sku
+  - Model NetworkVirtualAppliance no longer has parameter cloud_init_configuration_blob
+  - Model NatRuleCondition no longer has parameter terminate_tls
+  - Model HubIPAddresses no longer has parameter public_ip_addresses
+  - Model ApplicationRuleCondition no longer has parameter target_urls
+  - Removed operation VpnGatewaysOperations.update_tags
+  - Removed operation PrivateLinkServicesOperations.check_private_link_service_visibility_by_resource_group
+  - Removed operation PrivateLinkServicesOperations.check_private_link_service_visibility
+  - Removed operation P2SVpnGatewaysOperations.update_tags
+
 ## 16.0.0b1 (2020-06-17)
 
 This is beta preview version.

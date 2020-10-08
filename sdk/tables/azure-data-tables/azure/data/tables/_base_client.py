@@ -50,7 +50,8 @@ from ._policies import (
     StorageRequestHook,
     StorageResponseHook,
     StorageLoggingPolicy,
-    StorageHosts, ExponentialRetry,
+    StorageHosts,
+    TablesRetryPolicy,
 )
 from ._error import _process_table_error
 from ._models import PartialBatchErrorException
@@ -84,6 +85,8 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             raise ValueError("Invalid service: {}".format(service))
         service_name = service.split('-')[0]
         account = parsed_url.netloc.split(".{}.core.".format(service_name))
+        if 'cosmos' in parsed_url.netloc:
+            account = parsed_url.netloc.split(".{}.cosmos.".format(service_name))
         self.account_name = account[0] if len(account) > 1 else None
         secondary_hostname = None
 
@@ -391,7 +394,7 @@ def create_configuration(**kwargs):
     config.headers_policy = StorageHeadersPolicy(**kwargs)
     config.user_agent_policy = UserAgentPolicy(sdk_moniker=SDK_MONIKER, **kwargs)
         # sdk_moniker="storage-{}/{}".format(kwargs.pop('storage_sdk'), VERSION), **kwargs)
-    config.retry_policy = kwargs.get("retry_policy") or ExponentialRetry(**kwargs)
+    config.retry_policy = kwargs.get("retry_policy") or TablesRetryPolicy(**kwargs)
     config.logging_policy = StorageLoggingPolicy(**kwargs)
     config.proxy_policy = ProxyPolicy(**kwargs)
 

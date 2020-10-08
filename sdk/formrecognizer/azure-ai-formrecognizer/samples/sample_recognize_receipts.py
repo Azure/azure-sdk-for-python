@@ -44,7 +44,7 @@ class RecognizeReceiptsSample(object):
             endpoint=endpoint, credential=AzureKeyCredential(key)
         )
         with open(path_to_sample_forms, "rb") as f:
-            poller = form_recognizer_client.begin_recognize_receipts(receipt=f)
+            poller = form_recognizer_client.begin_recognize_receipts(receipt=f, locale="en-US")
         receipts = poller.result()
 
         for idx, receipt in enumerate(receipts):

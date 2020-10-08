@@ -8,7 +8,7 @@ import pytest
 import datetime
 
 import msrest
-from azure.servicebus.management import ServiceBusManagementClient, SubscriptionProperties
+from azure.servicebus.management import ServiceBusAdministrationClient, SubscriptionProperties
 from utilities import get_logger
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
 
@@ -23,11 +23,11 @@ from mgmt_test_utilities import clear_topics
 _logger = get_logger(logging.DEBUG)
 
 
-class ServiceBusManagementClientSubscriptionTests(AzureMgmtTestCase):
+class ServiceBusAdministrationClientSubscriptionTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     def test_mgmt_subscription_create_by_name(self, servicebus_namespace_connection_string, **kwargs):
-        mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
         clear_topics(mgmt_service)
         topic_name = "topic_testaddf"
         subscription_name = "sub_testkkk"
@@ -37,7 +37,7 @@ class ServiceBusManagementClientSubscriptionTests(AzureMgmtTestCase):
             mgmt_service.create_subscription(topic_name, subscription_name)
             subscription = mgmt_service.get_subscription(topic_name, subscription_name)
             assert subscription.name == subscription_name
-            assert subscription.entity_availability_status == 'Available'
+            assert subscription.availability_status == 'Available'
             assert subscription.status == 'Active'
         finally:
             mgmt_service.delete_subscription(topic_name, subscription_name)
@@ -46,7 +46,7 @@ class ServiceBusManagementClientSubscriptionTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     def test_mgmt_subscription_create_with_subscription_description(self, servicebus_namespace_connection_string, **kwargs):
-        mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
         clear_topics(mgmt_service)
         topic_name = "iweidk"
         subscription_name = "kdosako"
@@ -79,7 +79,7 @@ class ServiceBusManagementClientSubscriptionTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     def test_mgmt_subscription_create_duplicate(self, servicebus_namespace_connection_string, **kwargs):
-        mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
         clear_topics(mgmt_service)
         topic_name = "dqkodq"
         subscription_name = 'kkaqo'
@@ -95,18 +95,18 @@ class ServiceBusManagementClientSubscriptionTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     def test_mgmt_subscription_update_success(self, servicebus_namespace_connection_string, **kwargs):
-        mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
         clear_topics(mgmt_service)
         topic_name = "fjrui"
         subscription_name = "eqkovc"
 
         try:
             topic_description = mgmt_service.create_topic(topic_name)
-            subscription_description = mgmt_service.create_subscription(topic_description, subscription_name)
+            subscription_description = mgmt_service.create_subscription(topic_description.name, subscription_name)
 
             # Try updating one setting.
             subscription_description.lock_duration = datetime.timedelta(minutes=2)
-            mgmt_service.update_subscription(topic_description, subscription_description)
+            mgmt_service.update_subscription(topic_description.name, subscription_description)
             subscription_description = mgmt_service.get_subscription(topic_name, subscription_name)
             assert subscription_description.lock_duration == datetime.timedelta(minutes=2)
 
@@ -119,8 +119,8 @@ class ServiceBusManagementClientSubscriptionTests(AzureMgmtTestCase):
             # topic_description.enable_partitioning = True # Cannot be changed after creation
             # topic_description.requires_session = True # Cannot be changed after creation
 
-            mgmt_service.update_subscription(topic_description, subscription_description)
-            subscription_description = mgmt_service.get_subscription(topic_description, subscription_name)
+            mgmt_service.update_subscription(topic_description.name, subscription_description)
+            subscription_description = mgmt_service.get_subscription(topic_description.name, subscription_name)
 
             assert subscription_description.auto_delete_on_idle == datetime.timedelta(minutes=10)
             assert subscription_description.dead_lettering_on_message_expiration == True
@@ -136,7 +136,7 @@ class ServiceBusManagementClientSubscriptionTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     def test_mgmt_subscription_update_invalid(self, servicebus_namespace_connection_string, **kwargs):
-        mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
         clear_topics(mgmt_service)
         topic_name = "dfjfj"
         subscription_name = "kwqxc"
@@ -176,7 +176,7 @@ class ServiceBusManagementClientSubscriptionTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     def test_mgmt_subscription_delete(self, servicebus_namespace_connection_string):
-        mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
         clear_topics(mgmt_service)
         topic_name = 'test_topicgda'
         subscription_name_1 = 'test_sub1da'
@@ -192,7 +192,7 @@ class ServiceBusManagementClientSubscriptionTests(AzureMgmtTestCase):
         assert len(subscriptions) == 2
 
         description = mgmt_service.get_subscription(topic_name, subscription_name_1)
-        mgmt_service.delete_subscription(topic_name, description)
+        mgmt_service.delete_subscription(topic_name, description.name)
 
         subscriptions = list(mgmt_service.list_subscriptions(topic_name))
         assert len(subscriptions) == 1 and subscriptions[0].name == subscription_name_2
@@ -206,7 +206,7 @@ class ServiceBusManagementClientSubscriptionTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     def test_mgmt_subscription_list(self, servicebus_namespace_connection_string, **kwargs):
-        mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
         clear_topics(mgmt_service)
         topic_name = 'lkoqxc'
         subscription_name_1 = 'testsub1'
@@ -229,22 +229,22 @@ class ServiceBusManagementClientSubscriptionTests(AzureMgmtTestCase):
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    def test_mgmt_subscription_list_runtime_info(self, servicebus_namespace_connection_string, **kwargs):
-        mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
+    def test_mgmt_subscription_list_runtime_properties(self, servicebus_namespace_connection_string, **kwargs):
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
         clear_topics(mgmt_service)
         topic_name = 'dkoamv'
         subscription_name = 'cxqplc'
         mgmt_service.create_topic(topic_name)
 
         subs = list(mgmt_service.list_subscriptions(topic_name))
-        subs_infos = list(mgmt_service.list_subscriptions_runtime_info(topic_name))
+        subs_infos = list(mgmt_service.list_subscriptions_runtime_properties(topic_name))
 
         assert len(subs) == len(subs_infos) == 0
 
         mgmt_service.create_subscription(topic_name, subscription_name)
 
         subs = list(mgmt_service.list_subscriptions(topic_name))
-        subs_infos = list(mgmt_service.list_subscriptions_runtime_info(topic_name))
+        subs_infos = list(mgmt_service.list_subscriptions_runtime_properties(topic_name))
 
         assert len(subs) == 1 and len(subs_infos) == 1
 
@@ -252,8 +252,8 @@ class ServiceBusManagementClientSubscriptionTests(AzureMgmtTestCase):
 
         info = subs_infos[0]
 
-        assert info.accessed_at is not None
-        assert info.updated_at is not None
+        assert info.accessed_at_utc is not None
+        assert info.updated_at_utc is not None
 
         assert info.active_message_count == 0
         assert info.dead_letter_message_count == 0
@@ -261,33 +261,33 @@ class ServiceBusManagementClientSubscriptionTests(AzureMgmtTestCase):
         assert info.transfer_message_count == 0
 
         mgmt_service.delete_subscription(topic_name, subscription_name)
-        subs_infos = list(mgmt_service.list_subscriptions_runtime_info(topic_name))
+        subs_infos = list(mgmt_service.list_subscriptions_runtime_properties(topic_name))
         assert len(subs_infos) == 0
 
         mgmt_service.delete_topic(topic_name)
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    def test_mgmt_subscription_get_runtime_info_basic(self, servicebus_namespace_connection_string):
-        mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
+    def test_mgmt_subscription_get_runtime_properties_basic(self, servicebus_namespace_connection_string):
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
         clear_topics(mgmt_service)
         topic_name = 'dcvxqa'
         subscription_name = 'xvazzag'
 
         mgmt_service.create_topic(topic_name)
         mgmt_service.create_subscription(topic_name, subscription_name)
-        sub_runtime_info = mgmt_service.get_subscription_runtime_info(topic_name, subscription_name)
+        sub_runtime_properties = mgmt_service.get_subscription_runtime_properties(topic_name, subscription_name)
 
-        assert sub_runtime_info
-        assert sub_runtime_info.name == subscription_name
-        assert sub_runtime_info.created_at is not None
-        assert sub_runtime_info.accessed_at is not None
-        assert sub_runtime_info.updated_at is not None
+        assert sub_runtime_properties
+        assert sub_runtime_properties.name == subscription_name
+        assert sub_runtime_properties.created_at_utc is not None
+        assert sub_runtime_properties.accessed_at_utc is not None
+        assert sub_runtime_properties.updated_at_utc is not None
 
-        assert sub_runtime_info.active_message_count == 0
-        assert sub_runtime_info.dead_letter_message_count == 0
-        assert sub_runtime_info.transfer_dead_letter_message_count == 0
-        assert sub_runtime_info.transfer_message_count == 0
+        assert sub_runtime_properties.active_message_count == 0
+        assert sub_runtime_properties.dead_letter_message_count == 0
+        assert sub_runtime_properties.transfer_dead_letter_message_count == 0
+        assert sub_runtime_properties.transfer_message_count == 0
 
         mgmt_service.delete_subscription(topic_name, subscription_name)
         mgmt_service.delete_topic(topic_name)

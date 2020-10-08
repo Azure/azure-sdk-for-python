@@ -47,10 +47,18 @@ class QueryTest(unittest.TestCase):
         iter_list = list(query_iterable)
         self.assertEqual(iter_list[0]['id'], 'myId')
 
-    def test_query_change_feed(self):
+    def test_query_change_feed_with_pk(self):
+        self.query_change_feed(True)
+
+    def test_query_change_feed_with_pk_range_id(self):
+        self.query_change_feed(False)
+
+    def query_change_feed(self, use_partition_key):
         created_collection = self.config.create_multi_partition_collection_with_custom_pk_if_not_exist(self.client)
         # The test targets partition #3
-        pkRangeId = "2"
+        partition_key = "pk"
+        partition_key_range_id = 2
+        partitionParam = {"partition_key": partition_key} if use_partition_key else {"partition_key_range_id": partition_key_range_id}
 
         # Read change feed without passing any options
         query_iterable = created_collection.query_items_change_feed()
@@ -58,7 +66,7 @@ class QueryTest(unittest.TestCase):
         self.assertEqual(len(iter_list), 0)
 
         # Read change feed from current should return an empty list
-        query_iterable = created_collection.query_items_change_feed(partition_key_range_id=pkRangeId)
+        query_iterable = created_collection.query_items_change_feed(**partitionParam)
         iter_list = list(query_iterable)
         self.assertEqual(len(iter_list), 0)
         self.assertTrue('etag' in created_collection.client_connection.last_response_headers)
@@ -66,8 +74,8 @@ class QueryTest(unittest.TestCase):
 
         # Read change feed from beginning should return an empty list
         query_iterable = created_collection.query_items_change_feed(
-            partition_key_range_id=pkRangeId,
-            is_start_from_beginning=True
+            is_start_from_beginning=True,
+            **partitionParam
         )
         iter_list = list(query_iterable)
         self.assertEqual(len(iter_list), 0)
@@ -79,8 +87,8 @@ class QueryTest(unittest.TestCase):
         document_definition = {'pk': 'pk', 'id':'doc1'}
         created_collection.create_item(body=document_definition)
         query_iterable = created_collection.query_items_change_feed(
-            partition_key_range_id=pkRangeId,
             is_start_from_beginning=True,
+            **partitionParam
         )
         iter_list = list(query_iterable)
         self.assertEqual(len(iter_list), 1)
@@ -100,9 +108,9 @@ class QueryTest(unittest.TestCase):
         for pageSize in [1, 100]:
             # verify iterator
             query_iterable = created_collection.query_items_change_feed(
-                partition_key_range_id=pkRangeId,
                 continuation=continuation2,
-                max_item_count=pageSize
+                max_item_count=pageSize,
+                **partitionParam
             )
             it = query_iterable.__iter__()
             expected_ids = 'doc2.doc3.'
@@ -114,9 +122,9 @@ class QueryTest(unittest.TestCase):
             # verify by_page
             # the options is not copied, therefore it need to be restored
             query_iterable = created_collection.query_items_change_feed(
-                partition_key_range_id=pkRangeId,
                 continuation=continuation2,
-                max_item_count=pageSize
+                max_item_count=pageSize,
+                **partitionParam
             )
             count = 0
             expected_count = 2
@@ -134,8 +142,8 @@ class QueryTest(unittest.TestCase):
 
         # verify reading change feed from the beginning
         query_iterable = created_collection.query_items_change_feed(
-            partition_key_range_id=pkRangeId,
-            is_start_from_beginning=True
+            is_start_from_beginning=True,
+            **partitionParam
         )
         expected_ids = ['doc1', 'doc2', 'doc3']
         it = query_iterable.__iter__()
@@ -147,9 +155,9 @@ class QueryTest(unittest.TestCase):
 
         # verify reading empty change feed
         query_iterable = created_collection.query_items_change_feed(
-            partition_key_range_id=pkRangeId,
             continuation=continuation3,
-            is_start_from_beginning=True
+            is_start_from_beginning=True,
+            **partitionParam
         )
         iter_list = list(query_iterable)
         self.assertEqual(len(iter_list), 0)
@@ -521,6 +529,42 @@ class QueryTest(unittest.TestCase):
 
         _QueryExecutionContextBase.__next__ = self.OriginalExecuteFunction
         _QueryExecutionContextBase.next = self.OriginalExecuteFunction
+
+    def test_paging_with_continuation_token(self):
+        created_collection = self.config.create_multi_partition_collection_with_custom_pk_if_not_exist(self.client)
+
+        document_definition = {'pk': 'pk', 'id': '1'}
+        created_collection.create_item(body=document_definition)
+        document_definition = {'pk': 'pk', 'id': '2'}
+        created_collection.create_item(body=document_definition)
+
+        query = 'SELECT * from c'
+        query_iterable = created_collection.query_items(
+            query=query,
+            partition_key='pk',
+            max_item_count=1
+        )
+        pager = query_iterable.by_page()
+        pager.next()
+        token = pager.continuation_token
+        second_page = list(pager.next())[0]
+
+        pager = query_iterable.by_page(token)
+        second_page_fetched_with_continuation_token = list(pager.next())[0]
+
+        self.assertEqual(second_page['id'], second_page_fetched_with_continuation_token['id'])
+
+    def test_cross_partition_query_with_continuation_token_fails(self):
+        created_collection = self.config.create_multi_partition_collection_with_custom_pk_if_not_exist(self.client)
+        query = 'SELECT * from c'
+        query_iterable = created_collection.query_items(
+            query=query,
+            enable_cross_partition_query=True,
+            max_item_count=1,
+        )
+
+        with self.assertRaises(ValueError):
+            pager = query_iterable.by_page("fake_continuation_token")
 
     def _validate_distinct_on_different_types_and_field_orders(self, collection, query, expected_results, get_mock_result):
         self.count = 0

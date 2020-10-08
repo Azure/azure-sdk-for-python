@@ -7,6 +7,7 @@
 from uuid import UUID
 from datetime import datetime
 from math import isnan
+from enum import Enum
 import sys
 import uuid
 import isodate
@@ -41,6 +42,8 @@ def _get_match_headers(kwargs, match_param, etag_param):
         if not if_none_match:
             raise ValueError("'{}' specified without '{}'.".format(match_param, etag_param))
     elif match_condition == MatchConditions.IfMissing:
+        if_none_match = '*'
+    elif match_condition == MatchConditions.Unconditionally:
         if_none_match = '*'
     elif match_condition is None:
         if kwargs.get(etag_param):
@@ -114,6 +117,7 @@ def _to_entity_guid(value):
 
 
 def _to_entity_int32(value):
+    # TODO: What the heck? below
     if sys.version_info < (3,):
         value = int(value)
     else:
@@ -133,8 +137,17 @@ def _to_entity_int64(value):
     return EdmType.INT64, str(value)
 
 
+def _to_entity_int(value):
+    ivalue = int(value)
+    if ivalue.bit_length() <= 32:
+        return _to_entity_int32(value)
+    if ivalue.bit_length() <= 64:
+        return _to_entity_int64(value)
+    raise TypeError(_ERROR_VALUE_TOO_LARGE.format(str(value), EdmType.INT64))
+
+
 def _to_entity_str(value):
-    return None, value
+    return EdmType.STRING, value
 
 
 def _to_entity_none(value):  # pylint:disable=W0613
@@ -144,14 +157,24 @@ def _to_entity_none(value):  # pylint:disable=W0613
 # Conversion from Python type to a function which returns a tuple of the
 # type string and content string.
 _PYTHON_TO_ENTITY_CONVERSIONS = {
-    int: _to_entity_int64,
+    int: _to_entity_int32,
     bool: _to_entity_bool,
     datetime: _to_entity_datetime,
     float: _to_entity_float,
-    str: _to_entity_str,
-    bytes: _to_entity_binary,
-    UUID: _to_entity_guid
+    UUID: _to_entity_guid,
+    Enum: _to_entity_str
 }
+try:
+    _PYTHON_TO_ENTITY_CONVERSIONS.update({
+        unicode: _to_entity_str,
+        str: _to_entity_binary,
+        long: _to_entity_int32,
+    })
+except NameError:
+    _PYTHON_TO_ENTITY_CONVERSIONS.update({
+        str: _to_entity_str,
+        bytes: _to_entity_binary,
+    })
 
 # Conversion from Edm type to a function which returns a tuple of the
 # type string and content string.
@@ -193,7 +216,13 @@ def _add_entity_properties(source):
     for name, value in source.items():
         mtype = ''
 
-        if isinstance(value, EntityProperty):
+        if isinstance(value, Enum):
+            try:
+                conv = _PYTHON_TO_ENTITY_CONVERSIONS.get(unicode)
+            except NameError:
+                conv = _PYTHON_TO_ENTITY_CONVERSIONS.get(str)
+            mtype, value = conv(value)
+        elif isinstance(value, EntityProperty):
             conv = _EDM_TO_ENTITY_CONVERSIONS.get(value.type)
             if conv is None:
                 raise TypeError(

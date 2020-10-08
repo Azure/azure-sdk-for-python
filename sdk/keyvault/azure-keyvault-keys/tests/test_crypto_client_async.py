@@ -6,14 +6,17 @@ import codecs
 from datetime import datetime
 import hashlib
 import os
+from unittest import mock
 
+from azure.core.exceptions import HttpResponseError
 from azure.keyvault.keys import JsonWebKey, KeyCurveName, KeyVaultKey
-from azure.keyvault.keys.crypto._client import _UTC
+from azure.keyvault.keys.crypto._key_validity import _UTC
 from azure.keyvault.keys.crypto.aio import CryptographyClient, EncryptionAlgorithm, KeyWrapAlgorithm, SignatureAlgorithm
 from azure.mgmt.keyvault.models import KeyPermissions, Permissions
 from devtools_testutils import ResourceGroupPreparer, KeyVaultPreparer
 import pytest
 
+from _shared.helpers_async  import get_completed_future
 from _shared.json_attribute_matcher import json_attribute_matcher
 from _shared.test_case_async import KeyVaultTestCase
 from crypto_client_preparer_async import CryptoClientPreparer
@@ -238,55 +241,36 @@ class CryptoClientTests(KeyVaultTestCase):
         the_year_3000 = datetime(3000, 1, 1, tzinfo=_UTC)
 
         rsa_wrap_algorithms = [algo for algo in KeyWrapAlgorithm if algo.startswith("RSA")]
-        rsa_not_yet_valid = await key_client.create_rsa_key("rsa-not-yet-valid", not_before=the_year_3000)
-        await test_operations(rsa_not_yet_valid, [str(the_year_3000)], EncryptionAlgorithm, rsa_wrap_algorithms)
-
-        ec_not_yet_valid = await key_client.create_ec_key("ec-not-yet-valid", not_before=the_year_3000)
-        await test_operations(
-            ec_not_yet_valid, [str(the_year_3000)], encrypt_algorithms=[], wrap_algorithms=[KeyWrapAlgorithm.aes_256]
-        )
+        not_yet_valid_key = await key_client.create_rsa_key("rsa-not-yet-valid", not_before=the_year_3000)
+        await test_operations(not_yet_valid_key, [str(the_year_3000)], EncryptionAlgorithm, rsa_wrap_algorithms)
 
         # nor should they succeed with a key whose exp has passed
         the_year_2000 = datetime(2000, 1, 1, tzinfo=_UTC)
 
-        rsa_expired = await key_client.create_rsa_key("rsa-expired", expires_on=the_year_2000)
-        await test_operations(rsa_expired, [str(the_year_2000)], EncryptionAlgorithm, rsa_wrap_algorithms)
-
-        ec_expired = await key_client.create_ec_key("ec-expired", expires_on=the_year_2000)
-        await test_operations(
-            ec_expired, [str(the_year_2000)], encrypt_algorithms=[], wrap_algorithms=[KeyWrapAlgorithm.aes_256]
-        )
+        expired_key = await key_client.create_rsa_key("rsa-expired", expires_on=the_year_2000)
+        await test_operations(expired_key, [str(the_year_2000)], EncryptionAlgorithm, rsa_wrap_algorithms)
 
         # when exp and nbf are set, error messages should contain both
         the_year_3001 = datetime(3001, 1, 1, tzinfo=_UTC)
 
-        rsa_valid = await key_client.create_rsa_key("rsa-valid", not_before=the_year_3000, expires_on=the_year_3001)
+        valid_key = await key_client.create_rsa_key("rsa-valid", not_before=the_year_3000, expires_on=the_year_3001)
         await test_operations(
-            rsa_valid, (str(the_year_3000), str(the_year_3001)), EncryptionAlgorithm, rsa_wrap_algorithms
+            valid_key, (str(the_year_3000), str(the_year_3001)), EncryptionAlgorithm, rsa_wrap_algorithms
         )
 
-        ec_valid = await key_client.create_ec_key("ec-valid", not_before=the_year_3000, expires_on=the_year_3001)
-        await test_operations(
-            ec_valid,
-            (str(the_year_3000), str(the_year_3001)),
-            encrypt_algorithms=[],
-            wrap_algorithms=[KeyWrapAlgorithm.aes_256],
-        )
 
-    class _CustomHookPolicy(object):
+def test_custom_hook_policy():
+    class CustomHookPolicy(object):
         pass
 
-    @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer()
-    @CryptoClientPreparer(client_kwargs={"custom_hook_policy": _CustomHookPolicy()})
-    async def test_custom_hook_policy(self, key_client, credential, **kwargs):
-        assert isinstance(key_client._client._config.custom_hook_policy, CryptoClientTests._CustomHookPolicy)
+    client = CryptographyClient("https://localhost/fake/key/version", object(), custom_hook_policy=CustomHookPolicy())
+    assert isinstance(client._client._config.custom_hook_policy, CustomHookPolicy)
 
 
 @pytest.mark.asyncio
 async def test_symmetric_wrap_and_unwrap_local():
     key = KeyVaultKey(
-        key_id="http://fake.test.vault/keys/key/version", k=os.urandom(32), kty="oct", key_ops=["unwrapKey", "wrapKey"],
+        key_id="http://localhost/keys/key/version", k=os.urandom(32), kty="oct", key_ops=["unwrapKey", "wrapKey"],
     )
 
     crypto_client = CryptographyClient(key, credential=lambda *_: None)
@@ -296,3 +280,154 @@ async def test_symmetric_wrap_and_unwrap_local():
     wrap_result = await crypto_client.wrap_key(KeyWrapAlgorithm.aes_256, key_bytes)
     unwrap_result = await crypto_client.unwrap_key(wrap_result.algorithm, wrap_result.encrypted_key)
     assert unwrap_result.key == key_bytes
+
+
+@pytest.mark.asyncio
+async def test_initialization_given_key():
+    """If the client is given key material, it should not attempt to get this from the vault"""
+
+    mock_client = mock.Mock()
+    key = mock.Mock(spec=KeyVaultKey, id="https://localhost/fake/key/version")
+    client = CryptographyClient(key, mock.Mock())
+    client._client = mock_client
+    mock_client.get_key.return_value = get_completed_future()
+
+    with mock.patch(CryptographyClient.__module__ + ".get_local_cryptography_provider") as get_provider:
+        await client.verify(SignatureAlgorithm.rs256, b"...", b"...")
+    get_provider.assert_called_once_with(key)
+    assert mock_client.get_key.call_count == 0
+
+
+@pytest.mark.asyncio
+async def test_initialization_get_key_successful():
+    """If the client is able to get key material, it shouldn't do so again"""
+
+    mock_client = mock.Mock()
+    mock_client.get_key.return_value = mock.Mock(spec=KeyVaultKey)
+    client = CryptographyClient("https://localhost/fake/key/version", mock.Mock())
+    client._client = mock_client
+    mock_key = mock.Mock()
+    mock_client.get_key.return_value = get_completed_future(mock_key)
+
+    assert mock_client.get_key.call_count == 0
+    with mock.patch(CryptographyClient.__module__ + ".get_local_cryptography_provider") as get_provider:
+        await client.verify(SignatureAlgorithm.rs256, b"...", b"...")
+    get_provider.assert_called_once_with(mock_key)
+
+    for _ in range(3):
+        assert mock_client.get_key.call_count == 1
+        assert get_provider.call_count == 1
+        await client.verify(SignatureAlgorithm.rs256, b"...", b"...")
+
+
+@pytest.mark.asyncio
+async def test_initialization_forbidden_to_get_key():
+    """If the client is forbidden to get key material, it should try to do so exactly once"""
+
+    mock_client = mock.Mock()
+    mock_client.get_key.side_effect = HttpResponseError(response=mock.Mock(status_code=403))
+    mock_client.verify.return_value = get_completed_future(mock.Mock())
+    client = CryptographyClient("https://localhost/fake/key/version", mock.Mock())
+    client._client = mock_client
+
+    assert mock_client.get_key.call_count == 0
+    for _ in range(3):
+        await client.verify(SignatureAlgorithm.rs256, b"...", b"...")
+        assert mock_client.get_key.call_count == 1
+
+
+@pytest.mark.asyncio
+async def test_initialization_transient_failure_getting_key():
+    """If the client is not forbidden to get key material, it should retry after failing to do so"""
+
+    mock_client = mock.Mock()
+    mock_client.get_key.side_effect = HttpResponseError(response=mock.Mock(status_code=500))
+    mock_client.verify.return_value = get_completed_future(mock.Mock())
+    client = CryptographyClient("https://localhost/fake/key/version", mock.Mock())
+    client._client = mock_client
+
+    for i in range(3):
+        assert mock_client.get_key.call_count == i
+        await client.verify(SignatureAlgorithm.rs256, b"...", b"...")
+
+
+@pytest.mark.asyncio
+async def test_calls_service_for_operations_unsupported_locally():
+    """When an operation can't be performed locally, the client should request Key Vault perform it"""
+
+    class _AsyncMock(mock.Mock):
+        async def __call__(self, *args, **kwargs):
+            return super().__call__(*args, **kwargs)
+
+    mock_client = _AsyncMock()
+    key = mock.Mock(spec=KeyVaultKey, id="https://localhost/fake/key/version")
+    client = CryptographyClient(key, mock.Mock())
+    client._client = mock_client
+
+    supports_nothing = mock.Mock(supports=mock.Mock(return_value=False))
+    with mock.patch(CryptographyClient.__module__ + ".get_local_cryptography_provider", lambda *_: supports_nothing):
+        await client.decrypt(EncryptionAlgorithm.rsa_oaep, b"...")
+    assert mock_client.decrypt.call_count == 1
+    assert supports_nothing.decrypt.call_count == 0
+
+    await client.encrypt(EncryptionAlgorithm.rsa_oaep, b"...")
+    assert mock_client.encrypt.call_count == 1
+    assert supports_nothing.encrypt.call_count == 0
+
+    await client.sign(SignatureAlgorithm.rs256, b"...")
+    assert mock_client.sign.call_count == 1
+    assert supports_nothing.sign.call_count == 0
+
+    await client.verify(SignatureAlgorithm.rs256, b"...", b"...")
+    assert mock_client.verify.call_count == 1
+    assert supports_nothing.verify.call_count == 0
+
+    await client.unwrap_key(KeyWrapAlgorithm.rsa_oaep, b"...")
+    assert mock_client.unwrap_key.call_count == 1
+    assert supports_nothing.unwrap_key.call_count == 0
+
+    await client.wrap_key(KeyWrapAlgorithm.rsa_oaep, b"...")
+    assert mock_client.wrap_key.call_count == 1
+    assert supports_nothing.wrap_key.call_count == 0
+
+
+@pytest.mark.asyncio
+async def test_prefers_local_provider():
+    """The client should complete operations locally whenever possible"""
+
+    mock_client = mock.Mock()
+    key = mock.Mock(
+        spec=KeyVaultKey,
+        id="https://localhost/fake/key/version",
+        properties=mock.Mock(
+            not_before=datetime(2000, 1, 1, tzinfo=_UTC), expires_on=datetime(3000, 1, 1, tzinfo=_UTC)
+        ),
+    )
+    client = CryptographyClient(key, mock.Mock())
+    client._client = mock_client
+
+    supports_everything = mock.Mock(supports=mock.Mock(return_value=True))
+    with mock.patch(CryptographyClient.__module__ + ".get_local_cryptography_provider", lambda *_: supports_everything):
+        await client.decrypt(EncryptionAlgorithm.rsa_oaep, b"...")
+    assert mock_client.decrypt.call_count == 0
+    assert supports_everything.decrypt.call_count == 1
+
+    await client.encrypt(EncryptionAlgorithm.rsa_oaep, b"...")
+    assert mock_client.encrypt.call_count == 0
+    assert supports_everything.encrypt.call_count == 1
+
+    await client.sign(SignatureAlgorithm.rs256, b"...")
+    assert mock_client.sign.call_count == 0
+    assert supports_everything.sign.call_count == 1
+
+    await client.verify(SignatureAlgorithm.rs256, b"...", b"...")
+    assert mock_client.verify.call_count == 0
+    assert supports_everything.verify.call_count == 1
+
+    await client.unwrap_key(KeyWrapAlgorithm.rsa_oaep, b"...")
+    assert mock_client.unwrap_key.call_count == 0
+    assert supports_everything.unwrap_key.call_count == 1
+
+    await client.wrap_key(KeyWrapAlgorithm.rsa_oaep, b"...")
+    assert mock_client.wrap_key.call_count == 0
+    assert supports_everything.wrap_key.call_count == 1

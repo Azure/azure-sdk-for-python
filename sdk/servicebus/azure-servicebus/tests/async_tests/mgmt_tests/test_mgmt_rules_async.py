@@ -9,7 +9,7 @@ from datetime import datetime, timedelta
 import pytest
 
 import msrest
-from azure.servicebus.aio.management import ServiceBusManagementClient
+from azure.servicebus.aio.management import ServiceBusAdministrationClient
 from azure.servicebus.management import RuleProperties, CorrelationRuleFilter, SqlRuleFilter, TrueRuleFilter, SqlRuleAction
 from azure.servicebus.management._constants import INT32_MAX_VALUE
 from utilities import get_logger
@@ -25,11 +25,11 @@ from mgmt_test_utilities_async import async_pageable_to_list, clear_topics
 
 _logger = get_logger(logging.DEBUG)
 
-class ServiceBusManagementClientRuleAsyncTests(AzureMgmtTestCase):
+class ServiceBusAdministrationClientRuleAsyncTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     async def test_async_mgmt_rule_create(self, servicebus_namespace_connection_string, **kwargs):
-        mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
         await clear_topics(mgmt_service)
         topic_name = "topic_testaddf"
         subscription_name = "sub_testkkk"
@@ -93,7 +93,7 @@ class ServiceBusManagementClientRuleAsyncTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     async def test_async_mgmt_rule_create_duplicate(self, servicebus_namespace_connection_string, **kwargs):
-        mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
         await clear_topics(mgmt_service)
         topic_name = "dqkodq"
         subscription_name = 'kkaqo'
@@ -113,7 +113,7 @@ class ServiceBusManagementClientRuleAsyncTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     async def test_async_mgmt_rule_update_success(self, servicebus_namespace_connection_string, **kwargs):
-        mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
         await clear_topics(mgmt_service)
         topic_name = "fjrui"
         subscription_name = "eqkovc"
@@ -122,7 +122,7 @@ class ServiceBusManagementClientRuleAsyncTests(AzureMgmtTestCase):
 
         try:
             topic_description = await mgmt_service.create_topic(topic_name)
-            subscription_description = await mgmt_service.create_subscription(topic_description, subscription_name)
+            subscription_description = await mgmt_service.create_subscription(topic_description.name, subscription_name)
             await mgmt_service.create_rule(topic_name, subscription_name, rule_name, filter=sql_filter)
 
             rule_desc = await mgmt_service.get_rule(topic_name, subscription_name, rule_name)
@@ -135,7 +135,7 @@ class ServiceBusManagementClientRuleAsyncTests(AzureMgmtTestCase):
 
             rule_desc.filter = correlation_fitler
             rule_desc.action = sql_rule_action
-            await mgmt_service.update_rule(topic_description, subscription_description, rule_desc)
+            await mgmt_service.update_rule(topic_description.name, subscription_description.name, rule_desc)
 
             rule_desc = await mgmt_service.get_rule(topic_name, subscription_name, rule_name)
             assert type(rule_desc.filter) == CorrelationRuleFilter
@@ -150,7 +150,7 @@ class ServiceBusManagementClientRuleAsyncTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     async def test_async_mgmt_rule_update_invalid(self, servicebus_namespace_connection_string, **kwargs):
-        mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
         await clear_topics(mgmt_service)
         topic_name = "fjrui"
         subscription_name = "eqkovc"
@@ -175,13 +175,13 @@ class ServiceBusManagementClientRuleAsyncTests(AzureMgmtTestCase):
             # change the name to a topic that doesn't exist; should fail.
             rule_desc.name = "iewdm"
             with pytest.raises(HttpResponseError):
-                await mgmt_service.update_rule(topic_name, subscription_description, rule_desc)
+                await mgmt_service.update_rule(topic_name, subscription_description.name, rule_desc)
             rule_desc.name = rule_name
 
             # change the name to a topic with an invalid name exist; should fail.
             rule_desc.name = ''
             with pytest.raises(msrest.exceptions.ValidationError):
-                await mgmt_service.update_rule(topic_name, subscription_description, rule_desc)
+                await mgmt_service.update_rule(topic_name, subscription_description.name, rule_desc)
             rule_desc.name = rule_name
 
         finally:
@@ -192,7 +192,7 @@ class ServiceBusManagementClientRuleAsyncTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     async def test_async_mgmt_rule_list_and_delete(self, servicebus_namespace_connection_string):
-        mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
         await clear_topics(mgmt_service)
         topic_name = "topic_testaddf"
         subscription_name = "sub_testkkk"

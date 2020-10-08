@@ -14,25 +14,22 @@ from typing import (
     TYPE_CHECKING
 )
 from azure.core.tracing.decorator import distributed_trace
-from azure.core.polling import LROPoller
 from azure.core.polling.base_polling import LROBasePolling
-from ._generated._form_recognizer_client import FormRecognizerClient as FormRecognizer
+
 from ._response_handlers import (
     prepare_receipt,
     prepare_content_result,
     prepare_form_result
 )
-from ._generated.models import AnalyzeOperationResult
-from ._api_versions import validate_api_version
-from ._helpers import get_content_type, get_authentication_policy, error_map, POLLING_INTERVAL
-from ._user_agent import USER_AGENT
+from ._helpers import get_content_type
+from ._form_base_client import FormRecognizerClientBase
 from ._polling import AnalyzePolling
 if TYPE_CHECKING:
-    from azure.core.credentials import AzureKeyCredential, TokenCredential
+    from azure.core.polling import LROPoller
     from ._models import FormPage, RecognizedForm
 
 
-class FormRecognizerClient(object):
+class FormRecognizerClient(FormRecognizerClientBase):
     """FormRecognizerClient extracts information from forms and images into structured data.
     It is the interface to use for analyzing receipts, recognizing content/layout from
     forms, and analyzing custom forms from trained models. It provides different methods
@@ -67,24 +64,8 @@ class FormRecognizerClient(object):
             :caption: Creating the FormRecognizerClient with a token credential.
     """
 
-    def __init__(self, endpoint, credential, **kwargs):
-        # type: (str, Union[AzureKeyCredential, TokenCredential], Any) -> None
-
-        authentication_policy = get_authentication_policy(credential)
-        polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
-        api_version = kwargs.pop('api_version', None)
-        validate_api_version(api_version)
-        self._client = FormRecognizer(
-            endpoint=endpoint,
-            credential=credential,  # type: ignore
-            sdk_moniker=USER_AGENT,
-            authentication_policy=authentication_policy,
-            polling_interval=polling_interval,
-            **kwargs
-        )
-
     def _receipt_callback(self, raw_response, _, headers):  # pylint: disable=unused-argument
-        analyze_result = self._client._deserialize(AnalyzeOperationResult, raw_response)
+        analyze_result = self._deserialize(self._generated_models.AnalyzeOperationResult, raw_response)
         return prepare_receipt(analyze_result)
 
     @distributed_trace
@@ -109,10 +90,14 @@ class FormRecognizerClient(object):
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword str locale: Locale of the receipt. Defaults to en-US. Supported locales include:
+            en-US, en-AU, en-CA, en-GB, and en-IN.
         :return: An instance of an LROPoller. Call `result()` on the poller
             object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`].
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
         :raises ~azure.core.exceptions.HttpResponseError:
+        .. versionadded:: v2.1-preview
+            The *locale* keyword argument
 
         .. admonition:: Example:
 
@@ -123,26 +108,24 @@ class FormRecognizerClient(object):
                 :dedent: 8
                 :caption: Recognize US sales receipt fields.
         """
-
-        polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
-        continuation_token = kwargs.pop("continuation_token", None)
+        locale = kwargs.pop("locale", None)
         content_type = kwargs.pop("content_type", None)
+        include_field_elements = kwargs.pop("include_field_elements", False)
         if content_type == "application/json":
             raise TypeError("Call begin_recognize_receipts_from_url() to analyze a receipt from a URL.")
-
-        include_field_elements = kwargs.pop("include_field_elements", False)
-
+        cls = kwargs.pop("cls", self._receipt_callback)
         if content_type is None:
             content_type = get_content_type(receipt)
+
+        if self.api_version == "2.1-preview.1" and locale:
+            kwargs.update({"locale": locale})
 
         return self._client.begin_analyze_receipt_async(  # type: ignore
             file_stream=receipt,
             content_type=content_type,
             include_text_details=include_field_elements,
-            cls=kwargs.pop("cls", self._receipt_callback),
-            polling=LROBasePolling(timeout=polling_interval, **kwargs),
-            error_map=error_map,
-            continuation_token=continuation_token,
+            cls=cls,
+            polling=True,
             **kwargs
         )
 
@@ -163,10 +146,14 @@ class FormRecognizerClient(object):
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword str locale: Locale of the receipt. Defaults to en-US. Supported locales include:
+            en-US, en-AU, en-CA, en-GB, and en-IN.
         :return: An instance of an LROPoller. Call `result()` on the poller
             object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`].
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
         :raises ~azure.core.exceptions.HttpResponseError:
+        .. versionadded:: v2.1-preview
+            The *locale* keyword argument
 
         .. admonition:: Example:
 
@@ -177,23 +164,21 @@ class FormRecognizerClient(object):
                 :dedent: 8
                 :caption: Recognize US sales receipt fields from a URL.
         """
-
-        polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
-        continuation_token = kwargs.pop("continuation_token", None)
+        locale = kwargs.pop("locale", None)
         include_field_elements = kwargs.pop("include_field_elements", False)
-
+        cls = kwargs.pop("cls", self._receipt_callback)
+        if self.api_version == "2.1-preview.1" and locale:
+            kwargs.update({"locale": locale})
         return self._client.begin_analyze_receipt_async(  # type: ignore
             file_stream={"source": receipt_url},
             include_text_details=include_field_elements,
-            cls=kwargs.pop("cls", self._receipt_callback),
-            polling=LROBasePolling(timeout=polling_interval, **kwargs),
-            error_map=error_map,
-            continuation_token=continuation_token,
+            cls=cls,
+            polling=True,
             **kwargs
         )
 
     def _content_callback(self, raw_response, _, headers):  # pylint: disable=unused-argument
-        analyze_result = self._client._deserialize(AnalyzeOperationResult, raw_response)
+        analyze_result = self._deserialize(self._generated_models.AnalyzeOperationResult, raw_response)
         return prepare_content_result(analyze_result)
 
     @distributed_trace
@@ -226,9 +211,6 @@ class FormRecognizerClient(object):
                 :dedent: 8
                 :caption: Recognize text and content/layout information from a form.
         """
-
-        polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
-        continuation_token = kwargs.pop("continuation_token", None)
         content_type = kwargs.pop("content_type", None)
         if content_type == "application/json":
             raise TypeError("Call begin_recognize_content_from_url() to analyze a document from a URL.")
@@ -240,9 +222,7 @@ class FormRecognizerClient(object):
             file_stream=form,
             content_type=content_type,
             cls=kwargs.pop("cls", self._content_callback),
-            polling=LROBasePolling(timeout=polling_interval, **kwargs),
-            error_map=error_map,
-            continuation_token=continuation_token,
+            polling=True,
             **kwargs
         )
 
@@ -263,15 +243,10 @@ class FormRecognizerClient(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
-        continuation_token = kwargs.pop("continuation_token", None)
-
         return self._client.begin_analyze_layout_async(  # type: ignore
             file_stream={"source": form_url},
             cls=kwargs.pop("cls", self._content_callback),
-            polling=LROBasePolling(timeout=polling_interval, **kwargs),
-            error_map=error_map,
-            continuation_token=continuation_token,
+            polling=True,
             **kwargs
         )
 
@@ -313,7 +288,6 @@ class FormRecognizerClient(object):
         if not model_id:
             raise ValueError("model_id cannot be None or empty.")
 
-        cls = kwargs.pop("cls", None)
         polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
         continuation_token = kwargs.pop("continuation_token", None)
         content_type = kwargs.pop("content_type", None)
@@ -325,18 +299,16 @@ class FormRecognizerClient(object):
             content_type = get_content_type(form)
 
         def analyze_callback(raw_response, _, headers):  # pylint: disable=unused-argument
-            analyze_result = self._client._deserialize(AnalyzeOperationResult, raw_response)
+            analyze_result = self._deserialize(self._generated_models.AnalyzeOperationResult, raw_response)
             return prepare_form_result(analyze_result, model_id)
 
-        deserialization_callback = cls if cls else analyze_callback
         return self._client.begin_analyze_with_custom_model(  # type: ignore
             file_stream=form,
             model_id=model_id,
             include_text_details=include_field_elements,
             content_type=content_type,
-            cls=deserialization_callback,
+            cls=kwargs.pop("cls", analyze_callback),
             polling=LROBasePolling(timeout=polling_interval, lro_algorithms=[AnalyzePolling()], **kwargs),
-            error_map=error_map,
             continuation_token=continuation_token,
             **kwargs
         )
@@ -365,23 +337,20 @@ class FormRecognizerClient(object):
         if not model_id:
             raise ValueError("model_id cannot be None or empty.")
 
-        cls = kwargs.pop("cls", None)
         polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
         continuation_token = kwargs.pop("continuation_token", None)
         include_field_elements = kwargs.pop("include_field_elements", False)
 
         def analyze_callback(raw_response, _, headers):  # pylint: disable=unused-argument
-            analyze_result = self._client._deserialize(AnalyzeOperationResult, raw_response)
+            analyze_result = self._deserialize(self._generated_models.AnalyzeOperationResult, raw_response)
             return prepare_form_result(analyze_result, model_id)
 
-        deserialization_callback = cls if cls else analyze_callback
         return self._client.begin_analyze_with_custom_model(  # type: ignore
             file_stream={"source": form_url},
             model_id=model_id,
             include_text_details=include_field_elements,
-            cls=deserialization_callback,
+            cls=kwargs.pop("cls", analyze_callback),
             polling=LROBasePolling(timeout=polling_interval, lro_algorithms=[AnalyzePolling()], **kwargs),
-            error_map=error_map,
             continuation_token=continuation_token,
             **kwargs
         )
