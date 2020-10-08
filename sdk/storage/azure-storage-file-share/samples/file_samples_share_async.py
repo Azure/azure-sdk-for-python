@@ -149,11 +149,11 @@ class ShareSamplesAsync(object):
 
 async def main():
     sample = ShareSamplesAsync()
-    # await sample.create_share_snapshot_async()
-    # await sample.set_share_quota_and_metadata_async()
+    await sample.create_share_snapshot_async()
+    await sample.set_share_quota_and_metadata_async()
     await sample.set_share_tier()
-    # await sample.list_directories_and_files_async()
-    # await sample.get_directory_or_file_client_async()
+    await sample.list_directories_and_files_async()
+    await sample.get_directory_or_file_client_async()
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()

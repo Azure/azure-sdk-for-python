@@ -155,9 +155,9 @@ class ShareSamples(object):
 
 if __name__ == '__main__':
     sample = ShareSamples()
-    # sample.create_share_snapshot()
-    # sample.set_share_quota_and_metadata()
+    sample.create_share_snapshot()
+    sample.set_share_quota_and_metadata()
     sample.set_share_tier()
-    # sample.list_directories_and_files()
-    # sample.get_directory_or_file_client()
-    # sample.acquire_share_lease()
+    sample.list_directories_and_files()
+    sample.get_directory_or_file_client()
+    sample.acquire_share_lease()
