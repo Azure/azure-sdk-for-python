@@ -8,7 +8,7 @@
 
 import asyncio
 import os
-from colorama import init, Style
+from colorama import init, Style, Fore
 init()
 
 from azure.identity.aio import DefaultAzureCredential
@@ -18,27 +18,27 @@ from azure.core import MatchConditions
 
 
 async def main():
-    url = os.environ.get('APP_CONFIG_HOSTNAME')
+    url = os.environ.get('API-LEARN_ENDPOINT')
     credential = DefaultAzureCredential()
     async with AppConfigurationClient(account_url=url, credential=credential) as client:
 
         # Retrieve initial color value
         try:
-            first_color = await client.get_configuration_setting('FontColor')
+            first_color = await client.get_configuration_setting(os.enviorn['API-LEARN_SETTING_COLOR_KEY'])
         except ResourceNotFoundError:
             raise
 
         # Get latest color value, only if it has changed
         try:
             new_color = await client.get_configuration_setting(
-                key='FontColor',
+                key=os.enviorn['API-LEARN_SETTING_COLOR_KEY'],
                 match_condition=MatchConditions.IfModified,
                 etag=first_color.etag
             )
         except ResourceNotModifiedError:
             new_color = first_color
 
-        color = new_color.value.replace('\\0', '\0')
+        color = getattr(Fore, new_color.value.upper())
         greeting = 'Hello!'
         print(f'{color}{greeting}{Style.RESET_ALL}')
 
