@@ -23,10 +23,9 @@ def main():
         color = color_setting.value.replace('\\0', '\0')
         text_setting = client.get_configuration_setting('Greeting')
         greeting = text_setting.value
-    except Exception as e:
+    except:
         color = '\033[31m'
         greeting = 'Default greeting'
-        print(e)
 
     print(f'{color}{greeting}{Style.RESET_ALL}')
 
