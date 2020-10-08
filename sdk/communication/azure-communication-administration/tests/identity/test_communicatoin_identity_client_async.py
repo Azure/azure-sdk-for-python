@@ -7,10 +7,11 @@
 import pytest
 from azure.communication.administration.aio import CommunicationIdentityClient
 from azure_devtools.scenario_tests import RecordingProcessor
+from devtools_testutils import ResourceGroupPreparer
 from _shared.helper import URIIdentityReplacer
 from _shared.asynctestcase  import AsyncCommunicationTestCase
 from _shared.testcase import BodyReplacerProcessor
-from _shared.communication_service_preparer import CommunicationServicePreparer, CommunicationResourceGroupPreparer
+from _shared.communication_service_preparer import CommunicationServicePreparer
 
 class CommunicationIdentityClientTestAsync(AsyncCommunicationTestCase):
     def setUp(self):
@@ -19,7 +20,7 @@ class CommunicationIdentityClientTestAsync(AsyncCommunicationTestCase):
             BodyReplacerProcessor(keys=["id", "token"]),
             URIIdentityReplacer()])
 
-    @CommunicationResourceGroupPreparer(random_name_enabled=True)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @CommunicationServicePreparer()
     @pytest.mark.live_test_only
     @pytest.mark.asyncio
@@ -31,7 +32,7 @@ class CommunicationIdentityClientTestAsync(AsyncCommunicationTestCase):
         assert user.identifier is not None
 
     @pytest.mark.live_test_only
-    @CommunicationResourceGroupPreparer(random_name_enabled=True)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @CommunicationServicePreparer()
     async def test_issue_token(self, connection_string):
         identity_client = CommunicationIdentityClient.from_connection_string(connection_string)
@@ -43,7 +44,7 @@ class CommunicationIdentityClientTestAsync(AsyncCommunicationTestCase):
         assert token_response.token is not None
 
     @pytest.mark.live_test_only
-    @CommunicationResourceGroupPreparer(random_name_enabled=True)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @CommunicationServicePreparer()
     async def test_revoke_tokens(self, connection_string):
         identity_client = CommunicationIdentityClient.from_connection_string(connection_string)
@@ -56,7 +57,7 @@ class CommunicationIdentityClientTestAsync(AsyncCommunicationTestCase):
         assert token_response.token is not None
 
     @pytest.mark.live_test_only
-    @CommunicationResourceGroupPreparer(random_name_enabled=True)
+    @ResourceGroupPreparer(random_name_enabled=True)
     @CommunicationServicePreparer()
     async def test_delete_user(self, connection_string):
         identity_client = CommunicationIdentityClient.from_connection_string(connection_string)

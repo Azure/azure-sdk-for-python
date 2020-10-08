@@ -11,22 +11,6 @@ from devtools_testutils import AzureMgmtPreparer, ResourceGroupPreparer
 from devtools_testutils.resource_testcase import RESOURCE_GROUP_PARAM
 from azure_devtools.scenario_tests.exceptions import AzureTestError
 
-class CommunicationResourceGroupPreparer(ResourceGroupPreparer):
-    """Communication Service Resource Group Preparer.
-       Creating and removing test resource groups on demand
-    """
-    def __init__(self, **kwargs):
-        super(CommunicationResourceGroupPreparer, self).__init__(**kwargs)
-        # self.set_cache(True) 
-
-    def create_resource(self, name, **kwargs):
-        result = super(CommunicationResourceGroupPreparer, self).create_resource(name, **kwargs)
-        if self.is_live and self._need_creation:
-            expiry = datetime.datetime.now() + datetime.timedelta(hours=2)
-            resource_group_params = dict(tags={'DeleteAfter': expiry.isoformat()}, location=self.location)
-            self.client.resource_groups.create_or_update(name, resource_group_params)
-        return result
-
 class CommunicationServicePreparer(AzureMgmtPreparer):
     """Communication Service Preparer.
        Creating and destroying test resources on demand
