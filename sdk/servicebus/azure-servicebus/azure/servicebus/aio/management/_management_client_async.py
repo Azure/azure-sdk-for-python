@@ -22,7 +22,7 @@ from ...management._generated.models import QueueDescriptionFeed, TopicDescripti
     TopicDescriptionFeed, CreateSubscriptionBody, CreateSubscriptionBodyContent, CreateRuleBody, \
     CreateRuleBodyContent, CreateQueueBody, CreateQueueBodyContent
 
-from ...base_handler import _parse_conn_str
+from ..._base_handler import _parse_conn_str
 from ..._common.constants import JWT_TOKEN_SCOPE
 from ...aio._base_handler_async import ServiceBusSharedKeyCredential, ServiceBusSASTokenCredential
 from ...management._generated.aio._configuration_async import ServiceBusManagementClientConfiguration
