@@ -68,7 +68,7 @@ setup(
         'six>=1.6'
     ],
     extras_require={
-        ":python_version<'3.0'": ['azure-nspkg'],
+        ":python_version<'3.0'": ['azure-communication-nspkg'],
         ":python_version<'3.5'": ["typing"]
     }
 )
