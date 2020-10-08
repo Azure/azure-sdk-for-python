@@ -86,7 +86,7 @@ def _get_authentication_policy(credential):
     return authentication_policy
 
 def _is_cloud_event(event):
-    # type: (dict) -> bool
+    # type: (Any) -> bool
     required = ('id', 'source', 'specversion', 'type')
     try:
         return all([_ in event for _ in required]) and event['specversion'] == "1.0"

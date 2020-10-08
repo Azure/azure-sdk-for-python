@@ -111,7 +111,7 @@ class EventGridPublisherClient():
         if not isinstance(events, list):
             events = cast(ListEventType, [events])
 
-        if all(isinstance(e, CloudEvent) for e in events) or all(_is_cloud_event(cast(Dict, e)) for e in events):
+        if all(isinstance(e, CloudEvent) for e in events) or all(_is_cloud_event(e) for e in events):
             try:
                 events = [
                     cast(CloudEvent, e)._to_generated(**kwargs) for e in events # pylint: disable=protected-access

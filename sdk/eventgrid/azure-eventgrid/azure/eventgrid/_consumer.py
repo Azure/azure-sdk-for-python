@@ -35,7 +35,7 @@ class EventGridConsumer(object):
             cloud_event = CloudEvent._from_json(cloud_event, encode) # pylint: disable=protected-access
             deserialized_event = CloudEvent._from_generated(cloud_event) # pylint: disable=protected-access
             CloudEvent._deserialize_data(deserialized_event, deserialized_event.type) # pylint: disable=protected-access
-            return cast(CloudEvent, deserialized_event)
+            return deserialized_event
         except Exception as err:
             _LOGGER.error('Error: cannot deserialize event. Event does not have a valid format. \
                 Event must be a string, dict, or bytes following the CloudEvent schema.')
