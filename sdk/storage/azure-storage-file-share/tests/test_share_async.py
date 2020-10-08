@@ -22,6 +22,7 @@ from azure.core.exceptions import (
 from azure.storage.fileshare import (
     AccessPolicy,
     ShareSasPermissions,
+    ShareAccessTier,
     generate_share_sas,
 )
 from azure.storage.fileshare.aio import (
@@ -564,6 +565,21 @@ class StorageShareTest(AsyncStorageTestCase):
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
+    async def test_create_share_with_access_tier(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
+
+        # Act
+        client = self._get_share_reference()
+        created = await client.create_share(access_tier="Hot")
+
+        # Assert
+        props = await client.get_share_properties()
+        self.assertTrue(created)
+        self.assertEqual(props.access_tier, "Hot")
+        await self._delete_shares(client.share_name)
+
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
     async def test_share_exists_async(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         share = await self._create_share()
@@ -851,16 +867,31 @@ class StorageShareTest(AsyncStorageTestCase):
     @AsyncStorageTestCase.await_prepared_test
     async def test_set_share_properties_async(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
-        share = await self._create_share()
-        await share.set_share_quota(1)
+        share1 = await self._create_share("share1")
+        share2 = await self._create_share("share2")
+
+        await share1.set_share_quota(1)
+        await share1.set_share_tier("Hot")
+
+        await share2.set_share_tier(ShareAccessTier("Cool"))
+        await share2.set_share_quota(2)
 
         # Act
-        props = await share.get_share_properties()
+        props1 = await share1.get_share_properties()
+        props2 = await share2.get_share_properties()
 
-        # Assert
-        self.assertIsNotNone(props)
-        self.assertEqual(props.quota, 1)
-        await self._delete_shares(share.share_name)
+        share1_quota = props1.quota
+        share1_tier = props1.access_tier
+
+        share2_quota = props2.quota
+        share2_tier = props2.access_tier
+
+        # Assert quotas and access tiers don't change by calling the other method.
+        self.assertEqual(share1_quota, 1)
+        self.assertEqual(share1_tier, "Hot")
+        self.assertEqual(share2_quota, 2)
+        self.assertEqual(share2_tier, "Cool")
+        await self._delete_shares()
 
     @GlobalResourceGroupPreparer()
     @StorageAccountPreparer(random_name_enabled=True, sku='premium_LRS', name_prefix='pyacrstorage', kind='FileStorage')
