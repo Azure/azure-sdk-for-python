@@ -11,6 +11,7 @@ from azure.core.exceptions import HttpResponseError, ServiceRequestError, Client
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer._generated.models import AnalyzeOperationResult
 from azure.ai.formrecognizer._response_handlers import prepare_receipt
+from azure.ai.formrecognizer import FormRecognizerApiVersion
 from azure.ai.formrecognizer.aio import FormRecognizerClient
 from testcase import GlobalFormRecognizerAccountPreparer
 from asynctestcase import AsyncFormRecognizerTest
@@ -96,7 +97,7 @@ class TestReceiptFromUrlAsync(AsyncFormRecognizerTest):
     @GlobalFormRecognizerAccountPreparer()
     @GlobalClientPreparer()
     async def test_receipt_url_pass_stream(self, client):
-        
+
         with open(self.receipt_png, "rb") as fd:
             receipt = fd.read(4)  # makes the recording smaller
 
@@ -387,3 +388,27 @@ class TestReceiptFromUrlAsync(AsyncFormRecognizerTest):
             result = await poller.result()
             self.assertIsNotNone(result)
             await initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer()
+    async def test_receipt_locale_specified(self, client):
+        async with client:
+            poller = await client.begin_recognize_receipts_from_url(self.receipt_url_jpg, locale="en-IN")
+            assert 'en-IN' == poller._polling_method._initial_response.http_response.request.query['locale']
+            await poller.wait()
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer()
+    async def test_receipt_locale_error(self, client):
+        with pytest.raises(HttpResponseError) as e:
+            async with client:
+                await client.begin_recognize_receipts_from_url(self.receipt_url_jpg, locale="not a locale")
+        assert "UnsupportedLocale" == e.value.error.code
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
+    async def test_receipt_locale_v2(self, client):
+        with pytest.raises(ValueError) as e:
+            async with client:
+                await client.begin_recognize_receipts_from_url(self.receipt_url_jpg, locale="en-US")
+        assert "'locale' is only available for API version V2_1_PREVIEW and up" in str(e.value)

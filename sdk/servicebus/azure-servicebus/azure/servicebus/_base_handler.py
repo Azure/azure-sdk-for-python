@@ -15,7 +15,7 @@ except ImportError:
     from urllib.parse import quote_plus
 
 import uamqp
-from uamqp import utils
+from uamqp import utils, compat
 from uamqp.message import MessageProperties
 
 from azure.core.credentials import AccessToken
@@ -24,6 +24,7 @@ from ._common._configuration import Configuration
 from .exceptions import (
     ServiceBusError,
     ServiceBusAuthenticationError,
+    OperationTimeoutError,
     _create_servicebus_exception
 )
 from ._common.utils import create_properties
@@ -233,14 +234,14 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         self,
         retried_times,
         last_exception,
-        timeout=None,
+        abs_timeout_time=None,
         entity_name=None
     ):
         # type: (int, Exception, Optional[float], str) -> None
         entity_name = entity_name or self._container_id
         backoff = self._config.retry_backoff_factor * 2 ** retried_times
         if backoff <= self._config.retry_backoff_max and (
-            timeout is None or backoff <= timeout
+            abs_timeout_time is None or (backoff + time.time()) <= abs_timeout_time
         ):  # pylint:disable=no-else-return
             time.sleep(backoff)
             _LOGGER.info(
@@ -259,14 +260,17 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
     def _do_retryable_operation(self, operation, timeout=None, **kwargs):
         # type: (Callable, Optional[float], Any) -> Any
         require_last_exception = kwargs.pop("require_last_exception", False)
-        require_timeout = kwargs.pop("require_timeout", False)
+        operation_requires_timeout = kwargs.pop("operation_requires_timeout", False)
         retried_times = 0
         max_retries = self._config.retry_total
 
+        abs_timeout_time = (time.time() + timeout) if (operation_requires_timeout and timeout) else None
+
         while retried_times <= max_retries:
             try:
-                if require_timeout:
-                    kwargs["timeout"] = timeout
+                if operation_requires_timeout and abs_timeout_time:
+                    remaining_timeout = abs_timeout_time - time.time()
+                    kwargs["timeout"] = remaining_timeout
                 return operation(**kwargs)
             except StopIteration:
                 raise
@@ -285,13 +289,37 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
                 self._backoff(
                     retried_times=retried_times,
                     last_exception=last_exception,
-                    timeout=timeout
+                    abs_timeout_time=abs_timeout_time
                 )
 
-    def _mgmt_request_response(self, mgmt_operation, message, callback, keep_alive_associated_link=True, **kwargs):
-        # type: (bytes, uamqp.Message, Callable, bool, Any) -> uamqp.Message
+    def _mgmt_request_response(
+        self,
+        mgmt_operation,
+        message,
+        callback,
+        keep_alive_associated_link=True,
+        timeout=None,
+        **kwargs
+    ):
+        # type: (bytes, uamqp.Message, Callable, bool, Optional[float], Any) -> uamqp.Message
+        """
+        Execute an amqp management operation.
+
+        :param bytes mgmt_operation: The type of operation to be performed. This value will
+         be service-specific, but common values include READ, CREATE and UPDATE.
+         This value will be added as an application property on the message.
+        :param message: The message to send in the management request.
+        :paramtype message: ~uamqp.message.Message
+        :param callback: The callback which is used to parse the returning message.
+        :paramtype callback: Callable[int, ~uamqp.message.Message, str]
+        :param keep_alive_associated_link: A boolean flag for keeping associated amqp sender/receiver link alive when
+         executing operation on mgmt links.
+        :param timeout: timeout in seconds executing the mgmt operation.
+        :rtype: None
+        """
         self._open()
         application_properties = {}
+
         # Some mgmt calls do not support an associated link name (such as list_sessions).  Most do, so on by default.
         if keep_alive_associated_link:
             try:
@@ -308,22 +336,29 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
             ),
             application_properties=application_properties
         )
-        return self._handler.mgmt_request(
-            mgmt_msg,
-            mgmt_operation,
-            op_type=MGMT_REQUEST_OP_TYPE_ENTITY_MGMT,
-            node=self._mgmt_target.encode(self._config.encoding),
-            timeout=5000,
-            callback=callback
-        )
+        try:
+            return self._handler.mgmt_request(
+                mgmt_msg,
+                mgmt_operation,
+                op_type=MGMT_REQUEST_OP_TYPE_ENTITY_MGMT,
+                node=self._mgmt_target.encode(self._config.encoding),
+                timeout=timeout * 1000 if timeout else None,
+                callback=callback
+            )
+        except Exception as exp:  # pylint: disable=broad-except
+            if isinstance(exp, compat.TimeoutException):
+                raise OperationTimeoutError("Management operation timed out.", inner_exception=exp)
+            raise
 
-    def _mgmt_request_response_with_retry(self, mgmt_operation, message, callback, **kwargs):
-        # type: (bytes, Dict[str, Any], Callable, Any) -> Any
+    def _mgmt_request_response_with_retry(self, mgmt_operation, message, callback, timeout=None, **kwargs):
+        # type: (bytes, Dict[str, Any], Callable, Optional[float], Any) -> Any
         return self._do_retryable_operation(
             self._mgmt_request_response,
             mgmt_operation=mgmt_operation,
             message=message,
             callback=callback,
+            timeout=timeout,
+            operation_requires_timeout=True,
             **kwargs
         )
 

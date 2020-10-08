@@ -5,9 +5,11 @@
 import logging
 import asyncio
 import uuid
-from typing import TYPE_CHECKING, Any
+import time
+from typing import TYPE_CHECKING, Any, Callable, Optional, Dict
 
 import uamqp
+from uamqp import compat
 from uamqp.message import MessageProperties
 
 from azure.core.credentials import AccessToken
@@ -22,6 +24,7 @@ from .._common.constants import (
     CONTAINER_PREFIX, MANAGEMENT_PATH_SUFFIX)
 from ..exceptions import (
     ServiceBusError,
+    OperationTimeoutError,
     _create_servicebus_exception
 )
 
@@ -124,13 +127,13 @@ class BaseHandler:
             self,
             retried_times,
             last_exception,
-            timeout=None,
+            abs_timeout_time=None,
             entity_name=None
     ):
         entity_name = entity_name or self._container_id
         backoff = self._config.retry_backoff_factor * 2 ** retried_times
         if backoff <= self._config.retry_backoff_max and (
-                timeout is None or backoff <= timeout
+                abs_timeout_time is None or (backoff + time.time()) <= abs_timeout_time
         ):
             await asyncio.sleep(backoff)
             _LOGGER.info(
@@ -147,42 +150,65 @@ class BaseHandler:
             raise last_exception
 
     async def _do_retryable_operation(self, operation, timeout=None, **kwargs):
+        # type: (Callable, Optional[float], Any) -> Any
         require_last_exception = kwargs.pop("require_last_exception", False)
-        require_timeout = kwargs.pop("require_timeout", False)
+        operation_requires_timeout = kwargs.pop("operation_requires_timeout", False)
         retried_times = 0
-        last_exception = None
         max_retries = self._config.retry_total
+
+        abs_timeout_time = (time.time() + timeout) if (operation_requires_timeout and timeout) else None
 
         while retried_times <= max_retries:
             try:
-                if require_last_exception:
-                    kwargs["last_exception"] = last_exception
-                if require_timeout:
-                    kwargs["timeout"] = timeout
+                if operation_requires_timeout and abs_timeout_time:
+                    remaining_timeout = abs_timeout_time - time.time()
+                    kwargs["timeout"] = remaining_timeout
                 return await operation(**kwargs)
             except StopAsyncIteration:
                 raise
             except Exception as exception:  # pylint: disable=broad-except
                 last_exception = await self._handle_exception(exception)
+                if require_last_exception:
+                    kwargs["last_exception"] = last_exception
                 retried_times += 1
                 if retried_times > max_retries:
-                    break
+                    _LOGGER.info(
+                        "%r operation has exhausted retry. Last exception: %r.",
+                        self._container_id,
+                        last_exception,
+                    )
+                    raise last_exception
                 await self._backoff(
                     retried_times=retried_times,
                     last_exception=last_exception,
-                    timeout=timeout
+                    abs_timeout_time=abs_timeout_time
                 )
 
-        _LOGGER.info(
-            "%r operation has exhausted retry. Last exception: %r.",
-            self._container_id,
-            last_exception,
-        )
-        raise last_exception
-
     async def _mgmt_request_response(
-            self, mgmt_operation, message, callback, keep_alive_associated_link=True, **kwargs
+        self,
+        mgmt_operation,
+        message,
+        callback,
+        keep_alive_associated_link=True,
+        timeout=None,
+        **kwargs
     ):
+        # type: (bytes, uamqp.Message, Callable, bool, Optional[float], Any) -> uamqp.Message
+        """
+        Execute an amqp management operation.
+
+        :param bytes mgmt_operation: The type of operation to be performed. This value will
+         be service-specific, but common values include READ, CREATE and UPDATE.
+         This value will be added as an application property on the message.
+        :param message: The message to send in the management request.
+        :paramtype message: ~uamqp.message.Message
+        :param callback: The callback which is used to parse the returning message.
+        :paramtype callback: Callable[int, ~uamqp.message.Message, str]
+        :param keep_alive_associated_link: A boolean flag for keeping associated amqp sender/receiver link alive when
+         executing operation on mgmt links.
+        :param timeout: timeout in seconds for executing the mgmt operation.
+        :rtype: None
+        """
         await self._open()
 
         application_properties = {}
@@ -200,20 +226,28 @@ class BaseHandler:
                 encoding=self._config.encoding,
                 **kwargs),
             application_properties=application_properties)
-        return await self._handler.mgmt_request_async(
-            mgmt_msg,
-            mgmt_operation,
-            op_type=MGMT_REQUEST_OP_TYPE_ENTITY_MGMT,
-            node=self._mgmt_target.encode(self._config.encoding),
-            timeout=5000,
-            callback=callback)
+        try:
+            return await self._handler.mgmt_request_async(
+                mgmt_msg,
+                mgmt_operation,
+                op_type=MGMT_REQUEST_OP_TYPE_ENTITY_MGMT,
+                node=self._mgmt_target.encode(self._config.encoding),
+                timeout=timeout * 1000 if timeout else None,
+                callback=callback)
+        except Exception as exp:  # pylint: disable=broad-except
+            if isinstance(exp, compat.TimeoutException):
+                raise OperationTimeoutError("Management operation timed out.", inner_exception=exp)
+            raise
 
-    async def _mgmt_request_response_with_retry(self, mgmt_operation, message, callback, **kwargs):
+    async def _mgmt_request_response_with_retry(self, mgmt_operation, message, callback, timeout=None, **kwargs):
+        # type: (bytes, Dict[str, Any], Callable, Optional[float], Any) -> Any
         return await self._do_retryable_operation(
             self._mgmt_request_response,
             mgmt_operation=mgmt_operation,
             message=message,
             callback=callback,
+            timeout=timeout,
+            operation_requires_timeout=True,
             **kwargs
         )
 

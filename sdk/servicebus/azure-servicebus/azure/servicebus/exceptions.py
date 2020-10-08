@@ -82,7 +82,10 @@ def _create_servicebus_exception(logger, exception, handler):  # pylint: disable
         error_need_raise = True
     elif isinstance(exception, errors.MessageException):
         logger.info("Message send failed (%r)", exception)
-        error = MessageSendFailed(exception)
+        if exception.condition == constants.ErrorCodes.ClientError and 'timed out' in str(exception):
+            error = OperationTimeoutError("Send operation timed out", inner_exception=exception)
+        else:
+            error = MessageSendFailed(exception)
         error_need_raise = False
     elif isinstance(exception, errors.LinkDetach) and exception.condition == SESSION_LOCK_LOST:
         try:
