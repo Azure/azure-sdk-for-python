@@ -18,7 +18,7 @@ from azure.core import MatchConditions
 
 
 async def main():
-    url = os.environ.get('APPCONFIG_URL')
+    url = os.environ.get('APP_CONFIG_HOSTNAME')
     credential = DefaultAzureCredential()
     async with AppConfigurationClient(account_url=url, credential=credential) as client:
 

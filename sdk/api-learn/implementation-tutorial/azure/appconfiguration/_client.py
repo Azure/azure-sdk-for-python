@@ -30,7 +30,6 @@ class AppConfigurationClient(object):
         """
         pass
 
-    @distributed_trace
     def get_configuration_setting(self, key, label=None, **kwargs):
         # type: (str, Optional[str]) -> ConfigurationSetting
         """Get the value of a particular configuration settings.

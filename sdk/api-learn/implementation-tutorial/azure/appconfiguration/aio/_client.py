@@ -22,7 +22,6 @@ class AppConfigurationClient(object):
     def __init__(self, account_url: str, credential: "AsyncTokenCredential", **kwargs):
         pass
 
-    @distributed_trace_async
     async def get_configuration_setting(
         self,
         key: str,
