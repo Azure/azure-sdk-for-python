@@ -13,12 +13,10 @@ from azure.communication.administration import (
     CreateSearchOptions
 )
 from phone_number_helper import PhoneNumberUriReplacer
-from _shared.testcase import (
-    CommunicationTestCase,
-    BodyReplacerProcessor
-)
+from phone_number_testcase import PhoneNumberCommunicationTestCase
+from .._shared.testcase import BodyReplacerProcessor
 
-class PhoneNumberAdministrationClientTest(CommunicationTestCase):
+class PhoneNumberAdministrationClientTest(PhoneNumberCommunicationTestCase):
 
     def setUp(self):
         super(PhoneNumberAdministrationClientTest, self).setUp()
