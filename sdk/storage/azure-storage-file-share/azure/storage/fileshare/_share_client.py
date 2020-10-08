@@ -547,7 +547,7 @@ class ShareClient(StorageAccountHostsMixin):
                 :end-before: [END set_share_tier]
                 :language: python
                 :dedent: 12
-                :caption: Sets the share quota.
+                :caption: Sets the share tier.
         """
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         timeout = kwargs.pop('timeout', None)

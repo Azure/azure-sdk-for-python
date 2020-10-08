@@ -412,11 +412,11 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/file_samples_share_async.py
-                :start-after: [START set_share_quota]
-                :end-before: [END set_share_quota]
+                :start-after: [START set_share_tier]
+                :end-before: [END set_share_tier]
                 :language: python
                 :dedent: 16
-                :caption: Sets the share quota.
+                :caption: Sets the share tier.
         """
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         timeout = kwargs.pop('timeout', None)
