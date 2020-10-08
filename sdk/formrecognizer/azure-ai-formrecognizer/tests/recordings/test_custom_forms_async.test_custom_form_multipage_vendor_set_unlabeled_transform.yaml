@@ -1,7 +1,7 @@
 interactions:
 - request:
-    body: 'b''b\''{"source": "containersasurl", "sourceFilter": {"prefix": "", "includeSubFolders":
-      false}, "useLabelFile": false}\'''''
+    body: 'b''{"source": "containersasurl", "sourceFilter": {"prefix": "", "includeSubFolders":
+      false}, "useLabelFile": false}'''
     headers:
       Accept:
       - application/json
@@ -17,13 +17,13 @@ interactions:
     body:
       string: ''
     headers:
-      apim-request-id: 5b9e3ad8-eb10-4283-8df9-02168dea3c4d
+      apim-request-id: 69720a11-33f7-45f0-9d84-82b1170b3aa7
       content-length: '0'
-      date: Mon, 14 Sep 2020 19:51:12 GMT
-      location: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/208757b6-34ba-4e01-98dd-4624ae384e16
+      date: Tue, 06 Oct 2020 02:31:07 GMT
+      location: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/61ed6945-fde5-43dc-81b2-de8fd5953154
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '41'
+      x-envoy-upstream-service-time: '48'
     status:
       code: 201
       message: Created
@@ -34,40 +34,64 @@ interactions:
       User-Agent:
       - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/208757b6-34ba-4e01-98dd-4624ae384e16?includeKeys=true
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/61ed6945-fde5-43dc-81b2-de8fd5953154?includeKeys=true
   response:
     body:
-      string: '{"modelInfo": {"modelId": "208757b6-34ba-4e01-98dd-4624ae384e16", "status":
-        "creating", "createdDateTime": "2020-09-14T19:51:13Z", "lastUpdatedDateTime":
-        "2020-09-14T19:51:13Z"}}'
+      string: '{"modelInfo": {"modelId": "61ed6945-fde5-43dc-81b2-de8fd5953154", "status":
+        "creating", "createdDateTime": "2020-10-06T02:31:08Z", "lastUpdatedDateTime":
+        "2020-10-06T02:31:08Z"}}'
     headers:
-      apim-request-id: 173be977-4e33-49ea-936e-0c79f884e1dc
+      apim-request-id: 6da0c5cd-a76a-4319-a0c0-da919c4659e6
       content-type: application/json; charset=utf-8
-      date: Mon, 14 Sep 2020 19:51:18 GMT
+      date: Tue, 06 Oct 2020 02:31:12 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '14'
+      x-envoy-upstream-service-time: '17'
     status:
       code: 200
       message: OK
-    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/208757b6-34ba-4e01-98dd-4624ae384e16?includeKeys=true
+    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/61ed6945-fde5-43dc-81b2-de8fd5953154?includeKeys=true
 - request:
     body: null
     headers:
       User-Agent:
       - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/208757b6-34ba-4e01-98dd-4624ae384e16?includeKeys=true
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/61ed6945-fde5-43dc-81b2-de8fd5953154?includeKeys=true
   response:
     body:
-      string: '{"modelInfo": {"modelId": "208757b6-34ba-4e01-98dd-4624ae384e16", "status":
-        "creating", "createdDateTime": "2020-09-14T19:51:13Z", "lastUpdatedDateTime":
-        "2020-09-14T19:51:13Z"}}'
+      string: '{"modelInfo": {"modelId": "61ed6945-fde5-43dc-81b2-de8fd5953154", "status":
+        "creating", "createdDateTime": "2020-10-06T02:31:08Z", "lastUpdatedDateTime":
+        "2020-10-06T02:31:08Z"}}'
     headers:
-      apim-request-id: 8b53368a-425c-4ddf-ab0a-eb928795dcae
+      apim-request-id: fcdb9a8a-6079-409a-9637-36322ab084f7
       content-type: application/json; charset=utf-8
-      date: Mon, 14 Sep 2020 19:51:22 GMT
+      date: Tue, 06 Oct 2020 02:31:18 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '18'
+    status:
+      code: 200
+      message: OK
+    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/61ed6945-fde5-43dc-81b2-de8fd5953154?includeKeys=true
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/61ed6945-fde5-43dc-81b2-de8fd5953154?includeKeys=true
+  response:
+    body:
+      string: '{"modelInfo": {"modelId": "61ed6945-fde5-43dc-81b2-de8fd5953154", "status":
+        "creating", "createdDateTime": "2020-10-06T02:31:08Z", "lastUpdatedDateTime":
+        "2020-10-06T02:31:08Z"}}'
+    headers:
+      apim-request-id: 4767e41a-71b5-4a44-b6b0-b9286a38d965
+      content-type: application/json; charset=utf-8
+      date: Tue, 06 Oct 2020 02:31:23 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
@@ -75,23 +99,23 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/208757b6-34ba-4e01-98dd-4624ae384e16?includeKeys=true
+    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/61ed6945-fde5-43dc-81b2-de8fd5953154?includeKeys=true
 - request:
     body: null
     headers:
       User-Agent:
       - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/208757b6-34ba-4e01-98dd-4624ae384e16?includeKeys=true
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/61ed6945-fde5-43dc-81b2-de8fd5953154?includeKeys=true
   response:
     body:
-      string: '{"modelInfo": {"modelId": "208757b6-34ba-4e01-98dd-4624ae384e16", "status":
-        "creating", "createdDateTime": "2020-09-14T19:51:13Z", "lastUpdatedDateTime":
-        "2020-09-14T19:51:13Z"}}'
+      string: '{"modelInfo": {"modelId": "61ed6945-fde5-43dc-81b2-de8fd5953154", "status":
+        "creating", "createdDateTime": "2020-10-06T02:31:08Z", "lastUpdatedDateTime":
+        "2020-10-06T02:31:08Z"}}'
     headers:
-      apim-request-id: 0fff8d49-2090-4672-9945-9603f1fcf118
+      apim-request-id: 680d9057-67cd-45cc-889b-fcac64e25e50
       content-type: application/json; charset=utf-8
-      date: Mon, 14 Sep 2020 19:51:27 GMT
+      date: Tue, 06 Oct 2020 02:31:27 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
@@ -99,46 +123,26 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/208757b6-34ba-4e01-98dd-4624ae384e16?includeKeys=true
+    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/61ed6945-fde5-43dc-81b2-de8fd5953154?includeKeys=true
 - request:
     body: null
     headers:
       User-Agent:
       - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/208757b6-34ba-4e01-98dd-4624ae384e16?includeKeys=true
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/61ed6945-fde5-43dc-81b2-de8fd5953154?includeKeys=true
   response:
     body:
-      string: '{"modelInfo": {"modelId": "208757b6-34ba-4e01-98dd-4624ae384e16", "status":
-        "creating", "createdDateTime": "2020-09-14T19:51:13Z", "lastUpdatedDateTime":
-        "2020-09-14T19:51:13Z"}}'
-    headers:
-      apim-request-id: 31e0d596-8f53-46fb-ae89-68bbafeed478
-      content-type: application/json; charset=utf-8
-      date: Mon, 14 Sep 2020 19:51:33 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '23'
-    status:
-      code: 200
-      message: OK
-    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/208757b6-34ba-4e01-98dd-4624ae384e16?includeKeys=true
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/208757b6-34ba-4e01-98dd-4624ae384e16?includeKeys=true
-  response:
-    body:
-      string: '{"modelInfo": {"modelId": "208757b6-34ba-4e01-98dd-4624ae384e16", "status":
-        "ready", "createdDateTime": "2020-09-14T19:51:13Z", "lastUpdatedDateTime":
-        "2020-09-14T19:51:38Z"}, "keys": {"clusters": {"0": ["Contoso Ltd. Conference
-        will be held on May 28-29, 2020 at the Elm Conference Center in", "Included",
-        "Maple City, Massachusetts. The conference has sold out of its 1,500 tickets,
-        with a 400 person", "Package", "Price", "Rates:", "Vendor #:", "Vendor Registration",
+      string: '{"modelInfo": {"modelId": "61ed6945-fde5-43dc-81b2-de8fd5953154", "status":
+        "ready", "createdDateTime": "2020-10-06T02:31:08Z", "lastUpdatedDateTime":
+        "2020-10-06T02:31:32Z"}, "keys": {"clusters": {"0": ["25% discount on program
+        guide", "50% discount on program guide", "Bronze Sponsor", "Contoso Ltd. Conference
+        will be held on May 28-29, 2020 at the Elm Conference Center in", "Full Booth",
+        "Full booth", "Full page ad in program guide", "Gold Sponsor", "Half Booth",
+        "Half page ad in program guide", "Included", "Logo on poster", "Maple City,
+        Massachusetts. The conference has sold out of its 1,500 tickets, with a 400
+        person", "Package", "Post-keynote thank you", "Pre-keynote thank you", "Price",
+        "Rates:", "Silver Sponsor", "Vendor #:", "Vendor Registration", "advertisements",
         "below, and attach a check made out to:", "waitlist. Vendor applications are
         being accepted through Feb 28, 2020. Please fill in the form"], "1": ["Company
         Name:", "Contact:", "Preferred Package:", "Special Requests:", "Vendor #:",
@@ -150,17 +154,17 @@ interactions:
         "multi5.pdf", "pages": 2, "errors": [], "status": "succeeded"}], "errors":
         []}}'
     headers:
-      apim-request-id: 0dd94499-5c2b-4cc3-bf3d-2fd158d20a77
+      apim-request-id: 261359b4-74a6-4b4c-a796-513ba8b62d87
       content-type: application/json; charset=utf-8
-      date: Mon, 14 Sep 2020 19:51:38 GMT
+      date: Tue, 06 Oct 2020 02:31:33 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '15'
+      x-envoy-upstream-service-time: '13'
     status:
       code: 200
       message: OK
-    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/208757b6-34ba-4e01-98dd-4624ae384e16?includeKeys=true
+    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/61ed6945-fde5-43dc-81b2-de8fd5953154?includeKeys=true
 - request:
     body: !!binary |
       JVBERi0xLjcKCjQgMCBvYmoKKElkZW50aXR5KQplbmRvYmoKNSAwIG9iagooQWRvYmUpCmVuZG9i
@@ -12656,79 +12660,79 @@ interactions:
       User-Agent:
       - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/208757b6-34ba-4e01-98dd-4624ae384e16/analyze?includeTextDetails=true
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/61ed6945-fde5-43dc-81b2-de8fd5953154/analyze?includeTextDetails=true
   response:
     body:
       string: ''
     headers:
-      apim-request-id: 68b4318d-9274-4306-8c4d-27e2578119ed
+      apim-request-id: 6215117f-a61e-4c94-99aa-83a5f9f3e32b
       content-length: '0'
-      date: Mon, 14 Sep 2020 19:51:40 GMT
-      operation-location: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/208757b6-34ba-4e01-98dd-4624ae384e16/analyzeresults/d7cda754-0efb-4a12-b555-2c4047d11cf7
+      date: Tue, 06 Oct 2020 02:31:34 GMT
+      operation-location: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/61ed6945-fde5-43dc-81b2-de8fd5953154/analyzeresults/2705f443-80f5-4974-a018-6329fe3258a9
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '58'
+      x-envoy-upstream-service-time: '63'
     status:
       code: 202
       message: Accepted
-    url: https://centraluseuap.api.cognitive.microsoft.com//formrecognizer/v2.1-preview.1/custom/models/208757b6-34ba-4e01-98dd-4624ae384e16/analyze?includeTextDetails=true
+    url: https://centraluseuap.api.cognitive.microsoft.com//formrecognizer/v2.1-preview.1/custom/models/61ed6945-fde5-43dc-81b2-de8fd5953154/analyze?includeTextDetails=true
 - request:
     body: null
     headers:
       User-Agent:
       - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/208757b6-34ba-4e01-98dd-4624ae384e16/analyzeresults/d7cda754-0efb-4a12-b555-2c4047d11cf7
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/61ed6945-fde5-43dc-81b2-de8fd5953154/analyzeresults/2705f443-80f5-4974-a018-6329fe3258a9
   response:
     body:
-      string: '{"status": "running", "createdDateTime": "2020-09-14T19:51:40Z", "lastUpdatedDateTime":
-        "2020-09-14T19:51:41Z", "analyzeResult": null}'
+      string: '{"status": "running", "createdDateTime": "2020-10-06T02:31:35Z", "lastUpdatedDateTime":
+        "2020-10-06T02:31:35Z", "analyzeResult": null}'
     headers:
-      apim-request-id: 0411e4af-1aac-49c6-ac52-5da16b4f4a74
+      apim-request-id: 1c5e489d-6d66-4479-9179-47164a39ffc9
       content-length: '134'
       content-type: application/json; charset=utf-8
-      date: Mon, 14 Sep 2020 19:51:45 GMT
+      date: Tue, 06 Oct 2020 02:31:40 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '14'
+      x-envoy-upstream-service-time: '19'
     status:
       code: 200
       message: OK
-    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/208757b6-34ba-4e01-98dd-4624ae384e16/analyzeresults/d7cda754-0efb-4a12-b555-2c4047d11cf7
+    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/61ed6945-fde5-43dc-81b2-de8fd5953154/analyzeresults/2705f443-80f5-4974-a018-6329fe3258a9
 - request:
     body: null
     headers:
       User-Agent:
       - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/208757b6-34ba-4e01-98dd-4624ae384e16/analyzeresults/d7cda754-0efb-4a12-b555-2c4047d11cf7
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/61ed6945-fde5-43dc-81b2-de8fd5953154/analyzeresults/2705f443-80f5-4974-a018-6329fe3258a9
   response:
     body:
-      string: '{"status": "running", "createdDateTime": "2020-09-14T19:51:40Z", "lastUpdatedDateTime":
-        "2020-09-14T19:51:41Z", "analyzeResult": null}'
+      string: '{"status": "running", "createdDateTime": "2020-10-06T02:31:35Z", "lastUpdatedDateTime":
+        "2020-10-06T02:31:35Z", "analyzeResult": null}'
     headers:
-      apim-request-id: a5c49a11-d8e0-4b0a-9cfc-b6ca5536df31
+      apim-request-id: 38ee4508-87e9-4d01-b59b-e7e9e006a73a
       content-length: '134'
       content-type: application/json; charset=utf-8
-      date: Mon, 14 Sep 2020 19:51:50 GMT
+      date: Tue, 06 Oct 2020 02:31:45 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '12'
+      x-envoy-upstream-service-time: '19'
     status:
       code: 200
       message: OK
-    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/208757b6-34ba-4e01-98dd-4624ae384e16/analyzeresults/d7cda754-0efb-4a12-b555-2c4047d11cf7
+    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/61ed6945-fde5-43dc-81b2-de8fd5953154/analyzeresults/2705f443-80f5-4974-a018-6329fe3258a9
 - request:
     body: null
     headers:
       User-Agent:
       - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/208757b6-34ba-4e01-98dd-4624ae384e16/analyzeresults/d7cda754-0efb-4a12-b555-2c4047d11cf7
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/61ed6945-fde5-43dc-81b2-de8fd5953154/analyzeresults/2705f443-80f5-4974-a018-6329fe3258a9
   response:
     body:
-      string: '{"status": "succeeded", "createdDateTime": "2020-09-14T19:51:40Z",
-        "lastUpdatedDateTime": "2020-09-14T19:51:52Z", "analyzeResult": {"version":
+      string: '{"status": "succeeded", "createdDateTime": "2020-10-06T02:31:35Z",
+        "lastUpdatedDateTime": "2020-10-06T02:31:48Z", "analyzeResult": {"version":
         "2.1.0", "readResults": [{"page": 1, "angle": 0, "width": 8.5, "height": 11.0,
         "unit": "inch", "lines": [{"text": "Vendor #:", "boundingBox": [6.1278, 1.0688,
         7.1514, 1.0688, 7.1514, 1.24, 6.1278, 1.24], "words": [{"text": "Vendor",
@@ -13023,98 +13027,35 @@ interactions:
         "#/readResults/0/lines/0/words/1"]}, "value": {"text": "121", "boundingBox":
         [7.1514, 1.076, 7.4833, 1.076, 7.4833, 1.2392, 7.1514, 1.2392], "elements":
         ["#/readResults/0/lines/1/words/0"]}, "confidence": 1.0}, {"key": {"text":
-        "__Address__1", "boundingBox": null, "elements": null}, "value": {"text":
-        "Contoso Ltd. 2345 Dogwood Lane Birch, Kansas 98123", "boundingBox": [1.0069,
-        3.5781, 2.3764, 3.5781, 2.3764, 4.1379, 1.0069, 4.1379], "elements": ["#/readResults/0/lines/7/words/0",
-        "#/readResults/0/lines/7/words/1", "#/readResults/0/lines/8/words/0", "#/readResults/0/lines/8/words/1",
-        "#/readResults/0/lines/8/words/2", "#/readResults/0/lines/9/words/0", "#/readResults/0/lines/9/words/1",
-        "#/readResults/0/lines/9/words/2"]}, "confidence": 1.0}], "tables": [{"rows":
-        6, "columns": 3, "cells": [{"text": "Package", "rowIndex": 0, "columnIndex":
-        0, "boundingBox": [1.0931, 4.6986, 1.6236, 4.6986, 1.6236, 4.8427, 1.0931,
-        4.8427], "confidence": 1.0, "rowSpan": 1, "columnSpan": 1, "elements": ["#/readResults/0/lines/11/words/0"],
-        "isHeader": true, "isFooter": false}, {"text": "Included", "rowIndex": 0,
-        "columnIndex": 1, "boundingBox": [2.7125, 4.6986, 3.2708, 4.6986, 3.2708,
-        4.8146, 2.7125, 4.8146], "confidence": 1.0, "rowSpan": 1, "columnSpan": 1,
-        "elements": ["#/readResults/0/lines/12/words/0"], "isHeader": true, "isFooter":
-        false}, {"text": "Price", "rowIndex": 0, "columnIndex": 2, "boundingBox":
-        [5.8375, 4.7038, 6.1514, 4.7038, 6.1514, 4.8146, 5.8375, 4.8146], "confidence":
-        1.0, "rowSpan": 1, "columnSpan": 1, "elements": ["#/readResults/0/lines/13/words/0"],
-        "isHeader": true, "isFooter": false}, {"text": "Gold Sponsor", "rowIndex":
-        1, "columnIndex": 0, "boundingBox": [1.0861, 4.9125, 1.9833, 4.9125, 1.9833,
-        5.042, 1.0861, 5.042], "confidence": 1.0, "rowSpan": 1, "columnSpan": 1, "elements":
-        ["#/readResults/0/lines/14/words/0", "#/readResults/0/lines/14/words/1"],
-        "isHeader": false, "isFooter": false}, {"text": "Full booth Pre-keynote thank
-        you Logo on poster Full page ad in program guide", "rowIndex": 1, "columnIndex":
-        1, "boundingBox": [3.2139, 4.917, 5.2014, 4.917, 5.2014, 5.6885, 3.2139, 5.6885],
-        "confidence": 1.0, "rowSpan": 1, "columnSpan": 1, "elements": ["#/readResults/0/lines/15/words/0",
-        "#/readResults/0/lines/15/words/1", "#/readResults/0/lines/17/words/0", "#/readResults/0/lines/17/words/1",
-        "#/readResults/0/lines/17/words/2", "#/readResults/0/lines/18/words/0", "#/readResults/0/lines/18/words/1",
-        "#/readResults/0/lines/18/words/2", "#/readResults/0/lines/19/words/0", "#/readResults/0/lines/19/words/1",
-        "#/readResults/0/lines/19/words/2", "#/readResults/0/lines/19/words/3", "#/readResults/0/lines/19/words/4",
-        "#/readResults/0/lines/19/words/5"], "isHeader": false, "isFooter": false},
-        {"text": "$1,500", "rowIndex": 1, "columnIndex": 2, "boundingBox": [5.8319,
-        4.8976, 6.2833, 4.8976, 6.2833, 5.0469, 5.8319, 5.0469], "confidence": 1.0,
-        "rowSpan": 1, "columnSpan": 1, "elements": ["#/readResults/0/lines/16/words/0"],
-        "isHeader": false, "isFooter": false}, {"text": "Silver Sponsor", "rowIndex":
-        2, "columnIndex": 0, "boundingBox": [1.0833, 5.982, 2.0333, 5.982, 2.0333,
-        6.1098, 1.0833, 6.1098], "confidence": 1.0, "rowSpan": 1, "columnSpan": 1,
-        "elements": ["#/readResults/0/lines/20/words/0", "#/readResults/0/lines/20/words/1"],
-        "isHeader": false, "isFooter": false}, {"text": "Full booth Post-keynote thank
-        you Logo on poster Half page ad in program guide", "rowIndex": 2, "columnIndex":
-        1, "boundingBox": [3.2139, 5.9868, 5.2306, 5.9868, 5.2306, 6.7569, 3.2139,
-        6.7569], "confidence": 1.0, "rowSpan": 1, "columnSpan": 1, "elements": ["#/readResults/0/lines/21/words/0",
-        "#/readResults/0/lines/21/words/1", "#/readResults/0/lines/23/words/0", "#/readResults/0/lines/23/words/1",
-        "#/readResults/0/lines/23/words/2", "#/readResults/0/lines/24/words/0", "#/readResults/0/lines/24/words/1",
-        "#/readResults/0/lines/24/words/2", "#/readResults/0/lines/25/words/0", "#/readResults/0/lines/25/words/1",
-        "#/readResults/0/lines/25/words/2", "#/readResults/0/lines/25/words/3", "#/readResults/0/lines/25/words/4",
-        "#/readResults/0/lines/25/words/5"], "isHeader": false, "isFooter": false},
-        {"text": "$1,200", "rowIndex": 2, "columnIndex": 2, "boundingBox": [5.8319,
-        5.9677, 6.2833, 5.9677, 6.2833, 6.1167, 5.8319, 6.1167], "confidence": 1.0,
-        "rowSpan": 1, "columnSpan": 1, "elements": ["#/readResults/0/lines/22/words/0"],
-        "isHeader": false, "isFooter": false}, {"text": "Bronze Sponsor", "rowIndex":
-        3, "columnIndex": 0, "boundingBox": [1.0931, 6.8407, 2.1361, 6.8407, 2.1361,
-        6.9647, 1.0931, 6.9647], "confidence": 1.0, "rowSpan": 1, "columnSpan": 1,
-        "elements": ["#/readResults/0/lines/26/words/0", "#/readResults/0/lines/26/words/1"],
-        "isHeader": false, "isFooter": false}, {"text": "Full booth Logo on poster
-        50% discount on program guide advertisements", "rowIndex": 3, "columnIndex":
-        1, "boundingBox": [3.2069, 6.842, 5.3417, 6.842, 5.3417, 7.5865, 3.2069, 7.5865],
-        "confidence": 1.0, "rowSpan": 1, "columnSpan": 1, "elements": ["#/readResults/0/lines/27/words/0",
-        "#/readResults/0/lines/27/words/1", "#/readResults/0/lines/29/words/0", "#/readResults/0/lines/29/words/1",
-        "#/readResults/0/lines/29/words/2", "#/readResults/0/lines/30/words/0", "#/readResults/0/lines/30/words/1",
-        "#/readResults/0/lines/30/words/2", "#/readResults/0/lines/30/words/3", "#/readResults/0/lines/30/words/4",
-        "#/readResults/0/lines/31/words/0"], "isHeader": false, "isFooter": false},
-        {"text": "$1,000", "rowIndex": 3, "columnIndex": 2, "boundingBox": [5.8319,
-        6.8226, 6.2833, 6.8226, 6.2833, 6.9719, 5.8319, 6.9719], "confidence": 1.0,
-        "rowSpan": 1, "columnSpan": 1, "elements": ["#/readResults/0/lines/28/words/0"],
-        "isHeader": false, "isFooter": false}, {"text": "Full Booth", "rowIndex":
-        4, "columnIndex": 0, "boundingBox": [1.0931, 7.6819, 1.7542, 7.6819, 1.7542,
-        7.7979, 1.0931, 7.7979], "confidence": 1.0, "rowSpan": 1, "columnSpan": 1,
-        "elements": ["#/readResults/0/lines/32/words/0", "#/readResults/0/lines/32/words/1"],
-        "isHeader": false, "isFooter": false}, {"text": "Full booth 50% discount on
-        program guide advertisements", "rowIndex": 4, "columnIndex": 1, "boundingBox":
-        [3.2069, 7.6903, 5.3417, 7.6903, 5.3417, 8.2212, 3.2069, 8.2212], "confidence":
-        1.0, "rowSpan": 1, "columnSpan": 1, "elements": ["#/readResults/0/lines/33/words/0",
-        "#/readResults/0/lines/33/words/1", "#/readResults/0/lines/35/words/0", "#/readResults/0/lines/35/words/1",
-        "#/readResults/0/lines/35/words/2", "#/readResults/0/lines/35/words/3", "#/readResults/0/lines/35/words/4",
-        "#/readResults/0/lines/36/words/0"], "isHeader": false, "isFooter": false},
-        {"text": "$600", "rowIndex": 4, "columnIndex": 2, "boundingBox": [5.8319,
-        7.6712, 6.1583, 7.6712, 6.1583, 7.8167, 5.8319, 7.8167], "confidence": 1.0,
-        "rowSpan": 1, "columnSpan": 1, "elements": ["#/readResults/0/lines/34/words/0"],
-        "isHeader": false, "isFooter": false}, {"text": "Half Booth", "rowIndex":
-        5, "columnIndex": 0, "boundingBox": [1.0931, 8.3167, 1.7861, 8.3167, 1.7861,
-        8.433, 1.0931, 8.433], "confidence": 1.0, "rowSpan": 1, "columnSpan": 1, "elements":
-        ["#/readResults/0/lines/37/words/0", "#/readResults/0/lines/37/words/1"],
-        "isHeader": false, "isFooter": false}, {"text": "Full booth 25% discount on
-        program guide advertisements", "rowIndex": 5, "columnIndex": 1, "boundingBox":
-        [3.2069, 8.3253, 5.3417, 8.3253, 5.3417, 8.8563, 3.2069, 8.8563], "confidence":
-        1.0, "rowSpan": 1, "columnSpan": 1, "elements": ["#/readResults/0/lines/38/words/0",
-        "#/readResults/0/lines/38/words/1", "#/readResults/0/lines/40/words/0", "#/readResults/0/lines/40/words/1",
-        "#/readResults/0/lines/40/words/2", "#/readResults/0/lines/40/words/3", "#/readResults/0/lines/40/words/4",
-        "#/readResults/0/lines/41/words/0"], "isHeader": false, "isFooter": false},
-        {"text": "$350", "rowIndex": 5, "columnIndex": 2, "boundingBox": [5.8319,
-        8.3062, 6.1583, 8.3062, 6.1583, 8.4514, 5.8319, 8.4514], "confidence": 1.0,
-        "rowSpan": 1, "columnSpan": 1, "elements": ["#/readResults/0/lines/39/words/0"],
-        "isHeader": false, "isFooter": false}]}], "clusterId": 0}, {"page": 2, "keyValuePairs":
+        "Full Booth", "boundingBox": [3.2139, 4.917, 3.8722, 4.917, 3.8722, 5.033,
+        3.2139, 5.033], "elements": ["#/readResults/0/lines/15/words/0", "#/readResults/0/lines/15/words/1"]},
+        "value": {"text": "$1,500", "boundingBox": [5.8319, 4.8976, 6.2833, 4.8976,
+        6.2833, 5.0469, 5.8319, 5.0469], "elements": ["#/readResults/0/lines/16/words/0"]},
+        "confidence": 0.36}, {"key": {"text": "Full Booth", "boundingBox": [3.2139,
+        5.9868, 3.8722, 5.9868, 3.8722, 6.1031, 3.2139, 6.1031], "elements": ["#/readResults/0/lines/21/words/0",
+        "#/readResults/0/lines/21/words/1"]}, "value": {"text": "$1,200", "boundingBox":
+        [5.8319, 5.9677, 6.2833, 5.9677, 6.2833, 6.1167, 5.8319, 6.1167], "elements":
+        ["#/readResults/0/lines/22/words/0"]}, "confidence": 0.36}, {"key": {"text":
+        "Full Booth", "boundingBox": [3.2139, 6.842, 3.8722, 6.842, 3.8722, 6.958,
+        3.2139, 6.958], "elements": ["#/readResults/0/lines/27/words/0", "#/readResults/0/lines/27/words/1"]},
+        "value": {"text": "$1,000", "boundingBox": [5.8319, 6.8226, 6.2833, 6.8226,
+        6.2833, 6.9719, 5.8319, 6.9719], "elements": ["#/readResults/0/lines/28/words/0"]},
+        "confidence": 0.36}, {"key": {"text": "Full Booth", "boundingBox": [3.2139,
+        7.6903, 3.8722, 7.6903, 3.8722, 7.8063, 3.2139, 7.8063], "elements": ["#/readResults/0/lines/33/words/0",
+        "#/readResults/0/lines/33/words/1"]}, "value": {"text": "$600", "boundingBox":
+        [5.8319, 7.6712, 6.1583, 7.6712, 6.1583, 7.8167, 5.8319, 7.8167], "elements":
+        ["#/readResults/0/lines/34/words/0"]}, "confidence": 0.36}, {"key": {"text":
+        "Full Booth", "boundingBox": [3.2139, 8.3253, 3.8722, 8.3253, 3.8722, 8.4413,
+        3.2139, 8.4413], "elements": ["#/readResults/0/lines/38/words/0", "#/readResults/0/lines/38/words/1"]},
+        "value": {"text": "$350", "boundingBox": [5.8319, 8.3062, 6.1583, 8.3062,
+        6.1583, 8.4514, 5.8319, 8.4514], "elements": ["#/readResults/0/lines/39/words/0"]},
+        "confidence": 0.36}, {"key": {"text": "__Address__1", "boundingBox": null,
+        "elements": null}, "value": {"text": "Contoso Ltd. 2345 Dogwood Lane Birch,
+        Kansas 98123", "boundingBox": [1.0069, 3.5781, 2.3764, 3.5781, 2.3764, 4.1379,
+        1.0069, 4.1379], "elements": ["#/readResults/0/lines/7/words/0", "#/readResults/0/lines/7/words/1",
+        "#/readResults/0/lines/8/words/0", "#/readResults/0/lines/8/words/1", "#/readResults/0/lines/8/words/2",
+        "#/readResults/0/lines/9/words/0", "#/readResults/0/lines/9/words/1", "#/readResults/0/lines/9/words/2"]},
+        "confidence": 1.0}], "tables": [], "clusterId": 0}, {"page": 2, "keyValuePairs":
         [{"key": {"text": "Vendor #:", "boundingBox": [6.1278, 1.0688, 7.1514, 1.0688,
         7.1514, 1.24, 6.1278, 1.24], "elements": ["#/readResults/1/lines/0/words/0",
         "#/readResults/1/lines/0/words/1"]}, "value": {"text": "121", "boundingBox":
@@ -13141,15 +13082,15 @@ interactions:
         ["#/readResults/1/lines/10/words/0"]}, "confidence": 0.53}], "tables": [],
         "clusterId": 1}], "documentResults": [], "errors": []}}'
     headers:
-      apim-request-id: c37c6d0f-1baf-4a94-9c53-5e65d6a2ee0a
-      content-length: '32950'
+      apim-request-id: 948d7edf-4aec-41ac-9e8c-5f57bb527bc8
+      content-length: '27606'
       content-type: application/json; charset=utf-8
-      date: Mon, 14 Sep 2020 19:51:55 GMT
+      date: Tue, 06 Oct 2020 02:31:50 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '20'
+      x-envoy-upstream-service-time: '26'
     status:
       code: 200
       message: OK
-    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/208757b6-34ba-4e01-98dd-4624ae384e16/analyzeresults/d7cda754-0efb-4a12-b555-2c4047d11cf7
+    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/61ed6945-fde5-43dc-81b2-de8fd5953154/analyzeresults/2705f443-80f5-4974-a018-6329fe3258a9
 version: 1
