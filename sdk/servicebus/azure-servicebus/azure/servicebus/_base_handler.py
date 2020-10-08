@@ -38,7 +38,6 @@ from ._common.constants import (
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
-_AccessToken = collections.namedtuple("AccessToken", "token expires_on")
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -108,7 +107,7 @@ def _generate_sas_token(uri, policy, key, expiry=None):
     encoded_key = key.encode("utf-8")
 
     token = utils.create_sas_token(encoded_policy, encoded_key, encoded_uri, expiry)
-    return _AccessToken(token=token, expires_on=abs_expiry)
+    return AccessToken(token=token, expires_on=abs_expiry)
 
 
 class ServiceBusSASTokenCredential(object):
