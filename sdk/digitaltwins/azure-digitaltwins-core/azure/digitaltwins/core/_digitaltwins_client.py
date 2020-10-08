@@ -139,7 +139,6 @@ class DigitalTwinsClient(object):
             400: ServiceRequestError,
             404: ResourceNotFoundError
         }
-
         etag = kwargs.get("etag", None)
         match_condition = kwargs.get("match_condition", MatchConditions.Unconditionally)
         if match_condition == MatchConditions.IfNotModified:
@@ -153,8 +152,8 @@ class DigitalTwinsClient(object):
 
         try:
             return self._client.digital_twins.update(
-                digital_twin_id, 
-                json_patch, 
+                digital_twin_id,
+                json_patch,
                 if_match=prep_if_match(etag, match_condition),
                 error_map=error_map,
                 **kwargs
@@ -191,7 +190,6 @@ class DigitalTwinsClient(object):
             400: ServiceRequestError,
             404: ResourceNotFoundError
         }
-
         etag = kwargs.get("etag", None)
         match_condition = kwargs.get("match_condition", MatchConditions.Unconditionally)
         if match_condition == MatchConditions.IfNotModified:
@@ -205,7 +203,7 @@ class DigitalTwinsClient(object):
 
         try:
             return self._client.digital_twins.delete(
-                digital_twin_id, 
+                digital_twin_id,
                 if_match=prep_if_match(etag, match_condition),
                 error_map=error_map,
                 **kwargs
@@ -274,7 +272,6 @@ class DigitalTwinsClient(object):
             400: ServiceRequestError,
             404: ResourceNotFoundError
         }
-
         etag = kwargs.get("etag", None)
         match_condition = kwargs.get("match_condition", MatchConditions.Unconditionally)
         if match_condition == MatchConditions.IfNotModified:
@@ -395,7 +392,6 @@ class DigitalTwinsClient(object):
             400: ServiceRequestError,
             404: ResourceNotFoundError
         }
-
         etag = kwargs.get("etag", None)
         match_condition = kwargs.get("match_condition", MatchConditions.Unconditionally)
         if match_condition == MatchConditions.IfNotModified:
@@ -447,7 +443,6 @@ class DigitalTwinsClient(object):
         error_map = {
             404: ResourceNotFoundError
         }
-
         etag = kwargs.get("etag", None)
         match_condition = kwargs.get("match_condition", MatchConditions.Unconditionally)
         if match_condition == MatchConditions.IfNotModified:
@@ -461,8 +456,8 @@ class DigitalTwinsClient(object):
 
         try:
             return self._client.digital_twins.delete_relationship(
-                digital_twin_id, 
-                relationship_id, 
+                digital_twin_id,
+                relationship_id,
                 if_match=prep_if_match(etag, match_condition),
                 error_map=error_map,
                 **kwargs
@@ -494,7 +489,7 @@ class DigitalTwinsClient(object):
 
         try:
             return self._client.digital_twins.list_relationships(
-                digital_twin_id, 
+                digital_twin_id,
                 relationship_name=relationship_id,
                 error_map=error_map,
                 **kwargs
@@ -526,7 +521,7 @@ class DigitalTwinsClient(object):
 
         try:
             return self._client.digital_twins.list_incoming_relationships(
-                digital_twin_id, 
+                digital_twin_id,
                 error_map=error_map,
                 **kwargs
             )
@@ -628,12 +623,12 @@ class DigitalTwinsClient(object):
             return None
 
     @distributed_trace
-    def get_model(self, model_id, include_model_definition=False, **kwargs):
-        # type: (str, Optional[bool], dict) -> ~azure.digitaltwins.models.ModelData
+    def get_model(self, model_id, **kwargs):
+        # type: (str, dict) -> ~azure.digitaltwins.models.ModelData
         """Get a model, including the model metadata and the model definition.
 
         :param str model_id: The Id of the model.
-        :param bool include_model_definition: When true the model definition
+        :keyword bool include_model_definition: When true the model definition
             will be returned as part of the result.
         :return: The ModelDate object.
         :rtype: ~azure.digitaltwins.models.ModelData
@@ -641,11 +636,13 @@ class DigitalTwinsClient(object):
         :raises :class: `~azure.core.exceptions.ResourceNotFoundError`: If there is no
             model with the provided id.
         """
+        include_model_definition = kwargs.get("include_model_definition", False)
         error_map = {
             404: ResourceNotFoundError
         }
 
         try:
+
             return self._client.digital_twin_models.get_by_id(
                 model_id, include_model_definition,
                 error_map=error_map,
@@ -675,14 +672,13 @@ class DigitalTwinsClient(object):
         error_map = {
             400: ServiceRequestError
         }
+        include_model_definition = kwargs.pop('include_model_definition', False)
+        max_item_count = kwargs.pop('max_item_count', -1)
+        digital_twin_models_list_options = {'max_item_count': -1}
+        if max_item_count != -1:
+            digital_twin_models_list_options= {'max_item_count': max_item_count}
 
         try:
-            include_model_definition = kwargs.pop('include_model_definition', False)
-            max_item_count = kwargs.pop('max_item_count', -1)
-
-            digital_twin_models_list_options = {'max_item_count': -1}
-            if max_item_count != -1:
-                digital_twin_models_list_options= {'max_item_count': max_item_count}
             return self._client.digital_twin_models.list(
                 dependencies_for=dependencies_for,
                 include_model_definition=include_model_definition,
@@ -712,6 +708,7 @@ class DigitalTwinsClient(object):
             400: ServiceRequestError,
             409: ResourceExistsError
         }
+
         try:
             return self._client.digital_twin_models.add(
                 model_list,
@@ -743,6 +740,7 @@ class DigitalTwinsClient(object):
             400: ServiceRequestError,
             404: ResourceNotFoundError
         }
+
         try:
             return self._client.digital_twin_models.update(
                 model_id,
@@ -769,7 +767,7 @@ class DigitalTwinsClient(object):
         :raises :class: `~azure.core.exceptions.ServiceRequestError`: If the request is invalid.
         :raises :class: `~azure.core.exceptions.ResourceNotFoundError`: There is no model
             with the provided id.
-        :raises :class: `~azure.core.exceptions.ResourceExistsError`: There are dependencies 
+        :raises :class: `~azure.core.exceptions.ResourceExistsError`: There are dependencies
             on the model that prevent it from being deleted.
         """
         error_map = {
@@ -777,6 +775,7 @@ class DigitalTwinsClient(object):
             404: ResourceNotFoundError,
             409: ResourceExistsError
         }
+
         try:
             return self._client.digital_twin_models.delete(
                 model_id,
@@ -807,6 +806,7 @@ class DigitalTwinsClient(object):
         error_map = {
             404: ResourceNotFoundError,
         }
+
         try:
             return self._client.event_routes.get_by_id(
                 event_route_id,
@@ -833,6 +833,7 @@ class DigitalTwinsClient(object):
         error_map = {
             400: ServiceRequestError,
         }
+
         try:
             digital_twin_models_list_options = {'max_item_count': -1}
             if max_item_count != -1:
@@ -863,6 +864,7 @@ class DigitalTwinsClient(object):
         error_map = {
             400: ServiceRequestError,
         }
+
         try:
             return self._client.event_routes.add(
                 event_route_id, event_route,
@@ -889,6 +891,7 @@ class DigitalTwinsClient(object):
         error_map = {
             404: ResourceNotFoundError,
         }
+
         try:
             return self._client.event_routes.delete(
                 event_route_id,
@@ -920,7 +923,7 @@ class DigitalTwinsClient(object):
 
         def get_next(continuation_token=None):
             query_spec = self._serialize.serialize_dict(
-                {'query': query, 'continuation_token': continuation_token}, 
+                {'query': query, 'continuation_token': continuation_token},
                 'QuerySpecification'
             )
             pipeline_response = self._client.query.query_twins(query_spec, **kwargs)
