@@ -170,7 +170,7 @@ class TestCustomForms(FormRecognizerTest):
         poller = client.begin_training(
             container_sas_url,
             use_training_labels=True,
-            display_name="labeled"
+            model_name="labeled"
         )
         model = poller.result()
 

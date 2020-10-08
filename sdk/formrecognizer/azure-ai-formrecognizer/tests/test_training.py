@@ -58,11 +58,11 @@ class TestTraining(FormRecognizerTest):
     @GlobalClientPreparer(training=True)
     def test_training(self, client, container_sas_url):
 
-        poller = client.begin_training(training_files_url=container_sas_url, use_training_labels=False, display_name="my unlabeled model")
+        poller = client.begin_training(training_files_url=container_sas_url, use_training_labels=False, model_name="my unlabeled model")
         model = poller.result()
 
         self.assertIsNotNone(model.model_id)
-        # self.assertEqual(model.display_name, "my unlabeled model")  # bug in service
+        # self.assertEqual(model.model_name, "my unlabeled model")  # bug in service
         self.assertIsNotNone(model.training_started_on)
         self.assertIsNotNone(model.training_completed_on)
         self.assertEqual(model.errors, [])
@@ -143,11 +143,11 @@ class TestTraining(FormRecognizerTest):
     @GlobalClientPreparer(training=True)
     def test_training_with_labels(self, client, container_sas_url):
 
-        poller = client.begin_training(training_files_url=container_sas_url, use_training_labels=True, display_name="my labeled model")
+        poller = client.begin_training(training_files_url=container_sas_url, use_training_labels=True, model_name="my labeled model")
         model = poller.result()
 
         self.assertIsNotNone(model.model_id)
-        self.assertEqual(model.display_name, "my labeled model")
+        self.assertEqual(model.model_name, "my labeled model")
         self.assertIsNotNone(model.training_started_on)
         self.assertIsNotNone(model.training_completed_on)
         self.assertEqual(model.errors, [])
@@ -260,8 +260,8 @@ class TestTraining(FormRecognizerTest):
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalClientPreparer(training=True, client_kwargs={"api_version": "2.0"})
-    def test_training_with_display_name_bad_api_version(self, client, container_sas_url):
+    def test_training_with_model_name_bad_api_version(self, client, container_sas_url):
         with pytest.raises(ValueError) as excinfo:
-            poller = client.begin_training(training_files_url="url", use_training_labels=True, display_name="not supported in v2.0")
+            poller = client.begin_training(training_files_url="url", use_training_labels=True, model_name="not supported in v2.0")
             result = poller.result()
-        assert "'display_name' is only available for API version V2_1_PREVIEW and up" in str(excinfo.value)
+        assert "'model_name' is only available for API version V2_1_PREVIEW and up" in str(excinfo.value)
