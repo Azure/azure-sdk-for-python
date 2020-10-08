@@ -33,7 +33,6 @@ class CommunicationServicePreparer(AzureMgmtPreparer):
         self.resource_group_parameter_name = resource_group_parameter_name
         self.service_name = "TEST-SERVICE-NAME"
         self.mgmt_client = None
-        # self.set_cache(True)
 
     def _get_resource_group(self, **kwargs):
         try:
