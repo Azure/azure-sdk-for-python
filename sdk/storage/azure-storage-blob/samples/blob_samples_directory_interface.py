@@ -26,7 +26,8 @@ DESCRIPTION:
 '''
 
 import os
-from azure.storage.blob import BlobServiceClient
+import mimetypes
+from azure.storage.blob import BlobServiceClient, ContentSettings
 
 class DirectoryClient:
   def __init__(self, connection_string, container_name):
@@ -46,9 +47,10 @@ class DirectoryClient:
     '''
     Upload a single file to a path inside the container
     '''
-    print(f'Uploading {source} to {dest}')
+    content_type = mimetypes.guess_type(source)[0]
+    print(f'Uploading {source} to {dest} (type: {content_type})')
     with open(source, 'rb') as data:
-      self.client.upload_blob(name=dest, data=data)
+      self.client.upload_blob(name=dest, data=data, content_settings=ContentSettings(content_type=content_type))
 
   def upload_dir(self, source, dest):
     '''
