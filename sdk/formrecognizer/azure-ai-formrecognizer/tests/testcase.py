@@ -442,6 +442,27 @@ class FormRecognizerTest(AzureTestCase):
                 self.assertEqual(value.name, composed_model.fields[field].name)
                 self.assertEqual(value.accuracy, composed_model.fields[field].accuracy)
 
+    def assertUnlabeledRecognizedFormHasValues(self, form, model):
+        self.assertIsNone(form.form_type_confidence)
+        self.assertEqual(form.model_id, model.model_id)
+        self.assertFormPagesHasValues(form.pages)
+        for label, field in form.fields.items():
+            self.assertIsNotNone(field.confidence)
+            self.assertIsNotNone(field.name)
+            self.assertIsNotNone(field.value)
+            self.assertIsNotNone(field.value_data.text)
+            self.assertIsNotNone(field.label_data.text)
+
+    def assertLabeledRecognizedFormHasValues(self, form, model):
+        self.assertEqual(form.form_type_confidence, 1.0)
+        self.assertEqual(form.model_id, model.model_id)
+        self.assertFormPagesHasValues(form.pages)
+        for label, field in form.fields.items():
+            self.assertIsNotNone(field.confidence)
+            self.assertIsNotNone(field.name)
+            self.assertIsNotNone(field.value_data.text)
+            self.assertIsNotNone(field.value_data.bounding_box)
+
 
 class GlobalResourceGroupPreparer(AzureMgmtPreparer):
     def __init__(self):
