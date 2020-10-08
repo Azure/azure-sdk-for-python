@@ -23,6 +23,7 @@ USAGE:
 
 import os
 import asyncio
+from azure.storage.fileshare import ShareAccessTier
 
 SOURCE_FILE = './SampleSource.txt'
 DEST_FILE = './SampleDestination.txt'
@@ -78,6 +79,33 @@ class ShareSamplesAsync(object):
                 # Delete the share
                 await share.delete_share()
 
+    async def set_share_tier(self):
+        from azure.storage.fileshare.aio import ShareClient
+        share1 = ShareClient.from_connection_string(self.connection_string, "sharesamples3a")
+        share2 = ShareClient.from_connection_string(self.connection_string, "sharesamples3b")
+
+        # Create the share
+        await share1.create_share()
+        await share2.create_share()
+
+        try:
+            # [START set_share_tier]
+            # Set the tier for the first share to Hot
+            await share1.set_share_tier(access_tier="Hot")
+            # Set the tier for the second share to Hot
+            await share2.set_share_tier(access_tier=ShareAccessTier("Cool"))
+            # Get the shares' properties
+            props1 = await share1.get_share_properties()
+            print(props1.access_tier)
+            props2 = await share2.get_share_properties()
+            print(props2.access_tier)
+            # [END set_share_tier]
+
+        finally:
+            # Delete the shares
+            await share1.delete_share()
+            await share2.delete_share()
+
     async def list_directories_and_files_async(self):
         # Instantiate the ShareClient from a connection string
         from azure.storage.fileshare.aio import ShareClient
@@ -122,6 +150,7 @@ async def main():
     sample = ShareSamplesAsync()
     await sample.create_share_snapshot_async()
     await sample.set_share_quota_and_metadata_async()
+    await sample.set_share_tier()
     await sample.list_directories_and_files_async()
     await sample.get_directory_or_file_client_async()
 

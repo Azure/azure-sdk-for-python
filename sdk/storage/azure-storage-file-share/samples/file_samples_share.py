@@ -22,6 +22,7 @@ USAGE:
 """
 
 import os
+from azure.storage.fileshare import ShareAccessTier
 
 SOURCE_FILE = './SampleSource.txt'
 DEST_FILE = './SampleDestination.txt'
@@ -75,10 +76,35 @@ class ShareSamples(object):
             # Delete the share
             share.delete_share()
 
+    def set_share_tier(self):
+        from azure.storage.fileshare import ShareClient
+        share1 = ShareClient.from_connection_string(self.connection_string, "sharesamples3a")
+        share2 = ShareClient.from_connection_string(self.connection_string, "sharesamples3b")
+
+        # Create the share
+        share1.create_share()
+        share2.create_share()
+
+        try:
+            # [START set_share_tier]
+            # Set the tier for the first share to Hot
+            share1.set_share_tier(access_tier="Hot")
+            # Set the tier for the second share to Hot
+            share2.set_share_tier(access_tier=ShareAccessTier("Cool"))
+            # Get the shares' properties
+            print(share1.get_share_properties().access_tier)
+            print(share2.get_share_properties().access_tier)
+            # [END set_share_tier]
+
+        finally:
+            # Delete the shares
+            share1.delete_share()
+            share2.delete_share()
+
     def list_directories_and_files(self):
         # Instantiate the ShareClient from a connection string
         from azure.storage.fileshare import ShareClient
-        share = ShareClient.from_connection_string(self.connection_string, "sharesamples3")
+        share = ShareClient.from_connection_string(self.connection_string, "sharesamples4")
 
         # Create the share
         share.create_share()
@@ -103,7 +129,7 @@ class ShareSamples(object):
     def get_directory_or_file_client(self):
         # Instantiate the ShareClient from a connection string
         from azure.storage.fileshare import ShareClient
-        share = ShareClient.from_connection_string(self.connection_string, "sharesamples4")
+        share = ShareClient.from_connection_string(self.connection_string, "sharesamples5")
 
         # Get the directory client to interact with a specific directory
         my_dir = share.get_directory_client("dir1")
@@ -129,8 +155,9 @@ class ShareSamples(object):
 
 if __name__ == '__main__':
     sample = ShareSamples()
-    sample.create_share_snapshot()
-    sample.set_share_quota_and_metadata()
-    sample.list_directories_and_files()
-    sample.get_directory_or_file_client()
-    sample.acquire_share_lease()
+    # sample.create_share_snapshot()
+    # sample.set_share_quota_and_metadata()
+    sample.set_share_tier()
+    # sample.list_directories_and_files()
+    # sample.get_directory_or_file_client()
+    # sample.acquire_share_lease()

@@ -22,6 +22,7 @@ from ._shared.response_handlers import (
     return_response_headers,
     process_storage_error,
     return_headers_and_deserialized)
+from ._generated.models import ShareAccessTier
 from ._generated import AzureFileStorage
 from ._generated.version import VERSION
 from ._generated.models import (
@@ -305,6 +306,13 @@ class ShareClient(StorageAccountHostsMixin):
             Name-value pairs associated with the share as metadata.
         :keyword int quota:
             The quota to be allotted.
+        :keyword access_tier:
+            Specifies the access tier of the share.
+            Possible values: 'TransactionOptimized', 'Hot', 'Cool'
+        :paramtype access_tier: str or ~azure.storage.fileshare.models.ShareAccessTier
+
+            .. versionadded:: 12.6.0
+
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Share-updated property dict (Etag and last modified).
@@ -321,6 +329,7 @@ class ShareClient(StorageAccountHostsMixin):
         """
         metadata = kwargs.pop('metadata', None)
         quota = kwargs.pop('quota', None)
+        access_tier = kwargs.pop('access_tier', None)
         timeout = kwargs.pop('timeout', None)
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata)) # type: ignore
@@ -330,6 +339,7 @@ class ShareClient(StorageAccountHostsMixin):
                 timeout=timeout,
                 metadata=metadata,
                 quota=quota,
+                access_tier=access_tier,
                 cls=return_response_headers,
                 headers=headers,
                 **kwargs)
@@ -504,6 +514,48 @@ class ShareClient(StorageAccountHostsMixin):
             return self._client.share.set_properties( # type: ignore
                 timeout=timeout,
                 quota=quota,
+                access_tier= None,
+                lease_access_conditions=access_conditions,
+                cls=return_response_headers,
+                **kwargs)
+        except StorageErrorException as error:
+            process_storage_error(error)
+
+    @distributed_trace
+    def set_share_tier(self, access_tier, **kwargs):
+        # type: (Union[str, ShareAccessTier], Any) ->  Dict[str, Any]
+        """Sets the tier for the share.
+
+        .. versionadded:: 12.6.0
+
+        :param int access_tier:
+            Specifies the access tier of the share.
+            Possible values: 'TransactionOptimized', 'Hot', 'Cool'
+        :type access_tier: str or ~azure.storage.fileshare.models.ShareAccessTier
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :keyword lease:
+            Required if the share has an active lease. Value can be a ShareLeaseClient object
+            or the lease ID as a string.
+        :returns: Share-updated property dict (Etag and last modified).
+        :rtype: dict(str, Any)
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/file_samples_share.py
+                :start-after: [START set_share_tier]
+                :end-before: [END set_share_tier]
+                :language: python
+                :dedent: 12
+                :caption: Sets the share quota.
+        """
+        access_conditions = get_access_conditions(kwargs.pop('lease', None))
+        timeout = kwargs.pop('timeout', None)
+        try:
+            return self._client.share.set_properties( # type: ignore
+                timeout=timeout,
+                quota=None,
+                access_tier=access_tier,
                 lease_access_conditions=access_conditions,
                 cls=return_response_headers,
                 **kwargs)
