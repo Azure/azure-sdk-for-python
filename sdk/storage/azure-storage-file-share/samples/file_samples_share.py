@@ -91,6 +91,7 @@ class ShareSamples(object):
             share1.set_share_tier(access_tier="Hot")
             # Set the tier for the second share to Hot
             share2.set_share_tier(access_tier=ShareAccessTier("Cool"))
+
             # Get the shares' properties
             print(share1.get_share_properties().access_tier)
             print(share2.get_share_properties().access_tier)

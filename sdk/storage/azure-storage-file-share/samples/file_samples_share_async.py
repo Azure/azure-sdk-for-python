@@ -95,6 +95,7 @@ class ShareSamplesAsync(object):
                 await share1.set_share_tier(access_tier="Hot")
                 # Set the tier for the second share to Hot
                 await share2.set_share_tier(access_tier=ShareAccessTier("Cool"))
+
                 # Get the shares' properties
                 props1 = await share1.get_share_properties()
                 print(props1.access_tier)
