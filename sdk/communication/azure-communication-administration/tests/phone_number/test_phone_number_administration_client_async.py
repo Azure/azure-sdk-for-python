@@ -12,13 +12,11 @@ from azure.communication.administration import (
     CreateSearchOptions
 )
 from phone_number_helper import PhoneNumberUriReplacer
-from _shared.asynctestcase  import (
-    AsyncCommunicationTestCase
-)
-from _shared.testcase import BodyReplacerProcessor, ResponseReplacerProcessor
+from phone_number_testcase_async import PhoneNumberCommunicationTestCase
+from .._shared.testcase import BodyReplacerProcessor, ResponseReplacerProcessor
 import os
 
-class PhoneNumberAdministrationClientTestAsync(AsyncCommunicationTestCase):
+class PhoneNumberAdministrationClientTestAsync(PhoneNumberCommunicationTestCase):
 
     def setUp(self):
         super(PhoneNumberAdministrationClientTestAsync, self).setUp()
