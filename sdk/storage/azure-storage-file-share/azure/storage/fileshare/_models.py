@@ -309,7 +309,7 @@ class ShareProperties(DictMixin):
     :ivar int quota:
         The allocated quota.
     :ivar str access_tier:
-        The share's tier.
+        The share's access tier.
     :ivar dict metadata: A dict with name_value pairs to associate with the
         share as metadata.
     :ivar str snapshot:
