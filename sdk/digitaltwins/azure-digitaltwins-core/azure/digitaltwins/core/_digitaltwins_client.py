@@ -664,7 +664,7 @@ class DigitalTwinsClient(object):
             If omitted, all models are retrieved.
         :keyword bool include_model_definition: When true the model definition
             will be returned as part of the result.
-        :keyword int max_item_count: The maximum number of items to retrieve per request.
+        :keyword int results_per_page: The maximum number of items to retrieve per request.
             The server may choose to return less than the requested max.
         :return: An iterator instance of list of ModelData.
         :rtype: ~azure.core.paging.ItemPaged[~azure.digitaltwins.models.ModelData]
@@ -674,11 +674,13 @@ class DigitalTwinsClient(object):
         error_map = {
             400: ServiceRequestError
         }
+
         include_model_definition = kwargs.pop('include_model_definition', False)
-        max_item_count = kwargs.pop('max_item_count', -1)
-        digital_twin_models_list_options = {'max_item_count': -1}
-        if max_item_count != -1:
-            digital_twin_models_list_options= {'max_item_count': max_item_count}
+
+        results_per_page = kwargs.pop('results_per_page', None)
+        digital_twin_models_list_options = None
+        if results_per_page is not None:
+            digital_twin_models_list_options= {'max_item_count': results_per_page}
 
         try:
             return self._client.digital_twin_models.list(
@@ -821,11 +823,11 @@ class DigitalTwinsClient(object):
             return None
 
     @distributed_trace
-    def list_event_routes(self, max_item_count=-1, **kwargs):
-        # type: (int, **Any) -> ~azure.core.paging.ItemPaged[~azure.digitaltwins.models.EventRoute]
+    def list_event_routes(self, **kwargs):
+        # type: (**Any) -> ~azure.core.paging.ItemPaged[~azure.digitaltwins.models.EventRoute]
         """Retrieves all event routes.
 
-        :param str max_item_count: The maximum number of items to retrieve per request.
+        :keyword int results_per_page: The maximum number of items to retrieve per request.
             The server may choose to return less than the requested max.
         :return: An iterator instance of list of EventRoute.
         :rtype: ~azure.core.paging.ItemPaged[~azure.digitaltwins.models.EventRoute]
@@ -836,11 +838,12 @@ class DigitalTwinsClient(object):
             400: ServiceRequestError,
         }
 
-        try:
-            digital_twin_models_list_options = {'max_item_count': -1}
-            if max_item_count != -1:
-                digital_twin_models_list_options= {'max_item_count': max_item_count}
+        digital_twin_models_list_options = None
+        results_per_page = kwargs.pop('results_per_page', None)
+        if results_per_page is not None:
+            digital_twin_models_list_options= {'max_item_count': results_per_page}
 
+        try:
             return self._client.event_routes.list(
                 digital_twin_models_list_options,
                 error_map=error_map,
