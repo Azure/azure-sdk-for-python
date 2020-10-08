@@ -25,4 +25,4 @@ jobs:
           PythonVersion: '2.7'
         Linux_Python39:
           OSVmImage: 'ubuntu-18.04'
-          PythonVersion: '3.9'
+          PythonVersion: '3.9.0'
