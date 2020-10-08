@@ -12,8 +12,8 @@ from azure.communication.administration import (
     NumberUpdateCapabilities,
     CreateSearchOptions
 )
-from phone_number_helper import PhoneNumberUriReplacer
-from phone_number_testcase import PhoneNumberCommunicationTestCase
+from .phone_number_helper import PhoneNumberUriReplacer
+from .phone_number_testcase import PhoneNumberCommunicationTestCase
 from .._shared.testcase import BodyReplacerProcessor
 
 class PhoneNumberAdministrationClientTest(PhoneNumberCommunicationTestCase):

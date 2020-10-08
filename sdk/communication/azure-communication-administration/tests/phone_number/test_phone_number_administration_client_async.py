@@ -11,12 +11,12 @@ from azure.communication.administration import (
     NumberUpdateCapabilities,
     CreateSearchOptions
 )
-from phone_number_helper import PhoneNumberUriReplacer
-from phone_number_testcase_async import PhoneNumberCommunicationTestCase
+from .phone_number_helper import PhoneNumberUriReplacer
+from .phone_number_testcase_async import AsyncPhoneNumberCommunicationTestCase
 from .._shared.testcase import BodyReplacerProcessor, ResponseReplacerProcessor
 import os
 
-class PhoneNumberAdministrationClientTestAsync(PhoneNumberCommunicationTestCase):
+class PhoneNumberAdministrationClientTestAsync(AsyncPhoneNumberCommunicationTestCase):
 
     def setUp(self):
         super(PhoneNumberAdministrationClientTestAsync, self).setUp()
@@ -123,7 +123,7 @@ class PhoneNumberAdministrationClientTestAsync(PhoneNumberCommunicationTestCase)
             self.capabilities_id = "capabilities_id"
             self.release_id = "release_id"
 
-    @AsyncCommunicationTestCase.await_prepared_test
+    @AsyncPhoneNumberCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
     async def test_list_all_phone_numbers(self):
         async with self._phone_number_administration_client:
@@ -134,7 +134,7 @@ class PhoneNumberAdministrationClientTestAsync(PhoneNumberCommunicationTestCase)
                 items.append(item)
         assert len(items) > 0
 
-    @AsyncCommunicationTestCase.await_prepared_test
+    @AsyncPhoneNumberCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
     async def test_get_all_area_codes(self):
         async with self._phone_number_administration_client:
@@ -145,7 +145,7 @@ class PhoneNumberAdministrationClientTestAsync(PhoneNumberCommunicationTestCase)
             )
         assert area_codes.primary_area_codes
 
-    @AsyncCommunicationTestCase.await_prepared_test
+    @AsyncPhoneNumberCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
     async def test_get_capabilities_update(self):
         async with self._phone_number_administration_client:
@@ -154,7 +154,7 @@ class PhoneNumberAdministrationClientTestAsync(PhoneNumberCommunicationTestCase)
             )
         assert capability_response.capabilities_update_id
 
-    @AsyncCommunicationTestCase.await_prepared_test
+    @AsyncPhoneNumberCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
     async def test_update_capabilities(self):
         update = NumberUpdateCapabilities(add=iter(["InboundCalling"]))
@@ -169,7 +169,7 @@ class PhoneNumberAdministrationClientTestAsync(PhoneNumberCommunicationTestCase)
             )
         assert capability_response.capabilities_update_id
 
-    @AsyncCommunicationTestCase.await_prepared_test
+    @AsyncPhoneNumberCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
     async def test_list_all_supported_countries(self):
         async with self._phone_number_administration_client:
@@ -180,7 +180,7 @@ class PhoneNumberAdministrationClientTestAsync(PhoneNumberCommunicationTestCase)
         self.assertGreater(len(items), 0)
         assert items[0].localized_name
 
-    @AsyncCommunicationTestCase.await_prepared_test
+    @AsyncPhoneNumberCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
     async def test_get_number_configuration(self):
         async with self._phone_number_administration_client:
@@ -189,7 +189,7 @@ class PhoneNumberAdministrationClientTestAsync(PhoneNumberCommunicationTestCase)
             )
         assert phone_number_response.pstn_configuration
 
-    @AsyncCommunicationTestCase.await_prepared_test
+    @AsyncPhoneNumberCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
     async def test_configure_number(self):
         pstnConfig = PstnConfiguration(
@@ -203,7 +203,7 @@ class PhoneNumberAdministrationClientTestAsync(PhoneNumberCommunicationTestCase)
             )
         assert not configure_number_response
 
-    @AsyncCommunicationTestCase.await_prepared_test
+    @AsyncPhoneNumberCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
     async def test_list_phone_plan_groups(self):
         async with self._phone_number_administration_client:
@@ -217,7 +217,7 @@ class PhoneNumberAdministrationClientTestAsync(PhoneNumberCommunicationTestCase)
         assert len(items) > 0
         assert items[0].phone_plan_group_id
 
-    @AsyncCommunicationTestCase.await_prepared_test
+    @AsyncPhoneNumberCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
     async def test_list_phone_plans(self):
         async with self._phone_number_administration_client:
@@ -232,7 +232,7 @@ class PhoneNumberAdministrationClientTestAsync(PhoneNumberCommunicationTestCase)
         assert len(items) > 0
         assert items[0].phone_plan_id
 
-    @AsyncCommunicationTestCase.await_prepared_test
+    @AsyncPhoneNumberCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
     async def test_get_phone_plan_location_options(self):
         async with self._phone_number_administration_client:
@@ -243,7 +243,7 @@ class PhoneNumberAdministrationClientTestAsync(PhoneNumberCommunicationTestCase)
             )
         assert location_options_response.location_options.label_id
 
-    @AsyncCommunicationTestCase.await_prepared_test
+    @AsyncPhoneNumberCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
     async def test_get_release_by_id(self):
         async with self._phone_number_administration_client:
@@ -252,7 +252,7 @@ class PhoneNumberAdministrationClientTestAsync(PhoneNumberCommunicationTestCase)
             )
         assert phone_number_release_response.release_id
 
-    @AsyncCommunicationTestCase.await_prepared_test
+    @AsyncPhoneNumberCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
     async def test_list_all_releases(self):
         async with self._phone_number_administration_client:
@@ -264,7 +264,7 @@ class PhoneNumberAdministrationClientTestAsync(PhoneNumberCommunicationTestCase)
         self.assertGreater(len(items), 0)
         assert items[0].id
 
-    @AsyncCommunicationTestCase.await_prepared_test
+    @AsyncPhoneNumberCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
     async def test_release_phone_numbers(self):
         async with self._phone_number_administration_client:
@@ -273,7 +273,7 @@ class PhoneNumberAdministrationClientTestAsync(PhoneNumberCommunicationTestCase)
             )
             assert releases_response.release_id
 
-    @AsyncCommunicationTestCase.await_prepared_test
+    @AsyncPhoneNumberCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
     async def test_get_search_by_id(self):
         async with self._phone_number_administration_client:
@@ -282,7 +282,7 @@ class PhoneNumberAdministrationClientTestAsync(PhoneNumberCommunicationTestCase)
             )
         assert phone_number_search_response.search_id
 
-    @AsyncCommunicationTestCase.await_prepared_test
+    @AsyncPhoneNumberCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
     async def test_create_search(self):
         searchOptions = CreateSearchOptions(
@@ -298,7 +298,7 @@ class PhoneNumberAdministrationClientTestAsync(PhoneNumberCommunicationTestCase)
             )
         assert search_response.search_id
 
-    @AsyncCommunicationTestCase.await_prepared_test
+    @AsyncPhoneNumberCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
     async def test_cancel_search(self):
         async with self._phone_number_administration_client:
@@ -307,7 +307,7 @@ class PhoneNumberAdministrationClientTestAsync(PhoneNumberCommunicationTestCase)
             )
         assert not cancel_search_response
 
-    @AsyncCommunicationTestCase.await_prepared_test
+    @AsyncPhoneNumberCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
     async def test_purchase_search(self):
         async with self._phone_number_administration_client:
