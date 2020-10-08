@@ -24,6 +24,7 @@ class CommunicationIdentityClientTestAsync(AsyncCommunicationTestCase):
     @CommunicationServicePreparer()
     @pytest.mark.live_test_only
     @pytest.mark.asyncio
+    @AsyncCommunicationTestCase.await_prepared_test
     async def test_create_user(self, connection_string):
         identity_client = CommunicationIdentityClient.from_connection_string(connection_string)
         async with identity_client:
@@ -31,9 +32,11 @@ class CommunicationIdentityClientTestAsync(AsyncCommunicationTestCase):
 
         assert user.identifier is not None
 
-    @pytest.mark.live_test_only
     @ResourceGroupPreparer(random_name_enabled=True)
     @CommunicationServicePreparer()
+    @pytest.mark.live_test_only
+    @pytest.mark.asyncio
+    @AsyncCommunicationTestCase.await_prepared_test
     async def test_issue_token(self, connection_string):
         identity_client = CommunicationIdentityClient.from_connection_string(connection_string)
         async with identity_client:
@@ -43,9 +46,11 @@ class CommunicationIdentityClientTestAsync(AsyncCommunicationTestCase):
         assert user.identifier is not None
         assert token_response.token is not None
 
-    @pytest.mark.live_test_only
     @ResourceGroupPreparer(random_name_enabled=True)
     @CommunicationServicePreparer()
+    @pytest.mark.live_test_only
+    @pytest.mark.asyncio
+    @AsyncCommunicationTestCase.await_prepared_test
     async def test_revoke_tokens(self, connection_string):
         identity_client = CommunicationIdentityClient.from_connection_string(connection_string)
         async with identity_client:
@@ -56,9 +61,11 @@ class CommunicationIdentityClientTestAsync(AsyncCommunicationTestCase):
         assert user.identifier is not None
         assert token_response.token is not None
 
-    @pytest.mark.live_test_only
     @ResourceGroupPreparer(random_name_enabled=True)
     @CommunicationServicePreparer()
+    @pytest.mark.live_test_only
+    @pytest.mark.asyncio
+    @AsyncCommunicationTestCase.await_prepared_test
     async def test_delete_user(self, connection_string):
         identity_client = CommunicationIdentityClient.from_connection_string(connection_string)
         async with identity_client:
