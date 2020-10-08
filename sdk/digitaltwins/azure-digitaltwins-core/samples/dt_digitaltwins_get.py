@@ -44,7 +44,7 @@ try:
     #   FloorTwin
     #   HVACTwin
     #   RoomTwin
-    digital_twint_id = "<DIGITAL_TWIN_ID>"
+    digital_twint_id = "BuildingTwin"
 
     # Get twin
     digital_twin = service_client.get_digital_twin(digital_twint_id)

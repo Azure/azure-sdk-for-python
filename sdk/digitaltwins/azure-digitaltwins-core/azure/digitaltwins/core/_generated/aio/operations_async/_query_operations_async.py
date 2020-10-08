@@ -24,7 +24,7 @@ class QueryOperations:
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.digitaltwins.models
+    :type models: ~azure.digitaltwins.core.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -42,24 +42,44 @@ class QueryOperations:
     async def query_twins(
         self,
         query_specification: "models.QuerySpecification",
+        query_twins_options: Optional["models.QueryTwinsOptions"] = None,
         **kwargs
     ) -> "models.QueryResult":
         """Executes a query that allows traversing relationships and filtering by property values.
         Status codes:
-        200 (OK): Success.
-        400 (Bad Request): The request is invalid.
+
+
+        * 200 OK
+        * 400 Bad Request
+
+          * BadRequest - The continuation token is invalid.
+          * SqlQueryError - The query contains some errors.
+
+        * 429 Too Many Requests
+
+          * QuotaReachedError - The maximum query rate limit has been reached.
 
         :param query_specification: The query specification to execute.
-        :type query_specification: ~azure.digitaltwins.models.QuerySpecification
+        :type query_specification: ~azure.digitaltwins.core.models.QuerySpecification
+        :param query_twins_options: Parameter group.
+        :type query_twins_options: ~azure.digitaltwins.core.models.QueryTwinsOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: QueryResult, or the result of cls(response)
-        :rtype: ~azure.digitaltwins.models.QueryResult
+        :rtype: ~azure.digitaltwins.core.models.QueryResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.QueryResult"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-05-31-preview"
+        
+        _traceparent = None
+        _tracestate = None
+        _max_items_per_page = None
+        if query_twins_options is not None:
+            _traceparent = query_twins_options.traceparent
+            _tracestate = query_twins_options.tracestate
+            _max_items_per_page = query_twins_options.max_items_per_page
+        api_version = "2020-10-31"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
@@ -71,6 +91,12 @@ class QueryOperations:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
+        if _traceparent is not None:
+            header_parameters['traceparent'] = self._serialize.header("traceparent", _traceparent, 'str')
+        if _tracestate is not None:
+            header_parameters['tracestate'] = self._serialize.header("tracestate", _tracestate, 'str')
+        if _max_items_per_page is not None:
+            header_parameters['max-items-per-page'] = self._serialize.header("max_items_per_page", _max_items_per_page, 'int')
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 

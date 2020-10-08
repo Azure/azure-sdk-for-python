@@ -27,13 +27,13 @@ class AzureDigitalTwinsAPI(object):
     """A service for managing and querying digital twins and digital twin models.
 
     :ivar digital_twin_models: DigitalTwinModelsOperations operations
-    :vartype digital_twin_models: azure.digitaltwins.aio.operations_async.DigitalTwinModelsOperations
+    :vartype digital_twin_models: azure.digitaltwins.core.aio.operations_async.DigitalTwinModelsOperations
     :ivar query: QueryOperations operations
-    :vartype query: azure.digitaltwins.aio.operations_async.QueryOperations
+    :vartype query: azure.digitaltwins.core.aio.operations_async.QueryOperations
     :ivar digital_twins: DigitalTwinsOperations operations
-    :vartype digital_twins: azure.digitaltwins.aio.operations_async.DigitalTwinsOperations
+    :vartype digital_twins: azure.digitaltwins.core.aio.operations_async.DigitalTwinsOperations
     :ivar event_routes: EventRoutesOperations operations
-    :vartype event_routes: azure.digitaltwins.aio.operations_async.EventRoutesOperations
+    :vartype event_routes: azure.digitaltwins.core.aio.operations_async.EventRoutesOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param str base_url: Service URL
