@@ -920,7 +920,7 @@ class DigitalTwinsClient(object):
         """
         def extract_data(pipeline_response):
             deserialized = self._deserialize('QueryResult', pipeline_response)
-            list_of_elem = deserialized.items
+            list_of_elem = deserialized.value
             return deserialized.continuation_token or None, iter(list_of_elem)
 
         def get_next(continuation_token=None):
