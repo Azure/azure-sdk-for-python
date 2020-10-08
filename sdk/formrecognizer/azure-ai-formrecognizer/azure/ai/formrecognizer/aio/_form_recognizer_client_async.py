@@ -117,8 +117,13 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
         if content_type is None:
             content_type = get_content_type(receipt)
 
-        if self.api_version == "2.1-preview.1" and locale:
-            kwargs.update({"locale": locale})
+        # FIXME: part of this code will be removed once autorest can handle diff mixin
+        # signatures across API versions
+        if locale:
+            if self.api_version == "2.1-preview.1":
+                kwargs.update({"locale": locale})
+            else:
+                raise ValueError("'locale' is only available for API version V2_1_PREVIEW and up")
 
         return await self._client.begin_analyze_receipt_async(  # type: ignore
             file_stream=receipt,
@@ -171,8 +176,13 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
 
         include_field_elements = kwargs.pop("include_field_elements", False)
 
-        if self.api_version == "2.1-preview.1" and locale:
-            kwargs.update({"locale": locale})
+        # FIXME: part of this code will be removed once autorest can handle diff mixin
+        # signatures across API versions
+        if locale:
+            if self.api_version == "2.1-preview.1":
+                kwargs.update({"locale": locale})
+            else:
+                raise ValueError("'locale' is only available for API version V2_1_PREVIEW and up")
 
         return await self._client.begin_analyze_receipt_async(  # type: ignore
             file_stream={"source": receipt_url},
