@@ -11,6 +11,8 @@ import time
 from functools import partial
 
 from devtools_testutils import AzureMgmtPreparer, FakeResource
+
+# from azure.appconfiguration import AzureAppConfigurationClient, ConfigurationSetting
 from azure.mgmt.appconfiguration import AppConfigurationManagementClient
 from azure.mgmt.network import NetworkManagementClient
 
@@ -79,6 +81,21 @@ class AppConfigPreparer(AzureMgmtPreparer):
                 "Id={}".format(self.access_key),
                 "Secret={}".format(self.secret)
             ])
+
+            # appconfig_client = AzureAppConfigurationClient.from_connection_string(self.appconfig_conn_str)
+            # config_setting = ConfigurationSetting(
+            #     key="FontColor",
+            #     value="Green"
+            # )
+
+            # returned_config_setting = appconfig_client.set_configuration_setting(config_setting)
+
+            # config_setting = ConfigurationSetting(
+            #     key="Greeting",
+            #     value="Hello World!"
+            # )
+
+            # returned_config_setting = appconfig_client.set_configuration_setting(config_setting)
 
             self.test_class_instance.scrubber.register_name_pair(
                 name,
