@@ -1,0 +1,36 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Date:
+      - Thu, 08 Oct 2020 20:37:09 GMT
+      User-Agent:
+      - azsdk-python-communication-administration/1.0.0b2 Python/3.8.5 (Linux-5.4.0-48-generic-x86_64-with-glibc2.29)
+      x-ms-return-client-request-id:
+      - 'true'
+    method: POST
+    uri: https://sanitized.communication.azure.com/administration/phonenumbers/searches/search_id/purchase?api-version=2020-07-20-preview1
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Thu, 08 Oct 2020 20:37:09 GMT
+      ms-cv:
+      - jCLNiyH5nE2Qp9duue58YQ.0
+      x-processing-time:
+      - 259ms
+    status:
+      code: 202
+      message: Accepted
+version: 1

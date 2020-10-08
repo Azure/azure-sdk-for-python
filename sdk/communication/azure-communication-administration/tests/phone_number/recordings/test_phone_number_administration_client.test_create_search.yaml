@@ -1,0 +1,41 @@
+interactions:
+- request:
+    body: '{"displayName": "testsearch20200014", "description": "testsearch20200014",
+      "phonePlanIds": "sanitized", "areaCode": "area_code_for_search", "quantity":
+      1}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '166'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 08 Oct 2020 20:37:02 GMT
+      User-Agent:
+      - azsdk-python-communication-administration/1.0.0b2 Python/3.8.5 (Linux-5.4.0-48-generic-x86_64-with-glibc2.29)
+      x-ms-return-client-request-id:
+      - 'true'
+    method: POST
+    uri: https://sanitized.communication.azure.com/administration/phonenumbers/searches?api-version=2020-07-20-preview1
+  response:
+    body: '{"searchId": "sanitized"}'
+    headers:
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 08 Oct 2020 20:37:03 GMT
+      ms-cv:
+      - 0td3E5AV+k+sJjO5v9obEQ.0
+      transfer-encoding:
+      - chunked
+      x-processing-time:
+      - 1513ms
+    status:
+      code: 201
+      message: Created
+version: 1

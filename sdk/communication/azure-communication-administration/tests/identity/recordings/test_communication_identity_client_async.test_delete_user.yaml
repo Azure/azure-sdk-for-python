@@ -1,0 +1,53 @@
+interactions:
+- request:
+    body: ''
+    headers:
+      Accept:
+      - application/json
+      Date:
+      - Thu, 08 Oct 2020 20:34:18 GMT
+      User-Agent:
+      - azsdk-python-communication-administration/1.0.0b2 Python/3.8.5 (Linux-5.4.0-48-generic-x86_64-with-glibc2.29)
+      x-ms-return-client-request-id:
+      - 'true'
+    method: POST
+    uri: https://communicationafed1798.communication.azure.com/identities?api-version=2020-07-20-preview2
+  response:
+    body: '{"id": "sanitized"}'
+    headers:
+      api-supported-versions: 2020-07-20-preview1, 2020-07-20-preview2
+      content-type: application/json; charset=utf-8
+      date: Thu, 08 Oct 2020 20:34:18 GMT
+      ms-cv: LbEvoWg1mUCfiK6tbIjKMg.0
+      strict-transport-security: max-age=2592000
+      transfer-encoding: chunked
+      x-processing-time: 18ms
+    status:
+      code: 200
+      message: OK
+    url: https://communicationafed1798.communication.azure.com/identities?api-version=2020-07-20-preview2
+- request:
+    body: ''
+    headers:
+      Date:
+      - Thu, 08 Oct 2020 20:34:19 GMT
+      User-Agent:
+      - azsdk-python-communication-administration/1.0.0b2 Python/3.8.5 (Linux-5.4.0-48-generic-x86_64-with-glibc2.29)
+      x-ms-return-client-request-id:
+      - 'true'
+    method: DELETE
+    uri: https://communicationafed1798.communication.azure.com/identities/sanitized?api-version=2020-07-20-preview2
+  response:
+    body:
+      string: ''
+    headers:
+      api-supported-versions: 2020-07-20-preview1, 2020-07-20-preview2
+      date: Thu, 08 Oct 2020 20:34:18 GMT
+      ms-cv: aVrEEt5CJ0eK8FPKq217mg.0
+      strict-transport-security: max-age=2592000
+      x-processing-time: 691ms
+    status:
+      code: 204
+      message: No Content
+    url: https://communicationafed1798.communication.azure.com/identities/sanitized?api-version=2020-07-20-preview2
+version: 1

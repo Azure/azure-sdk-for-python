@@ -1,0 +1,39 @@
+interactions:
+- request:
+    body: '{"pstnConfiguration": {"callbackUrl": "https://callbackurl", "applicationId":
+      "ApplicationId"}, "phoneNumber": "sanitized"}'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '126'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 08 Oct 2020 20:37:00 GMT
+      User-Agent:
+      - azsdk-python-communication-administration/1.0.0b2 Python/3.8.5 (Linux-5.4.0-48-generic-x86_64-with-glibc2.29)
+      x-ms-return-client-request-id:
+      - 'true'
+    method: PATCH
+    uri: https://sanitized.communication.azure.com/administration/phonenumbers/numberconfiguration/configure?api-version=2020-07-20-preview1
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Thu, 08 Oct 2020 20:37:02 GMT
+      ms-cv:
+      - vx1CfabAmESL2vnVmouMyA.0
+      x-processing-time:
+      - 1295ms
+    status:
+      code: 200
+      message: OK
+version: 1
