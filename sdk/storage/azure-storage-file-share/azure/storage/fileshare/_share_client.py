@@ -514,7 +514,7 @@ class ShareClient(StorageAccountHostsMixin):
             return self._client.share.set_properties( # type: ignore
                 timeout=timeout,
                 quota=quota,
-                access_tier= None,
+                access_tier=None,
                 lease_access_conditions=access_conditions,
                 cls=return_response_headers,
                 **kwargs)
