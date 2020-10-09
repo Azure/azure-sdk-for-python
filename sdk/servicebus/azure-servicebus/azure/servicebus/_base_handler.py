@@ -211,7 +211,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         self._container_id = CONTAINER_PREFIX + str(uuid.uuid4())[:8]
         self._config = Configuration(**kwargs)
         self._running = False
-        self._handler = None  # type: Optional[uamqp.AMQPClient]
+        self._handler = None  # type: uamqp.AMQPClient
         self._auth_uri = None
         self._properties = create_properties(self._config.user_agent)
 

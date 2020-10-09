@@ -907,10 +907,9 @@ class ReceivedMessage(ReceivedMessageBase):
         self,
         settle_operation,
         dead_letter_reason=None,
-        dead_letter_error_description=None,
-        **kwargs
+        dead_letter_error_description=None
     ):
-        # type: (str, Optional[str], Optional[str], Any) -> None
+        # type: (str, Optional[str], Optional[str]) -> None
         try:
             if not self._is_deferred_message:
                 try:

@@ -85,7 +85,7 @@ def _error_handler(error):
     return errors.ErrorAction(retry=True)
 
 
-def _handle_amqp_connection_error(logger, exception, handler, **kwargs):
+def _handle_amqp_connection_error(logger, exception, handler):
     # Handle all exception inherited from uamqp.errors.AMQPConnectionError
     error_need_close_handler = True
     error_need_raise = False
@@ -124,7 +124,7 @@ def _handle_amqp_connection_error(logger, exception, handler, **kwargs):
     return error, error_need_close_handler, error_need_raise
 
 
-def _handle_amqp_message_error(logger, exception, handler, **kwargs):
+def _handle_amqp_message_error(logger, exception, **kwargs):
     # Handle amqp message related errors
     error_need_close_handler = True
     error_need_raise = False
@@ -161,10 +161,10 @@ def _create_servicebus_exception(logger, exception, handler, **kwargs):  # pylin
     error_need_raise = False
     if isinstance(exception, _AMQP_CONNECTION_ERRORS):
         error, error_need_close_handler, error_need_raise = \
-            _handle_amqp_connection_error(logger, exception, handler, **kwargs)
+            _handle_amqp_connection_error(logger, exception, handler)
     elif isinstance(exception, _AMQP_MESSAGE_ERRORS):
         error, error_need_close_handler, error_need_raise = \
-            _handle_amqp_message_error(logger, exception, handler, **kwargs)
+            _handle_amqp_message_error(logger, exception, **kwargs)
     elif isinstance(exception, errors.AuthenticationException):
         logger.info("Authentication failed due to exception: (%r).", exception)
         error = ServiceBusAuthenticationError(str(exception), exception)

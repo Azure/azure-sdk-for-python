@@ -19,7 +19,6 @@ from .._common.constants import (
 )
 from .._common.utils import utc_from_timestamp
 from ._async_utils import get_running_loop
-from ..exceptions import MessageSettleFailed
 
 _LOGGER = logging.getLogger(__name__)
 

@@ -129,7 +129,7 @@ class BaseHandler:
         self._container_id = CONTAINER_PREFIX + str(uuid.uuid4())[:8]
         self._config = Configuration(**kwargs)
         self._running = False
-        self._handler = None  # type: Optional[uamqp.AMQPClientAsync]
+        self._handler = None  # type: uamqp.AMQPClientAsync
         self._auth_uri = None
         self._properties = create_properties(self._config.user_agent)
 
