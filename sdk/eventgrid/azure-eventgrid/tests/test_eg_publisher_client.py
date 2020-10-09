@@ -45,13 +45,13 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
         client = EventGridPublisherClient(eventgrid_topic_endpoint, akc_credential)
         eg_event1 = EventGridEvent(
                 subject="sample", 
-                data="eventgridevent", 
+                data=u"eventgridevent",
                 event_type="Sample.EventGrid.Event",
                 data_version="2.0"
                 )
         eg_event2 = EventGridEvent(
                 subject="sample2", 
-                data="eventgridevent2", 
+                data=u"eventgridevent2",
                 event_type="Sample.EventGrid.Event",
                 data_version="2.0"
                 )
@@ -64,7 +64,7 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
         client = EventGridPublisherClient(eventgrid_topic_endpoint, akc_credential)
         eg_event = EventGridEvent(
                 subject="sample", 
-                data="eventgridevent", 
+                data=u"eventgridevent",
                 event_type="Sample.EventGrid.Event",
                 data_version="2.0"
                 )
