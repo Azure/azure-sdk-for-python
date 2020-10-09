@@ -8,6 +8,7 @@ import os
 import platform
 import re
 import sys
+import time
 from typing import TYPE_CHECKING
 
 import subprocess
@@ -40,9 +41,8 @@ class AzureCliCredential(object):
         # type: (*str, **Any) -> AccessToken
         """Request an access token for `scopes`.
 
-        .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
-
-        This credential won't cache tokens. Every call invokes the Azure CLI.
+        This method is called automatically by Azure SDK clients. Applications calling this method directly must
+        also handle token caching because this credential doesn't cache the tokens it acquires.
 
         :param str scopes: desired scope for the access token. This credential allows only one scope per request.
         :rtype: :class:`azure.core.credentials.AccessToken`
@@ -68,14 +68,18 @@ class AzureCliCredential(object):
 def parse_token(output):
     """Parse output of 'az account get-access-token' to an AccessToken.
 
-    In particular, convert the CLI's "expiresOn" value, the string representation of a naive datetime, to epoch seconds.
+    In particular, convert the "expiresOn" value to epoch seconds. This value is a naive local datetime as returned by
+    datetime.fromtimestamp.
     """
     try:
         token = json.loads(output)
-        parsed_expires_on = datetime.strptime(token["expiresOn"], "%Y-%m-%d %H:%M:%S.%f")
-
-        # calculate seconds since the epoch; parsed_expires_on is naive
-        expires_on = (parsed_expires_on - datetime.fromtimestamp(0)).total_seconds()
+        dt = datetime.strptime(token["expiresOn"], "%Y-%m-%d %H:%M:%S.%f")
+        if hasattr(dt, "timestamp"):
+            # Python >= 3.3
+            expires_on = dt.timestamp()
+        else:
+            # taken from Python 3.5's datetime.timestamp()
+            expires_on = time.mktime((dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second, -1, -1, -1))
 
         return AccessToken(token["accessToken"], int(expires_on))
     except (KeyError, ValueError):

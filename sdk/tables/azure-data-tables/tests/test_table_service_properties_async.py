@@ -16,7 +16,8 @@ from azure.core.exceptions import HttpResponseError
 from azure.data.tables._models import TableAnalyticsLogging, Metrics, RetentionPolicy, CorsRule
 from azure.data.tables.aio import TableServiceClient
 
-from _shared.testcase import GlobalStorageAccountPreparer, TableTestCase
+from _shared.testcase import TableTestCase
+from devtools_testutils import CachedResourceGroupPreparer, CachedStorageAccountPreparer
 
 # ------------------------------------------------------------------------------
 
@@ -31,6 +32,7 @@ class TableServicePropertiesTest(TableTestCase):
         self._assert_metrics_equal(prop['minute_metrics'], Metrics())
         self._assert_cors_equal(prop['cors'], list())
 
+
     def _assert_logging_equal(self, log1, log2):
         if log1 is None or log2 is None:
             self.assertEqual(log1, log2)
@@ -42,6 +44,7 @@ class TableServicePropertiesTest(TableTestCase):
         self.assertEqual(log1.delete, log2.delete)
         self._assert_retention_equal(log1.retention_policy, log2.retention_policy)
 
+
     def _assert_delete_retention_policy_equal(self, policy1, policy2):
         if policy1 is None or policy2 is None:
             self.assertEqual(policy1, policy2)
@@ -49,6 +52,7 @@ class TableServicePropertiesTest(TableTestCase):
 
         self.assertEqual(policy1.enabled, policy2.enabled)
         self.assertEqual(policy1.days, policy2.days)
+
 
     def _assert_static_website_equal(self, prop1, prop2):
         if prop1 is None or prop2 is None:
@@ -59,6 +63,7 @@ class TableServicePropertiesTest(TableTestCase):
         self.assertEqual(prop1.index_document, prop2.index_document)
         self.assertEqual(prop1.error_document404_path, prop2.error_document404_path)
 
+
     def _assert_delete_retention_policy_not_equal(self, policy1, policy2):
         if policy1 is None or policy2 is None:
             self.assertNotEqual(policy1, policy2)
@@ -66,6 +71,7 @@ class TableServicePropertiesTest(TableTestCase):
 
         self.assertFalse(policy1.enabled == policy2.enabled
                          and policy1.days == policy2.days)
+
 
     def _assert_metrics_equal(self, metrics1, metrics2):
         if metrics1 is None or metrics2 is None:
@@ -76,6 +82,7 @@ class TableServicePropertiesTest(TableTestCase):
         self.assertEqual(metrics1.enabled, metrics2.enabled)
         self.assertEqual(metrics1.include_apis, metrics2.include_apis)
         self._assert_retention_equal(metrics1.retention_policy, metrics2.retention_policy)
+
 
     def _assert_cors_equal(self, cors1, cors2):
         if cors1 is None or cors2 is None:
@@ -93,12 +100,15 @@ class TableServicePropertiesTest(TableTestCase):
             self.assertEqual(len(rule1.exposed_headers), len(rule2.exposed_headers))
             self.assertEqual(len(rule1.allowed_headers), len(rule2.allowed_headers))
 
+
     def _assert_retention_equal(self, ret1, ret2):
         self.assertEqual(ret1.enabled, ret2.enabled)
         self.assertEqual(ret1.days, ret2.days)
 
+
     # --Test cases per service ---------------------------------------
-    @GlobalStorageAccountPreparer()
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
     async def test_table_service_properties_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         url = self.account_url(storage_account, "table")
@@ -120,7 +130,8 @@ class TableServicePropertiesTest(TableTestCase):
 
 
     # --Test cases per feature ---------------------------------------
-    @GlobalStorageAccountPreparer()
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
     async def test_set_logging_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         url = self.account_url(storage_account, "table")
@@ -138,7 +149,9 @@ class TableServicePropertiesTest(TableTestCase):
         received_props = await tsc.get_service_properties()
         self._assert_logging_equal(received_props['analytics_logging'], logging)
 
-    @GlobalStorageAccountPreparer()
+
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
     async def test_set_hour_metrics_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         url = self.account_url(storage_account, "table")
@@ -156,7 +169,9 @@ class TableServicePropertiesTest(TableTestCase):
         received_props = await tsc.get_service_properties()
         self._assert_metrics_equal(received_props['hour_metrics'], hour_metrics)
 
-    @GlobalStorageAccountPreparer()
+
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
     async def test_set_minute_metrics_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         url = self.account_url(storage_account, "table")
@@ -175,7 +190,9 @@ class TableServicePropertiesTest(TableTestCase):
         received_props = await tsc.get_service_properties()
         self._assert_metrics_equal(received_props['minute_metrics'], minute_metrics)
 
-    @GlobalStorageAccountPreparer()
+
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
     async def test_set_cors_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         url = self.account_url(storage_account, "table")
@@ -207,16 +224,20 @@ class TableServicePropertiesTest(TableTestCase):
         received_props = await tsc.get_service_properties()
         self._assert_cors_equal(received_props['cors'], cors)
 
+
     # --Test cases for errors ---------------------------------------
-    @GlobalStorageAccountPreparer()
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
     async def test_retention_no_days_async(self, resource_group, location, storage_account, storage_account_key):
         # Assert
         self.assertRaises(ValueError,
                           RetentionPolicy,
                           True, None)
 
+
     @pytest.mark.skip("pending")
-    @GlobalStorageAccountPreparer()
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
     async def test_too_many_cors_rules_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         tsc = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
@@ -225,22 +246,22 @@ class TableServicePropertiesTest(TableTestCase):
             cors.append(CorsRule(['www.xyz.com'], ['GET']))
 
         # Assert
-        self.assertRaises(HttpResponseError,
-                          tsc.set_service_properties, None, None, None, cors)
+        with self.assertRaises(HttpResponseError):
+            await tsc.set_service_properties(None, None, None, cors)
+
 
     @pytest.mark.skip("pending")
-    @GlobalStorageAccountPreparer()
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
     async def test_retention_too_long_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         tsc = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
         minute_metrics = Metrics(enabled=True, include_apis=True,
                                  retention_policy=RetentionPolicy(enabled=True, days=366))
-        
-        await tsc.set_service_properties(None, None, minute_metrics)
+
         # Assert
-        self.assertRaises(HttpResponseError,
-                          tsc.set_service_properties,
-                          None, None, minute_metrics)
+        with self.assertRaises(HttpResponseError):
+            await tsc.set_service_properties(None, None, minute_metrics)
 
 
 # ------------------------------------------------------------------------------

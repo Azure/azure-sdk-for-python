@@ -56,6 +56,7 @@ class TrainModelWithoutLabelsSampleAsync(object):
             # Custom model information
             print("Model ID: {}".format(model.model_id))
             print("Status: {}".format(model.status))
+            print("Model name: {}".format(model.model_name))
             print("Training started on: {}".format(model.training_started_on))
             print("Training completed on: {}".format(model.training_completed_on))
 

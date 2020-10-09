@@ -130,4 +130,135 @@ interactions:
       code: 200
       message: OK
     url: https://xiafuhns.dfs.core.windows.net/filesystembf461bd2/filebf461bd2?action=getAccessControl&upn=false
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-dfs/12.1.2 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - e95b879a-fdd7-11ea-a0fa-001a7dda7113
+      x-ms-date:
+      - Wed, 23 Sep 2020 20:03:56 GMT
+      x-ms-properties:
+      - ''
+      x-ms-version:
+      - '2020-02-10'
+    method: PUT
+    uri: https://storagename.dfs.core.windows.net/filesystembf461bd2/filebf461bd2?resource=file
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length: '0'
+      Date: Wed, 23 Sep 2020 20:03:55 GMT
+      Etag: '"0x8D85FFBCDA50DF2"'
+      Last-Modified: Wed, 23 Sep 2020 20:03:56 GMT
+      Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id: 041d425c-001f-0052-48e4-91317c000000
+      x-ms-version: '2020-02-10'
+    status:
+      code: 201
+      message: Created
+    url: https://xiafuhns.dfs.core.windows.net/filesystembf461bd2/filebf461bd2?resource=file
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-dfs/12.1.2 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - e9798634-fdd7-11ea-8851-001a7dda7113
+      x-ms-date:
+      - Wed, 23 Sep 2020 20:03:56 GMT
+      x-ms-permissions:
+      - '0777'
+      x-ms-version:
+      - '2020-02-10'
+    method: PATCH
+    uri: https://storagename.dfs.core.windows.net/filesystembf461bd2/filebf461bd2?action=setAccessControl
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length: '0'
+      Date: Wed, 23 Sep 2020 20:03:55 GMT
+      Etag: '"0x8D85FFBCDA50DF2"'
+      Last-Modified: Wed, 23 Sep 2020 20:03:56 GMT
+      Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-namespace-enabled: 'true'
+      x-ms-request-id: 041d425d-001f-0052-49e4-91317c000000
+      x-ms-version: '2020-02-10'
+    status:
+      code: 200
+      message: OK
+    url: https://xiafuhns.dfs.core.windows.net/filesystembf461bd2/filebf461bd2?action=setAccessControl
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-dfs/12.1.2 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - e981acd8-fdd7-11ea-8146-001a7dda7113
+      x-ms-date:
+      - Wed, 23 Sep 2020 20:03:56 GMT
+      x-ms-version:
+      - '2020-02-10'
+    method: HEAD
+    uri: https://storagename.blob.core.windows.net/filesystembf461bd2//filebf461bd2
+  response:
+    body:
+      string: ''
+    headers:
+      Accept-Ranges: bytes
+      Content-Length: '0'
+      Content-Type: application/octet-stream
+      Date: Wed, 23 Sep 2020 20:03:56 GMT
+      Etag: '"0x8D85FFBCDA50DF2"'
+      Last-Modified: Wed, 23 Sep 2020 20:03:56 GMT
+      Server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-access-tier: Hot
+      x-ms-access-tier-inferred: 'true'
+      x-ms-blob-type: BlockBlob
+      x-ms-creation-time: Wed, 23 Sep 2020 20:03:56 GMT
+      x-ms-lease-state: available
+      x-ms-lease-status: unlocked
+      x-ms-request-id: c9ef7d2c-101e-002c-18e4-91a13b000000
+      x-ms-server-encrypted: 'true'
+      x-ms-version: '2020-02-10'
+    status:
+      code: 200
+      message: OK
+    url: https://xiafuhns.blob.core.windows.net/filesystembf461bd2//filebf461bd2
+- request:
+    body: null
+    headers:
+      If-Modified-Since:
+      - Wed, 23 Sep 2020 19:48:56 GMT
+      User-Agent:
+      - azsdk-python-storage-dfs/12.1.2 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - e9897786-fdd7-11ea-ab90-001a7dda7113
+      x-ms-date:
+      - Wed, 23 Sep 2020 20:03:56 GMT
+      x-ms-version:
+      - '2020-02-10'
+    method: HEAD
+    uri: https://storagename.dfs.core.windows.net/filesystembf461bd2/filebf461bd2?action=getAccessControl&upn=false
+  response:
+    body:
+      string: ''
+    headers:
+      Date: Wed, 23 Sep 2020 20:03:55 GMT
+      Etag: '"0x8D85FFBCDA50DF2"'
+      Last-Modified: Wed, 23 Sep 2020 20:03:56 GMT
+      Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-acl: user::rwx,group::rwx,other::rwx
+      x-ms-group: $superuser
+      x-ms-owner: $superuser
+      x-ms-permissions: rwxrwxrwx
+      x-ms-request-id: 041d425e-001f-0052-4ae4-91317c000000
+      x-ms-version: '2020-02-10'
+    status:
+      code: 200
+      message: OK
+    url: https://xiafuhns.dfs.core.windows.net/filesystembf461bd2/filebf461bd2?action=getAccessControl&upn=false
 version: 1

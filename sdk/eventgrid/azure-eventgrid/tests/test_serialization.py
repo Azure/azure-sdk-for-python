@@ -15,6 +15,8 @@ import datetime as dt
 from devtools_testutils import AzureMgmtTestCase
 from msrest.serialization import UTC
 from azure.eventgrid import CloudEvent
+from azure.eventgrid import models
+from azure.eventgrid._generated import models as internal_models
 from _mocks import (
     cloud_storage_dict,
     cloud_storage_string,
@@ -100,3 +102,10 @@ class EventGridSerializationTests(AzureMgmtTestCase):
             expected['data_base64'] = encoded
             assert expected['data_base64'] == json['data_base64']
             assert 'data' not in json
+    
+    def test_models_exist_in_namespace(self):
+        exposed = dir(models)
+        generated = dir(internal_models)
+
+        diff = {m for m in list(set(generated) - set(exposed)) if not m.startswith('_')}
+        assert diff == {'CloudEvent', 'EventGridEvent'}

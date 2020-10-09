@@ -1,0 +1,27 @@
+interactions:
+- request:
+    body: ''
+    headers:
+      Accept:
+      - application/json
+      Date:
+      - Mon, 28 Sep 2020 23:36:47 GMT
+      User-Agent:
+      - azsdk-python-communication-administration/1.0.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-return-client-request-id:
+      - 'true'
+    method: GET
+    uri: https://sanitized.communication.azure.com/administration/phonenumbers/countries/US/phoneplangroups?locale=en-US&includeRateInformation=false&skip=0&take=100&api-version=2020-07-20-preview1
+  response:
+    body: '{"phonePlanGroups": "sanitized", "nextLink": null}'
+    headers:
+      content-type: application/json; charset=utf-8
+      date: Mon, 28 Sep 2020 23:36:47 GMT
+      ms-cv: 2JfFR8NjR06p3+cz6Rcc4w.0
+      transfer-encoding: chunked
+      x-processing-time: 519ms
+    status:
+      code: 200
+      message: OK
+    url: https://sanitized.communication.azure.com/administration/phonenumbers/countries/US/phoneplangroups?locale=en-US&includeRateInformation=false&skip=0&take=100&api-version=2020-07-20-preview1
+version: 1

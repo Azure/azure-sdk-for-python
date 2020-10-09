@@ -7,6 +7,22 @@
 # --------------------------------------------------------------------------
 
 try:
+    from ._models_py3 import ACSChatEventBaseProperties
+    from ._models_py3 import ACSChatMemberAddedToThreadWithUserEventData
+    from ._models_py3 import ACSChatMemberRemovedFromThreadWithUserEventData
+    from ._models_py3 import ACSChatMessageDeletedEventData
+    from ._models_py3 import ACSChatMessageEditedEventData
+    from ._models_py3 import ACSChatMessageEventBaseProperties
+    from ._models_py3 import ACSChatMessageReceivedEventData
+    from ._models_py3 import ACSChatThreadCreatedWithUserEventData
+    from ._models_py3 import ACSChatThreadEventBaseProperties
+    from ._models_py3 import ACSChatThreadMemberProperties
+    from ._models_py3 import ACSChatThreadPropertiesUpdatedPerUserEventData
+    from ._models_py3 import ACSChatThreadWithUserDeletedEventData
+    from ._models_py3 import ACSSMSDeliveryAttemptProperties
+    from ._models_py3 import ACSSMSDeliveryReportReceivedEventData
+    from ._models_py3 import ACSSMSEventBaseProperties
+    from ._models_py3 import ACSSMSReceivedEventData
     from ._models_py3 import AppConfigurationKeyValueDeletedEventData
     from ._models_py3 import AppConfigurationKeyValueModifiedEventData
     from ._models_py3 import AppEventTypeDetail
@@ -130,6 +146,22 @@ try:
     from ._models_py3 import WebSlotSwapWithPreviewCancelledEventData
     from ._models_py3 import WebSlotSwapWithPreviewStartedEventData
 except (SyntaxError, ImportError):
+    from ._models import ACSChatEventBaseProperties  # type: ignore
+    from ._models import ACSChatMemberAddedToThreadWithUserEventData  # type: ignore
+    from ._models import ACSChatMemberRemovedFromThreadWithUserEventData  # type: ignore
+    from ._models import ACSChatMessageDeletedEventData  # type: ignore
+    from ._models import ACSChatMessageEditedEventData  # type: ignore
+    from ._models import ACSChatMessageEventBaseProperties  # type: ignore
+    from ._models import ACSChatMessageReceivedEventData  # type: ignore
+    from ._models import ACSChatThreadCreatedWithUserEventData  # type: ignore
+    from ._models import ACSChatThreadEventBaseProperties  # type: ignore
+    from ._models import ACSChatThreadMemberProperties  # type: ignore
+    from ._models import ACSChatThreadPropertiesUpdatedPerUserEventData  # type: ignore
+    from ._models import ACSChatThreadWithUserDeletedEventData  # type: ignore
+    from ._models import ACSSMSDeliveryAttemptProperties  # type: ignore
+    from ._models import ACSSMSDeliveryReportReceivedEventData  # type: ignore
+    from ._models import ACSSMSEventBaseProperties  # type: ignore
+    from ._models import ACSSMSReceivedEventData  # type: ignore
     from ._models import AppConfigurationKeyValueDeletedEventData  # type: ignore
     from ._models import AppConfigurationKeyValueModifiedEventData  # type: ignore
     from ._models import AppEventTypeDetail  # type: ignore
@@ -265,6 +297,22 @@ from ._event_grid_publisher_client_enums import (
 )
 
 __all__ = [
+    'ACSChatEventBaseProperties',
+    'ACSChatMemberAddedToThreadWithUserEventData',
+    'ACSChatMemberRemovedFromThreadWithUserEventData',
+    'ACSChatMessageDeletedEventData',
+    'ACSChatMessageEditedEventData',
+    'ACSChatMessageEventBaseProperties',
+    'ACSChatMessageReceivedEventData',
+    'ACSChatThreadCreatedWithUserEventData',
+    'ACSChatThreadEventBaseProperties',
+    'ACSChatThreadMemberProperties',
+    'ACSChatThreadPropertiesUpdatedPerUserEventData',
+    'ACSChatThreadWithUserDeletedEventData',
+    'ACSSMSDeliveryAttemptProperties',
+    'ACSSMSDeliveryReportReceivedEventData',
+    'ACSSMSEventBaseProperties',
+    'ACSSMSReceivedEventData',
     'AppConfigurationKeyValueDeletedEventData',
     'AppConfigurationKeyValueModifiedEventData',
     'AppEventTypeDetail',

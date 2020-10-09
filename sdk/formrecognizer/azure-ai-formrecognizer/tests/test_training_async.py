@@ -65,10 +65,12 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
         async with client:
             poller = await client.begin_training(
                 training_files_url=container_sas_url,
-                use_training_labels=False)
+                use_training_labels=False,
+                model_name="my unlabeled model")
             model = await poller.result()
 
         self.assertIsNotNone(model.model_id)
+        # self.assertEqual(model.model_name, "my unlabeled model")  # bug in service
         self.assertIsNotNone(model.training_started_on)
         self.assertIsNotNone(model.training_completed_on)
         self.assertEqual(model.errors, [])
@@ -113,9 +115,9 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
 
         raw_response = []
 
-        def callback(response):
-            raw_model = client._client._deserialize(Model, response)
-            custom_model = CustomFormModel._from_generated(raw_model)
+        def callback(response, _, headers):
+            raw_model = client._deserialize(Model, response)
+            custom_model = CustomFormModel._from_generated(raw_model, client.api_version)
             raw_response.append(raw_model)
             raw_response.append(custom_model)
 
@@ -136,9 +138,9 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
 
         raw_response = []
 
-        def callback(response):
-            raw_model = client._client._deserialize(Model, response)
-            custom_model = CustomFormModel._from_generated(raw_model)
+        def callback(response, _, headers):
+            raw_model = client._deserialize(Model, response)
+            custom_model = CustomFormModel._from_generated(raw_model, client.api_version)
             raw_response.append(raw_model)
             raw_response.append(custom_model)
 
@@ -154,10 +156,11 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
     @GlobalClientPreparer(training=True)
     async def test_training_with_labels(self, client, container_sas_url):
         async with client:
-            poller = await client.begin_training(training_files_url=container_sas_url, use_training_labels=True)
+            poller = await client.begin_training(training_files_url=container_sas_url, use_training_labels=True, model_name="my labeled model")
             model = await poller.result()
 
         self.assertIsNotNone(model.model_id)
+        self.assertEqual(model.model_name, "my labeled model")
         self.assertIsNotNone(model.training_started_on)
         self.assertIsNotNone(model.training_completed_on)
         self.assertEqual(model.errors, [])
@@ -203,9 +206,9 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
 
         raw_response = []
 
-        def callback(response):
-            raw_model = client._client._deserialize(Model, response)
-            custom_model = CustomFormModel._from_generated(raw_model)
+        def callback(response, _, headers):
+            raw_model = client._deserialize(Model, response)
+            custom_model = CustomFormModel._from_generated(raw_model, client.api_version)
             raw_response.append(raw_model)
             raw_response.append(custom_model)
 
@@ -223,9 +226,9 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
 
         raw_response = []
 
-        def callback(response):
-            raw_model = client._client._deserialize(Model, response)
-            custom_model = CustomFormModel._from_generated(raw_model)
+        def callback(response, _, headers):
+            raw_model = client._deserialize(Model, response)
+            custom_model = CustomFormModel._from_generated(raw_model, client.api_version)
             raw_response.append(raw_model)
             raw_response.append(custom_model)
 
@@ -268,3 +271,11 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
             result = await poller.result()
             self.assertIsNotNone(result)
             await initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer(training=True, client_kwargs={"api_version": "2.0"})
+    async def test_training_with_model_name_bad_api_version(self, client, container_sas_url):
+        with pytest.raises(ValueError) as excinfo:
+            poller = await client.begin_training(training_files_url="url", use_training_labels=True, model_name="not supported in v2.0")
+            result = await poller.result()
+        assert "'model_name' is only available for API version V2_1_PREVIEW and up" in str(excinfo.value)

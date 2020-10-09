@@ -72,6 +72,68 @@ class AppendPositionAccessConditions(Model):
         self.append_position = append_position
 
 
+class ArrowConfiguration(Model):
+    """arrow configuration.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param schema: Required.
+    :type schema: list[~azure.storage.blob.models.ArrowField]
+    """
+
+    _validation = {
+        'schema': {'required': True},
+    }
+
+    _attribute_map = {
+        'schema': {'key': 'Schema', 'type': '[ArrowField]', 'xml': {'name': 'Schema', 'itemsName': 'Schema', 'wrapped': True}},
+    }
+    _xml_map = {
+        'name': 'ArrowConfiguration'
+    }
+
+    def __init__(self, *, schema, **kwargs) -> None:
+        super(ArrowConfiguration, self).__init__(**kwargs)
+        self.schema = schema
+
+
+class ArrowField(Model):
+    """field of an arrow schema.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required.
+    :type type: str
+    :param name:
+    :type name: str
+    :param precision:
+    :type precision: int
+    :param scale:
+    :type scale: int
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'Type', 'type': 'str', 'xml': {'name': 'Type'}},
+        'name': {'key': 'Name', 'type': 'str', 'xml': {'name': 'Name'}},
+        'precision': {'key': 'Precision', 'type': 'int', 'xml': {'name': 'Precision'}},
+        'scale': {'key': 'Scale', 'type': 'int', 'xml': {'name': 'Scale'}},
+    }
+    _xml_map = {
+        'name': 'Field'
+    }
+
+    def __init__(self, *, type: str, name: str=None, precision: int=None, scale: int=None, **kwargs) -> None:
+        super(ArrowField, self).__init__(**kwargs)
+        self.type = type
+        self.name = name
+        self.precision = precision
+        self.scale = scale
+
+
 class BlobFlatListSegment(Model):
     """BlobFlatListSegment.
 
@@ -367,6 +429,8 @@ class BlobPropertiesInternal(Model):
     :param rehydrate_priority: Possible values include: 'High', 'Standard'
     :type rehydrate_priority: str or
      ~azure.storage.blob.models.RehydratePriority
+    :param last_accessed_on:
+    :type last_accessed_on: datetime
     """
 
     _validation = {
@@ -411,12 +475,13 @@ class BlobPropertiesInternal(Model):
         'expires_on': {'key': 'Expiry-Time', 'type': 'rfc-1123', 'xml': {'name': 'Expiry-Time'}},
         'is_sealed': {'key': 'Sealed', 'type': 'bool', 'xml': {'name': 'Sealed'}},
         'rehydrate_priority': {'key': 'RehydratePriority', 'type': 'str', 'xml': {'name': 'RehydratePriority'}},
+        'last_accessed_on': {'key': 'LastAccessTime', 'type': 'rfc-1123', 'xml': {'name': 'LastAccessTime'}},
     }
     _xml_map = {
         'name': 'Properties'
     }
 
-    def __init__(self, *, last_modified, etag: str, creation_time=None, content_length: int=None, content_type: str=None, content_encoding: str=None, content_language: str=None, content_md5: bytearray=None, content_disposition: str=None, cache_control: str=None, blob_sequence_number: int=None, blob_type=None, lease_status=None, lease_state=None, lease_duration=None, copy_id: str=None, copy_status=None, copy_source: str=None, copy_progress: str=None, copy_completion_time=None, copy_status_description: str=None, server_encrypted: bool=None, incremental_copy: bool=None, destination_snapshot: str=None, deleted_time=None, remaining_retention_days: int=None, access_tier=None, access_tier_inferred: bool=None, archive_status=None, customer_provided_key_sha256: str=None, encryption_scope: str=None, access_tier_change_time=None, tag_count: int=None, expires_on=None, is_sealed: bool=None, rehydrate_priority=None, **kwargs) -> None:
+    def __init__(self, *, last_modified, etag: str, creation_time=None, content_length: int=None, content_type: str=None, content_encoding: str=None, content_language: str=None, content_md5: bytearray=None, content_disposition: str=None, cache_control: str=None, blob_sequence_number: int=None, blob_type=None, lease_status=None, lease_state=None, lease_duration=None, copy_id: str=None, copy_status=None, copy_source: str=None, copy_progress: str=None, copy_completion_time=None, copy_status_description: str=None, server_encrypted: bool=None, incremental_copy: bool=None, destination_snapshot: str=None, deleted_time=None, remaining_retention_days: int=None, access_tier=None, access_tier_inferred: bool=None, archive_status=None, customer_provided_key_sha256: str=None, encryption_scope: str=None, access_tier_change_time=None, tag_count: int=None, expires_on=None, is_sealed: bool=None, rehydrate_priority=None, last_accessed_on=None, **kwargs) -> None:
         super(BlobPropertiesInternal, self).__init__(**kwargs)
         self.creation_time = creation_time
         self.last_modified = last_modified
@@ -454,6 +519,7 @@ class BlobPropertiesInternal(Model):
         self.expires_on = expires_on
         self.is_sealed = is_sealed
         self.rehydrate_priority = rehydrate_priority
+        self.last_accessed_on = last_accessed_on
 
 
 class BlobTag(Model):
@@ -1523,7 +1589,7 @@ class PageRange(Model):
 class QueryFormat(Model):
     """QueryFormat.
 
-    :param type: Possible values include: 'delimited', 'json'
+    :param type: Possible values include: 'delimited', 'json', 'arrow'
     :type type: str or ~azure.storage.blob.models.QueryFormatType
     :param delimited_text_configuration:
     :type delimited_text_configuration:
@@ -1531,21 +1597,25 @@ class QueryFormat(Model):
     :param json_text_configuration:
     :type json_text_configuration:
      ~azure.storage.blob.models.JsonTextConfiguration
+    :param arrow_configuration:
+    :type arrow_configuration: ~azure.storage.blob.models.ArrowConfiguration
     """
 
     _attribute_map = {
         'type': {'key': 'Type', 'type': 'QueryFormatType', 'xml': {'name': 'Type'}},
         'delimited_text_configuration': {'key': 'DelimitedTextConfiguration', 'type': 'DelimitedTextConfiguration', 'xml': {'name': 'DelimitedTextConfiguration'}},
         'json_text_configuration': {'key': 'JsonTextConfiguration', 'type': 'JsonTextConfiguration', 'xml': {'name': 'JsonTextConfiguration'}},
+        'arrow_configuration': {'key': 'ArrowConfiguration', 'type': 'ArrowConfiguration', 'xml': {'name': 'ArrowConfiguration'}},
     }
     _xml_map = {
     }
 
-    def __init__(self, *, type=None, delimited_text_configuration=None, json_text_configuration=None, **kwargs) -> None:
+    def __init__(self, *, type=None, delimited_text_configuration=None, json_text_configuration=None, arrow_configuration=None, **kwargs) -> None:
         super(QueryFormat, self).__init__(**kwargs)
         self.type = type
         self.delimited_text_configuration = delimited_text_configuration
         self.json_text_configuration = json_text_configuration
+        self.arrow_configuration = arrow_configuration
 
 
 class QueryRequest(Model):

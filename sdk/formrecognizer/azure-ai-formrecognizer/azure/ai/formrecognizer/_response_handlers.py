@@ -6,7 +6,7 @@
 
 # pylint: disable=protected-access
 
-from ._helpers import adjust_text_angle
+from ._helpers import adjust_text_angle, adjust_confidence
 from ._models import (
     FormField,
     FormPage,
@@ -34,7 +34,9 @@ def prepare_receipt(response):
             fields={
                 key: FormField._from_generated(key, value, read_result)
                 for key, value in page.fields.items()
-            } if page.fields else None
+            } if page.fields else None,
+            form_type_confidence=page.doc_type_confidence,
+            model_id=page.model_id
         )
 
         receipts.append(receipt)
@@ -78,10 +80,10 @@ def prepare_form_result(response, model_id):
     document_result = response.analyze_result.document_results
     if document_result:
         return prepare_labeled_result(response, model_id)
-    return prepare_unlabeled_result(response)
+    return prepare_unlabeled_result(response, model_id)
 
 
-def prepare_unlabeled_result(response):
+def prepare_unlabeled_result(response, model_id):
     result = []
     form_pages = prepare_content_result(response)
     read_result = response.analyze_result.read_results
@@ -99,7 +101,9 @@ def prepare_unlabeled_result(response):
             ),
             fields=unlabeled_fields,
             form_type="form-" + str(page.cluster_id) if page.cluster_id is not None else None,
-            pages=[form_pages[index]]
+            pages=[form_pages[index]],
+            model_id=model_id,
+            form_type_confidence=None
         )
         result.append(form)
 
@@ -109,6 +113,10 @@ def prepare_unlabeled_result(response):
 def prepare_labeled_result(response, model_id):
     read_result = response.analyze_result.read_results
     form_pages = prepare_content_result(response)
+
+    form_type = None
+    if response.analyze_result.version == "2.0.0":
+        form_type = "form-" + model_id
 
     result = []
     for doc in response.analyze_result.document_results:
@@ -122,7 +130,9 @@ def prepare_labeled_result(response, model_id):
                 for label, value in doc.fields.items()
             },
             pages=form_pages[doc.page_range[0]-1:doc.page_range[1]],
-            form_type="form-" + model_id,
+            form_type=form_type if form_type else doc.doc_type,
+            form_type_confidence=adjust_confidence(doc.doc_type_confidence),
+            model_id=doc.model_id
         )
         result.append(form)
     return result

@@ -49,6 +49,7 @@ known_content_issues:
   - ['sdk/synapse/azure-synapse-artifacts/README.md', '#4554']
   - ['sdk/synapse/azure-synapse-nspkg/README.md', '#4554']
   - ['sdk/anomalydetector/azure-ai-anomalydetector/README.md', '#4554']
+  - ['sdk/metricsadvisor/azure-ai-metricsadvisor/README.md', '#4554']
   - ['sdk/applicationinsights/azure-applicationinsights/README.md', '#4554']
   - ['sdk/batch/azure-batch/README.md', '#4554']
   - ['sdk/cognitiveservices/azure-cognitiveservices-anomalydetector/README.md', '#4554']
@@ -124,8 +125,7 @@ known_content_issues:
   - ['sdk/eventhub/azure-eventhub/samples/README.md', 'nspkg and common']
   - ['sdk/tables/azure-data-nspkg/README.md', 'nspkg and common']
   - ['sdk/cosmos/README.md', 'nspkg and common']
-
-
+  - ['sdk/communication/azure-communication-nspkg/README.md', 'nspkg and common']
 # HISTORY.rst
   - ['sdk/core/azure/HISTORY.rst','#4554']
 

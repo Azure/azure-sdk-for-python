@@ -14,6 +14,9 @@ from ._generated.models import StorageErrorException
 from ._generated.models import Metrics as GeneratedMetrics
 from ._generated.models import RetentionPolicy as GeneratedRetentionPolicy
 from ._generated.models import CorsRule as GeneratedCorsRule
+from ._generated.models import ShareProtocolSettings as GeneratedShareProtocolSettings
+from ._generated.models import ShareSmbSettings as GeneratedShareSmbSettings
+from ._generated.models import SmbMultichannel as GeneratedSmbMultichannel
 from ._generated.models import AccessPolicy as GenAccessPolicy
 from ._generated.models import DirectoryItem
 
@@ -134,6 +137,40 @@ class CorsRule(GeneratedCorsRule):
         )
 
 
+class ShareSmbSettings(GeneratedShareSmbSettings):
+    """ Settings for the SMB protocol.
+
+    :param SmbMultichannel multichannel: Required. Sets the multichannel settings.
+    """
+    def __init__(self, multichannel):
+        self.multichannel = multichannel
+
+
+class SmbMultichannel(GeneratedSmbMultichannel):
+    """ Settings for Multichannel.
+
+    :param bool enabled: Required. If SMB Multichannel is enabled.
+    """
+    def __init__(self, enabled):
+        self.enabled = enabled
+
+
+class ShareProtocolSettings(GeneratedShareProtocolSettings):
+    """Protocol Settings class used by the set and get service properties methods in the share service.
+
+    Contains protocol properties of the share service such as the SMB setting of the share service.
+
+    :param SmbSettings smb: Required. Sets SMB settings.
+    """
+    def __init__(self, smb):
+        self.smb = smb
+
+    @classmethod
+    def _from_generated(cls, generated):
+        return cls(
+            smb=generated.smb)
+
+
 class AccessPolicy(GenAccessPolicy):
     """Access Policy class used by the set and get acl methods in each service.
 
@@ -188,11 +225,11 @@ class LeaseProperties(DictMixin):
     """File Lease Properties.
 
     :ivar str status:
-        The lease status of the file. Possible values: locked|unlocked
+        The lease status of the file or share. Possible values: locked|unlocked
     :ivar str state:
-        Lease state of the file. Possible values: available|leased|expired|breaking|broken
+        Lease state of the file or share. Possible values: available|leased|expired|breaking|broken
     :ivar str duration:
-        When a file is leased, specifies whether the lease is of infinite or fixed duration.
+        When a file or share is leased, specifies whether the lease is of infinite or fixed duration.
     """
 
     def __init__(self, **kwargs):
@@ -304,6 +341,7 @@ class ShareProperties(DictMixin):
         self.provisioned_egress_mbps = kwargs.get('x-ms-share-provisioned-egress-mbps')
         self.provisioned_ingress_mbps = kwargs.get('x-ms-share-provisioned-ingress-mbps')
         self.provisioned_iops = kwargs.get('x-ms-share-provisioned-iops')
+        self.lease = LeaseProperties(**kwargs)
 
     @classmethod
     def _from_generated(cls, generated):
@@ -322,6 +360,7 @@ class ShareProperties(DictMixin):
         props.provisioned_egress_mbps = generated.properties.provisioned_egress_mbps
         props.provisioned_ingress_mbps = generated.properties.provisioned_ingress_mbps
         props.provisioned_iops = generated.properties.provisioned_iops
+        props.lease = LeaseProperties._from_generated(generated)  # pylint: disable=protected-access
         return props
 
 
@@ -922,4 +961,5 @@ def service_properties_deserialize(generated):
         'hour_metrics': Metrics._from_generated(generated.hour_metrics),  # pylint: disable=protected-access
         'minute_metrics': Metrics._from_generated(generated.minute_metrics),  # pylint: disable=protected-access
         'cors': [CorsRule._from_generated(cors) for cors in generated.cors],  # pylint: disable=protected-access
+        'protocol': ShareProtocolSettings._from_generated(generated.protocol), # pylint: disable=protected-access
     }

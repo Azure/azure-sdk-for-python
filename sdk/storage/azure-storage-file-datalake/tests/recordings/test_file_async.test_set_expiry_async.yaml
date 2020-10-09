@@ -1,0 +1,140 @@
+interactions:
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-dfs/12.0.2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-client-request-id:
+      - 107e1ee6-9f22-11ea-b27b-001a7dda7113
+      x-ms-date:
+      - Tue, 26 May 2020 07:25:24 GMT
+      x-ms-properties:
+      - ''
+      x-ms-version:
+      - '2019-12-12'
+    method: PUT
+    uri: https://storagename.dfs.core.windows.net/filesystem217a0f53/directory217a0f53?resource=directory
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length: '0'
+      Date: Tue, 26 May 2020 07:25:23 GMT
+      Etag: '"0x8D80145F4DF209F"'
+      Last-Modified: Tue, 26 May 2020 07:25:24 GMT
+      Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id: c7f29fe2-401f-0028-752e-332c08000000
+      x-ms-version: '2019-12-12'
+    status:
+      code: 201
+      message: Created
+    url: https://emilyhnseuap.dfs.core.windows.net/filesystem217a0f53/directory217a0f53?resource=directory
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-dfs/12.0.2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-client-request-id:
+      - 10b47fba-9f22-11ea-993d-001a7dda7113
+      x-ms-content-disposition:
+      - inline
+      x-ms-content-language:
+      - spanish
+      x-ms-date:
+      - Tue, 26 May 2020 07:25:24 GMT
+      x-ms-properties:
+      - hello=d29ybGQ=,number=NDI=
+      x-ms-version:
+      - '2019-12-12'
+    method: PUT
+    uri: https://storagename.dfs.core.windows.net/filesystem217a0f53/directory217a0f53%2Fnewfile?resource=file
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length: '0'
+      Date: Tue, 26 May 2020 07:25:24 GMT
+      Etag: '"0x8D80145F4ECE3A1"'
+      Last-Modified: Tue, 26 May 2020 07:25:24 GMT
+      Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id: c7f29fe3-401f-0028-762e-332c08000000
+      x-ms-version: '2019-12-12'
+    status:
+      code: 201
+      message: Created
+    url: https://emilyhnseuap.dfs.core.windows.net/filesystem217a0f53/directory217a0f53%2Fnewfile?resource=file
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-dfs/12.0.2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-client-request-id:
+      - 10c24164-9f22-11ea-8bbd-001a7dda7113
+      x-ms-date:
+      - Tue, 26 May 2020 07:25:24 GMT
+      x-ms-expiry-option:
+      - Absolute
+      x-ms-expiry-time:
+      - Tue, 26 May 2020 08:25:24 GMT
+      x-ms-version:
+      - '2019-12-12'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/filesystem217a0f53/directory217a0f53/newfile?comp=expiry
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length: '0'
+      Date: Tue, 26 May 2020 07:25:25 GMT
+      Etag: '"0x8D80145F4ECE3A1"'
+      Last-Modified: Tue, 26 May 2020 07:25:24 GMT
+      Server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id: 5cbafaac-901e-0059-6d2e-33ca23000000
+      x-ms-version: '2019-12-12'
+    status:
+      code: 200
+      message: OK
+    url: https://emilyhnseuap.blob.core.windows.net/filesystem217a0f53/directory217a0f53/newfile?comp=expiry
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-dfs/12.0.2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-client-request-id:
+      - 113b38ca-9f22-11ea-9baf-001a7dda7113
+      x-ms-date:
+      - Tue, 26 May 2020 07:25:25 GMT
+      x-ms-version:
+      - '2019-12-12'
+    method: HEAD
+    uri: https://storagename.blob.core.windows.net/filesystem217a0f53/directory217a0f53/newfile
+  response:
+    body:
+      string: ''
+    headers:
+      Accept-Ranges: bytes
+      Content-Disposition: inline
+      Content-Language: spanish
+      Content-Length: '0'
+      Content-Type: application/octet-stream
+      Date: Tue, 26 May 2020 07:25:25 GMT
+      Etag: '"0x8D80145F4ECE3A1"'
+      Last-Modified: Tue, 26 May 2020 07:25:24 GMT
+      Server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-access-tier: Hot
+      x-ms-access-tier-inferred: 'true'
+      x-ms-blob-type: BlockBlob
+      x-ms-creation-time: Tue, 26 May 2020 07:25:24 GMT
+      x-ms-expiry-time: Tue, 26 May 2020 08:25:24 GMT
+      x-ms-lease-state: available
+      x-ms-lease-status: unlocked
+      x-ms-meta-hello: world
+      x-ms-meta-number: '42'
+      x-ms-request-id: 5cbafb24-901e-0059-502e-33ca23000000
+      x-ms-server-encrypted: 'true'
+      x-ms-version: '2019-12-12'
+    status:
+      code: 200
+      message: OK
+    url: https://emilyhnseuap.blob.core.windows.net/filesystem217a0f53/directory217a0f53/newfile
+version: 1

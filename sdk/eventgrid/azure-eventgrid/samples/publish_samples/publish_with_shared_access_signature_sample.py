@@ -19,15 +19,13 @@ import os
 from random import randint, sample
 import time
 
-from dateutil.tz import tzutc
-from datetime import timedelta
-import datetime as dt
+from datetime import datetime, timedelta
 
 from azure.eventgrid import EventGridPublisherClient, CloudEvent, generate_shared_access_signature, EventGridSharedAccessSignatureCredential
 
 key = os.environ["CLOUD_ACCESS_KEY"]
 topic_hostname = os.environ["CLOUD_TOPIC_HOSTNAME"]
-expiration_date_utc = dt.datetime.now(tzutc()) + timedelta(hours=1)
+expiration_date_utc = datetime.utcnow() + timedelta(hours=1)
 
 signature = generate_shared_access_signature(topic_hostname, key, expiration_date_utc)
 

@@ -93,3 +93,35 @@ class KeyVaultBackupClient(KeyVaultClientBase):
             polling=LROBasePolling(lro_algorithms=[KeyVaultBackupClientPolling()], timeout=polling_interval, **kwargs),
             **kwargs
         )
+
+    def get_backup_status(self, job_id, **kwargs):
+        # type: (str, **Any) -> BackupOperation
+        """Returns the status of a full backup operation.
+
+        :param job_id: The job ID returned as part of the backup request
+        :type job_id: str
+        :return: The full backup operation status as a :class:`BackupOperation`
+        :rtype: BackupOperation
+        """
+        return self._client.full_backup_status(
+            vault_base_url=self._vault_url,
+            job_id=job_id,
+            cls=BackupOperation._wrap_generated,
+            **kwargs
+        )
+
+    def get_restore_status(self, job_id, **kwargs):
+        # type: (str, **Any) -> RestoreOperation
+        """Returns the status of a restore operation.
+
+        :param job_id: The job ID returned as part of the restore request
+        :type job_id: str
+        :return: The restore operation status as a :class:`RestoreOperation`
+        :rtype: RestoreOperation
+        """
+        return self._client.restore_status(
+            vault_base_url=self.vault_url,
+            job_id=job_id,
+            cls=RestoreOperation._wrap_generated,
+            **kwargs
+        )

@@ -249,6 +249,7 @@ class ContainerProxy(object):
 
         :param partition_key_range_id: ChangeFeed requests can be executed against specific partition key ranges.
             This is used to process the change feed in parallel across multiple consumers.
+        :param partition_key: partition key at which ChangeFeed requests are targetted.
         :param is_start_from_beginning: Get whether change feed should start from
             beginning (true) or from current (false). By default it's start from current (false).
         :param continuation: e_tag value to be used as continuation for reading change feed.
@@ -261,6 +262,9 @@ class ContainerProxy(object):
         response_hook = kwargs.pop('response_hook', None)
         if partition_key_range_id is not None:
             feed_options["partitionKeyRangeId"] = partition_key_range_id
+        partition_key = kwargs.pop("partitionKey", None)
+        if partition_key is not None:
+            feed_options["partitionKey"] = partition_key
         if is_start_from_beginning is not None:
             feed_options["isStartFromBeginning"] = is_start_from_beginning
         if max_item_count is not None:

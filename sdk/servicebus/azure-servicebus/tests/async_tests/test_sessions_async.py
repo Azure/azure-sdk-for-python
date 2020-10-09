@@ -467,7 +467,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                         assert m.lock_token is not None
                     time.sleep(5)
                     initial_expiry = receiver.session.locked_until_utc
-                    await receiver.session.renew_lock()
+                    await receiver.session.renew_lock(timeout=5)
                     assert (receiver.session.locked_until_utc - initial_expiry) >= timedelta(seconds=5)
                 finally:
                     await messages[0].complete()
@@ -733,8 +733,8 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                     await sender.send_messages(message)
 
             async with sb_client.get_queue_session_receiver(servicebus_queue.name, session_id=session_id, max_wait_time=5) as session:
-                assert await session.session.get_state() == None
-                await session.session.set_state("first_state")
+                assert await session.session.get_state(timeout=5) == None
+                await session.session.set_state("first_state", timeout=5)
                 count = 0
                 async for m in session:
                     assert m.session_id == session_id

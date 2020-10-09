@@ -159,6 +159,26 @@
     "category": "Other",
     "service_name": "Other"
   },
+  "azure-communication-administration": {
+    "category": "Client",
+    "service_name": "Communication",
+    "manually_generated": true
+  },
+  "azure-communication-chat": {
+    "category": "Client",
+    "service_name": "Communication",
+    "manually_generated": true
+  },
+  "azure-communication-sms": {
+    "category": "Client",
+    "service_name": "Communication",
+    "manually_generated": true
+  },
+  "azure-mgmt-communication": {
+    "category": "Management",
+    "service_name": "Communication",
+    "manually_generated": true
+  },
   "azure-eventgrid": {
     "category": "Client",
     "namespaces": [
@@ -894,6 +914,11 @@
     "azure-ai-formrecognizer": {
     "category": "Client",
     "service_name": "Form Recognizer",
+    "manually_generated": true
+  },
+  "azure-ai-metricsadvisor": {
+    "category": "Client",
+    "service_name": "Metrics Advisor",
     "manually_generated": true
   },
   "azure-storage-blob": {

@@ -118,6 +118,7 @@ def __GetAuthorizationTokenUsingResourceTokens(resource_tokens, path, resource_i
         # For database account access(through GetDatabaseAccount API), path and
         # resource_id_or_fullname are '', so in this case we return the first token to be
         # used for creating the auth header as the service will accept any token in this case
+        path = six.moves.urllib.parse.unquote(path)
         if not path and not resource_id_or_fullname:
             return next(six.itervalues(resource_tokens))
 
@@ -126,7 +127,7 @@ def __GetAuthorizationTokenUsingResourceTokens(resource_tokens, path, resource_i
 
         path_parts = []
         if path:
-            path_parts = path.split("/")
+            path_parts = [item for item in path.split("/") if item]
         resource_types = [
             "dbs",
             "colls",
@@ -140,9 +141,12 @@ def __GetAuthorizationTokenUsingResourceTokens(resource_tokens, path, resource_i
             "conflicts",
             "offers",
         ]
+
         # Get the last resource id or resource name from the path and get it's token from resource_tokens
-        for one_part in reversed(path_parts):
-            if not one_part in resource_types and one_part in resource_tokens:
-                return resource_tokens[one_part]
+        for i in range(len(path_parts), 1, -1):
+            segment = path_parts[i-1]
+            sub_path = "/".join(path_parts[:i])
+            if not segment in resource_types and sub_path in resource_tokens:
+                return resource_tokens[sub_path]
 
     return None
