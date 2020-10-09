@@ -90,8 +90,8 @@ class FormRecognizerClient(FormRecognizerClientBase):
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword str locale: Locale of the receipt. Defaults to en-US. Supported locales include:
-            en-US, en-AU, en-CA, en-GB, and en-IN.
+        :keyword str locale: Locale of the receipt. Supported locales include: en-US, en-AU, en-CA, en-GB,
+            and en-IN.
         :return: An instance of an LROPoller. Call `result()` on the poller
             object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`].
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
@@ -146,8 +146,8 @@ class FormRecognizerClient(FormRecognizerClientBase):
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword str locale: Locale of the receipt. Defaults to en-US. Supported locales include:
-            en-US, en-AU, en-CA, en-GB, and en-IN.
+        :keyword str locale: Locale of the receipt. Supported locales include: en-US, en-AU, en-CA, en-GB,
+            and en-IN.
         :return: An instance of an LROPoller. Call `result()` on the poller
             object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`].
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
@@ -193,8 +193,8 @@ class FormRecognizerClient(FormRecognizerClientBase):
 
         :param business_card: JPEG, PNG, PDF and TIFF type file stream or bytes.
         :type business_card: bytes or IO[bytes]
-        :keyword str locale: Locale of the business card. Default locale is en-US. Other supported locales
-            include: en-AU, en-CA, en-GB, and en-IN.
+        :keyword str locale: Locale of the business card. Supported locales include: en-US, en-AU, en-CA, en-GB,
+            and en-IN.
         :keyword bool include_field_elements:
             Whether or not to include field elements such as lines and words in addition to form fields.
         :keyword content_type: Media type of the body sent to the API. Content-type is
@@ -249,8 +249,8 @@ class FormRecognizerClient(FormRecognizerClientBase):
 
         :param str business_card_url: The URL of the business card to analyze. The input must be a valid, encoded URL
             of one of the supported formats: JPEG, PNG, PDF and TIFF.
-        :keyword str locale: Locale of the business card. Default locale is en-US. Other supported locales
-            include: en-AU, en-CA, en-GB, and en-IN.
+        :keyword str locale: Locale of the business card. Supported locales include: en-US, en-AU, en-CA, en-GB,
+            and en-IN.
         :keyword bool include_field_elements:
             Whether or not to include field elements such as lines and words in addition to form fields.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
