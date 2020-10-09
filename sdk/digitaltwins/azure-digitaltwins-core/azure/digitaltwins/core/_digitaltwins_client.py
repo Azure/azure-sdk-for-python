@@ -12,14 +12,6 @@ from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.core import MatchConditions
 
-from azure.core.exceptions import (
-    ServiceRequestError,
-    ResourceExistsError,
-    ResourceNotFoundError,
-    ResourceModifiedError,
-    ResourceNotModifiedError
-)
-
 from ._utils import (
     prep_if_match
 )
@@ -60,18 +52,10 @@ class DigitalTwinsClient(object):
         :raises :class: `~azure.core.exceptions.ResourceNotFoundError`:
             If the digital twin doesn't exist.
         """
-        error_map = {
-            404: ResourceNotFoundError
-        }
-
-        try:
-            return self._client.digital_twins.get_by_id(
-                digital_twin_id,
-                error_map=error_map,
-                **kwargs
-            )
-        except ResourceNotFoundError:
-            return None
+        return self._client.digital_twins.get_by_id(
+            digital_twin_id,
+            **kwargs
+        )
 
     @distributed_trace
     def upsert_digital_twin(self, digital_twin_id, digital_twin, **kwargs):
@@ -89,22 +73,11 @@ class DigitalTwinsClient(object):
         :raises :class: `~azure.core.exceptions.ResourceExistsError`:
             If the digital twin is already exist.
         """
-        error_map = {
-            400: ServiceRequestError,
-            412: ResourceExistsError
-        }
-
-        try:
-            return self._client.digital_twins.add(
-                digital_twin_id,
-                digital_twin,
-                error_map=error_map,
-                **kwargs
-            )
-        except ServiceRequestError:
-            return None
-        except ResourceExistsError:
-            return None
+        return self._client.digital_twins.add(
+            digital_twin_id,
+            digital_twin,
+            **kwargs
+        )
 
     @distributed_trace
     def update_digital_twin(
@@ -132,33 +105,15 @@ class DigitalTwinsClient(object):
         :raises :class: `~azure.core.exceptions.ResourceNotFoundError`:
             If there is no digital twin with the provided id.
         """
-        error_map = {
-            400: ServiceRequestError,
-            404: ResourceNotFoundError
-        }
         etag = kwargs.get("etag", None)
         match_condition = kwargs.get("match_condition", MatchConditions.Unconditionally)
-        if match_condition == MatchConditions.IfNotModified:
-            error_map[412] = ResourceModifiedError
-        if match_condition == MatchConditions.IfModified:
-            error_map[412] = ResourceNotModifiedError
-        if match_condition == MatchConditions.IfPresent:
-            error_map[412] = ResourceNotFoundError
-        if match_condition == MatchConditions.IfMissing:
-            error_map[412] = ResourceExistsError
 
-        try:
-            return self._client.digital_twins.update(
-                digital_twin_id,
-                json_patch,
-                if_match=prep_if_match(etag, match_condition),
-                error_map=error_map,
-                **kwargs
-            )
-        except ServiceRequestError:
-            return None
-        except ResourceNotFoundError:
-            return None
+        return self._client.digital_twins.update(
+            digital_twin_id,
+            json_patch,
+            if_match=prep_if_match(etag, match_condition),
+            **kwargs
+        )
 
     @distributed_trace
     def delete_digital_twin(
@@ -181,32 +136,14 @@ class DigitalTwinsClient(object):
         :raises :class: `~azure.core.exceptions.ResourceNotFoundError`:
             If there is no digital twin with the provided id.
         """
-        error_map = {
-            400: ServiceRequestError,
-            404: ResourceNotFoundError
-        }
         etag = kwargs.get("etag", None)
         match_condition = kwargs.get("match_condition", MatchConditions.Unconditionally)
-        if match_condition == MatchConditions.IfNotModified:
-            error_map[412] = ResourceModifiedError
-        if match_condition == MatchConditions.IfModified:
-            error_map[412] = ResourceNotModifiedError
-        if match_condition == MatchConditions.IfPresent:
-            error_map[412] = ResourceNotFoundError
-        if match_condition == MatchConditions.IfMissing:
-            error_map[412] = ResourceExistsError
 
-        try:
-            return self._client.digital_twins.delete(
-                digital_twin_id,
-                if_match=prep_if_match(etag, match_condition),
-                error_map=error_map,
-                **kwargs
-            )
-        except ServiceRequestError:
-            return None
-        except ResourceNotFoundError:
-            return None
+        return self._client.digital_twins.delete(
+            digital_twin_id,
+            if_match=prep_if_match(etag, match_condition),
+            **kwargs
+        )
 
     @distributed_trace
     def get_component(self, digital_twin_id, component_path, **kwargs):
@@ -221,19 +158,11 @@ class DigitalTwinsClient(object):
         :raises :class: `~azure.core.exceptions.ResourceNotFoundError`: If there is either no
             digital twin with the provided id or the component path is invalid.
         """
-        error_map = {
-            404: ResourceNotFoundError
-        }
-
-        try:
-            return self._client.digital_twins.get_component(
-                digital_twin_id,
-                component_path,
-                error_map=error_map,
-                **kwargs
-            )
-        except ResourceNotFoundError:
-            return None
+        return self._client.digital_twins.get_component(
+            digital_twin_id,
+            component_path,
+            **kwargs
+        )
 
     @distributed_trace
     def update_component(
@@ -259,34 +188,16 @@ class DigitalTwinsClient(object):
         :raises :class: `~azure.core.exceptions.ResourceNotFoundError`: If there is either no
             digital twin with the provided id or the component path is invalid.
         """
-        error_map = {
-            400: ServiceRequestError,
-            404: ResourceNotFoundError
-        }
         etag = kwargs.get("etag", None)
         match_condition = kwargs.get("match_condition", MatchConditions.Unconditionally)
-        if match_condition == MatchConditions.IfNotModified:
-            error_map[412] = ResourceModifiedError
-        if match_condition == MatchConditions.IfModified:
-            error_map[412] = ResourceNotModifiedError
-        if match_condition == MatchConditions.IfPresent:
-            error_map[412] = ResourceNotFoundError
-        if match_condition == MatchConditions.IfMissing:
-            error_map[412] = ResourceExistsError
 
-        try:
-            return self._client.digital_twins.update_component(
-                digital_twin_id,
-                component_path,
-                patch_document=json_patch,
-                if_match=prep_if_match(etag, match_condition),
-                error_map=error_map,
-                **kwargs
-            )
-        except ServiceRequestError:
-            return None
-        except ResourceNotFoundError:
-            return None
+        return self._client.digital_twins.update_component(
+            digital_twin_id,
+            component_path,
+            patch_document=json_patch,
+            if_match=prep_if_match(etag, match_condition),
+            **kwargs
+        )
 
     @distributed_trace
     def get_relationship(self, digital_twin_id, relationship_id, **kwargs):
@@ -301,19 +212,11 @@ class DigitalTwinsClient(object):
         :raises :class: `~azure.core.exceptions.ResourceNotFoundError`: If there is either no
             digital twin or relationship with the provided id.
         """
-        error_map = {
-            404: ResourceNotFoundError
-        }
-
-        try:
-            return self._client.digital_twins.get_relationship_by_id(
-                digital_twin_id,
-                relationship_id,
-                error_map=error_map,
-                **kwargs
-            )
-        except ResourceNotFoundError:
-            return None
+        return self._client.digital_twins.get_relationship_by_id(
+            digital_twin_id,
+            relationship_id,
+            **kwargs
+        )
 
     @distributed_trace
     def upsert_relationship(self, digital_twin_id, relationship_id, relationship=None, **kwargs):
@@ -330,23 +233,12 @@ class DigitalTwinsClient(object):
         :raises :class: `~azure.core.exceptions.ResourceNotFoundError`: If there is either no
             digital twin, target digital twin or relationship with the provided id.
         """
-        error_map = {
-            400: ServiceRequestError,
-            404: ResourceNotFoundError
-        }
-
-        try:
-            return self._client.digital_twins.add_relationship(
-                id=digital_twin_id,
-                relationship_id=relationship_id,
-                relationship=relationship,
-                error_map=error_map,
-                **kwargs
-            )
-        except ServiceRequestError:
-            return None
-        except ResourceNotFoundError:
-            return None
+        return self._client.digital_twins.add_relationship(
+            id=digital_twin_id,
+            relationship_id=relationship_id,
+            relationship=relationship,
+            **kwargs
+        )
 
     @distributed_trace
     def update_relationship(
@@ -373,34 +265,16 @@ class DigitalTwinsClient(object):
         :raises :class: `~azure.core.exceptions.ResourceNotFoundError`: If there is either no
             digital twin or relationship with the provided id.
         """
-        error_map = {
-            400: ServiceRequestError,
-            404: ResourceNotFoundError
-        }
         etag = kwargs.get("etag", None)
         match_condition = kwargs.get("match_condition", MatchConditions.Unconditionally)
-        if match_condition == MatchConditions.IfNotModified:
-            error_map[412] = ResourceModifiedError
-        if match_condition == MatchConditions.IfModified:
-            error_map[412] = ResourceNotModifiedError
-        if match_condition == MatchConditions.IfPresent:
-            error_map[412] = ResourceNotFoundError
-        if match_condition == MatchConditions.IfMissing:
-            error_map[412] = ResourceExistsError
 
-        try:
-            return self._client.digital_twins.update_relationship(
-                id=digital_twin_id,
-                relationship_id=relationship_id,
-                json_patch=json_patch,
-                if_match=prep_if_match(etag, match_condition),
-                error_map=error_map,
-                **kwargs
-            )
-        except ServiceRequestError:
-            return None
-        except ResourceNotFoundError:
-            return None
+        return self._client.digital_twins.update_relationship(
+            id=digital_twin_id,
+            relationship_id=relationship_id,
+            json_patch=json_patch,
+            if_match=prep_if_match(etag, match_condition),
+            **kwargs
+        )
 
     @distributed_trace
     def delete_relationship(
@@ -423,30 +297,15 @@ class DigitalTwinsClient(object):
         :raises :class: `~azure.core.exceptions.ResourceNotFoundError`: If there is either no
             digital twin or relationship with the provided id.
         """
-        error_map = {
-            404: ResourceNotFoundError
-        }
         etag = kwargs.get("etag", None)
         match_condition = kwargs.get("match_condition", MatchConditions.Unconditionally)
-        if match_condition == MatchConditions.IfNotModified:
-            error_map[412] = ResourceModifiedError
-        if match_condition == MatchConditions.IfModified:
-            error_map[412] = ResourceNotModifiedError
-        if match_condition == MatchConditions.IfPresent:
-            error_map[412] = ResourceNotFoundError
-        if match_condition == MatchConditions.IfMissing:
-            error_map[412] = ResourceExistsError
 
-        try:
-            return self._client.digital_twins.delete_relationship(
-                digital_twin_id,
-                relationship_id,
-                if_match=prep_if_match(etag, match_condition),
-                error_map=error_map,
-                **kwargs
-            )
-        except ResourceNotFoundError:
-            return None
+        return self._client.digital_twins.delete_relationship(
+            digital_twin_id,
+            relationship_id,
+            if_match=prep_if_match(etag, match_condition),
+            **kwargs
+        )
 
     @distributed_trace
     def list_relationships(self, digital_twin_id, relationship_id=None, **kwargs):
@@ -463,22 +322,11 @@ class DigitalTwinsClient(object):
         :raises :class: `~azure.core.exceptions.ResourceNotFoundError`: If there is no
             digital twin with the provided id.
         """
-        error_map = {
-            400: ServiceRequestError,
-            404: ResourceNotFoundError
-        }
-
-        try:
-            return self._client.digital_twins.list_relationships(
-                digital_twin_id,
-                relationship_name=relationship_id,
-                error_map=error_map,
-                **kwargs
-            )
-        except ServiceRequestError:
-            return None
-        except ResourceNotFoundError:
-            return None
+        return self._client.digital_twins.list_relationships(
+            digital_twin_id,
+            relationship_name=relationship_id,
+            **kwargs
+        )
 
     @distributed_trace
     def list_incoming_relationships(self, digital_twin_id, **kwargs):
@@ -493,21 +341,10 @@ class DigitalTwinsClient(object):
         :raises :class: `~azure.core.exceptions.ResourceNotFoundError`: If there is no
             digital twin with the provided id.
         """
-        error_map = {
-            400: ServiceRequestError,
-            404: ResourceNotFoundError
-        }
-
-        try:
-            return self._client.digital_twins.list_incoming_relationships(
-                digital_twin_id,
-                error_map=error_map,
-                **kwargs
-            )
-        except ServiceRequestError:
-            return None
-        except ResourceNotFoundError:
-            return None
+        return self._client.digital_twins.list_incoming_relationships(
+            digital_twin_id,
+            **kwargs
+        )
 
     @distributed_trace
     def publish_telemetry(self, digital_twin_id, payload, message_id=None, **kwargs):
@@ -525,27 +362,17 @@ class DigitalTwinsClient(object):
         :raises :class: `~azure.core.exceptions.ResourceNotFoundError`: If there is no
             digital twin with the provided id.
         """
-        error_map = {
-            400: ServiceRequestError,
-            404: ResourceNotFoundError
-        }
+        if not message_id:
+            message_id = uuid.UUID
+        timestamp = datetime.now
 
-        try:
-            if not message_id:
-                message_id = uuid.UUID
-            timestamp = datetime.now
-            return self._client.digital_twins.send_telemetry(
-                digital_twin_id,
-                message_id,
-                telemetry=payload,
-                dt_timestamp=timestamp,
-                error_map=error_map,
-                **kwargs
-            )
-        except ServiceRequestError:
-            return None
-        except ResourceNotFoundError:
-            return None
+        return self._client.digital_twins.send_telemetry(
+            digital_twin_id,
+            message_id,
+            telemetry=payload,
+            dt_timestamp=timestamp,
+            **kwargs
+        )
 
     @distributed_trace
     def publish_component_telemetry(
@@ -571,29 +398,18 @@ class DigitalTwinsClient(object):
         :raises :class: `~azure.core.exceptions.ResourceNotFoundError`: If there is no
             digital twin with the provided id or the component path is invalid.
         """
-        error_map = {
-            400: ServiceRequestError,
-            404: ResourceNotFoundError
-        }
+        if not message_id:
+            message_id = uuid.UUID
+        timestamp = datetime.now
 
-        try:
-            if not message_id:
-                message_id = uuid.UUID
-            timestamp = datetime.now
-
-            return self._client.digital_twins.send_component_telemetry(
-                digital_twin_id,
-                component_path,
-                dt_id=message_id,
-                telemetry=payload,
-                dt_timestamp=timestamp,
-                error_map=error_map,
-                **kwargs
-            )
-        except ServiceRequestError:
-            return None
-        except ResourceNotFoundError:
-            return None
+        return self._client.digital_twins.send_component_telemetry(
+            digital_twin_id,
+            component_path,
+            dt_id=message_id,
+            telemetry=payload,
+            dt_timestamp=timestamp,
+            **kwargs
+        )
 
     @distributed_trace
     def get_model(self, model_id, **kwargs):
@@ -610,19 +426,11 @@ class DigitalTwinsClient(object):
             model with the provided id.
         """
         include_model_definition = kwargs.get("include_model_definition", False)
-        error_map = {
-            404: ResourceNotFoundError
-        }
 
-        try:
-
-            return self._client.digital_twin_models.get_by_id(
-                model_id, include_model_definition,
-                error_map=error_map,
-                **kwargs
-            )
-        except ResourceNotFoundError:
-            return None
+        return self._client.digital_twin_models.get_by_id(
+            model_id, include_model_definition,
+            **kwargs
+        )
 
     @distributed_trace
     def list_models(self, dependencies_for, **kwargs):
@@ -640,10 +448,6 @@ class DigitalTwinsClient(object):
         :raises :class: `~azure.core.exceptions.HttpResponseError`
         :raises :class: `~azure.core.exceptions.ServiceRequestError`: If the request is invalid.
         """
-        error_map = {
-            400: ServiceRequestError
-        }
-
         include_model_definition = kwargs.pop('include_model_definition', False)
 
         results_per_page = kwargs.pop('results_per_page', None)
@@ -651,16 +455,12 @@ class DigitalTwinsClient(object):
         if results_per_page is not None:
             digital_twin_models_list_options= {'max_item_count': results_per_page}
 
-        try:
-            return self._client.digital_twin_models.list(
-                dependencies_for=dependencies_for,
-                include_model_definition=include_model_definition,
-                digital_twin_models_list_options=digital_twin_models_list_options,
-                error_map=error_map,
-                **kwargs
-            )
-        except ServiceRequestError:
-            return None
+        return self._client.digital_twin_models.list(
+            dependencies_for=dependencies_for,
+            include_model_definition=include_model_definition,
+            digital_twin_models_list_options=digital_twin_models_list_options,
+            **kwargs
+        )
 
     @distributed_trace
     def create_models(self, model_list=None, **kwargs):
@@ -675,21 +475,10 @@ class DigitalTwinsClient(object):
         :raises :class: `~azure.core.exceptions.ResourceNotFoundError`: One or more of
             the provided models already exist.
         """
-        error_map = {
-            400: ServiceRequestError,
-            409: ResourceExistsError
-        }
-
-        try:
-            return self._client.digital_twin_models.add(
-                model_list,
-                error_map=error_map,
-                **kwargs
-            )
-        except ServiceRequestError:
-            return None
-        except ResourceExistsError:
-            return None
+        return self._client.digital_twin_models.add(
+            model_list,
+            **kwargs
+        )
 
     @distributed_trace
     def decommission_model(self, model_id, **kwargs):
@@ -705,22 +494,12 @@ class DigitalTwinsClient(object):
             with the provided id.
         """
         json_patch = "{ 'op': 'replace', 'path': '/decommissioned', 'value': true }"
-        error_map = {
-            400: ServiceRequestError,
-            404: ResourceNotFoundError
-        }
 
-        try:
-            return self._client.digital_twin_models.update(
-                model_id,
-                json_patch ,
-                error_map=error_map,
-                **kwargs
-            )
-        except ServiceRequestError:
-            return None
-        except ResourceNotFoundError:
-            return None
+        return self._client.digital_twin_models.update(
+            model_id,
+            json_patch,
+            **kwargs
+        )
 
     @distributed_trace
     def delete_model(self, model_id, **kwargs):
@@ -737,24 +516,10 @@ class DigitalTwinsClient(object):
         :raises :class: `~azure.core.exceptions.ResourceExistsError`: There are dependencies
             on the model that prevent it from being deleted.
         """
-        error_map = {
-            400: ServiceRequestError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError
-        }
-
-        try:
-            return self._client.digital_twin_models.delete(
-                model_id,
-                error_map=error_map,
-                **kwargs
-            )
-        except ServiceRequestError:
-            return None
-        except ResourceNotFoundError:
-            return None
-        except ResourceExistsError:
-            return None
+        return self._client.digital_twin_models.delete(
+            model_id,
+            **kwargs
+        )
 
     @distributed_trace
     def get_event_route(self, event_route_id, **kwargs):
@@ -768,18 +533,10 @@ class DigitalTwinsClient(object):
         :raises :class: `~azure.core.exceptions.ResourceNotFoundError`: There is no
             event route with the provided id.
         """
-        error_map = {
-            404: ResourceNotFoundError,
-        }
-
-        try:
-            return self._client.event_routes.get_by_id(
-                event_route_id,
-                error_map=error_map,
-                **kwargs
-            )
-        except ResourceNotFoundError:
-            return None
+        return self._client.event_routes.get_by_id(
+            event_route_id,
+            **kwargs
+        )
 
     @distributed_trace
     def list_event_routes(self, **kwargs):
@@ -793,23 +550,15 @@ class DigitalTwinsClient(object):
         :raises :class: `~azure.core.exceptions.HttpResponseError`
         :raises :class: `~azure.core.exceptions.ServiceRequestError`: The request is invalid.
         """
-        error_map = {
-            400: ServiceRequestError,
-        }
-
         digital_twin_models_list_options = None
         results_per_page = kwargs.pop('results_per_page', None)
         if results_per_page is not None:
             digital_twin_models_list_options= {'max_item_count': results_per_page}
 
-        try:
-            return self._client.event_routes.list(
-                digital_twin_models_list_options,
-                error_map=error_map,
-                **kwargs
-            )
-        except ServiceRequestError:
-            return None
+        return self._client.event_routes.list(
+            digital_twin_models_list_options,
+            **kwargs
+        )
 
     @distributed_trace
     def upsert_event_route(self, event_route_id, event_route, **kwargs):
@@ -823,18 +572,10 @@ class DigitalTwinsClient(object):
         :raises :class: `~azure.core.exceptions.HttpResponseError`
         :raises :class: `~azure.core.exceptions.ServiceRequestError`: The request is invalid.
         """
-        error_map = {
-            400: ServiceRequestError,
-        }
-
-        try:
-            return self._client.event_routes.add(
-                event_route_id, event_route,
-                error_map=error_map,
-                **kwargs
-            )
-        except ServiceRequestError:
-            return None
+        return self._client.event_routes.add(
+            event_route_id, event_route,
+            **kwargs
+        )
 
     @distributed_trace
     def delete_event_route(self, event_route_id, **kwargs):
@@ -848,18 +589,10 @@ class DigitalTwinsClient(object):
         :raises :class: `~azure.core.exceptions.ResourceNotFoundError`: There is no
             event route with the provided id.
         """
-        error_map = {
-            404: ResourceNotFoundError,
-        }
-
-        try:
-            return self._client.event_routes.delete(
-                event_route_id,
-                error_map=error_map,
-                **kwargs
-            )
-        except ResourceNotFoundError:
-            return None
+        return self._client.event_routes.delete(
+            event_route_id,
+            **kwargs
+        )
 
     @distributed_trace
     def query_twins(self, query_expression, **kwargs):
