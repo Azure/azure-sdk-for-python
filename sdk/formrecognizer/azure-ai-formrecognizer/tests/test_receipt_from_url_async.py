@@ -10,7 +10,7 @@ from datetime import date, time
 from azure.core.exceptions import HttpResponseError, ServiceRequestError, ClientAuthenticationError
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer._generated.models import AnalyzeOperationResult
-from azure.ai.formrecognizer._response_handlers import prepare_receipt
+from azure.ai.formrecognizer._response_handlers import prepare_prebuilt_models
 from azure.ai.formrecognizer.aio import FormRecognizerClient
 from testcase import GlobalFormRecognizerAccountPreparer
 from asynctestcase import AsyncFormRecognizerTest
@@ -96,7 +96,7 @@ class TestReceiptFromUrlAsync(AsyncFormRecognizerTest):
     @GlobalFormRecognizerAccountPreparer()
     @GlobalClientPreparer()
     async def test_receipt_url_pass_stream(self, client):
-        
+
         with open(self.receipt_png, "rb") as fd:
             receipt = fd.read(4)  # makes the recording smaller
 
@@ -113,7 +113,7 @@ class TestReceiptFromUrlAsync(AsyncFormRecognizerTest):
 
         def callback(raw_response, _, headers):
             analyze_result = client._deserialize(AnalyzeOperationResult, raw_response)
-            extracted_receipt = prepare_receipt(analyze_result)
+            extracted_receipt = prepare_prebuilt_models(analyze_result)
             responses.append(analyze_result)
             responses.append(extracted_receipt)
 
@@ -165,7 +165,7 @@ class TestReceiptFromUrlAsync(AsyncFormRecognizerTest):
 
         def callback(raw_response, _, headers):
             analyze_result = client._deserialize(AnalyzeOperationResult, raw_response)
-            extracted_receipt = prepare_receipt(analyze_result)
+            extracted_receipt = prepare_prebuilt_models(analyze_result)
             responses.append(analyze_result)
             responses.append(extracted_receipt)
 
@@ -325,7 +325,7 @@ class TestReceiptFromUrlAsync(AsyncFormRecognizerTest):
 
         def callback(raw_response, _, headers):
             analyze_result = client._deserialize(AnalyzeOperationResult, raw_response)
-            extracted_receipt = prepare_receipt(analyze_result)
+            extracted_receipt = prepare_prebuilt_models(analyze_result)
             responses.append(analyze_result)
             responses.append(extracted_receipt)
 

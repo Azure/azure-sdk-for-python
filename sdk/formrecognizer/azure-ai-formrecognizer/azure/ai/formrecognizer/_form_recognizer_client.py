@@ -17,7 +17,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.polling.base_polling import LROBasePolling
 
 from ._response_handlers import (
-    prepare_receipt,
+    prepare_prebuilt_models,
     prepare_content_result,
     prepare_form_result
 )
@@ -64,9 +64,9 @@ class FormRecognizerClient(FormRecognizerClientBase):
             :caption: Creating the FormRecognizerClient with a token credential.
     """
 
-    def _receipt_callback(self, raw_response, _, headers):  # pylint: disable=unused-argument
+    def _prebuilt_callback(self, raw_response, _, headers):  # pylint: disable=unused-argument
         analyze_result = self._deserialize(self._generated_models.AnalyzeOperationResult, raw_response)
-        return prepare_receipt(analyze_result)
+        return prepare_prebuilt_models(analyze_result)
 
     @distributed_trace
     def begin_recognize_receipts(self, receipt, **kwargs):
@@ -113,7 +113,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
         include_field_elements = kwargs.pop("include_field_elements", False)
         if content_type == "application/json":
             raise TypeError("Call begin_recognize_receipts_from_url() to analyze a receipt from a URL.")
-        cls = kwargs.pop("cls", self._receipt_callback)
+        cls = kwargs.pop("cls", self._prebuilt_callback)
         if content_type is None:
             content_type = get_content_type(receipt)
 
@@ -166,7 +166,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
         """
         locale = kwargs.pop("locale", None)
         include_field_elements = kwargs.pop("include_field_elements", False)
-        cls = kwargs.pop("cls", self._receipt_callback)
+        cls = kwargs.pop("cls", self._prebuilt_callback)
         if self.api_version == "2.1-preview.1" and locale:
             kwargs.update({"locale": locale})
         return self._client.begin_analyze_receipt_async(  # type: ignore
@@ -223,7 +223,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
                 file_stream=business_card,
                 content_type=content_type,
                 include_text_details=include_field_elements,
-                cls=kwargs.pop("cls", self._receipt_callback),
+                cls=kwargs.pop("cls", self._prebuilt_callback),
                 polling=True,
                 **kwargs
             )
@@ -268,7 +268,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
             return self._client.begin_analyze_business_card_async(  # type: ignore
                 file_stream={"source": business_card_url},
                 include_text_details=include_field_elements,
-                cls=kwargs.pop("cls", self._receipt_callback),
+                cls=kwargs.pop("cls", self._prebuilt_callback),
                 polling=True,
                 **kwargs
             )
