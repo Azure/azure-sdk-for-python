@@ -30,7 +30,7 @@ All of these samples need the endpoint to your Form Recognizer resource ([instru
 |[sample_train_model_with_labels.py][sample_train_model_with_labels] and [sample_train_model_with_labels_async.py][sample_train_model_with_labels_async]|Train a custom model with labeled data|
 |[sample_manage_custom_models.py][sample_manage_custom_models] and [sample_manage_custom_models_async.py][sample_manage_custom_models_async]|Manage the custom models in your account|
 |[sample_copy_model.py][sample_copy_model] and [sample_copy_model_async.py][sample_copy_model_async]|Copy a custom model from one Form Recognizer resource to another|
-
+|[sample_create_composed_model.py][sample_create_composed_model] and [sample_create_composed_model_async.py][sample_create_composed_model_async]|Creates a composed model from a collection of existing trained models with labels|
 
 ## Prerequisites
 * Python 2.7, or 3.5 or later is required to use this package (3.5 or later if using asyncio)
@@ -42,7 +42,7 @@ All of these samples need the endpoint to your Form Recognizer resource ([instru
 1. Install the Azure Form Recognizer client library for Python with [pip][pip]:
 
 ```bash
-pip install azure-ai-formrecognizer
+pip install azure-ai-formrecognizer --pre
 ```
 
 2. Clone or download this sample repository
@@ -100,3 +100,5 @@ what you can do with the Azure Form Recognizer client library.
 [sample_copy_model_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_copy_model_async.py
 [sample_strongly_typing_recognized_form]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_strongly_typing_recognized_form.py
 [sample_strongly_typing_recognized_form_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_strongly_typing_recognized_form_async.py
+[sample_create_composed_model]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples
+[sample_create_composed_model_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/
