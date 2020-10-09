@@ -89,7 +89,7 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
                 event_type="Sample.EventGrid.Event",
                 data_version="2.0"
                 )
-        with pytest.raises(TypeError):
+        with pytest.raises(TypeError, match="Data in EventGridEvent cannot be bytes*"):
             await client.send(eg_event)
 
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
