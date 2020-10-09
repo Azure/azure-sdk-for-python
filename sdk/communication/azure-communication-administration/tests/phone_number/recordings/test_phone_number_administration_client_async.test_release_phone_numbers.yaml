@@ -9,7 +9,7 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Thu, 08 Oct 2020 23:19:05 GMT
+      - Fri, 09 Oct 2020 23:49:57 GMT
       User-Agent:
       - azsdk-python-communication-administration/1.0.0b2 Python/3.8.5 (Linux-5.4.0-48-generic-x86_64-with-glibc2.29)
       x-ms-return-client-request-id:
@@ -20,10 +20,10 @@ interactions:
     body: '{"releaseId": "sanitized"}'
     headers:
       content-type: application/json; charset=utf-8
-      date: Thu, 08 Oct 2020 23:19:05 GMT
-      ms-cv: t+haXBy/7kWvUmMupyLIIw.0
+      date: Fri, 09 Oct 2020 23:49:58 GMT
+      ms-cv: 9ooDrX8q2kSifc3gUoRQFg.0
       transfer-encoding: chunked
-      x-processing-time: 596ms
+      x-processing-time: 1221ms
     status:
       code: 200
       message: OK
