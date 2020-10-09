@@ -30,12 +30,13 @@ try:
 except AttributeError:  # Python 2.7, abc exists, but not ABC
     ABC = abc.ABCMeta("ABC", (object,), {"__slots__": ()})  # type: ignore
 
-class PagingOperationABC(ABC):
+
+class PagingAlgorithmABC(ABC):
     """Provides default logic for getting next links
     """
 
     @abc.abstractmethod
-    def get_next_link(self, format_next_link):
+    def get_next_link(self):
         # type: () -> str
         """Return the next link
         """
@@ -65,19 +66,19 @@ class PagingOperationABC(ABC):
         raise NotImplementedError()
 
 
-class PagingOperation(PagingOperationABC):
+class PagingAlgorithmDefault(PagingAlgorithmABC):
     def __init__(self, **kwargs):
         self.next_link = None
         self._initial_request = None
 
-    def get_next_link(self, format_next_link):
-        return format_next_link(self._initial_request.url, self.next_link)
+    def get_next_link_url(self):
+        return self._initial_request.url
 
     def set_initial_state(self, initial_pipeline_response):
         response = initial_pipeline_response.http_response
         self._initial_request = response.request
 
-    def can_page(self):
+    def can_page(self, **kwargss):
         return True
 
     @property
@@ -95,32 +96,49 @@ class PagingOperation(PagingOperationABC):
         }
 
 
-class PagingOperationWithSeparateNextOperation(PagingOperationABC):
-    def __init__(self, next_link_operation_url=None, **kwargs):
-        self._next_link_operation_url = next_link_operation_url
+class PagingAlgorithmIfSeparateNextOperation(PagingAlgorithmABC):
+    def __init__(self, **kwargs):
+        self._next_link_operation_url = kwargs.pop("next_link_operation_url", None)
         self.next_link = None
         self._initial_request = response.request
+        self._operation_config = kwargs
 
-    def get_next_link(self, format_next_link):
-        return format_next_link(
-            self._next_link_operation_url,
-            self.next_link
-        )
+    def get_next_link_url(self):
+        return self._next_link_operation_url
 
     def set_initial_state(self, initial_pipeline_response):
         response = initial_pipeline_response.http_response
         self._initial_request = response.request
 
-    def can_page(self):
-        return bool(self._next_link_operation_url)
+    def can_page(self, **kwargss):
+        return bool(kwargs.get("next_link_operation_url", None))
 
     @property
     def operation_config(self):
         # we add headers, query, and body parameters here
 
-        query_params = self._initial_request.query
-        headers = self._initial_request.headers
-        body = self._initial_request.body
+        query_params = self._operation_config.get("next_operation_query_params", None) or self._initial_request.query
+        headers = self._operation_config.get("next_operation_header_params", None) or self._initial_request.headers
+        body = self._operation_config.get("next_operation_body_params", None) or self._initial_request.body
+
+        return {
+            'params': query_params,
+            'headers': headers,
+            'body': body
+        }
+
+class PagingAlgorithmForTokenPaging(PagingAlgorithmABC):
+
+    def can_page(self, **kwargs):
+        return
+
+    @property
+    def operation_config(self):
+        # we add headers, query, and body parameters here
+
+        query_params = self._operation_config.get("next_operation_query_params", None) or self._initial_request.query
+        headers = self._operation_config.get("next_operation_header_params", None) or self._initial_request.headers
+        body = self._operation_config.get("next_operation_body_params", None) or self._initial_request.body
 
         return {
             'params': query_params,

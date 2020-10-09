@@ -34,6 +34,7 @@ from typing import (  # pylint: disable=unused-import
     Tuple,
 )
 import logging
+from enum import Enum
 from .paging_operation import PagingOperation, PagingOperationWithSeparateNextOperation
 
 try:
@@ -46,6 +47,11 @@ _LOGGER = logging.getLogger(__name__)
 
 ReturnType = TypeVar("ReturnType")
 ResponseType = TypeVar("ResponseType")
+
+class _PagingOption(str, Enum):
+    """Known paging options from Swagger."""
+
+    TOKEN_INPUT_PARAMETER = "token-input-parameter"  # for token paging, which parameter will hold continuation token
 
 class BadStatus(Exception):
     pass
@@ -78,7 +84,7 @@ def _raise_if_bad_http_status_and_method(response):
 class PageIteratorABC(ABC):
 
     def initialize(
-        self, client, initial_request, extract_data, format_next_link
+        self, client, initial_request, extract_data
     ):
         raise NotImplementedError("This method needs to be implemented")
 
@@ -102,6 +108,9 @@ class PageIterator(PageIteratorABC):
         get_next=None,  # type: Callable[[Optional[str]], ResponseType]
         extract_data=None,  # type: Callable[[ResponseType], Tuple[str, Iterable[ReturnType]]]
         continuation_token=None,  # type: Optional[str]
+        paging_algorithms=None,
+        paging_options=None,
+        path_format_arguments=None,
         **operation_config
     ):
         """Return an iterator of pages.
@@ -119,7 +128,10 @@ class PageIterator(PageIteratorABC):
         self._did_a_call_already = False
         self._response = None  # type: Optional[ResponseType]
         self._current_page = None  # type: Optional[Iterable[ReturnType]]
+        self._path_format_arguments = path_format_arguments
         self._operation_config = operation_config
+        self._paging_options = paging_options
+        self._paging_algorithms = paging_algorithms
 
         # these are for back-compat
         self._get_next = get_next
@@ -127,25 +139,27 @@ class PageIterator(PageIteratorABC):
 
 
     def initialize(
-        self, client, initial_request, extract_data, format_next_link
+        self, client, initial_request, extract_data
     ):
         self._client = client
         self._extract_data = extract_data
         self._initial_request = initial_request
-        self._format_next_link = format_next_link
+        self._next_link = None
 
         # TODO: how to pass in next_link_operation_url
         for operation in self._paging_algorithms:
-            if operation.can_page(next_link_operation_url):
-                self._operation = operation
+            if operation.can_page(**self._operation_config):
+                self._operation = operation(**self._operation_config)
                 break
         else:
             raise BadResponse("Unable to find way to retrieve next link.")
 
     def get_next_page(self, next_link):
         request = self._client.get(next_link)
+        if self._path_format_arguments:
+            request = self._client.format_url(status_link, **self._path_format_arguments)
         return self._client._pipeline.run(
-            request, stream=False, **self._operation_config
+            request, stream=False, **self._operation.operation_config
         )
 
     def finished(self):
@@ -158,9 +172,7 @@ class PageIterator(PageIteratorABC):
         return self
 
     def _make_initial_call(self):
-        self._initial_pipeline_response = self._client._pipeline.run(
-            self._initial_request, **kwargs
-        )
+        response = self._client._pipeline.run(self._initial_request)
 
         try:
             _raise_if_bad_http_status_and_method(initial_pipeline_response.http_response)
@@ -172,6 +184,7 @@ class PageIterator(PageIteratorABC):
             )
         except OperationFailed as err:
             raise HttpResponseError(response=initial_pipeline_response.http_response, error=err)
+        return response
 
     def __next__(self):
         # type: () -> Iterator[ReturnType]
@@ -182,7 +195,7 @@ class PageIterator(PageIteratorABC):
             response = self._make_initial_call()
             self._operation.set_initial_state(response)
         else:
-            next_link = self._operation.get_next_link(self._format_next_link)
+            next_link = self._operation.get_next_link()
             response = self.get_next_page(next_link)
 
         self._did_a_call_already = True
@@ -193,6 +206,34 @@ class PageIterator(PageIteratorABC):
 
     next = __next__  # Python 2 compatibility.
 
+class PageIteratorNextLinkTemplate(PageIterator):
+
+    def get_next_page(self, next_link):
+        request = self._client.get(next_link)
+        if self._path_format_arguments:
+            request = self._client.format_url(status_link, **self._path_format_arguments, 'nextLink'=next_link)
+        return self._client._pipeline.run(
+            request, stream=False, **self._operation.operation_config
+        )
+
+
+class PageIteratorWithContinuationToken(PageIterator):
+
+    def _set_continuation_token(self):
+        continuation_token_input_parameter = self._paging_options[_PagingOption.TOKEN_INPUT_PARAMETER]
+        for api_parameter_type, api_parameters in self._operation.operation_config.items():
+            for param_name, param_value in api_parameters.items():
+                if param_name.lower() == continuation_token_input_parameter.lower()
+                    self._operation.operation_config[api_parameter_type][param_name] = self._
+
+
+    def get_next_page(self, next_link):
+        request = self._client.get(next_link)
+        if self._path_format_arguments:
+            request = self._client.format_url(status_link, **self._path_format_arguments, 'nextLink'=next_link)
+        return self._client._pipeline.run(
+            request, stream=False, **self._operation.operation_config
+        )
 
 class ItemPaged(Iterator[ReturnType]):
     def __init__(self, *args, **kwargs):
