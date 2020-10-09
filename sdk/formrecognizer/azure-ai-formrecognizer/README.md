@@ -292,7 +292,7 @@ model = poller.result()
 
 # Custom model information
 print("Model ID: {}".format(model.model_id))
-print("Display name: {}".format(model.model_name))
+print("Model name: {}".format(model.model_name))
 print("Is composed model?: {}".format(model.properties.is_composed_model))
 print("Status: {}".format(model.status))
 print("Training started on: {}".format(model.training_started_on))
@@ -349,7 +349,7 @@ model_id = "<model_id from the Train a Model sample>"
 
 custom_model = form_training_client.get_custom_model(model_id=model_id)
 print("Model ID: {}".format(custom_model.model_id))
-print("Display name: {}".format(model.model_name))
+print("Model name: {}".format(model.model_name))
 print("Is composed model?: {}".format(model.properties.is_composed_model))
 print("Status: {}".format(custom_model.status))
 print("Training started on: {}".format(custom_model.training_started_on))
