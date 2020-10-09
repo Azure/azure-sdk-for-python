@@ -11,6 +11,7 @@ try:
     from ._models_py3 import AutomaticResolutionProperties
     from ._models_py3 import AvailabilitySetResourceSettings
     from ._models_py3 import AzureResourceReference
+    from ._models_py3 import BulkRemoveRequest
     from ._models_py3 import CloudErrorBody
     from ._models_py3 import CommitRequest
     from ._models_py3 import DiscardRequest
@@ -60,6 +61,7 @@ try:
     from ._models_py3 import SqlServerResourceSettings
     from ._models_py3 import SubnetReference
     from ._models_py3 import SubnetResourceSettings
+    from ._models_py3 import SummaryItem
     from ._models_py3 import UnresolvedDependency
     from ._models_py3 import UnresolvedDependencyCollection
     from ._models_py3 import UpdateMoveCollectionRequest
@@ -70,6 +72,7 @@ except (SyntaxError, ImportError):
     from ._models import AutomaticResolutionProperties  # type: ignore
     from ._models import AvailabilitySetResourceSettings  # type: ignore
     from ._models import AzureResourceReference  # type: ignore
+    from ._models import BulkRemoveRequest  # type: ignore
     from ._models import CloudErrorBody  # type: ignore
     from ._models import CommitRequest  # type: ignore
     from ._models import DiscardRequest  # type: ignore
@@ -119,6 +122,7 @@ except (SyntaxError, ImportError):
     from ._models import SqlServerResourceSettings  # type: ignore
     from ._models import SubnetReference  # type: ignore
     from ._models import SubnetResourceSettings  # type: ignore
+    from ._models import SummaryItem  # type: ignore
     from ._models import UnresolvedDependency  # type: ignore
     from ._models import UnresolvedDependencyCollection  # type: ignore
     from ._models import UpdateMoveCollectionRequest  # type: ignore
@@ -127,6 +131,7 @@ except (SyntaxError, ImportError):
 
 from ._resource_mover_service_api_enums import (
     DependencyType,
+    JobName,
     MoveResourceInputType,
     MoveState,
     ProvisioningState,
@@ -141,6 +146,7 @@ __all__ = [
     'AutomaticResolutionProperties',
     'AvailabilitySetResourceSettings',
     'AzureResourceReference',
+    'BulkRemoveRequest',
     'CloudErrorBody',
     'CommitRequest',
     'DiscardRequest',
@@ -190,12 +196,14 @@ __all__ = [
     'SqlServerResourceSettings',
     'SubnetReference',
     'SubnetResourceSettings',
+    'SummaryItem',
     'UnresolvedDependency',
     'UnresolvedDependencyCollection',
     'UpdateMoveCollectionRequest',
     'VirtualMachineResourceSettings',
     'VirtualNetworkResourceSettings',
     'DependencyType',
+    'JobName',
     'MoveResourceInputType',
     'MoveState',
     'ProvisioningState',
