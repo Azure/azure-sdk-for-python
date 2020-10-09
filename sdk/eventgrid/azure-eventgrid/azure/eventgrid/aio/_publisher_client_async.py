@@ -24,7 +24,12 @@ from azure.core.pipeline.policies import (
 )
 from .._policies import CloudEventDistributedTracingPolicy
 from .._models import CloudEvent, EventGridEvent, CustomEvent
-from .._helpers import _get_topic_hostname_only_fqdn, _get_authentication_policy, _is_cloud_event, _eventgrid_event_options
+from .._helpers import (
+    _get_topic_hostname_only_fqdn,
+    _get_authentication_policy,
+    _is_cloud_event,
+    _eventgrid_event_options
+)
 from .._generated.aio import EventGridPublisherClient as EventGridPublisherClientAsync
 from .._shared_access_signature_credential import EventGridSharedAccessSignatureCredential
 from .._version import VERSION

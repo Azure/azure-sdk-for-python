@@ -4,8 +4,8 @@
 # --------------------------------------------------------------------------------------------
 import hashlib
 import hmac
-import six
 import base64
+import six
 try:
     from urllib.parse import quote
 except ImportError:
