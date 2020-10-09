@@ -149,7 +149,7 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
         fr_client = client.get_form_recognizer_client()
 
         async with client:
-            training_poller = await client.begin_training(container_sas_url, use_training_labels=True, display_name="labeled")
+            training_poller = await client.begin_training(container_sas_url, use_training_labels=True, model_name="labeled")
             model = await training_poller.result()
 
             async with fr_client:

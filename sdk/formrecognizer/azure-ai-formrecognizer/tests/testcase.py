@@ -422,7 +422,7 @@ class FormRecognizerTest(AzureTestCase):
             composed_model = composed.submodels[0]
             if model.model_id != composed_model.model_id:  # order not guaranteed from service
                 composed_model = composed.submodels[1]
-            if model_1.display_name is None:
+            if model_1.model_name is None:
                 self.assertEqual(model.form_type, composed_model.form_type)
             self.assertEqual(model.accuracy, composed_model.accuracy)
             self.assertEqual(model.model_id, composed_model.model_id)
@@ -434,7 +434,7 @@ class FormRecognizerTest(AzureTestCase):
             composed_model = composed.submodels[1]
             if model.model_id != composed_model.model_id:  # order not guaranteed from service
                 composed_model = composed.submodels[0]
-            if model_2.display_name is None:
+            if model_2.model_name is None:
                 self.assertEqual(model.form_type, composed_model.form_type)
             self.assertEqual(model.accuracy, composed_model.accuracy)
             self.assertEqual(model.model_id, composed_model.model_id)

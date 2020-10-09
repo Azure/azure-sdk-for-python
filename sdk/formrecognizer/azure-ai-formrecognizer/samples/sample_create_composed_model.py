@@ -54,16 +54,16 @@ class ComposedModelSample(object):
 
         form_training_client = FormTrainingClient(endpoint=endpoint, credential=AzureKeyCredential(key))
         supplies_poller = form_training_client.begin_training(
-            po_supplies, use_training_labels=True, display_name="Purchase order - Office supplies"
+            po_supplies, use_training_labels=True, model_name="Purchase order - Office supplies"
         )
         equipment_poller = form_training_client.begin_training(
-            po_equipment, use_training_labels=True, display_name="Purchase order - Office Equipment"
+            po_equipment, use_training_labels=True, model_name="Purchase order - Office Equipment"
         )
         furniture_poller = form_training_client.begin_training(
-            po_furniture, use_training_labels=True, display_name="Purchase order - Furniture"
+            po_furniture, use_training_labels=True, model_name="Purchase order - Furniture"
         )
         cleaning_supplies_poller = form_training_client.begin_training(
-            po_cleaning_supplies, use_training_labels=True, display_name="Purchase order - Cleaning Supplies"
+            po_cleaning_supplies, use_training_labels=True, model_name="Purchase order - Cleaning Supplies"
         )
         supplies_model = supplies_poller.result()
         equipment_model = equipment_poller.result()
@@ -78,13 +78,13 @@ class ComposedModelSample(object):
         ]
 
         poller = form_training_client.begin_create_composed_model(
-            models_trained_with_labels, display_name="Office Supplies Composed Model"
+            models_trained_with_labels, model_name="Office Supplies Composed Model"
         )
         model = poller.result()
 
         print("Office Supplies Composed Model Info:")
         print("Model ID: {}".format(model.model_id))
-        print("Model display name: {}".format(model.display_name))
+        print("Model name: {}".format(model.model_name))
         print("Is this a composed model?: {}".format(model.properties.is_composed_model))
         print("Status: {}".format(model.status))
         print("Composed model creation started on: {}".format(model.training_started_on))
