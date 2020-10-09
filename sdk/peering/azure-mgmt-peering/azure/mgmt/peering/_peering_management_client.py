@@ -14,6 +14,7 @@ from msrest import Serializer, Deserializer
 
 from ._configuration import PeeringManagementClientConfiguration
 from .operations import PeeringManagementClientOperationsMixin
+from .operations import CdnPeeringPrefixesOperations
 from .operations import LegacyPeeringsOperations
 from .operations import Operations
 from .operations import PeerAsnsOperations
@@ -21,6 +22,7 @@ from .operations import PeeringLocationsOperations
 from .operations import RegisteredAsnsOperations
 from .operations import RegisteredPrefixesOperations
 from .operations import PeeringsOperations
+from .operations import ReceivedRoutesOperations
 from .operations import PeeringServiceCountriesOperations
 from .operations import PeeringServiceLocationsOperations
 from .operations import PrefixesOperations
@@ -35,6 +37,8 @@ class PeeringManagementClient(PeeringManagementClientOperationsMixin, SDKClient)
     :ivar config: Configuration for client.
     :vartype config: PeeringManagementClientConfiguration
 
+    :ivar cdn_peering_prefixes: CdnPeeringPrefixes operations
+    :vartype cdn_peering_prefixes: azure.mgmt.peering.operations.CdnPeeringPrefixesOperations
     :ivar legacy_peerings: LegacyPeerings operations
     :vartype legacy_peerings: azure.mgmt.peering.operations.LegacyPeeringsOperations
     :ivar operations: Operations operations
@@ -49,6 +53,8 @@ class PeeringManagementClient(PeeringManagementClientOperationsMixin, SDKClient)
     :vartype registered_prefixes: azure.mgmt.peering.operations.RegisteredPrefixesOperations
     :ivar peerings: Peerings operations
     :vartype peerings: azure.mgmt.peering.operations.PeeringsOperations
+    :ivar received_routes: ReceivedRoutes operations
+    :vartype received_routes: azure.mgmt.peering.operations.ReceivedRoutesOperations
     :ivar peering_service_countries: PeeringServiceCountries operations
     :vartype peering_service_countries: azure.mgmt.peering.operations.PeeringServiceCountriesOperations
     :ivar peering_service_locations: PeeringServiceLocations operations
@@ -75,10 +81,12 @@ class PeeringManagementClient(PeeringManagementClientOperationsMixin, SDKClient)
         super(PeeringManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2020-01-01-preview'
+        self.api_version = '2020-10-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
+        self.cdn_peering_prefixes = CdnPeeringPrefixesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.legacy_peerings = LegacyPeeringsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
@@ -92,6 +100,8 @@ class PeeringManagementClient(PeeringManagementClientOperationsMixin, SDKClient)
         self.registered_prefixes = RegisteredPrefixesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.peerings = PeeringsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.received_routes = ReceivedRoutesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.peering_service_countries = PeeringServiceCountriesOperations(
             self._client, self.config, self._serialize, self._deserialize)

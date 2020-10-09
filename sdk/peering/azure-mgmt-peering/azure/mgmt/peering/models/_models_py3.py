@@ -91,6 +91,95 @@ class BgpSession(Model):
         self.md5_authentication_key = md5_authentication_key
 
 
+class Resource(Model):
+    """The ARM resource class.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar id: The ID of the resource.
+    :vartype id: str
+    :ivar type: The type of the resource.
+    :vartype type: str
+    """
+
+    _validation = {
+        'name': {'readonly': True},
+        'id': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(Resource, self).__init__(**kwargs)
+        self.name = None
+        self.id = None
+        self.type = None
+
+
+class CdnPeeringPrefix(Resource):
+    """The CDN peering prefix.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar id: The ID of the resource.
+    :vartype id: str
+    :ivar type: The type of the resource.
+    :vartype type: str
+    :ivar prefix: The prefix.
+    :vartype prefix: str
+    :ivar azure_region: The Azure region.
+    :vartype azure_region: str
+    :ivar azure_service: The Azure service.
+    :vartype azure_service: str
+    :ivar is_primary_region: The flag that indicates whether or not this is
+     the primary region.
+    :vartype is_primary_region: bool
+    :ivar bgp_community: The BGP Community
+    :vartype bgp_community: str
+    """
+
+    _validation = {
+        'name': {'readonly': True},
+        'id': {'readonly': True},
+        'type': {'readonly': True},
+        'prefix': {'readonly': True},
+        'azure_region': {'readonly': True},
+        'azure_service': {'readonly': True},
+        'is_primary_region': {'readonly': True},
+        'bgp_community': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'prefix': {'key': 'properties.prefix', 'type': 'str'},
+        'azure_region': {'key': 'properties.azureRegion', 'type': 'str'},
+        'azure_service': {'key': 'properties.azureService', 'type': 'str'},
+        'is_primary_region': {'key': 'properties.isPrimaryRegion', 'type': 'bool'},
+        'bgp_community': {'key': 'properties.bgpCommunity', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(CdnPeeringPrefix, self).__init__(**kwargs)
+        self.prefix = None
+        self.azure_region = None
+        self.azure_service = None
+        self.is_primary_region = None
+        self.bgp_community = None
+
+
 class CheckServiceProviderAvailabilityInput(Model):
     """Class for CheckServiceProviderAvailabilityInput.
 
@@ -125,7 +214,7 @@ class ContactDetail(Model):
     """The contact detail class.
 
     :param role: The role of the contact. Possible values include: 'Noc',
-     'Policy', 'Technical', 'Service', 'Other'
+     'Policy', 'Technical', 'Service', 'Escalation', 'Other'
     :type role: str or ~azure.mgmt.peering.models.Role
     :param email: The e-mail address of the contact.
     :type email: str
@@ -165,6 +254,9 @@ class DirectConnection(Model):
     :param use_for_peering_service: The flag that indicates whether or not the
      connection is used for peering service.
     :type use_for_peering_service: bool
+    :ivar microsoft_tracking_id: The ID used within Microsoft's peering
+     provisioning system to track the connection
+    :vartype microsoft_tracking_id: str
     :param peering_db_facility_id: The PeeringDB.com ID of the facility at
      which the connection has to be set up.
     :type peering_db_facility_id: int
@@ -185,6 +277,7 @@ class DirectConnection(Model):
 
     _validation = {
         'provisioned_bandwidth_in_mbps': {'readonly': True},
+        'microsoft_tracking_id': {'readonly': True},
         'connection_state': {'readonly': True},
         'error_message': {'readonly': True},
     }
@@ -194,6 +287,7 @@ class DirectConnection(Model):
         'provisioned_bandwidth_in_mbps': {'key': 'provisionedBandwidthInMbps', 'type': 'int'},
         'session_address_provider': {'key': 'sessionAddressProvider', 'type': 'str'},
         'use_for_peering_service': {'key': 'useForPeeringService', 'type': 'bool'},
+        'microsoft_tracking_id': {'key': 'microsoftTrackingId', 'type': 'str'},
         'peering_db_facility_id': {'key': 'peeringDBFacilityId', 'type': 'int'},
         'connection_state': {'key': 'connectionState', 'type': 'str'},
         'bgp_session': {'key': 'bgpSession', 'type': 'BgpSession'},
@@ -207,6 +301,7 @@ class DirectConnection(Model):
         self.provisioned_bandwidth_in_mbps = None
         self.session_address_provider = session_address_provider
         self.use_for_peering_service = use_for_peering_service
+        self.microsoft_tracking_id = None
         self.peering_db_facility_id = peering_db_facility_id
         self.connection_state = None
         self.bgp_session = bgp_session
@@ -244,8 +339,8 @@ class DirectPeeringFacility(Model):
         self.peering_db_facility_link = peering_db_facility_link
 
 
-class ErrorResponse(Model):
-    """The error response that indicates why an operation has failed.
+class ErrorDetail(Model):
+    """The error detail that describes why an operation has failed.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -267,9 +362,25 @@ class ErrorResponse(Model):
     }
 
     def __init__(self, **kwargs) -> None:
-        super(ErrorResponse, self).__init__(**kwargs)
+        super(ErrorDetail, self).__init__(**kwargs)
         self.code = None
         self.message = None
+
+
+class ErrorResponse(Model):
+    """The error response that indicates why an operation has failed.
+
+    :param error: The error detail that describes why an operation has failed.
+    :type error: ~azure.mgmt.peering.models.ErrorDetail
+    """
+
+    _attribute_map = {
+        'error': {'key': 'error', 'type': 'ErrorDetail'},
+    }
+
+    def __init__(self, *, error=None, **kwargs) -> None:
+        super(ErrorResponse, self).__init__(**kwargs)
+        self.error = error
 
 
 class ErrorResponseException(HttpOperationError):
@@ -449,39 +560,6 @@ class OperationDisplayInfo(Model):
         self.resource = None
         self.operation = None
         self.description = None
-
-
-class Resource(Model):
-    """The ARM resource class.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar id: The ID of the resource.
-    :vartype id: str
-    :ivar type: The type of the resource.
-    :vartype type: str
-    """
-
-    _validation = {
-        'name': {'readonly': True},
-        'id': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs) -> None:
-        super(Resource, self).__init__(**kwargs)
-        self.name = None
-        self.id = None
-        self.type = None
 
 
 class PeerAsn(Resource):
@@ -787,6 +865,63 @@ class PeeringPropertiesExchange(Model):
         super(PeeringPropertiesExchange, self).__init__(**kwargs)
         self.connections = connections
         self.peer_asn = peer_asn
+
+
+class PeeringReceivedRoute(Model):
+    """The properties that define a received route.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar prefix: The prefix.
+    :vartype prefix: str
+    :ivar next_hop: The next hop for the prefix.
+    :vartype next_hop: str
+    :ivar as_path: The AS path for the prefix.
+    :vartype as_path: str
+    :ivar origin_as_validation_state: The origin AS change information for the
+     prefix.
+    :vartype origin_as_validation_state: str
+    :ivar rpki_validation_state: The RPKI validation state for the prefix and
+     origin AS that's listed in the AS path.
+    :vartype rpki_validation_state: str
+    :ivar trust_anchor: The authority which holds the Route Origin
+     Authorization record for the prefix, if any.
+    :vartype trust_anchor: str
+    :ivar received_timestamp: The received timestamp associated with the
+     prefix.
+    :vartype received_timestamp: str
+    """
+
+    _validation = {
+        'prefix': {'readonly': True},
+        'next_hop': {'readonly': True},
+        'as_path': {'readonly': True},
+        'origin_as_validation_state': {'readonly': True},
+        'rpki_validation_state': {'readonly': True},
+        'trust_anchor': {'readonly': True},
+        'received_timestamp': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'prefix': {'key': 'prefix', 'type': 'str'},
+        'next_hop': {'key': 'nextHop', 'type': 'str'},
+        'as_path': {'key': 'asPath', 'type': 'str'},
+        'origin_as_validation_state': {'key': 'originAsValidationState', 'type': 'str'},
+        'rpki_validation_state': {'key': 'rpkiValidationState', 'type': 'str'},
+        'trust_anchor': {'key': 'trustAnchor', 'type': 'str'},
+        'received_timestamp': {'key': 'receivedTimestamp', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(PeeringReceivedRoute, self).__init__(**kwargs)
+        self.prefix = None
+        self.next_hop = None
+        self.as_path = None
+        self.origin_as_validation_state = None
+        self.rpki_validation_state = None
+        self.trust_anchor = None
+        self.received_timestamp = None
 
 
 class PeeringRegisteredAsn(Resource):
