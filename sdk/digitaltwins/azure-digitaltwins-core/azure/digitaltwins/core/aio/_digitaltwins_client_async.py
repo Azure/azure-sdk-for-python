@@ -13,7 +13,6 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core import MatchConditions
 
 from azure.core.exceptions import (
-    HttpResponseError,
     ServiceRequestError,
     ResourceExistsError,
     ResourceNotFoundError,
@@ -83,8 +82,6 @@ class DigitalTwinsClient(object):
             )
         except ResourceNotFoundError:
             return None
-        except HttpResponseError:
-            return None
 
     @distributed_trace_async
     async def upsert_digital_twin(self, digital_twin_id, digital_twin, **kwargs):
@@ -117,8 +114,6 @@ class DigitalTwinsClient(object):
         except ServiceRequestError:
             return None
         except ResourceExistsError:
-            return None
-        except HttpResponseError:
             return None
 
     @distributed_trace_async
@@ -174,8 +169,6 @@ class DigitalTwinsClient(object):
             return None
         except ResourceNotFoundError:
             return None
-        except HttpResponseError:
-            return None
 
     @distributed_trace_async
     async def delete_digital_twin(
@@ -224,8 +217,6 @@ class DigitalTwinsClient(object):
             return None
         except ResourceNotFoundError:
             return None
-        except HttpResponseError:
-            return None
 
     @distributed_trace_async
     async def get_component(self, digital_twin_id, component_path, **kwargs):
@@ -252,8 +243,6 @@ class DigitalTwinsClient(object):
                 **kwargs
             )
         except ResourceNotFoundError:
-            return None
-        except HttpResponseError:
             return None
 
     @distributed_trace_async
@@ -308,8 +297,6 @@ class DigitalTwinsClient(object):
             return None
         except ResourceNotFoundError:
             return None
-        except HttpResponseError:
-            return None
 
     @distributed_trace_async
     async def get_relationship(self, digital_twin_id, relationship_id, **kwargs):
@@ -336,8 +323,6 @@ class DigitalTwinsClient(object):
                 **kwargs
             )
         except ResourceNotFoundError:
-            return None
-        except HttpResponseError:
             return None
 
     @distributed_trace_async
@@ -371,8 +356,6 @@ class DigitalTwinsClient(object):
         except ServiceRequestError:
             return None
         except ResourceNotFoundError:
-            return None
-        except HttpResponseError:
             return None
 
     @distributed_trace_async
@@ -428,8 +411,6 @@ class DigitalTwinsClient(object):
             return None
         except ResourceNotFoundError:
             return None
-        except HttpResponseError:
-            return None
 
     @distributed_trace_async
     async def delete_relationship(
@@ -476,8 +457,6 @@ class DigitalTwinsClient(object):
             )
         except ResourceNotFoundError:
             return None
-        except HttpResponseError:
-            return None
 
     @distributed_trace_async
     async def list_relationships(self, digital_twin_id, relationship_id=None, **kwargs):
@@ -510,8 +489,6 @@ class DigitalTwinsClient(object):
             return None
         except ResourceNotFoundError:
             return None
-        except HttpResponseError:
-            return None
 
     @distributed_trace_async
     async def list_incoming_relationships(self, digital_twin_id, **kwargs):
@@ -540,8 +517,6 @@ class DigitalTwinsClient(object):
         except ServiceRequestError:
             return None
         except ResourceNotFoundError:
-            return None
-        except HttpResponseError:
             return None
 
     @distributed_trace_async
@@ -580,8 +555,6 @@ class DigitalTwinsClient(object):
         except ServiceRequestError:
             return None
         except ResourceNotFoundError:
-            return None
-        except HttpResponseError:
             return None
 
     @distributed_trace_async
@@ -631,8 +604,6 @@ class DigitalTwinsClient(object):
             return None
         except ResourceNotFoundError:
             return None
-        except HttpResponseError:
-            return None
 
     @distributed_trace_async
     async def get_model(self, model_id, **kwargs):
@@ -662,8 +633,6 @@ class DigitalTwinsClient(object):
             )
         except ResourceNotFoundError:
             return None
-        except HttpResponseError:
-            return None
 
     @distributed_trace_async
     async def list_models(self, dependencies_for, **kwargs):
@@ -674,7 +643,7 @@ class DigitalTwinsClient(object):
             If omitted, all models are retrieved.
         :keyword bool include_model_definition: When true the model definition
             will be returned as part of the result.
-        :keyword int max_item_count: The maximum number of items to retrieve per request.
+        :keyword int results_per_page: The maximum number of items to retrieve per request.
             The server may choose to return less than the requested max.
         :return: An iterator instance of list of ModelData.
         :rtype: ~azure.core.paging.ItemPaged[~azure.digitaltwins.models.ModelData]
@@ -684,14 +653,16 @@ class DigitalTwinsClient(object):
         error_map = {
             400: ServiceRequestError
         }
+
         include_model_definition = kwargs.pop('include_model_definition', False)
-        max_item_count = kwargs.pop('max_item_count', -1)
-        digital_twin_models_list_options = {'max_item_count': -1}
-        if max_item_count != -1:
-            digital_twin_models_list_options= {'max_item_count': max_item_count}
+
+        results_per_page = kwargs.pop('results_per_page', None)
+        digital_twin_models_list_options = None
+        if results_per_page is not None:
+            digital_twin_models_list_options= {'max_item_count': results_per_page}
 
         try:
-            return self._client.digital_twin_models.list(
+            return await self._client.digital_twin_models.list(
                 dependencies_for=dependencies_for,
                 include_model_definition=include_model_definition,
                 digital_twin_models_list_options=digital_twin_models_list_options,
@@ -699,8 +670,6 @@ class DigitalTwinsClient(object):
                 **kwargs
             )
         except ServiceRequestError:
-            return None
-        except HttpResponseError:
             return None
 
     @distributed_trace_async
@@ -731,8 +700,6 @@ class DigitalTwinsClient(object):
             return None
         except ResourceExistsError:
             return None
-        except HttpResponseError:
-            return None
 
     @distributed_trace_async
     async def decommission_model(self, model_id, **kwargs):
@@ -740,7 +707,7 @@ class DigitalTwinsClient(object):
         """Decommissions a model.
 
         :param str model_id: The id for the model. The id is globally unique and case sensitive.
-        :returns: None
+        :return: None
         :rtype: None
         :raises :class: `~azure.core.exceptions.HttpResponseError`
         :raises :class: `~azure.core.exceptions.ServiceRequestError`: If the request is invalid.
@@ -763,8 +730,6 @@ class DigitalTwinsClient(object):
         except ServiceRequestError:
             return None
         except ResourceNotFoundError:
-            return None
-        except HttpResponseError:
             return None
 
     @distributed_trace_async
@@ -800,8 +765,6 @@ class DigitalTwinsClient(object):
             return None
         except ResourceExistsError:
             return None
-        except HttpResponseError:
-            return None
 
     @distributed_trace_async
     async def get_event_route(self, event_route_id, **kwargs):
@@ -827,15 +790,13 @@ class DigitalTwinsClient(object):
             )
         except ResourceNotFoundError:
             return None
-        except HttpResponseError:
-            return None
 
     @distributed_trace_async
-    async def list_event_routes(self, max_item_count=-1, **kwargs):
-        # type: (int, **Any) -> ~azure.core.paging.ItemPaged[~azure.digitaltwins.models.EventRoute]
+    async def list_event_routes(self, **kwargs):
+        # type: (**Any) -> ~azure.core.paging.ItemPaged[~azure.digitaltwins.models.EventRoute]
         """Retrieves all event routes.
 
-        :param str max_item_count: The maximum number of items to retrieve per request.
+        :keyword int results_per_page: The maximum number of items to retrieve per request.
             The server may choose to return less than the requested max.
         :return: An iterator instance of list of EventRoute.
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.digitaltwins.models.EventRoute]
@@ -846,19 +807,18 @@ class DigitalTwinsClient(object):
             400: ServiceRequestError,
         }
 
-        try:
-            digital_twin_models_list_options = {'max_item_count': -1}
-            if max_item_count != -1:
-                digital_twin_models_list_options= {'max_item_count': max_item_count}
+        digital_twin_models_list_options = None
+        results_per_page = kwargs.pop('results_per_page', None)
+        if results_per_page is not None:
+            digital_twin_models_list_options= {'max_item_count': results_per_page}
 
+        try:
             return await self._client.event_routes.list(
                 digital_twin_models_list_options,
                 error_map=error_map,
                 **kwargs
             )
         except ServiceRequestError:
-            return None
-        except HttpResponseError:
             return None
 
     @distributed_trace_async
@@ -885,8 +845,6 @@ class DigitalTwinsClient(object):
             )
         except ServiceRequestError:
             return None
-        except HttpResponseError:
-            return None
 
     @distributed_trace_async
     async def delete_event_route(self, event_route_id, **kwargs):
@@ -912,8 +870,6 @@ class DigitalTwinsClient(object):
             )
         except ResourceNotFoundError:
             return None
-        except HttpResponseError:
-            return None
 
     @distributed_trace_async
     async def query_twins(self, query_expression, **kwargs):
@@ -927,7 +883,7 @@ class DigitalTwinsClient(object):
         """
         def extract_data(pipeline_response):
             deserialized = self._deserialize('QueryResult', pipeline_response)
-            list_of_elem = deserialized.items
+            list_of_elem = deserialized.value
             return deserialized.continuation_token or None, iter(list_of_elem)
 
         async def get_next(continuation_token=None):

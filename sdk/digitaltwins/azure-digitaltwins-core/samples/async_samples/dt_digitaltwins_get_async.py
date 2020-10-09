@@ -37,11 +37,14 @@ async def create_digitaltwins_service_client():
     return service_client
 
 async def digitaltwins_get():
-    service_client = await create_digitaltwins_service_client()
+    # service_client = await create_digitaltwins_service_client()
+
+    url = os.getenv("AZURE_URL")
+    credential = DefaultAzureCredential()
 
     digital_twint_id = "BuildingTwin" # from the samples: BuildingTwin, FloorTwin, HVACTwin, RoomTwin
     try:
-        async with service_client:
+        async with DigitalTwinsClient(url, credential) as service_client:
             digital_twin = await service_client.get_digital_twin(digital_twint_id)
             print(digital_twin)
 

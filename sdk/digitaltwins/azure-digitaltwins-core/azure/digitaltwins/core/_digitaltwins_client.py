@@ -13,7 +13,6 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core import MatchConditions
 
 from azure.core.exceptions import (
-    HttpResponseError,
     ServiceRequestError,
     ResourceExistsError,
     ResourceNotFoundError,
@@ -73,8 +72,6 @@ class DigitalTwinsClient(object):
             )
         except ResourceNotFoundError:
             return None
-        except HttpResponseError:
-            return None
 
     @distributed_trace
     def upsert_digital_twin(self, digital_twin_id, digital_twin, **kwargs):
@@ -107,8 +104,6 @@ class DigitalTwinsClient(object):
         except ServiceRequestError:
             return None
         except ResourceExistsError:
-            return None
-        except HttpResponseError:
             return None
 
     @distributed_trace
@@ -164,8 +159,6 @@ class DigitalTwinsClient(object):
             return None
         except ResourceNotFoundError:
             return None
-        except HttpResponseError:
-            return None
 
     @distributed_trace
     def delete_digital_twin(
@@ -214,8 +207,6 @@ class DigitalTwinsClient(object):
             return None
         except ResourceNotFoundError:
             return None
-        except HttpResponseError:
-            return None
 
     @distributed_trace
     def get_component(self, digital_twin_id, component_path, **kwargs):
@@ -242,8 +233,6 @@ class DigitalTwinsClient(object):
                 **kwargs
             )
         except ResourceNotFoundError:
-            return None
-        except HttpResponseError:
             return None
 
     @distributed_trace
@@ -298,8 +287,6 @@ class DigitalTwinsClient(object):
             return None
         except ResourceNotFoundError:
             return None
-        except HttpResponseError:
-            return None
 
     @distributed_trace
     def get_relationship(self, digital_twin_id, relationship_id, **kwargs):
@@ -326,8 +313,6 @@ class DigitalTwinsClient(object):
                 **kwargs
             )
         except ResourceNotFoundError:
-            return None
-        except HttpResponseError:
             return None
 
     @distributed_trace
@@ -361,8 +346,6 @@ class DigitalTwinsClient(object):
         except ServiceRequestError:
             return None
         except ResourceNotFoundError:
-            return None
-        except HttpResponseError:
             return None
 
     @distributed_trace
@@ -418,8 +401,6 @@ class DigitalTwinsClient(object):
             return None
         except ResourceNotFoundError:
             return None
-        except HttpResponseError:
-            return None
 
     @distributed_trace
     def delete_relationship(
@@ -466,8 +447,6 @@ class DigitalTwinsClient(object):
             )
         except ResourceNotFoundError:
             return None
-        except HttpResponseError:
-            return None
 
     @distributed_trace
     def list_relationships(self, digital_twin_id, relationship_id=None, **kwargs):
@@ -500,8 +479,6 @@ class DigitalTwinsClient(object):
             return None
         except ResourceNotFoundError:
             return None
-        except HttpResponseError:
-            return None
 
     @distributed_trace
     def list_incoming_relationships(self, digital_twin_id, **kwargs):
@@ -530,8 +507,6 @@ class DigitalTwinsClient(object):
         except ServiceRequestError:
             return None
         except ResourceNotFoundError:
-            return None
-        except HttpResponseError:
             return None
 
     @distributed_trace
@@ -570,8 +545,6 @@ class DigitalTwinsClient(object):
         except ServiceRequestError:
             return None
         except ResourceNotFoundError:
-            return None
-        except HttpResponseError:
             return None
 
     @distributed_trace
@@ -621,8 +594,6 @@ class DigitalTwinsClient(object):
             return None
         except ResourceNotFoundError:
             return None
-        except HttpResponseError:
-            return None
 
     @distributed_trace
     def get_model(self, model_id, **kwargs):
@@ -651,8 +622,6 @@ class DigitalTwinsClient(object):
                 **kwargs
             )
         except ResourceNotFoundError:
-            return None
-        except HttpResponseError:
             return None
 
     @distributed_trace
@@ -692,8 +661,6 @@ class DigitalTwinsClient(object):
             )
         except ServiceRequestError:
             return None
-        except HttpResponseError:
-            return None
 
     @distributed_trace
     def create_models(self, model_list=None, **kwargs):
@@ -722,8 +689,6 @@ class DigitalTwinsClient(object):
         except ServiceRequestError:
             return None
         except ResourceExistsError:
-            return None
-        except HttpResponseError:
             return None
 
     @distributed_trace
@@ -755,8 +720,6 @@ class DigitalTwinsClient(object):
         except ServiceRequestError:
             return None
         except ResourceNotFoundError:
-            return None
-        except HttpResponseError:
             return None
 
     @distributed_trace
@@ -792,8 +755,6 @@ class DigitalTwinsClient(object):
             return None
         except ResourceExistsError:
             return None
-        except HttpResponseError:
-            return None
 
     @distributed_trace
     def get_event_route(self, event_route_id, **kwargs):
@@ -818,8 +779,6 @@ class DigitalTwinsClient(object):
                 **kwargs
             )
         except ResourceNotFoundError:
-            return None
-        except HttpResponseError:
             return None
 
     @distributed_trace
@@ -851,8 +810,6 @@ class DigitalTwinsClient(object):
             )
         except ServiceRequestError:
             return None
-        except HttpResponseError:
-            return None
 
     @distributed_trace
     def upsert_event_route(self, event_route_id, event_route, **kwargs):
@@ -878,8 +835,6 @@ class DigitalTwinsClient(object):
             )
         except ServiceRequestError:
             return None
-        except HttpResponseError:
-            return None
 
     @distributed_trace
     def delete_event_route(self, event_route_id, **kwargs):
@@ -904,8 +859,6 @@ class DigitalTwinsClient(object):
                 **kwargs
             )
         except ResourceNotFoundError:
-            return None
-        except HttpResponseError:
             return None
 
     @distributed_trace
