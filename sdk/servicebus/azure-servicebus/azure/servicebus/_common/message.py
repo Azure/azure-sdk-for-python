@@ -57,6 +57,7 @@ from ..exceptions import (
     MessageSettleFailed,
     MessageContentTooLarge,
     ServiceBusError)
+from .._base_handler import _do_retryable_operation
 from .utils import utc_from_timestamp, utc_now, transform_messages_to_sendable_if_needed
 if TYPE_CHECKING:
     from .._servicebus_receiver import ServiceBusReceiver
@@ -903,15 +904,13 @@ class ReceivedMessageBase(PeekedMessage):
 
 class ReceivedMessage(ReceivedMessageBase):
     def _settle_message(
-            self,
-            settle_operation,
-            dead_letter_reason=None,
-            dead_letter_error_description=None,
+        self,
+        settle_operation,
+        dead_letter_reason=None,
+        dead_letter_error_description=None,
+        **kwargs
     ):
-        # type: (str, Optional[str], Optional[str]) -> None
-        # TODO:
-        # current it's one time settle via receiver link, if failed, then x times retry settle via mgmt link
-        # should retry to be x times of try settle via receiver link, settle via mgmt link?
+        # type: (str, Optional[str], Optional[str], Any) -> None
         try:
             if not self._is_deferred_message:
                 try:
@@ -929,10 +928,28 @@ class ReceivedMessage(ReceivedMessageBase):
             self._settle_via_mgmt_link(settle_operation,
                                        dead_letter_reason=dead_letter_reason,
                                        dead_letter_error_description=dead_letter_error_description)()
-        except Exception as e:
-            # TODO: should we not wrap everything into MessageSettleFailed?
-            # but user could inspect the more concrete error detail by inner exception
-            raise MessageSettleFailed(settle_operation, e)
+        except Exception as exception:
+            _LOGGER.info(
+                "Message settling: %r has encountered an exception (%r) through management link",
+                settle_operation,
+                exception
+            )
+            raise
+
+    def _settle_message_with_retry(
+        self,
+        settle_operation,
+        dead_letter_reason=None,
+        dead_letter_error_description=None
+    ):
+        _do_retryable_operation(
+            self._receiver,
+            self._settle_message,
+            timeout=None,
+            settle_operation=settle_operation,
+            dead_letter_reason=dead_letter_reason,
+            dead_letter_error_description=dead_letter_error_description
+        )
 
     def complete(self):
         # type: () -> None
@@ -958,7 +975,7 @@ class ReceivedMessage(ReceivedMessageBase):
         """
         # pylint: disable=protected-access
         self._check_live(MESSAGE_COMPLETE)
-        self._settle_message(MESSAGE_COMPLETE)
+        self._settle_message_with_retry(MESSAGE_COMPLETE)
         self._settled = True
 
     def dead_letter(self, reason=None, error_description=None):
@@ -989,7 +1006,7 @@ class ReceivedMessage(ReceivedMessageBase):
         """
         # pylint: disable=protected-access
         self._check_live(MESSAGE_DEAD_LETTER)
-        self._settle_message(MESSAGE_DEAD_LETTER,
+        self._settle_message_with_retry(MESSAGE_DEAD_LETTER,
                              dead_letter_reason=reason,
                              dead_letter_error_description=error_description)
         self._settled = True
@@ -1018,7 +1035,7 @@ class ReceivedMessage(ReceivedMessageBase):
         """
         # pylint: disable=protected-access
         self._check_live(MESSAGE_ABANDON)
-        self._settle_message(MESSAGE_ABANDON)
+        self._settle_message_with_retry(MESSAGE_ABANDON)
         self._settled = True
 
     def defer(self):
@@ -1045,7 +1062,7 @@ class ReceivedMessage(ReceivedMessageBase):
                     by calling receive_deffered_messages with its sequence number
         """
         self._check_live(MESSAGE_DEFER)
-        self._settle_message(MESSAGE_DEFER)
+        self._settle_message_with_retry(MESSAGE_DEFER)
         self._settled = True
 
     def renew_lock(self, **kwargs):

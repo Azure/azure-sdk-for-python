@@ -11,7 +11,7 @@ import uamqp
 from uamqp import SendClient, types
 from uamqp.authentication.common import AMQPAuth
 
-from ._base_handler import BaseHandler
+from ._base_handler import BaseHandler, _do_retryable_operation
 from ._common import mgmt_handlers
 from ._common.message import Message, BatchMessage
 from .exceptions import (
@@ -361,7 +361,8 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         if not isinstance(message, BatchMessage) and not isinstance(message, Message):
             raise TypeError("Can only send azure.servicebus.<BatchMessage,Message> or lists of Messages.")
 
-        self._do_retryable_operation(
+        _do_retryable_operation(
+            self,
             self._send,
             message=message,
             timeout=timeout,

@@ -39,6 +39,27 @@ _NO_RETRY_ERRORS = (
     b"com.microsoft:argument-error")
 
 
+_AMQP_SESSION_ERROR_CONDITIONS = (
+    SESSION_LOCK_LOST,
+    SESSION_LOCK_TIMEOUT
+)
+
+
+_AMQP_CONNECTION_ERRORS = (
+    errors.LinkDetach,
+    errors.ConnectionClose,
+    errors.MessageHandlerError,
+    errors.AMQPConnectionError
+)
+
+
+_AMQP_MESSAGE_ERRORS = (
+    errors.MessageAlreadySettled,
+    errors.MessageContentTooLarge,
+    errors.MessageException,
+)
+
+
 def _error_handler(error):
     """Handle connection and service errors.
 
@@ -64,43 +85,24 @@ def _error_handler(error):
     return errors.ErrorAction(retry=True)
 
 
-def _create_servicebus_exception(logger, exception, handler):  # pylint: disable=too-many-statements
+def _handle_amqp_connection_error(logger, exception, handler, **kwargs):
+    # Handle all exception inherited from uamqp.errors.AMQPConnectionError
     error_need_close_handler = True
     error_need_raise = False
-    if isinstance(exception, errors.MessageAlreadySettled):
-        # TODO: consider removing the error handling for MessageAlreadySettled here, cause it respects actions
-        logger.info("Message already settled (%r)", exception)
-        error = MessageAlreadySettled(exception)  # TODO: MessageAlreadySettled takes action str, not an exception
-        error_need_close_handler = False
+    error = None
+    if isinstance(exception, errors.LinkDetach) and exception.condition in _AMQP_SESSION_ERROR_CONDITIONS:
+        # In session lock lost or no active session case, we don't retry, close the handler and raise the error
         error_need_raise = True
-    elif isinstance(exception, errors.MessageContentTooLarge) or \
-            (isinstance(exception, errors.MessageException) and
-             exception.condition == constants.ErrorCodes.LinkMessageSizeExceeded):
-        logger.info("Message content is too large (%r).", exception)
-        error = MessageContentTooLarge("Message content is too large.", exception)
-        error_need_close_handler = False
-        error_need_raise = True
-    elif isinstance(exception, errors.MessageException):
-        logger.info("Message send failed (%r)", exception)
-        if exception.condition == constants.ErrorCodes.ClientError and 'timed out' in str(exception):
-            error = OperationTimeoutError("Send operation timed out", inner_exception=exception)
-        else:
-            error = MessageSendFailed(exception)
-        error_need_raise = False
-    elif isinstance(exception, errors.LinkDetach) and exception.condition == SESSION_LOCK_LOST:
-        try:
-            session_id = handler._session_id  # pylint: disable=protected-access
-        except AttributeError:
-            session_id = None
-        error = SessionLockExpired("Connection detached - lock on Session {} lost.".format(session_id))
-        error_need_raise = True
-    elif isinstance(exception, errors.LinkDetach) and exception.condition == SESSION_LOCK_TIMEOUT:
-        error = NoActiveSession("Queue has no active session to receive from.")
-        error_need_raise = True
-    elif isinstance(exception, errors.AuthenticationException):
-        logger.info("Authentication failed due to exception: (%r).", exception)
-        error = ServiceBusAuthenticationError(str(exception), exception)
+        if exception.condition == SESSION_LOCK_LOST:
+            try:
+                session_id = handler._session_id  # pylint: disable=protected-access
+            except AttributeError:
+                session_id = None
+            error = SessionLockExpired("Connection detached - lock on Session {} lost.".format(session_id))
+        elif exception.condition == SESSION_LOCK_TIMEOUT:
+            error = NoActiveSession("Queue has no active session to receive from.")
     elif isinstance(exception, (errors.LinkDetach, errors.ConnectionClose)):
+        # In other link detach and connection case, should retry
         logger.info("Handler detached due to exception: (%r).", exception)
         if exception.condition == constants.ErrorCodes.UnauthorizedAccess:
             error = ServiceBusAuthorizationError(str(exception), exception)
@@ -112,16 +114,68 @@ def _create_servicebus_exception(logger, exception, handler):  # pylint: disable
     elif isinstance(exception, errors.MessageHandlerError):
         logger.info("Handler error: (%r).", exception)
         error = ServiceBusConnectionError(str(exception), exception)
-    elif isinstance(exception, errors.AMQPConnectionError):
+    else:
+        # handling general uamqp.errors.AMQPConnectionError
         logger.info("Failed to open handler: (%r).", exception)
         message = "Failed to open handler: {}.".format(exception)
         error = ServiceBusConnectionError(message, exception)
         error_need_raise, error_need_close_handler = True, False
+
+    return error, error_need_close_handler, error_need_raise
+
+
+def _handle_amqp_message_error(logger, exception, handler, **kwargs):
+    # Handle amqp message related errors
+    error_need_close_handler = True
+    error_need_raise = False
+    error = None
+    if isinstance(exception, errors.MessageAlreadySettled):
+        # This one doesn't need retry, should raise the error
+        logger.info("Message already settled (%r)", exception)
+        error = MessageAlreadySettled(kwargs.get("settle_operation", "Unknown operation"))
+        error_need_close_handler = False
+        error_need_raise = True
+    elif isinstance(exception, errors.MessageContentTooLarge) or \
+            (isinstance(exception, errors.MessageException) and
+             exception.condition == constants.ErrorCodes.LinkMessageSizeExceeded):
+        # This one doesn't need retry, should raise the error
+        logger.info("Message content is too large (%r).", exception)
+        error = MessageContentTooLarge("Message content is too large.", exception)
+        error_need_close_handler = False
+        error_need_raise = True
+    else:
+        # handling general uamqp.errors.MessageException
+        logger.info("Message send failed (%r)", exception)
+        if exception.condition == constants.ErrorCodes.ClientError and 'timed out' in str(exception):
+            error = OperationTimeoutError("Send operation timed out", inner_exception=exception)
+        else:
+            error = MessageSendFailed(exception)
+        error_need_raise = False
+
+    return error, error_need_close_handler, error_need_raise
+
+
+def _create_servicebus_exception(logger, exception, handler, **kwargs):  # pylint: disable=too-many-statements
+    # transform amqp exceptions into servicebus exceptions
+    error_need_close_handler = True
+    error_need_raise = False
+    if type(exception) in _AMQP_CONNECTION_ERRORS:
+        error, error_need_close_handler, error_need_raise = \
+            _handle_amqp_connection_error(logger, exception, handler, **kwargs)
+    elif type(exception) in _AMQP_MESSAGE_ERRORS:
+        error, error_need_close_handler, error_need_raise = \
+            _handle_amqp_message_error(logger, exception, handler, **kwargs)
+    elif isinstance(exception, errors.AuthenticationException):
+        logger.info("Authentication failed due to exception: (%r).", exception)
+        error = ServiceBusAuthenticationError(str(exception), exception)
     else:
         logger.info("Unexpected error occurred (%r). Shutting down.", exception)
-        error = exception
-        if not isinstance(exception, ServiceBusError):
+        if kwargs.get("settle_operation"):
+            error = MessageSettleFailed(kwargs.get("settle_operation"), exception)
+        elif not isinstance(exception, ServiceBusError):
             error = ServiceBusError("Handler failed: {}.".format(exception), exception)
+        else:
+            error = exception
 
     try:
         err_condition = exception.condition

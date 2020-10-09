@@ -13,7 +13,7 @@ from uamqp import ReceiveClient, types, Message
 from uamqp.constants import SenderSettleMode
 from uamqp.authentication.common import AMQPAuth
 
-from ._base_handler import BaseHandler
+from ._base_handler import BaseHandler, _do_retryable_operation
 from ._common.utils import create_authentication
 from ._common.message import PeekedMessage, ReceivedMessage
 from ._common.constants import (
@@ -157,7 +157,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         self._check_live()
         while True:
             try:
-                return self._do_retryable_operation(self._iter_next)
+                return _do_retryable_operation(self, self._iter_next)
             except StopIteration:
                 self._message_iter = None
                 raise
@@ -256,6 +256,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
 
     def _settle_message(self, settlement, lock_tokens, dead_letter_details=None):
         # type: (bytes, List[str], Optional[Dict[str, Any]]) -> Any
+        # Message settlement through the mgmt link.
         message = {
             MGMT_REQUEST_DISPOSITION_STATUS: settlement,
             MGMT_REQUEST_LOCK_TOKENS: types.AMQPArray(lock_tokens)
@@ -265,7 +266,8 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         if dead_letter_details:
             message.update(dead_letter_details)
 
-        return self._mgmt_request_response_with_retry(
+        # We don't do retry here, retry is done in the ReceivedMessage._settle_message
+        return self._mgmt_request_response(
             REQUEST_RESPONSE_UPDATE_DISPOSTION_OPERATION,
             message,
             mgmt_handlers.default
@@ -411,7 +413,8 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
 
         """
         self._check_live()
-        return self._do_retryable_operation(
+        return _do_retryable_operation(
+            self,
             self._receive,
             max_message_count=max_message_count,
             timeout=max_wait_time,
