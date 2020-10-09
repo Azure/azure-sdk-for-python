@@ -68,15 +68,18 @@ class PagingAlgorithmABC(ABC):
 
 class PagingAlgorithmDefault(PagingAlgorithmABC):
     def __init__(self, **kwargs):
-        self.next_link = None
         self._initial_request = None
+        self._next_link = None
 
-    def get_next_link_url(self):
-        return self._initial_request.url
+    def get_next_link(self):
+        return self._next_link
 
     def set_initial_state(self, initial_pipeline_response):
         response = initial_pipeline_response.http_response
         self._initial_request = response.request
+
+    def update_state(self, next_link):
+        self._next_link = next_link
 
     def can_page(self, **kwargss):
         return True
@@ -99,18 +102,23 @@ class PagingAlgorithmDefault(PagingAlgorithmABC):
 class PagingAlgorithmIfSeparateNextOperation(PagingAlgorithmABC):
     def __init__(self, **kwargs):
         self._next_link_operation_url = kwargs.pop("next_link_operation_url", None)
-        self.next_link = None
         self._initial_request = response.request
         self._operation_config = kwargs
 
-    def get_next_link_url(self):
+    def get_next_link(self):
         return self._next_link_operation_url
 
     def set_initial_state(self, initial_pipeline_response):
         response = initial_pipeline_response.http_response
         self._initial_request = response.request
 
-    def can_page(self, **kwargss):
+    def update_state(self, next_link):
+        # Here we just return the next operation URL defined in the next operation swagger
+        # If there is a path form argument for next link in the next operation URL, that is
+        # handled by the page iterator
+        pass
+
+    def can_page(self, **kwargs):
         return bool(kwargs.get("next_link_operation_url", None))
 
     @property

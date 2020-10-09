@@ -51,7 +51,7 @@ ResponseType = TypeVar("ResponseType")
 class _PagingOption(str, Enum):
     """Known paging options from Swagger."""
 
-    TOKEN_INPUT_PARAMETER = "token-input-parameter"  # for token paging, which parameter will hold continuation token
+    TOKEN_INPUT_PARAMETER = "continuation-token-input-parameter"  # for token paging, which parameter will hold continuation token
 
 class BadStatus(Exception):
     pass
@@ -195,12 +195,12 @@ class PageIterator(PageIteratorABC):
             response = self._make_initial_call()
             self._operation.set_initial_state(response)
         else:
-            next_link = self._operation.get_next_link()
-            response = self.get_next_page(next_link)
+            next_link_url = self._operation.get_next_link()
+            response = self.get_next_page(next_link_url)
 
         self._did_a_call_already = True
-        next_link, self._current_page = self._extract_data(response)
-        self._operation.next_link = next_link
+        self._next_link, self._current_page = self._extract_data(response)
+        self._operation.update_state(self._next_link)
 
         return iter(self._current_page)
 
@@ -220,20 +220,47 @@ class PageIteratorNextLinkTemplate(PageIterator):
 class PageIteratorWithContinuationToken(PageIterator):
 
     def _set_continuation_token(self):
+        set_continuation_token = False
         continuation_token_input_parameter = self._paging_options[_PagingOption.TOKEN_INPUT_PARAMETER]
         for api_parameter_type, api_parameters in self._operation.operation_config.items():
             for param_name, param_value in api_parameters.items():
                 if param_name.lower() == continuation_token_input_parameter.lower()
-                    self._operation.operation_config[api_parameter_type][param_name] = self._
+                    self._operation.operation_config[api_parameter_type][param_name] = self._next_link
+                    set_continuation_token = True
+                    break
+
+        if not set_continuation_token:
+            raise ValueError(
+                "The value provided in paging_options for the input parameter that accepts "
+                "the continuation token {} is not present in the API parameters".format(self._paging_options[_PagingOption.TOKEN_INPUT_PARAMETER])
+            )
 
 
     def get_next_page(self, next_link):
         request = self._client.get(next_link)
         if self._path_format_arguments:
             request = self._client.format_url(status_link, **self._path_format_arguments, 'nextLink'=next_link)
+        self._set_continuation_token()
         return self._client._pipeline.run(
             request, stream=False, **self._operation.operation_config
         )
+
+    def __next__(self):
+        # type: () -> Iterator[ReturnType]
+        if self.finished():
+            raise StopIteration("End of paging")
+
+        if not self._did_a_call_already:
+            response = self._make_initial_call()
+            self._operation.set_initial_state(response)
+        else:
+            next_link_url = self._operation.get_next_link()
+            response = self.get_next_page(next_link_url)
+
+        self._did_a_call_already = True
+        self._next_link, self._current_page = self._extract_data(response)
+
+        return iter(self._current_page)
 
 class ItemPaged(Iterator[ReturnType]):
     def __init__(self, *args, **kwargs):
