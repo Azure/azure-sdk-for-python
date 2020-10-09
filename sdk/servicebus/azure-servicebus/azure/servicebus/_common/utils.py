@@ -9,7 +9,6 @@ import datetime
 import logging
 import functools
 import platform
-import time
 from typing import Optional, Dict, Tuple
 from msrest.serialization import UTC
 
