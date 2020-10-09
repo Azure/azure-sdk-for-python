@@ -74,4 +74,4 @@ class ConfigurationSetting(DictMixin):
 
     def __init__(self, key, value, **kwargs):
         # type: (str, str, Any) -> None
-        pass    
+        pass

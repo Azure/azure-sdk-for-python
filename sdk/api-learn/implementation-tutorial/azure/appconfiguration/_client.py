@@ -11,7 +11,7 @@ from ._models import ConfigurationSetting
 
 class AppConfigurationClient(object):
     """A Client for the AppConfiguration Service.
-    
+
     :param str account_url: The URL for the service.
     :param TokenCredential credential: The credentials to authenticate with the service.
     """
@@ -29,7 +29,6 @@ class AppConfigurationClient(object):
          from the Azure portal.
         """
         pass
-    
     def get_configuration_setting(self, key, label=None, **kwargs):
         # type: (str, Optional[str]) -> ConfigurationSetting
         """Get the value of a particular configuration settings.

@@ -14,7 +14,7 @@ from .._models import ConfigurationSetting
 
 class AppConfigurationClient(object):
     """A Client for the AppConfiguration Service.
-    
+
     :param str account_url: The URL for the service.
     :param AsyncTokenCredential credential: The credentials to authenticate with the service.
     """

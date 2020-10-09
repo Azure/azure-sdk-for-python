@@ -27,7 +27,7 @@ async def main():
             first_color = await client.get_configuration_setting(os.enviorn['API-LEARN_SETTING_COLOR_KEY'])
         except ResourceNotFoundError:
             raise
-        
+
         # Get latest color value, only if it has changed
         try:
             new_color = await client.get_configuration_setting(
