@@ -679,8 +679,6 @@ class ClusterCreateProperties(Model):
      ~azure.mgmt.hdinsight.models.EncryptionInTransitProperties
     :param min_supported_tls_version: The minimal supported tls version.
     :type min_supported_tls_version: str
-    :param network_settings: The network settings.
-    :type network_settings: ~azure.mgmt.hdinsight.models.NetworkSettings
     """
 
     _attribute_map = {
@@ -695,10 +693,9 @@ class ClusterCreateProperties(Model):
         'disk_encryption_properties': {'key': 'diskEncryptionProperties', 'type': 'DiskEncryptionProperties'},
         'encryption_in_transit_properties': {'key': 'encryptionInTransitProperties', 'type': 'EncryptionInTransitProperties'},
         'min_supported_tls_version': {'key': 'minSupportedTlsVersion', 'type': 'str'},
-        'network_settings': {'key': 'networkSettings', 'type': 'NetworkSettings'},
     }
 
-    def __init__(self, *, cluster_version: str=None, os_type=None, tier=None, cluster_definition=None, kafka_rest_properties=None, security_profile=None, compute_profile=None, storage_profile=None, disk_encryption_properties=None, encryption_in_transit_properties=None, min_supported_tls_version: str=None, network_settings=None, **kwargs) -> None:
+    def __init__(self, *, cluster_version: str=None, os_type=None, tier=None, cluster_definition=None, kafka_rest_properties=None, security_profile=None, compute_profile=None, storage_profile=None, disk_encryption_properties=None, encryption_in_transit_properties=None, min_supported_tls_version: str=None, **kwargs) -> None:
         super(ClusterCreateProperties, self).__init__(**kwargs)
         self.cluster_version = cluster_version
         self.os_type = os_type
@@ -711,7 +708,6 @@ class ClusterCreateProperties(Model):
         self.disk_encryption_properties = disk_encryption_properties
         self.encryption_in_transit_properties = encryption_in_transit_properties
         self.min_supported_tls_version = min_supported_tls_version
-        self.network_settings = network_settings
 
 
 class ClusterDefinition(Model):
@@ -816,8 +812,6 @@ class ClusterGetProperties(Model):
      ~azure.mgmt.hdinsight.models.EncryptionInTransitProperties
     :param min_supported_tls_version: The minimal supported tls version.
     :type min_supported_tls_version: str
-    :param network_settings: The network settings.
-    :type network_settings: ~azure.mgmt.hdinsight.models.NetworkSettings
     """
 
     _validation = {
@@ -841,10 +835,9 @@ class ClusterGetProperties(Model):
         'disk_encryption_properties': {'key': 'diskEncryptionProperties', 'type': 'DiskEncryptionProperties'},
         'encryption_in_transit_properties': {'key': 'encryptionInTransitProperties', 'type': 'EncryptionInTransitProperties'},
         'min_supported_tls_version': {'key': 'minSupportedTlsVersion', 'type': 'str'},
-        'network_settings': {'key': 'networkSettings', 'type': 'NetworkSettings'},
     }
 
-    def __init__(self, *, cluster_definition, cluster_version: str=None, os_type=None, tier=None, kafka_rest_properties=None, security_profile=None, compute_profile=None, provisioning_state=None, created_date: str=None, cluster_state: str=None, quota_info=None, errors=None, connectivity_endpoints=None, disk_encryption_properties=None, encryption_in_transit_properties=None, min_supported_tls_version: str=None, network_settings=None, **kwargs) -> None:
+    def __init__(self, *, cluster_definition, cluster_version: str=None, os_type=None, tier=None, kafka_rest_properties=None, security_profile=None, compute_profile=None, provisioning_state=None, created_date: str=None, cluster_state: str=None, quota_info=None, errors=None, connectivity_endpoints=None, disk_encryption_properties=None, encryption_in_transit_properties=None, min_supported_tls_version: str=None, **kwargs) -> None:
         super(ClusterGetProperties, self).__init__(**kwargs)
         self.cluster_version = cluster_version
         self.os_type = os_type
@@ -862,7 +855,6 @@ class ClusterGetProperties(Model):
         self.disk_encryption_properties = disk_encryption_properties
         self.encryption_in_transit_properties = encryption_in_transit_properties
         self.min_supported_tls_version = min_supported_tls_version
-        self.network_settings = network_settings
 
 
 class ClusterIdentity(Model):
@@ -1455,32 +1447,6 @@ class LocalizedName(Model):
         super(LocalizedName, self).__init__(**kwargs)
         self.value = value
         self.localized_value = localized_value
-
-
-class NetworkSettings(Model):
-    """The network settings.
-
-    :param public_network_access: Specifies whether public network access is
-     enabled for inbound and outbound, or outbound only. Possible values
-     include: 'InboundAndOutbound', 'OutboundOnly'
-    :type public_network_access: str or
-     ~azure.mgmt.hdinsight.models.PublicNetworkAccess
-    :param outbound_only_public_network_access_type: The mechanism through
-     which the cluster will have outbound access to the public network.
-     Possible values include: 'PublicLoadBalancer', 'UDR'
-    :type outbound_only_public_network_access_type: str or
-     ~azure.mgmt.hdinsight.models.OutboundOnlyPublicNetworkAccessType
-    """
-
-    _attribute_map = {
-        'public_network_access': {'key': 'publicNetworkAccess', 'type': 'str'},
-        'outbound_only_public_network_access_type': {'key': 'outboundOnlyPublicNetworkAccessType', 'type': 'str'},
-    }
-
-    def __init__(self, *, public_network_access=None, outbound_only_public_network_access_type=None, **kwargs) -> None:
-        super(NetworkSettings, self).__init__(**kwargs)
-        self.public_network_access = public_network_access
-        self.outbound_only_public_network_access_type = outbound_only_public_network_access_type
 
 
 class Operation(Model):
