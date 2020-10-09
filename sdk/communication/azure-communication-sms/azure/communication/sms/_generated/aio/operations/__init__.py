@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._sms_operations_async import SmsOperations
+from ._sms_operations import SmsOperations
 
 __all__ = [
     'SmsOperations',
