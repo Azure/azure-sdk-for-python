@@ -9,6 +9,7 @@
 import datetime
 from typing import Dict, List, Optional, Union
 
+from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
 from ._text_analytics_client_enums import *
@@ -1275,51 +1276,6 @@ class DocumentLinkedEntities(msrest.serialization.Model):
         self.statistics = statistics
 
 
-class DocumentPiiEntities(msrest.serialization.Model):
-    """DocumentPiiEntities.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param id: Required. Unique, non-empty document identifier.
-    :type id: str
-    :param entities: Required. Recognized entities in the document.
-    :type entities: list[~azure.ai.textanalytics.v3_2_preview_1.models.PiiEntity]
-    :param warnings: Required. Warnings encountered while processing document.
-    :type warnings: list[~azure.ai.textanalytics.v3_2_preview_1.models.TextAnalyticsWarning]
-    :param statistics: if showStats=true was specified in the request this field will contain
-     information about the document payload.
-    :type statistics: ~azure.ai.textanalytics.v3_2_preview_1.models.DocumentStatistics
-    """
-
-    _validation = {
-        'id': {'required': True},
-        'entities': {'required': True},
-        'warnings': {'required': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'entities': {'key': 'entities', 'type': '[PiiEntity]'},
-        'warnings': {'key': 'warnings', 'type': '[TextAnalyticsWarning]'},
-        'statistics': {'key': 'statistics', 'type': 'DocumentStatistics'},
-    }
-
-    def __init__(
-        self,
-        *,
-        id: str,
-        entities: List["PiiEntity"],
-        warnings: List["TextAnalyticsWarning"],
-        statistics: Optional["DocumentStatistics"] = None,
-        **kwargs
-    ):
-        super(DocumentPiiEntities, self).__init__(**kwargs)
-        self.id = id
-        self.entities = entities
-        self.warnings = warnings
-        self.statistics = statistics
-
-
 class DocumentSentiment(msrest.serialization.Model):
     """DocumentSentiment.
 
@@ -2234,6 +2190,8 @@ class LinkedEntity(msrest.serialization.Model):
     :param data_source: Required. Data source used to extract entity linking, such as Wiki/Bing
      etc.
     :type data_source: str
+    :param bing_id: Bing Entity Search API unique identifier of the recognized entity.
+    :type bing_id: str
     """
 
     _validation = {
@@ -2251,6 +2209,7 @@ class LinkedEntity(msrest.serialization.Model):
         'id': {'key': 'id', 'type': 'str'},
         'url': {'key': 'url', 'type': 'str'},
         'data_source': {'key': 'dataSource', 'type': 'str'},
+        'bing_id': {'key': 'bingId', 'type': 'str'},
     }
 
     def __init__(
@@ -2262,6 +2221,7 @@ class LinkedEntity(msrest.serialization.Model):
         url: str,
         data_source: str,
         id: Optional[str] = None,
+        bing_id: Optional[str] = None,
         **kwargs
     ):
         super(LinkedEntity, self).__init__(**kwargs)
@@ -2271,6 +2231,7 @@ class LinkedEntity(msrest.serialization.Model):
         self.id = id
         self.url = url
         self.data_source = data_source
+        self.bing_id = bing_id
 
 
 class Match(msrest.serialization.Model):
@@ -2386,62 +2347,55 @@ class MultiLanguageInput(msrest.serialization.Model):
         self.language = language
 
 
-class PiiEntity(Entity):
-    """PiiEntity.
+class PiiDocumentEntities(msrest.serialization.Model):
+    """PiiDocumentEntities.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param text: Required. Entity text as appears in the request.
-    :type text: str
-    :param category: Required. Entity type.
-    :type category: str
-    :param subcategory: (Optional) Entity sub type.
-    :type subcategory: str
-    :param offset: Required. Start position for the entity text. Use of different 'stringIndexType'
-     values can affect the offset returned.
-    :type offset: int
-    :param length: Required. Length for the entity text. Use of different 'stringIndexType' values
-     can affect the length returned.
-    :type length: int
-    :param confidence_score: Required. Confidence score between 0 and 1 of the extracted entity.
-    :type confidence_score: float
-    :param redacted_text: Required.
+    :param id: Required. Unique, non-empty document identifier.
+    :type id: str
+    :param redacted_text: Required. Returns redacted text.
     :type redacted_text: str
+    :param entities: Required. Recognized entities in the document.
+    :type entities: list[~azure.ai.textanalytics.v3_2_preview_1.models.Entity]
+    :param warnings: Required. Warnings encountered while processing document.
+    :type warnings: list[~azure.ai.textanalytics.v3_2_preview_1.models.TextAnalyticsWarning]
+    :param statistics: if showStats=true was specified in the request this field will contain
+     information about the document payload.
+    :type statistics: ~azure.ai.textanalytics.v3_2_preview_1.models.DocumentStatistics
     """
 
     _validation = {
-        'text': {'required': True},
-        'category': {'required': True},
-        'offset': {'required': True},
-        'length': {'required': True},
-        'confidence_score': {'required': True},
+        'id': {'required': True},
         'redacted_text': {'required': True},
+        'entities': {'required': True},
+        'warnings': {'required': True},
     }
 
     _attribute_map = {
-        'text': {'key': 'text', 'type': 'str'},
-        'category': {'key': 'category', 'type': 'str'},
-        'subcategory': {'key': 'subcategory', 'type': 'str'},
-        'offset': {'key': 'offset', 'type': 'int'},
-        'length': {'key': 'length', 'type': 'int'},
-        'confidence_score': {'key': 'confidenceScore', 'type': 'float'},
+        'id': {'key': 'id', 'type': 'str'},
         'redacted_text': {'key': 'redactedText', 'type': 'str'},
+        'entities': {'key': 'entities', 'type': '[Entity]'},
+        'warnings': {'key': 'warnings', 'type': '[TextAnalyticsWarning]'},
+        'statistics': {'key': 'statistics', 'type': 'DocumentStatistics'},
     }
 
     def __init__(
         self,
         *,
-        text: str,
-        category: str,
-        offset: int,
-        length: int,
-        confidence_score: float,
+        id: str,
         redacted_text: str,
-        subcategory: Optional[str] = None,
+        entities: List["Entity"],
+        warnings: List["TextAnalyticsWarning"],
+        statistics: Optional["DocumentStatistics"] = None,
         **kwargs
     ):
-        super(PiiEntity, self).__init__(text=text, category=category, subcategory=subcategory, offset=offset, length=length, confidence_score=confidence_score, **kwargs)
+        super(PiiDocumentEntities, self).__init__(**kwargs)
+        self.id = id
         self.redacted_text = redacted_text
+        self.entities = entities
+        self.warnings = warnings
+        self.statistics = statistics
 
 
 class PiiResult(msrest.serialization.Model):
@@ -2450,7 +2404,7 @@ class PiiResult(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :param documents: Required. Response by document.
-    :type documents: list[~azure.ai.textanalytics.v3_2_preview_1.models.DocumentPiiEntities]
+    :type documents: list[~azure.ai.textanalytics.v3_2_preview_1.models.PiiDocumentEntities]
     :param errors: Required. Errors by document id.
     :type errors: list[~azure.ai.textanalytics.v3_2_preview_1.models.DocumentError]
     :param statistics: if showStats=true was specified in the request this field will contain
@@ -2467,7 +2421,7 @@ class PiiResult(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'documents': {'key': 'documents', 'type': '[DocumentPiiEntities]'},
+        'documents': {'key': 'documents', 'type': '[PiiDocumentEntities]'},
         'errors': {'key': 'errors', 'type': '[DocumentError]'},
         'statistics': {'key': 'statistics', 'type': 'RequestStatistics'},
         'model_version': {'key': 'modelVersion', 'type': 'str'},
@@ -2476,7 +2430,7 @@ class PiiResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        documents: List["DocumentPiiEntities"],
+        documents: List["PiiDocumentEntities"],
         errors: List["DocumentError"],
         model_version: str,
         statistics: Optional["RequestStatistics"] = None,
