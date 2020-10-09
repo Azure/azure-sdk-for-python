@@ -1,5 +1,44 @@
 # Release History
 
+## 12.0.0b1 (2020-10-09)
+
+**Features**
+
+  - Added operation LinkedServerOperations.begin_create
+  - Added operation RedisOperations.begin_import_data
+  - Added operation RedisOperations.begin_export_data
+  - Added operation RedisOperations.begin_create
+  - Added operation RedisOperations.begin_delete
+
+**Breaking changes**
+
+  - Operation FirewallRulesOperations.delete has a new signature
+  - Operation FirewallRulesOperations.get has a new signature
+  - Operation FirewallRulesOperations.list_by_redis_resource has a new signature
+  - Operation LinkedServerOperations.delete has a new signature
+  - Operation LinkedServerOperations.get has a new signature
+  - Operation LinkedServerOperations.list has a new signature
+  - Operation PatchSchedulesOperations.list_by_redis_resource has a new signature
+  - Operation RedisOperations.force_reboot has a new signature
+  - Operation RedisOperations.get has a new signature
+  - Operation RedisOperations.list_by_resource_group has a new signature
+  - Operation RedisOperations.list_keys has a new signature
+  - Operation RedisOperations.list_upgrade_notifications has a new signature
+  - Operation RedisOperations.update has a new signature
+  - Operation FirewallRulesOperations.create_or_update has a new signature
+  - Operation Operations.list has a new signature
+  - Operation PatchSchedulesOperations.delete has a new signature
+  - Operation PatchSchedulesOperations.get has a new signature
+  - Operation PatchSchedulesOperations.create_or_update has a new signature
+  - Operation RedisOperations.check_name_availability has a new signature
+  - Operation RedisOperations.list has a new signature
+  - Operation RedisOperations.regenerate_key has a new signature
+  - Removed operation LinkedServerOperations.create
+  - Removed operation RedisOperations.import_data
+  - Removed operation RedisOperations.create
+  - Removed operation RedisOperations.export_data
+  - Removed operation RedisOperations.delete
+
 ## 7.0.0rc1 (2019-12-07)
 
 **Features**

@@ -48,7 +48,7 @@ class MgmtRedisTest(AzureMgmtTestCase):
 
     def create_virtual_network(self, group_name, location, network_name, subnet_name):
 
-        azure_operation_poller = self.network_client.virtual_networks.create_or_update(
+        azure_operation_poller = self.network_client.virtual_networks.begin_create_or_update(
             group_name,
             network_name,
             {
@@ -60,7 +60,7 @@ class MgmtRedisTest(AzureMgmtTestCase):
         )
         result_create = azure_operation_poller.result()
 
-        async_subnet_creation = self.network_client.subnets.create_or_update(
+        async_subnet_creation = self.network_client.subnets.begin_create_or_update(
             group_name,
             network_name,
             subnet_name,
@@ -83,7 +83,7 @@ class MgmtRedisTest(AzureMgmtTestCase):
         # CACHE_NAME = "myCache"
         CACHE_NAME = NAME
         RULE_NAME = "myRule"
-        DEFAULT = "myDefault"
+        DEFAULT = "default"
         LINKED_SERVER_NAME = "myLinkedServer"
         REDIS_NAME = "myRedis"
 
@@ -132,7 +132,7 @@ class MgmtRedisTest(AzureMgmtTestCase):
             }
           ]
         }
-        result = self.mgmt_client.patch_schedules.create_or_update(resource_group_name=RESOURCE_GROUP, name=NAME, parameters=BODY)
+        result = self.mgmt_client.patch_schedules.create_or_update(resource_group_name=RESOURCE_GROUP, name=NAME, default=DEFAULT, parameters=BODY)
 
         if self.is_live:
             time.sleep(1800)
@@ -287,7 +287,7 @@ class MgmtRedisTest(AzureMgmtTestCase):
 #--------------------------------------------------------------------------
         # /PatchSchedules/delete/RedisCachePatchSchedulesDelete[delete]
 #--------------------------------------------------------------------------
-        result = self.mgmt_client.patch_schedules.delete(resource_group_name=RESOURCE_GROUP, name=NAME)
+        result = self.mgmt_client.patch_schedules.delete(resource_group_name=RESOURCE_GROUP, name=NAME, default=DEFAULT)
 
 #--------------------------------------------------------------------------
         # /Redis/delete/RedisCacheDelete[delete]

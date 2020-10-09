@@ -15,12 +15,12 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
-from ._configuration_async import RedisManagementClientConfiguration
-from .operations_async import Operations
-from .operations_async import RedisOperations
-from .operations_async import FirewallRulesOperations
-from .operations_async import PatchSchedulesOperations
-from .operations_async import LinkedServerOperations
+from ._configuration import RedisManagementClientConfiguration
+from .operations import Operations
+from .operations import RedisOperations
+from .operations import FirewallRulesOperations
+from .operations import PatchSchedulesOperations
+from .operations import LinkedServerOperations
 from .. import models
 
 
@@ -28,15 +28,15 @@ class RedisManagementClient(object):
     """REST API for Azure Redis Cache Service.
 
     :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.redis.aio.operations_async.Operations
+    :vartype operations: azure.mgmt.redis.aio.operations.Operations
     :ivar redis: RedisOperations operations
-    :vartype redis: azure.mgmt.redis.aio.operations_async.RedisOperations
+    :vartype redis: azure.mgmt.redis.aio.operations.RedisOperations
     :ivar firewall_rules: FirewallRulesOperations operations
-    :vartype firewall_rules: azure.mgmt.redis.aio.operations_async.FirewallRulesOperations
+    :vartype firewall_rules: azure.mgmt.redis.aio.operations.FirewallRulesOperations
     :ivar patch_schedules: PatchSchedulesOperations operations
-    :vartype patch_schedules: azure.mgmt.redis.aio.operations_async.PatchSchedulesOperations
+    :vartype patch_schedules: azure.mgmt.redis.aio.operations.PatchSchedulesOperations
     :ivar linked_server: LinkedServerOperations operations
-    :vartype linked_server: azure.mgmt.redis.aio.operations_async.LinkedServerOperations
+    :vartype linked_server: azure.mgmt.redis.aio.operations.LinkedServerOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: Gets subscription credentials which uniquely identify the Microsoft Azure subscription. The subscription ID forms part of the URI for every service call.
@@ -59,6 +59,7 @@ class RedisManagementClient(object):
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
+        self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
 
         self.operations = Operations(

@@ -6,11 +6,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._operations_async import Operations
-from ._redis_operations_async import RedisOperations
-from ._firewall_rules_operations_async import FirewallRulesOperations
-from ._patch_schedules_operations_async import PatchSchedulesOperations
-from ._linked_server_operations_async import LinkedServerOperations
+from ._operations import Operations
+from ._redis_operations import RedisOperations
+from ._firewall_rules_operations import FirewallRulesOperations
+from ._patch_schedules_operations import PatchSchedulesOperations
+from ._linked_server_operations import LinkedServerOperations
 
 __all__ = [
     'Operations',

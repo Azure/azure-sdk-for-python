@@ -6,81 +6,103 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum
+from enum import Enum, EnumMeta
+from six import with_metaclass
 
-class DayOfWeek(str, Enum):
+class _CaseInsensitiveEnumMeta(EnumMeta):
+    def __getitem__(self, name):
+        return super().__getitem__(name.upper())
+
+    def __getattr__(cls, name):
+        """Return the enum member matching `name`
+        We use __getattr__ instead of descriptors or inserting into the enum
+        class' __dict__ in order to support `name` and `value` being both
+        properties for enum members (which live in the class' __dict__) and
+        enum members themselves.
+        """
+        try:
+            return cls._member_map_[name.upper()]
+        except KeyError:
+            raise AttributeError(name)
+
+
+class DayOfWeek(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Day of the week when a cache can be patched.
     """
 
-    monday = "Monday"
-    tuesday = "Tuesday"
-    wednesday = "Wednesday"
-    thursday = "Thursday"
-    friday = "Friday"
-    saturday = "Saturday"
-    sunday = "Sunday"
-    everyday = "Everyday"
-    weekend = "Weekend"
+    MONDAY = "Monday"
+    TUESDAY = "Tuesday"
+    WEDNESDAY = "Wednesday"
+    THURSDAY = "Thursday"
+    FRIDAY = "Friday"
+    SATURDAY = "Saturday"
+    SUNDAY = "Sunday"
+    EVERYDAY = "Everyday"
+    WEEKEND = "Weekend"
 
-class ProvisioningState(str, Enum):
+class DefaultName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    DEFAULT = "default"
+
+class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Redis instance provisioning status.
     """
 
-    creating = "Creating"
-    deleting = "Deleting"
-    disabled = "Disabled"
-    failed = "Failed"
-    linking = "Linking"
-    provisioning = "Provisioning"
-    recovering_scale_failure = "RecoveringScaleFailure"
-    scaling = "Scaling"
-    succeeded = "Succeeded"
-    unlinking = "Unlinking"
-    unprovisioning = "Unprovisioning"
-    updating = "Updating"
+    CREATING = "Creating"
+    DELETING = "Deleting"
+    DISABLED = "Disabled"
+    FAILED = "Failed"
+    LINKING = "Linking"
+    PROVISIONING = "Provisioning"
+    RECOVERING_SCALE_FAILURE = "RecoveringScaleFailure"
+    SCALING = "Scaling"
+    SUCCEEDED = "Succeeded"
+    UNLINKING = "Unlinking"
+    UNPROVISIONING = "Unprovisioning"
+    UPDATING = "Updating"
 
-class RebootType(str, Enum):
+class RebootType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Which Redis node(s) to reboot. Depending on this value data loss is possible.
     """
 
-    primary_node = "PrimaryNode"
-    secondary_node = "SecondaryNode"
-    all_nodes = "AllNodes"
+    PRIMARY_NODE = "PrimaryNode"
+    SECONDARY_NODE = "SecondaryNode"
+    ALL_NODES = "AllNodes"
 
-class RedisKeyType(str, Enum):
+class RedisKeyType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The Redis access key to regenerate.
     """
 
-    primary = "Primary"
-    secondary = "Secondary"
+    PRIMARY = "Primary"
+    SECONDARY = "Secondary"
 
-class ReplicationRole(str, Enum):
+class ReplicationRole(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Role of the linked server.
     """
 
-    primary = "Primary"
-    secondary = "Secondary"
+    PRIMARY = "Primary"
+    SECONDARY = "Secondary"
 
-class SkuFamily(str, Enum):
+class SkuFamily(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The SKU family to use. Valid values: (C, P). (C = Basic/Standard, P = Premium).
     """
 
-    c = "C"
-    p = "P"
+    C = "C"
+    P = "P"
 
-class SkuName(str, Enum):
+class SkuName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The type of Redis cache to deploy. Valid values: (Basic, Standard, Premium)
     """
 
-    basic = "Basic"
-    standard = "Standard"
-    premium = "Premium"
+    BASIC = "Basic"
+    STANDARD = "Standard"
+    PREMIUM = "Premium"
 
-class TlsVersion(str, Enum):
+class TlsVersion(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Optional: requires clients to use a specified TLS version (or higher) to connect (e,g, '1.0',
     '1.1', '1.2')
     """
 
-    one0 = "1.0"
-    one1 = "1.1"
-    one2 = "1.2"
+    ONE0 = "1.0"
+    ONE1 = "1.1"
+    ONE2 = "1.2"

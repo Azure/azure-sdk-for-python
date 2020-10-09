@@ -85,6 +85,7 @@ except (SyntaxError, ImportError):
 
 from ._redis_management_client_enums import (
     DayOfWeek,
+    DefaultName,
     ProvisioningState,
     RebootType,
     RedisKeyType,
@@ -133,6 +134,7 @@ __all__ = [
     'TrackedResource',
     'UpgradeNotification',
     'DayOfWeek',
+    'DefaultName',
     'ProvisioningState',
     'RebootType',
     'RedisKeyType',
