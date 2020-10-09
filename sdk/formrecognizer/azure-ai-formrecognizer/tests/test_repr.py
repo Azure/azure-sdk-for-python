@@ -151,12 +151,12 @@ class TestRepr():
             errors=[form_recognizer_error[0]],
             training_documents=[training_document_info[0], training_document_info[0]],
             properties=custom_form_model_properties[0],
-            display_name="my model"
+            model_name="my model"
         )
 
         model_repr = "CustomFormModel(model_id=1, status=creating, training_started_on=0001-01-01 00:00:00, " \
             "training_completed_on=0001-01-01 00:00:00, submodels=[{}, {}], errors=[{}], training_documents=[{}, {}], " \
-            "display_name=my model, properties={})".format(
+            "model_name=my model, properties={})".format(
                 custom_form_sub_model[1], custom_form_sub_model[1], form_recognizer_error[1], training_document_info[1], training_document_info[1],
                 custom_form_model_properties[1]
             )[:1024]
@@ -166,9 +166,9 @@ class TestRepr():
     def test_custom_form_model_info(self, custom_form_model_properties):
         model = _models.CustomFormModelInfo(
             model_id=1, status=_models.CustomFormModelStatus.READY, training_started_on=datetime.datetime(1, 1, 1), training_completed_on=datetime.datetime(1, 1, 1),
-            properties=custom_form_model_properties[0], display_name="my model"
+            properties=custom_form_model_properties[0], model_name="my model"
         )
-        model_repr = "CustomFormModelInfo(model_id=1, status=ready, training_started_on=0001-01-01 00:00:00, training_completed_on=0001-01-01 00:00:00, properties={}, display_name=my model)".format(custom_form_model_properties[1])[:1024]
+        model_repr = "CustomFormModelInfo(model_id=1, status=ready, training_started_on=0001-01-01 00:00:00, training_completed_on=0001-01-01 00:00:00, properties={}, model_name=my model)".format(custom_form_model_properties[1])[:1024]
         assert repr(model) == model_repr
 
     def test_account_properties(self):

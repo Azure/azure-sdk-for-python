@@ -20,23 +20,23 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalClientPreparer(training=True)
-    async def test_compose_model_with_display_name(self, client, container_sas_url):
+    async def test_compose_model_with_model_name(self, client, container_sas_url):
         async with client:
             poller = await client.begin_training(container_sas_url, use_training_labels=True)
             model_1 = await poller.result()
 
-            poller = await client.begin_training(container_sas_url, use_training_labels=True, display_name="second-labeled-model")
+            poller = await client.begin_training(container_sas_url, use_training_labels=True, model_name="second-labeled-model")
             model_2 = await poller.result()
 
-            poller = await client.begin_create_composed_model([model_1.model_id, model_2.model_id], display_name="my composed model")
+            poller = await client.begin_create_composed_model([model_1.model_id, model_2.model_id], model_name="my composed model")
 
             composed_model = await poller.result()
-            self.assertEqual(composed_model.display_name, "my composed model")
+            self.assertEqual(composed_model.model_name, "my composed model")
             self.assertComposedModelHasValues(composed_model, model_1, model_2)
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalClientPreparer(training=True)
-    async def test_compose_model_no_display_name(self, client, container_sas_url):
+    async def test_compose_model_no_model_name(self, client, container_sas_url):
         async with client:
             poller = await client.begin_training(container_sas_url, use_training_labels=True)
             model_1 = await poller.result()
@@ -47,7 +47,7 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
             poller = await client.begin_create_composed_model([model_1.model_id, model_2.model_id])
 
             composed_model = await poller.result()
-            self.assertIsNone(composed_model.display_name)
+            self.assertIsNone(composed_model.model_name)
             self.assertComposedModelHasValues(composed_model, model_1, model_2)
 
     @GlobalFormRecognizerAccountPreparer()

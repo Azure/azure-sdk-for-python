@@ -598,11 +598,11 @@ class CustomFormModel(object):
         List of any training errors.
     :ivar list[~azure.ai.formrecognizer.TrainingDocumentInfo] training_documents:
          Metadata about each of the documents used to train the model.
-    :ivar str display_name: Optional user defined model name.
+    :ivar str model_name: Optional user defined model name.
     :ivar properties: Optional model properties.
     :vartype properties: ~azure.ai.formrecognizer.CustomFormModelProperties
     .. versionadded:: v2.1-preview
-        The *display_name* and *properties* properties.
+        The *model_name* and *properties* properties.
     """
 
     def __init__(self, **kwargs):
@@ -613,7 +613,7 @@ class CustomFormModel(object):
         self.submodels = kwargs.get("submodels", None)
         self.errors = kwargs.get("errors", None)
         self.training_documents = kwargs.get("training_documents", None)
-        self.display_name = kwargs.get("display_name", None)
+        self.model_name = kwargs.get("model_name", None)
         self.properties = kwargs.get("properties", None)
 
     @classmethod
@@ -625,14 +625,14 @@ class CustomFormModel(object):
             training_completed_on=model.model_info.last_updated_date_time,
             submodels=CustomFormSubmodel._from_generated_unlabeled(model)
             if model.keys else CustomFormSubmodel._from_generated_labeled(
-                model, api_version, display_name=model.model_info.model_name
+                model, api_version, model_name=model.model_info.model_name
             ),
             errors=FormRecognizerError._from_generated(model.train_result.errors)
             if model.train_result else None,
             training_documents=TrainingDocumentInfo._from_generated(model.train_result)
             if model.train_result else None,
             properties=CustomFormModelProperties._from_generated(model.model_info),
-            display_name=model.model_info.model_name
+            model_name=model.model_info.model_name
         )
 
     @classmethod
@@ -645,12 +645,12 @@ class CustomFormModel(object):
             submodels=CustomFormSubmodel._from_generated_composed(model),
             training_documents=TrainingDocumentInfo._from_generated_composed(model),
             properties=CustomFormModelProperties._from_generated(model.model_info),
-            display_name=model.model_info.model_name
+            model_name=model.model_info.model_name
         )
 
     def __repr__(self):
         return "CustomFormModel(model_id={}, status={}, training_started_on={}, training_completed_on={}, " \
-               "submodels={}, errors={}, training_documents={}, display_name={}, properties={})" \
+               "submodels={}, errors={}, training_documents={}, model_name={}, properties={})" \
                 .format(
                     self.model_id,
                     self.status,
@@ -659,7 +659,7 @@ class CustomFormModel(object):
                     repr(self.submodels),
                     repr(self.errors),
                     repr(self.training_documents),
-                    self.display_name,
+                    self.model_name,
                     repr(self.properties)
                 )[:1024]
 
@@ -697,11 +697,11 @@ class CustomFormSubmodel(object):
         ]
 
     @classmethod
-    def _from_generated_labeled(cls, model, api_version, display_name):
+    def _from_generated_labeled(cls, model, api_version, model_name):
         if api_version == "2.0":
             form_type = "form-" + model.model_info.model_id
-        elif display_name:
-            form_type = "custom:" + display_name
+        elif model_name:
+            form_type = "custom:" + model_name
         else:
             form_type = "custom:" + model.model_info.model_id
 
@@ -872,12 +872,12 @@ class CustomFormModelInfo(object):
         Date and time (UTC) when model training was started.
     :ivar ~datetime.datetime training_completed_on:
         Date and time (UTC) when model training completed.
-    :ivar display_name: Optional user defined model name.
-    :vartype display_name: str
+    :ivar model_name: Optional user defined model name.
+    :vartype model_name: str
     :ivar properties: Optional model properties.
     :vartype properties: ~azure.ai.formrecognizer.CustomFormModelProperties
     .. versionadded:: v2.1-preview
-        The *display_name* and *properties* properties
+        The *model_name* and *properties* properties
     """
 
     def __init__(self, **kwargs):
@@ -885,7 +885,7 @@ class CustomFormModelInfo(object):
         self.status = kwargs.get("status", None)
         self.training_started_on = kwargs.get("training_started_on", None)
         self.training_completed_on = kwargs.get("training_completed_on", None)
-        self.display_name = kwargs.get("display_name", None)
+        self.model_name = kwargs.get("model_name", None)
         self.properties = kwargs.get("properties", None)
 
     @classmethod
@@ -893,32 +893,32 @@ class CustomFormModelInfo(object):
         if model.status == "succeeded":  # map copy status to model status
             model.status = "ready"
 
-        display_name = None
+        model_name = None
         if hasattr(model, "attributes"):
             properties = CustomFormModelProperties._from_generated(model)
         else:
             properties = CustomFormModelProperties(is_composed_model=False)
         if hasattr(model, "model_name"):
-            display_name = model.model_name
+            model_name = model.model_name
         return cls(
             model_id=model_id if model_id else model.model_id,
             status=model.status,
             training_started_on=model.created_date_time,
             training_completed_on=model.last_updated_date_time,
             properties=properties,
-            display_name=display_name
+            model_name=model_name
         )
 
     def __repr__(self):
         return "CustomFormModelInfo(model_id={}, status={}, training_started_on={}, training_completed_on={}, " \
-               "properties={}, display_name={})" \
+               "properties={}, model_name={})" \
                 .format(
                     self.model_id,
                     self.status,
                     self.training_started_on,
                     self.training_completed_on,
                     repr(self.properties),
-                    self.display_name
+                    self.model_name
                 )[:1024]
 
 

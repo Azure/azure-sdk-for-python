@@ -54,14 +54,14 @@ class TrainModelWithLabelsSampleAsync(object):
 
         async with form_training_client:
             poller = await form_training_client.begin_training(
-                container_sas_url, use_training_labels=True, display_name="mymodel"
+                container_sas_url, use_training_labels=True, model_name="mymodel"
             )
             model = await poller.result()
 
             # Custom model information
             print("Model ID: {}".format(model.model_id))
             print("Status: {}".format(model.status))
-            print("Model display name: {}".format(model.display_name))
+            print("Model name: {}".format(model.model_name))
             print("Is this a composed model?: {}".format(model.properties.is_composed_model))
             print("Training started on: {}".format(model.training_started_on))
             print("Training completed on: {}".format(model.training_completed_on))
