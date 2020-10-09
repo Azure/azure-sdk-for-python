@@ -27,8 +27,7 @@ from ._utils import extract_data_template, get_next_template, deserialize_rule_k
 from ._xml_workaround_policy import ServiceBusXMLWorkaroundPolicy
 
 from .._common.constants import JWT_TOKEN_SCOPE
-from .._common.utils import parse_conn_str
-from .._base_handler import ServiceBusSharedKeyCredential, ServiceBusSASTokenCredential
+from .._base_handler import _parse_conn_str, ServiceBusSharedKeyCredential, ServiceBusSASTokenCredential
 from ._shared_key_policy import ServiceBusSharedKeyCredentialPolicy
 from ._generated._configuration import ServiceBusManagementClientConfiguration
 from ._generated._service_bus_management_client import ServiceBusManagementClient as ServiceBusManagementClientImpl
@@ -133,7 +132,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         :param str conn_str: The connection string of the Service Bus Namespace.
         :rtype: ~azure.servicebus.management.ServiceBusAdministrationClient
         """
-        endpoint, shared_access_key_name, shared_access_key, _, token, token_expiry = parse_conn_str(conn_str)
+        endpoint, shared_access_key_name, shared_access_key, _, token, token_expiry = _parse_conn_str(conn_str)
         if token and token_expiry:
             credential = ServiceBusSASTokenCredential(token, token_expiry)
         elif shared_access_key_name and shared_access_key:
