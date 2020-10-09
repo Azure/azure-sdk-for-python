@@ -7,6 +7,7 @@ import logging
 import datetime
 from typing import Any, Optional
 
+from ._base_handler_async import _do_retryable_operation
 from .._common import message as sync_message
 from .._common.constants import (
     MGMT_RESPONSE_MESSAGE_EXPIRATION,
@@ -27,11 +28,27 @@ class ReceivedMessage(sync_message.ReceivedMessageBase):
     """A Service Bus Message received from service side.
 
     """
+
+    async def _settle_message_with_retry(
+        self,
+        settle_operation,
+        dead_letter_reason=None,
+        dead_letter_error_description=None
+    ):
+        await _do_retryable_operation(
+            self._receiver,  # type: ignore
+            self._settle_message,
+            timeout=None,
+            settle_operation=settle_operation,
+            dead_letter_reason=dead_letter_reason,
+            dead_letter_error_description=dead_letter_error_description
+        )
+
     async def _settle_message(  # type: ignore
-            self,
-            settle_operation,
-            dead_letter_reason=None,
-            dead_letter_error_description=None,
+        self,
+        settle_operation,
+        dead_letter_reason=None,
+        dead_letter_error_description=None,
     ):
         try:
             if not self._is_deferred_message:
@@ -55,8 +72,13 @@ class ReceivedMessage(sync_message.ReceivedMessageBase):
             await self._settle_via_mgmt_link(settle_operation,
                                              dead_letter_reason=dead_letter_reason,
                                              dead_letter_error_description=dead_letter_error_description)()
-        except Exception as e:
-            raise MessageSettleFailed(settle_operation, e)
+        except Exception as exception:
+            _LOGGER.info(
+                "Message settling: %r has encountered an exception (%r) through management link",
+                settle_operation,
+                exception
+            )
+            raise
 
     async def complete(self) -> None:  # type: ignore
         """Complete the message.

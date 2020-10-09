@@ -761,7 +761,7 @@ class ReceivedMessageBase(PeekedMessage):
         self._settled = (receive_mode == ReceiveMode.ReceiveAndDelete)
         self._received_timestamp_utc = utc_now()
         self._is_deferred_message = kwargs.get("is_deferred_message", False)
-        self.auto_renew_error = None # type: Optional[Exception]
+        self.auto_renew_error = None  # type: Optional[Exception]
         try:
             self._receiver = kwargs.pop("receiver")  # type: Union[ServiceBusReceiver, ServiceBusSessionReceiver]
         except KeyError:

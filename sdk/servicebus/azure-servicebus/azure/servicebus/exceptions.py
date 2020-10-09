@@ -56,7 +56,7 @@ _AMQP_CONNECTION_ERRORS = (
 _AMQP_MESSAGE_ERRORS = (
     errors.MessageAlreadySettled,
     errors.MessageContentTooLarge,
-    errors.MessageException,
+    errors.MessageException
 )
 
 
@@ -159,10 +159,10 @@ def _create_servicebus_exception(logger, exception, handler, **kwargs):  # pylin
     # transform amqp exceptions into servicebus exceptions
     error_need_close_handler = True
     error_need_raise = False
-    if type(exception) in _AMQP_CONNECTION_ERRORS:
+    if isinstance(exception, _AMQP_CONNECTION_ERRORS):
         error, error_need_close_handler, error_need_raise = \
             _handle_amqp_connection_error(logger, exception, handler, **kwargs)
-    elif type(exception) in _AMQP_MESSAGE_ERRORS:
+    elif isinstance(exception, _AMQP_MESSAGE_ERRORS):
         error, error_need_close_handler, error_need_raise = \
             _handle_amqp_message_error(logger, exception, handler, **kwargs)
     elif isinstance(exception, errors.AuthenticationException):

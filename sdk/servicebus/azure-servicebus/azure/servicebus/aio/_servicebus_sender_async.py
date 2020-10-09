@@ -11,7 +11,7 @@ from uamqp import SendClientAsync, types
 
 from .._common.message import Message, BatchMessage
 from .._servicebus_sender import SenderMixin
-from ._base_handler_async import BaseHandler
+from ._base_handler_async import BaseHandler, _do_retryable_operation
 from .._common.constants import (
     REQUEST_RESPONSE_SCHEDULE_MESSAGE_OPERATION,
     REQUEST_RESPONSE_CANCEL_SCHEDULED_MESSAGE_OPERATION,
@@ -299,7 +299,8 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         if not isinstance(message, BatchMessage) and not isinstance(message, Message):
             raise TypeError("Can only send azure.servicebus.<BatchMessage,Message> or lists of Messages.")
 
-        await self._do_retryable_operation(
+        await _do_retryable_operation(
+            self,
             self._send,
             message=message,
             timeout=timeout,

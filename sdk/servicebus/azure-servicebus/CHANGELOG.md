@@ -10,6 +10,12 @@
   - `ServiceBusSession`: `get_state`, `set_state` and `renew_lock`
   - `ReceivedMessage`: `renew_lock`
 
+**Breaking Changes**
+
+* Message settlement methods (`complete`, `abandon`, `defer` and `dead_letter`)
+and methods that use amqp management link for request like `schedule_messages`, `received_deferred_messages`, etc.
+now raise more concrete exception instead of `MessageSettleFailed`/`ServiceBusError`.
+
 **BugFixes**
 
 * Updated uAMQP dependency to 1.2.11.

@@ -131,7 +131,7 @@ def _do_retryable_operation(handler, operation, timeout=None, **kwargs):
         except StopIteration:
             raise
         except Exception as exception:  # pylint: disable=broad-except
-            last_exception = handler._handle_exception(exception)
+            last_exception = handler._handle_exception(exception, **kwargs)
             if require_last_exception:
                 kwargs["last_exception"] = last_exception
             retried_times += 1
@@ -357,6 +357,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         # type: (bytes, Dict[str, Any], Callable, Optional[float], Any) -> Any
         return _do_retryable_operation(
             self,
+            self._mgmt_request_response,
             mgmt_operation=mgmt_operation,
             message=message,
             callback=callback,
