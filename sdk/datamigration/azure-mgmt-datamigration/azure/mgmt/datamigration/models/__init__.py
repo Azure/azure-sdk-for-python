@@ -121,6 +121,7 @@ try:
     from ._models_py3 import MigrateOracleAzureDbPostgreSqlSyncTaskOutputMigrationLevel
     from ._models_py3 import MigrateOracleAzureDbPostgreSqlSyncTaskOutputTableLevel
     from ._models_py3 import MigratePostgreSqlAzureDbForPostgreSqlSyncDatabaseInput
+    from ._models_py3 import MigratePostgreSqlAzureDbForPostgreSqlSyncDatabaseTableInput
     from ._models_py3 import MigratePostgreSqlAzureDbForPostgreSqlSyncTaskInput
     from ._models_py3 import MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutput
     from ._models_py3 import MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputDatabaseError
@@ -380,6 +381,7 @@ except (SyntaxError, ImportError):
     from ._models import MigrateOracleAzureDbPostgreSqlSyncTaskOutputMigrationLevel
     from ._models import MigrateOracleAzureDbPostgreSqlSyncTaskOutputTableLevel
     from ._models import MigratePostgreSqlAzureDbForPostgreSqlSyncDatabaseInput
+    from ._models import MigratePostgreSqlAzureDbForPostgreSqlSyncDatabaseTableInput
     from ._models import MigratePostgreSqlAzureDbForPostgreSqlSyncTaskInput
     from ._models import MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutput
     from ._models import MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputDatabaseError
@@ -552,6 +554,9 @@ from ._data_migration_service_client_enums import (
     BackupMode,
     SyncTableMigrationState,
     SyncDatabaseMigrationReportingState,
+    ReplicateMigrationState,
+    ScenarioTarget,
+    ScenarioSource,
     ValidationStatus,
     Severity,
     UpdateActionType,
@@ -695,6 +700,7 @@ __all__ = [
     'MigrateOracleAzureDbPostgreSqlSyncTaskOutputMigrationLevel',
     'MigrateOracleAzureDbPostgreSqlSyncTaskOutputTableLevel',
     'MigratePostgreSqlAzureDbForPostgreSqlSyncDatabaseInput',
+    'MigratePostgreSqlAzureDbForPostgreSqlSyncDatabaseTableInput',
     'MigratePostgreSqlAzureDbForPostgreSqlSyncTaskInput',
     'MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutput',
     'MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputDatabaseError',
@@ -866,6 +872,9 @@ __all__ = [
     'BackupMode',
     'SyncTableMigrationState',
     'SyncDatabaseMigrationReportingState',
+    'ReplicateMigrationState',
+    'ScenarioTarget',
+    'ScenarioSource',
     'ValidationStatus',
     'Severity',
     'UpdateActionType',

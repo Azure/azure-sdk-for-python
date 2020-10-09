@@ -155,6 +155,49 @@ class SyncDatabaseMigrationReportingState(str, Enum):
     cancelling = "CANCELLING"
     cancelled = "CANCELLED"
     failed = "FAILED"
+    validating = "VALIDATING"
+    validation_complete = "VALIDATION_COMPLETE"
+    validation_failed = "VALIDATION_FAILED"
+    restore_in_progress = "RESTORE_IN_PROGRESS"
+    restore_completed = "RESTORE_COMPLETED"
+    backup_in_progress = "BACKUP_IN_PROGRESS"
+    backup_completed = "BACKUP_COMPLETED"
+
+
+class ReplicateMigrationState(str, Enum):
+
+    undefined = "UNDEFINED"
+    validating = "VALIDATING"
+    pending = "PENDING"
+    complete = "COMPLETE"
+    action_required = "ACTION_REQUIRED"
+    failed = "FAILED"
+
+
+class ScenarioTarget(str, Enum):
+
+    sql_server = "SQLServer"
+    sqldb = "SQLDB"
+    sqldw = "SQLDW"
+    sqlmi = "SQLMI"
+    azure_db_for_my_sql = "AzureDBForMySql"
+    azure_db_for_postgres_sql = "AzureDBForPostgresSQL"
+    mongo_db = "MongoDB"
+
+
+class ScenarioSource(str, Enum):
+
+    access = "Access"
+    db2 = "DB2"
+    my_sql = "MySQL"
+    oracle = "Oracle"
+    sql = "SQL"
+    sybase = "Sybase"
+    postgre_sql = "PostgreSQL"
+    mongo_db = "MongoDB"
+    sqlrds = "SQLRDS"
+    my_sqlrds = "MySQLRDS"
+    postgre_sqlrds = "PostgreSQLRDS"
 
 
 class ValidationStatus(str, Enum):
