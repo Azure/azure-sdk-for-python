@@ -445,7 +445,7 @@ class TextAnalyticsClientOperationsMixin(object):
             'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
         url = self._client.format_url(url, **path_format_arguments)
-
+        print(url)
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
         if model_version is not None:
