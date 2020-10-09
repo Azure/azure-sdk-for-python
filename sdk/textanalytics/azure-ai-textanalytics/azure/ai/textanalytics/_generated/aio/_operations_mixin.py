@@ -28,7 +28,7 @@ class TextAnalyticsClientOperationsMixin(object):
         top: Optional[int] = 20,
         skip: Optional[int] = 0,
         **kwargs
-    ) -> Union["models.AnalyzeJobState", "models.ErrorResponse"]:
+    ) -> "models.AnalyzeJobState":
         """Get analysis status and results.
 
         Get the status of an analysis job.  A job may consist of one or more tasks.  Once all tasks are
@@ -47,8 +47,8 @@ class TextAnalyticsClientOperationsMixin(object):
          and $skip are specified, $skip is applied first.
         :type skip: int
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: AnalyzeJobState or ErrorResponse, or the result of cls(response)
-        :rtype: ~azure.ai.textanalytics.v3_2_preview_1.models.AnalyzeJobState or ~azure.ai.textanalytics.v3_2_preview_1.models.ErrorResponse
+        :return: AnalyzeJobState, or the result of cls(response)
+        :rtype: ~azure.ai.textanalytics.v3_2_preview_1.models.AnalyzeJobState
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('analyze_status')
@@ -67,7 +67,7 @@ class TextAnalyticsClientOperationsMixin(object):
         self,
         body: Optional["models.AnalyzeBatchInput"] = None,
         **kwargs
-    ) -> AsyncLROPoller["models.ErrorResponse"]:
+    ) -> AsyncLROPoller[None]:
         """Submit analysis job.
 
         Submit a collection of text documents for analysis. Specify one or more unique tasks to be
@@ -101,7 +101,7 @@ class TextAnalyticsClientOperationsMixin(object):
         self,
         job_id: str,
         **kwargs
-    ) -> AsyncLROPoller["models.ErrorResponse"]:
+    ) -> AsyncLROPoller[None]:
         """Cancel healthcare prediction job.
 
         Cancel healthcare prediction job.
@@ -136,7 +136,7 @@ class TextAnalyticsClientOperationsMixin(object):
         model_version: Optional[str] = None,
         string_index_type: Optional[Union[str, "models.StringIndexType"]] = None,
         **kwargs
-    ) -> AsyncLROPoller["models.ErrorResponse"]:
+    ) -> AsyncLROPoller[None]:
         """Submit healthcare analysis job.
 
         Start a healthcare analysis job to recognize healthcare related entities (drugs, conditions,
@@ -264,9 +264,9 @@ class TextAnalyticsClientOperationsMixin(object):
         model_version: Optional[str] = None,
         show_stats: Optional[bool] = None,
         domain: Optional[str] = None,
-        string_index_type: Optional[Union[str, "models.StringIndexType"]] = None,
+        string_index_type: Optional[Union[str, "models.StringIndexType"]] = "TextElements_v8",
         **kwargs
-    ) -> Union["models.PiiResult", "models.ErrorResponse"]:
+    ) -> "models.PiiEntitiesResult":
         """Entities containing personal information.
 
         The API returns a list of entities with personal information (\"SSN\", \"Bank Account\" etc) in
@@ -276,23 +276,22 @@ class TextAnalyticsClientOperationsMixin(object):
         list of enabled languages.
 
         :param documents: The set of documents to process as part of this batch.
-        :type documents: list[~azure.ai.textanalytics.v3_2_preview_1.models.MultiLanguageInput]
+        :type documents: list[~azure.ai.textanalytics.v3_1_preview_2.models.MultiLanguageInput]
         :param model_version: (Optional) This value indicates which model will be used for scoring. If
          a model-version is not specified, the API should default to the latest, non-preview version.
         :type model_version: str
         :param show_stats: (Optional) if set to true, response will contain request and document level
          statistics.
         :type show_stats: bool
-        :param domain: (Optional) if specified, will set the PII domain to include only a subset of the
-         entity categories. Possible values include: 'PHI', 'none'.
+        :param domain: (Optional) if set to 'PHI', response will contain only PHI entities.
         :type domain: str
         :param string_index_type: (Optional) Specifies the method used to interpret string offsets.
          Defaults to Text Elements (Graphemes) according to Unicode v8.0.0. For additional information
          see https://aka.ms/text-analytics-offsets.
-        :type string_index_type: str or ~azure.ai.textanalytics.v3_2_preview_1.models.StringIndexType
+        :type string_index_type: str or ~azure.ai.textanalytics.v3_1_preview_2.models.StringIndexType
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: PiiResult or ErrorResponse, or the result of cls(response)
-        :rtype: ~azure.ai.textanalytics.v3_2_preview_1.models.PiiResult or ~azure.ai.textanalytics.v3_2_preview_1.models.ErrorResponse
+        :return: PiiEntitiesResult, or the result of cls(response)
+        :rtype: ~azure.ai.textanalytics.v3_1_preview_2.models.PiiEntitiesResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('entities_recognition_pii')
@@ -316,7 +315,7 @@ class TextAnalyticsClientOperationsMixin(object):
         skip: Optional[int] = 0,
         show_stats: Optional[bool] = None,
         **kwargs
-    ) -> Union["models.HealthcareJobState", "models.ErrorResponse"]:
+    ) -> "models.HealthcareJobState":
         """Get healthcare analysis job status and results.
 
         Get details of the healthcare prediction job specified by the jobId.
@@ -333,8 +332,8 @@ class TextAnalyticsClientOperationsMixin(object):
          statistics.
         :type show_stats: bool
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: HealthcareJobState or ErrorResponse, or the result of cls(response)
-        :rtype: ~azure.ai.textanalytics.v3_2_preview_1.models.HealthcareJobState or ~azure.ai.textanalytics.v3_2_preview_1.models.ErrorResponse
+        :return: HealthcareJobState, or the result of cls(response)
+        :rtype: ~azure.ai.textanalytics.v3_2_preview_1.models.HealthcareJobState
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('health_status')

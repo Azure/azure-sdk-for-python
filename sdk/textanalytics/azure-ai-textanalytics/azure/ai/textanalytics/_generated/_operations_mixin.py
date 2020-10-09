@@ -51,8 +51,8 @@ class TextAnalyticsClientOperationsMixin(object):
          and $skip are specified, $skip is applied first.
         :type skip: int
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: AnalyzeJobState or ErrorResponse, or the result of cls(response)
-        :rtype: ~azure.ai.textanalytics.v3_2_preview_1.models.AnalyzeJobState or ~azure.ai.textanalytics.v3_2_preview_1.models.ErrorResponse
+        :return: AnalyzeJobState, or the result of cls(response)
+        :rtype: ~azure.ai.textanalytics.v3_2_preview_1.models.AnalyzeJobState
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('analyze_status')
@@ -268,7 +268,7 @@ class TextAnalyticsClientOperationsMixin(object):
         model_version=None,  # type: Optional[str]
         show_stats=None,  # type: Optional[bool]
         domain=None,  # type: Optional[str]
-        string_index_type=None,  # type: Optional[Union[str, "models.StringIndexType"]]
+        string_index_type="TextElements_v8",  # type: Optional[Union[str, "models.StringIndexType"]]
         **kwargs  # type: Any
     ):
         """Entities containing personal information.
@@ -280,23 +280,22 @@ class TextAnalyticsClientOperationsMixin(object):
         list of enabled languages.
 
         :param documents: The set of documents to process as part of this batch.
-        :type documents: list[~azure.ai.textanalytics.v3_2_preview_1.models.MultiLanguageInput]
+        :type documents: list[~azure.ai.textanalytics.v3_1_preview_2.models.MultiLanguageInput]
         :param model_version: (Optional) This value indicates which model will be used for scoring. If
          a model-version is not specified, the API should default to the latest, non-preview version.
         :type model_version: str
         :param show_stats: (Optional) if set to true, response will contain request and document level
          statistics.
         :type show_stats: bool
-        :param domain: (Optional) if specified, will set the PII domain to include only a subset of the
-         entity categories. Possible values include: 'PHI', 'none'.
+        :param domain: (Optional) if set to 'PHI', response will contain only PHI entities.
         :type domain: str
         :param string_index_type: (Optional) Specifies the method used to interpret string offsets.
          Defaults to Text Elements (Graphemes) according to Unicode v8.0.0. For additional information
          see https://aka.ms/text-analytics-offsets.
-        :type string_index_type: str or ~azure.ai.textanalytics.v3_2_preview_1.models.StringIndexType
+        :type string_index_type: str or ~azure.ai.textanalytics.v3_1_preview_2.models.StringIndexType
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: PiiResult or ErrorResponse, or the result of cls(response)
-        :rtype: ~azure.ai.textanalytics.v3_2_preview_1.models.PiiResult or ~azure.ai.textanalytics.v3_2_preview_1.models.ErrorResponse
+        :return: PiiEntitiesResult, or the result of cls(response)
+        :rtype: ~azure.ai.textanalytics.v3_1_preview_2.models.PiiEntitiesResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('entities_recognition_pii')
@@ -337,8 +336,8 @@ class TextAnalyticsClientOperationsMixin(object):
          statistics.
         :type show_stats: bool
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: HealthcareJobState or ErrorResponse, or the result of cls(response)
-        :rtype: ~azure.ai.textanalytics.v3_2_preview_1.models.HealthcareJobState or ~azure.ai.textanalytics.v3_2_preview_1.models.ErrorResponse
+        :return: HealthcareJobState, or the result of cls(response)
+        :rtype: ~azure.ai.textanalytics.v3_2_preview_1.models.HealthcareJobState
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('health_status')
