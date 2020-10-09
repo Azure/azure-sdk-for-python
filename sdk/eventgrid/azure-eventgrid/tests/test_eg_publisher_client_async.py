@@ -80,7 +80,7 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
     @CachedEventGridTopicPreparer(name_prefix='eventgridtest')
     @pytest.mark.asyncio
-    async def test_send_event_grid_event_data_str(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
+    async def test_send_event_grid_event_data_bytes(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
         akc_credential = AzureKeyCredential(eventgrid_topic_primary_key)
         client = EventGridPublisherClient(eventgrid_topic_endpoint, akc_credential)
         eg_event = EventGridEvent(

@@ -4,6 +4,7 @@
 # --------------------------------------------------------------------------------------------
 import hashlib
 import hmac
+import six
 import base64
 try:
     from urllib.parse import quote
@@ -88,3 +89,15 @@ def _is_cloud_event(event):
         return all([_ in event for _ in required]) and event['specversion'] == "1.0"
     except TypeError:
         return False
+
+def _eventgrid_event_options(event):
+    try:
+        exists = 'data' in event
+        data = event['data']
+    except TypeError:
+        exists = hasattr(event, 'data')
+        data = event.data
+
+    if exists and isinstance(data, six.binary_type):
+        raise TypeError("Data in EventGridEvent cannot be bytes. Please refer to"\
+            "https://docs.microsoft.com/en-us/azure/event-grid/event-schema")

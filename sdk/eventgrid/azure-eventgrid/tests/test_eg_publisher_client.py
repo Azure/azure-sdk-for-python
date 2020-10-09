@@ -25,7 +25,6 @@ from eventgrid_preparer import (
 class EventGridPublisherClientTests(AzureMgmtTestCase):
     FILTER_HEADERS = ReplayableTest.FILTER_HEADERS + ['aeg-sas-key']
 
-    @pytest.mark.liveTest
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
     @CachedEventGridTopicPreparer(name_prefix='eventgridtest')
     def test_send_event_grid_event_data_dict(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
@@ -39,7 +38,6 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
                 )
         client.send(eg_event)
 
-    @pytest.mark.liveTest
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
     @CachedEventGridTopicPreparer(name_prefix='eventgridtest')
     def test_send_event_grid_event_data_as_list(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
@@ -59,7 +57,6 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
                 )
         client.send([eg_event1, eg_event2])
 
-    @pytest.mark.liveTest
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
     @CachedEventGridTopicPreparer(name_prefix='eventgridtest')
     def test_send_event_grid_event_data_str(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
@@ -73,7 +70,6 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
                 )
         client.send(eg_event)
 
-    @pytest.mark.liveTest
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
     @CachedEventGridTopicPreparer(name_prefix='eventgridtest')
     def test_send_event_grid_event_data_bytes(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
@@ -88,7 +84,6 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
         with pytest.raises(TypeError): 
             client.send(eg_event)
 
-    @pytest.mark.liveTest
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
     @CachedEventGridTopicPreparer(name_prefix='cloudeventgridtest')
     def test_send_cloud_event_data_dict(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
@@ -101,7 +96,6 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
                 )
         client.send(cloud_event)
 
-    @pytest.mark.liveTest
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
     @CachedEventGridTopicPreparer(name_prefix='cloudeventgridtest')
     def test_send_cloud_event_data_str(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
@@ -114,7 +108,6 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
                 )
         client.send(cloud_event)
 
-    @pytest.mark.liveTest
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
     @CachedEventGridTopicPreparer(name_prefix='cloudeventgridtest')
     def test_send_cloud_event_data_bytes(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
@@ -127,7 +120,6 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
                 )
         client.send(cloud_event)
 
-    @pytest.mark.liveTest
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
     @CachedEventGridTopicPreparer(name_prefix='cloudeventgridtest')
     def test_send_cloud_event_data_as_list(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
@@ -140,7 +132,6 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
                 )
         client.send([cloud_event])
 
-    @pytest.mark.liveTest
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
     @CachedEventGridTopicPreparer(name_prefix='cloudeventgridtest')
     def test_send_cloud_event_data_with_extensions(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
@@ -161,7 +152,6 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
         assert 'extension' in internal
         assert internal['reason_code'] == 204
 
-    @pytest.mark.liveTest
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
     @CachedEventGridTopicPreparer(name_prefix='cloudeventgridtest')
     def test_send_cloud_event_dict(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
@@ -176,7 +166,6 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
         }
         client.send(cloud_event1)
 
-    @pytest.mark.liveTest
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
     @CachedEventGridTopicPreparer(name_prefix='eventgridtest')
     def test_send_signature_credential(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
@@ -192,7 +181,6 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
                 )
         client.send(eg_event)
 
-    @pytest.mark.liveTest
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
     @CachedEventGridTopicPreparer(name_prefix='customeventgridtest')
     def test_send_custom_schema_event(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
@@ -210,7 +198,6 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
                 )
         client.send(custom_event)
 
-    @pytest.mark.liveTest
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
     @CachedEventGridTopicPreparer(name_prefix='customeventgridtest')
     def test_send_custom_schema_event_as_list(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):

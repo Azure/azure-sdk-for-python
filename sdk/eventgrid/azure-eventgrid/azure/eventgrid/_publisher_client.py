@@ -23,7 +23,7 @@ from azure.core.pipeline.policies import (
 )
 
 from ._models import CloudEvent, EventGridEvent, CustomEvent
-from ._helpers import _get_topic_hostname_only_fqdn, _get_authentication_policy, _is_cloud_event
+from ._helpers import _get_topic_hostname_only_fqdn, _get_authentication_policy, _is_cloud_event, _eventgrid_event_options
 from ._generated._event_grid_publisher_client import EventGridPublisherClient as EventGridPublisherClientImpl
 from ._policies import CloudEventDistributedTracingPolicy
 from ._version import VERSION
@@ -109,6 +109,8 @@ class EventGridPublisherClient(object):
             self._client.publish_cloud_event_events(self._topic_hostname, events, **kwargs)
         elif all(isinstance(e, EventGridEvent) for e in events) or all(isinstance(e, dict) for e in events):
             kwargs.setdefault("content_type", "application/json; charset=utf-8")
+            for event in events:
+                _eventgrid_event_options(event)
             self._client.publish_events(self._topic_hostname, events, **kwargs)
         elif all(isinstance(e, CustomEvent) for e in events):
             serialized_events = [dict(e) for e in events]
