@@ -15,17 +15,17 @@ interactions:
       - application/json; charset=utf-8
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-sql/1.0.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-sql/0.22.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_sql_test_server87460a68/providers/Microsoft.Sql/servers/tstpysqlserverx87460a68?api-version=2019-06-01-preview
   response:
     body:
-      string: '{"operation":"UpsertLogicalServer","startTime":"2020-10-09T08:03:15.08Z"}'
+      string: '{"operation":"UpsertLogicalServer","startTime":"2020-10-10T03:34:26.78Z"}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_sql_test_server87460a68/providers/Microsoft.Sql/locations/westus2/serverAzureAsyncOperation/0d2ac48e-c1cc-4656-b865-d3b29c9fbc1b?api-version=2019-06-01-preview
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_sql_test_server87460a68/providers/Microsoft.Sql/locations/westus2/serverAzureAsyncOperation/bdd08c0f-dd39-42ca-a274-d9afe764f757?api-version=2019-06-01-preview
       cache-control:
       - no-cache
       content-length:
@@ -33,11 +33,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 09 Oct 2020 08:03:14 GMT
+      - Sat, 10 Oct 2020 03:34:26 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_sql_test_server87460a68/providers/Microsoft.Sql/locations/westus2/serverOperationResults/0d2ac48e-c1cc-4656-b865-d3b29c9fbc1b?api-version=2019-06-01-preview
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_sql_test_server87460a68/providers/Microsoft.Sql/locations/westus2/serverOperationResults/bdd08c0f-dd39-42ca-a274-d9afe764f757?api-version=2019-06-01-preview
       pragma:
       - no-cache
       server:
@@ -62,12 +62,12 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-sql/1.0.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-sql/0.22.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_sql_test_server87460a68/providers/Microsoft.Sql/locations/westus2/serverAzureAsyncOperation/0d2ac48e-c1cc-4656-b865-d3b29c9fbc1b?api-version=2019-06-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_sql_test_server87460a68/providers/Microsoft.Sql/locations/westus2/serverAzureAsyncOperation/bdd08c0f-dd39-42ca-a274-d9afe764f757?api-version=2019-06-01-preview
   response:
     body:
-      string: '{"name":"0d2ac48e-c1cc-4656-b865-d3b29c9fbc1b","status":"InProgress","startTime":"2020-10-09T08:03:15.08Z"}'
+      string: '{"name":"bdd08c0f-dd39-42ca-a274-d9afe764f757","status":"InProgress","startTime":"2020-10-10T03:34:26.78Z"}'
     headers:
       cache-control:
       - no-cache
@@ -76,7 +76,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 09 Oct 2020 08:03:16 GMT
+      - Sat, 10 Oct 2020 03:34:28 GMT
       expires:
       - '-1'
       pragma:
@@ -105,12 +105,12 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-sql/1.0.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-sql/0.22.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_sql_test_server87460a68/providers/Microsoft.Sql/locations/westus2/serverAzureAsyncOperation/0d2ac48e-c1cc-4656-b865-d3b29c9fbc1b?api-version=2019-06-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_sql_test_server87460a68/providers/Microsoft.Sql/locations/westus2/serverAzureAsyncOperation/bdd08c0f-dd39-42ca-a274-d9afe764f757?api-version=2019-06-01-preview
   response:
     body:
-      string: '{"name":"0d2ac48e-c1cc-4656-b865-d3b29c9fbc1b","status":"InProgress","startTime":"2020-10-09T08:03:15.08Z"}'
+      string: '{"name":"bdd08c0f-dd39-42ca-a274-d9afe764f757","status":"InProgress","startTime":"2020-10-10T03:34:26.78Z"}'
     headers:
       cache-control:
       - no-cache
@@ -119,7 +119,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 09 Oct 2020 08:03:17 GMT
+      - Sat, 10 Oct 2020 03:34:29 GMT
       expires:
       - '-1'
       pragma:
@@ -148,12 +148,12 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-sql/1.0.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-sql/0.22.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_sql_test_server87460a68/providers/Microsoft.Sql/locations/westus2/serverAzureAsyncOperation/0d2ac48e-c1cc-4656-b865-d3b29c9fbc1b?api-version=2019-06-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_sql_test_server87460a68/providers/Microsoft.Sql/locations/westus2/serverAzureAsyncOperation/bdd08c0f-dd39-42ca-a274-d9afe764f757?api-version=2019-06-01-preview
   response:
     body:
-      string: '{"name":"0d2ac48e-c1cc-4656-b865-d3b29c9fbc1b","status":"InProgress","startTime":"2020-10-09T08:03:15.08Z"}'
+      string: '{"name":"bdd08c0f-dd39-42ca-a274-d9afe764f757","status":"InProgress","startTime":"2020-10-10T03:34:26.78Z"}'
     headers:
       cache-control:
       - no-cache
@@ -162,7 +162,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 09 Oct 2020 08:03:19 GMT
+      - Sat, 10 Oct 2020 03:34:30 GMT
       expires:
       - '-1'
       pragma:
@@ -191,12 +191,12 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-sql/1.0.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-sql/0.22.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_sql_test_server87460a68/providers/Microsoft.Sql/locations/westus2/serverAzureAsyncOperation/0d2ac48e-c1cc-4656-b865-d3b29c9fbc1b?api-version=2019-06-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_sql_test_server87460a68/providers/Microsoft.Sql/locations/westus2/serverAzureAsyncOperation/bdd08c0f-dd39-42ca-a274-d9afe764f757?api-version=2019-06-01-preview
   response:
     body:
-      string: '{"name":"0d2ac48e-c1cc-4656-b865-d3b29c9fbc1b","status":"InProgress","startTime":"2020-10-09T08:03:15.08Z"}'
+      string: '{"name":"bdd08c0f-dd39-42ca-a274-d9afe764f757","status":"InProgress","startTime":"2020-10-10T03:34:26.78Z"}'
     headers:
       cache-control:
       - no-cache
@@ -205,7 +205,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 09 Oct 2020 08:03:20 GMT
+      - Sat, 10 Oct 2020 03:34:32 GMT
       expires:
       - '-1'
       pragma:
@@ -234,12 +234,12 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-sql/1.0.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-sql/0.22.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_sql_test_server87460a68/providers/Microsoft.Sql/locations/westus2/serverAzureAsyncOperation/0d2ac48e-c1cc-4656-b865-d3b29c9fbc1b?api-version=2019-06-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_sql_test_server87460a68/providers/Microsoft.Sql/locations/westus2/serverAzureAsyncOperation/bdd08c0f-dd39-42ca-a274-d9afe764f757?api-version=2019-06-01-preview
   response:
     body:
-      string: '{"name":"0d2ac48e-c1cc-4656-b865-d3b29c9fbc1b","status":"InProgress","startTime":"2020-10-09T08:03:15.08Z"}'
+      string: '{"name":"bdd08c0f-dd39-42ca-a274-d9afe764f757","status":"InProgress","startTime":"2020-10-10T03:34:26.78Z"}'
     headers:
       cache-control:
       - no-cache
@@ -248,7 +248,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 09 Oct 2020 08:03:40 GMT
+      - Sat, 10 Oct 2020 03:34:52 GMT
       expires:
       - '-1'
       pragma:
@@ -277,12 +277,12 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-sql/1.0.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-sql/0.22.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_sql_test_server87460a68/providers/Microsoft.Sql/locations/westus2/serverAzureAsyncOperation/0d2ac48e-c1cc-4656-b865-d3b29c9fbc1b?api-version=2019-06-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_sql_test_server87460a68/providers/Microsoft.Sql/locations/westus2/serverAzureAsyncOperation/bdd08c0f-dd39-42ca-a274-d9afe764f757?api-version=2019-06-01-preview
   response:
     body:
-      string: '{"name":"0d2ac48e-c1cc-4656-b865-d3b29c9fbc1b","status":"Succeeded","startTime":"2020-10-09T08:03:15.08Z"}'
+      string: '{"name":"bdd08c0f-dd39-42ca-a274-d9afe764f757","status":"Succeeded","startTime":"2020-10-10T03:34:26.78Z"}'
     headers:
       cache-control:
       - no-cache
@@ -291,7 +291,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 09 Oct 2020 08:04:01 GMT
+      - Sat, 10 Oct 2020 03:35:12 GMT
       expires:
       - '-1'
       pragma:
@@ -320,7 +320,7 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-sql/1.0.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-sql/0.22.0 Azure-SDK-For-Python
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_sql_test_server87460a68/providers/Microsoft.Sql/servers/tstpysqlserverx87460a68?api-version=2019-06-01-preview
   response:
@@ -334,7 +334,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 09 Oct 2020 08:04:01 GMT
+      - Sat, 10 Oct 2020 03:35:12 GMT
       expires:
       - '-1'
       pragma:
@@ -363,7 +363,7 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-sql/1.0.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-sql/0.22.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
@@ -379,7 +379,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 09 Oct 2020 08:04:02 GMT
+      - Sat, 10 Oct 2020 03:35:12 GMT
       expires:
       - '-1'
       pragma:
@@ -408,7 +408,7 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-sql/1.0.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-sql/0.22.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
@@ -424,7 +424,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 09 Oct 2020 08:04:02 GMT
+      - Sat, 10 Oct 2020 03:35:12 GMT
       expires:
       - '-1'
       pragma:
@@ -453,7 +453,7 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-sql/1.0.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-sql/0.22.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
@@ -469,7 +469,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 09 Oct 2020 08:04:02 GMT
+      - Sat, 10 Oct 2020 03:35:13 GMT
       expires:
       - '-1'
       pragma:
@@ -498,7 +498,7 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-sql/1.0.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-sql/0.22.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
@@ -518,7 +518,7 @@ interactions:
       dataserviceversion:
       - 3.0;
       date:
-      - Fri, 09 Oct 2020 08:04:03 GMT
+      - Sat, 10 Oct 2020 03:35:13 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -547,7 +547,7 @@ interactions:
       - application/json; charset=utf-8
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-sql/1.0.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-sql/0.22.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
@@ -566,7 +566,7 @@ interactions:
       dataserviceversion:
       - 3.0;
       date:
-      - Fri, 09 Oct 2020 08:04:04 GMT
+      - Sat, 10 Oct 2020 03:35:14 GMT
       preference-applied:
       - return-content
       server:
@@ -593,17 +593,17 @@ interactions:
       - '0'
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-sql/1.0.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-sql/0.22.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_sql_test_server87460a68/providers/Microsoft.Sql/servers/tstpysqlserverx87460a68?api-version=2019-06-01-preview
   response:
     body:
-      string: '{"operation":"DropLogicalServer","startTime":"2020-10-09T08:04:04.677Z"}'
+      string: '{"operation":"DropLogicalServer","startTime":"2020-10-10T03:35:16.467Z"}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_sql_test_server87460a68/providers/Microsoft.Sql/locations/westus2/serverAzureAsyncOperation/8f0548fb-8c5c-4702-8f40-a9b97dc1b142?api-version=2019-06-01-preview
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_sql_test_server87460a68/providers/Microsoft.Sql/locations/westus2/serverAzureAsyncOperation/64881d57-212f-4063-be0f-582962f73b1e?api-version=2019-06-01-preview
       cache-control:
       - no-cache
       content-length:
@@ -611,11 +611,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 09 Oct 2020 08:04:04 GMT
+      - Sat, 10 Oct 2020 03:35:15 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_sql_test_server87460a68/providers/Microsoft.Sql/locations/westus2/serverOperationResults/8f0548fb-8c5c-4702-8f40-a9b97dc1b142?api-version=2019-06-01-preview
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_sql_test_server87460a68/providers/Microsoft.Sql/locations/westus2/serverOperationResults/64881d57-212f-4063-be0f-582962f73b1e?api-version=2019-06-01-preview
       pragma:
       - no-cache
       server:
