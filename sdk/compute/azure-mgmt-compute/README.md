@@ -7,8 +7,12 @@ For a more complete view of Azure libraries, see the [azure sdk python release](
 
 # Usage
 
-For code examples, see [Compute Management](https://docs.microsoft.com/python/api/overview/azure/virtualmachines?view=azure-python-preview)
+To learn how to use this package, see [quickstart](http://aka.ms/azsdk/python/mgmt)
+
+For code samples, see [Compute Management]https://docs.microsoft.com/en-us/samples/azure-samples/azure-samples-python-management/compute/)
 on docs.microsoft.com.
+
+Additional code samples can be found [here](https://aka.ms/azsdk/python/mgmt/samples)
 
 
 # Provide Feedback
