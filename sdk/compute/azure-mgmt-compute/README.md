@@ -7,7 +7,7 @@ For a more complete view of Azure libraries, see the [azure sdk python release](
 
 # Usage
 
-To learn how to use this package, see [quickstart](http://aka.ms/azsdk/python/mgmt)
+To learn how to use this package, see the [quickstart guide](http://aka.ms/azsdk/python/mgmt)
 
 For code samples, see [Compute Management](https://docs.microsoft.com/en-us/samples/azure-samples/azure-samples-python-management/compute/)
 on docs.microsoft.com.
