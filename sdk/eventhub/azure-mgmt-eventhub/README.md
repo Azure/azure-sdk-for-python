@@ -12,6 +12,7 @@ To learn how to use this package, see the [quickstart guide](http://aka.ms/azsdk
 For code examples, see [EventHub Management](https://docs.microsoft.com/samples/azure-samples/azure-samples-python-management/eventhub/)
 on docs.microsoft.com.
 
+Additional code samples can be found [here](https://aka.ms/azsdk/python/mgmt/samples)
 
 # Provide Feedback
 
