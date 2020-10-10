@@ -1,14 +1,15 @@
 # Microsoft Azure SDK for Python
 
-This is the Microsoft Azure MyService Management Client Library.
+This is the Microsoft Azure Bare Metal Infrastructure Management Client Library.
 This package has been tested with Python 2.7, 3.5, 3.6, 3.7 and 3.8.
 For a more complete view of Azure libraries, see the [azure sdk python release](https://aka.ms/azsdk/python/all).
 
 
 # Usage
 
-For code examples, see [MyService Management](https://docs.microsoft.com/python/api/overview/azure/)
-on docs.microsoft.com.
+To learn how to use this package, see the [quickstart guide](http://aka.ms/azsdk/python/mgmt)
+
+Additional code samples can be found [here](https://aka.ms/azsdk/python/mgmt/samples)
 
 
 # Provide Feedback
