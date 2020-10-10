@@ -7,12 +7,9 @@ For a more complete view of Azure libraries, see the [azure sdk python release](
 
 # Usage
 
-To learn how to use this package, see the [quickstart guide](http://aka.ms/azsdk/python/mgmt)
-
-For code examples, see [Network Management](https://docs.microsoft.com/samples/azure-samples/azure-samples-python-management/network/)
+For code examples, see [Network Management](https://docs.microsoft.com/python/api/overview/azure/network?view=azure-python-preview)
 on docs.microsoft.com.
 
-Additional code samples can be found [here](https://aka.ms/azsdk/python/mgmt/samples)
 
 # Provide Feedback
 
