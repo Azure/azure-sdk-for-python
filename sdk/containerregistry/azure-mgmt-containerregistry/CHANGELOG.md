@@ -1,5 +1,164 @@
 # Release History
 
+## 8.0.0b1 (2020-10-10)
+
+**Features**
+
+  - Model ScopeMap has a new parameter type_properties_type
+  - Added operation BuildTasksOperations.begin_delete
+  - Added operation BuildTasksOperations.begin_update
+  - Added operation BuildTasksOperations.begin_create
+  - Added operation ReplicationsOperations.begin_delete
+  - Added operation ReplicationsOperations.begin_update
+  - Added operation ReplicationsOperations.begin_create
+  - Added operation ScopeMapsOperations.begin_delete
+  - Added operation ScopeMapsOperations.begin_update
+  - Added operation ScopeMapsOperations.begin_create
+  - Added operation BuildStepsOperations.begin_delete
+  - Added operation BuildStepsOperations.begin_update
+  - Added operation BuildStepsOperations.begin_create
+  - Added operation TokensOperations.begin_delete
+  - Added operation TokensOperations.begin_update
+  - Added operation TokensOperations.begin_create
+  - Added operation ImportPipelinesOperations.begin_delete
+  - Added operation ImportPipelinesOperations.begin_create
+  - Added operation ExportPipelinesOperations.begin_delete
+  - Added operation ExportPipelinesOperations.begin_create
+  - Added operation TaskRunsOperations.begin_delete
+  - Added operation TaskRunsOperations.begin_update
+  - Added operation TaskRunsOperations.begin_create
+  - Added operation RunsOperations.begin_cancel
+  - Added operation RunsOperations.begin_update
+  - Added operation PrivateEndpointConnectionsOperations.begin_delete
+  - Added operation PrivateEndpointConnectionsOperations.begin_create_or_update
+  - Added operation RegistriesOperations.begin_update
+  - Added operation RegistriesOperations.begin_schedule_run
+  - Added operation RegistriesOperations.begin_create
+  - Added operation RegistriesOperations.begin_generate_credentials
+  - Added operation RegistriesOperations.begin_import_image
+  - Added operation RegistriesOperations.begin_delete
+  - Added operation PipelineRunsOperations.begin_delete
+  - Added operation PipelineRunsOperations.begin_create
+  - Added operation WebhooksOperations.begin_delete
+  - Added operation WebhooksOperations.begin_update
+  - Added operation WebhooksOperations.begin_create
+  - Added operation BuildsOperations.begin_cancel
+  - Added operation BuildsOperations.begin_update
+  - Added operation AgentPoolsOperations.begin_delete
+  - Added operation AgentPoolsOperations.begin_update
+  - Added operation AgentPoolsOperations.begin_create
+  - Added operation TasksOperations.begin_delete
+  - Added operation TasksOperations.begin_update
+  - Added operation TasksOperations.begin_create
+
+**Breaking changes**
+
+  - Operation AgentPoolsOperations.get has a new signature
+  - Operation AgentPoolsOperations.get_queue_status has a new signature
+  - Operation AgentPoolsOperations.list has a new signature
+  - Operation BuildStepsOperations.get has a new signature
+  - Operation BuildStepsOperations.list has a new signature
+  - Operation BuildStepsOperations.list_build_arguments has a new signature
+  - Operation BuildTasksOperations.get has a new signature
+  - Operation BuildTasksOperations.list has a new signature
+  - Operation BuildTasksOperations.list_source_repository_properties has a new signature
+  - Operation BuildsOperations.get has a new signature
+  - Operation BuildsOperations.get_log_link has a new signature
+  - Operation BuildsOperations.list has a new signature
+  - Operation ExportPipelinesOperations.get has a new signature
+  - Operation ExportPipelinesOperations.list has a new signature
+  - Operation ImportPipelinesOperations.get has a new signature
+  - Operation ImportPipelinesOperations.list has a new signature
+  - Operation PipelineRunsOperations.get has a new signature
+  - Operation PipelineRunsOperations.list has a new signature
+  - Operation PrivateEndpointConnectionsOperations.get has a new signature
+  - Operation PrivateEndpointConnectionsOperations.list has a new signature
+  - Operation RegistriesOperations.get has a new signature
+  - Operation RegistriesOperations.get_build_source_upload_url has a new signature
+  - Operation RegistriesOperations.list_by_resource_group has a new signature
+  - Operation RegistriesOperations.list_credentials has a new signature
+  - Operation RegistriesOperations.list_private_link_resources has a new signature
+  - Operation RegistriesOperations.list_usages has a new signature
+  - Operation ReplicationsOperations.get has a new signature
+  - Operation ReplicationsOperations.list has a new signature
+  - Operation RunsOperations.get has a new signature
+  - Operation RunsOperations.get_log_sas_url has a new signature
+  - Operation RunsOperations.list has a new signature
+  - Operation ScopeMapsOperations.get has a new signature
+  - Operation ScopeMapsOperations.list has a new signature
+  - Operation TaskRunsOperations.get has a new signature
+  - Operation TaskRunsOperations.get_details has a new signature
+  - Operation TaskRunsOperations.list has a new signature
+  - Operation TasksOperations.get has a new signature
+  - Operation TasksOperations.get_details has a new signature
+  - Operation TasksOperations.list has a new signature
+  - Operation TokensOperations.get has a new signature
+  - Operation TokensOperations.list has a new signature
+  - Operation WebhooksOperations.get has a new signature
+  - Operation WebhooksOperations.get_callback_config has a new signature
+  - Operation WebhooksOperations.list has a new signature
+  - Operation WebhooksOperations.list_events has a new signature
+  - Operation WebhooksOperations.ping has a new signature
+  - Model RunRequest no longer has parameter log_template
+  - Model DockerBuildRequest no longer has parameter log_template
+  - Model TaskRunRequest no longer has parameter log_template
+  - Model EncodedTaskRunRequest no longer has parameter log_template
+  - Model Run no longer has parameter log_artifact
+  - Model TaskUpdateParameters no longer has parameter log_template
+  - Model ScopeMap no longer has parameter scope_map_type
+  - Model FileTaskRunRequest no longer has parameter log_template
+  - Model Task no longer has parameter is_system_task
+  - Model Task no longer has parameter log_template
+  - Operation Operations.list has a new signature
+  - Operation RegistriesOperations.check_name_availability has a new signature
+  - Operation RegistriesOperations.list has a new signature
+  - Operation RegistriesOperations.regenerate_credential has a new signature
+  - Removed operation BuildTasksOperations.update
+  - Removed operation BuildTasksOperations.delete
+  - Removed operation BuildTasksOperations.create
+  - Removed operation ReplicationsOperations.update
+  - Removed operation ReplicationsOperations.delete
+  - Removed operation ReplicationsOperations.create
+  - Removed operation ScopeMapsOperations.update
+  - Removed operation ScopeMapsOperations.delete
+  - Removed operation ScopeMapsOperations.create
+  - Removed operation BuildStepsOperations.update
+  - Removed operation BuildStepsOperations.delete
+  - Removed operation BuildStepsOperations.create
+  - Removed operation TokensOperations.update
+  - Removed operation TokensOperations.delete
+  - Removed operation TokensOperations.create
+  - Removed operation ImportPipelinesOperations.delete
+  - Removed operation ImportPipelinesOperations.create
+  - Removed operation ExportPipelinesOperations.delete
+  - Removed operation ExportPipelinesOperations.create
+  - Removed operation TaskRunsOperations.update
+  - Removed operation TaskRunsOperations.delete
+  - Removed operation TaskRunsOperations.create
+  - Removed operation RunsOperations.cancel
+  - Removed operation RunsOperations.update
+  - Removed operation PrivateEndpointConnectionsOperations.delete
+  - Removed operation PrivateEndpointConnectionsOperations.create_or_update
+  - Removed operation RegistriesOperations.import_image
+  - Removed operation RegistriesOperations.create
+  - Removed operation RegistriesOperations.schedule_run
+  - Removed operation RegistriesOperations.delete
+  - Removed operation RegistriesOperations.generate_credentials
+  - Removed operation RegistriesOperations.update
+  - Removed operation PipelineRunsOperations.delete
+  - Removed operation PipelineRunsOperations.create
+  - Removed operation WebhooksOperations.update
+  - Removed operation WebhooksOperations.delete
+  - Removed operation WebhooksOperations.create
+  - Removed operation BuildsOperations.cancel
+  - Removed operation BuildsOperations.update
+  - Removed operation AgentPoolsOperations.update
+  - Removed operation AgentPoolsOperations.delete
+  - Removed operation AgentPoolsOperations.create
+  - Removed operation TasksOperations.update
+  - Removed operation TasksOperations.delete
+  - Removed operation TasksOperations.create
+
 ## 3.0.0rc13 (2020-05-15)
 
 **Features**

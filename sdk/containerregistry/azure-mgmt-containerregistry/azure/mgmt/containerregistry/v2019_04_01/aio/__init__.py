@@ -6,5 +6,5 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._container_registry_management_client_async import ContainerRegistryManagementClient
+from ._container_registry_management_client import ContainerRegistryManagementClient
 __all__ = ['ContainerRegistryManagementClient']
