@@ -9,8 +9,8 @@ The objective of this tutorial is to design a "public API" or "customization lay
 An SDK namespace, `azure-computation`, has already been set up, with directory structure and packaging scripts in place.
 The swagger specification (found at `swagger/computation.json`), and the auto-generated layer has already been pre-generated, and can be found in the `_generated` directory.
 
-1. Follow the steps in the [API Design tutorial Setup](https://github.com/Azure/azure-sdk-pr/blob/1aa822c70286933fac59af902685943637f0177b/training/azure-sdk-apis/tutorials/api-design-intro/setup/setup-python.md#setup-for-api-design-tutorial-python) for setting up the environment for this project.
-2. Follow the steps in the [API Design tutorial](https://github.com/Azure/azure-sdk-pr/blob/1aa822c70286933fac59af902685943637f0177b/training/azure-sdk-apis/tutorials/api-design-intro/api-design-intro/api-design-intro-python.md#create-the-public-api-python) for considering hero scenarios, and using them to build a public API.
+1. Follow the steps in the [API Design tutorial Setup](https://github.com/Azure/azure-sdk-pr/blob/master/training/azure-sdk-apis/tutorials/api-design-intro/setup/setup-python.md) for setting up the environment for this project.
+2. Follow the steps in the [API Design tutorial](https://github.com/Azure/azure-sdk-pr/blob/master/training/azure-sdk-apis/tutorials/api-design-intro/api-design-intro/api-design-intro-python.md) for considering hero scenarios, and using them to build a public API.
 3. Remember the common-patterns that we covered in the API Design presentation and see whether and how they can be applied to the API. If you wish to use one of these patterns - take a look through the [Python Design Guidelines](https://azure.github.io/azure-sdk/python_design.html#) for specifics.
     - [Service Client](https://azure.github.io/azure-sdk/python_design.html#clients)
     - [Authentication and `azure-identity`](https://azure.github.io/azure-sdk/python_design.html#authentication)
@@ -35,8 +35,8 @@ The swagger specification (found at `swagger/computation.json`), and the auto-ge
         - [`begin_delete_secret`](https://github.com/Azure/azure-sdk-for-python/blob/f451b9ec96a8317b8a292bbc664653c04cc62b2c/sdk/keyvault/azure-keyvault-secrets/azure/keyvault/secrets/_client.py#L296)
         - [async `begin_delete_secret`](https://github.com/Azure/azure-sdk-for-python/blob/f451b9ec96a8317b8a292bbc664653c04cc62b2c/sdk/keyvault/azure-keyvault-secrets/azure/keyvault/secrets/aio/_client.py#L266)
 
-4. If you wish to make adjustments to the swagger specification, follow the instructions in the [API Design tutorial Review](https://github.com/Azure/azure-sdk-pr/blob/1aa822c70286933fac59af902685943637f0177b/training/azure-sdk-apis/tutorials/api-design-intro/review-the-api/review-the-api-python.md#regenerate-the-code) for regenerating the code.
-5. Follow the instructions in the [API Design tutorial Review](https://github.com/Azure/azure-sdk-pr/blob/1aa822c70286933fac59af902685943637f0177b/training/azure-sdk-apis/tutorials/api-design-intro/review-the-api/review-the-api-python.md#regenerate-the-code) for generating an API stubfile and uploading it to APIView.
+4. If you wish to make adjustments to the swagger specification, follow the instructions in the [API Design tutorial Review](https://github.com/Azure/azure-sdk-pr/blob/master/training/azure-sdk-apis/tutorials/api-design-intro/review-the-api/review-the-api-python.md#regenerate-the-code) for regenerating the code.
+5. Follow the instructions in the [API Design tutorial Review](https://github.com/Azure/azure-sdk-pr/blob/master/training/azure-sdk-apis/tutorials/api-design-intro/review-the-api/review-the-api-python.md#building-a-python-wheel) for generating a wheel and uploading it to APIView.
 
 ## API Review
 

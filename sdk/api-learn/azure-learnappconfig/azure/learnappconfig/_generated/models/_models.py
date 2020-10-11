@@ -74,7 +74,7 @@ class KeyListResult(msrest.serialization.Model):
     """The result of a list request.
 
     :param items: The collection value.
-    :type items: list[~azure.appconfiguration.models.Key]
+    :type items: list[~azure.learnappconfig.models.Key]
     :param next_link: The URI that can be used to request the next set of paged results.
     :type next_link: str
     """
@@ -144,7 +144,7 @@ class KeyValueListResult(msrest.serialization.Model):
     """The result of a list request.
 
     :param items: The collection value.
-    :type items: list[~azure.appconfiguration.models.KeyValue]
+    :type items: list[~azure.learnappconfig.models.KeyValue]
     :param next_link: The URI that can be used to request the next set of paged results.
     :type next_link: str
     """
@@ -192,7 +192,7 @@ class LabelListResult(msrest.serialization.Model):
     """The result of a list request.
 
     :param items: The collection value.
-    :type items: list[~azure.appconfiguration.models.Label]
+    :type items: list[~azure.learnappconfig.models.Label]
     :param next_link: The URI that can be used to request the next set of paged results.
     :type next_link: str
     """

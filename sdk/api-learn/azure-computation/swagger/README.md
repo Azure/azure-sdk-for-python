@@ -2,14 +2,6 @@
 
 > see https://aka.ms/autorest
 
-### Setup
-```ps
-cd C:\work
-git clone --recursive https://github.com/Azure/autorest.python.git
-cd autorest.python
-git checkout azure-core
-npm install
-```
 
 ### Generation
 ```ps

@@ -46,7 +46,7 @@ class AzureAppConfigurationOperationsMixin(object):
         :type accept_datetime: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either KeyListResult or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.appconfiguration.models.KeyListResult]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.learnappconfig.models.KeyListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.KeyListResult"]
@@ -207,10 +207,10 @@ class AzureAppConfigurationOperationsMixin(object):
          specified time.
         :type accept_datetime: str
         :param select: Used to select what fields are present in the returned resource(s).
-        :type select: list[str or ~azure.appconfiguration.models.Get6ItemsItem]
+        :type select: list[str or ~azure.learnappconfig.models.Get6ItemsItem]
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either KeyValueListResult or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.appconfiguration.models.KeyValueListResult]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.learnappconfig.models.KeyValueListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.KeyValueListResult"]
@@ -307,7 +307,7 @@ class AzureAppConfigurationOperationsMixin(object):
          specified time.
         :type accept_datetime: str
         :param select: Used to select what fields are present in the returned resource(s).
-        :type select: list[str or ~azure.appconfiguration.models.Head6ItemsItem]
+        :type select: list[str or ~azure.learnappconfig.models.Head6ItemsItem]
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -389,10 +389,10 @@ class AzureAppConfigurationOperationsMixin(object):
          not match the value provided.
         :type if_none_match: str
         :param select: Used to select what fields are present in the returned resource(s).
-        :type select: list[str or ~azure.appconfiguration.models.Get7ItemsItem]
+        :type select: list[str or ~azure.learnappconfig.models.Get7ItemsItem]
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: KeyValue, or the result of cls(response)
-        :rtype: ~azure.appconfiguration.models.KeyValue
+        :rtype: ~azure.learnappconfig.models.KeyValue
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.KeyValue"]
@@ -474,10 +474,10 @@ class AzureAppConfigurationOperationsMixin(object):
          not match the value provided.
         :type if_none_match: str
         :param entity: The key-value to create.
-        :type entity: ~azure.appconfiguration.models.KeyValue
+        :type entity: ~azure.learnappconfig.models.KeyValue
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: KeyValue, or the result of cls(response)
-        :rtype: ~azure.appconfiguration.models.KeyValue
+        :rtype: ~azure.learnappconfig.models.KeyValue
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.KeyValue"]
@@ -559,7 +559,7 @@ class AzureAppConfigurationOperationsMixin(object):
         :type if_match: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: KeyValue, or the result of cls(response)
-        :rtype: ~azure.appconfiguration.models.KeyValue or None
+        :rtype: ~azure.learnappconfig.models.KeyValue or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.KeyValue"]]
@@ -643,7 +643,7 @@ class AzureAppConfigurationOperationsMixin(object):
          not match the value provided.
         :type if_none_match: str
         :param select: Used to select what fields are present in the returned resource(s).
-        :type select: list[str or ~azure.appconfiguration.models.Head7ItemsItem]
+        :type select: list[str or ~azure.learnappconfig.models.Head7ItemsItem]
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -724,7 +724,7 @@ class AzureAppConfigurationOperationsMixin(object):
         :type select: list[str]
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either LabelListResult or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.appconfiguration.models.LabelListResult]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.learnappconfig.models.LabelListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.LabelListResult"]
@@ -892,7 +892,7 @@ class AzureAppConfigurationOperationsMixin(object):
         :type if_none_match: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: KeyValue, or the result of cls(response)
-        :rtype: ~azure.appconfiguration.models.KeyValue
+        :rtype: ~azure.learnappconfig.models.KeyValue
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.KeyValue"]
@@ -969,7 +969,7 @@ class AzureAppConfigurationOperationsMixin(object):
         :type if_none_match: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: KeyValue, or the result of cls(response)
-        :rtype: ~azure.appconfiguration.models.KeyValue
+        :rtype: ~azure.learnappconfig.models.KeyValue
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.KeyValue"]
@@ -1046,10 +1046,10 @@ class AzureAppConfigurationOperationsMixin(object):
          specified time.
         :type accept_datetime: str
         :param select: Used to select what fields are present in the returned resource(s).
-        :type select: list[str or ~azure.appconfiguration.models.Enum4]
+        :type select: list[str or ~azure.learnappconfig.models.Enum4]
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either KeyValueListResult or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.appconfiguration.models.KeyValueListResult]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.learnappconfig.models.KeyValueListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.KeyValueListResult"]
@@ -1146,7 +1146,7 @@ class AzureAppConfigurationOperationsMixin(object):
          specified time.
         :type accept_datetime: str
         :param select: Used to select what fields are present in the returned resource(s).
-        :type select: list[str or ~azure.appconfiguration.models.Enum5]
+        :type select: list[str or ~azure.learnappconfig.models.Enum5]
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
