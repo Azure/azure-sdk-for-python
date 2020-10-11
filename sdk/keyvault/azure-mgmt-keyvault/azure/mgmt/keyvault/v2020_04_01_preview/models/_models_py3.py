@@ -31,7 +31,8 @@ class AccessPolicyEntry(Model):
     :type application_id: str
     :param permissions: Required. Permissions the identity has for keys,
      secrets and certificates.
-    :type permissions: ~azure.mgmt.keyvault.v2019_09_01.models.Permissions
+    :type permissions:
+     ~azure.mgmt.keyvault.v2020_04_01_preview.models.Permissions
     """
 
     _validation = {
@@ -68,7 +69,8 @@ class CheckNameAvailabilityResult(Model):
     :ivar reason: The reason that a vault name could not be used. The Reason
      element is only returned if NameAvailable is false. Possible values
      include: 'AccountNameInvalid', 'AlreadyExists'
-    :vartype reason: str or ~azure.mgmt.keyvault.v2019_09_01.models.Reason
+    :vartype reason: str or
+     ~azure.mgmt.keyvault.v2020_04_01_preview.models.Reason
     :ivar message: An error message explaining the Reason value in more
      detail.
     :vartype message: str
@@ -97,7 +99,8 @@ class CloudError(Model):
     """An error response from Key Vault resource provider.
 
     :param error:
-    :type error: ~azure.mgmt.keyvault.v2019_09_01.models.CloudErrorBody
+    :type error:
+     ~azure.mgmt.keyvault.v2020_04_01_preview.models.CloudErrorBody
     """
 
     _attribute_map = {
@@ -157,7 +160,7 @@ class DeletedVault(Model):
     :vartype type: str
     :param properties: Properties of the vault
     :type properties:
-     ~azure.mgmt.keyvault.v2019_09_01.models.DeletedVaultProperties
+     ~azure.mgmt.keyvault.v2020_04_01_preview.models.DeletedVaultProperties
     """
 
     _validation = {
@@ -224,6 +227,40 @@ class DeletedVaultProperties(Model):
         self.tags = None
 
 
+class Error(Model):
+    """The server error.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar inner_error: The inner error, contains a more specific error code.
+    :vartype inner_error:
+     ~azure.mgmt.keyvault.v2020_04_01_preview.models.Error
+    """
+
+    _validation = {
+        'code': {'readonly': True},
+        'message': {'readonly': True},
+        'inner_error': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'inner_error': {'key': 'innererror', 'type': 'Error'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(Error, self).__init__(**kwargs)
+        self.code = None
+        self.message = None
+        self.inner_error = None
+
+
 class IPRule(Model):
     """A rule governing the accessibility of a vault from a specific ip address or
     ip range.
@@ -273,6 +310,241 @@ class LogSpecification(Model):
         self.blob_duration = blob_duration
 
 
+class ManagedHsmResource(Model):
+    """Managed HSM resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: The Azure Resource Manager resource ID for the managed HSM Pool.
+    :vartype id: str
+    :ivar name: The name of the managed HSM Pool.
+    :vartype name: str
+    :ivar type: The resource type of the managed HSM Pool.
+    :vartype type: str
+    :param location: The supported Azure location where the managed HSM Pool
+     should be created.
+    :type location: str
+    :param sku: SKU details
+    :type sku: ~azure.mgmt.keyvault.v2020_04_01_preview.models.ManagedHsmSku
+    :param tags: Resource tags
+    :type tags: dict[str, str]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'sku': {'key': 'sku', 'type': 'ManagedHsmSku'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+    }
+
+    def __init__(self, *, location: str=None, sku=None, tags=None, **kwargs) -> None:
+        super(ManagedHsmResource, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.location = location
+        self.sku = sku
+        self.tags = tags
+
+
+class ManagedHsm(ManagedHsmResource):
+    """Resource information with extended details.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: The Azure Resource Manager resource ID for the managed HSM Pool.
+    :vartype id: str
+    :ivar name: The name of the managed HSM Pool.
+    :vartype name: str
+    :ivar type: The resource type of the managed HSM Pool.
+    :vartype type: str
+    :param location: The supported Azure location where the managed HSM Pool
+     should be created.
+    :type location: str
+    :param sku: SKU details
+    :type sku: ~azure.mgmt.keyvault.v2020_04_01_preview.models.ManagedHsmSku
+    :param tags: Resource tags
+    :type tags: dict[str, str]
+    :param properties: Properties of the managed HSM
+    :type properties:
+     ~azure.mgmt.keyvault.v2020_04_01_preview.models.ManagedHsmProperties
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'sku': {'key': 'sku', 'type': 'ManagedHsmSku'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'properties': {'key': 'properties', 'type': 'ManagedHsmProperties'},
+    }
+
+    def __init__(self, *, location: str=None, sku=None, tags=None, properties=None, **kwargs) -> None:
+        super(ManagedHsm, self).__init__(location=location, sku=sku, tags=tags, **kwargs)
+        self.properties = properties
+
+
+class ManagedHsmError(Model):
+    """The error exception.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar error: The server error.
+    :vartype error: ~azure.mgmt.keyvault.v2020_04_01_preview.models.Error
+    """
+
+    _validation = {
+        'error': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'error': {'key': 'error', 'type': 'Error'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(ManagedHsmError, self).__init__(**kwargs)
+        self.error = None
+
+
+class ManagedHsmErrorException(HttpOperationError):
+    """Server responsed with exception of type: 'ManagedHsmError'.
+
+    :param deserialize: A deserializer
+    :param response: Server response to be deserialized.
+    """
+
+    def __init__(self, deserialize, response, *args):
+
+        super(ManagedHsmErrorException, self).__init__(deserialize, response, 'ManagedHsmError', *args)
+
+
+class ManagedHsmProperties(Model):
+    """Properties of the managed HSM Pool.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param tenant_id: The Azure Active Directory tenant ID that should be used
+     for authenticating requests to the managed HSM pool.
+    :type tenant_id: str
+    :param initial_admin_object_ids: Array of initial administrators object
+     ids for this managed hsm pool.
+    :type initial_admin_object_ids: list[str]
+    :param hsm_uri: The URI of the managed hsm pool for performing operations
+     on keys.
+    :type hsm_uri: str
+    :param enable_soft_delete: Property to specify whether the 'soft delete'
+     functionality is enabled for this managed HSM pool. If it's not set to any
+     value(true or false) when creating new managed HSM pool, it will be set to
+     true by default. Once set to true, it cannot be reverted to false. Default
+     value: True .
+    :type enable_soft_delete: bool
+    :param soft_delete_retention_in_days: softDelete data retention days. It
+     accepts >=7 and <=90. Default value: 90 .
+    :type soft_delete_retention_in_days: int
+    :param enable_purge_protection: Property specifying whether protection
+     against purge is enabled for this managed HSM pool. Setting this property
+     to true activates protection against purge for this managed HSM pool and
+     its content - only the Managed HSM service may initiate a hard,
+     irrecoverable deletion. The setting is effective only if soft delete is
+     also enabled. Enabling this functionality is irreversible.
+    :type enable_purge_protection: bool
+    :param create_mode: The create mode to indicate whether the resource is
+     being created or is being recovered from a deleted resource. Possible
+     values include: 'recover', 'default'
+    :type create_mode: str or
+     ~azure.mgmt.keyvault.v2020_04_01_preview.models.CreateMode
+    :ivar status_message: Resource Status Message.
+    :vartype status_message: str
+    :ivar provisioning_state: Provisioning state. Possible values include:
+     'Succeeded', 'Provisioning', 'Failed', 'Updating', 'Deleting',
+     'Activated', 'SecurityDomainRestore', 'Restoring'
+    :vartype provisioning_state: str or
+     ~azure.mgmt.keyvault.v2020_04_01_preview.models.ProvisioningState
+    """
+
+    _validation = {
+        'status_message': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+        'initial_admin_object_ids': {'key': 'initialAdminObjectIds', 'type': '[str]'},
+        'hsm_uri': {'key': 'hsmUri', 'type': 'str'},
+        'enable_soft_delete': {'key': 'enableSoftDelete', 'type': 'bool'},
+        'soft_delete_retention_in_days': {'key': 'softDeleteRetentionInDays', 'type': 'int'},
+        'enable_purge_protection': {'key': 'enablePurgeProtection', 'type': 'bool'},
+        'create_mode': {'key': 'createMode', 'type': 'CreateMode'},
+        'status_message': {'key': 'statusMessage', 'type': 'str'},
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+    }
+
+    def __init__(self, *, tenant_id: str=None, initial_admin_object_ids=None, hsm_uri: str=None, enable_soft_delete: bool=True, soft_delete_retention_in_days: int=90, enable_purge_protection: bool=None, create_mode=None, **kwargs) -> None:
+        super(ManagedHsmProperties, self).__init__(**kwargs)
+        self.tenant_id = tenant_id
+        self.initial_admin_object_ids = initial_admin_object_ids
+        self.hsm_uri = hsm_uri
+        self.enable_soft_delete = enable_soft_delete
+        self.soft_delete_retention_in_days = soft_delete_retention_in_days
+        self.enable_purge_protection = enable_purge_protection
+        self.create_mode = create_mode
+        self.status_message = None
+        self.provisioning_state = None
+
+
+class ManagedHsmSku(Model):
+    """SKU details.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar family: Required. SKU Family of the managed HSM Pool. Default value:
+     "B" .
+    :vartype family: str
+    :param name: Required. SKU of the managed HSM Pool. Possible values
+     include: 'Standard_B1', 'Custom_B32'
+    :type name: str or
+     ~azure.mgmt.keyvault.v2020_04_01_preview.models.ManagedHsmSkuName
+    """
+
+    _validation = {
+        'family': {'required': True, 'constant': True},
+        'name': {'required': True},
+    }
+
+    _attribute_map = {
+        'family': {'key': 'family', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'ManagedHsmSkuName'},
+    }
+
+    family = "B"
+
+    def __init__(self, *, name, **kwargs) -> None:
+        super(ManagedHsmSku, self).__init__(**kwargs)
+        self.name = name
+
+
 class NetworkRuleSet(Model):
     """A set of rules governing the network accessibility of a vault.
 
@@ -280,17 +552,18 @@ class NetworkRuleSet(Model):
      'AzureServices' or 'None'.  If not specified the default is
      'AzureServices'. Possible values include: 'AzureServices', 'None'
     :type bypass: str or
-     ~azure.mgmt.keyvault.v2019_09_01.models.NetworkRuleBypassOptions
+     ~azure.mgmt.keyvault.v2020_04_01_preview.models.NetworkRuleBypassOptions
     :param default_action: The default action when no rule from ipRules and
      from virtualNetworkRules match. This is only used after the bypass
      property has been evaluated. Possible values include: 'Allow', 'Deny'
     :type default_action: str or
-     ~azure.mgmt.keyvault.v2019_09_01.models.NetworkRuleAction
+     ~azure.mgmt.keyvault.v2020_04_01_preview.models.NetworkRuleAction
     :param ip_rules: The list of IP address rules.
-    :type ip_rules: list[~azure.mgmt.keyvault.v2019_09_01.models.IPRule]
+    :type ip_rules:
+     list[~azure.mgmt.keyvault.v2020_04_01_preview.models.IPRule]
     :param virtual_network_rules: The list of virtual network rules.
     :type virtual_network_rules:
-     list[~azure.mgmt.keyvault.v2019_09_01.models.VirtualNetworkRule]
+     list[~azure.mgmt.keyvault.v2020_04_01_preview.models.VirtualNetworkRule]
     """
 
     _attribute_map = {
@@ -314,13 +587,14 @@ class Operation(Model):
     :param name: Operation name: {provider}/{resource}/{operation}
     :type name: str
     :param display: Display metadata associated with the operation.
-    :type display: ~azure.mgmt.keyvault.v2019_09_01.models.OperationDisplay
+    :type display:
+     ~azure.mgmt.keyvault.v2020_04_01_preview.models.OperationDisplay
     :param origin: The origin of operations.
     :type origin: str
     :param service_specification: One property of operation, include metric
      specifications.
     :type service_specification:
-     ~azure.mgmt.keyvault.v2019_09_01.models.ServiceSpecification
+     ~azure.mgmt.keyvault.v2020_04_01_preview.models.ServiceSpecification
     """
 
     _attribute_map = {
@@ -371,16 +645,16 @@ class Permissions(Model):
 
     :param keys: Permissions to keys
     :type keys: list[str or
-     ~azure.mgmt.keyvault.v2019_09_01.models.KeyPermissions]
+     ~azure.mgmt.keyvault.v2020_04_01_preview.models.KeyPermissions]
     :param secrets: Permissions to secrets
     :type secrets: list[str or
-     ~azure.mgmt.keyvault.v2019_09_01.models.SecretPermissions]
+     ~azure.mgmt.keyvault.v2020_04_01_preview.models.SecretPermissions]
     :param certificates: Permissions to certificates
     :type certificates: list[str or
-     ~azure.mgmt.keyvault.v2019_09_01.models.CertificatePermissions]
+     ~azure.mgmt.keyvault.v2020_04_01_preview.models.CertificatePermissions]
     :param storage: Permissions to storage accounts
     :type storage: list[str or
-     ~azure.mgmt.keyvault.v2019_09_01.models.StoragePermissions]
+     ~azure.mgmt.keyvault.v2020_04_01_preview.models.StoragePermissions]
     """
 
     _attribute_map = {
@@ -482,16 +756,16 @@ class PrivateEndpointConnection(Resource):
     :vartype tags: dict[str, str]
     :param private_endpoint: Properties of the private endpoint object.
     :type private_endpoint:
-     ~azure.mgmt.keyvault.v2019_09_01.models.PrivateEndpoint
+     ~azure.mgmt.keyvault.v2020_04_01_preview.models.PrivateEndpoint
     :param private_link_service_connection_state: Approval state of the
      private link connection.
     :type private_link_service_connection_state:
-     ~azure.mgmt.keyvault.v2019_09_01.models.PrivateLinkServiceConnectionState
+     ~azure.mgmt.keyvault.v2020_04_01_preview.models.PrivateLinkServiceConnectionState
     :param provisioning_state: Provisioning state of the private endpoint
      connection. Possible values include: 'Succeeded', 'Creating', 'Updating',
      'Deleting', 'Failed', 'Disconnected'
     :type provisioning_state: str or
-     ~azure.mgmt.keyvault.v2019_09_01.models.PrivateEndpointConnectionProvisioningState
+     ~azure.mgmt.keyvault.v2020_04_01_preview.models.PrivateEndpointConnectionProvisioningState
     """
 
     _validation = {
@@ -525,16 +799,16 @@ class PrivateEndpointConnectionItem(Model):
 
     :param private_endpoint: Properties of the private endpoint object.
     :type private_endpoint:
-     ~azure.mgmt.keyvault.v2019_09_01.models.PrivateEndpoint
+     ~azure.mgmt.keyvault.v2020_04_01_preview.models.PrivateEndpoint
     :param private_link_service_connection_state: Approval state of the
      private link connection.
     :type private_link_service_connection_state:
-     ~azure.mgmt.keyvault.v2019_09_01.models.PrivateLinkServiceConnectionState
+     ~azure.mgmt.keyvault.v2020_04_01_preview.models.PrivateLinkServiceConnectionState
     :param provisioning_state: Provisioning state of the private endpoint
      connection. Possible values include: 'Succeeded', 'Creating', 'Updating',
      'Deleting', 'Failed', 'Disconnected'
     :type provisioning_state: str or
-     ~azure.mgmt.keyvault.v2019_09_01.models.PrivateEndpointConnectionProvisioningState
+     ~azure.mgmt.keyvault.v2020_04_01_preview.models.PrivateEndpointConnectionProvisioningState
     """
 
     _attribute_map = {
@@ -608,7 +882,7 @@ class PrivateLinkResourceListResult(Model):
 
     :param value: Array of private link resources
     :type value:
-     list[~azure.mgmt.keyvault.v2019_09_01.models.PrivateLinkResource]
+     list[~azure.mgmt.keyvault.v2020_04_01_preview.models.PrivateLinkResource]
     """
 
     _attribute_map = {
@@ -628,7 +902,7 @@ class PrivateLinkServiceConnectionState(Model):
      rejected or removed by the key vault owner. Possible values include:
      'Pending', 'Approved', 'Rejected', 'Disconnected'
     :type status: str or
-     ~azure.mgmt.keyvault.v2019_09_01.models.PrivateEndpointServiceConnectionStatus
+     ~azure.mgmt.keyvault.v2020_04_01_preview.models.PrivateEndpointServiceConnectionStatus
     :param description: The reason for approval or rejection.
     :type description: str
     :param action_required: A message indicating if changes on the service
@@ -654,7 +928,7 @@ class ServiceSpecification(Model):
 
     :param log_specifications: Log specifications of operation.
     :type log_specifications:
-     list[~azure.mgmt.keyvault.v2019_09_01.models.LogSpecification]
+     list[~azure.mgmt.keyvault.v2020_04_01_preview.models.LogSpecification]
     """
 
     _attribute_map = {
@@ -679,7 +953,7 @@ class Sku(Model):
     :param name: Required. SKU name to specify whether the key vault is a
      standard vault or a premium vault. Possible values include: 'standard',
      'premium'
-    :type name: str or ~azure.mgmt.keyvault.v2019_09_01.models.SkuName
+    :type name: str or ~azure.mgmt.keyvault.v2020_04_01_preview.models.SkuName
     """
 
     _validation = {
@@ -718,7 +992,8 @@ class Vault(Model):
     :param tags: Tags assigned to the key vault resource.
     :type tags: dict[str, str]
     :param properties: Required. Properties of the vault
-    :type properties: ~azure.mgmt.keyvault.v2019_09_01.models.VaultProperties
+    :type properties:
+     ~azure.mgmt.keyvault.v2020_04_01_preview.models.VaultProperties
     """
 
     _validation = {
@@ -765,7 +1040,7 @@ class VaultAccessPolicyParameters(Model):
     :vartype location: str
     :param properties: Required. Properties of the access policy
     :type properties:
-     ~azure.mgmt.keyvault.v2019_09_01.models.VaultAccessPolicyProperties
+     ~azure.mgmt.keyvault.v2020_04_01_preview.models.VaultAccessPolicyProperties
     """
 
     _validation = {
@@ -802,7 +1077,7 @@ class VaultAccessPolicyProperties(Model):
      access to the key vault. All identities in the array must use the same
      tenant ID as the key vault's tenant ID.
     :type access_policies:
-     list[~azure.mgmt.keyvault.v2019_09_01.models.AccessPolicyEntry]
+     list[~azure.mgmt.keyvault.v2020_04_01_preview.models.AccessPolicyEntry]
     """
 
     _validation = {
@@ -861,7 +1136,8 @@ class VaultCreateOrUpdateParameters(Model):
     :param tags: The tags that will be assigned to the key vault.
     :type tags: dict[str, str]
     :param properties: Required. Properties of the vault
-    :type properties: ~azure.mgmt.keyvault.v2019_09_01.models.VaultProperties
+    :type properties:
+     ~azure.mgmt.keyvault.v2020_04_01_preview.models.VaultProperties
     """
 
     _validation = {
@@ -889,7 +1165,7 @@ class VaultPatchParameters(Model):
     :type tags: dict[str, str]
     :param properties: Properties of the vault
     :type properties:
-     ~azure.mgmt.keyvault.v2019_09_01.models.VaultPatchProperties
+     ~azure.mgmt.keyvault.v2020_04_01_preview.models.VaultPatchProperties
     """
 
     _attribute_map = {
@@ -910,12 +1186,12 @@ class VaultPatchProperties(Model):
      for authenticating requests to the key vault.
     :type tenant_id: str
     :param sku: SKU details
-    :type sku: ~azure.mgmt.keyvault.v2019_09_01.models.Sku
+    :type sku: ~azure.mgmt.keyvault.v2020_04_01_preview.models.Sku
     :param access_policies: An array of 0 to 16 identities that have access to
      the key vault. All identities in the array must use the same tenant ID as
      the key vault's tenant ID.
     :type access_policies:
-     list[~azure.mgmt.keyvault.v2019_09_01.models.AccessPolicyEntry]
+     list[~azure.mgmt.keyvault.v2020_04_01_preview.models.AccessPolicyEntry]
     :param enabled_for_deployment: Property to specify whether Azure Virtual
      Machines are permitted to retrieve certificates stored as secrets from the
      key vault.
@@ -946,7 +1222,7 @@ class VaultPatchProperties(Model):
     :param create_mode: The vault's create mode to indicate whether the vault
      need to be recovered or not. Possible values include: 'recover', 'default'
     :type create_mode: str or
-     ~azure.mgmt.keyvault.v2019_09_01.models.CreateMode
+     ~azure.mgmt.keyvault.v2020_04_01_preview.models.CreateMode
     :param enable_purge_protection: Property specifying whether protection
      against purge is enabled for this vault. Setting this property to true
      activates protection against purge for this vault and its content - only
@@ -957,7 +1233,8 @@ class VaultPatchProperties(Model):
     :type enable_purge_protection: bool
     :param network_acls: A collection of rules governing the accessibility of
      the vault from specific network locations.
-    :type network_acls: ~azure.mgmt.keyvault.v2019_09_01.models.NetworkRuleSet
+    :type network_acls:
+     ~azure.mgmt.keyvault.v2020_04_01_preview.models.NetworkRuleSet
     """
 
     _attribute_map = {
@@ -1003,13 +1280,13 @@ class VaultProperties(Model):
      should be used for authenticating requests to the key vault.
     :type tenant_id: str
     :param sku: Required. SKU details
-    :type sku: ~azure.mgmt.keyvault.v2019_09_01.models.Sku
+    :type sku: ~azure.mgmt.keyvault.v2020_04_01_preview.models.Sku
     :param access_policies: An array of 0 to 1024 identities that have access
      to the key vault. All identities in the array must use the same tenant ID
      as the key vault's tenant ID. When `createMode` is set to `recover`,
      access policies are not required. Otherwise, access policies are required.
     :type access_policies:
-     list[~azure.mgmt.keyvault.v2019_09_01.models.AccessPolicyEntry]
+     list[~azure.mgmt.keyvault.v2020_04_01_preview.models.AccessPolicyEntry]
     :param vault_uri: The URI of the vault for performing operations on keys
      and secrets.
     :type vault_uri: str
@@ -1046,7 +1323,7 @@ class VaultProperties(Model):
     :param create_mode: The vault's create mode to indicate whether the vault
      need to be recovered or not. Possible values include: 'recover', 'default'
     :type create_mode: str or
-     ~azure.mgmt.keyvault.v2019_09_01.models.CreateMode
+     ~azure.mgmt.keyvault.v2020_04_01_preview.models.CreateMode
     :param enable_purge_protection: Property specifying whether protection
      against purge is enabled for this vault. Setting this property to true
      activates protection against purge for this vault and its content - only
@@ -1057,11 +1334,12 @@ class VaultProperties(Model):
     :type enable_purge_protection: bool
     :param network_acls: Rules governing the accessibility of the key vault
      from specific network locations.
-    :type network_acls: ~azure.mgmt.keyvault.v2019_09_01.models.NetworkRuleSet
+    :type network_acls:
+     ~azure.mgmt.keyvault.v2020_04_01_preview.models.NetworkRuleSet
     :ivar private_endpoint_connections: List of private endpoint connections
      associated with the key vault.
     :vartype private_endpoint_connections:
-     list[~azure.mgmt.keyvault.v2019_09_01.models.PrivateEndpointConnectionItem]
+     list[~azure.mgmt.keyvault.v2020_04_01_preview.models.PrivateEndpointConnectionItem]
     """
 
     _validation = {
