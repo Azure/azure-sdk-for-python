@@ -297,7 +297,7 @@ class ApplicationsOperations(object):
         :param parameters: Parameters supplied to update an existing managed
          application.
         :type parameters:
-         ~azure.mgmt.resource.managedapplications.models.Application
+         ~azure.mgmt.resource.managedapplications.models.ApplicationPatchable
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -335,7 +335,7 @@ class ApplicationsOperations(object):
 
         # Construct body
         if parameters is not None:
-            body_content = self._serialize.body(parameters, 'Application')
+            body_content = self._serialize.body(parameters, 'ApplicationPatchable')
         else:
             body_content = None
 
