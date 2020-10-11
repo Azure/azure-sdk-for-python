@@ -11,13 +11,14 @@ from typing import TYPE_CHECKING
 from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
 
+from ._version import VERSION
+
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any, Optional
 
     from azure.core.credentials import TokenCredential
 
-VERSION = "unknown"
 
 class AzureAppConfigurationConfiguration(Configuration):
     """Configuration for AzureAppConfiguration.

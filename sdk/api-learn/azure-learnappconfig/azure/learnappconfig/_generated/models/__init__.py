@@ -24,12 +24,7 @@ except (SyntaxError, ImportError):
     from ._models import LabelListResult  # type: ignore
 
 from ._azure_app_configuration_enums import (
-    Enum4,
-    Enum5,
-    Get6ItemsItem,
-    Get7ItemsItem,
-    Head6ItemsItem,
-    Head7ItemsItem,
+    SettingFields,
 )
 
 __all__ = [
@@ -40,10 +35,5 @@ __all__ = [
     'KeyValueListResult',
     'Label',
     'LabelListResult',
-    'Enum4',
-    'Enum5',
-    'Get6ItemsItem',
-    'Get7ItemsItem',
-    'Head6ItemsItem',
-    'Head7ItemsItem',
+    'SettingFields',
 ]
