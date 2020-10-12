@@ -19,7 +19,7 @@ def main():
     client = AppConfigurationClient(account_url=url, credential=credential)
 
     try:
-        color_setting = client.get_configuration_setting(os.enviorn['API-LEARN_SETTING_COLOR_KEY'])
+        color_setting = client.get_configuration_setting(os.environ['API-LEARN_SETTING_COLOR_KEY'])
         color = color_setting.value.upper()
         text_setting = client.get_configuration_setting(os.environ['API-LEARN_SETTING_TEXT_KEY'])
         greeting = text_setting.value
