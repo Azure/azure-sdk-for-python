@@ -6,5 +6,5 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._cosmos_db_management_client_async import CosmosDBManagementClient
+from ._cosmos_db_management_client import CosmosDBManagementClient
 __all__ = ['CosmosDBManagementClient']

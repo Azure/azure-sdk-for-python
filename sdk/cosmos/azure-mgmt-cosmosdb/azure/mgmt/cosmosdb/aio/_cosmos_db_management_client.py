@@ -15,28 +15,28 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
-from ._configuration_async import CosmosDBManagementClientConfiguration
-from .operations_async import DatabaseAccountsOperations
-from .operations_async import Operations
-from .operations_async import DatabaseOperations
-from .operations_async import CollectionOperations
-from .operations_async import CollectionRegionOperations
-from .operations_async import DatabaseAccountRegionOperations
-from .operations_async import PercentileSourceTargetOperations
-from .operations_async import PercentileTargetOperations
-from .operations_async import PercentileOperations
-from .operations_async import CollectionPartitionRegionOperations
-from .operations_async import CollectionPartitionOperations
-from .operations_async import PartitionKeyRangeIdOperations
-from .operations_async import PartitionKeyRangeIdRegionOperations
-from .operations_async import SqlResourcesOperations
-from .operations_async import MongoDBResourcesOperations
-from .operations_async import TableResourcesOperations
-from .operations_async import CassandraResourcesOperations
-from .operations_async import GremlinResourcesOperations
-from .operations_async import NotebookWorkspacesOperations
-from .operations_async import PrivateLinkResourcesOperations
-from .operations_async import PrivateEndpointConnectionsOperations
+from ._configuration import CosmosDBManagementClientConfiguration
+from .operations import DatabaseAccountsOperations
+from .operations import Operations
+from .operations import DatabaseOperations
+from .operations import CollectionOperations
+from .operations import CollectionRegionOperations
+from .operations import DatabaseAccountRegionOperations
+from .operations import PercentileSourceTargetOperations
+from .operations import PercentileTargetOperations
+from .operations import PercentileOperations
+from .operations import CollectionPartitionRegionOperations
+from .operations import CollectionPartitionOperations
+from .operations import PartitionKeyRangeIdOperations
+from .operations import PartitionKeyRangeIdRegionOperations
+from .operations import SqlResourcesOperations
+from .operations import MongoDBResourcesOperations
+from .operations import TableResourcesOperations
+from .operations import CassandraResourcesOperations
+from .operations import GremlinResourcesOperations
+from .operations import NotebookWorkspacesOperations
+from .operations import PrivateLinkResourcesOperations
+from .operations import PrivateEndpointConnectionsOperations
 from .. import models
 
 
@@ -44,47 +44,47 @@ class CosmosDBManagementClient(object):
     """Azure Cosmos DB Database Service Resource Provider REST API.
 
     :ivar database_accounts: DatabaseAccountsOperations operations
-    :vartype database_accounts: azure.mgmt.cosmosdb.aio.operations_async.DatabaseAccountsOperations
+    :vartype database_accounts: azure.mgmt.cosmosdb.aio.operations.DatabaseAccountsOperations
     :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.cosmosdb.aio.operations_async.Operations
+    :vartype operations: azure.mgmt.cosmosdb.aio.operations.Operations
     :ivar database: DatabaseOperations operations
-    :vartype database: azure.mgmt.cosmosdb.aio.operations_async.DatabaseOperations
+    :vartype database: azure.mgmt.cosmosdb.aio.operations.DatabaseOperations
     :ivar collection: CollectionOperations operations
-    :vartype collection: azure.mgmt.cosmosdb.aio.operations_async.CollectionOperations
+    :vartype collection: azure.mgmt.cosmosdb.aio.operations.CollectionOperations
     :ivar collection_region: CollectionRegionOperations operations
-    :vartype collection_region: azure.mgmt.cosmosdb.aio.operations_async.CollectionRegionOperations
+    :vartype collection_region: azure.mgmt.cosmosdb.aio.operations.CollectionRegionOperations
     :ivar database_account_region: DatabaseAccountRegionOperations operations
-    :vartype database_account_region: azure.mgmt.cosmosdb.aio.operations_async.DatabaseAccountRegionOperations
+    :vartype database_account_region: azure.mgmt.cosmosdb.aio.operations.DatabaseAccountRegionOperations
     :ivar percentile_source_target: PercentileSourceTargetOperations operations
-    :vartype percentile_source_target: azure.mgmt.cosmosdb.aio.operations_async.PercentileSourceTargetOperations
+    :vartype percentile_source_target: azure.mgmt.cosmosdb.aio.operations.PercentileSourceTargetOperations
     :ivar percentile_target: PercentileTargetOperations operations
-    :vartype percentile_target: azure.mgmt.cosmosdb.aio.operations_async.PercentileTargetOperations
+    :vartype percentile_target: azure.mgmt.cosmosdb.aio.operations.PercentileTargetOperations
     :ivar percentile: PercentileOperations operations
-    :vartype percentile: azure.mgmt.cosmosdb.aio.operations_async.PercentileOperations
+    :vartype percentile: azure.mgmt.cosmosdb.aio.operations.PercentileOperations
     :ivar collection_partition_region: CollectionPartitionRegionOperations operations
-    :vartype collection_partition_region: azure.mgmt.cosmosdb.aio.operations_async.CollectionPartitionRegionOperations
+    :vartype collection_partition_region: azure.mgmt.cosmosdb.aio.operations.CollectionPartitionRegionOperations
     :ivar collection_partition: CollectionPartitionOperations operations
-    :vartype collection_partition: azure.mgmt.cosmosdb.aio.operations_async.CollectionPartitionOperations
+    :vartype collection_partition: azure.mgmt.cosmosdb.aio.operations.CollectionPartitionOperations
     :ivar partition_key_range_id: PartitionKeyRangeIdOperations operations
-    :vartype partition_key_range_id: azure.mgmt.cosmosdb.aio.operations_async.PartitionKeyRangeIdOperations
+    :vartype partition_key_range_id: azure.mgmt.cosmosdb.aio.operations.PartitionKeyRangeIdOperations
     :ivar partition_key_range_id_region: PartitionKeyRangeIdRegionOperations operations
-    :vartype partition_key_range_id_region: azure.mgmt.cosmosdb.aio.operations_async.PartitionKeyRangeIdRegionOperations
+    :vartype partition_key_range_id_region: azure.mgmt.cosmosdb.aio.operations.PartitionKeyRangeIdRegionOperations
     :ivar sql_resources: SqlResourcesOperations operations
-    :vartype sql_resources: azure.mgmt.cosmosdb.aio.operations_async.SqlResourcesOperations
+    :vartype sql_resources: azure.mgmt.cosmosdb.aio.operations.SqlResourcesOperations
     :ivar mongo_db_resources: MongoDBResourcesOperations operations
-    :vartype mongo_db_resources: azure.mgmt.cosmosdb.aio.operations_async.MongoDBResourcesOperations
+    :vartype mongo_db_resources: azure.mgmt.cosmosdb.aio.operations.MongoDBResourcesOperations
     :ivar table_resources: TableResourcesOperations operations
-    :vartype table_resources: azure.mgmt.cosmosdb.aio.operations_async.TableResourcesOperations
+    :vartype table_resources: azure.mgmt.cosmosdb.aio.operations.TableResourcesOperations
     :ivar cassandra_resources: CassandraResourcesOperations operations
-    :vartype cassandra_resources: azure.mgmt.cosmosdb.aio.operations_async.CassandraResourcesOperations
+    :vartype cassandra_resources: azure.mgmt.cosmosdb.aio.operations.CassandraResourcesOperations
     :ivar gremlin_resources: GremlinResourcesOperations operations
-    :vartype gremlin_resources: azure.mgmt.cosmosdb.aio.operations_async.GremlinResourcesOperations
+    :vartype gremlin_resources: azure.mgmt.cosmosdb.aio.operations.GremlinResourcesOperations
     :ivar notebook_workspaces: NotebookWorkspacesOperations operations
-    :vartype notebook_workspaces: azure.mgmt.cosmosdb.aio.operations_async.NotebookWorkspacesOperations
+    :vartype notebook_workspaces: azure.mgmt.cosmosdb.aio.operations.NotebookWorkspacesOperations
     :ivar private_link_resources: PrivateLinkResourcesOperations operations
-    :vartype private_link_resources: azure.mgmt.cosmosdb.aio.operations_async.PrivateLinkResourcesOperations
+    :vartype private_link_resources: azure.mgmt.cosmosdb.aio.operations.PrivateLinkResourcesOperations
     :ivar private_endpoint_connections: PrivateEndpointConnectionsOperations operations
-    :vartype private_endpoint_connections: azure.mgmt.cosmosdb.aio.operations_async.PrivateEndpointConnectionsOperations
+    :vartype private_endpoint_connections: azure.mgmt.cosmosdb.aio.operations.PrivateEndpointConnectionsOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription.
@@ -107,6 +107,7 @@ class CosmosDBManagementClient(object):
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
+        self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
 
         self.database_accounts = DatabaseAccountsOperations(

@@ -9,7 +9,7 @@ from typing import Any, AsyncIterable, Callable, Dict, Generic, Optional, TypeVa
 import warnings
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
-from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
@@ -19,8 +19,8 @@ from ... import models
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class PartitionKeyRangeIdOperations:
-    """PartitionKeyRangeIdOperations async operations.
+class DatabaseAccountRegionOperations:
+    """DatabaseAccountRegionOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -45,42 +45,39 @@ class PartitionKeyRangeIdOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        database_rid: str,
-        collection_rid: str,
-        partition_key_range_id: str,
+        region: str,
         filter: str,
         **kwargs
-    ) -> AsyncIterable["models.PartitionMetricListResult"]:
-        """Retrieves the metrics determined by the given filter for the given partition key range id.
+    ) -> AsyncIterable["models.MetricListResult"]:
+        """Retrieves the metrics determined by the given filter for the given database account and region.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name.
         :type account_name: str
-        :param database_rid: Cosmos DB database rid.
-        :type database_rid: str
-        :param collection_rid: Cosmos DB collection rid.
-        :type collection_rid: str
-        :param partition_key_range_id: Partition Key Range Id for which to get data.
-        :type partition_key_range_id: str
+        :param region: Cosmos DB region, with spaces between words and each word capitalized.
+        :type region: str
         :param filter: An OData filter expression that describes a subset of metrics to return. The
          parameters that can be filtered are name.value (name of the metric, can have an or of multiple
          names), startTime, endTime, and timeGrain. The supported operator is eq.
         :type filter: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either PartitionMetricListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.cosmosdb.models.PartitionMetricListResult]
+        :return: An iterator like instance of either MetricListResult or the result of cls(response)
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.cosmosdb.models.MetricListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PartitionMetricListResult"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.MetricListResult"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2020-04-01"
+        accept = "application/json"
 
         def prepare_request(next_link=None):
             # Construct headers
             header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
+            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
             if not next_link:
                 # Construct URL
@@ -89,9 +86,7 @@ class PartitionKeyRangeIdOperations:
                     'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
                     'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
-                    'databaseRid': self._serialize.url("database_rid", database_rid, 'str'),
-                    'collectionRid': self._serialize.url("collection_rid", collection_rid, 'str'),
-                    'partitionKeyRangeId': self._serialize.url("partition_key_range_id", partition_key_range_id, 'str'),
+                    'region': self._serialize.url("region", region, 'str'),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
@@ -107,7 +102,7 @@ class PartitionKeyRangeIdOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize('PartitionMetricListResult', pipeline_response)
+            deserialized = self._deserialize('MetricListResult', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -128,4 +123,4 @@ class PartitionKeyRangeIdOperations:
         return AsyncItemPaged(
             get_next, extract_data
         )
-    list_metrics.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/databases/{databaseRid}/collections/{collectionRid}/partitionKeyRangeId/{partitionKeyRangeId}/metrics'}  # type: ignore
+    list_metrics.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/region/{region}/metrics'}  # type: ignore
